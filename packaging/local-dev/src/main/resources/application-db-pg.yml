@@ -1,0 +1,14 @@
+
+chutney:
+  db-server:
+    port: 9360
+    base-dir: ./.chutney/pgdata
+    work-dir: ./.chutney/pgwork
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:${chutney.db-server.port}/postgres
+    username: postgres
+    password: postgres
+    hikari:
+      maximum-pool-size: 5

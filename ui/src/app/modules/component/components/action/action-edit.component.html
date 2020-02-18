@@ -1,0 +1,199 @@
+<div [formGroup]="actionForm">
+    <div class="edition-header row mt-0">
+        <div class="col-7">
+            <div class="row">
+                <div class="btn">
+                    <span class="fa fa-clone"></span>
+                    <span class="ml-2 font-weight-bold text-capitalize">{{editComponent.implementation.identifier}}</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-1"></div>
+                <textarea formControlName="name" rows="2" class="no-resize form-control col is-{{actionForm.get('name').valid ? '' : 'in'}}valid"
+                          placeholder="{{'components.shared.edition.fields.intention.placeholder' | translate}}"
+                          required></textarea>
+                <div class="col-1"></div>
+            </div>
+            <div *ngIf="editComponent.implementation.hasTarget" class="row">
+                <label for="target" class="col-3">{{'components.shared.edition.fields.target.name' | translate}}</label>
+                <select id="target" class="form-control col-8" formControlName="target">
+                    <option *ngFor="let target of availableTargets" [value]="target.name">{{target.name}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-5">
+            <div class="row">
+                <div class="col text-center">
+                    <chutney-toolbar-component (editEvent)="edit()"
+                                           (cancelEvent)="cancel()"
+                                           (executeEvent)="execute($event)"
+                                           (childEvent)="sideBarToggle()"
+                                           (deleteEvent)="delete()"
+                                           [editComponent]="editComponent"
+                                           [parents]="parents">
+                    </chutney-toolbar-component>
+                </div>
+            </div>
+            <div class="row">
+                <div class="p-0 align-self-center">
+                    <label class="form-control-label font-weight-bold" for="tags">{{ 'scenarios.edition.form.tags' | translate }}</label>
+                </div>
+                <div class="col">
+                    <textarea formControlName="tags" type="text" class="form-control no-resize" name="tags" id="tags" rows="3"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="edition-body row">
+        <div class="col-7">
+            <!-- Inputs -->
+            <div *ngIf="hasInputs()" class="mt-4" class="p-2">
+                <legend class="pl-3 pr-3 ">
+                    <span class="font-weight-bold" (click)="switchCollapseInputs()">{{'components.shared.edition.blocks.inputs' | translate}}</span>
+                    <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
+                            (click)="switchCollapseInputs()"
+                            title="{{(collapseInputs ? 'global.actions.show' : 'global.actions.hide') | translate}}">
+                        <span class="fa" [ngClass]="collapseInputs ? 'fa-eye' : 'fa-eye-slash'"></span>
+                    </button>
+                </legend>
+                <ng-container *ngIf="!collapseInputs">
+                    <div formArrayName="inputs" *ngFor="let input of actionForm.get('inputs')?.controls; let i=index;">
+                        <div [formGroupName]="i" class="form-group row">
+                            <label for="input-{{i}}" class="col-3 col-form-label">{{input.value.key}}</label>
+                            <textarea class="form-control col-8" id="input-{{i}}" rows="1"
+                                      placeholder="{{input.value.placeholder}}" formControlName="value"></textarea>
+                            <button *ngIf="isVariableRef(i)" class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
+                                    (click)="switchVariableRefToStruct(i)"
+                                    title="{{'components.action.refvar.backTo.tooltip' | translate}}">
+                                <span class="font-weight-bold" style="text-decoration: line-through;">{{'components.action.refvar.label' | translate}}</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div formArrayName="inputsMap" *ngFor="let input of actionForm.get('inputsMap')?.controls; let i=index;">
+                        <div [formGroupName]="i" class="form-group">
+                            <label class="col-3 col-form-label"
+                                   (click)="switchCollapseInputsMap(i)">{{input.value.keyMap}}</label>
+                            <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
+                                    (click)="switchCollapseInputsMap(i)"
+                                    title="{{(collapseInputsMap[i] ? 'global.actions.show' : 'global.actions.hide') | translate}}">
+                                <span class="fa" [ngClass]="collapseInputsMap[i] ? 'fa-eye' : 'fa-eye-slash'"></span>
+                            </button>
+                            <button class="btn btn-sm btn-light btn-outline-dark ml-sm-1 border-0"
+                                    (click)="addMapItem(i);"
+                                    title="{{'global.actions.add' | translate}}">
+                                <span class="fa fa-plus"></span>
+                            </button>
+                            <button class="btn btn-sm btn-light btn-outline-dark ml-sm-1 border-0"
+                                    (click)="switchMapToVariableRef(i);"
+                                    title="{{'components.action.refvar.switchTo.tooltip' | translate}}">
+                                <span class="font-weight-bold">{{'components.action.refvar.label' | translate}}</span>
+                            </button>
+                            <ng-container *ngIf="!collapseInputsMap[i]">
+                                <div formArrayName="valueMap"
+                                     *ngFor="let nestedMap of input.get('valueMap').controls; let j = index;">
+                                    <div [formGroupName]="j">
+                                        <div class="form-group row">
+                                            <div class="col-2"></div>
+                                            <input type="text" class="col-2 form-control" formControlName="k"
+                                                   placeholder="key"/>
+                                            <textarea class="col-6 ml-2 mr-2 form-control" formControlName="v"
+                                                      placeholder="value" rows="1"></textarea>
+                                            <button type="button" class="btn btn-outline-danger"
+                                                    (click)="removeMapItem(i,j)"
+                                                    title="{{'global.actions.delete' | translate}}">
+                                                <span class="fa fa-trash"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </div>
+                    <div formArrayName="inputsList"
+                         *ngFor="let input of actionForm.get('inputsList')?.controls; let i=index;">
+                        <div [formGroupName]="i" class="form-group">
+                            <label class="col-3 col-form-label"
+                                   (click)="switchCollapseInputsList(i)">{{input.value.keyList}}</label>
+                            <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
+                                    (click)="switchCollapseInputsList(i)"
+                                    title="{{(collapseInputsList[i] ? 'global.actions.show' : 'global.actions.hide') | translate}}">
+                                <span class="fa" [ngClass]="collapseInputsList[i] ? 'fa-eye' : 'fa-eye-slash'"></span>
+                            </button>
+                            <button class="btn btn-sm btn-light btn-outline-dark ml-sm-1 border-0"
+                                    (click)="addListItem(i);"
+                                    title="{{'global.actions.add' | translate}}">
+                                <span class="fa fa-plus"></span>
+                            </button>
+                            <button class="btn btn-sm btn-light btn-outline-dark ml-sm-1 border-0"
+                                    (click)="switchListToVariableRef(i);"
+                                    title="{{'components.action.refvar.switchTo.tooltip' | translate}}">
+                                <span class="font-weight-bold">{{'components.action.refvar.label' | translate}}</span>
+                            </button>
+                            <ng-container *ngIf="!collapseInputsList[i]">
+                                <div formArrayName="valueList"
+                                     *ngFor="let nestedList of input.get('valueList').controls; let j=index;">
+                                    <div [formGroupName]="j">
+                                        <div class="form-group row">
+                                            <div class="col-2"></div>
+                                            <textarea class="col-8 mr-2 form-control" formControlName="l"
+                                                      placeholder="value" rows="1"></textarea>
+                                            <button type="button" class="btn btn-outline-danger"
+                                                    (click)="removeListItem(i,j)"
+                                                    title="{{'global.actions.delete' | translate}}">
+                                                <span class="fa fa-trash"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+            <!-- Outputs -->
+            <fieldset class="mt-4" [ngClass]="collapseOutputs ? 'border-top pl-2' : 'border p-2'">
+                <legend class="pl-3 pr-3 font-weight-bold">
+                    <div class="legend-title" (click)="switchCollapseOutputs()">Sorties</div>
+                    <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
+                            (click)="switchCollapseOutputs()"
+                            title="{{(collapseOutputs ? 'global.actions.show' : 'global.actions.hide') | translate}}">
+                        <span class="fa" [ngClass]="collapseOutputs ? 'fa-eye' : 'fa-eye-slash'"></span>
+                    </button>
+                    <button class="btn btn-sm btn-light btn-outline-dark border-0 ml-sm-1"
+                            (click)="addOutput();"
+                            title="{{'global.actions.add' | translate}}">
+                        <span class="fa fa-plus"></span>
+                    </button>
+                </legend>
+                <ng-container *ngIf="!collapseOutputs">
+                    <div class="row" formArrayName="outputs"
+                         *ngFor="let parameter of actionForm.get('outputs')?.controls; let i=index;">
+                        <ng-container [formGroupName]="i">
+                            <div class="col-2"></div>
+                            <input type="text" class="col-2 form-control mr-2" formControlName="key" placeholder="key"/>
+                            <textarea class="col-6 form-control mr-2" formControlName="value" rows="1"
+                                      placeholder="value"></textarea>
+                            <button type="button" class="btn btn-outline-danger"
+                                    (click)="removeOutput(i)"
+                                    title="{{'global.actions.delete' | translate}}">
+                                <span class="fa fa-trash"></span>
+                            </button>
+                        </ng-container>
+                    </div>
+                </ng-container>
+            </fieldset>
+        </div>
+        <div class="col-5">
+            <ng-container *ngIf="!executionResult">
+                <div>
+                    <chutney-strategy-form [strategy]="editComponent.strategy" formControlName="strategy"></chutney-strategy-form>
+                    <chutney-parameters-component [parentForm]="actionForm" [editableComponent]="editComponent"></chutney-parameters-component>
+                    <chutney-child-panel-component [parents]="parents" [show]="sideBar"></chutney-child-panel-component>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="executionResult">
+                <chutney-execution-panel-component [executionResult]="executionResult" (closeEvent)="closeExecutionPanel()"></chutney-execution-panel-component>
+            </ng-container>
+        </div>
+    </div>
+</div>

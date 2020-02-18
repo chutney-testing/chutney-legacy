@@ -1,0 +1,39 @@
+{
+    "title": "__titre__",
+    "description": "__description__",
+    "scenario": {
+        "givens": [
+            {
+                "sentence": "given 1",
+                "subSteps": [
+                    {
+                        "sentence": "given sub step 1.1"
+                    },
+                    {
+                        "sentence": "given sub step 1.2"
+                    }
+                ]
+            },
+            {
+                "sentence": "given 2"
+            },
+            {
+                "sentence": "given 3"
+            }
+        ],
+        "when": {
+            "sentence": "when 1"
+        },
+        "thens": [
+            {
+                "sentence": "then 1"
+            },
+            {
+                "sentence": "then 2"
+            },
+            {
+                "sentence": "then 3"
+            }
+        ]
+    }
+}

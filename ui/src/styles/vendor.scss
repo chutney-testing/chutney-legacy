@@ -1,0 +1,26 @@
+/*
+ *  After changing this file you should run one of the following command :
+ *    - npm run build
+ *    - yarn run webpack:build
+ */
+
+@import 'colors';
+
+/***************************
+put Sass variables here:
+eg $input-color: red;
+****************************/
+$fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
+$danger: $labelko;
+
+@import 'node_modules/bootstrap/scss/bootstrap';
+
+@import "~@fortawesome/fontawesome-free/scss/fontawesome";
+@import "~@fortawesome/fontawesome-free/scss/brands";
+@import "~@fortawesome/fontawesome-free/scss/regular";
+@import "~@fortawesome/fontawesome-free/scss/solid";
+
+// Highlight.js themes
+// @import 'node_modules/highlight.js/styles/github-gist.css';
+@import 'node_modules/highlight.js/styles/foundation.css';
+// @import 'node_modules/highlight.js/styles/default.css';

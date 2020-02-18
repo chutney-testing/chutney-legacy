@@ -1,0 +1,14 @@
+@import 'colors';
+
+a.chutney-link {
+    text-decoration: none !important;
+    color: $liens !important;
+    font-family: Ubuntu;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+
+    &:hover {
+        color: $bleu2 !important;
+    }
+}

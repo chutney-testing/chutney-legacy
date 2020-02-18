@@ -1,0 +1,79 @@
+@import 'colors';
+
+
+.campaign-title {
+    height: 50px;
+}
+
+.scenario-title-cell {
+    width: 90%;
+}
+
+input.search-field {
+    border: none;
+    border-bottom: 1px solid $vert2;
+    width: 100%;
+}
+
+span.search-field {
+    border: none;
+    color: $vert2;
+    border-bottom: 1px solid $vert2;
+}
+
+.cursor {
+    cursor: pointer;
+}
+
+
+fieldset {
+    width: 100%;
+}
+
+fieldset legend {
+    width: auto;
+    font-size: 1rem;
+}
+
+.legend-title {
+    cursor: default;
+    display: inline-block;
+    width: 150px;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+}
+
+:host ::ng-deep {
+
+    .env-combo {
+        width: 100% !important;
+    }
+}
+
+::ng-deep {
+
+    .popover {
+        max-width: 30vw; /* optional max width */
+        width: intrinsic; /* Safari/WebKit uses a non-standard name */
+        width: -moz-max-content; /* Firefox/Gecko */
+        width: -webkit-max-content; /* Chrome */
+        border: 0;
+        border-radius: 0.5rem;
+
+        .arrow {
+            margin-top: -8px !important;
+
+            &::after {
+                border-left-color: $bleu1;
+            }
+        }
+    }
+
+    .popover-body {
+        background-color: $bleu1;
+        color: $blanc;
+        border-radius: 0.5rem;
+    }
+}

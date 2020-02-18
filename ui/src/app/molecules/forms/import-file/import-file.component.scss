@@ -1,0 +1,58 @@
+@import 'colors';
+
+.drop-box {
+
+    width: 426px;
+    height: 240px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border: 2px dashed #bbb;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    padding: 25px;
+    text-align: center;
+    color: #bbb;
+    transition: border-width 0.5s linear;
+
+    .btn-file-browser {
+
+        height: 75px;
+        width: 75px;
+        border-radius: 100px;
+        position: relative;
+
+        display:flex;
+        justify-content:center;
+        align-items: center;
+
+        overflow: hidden;
+        background-image: linear-gradient(to bottom, $bleu1 50%, $blanc 50%);
+        background-size: 100% 200%;
+        transition: all 1s;
+        color: $blanc;
+        font-size: 30px;
+
+        input[type='file'] {
+            height: 75px;
+            width: 75px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        &:hover {
+            background-position: 0 -100%;
+            color: $bleu1;
+        }
+
+    }
+}
+
+.hover {
+    border: 2px solid $vert1;
+}

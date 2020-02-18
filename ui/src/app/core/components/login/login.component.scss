@@ -1,0 +1,31 @@
+@import 'colors';
+
+.login{
+    background-color: $bleu2;
+    height: 100%;
+}
+
+.form-login {
+    width:350px;
+    padding-top: 25vh;
+}
+
+.login-button {
+    background-color:$bleu4;
+    color: white;
+}
+
+.form-control{
+    color: black;
+    border-color: black ;
+    background-color: white  ;
+    &:focus {
+        box-shadow: 0 0 0 0.3rem rgba(black, 0.25);
+    }
+}
+
+.label {
+    display: inline-block;
+    max-width:100%;
+    margin-bottom: 10px;
+}

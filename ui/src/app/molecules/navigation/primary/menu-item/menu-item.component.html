@@ -1,0 +1,7 @@
+<li class="menu-item" [routerLinkActive]="route == null ? '' : 'menu-item--active'" #rla="routerLinkActive">
+    <a class="nav-link" routerLink="{{route}}">
+        <img *ngIf="img_src!==undefined" src="{{ (rla && rla.isActive) ? img_src_selected : img_src}}" />
+        <span *ngIf="icon_fa_class!==undefined" class="fa {{icon_fa_class}}"></span>
+        {{label}}
+    </a>
+</li>

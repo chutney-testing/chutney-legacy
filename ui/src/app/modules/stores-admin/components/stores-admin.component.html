@@ -1,0 +1,31 @@
+<div class="col-md-8 m-5">
+    <h1>Git repositories</h1>
+
+    <chutney-error-panel [errorMessage]="errorMessage"></chutney-error-panel>
+
+    <button type="button" class="btn mb-2" (click)="add()">Add git repository</button>
+
+    <table class="table table-dark table-striped">
+        <thead class="thead-light"> 
+        <tr>
+            <th scope="col">id</th>
+            <th scope="col">url</th>
+            <th scope="col">repository name</th>
+            <th scope="col">sub-folder</th>
+            <th scope="col">save</th>
+            <th scope="col">delete</th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let repo of gitRepos">
+                <td>{{ repo.id }}</td>
+                <td><input type="text" [(ngModel)] = "repo.url"/></td>
+                <td><input type="text" [(ngModel)] = "repo.name"/></td>
+                <td><input type="text" [(ngModel)] = "repo.sourceDirectory"/></td>
+                <td><button type="button" class="btn" (click)="save(repo)">Save</button></td>
+                <td><button type="button" class="btn" (click)="delete(repo)">Delete</button></td>
+            </tr>
+        </tbody>
+    </table>
+    
+</div>

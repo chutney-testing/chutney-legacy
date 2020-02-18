@@ -1,0 +1,104 @@
+@import 'colors';
+
+button span:not(:first-child) {
+    display: block;
+}
+
+.accept-spinner {
+    margin-right: 5px;
+}
+
+.edition-header {
+    margin-top: 0px;
+    margin-bottom: 0px;
+
+    .header-left {
+        height: 120px;
+        background-color: $vert2;
+        width: 45%;
+        float: left;
+
+        .title {
+            margin-top: 15px;
+            margin-left: 40px;
+            background-color: $vert2;
+            color: white;
+            font-size: 18px;
+            line-height: 18px;
+            overflow: hidden;
+            height:45px;
+        }
+
+        .description{
+            margin-top: 10px;
+            background-color: $vert2;
+            font-size: 13px;
+            font-weight: 300;
+            font-style: normal;
+            font-stretch: normal;
+            line-height: normal;
+            letter-spacing: normal;
+            color: #333333;
+            margin-left: 40px;
+            height:20px;
+            overflow: hidden;
+        }
+        
+        .header-tag {
+            margin-left: 40px;
+            height:25px;
+            overflow: hidden;
+        }
+    }
+
+    .header-right {
+        background-color: $vert3;
+        width:55%;
+        height: 120px;
+        float: left;
+        text-align: center;
+        position: relative;
+        padding-left: 20px;
+
+        .btn-toolbar {
+            height: 100px;
+
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+
+            -ms-flex-align: center;
+            -webkit-align-items: center;
+            -webkit-box-align: center;
+
+            align-items: center;
+        }
+
+        .btn-group {
+            margin-left: 8px;
+            margin-right: 8px;
+        }
+
+        button {
+            margin-left: 2px;
+            margin-right: 2px;
+
+            .btn-label {
+                font-size: 12px;
+            }
+        }
+    }
+
+    .triangle-left:before {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 0;
+        border-color: transparent transparent transparent $vert2;
+        border-style: solid;
+        border-width: 60px 0 60px 20px;
+    }
+}

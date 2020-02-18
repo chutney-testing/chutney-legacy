@@ -1,0 +1,13 @@
+@import 'colors';
+
+.table-pagination-controls {
+  text-align: center;
+}
+
+.table-pagination-controls /deep/ .ngx-pagination {
+  font-size: 0.8rem;
+
+  .current {
+    background: $bleu2;
+  }
+}

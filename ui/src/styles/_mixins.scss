@@ -1,0 +1,58 @@
+@mixin box-shadow($offsetX: 0, $offsetY: 0, $blur: 0, $spread: 0, $color: rgba(0, 0, 0, 0), $inset: false) {
+    @if $inset {
+        -webkit-box-shadow:inset $offsetX $offsetY $blur $spread $color;
+        -moz-box-shadow:inset $offsetX $offsetY $blur $spread $color;
+        box-shadow:inset $offsetX $offsetY $blur $spread $color;
+    } @else {
+        -webkit-box-shadow: $offsetX $offsetY $blur $spread $color;
+        -moz-box-shadow: $offsetX $offsetY $blur $spread $color;
+        box-shadow: $offsetX $offsetY $blur $spread $color;
+    }
+}
+
+@mixin keyframe($animation_name: none) {
+  @-webkit-keyframes #{$animation_name} {
+    @content;
+  }
+
+  @-moz-keyframes #{$animation_name} {
+    @content;
+  }
+
+  @keyframes #{$animation_name} {
+    @content;
+  }
+}
+
+@mixin animation ($animation_name: none,
+                  $animation_duration: 0s,
+                  $animation_timing-function: ease,
+                  $animation_delay: 0s,
+                  $animation_iteration-count: 1,
+                  $animation_direction: normal,
+                  $animation_fill_mode: none) {
+
+  -webkit-animation-name: $animation_name;
+  -webkit-animation-duration: $animation_duration;
+  -webkit-animation-timing-function: $animation_timing-function;
+  -webkit-animation-delay: $animation_delay;
+  -webkit-animation-iteration-count: $animation_iteration-count;
+  -webkit-animation-direction: $animation_direction;
+  -webkit-animation-fill-mode: $animation_fill_mode;
+
+  -moz-animation-name: $animation_name;
+  -moz-animation-duration: $animation_duration;
+  -moz-animation-timing-function: $animation_timing-function;
+  -moz-animation-delay: $animation_delay;
+  -moz-animation-iteration-count: $animation_iteration-count;
+  -moz-animation-direction: $animation_direction;
+  -moz-animation-fill-mode: $animation_fill_mode;
+
+  animation-name: $animation_name;
+  animation-duration: $animation_duration;
+  animation-timing-function: $animation_timing-function;
+  animation-delay: $animation_delay;
+  animation-iteration-count: $animation_iteration-count;
+  animation-direction: $animation_direction;
+  animation-fill-mode: $animation_fill_mode;
+}

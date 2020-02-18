@@ -1,0 +1,39 @@
+<div class="col-sm-12">
+    <div id="admin-prperties" class="row">
+        <div class="col-md-2 pt-1">
+          <label for="database" class="mr-2">Database</label>
+          <select id="database" [(ngModel)]="database" class="no-border">
+            <option value="jdbc">JDBC</option>
+            <option value="orient">ORIENT</option>
+          </select>
+        </div>
+        <div class="col-md-1 pt-1">
+          <input id="paginate" type="checkbox" [(ngModel)]="paginate" (change)="onPaginationChange()" class="mr-1" />
+          <label for="paginate">Paginate</label>
+        </div>
+        <div id="pagination-props-container" class="col-md-2 pt-1" *ngIf="paginate">
+          <label for="itemsPerPage" class="mr-1">Items per page</label>
+          <input id="itemsPerPage" type="number" min="1" max="50" [(ngModel)]="itemsPerPage" (change)="onPaginationChange()" class="no-border" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-11">
+            <a class="syntax-link" *ngIf="database === 'jdbc'" href="https://en.wikibooks.org/wiki/Structured_Query_Language" target="_blank">query syntax</a>
+            <a class="syntax-link" *ngIf="database === 'orient'" href="https://orientdb.com/docs/3.0.x/sql/" target="_blank">query syntax</a>
+            <textarea id="statement" class="form-control" rows="5" [(ngModel)]="statement"></textarea>
+        </div>
+        <div class="col-md-1" style="text-align: center; align-self: center">
+            <button class='btn btn-success' (click)="execute()">
+                <span class="fa fa-play mr-2" aria-hidden="true"></span> {{'global.actions.execute' | translate}}
+            </button>
+        </div>
+    </div>
+    <div class="col-md-12" style="overflow-x: auto;">
+        <chutney-error-panel [errorMessage]="errorMessage"></chutney-error-panel>
+        <chutney-error-panel [errorMessage]="sqlResult.error"></chutney-error-panel>
+        <div [hidden]="sqlResult.updatedRows === undefined || sqlResult.updatedRows === null" style="margin-bottom: 5px;">
+            {{sqlResult.updatedRows}} {{'admin.database.updated_rows' | translate}}
+        </div>
+        <chutney-table-panel [table]="sqlResult.table" [paginationInstanceConfig]="paginate ? paginationInstanceConfig : undefined" (pageChangeEvent)="pageChange($event)"></chutney-table-panel>
+    </div>
+</div>

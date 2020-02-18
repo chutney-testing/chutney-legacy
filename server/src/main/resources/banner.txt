@@ -1,0 +1,24 @@
+
+${AnsiColor.BLUE}              `o@@/
+${AnsiColor.BLUE}                /@@@`
+${AnsiColor.BLUE}                 -@@@`
+${AnsiColor.BLUE}                  /@@o                                 @@-
+${AnsiColor.BLUE}                  `@@@`                                @@@
+${AnsiColor.BLUE} ,,,,,,,,,,,,,,,,,,@@@@,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,o@@@,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+${AnsiColor.BLUE} @@@@@@@@@@@@@@@@@@@@@o@@@@@@@@@@@@o@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@o@@@@@@@@o@@@@@@@@@@@@@@@@
+${AnsiColor.BLUE}     :@@@@@+@@@    @@@. -+@@o+.    .@@@        .::`    @@@        `//- ./o@@o:        `.::+@@+     .@@@        `+-`
+${AnsiColor.BLUE}   /@@@@+-..-@@.   @@@@@@@/..:@@-  .@@@        @@@/    @@@        /@@@@@o:..-o@/   .@@@@@@@@@@@    .@@@        -@@@
+${AnsiColor.BLUE}  @@@@.       +@:  @@@@+`     `@@- .@@@        @@@/    @@@        /@@@@`      o@+  @@@o`           .@@@        -@@@
+${AnsiColor.BLUE} `@@@`             @@@/       `@@@ .@@@        @@@/    @@@        /@@@        o@@  `@@@@oo@/       .@@@        :@@@
+${AnsiColor.BLUE}  +@o              @@@.       @@@@ `@@@        @@@/    @@@   o@/` /@@/       -@@@ /@@@o:-..`   .@   @@@       .@@@@
+${AnsiColor.BLUE}   -@/`    (@@@/   @@@.     :@@@@`  :@@:     `@@@@/    @@@  `@@@. /@@:     .@@@@- :@@o`     `/@@@    +@@-`  (@@@@@@
+${AnsiColor.BLUE}     .+@@@@@@o.    -@@.    `o@@+     `/@@+++o@:/@@/    `o@@+@@/   .@@:     /@@@.    :o@@@@@@@@@o-      `.-:--. -@@@
+${AnsiColor.BLUE}                                                 ``                          `                     -+@@@`      -@@@
+${AnsiColor.BLUE}                                                                                                 -@@@@@@o`     -@@@
+${AnsiColor.BLUE}                                                                                                 @@@.          @@@o
+${AnsiColor.BLUE}                                                                                                 `@@-        (@@@o
+${AnsiColor.BLUE}                                                                                                   .+oooo@@@@@@/`
+
+${AnsiColor.GREEN}    :: CHUTNEY ${application.version} - powered by Spring Boot ${spring-boot.version} ::
+
+${AnsiColor.DEFAULT}

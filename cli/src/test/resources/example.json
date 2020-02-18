@@ -1,0 +1,30 @@
+{
+  scenario:
+  {
+    gwtType: ROOT_STEP
+    name: Step exemple
+    steps:
+    [
+      {
+		name: "Sucess 1"
+        gwtType: WHEN
+        type: success
+      }
+        {
+            name: "sleep 2s"
+            gwtType: WHEN
+            type: sleep
+            inputs:{
+                duration: "2 sec"
+            }
+        }
+      {
+	    name: "Sucess 2"
+        gwtType: THEN
+        type: success
+      }
+
+
+    ]
+  }
+}

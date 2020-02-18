@@ -1,0 +1,28 @@
+
+<div *ngIf="parents?.parentSteps.length > 0 || parents?.parentScenario.length > 0" 
+    class="font-weight-bold mt-3">
+    Utilisation composant
+    <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
+        (click)="show = !show"
+        title="{{(!show ? 'global.actions.show' : 'global.actions.hide') | translate}}">
+    <span class="fa" [ngClass]="!show ? 'fa-eye' : 'fa-eye-slash'"></span>
+    </button>
+</div>
+<div *ngIf="show">
+    <ng-container *ngIf="parents?.parentSteps.length > 0">
+        <span class="ml-2">{{'components.shared.edition.existInStep' | translate}}</span>
+        <ul>
+            <li *ngFor="let parentStep of parents?.parentSteps">
+                <a [routerLink]="['/component', parentStep.id]">{{parentStep.name}}</a>
+            </li>
+        </ul>
+    </ng-container>
+    <ng-container *ngIf="parents?.parentScenario.length > 0">
+        <span class="ml-2"> {{'components.shared.edition.existInScenario' | translate}}</span>
+        <ul *ngIf="parents?.parentScenario.length > 0">
+            <li *ngFor="let parentScenario of parents?.parentScenario">
+                <a [routerLink]="['/scenario', parentScenario.id, 'execution', 'last']">{{parentScenario.name}}</a>
+            </li>
+        </ul>
+    </ng-container>
+</div>

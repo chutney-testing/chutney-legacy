@@ -1,0 +1,20 @@
+@import 'colors';
+
+
+.search-field-group {
+    display: flex;
+}
+
+input.search-field  {
+    border: none;
+    font-size: 24px;
+    border-bottom: 1px solid $vert2;
+    width:100%;
+}
+
+span.search-field {
+    padding-top: 4px;
+    border: none;
+    color: $vert2;
+    border-bottom: 1px solid $vert2;
+}

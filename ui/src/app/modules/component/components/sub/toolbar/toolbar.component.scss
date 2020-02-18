@@ -1,0 +1,21 @@
+@import 'colors';
+
+.btn-toolbar {
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    top: -28px;
+    margin-bottom: -28px;
+
+    div:first-child {
+        margin-left: auto;
+    }
+
+    div:last-child {
+        margin-left: auto;
+    }
+}
+
+.accept-spinner {
+    margin-right: 5px;
+}

@@ -1,0 +1,1522 @@
+= Chutney User Manual
+:toclevels: 1
+
+[NOTE]
+====
+Pour commencer, vous pouvez :
+
+* Ajouter un serveur à tester : link:#/environmentAdmin[Configuration -> Global]
+* Ajouter un nouveau scénario de test : link:#/scenario/edition[Scenario]
+====
+
+[NOTE]
+====
+Si vous rencontrez un problème, vous pouvez contacter l'équipe :
+
+* Liste de diffusion de l'équipe Chutney:
+====
+
+
+== Utiliser les valeurs définies dans le context
+
+TIP: http://zed332wj:8350/#/scenario/163/execution/474[Live Demo]
+
+Après avoir déclaré des valeurs, elles sont accèssibles depuis n'importe qu'elle étape grâce à la clef donnée.
+
+WARNING: Si une prochaine étape ajoute une autre valeur en utilisant la même clef,
+alors la valeur précédente sera perdue et remplacée par la nouvelle.
+
+Pour pouvoir utiliser la valeur il faut l'écrire avec un `#`, exemple : `#clef_définie`
+L'utilisation doit se faire à l'intérieur d'un bloc *d'évaluation* : `${ }`
+
+Exemple, `${#clef_définie}`
+
+.Exemple
+[source,json]
+----
+{
+    "type":"context-put",
+    "inputs": {
+        "entries": {
+            "prenom" : "toto" <1>
+        }
+    }
+},
+{
+    "type": "context-put"
+    "inputs": {
+      "entries":
+      {
+        "réutilisation": "${#prenom}" <2>
+        "concaténation": "${#prenom.concat(" à la plage")}" <3>
+      }
+    }
+  }
+}
+----
+<1> La clef `prenom` contiendra la valeur `toto`
+<2> On utilise la valeur de `#prenom`, donc la clef `réutilisation` contiendra aussi `toto`
+<3> La clef `concaténation` contiendra `toto à la plage`
+
+== Injecter des données utilisables dans un scénario
+
+TIP: http://zed332wj:8350/#/scenario/162/execution/460[Live Demo]
+
+Par exemple, pour créer une variable avec :
+
+* Une valeur fixe : `"ADS" : "0217DA00014822"`
+* Une valeur calculée au moment de l'exécution :
+** Date à l'instant _t_ : `"startDate" : "$\{T(java.time.LocalDateTime).now().toString()}Z"`
+** Date dans le futur (instant _t_ + 1800 secondes) : `"endDate" : "$\{T(java.time.LocalDateTime).now().plusSeconds(1800).toString()}Z"`
+
+Cette action prend 1 paramètre en entrée :
+
+* `entries`
+** C'est une `Map`, c'est à dire une *liste* de *"clef": "valeur"*
+
+.Exemple
+[source,json]
+----
+{
+    "type":"context-put", <1>
+    "inputs": { <2>
+        "entries": { <3>
+            "un_nom_de_clef" : "une valeur", <4>
+            "un_autre_nom_de_clef" : "une autre valeur"
+        }
+    }
+}
+----
+<1> on défini l'action à effectuer : `context-put`
+<2> on ouvre le bloc `inputs`, c'est là que sont déclarés les entrées nécessaires à une action
+<3> on défini le paramètre `entries`, qui est nécessaire à l'action `context-put`
+<4> on défini
+
+== Exécuter une requête SQL
+
+.Exemple
+[source,json]
+----
+{
+    "type":"sql",  <1>
+     "inputs": {
+        "statements": [  <2>
+          "select * from random_table",
+          "show tables"
+          ]
+    }
+}
+----
+<1> on défini l'action `sql`
+<2> on défini la liste des requetes à executer
+
+.Output de la tache
+----
+Une liste de Records :
+3 attributs disponibles :
+    - public final int affectedRows;
+    - public final List<String> headers;
+    - public final List<List<Object>> rows;
+
+2 méthodes disponibles sur chaque Record :
+  - List<Map<String, Object>> toListOfMaps() =>  un élément de la liste correspond à un resultat, la map permet de retrouver chaque résultat par sa clef
+  - Object[][] toMatrix() => ligne correspond à une résultat, colonne correspond à l'index la colonne de la requete
+----
+
+== Steps HTTP
+
+=== Appel http GET - `http-get`
+
+.Exemple
+[source,json]
+----
+{
+   "type":"http-get",
+   "target": "some_target", <1>
+   "inputs":{
+      "uri": "/actuator/health", <2>
+      "headers": { <3>
+            "X--API-VERSION": "1.0",
+            "X--HEADER-1": "42"
+      },
+      "timeout": "3000 ms" <4>
+   }
+}
+----
+
+<1> Target de type http ou https
+<2> Uri de la requete
+<3> *Optionel* Headers de la requete
+<4> *Optionel* par défault 2 secondes. Unité disponible : "ms", "s", "sec", "m", "min", "h", "hour", "hours", "hour(s)", "d", "day", "days", "day(s)"
+
+.Output de la tache
+----
+- status => int
+- body => String
+- headers => org.springframework.http.HttpHeaders
+----
+
+=== Appel http POST - `http-post`
+
+.Exemple
+[source,json]
+----
+{
+   "type":"http-post",
+   "target": "some_target", <1>
+   "inputs":{
+      "uri": "/actuator/health", <2>
+      "headers": { <3>
+            "X--API-VERSION": "1.0",
+            "X--HEADER-1": "42"
+      },
+      "timeout": "3000 ms", <4>
+      "body" : "some body" <5>
+   }
+}
+----
+
+<1> Target de type http ou https
+<2> Uri de la requete
+<3> *Optionel* Headers de la requete
+<4> *Optionel* par défault 2 secondes. Unité disponible : "ms", "s", "sec", "m", "min", "h", "hour", "hours", "hour(s)", "d", "day", "days", "day(s)"
+<5> Body de la requete
+
+.Output de la tache
+----
+- status => int
+- body => String
+- headers => org.springframework.http.HttpHeaders
+----
+
+=== Appel http PUT - `http-put`
+
+.Exemple
+[source,json]
+----
+{
+   "type":"http-put",
+   "target": "some_target", <1>
+   "inputs": {
+      "uri": "/actuator/health", <2>
+      "headers": { <3>
+            "X--API-VERSION": "1.0",
+            "X--HEADER-1": "42"
+      },
+      "timeout": "3000 ms", <4>
+      "body" : "some body" <5>
+   }
+}
+----
+
+<1> Target de type http ou https
+<2> Uri de la requete
+<3> *Optionel* Headers de la requete
+<4> *Optionel* par défault 2 secondes. Unité disponible : "ms", "s", "sec", "m", "min", "h", "hour", "hours", "hour(s)", "d", "day", "days", "day(s)"
+<5> Body de la requete
+
+.Output de la tache
+----
+- status => int
+- body => String
+- headers => org.springframework.http.HttpHeaders
+----
+
+=== Appel http DELETE - `http-delete`
+
+.Exemple
+[source,json]
+----
+{
+   "type":"http-delete",
+   "target": "some_target", <1>
+   "inputs":{
+      "uri": "/actuator/health", <2>
+      "headers": { <3>
+            "X--API-VERSION": "1.0",
+            "X--HEADER-1": "42"
+      },
+      "timeout": "3000 ms" <4>
+   }
+}
+----
+
+<1> Target de type http ou https
+<2> Uri de la requete
+<3> *Optionel* Headers de la requete
+<4> *Optionel* par défault 2 secondes. Unité disponible : "ms", "s", "sec", "m", "min", "h", "hour", "hours", "hour(s)", "d", "day", "days", "day(s)"
+
+.Output de la tache
+----
+- status => int
+- body => String
+- headers => org.springframework.http.HttpHeaders
+----
+
+=== Démarrage d'un serveur https - `https-server-start`
+
+.Exemple
+[source,json]
+----
+{
+   "type":"https-server-start",
+   "inputs":{
+      "port": "8443", <1>
+      "truststore-path": "/tmp/trustore.jks", <2>
+      "truststore-passowrd": "password" <3>
+   }
+}
+----
+
+<1> port d'écoute
+<2> path local vers le trustore
+<3> password pour lire le trustore
+
+.Output de la tache
+----
+- httpsServer => l'instance WireMockServer qui sera réutilisé pour récupérer les messages reçu par le serveur
+- Une finally operation qui arrete le server à la fin du scénario
+----
+
+=== Récupération des messages d'un serveur https `https-listener`
+
+.Exemple
+[source,json]
+----
+{
+   "type":"https-listener",
+   "inputs": {
+      "https-server": "${#httpsServer}" <1>
+      "uri": "/test", <2>
+      "verb": "POST", <3>
+      "expected-message-count": "2" <4>
+   }
+}
+----
+
+<1> instance du serveur http d'écoute
+<2> uri (regexp) sur laquelle récupérer les messages
+<3> sur quel VERB récupérer les message
+<4> *Optionel* Nombre de message attendu. KO si nombre de message différent. 1 par default
+
+.Output de la tache
+----
+- requests => une liste de com.github.tomakehurst.wiremock.verification.LoggedRequest
+----
+
+=== Arrêt d'un serveur https - `https-server-stop`
+
+.Exemple
+[source,json]
+----
+{
+   "type":"https-stop",
+   "inputs": {
+      "https-server": "${#httpsServer}" <1>
+   }
+}
+----
+
+<1> instance du serveur http d'écoute
+
+== Step d'Assertion
+
+=== Validation de json - `json-assert`
+
+.Exemple
+[source,json]
+----
+{
+   "type":"json-assert",
+   "inputs":{
+       "document": "document_json", <1>
+        "expected": { <2>
+            "$.status.code": 200.0,
+            "$.status.reason": "OK"
+        }
+   }
+}
+----
+
+<1> Document json à évaluer
+<2> Pour chaque path (key), on vérifie que la valeur correspond (value)
+
+=== Validation de chaîne de caractères - `compare`
+
+Un objet logger est disponible avec info(), error() qui va logger directement les infos au niveau du step
+
+.Exemple
+[source,json]
+----
+{
+   "type":"compare",
+   "inputs":{
+       "actual": "chaîne_de_caractères_1", <1>
+       "expected": "chaîne_de_caractères_2", <2>
+       "mode": "mode", <3>
+   }
+}
+----
+
+<1> Chaîne de caractères à évaluer
+<2> Chaîne de caractères à comparer
+<3> Mode à comparer: equals, not equals, not-equals, contains, not contains, not-contains
+
+=== Validation de chiffre - `compare`
+
+Un objet logger est disponible avec info(), error() qui va logger directement les infos au niveau du step
+
+.Exemple
+[source,json]
+----
+{
+   "type":"compare",
+   "inputs":{
+       "actual": "chiffre_1", <1>
+       "expected": "chiffre_2", <2>
+       "mode": "mode", <3>
+   }
+}
+----
+
+<1> Chiffre à évaluer
+<2> Chiffre à comparer
+<3> Mode à comparer: greater than, less than, greater-than, less-than
+
+=== Validation entre deux documents json`json-compare`
+
+.Exemple
+[source,json]
+----
+{
+   "type":"json-compare",
+   "inputs": {
+       "document1": "document_json1", <1>
+       "document2": "document_json2", <2>
+        "comparingPaths": { <3>
+          "$.status": "$.test.status",
+          "$.status.code": "$.test.status.code"
+        }
+   }
+}
+----
+
+<1> Premier document
+<2> Second document
+<3> Path à comparer entre le premier document et le second document
+
+=== Validation de XML - `xml-assert`
+
+.Exemple
+[source,json]
+----
+{
+   "type":"xml-assert",
+   "inputs": {
+       "document": "document_xml", <1>
+        "expected": { <2>
+            "$.status.code": 200.0,
+            "$.status.reason": "OK"
+        }
+   }
+}
+----
+
+<1> Document xml à évaluer
+<2> Pour chaque path (key), on vérifie que la valeur correspond (value)
+
+=== Validation sur des objets du contexte du scénario - `assert`
+
+.Exemple
+[source,json]
+----
+{
+   "type":"assert",
+   "inputs":{
+        "asserts": <1>
+        [
+            {"assert-true": "${1 == 1}"},
+            {"assert-true": "${#httpStatus == 200}"}
+        ]
+   }
+}
+----
+
+<1> Liste d'assert à évaluer
+
+=== Validation XSD - `xsd-validation`
+
+WARNING: Ne fonctionne qu'avec des xsd packagé dans Chutney
+
+.Exemple
+[source,json]
+----
+{
+   "type":"xsd-validation",
+   "inputs":{
+        "xml": "<document xml>", <1>
+        "xsd": "path du xsd packagé dans Chutney" <2>
+   }
+}
+----
+
+<1> Document xml à évaluer
+<2> Liste d'assert à évaluer
+
+== Steps JMS
+
+=== Suppression de messages dans une queue jms - `jms-clean-queue`
+
+.Exemple
+[source,json]
+----
+{
+   "type":"jms-clean-queue",
+   "target": "target_jms", <1>
+   "inputs":{
+      "destination": "dynamicQueues/test" <2>
+   }
+}
+----
+
+<1> target de type jms connection
+<2> queue distante à vider
+
+=== Récupération d'un message jms - `jms-listener`
+
+WARNING: Ne récupère que des javax.jms.TextMessage
+
+.Exemple
+[source,json]
+----
+{
+   "type":"jms-listener",
+   "target": "target_jms", <1>
+   "inputs": {
+      "destination": "dynamicQueues/test"  <2>
+   }
+}
+----
+
+<1> target de type jms connection
+<2> queue distante sur laquelle récupérer un messages JMS
+
+.Output de la tache
+----
+- textMessage => le contenu du message sous format String
+- jmsProperties => une Map<String, Object> des headers JMS
+----
+
+=== Envoi de message JMS`jms-sender`
+
+N'envoi que des javax.jms.TextMessage
+
+.Exemple
+[source,json]
+----
+{
+   "type":"jms-sender",
+   "target": "target_jms", <1>
+   "inputs":{
+      "destination": "dynamicQueues/test", <2>
+      "body": "some body" <3>
+      "headers": { <4>
+            "X--JMS-VERSION": "1.0",
+            "X--HEADER-1": "42"
+      },
+   }
+}
+----
+
+<1> target de type jms connection
+<2> queue distante sur laquelle envoyer un messages JMS
+<3> contenu du message jms
+<4> *Optionel* header du message jms
+
+== Steps AMQP
+
+=== Création du queue Rabbitmq temporaire bindé `amqp-create-bound-temporary-queue`
+
+.Exemple
+[source,json]
+----
+{
+  "type": "amqp-create-bound-temporary-queue",
+  "target": "target_amqp", <1>
+  "inputs": {
+      "exchange-name": "amq.direct", <2>
+      "routing-key": "routemeplease", <3>
+      "queue-name": "my queue" <4>
+  }
+}
+----
+
+<1> Target de type amqp connection
+<2> Exchange existant sur lequel bindé la queue
+<3> Nom de la routing key
+<4> Queue temporaire à créer sur lequel le binding va être fait
+
+.Output de la tache
+----
+- queueName => le nom de la queue
+- Une finally operation qui va supprimer la queue créée
+----
+
+=== Suppression d'une queue RabbitMq - `amqp-delete-queue`
+
+.Exemple
+[source,json]
+----
+{
+  "type": "amqp-delete-queue",
+  "target": "target_amqp", <1>
+  "inputs": {
+      "queue-name": "my queue" <2>
+  }
+}
+----
+
+<1> Target de type amqp connection
+<2> Queue temporaire à supprimer
+
+.Output de la tache
+----
+- queueName => le nom de la queue
+- Une finally operation qui va supprimer la queue créée
+----
+
+=== Queue à unbind d'un exchange rabbitmq - `amqp-unbind-queue`
+
+.Exemple
+[source,json]
+----
+{
+  "type": "amqp-unbind-queue",
+  "target": "target_amqp", <1>
+  "inputs": {
+      "exchange-name": "amq.direct", <2>
+      "routing-key": "routemeplease", <3>
+      "queue-name": "my queue" <4>
+  }
+}
+----
+
+<1> Target de type amqp connection
+<2> Exchange existant sur lequel est bindé la queue
+<3> Nom de la routing key
+<4> Queue existante
+
+=== Envoi d'un message sur un broker Rabbitmq - `amqp-basic-publish`
+
+.Exemple
+[source,json]
+----
+{
+  "type": "amqp-basic-publish",
+  "target": "target_amqp", <1>
+  "inputs": {
+      "exchange-name": "amq.direct", <2>
+      "routing-key": "routemeplease", <3>
+      "payload": "my payload" <4>
+      "headers": {  <5>
+             "X--AMQP-VERSION": "1.0",
+             "X--HEADER-1": "42"
+       },
+      "properties": {  <6>
+             "X--AMQP-PROPERTIES": "1.0",
+             "X--PROPERTIES-1": "42"
+       },
+  }
+}
+----
+
+<1> Target de type amqp connection
+<2> Exchange existant sur lequel bindé la queue
+<3> Nom de la routing key
+<4> Queue temporaire à créer sur lequel le binding va être fait
+<5> Headers à ajouter au message
+<6> Properties du message
+
+.Output de la tache
+----
+- payload => payload envoyé
+- headers => headers envoyé sous format String
+----
+
+=== Récupérer un message sur un broker rabbitmq `amqp-basic-get`
+
+.Exemple
+[source,json]
+----
+{
+  "type": "amqp-basic-get",
+  "target": "test_amqp", <1>
+  "inputs": {
+      "queue-name": "my queue" <2>
+  }
+}
+----
+
+<1> Target de type amqp connection
+<2> Queue sur lequel récupére le message
+
+.Output de la tache
+----
+- message => message complet com.rabbitmq.client.GetResponse
+- body => contenu message  récupéré
+- headers => headers du message récupéré
+----
+
+=== Vider des queues rabbitmq - `amqp-clean-queues`
+
+.Exemple
+[source,json]
+----
+{
+  "type": "amqp-create-bound-temporary-queue",
+  "target": "amqp-clean-queues", <1>
+  "inputs": {
+      "queue-names": ["queue1", "queue2"] <2>
+  }
+}
+----
+
+<1> Target de type amqp connection
+<2> Liste des queues à vider
+
+== Steps Selenium
+
+=== Initialisation d'un driver selenium - `selenium-driver-init`
+
+.Exemple
+[source,json]
+----
+{
+  "type": "selenium-driver-init",
+  "inputs: {",
+      "driverPath: "path", <1>
+      "browserPath: "path" <2>
+  }
+}
+----
+
+<1> Path vers driver en local
+<2> Path vers browser en local
+
+.Output de la tache
+----
+- webDriver => instance de webdriver créé
+- Une finally operation qui arrete le driver à la fin du scénario
+----
+
+=== Click sur un élément - `selenium-click`
+.Exemple
+[source,json]
+----
+{
+    "type": "selenium-click"
+    "inputs": {
+        "web-driver": "${#webDriver}", <1>
+        "selector": "//chutney-home-page/div[1]/button", <2>
+        "by": "xpath", <3>
+        "wait": "2", <4>
+    }
+}
+----
+
+<1> Instance de webdriver créée précédemment
+<2> Selector vers le button a cliqué
+<3> Type de selector : "xpath", "id", "name", "className", "cssSelector"
+<4> *Optionel* Timemout en seconde pour trouver l'élément, 1 seconde par default
+
+
+=== Fermeture d'un diver selenium - `selenium-close`
+.Exemple
+[source,json]
+----
+{
+    "type": "selenium-close"
+    "inputs": {
+        "web-driver": "${#webDriver}" <1>
+    }
+}
+----
+
+<1> Instance de webdriver créée précédemment
+
+
+=== Ouvrir une page - `selenium-get`
+.Exemple
+[source,json]
+----
+{
+    "type": "selenium-get"
+    "inputs": {
+        "web-driver": "${#webDriver}", <1>
+        "valu"e: "http://url:port/unepage" <2>
+    }
+}
+----
+
+<1> Instance de webdriver créée précédemment
+<2> Url à ouvrir
+
+.Output de la tache
+----
+- outputGet => contient le nom de la page ouverte
+----
+
+
+=== Récupérer du texte - `selenium-get-text`
+
+.Exemple
+[source,json]
+----
+{
+    "type": "selenium-click"
+    "inputs": {
+        "web-driver": "${#webDriver}", <1>
+        "selector": "//chutney-home-page/div[1]/button", <2>
+        "by": "xpath", <3>
+        "wait": "2" <4>
+    }
+}
+----
+
+<1> Instance de webdriver créée précédemment
+<2> Selector vers le button a cliqué
+<3> Type de selector : "xpath", "id", "name", "className", "cssSelector"
+<4> *Optionel* Timemout en seconde pour trouver l'élément, 1 seconde par default
+
+.Output de la tache
+----
+- outputGetText => contient le text récupérer au format String
+----
+
+=== Fermeture d'un driver selenium - `selenium-quit`
+.Exemple
+[source,json]
+----
+{
+    "type": "selenium-quit"
+    "inputs": {
+        "web-driver": "${#webDriver}" <1>
+    }
+}
+----
+
+<1> Instance de webdriver créée précédemment
+
+=== Screenshot - `selenium-screenshot`
+
+Le screeshot est logger au niveau de la tache au format image/png;base64
+
+.Exemple
+[source,json]
+----
+{
+    "type": "selenium-screenshot
+    "inputs": {
+        "web-driver": "${#webDriver}" <1>
+    }
+}
+----
+
+<1> Instance de webdriver créée précédemment
+
+=== Ecrire du texte dans un champs - `selenium-send-keys`
+
+.Exemple
+[source,json]
+----
+{
+    "type": "selenium-send-keys"
+    "inputs": {
+        "web-driver": "${#webDriver}", <1>
+        "selector": "//input[@name='username']", <2>
+        "by": "xpath", <3>
+        "wait": "5", <4>
+        "value": "my username" <5>
+    }
+}
+----
+
+<1> Instance de webdriver créée précédemment
+<2> Selector vers le button a cliqué
+<3> Type de selector : "xpath", "id", "name", "className", "cssSelector"
+<4> *Optionel* Timemout en seconde pour trouver l'élément, 1 seconde par default
+<5> Texte à écrire
+
+
+=== Switch de window - `selenium-switch-to`
+.Exemple
+[source,json]
+----
+{
+    "type": "selenium-send-keys"
+    "inputs": {
+        "web-driver": "${#webDriver}", <1>
+        "selector": "windowId", <2>
+        "by": "id", <3>
+        "wait": "5" <4>
+    }
+}
+----
+
+<1> Instance de webdriver créée précédemment
+<2> Selector vers le button a cliqué
+<3> Type de selector : "xpath", "id", "name", "className", "cssSelector"
+<4> *Optionel* Timemout en seconde pour trouver l'élément, 1 seconde par default
+
+=== Attente tant qu'un élément n'est pas affiché - `selenium-wait`
+
+.Exemple
+[source,json]
+----
+{
+    "type": "selenium-wait"
+    "inputs": {
+        "web-driver": "${#webDriver}", <1>
+        "selector": "//input[@name='username']", <2>
+        "by": "xpath", <3>
+        "wait": "5" <4>
+    }
+}
+----
+
+<1> Instance de webdriver créée précédemment
+<2> Selector vers le button a cliqué
+<3> Type de selector : "xpath", "id", "name", "className", "cssSelector"
+<4> *Optionel* Timemout en seconde pour trouver l'élément, 1 seconde par default
+
+== Steps Mongo
+
+=== Mongo - Compter le nombre de document - `mongo-count`
+
+.Exemple
+[source,json]
+----
+{
+    "type": "mongo-count"
+    "inputs": {
+        "collection": "my collection", <1>
+        "query": "/my query" <2>
+    }
+}
+----
+
+<1> La collection à requêter
+<2> La requête
+
+.Output de la tache
+----
+- count => le nombre de document
+----
+
+=== Mongo - Supprimer des documents - `mongo-delete`
+
+.Exemple
+[source,json]
+----
+{
+    "type": "mongo-delete"
+    "inputs": {
+        "collection": "my collection", <1>
+        "query": "my query" <2>
+    }
+}
+----
+
+<1> La collection à requêter
+<2> La requête
+
+.Output de la tache
+----
+- deletedCount => le nombre de document supprimé
+----
+
+=== Mongo - Récupérer des documents - `mongo-find`
+.Exemple
+[source,json]
+----
+{
+    "type": "mongo-find"
+    "inputs": {
+        "collection": "my collection", <1>
+        "query": "my query", <2>
+        "limit": "42" <3>
+    }
+}
+----
+
+<1> La collection à requêter
+<2> La requête
+<3> *Optionel* 20 par default
+
+.Output de la tache
+----
+- documents => liste de document au format String
+----
+
+=== Mongo - Insérer un document -`mongo-insert`
+.Exemple
+[source,json]
+----
+{
+    "type": "mongo-insert"
+    "inputs": {
+        "collection": "my collection", <1>
+        "document": "my document to insert" <2>
+    }
+}
+----
+
+<1> La collection où insérer le document
+<2> Le document à insérer
+
+=== Mongo - Mettre à jour des documents - `mongo-update`
+
+WARNING: pour le paramètre arrayFilters, seulement de puis la version mongodb 3.5.12
+
+.Exemple
+[source,json]
+----
+{
+    "type": "mongo-update"
+    "inputs": {
+        "collection": "my collection", <1>
+        "filter": "my filter", <2>
+        "update": "my update to apply", <3>
+        "arrayFilters": "my filter" <4>
+    }
+}
+----
+
+<1> La collection à requêter
+<2> Le filtre pour sélectionner les document à mettre à jour
+<3> La mise a jour à appliquer
+<4> *Optionel* liste d'arrayFilters. Voir https://jira.mongodb.org/browse/SERVER-831 pour l'usage
+
+.Output de la tache
+----
+- modifiedCount => le nombre de document modifié
+----
+
+=== Mongo - Lister les collections - `mongo-list`
+
+.Exemple
+[source,json]
+----
+{
+    "type": "mongo-list"
+}
+----
+
+.Output de la tache
+----
+- collectionNames => List<String> des collections sur le serveur mongo
+----
+
+== Steps Debug / Sleep
+
+=== Logger le contexte du scénario `debug`
+
+Va logger tout le contexte du scénario au niveau du report du step
+
+.Exemple
+[source,json]
+----
+{
+    "type": "debug"
+}
+----
+
+=== Attente - `sleep`
+.Exemple
+[source,json]
+----
+{
+    "type": "sleep"
+    "inputs": {
+         "duration": "2000 ms" <1>
+    }
+}
+----
+
+<1> Unité disponible : "ms", "s", "sec", "m", "min", "h", "hour", "hours", "hour(s)", "d", "day", "days", "day(s)"
+
+== Steps Kafka
+
+=== Envoi d'un message sur un broker Kafka - `kafka-basic-publish`
+.Exemple
+[source,json]
+----
+{
+  "type": "kafka-basic-publish",
+  "target": "target_kafka", <1>
+  "inputs": {
+      "topic": "topic_name", <2>
+      "payload": "my payload", <3>
+      "headers": {  <4>
+             "X--KAFKA-VERSION": "1.0",
+             "X--HEADER-1": "42"
+       },
+  }
+}
+----
+
+<1> Target de type kafka
+<2> Topic existant sur lequel envoyer le message
+<3> Contenu du message à envoyer
+<4> Headers à ajouter au message
+
+.Output de la tache
+----
+- payload => payload envoyé
+- headers => headers envoyé sous format String
+----
+
+== Steps SSH
+
+=== Envoi de commandes ssh - `ssh-client`
+
+.Exemple
+[source,json]
+----
+{
+  "type": "ssh-client",
+  "target": "target_ssh", <1>
+  "inputs": {
+      "commands": [ <2>
+        "pwd",
+        "rm -rf *"
+      ]
+  }
+}
+----
+
+<1> Target de type ssh
+<2> List de commande ssh à executer sur le serveur
+
+
+.Output de la tache
+----
+- results => Liste de résultat de chaque commande ssh
+----
+
+== Steps Groovy
+
+=== Execution de script groovy - `groovy`
+
+Un objet logger est disponible avec info(), error() qui va logger directement les infos au niveau du step
+
+.Exemple
+[source,json]
+----
+{
+  "type": "groovy",
+  "inputs": {
+     "script": "topic_name", <1>
+     "parameters": {  <2>
+          "key": "value",
+          "key2": "value2"
+    }
+  }
+}
+----
+
+<1> Script groovy au format String
+<2> Map des parametres à ajouter on contexte groovy
+
+
+.Output de la tache
+----
+- results => Liste de résultat de chaque commande ssh
+----
+
+== Function Generate
+
+=== `#generate`
+
+Cette fonction est principaglement pour générer UUID.
+
+.Exemple
+[source,json]
+----
+{
+  "inputs": {
+    "entries": {
+        "generateID": "${ <1>
+                            #generate().uuid() <2>
+                        }"<1>
+    }
+  }
+}
+----
+
+<1> début et fin de SpEL
+<2> appel generateFunction et son méthode
+
+.Output de la tache
+----
+Un random UUID est généré.
+----
+
+== Function JsonPath
+
+=== `#json`
+
+Cette fonction est pour enregistrer une value dans un Json document, en utilisant son json path.
+
+.Exemple
+[source,json]
+----
+{
+   "type": "http-get", <1>
+   "outputs": {        <2>
+      "title_book_01":
+                       "${ <3>
+                            #json( <4>
+                                    #body, <5>
+                                    '$.store.book[0].title' <6>
+                                 )
+                                .toString() <7>
+                        }" <3>
+              }
+}
+----
+
+<1> cette exemple utilise http-get, mais jsonPathFunction peut être utilsé dans context HTTP
+<2> output de l'appel http
+<3> début et fin de SpEL
+<4> appel jsonPathFunction
+<5> 1er paramètre de cette function: un json document, ici c'est le body de reponse http-get
+<6> 2er paramètre de cette function: le json path de la valeur souhaitée
+<7> l'output de cette function est un object, on peut le caster un string si besons
+
+== Function XPath
+
+=== `#xpath`
+
+Cette fonction est pour enregistrer une value dans un xml document, en utilisant son path.
+
+.Exemple STANDARD_XML
+[source,json]
+----
+{ "inputs":
+   {
+        "entries":
+        {
+            "STANDARD_XML":
+                 '''
+                 <node1>
+                     <node2 attr1="attr1"/>
+                     <node3 attr1="attr2">text1</node3>
+                     <node4/>
+                     <node5>
+                          <![CDATA[some stuff]]>
+                     </node5>
+                 </node1>
+                 ''',
+            "attribute_value": "${  <1>
+                                  #xpath( <2>
+                                      #STANDARD_XML, <3>
+                                      "/node1/node2/@attr1" <4>
+                                      )
+                                  }",<1> <5>
+            "text_value": "${#xpath(#STANDARD_XML,'/node1/node3/text()')}", <6>
+            "single_node_containing_text": "${#xpath(#STANDARD_XML,'/node1/node3')}", <7>
+            "single_node_containing_CDATA": "${#xpath(#STANDARD_XML,'/node1/node5')}" <8>
+        }
+   }
+}
+----
+
+<1> début et fin de SpEL
+<2> appel xPathFunction
+<3> 1er paramètre de cette function: un xml document
+<4> 2er paramètre de cette function: le xml path de la valeur souhaitée
+<5> le résultat de ce exemple: "attr1"
+<6> le résultat de ce exemple: "text1"
+<7> le résultat de ce exemple: "text1"
+<8> le résultat de ce exemple: "some stuff"
+
+== Function Date
+
+=== `#date`
+
+Cette function est pour parser la date de type String à different type, selon le formateur fourni.
+
+.Exemple 01
+[source,json]
+----
+{
+  "inputs": {
+    "entries": {
+        "dateToParse": "2018-01-15T14:38:21Z",
+        "dateParsed": "${ <1>
+                            #date(#dateToParse) <2>
+                        }",<1>
+        "epochSecond": "${#dateParsed.getEpochSecond()}" <3>
+    }
+  }
+}
+----
+
+<1> début et fin de SpEL
+<2> appel dateFunction
+<3> l'epochSecond de ce exemple : 1516027101
+
+.Output de la tache
+----
+Quand il n'y a pas de formatteur fourni, l'output est type Instant.
+----
+
+.Exemple 02
+[source,json]
+----
+{
+  "inputs": {
+    "entries": {
+        "dateToParse": "2018-01-15",
+        "dateParsed": "${ <1>
+                            #date(#dateToParse, "yyyy-MM-dd") <2>
+                        }",<1>
+        "dayOfWeek": "${#dateParsed.getDayOfWeek()}" <3>
+    }
+  }
+}
+----
+
+<1> début et fin de SpEL
+<2> appel dateFunction
+<3> le jour de ce exemple : "MONDAY"
+
+.Output de la tache
+----
+Avec date et son formatteur "yyyy-MM-dd", l'output est type LocalDate.
+----
+
+.Exemple 03
+[source,json]
+----
+{
+  "inputs": {
+    "entries": {
+        "dateToParse": "2018-01-15T14:38:21+0200",
+        "dateParsed": "${ <1>
+                            #date(#dateToParse, "yyyy-MM-dd'T'HH:mm:ssx") <2>
+                        }", <1>
+        "zone": "${#dateParsed.getZone()}" <3>
+    }
+  }
+}
+----
+
+<1> début et fin de SpEL
+<2> appel dateFunction
+<3> le zone de ce exemple : "+02:00"
+
+.Output de la tache
+----
+Avec date et son formatteur "yyyy-MM-dd'T'HH:mm:ssx", l'output est type ZonedDateTime.
+----
+
+Exemple 04
+[source,json]
+----
+{
+  "inputs": {
+    "entries": {
+        "dateToParse": "2018-01-15T14:38:21",
+        "dateParsed": "${ <1>
+                            #date(#dateToParse, "yyyy-MM-dd'T'HH:mm:ss") <2>
+                        }", <1>
+        "minute": "${#dateParsed.getMinute()"} <3>
+    }
+  }
+}
+----
+
+<1> début et fin de SpEL
+<2> appel dateFunction
+<3> le value minute de ce exemple : "38"
+
+.Output de la tache
+----
+Avec date et son formatteur "yyyy-MM-dd'T'HH:mm:ss", l'output est type LocalDateTime.
+----
+
+== Function String replace
+
+=== `#str_replace`
+
+```
+String str_replace(String input, String regularExpression, String replacement)
+```
+
+.Exemple
+[source,json]
+----
+{
+  "description": "Remplace poivron par pimiento",
+  "implementation":
+  {
+    "type": "compare", <1>
+    "inputs":
+    {
+      "actual": "${ #str_replace(\"carotte, poivron, courgette\", \"poivron\", \"pimiento\") }", <2>
+      "expected": "carotte, pimiento, courgette",
+      "mode": "equals" <1>
+    } <3>
+  }
+}
+----
+
+<1> Exemple d'utilisation avec une comparaison d'égalité (tâche `compare` avec le mode `equals`)
+<2> Appel à la fonction `str_replace` avec des paramètres
+<3> Le résultat de cet exemple est : "vrai", car la variable le mot poivron est remplacé par pimiento
+
+.Exemple
+[source,json]
+----
+{
+  "inputs": {
+    "entries": {
+        "input": "{ \"chutney\" : 12345, \"Carotte\" : \"poivron\" }",
+        "regExp": "(?i)(.*\"caRotTe\" : )(\".*?\")(.*)",
+        "replacement": "$1\"pimiento\"$3",
+        "replaced": "${ <1>
+                        #str_replace(#input,#regExp,#replacement) <2>
+                     }" <1>
+    } <3>
+  }
+}
+----
+
+<1> début et fin de SpEL
+<2> appel stringRepalceFunction
+<3> le résultat de cet exemple : "{ \"chutney\" : 12345, \"Carotte\" : \"pimiento\" }"
+
+== Function Nullable
+
+=== `#nullable`
+
+```
+Object nullable(Object maybeNullValue)
+```
+
+Le résultat d'une expression SpEL est parfois _null_,
+ce qui est traité comme une erreur par le système.
+
+Toutefois, ce résultat est parfois attendu et souhaité.
+Dans ce cas, il faut indiquer au système que la valeur _null_ ne doit pas être traitée comme une erreur.
+Pour ce faire, il faut utiliser la fonction `nullable` pour englober l'expression dont la valeur peut être nulle.
+
+.Exemple
+[source,json]
+----
+{
+  "description": "Assert nullable value",
+  "implementation":
+  {
+    "type": "compare", <1>
+    "inputs":
+    {
+      "actual": "${ <2>
+                    #nullable(#nil) <3>
+                }", <2>
+      "expected": "null",
+      "mode": "equals" <1>
+    } <4>
+  }
+}
+----
+<1> Exemple d'utilisation avec une comparaison d'égalité (tâche `compare` avec le mode `equals`)
+<2> début et fin de SpEL
+<3> la variable `#nil` n'existe pas et vaut donc _null_. Elle est passée en paramètre de la fonction `nullable`
+<4> le résultat de cet exemple est : "vrai", car la variable nil est remplacée par la chaine de charactère *"null"*
+
+== Strategies d'exécution
+
+Une strategie d'exécution permet de définir la façon dont Chutney va exécuter une ou plusieurs étapes.
+Aujourd'hui, il existe 2 strategies :
+
+=== Sequentielle
+
+* Les étapes s'exécutent les unes à la suite des autres.
+* Dès qu'une étape est en échec alors tout le test s'arrête.
+
+.Exemple :
+[source,json]
+----
+{
+    "name": "Etape exécuter une seule fois",
+    "type": "fail", <1>
+    "strategy": { <2>
+        "type": "sequential" <3>
+    }
+},
+{
+    "name": "Etape jamais exécuter", <4>
+    "type": "success",
+    "strategy": {
+        "type": "sequential"
+    }
+}
+----
+<1> On déclare une action de type `fail`, qui sera donc en échec
+<2> On déclare qu'on va utiliser une stratégie
+<3> On déclare que la strategie à appliquée est `sequential`
+<4> Cette étape ne sera jamais exécutée car le test échoue à l'étape précédente
+
+
+TIP: La stratégie `sequential` est appliquée par défaut. Il n'est pas nécessaire de l'écrire sur chaque étape.
+
+.Exemple sans déclarer de stratégie :
+[source,json]
+----
+{
+    "name": "Etape exécuter une seule fois",
+    "type": "fail" <1>
+},
+{
+    "name": "Etape jamais exécuter",
+    "type": "success"
+}
+----
+<1> Ici, il n'y a pas de stratégie définie, la stratégie par défaut s'applique donc automatiquement.
+
+
+=== Retry avec timeout
+
+Certaine étapes sont parfois en échec,
+mais vous souhaitez pouvoir ré-essayer jusqu'à obtenir un succès avec :
+
+* Une durée limitée,
+* Et un nombre de tentatives limitées
+
+Pour cela,
+il faut utiliser la strategy `retry-with-timeout`.
+
+.Exemple :
+[source,json]
+----
+{
+    "name": "Etape relancer plusieurs fois",
+    "type": "fail", <1>
+    "strategy": { <2>
+        "type": "retry-with-timeout", <3>
+        "parameters": { <4>
+            "timeOut": "30 min", <5>
+            "retryDelay": "1 min" <6>
+        }
+    }
+}
+----
+<1> On déclare une action de type `fail`, qui sera donc *toujours* en échec
+<2> On déclare qu'on va utiliser une stratégie
+<3> On déclare que la strategie à appliquée est `retry-with-timeout`
+<4> On déclare les paramètres à utiliser pour cette stratégie
+<5> Le paramètre `timeOut` défini la durée maximum pendant laquelle cette étape sera relancer
+<6> Le paramètre `retryDelay` défini la durée à attendre entre chaque tentative

@@ -1,0 +1,62 @@
+<div class="row m-4">
+    <div class="col-md-8 pl-0">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="{{ 'campaigns.search.placeholder' | translate }}"
+                [(ngModel)]="campaignFilter">
+        </div>
+    </div>
+    <div class="col-md-4">
+        <button type="button" class="btn btn-outline-primary" (click)="createCampaign()">
+            <span class="fa fa-plus" aria-hidden="true"></span> {{ 'campaigns.list.actions.create' | translate }}
+        </button>
+    </div>
+</div>
+<div class="row m-4">
+    <div class="col-md-6">
+        <h2>Campagnes</h2>
+        <div class="table-responsive" *ngIf="campaigns.length > 0">
+            <table class="table table-striped table-hover">
+                <tbody>
+                    <tr *ngFor="let campaign of (campaigns | searchTextPipe : campaignFilter:['title','description'])">
+                        <td>
+                             <a [routerLink]="['/campaign',campaign.id,'execution']" title="{{ 'campaigns.list.item.title.link.title' | translate }} {{campaign.title}}">{{campaign.title}}</a>
+                        </td>
+                        <td>
+                            <small [ngClass]="{'text-muted':campaign.description,'text-warning': !campaign.description}">{{campaign.description || ('campaigns.list.item.description.none' | translate) }}</small>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-outline-danger" (click)="deleteCampaign(campaign.id, campaign.title)">
+                                <span class="fa fa-trash"></span>
+                            </button>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-light" (click)="editCampaign(campaign)">
+                                <span class="fa fa-pencil-alt"></span>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div *ngIf="campaigns.length == 0" class="alert alert-dark col-md-12 not-found text-muted">
+            <span>{{ 'campaigns.list.empty' | translate }}</span>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <h2>Dernières executions</h2>
+        <div class="table-responsive" *ngIf="campaigns.length > 0">
+            <table class="table table-striped">
+                <tbody>
+                    <tr *ngFor="let report of lastCampaignReports">
+                        <td>{{ report.startDate | amDateFormat: 'DD MMM. YYYY HH:mm' }}</td>
+                        <td>{{ report.campaignName }}</td>
+                        <td class="text-center">
+                            <chutney-execution-badge [status]="report.status" [spin]="true"></chutney-execution-badge>
+                        </td>
+                        <td class="text-center">{{ report.duration | duration:'short'}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

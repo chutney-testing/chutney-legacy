@@ -1,0 +1,8 @@
+<div class="row">
+    <div class="col-sm-3">
+        <chutney-agent-network-configuration *ngIf="description" [currentConfiguration]="description.networkConfiguration" (configurationUpdate)="propagationDone($event)"></chutney-agent-network-configuration>
+    </div>
+    <div class="col-sm-9">
+        <chutney-network-graph *ngIf="description" [agentGraphe]="description.graphe" [message]="messages"></chutney-network-graph>
+    </div>
+</div>

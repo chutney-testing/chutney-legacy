@@ -1,0 +1,69 @@
+<div id="{{id + 'scroll-to'}}"></div>
+<div id="{{id}}" class="example-steps"
+     [ngClass]="'example-steps-type-' + (ancestryIndex == 0 ? 'root-' : '') + exampleStepsType">
+  <div *ngIf="ancestryIndex == 0" class="title">{{stepWording}}</div>
+  <div class="gwt-section"
+       [ngClass]="ancestryIndex == 0 ? 'gwt-section-root' : ''">
+    <div class="gwt-section-content" (click)="descriptionFocus($event)">
+      <div [ngClass]="'gwt-section-body' + (ancestryIndex == 0 ? '' : '-child')">
+        <div class="gwt-section-body-pane">
+          <div class="step-strategy" *ngIf="step.strategy != null && step.strategy.type != null && step.strategy.type != ''">
+            <b>{{ step.strategy.type }}</b> [ {{ step.strategy.parameters | stringify }} ]
+          </div>
+          <div class="dropdown show gwt-section-body-elem"
+               [ngClass]="'step-description' + (step.subSteps.length > 0 && hideDelete ? '-alone' : '')">
+
+            <pre tabindex="0" class="step-desc-preview" *ngIf="!stepDescriptionEdition" attr.data-text="{{ placeholder }}"
+                 (click)="descriptionFocus($event)"
+                 #preStepDescription></pre>
+
+            <textarea id="{{id}}-edit" *ngIf="stepDescriptionEdition" autocomplete="false" class="form-control"
+                      placeholder="{{ placeholder }}" required spellcheck="false"
+                      [(ngModel)]="step.sentence"
+                      [attr.rows]="descriptionNbLines()"
+                      (keyup)="descriptionKeyUp($event)"
+                      (blur)="descriptionBlur()"></textarea>
+          </div>
+          <div *ngIf="stepDescriptionEdition || stepImplementationEdition || implementationHost.viewContainerRef.length > 0" style="display: contents;"
+               tabindex="0">
+            <div *ngIf="step.subSteps.length == 0" class="gwt-section-body-elem">
+              <button id="{{id}}-code" class="step-btn"
+                      (click)="clickCode($event)"
+                      [ngClass]="step.implementation ? 'show-code-btn' : 'create-code-btn'">
+              </button>
+            </div>
+            <div *ngIf="!hideAnd" class="gwt-section-body-elem">
+              <button id="{{id}}-and" class="step-btn add-brother-btn" data-toggle="tooltip" title="Ajouter un Step au même niveau"
+                      (click)="and()">
+              </button>
+            </div>
+            <div *ngIf="step.implementation == null && step.subSteps.length == 0" class="gwt-section-body-elem">
+              <button id="{{id}}-sub" class="step-btn add-child-btn" data-toggle="tooltip" title="Ajouter un sous-Step"
+                      (click)="addSubStep(-1)">
+              </button>
+            </div>
+            <div *ngIf="!hideDelete" class="gwt-section-body-elem">
+              <button id="{{id}}-del" class="step-btn delete-btn" data-toggle="tooltip" title="Supprimer le Step"
+                      (click)="deleteStep()">
+              </button>
+            </div>
+            <div class="gwt-section-body-last-elem"></div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngFor="let subStep of step.subSteps; index as j">
+        <chutney-functional-step [step]="subStep" [id]="id+'-'+j" [exampleStepsType]="exampleStepsType"
+                             [ancestryIndex]="ancestryIndex + 1"
+                             [placeholder]="'Which means that...'"
+                             [exampleParams$]="exampleParams$"
+                             [showTechnicalStep]="showTechnicalStep"
+                             (deleteEvent)="deleteSubStep(j)"
+                             (andEvent)="addSubStep(j)"
+                             (refStepEvent)="setSubStep(j, $event)"
+                             (stepParamsEvent)="propagateStepParamsEvent($event)"></chutney-functional-step>
+      </div>
+      <ng-template implementation-host></ng-template>
+    </div>
+  </div>
+</div>

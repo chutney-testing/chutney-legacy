@@ -1,0 +1,10 @@
+{
+  "name" : "GLOBAL",
+  "description" : "Global targets configuration",
+  "targets" : [
+  {
+    "url" : "http://localhost:8350",
+    "security" : { },
+    "name" : "FAKE"
+  } ]
+}

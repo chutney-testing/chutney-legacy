@@ -1,0 +1,25 @@
+@import 'colors';
+
+input {
+    border: solid 1px $grisclair1;
+    background-color: $blanc;
+    border-radius: 0;
+    caret-color: $bleu1;
+    font-family: Ubuntu;
+    font-size: 16px;
+
+    &::placeholder {
+        color: $grisclair1;
+        opacity: 1; /* Firefox */
+    }
+    &:focus {
+        border-color: $bleu1;
+    }
+    &.invalid {
+        border-color: $labelko;
+        color: $labelko;
+        &::placeholder {
+            color: $labelko;
+        }
+    }
+}

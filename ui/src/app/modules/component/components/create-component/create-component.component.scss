@@ -1,0 +1,84 @@
+@import 'colors';
+
+.small-font {
+    font-size: 0.9em;
+}
+
+.table-scroll {
+    overflow-y: auto;
+    height: calc(100vh - (64px /*menu*/ + 10px /*row margin*/ + 38px /*menu buttons*/ + (1.5em + 0.75rem + 2px + 0.5rem + 2px) /*search*/ + 1rem /*inner table margin*/ + 0px));
+}
+
+.table-scroll-with-tags-filter {
+    overflow-y: auto;
+    height: calc(100vh - (64px /*menu*/ + 10px /*row margin*/ + 38px /*menu buttons*/ + (1.5em + 0.75rem + 2px + 0.5rem + 2px) /*search*/ + (35px + 102px) /*tags*/ + (1px + 2rem) /*hr*/ + 1rem /*inner table margin*/ + 0px));
+}
+
+.tags-scroll {
+    height: 102px;
+    overflow-y: auto;
+}
+
+.component-list {
+    padding-right: 10px;
+
+    table {
+        table-layout: fixed;
+        font-size: 0.9rem;
+    }
+}
+
+.selected {
+    color: black;
+    font-weight: bold;
+    box-shadow: none;
+}
+
+.not-selected {
+    color: lightsteelblue;
+    font-weight: normal;
+    box-shadow: none;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.selected-component {
+    background-color: $grisclair1;
+}
+
+.btn-toolbar {
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    top: -28px;
+    margin-bottom: -28px;
+    margin-left: auto;
+}
+
+.components-list-container {
+    position: fixed;
+}
+
+.edition {
+    position: absolute;
+    right: 0;
+
+    .edition-header {
+        height: 170px;
+    }
+
+    .edition-body {
+        height: calc(100vh - (64px + 10px + 170px + 10px + 10px));
+        overflow-y: auto;
+    }
+}
+
+textarea.no-resize {
+    resize: none;
+}
+
+.bg-draggable {
+    background-color: lightgray;
+}

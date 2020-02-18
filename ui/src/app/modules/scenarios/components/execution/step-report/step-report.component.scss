@@ -1,0 +1,166 @@
+@import 'colors';
+@import 'mixins';
+@import 'animations';
+
+@include border-animation(
+    $animation_name: running-report-step-border-anim,
+    $fromWidth: 0 3px 0 0,
+    $fromStyle: solid,
+    $fromColor: rgba($grisfonce2, 0),
+    $toWidth: 0 5px 0 0,
+    $toStyle: solid,
+    $toColor: rgba($grisfonce2, 50)
+);
+
+div.step-container-wrapper {
+    margin: 1px;
+    line-height: normal;
+    font-size: 14px;
+}
+
+div.step-container {
+    margin: 5px 0 5px 0;
+    width: 100%;
+    border-radius: 4px;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    background-color: white;
+}
+
+div.step-container:hover {
+    // margin: 0 1px 10px 0;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+div.result-header {
+    padding: 2px 5px 0 0;
+    width: 90px;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    background-color: #efefef;
+    border-right: 4px solid;
+    font-size: 10px;
+}
+
+div.result-header-success {
+    color: #0275d8;
+    border-right-color: #0275d8;
+}
+
+div.result-header-running {
+    //color: rgb(240,173,78);
+    @include animation(
+        $animation_name: running-report-step-border-anim,
+        $animation_duration: 750ms,
+        $animation_timing-function: linear,
+        $animation_iteration-count: infinite,
+        $animation_direction: alternate);
+}
+
+div.result-header-error {
+    color: #d9534f;
+    border-right-color: #d9534f;
+}
+
+div.result-body {
+    width: calc(100% - 90px);
+}
+
+div.step {
+    border: 0 solid #eee;
+    border-left-width: .25rem;
+    //border-radius: .25rem;
+
+    margin-top: 0;
+    margin-bottom: 0;
+    height: 100%;
+
+    div.step-name {
+        margin-top: 0;
+        margin-bottom: 0;
+
+        span {
+            flex: auto;
+        }
+    }
+
+    .inputs {
+        padding-top: 10px;
+        font-size: 12px;
+    }
+}
+
+.optional {
+    color: #58c69f;
+}
+
+button.btn-link {
+    border-width: 0;
+    padding: 0;
+}
+
+.error {
+    color: #d9534f;
+    font-weight: bold;
+    padding-top: 10px;
+    font-size: 12px;
+
+    pre {
+        color: #d9534f;
+        font-weight: bold;
+    }
+
+    button {
+        color: #d9534f;
+        text-decoration: underline;
+    }
+}
+
+.information {
+    color: #58c69f;
+    font-weight: bold;
+    padding-top: 10px;
+    font-size: 12px;
+
+    button {
+        color: #58c69f;
+        text-decoration: underline;
+    }
+}
+
+pre {
+    background-color: white;
+}
+
+.btn-toolbar {
+    margin-right: 20px;
+
+    button {
+        height: 18px;
+        padding-top: 0;
+        font-size: 12px;
+    }
+
+    .inputs {
+        border: 0 double rgba(216, 216, 216, 0.87);
+        border-left-width: .25rem;
+        //border-left-color: grey;
+        padding-left: 5px;
+    }
+
+    .exec-date {
+        white-space: nowrap;
+    }
+
+    .steps-btn {
+        position: absolute;
+        right: 10px;
+
+        button {
+            background-color: transparent;
+
+            &:focus {
+                box-shadow: none;
+            }
+        }
+    }
+}

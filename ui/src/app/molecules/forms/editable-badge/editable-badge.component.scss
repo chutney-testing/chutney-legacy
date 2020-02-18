@@ -1,0 +1,55 @@
+.row {
+    .editable-field {
+        border-radius: 2px;
+        transition: box-shadow 150ms ease-in 0ms;
+        display: inline-block;
+        cursor: text;
+        padding-left: 2px;
+  
+        &:hover {
+            box-shadow: 0 0 0 1px #ccc;
+
+            .overlay-icon {
+                -webkit-transition: opacity 150ms ease-in 0ms;
+                transition: opacity 150ms ease-in 0ms;
+                opacity: 1;
+            }
+        }
+
+        .overlay-icon {
+            background-color: #f0f0f0;
+            opacity: 0;
+            border-left: 1px solid #ccc;
+            padding-left: 5px;
+            box-sizing: border-box;
+            vertical-align: top;
+            cursor: pointer;
+        }
+    }
+
+    input {
+        width: 90%;
+    }
+}
+
+@mixin input-size($font-size, $font-weight, $padding-top) {
+    .editable-field {
+        font-size: $font-size;
+        font-weight: $font-weight;
+
+        .overlay-icon {
+            width: $font-size * 1,5;
+            font-size: $font-size;
+            padding-top: $padding-top;
+            padding-bottom: $padding-top + 4px;
+            padding-right: $padding-top;
+        }
+    }
+    input {
+        font-size: $font-size;
+    }
+}
+
+.simple { @include input-size(16px, 200, 3px); }
+
+.form-title { @include input-size(24px, 400, 7px); }

@@ -1,0 +1,24 @@
+@import 'colors';
+
+.pointer {
+    cursor: pointer;
+}
+
+.sticky-top-admin {
+    position:sticky;
+    top:100px;
+}
+
+.left-panel {
+  width:400px;
+}
+
+table {
+  table-layout: fixed;
+  width:400px;
+}
+
+th,
+td {
+  overflow: hidden;
+}

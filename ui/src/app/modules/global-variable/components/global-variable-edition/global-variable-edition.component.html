@@ -1,0 +1,67 @@
+<div *ngIf="data !== null" style="padding:25px;">
+
+    <div class="box2">
+        <button type="button" class="btn btn-success m-2 box2" (click)="save()">
+            Save
+            <span class="fa fa-check"></span>
+        </button>
+    </div>
+    <div class="box2">
+        <select class="form-control" [(ngModel)]="currentFileName" (ngModelChange)="updateFileContent($event)">
+            <option [value]="fileName" *ngFor="let fileName of fileNames">{{fileName}}</option>
+        </select>
+    </div>
+    <div class="box2">
+        <input id="filename" type="text" class="form-control" name="filename"
+               placeholder="Add a new file" [(ngModel)]="currentFileName"/>
+    </div>
+    <div class="box2">
+        <button type="button"
+                class="btn btn-danger"
+                (click)="deleteFile()">
+            <span class="fa fa-trash"></span><br/>
+        </button>
+    </div>
+    <div class="box2">
+        <button type="button" class="btn btn-primary m-2 box2" (click)="help = !help">
+            Help
+            <span class="fa fa-help"></span>
+        </button>
+    </div>
+    <div class="box2" *ngIf="message"> {{ message }}</div>
+
+    <div *ngIf="help">
+        <pre>
+Global variable can be user in your scenario or components with **global_variable_name**.
+You can defined variable in json in this file.
+For example :
+{{"{
+        key1: value1,
+        key2: {
+                subKey1: subValue1,
+                subKey2: subValue2
+        },
+        key3: [
+                {
+                alias: nico,
+                test:value
+                },
+                {
+                test:value
+                }
+        ]
+}"}}
+will generate keys :
+        - subKey1
+        - key2.subKey1
+        - key2.subKey2
+        - nico.test
+        - key3[1].test
+
+        </pre>
+    </div>
+
+    <div chutneyAceEditor id="editor" [text]="data" [mode]="editorMode.name" [theme]="editorTheme.name"
+         [options]="aceOptions" [readOnly]="false" (textChanged)="callBackFunc($event)"
+         (editorRef)="resizeEditor()"></div>
+</div>

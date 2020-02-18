@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite errors="0" failures="1" group="GroupName" name="Name"
+		   skipped="0" tests="1">
+	<testcase group="GroupName" name="Name" time="0.0">
+		<failure/>
+	</testcase>
+</testsuite>

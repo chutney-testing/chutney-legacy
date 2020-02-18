@@ -1,0 +1,31 @@
+<div class="table-pagination-controls" *ngIf="table && paginationInstanceConfig != undefined">
+  <pagination-controls [id]="paginationInstanceConfig.id"
+                       [maxSize]="paginationControlConfig.maxSize"
+                       [directionLinks]="paginationControlConfig.directionLinks"
+                       [autoHide]="paginationControlConfig.autoHide"
+                       [previousLabel]="paginationControlConfig.previousLabel"
+                       [nextLabel]="paginationControlConfig.nextLabel"
+                       [screenReaderPaginationLabel]="paginationControlConfig.screenReaderPaginationLabel"
+                       [screenReaderPageLabel]="paginationControlConfig.screenReaderPageLabel"
+                       [screenReaderCurrentLabel]="paginationControlConfig.screenReaderCurrentLabel"
+                       (pageChange)="pageChange($event)">
+  </pagination-controls>
+</div>
+
+<table *ngIf="table" class="table">
+    <thead>
+        <tr>
+            <th *ngFor="let columnName of table.columnNames">{{columnName}}</th>
+        </tr>
+    </thead>
+    <tbody *ngIf="paginationInstanceConfig != undefined">
+        <tr *ngFor="let row of table.rows | paginate: paginationInstanceConfig">
+            <td *ngFor="let value of row.values">{{value}}</td>
+        </tr>
+    </tbody>
+    <tbody *ngIf="!(paginationInstanceConfig != undefined)">
+      <tr *ngFor="let row of table.rows">
+        <td *ngFor="let value of row.values">{{value}}</td>
+      </tr>
+    </tbody>
+</table>

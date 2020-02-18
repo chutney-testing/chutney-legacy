@@ -1,0 +1,30 @@
+{
+    "scenario": {
+        "name": "sample 1",
+        "steps": [
+            {
+                "name": "step 1",
+                "steps": [
+                    {
+                        "name": "step 1.1",
+                        "steps": [
+                            {
+                                "name": "step 1.1.1",
+                                "type": "context-put"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "step 2",
+                "steps": [
+                    {
+                        "name": "step 2.1",
+                        "type": "context-put"
+                    }
+                ]
+            }
+        ]
+    }
+}

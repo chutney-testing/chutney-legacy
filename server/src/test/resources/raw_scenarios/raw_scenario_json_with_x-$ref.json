@@ -1,0 +1,42 @@
+{
+    "givens": [
+        {
+            "description": "Clean Queue",
+            "subSteps": [{
+                "description": "La liste des queues de RABBIT_DEV",
+                "implementation": {
+                    "target": "ICOEUR_RABBIT_DEV_ADMIN",
+                    "type": "http-get",
+                    "inputs": {
+                        "uri": "/api/queues"
+                    },
+                    "outputs": {
+                        "queueNames": "${#json(#body, '$.[*].name')}"
+                    }
+                }
+            }, {
+                "description": "On purge toutes les queues",
+                "implementation": {
+                    "target": "ICOEUR_RABBIT_DEV",
+                    "type": "amqp-clean-queues",
+                    "inputs": {
+                        "queue-names": "${#queueNames}"
+                    }
+                }
+            }],
+            "x-$ref": "common/frag1.icefrag.json"
+        },
+        {
+            "description": "Step with a typed implementation",
+            "implementation": {
+                "type": "success",
+                "inputs": {
+                    "fake_param": "fake_value"
+                },
+                "x-$ref": "common/frag2.icefrag.json"
+            }
+        }
+    ],
+    "when": {},
+    "thens": []
+}

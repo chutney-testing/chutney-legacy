@@ -1,0 +1,86 @@
+<div class="container-fluid">
+    <div class="row">
+        <form [formGroup]="backupForm" class="w-100">
+            <table class="table table-striped table-hover">
+                <thead>
+                <tr>
+                    <th scope="col" class="text-center" style="width: 100px;"></th>
+                    <th scope="col" class="text-center">{{ 'admin.backups.table.time.title' | translate }}</th>
+                    <th scope="col" class="text-center">{{ 'admin.backups.table.homepage.title' | translate }}</th>
+                    <th scope="col" class="text-center">{{ 'admin.backups.table.agents.title' | translate }}</th>
+                    <th scope="col" class="text-center">{{ 'admin.backups.table.environments.title' | translate }}</th>
+                    <th scope="col" class="text-center">{{ 'admin.backups.table.components.title' | translate }}</th>
+                    <th scope="col" class="text-center">{{ 'admin.backups.table.globalvars.title' | translate }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="bg-light">
+                    <td class="btn-group-sm text-center align-middle">
+                        <button type="button" class="btn btn-sm btn-primary"
+                                title="{{ 'global.actions.add' | translate }}"
+                                (click)="launchBackup()"
+                                [disabled]="!isOneBackupSelected()">
+                            <span class="fa fa-plus" aria-hidden="true"></span>
+                        </button>
+                    </td>
+                    <td></td>
+                    <td scope="row" class="text-center align-middle">
+                        <input type="checkbox" formControlName="homePage"/>
+                    </td>
+                    <td scope="row" class="text-center align-middle">
+                        <input type="checkbox" formControlName="agentsNetwork"/>
+                    </td>
+                    <td scope="row" class="text-center align-middle">
+                        <input type="checkbox" formControlName="environments"/>
+                    </td>
+                    <td scope="row" class="text-center align-middle">
+                        <input type="checkbox" formControlName="components"/>
+                    </td>
+                    <td scope="row" class="text-center align-middle">
+                        <input type="checkbox" formControlName="globalVars"/>
+                    </td>
+                </tr>
+                <tr *ngFor="let backup of backups">
+                    <td scope="row" class="btn-group-sm text-center align-middle">
+                        <button type="button" class="btn btn-sm btn-danger"
+                                title="{{ 'global.actions.delete' | translate }}"
+                                (click)="deleteBackup(backup)">
+                            <span class="fa fa-trash"></span>
+                        </button>
+
+                        <button type="button" class="btn btn-sm btn-primary ml-2"
+                                title="Download"
+                                (click)="download(backup)">
+                            <span class="fa fa-download"></span>
+                        </button>
+                    </td>
+
+                    <td scope="row" class="text-center align-middle">
+                        {{ backup.time | date: 'medium' }}
+                    </td>
+
+                    <td scope="row" class="text-center align-middle">
+                        <span *ngIf="backup.homePage" class="fa fa-check-square" aria-hidden="true"></span>
+                    </td>
+
+                    <td scope="row" class="text-center align-middle">
+                        <span *ngIf="backup.agentsNetwork" class="fa fa-check-square" aria-hidden="true"></span>
+                    </td>
+
+                    <td scope="row" class="text-center align-middle">
+                        <span *ngIf="backup.environments" class="fa fa-check-square" aria-hidden="true"></span>
+                    </td>
+
+                    <td scope="row" class="text-center align-middle">
+                        <span *ngIf="backup.components" class="fa fa-check-square" aria-hidden="true"></span>
+                    </td>
+
+                    <td scope="row" class="text-center align-middle">
+                        <span *ngIf="backup.globalVars" class="fa fa-check-square" aria-hidden="true"></span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>

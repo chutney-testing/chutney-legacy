@@ -1,0 +1,30 @@
+<div class="login m-0">
+    <form name="form" class="container form-login" (ngSubmit)="login()" novalidate>
+        <div class="form-row justify-content-center mb-3">
+            <img src="../../../assets/logo/logo-circle.png"/>
+        </div>
+
+        <div class="form-group">
+            <input id="username" type="text" class="form-control" name="username"
+                   placeholder="{{ 'login.username' | translate }}" [(ngModel)]="username"/>
+        </div>
+
+        <div class="form-group">
+            <input id="password" type="password" class="form-control" name="password"
+                   placeholder="{{ 'login.password' | translate }}" [(ngModel)]="password"/>
+        </div>
+
+        <div class="form-row justify-content-center">
+            <button type="submit" class="btn mr-2 login-button">
+                <span>{{ 'global.actions.login' | translate }}</span>
+            </button>
+        </div>
+    </form>
+    <div class="container col-md-3">
+        <div *ngIf="connectionError" class="row text-danger justify-content-center"><b>{{ connectionError }}</b></div>
+        <div *ngIf="disconnected" class="row text-info justify-content-center">
+            <b>{{ 'login.disconnected' | translate }}</b>
+        </div>
+    </div>
+
+</div>

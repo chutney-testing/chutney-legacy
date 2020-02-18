@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Implementation-Title: chutney-test-manifest
+Implementation-Version: 1.0.0-SNAPSHOT
+Built-By: toto ;)
+Specification-Title: server
+Implementation-Vendor-Id: com.chutneytesting
+Created-By: Apache Maven 3.2.2
+Build-Jdk: 1.8.0_121
+Specification-Version: 1.0

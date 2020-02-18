@@ -1,0 +1,17 @@
+@import 'colors';
+@import 'menu';
+
+.row {
+    margin: 0px;
+}
+
+.main-content {
+    position: absolute;
+    margin-top: $nav-height;
+    margin-left: $profile-width;
+    width: $remaind-width;
+    min-height: $nav-remain-height;
+    height: auto;
+    background-color: $grisclair2;
+    z-index: 200;
+}

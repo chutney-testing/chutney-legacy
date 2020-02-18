@@ -1,0 +1,115 @@
+@import 'colors';
+@import 'mixins';
+@import 'animations';
+
+@include box-shadow-animation(
+  $animation_name: history-tile-running-anim,
+  $fromOffsetX: 4px,
+  $fromOffsetY: 4px,
+  $fromBlur: 8px,
+  $fromSpread: 0,
+  $fromColor: rgba($grisfonce2, 30),
+  $toOffsetX: 8px,
+  $toOffsetY: 8px,
+  $toBlur: 16px,
+  $toSpread: 0,
+  $toColor: rgba($grisfonce2, 30)
+);
+
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+}
+
+.panel {
+    @extend .noselect;
+    padding: 5px;
+}
+
+h2 {
+    font-weight: bold;
+    font-size: 15px;
+    border-bottom-width: 3px;
+    margin-bottom: 15px;
+}
+.title {
+    padding-left: 2px;
+    padding-top: 2px;
+}
+.exection-id {
+    color: black;
+    font-size: 14px;
+    font-weight: bold;
+    margin-left:4px;
+}
+.time {
+    font-size: 12px;
+    color: white;
+    padding-top: 6px;
+    padding-left: 20px;
+    line-height: 14px;
+    min-height: 40px;
+}
+
+.tile {
+    padding: 0;
+    cursor: pointer;
+    border-radius: 4px;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
+    margin: 10px 0 10px 0;
+}
+
+.tile:hover {
+    margin: 10px -20px 10px 20px;
+    box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.tile-ok {
+    background-color: $liens;
+}
+
+.tile-ko {
+    background-color: $labelko;
+}
+
+.tile-stop {
+    background-color: grey;
+}
+
+.tile-selected {
+    margin: 10px -20px 10px 20px;
+}
+
+.tile-running {
+  background-color: $grisclair1;
+  @include animation(
+    $animation_name: history-tile-running-anim,
+    $animation_duration: 750ms,
+    $animation_timing-function: linear,
+    $animation_iteration-count: infinite,
+    $animation_direction: alternate);
+}
+
+.fa-circle {
+    background-color: white;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.circle-ok {
+    color: #0275d8;
+}
+
+.circle-ko {
+    color: #d9534f;
+}
+
+.error {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 0 0 4px 4px;
+    font-size: 12px;
+}

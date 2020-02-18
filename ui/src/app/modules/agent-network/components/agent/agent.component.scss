@@ -1,0 +1,26 @@
+input[type="number"] {
+    width:80px;
+}
+
+.btn {
+    background-color: white;
+    border: none;
+    color: red;
+}
+
+.name {
+    padding-right: 30px;
+}
+
+.dot {
+    padding-left: 5px;
+    padding-right: 5px;
+    font-weight: bold;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}

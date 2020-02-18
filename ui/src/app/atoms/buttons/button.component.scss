@@ -1,0 +1,45 @@
+@import 'colors';
+
+@mixin baseButton($text-color, $background-color, $border-color) {
+    font-family: 'Montserrat';
+    font-weight: bold;
+    cursor: pointer;
+    border: solid 2px $border-color !important;
+    padding: 9px 20px 9px 20px;
+    color: $text-color;
+    text-transform: uppercase;
+    border: 0;
+    background-color: $background-color;
+
+    span {
+        margin-right: 8px;
+    }
+}
+
+@mixin hoverButton($text-color, $border-color, $background-color) {
+    &:hover {
+        background-color: $background-color;
+        border-color: $border-color !important;
+        color: $text-color;
+    }
+}
+
+@mixin disabledButton($text-color, $border-color, $background-color) {
+    &:disabled {
+        background-color: $background-color;
+        border-color: $border-color !important;
+        color: $text-color;
+        cursor: not-allowed;
+    }
+}
+
+.first {
+    @include baseButton($grisfonce1, $vert2, $vert2);
+    @include hoverButton($grisfonce1, $vert4, $vert4);
+    @include disabledButton($blanc, $labelko, $labelko);
+}
+
+.second {
+    @include baseButton($vert2, $blanc, $vert2);
+    @include hoverButton($vert1, $vert3, $blanc);
+}

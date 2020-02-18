@@ -1,0 +1,61 @@
+@import 'colors';
+
+.edition-header {
+    margin-top: 0;
+    margin-bottom: 0;
+
+    .header-left {
+        height: 120px;
+        background-color: $vert2;
+        width: 50%;
+        float: left;
+
+        .title {
+            margin-top: 20px;
+            margin-left: 40px;
+            background-color: $vert2;
+            color: white;
+            font-size: 22px;
+            line-height: 22px;
+            font-weight: bold;
+            overflow: hidden;
+        }
+
+        .description{
+            margin-top: 10px;
+            background-color: $vert2;
+            font-size: 13px;
+            font-weight: 300;
+            font-style: normal;
+            font-stretch: normal;
+            line-height: normal;
+            letter-spacing: normal;
+            color: #333333;
+            margin-left: 40px;
+            overflow: hidden;
+        }
+    }
+
+    .header-right {
+        background-color: $vert3;
+        width:50%;
+        height: 120px;
+        float: left;
+        text-align: center;
+        position: relative;
+        padding-left: 20px;
+    }
+
+    .triangle-left:before {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 0;
+        border-color: transparent transparent transparent $vert2;
+        border-style: solid;
+        border-width: 60px 0 60px 20px;
+    }
+}

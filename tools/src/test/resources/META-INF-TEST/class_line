@@ -1,0 +1,5 @@
+# Comment 1
+java.lang.String
+
+# Empty line above should be ignored
+java.lang.Integer

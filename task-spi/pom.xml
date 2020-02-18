@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.chutneytesting</groupId>
+        <artifactId>chutney-parent</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>task-spi</artifactId>
+
+    <profiles>
+        <!-- Mutation Testing -->
+        <profile>
+            <id>mutation</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-maven</artifactId>
+                        <version>${pitest.version}</version>
+                        <configuration>
+
+                            <!-- Targets -->
+                            <targetClasses>
+                                <param>com.chutneytesting.*</param>
+                            </targetClasses>
+                            <targetTests>
+                                <param>com.chutneytesting.*Test</param>
+                            </targetTests>
+
+                            <!-- Reporting -->
+                            <outputFormats>
+                                <outputFormat>HTML</outputFormat>
+                            </outputFormats>
+                            <timestampedReports>false</timestampedReports>
+                            <verbose>false</verbose>
+
+                            <!-- Mutations -->
+                            <mutators>
+                                <mutator>CONDITIONALS_BOUNDARY</mutator>
+                                <mutator>INCREMENTS</mutator>
+                                <mutator>INVERT_NEGS</mutator>
+                                <mutator>MATH</mutator>
+                                <mutator>NEGATE_CONDITIONALS</mutator>
+                                <mutator>VOID_METHOD_CALLS</mutator>
+                                <mutator>EMPTY_RETURNS</mutator>
+                                <mutator>PRIMITIVE_RETURNS</mutator>
+                                <mutator>REMOVE_CONDITIONALS</mutator>
+                            </mutators>
+                            <excludedClasses>
+                                <class>com.chutneytesting.task.spi.FinallyAction</class>
+                                <class>com.chutneytesting.task.spi.injectable.Target</class>
+                            </excludedClasses>
+
+                            <!-- Duration -->
+                            <timeoutFactor>1.25</timeoutFactor>
+                            <timeoutConstant>3000</timeoutConstant>
+                            <maxMutationsPerClass>0</maxMutationsPerClass>
+                            <withHistory>true</withHistory>
+                            <threads>1</threads>
+
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>run-mutation-tests</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>mutationCoverage</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

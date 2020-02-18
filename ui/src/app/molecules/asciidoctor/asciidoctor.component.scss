@@ -1,0 +1,20 @@
+.asciidoc-container > #toc.toc {
+  border: none!important;
+  left: 100px + 30px;
+  top: 137px;
+  position: fixed;
+  width: 20%;
+  z-index: 1000;
+  height: 90%;
+  overflow: auto;
+}
+
+.asciidoc-container > .with-toc {
+  padding-left: 30px + 10px;
+  margin-left: 20%;
+}
+
+.asciidoc-container {
+  padding: 25px;
+  @import 'asciidoctor';
+}

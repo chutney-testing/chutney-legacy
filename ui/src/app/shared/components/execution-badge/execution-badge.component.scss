@@ -1,0 +1,18 @@
+
+@keyframes running-animation {
+    0% {background-color: Chartreuse ;}
+    75% {background-color: Cyan;}
+    100% {background-color: Chartreuse ;}
+}
+
+.badge-running {
+    font-style: italic;
+    animation-duration: 1s;
+    animation-name: running-animation;
+    animation-iteration-count: infinite;
+}
+
+.badge-stopped {
+    font-style: italic;
+    background-color: grey;
+}

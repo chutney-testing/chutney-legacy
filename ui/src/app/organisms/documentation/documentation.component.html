@@ -1,0 +1,8 @@
+<div id="documentation-header">
+  <chutney-toggle-button [label]="'admin.documentation.toggle.examples' | translate" [id]="'light'" [style]="'light'" [isChecked]="isActivated" (change)="toggle()"></chutney-toggle-button>
+</div>
+
+<div class="documentation">
+  <chutney-asciidoctor [doc]="documentation" [tocLeft]="true" [tocScrollHack]="true">
+  </chutney-asciidoctor>
+</div>

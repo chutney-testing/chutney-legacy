@@ -1,0 +1,2 @@
+com.chutneytesting.task.selenium.jackson.SeleniumModule
+com.chutneytesting.task.http.jackson.WiremockModule

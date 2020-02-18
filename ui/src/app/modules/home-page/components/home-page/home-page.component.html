@@ -1,0 +1,10 @@
+<div class="home-page-actions btn-group">
+  <button type="button" class="btn btn-primary" (click)="openHomePageDialog()">
+    <span class="fa fa-pencil-alt" aria-hidden="true"></span> {{ 'global.actions.edit' | translate }}
+  </button>
+</div>
+
+<div class="home-page">
+  <chutney-asciidoctor [doc]="homePage ? homePage.content : ''" [tocLeft]="true" [tocScrollHack]="true">
+  </chutney-asciidoctor>
+</div>

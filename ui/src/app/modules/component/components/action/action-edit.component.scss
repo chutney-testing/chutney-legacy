@@ -1,0 +1,31 @@
+@import 'colors';
+
+fieldset legend {
+    width: auto;
+    font-size: 1rem;
+}
+
+.legend-title {
+    cursor: default;
+    display: inline-block;
+    width: 150px;
+}
+
+.component-type {
+    position: relative;
+    top: -5px;
+}
+
+.edition-header {
+    height: 170px;
+}
+
+.edition-body {
+    height: calc(100vh - (64px + 10px + 170px + 10px + 10px));
+    overflow-y: auto;
+}
+
+textarea.no-resize {
+    resize: none;
+}
+

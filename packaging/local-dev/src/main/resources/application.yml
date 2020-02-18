@@ -1,0 +1,65 @@
+
+agent-name: chutney-server-agent-0
+server:
+  port: 8443
+  http:
+    port: 9350
+    interface: localhost
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+    min-response-size: 1024
+  ssl:
+    keyStore: 'classpath:security/https/server.jks'
+    key-store-password: 'server'
+    key-password: 'server'
+    trust-store: 'classpath:security/https/truststore.jks'
+    trust-store-password: 'truststore'
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        secure: true
+      tracking-modes: cookie
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      cors:
+        allowed-origins: '*'
+        allowed-methods: GET
+  endpoint:
+    health:
+      show-details: always
+
+spring:
+  liquibase:
+    change-log: classpath:/changelog/db.changelog-master.xml
+  profiles:
+    active:
+      - http-ssl
+      - mem-auth
+      - db-h2
+
+chutney:
+  db-server:
+    port: 9360
+    base-dir: ./.chutney/pgdata
+    work-dir: ./.chutney/pgwork
+  execution:
+    async:
+      publisher:
+        ttl: 5
+        debounce: 250
+  backups:
+    root: backups
+  examples:
+    active: false
+
+orient:
+  path: .chutney/orient/
+  contextConfiguration:
+    "[storage.diskCache.diskFreeSpaceLimit]": 384
+    "[storage.diskCache.bufferSize]": 1024

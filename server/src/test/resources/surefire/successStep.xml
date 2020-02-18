@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testcase group="GroupName" name="Name" time="0.0">
+	<system-out xmlns:xs="http://www.w3.org/2001/XMLSchema"
+				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">Message</system-out>
+</testcase>

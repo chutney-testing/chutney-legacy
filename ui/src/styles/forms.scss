@@ -1,0 +1,14 @@
+@import 'bootstrap-variables';
+
+.form-group.errors-input {
+  .error-message{
+    color:$brand-danger;
+    font-size: 0.8em;
+  }
+  input {
+    border-color:$brand-danger;
+    &:focus {
+        box-shadow: 0 0 0 0.2rem rgba($brand-danger, 0.25);
+    }
+  }
+}

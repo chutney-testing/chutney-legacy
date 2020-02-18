@@ -1,0 +1,14 @@
+{
+  "name": "Chutney",
+  "short_name": "Chutney",
+  "icons": [
+      {
+          "src": "assets/logo/logo-circle.png",
+          "sizes": "141x140",
+          "type": "image/png"
+      }
+  ],
+  "start_url": "/index.html",
+  "display": "standalone",
+  "orientation": "portrait"
+}

@@ -1,0 +1,58 @@
+<div *ngIf="testCase" class="row edition-header">
+        <div class="header-left">
+            <div class="title">{{testCase.title}}</div>
+            <div class="description">{{testCase.description}}</div>
+            <div class="btn-group ml-4 header-tag">
+                <span *ngFor="let tag of testCase.tags">
+                    <span class="chutney-tag chutney-tag-selected">{{tag}}</span>
+                </span>
+            </div>
+        </div>
+        <div class="header-right triangle-left">
+            <div class="row">
+                <div class="col-sm-12 btn-toolbar p-0">
+                    <div class="col-6 p-0">
+                        <div ngbDropdown class="d-inline-block">
+                            <button id="dropdownBasic1" type="button" class="btn btn-success accept-spinner m-1"
+                                    [disabled]="canExecute" ngbDropdownToggle
+                                    (click)="executeScenarioOnToggle()">
+                                <span class="fa fa-play"></span>
+                                <span class="btn-label">{{'global.actions.execute' | translate}}</span>
+                            </button>
+                            <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                                <button *ngFor="let env of environments" class="dropdown-item"
+                                        (click)="executeScenario(env.name)">{{ env.name }}</button>
+                            </div>
+                        </div>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-light"
+                                routerLink="{{isComposed(testCase) ? '/scenario/' + testCase.id + '/component-edition' : '/scenario/' + testCase.id + '/edition'}}"
+                                [attr.disabled]="isNotEditable()">
+                                <span class="fa fa-pencil-alt"></span>
+                                <span class="btn-label">{{'global.actions.edit' | translate}}</span>
+                            </button>
+                            <button *ngIf="!isComposed(testCase)" type="button" class="btn btn-light"
+                                routerLink="{{'/scenario/' + testCase.id + '/raw-edition'}}"
+                                [attr.disabled]="isNotEditable()">
+                                <span class="fa fa-pencil-alt"></span>
+                                <span class="btn-label">{{'global.actions.editRaw' | translate}}</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-6 p-0">
+                        <chutney-delete-confirm-dialog class="align-items-end" [dialogMessage]="'scenarios.execution.actions.remove' | translate"
+                            (deleteEvent)="deleteScenario(testCase.id)" [disabled]="isNotEditable()">
+                        </chutney-delete-confirm-dialog>
+                        <button type="button" class="btn btn-success accept-spinner align-items-end" (click)="duplicateScenario()">
+                            <span class="fa fa-clone"></span>
+                            <span class="btn-label">{{'global.actions.clone' | translate}}</span>
+                        </button>
+                        <button *ngIf="isNotComposed()" type="button" class="btn btn-success accept-spinner align-items-end" (click)="exportScenario()">
+                            <span class="fa fa-file-code"></span>
+                            <span class="btn-label">{{'global.actions.export' | translate}}</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

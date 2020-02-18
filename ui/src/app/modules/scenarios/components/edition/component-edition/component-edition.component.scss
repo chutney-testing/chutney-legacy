@@ -1,0 +1,177 @@
+@import 'colors';
+
+.component-edition-content {
+    position: fixed;
+    top: 64px;
+    width: calc(100vw - 50px);
+}
+
+.edition-header {
+    height: 120px;
+
+    .header-left {
+        height: 120px;
+        background-color: $vert2;
+        padding: 20px 20px 20px 0;
+    }
+
+    .header-right {
+        background-color: $vert3;
+        height: 120px;
+        text-align: center;
+        padding: 10px 20px 10px 30px;
+    }
+
+    .triangle-left:before {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 0;
+        border-color: transparent transparent transparent $vert2;
+        border-style: solid;
+        border-width: 60px 0 60px 20px;
+    }
+
+    .header-left {
+        a {
+            position: absolute;
+            top: 100px;
+            text-transform: lowercase;
+            font-family: Ubuntu;
+            font-size: 11px;
+            color: #4a4a4a;
+        }
+
+        .title {
+            margin-left: 40px;
+            background-color: $vert2;
+            overflow: hidden;
+        }
+
+        .description {
+            margin-top: 10px;
+            background-color: $vert2;
+            margin-left: 40px;
+            overflow: hidden;
+        }
+    }
+}
+
+.edition-body {
+    .drop-zone {
+        background-color: lightgray;
+        min-height: 60px;
+    }
+}
+
+.component-list {
+    position: fixed;
+
+    table {
+        table-layout: fixed;
+    }
+}
+
+.testcase-edition {
+    position: absolute;
+    right: 0;
+    max-height: calc(100vh - (64px + 120px + 10px));
+    overflow-y: auto;
+}
+
+fieldset legend {
+    width: auto;
+    font-size: 1rem;
+}
+
+.legend-title {
+    cursor: default;
+    display: inline-block;
+    width: 150px;
+}
+
+.scenario-components-parameters {
+    font-size: 0.8rem;
+
+    legend {
+        font-size: 0.8rem;
+        width: auto;
+    }
+}
+
+.scenario-components-identifier {
+    font-size: 0.8rem;
+}
+
+:host ::ng-deep chutney-forms-editable-label {
+    .row {
+        margin: 0;
+    }
+
+    .input-lbl {
+        color: white;
+        font-size: 22px;
+        line-height: 22px;
+        font-weight: bold;
+    }
+
+    .overlay-icon {
+        font-size: 18px !important;
+        padding: 2px 5px 2px 5px !important;
+        margin-left: 10px;
+    }
+}
+
+:host ::ng-deep chutney-forms-editable-text-area {
+    .row {
+        margin: 0;
+    }
+
+    .input-lbl {
+        font-size: 13px;
+        font-weight: 300;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: normal;
+        color: #333333;
+    }
+
+    .overlay-icon {
+        font-size: 18px !important;
+        padding: 2px 5px 2px 5px !important;
+        margin-left: 10px;
+    }
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.tag-input {
+    height: 50px;
+}
+
+.table-scroll {
+    overflow-y: auto;
+    height: calc(100vh - (64px /*menu*/ + (120px + 10px) /*header*/ + (1.5em + 0.75rem + 2px + 0.5rem + 2px) /*search*/ + 1rem /*inner table margin*/ + 0px));
+}
+
+.small-text {
+    font-size: 0.75em;
+}
+
+.delete-button-height {
+    height: 30px;
+}
+
+textarea.no-resize {
+    resize: none;
+}
+
+.cursor-default {
+    cursor: default;
+}

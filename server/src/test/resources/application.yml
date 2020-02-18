@@ -1,0 +1,41 @@
+
+agent-name: dev-agent
+server:
+  port: ${securePort:443}
+  http:
+    port: ${port:80}
+    interface: 0.0.0.0
+  ssl:
+    keyStore: 'classpath:blackbox/security/server.jks'
+    key-store-password: 'server'
+    key-password: 'server'
+  undertow:
+    io-threads: 1
+    worker-threads: 8
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      cors:
+        allowed-origins: '*'
+        allowed-methods: GET
+
+spring:
+  liquibase:
+    change-log: classpath:changelog/db.changelog-master.xml
+  profiles:
+    active:
+      - http-ssl
+      - mem-auth
+      - db-h2
+
+orient:
+  path: target/orient
+  dbproperties:
+    dbName: blackbox_component_db
+    dbType: PLOCAL
+  contextConfiguration:
+    "[storage.diskCache.diskFreeSpaceLimit]": 384
+    "[storage.diskCache.bufferSize]": 1024

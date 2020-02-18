@@ -1,0 +1,351 @@
+{
+    "menu": {
+        "principal": {
+            "scenarios": "Scénarios",
+            "campaigns": "Campagnes",
+            "steps": "Référentiel",
+            "targets": "Targets",
+            "workers": "Agents",
+            "databaseAdmin": "BDD",
+            "storesAdmin": "Stores",
+            "documentation": "Documentation",
+            "showroom": "Showroom",
+            "component": "Composants",
+            "backups": "Sauvegardes"
+        }
+    },
+    "home": {
+        "edition": {
+            "dialog": {
+                "title": "Modifier la page d'accueil"
+            }
+        }
+    },
+    "scenarios": {
+        "search": {
+            "create": {
+                "form": "Ecrire un cas de test",
+                "component": "Composer un cas de test"
+            },
+            "placeholder": "Rechercher un scénario",
+            "created": " Derniers créés",
+            "executed": "Derniers executés",
+            "lastExecution": "Dernière execution",
+            "sources": {
+                "settings": {
+                    "text": "Sélectionner des sources",
+                    "selectAllText": "Tout sélectionner",
+                    "unSelectAllText": "Tout désélectionner",
+                    "searchPlaceholderText": "Rechercher"
+                }
+            }
+        },
+        "list": {
+            "item": {
+                "title.link.title": "Voir les exécutions de",
+                "description.none": "Aucune description"
+            },
+            "empty": "Aucun scénario disponible",
+            "actions": {
+                "create": "Nouveau scénario"
+            }
+        },
+        "execution": {
+            "history": {
+                "title": "Historique des exécutions",
+                "time": "Aujourd'hui à"
+            },
+            "step": {
+                "actions": {
+                    "details": "Détails",
+                    "informations": "Informations",
+                    "errors": "Erreurs"
+                }
+            },
+            "actions": {
+                "details": {
+                    "show": "Voir détails",
+                    "hide": "Cacher détails"
+                },
+                "remove": "Etes-vous sur de vouloir supprimer le scénario ?"
+            },
+            "errors": {
+                "execution": "Impossible d'exécuter le scénario",
+                "parse": "Impossible de parser le scénario"
+            },
+            "dataset.title": "Paramètres"
+        },
+        "edition": {
+            "title": {
+                "create": "Créer un nouveau scénario",
+                "update": "Modifier un scénario"
+            },
+            "form": {
+                "title": {
+                    "label": "Titre",
+                    "required": "Le titre est obligatoire."
+                },
+                "description": "Description",
+                "tags": "Tags",
+                "content": {
+                    "title": "Contenu du scénario",
+                    "editor": {
+                        "actions": {
+                            "show": "Montrer la configuration de l'éditeur",
+                            "hide": "Cacher la configuration de l'éditeur"
+                        },
+                        "mode": "Mode Edition",
+                        "theme": "Thème"
+                    }
+                }
+            }
+        }
+    },
+    "campaigns": {
+        "search": {
+            "placeholder": "Rechercher une campagne"
+        },
+        "list": {
+            "item": {
+                "title.link.title": "Voir les exécutions de",
+                "description.none": "Aucune description"
+            },
+            "empty": "Aucune campagne disponible",
+            "actions": {
+                "create": "Nouvelle campagne"
+            }
+        },
+        "execution": {
+            "actual": "Dernière execution complète",
+            "replay": "Rejouer les scénarios en échec",
+            "on_env": "sur l'environnement",
+            "history": {
+                "title": "Historique des executions"
+            },
+            "scenarios": {
+                "title": "Scénarios dans la campagne",
+                "result": "Résultat de l'exécution",
+                "item": {
+                    "title": "Voir les exécutions de",
+                    "description.none": "Aucune description",
+                    "executions.link": "Voir les exécutions de"
+                },
+                "empty": "Aucun scénario disponible"
+            }
+        },
+        "edition": {
+            "title": {
+                "create": "Créer un nouvelle campagne",
+                "update": "Modifier une campagne"
+            },
+            "form": {
+                "title": {
+                    "label": "Titre",
+                    "required": "Le titre est obligatoire."
+                },
+                "description": "Description",
+                "schedule": {
+                    "label": "Heure de planification",
+                    "pattern": "Format doit être HH:MM"
+                }
+            },
+            "scenarios": {
+                "title": "Scénarios de la campagne",
+                "pick": {
+                    "title": "Scénarios disponibles"
+                }
+            }, 
+            "options": "Options",
+            "parallelRun": "Execution parallèle des scénarios",
+            "retryAuto": "1 retry auto sur les scénarios en échec"
+        },
+        "confirm": {
+            "deletion.prefix": "Etes-vous sûr de vouloir supprimer la campagne ",
+            "deletion.suffix": " ?"
+        }
+    },
+    "admin": {
+        "targets": {
+            "name.placeholder": "Nom du serveur",
+            "url": {
+                "placeholder": "URL du serveur",
+                "label": "Url"
+            },
+            "username.label": "Utilisateur",
+            "password.label": "Mot de passe",
+            "truststore.label": "Truststore",
+            "truststorepass.label": "Mot de passe du truststore",
+            "keystore.label": "Keystore",
+            "keystorepass.label": "Mot de passe du keystore",
+            "properties.label": "Propriétés",
+            "environment": "Environnement"
+        },
+        "agents": {
+            "name.placeholder": "Nom",
+            "host.placeholder": "Host",
+            "port.placeholder": "Port",
+            "graph": {
+                "agents": {
+                    "title": "Agents",
+                    "name": "Nom",
+                    "url": "URL",
+                    "reach": "Accède à",
+                    "noreach": "Aucun"
+                },
+                "targets": {
+                    "title": "Targets",
+                    "search": "Filtre les noms des targets",
+                    "environment": "Environnement",
+                    "name": "Nom",
+                    "url": "URL",
+                    "reachable": "Accessible depuis",
+                    "unreachable": "Inaccessible"
+                }
+            }
+        },
+        "database": {
+            "updated_rows": "updated row(s)"
+        },
+        "documentation": {
+            "toggle.examples": "Activation des exemples"
+        },
+        "backups": {
+            "table": {
+                "time.title": "Date de création",
+                "homepage.title": "Page d'accueil",
+                "agents.title": "Agents",
+                "environments.title": "Environnements",
+                "components.title": "Composants",
+                "globalvars.title": "Variables globales"
+            }
+        }
+    },
+    "components": {
+        "menu": {
+            "components": "Composants",
+            "actions": "Actions"
+        },
+        "shared": {
+            "list": {
+                "filter.placeholder": "Chercher un composant"
+            },
+            "edition": {
+                "draganddrop": "Glisser/Déposer ici",
+                "existInStep":"Présent dans step: ",
+                "existInScenario": "Présent dans scénario: ",
+                "seeParents": "Voir/cacher parents",
+                "blocks": {
+                    "global": "Générale",
+                    "parameters": "Paramètres",
+                    "inputs": "Entrées"
+                },
+                "fields": {
+                    "intention.placeholder": "Ecrivez votre intention",
+                    "strategy": {
+                        "name": "Stratégie",
+                        "retry": {
+                            "name": "retry",
+                            "timeout": "Time out",
+                            "delay": "Délai"
+                        },
+                        "loop": {
+                            "name": "for",
+                            "data": "Data"
+                        }
+                    },
+                    "target.name": "Cible"
+                }
+            }
+        },
+        "action": {
+            "list": {
+                "filter.placeholder": "Chercher une action"
+            },
+            "edition": {
+                "select": "Sélectionner une action pour créer un composant"
+            },
+            "messages": {
+                "create": "Action créée",
+                "update": "Action mise à jour"
+            },
+            "refvar" : {
+                "label": "var",
+                "switchTo.tooltip": "Remplacer les éléments d'une Liste ou d'une Map par une variable contextuelle",
+                "backTo.tooltip": "Remplacer la variable contextuelle par une Liste ou une Map"
+            }
+        },
+        "component": {
+            "edition": {
+                "blocks": {
+                    "steps": "Etapes"
+                }
+            },
+            "create": "Créer un composant",
+            "messages": {
+                "empty": "Composant vide"
+            }
+        },
+        "testcase": {
+            "edition": {
+                "blocks": {
+                    "steps": "Etapes"
+                }
+            }
+        }
+    },
+    "login": {
+        "disconnected": "Vous vous êtes bien déconnectés",
+        "username": "Nom d'utilisateur",
+        "password": "Mot de passe (Sesame)"
+    },
+    "global": {
+        "time": {
+            "in": "en",
+            "at": "le",
+            "today.at": "Aujourd'hui à"
+        },
+        "actions": {
+            "search": "Rechercher",
+            "add": "Ajouter",
+            "edit": "Éditer",
+            "editRaw": "Édition brute",
+            "execute": "Exécuter",
+            "delete": "Supprimer",
+            "save": "Sauvegarder",
+            "record": "Enregistrer",
+            "update": "Modifier",
+            "cancel": "Annuler",
+            "login": "S'identifier",
+            "close": "Fermer",
+            "activate": "Activer",
+            "show": "Voir",
+            "hide": "Cacher",
+            "clone": "Cloner",
+            "export": "Exporter",
+            "import": "Importer",
+            "create": "Créer",
+            "replay": "Rejouer"
+        },
+        "bdd": {
+            "given": "Etant donné",
+            "soit": "Soit",
+            "when": "Quand",
+            "then": "Alors",
+            "and": "Et"
+        },
+        "sort": {
+            "use": "Usage",
+            "all": "Tout",
+            "sort": "Tri",
+            "ascending": "Ascendant",
+            "descending": "Descendant"
+        },
+        "confirm": {
+            "question" : "Etes-vous sûr de vouloir",
+            "page.deactivate": "Vous avez des changements non sauvegardés ! Si vous quittez cette page, vos changements seront perdus.",
+            "delete": "Confirmez-vous votre demande de suppression ?",
+            "yes": "Oui",
+            "no": "Non"
+        }
+    }
+}

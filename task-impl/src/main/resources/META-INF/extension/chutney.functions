@@ -1,0 +1,8 @@
+com.chutneytesting.task.function.JsonPathFunction
+com.chutneytesting.task.function.XPathFunction
+com.chutneytesting.task.function.XmlFunction
+com.chutneytesting.task.function.DateFunction
+com.chutneytesting.task.function.StringReplaceFunction
+com.chutneytesting.task.function.GenerateFunction
+com.chutneytesting.task.http.function.WireMockFunction
+com.chutneytesting.task.function.NullableFunction

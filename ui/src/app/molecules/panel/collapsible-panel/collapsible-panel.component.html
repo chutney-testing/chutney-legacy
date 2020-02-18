@@ -1,0 +1,4 @@
+<div class="collapsible-title" (click)="collapsed = !collapsed"><span class="fa fa-angle-right"></span> {{title}}</div>
+<div *ngIf="!collapsed" class="collapsible-content">
+    <ng-content ></ng-content>
+</div>

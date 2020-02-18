@@ -1,0 +1,29 @@
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Chatty frameworks -->
+    <logger name="com.jayway" level="WARN"/>
+    <logger name="com.zaxxer" level="WARN"/>
+    <logger name="io.undertow" level="ERROR"/>
+    <logger name="org.apache" level="WARN"/>
+    <logger name="org.eclipse" level="WARN"/>
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.jboss" level="WARN"/>
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.xnio" level="WARN"/>
+    <logger name="liquibase" level="WARN"/>
+    <logger name="liquibase.lockservice.StandardLockService" level="INFO"/>
+    <logger name="LiquibaseSchemaResolver" level="WARN"/>
+    <logger name="org.apache.maven.surefire.booter" level="WARN"/>
+    <logger name="org.mongodb.driver" level="WARN" />
+    <logger name="com.orientechnologies.orient" level="WARN" />
+
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

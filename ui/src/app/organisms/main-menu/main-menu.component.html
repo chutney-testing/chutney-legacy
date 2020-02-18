@@ -1,0 +1,35 @@
+<nav class="navbar fixed-top navbar-expand-lg">
+    <ul class="navbar-nav menu-principal">
+        <chutney-menu-item [style]="''" [route]="'/scenario'" [label]="'menu.principal.scenarios' | translate" [img_src]="ICON_TESTS"
+            [img_src_selected]="ICON_TESTS_SELECTED"></chutney-menu-item>
+        <li class="separator"></li>
+        <chutney-menu-item [style]="'nav-link'" [route]="'/campaign'" [label]="'menu.principal.campaigns' | translate" [img_src]="ICON_TESTS"
+            [img_src_selected]="ICON_TESTS_SELECTED"></chutney-menu-item>
+        <li class="separator"></li>
+        <chutney-menu-item [style]="'nav-link'" [route]="'/component'" [label]="'menu.principal.component' | translate" [img_src]="ICON_REPO"
+            [img_src_selected]="ICON_REPO_SELECTED"></chutney-menu-item>
+        <chutney-menu-item [style]="'nav-link'" [route]="'/variable'" [label]="'Variable'" [img_src]="ICON_REPO"
+            [img_src_selected]="ICON_REPO_SELECTED"></chutney-menu-item>
+        <ul class="navbar-nav ml-auto">
+            <div class="dropdown">
+                <button class="dropbtn"><span class="fa fa-cog"></span>Admin</button>
+                <div class="dropdown-content">
+                    <chutney-menu-item [style]="'nav-link'" [route]="'/databaseAdmin'" [label]="'menu.principal.databaseAdmin' | translate" [icon_fa_class]="'fa-database'"></chutney-menu-item>
+                    <chutney-menu-item [style]="'nav-link'" [route]="'/environmentAdmin'" [label]="'menu.principal.targets' | translate" [icon_fa_class]="'fa-cogs'"></chutney-menu-item>
+                    <chutney-menu-item [style]="'nav-link'" [route]="'/configurationAgent'" [label]="'menu.principal.workers' | translate" [icon_fa_class]="'fa-bars'"></chutney-menu-item>
+                    <chutney-menu-item [style]="'nav-link'" [route]="'/storesAdmin'" [label]="'menu.principal.storesAdmin' | translate" [icon_fa_class]="'fa-cubes'"></chutney-menu-item>
+                    <chutney-menu-item [style]="'nav-link'" [route]="'/documentation'" [label]="'menu.principal.documentation' | translate" [icon_fa_class]="'fa-book'"></chutney-menu-item>
+                    <chutney-menu-item [style]="'nav-link'" [route]="'/showroom'" [label]="'menu.principal.showroom' | translate" [icon_fa_class]="'fa-eye'"></chutney-menu-item>
+                    <chutney-menu-item [style]="'nav-link'" [route]="'/backups'" [label]="'menu.principal.backups' | translate" [icon_fa_class]="'fa-archive'"></chutney-menu-item>
+                </div>
+            </div>
+
+            <div *ngIf="currentUser" class="dropdown">
+                <button class="dropbtn"><span class="fa fa-user"></span>{{currentUser.id}}</button>
+                <div class="dropdown-content">
+                    <chutney-menu-item *ngIf="currentUser" [label]="'Logout'" [icon_fa_class]="'fa-sign-out'" [route]="'/login/logout'"></chutney-menu-item>
+                </div>
+            </div>
+        </ul>
+    </ul>
+</nav>

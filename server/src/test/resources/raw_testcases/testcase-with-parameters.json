@@ -1,0 +1,39 @@
+{
+    "title": "__titre__",
+    "description": "__description__",
+    "dataSet": {},
+    "scenario": {
+        "givens": [
+            {
+                "sentence": "given 1 with **single_line**",
+                "subSteps": [
+                    {
+                        "sentence": "given sub step 1.1 with **multi_line**",
+                        "implementation": {
+                            "task": "\"type\":\"success\""
+                        }
+                    }
+                ]
+            }
+        ],
+        "when": {
+            "sentence": "when 1",
+            "subSteps": [
+                {
+                    "sentence": "when sub step 1.1",
+                    "implementation": {
+                        "task": "\"type\":\"context-put\", \"inputs\":{\"entries\":{ \"**single_line**\":\"**multi_line**\"}}"
+                    }
+                }
+            ]
+        },
+        "thens": [
+            {
+                "sentence": "then 1",
+                "implementation": {
+                    "task": "\"type\": \"string-assert\", \"inputs\": {\"document\": \"${#**single_line**}\",\"expected\": \"**multi_line**\"}"
+                }
+            }
+        ]
+    }
+}

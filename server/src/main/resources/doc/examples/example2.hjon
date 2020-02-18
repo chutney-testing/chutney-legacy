@@ -1,0 +1,11 @@
+{
+    scenario : {
+        name : test
+        steps : [
+            {
+                name : when something else
+                type : success
+            }
+        ]
+    }
+}
