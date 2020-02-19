@@ -35,7 +35,7 @@
         <hjson.version>3.0.0</hjson.version>
         <generex.version>1.0.2</generex.version>
         <jms.version>2.0.1</jms.version>
-        <amqp-client.version>5.3.0</amqp-client.version>
+        <amqp-client.version>5.8.0</amqp-client.version>
         <mongodb.version>3.8.0</mongodb.version>
         <orientdb.version>3.0.28</orientdb.version>
         <lucene.version>7.3.0</lucene.version>
