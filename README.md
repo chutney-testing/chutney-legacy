@@ -196,6 +196,7 @@ Security breaches can be reported directly to the team by sending an email such 
 ## <a name="contrib"></a> How to contribute ?
 
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fchutney-testing%2Fchutney.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fchutney-testing%2Fchutney?ref=badge_shield)
 
 You don't need to be a developer to contribute, nor do much, you can simply:
 * Enhance documentation,
@@ -218,3 +219,7 @@ To contribute to this documentation (README, CONTRIBUTING, etc.), we conforms to
 ## Other resources
 ### Continuous Integration Builds
 
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fchutney-testing%2Fchutney.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fchutney-testing%2Fchutney?ref=badge_large)
