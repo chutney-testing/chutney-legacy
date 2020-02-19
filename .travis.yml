@@ -1,4 +1,17 @@
 language: java
 sudo: false # faster builds
 
-script: "mvn verify"
+cache:
+  directories:
+  - "$HOME/.m2"
+  - "$TRAVIS_BUILD_DIR/ui/node/"
+  - "$TRAVIS_BUILD_DIR/ui/node_modules/"
+  
+jdk: openjdk8
+
+install: skip
+
+script: "mvn -B -V -P node_install verify"
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

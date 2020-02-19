@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/chutney-testing/chutney.svg?branch=master)](https://travis-ci.org/chutney-testing/chutney)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/559893368d134d729b204891e3ce0239)](https://www.codacy.com/gh/chutney-testing/chutney?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=chutney-testing/chutney&amp;utm_campaign=Badge_Grade)
+[![Coverage Status](https://codecov.io/gh/chutney-testing/chutney/branch/master/graph/badge.svg)](https://codecov.io/gh/chutney-testing/chutney/)
+
 # Chutney
 
 Chutney is an opinionated test tool based upon the practice of Specification by Example. 
@@ -111,7 +115,7 @@ Core contributors :
 
   * Loic Ledoyen
   * Mael Besson
-  * Matthieu Gensolen
+  * Matthieu Gensollen
   * Nicolas Brouand
 
 ### <a name="contributors"></a> Contributors
