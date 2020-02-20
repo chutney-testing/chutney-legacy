@@ -58,6 +58,7 @@
         <pitest.version>1.4.9</pitest.version>
         <pitest-cucumber.version>0.8</pitest-cucumber.version>
         <otj-pg-embedded.version>0.13.1</otj-pg-embedded.version>
+		<jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
     </properties>
 
     <modules>
@@ -472,6 +473,24 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
@@ -618,6 +637,11 @@
                         </lifecycleMappingMetadata>
                     </configuration>
                 </plugin>
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>${jacoco-maven-plugin.version}</version>
+				</plugin>
             </plugins>
         </pluginManagement>
     </build>
