@@ -91,7 +91,7 @@ While we think that having glue code is cumbersome and adds unnecessary levels o
 especially for high level tests and distributed softwares.
 
 We also do think that using Cucumber for low level testing is sometimes very handy and useful, 
-thanks to the high level of expression provided by Gherkin (and this is part of the Testing Chutney Seb Rose talked about).
+thanks to the high level of expression provided by Gherkin (and this is part of the Testing Iceberg Seb Rose talked about).
 
 
 __Chutney is no silver-bullet, it is just a tool which promotes and supports one way of doing software testing.__
