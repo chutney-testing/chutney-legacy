@@ -46,8 +46,11 @@ spring:
 chutney:
   db-server:
     port: 9360
-    base-dir: ./.chutney/pgdata
-    work-dir: ./.chutney/pgwork
+    base-dir: ./.chutney
+  engine:
+    reporter:
+      publisher:
+        ttl: 5
   execution:
     async:
       publisher:

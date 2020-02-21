@@ -4,13 +4,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.chutneytesting</groupId>
+    <parent>
+        <groupId>com.chutneytesting</groupId>
+        <artifactId>chutney-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
     <artifactId>packaging</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
-        <chutney.version>2.0.0-SNAPSHOT</chutney.version>
+        <chutney.version>${project.version}</chutney.version>
         <mainClass>com.chutneytesting.ServerBootstrap</mainClass>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -19,15 +23,6 @@
     <modules>
         <module>local-dev</module>
     </modules>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.chutneytesting</groupId>
-            <artifactId>chutney-parent</artifactId>
-            <version>${chutney.version}</version>
-            <type>pom</type>
-        </dependency>
-    </dependencies>
 
     <dependencyManagement>
         <dependencies>
@@ -86,7 +81,7 @@
                         <executable>true</executable>
                         <layout>ZIP</layout>
                         <mainClass>${mainClass}</mainClass>
-                        <finalName>chutney-local-dev-${project.version}</finalName>
+                        <finalName>chutney-${project.artifactId}-${project.version}</finalName>
                     </configuration>
                     <executions>
                         <execution>
