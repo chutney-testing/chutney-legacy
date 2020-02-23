@@ -14,7 +14,7 @@ install: skip
 script:
   - export MVN_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression="project.version" -q -DforceStdout)
   - echo "MVN_VERSION ${MVN_VERSION} - TRAVIS_TAG ${TRAVIS_BRANCH} - TRAVIS_BRANCH ${TRAVIS_BRANCH}"
-  - "mvn -B -V -P node_install verify"
+  - "mvn -B -V verify"
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
