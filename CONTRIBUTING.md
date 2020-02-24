@@ -154,20 +154,26 @@ As a general rule, the style and formatting of commit messages should follow the
 
 ## <a name="release"></a> Release Management
 
-// TODO
+### Releasing
+
+```shell
+  mvn versions:set -DnewVersion=<RELEASE_VERSION> -DgenerateBackupPoms=false && mvn versions:set-scm-tag -DnewTag=<RELEASE_VERSION> -DgenerateBackupPoms=false
+  git diff HEAD
+  git add . && git commit -m "chore: Release <RELEASE_VERSION>"
+  git push origin
+  git tag <TAG_VERSION>
+  git push origin <TAG_VERSION>
+```
 
 
-### Versioning
+#### Prepare next development
 
-// TODO
-
-X.Y.Z-VVV
-
-X => MAJOR version 
-Y => SPRINT NUMBER 
-Z => 0 during the sprint, incremented at each delivery in REC.
-VVV => tag at each merge on master
-
+```shell
+  mvn versions:set -DnewVersion=<NEXT_DEV_VERSION> -DgenerateBackupPoms=false && mvn versions:set-scm-tag -DnewTag=HEAD -DgenerateBackupPoms=false
+  git diff HEAD
+  git add . && git commit -m "chore: Prepare next development <NEXT_DEV_VERSION>"
+  git push origin
+```
 
 ## <a name="task"></a> Adding a task
 
