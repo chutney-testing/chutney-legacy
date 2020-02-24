@@ -3,12 +3,13 @@ package com.chutneytesting.engine.domain.execution.engine;
 import static com.chutneytesting.engine.domain.environment.NoTarget.NO_TARGET;
 import static com.chutneytesting.engine.domain.environment.SecurityInfo.Credential;
 
+import java.util.Optional;
+
 import com.chutneytesting.engine.domain.environment.ImmutableTarget;
 import com.chutneytesting.engine.domain.environment.SecurityInfo;
 import com.chutneytesting.engine.domain.environment.Target;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.task.spi.FinallyAction;
-import java.util.Optional;
 
 class FinallyActionMapper {
 
@@ -48,6 +49,6 @@ class FinallyActionMapper {
 
     private Credential mapCreds(Optional<com.chutneytesting.task.spi.injectable.SecurityInfo.Credential> credential) {
         return credential.map(c -> Credential.of(c.username(), c.password()))
-            .orElse(Credential.of("", ""));
+            .orElse(null);
     }
 }
