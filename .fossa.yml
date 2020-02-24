@@ -1,0 +1,63 @@
+# Visit https://fossa.com to learn more
+
+version: 2
+cli:
+  server: https://app.fossa.com
+  fetcher: custom
+  project: git@github.com:chutney-testing/chutney.git
+analyze:
+  modules:
+    - name: task-spi
+      type: mvn
+      target: task-spi/pom.xml
+      path: .
+      options:
+        cmd: mvn dependency:tree -Dscope=compile -pl task-spi
+    - name: tools
+      type: mvn
+      target: tools/pom.xml
+      path: .
+      options:
+        cmd: mvn dependency:tree -Dscope=compile -pl tools
+    - name: task-impl
+      type: mvn
+      target: task-impl/pom.xml
+      path: .
+      options:
+        cmd: mvn dependency:tree -Dscope=compile -pl task-impl
+    - name: engine
+      type: mvn
+      target: engine/pom.xml
+      path: .
+      options:
+        cmd: mvn dependency:tree -Dscope=compile -pl engine
+    - name: server
+      type: mvn
+      target: server/pom.xml
+      path: .
+      options:
+        cmd: mvn dependency:tree -Dscope=compile -pl server
+    - name: cli
+      type: mvn
+      target: cli/pom.xml
+      path: .
+      options:
+        cmd: mvn dependency:tree -Dscope=compile -pl cli
+    - name: ui-pkg
+      type: mvn
+      target: ui/pom.xml
+      path: .
+      options:
+        cmd: mvn dependency:tree -Dscope=compile -pl ui
+    - name: ui-angular
+      type: nodejs
+      target: ui
+      path: ui
+      options:
+        strategy: npm
+    - name: local-dev
+      type: mvn
+      target: local-dev/pom.xml
+      path: packaging
+      options:
+        cmd: mvn dependency:tree -Dscope=compile -pl packaging/local-dev
