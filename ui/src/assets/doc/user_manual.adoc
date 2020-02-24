@@ -693,9 +693,9 @@ N'envoi que des javax.jms.TextMessage
 ----
 {
   "type": "selenium-driver-init",
-  "inputs: {",
-      "driverPath: "path", <1>
-      "browserPath: "path" <2>
+  "inputs": {
+      "driverPath": "path", <1>
+      "browserPath": "path" <2>
   }
 }
 ----
