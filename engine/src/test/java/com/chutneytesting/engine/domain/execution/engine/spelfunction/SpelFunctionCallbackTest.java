@@ -3,6 +3,7 @@ package com.chutneytesting.engine.domain.execution.engine.spelfunction;
 import com.chutneytesting.engine.domain.execution.evaluation.SpelFunctionCallback;
 import com.chutneytesting.engine.domain.execution.evaluation.SpelFunctions;
 import com.chutneytesting.task.spi.SpelFunction;
+import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import com.chutneytesting.tools.ThrowingConsumer;
 import org.junit.Test;
@@ -10,7 +11,7 @@ import org.springframework.util.ReflectionUtils;
 
 public class SpelFunctionCallbackTest {
 
-    static Object mockObject = new Object();
+    private static Object mockObject = new Object();
 
     static class TestClassWithNoArgument {
         @SpelFunction("testNoArgument")
@@ -53,7 +54,9 @@ public class SpelFunctionCallbackTest {
         SpelFunctionCallback callback = new SpelFunctionCallback();
         ReflectionUtils.doWithMethods(TestClassWithNoArgument.class, callback);
         Assertions.assertThat(1L).isEqualTo(callback.getSpelFunctions().stream().count());
-        assertTestClassWithNoArgument(callback.getSpelFunctions().stream().findFirst().get());
+        Optional<SpelFunctions.NamedFunctionLink> element = callback.getSpelFunctions().stream().findFirst();
+        Assertions.assertThat(element).isPresent();
+        assertTestClassWithNoArgument(element.get());
     }
 
     @Test
@@ -61,7 +64,9 @@ public class SpelFunctionCallbackTest {
         SpelFunctionCallback callback = new SpelFunctionCallback();
         ReflectionUtils.doWithMethods(TestClassWithArguments.class, callback);
         Assertions.assertThat(1L).isEqualTo(callback.getSpelFunctions().stream().count());
-        assertTestClassWithArguments(callback.getSpelFunctions().stream().findFirst().get());
+        Optional<SpelFunctions.NamedFunctionLink> element = callback.getSpelFunctions().stream().findFirst();
+        Assertions.assertThat(element).isPresent();
+        assertTestClassWithArguments(element.get());
     }
 
     @Test
@@ -69,25 +74,27 @@ public class SpelFunctionCallbackTest {
         SpelFunctionCallback callback = new SpelFunctionCallback();
         ReflectionUtils.doWithMethods(TestClassMethodNameValue.class, callback);
         Assertions.assertThat(1L).isEqualTo(callback.getSpelFunctions().stream().count());
-        assertTestClassMethodNameValue(callback.getSpelFunctions().stream().findFirst().get());
+        Optional<SpelFunctions.NamedFunctionLink> element = callback.getSpelFunctions().stream().findFirst();
+        Assertions.assertThat(element).isPresent();
+        assertTestClassMethodNameValue(element.get());
     }
 
     @Test
-    public void should_create_spelFunctions_containing_multiple_method_with_name_and_arguments() throws Exception {
+    public void should_create_spelFunctions_containing_multiple_method_with_name_and_arguments() {
         SpelFunctionCallback callback = new SpelFunctionCallback();
         ReflectionUtils.doWithMethods(TestClassWithArguments.class, callback);
         ReflectionUtils.doWithMethods(TestClassWithNoArgument.class, callback);
         ReflectionUtils.doWithMethods(TestClassMethodNameValue.class, callback);
         Assertions.assertThat(3L).isEqualTo(callback.getSpelFunctions().stream().count());
         callback.getSpelFunctions().stream()
-            .filter(f -> f.getName() == "testNoArgument")
-            .forEach(ThrowingConsumer.toUnchecked(f -> assertTestClassWithNoArgument(f)));
+            .filter(f -> "testNoArgument".equals(f.getName()))
+            .forEach(ThrowingConsumer.toUnchecked(this::assertTestClassWithNoArgument));
         callback.getSpelFunctions().stream()
-            .filter(f -> f.getName() == "testWithArguments")
-            .forEach(ThrowingConsumer.toUnchecked(f -> assertTestClassWithArguments(f)));
+            .filter(f -> "testWithArguments".equals(f.getName()))
+            .forEach(ThrowingConsumer.toUnchecked(this::assertTestClassWithArguments));
         callback.getSpelFunctions().stream()
-            .filter(f -> f.getName() == "testWithMethodNameValue")
-            .forEach(ThrowingConsumer.toUnchecked(f -> assertTestClassMethodNameValue(f)));
+            .filter(f -> "testWithMethodNameValue".equals(f.getName()))
+            .forEach(ThrowingConsumer.toUnchecked(this::assertTestClassMethodNameValue));
     }
 
     class TestNoStaticClass {
@@ -98,7 +105,7 @@ public class SpelFunctionCallbackTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void should_throw_exception_if_method_not_static() throws Exception {
+    public void should_throw_exception_if_method_not_static() {
         SpelFunctionCallback callback = new SpelFunctionCallback();
         ReflectionUtils.doWithMethods(TestNoStaticClass.class, callback);
     }
