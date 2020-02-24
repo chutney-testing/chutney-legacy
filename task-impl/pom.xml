@@ -174,7 +174,7 @@
         <dependency>
             <groupId>org.apache.ws.security</groupId>
             <artifactId>wss4j</artifactId>
-            <version>1.6.17</version>
+            <version>1.6.19</version>
         </dependency>
     </dependencies>
 
