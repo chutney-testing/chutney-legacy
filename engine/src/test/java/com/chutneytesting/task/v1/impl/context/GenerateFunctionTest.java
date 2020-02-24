@@ -18,4 +18,10 @@ public class GenerateFunctionTest {
     public void generate_standard_uuid() {
         assertThat(new Generate().uuid()).matches("\\p{XDigit}{8}(?:-\\p{XDigit}{4}){3}-\\p{XDigit}{12}");
     }
+
+    @Test
+    public void generate_long() {
+        assertThat(new Generate().randomLong()).matches("[-]?\\p{XDigit}+");
+    }
+
 }

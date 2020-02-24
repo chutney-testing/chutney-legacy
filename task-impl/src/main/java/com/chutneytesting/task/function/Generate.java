@@ -1,11 +1,15 @@
 package com.chutneytesting.task.function;
 
-import com.mifmif.common.regex.Generex;
+import java.util.Random;
+import java.util.UUID;
 
 public class Generate {
-    private static final Generex UUID_GENERATOR = new Generex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}");
+    private static final Random LONG_GENERATOR = new Random();
 
     public String uuid() {
-        return UUID_GENERATOR.random();
+        return UUID.randomUUID().toString();
     }
+
+    public String randomLong() { return String.valueOf(LONG_GENERATOR.nextLong()); }
+
 }
