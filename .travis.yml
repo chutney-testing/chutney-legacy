@@ -1,4 +1,5 @@
 language: java
+os: linux
 sudo: false # faster builds
 
 cache:
@@ -11,13 +12,17 @@ jdk: openjdk8
 
 install: skip
 
+before_script:
+  - export BINDIR=$(pwd) && curl -H 'Cache-Control:no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install.sh | bash
+
 script:
   - export MVN_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression="project.version" -q -DforceStdout)
   - echo "MVN_VERSION ${MVN_VERSION} - TRAVIS_TAG ${TRAVIS_BRANCH} - TRAVIS_BRANCH ${TRAVIS_BRANCH}"
-  - "mvn -B -V verify"
+  - mvn -B -V install
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+  - ([[ -n "$FOSSA_API_KEY" ]]) && (./fossa analyze)
 
 deploy:
 
