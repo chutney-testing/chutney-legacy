@@ -7,10 +7,6 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.google.common.collect.Lists;
 import com.chutneytesting.WebConfiguration;
 import com.chutneytesting.design.domain.compose.ComposableScenario;
 import com.chutneytesting.design.domain.compose.ComposableTestCase;
@@ -19,6 +15,10 @@ import com.chutneytesting.design.domain.compose.Strategy;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.NullNode;
+import com.google.common.collect.Lists;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -31,7 +31,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.groovy.util.Maps;
-import org.assertj.core.api.Assumptions;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -55,7 +54,7 @@ public class ComposableTestCasePreProcessorsIntegrationTest {
         Mockito.when(globalvarRepository.getFlatMap()).thenReturn(map);
 
         ComposableTestCaseLoopPreProcessor loop = new ComposableTestCaseLoopPreProcessor(objectMapper);
-        ComposableTestCaseDataSetPreProcessor dataset = new ComposableTestCaseDataSetPreProcessor(globalvarRepository, objectMapper);
+        ComposableTestCaseDataSetPreProcessor dataset = new ComposableTestCaseDataSetPreProcessor(globalvarRepository);
 
         sut = new TestCasePreProcessors(Lists.newArrayList(loop, dataset));
         legacy = new LegacyComposableTestCasePreProcessor(globalvarRepository, objectMapper);
@@ -193,7 +192,7 @@ public class ComposableTestCasePreProcessorsIntegrationTest {
                     "{\"name\":\"target\",\"value\":\"**target**\"" + "}," +
                     "{\"name\":\"action param\",\"value\":\"hard action value\"}" +
                 "]" +
-            "}";
+             "}";
 
         String stepName = "step name";
         String testCaseTitle = "test case testCaseTitle with parameter %1$s";
@@ -490,7 +489,7 @@ public class ComposableTestCasePreProcessorsIntegrationTest {
                 });
 
                 substeps.add(FunctionalStep.builder()
-                    .withName(replaceParams(functionalStep.name, globalVariable, scopedDataSet) + " - iteration " + (i+1))
+                    .withName(replaceParams(functionalStep.name, globalVariable, scopedDataSet) + " - iteration " + (i + 1))
                     .withSteps(replaceSubStepsParams(functionalStep, data, globalVariable))
                     .withImplementation(functionalStep.implementation.map(v -> replaceParams(v, globalVariable, scopedDataSet)))
                     .overrideDataSetWith(dataset)
