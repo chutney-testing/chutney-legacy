@@ -4,6 +4,7 @@
 .chutney/
 server/conf/
 /backups
+.env/
 
 ######################
 # Chutney persistence dir
