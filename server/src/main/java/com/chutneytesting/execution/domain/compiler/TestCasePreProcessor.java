@@ -5,7 +5,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Comparator;
 import java.util.Map;
-import org.apache.commons.text.StringEscapeUtils;
 
 public interface TestCasePreProcessor<T extends TestCase> {
 
@@ -26,7 +25,7 @@ public interface TestCasePreProcessor<T extends TestCase> {
 
     default String replaceParams(Map<String, String> dataSet, String concreteString) {
         for (Map.Entry<String, String> entry : dataSet.entrySet()) {
-            concreteString = concreteString.replace("**" + entry.getKey() + "**", StringEscapeUtils.escapeJson(entry.getValue()));
+            concreteString = concreteString.replace("**" + entry.getKey() + "**", entry.getValue().replaceAll("[\\n\\r]+", "\\\\n"));
         }
         return concreteString;
     }

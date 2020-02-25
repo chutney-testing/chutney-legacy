@@ -6,8 +6,6 @@ import static java.util.Optional.ofNullable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.chutneytesting.WebConfiguration;
 import com.chutneytesting.design.domain.compose.ComposableScenario;
 import com.chutneytesting.design.domain.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.compose.FunctionalStep;
@@ -26,8 +24,6 @@ import org.mockito.Mockito;
 public class ComposableTestCaseDataSetPreProcessorTest {
 
     private GlobalvarRepository globalvarRepository;
-
-    private ObjectMapper objectMapper = new WebConfiguration().objectMapper();
 
     @Before
     public void setUp() {
@@ -115,7 +111,7 @@ public class ComposableTestCaseDataSetPreProcessorTest {
                 .build(),
             dataSet);
 
-        ComposableTestCaseDataSetPreProcessor sut = new ComposableTestCaseDataSetPreProcessor(globalvarRepository, objectMapper);
+        ComposableTestCaseDataSetPreProcessor sut = new ComposableTestCaseDataSetPreProcessor(globalvarRepository);
         // When
         final ComposableTestCase composableTestCaseProcessed = sut.apply(composableTestCase);
 
