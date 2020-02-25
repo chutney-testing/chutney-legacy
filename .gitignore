@@ -77,7 +77,10 @@ local.properties
 ######################
 # Intellij
 ######################
-.idea/
+**/.idea/*
+!.idea/codeStyleSettings.xml
+!.idea/codeStyles
+!.idea/runConfigurations
 *.iml
 *.iws
 *.ipr
