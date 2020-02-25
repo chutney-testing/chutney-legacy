@@ -14,8 +14,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.chutneytesting.RestExceptionHandler;
+import com.chutneytesting.WebConfiguration;
+import com.chutneytesting.design.api.compose.dto.ImmutableFunctionalStepDto;
 import com.chutneytesting.design.api.compose.dto.ParentsStepDto;
 import com.chutneytesting.design.domain.compose.FunctionalStep;
 import com.chutneytesting.design.domain.compose.FunctionalStepNotFoundException;
@@ -27,6 +28,7 @@ import com.chutneytesting.tools.ImmutablePaginationRequestParametersDto;
 import com.chutneytesting.tools.ImmutableSortRequestParametersDto;
 import com.chutneytesting.tools.PaginationRequestParametersDto;
 import com.chutneytesting.tools.SortRequestParametersDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Arrays;
@@ -54,7 +56,7 @@ public class StepControllerTest {
 
     private MockMvc mockMvc;
 
-    private final ObjectMapper om = new ObjectMapper();
+    private final ObjectMapper om = new WebConfiguration().objectMapper();
 
     @Before
     public void setUp() {
@@ -108,8 +110,7 @@ public class StepControllerTest {
         // Given
         String FSTEP_NAME = "a functional step";
         final List<FunctionalStep> fStepList = Arrays.asList(
-            new FunctionalStep[]{FunctionalStep.builder().withName(FSTEP_NAME).build(), FunctionalStep.builder().withName(FSTEP_NAME).build()}
-        );
+            FunctionalStep.builder().withName(FSTEP_NAME).build(), FunctionalStep.builder().withName(FSTEP_NAME).build());
         when(stepRepository.find(
                 buildPaginationRequestParametersDto(1, 100),
                 buildSortRequestParametersDto("name", "name"),
@@ -257,6 +258,24 @@ public class StepControllerTest {
         assertThat(result.parentScenario().get(0).id()).isEqualTo("1-1");
         assertThat(result.parentSteps().get(0).name()).isEqualTo("Parent step");
         assertThat(result.parentSteps().get(0).id()).isEqualTo("2-2");
+    }
+
+    @Test
+    public void should_save_func_step() throws Exception {
+        // Given
+        String newId = "#12:3";
+        when(stepRepository.save(any())).thenReturn(newId);
+
+        // When
+        MvcResult mvcResult = mockMvc.perform(
+            post(StepController.BASE_URL, "")
+                .contentType(APPLICATION_JSON_UTF8_VALUE)
+                .content(om.writeValueAsString(ImmutableFunctionalStepDto.builder().name("new component").build())))
+            .andExpect(status().isOk())
+            .andReturn();
+
+        // Then
+        assertThat(mvcResult.getResponse().getContentAsString()).isEqualTo("12-3");
     }
 
     private String encodeRecordId(String recordId) {

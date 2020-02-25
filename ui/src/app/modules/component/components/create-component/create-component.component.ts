@@ -350,7 +350,8 @@ export class CreateComponent implements OnInit, OnDestroy {
     private saveComponent(componentTask: ComponentTask) {
         this.componentService.save(componentTask)
             .subscribe(
-                () => {
+                (id) => {
+                    this.editableComponent.id = id;
                     this.refreshComponents();
                     this.showMessage();
                 },
