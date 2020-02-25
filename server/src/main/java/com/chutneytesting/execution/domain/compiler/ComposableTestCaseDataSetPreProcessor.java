@@ -3,7 +3,6 @@ package com.chutneytesting.execution.domain.compiler;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.chutneytesting.design.domain.compose.ComposableScenario;
 import com.chutneytesting.design.domain.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.compose.FunctionalStep;
@@ -14,21 +13,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcessor<ComposableTestCase> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ComposableTestCaseDataSetPreProcessor.class);
-
     private GlobalvarRepository globalvarRepository;
-    private ObjectMapper objectMapper;
 
-    public ComposableTestCaseDataSetPreProcessor(GlobalvarRepository globalvarRepository, ObjectMapper objectMapper) {
+    public ComposableTestCaseDataSetPreProcessor(GlobalvarRepository globalvarRepository) {
         this.globalvarRepository = globalvarRepository;
-        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -87,7 +80,7 @@ public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcess
     }
 
     private Map<String, String> applyOnCurrentStepDataSet(Map<String, String> currentStepDataset, Map<String, String> parentDataset, Map<String, String> globalVariables) {
-        HashMap<String, String> scopedDataset = new HashMap<>();
+        Map<String, String> scopedDataset = new HashMap<>();
         Map<Boolean, List<Map.Entry<String, String>>> splitDataSet = currentStepDataset.entrySet().stream().collect(Collectors.groupingBy(o -> isBlank(o.getValue())));
 
         ofNullable(splitDataSet.get(true))

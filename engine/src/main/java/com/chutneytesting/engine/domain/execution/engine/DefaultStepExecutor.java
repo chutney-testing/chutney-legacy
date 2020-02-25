@@ -21,8 +21,11 @@ import com.chutneytesting.task.spi.injectable.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.LoggerFactory;
 
 public class DefaultStepExecutor implements StepExecutor {
+
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(DefaultStepExecutor.class);
 
     private final TaskTemplateRegistry taskTemplateRegistry;
 
@@ -44,15 +47,13 @@ public class DefaultStepExecutor implements StepExecutor {
                 executionResult = matchedTask.get().create(parameterResolvers).execute();
                 updateStepFromTaskResult(step, executionResult);
                 updateStepContextFromTaskResult(stepContext, executionResult);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
+                LOGGER.error("Cannot execute step: ", e);
                 step.failure("Task [" + type + "] failed: " + ofNullable(e.getMessage()).orElse(e.toString()));
             }
-        }
-        else if (type.isEmpty()) {
+        } else if (type.isEmpty()) {
             step.success();
-        }
-        else {
+        } else {
             step.failure("Task [" + type + "] not found");
         }
 
@@ -66,7 +67,7 @@ public class DefaultStepExecutor implements StepExecutor {
     }
 
     private void updateStepFromTaskResult(Step step, TaskExecutionResult executionResult) {
-        executionResult.outputs.forEach((k, v) ->  step.addInformation("Output: (" + k + ") : (" + v + ")") );
+        executionResult.outputs.forEach((k, v) -> step.addInformation("Output: (" + k + ") : (" + v + ")"));
 
         if (executionResult.status == TaskExecutionResult.Status.Success) {
             step.success();
