@@ -21,6 +21,7 @@
     </properties>
 
     <build>
+        <sourceDirectory>${project.basedir}</sourceDirectory>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -68,12 +69,16 @@
             </plugin>
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <phase>none</phase>
-                    </execution>
-                </executions>
+                <configuration>
+                    <includes>
+                        <include>src/**</include>
+                        <include>angular.json</include>
+                        <include>package.json</include>
+                        <include>package-lock.json</include>
+                        <include>README.md</include>
+                        <include>tsconfig.json</include>
+                    </includes>
+                </configuration>
             </plugin>
         </plugins>
     </build>
