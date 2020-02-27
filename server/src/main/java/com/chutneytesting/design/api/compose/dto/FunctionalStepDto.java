@@ -1,6 +1,5 @@
 package com.chutneytesting.design.api.compose.dto;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.Collections;
@@ -17,8 +16,6 @@ public interface FunctionalStepDto {
 
     Comparator<FunctionalStepDto> stepDtoComparator = Comparator
         .comparing(FunctionalStepDto::name, String.CASE_INSENSITIVE_ORDER);
-
-    ObjectMapper om = new ObjectMapper();
 
     Optional<String> id();
 

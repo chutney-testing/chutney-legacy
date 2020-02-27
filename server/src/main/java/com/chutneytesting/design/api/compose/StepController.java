@@ -1,5 +1,6 @@
 package com.chutneytesting.design.api.compose;
 
+import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.toFrontId;
 import static com.chutneytesting.design.api.compose.mapper.FunctionalStepMapper.fromDto;
 import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.fromFrontId;
 
@@ -41,8 +42,8 @@ public class StepController {
     }
 
     @PostMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void save(@RequestBody FunctionalStepDto step) {
-        stepRepository.save(fromDto(step));
+    public String save(@RequestBody FunctionalStepDto step) {
+        return toFrontId(stepRepository.save(fromDto(step)));
     }
 
     @PostMapping(path = "/delete")
