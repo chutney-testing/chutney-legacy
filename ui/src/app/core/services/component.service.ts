@@ -58,10 +58,11 @@ export class ComponentService {
             }));
     }
 
-    save(component: ComponentTask): Observable<Object> {
+    save(component: ComponentTask): Observable<any> {
         return this.httpClient.post(
             environment.backend + this.stepUrl,
-            this.mapToComponentTaskDto(component));
+            this.mapToComponentTaskDto(component), {responseType: 'text'}
+        );
     }
 
     delete(id: string): Observable<Object> {
