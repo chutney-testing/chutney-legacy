@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="start_local_server" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="com.chutneytesting.ServerBootstrap" />
+    <module name="local-dev" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
