@@ -49,3 +49,7 @@ deploy:
       all_branches: true
       tags: true
       condition: $MVN_VERSION = $TRAVIS_TAG
+
+notifications:
+  webhooks:
+    - secure: wPl1oR5onxqCJdw4hpe66t1X+j45/qyzXzG5MeD63y8OTRTI+5UQVoBALLfTBvz+9SXNgHc23A/QK13PIbo/NL56ROpkQ+v78ZkOgHUBzZ2GNsWEnnT0lpxavUjSGe2vAx9d+vnhMDnknltpjsZqMBAO/RAJetGKkPTbNE8jrLBuud3JDP7xjbx/hjBKbk99YZ8/xNW1o3JLf6n4g+BPpmEuQNQ5XES21D2DFlQxkhWkzWksgimlodNH4DojDewEHcHoVIveqv9dXJ6qMtsJ972rLJy3K/vhKf+VM7FgURqNiWx3UBE31pgNgQ5bjrGGncRkf+CezEm1viOQo7ro7qromwhmoQvyLRewKbwvqnDlx5b445jUIfBc3f1HtGe87KWJiDC8c37zhqjorJyElJKFQZ81RVW8gLFuI/YXmR+goc00zVjQwr/fAeLMIoNgf6V/ZStNv9OmaayfHV5pSxidtASm8+ZdmX14QYAp5teTgP7B9nzUtSJKn3RYAm7KlrnoEb4pIrhJiKiYXlthQ2QigrYXNOasRkCVQH9+pd8IKsYVN7J8dT+ec84mgsAijMDSiAm4U5GnGkV4GEbxxy75sv99QnQKqz9Z3pE1Nhqy1zKGA48anQ4+68YcOey0mH2jb+8VacyG4qX3ejVa7UxX9rsy2ppEROS5aj17Q7g=
