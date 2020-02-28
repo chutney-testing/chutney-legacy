@@ -19,7 +19,6 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import org.assertj.core.util.Lists;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class FakeCampaignRepository implements CampaignRepository {
 
@@ -112,7 +111,7 @@ public class FakeCampaignRepository implements CampaignRepository {
 
     @Override
     public CampaignExecutionReport findByExecutionId(Long campaignExecutionId) {
-        throw new NotImplementedException();
+        throw new RuntimeException("Not yet implemented");
     }
 
     @Override

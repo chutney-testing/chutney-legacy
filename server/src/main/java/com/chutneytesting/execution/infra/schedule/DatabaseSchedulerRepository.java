@@ -1,5 +1,6 @@
 package com.chutneytesting.execution.infra.schedule;
 
+import com.chutneytesting.design.domain.campaign.Campaign;
 import com.google.common.collect.ImmutableMap;
 import com.chutneytesting.execution.domain.schedule.SchedulerRepository;
 import java.sql.ResultSet;
@@ -49,7 +50,7 @@ public class DatabaseSchedulerRepository implements SchedulerRepository {
         public Pair<Long, LocalTime> mapRow(ResultSet rs, int rowNum) throws SQLException {
             final Long id = rs.getLong("ID");
             final String scheduledTime = rs.getString("SCHEDULE_TIME");
-            return Pair.of(id, LocalTime.parse(scheduledTime));
+            return Pair.of(id, LocalTime.parse(scheduledTime, Campaign.formatter));
         }
     }
 }

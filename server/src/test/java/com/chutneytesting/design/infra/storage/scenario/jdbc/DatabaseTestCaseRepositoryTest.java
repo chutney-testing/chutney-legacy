@@ -1,11 +1,10 @@
 package com.chutneytesting.design.infra.storage.scenario.jdbc;
 
+import static java.time.temporal.ChronoUnit.MILLIS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.mock;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableMap;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.gwt.GwtScenario;
@@ -13,6 +12,8 @@ import com.chutneytesting.design.domain.scenario.gwt.GwtStep;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import com.chutneytesting.instrument.domain.Metrics;
 import com.chutneytesting.tests.AbstractLocalDatabaseTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,7 +32,7 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
         .withVersion("v1.0")
         .withId("0")
         .withTitle("")
-        .withCreationDate(Instant.now())
+        .withCreationDate(Instant.now().truncatedTo(MILLIS))
         .withDescription("")
         .withTags(Collections.emptyList())
         .withDataSet(Collections.emptyMap())
@@ -64,7 +65,7 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
     @Test
     public void should_retrieve_all_data_of_saved_testCase() {
         // Given: a scenarioTemplate in the repository
-        Instant expectedTime = Instant.now();
+        Instant expectedTime = Instant.now().truncatedTo(MILLIS);
         TestCaseData aTestCase = TestCaseDataMapper.toDto(GwtTestCase.builder()
             .withMetadata(TestCaseMetadataImpl.builder()
                 .withTitle("A Purpose")

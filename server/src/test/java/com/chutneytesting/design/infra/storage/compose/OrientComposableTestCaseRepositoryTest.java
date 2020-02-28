@@ -16,6 +16,7 @@ import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB;
 import com.chutneytesting.tests.AbstractOrientDatabaseTest;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -218,7 +219,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
         assertThat(composableTestCaseFound.id).isEqualTo(testCaseId);
         assertThat(composableTestCaseFound.metadata.title()).isEqualTo(composableTestCase.metadata.title());
         assertThat(composableTestCaseFound.metadata.description()).isEqualTo(composableTestCase.metadata.description());
-        assertThat(composableTestCaseFound.metadata.creationDate()).isEqualTo(composableTestCase.metadata.creationDate());
+        assertThat(composableTestCaseFound.metadata.creationDate()).isEqualTo(composableTestCase.metadata.creationDate().truncatedTo(ChronoUnit.MILLIS));
         assertThat(composableTestCaseFound.metadata.tags()).containsExactly("tag1", "tag2");
         assertThat(composableTestCaseFound.composableScenario.functionalSteps)
             .containsExactly(FuncStepRefScenarioInstance, FuncStepRefParentScenarioInstance);

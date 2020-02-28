@@ -1,14 +1,16 @@
 package com.chutneytesting.design.infra.storage.scenario.jdbc;
 
 import static com.chutneytesting.design.domain.scenario.TestCaseRepository.DEFAULT_REPOSITORY_SOURCE;
+import static java.time.temporal.ChronoUnit.MILLIS;
 
+import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
+import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.design.infra.storage.scenario.DelegateScenarioRepository;
+import com.chutneytesting.instrument.domain.Metrics;
+import com.chutneytesting.tools.Try;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
-import com.chutneytesting.design.infra.storage.scenario.DelegateScenarioRepository;
-import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
-import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
-import com.chutneytesting.instrument.domain.Metrics;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,7 +20,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import com.chutneytesting.tools.Try;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -127,7 +128,7 @@ public class DatabaseTestCaseRepository implements DelegateScenarioRepository {
                 .withTitle(title)
                 .withDescription(description)
                 .withTags(tags)
-                .withCreationDate(creationDate != null ? creationDate.toInstant() : Instant.now())
+                .withCreationDate(creationDate != null ? creationDate.toInstant() : Instant.now().truncatedTo(MILLIS))
                 .build();
         }
     }
@@ -156,7 +157,7 @@ public class DatabaseTestCaseRepository implements DelegateScenarioRepository {
             }).runtime();
 
             Timestamp creationDate = rs.getTimestamp("CREATION_DATE");
-            testCaseDataBuilder.withCreationDate(creationDate != null ? creationDate.toInstant() : Instant.now());
+            testCaseDataBuilder.withCreationDate(creationDate != null ? creationDate.toInstant() : Instant.now().truncatedTo(MILLIS));
             return testCaseDataBuilder.build();
         }
     }

@@ -8,7 +8,7 @@ cache:
   - "$TRAVIS_BUILD_DIR/ui/node/"
   - "$TRAVIS_BUILD_DIR/ui/node_modules/"
 
-jdk: openjdk8
+jdk: openjdk11
 
 install: skip
 

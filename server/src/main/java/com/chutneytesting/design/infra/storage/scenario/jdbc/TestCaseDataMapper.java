@@ -8,7 +8,7 @@ import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import com.chutneytesting.design.domain.scenario.raw.RawTestCase;
 import com.chutneytesting.execution.domain.compiler.GwtScenarioMarshaller;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 
 public class TestCaseDataMapper { // TODO - test me more
 
@@ -33,7 +33,7 @@ public class TestCaseDataMapper { // TODO - test me more
             case "v1.0": return fromV1_0(testCaseData);
             case "v2.0": return fromV2_0(testCaseData);
             case "v2.1": return fromV2_1(testCaseData);
-            case "git" : return fromGit(testCaseData);
+            case "git" : return fromGit();
             default:
                 throw new RuntimeException("Cannot deserialize test case [" + testCaseData.id + "], unknown version [" + testCaseData.version + "]");
         }
@@ -77,8 +77,8 @@ public class TestCaseDataMapper { // TODO - test me more
             .build();
     }
 
-    private static TestCase fromGit(TestCaseData testCaseData) {
-        throw new NotImplementedException();
+    private static TestCase fromGit() {
+        throw new NotImplementedException("");
     }
 
 }

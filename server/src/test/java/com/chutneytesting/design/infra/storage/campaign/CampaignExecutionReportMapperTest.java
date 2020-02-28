@@ -1,5 +1,6 @@
 package com.chutneytesting.design.infra.storage.campaign;
 
+import static java.time.temporal.ChronoUnit.MILLIS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -19,21 +20,21 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 public class CampaignExecutionReportMapperTest {
+    
     private CampaignExecutionReportMapper sut;
     private ExecutionHistoryRepository scenarioExecutionHistoryRepository;
+    private long campaignExecutionId = 3;
+    private String scenarioId = "4";
+    private long scenarioExecutionId = 5;
+    private LocalDateTime started = LocalDateTime.now().truncatedTo(MILLIS);
+    private long duration = 6;
+    private ServerReportStatus status = ServerReportStatus.SUCCESS;
 
     @Before
     public void setUp() {
         scenarioExecutionHistoryRepository = Mockito.mock(ExecutionHistoryRepository.class);
         sut = new CampaignExecutionReportMapper();
     }
-
-    private long campaignExecutionId = 3;
-    private String scenarioId = "4";
-    private long scenarioExecutionId = 5;
-    private LocalDateTime started = LocalDateTime.now();
-    private long duration = 6;
-    private ServerReportStatus status = ServerReportStatus.SUCCESS;
 
     @Test
     public void extractDataWithOneScenarioExecution() throws SQLException {
