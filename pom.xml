@@ -109,7 +109,7 @@
         <sshd.version>1.6.0</sshd.version>
         <eddsa.version>0.2.0</eddsa.version>
         <activemq.version>5.15.0</activemq.version>
-        <rabbitmq-mock.version>1.0.4</rabbitmq-mock.version>
+        <rabbitmq-mock.version>1.0.14</rabbitmq-mock.version>
         <wire-mock.version>2.19.0</wire-mock.version>
         <pitest.version>1.4.9</pitest.version>
         <pitest-cucumber.version>0.8</pitest-cucumber.version>
