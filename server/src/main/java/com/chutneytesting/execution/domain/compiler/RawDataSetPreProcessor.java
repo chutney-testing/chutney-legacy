@@ -15,11 +15,6 @@ public class RawDataSetPreProcessor implements TestCasePreProcessor<RawTestCase>
     }
 
     @Override
-    public int order() {
-        return 0;
-    }
-
-    @Override
     public RawTestCase apply(RawTestCase testCase) {
         return RawTestCase.builder()
             .withMetadata(testCase.metadata)

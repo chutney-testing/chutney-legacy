@@ -1,10 +1,10 @@
 package com.chutneytesting.execution.domain.compiler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.chutneytesting.design.domain.compose.ComposableScenario;
 import com.chutneytesting.design.domain.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.compose.FunctionalStep;
 import com.chutneytesting.design.domain.compose.Strategy;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -17,10 +17,8 @@ import java.util.stream.Stream;
 import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
-@Component
-public class ComposableTestCaseLoopPreProcessor implements TestCasePreProcessor<ComposableTestCase> {
+class ComposableTestCaseLoopPreProcessor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ComposableTestCaseLoopPreProcessor.class);
 
@@ -28,17 +26,11 @@ public class ComposableTestCaseLoopPreProcessor implements TestCasePreProcessor<
 
     private Pattern aliasPattern = Pattern.compile("^\\*\\*(.+)\\*\\*$");
 
-    public ComposableTestCaseLoopPreProcessor(ObjectMapper objectMapper) {
+    ComposableTestCaseLoopPreProcessor(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
-    @Override
-    public int order() {
-        return 11;
-    }
-
-    @Override
-    public ComposableTestCase apply(ComposableTestCase testCase) {
+    ComposableTestCase apply(ComposableTestCase testCase) {
         return new ComposableTestCase(
             testCase.id,
             testCase.metadata,

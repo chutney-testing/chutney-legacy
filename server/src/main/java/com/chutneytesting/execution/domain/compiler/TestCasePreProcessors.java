@@ -9,7 +9,6 @@ public class TestCasePreProcessors {
     private final List<TestCasePreProcessor> processors;
 
     public TestCasePreProcessors(List<TestCasePreProcessor> processors) {
-        processors.sort(new TestCasePreProcessor.PreProcessorComparator());
         this.processors = Collections.unmodifiableList(processors);
     }
 

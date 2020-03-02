@@ -3,15 +3,12 @@ package com.chutneytesting.execution.domain.compiler;
 import com.chutneytesting.design.domain.scenario.TestCase;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Comparator;
 import java.util.Map;
 import java.util.function.Function;
 
 public interface TestCasePreProcessor<T extends TestCase> {
 
     T apply(T testCase);
-
-    int order();
 
     default boolean test(T testCase) {
         Type type = ((ParameterizedType) getClass().getGenericInterfaces()[0]).getActualTypeArguments()[0];
@@ -36,9 +33,4 @@ public interface TestCasePreProcessor<T extends TestCase> {
         return stringReplaced;
     }
 
-    class PreProcessorComparator implements Comparator<TestCasePreProcessor> {
-        public int compare(TestCasePreProcessor a, TestCasePreProcessor b) {
-            return b.order() - a.order();
-        }
-    }
 }
