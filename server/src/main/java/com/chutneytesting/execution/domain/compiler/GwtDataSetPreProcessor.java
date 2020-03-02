@@ -19,11 +19,6 @@ public class GwtDataSetPreProcessor implements TestCasePreProcessor<GwtTestCase>
     }
 
     @Override
-    public int order() {
-        return 10;
-    }
-
-    @Override
     public GwtTestCase apply(GwtTestCase testCase) {
         return GwtTestCase.builder()
             .withMetadata(testCase.metadata)
