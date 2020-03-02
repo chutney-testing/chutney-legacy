@@ -6,6 +6,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import com.chutneytesting.design.domain.compose.ComposableScenario;
 import com.chutneytesting.design.domain.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.compose.FunctionalStep;
+import com.chutneytesting.design.domain.compose.Strategy;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
@@ -13,20 +14,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.springframework.stereotype.Component;
 
-@Component
 public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcessor<ComposableTestCase> {
 
     private GlobalvarRepository globalvarRepository;
 
-    public ComposableTestCaseDataSetPreProcessor(GlobalvarRepository globalvarRepository) {
+    ComposableTestCaseDataSetPreProcessor(GlobalvarRepository globalvarRepository) {
         this.globalvarRepository = globalvarRepository;
     }
 
     @Override
     public int order() {
-        return 10;
+        return -1;
     }
 
     @Override
@@ -73,10 +72,16 @@ public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcess
             .withImplementation(functionalStep.implementation.map(v -> replaceParams(v, globalvarRepository.getFlatMap(), scopedDataset)));
 
         parentStepBuilder
-            .withStrategy(functionalStep.strategy)
+            .withStrategy(applyToStrategy(functionalStep.strategy, scopedDataset, globalVariable))
             .overrideDataSetWith(scopedDataset);
 
         return parentStepBuilder.build();
+    }
+
+    private Strategy applyToStrategy(Strategy strategy, Map<String, String> scopedDataset, Map<String, String> globalVariable) {
+        Map<String, Object> parameters = new HashMap<>();
+        strategy.parameters.forEach((key, value) -> parameters.put(key, replaceParams(value.toString(), scopedDataset, globalVariable)));
+        return new Strategy(strategy.type, parameters);
     }
 
     private Map<String, String> applyOnCurrentStepDataSet(Map<String, String> currentStepDataset, Map<String, String> parentDataset, Map<String, String> globalVariables) {

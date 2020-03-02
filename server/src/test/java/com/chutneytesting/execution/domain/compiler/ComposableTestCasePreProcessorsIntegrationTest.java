@@ -40,10 +40,10 @@ import org.slf4j.LoggerFactory;
 public class ComposableTestCasePreProcessorsIntegrationTest {
 
     private GlobalvarRepository globalvarRepository;
-
     private ObjectMapper objectMapper = new WebConfiguration().objectMapper();
-    LegacyComposableTestCasePreProcessor legacy;
-    TestCasePreProcessors sut;
+
+    private LegacyComposableTestCasePreProcessor legacy;
+    private ComposableTestCasePreProcessor sut;
 
     @Before
     public void setUp() {
@@ -53,10 +53,8 @@ public class ComposableTestCasePreProcessorsIntegrationTest {
         map.put("key.2", "value2");
         Mockito.when(globalvarRepository.getFlatMap()).thenReturn(map);
 
-        ComposableTestCaseLoopPreProcessor loop = new ComposableTestCaseLoopPreProcessor(objectMapper);
-        ComposableTestCaseDataSetPreProcessor dataset = new ComposableTestCaseDataSetPreProcessor(globalvarRepository);
+        sut = new ComposableTestCasePreProcessor(objectMapper, globalvarRepository);
 
-        sut = new TestCasePreProcessors(Lists.newArrayList(loop, dataset));
         legacy = new LegacyComposableTestCasePreProcessor(globalvarRepository, objectMapper);
     }
 
@@ -371,7 +369,6 @@ public class ComposableTestCasePreProcessorsIntegrationTest {
         );
     }
 
-
     private class LegacyComposableTestCasePreProcessor implements TestCasePreProcessor<ComposableTestCase> {
 
         private final Logger LOGGER = LoggerFactory.getLogger(LegacyComposableTestCasePreProcessor.class);
@@ -523,6 +520,5 @@ public class ComposableTestCasePreProcessorsIntegrationTest {
 
         }
     }
-
 
 }

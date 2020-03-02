@@ -30,9 +30,34 @@ public class ComposableTestCaseLoopPreProcessorTest {
         Strategy strategy = new Strategy("Loop", singletonMap("data", "[{\"P\":\"zog_zog\"}]"));
 
         FunctionalStep step = FunctionalStep.builder()
-            .withId("42")
-            .withName("fake_name")
             .overrideDataSetWith(parameter)
+            .withStrategy(strategy)
+            .build();
+
+        ComposableScenario composableScenario = ComposableScenario.builder()
+            .withFunctionalSteps(singletonList(step))
+            .build();
+
+        ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+
+        // When
+        ComposableTestCase actual = sut.apply(composableTestCase);
+
+        // Then
+        assertThat(actual.composableScenario.functionalSteps).hasSize(1);
+        assertThat(actual.composableScenario.functionalSteps.get(0).steps).hasSize(1);
+        assertThat(actual.composableScenario.functionalSteps.get(0).steps.get(0).dataSet).containsEntry("P", "zog_zog");
+    }
+
+    @Test
+    public void should_create_one_iteration_and_set_parameter_value_to_zogzog_When_component_has_no_parameter() {
+        ComposableTestCaseLoopPreProcessor sut = new ComposableTestCaseLoopPreProcessor(objectMapper);
+
+        // Given
+        Strategy strategy = new Strategy("Loop", singletonMap("data", "[{\"P\":\"zog_zog\"}]"));
+
+        FunctionalStep step = FunctionalStep.builder()
+            .overrideDataSetWith(emptyMap())
             .withStrategy(strategy)
             .build();
 
@@ -60,8 +85,6 @@ public class ComposableTestCaseLoopPreProcessorTest {
         Strategy strategy = new Strategy("Loop", emptyMap());
 
         FunctionalStep step = FunctionalStep.builder()
-            .withId("42")
-            .withName("fake_name")
             .overrideDataSetWith(parameter)
             .withStrategy(strategy)
             .build();
@@ -90,8 +113,6 @@ public class ComposableTestCaseLoopPreProcessorTest {
         Strategy strategy = new Strategy("Loop", singletonMap("data", "[{\"P\":\"zog_zog\"}]"));
 
         FunctionalStep step = FunctionalStep.builder()
-            .withId("42")
-            .withName("fake_name")
             .overrideDataSetWith(parameter)
             .withStrategy(strategy)
             .build();
@@ -120,8 +141,6 @@ public class ComposableTestCaseLoopPreProcessorTest {
         Strategy strategy = new Strategy("Loop", singletonMap("data", "[{\"X\":\"zog_zog\"}]"));
 
         FunctionalStep step = FunctionalStep.builder()
-            .withId("42")
-            .withName("fake_name")
             .overrideDataSetWith(parameter)
             .withStrategy(strategy)
             .build();
@@ -151,8 +170,6 @@ public class ComposableTestCaseLoopPreProcessorTest {
         Strategy strategy = new Strategy("Loop", singletonMap("data", "[{\"P\":\"dabu\"},{\"P\":\"zog_zog\"} ]"));
 
         FunctionalStep step = FunctionalStep.builder()
-            .withId("42")
-            .withName("fake_name")
             .overrideDataSetWith(parameter)
             .withStrategy(strategy)
             .build();
@@ -182,8 +199,6 @@ public class ComposableTestCaseLoopPreProcessorTest {
         Strategy strategy = new Strategy("Loop", singletonMap("data", "[ {\"P_1\":\"dabu\",\"P_2\":\"zog_zog\"}, {\"P_2\":\"goz_goz\"} ]"));
 
         FunctionalStep step = FunctionalStep.builder()
-            .withId("42")
-            .withName("fake_name")
             .overrideDataSetWith(parameter)
             .withStrategy(strategy)
             .build();
