@@ -11,8 +11,8 @@ public class NamedHostAndPort {
 
     public NamedHostAndPort(String name, String host, int port) {
         this.name = Optional.ofNullable(name).orElseThrow(() -> new IllegalArgumentException("Name should not be null"));
-        this.host = Optional.ofNullable(host).orElseThrow(() -> new IllegalArgumentException("Host should not be null"));;
-        this.port = Optional.ofNullable(port).orElseThrow(() -> new IllegalArgumentException("Port should not be null"));;
+        this.host = Optional.ofNullable(host).orElseThrow(() -> new IllegalArgumentException("Host should not be null"));
+        this.port = Optional.ofNullable(port).orElseThrow(() -> new IllegalArgumentException("Port should not be null"));
     }
 
     public String name() {
