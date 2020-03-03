@@ -17,7 +17,7 @@ public class UrlSlicerTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void urlWrapper_build_with_invalid_url() throws Exception {
+    public void urlWrapper_build_with_invalid_url() {
         new UrlSlicer("invalid url:12");
     }
 
@@ -42,6 +42,5 @@ public class UrlSlicerTest {
             "jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(host=somehost)(PORT=12))"
         };
     }
-
 
 }
