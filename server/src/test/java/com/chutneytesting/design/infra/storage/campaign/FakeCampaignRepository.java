@@ -3,13 +3,12 @@ package com.chutneytesting.design.infra.storage.campaign;
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.util.Lists.newArrayList;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import com.chutneytesting.design.domain.campaign.Campaign;
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
 import com.chutneytesting.design.domain.campaign.CampaignNotFoundException;
 import com.chutneytesting.design.domain.campaign.CampaignRepository;
-import java.util.Arrays;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;

@@ -1,7 +1,6 @@
 package com.chutneytesting.execution.api;
 
 import static com.chutneytesting.design.api.campaign.dto.CampaignExecutionReportMapper.toDto;
-import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.fromFrontId;
 
 import com.chutneytesting.design.api.campaign.dto.CampaignExecutionReportDto;
 import com.chutneytesting.design.api.campaign.dto.CampaignExecutionReportMapper;

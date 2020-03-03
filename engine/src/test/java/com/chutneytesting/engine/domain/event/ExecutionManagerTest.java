@@ -2,14 +2,12 @@ package com.chutneytesting.engine.domain.event;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import com.chutneytesting.engine.domain.execution.ExecutionManager;
 import com.chutneytesting.engine.domain.execution.RxBus;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.event.StartScenarioExecutionEvent;
-import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
 import org.junit.Before;
 import org.junit.Test;
 

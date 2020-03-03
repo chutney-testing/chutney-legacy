@@ -3,7 +3,6 @@ package com.chutneytesting.design.infra.storage.campaign;
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.google.common.collect.Lists;
 import com.chutneytesting.design.domain.campaign.Campaign;
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
 import com.chutneytesting.design.domain.campaign.ScenarioExecutionReportCampaign;
@@ -11,6 +10,7 @@ import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.tests.AbstractLocalDatabaseTest;
+import com.google.common.collect.Lists;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collections;

@@ -7,7 +7,6 @@ import com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper;
 import com.chutneytesting.design.domain.campaign.Campaign;
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
 import java.time.LocalTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
