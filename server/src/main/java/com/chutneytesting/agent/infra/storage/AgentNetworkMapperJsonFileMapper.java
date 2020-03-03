@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
@@ -71,20 +70,6 @@ public class AgentNetworkMapperJsonFileMapper {
             .configuration(configuration.build())
             .agentGraph(new AgentGraph(agents))
             .build();
-    }
-
-    private Iterable<Target> getTargets(Collection<AgentForJsonFile> agents, List<Target> targets) {
-        return agents.stream()
-            .flatMap(agent -> agent.reachableTargetIds.stream())
-            .map(targetId -> targets.stream()
-                .filter(target -> target.name.equals(targetId.name))
-                .findAny())
-            .collect(Collectors.toList())
-            // If name does not match in environment, fuck it !!
-            .stream()
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .collect(Collectors.toList());
     }
 
     private List<Agent> fromDto(Collection<AgentForJsonFile> dtos) {
