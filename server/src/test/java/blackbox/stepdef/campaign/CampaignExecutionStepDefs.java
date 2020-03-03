@@ -149,9 +149,9 @@ public class CampaignExecutionStepDefs {
     private void executeCampaign(CampaignDto campaign, String typeExecution) {
         try {
             RestRequestBuilder requestBuilder = secureRestClient.request();
-            if (typeExecution.equals("byName")) {
+            if ("byName".equals(typeExecution)) {
                 requestBuilder.withUrl(CAMPAIGN_EXECUTION_NAME_URL + campaign.getTitle());
-            } else if (typeExecution.equals("Surefire")) {
+            } else if ("Surefire".equals(typeExecution)) {
                 requestBuilder.withUrl(CAMPAIGN_EXECUTION_NAME_URL + campaign.getTitle() + "/surefire");
             } else {
                 requestBuilder.withUrl(CAMPAIGN_EXECUTION_ID_URL + campaign.getId());

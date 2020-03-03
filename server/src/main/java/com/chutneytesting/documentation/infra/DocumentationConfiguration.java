@@ -43,10 +43,10 @@ public class DocumentationConfiguration {
 
                 String scheme = resource.toURI().getScheme();
 
-                if (scheme.equals("jar")) {
+                if ("jar".equals(scheme)) {
                     examples = getFromFatJar();
                 }
-                else if (scheme.equals("file")) {
+                else if ("file".equals(scheme)) {
                     examples = getFromFileSystem();
                 }
                 else {

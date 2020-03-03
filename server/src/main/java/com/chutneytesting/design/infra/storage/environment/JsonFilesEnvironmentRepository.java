@@ -85,7 +85,7 @@ class JsonFilesEnvironmentRepository implements EnvironmentRepository {
     }
 
     private boolean isNotAgentConfigurationFile(Path path) {
-        return !path.getFileName().toString().equals("endpoints.json");
+        return !"endpoints.json".equals(path.getFileName().toString());
     }
 
     private boolean isJsonFile(Path path) {
