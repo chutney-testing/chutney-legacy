@@ -2,21 +2,17 @@ package com.chutneytesting.task.sql;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.chutneytesting.task.TestLogger;
+import com.chutneytesting.task.TestTarget;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
-import com.chutneytesting.task.TestLogger;
-import com.chutneytesting.task.TestTarget;
 import com.chutneytesting.task.sql.core.Records;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
@@ -33,9 +29,6 @@ public class SqlTaskTest {
 
     private Logger logger = new TestLogger();
 
-    @Captor
-    private ArgumentCaptor<Map<String, Records>> recordsCaptor;
-
     @Before
     public void setUp() {
         new EmbeddedDatabaseBuilder()
@@ -50,7 +43,7 @@ public class SqlTaskTest {
     }
 
     @Test
-    public void testExecute() throws Exception {
+    public void testExecute() {
         Object[] firstTuple = {1, "laitue", "laitue@fake.com"};
         Object[] secondTuple = {2, "carotte", "kakarot@fake.db"};
 
