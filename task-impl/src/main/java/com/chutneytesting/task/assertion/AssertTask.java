@@ -23,7 +23,7 @@ public class AssertTask implements Task {
     @Override
     @SuppressWarnings("unchecked")
     public TaskExecutionResult execute() {
-        boolean result = asserts.stream().map(l -> l.entrySet().stream()
+        boolean result = asserts.stream().allMatch(l -> l.entrySet().stream()
             .map(e -> {
                 if (e.getKey().equals("assert-true")) {
                     if (e.getValue()) {
@@ -38,7 +38,7 @@ public class AssertTask implements Task {
                 }
             })
             .allMatch(r -> r == true)
-        ).allMatch(r -> r == true);
+        );
         return result ? TaskExecutionResult.ok() : TaskExecutionResult.ko();
     }
 }
