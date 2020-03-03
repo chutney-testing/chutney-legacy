@@ -175,7 +175,7 @@ public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabas
     public void should_truncate_report_info_and_error_on_save_or_update() {
         final String tooLongString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede.";
 
-        Execution execution = executionHistoryRepository.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, tooLongString, tooLongString));
+        executionHistoryRepository.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, tooLongString, tooLongString));
 
         assertThat(executionHistoryRepository.getExecutions("1").get(0).info().get())
             .hasSize(512);

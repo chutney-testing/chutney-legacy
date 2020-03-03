@@ -25,12 +25,9 @@ import org.mockito.ArgumentCaptor;
 
 public class JmsSenderTaskTest {
 
-
     @Test
     public void should_send_jms_message_to_destination() throws NamingException {
 
-
-        Map<String, Object> data = new HashMap<>();
         String body = "builder";
         String destination = "testD";
         Map<String, String> headers = new HashMap<>();
@@ -50,11 +47,10 @@ public class JmsSenderTaskTest {
         assertThat(info.getValue()).contains("sent message").contains("testD");
     }
 
-    private void configureServer(Target targetMock) throws NamingException {
+    private void configureServer(Target targetMock) {
         Map<String, String> props = new HashMap<>();
         props.put(Context.INITIAL_CONTEXT_FACTORY, MockRunnerInitialContextFactory.class.getName());
         when(targetMock.properties()).thenReturn(props);
-//        when(serverInfoMock.getBrokerInfo().getConnectionFactoryName()).thenReturn("java:/ConnectionFactory");
         when(targetMock.url()).thenReturn("unused URL");
     }
 
@@ -69,7 +65,7 @@ public class JmsSenderTaskTest {
         }
 
         @Override
-        public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
+        public Context getInitialContext(Hashtable<?, ?> environment) {
             return context;
         }
     }
