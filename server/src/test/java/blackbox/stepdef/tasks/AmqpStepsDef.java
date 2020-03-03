@@ -11,15 +11,13 @@ import org.springframework.core.io.ClassPathResource;
 
 public class AmqpStepsDef {
 
-    private static final String INITIAL_CONFIGURATION = "/blackbox/qpid.json";
-
     private SystemLauncher systemLauncher;
 
     public AmqpStepsDef() {
     }
 
     @After
-    public void destroy() throws Exception {
+    public void destroy() {
         if (systemLauncher != null) {
             systemLauncher.shutdown();
         }
