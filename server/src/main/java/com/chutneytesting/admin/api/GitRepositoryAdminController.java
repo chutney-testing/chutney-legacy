@@ -65,7 +65,9 @@ public class GitRepositoryAdminController {
     }
 
     public static class GitRepositoryDto {
-        public final String url, name, sourceDirectory;
+        public final String url;
+        public final String name;
+        public final String sourceDirectory;
         public final Long id;
 
         public GitRepositoryDto(Long id, String url, String name, String sourceDirectory) {
