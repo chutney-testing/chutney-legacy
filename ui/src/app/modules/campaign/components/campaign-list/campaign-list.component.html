@@ -18,18 +18,22 @@
             <table class="table table-striped table-hover">
                 <tbody>
                     <tr *ngFor="let campaign of (campaigns | searchTextPipe : campaignFilter:['title','description'])">
-                        <td>
+                        <td class="small_text w95">
                              <a [routerLink]="['/campaign',campaign.id,'execution']" title="{{ 'campaigns.list.item.title.link.title' | translate }} {{campaign.title}}">{{campaign.title}}</a>
                         </td>
-                        <td>
-                            <small [ngClass]="{'text-muted':campaign.description,'text-warning': !campaign.description}">{{campaign.description || ('campaigns.list.item.description.none' | translate) }}</small>
+                        <td class="pl-0 w1">
+                            <button type="button" class="btn btn-link mr-0"
+                                ngbPopover="{{campaign.description}}" placement="left"
+                                triggers="mouseenter:mouseleave" container="body">
+                                <span class="fa fa-info-circle" aria-hidden="true"></span>
+                            </button>
                         </td>
-                        <td>
+                        <td class="pl-0 w2">
                             <button type="button" class="btn btn-outline-danger" (click)="deleteCampaign(campaign.id, campaign.title)">
                                 <span class="fa fa-trash"></span>
                             </button>
                         </td>
-                        <td>
+                        <td class="pl-0 w2">
                             <button type="button" class="btn btn-light" (click)="editCampaign(campaign)">
                                 <span class="fa fa-pencil-alt"></span>
                             </button>
@@ -47,13 +51,13 @@
         <div class="table-responsive" *ngIf="campaigns.length > 0">
             <table class="table table-striped">
                 <tbody>
-                    <tr *ngFor="let report of lastCampaignReports">
-                        <td>{{ report.startDate | amDateFormat: 'DD MMM. YYYY HH:mm' }}</td>
-                        <td>{{ report.campaignName }}</td>
-                        <td class="text-center">
+                    <tr *ngFor="let report of lastCampaignReports" class="small_text">
+                        <td class="w25">{{ report.startDate | amDateFormat: 'DD MMM. YYYY HH:mm' }}</td>
+                        <td class="pl-0 w60">{{ report.campaignName }}</td>
+                        <td class="pl-0 w5">
                             <chutney-execution-badge [status]="report.status" [spin]="true"></chutney-execution-badge>
                         </td>
-                        <td class="text-center">{{ report.duration | duration:'short'}}</td>
+                        <td class="text-center pl-0 w10">{{ report.duration | duration:'short'}}</td>
                     </tr>
                 </tbody>
             </table>
