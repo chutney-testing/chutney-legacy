@@ -39,7 +39,6 @@ class MicrometerMetrics implements Metrics {
         scenarioTotal = registerScenarioCountGauge("any", "any");
         failedScenarios = registerScenarioCountGauge("any", "failure");
         successfulScenarios = registerScenarioCountGauge("any", "success");
-        ;
 
         executionTotalTimer = this.meterRegistry.timer("execution_count", Collections.singleton(new ImmutableTag("status", "all")));
         executionOkTimer = this.meterRegistry.timer("execution_count", Collections.singleton(new ImmutableTag("status", "success")));
