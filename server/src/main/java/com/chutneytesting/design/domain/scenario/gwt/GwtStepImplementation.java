@@ -24,7 +24,7 @@ public class GwtStepImplementation {
         this.target = ofNullable(target).orElse("");
         this.inputs = ofNullable(inputs).map(Collections::unmodifiableMap).orElse(emptyMap());
         this.outputs = ofNullable(outputs).map(Collections::unmodifiableMap).orElse(emptyMap());
-        this.xRef = ofNullable(xRef).orElse("");;
+        this.xRef = ofNullable(xRef).orElse("");
     }
 
     @Override

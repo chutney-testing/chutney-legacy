@@ -158,7 +158,7 @@ public class StepTest {
 
         StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, inputs, null, null);
         Step step = new Step(dataEvaluator, fakeStepDefinition, Optional.of(mockTarget), mock(StepExecutor.class), Lists.emptyList());
-        ;
+
         ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
 
         // When
