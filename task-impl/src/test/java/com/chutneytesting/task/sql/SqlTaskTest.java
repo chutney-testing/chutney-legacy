@@ -54,7 +54,6 @@ public class SqlTaskTest {
         Object[] firstTuple = {1, "laitue", "laitue@fake.com"};
         Object[] secondTuple = {2, "carotte", "kakarot@fake.db"};
 
-        Map<String, Object> data = new HashMap<>();
         Task task = new SqlTask(sqlTarget, logger, Arrays.asList("select * from users"));
         TaskExecutionResult result = task.execute();
 

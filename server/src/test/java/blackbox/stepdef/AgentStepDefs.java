@@ -57,7 +57,7 @@ public class AgentStepDefs {
         localAgent.reachableTargets = Collections.emptyList();
         networkDescription.agentsGraph.agents.add(localAgent);
 
-        final ResponseEntity<String> responseConfiguration = restClient.defaultRequest()
+        restClient.defaultRequest()
             .withUrl("/api/v1/agentnetwork/wrapup")
             .withBody(networkDescription)
             .post(String.class);

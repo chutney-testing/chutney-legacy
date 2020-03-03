@@ -258,8 +258,7 @@ public class ComposableTestCasePreProcessorsIntegrationTest {
             dataSet);
 
         final ComposableTestCase composableTestCaseProcessed = sut.apply(composableTestCase);
-        final ComposableTestCase nugget = legacy.apply(composableTestCase);
-
+        //final ComposableTestCase nugget = legacy.apply(composableTestCase);
         //Assumptions.assumeThat(composableTestCaseProcessed).isEqualToComparingFieldByFieldRecursively(nugget);
 
         // Then
