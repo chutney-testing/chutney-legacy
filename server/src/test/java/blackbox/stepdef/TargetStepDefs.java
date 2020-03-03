@@ -43,7 +43,7 @@ public class TargetStepDefs {
         final ResponseEntity<String> test = restClient.defaultRequest()
             .withUrl("/api/v2/environment/")
             .get();
-        if (test.getBody().equals("[]")) {
+        if ("[]".equals(test.getBody())) {
             restClient.defaultRequest()
                 .withUrl("/api/v2/environment/")
                 .withBody(EnvironmentMetadataDto.from(Environment.builder().withName("GLOBAL").build()))

@@ -421,7 +421,7 @@ public class ComposableTestCasePreProcessorsIntegrationTest {
         private FunctionalStep applyToFunctionalStep(FunctionalStep functionalStep, Map<String, String> dataSet, Map<String, String> globalVariable) {
             Map<String, String> scopedDataSet = applyToDataSet(functionalStep.dataSet, dataSet, globalVariable);
             List<FunctionalStep> subSteps = functionalStep.steps;
-            boolean hasLoopStrategy = functionalStep.strategy.type.equals("Loop");
+            boolean hasLoopStrategy = "Loop".equals(functionalStep.strategy.type);
 
             // Generate steps for loop strategy
             if (hasLoopStrategy) {
