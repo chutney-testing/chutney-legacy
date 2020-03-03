@@ -4,8 +4,6 @@ import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.chutneytesting.WebConfiguration;
 import com.chutneytesting.design.api.scenario.v2_0.mapper.GwtScenarioMapper;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
@@ -26,8 +24,6 @@ import org.mockito.Mockito;
 public class DataSetPreProcessorTest {
 
     private GlobalvarRepository globalvarRepository;
-
-    private ObjectMapper objectMapper = new WebConfiguration().objectMapper();
 
     @Before
     public void setUp() {
