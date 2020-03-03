@@ -4,11 +4,10 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.chutneytesting.design.domain.campaign.Campaign;
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
 import com.chutneytesting.design.domain.campaign.ScenarioExecutionReportCampaign;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import java.util.HashMap;
 import java.util.List;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
