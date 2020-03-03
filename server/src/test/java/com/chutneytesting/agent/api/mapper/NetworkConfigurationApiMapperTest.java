@@ -56,8 +56,8 @@ public class NetworkConfigurationApiMapperTest {
         assertThat(networkConfiguration.creationDate()).isEqualTo(dto.creationDate);
         Set<NamedHostAndPort> agentInfos = networkConfiguration.agentNetworkConfiguration().agentInfos();
         assertThat(agentInfos).hasSize(1);
-        assertThat(agentInfos).haveExactly(1, new Condition<>(agentInfo -> agentInfo.name().equals("name"), "agent with name"));
-        assertThat(agentInfos).haveExactly(1, new Condition<>(agentInfo -> agentInfo.host().equals("host"), "agent with host"));
+        assertThat(agentInfos).haveExactly(1, new Condition<>(agentInfo -> "name".equals(agentInfo.name()), "agent with name"));
+        assertThat(agentInfos).haveExactly(1, new Condition<>(agentInfo -> "host".equals(agentInfo.host()), "agent with host"));
         assertThat(agentInfos).haveExactly(1, new Condition<>(agentInfo -> agentInfo.port() == 1000, "agent with port 1000"));
 
         Set<Environment> env = networkConfiguration.environmentConfiguration().environments();
@@ -122,8 +122,8 @@ public class NetworkConfigurationApiMapperTest {
         assertThat(dto.creationDate).isEqualTo(networkConfiguration.creationDate());
         assertThat(dto.agentNetworkConfiguration).hasSize(1);
         assertThat(dto.agentNetworkConfiguration).haveExactly(1, new Condition<>(agentInfoDto ->
-            agentInfoDto.name.equals("name") &&
-                agentInfoDto.host.equals("host") &&
+            "name".equals(agentInfoDto.name) &&
+                "host".equals(agentInfoDto.host) &&
                 agentInfoDto.port == 1000,
             "right agent"));
 

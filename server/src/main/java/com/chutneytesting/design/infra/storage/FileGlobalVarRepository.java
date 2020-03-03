@@ -144,7 +144,7 @@ public class FileGlobalVarRepository implements GlobalvarRepository {
             Iterator<Map.Entry<String, JsonNode>> iter = objectNode.fields();
             while (iter.hasNext()) {
                 Map.Entry<String, JsonNode> entry = iter.next();
-                if (!entry.getKey().equals("alias")) {
+                if (!"alias".equals(entry.getKey())) {
                     addKeys(pathPrefix + entry.getKey(), entry.getValue(), accumulator);
                 }
             }
@@ -163,7 +163,7 @@ public class FileGlobalVarRepository implements GlobalvarRepository {
         final Iterator<Map.Entry<String, JsonNode>> iter = objectNode.fields();
         while (iter.hasNext()) {
             Map.Entry<String, JsonNode> entry = iter.next();
-            if (entry.getKey().equals("alias")) {
+            if ("alias".equals(entry.getKey())) {
                 return entry.getValue().asText() + ".";
             }
         }

@@ -50,7 +50,7 @@ public class HttpClientTest {
     static {
         //for localhost testing only
         javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier(
-            (hostname, sslSession) -> hostname.equals("localhost"));
+            (hostname, sslSession) -> "localhost".equals(hostname));
     }
 
     @Before

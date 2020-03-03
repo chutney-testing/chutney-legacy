@@ -36,18 +36,18 @@ public class ExploreResultApiMapperTest {
         ExploreResultApiDto dto = exploreResultApiMapper.from(exploreResult);
 
         assertThat(dto.agentLinks).haveExactly(1, new Condition<>(
-            link -> link.source.equals("A") && link.destination.equals("B"),
+            link -> "A".equals(link.source) && "B".equals(link.destination),
             "A->B"));
         assertThat(dto.agentLinks).haveExactly(1, new Condition<>(
-            link -> link.source.equals("B") && link.destination.equals("A"),
+            link -> "B".equals(link.source) && "A".equals(link.destination),
             "B->A"));
 
         assertThat(dto.targetLinks).haveExactly(1, new Condition<>(
-            link -> link.source.equals("A") && link.destination.name.equals("s1"),
+            link -> "A".equals(link.source) && "s1".equals(link.destination.name),
             "A -> e1|s1"));
 
         assertThat(dto.targetLinks).haveExactly(1, new Condition<>(
-            link -> link.source.equals("B") && link.destination.name.equals("s2"),
+            link -> "B".equals(link.source) && "s2".equals(link.destination.name),
             "B -> e1|s2"));
     }
 
@@ -69,20 +69,20 @@ public class ExploreResultApiMapperTest {
 
         assertThat(exploreResult.agentLinks()).hasSize(3);
         assertThat(exploreResult.agentLinks()).haveExactly(1, new Condition<>(
-            link -> link.source().name().equals("local") && link.destination().name().equals("A"),
+            link -> "local".equals(link.source().name()) && "A".equals(link.destination().name()),
             "local->A"));
         assertThat(exploreResult.agentLinks()).haveExactly(1, new Condition<>(
-            link -> link.source().name().equals("A") && link.destination().name().equals("B"),
+            link -> "A".equals(link.source().name()) && "B".equals(link.destination().name()),
             "A->B"));
         assertThat(exploreResult.agentLinks()).haveExactly(1, new Condition<>(
-            link -> link.source().name().equals("B") && link.destination().name().equals("A"),
+            link -> "B".equals(link.source().name()) && "A".equals(link.destination().name()),
             "B->A"));
 
         assertThat(exploreResult.targetLinks()).haveExactly(1, new Condition<>(
-            link -> link.source().name().equals("A") && link.destination().name.equals("s1"),
+            link -> "A".equals(link.source().name()) && "s1".equals(link.destination().name),
             "B->A"));
         assertThat(exploreResult.targetLinks()).haveExactly(1, new Condition<>(
-            link -> link.source().name().equals("B") && link.destination().name.equals("s1"),
+            link -> "B".equals(link.source().name()) && "s1".equals(link.destination().name),
             "B->A"));
     }
 }

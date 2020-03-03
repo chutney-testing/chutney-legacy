@@ -25,7 +25,7 @@ public class AssertTask implements Task {
     public TaskExecutionResult execute() {
         boolean result = asserts.stream().allMatch(l -> l.entrySet().stream()
             .map(e -> {
-                if (e.getKey().equals("assert-true")) {
+                if ("assert-true".equals(e.getKey())) {
                     if (e.getValue()) {
                         logger.info("assert ok");
                         return true;

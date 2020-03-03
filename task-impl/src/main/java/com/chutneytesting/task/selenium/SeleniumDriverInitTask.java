@@ -38,7 +38,7 @@ public class SeleniumDriverInitTask implements Task {
 
     @Override
     public TaskExecutionResult execute() {
-        WebDriver webDriver = (browser != null && browser.equals("Internet Explorer")) ? createInternetExplorerWebDriver() : createFirefoxWebDriver();
+        WebDriver webDriver = ("Internet Explorer".equals(browser)) ? createInternetExplorerWebDriver() : createFirefoxWebDriver();
         configureWebDriver(webDriver);
         logger.info("WebDriver created : " + webDriver);
         createQuitFinallyAction(webDriver);
