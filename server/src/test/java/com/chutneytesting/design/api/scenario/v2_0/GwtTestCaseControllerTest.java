@@ -139,8 +139,6 @@ public class GwtTestCaseControllerTest {
         assertThat(actual.getValue().metadata.title).isEqualTo("__titre__");
         assertThat(actual.getValue().metadata.description).isEqualTo("__description__");
 
-        String ls = System.lineSeparator();
-
         GwtTestCase expected = GwtTestCase.builder()
             .withMetadata(TestCaseMetadataImpl.builder()
                 .withTitle("__titre__")
