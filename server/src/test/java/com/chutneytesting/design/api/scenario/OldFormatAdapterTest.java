@@ -21,7 +21,7 @@ public class OldFormatAdapterTest {
     private ObjectMapper objectMapper;
 
     @Before
-    public void setup() {
+    public void setUp() {
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new Jdk8Module())
             .registerModule(new JavaTimeModule());
