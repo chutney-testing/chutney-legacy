@@ -39,7 +39,7 @@ class CampaignExecutionReportMapper implements ResultSetExtractor<List<CampaignE
             String executionEnvironment = resultset.getString("EXECUTION_ENVIRONMENT");
             Long campaignId = resultset.getLong("CAMPAIGN_ID");
             try {
-                ScenarioExecutionReportCampaign scenarioExecutionReport = readScenarioExecutionReport(resultset, scenarioId, scenarioName, partialExecution);
+                ScenarioExecutionReportCampaign scenarioExecutionReport = readScenarioExecutionReport(resultset, scenarioId, scenarioName);
                 scenarioByCampaignId.putIfAbsent(campaignExecutionId, Lists.newArrayList());
                 campaignExecutionReportByCampaignId.putIfAbsent(campaignExecutionId, new CampaignExecutionHolder(campaignExecutionId, title, partialExecution, executionEnvironment, campaignId));
                 scenarioByCampaignId.get(campaignExecutionId).add(scenarioExecutionReport);
@@ -55,7 +55,7 @@ class CampaignExecutionReportMapper implements ResultSetExtractor<List<CampaignE
             }).collect(Collectors.toList());
     }
 
-    private ScenarioExecutionReportCampaign readScenarioExecutionReport(ResultSet resultset, String scenarioId, String scenarioName, boolean partialExecution) throws SQLException, ReportNotFoundException {
+    private ScenarioExecutionReportCampaign readScenarioExecutionReport(ResultSet resultset, String scenarioId, String scenarioName) throws SQLException, ReportNotFoundException {
         ExecutionHistory.ExecutionSummary execution = mapExecutionWithoutReport(resultset);
         return new ScenarioExecutionReportCampaign(scenarioId, scenarioName, execution);
     }
