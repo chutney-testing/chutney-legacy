@@ -12,10 +12,9 @@ import { Campaign } from '@model';
     templateUrl: './scenario-campaigns.component.html',
     styleUrls: ['./scenario-campaigns.component.scss']
 })
-export class ScenarioCampaignsComponent extends CanDeactivatePage implements OnInit, OnDestroy {
+export class ScenarioCampaignsComponent implements OnInit, OnDestroy {
 
     @Input() idScenario: string;
-    modificationsSaved = false;
     exampleParams$: BehaviorSubject<any> = new BehaviorSubject<any>({});
     errorMessage: any;
     campaignsForScenario: Array<Campaign> = [];
@@ -28,7 +27,6 @@ export class ScenarioCampaignsComponent extends CanDeactivatePage implements OnI
                 private route: ActivatedRoute,
                 private eventManager: EventManagerService
     ) {
-        super();
     }
 
     ngOnInit() {
@@ -40,10 +38,6 @@ export class ScenarioCampaignsComponent extends CanDeactivatePage implements OnI
     ngOnDestroy() {
         this.exampleParams$.unsubscribe();
         this.eventManager.destroy(this.routeParamsSubscription);
-    }
-
-    canDeactivatePage(): boolean {
-        return this.modificationsSaved
     }
 
     load(id) {
@@ -59,5 +53,4 @@ export class ScenarioCampaignsComponent extends CanDeactivatePage implements OnI
             );
         }
     }
-
 }
