@@ -10,7 +10,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.chutneytesting.RestExceptionHandler;
 import com.chutneytesting.WebConfiguration;
 import com.chutneytesting.design.api.campaign.dto.CampaignDto;
@@ -27,7 +26,7 @@ import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.design.infra.storage.campaign.FakeCampaignRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
-import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
@@ -70,7 +69,7 @@ public class CampaignControllerTest {
 
         composableTestCaseRepository = mock(ComposableTestCaseRepository.class);
         testCaseRepository = mock(TestCaseRepository.class);
-        CampaignController campaignController = new CampaignController(testCaseRepository, composableTestCaseRepository, repository, campaignExecutionEngine, mock(ExecutionHistoryRepository.class));
+        CampaignController campaignController = new CampaignController(testCaseRepository, composableTestCaseRepository, repository, campaignExecutionEngine);
         mockMvc = MockMvcBuilders.standaloneSetup(campaignController)
             .setControllerAdvice(new RestExceptionHandler())
             .build();

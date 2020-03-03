@@ -17,7 +17,6 @@ import com.chutneytesting.design.domain.campaign.CampaignRepository;
 import com.chutneytesting.design.domain.compose.ComposableTestCaseRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
-import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,7 +24,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.http.MediaType;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,7 +47,7 @@ public class CampaignController {
     public CampaignController(TestCaseRepository testCaseRepository,
                               ComposableTestCaseRepository composableTestCaseRepository,
                               CampaignRepository campaignRepository,
-                              CampaignExecutionEngine campaignExecutionEngine, ExecutionHistoryRepository executionHistoryRepository) {
+                              CampaignExecutionEngine campaignExecutionEngine) {
         this.testCaseRepository = testCaseRepository;
         this.composableTestCaseRepository = composableTestCaseRepository;
         this.campaignRepository = campaignRepository;

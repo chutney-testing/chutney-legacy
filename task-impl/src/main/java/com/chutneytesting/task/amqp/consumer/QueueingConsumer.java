@@ -90,7 +90,7 @@ public class QueueingConsumer {
     }
 
     private void cancelCallback(String consumerTag) {
-        //do nothing
+        // do nothing
     }
 
     public static class Result {
