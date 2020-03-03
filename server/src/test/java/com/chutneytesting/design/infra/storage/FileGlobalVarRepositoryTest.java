@@ -25,7 +25,7 @@ public class FileGlobalVarRepositoryTest {
     private FileGlobalVarRepository sut;
 
     @After
-    public void teardown() throws IOException {
+    public void tearDown() throws IOException {
         Files.walk(Paths.get(STORE_PATH + "/global_var"))
             .filter(Files::isRegularFile)
             .forEach(ThrowingConsumer.toUnchecked(Files::delete));
