@@ -17,7 +17,7 @@ import { DragulaService } from 'ng2-dragula';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { ComponentService } from '@core/services';
 import { distinct, flatMap } from '@shared/tools';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { EventManagerService } from '@shared';
 
 @Component({
@@ -72,6 +72,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         private translate: TranslateService,
         private route: ActivatedRoute,
         private eventManager: EventManagerService,
+        private router: Router
     ) {
     }
 
@@ -190,7 +191,7 @@ export class CreateComponent implements OnInit, OnDestroy {
             this.componentTasksCreated = [];
             this.actionToEdit = componentToEdit;
         }
-        window.history.replaceState({}, '', `/#/component/${componentToEdit.id}`);
+        this.router.navigateByUrl(`/component/${componentToEdit.id}`);
     }
 
     save() {
