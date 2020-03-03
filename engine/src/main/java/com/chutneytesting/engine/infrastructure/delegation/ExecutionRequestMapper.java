@@ -6,10 +6,8 @@ import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepStrategyDefinitionRequestDto;
 import com.chutneytesting.engine.api.execution.TargetDto;
-import com.chutneytesting.engine.domain.environment.Target;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 class ExecutionRequestMapper {

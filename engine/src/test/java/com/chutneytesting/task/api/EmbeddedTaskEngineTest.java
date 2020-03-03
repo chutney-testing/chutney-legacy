@@ -1,13 +1,13 @@
 package com.chutneytesting.task.api;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import com.google.common.collect.Lists;
 import com.chutneytesting.task.domain.TaskTemplate;
 import com.chutneytesting.task.domain.TaskTemplateParserV2;
 import com.chutneytesting.task.domain.TaskTemplateRegistry;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
+import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.Optional;
 import org.junit.Before;

@@ -1,11 +1,11 @@
 package com.chutneytesting.engine.domain.environment;
 
-import static com.chutneytesting.engine.domain.environment.SecurityInfo.*;
+import static com.chutneytesting.engine.domain.environment.SecurityInfo.builder;
 
+import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
