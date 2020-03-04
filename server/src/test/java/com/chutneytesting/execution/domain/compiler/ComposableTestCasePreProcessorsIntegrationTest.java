@@ -382,11 +382,6 @@ public class ComposableTestCasePreProcessorsIntegrationTest {
         }
 
         @Override
-        public int order() {
-            return 10;
-        }
-
-        @Override
         public ComposableTestCase apply(ComposableTestCase testCase) {
             Map<String, String> globalVariable = globalvarRepository.getFlatMap();
             return new ComposableTestCase(

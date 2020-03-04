@@ -17,11 +17,6 @@ public class ComposableTestCasePreProcessor implements TestCasePreProcessor<Comp
     }
 
     @Override
-    public int order() {
-        return 10;
-    }
-
-    @Override
     public ComposableTestCase apply(ComposableTestCase testCase) {
         return dataSetPreProcessor.apply(loopPreProcessor.apply(dataSetPreProcessor.apply(testCase)));
     }

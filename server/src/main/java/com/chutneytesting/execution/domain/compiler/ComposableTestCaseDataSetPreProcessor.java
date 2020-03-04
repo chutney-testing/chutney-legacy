@@ -24,11 +24,6 @@ public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcess
     }
 
     @Override
-    public int order() {
-        return -1;
-    }
-
-    @Override
     public ComposableTestCase apply(ComposableTestCase testCase) {
         Map<String, String> globalVariable = globalvarRepository.getFlatMap();
         return new ComposableTestCase(
