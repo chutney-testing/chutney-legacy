@@ -1,0 +1,19 @@
+{
+    "name": "sleep for **seconds to wait for** seconds",
+    "usage": null,
+    "task": "{\"identifier\":\"success\",\"target\":\"\",\"hasTarget\":false,\"mapInputs\":[],\"listInputs\":[],\"inputs\":[{\"name\":\"duration\",\"value\":\"**seconds to wait for**\"}],\"outputs\":[]}",
+    "steps": [],
+    "parameters": [
+        {
+            "key": "seconds to wait for",
+            "value": "1"
+        }
+    ],
+    "strategy": {
+        "type": "Default",
+        "parameters": {
+        }
+    },
+    "dataSet": [],
+    "tags": []
+}

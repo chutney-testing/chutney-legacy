@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import blackbox.assertion.Assertions;
 import blackbox.restclient.RestClient;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.slf4j.Logger;
@@ -18,18 +16,16 @@ public class ScenarioExecutionRequestStepDefs {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScenarioExecutionRequestStepDefs.class);
 
     private static final String EXECUTE_SCENARIO_URL = "/api/ui/scenario/execution/v1";
+    private static final String EXECUTE_COMPONENT_URL = "/api/ui/component/execution/v1";
 
     private final TestContext context;
     private final RestClient secureRestClient;
 
-    private ObjectMapper objectMapper;
     public static final String ENV = "GLOBAL";
 
     public ScenarioExecutionRequestStepDefs(TestContext context, RestClient secureRestClient) {
         this.context = context;
         this.secureRestClient = secureRestClient;
-        objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new Jdk8Module());
     }
 
     @When("^last saved scenario is executed")
@@ -48,8 +44,9 @@ public class ScenarioExecutionRequestStepDefs {
     }
 
     private ResponseEntity<String> executeScenario() {
+        String lastScenarioId = context.getLastScenarioId();
         return secureRestClient.defaultRequest()
-            .withUrl(EXECUTE_SCENARIO_URL + "/" + context.getLastScenarioId() + "/" + ENV)
+            .withUrl((isComponentId(lastScenarioId) ? EXECUTE_COMPONENT_URL : EXECUTE_SCENARIO_URL) + "/" + lastScenarioId + "/" + ENV)
             .withBody("{}")
             .post(String.class);
     }
@@ -102,5 +99,9 @@ public class ScenarioExecutionRequestStepDefs {
         LOGGER.debug("Execution report : \n" + lastExecutionReport);
         Assertions.assertThatJson(lastExecutionReport)
             .hasPathEqualsTo(path, value);
+    }
+
+    private boolean isComponentId(String lastScenarioId) {
+        return lastScenarioId.indexOf("-") > 0;
     }
 }

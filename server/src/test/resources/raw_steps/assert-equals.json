@@ -1,0 +1,23 @@
+{
+    "name": "Asssert [**actual**] equals [**expected**]",
+    "usage": null,
+    "task": "{\"identifier\":\"compare\",\"target\":\"\",\"hasTarget\":false,\"mapInputs\":[],\"listInputs\":[],\"inputs\":[{\"name\":\"actual\",\"value\":\"**actual**\"},{\"name\":\"expected\",\"value\":\"**expected**\"},{\"name\":\"mode\",\"value\":\"equals\"}],\"outputs\":[]}",
+    "steps": [],
+    "parameters": [
+        {
+            "key": "actual",
+            "value": ""
+        },
+        {
+            "key": "expected",
+            "value": ""
+        }
+    ],
+    "strategy": {
+        "type": "Default",
+        "parameters": {
+        }
+    },
+    "dataSet": [],
+    "tags": []
+}

@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -70,7 +71,7 @@ public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcess
                     .map(f -> applyToFunctionalStep(f, scopedDataset, globalVariable))
                     .collect(Collectors.toList())
             )
-            .withImplementation(functionalStep.implementation.map(v -> replaceParams(v, globalvarRepository.getFlatMap(), scopedDataset)));
+            .withImplementation(functionalStep.implementation.map(v -> replaceParams(v, globalvarRepository.getFlatMap(), scopedDataset, StringEscapeUtils::escapeJson)));
 
         parentStepBuilder
             .withStrategy(functionalStep.strategy)

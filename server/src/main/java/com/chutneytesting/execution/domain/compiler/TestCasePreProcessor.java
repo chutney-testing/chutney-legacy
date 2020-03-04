@@ -5,6 +5,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.function.Function;
 
 public interface TestCasePreProcessor<T extends TestCase> {
 
@@ -18,16 +19,21 @@ public interface TestCasePreProcessor<T extends TestCase> {
     }
 
     default String replaceParams(String parameterizedString, Map<String, String> globalDataSet, Map<String, String> dataSet) {
-        String concreteString = parameterizedString;
-        concreteString = replaceParams(dataSet, concreteString);
-        return replaceParams(globalDataSet, concreteString);
+        String concreteString = replaceParams(dataSet, parameterizedString, Function.identity());
+        return replaceParams(globalDataSet, concreteString, Function.identity());
     }
 
-    default String replaceParams(Map<String, String> dataSet, String concreteString) {
+    default String replaceParams(String parameterizedString, Map<String, String> globalDataSet, Map<String, String> dataSet, Function<String, String> escapeValueFunction) {
+        String concreteString = replaceParams(dataSet, parameterizedString, escapeValueFunction);
+        return replaceParams(globalDataSet, concreteString, escapeValueFunction);
+    }
+
+    default String replaceParams(Map<String, String> dataSet, String concreteString, Function<String, String> escapeValueFunction) {
+        String stringReplaced = concreteString;
         for (Map.Entry<String, String> entry : dataSet.entrySet()) {
-            concreteString = concreteString.replace("**" + entry.getKey() + "**", entry.getValue().replaceAll("[\\n\\r]+", "\\\\n"));
+            stringReplaced = stringReplaced.replace("**" + entry.getKey() + "**", escapeValueFunction.apply(entry.getValue()));
         }
-        return concreteString;
+        return stringReplaced;
     }
 
     class PreProcessorComparator implements Comparator<TestCasePreProcessor> {

@@ -1,0 +1,23 @@
+{
+    "name": "success with **param no default** and **param with default**",
+    "usage": null,
+    "task": "{\"identifier\":\"success\",\"target\":\"\",\"hasTarget\":false,\"mapInputs\":[],\"listInputs\":[],\"inputs\":[],\"outputs\":[]}",
+    "steps": [],
+    "parameters": [
+        {
+            "key": "param no default",
+            "value": ""
+        },
+        {
+            "key": "param with default",
+            "value": "sucess default value"
+        }
+    ],
+    "strategy": {
+        "type": "Default",
+        "parameters": {
+        }
+    },
+    "dataSet": [],
+    "tags": []
+}

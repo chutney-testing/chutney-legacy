@@ -6,14 +6,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import blackbox.restclient.RestClient;
 import blackbox.stepdef.TestContext;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.google.common.io.Resources;
-import cucumber.api.java.en.But;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
 import com.chutneytesting.design.api.scenario.v2_0.dto.GwtScenarioDto;
 import com.chutneytesting.design.api.scenario.v2_0.dto.GwtTestCaseDto;
 import com.chutneytesting.design.api.scenario.v2_0.dto.ImmutableGwtTestCaseDto;
@@ -24,13 +16,20 @@ import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import com.chutneytesting.design.infra.storage.scenario.jdbc.DatabaseTestCaseRepository;
 import com.chutneytesting.design.infra.storage.scenario.jdbc.TestCaseData;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.google.common.io.Resources;
+import cucumber.api.java.en.But;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.charset.Charset;
-import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.Optional;
+import org.apache.commons.text.StringEscapeUtils;
 import org.assertj.core.util.Files;
 import org.hjson.JsonValue;
 import org.springframework.http.ResponseEntity;
@@ -57,58 +56,20 @@ public class EditionStepDef {
             .registerModule(new JavaTimeModule());
     }
 
-    private String getScenarioContent(String fileName) {
-        return Files.contentOf(new File(Resources.getResource("raw_scenarios/"+ fileName).getPath()), Charset.forName("UTF-8"));
-    }
-
     @Given("^this scenario is saved")
     public void savedScenario(String scenarioJSonRequest) throws Throwable {
         String jsonContent = JsonValue.readHjson(scenarioJSonRequest).toString();
         jsonContent = context.replaceVariables(jsonContent);
 
         RawTestCaseDto rawTestCase = objectMapper.readValue(jsonContent, RawTestCaseDto.class);
-
-        final ResponseEntity<String> response = secureRestClient.defaultRequest()
-            .withUrl(RAW_SCENARIO_URL)
-            .withBody(rawTestCase)
-            .post(String.class);
-
-        context.putScenarioId(response.getBody());
+        saveTestCase(RAW_SCENARIO_URL, rawTestCase);
     }
 
-    @Given("^a valid test case with a dataset$")
-    public void aValidTestCaseWithADataset() throws Throwable {
-        URL resource = this.getClass().getResource("/raw_testcases/testcase-with-dataset.json");
-        String exampleWithDataSet = new String(java.nio.file.Files.readAllBytes(Paths.get(resource.toURI())));
-        GwtTestCaseDto gwtTestCase = objectMapper.readValue(exampleWithDataSet, GwtTestCaseDto.class);
-
-        final ResponseEntity<String> response = secureRestClient.defaultRequest()
-            .withUrl(GWT_SCENARIO_URL)
-            .withBody(gwtTestCase)
-            .post(String.class);
-
-        context.putScenarioId(response.getBody());
-    }
-
-    @Given("a valid test case with a parameter")
-    public void aValidTestCaseWithAParameter() throws Throwable {
-        URL resource = this.getClass().getResource("/raw_testcases/testcase-with-parameters.json");
-        String exampleWithDataSet = new String(java.nio.file.Files.readAllBytes(Paths.get(resource.toURI())));
-        GwtTestCaseDto gwtTestCase = objectMapper.readValue(exampleWithDataSet, GwtTestCaseDto.class);
-
-        final ResponseEntity<String> response = secureRestClient.defaultRequest()
-            .withUrl(GWT_SCENARIO_URL)
-            .withBody(gwtTestCase)
-            .post(String.class);
-
-        context.putScenarioId(response.getBody());
-    }
-
-    @Given("global variables defined")
-    public void aGlobalVarWithMultilineValue() {
+    @Given("global variables defined in (.*)")
+    public void aGlobalVarWithMultilineValue(String globalVarName) {
         secureRestClient.defaultRequest()
-            .withUrl("/api/ui/globalvar/v1/file_name")
-            .withBody("{\"message\":\"single_line: one_line\\nmulti_line:\\n  '''\\n  My half empty glass,\\n  I will fill your empty half.\\n  Now you are half full.\\n  '''\"}")
+            .withUrl("/api/ui/globalvar/v1/" + globalVarName)
+            .withBody("{\"message\": \"" + StringEscapeUtils.escapeJson(fileContent("raw_global_vars/" + globalVarName + ".hjson")) + "\"}")
             .post();
     }
 
@@ -131,6 +92,18 @@ public class EditionStepDef {
         context.putScenarioId(id);
     }
 
+    @Given("^an existing testcase (.*) written in old format$")
+    public void anWholeExistingScenarioWrittenInFormatVersion(String scenarioFileName) throws IOException {
+        TestCaseData testCaseData = objectMapper.readValue(getScenarioContent(scenarioFileName), TestCaseData.class);
+        String id = infraRepo.save(testCaseData);
+        context.putScenarioId(id);
+    }
+
+    @Given("^a testcase (.*) written with GWT form$")
+    public void savingAWholeTestCaseWithAScenarioWrittenWithGWTForm(String testCaseFileName) {
+        saveTestCase(GWT_SCENARIO_URL, getScenarioContent(testCaseFileName));
+    }
+
     @Given("^saving a test case with a (.*) written with GWT form$")
     public void savingATestCaseWithAScenarioWrittenWithGWTForm(String scenarioFileName) throws IOException {
         String serializeScenario = getScenarioContent(scenarioFileName);
@@ -142,12 +115,7 @@ public class EditionStepDef {
             .scenario(gwtTestCaseDto)
             .build();
 
-        final ResponseEntity<String> response = secureRestClient.defaultRequest()
-            .withUrl(GWT_SCENARIO_URL)
-            .withBody(gwtTestCase)
-            .post(String.class);
-
-        context.putScenarioId(response.getBody());
+        saveTestCase(GWT_SCENARIO_URL, gwtTestCase);
     }
 
     @When("^saving a test case with a raw (.*) written in an old format$")
@@ -158,12 +126,7 @@ public class EditionStepDef {
             .content(getScenarioContent(scenarioFileName))
             .build();
 
-        final ResponseEntity<String> response = secureRestClient.defaultRequest()
-            .withUrl(RAW_SCENARIO_URL)
-            .withBody(rawTestCase)
-            .post(String.class);
-
-        context.putScenarioId(response.getBody());
+        saveTestCase(RAW_SCENARIO_URL, rawTestCase);
     }
 
     @When("^it is retrieved$")
@@ -213,12 +176,12 @@ public class EditionStepDef {
 
         // GET GWT
         GwtTestCaseDto gwtTestCaseDto = objectMapper.readValue(getLastAsGwt(), GwtTestCaseDto.class);
-        assertThat(gwtTestCaseDto.scenario().givens().get(0).implementation().get().task().replaceAll("\\s+","")).as("from GWT")
+        assertThat(gwtTestCaseDto.scenario().givens().get(0).implementation().get().task().replaceAll("\\s+", "")).as("from GWT")
             .isEqualToIgnoringWhitespace(expectedHJSONTask);
 
         // GET RAW
         RawTestCaseDto rawTestCaseDto = objectMapper.readValue(getLastAsRaw(), RawTestCaseDto.class);
-        assertThat(rawTestCaseDto.content().replaceAll("\\s+","")).as("from RAW")
+        assertThat(rawTestCaseDto.content().replaceAll("\\s+", "")).as("from RAW")
             .contains(expectedHJSONTask);
 
     }
@@ -237,6 +200,23 @@ public class EditionStepDef {
             .get();
 
         return gwt_response.getBody();
+    }
+
+    private String getScenarioContent(String fileName) {
+        return fileContent("raw_scenarios/" + fileName);
+    }
+
+    private String fileContent(String resourcePath) {
+        return Files.contentOf(new File(Resources.getResource(resourcePath).getPath()), Charset.forName("UTF-8"));
+    }
+
+    private void saveTestCase(String endpoint, Object testCase) {
+        final ResponseEntity<String> response = secureRestClient.defaultRequest()
+            .withUrl(endpoint)
+            .withBody(testCase)
+            .post(String.class);
+
+        context.putScenarioId(response.getBody());
     }
 
 }
