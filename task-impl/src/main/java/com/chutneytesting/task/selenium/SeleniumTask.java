@@ -7,7 +7,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 
-abstract class SeleniumTask implements Task {
+public abstract class SeleniumTask implements Task {
 
     protected final Logger logger;
     protected final WebDriver webDriver;
@@ -17,7 +17,7 @@ abstract class SeleniumTask implements Task {
         this.webDriver = webDriver;
     }
 
-    abstract TaskExecutionResult executeSeleniumTask();
+    protected abstract TaskExecutionResult executeSeleniumTask();
 
     @Override
     public final TaskExecutionResult execute() {
@@ -30,7 +30,7 @@ abstract class SeleniumTask implements Task {
         }
     }
 
-    void takeScreenShot() {
+    protected void takeScreenShot() {
         try {
             String screenShot = ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BASE64);
             logger.error("data:image/png;base64," + screenShot);

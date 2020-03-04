@@ -16,7 +16,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
 
-interface SeleniumFindBehavior {
+public interface SeleniumFindBehavior {
 
     default Optional<WebElement> findElement(Logger logger, WebDriver webDriver, String selector, String by, Integer wait) {
         Optional<By> webElementBy = by(webDriver, selector, by);

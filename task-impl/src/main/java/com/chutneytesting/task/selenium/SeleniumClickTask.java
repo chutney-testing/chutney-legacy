@@ -34,7 +34,7 @@ public class SeleniumClickTask extends SeleniumTask implements SeleniumFindBehav
     }
 
     @Override
-    TaskExecutionResult executeSeleniumTask() {
+    public TaskExecutionResult executeSeleniumTask() {
         Optional<WebElement> webElement = findElement(logger, webDriver, selector, by, wait);
 
         if (webElement.isPresent()) {
