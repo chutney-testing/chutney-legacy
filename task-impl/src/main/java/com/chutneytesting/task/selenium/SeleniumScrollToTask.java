@@ -32,7 +32,7 @@ public class SeleniumScrollToTask extends SeleniumTask implements SeleniumFindBe
 
 
     @Override
-    TaskExecutionResult executeSeleniumTask() {
+    public TaskExecutionResult executeSeleniumTask() {
         Optional<WebElement> webElement = findElement(logger, webDriver, selector, by, wait);
 
         if (webElement.isPresent()) {
