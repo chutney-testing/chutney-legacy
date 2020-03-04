@@ -88,8 +88,7 @@ public class ExecutionRequestMapperTest {
             )
         );
 
-
-        final String implementationFull = Files.contentOf(new File(Resources.getResource("raw_scenarios/raw_composable_testcase.json").getPath()), Charset.forName("UTF-8"));
+        final String implementationFull = Files.contentOf(new File(Resources.getResource("raw_steps/raw_composable_implementation.json").getPath()), Charset.forName("UTF-8"));
 
         List<FunctionalStep> steps = new ArrayList<>();
         steps.add(FunctionalStep.builder()

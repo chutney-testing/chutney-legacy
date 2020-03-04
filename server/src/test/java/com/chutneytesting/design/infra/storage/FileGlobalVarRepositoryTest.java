@@ -35,21 +35,32 @@ public class FileGlobalVarRepositoryTest {
     public void shouldFlatKey() {
         // G
         sut = new FileGlobalVarRepository(STORE_PATH);
-        sut.saveFile(FILE_NAME, "{" +
-            "    key1: \"value1\"," +
-            "    key2: {" +
-            "        subKey1: \"subValue1\"," +
-            "        subKey2: \"subValue2\"" +
-            "    }," +
-            "    key3: [" +
-            "        {" +
-            "            test1: \"value\"," +
-            "            test2:\"value\"" +
-            "        }," +
-            "        {" +
-            "            test:\"value\"" +
-            "        }" +
-            "    ]" +
+
+        String urlValue = "http://host:port/path";
+        String mulitlineValuePattern = "" +
+            "%sMy half empty glass,\n" +
+            "%sI will fill your empty half.\n" +
+            "%sNow you are half full.";
+        String jsonPathValue = "//*[text()=\"${#spelRef}\"]//preceding::td[1]";
+
+        sut.saveFile(FILE_NAME, "{\n" +
+            "    key1: " + urlValue + "\n" +
+            "    key2: {\n" +
+            "        subKey1:\n"+
+            "          '''\n" +
+            String.format(mulitlineValuePattern, "          ", "          ", "          ") + "\n" +
+            "          '''\n" +
+            "        subKey2: \"subValue2\"\n" +
+            "    },\n" +
+            "    key3: [\n" +
+            "        {\n" +
+            "            test1: value\n" +
+            "            test2: \"value\"\n" +
+            "        },\n" +
+            "        {\n" +
+            "            test: '''" + jsonPathValue + "'''\n" +
+            "        }\n" +
+            "    ]\n" +
             "}");
 
         // W
@@ -57,12 +68,12 @@ public class FileGlobalVarRepositoryTest {
 
         // T
         assertThat(result).containsOnly(
-            entry("key1", "value1"),
-            entry("key2.subKey1", "subValue1"),
+            entry("key1", urlValue),
+            entry("key2.subKey1", String.format(mulitlineValuePattern, "", "", "")),
             entry("key2.subKey2", "subValue2"),
             entry("key3[0].test1", "value"),
             entry("key3[0].test2", "value"),
-            entry("key3[1].test", "value")
+            entry("key3[1].test", jsonPathValue)
         );
     }
 

@@ -1,0 +1,102 @@
+{
+    "title": "GWT testcase with parameters for global vars",
+    "tags": [],
+    "dataSet": {
+        "testcase parameter quote": "**escape.quote**",
+        "testcase parameter apostrophe": "**escape.apostrophe**"
+    },
+    "scenario": {
+        "when": {
+            "sentence": "Putting variables with sensitive characters in context",
+            "subSteps": [
+                {
+                    "implementation": {
+                        "type": "context-put",
+                        "inputs": {
+                            "entries": {
+                                "slash": "**escape.slash**"
+                            }
+                        }
+                    }
+                },
+                {
+                    "implementation": {
+                        "type": "context-put",
+                        "inputs": {
+                            "entries": {
+                                "apostrophe": "**testcase parameter apostrophe**"
+                            }
+                        }
+                    }
+                },
+                {
+                    "implementation": {
+                        "type": "context-put",
+                        "inputs": {
+                            "entries": {
+                                "quote": "**testcase parameter quote**"
+                            }
+                        }
+                    }
+                },
+                {
+                    "implementation": {
+                        "type": "context-put",
+                        "inputs": {
+                            "entries": {
+                                "backslash": "**escape.backslash**"
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "thens": [
+            {
+                "sentence": "Context contains correct value of those variables",
+                "subSteps": [
+                    {
+                        "implementation": {
+                            "type": "compare",
+                            "inputs": {
+                                "mode": "equals",
+                                "actual": "${#slash}",
+                                "expected": "line with slash as url http:\/\/host:port\/path"
+                            }
+                        }
+                    },
+                    {
+                        "implementation": {
+                            "type": "compare",
+                            "inputs": {
+                                "mode": "equals",
+                                "actual": "${#apostrophe}",
+                                "expected": "line with apostrophe '"
+                            }
+                        }
+                    },
+                    {
+                        "implementation": {
+                            "type": "compare",
+                            "inputs": {
+                                "mode": "equals",
+                                "actual": "${#quote}",
+                                "expected": "line with quote \""
+                            }
+                        }
+                    },
+                    {
+                        "implementation": {
+                            "type": "compare",
+                            "inputs": {
+                                "mode": "equals",
+                                "actual": "${#backslash}",
+                                "expected": "line with backslash \\"
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

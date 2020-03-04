@@ -174,7 +174,7 @@ public class GwtTestCaseControllerTest {
 
     @Test
     public void save_should_return_uri_of_the_scenario_when_it_has_a_data_set() throws Exception {
-        URL resource = this.getClass().getResource("/raw_testcases/testcase-with-dataset.json");
+        URL resource = this.getClass().getResource("/raw_scenarios/testcase_for_global_vars.v2.1.json");
         String exampleWithDataSet = new String(Files.readAllBytes(Paths.get(resource.toURI())));
 
         AtomicReference<String> bodyHolder = new AtomicReference<>();
@@ -188,6 +188,6 @@ public class GwtTestCaseControllerTest {
 
         ArgumentCaptor<GwtTestCase> testCase = ArgumentCaptor.forClass(GwtTestCase.class);
         verify(testCaseRepository).save(testCase.capture());
-        assertThat(testCase.getValue().dataSet).containsOnly(entry("aKey", "aValue"), entry("anotherKey", "another value"));
+        assertThat(testCase.getValue().dataSet).containsOnly(entry("testcase parameter quote", "**escape.quote**"), entry("testcase parameter apostrophe", "**escape.apostrophe**"));
     }
 }
