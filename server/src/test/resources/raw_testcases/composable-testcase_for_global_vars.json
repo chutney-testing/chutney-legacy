@@ -1,0 +1,284 @@
+{
+    "title": "TestCase composable with parameters for global vars",
+    "description": "",
+    "scenario": {
+        "parameters": [
+            {
+                "key": "testcase parameter quote",
+                "value": "**escape.quote**"
+            },
+            {
+                "key": "testcase parameter apostrophe",
+                "value": "**escape.apostrophe**"
+            }
+        ],
+        "componentSteps": [
+            {
+                "id": "%%context-put%%",
+                "name": "put entry [**key** -- **value**] in context",
+                "usage": null,
+                "task": null,
+                "steps": [],
+                "parameters": [
+                    {
+                        "key": "key",
+                        "value": ""
+                    },
+                    {
+                        "key": "value",
+                        "value": ""
+                    }
+                ],
+                "strategy": {
+                    "type": "Default",
+                    "parameters": {
+                    }
+                },
+                "dataSet": [
+                    {
+                        "key": "key",
+                        "value": "slash"
+                    },
+                    {
+                        "key": "value",
+                        "value": "**escape.slash**"
+                    }
+                ],
+                "tags": []
+            },
+            {
+                "id": "%%assert-equals%%",
+                "name": "Asssert [**actual**] equals [**expected**]",
+                "usage": null,
+                "task": null,
+                "steps": [],
+                "parameters": [
+                    {
+                        "key": "actual",
+                        "value": ""
+                    },
+                    {
+                        "key": "expected",
+                        "value": ""
+                    }
+                ],
+                "strategy": {
+                    "type": "Default",
+                    "parameters": {
+                    }
+                },
+                "dataSet": [
+                    {
+                        "key": "actual",
+                        "value": "${#slash}"
+                    },
+                    {
+                        "key": "expected",
+                        "value": "line with slash as url http:\/\/host:port\/path"
+                    }
+                ],
+                "tags": []
+            },
+            {
+                "id": "%%context-put%%",
+                "name": "put entry [**key** -- **value**] in context",
+                "usage": null,
+                "task": null,
+                "steps": [],
+                "parameters": [
+                    {
+                        "key": "key",
+                        "value": ""
+                    },
+                    {
+                        "key": "value",
+                        "value": ""
+                    }
+                ],
+                "strategy": {
+                    "type": "Default",
+                    "parameters": {
+                    }
+                },
+                "dataSet": [
+                    {
+                        "key": "key",
+                        "value": "apostrophe"
+                    },
+                    {
+                        "key": "value",
+                        "value": "**testcase parameter apostrophe**"
+                    }
+                ],
+                "tags": []
+            },
+            {
+                "id": "%%assert-equals%%",
+                "name": "Asssert [**actual**] equals [**expected**]",
+                "usage": null,
+                "task": null,
+                "steps": [],
+                "parameters": [
+                    {
+                        "key": "actual",
+                        "value": ""
+                    },
+                    {
+                        "key": "expected",
+                        "value": ""
+                    }
+                ],
+                "strategy": {
+                    "type": "Default",
+                    "parameters": {
+                    }
+                },
+                "dataSet": [
+                    {
+                        "key": "actual",
+                        "value": "${#apostrophe}"
+                    },
+                    {
+                        "key": "expected",
+                        "value": "line with apostrophe '"
+                    }
+                ],
+                "tags": []
+            },
+            {
+                "id": "%%context-put%%",
+                "name": "put entry [**key** -- **value**] in context",
+                "usage": null,
+                "task": null,
+                "steps": [],
+                "parameters": [
+                    {
+                        "key": "key",
+                        "value": ""
+                    },
+                    {
+                        "key": "value",
+                        "value": ""
+                    }
+                ],
+                "strategy": {
+                    "type": "Default",
+                    "parameters": {
+                    }
+                },
+                "dataSet": [
+                    {
+                        "key": "key",
+                        "value": "quote"
+                    },
+                    {
+                        "key": "value",
+                        "value": "**testcase parameter quote**"
+                    }
+                ],
+                "tags": []
+            },
+            {
+                "id": "%%assert-equals%%",
+                "name": "Asssert [**actual**] equals [**expected**]",
+                "usage": null,
+                "task": null,
+                "steps": [],
+                "parameters": [
+                    {
+                        "key": "actual",
+                        "value": ""
+                    },
+                    {
+                        "key": "expected",
+                        "value": ""
+                    }
+                ],
+                "strategy": {
+                    "type": "Default",
+                    "parameters": {
+                    }
+                },
+                "dataSet": [
+                    {
+                        "key": "actual",
+                        "value": "${#quote}"
+                    },
+                    {
+                        "key": "expected",
+                        "value": "line with quote \""
+                    }
+                ],
+                "tags": []
+            },
+            {
+                "id": "%%context-put%%",
+                "name": "put entry [**key** -- **value**] in context",
+                "usage": null,
+                "task": null,
+                "steps": [],
+                "parameters": [
+                    {
+                        "key": "key",
+                        "value": ""
+                    },
+                    {
+                        "key": "value",
+                        "value": ""
+                    }
+                ],
+                "strategy": {
+                    "type": "Default",
+                    "parameters": {
+                    }
+                },
+                "dataSet": [
+                    {
+                        "key": "key",
+                        "value": "backslash"
+                    },
+                    {
+                        "key": "value",
+                        "value": "**escape.backslash**"
+                    }
+                ],
+                "tags": []
+            },
+            {
+                "id": "%%assert-equals%%",
+                "name": "Asssert [**actual**] equals [**expected**]",
+                "usage": null,
+                "task": null,
+                "steps": [],
+                "parameters": [
+                    {
+                        "key": "actual",
+                        "value": ""
+                    },
+                    {
+                        "key": "expected",
+                        "value": ""
+                    }
+                ],
+                "strategy": {
+                    "type": "Default",
+                    "parameters": {
+                    }
+                },
+                "dataSet": [
+                    {
+                        "key": "actual",
+                        "value": "${#backslash}"
+                    },
+                    {
+                        "key": "expected",
+                        "value": "line with backslash \\"
+                    }
+                ],
+                "tags": []
+            }
+        ]
+    },
+    "dataSet": [],
+    "tags": []
+}

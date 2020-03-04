@@ -4,6 +4,7 @@ import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.design.domain.scenario.gwt.GwtScenario;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import java.util.Map;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -33,7 +34,7 @@ public class GwtDataSetPreProcessor implements TestCasePreProcessor<GwtTestCase>
 
     private GwtScenario replaceParams(GwtScenario scenario, Map<String, String> dataSet) {
         String blob = marshaller.serialize(scenario);
-        return marshaller.deserialize(scenario.title, scenario.description, replaceParams(blob, globalvarRepository.getFlatMap(), dataSet));
+        return marshaller.deserialize(scenario.title, scenario.description, replaceParams(blob, globalvarRepository.getFlatMap(), dataSet, StringEscapeUtils::escapeJson));
     }
 
 }

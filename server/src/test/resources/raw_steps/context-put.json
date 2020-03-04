@@ -1,0 +1,23 @@
+{
+    "name": "put entry [**key** -- **value**] in context",
+    "usage": null,
+    "task": "{\"identifier\":\"context-put\",\"target\":\"\",\"hasTarget\":false,\"mapInputs\":[{\"name\":\"entries\",\"values\":[{\"key\":\"**key**\",\"value\":\"**value**\"}]}],\"listInputs\":[],\"inputs\":[],\"outputs\":[]}",
+    "steps": [],
+    "parameters": [
+        {
+            "key": "key",
+            "value": ""
+        },
+        {
+            "key": "value",
+            "value": ""
+        }
+    ],
+    "strategy": {
+        "type": "Default",
+        "parameters": {
+        }
+    },
+    "dataSet": [],
+    "tags": []
+}
