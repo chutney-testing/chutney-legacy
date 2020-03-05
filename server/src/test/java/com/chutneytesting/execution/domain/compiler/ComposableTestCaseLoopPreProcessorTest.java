@@ -6,13 +6,14 @@ import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.chutneytesting.WebConfiguration;
 import com.chutneytesting.design.domain.compose.ComposableScenario;
 import com.chutneytesting.design.domain.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.compose.FunctionalStep;
 import com.chutneytesting.design.domain.compose.Strategy;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
 import java.util.Map;
 import org.apache.groovy.util.Maps;
 import org.junit.Test;
@@ -158,6 +159,34 @@ public class ComposableTestCaseLoopPreProcessorTest {
         assertThat(actual.composableScenario.functionalSteps).hasSize(1);
         assertThat(actual.composableScenario.functionalSteps.get(0).steps).hasSize(1);
         assertThat(actual.composableScenario.functionalSteps.get(0).steps.get(0).dataSet).containsEntry("P", "default_value");
+
+    }
+
+    @Test
+    public void should_create_one_iteration_and_add_one_parameter_When_step_has_no_parameter_matching_iteration_param() {
+        ComposableTestCaseLoopPreProcessor sut = new ComposableTestCaseLoopPreProcessor(objectMapper);
+
+        // Given
+        Strategy strategy = new Strategy("Loop", singletonMap("data", "[{\"X\":\"zog_zog\"}]"));
+
+        FunctionalStep step = FunctionalStep.builder()
+            .overrideDataSetWith(emptyMap())
+            .withStrategy(strategy)
+            .build();
+
+        ComposableScenario composableScenario = ComposableScenario.builder()
+            .withFunctionalSteps(singletonList(step))
+            .build();
+
+        ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+
+        // When
+        ComposableTestCase actual = sut.apply(composableTestCase);
+
+        // Then
+        assertThat(actual.composableScenario.functionalSteps).hasSize(1);
+        assertThat(actual.composableScenario.functionalSteps.get(0).steps).hasSize(1);
+        assertThat(actual.composableScenario.functionalSteps.get(0).steps.get(0).dataSet).containsOnly(new HashMap.SimpleEntry("X", "zog_zog"));
 
     }
 

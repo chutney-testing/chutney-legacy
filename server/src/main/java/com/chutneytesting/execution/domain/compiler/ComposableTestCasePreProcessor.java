@@ -18,6 +18,6 @@ public class ComposableTestCasePreProcessor implements TestCasePreProcessor<Comp
 
     @Override
     public ComposableTestCase apply(ComposableTestCase testCase) {
-        return dataSetPreProcessor.apply(loopPreProcessor.apply(dataSetPreProcessor.apply(testCase)));
+        return dataSetPreProcessor.apply(loopPreProcessor.apply(dataSetPreProcessor.applyOnStrategy(testCase)));
     }
 }

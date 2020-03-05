@@ -30,7 +30,7 @@ class ComposableTestCaseLoopPreProcessor {
         this.objectMapper = objectMapper;
     }
 
-    public ComposableTestCase apply(ComposableTestCase testCase) {
+    ComposableTestCase apply(ComposableTestCase testCase) {
         return new ComposableTestCase(
             testCase.id,
             testCase.metadata,

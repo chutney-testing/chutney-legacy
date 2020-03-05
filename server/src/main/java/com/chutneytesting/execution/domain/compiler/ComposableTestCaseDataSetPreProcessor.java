@@ -57,26 +57,17 @@ public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcess
         List<FunctionalStep> subSteps = functionalStep.steps;
 
         // Preprocess substeps - Recurse
-        FunctionalStep.FunctionalStepBuilder parentStepBuilder = FunctionalStep.builder()
+        return FunctionalStep.builder()
             .withName(replaceParams(functionalStep.name, globalvarRepository.getFlatMap(), scopedDataset))
             .withSteps(
                 subSteps.stream()
                     .map(f -> applyToFunctionalStep(f, scopedDataset, globalVariable))
                     .collect(Collectors.toList())
             )
-            .withImplementation(functionalStep.implementation.map(v -> replaceParams(v, globalvarRepository.getFlatMap(), scopedDataset)));
-
-        parentStepBuilder
-            .withStrategy(applyToStrategy(functionalStep.strategy, scopedDataset, globalVariable))
-            .overrideDataSetWith(scopedDataset);
-
-        return parentStepBuilder.build();
-    }
-
-    private Strategy applyToStrategy(Strategy strategy, Map<String, String> scopedDataset, Map<String, String> globalVariable) {
-        Map<String, Object> parameters = new HashMap<>();
-        strategy.parameters.forEach((key, value) -> parameters.put(key, replaceParams(value.toString(), scopedDataset, globalVariable)));
-        return new Strategy(strategy.type, parameters);
+            .withImplementation(functionalStep.implementation.map(v -> replaceParams(v, globalvarRepository.getFlatMap(), scopedDataset)))
+            .withStrategy(functionalStep.strategy)
+            .overrideDataSetWith(scopedDataset)
+            .build();
     }
 
     private Map<String, String> applyOnCurrentStepDataSet(Map<String, String> currentStepDataset, Map<String, String> parentDataset, Map<String, String> globalVariables) {
@@ -92,6 +83,48 @@ public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcess
             }));
 
         return scopedDataset;
+    }
+
+    ComposableTestCase applyOnStrategy(ComposableTestCase testCase) {
+        Map<String, String> globalVariable = globalvarRepository.getFlatMap();
+        return new ComposableTestCase(
+            testCase.id,
+            testCase.metadata,
+            applyOnStrategy(testCase.composableScenario, testCase.dataSet, globalVariable),
+            testCase.dataSet);
+    }
+
+    private ComposableScenario applyOnStrategy(ComposableScenario composableScenario, Map<String, String> testCaseDataSet, Map<String, String> globalVariable) {
+        return ComposableScenario.builder()
+            .withFunctionalSteps(
+                composableScenario.functionalSteps.stream()
+                    .map(step -> applyOnStepStrategy(step, testCaseDataSet, globalVariable))
+                    .collect(Collectors.toList())
+            )
+            .withParameters(composableScenario.parameters)
+            .build();
+    }
+
+    private FunctionalStep applyOnStepStrategy(FunctionalStep functionalStep, Map<String, String> parentDataset, Map<String, String> globalVariable) {
+        Map<String, String> scopedDataset = applyOnCurrentStepDataSet(functionalStep.dataSet, parentDataset, globalVariable);
+
+        return FunctionalStep.builder()
+            .withName(functionalStep.name)
+            .withSteps(
+                functionalStep.steps.stream()
+                    .map(f -> applyOnStepStrategy(f, scopedDataset, globalVariable))
+                    .collect(Collectors.toList())
+            )
+            .withImplementation(functionalStep.implementation)
+            .withStrategy(applyToStrategy(functionalStep.strategy, scopedDataset, globalVariable))
+            .overrideDataSetWith(scopedDataset)
+            .build();
+    }
+
+    private Strategy applyToStrategy(Strategy strategy, Map<String, String> scopedDataset, Map<String, String> globalVariable) {
+        Map<String, Object> parameters = new HashMap<>();
+        strategy.parameters.forEach((key, value) -> parameters.put(key, replaceParams(value.toString(), scopedDataset, globalVariable)));
+        return new Strategy(strategy.type, parameters);
     }
 
 }
