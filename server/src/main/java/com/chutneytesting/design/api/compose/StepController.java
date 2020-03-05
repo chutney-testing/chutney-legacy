@@ -1,8 +1,8 @@
 package com.chutneytesting.design.api.compose;
 
+import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.fromFrontId;
 import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.toFrontId;
 import static com.chutneytesting.design.api.compose.mapper.FunctionalStepMapper.fromDto;
-import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.fromFrontId;
 
 import com.chutneytesting.design.api.compose.dto.FunctionalStepDto;
 import com.chutneytesting.design.api.compose.dto.ParentsStepDto;
@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,8 +47,8 @@ public class StepController {
         return toFrontId(stepRepository.save(fromDto(step)));
     }
 
-    @PostMapping(path = "/delete")
-    public void deleteById(@RequestBody String stepId) {
+    @DeleteMapping(path = "/{stepId}")
+    public void deleteById(@PathVariable String stepId) {
         stepRepository.deleteById(fromFrontId(stepId));
     }
 
