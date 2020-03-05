@@ -65,8 +65,9 @@ export class ComponentService {
         );
     }
 
-    delete(id: string): Observable<Object> {
-        return this.httpClient.post(environment.backend + this.stepUrl + '/delete', id);
+    delete(id: string): Observable<void> {
+        return this.httpClient.delete(environment.backend + this.stepUrl + `/${id}`)
+            .pipe(map(() => {}));
     }
 
     execute(component: ComponentTask, env: string): Observable<Object> {
@@ -89,8 +90,9 @@ export class ComponentService {
         );
     }
 
-    deleteComponentTestCase(id: string): Observable<any> {
-        return this.httpClient.delete(environment.backend + `${this.componentUrl}/${id}`);
+    deleteComponentTestCase(id: string): Observable<void> {
+        return this.httpClient.delete(environment.backend + `${this.componentUrl}/${id}`)
+            .pipe(map(() => {}));
     }
 
     findParents(id: string): Observable<any> {
