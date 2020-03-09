@@ -81,7 +81,11 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.initTranslation();
         this.initDragAndDrop();
 
-        this.initAllTasksAndComponents().subscribe( () => {
+        this.initAllTasksAndComponents().subscribe( (results) => {
+
+            this.tasks = results[0];
+            this.componentTasks = results[1];
+
             this.setSelectedTags();
             this.routeParamsSubscription = this.route.params.subscribe((params) => {
                 this.initSelectedComponent(params['id']);
@@ -132,22 +136,12 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
 
     private initAllTasksAndComponents(): Observable<any> {
-        const observable = combineLatest(
+        return combineLatest(
             this.componentService.findAllTasks(),
             this.componentService.findAllComponent()
         ).pipe(
             takeUntil(this.unsubscribe$)
         );
-
-        observable.subscribe(
-            results => {
-                this.tasks = results[0];
-                this.componentTasks = results[1];
-            },
-            (error) => console.log(error)
-        );
-
-        return observable;
     }
 
     private setSelectedTags() {
@@ -170,7 +164,9 @@ export class CreateComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.dragulaService.destroy('COPYABLE');
         this.unsubscribe$.complete();
-        this.eventManager.destroy(this.routeParamsSubscription);
+        if (this.routeParamsSubscription) {
+            this.eventManager.destroy(this.routeParamsSubscription);
+        }
     }
 
     initNewComponent() {
@@ -196,7 +192,6 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     save() {
         this.saveComponent(this.createComponent());
-        this.resetData();
     }
 
     private createComponent(): ComponentTask {
@@ -235,6 +230,8 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.executionResult = null;
         this.showChild = false;
         this.message = null;
+
+        this.router.navigateByUrl(`/component`);
     }
 
     execute(environment: string) {
@@ -266,15 +263,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.actionToEdit = new ComponentTask('', implementation, [], [], [], [], null);
     }
 
-    createAction(componentTask: ComponentTask) {
-        this.actionSelected = null;
-        if (this.actionToEdit.id === null) {
-            this.actionToEdit = null;
-        }
-
-        this.saveComponent(componentTask);
-    }
-
     cancel() {
         this.resetData();
         this.fillFormValuesWith(/*nothing*/);
@@ -284,11 +272,17 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.executionResult = null;
     }
 
-    private refreshComponents(): void {
+    private refreshComponents(id?: string): void {
         this.componentService.findAllComponent().subscribe(
             (res) => {
                 this.componentTasks = res;
                 this.setSelectedTags();
+                if (id) {
+                    this.router.navigateByUrl(`/component/${id}`).then(() => {
+                        this.viewComponent = true;
+                        this.showMessage();
+                    });
+                }
             },
             (error) => console.log(error)
         );
@@ -337,7 +331,8 @@ export class CreateComponent implements OnInit, OnDestroy {
                 ctrl.valueChanges.pipe(
                     debounceTime(250)
                 ).subscribe(() => {
-                    if (this.componentTasksCreated[componentIndex] && componentsParametersValues.get(componentIndex.toString()).get(parameterIndex.toString())) {
+                    if (this.componentTasksCreated[componentIndex] &&
+                        componentsParametersValues.get(componentIndex.toString()).get(parameterIndex.toString())) {
                         this.componentTasksCreated[componentIndex].dataSet[parameterIndex].value =
                             componentsParametersValues.get(componentIndex.toString()).get(parameterIndex.toString()).value;
                     }
@@ -348,13 +343,14 @@ export class CreateComponent implements OnInit, OnDestroy {
         });
     }
 
-    private saveComponent(componentTask: ComponentTask) {
+    saveComponent(componentTask: ComponentTask) {
         this.componentService.save(componentTask)
             .subscribe(
                 (id) => {
-                    this.editableComponent.id = id;
-                    this.refreshComponents();
-                    this.showMessage();
+                    if (this.editableComponent) {
+                        this.editableComponent.id = id;
+                    }
+                    this.refreshComponents(id);
                 },
                 (error) => console.log(error)
             );

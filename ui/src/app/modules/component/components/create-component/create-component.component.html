@@ -183,7 +183,7 @@
         <!-- Actions panel edit -->
         <ng-container *ngIf="viewComponent && actionToEdit">
             <chutney-action-edit-component [editComponent]="actionToEdit"
-                                       (createEvent)="createAction($event)"
+                                       (createEvent)="saveComponent($event)"
                                        (deleteEvent)="deleteComponent($event)"
                                        (cancelEvent)="cancel()"></chutney-action-edit-component>
         </ng-container>
@@ -194,7 +194,7 @@
                  class="font-weight-bold text-center">{{'components.action.edition.select' | translate}}</div>
             <chutney-action-edit-component *ngIf="actionSelected"
                                        [editComponent]="actionToEdit"
-                                       (createEvent)="createAction($event)"
+                                       (createEvent)="saveComponent($event)"
                                        (deleteEvent)="deleteComponent($event)"
                                        (cancelEvent)="cancel()"></chutney-action-edit-component>
         </ng-container>
