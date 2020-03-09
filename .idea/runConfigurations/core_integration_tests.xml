@@ -1,0 +1,20 @@
+<component name="ProjectRunConfigurationManager">
+    <configuration default="false" name="core_integration_tests" type="JUnit" factoryName="JUnit">
+        <module name="server" />
+        <extension name="coverage">
+            <pattern>
+                <option name="PATTERN" value="blackbox.*" />
+                <option name="ENABLED" value="true" />
+            </pattern>
+        </extension>
+        <option name="PACKAGE_NAME" value="blackbox" />
+        <option name="MAIN_CLASS_NAME" value="blackbox.CucumberIT" />
+        <option name="METHOD_NAME" value="" />
+        <option name="TEST_OBJECT" value="class" />
+        <option name="PARAMETERS" value="" />
+        <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
+        <method v="2">
+            <option name="Make" enabled="true" />
+        </method>
+    </configuration>
+</component>
