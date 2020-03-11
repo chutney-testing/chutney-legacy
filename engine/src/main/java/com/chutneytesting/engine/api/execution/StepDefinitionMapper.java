@@ -30,10 +30,8 @@ class StepDefinitionMapper {
             .collect(toList());
 
         return new StepDefinition(
-            // TODO is a step without a name is really a step ?
             dto.name != null ? dto.name : "",
             dto.getTarget().isPresent() ? fromDto(dto.getTarget().get()) : null,
-            // TODO is a step without a type is really a step ?
             dto.type != null ? dto.type : "",
             strategy,
             dto.inputs,

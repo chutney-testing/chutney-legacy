@@ -62,7 +62,8 @@ public class ExecutionRequestDto {
                 target,
                 type,
                 strategy != null ? strategy.definition : null,
-                inputs, steps != null ? steps.stream().map(r -> r.definition).collect(Collectors.toList()) : Collections.emptyList(),
+                inputs,
+                steps != null ? steps.stream().map(r -> r.definition).collect(Collectors.toList()) : Collections.emptyList(),
                 outputs
             );
         }
