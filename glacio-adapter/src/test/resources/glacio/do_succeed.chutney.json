@@ -1,0 +1,13 @@
+{
+    "title": "Good feature",
+    "description": "a free form description",
+    "scenario": {
+        "givens": [],
+        "when": {
+            "description": "When something is good"
+        },
+        "thens": [{
+            "description": "Then it is very good"
+        }]
+    }
+}
