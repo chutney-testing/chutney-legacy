@@ -122,7 +122,15 @@ public class ComposableTestCaseMapperTest {
         final ComposableTestCase ctc = fromDto(composableTestCaseDto);
 
         // Then
-        assertThat(ctc).isEqualToComparingFieldByField(composableTestCase);
+        assertThat(ctc)
+            .usingRecursiveComparison()
+            .ignoringFieldsMatchingRegexes("metadata")
+            .isEqualTo(composableTestCase);
+        assertThat(ctc.metadata)
+            .usingRecursiveComparison()
+            .ignoringFieldsMatchingRegexes("tags")
+            .isEqualTo(composableTestCase.metadata);
+        assertThat(ctc.metadata.tags()).containsExactly("TAG1", "TAG2");
     }
 
     @Test
@@ -131,7 +139,11 @@ public class ComposableTestCaseMapperTest {
         final ComposableTestCaseDto ctcd = toDto(composableTestCase);
 
         // Then
-        assertThat(ctcd).isEqualToComparingFieldByField(composableTestCaseDto);
+        assertThat(ctcd)
+            .usingRecursiveComparison()
+            .ignoringFieldsMatchingRegexes("tags")
+            .isEqualTo(composableTestCaseDto);
+        assertThat(ctcd.tags()).containsExactly("TAG1", "TAG2");
     }
 
     @Test

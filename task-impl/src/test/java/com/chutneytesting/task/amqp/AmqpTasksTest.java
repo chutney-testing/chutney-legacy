@@ -106,7 +106,7 @@ public class AmqpTasksTest {
         assertThat(amqpBasicGetResult.outputs.get("message"))
             .isExactlyInstanceOf(GetResponse.class)
             .extracting(contentTypeExtractor)
-            .containsExactly("application/json");
+            .isEqualTo("application/json");
         assertThat(amqpBasicGetResult.outputs.get("body")).isEqualTo("test message");
         assertThat((Map<String, Object>) amqpBasicGetResult.outputs.get("headers")).containsOnly(entry("header1", "value1"));
     }
