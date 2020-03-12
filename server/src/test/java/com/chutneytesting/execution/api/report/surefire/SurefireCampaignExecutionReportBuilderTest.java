@@ -56,6 +56,7 @@ public class SurefireCampaignExecutionReportBuilderTest {
             .time(LocalDateTime.now())
             .report(objectMapper.writeValueAsString(success_report))
             .testCaseTitle("fake")
+            .environment("")
             .build();
 
         ScenarioExecutionReportCampaign scenarioExecutionReportOK = new ScenarioExecutionReportCampaign("123", "test ♥ Scenario Title ok", success_execution.summary());
@@ -77,6 +78,7 @@ public class SurefireCampaignExecutionReportBuilderTest {
             .time(LocalDateTime.now())
             .report(objectMapper.writeValueAsString(failure_report))
             .testCaseTitle("fake")
+            .environment("")
             .build();
 
         ScenarioExecutionReportCampaign scenarioExecutionReportKO = new ScenarioExecutionReportCampaign("123", "test Scenario Title ko", failure_execution.summary());

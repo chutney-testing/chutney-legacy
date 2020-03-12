@@ -88,11 +88,11 @@ public class ScenarioExecutionEngineAsync {
         // Compile testcase for execution
         ExecutionRequest executionRequestProcessed = new ExecutionRequest(testCasePreProcessors.apply(executionRequest.testCase), executionRequest.environment);
         // Initialize execution history
-        ExecutionHistory.Execution storedExecution = storeInitialReport(executionRequest.testCase.id(), executionRequest.testCase.metadata().title());
+        ExecutionHistory.Execution storedExecution = storeInitialReport(executionRequest.testCase.id(), executionRequest.testCase.metadata().title(), executionRequest.environment);
         // Start engine execution
         Pair<Observable<StepExecutionReportCore>, Long> followResult = callEngineExecution(executionRequestProcessed, storedExecution);
         // Build execution observable
-        Observable<ScenarioExecutionReport> executionObservable = buildScenarioExecutionReportObservable(executionRequestProcessed.testCase, storedExecution.executionId(), followResult);
+        Observable<ScenarioExecutionReport> executionObservable = buildScenarioExecutionReportObservable(executionRequestProcessed, storedExecution.executionId(), followResult);
         // Store execution Observable to permit further subscriptions
         LOGGER.trace("Add replayer for execution {}", storedExecution.executionId());
         scenarioExecutions.put(storedExecution.executionId(), Pair.of(executionObservable, followResult.getRight()));
@@ -115,7 +115,7 @@ public class ScenarioExecutionEngineAsync {
         return followResult;
     }
 
-    Observable<ScenarioExecutionReport> buildScenarioExecutionReportObservable(TestCase testCase, Long executionId, Pair<Observable<StepExecutionReportCore>, Long> engineExecution) {
+    Observable<ScenarioExecutionReport> buildScenarioExecutionReportObservable(ExecutionRequest executionRequest, Long executionId, Pair<Observable<StepExecutionReportCore>, Long> engineExecution) {
         // Observe in background
         Observable<StepExecutionReportCore> replayer = engineExecution.getLeft().observeOn(io());
         // Debounce configuration
@@ -123,18 +123,18 @@ public class ScenarioExecutionEngineAsync {
             replayer = replayer.debounce(debounceMilliSeconds, TimeUnit.MILLISECONDS);
         }
         return replayer
-            .doOnSubscribe(disposable -> notifyExecutionStart(executionId, testCase))
+            .doOnSubscribe(disposable -> notifyExecutionStart(executionId, executionRequest.testCase))
 
             // Create report
             .map(report -> {
                 LOGGER.trace("Map report for execution {}", executionId);
-                return new ScenarioExecutionReport(executionId, testCase.metadata().title(), report);
+                return new ScenarioExecutionReport(executionId, executionRequest.testCase.metadata().title(), report);
             })
 
-            .doOnNext(report -> updateHistory(executionId, testCase, report))
+            .doOnNext(report -> updateHistory(executionId, executionRequest, report))
 
-            .doOnTerminate(() -> notifyExecutionEnd(executionId, testCase))
-            .doOnTerminate(() -> sendMetrics(executionId, testCase))
+            .doOnTerminate(() -> notifyExecutionEnd(executionId, executionRequest.testCase))
+            .doOnTerminate(() -> sendMetrics(executionId, executionRequest.testCase))
             .doOnTerminate(() -> cleanExecutionId(executionId))
 
             // Make hot with replay last state
@@ -150,7 +150,7 @@ public class ScenarioExecutionEngineAsync {
         executionHistoryRepository.update(scenarioId, execution);
     }
 
-    private ExecutionHistory.Execution storeInitialReport(String scenarioId, String title) {
+    private ExecutionHistory.Execution storeInitialReport(String scenarioId, String title, String environment) {
         DetachedExecution detachedExecution = ImmutableExecutionHistory.DetachedExecution.builder()
             .time(LocalDateTime.now())
             .duration(0L)
@@ -159,6 +159,7 @@ public class ScenarioExecutionEngineAsync {
             .error("")
             .report("")
             .testCaseTitle(title)
+            .environment(environment)
             .build();
 
         return executionHistoryRepository.store(scenarioId, detachedExecution);
@@ -215,7 +216,7 @@ public class ScenarioExecutionEngineAsync {
      *
      * @param scenarioReport report to summarize
      */
-    private DetachedExecution summarize(ScenarioExecutionReport scenarioReport) {
+    private DetachedExecution summarize(ScenarioExecutionReport scenarioReport, String environment) {
         return ImmutableExecutionHistory.DetachedExecution.builder()
             .time(LocalDateTime.now())
             .duration(scenarioReport.report.duration)
@@ -224,6 +225,7 @@ public class ScenarioExecutionEngineAsync {
             .error(joinAndTruncateMessages(searchErrors(scenarioReport.report)))
             .report(serialize(scenarioReport)) // TODO - type me and move serialization to infra
             .testCaseTitle(scenarioReport.scenarioName)
+            .environment(environment)
             .build();
     }
 
@@ -268,10 +270,10 @@ public class ScenarioExecutionEngineAsync {
         }
     }
 
-    private void updateHistory(long executionId, TestCase testCase, ScenarioExecutionReport report) {
+    private void updateHistory(long executionId, ExecutionRequest executionRequest, ScenarioExecutionReport report) {
         LOGGER.trace("Update history for execution {}", executionId);
         try {
-            executionHistoryRepository.update(testCase.id(), summarize(report).attach(executionId));
+            executionHistoryRepository.update(executionRequest.testCase.id(), summarize(report, executionRequest.environment).attach(executionId));
         } catch (Exception e) {
             LOGGER.error("Update history for execution {} failed", executionId, e);
         }

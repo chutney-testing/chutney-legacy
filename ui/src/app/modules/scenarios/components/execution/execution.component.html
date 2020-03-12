@@ -9,9 +9,9 @@
 <div class="row">
     <div class="col-sm-3half">
         <chutney-execution-history [scenarioId]="currentScenarioId"
-                               [selectedExecutionId]="currentExecutionId"
-                               (onSelectExecution)="onSelectExecution($event)"
-                               (onLastIdExecution)="onLastIdExecution($event)"
+                               [selectedExecutionId] = "currentExecutionId"
+                               (onselectExecution)="onSelectExecution($event)"
+                               (onlastIdExecution)="onLastIdExecution($event)"
                                (onlastStatusExecution)="onlastStatusExecution($event)"
         ></chutney-execution-history>
     </div>
@@ -38,6 +38,8 @@
                         class="text-muted ml-2">{{'global.time.in' | translate}} {{scenarioExecutionReport.report.duration | duration}}</small>
                     <small
                         class="text-muted ml-2">{{'global.time.at' | translate}} {{scenarioExecutionReport.report.startDate | date:'medium'}}</small>
+                    <small
+                        class="text-muted ml-2"> - {{'admin.targets.environment' | translate}} : {{currentExecution?.environment}}</small>
                 </h1>
                 <div *ngIf="lastExecutionRunning">
                     <button type="button" class="btn btn-dark m-2" (click)="stopScenario()"

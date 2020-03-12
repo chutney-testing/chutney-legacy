@@ -119,7 +119,7 @@ public class CampaignExecutionEngine {
     private CampaignExecutionReport execute(Campaign campaign, CampaignExecutionReport campaignExecutionReport, List<String> scenariosToExecute) {
         LOGGER.trace("Execute campaign {} : {}", campaign.id, campaign.title);
         List<TestCase> testCases = scenariosToExecute.stream().map(id -> testCaseRepository.findById(id)).filter(t -> t !=null).collect(Collectors.toList());
-        campaignExecutionReport.initExecution(testCases);
+        campaignExecutionReport.initExecution(testCases, campaign.executionEnvironment());
         Stream<TestCase> scenarioStream;
         if(campaign.parallelRun) {
             scenarioStream = testCases.parallelStream();
@@ -137,7 +137,7 @@ public class CampaignExecutionEngine {
                 Map<String, String> ds = new HashMap<>(testCase.dataSet());
                 ds.putAll(campaign.dataSet);
                 // Init scenario execution in campaign report
-                campaignExecutionReport.startScenarioExecution(testCase);
+                campaignExecutionReport.startScenarioExecution(testCase, campaign.executionEnvironment());
                 // Execute scenario
                 ScenarioExecutionReportCampaign scenarioExecutionReport = executeScenario(campaign, testCase.withDataSet(ds));
                 // Retry one time if failed

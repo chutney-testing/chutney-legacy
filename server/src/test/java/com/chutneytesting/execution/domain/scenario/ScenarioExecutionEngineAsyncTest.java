@@ -41,6 +41,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.junit.After;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 public class ScenarioExecutionEngineAsyncTest {
 
@@ -123,14 +124,16 @@ public class ScenarioExecutionEngineAsyncTest {
         );
 
         // When
-        ExecutionRequest request = new ExecutionRequest(testCase, "");
+        ExecutionRequest request = new ExecutionRequest(testCase, "Exec env");
         sut.execute(request);
 
         // Then
         verify(executionStateRepository).runningState(scenarioId);
         verify(testCasePreProcessors).apply(any(RawTestCase.class));
         verify(executionEngine).executeAndFollow(any());
-        verify(executionHistoryRepository).store(eq(scenarioId), any());
+        ArgumentCaptor<ExecutionHistory.DetachedExecution> argumentCaptor = ArgumentCaptor.forClass(ExecutionHistory.DetachedExecution.class);
+        verify(executionHistoryRepository).store(eq(scenarioId), argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue().environment()).isEqualTo("Exec env");
 
         // Wait for background computation
         verify(executionStateRepository, timeout(250)).notifyExecutionStart(scenarioId);
@@ -162,7 +165,7 @@ public class ScenarioExecutionEngineAsyncTest {
 
         // When
         TestObserver<ScenarioExecutionReport> testObserver =
-            sut.buildScenarioExecutionReportObservable(emptyTestCase(), executionId, engineStub.getLeft()).test();
+            sut.buildScenarioExecutionReportObservable(new ExecutionRequest(emptyTestCase(), ""), executionId, engineStub.getLeft()).test();
 
         // Then
         assertTestObserverStateWithValues(testObserver, 0, false);
@@ -321,6 +324,7 @@ public class ScenarioExecutionEngineAsyncTest {
             .duration(666L)
             .report("")
             .testCaseTitle("fake")
+            .environment("")
             .build();
 
         when(executionHistoryRepository.store(eq(scenarioId), any())).thenReturn(storedExecution);

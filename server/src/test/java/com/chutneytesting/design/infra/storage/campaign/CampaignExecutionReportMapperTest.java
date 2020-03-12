@@ -54,6 +54,7 @@ public class CampaignExecutionReportMapperTest {
                 Assertions.assertThat(scenarioReport.execution.status()).isEqualTo(status);
                 Assertions.assertThat(scenarioReport.execution.duration()).isEqualTo(duration);
                 Assertions.assertThat(scenarioReport.execution.time()).isEqualTo(started);
+                Assertions.assertThat(scenarioReport.execution.environment()).isEqualTo("env");
             });
         });
     }
@@ -75,6 +76,7 @@ public class CampaignExecutionReportMapperTest {
         when(rs.getString("INFORMATION")).thenReturn("");
         when(rs.getString("ERROR")).thenReturn("");
         when(rs.getString("TEST_CASE_TITLE")).thenReturn("fake");
+        when(rs.getString("ENVIRONMENT")).thenReturn("env");
         return rs;
     }
 
@@ -86,6 +88,7 @@ public class CampaignExecutionReportMapperTest {
             .executionId(executionId)
             .report("")
             .testCaseTitle("fake")
+            .environment("env")
             .build();
     }
 }
