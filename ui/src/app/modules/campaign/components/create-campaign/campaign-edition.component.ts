@@ -148,7 +148,12 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
 
     clear() {
         this.campaignForm.reset();
-        const url = '/campaign';
+        let url: string;
+        if (this.campaign.id) {
+            url = '/campaign/' + this.campaign.id + '/execution';
+        } else {
+            url = '/campaign';
+        }
         this.router.navigateByUrl(url);
     }
 
