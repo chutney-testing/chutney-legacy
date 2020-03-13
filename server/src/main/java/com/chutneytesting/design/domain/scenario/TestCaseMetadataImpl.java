@@ -6,6 +6,7 @@ import static java.util.Optional.ofNullable;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public final class TestCaseMetadataImpl implements TestCaseMetadata {
 
@@ -106,7 +107,7 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
                 ofNullable(id).orElse("-42"),
                 ofNullable(title).orElse(""),
                 ofNullable(description).orElse(""),
-                ofNullable(tags).orElse(emptyList()),
+                (ofNullable(tags).orElse(emptyList())).stream().map(String::toUpperCase).map(String::trim).collect(Collectors.toList()),
                 ofNullable(creationDate).orElse(Instant.now()),
                 ofNullable(repositorySource).orElse(TestCaseRepository.DEFAULT_REPOSITORY_SOURCE)
             );

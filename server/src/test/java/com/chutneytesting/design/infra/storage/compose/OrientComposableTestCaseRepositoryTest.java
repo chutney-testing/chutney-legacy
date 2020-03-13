@@ -219,7 +219,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
         assertThat(composableTestCaseFound.metadata.title()).isEqualTo(composableTestCase.metadata.title());
         assertThat(composableTestCaseFound.metadata.description()).isEqualTo(composableTestCase.metadata.description());
         assertThat(composableTestCaseFound.metadata.creationDate()).isEqualTo(composableTestCase.metadata.creationDate());
-        assertThat(composableTestCaseFound.metadata.tags()).containsExactly("tag1", "tag2");
+        assertThat(composableTestCaseFound.metadata.tags()).containsExactly("TAG1", "TAG2");
         assertThat(composableTestCaseFound.composableScenario.functionalSteps)
             .containsExactly(FuncStepRefScenarioInstance, FuncStepRefParentScenarioInstance);
         assertThat(composableTestCaseFound.composableScenario.parameters).containsAllEntriesOf(scenarioParameters);

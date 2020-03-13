@@ -1,6 +1,7 @@
 {
     "title": "__titre__",
     "description": "__description__",
+    "tags": [" tag1", "  tag2   "],
     "scenario": {
         "givens": [
             {
