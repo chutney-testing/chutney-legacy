@@ -60,7 +60,6 @@ public class GwtTestCaseControllerTest {
     public void should_delete_scenario_with_repository_when_delete_scenario() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/scenario/v2/1")
             .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
-//            .andDo(print())
             .andExpect(MockMvcResultMatchers.status().isOk());
         verify(testCaseRepository).removeById(eq("1"));
     }
@@ -87,6 +86,7 @@ public class GwtTestCaseControllerTest {
         assertThat(bodyHolder.get()).isEqualTo("1");
         assertThat(scenario.getValue().metadata.title).isEqualTo("__titre__");
         assertThat(scenario.getValue().metadata.description).isEqualTo("__description__");
+        assertThat(scenario.getValue().metadata.tags).containsExactly("TAG1", "TAG2");
         GwtTestCase expected = GwtTestCase.builder()
             .withMetadata(TestCaseMetadataImpl.builder()
                 .withTitle("__titre__")
