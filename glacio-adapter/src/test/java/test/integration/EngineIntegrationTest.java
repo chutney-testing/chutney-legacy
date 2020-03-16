@@ -14,7 +14,6 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 import org.assertj.core.util.Files;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,7 +42,7 @@ public class EngineIntegrationTest {
     @Test
     public void should_execute_simple_feature() {
         // Given
-        String feature = fileContent("integration/do_succeed.feature");
+        String feature = fileContent("integration/simple_parser.feature");
         List<StepDefinition> stepDefinitions = glacioAdapter.toChutneyStepDefinition(feature);
 
         // When
@@ -51,9 +50,11 @@ public class EngineIntegrationTest {
         stepDefinitions.forEach(stepDefinition -> reports.add(execute(stepDefinition)));
 
         // Then
-        IntStream.range(0, stepDefinitions.size()).forEach(i ->
-            assertThat(reports.get(i).status).isEqualTo(Status.SUCCESS)
-        );
+        assertThat(reports.get(0).status).isEqualTo(Status.SUCCESS); // Success task
+        assertThat(reports.get(1).status).isEqualTo(Status.SUCCESS); // Debug task
+        assertThat(reports.get(2).status).isEqualTo(Status.FAILURE); // Fail task
+        assertThat(reports.get(3).status).isEqualTo(Status.FAILURE); // Fail task
+        assertThat(reports.get(4).status).isEqualTo(Status.FAILURE); // Fail task
     }
 
     private StepExecutionReport execute(StepDefinition stepDefinition) {
