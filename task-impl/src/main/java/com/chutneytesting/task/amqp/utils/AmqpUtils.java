@@ -1,9 +1,8 @@
 package com.chutneytesting.task.amqp.utils;
 
 import com.rabbitmq.client.LongString;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AmqpUtils {
@@ -16,12 +15,14 @@ public class AmqpUtils {
      */
     public static Map<String, Object> convertMapLongStringToString(Map<String, Object> map) {
         if (map == null) {
-            return null;
+            return Collections.emptyMap();
         }
 
         return map.entrySet().stream()
-            .collect(Collectors.toMap(Map.Entry::getKey, e -> convertLongStringToString(e.getValue())));
-
+            .map(e-> new AbstractMap.SimpleEntry<>(
+                e.getKey(),
+                Optional.ofNullable(convertLongStringToString(e.getValue())).orElse("null")))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     /**
