@@ -1076,6 +1076,41 @@ Va logger tout le contexte du scénario au niveau du report du step
 - headers => headers envoyé sous format String
 ----
 
+=== Consommer un message sur un broker Kafka - `kafka-basic-consume`
+.Exemple
+[source,json]
+----
+{
+  "type": "kafka-basic-consume",
+  "target": "target_kafka", <1>
+  "inputs": {
+      "topic": "topic_name", <2>
+      "group": "group_id", <3>
+      "properties": {  <4>
+             "client.id": "client_id"
+       },
+      "nb-messages": "1", <5>
+      "selector": "$..[?($.headers.header1=='value1' && $.payload.id=="1122")]", <6>
+      "timeout": "60 sec", <7>
+  }
+}
+----
+
+<1> Target de type kafka
+<2> Topic existant sur lequel écouter les messages
+<3> Le goup id du consumer
+<4> *Optionel* Propriétés supplémentaires pour le consumer comme 'auto.offset.reset', see: https://kafka.apache.org/documentation/#consumerconfigs
+<5> *Optionel* par défault 1. Nombre de messages à récupérer
+<6> *Optionel* par défault null. Selecteur json path
+<7> *Optionel* par défault 60 secondes. Unité disponible : "ms", "s", "sec", "m", "min", "h", "hour", "hours", "hour(s)", "d", "day", "days", "day(s)"
+
+.Output de la tache
+----
+- body => messages consommés sous format d'une liste Map avec clés headers et payload
+- payloads => payloads extraits de messages sous format d'une liste
+- headers => headers extraits de messages sous format d'une liste
+----
+
 == Steps SSH
 
 === Envoi de commandes ssh - `ssh-client`
