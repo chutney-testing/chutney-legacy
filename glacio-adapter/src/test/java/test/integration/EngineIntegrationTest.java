@@ -50,11 +50,22 @@ public class EngineIntegrationTest {
         stepDefinitions.forEach(stepDefinition -> reports.add(execute(stepDefinition)));
 
         // Then
-        assertThat(reports.get(0).status).isEqualTo(Status.SUCCESS); // Success task
-        assertThat(reports.get(1).status).isEqualTo(Status.SUCCESS); // Debug task
-        assertThat(reports.get(2).status).isEqualTo(Status.FAILURE); // Fail task
-        assertThat(reports.get(3).status).isEqualTo(Status.FAILURE); // Fail task
-        assertThat(reports.get(4).status).isEqualTo(Status.FAILURE); // Fail task
+        assertThat(reports.get(0).status).isEqualTo(Status.SUCCESS); // Success/Debug scenario
+        assertThat(reports.get(1).status).isEqualTo(Status.FAILURE); // Fail scenario
+    }
+
+    @Test
+    public void should_execute_sleep_feature() {
+        // Given
+        String feature = fileContent("integration/sleep_parser.feature");
+        List<StepDefinition> stepDefinitions = glacioAdapter.toChutneyStepDefinition(feature);
+
+        // When
+        List<StepExecutionReport> reports = new ArrayList<>();
+        stepDefinitions.forEach(stepDefinition -> reports.add(execute(stepDefinition)));
+
+        // Then
+        assertThat(reports.get(0).status).isEqualTo(Status.SUCCESS);
     }
 
     private StepExecutionReport execute(StepDefinition stepDefinition) {

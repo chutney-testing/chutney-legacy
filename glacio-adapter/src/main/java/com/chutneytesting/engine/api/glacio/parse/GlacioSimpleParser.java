@@ -25,13 +25,11 @@ public class GlacioSimpleParser implements GlacioExecutableStepParser {
     @Override
     public String parseTaskType(Step step) {
         Matcher matcher = STEP_TEXT_PATTERN.matcher(step.getText());
-        while(matcher.find()) {
-            if (matcher.groupCount() == 2) {
-                String stepText = ofNullable(matcher.group("text")).orElse("");
-                return ofNullable(matcher.group("task"))
-                    .map(this::extractTaskId)
-                    .orElse(stepText);
-            }
+        if (matcher.matches()) {
+            String stepText = ofNullable(matcher.group("text")).orElse("");
+            return ofNullable(matcher.group("task"))
+                .map(this::extractTaskId)
+                .orElse(stepText);
         }
         throw new IllegalArgumentException("Cannot parse task type from step text : "+step.getText());
     }
