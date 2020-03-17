@@ -13,6 +13,7 @@ import {
 import { Execution } from '@model';
 import { interval, Subscription } from 'rxjs/index';
 import { ScenarioExecutionService } from '@core/services';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'chutney-execution-history',
@@ -22,33 +23,37 @@ import { ScenarioExecutionService } from '@core/services';
 export class HistoryComponent implements OnInit, OnDestroy, OnChanges {
 
     @Input() scenarioId: string;
-    @Input() selectedExecutionId = 'last';
+    @Input() selectedExecutionId: number;
     @Input() checkForEndExecutions = 5000;
 
-    @Output() onSelectExecution: EventEmitter<Execution> = new EventEmitter<Execution>();
-    @Output() onLastIdExecution: EventEmitter<Execution> = new EventEmitter<Execution>();
+    @Output() onselectExecution: EventEmitter<Execution> = new EventEmitter<Execution>();
+    @Output() onlastIdExecution: EventEmitter<Execution> = new EventEmitter<Execution>();
     @Output() onlastStatusExecution: EventEmitter<String> = new EventEmitter<String>();
 
     executions: Execution[] = [];
+    selectedLast = true;
 
     private _checkRunningExecutionsSubscription: Subscription;
 
     constructor(
-        private scenarioExecutionService: ScenarioExecutionService
+        private scenarioExecutionService: ScenarioExecutionService,
+        private route: ActivatedRoute,
     ) { }
 
     ngOnChanges(simpleChanges: SimpleChanges) {
-        const scenarioIdSimpleChange: SimpleChange = simpleChanges.scenarioId;
-        const selectedExecutionIdSimpleChange: SimpleChange = simpleChanges.selectedExecutionId;
-        const firstChange = (scenarioIdSimpleChange && scenarioIdSimpleChange.firstChange) ||
-                            (selectedExecutionIdSimpleChange && selectedExecutionIdSimpleChange.firstChange);
-        if (!firstChange && (scenarioIdSimpleChange || selectedExecutionIdSimpleChange.currentValue === 'last')) {
-            this.findScenarioExecutions();
-        }
+        this.findScenarioExecutions();
     }
 
     ngOnInit() {
-        this.findScenarioExecutions();
+        this.route.params.subscribe((params) => {
+            if (params['execId'] && params['execId'] !== 'last') {
+                this.selectedExecutionId = params['execId'];
+                this.selectedLast = false;
+            } else {
+                this.selectedLast = true;
+            }
+            this.findScenarioExecutions();
+        });
     }
 
     ngOnDestroy() {
@@ -56,8 +61,8 @@ export class HistoryComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     selectExecution(execution: Execution) {
-        this.selectedExecutionId = execution.executionId + '';
-        this.onSelectExecution.emit(execution);
+        this.selectedExecutionId = execution.executionId;
+        this.onselectExecution.emit(execution);
     }
 
     findScenarioExecutions() {
@@ -65,9 +70,9 @@ export class HistoryComponent implements OnInit, OnDestroy, OnChanges {
             .subscribe((executions) => {
                 if (executions.length > 0) {
                     // Output last execution id if necessary
-                    if (this.selectedExecutionId === 'last') {
-                        this.selectedExecutionId = executions[0].executionId + '';
-                        this.onLastIdExecution.emit(executions[0]);
+                    if (this.selectedLast) {
+                        this.selectedExecutionId = executions[0].executionId;
+                        this.onlastIdExecution.emit(executions[0]);
                     }
                     // Update executions
                     if (this.executions.length === 0) {
@@ -80,9 +85,7 @@ export class HistoryComponent implements OnInit, OnDestroy, OnChanges {
 
                     this.onlastStatusExecution.emit(executions[0].status);
                 } else {
-                    if (this.selectedExecutionId === 'last') {
-                        this.onLastIdExecution.emit(Execution.NO_EXECUTION);
-                    }
+                    this.onlastIdExecution.emit(Execution.NO_EXECUTION);
                 }
             });
     }

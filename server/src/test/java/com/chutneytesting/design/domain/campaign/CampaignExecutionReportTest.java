@@ -93,8 +93,8 @@ public class CampaignExecutionReportTest {
         LocalDateTime beforeStartExecution = LocalDateTime.now().minusSeconds(1);
 
         // When
-        campaignReport.initExecution(Collections.singletonList(testCase));
-        campaignReport.startScenarioExecution(testCase);
+        campaignReport.initExecution(Collections.singletonList(testCase), "env");
+        campaignReport.startScenarioExecution(testCase, "env");
 
         // Then
         assertThat(campaignReport.scenarioExecutionReports()).hasSize(1);
@@ -104,6 +104,7 @@ public class CampaignExecutionReportTest {
         assertThat(startedScenarioExecution.execution.executionId()).isEqualTo(-1L);
         assertThat(startedScenarioExecution.execution.time()).isAfter(beforeStartExecution);
         assertThat(startedScenarioExecution.execution.status()).isEqualTo(ServerReportStatus.RUNNING);
+        assertThat(startedScenarioExecution.execution.environment()).isEqualTo("env");
     }
 
     @Test
@@ -111,8 +112,8 @@ public class CampaignExecutionReportTest {
         // Given
         CampaignExecutionReport campaignReport = new CampaignExecutionReport(1L, "...", false, "");
         TestCase testCase = buildTestCase("1", "title");
-        campaignReport.initExecution(Collections.singletonList(testCase));
-        campaignReport.startScenarioExecution(testCase);
+        campaignReport.initExecution(Collections.singletonList(testCase), "env");
+        campaignReport.startScenarioExecution(testCase, "env");
 
         ScenarioExecutionReportCampaign scenarioReport_SUCCESS = buildScenarioReportFromMockedExecution(testCase.id(), testCase.metadata().title(), ServerReportStatus.SUCCESS);
 
@@ -157,8 +158,8 @@ public class CampaignExecutionReportTest {
 
     private void addScenarioExecutions(CampaignExecutionReport campaignReport, String scenarioId, String scenarioTitle, ServerReportStatus scenarioExecutionStatus) {
         TestCase testCase = buildTestCase(scenarioId, scenarioTitle);
-        campaignReport.initExecution(Collections.singletonList(testCase));
-        campaignReport.startScenarioExecution(testCase);
+        campaignReport.initExecution(Collections.singletonList(testCase), "");
+        campaignReport.startScenarioExecution(testCase, "");
 
         ScenarioExecutionReportCampaign scenarioReport_FAILURE = buildScenarioReportFromMockedExecution(scenarioId, scenarioTitle, scenarioExecutionStatus);
 

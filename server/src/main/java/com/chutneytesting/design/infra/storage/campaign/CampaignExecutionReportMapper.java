@@ -70,6 +70,7 @@ class CampaignExecutionReportMapper implements ResultSetExtractor<List<CampaignE
             .info(Optional.ofNullable(rs.getString("INFORMATION")))
             .error(Optional.ofNullable(rs.getString("ERROR")))
             .testCaseTitle(rs.getString("TEST_CASE_TITLE"))
+            .environment(rs.getString("ENVIRONMENT"))
             .build();
     }
 

@@ -23,6 +23,7 @@ class ExecutionSummaryRowMapper implements RowMapper<ExecutionSummary> {
             .info(ofNullable(rs.getString("INFORMATION")))
             .error(ofNullable(rs.getString("ERROR")))
             .testCaseTitle(rs.getString("TEST_CASE_TITLE"))
+            .environment((rs.getString("ENVIRONMENT")))
             .build();
     }
 }

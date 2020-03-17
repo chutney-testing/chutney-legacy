@@ -29,6 +29,7 @@ public interface ExecutionSummaryDto extends ExecutionProperties, Attached {
             .error(executionSummary.error())
             .executionId(executionSummary.executionId())
             .testCaseTitle(executionSummary.testCaseTitle())
+            .environment(executionSummary.environment())
             .build();
     }
 
@@ -45,6 +46,7 @@ public interface ExecutionSummaryDto extends ExecutionProperties, Attached {
             .error(dto.error())
             .executionId(dto.executionId())
             .testCaseTitle(dto.testCaseTitle())
+            .environment(dto.environment())
             .build();
     }
 }
