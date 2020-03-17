@@ -393,4 +393,15 @@
             <column name="RETRY_AUTO"  type="BOOLEAN" defaultValue="FALSE"></column>
         </addColumn>
     </changeSet>
+    <changeSet id="20200313" author="ICG">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="SCENARIO_EXECUTION_HISTORY" columnName="ENVIRONMENT"/>
+            </not>
+        </preConditions>
+        <comment>Create column ENVIRONMENT in SCENARIO_EXECUTION_HISTORY</comment>
+        <addColumn tableName="SCENARIO_EXECUTION_HISTORY">
+            <column name="ENVIRONMENT"  type="VARCHAR(20)" defaultValue=""></column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

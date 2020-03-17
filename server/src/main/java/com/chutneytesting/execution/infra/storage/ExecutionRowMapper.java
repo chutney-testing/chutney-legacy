@@ -22,6 +22,7 @@ public class ExecutionRowMapper implements RowMapper<Execution> {
             .error(Optional.ofNullable(rs.getString("ERROR")))
             .report(rs.getString("REPORT"))
             .testCaseTitle(rs.getString("TEST_CASE_TITLE"))
+            .environment(rs.getString("ENVIRONMENT"))
             .build();
     }
 }

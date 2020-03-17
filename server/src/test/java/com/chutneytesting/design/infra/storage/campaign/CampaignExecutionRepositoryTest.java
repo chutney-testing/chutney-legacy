@@ -113,7 +113,7 @@ public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
         scenarioExecutions.get(scenarioId).put(scenarioExecutionId, execution);
         ScenarioExecutionReportCampaign scenarioExecutionReport = new ScenarioExecutionReportCampaign(scenarioId, scenarioName, execution);
 
-        CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(campaignExecutionId, campaignId, Collections.singletonList(scenarioExecutionReport), "title", false, "");
+        CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(campaignExecutionId, campaignId, Collections.singletonList(scenarioExecutionReport), "title", false, "env");
 
         sut.saveCampaignReport(campaignId, campaignExecutionReport);
     }
@@ -127,6 +127,7 @@ public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
                 ExecutionHistory.ExecutionSummary exec = scenarioExecutions.get(scenarioExecutionReport.scenarioId).get(scenarioExecutionReport.execution.executionId());
                 assertThat(scenarioExecutionReport.execution.executionId()).isEqualTo(exec.executionId());
                 assertThat(scenarioExecutionReport.execution.status()).isEqualTo(exec.status());
+                assertThat(scenarioExecutionReport.execution.environment()).isEqualTo(exec.environment());
             });
         });
     }
@@ -141,8 +142,8 @@ public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
 
     private void insertScenarioExec(String scenarioId, String execid, String status) {
         jdbcTemplate.execute("INSERT INTO SCENARIO_EXECUTION_HISTORY"
-            + "(ID, SCENARIO_ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, REPORT, TEST_CASE_TITLE) VALUES "
-            + "(" + execid + ", " + scenarioId + ",0,0,'" + status + "','','','','fake')");
+            + "(ID, SCENARIO_ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, REPORT, TEST_CASE_TITLE, ENVIRONMENT) VALUES "
+            + "(" + execid + ", " + scenarioId + ",0,0,'" + status + "','','','','fake', 'default')");
     }
 
     private ExecutionHistory.ExecutionSummary generateScenarioExecution(long scenarioExecutionId, ServerReportStatus status) {
@@ -151,6 +152,7 @@ public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
             .time(LocalDateTime.now())
             .status(status)
             .testCaseTitle("fake")
+            .environment("default")
             .build();
     }
 }

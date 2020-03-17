@@ -322,6 +322,7 @@ public class CampaignExecutionEngineTest {
             .duration(3L)
             .status(ServerReportStatus.SUCCESS)
             .report("")
+            .environment("")
             .build();
     }
 
@@ -333,6 +334,7 @@ public class CampaignExecutionEngineTest {
             .duration(3L)
             .status(ServerReportStatus.FAILURE)
             .report("")
+            .environment("")
             .build();
     }
 

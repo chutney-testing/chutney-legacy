@@ -50,19 +50,19 @@ export class ScenarioExecutionService {
             }));
     }
 
-    stopScenario(scenarioId: string, executionId: string): Observable<void> {
+    stopScenario(scenarioId: string, executionId: number): Observable<void> {
         return this.http.post(environment.backend +
             `${this.resourceUrl}/executionasync/v1/${scenarioId}/execution/${executionId}/stop`, {}).pipe(map((res: Response) => {
             }));
     }
 
-    pauseScenario(scenarioId: string, executionId: string): Observable<void> {
+    pauseScenario(scenarioId: string, executionId: number): Observable<void> {
         return this.http.post(environment.backend +
             `${this.resourceUrl}/executionasync/v1/${scenarioId}/execution/${executionId}/pause`, {}).pipe(map((res: Response) => {
             }));
     }
 
-    resumeScenario(scenarioId: string, executionId: string): Observable<void> {
+    resumeScenario(scenarioId: string, executionId: number): Observable<void> {
         return this.http.post(environment.backend +
             `${this.resourceUrl}/executionasync/v1/${scenarioId}/execution/${executionId}/resume`, {}).pipe(map((res: Response) => {
             }));
@@ -73,7 +73,7 @@ export class ScenarioExecutionService {
             let es;
             try {
                 es = new EventSource(url);
-                es.onerror = () => obs.error("Error loading execution");
+                es.onerror = () => obs.error('Error loading execution');
                 es.addEventListener('partial', (evt: any) => {
                     obs.next(this.buildExecutionReport(JSON.parse(evt.data)));
                 });
@@ -82,14 +82,14 @@ export class ScenarioExecutionService {
                     obs.complete();
                 });
             } catch (error) {
-                obs.error("Error creating source event");
+                obs.error('Error creating source event');
             }
 
             return () => {
                 if (es) {
                     es.close();
                 }
-            }
+            };
         });
     }
 

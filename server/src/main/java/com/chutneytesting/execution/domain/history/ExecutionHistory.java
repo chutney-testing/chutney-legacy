@@ -23,6 +23,7 @@ public interface ExecutionHistory {
         Optional<String> info();
         Optional<String> error();
         String testCaseTitle();
+        String environment();
     }
 
     interface Attached {

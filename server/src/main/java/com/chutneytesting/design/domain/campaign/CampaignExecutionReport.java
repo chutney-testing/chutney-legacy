@@ -49,7 +49,7 @@ public class CampaignExecutionReport {
         this.executionEnvironment = executionEnvironment;
     }
 
-    public void initExecution(List<TestCase> testCases) {
+    public void initExecution(List<TestCase> testCases, String executionEnvironment) {
         testCases.stream().forEach(testCase -> {
             this.scenarioExecutionReports.add(
                 new ScenarioExecutionReportCampaign(
@@ -61,11 +61,12 @@ public class CampaignExecutionReport {
                         .time(LocalDateTime.now())
                         .status(ServerReportStatus.NOT_EXECUTED)
                         .duration(0)
+                        .environment(executionEnvironment)
                         .build()));
         });
     }
 
-    public void startScenarioExecution(TestCase testCase) throws UnsupportedOperationException {
+    public void startScenarioExecution(TestCase testCase, String executionEnvironment) throws UnsupportedOperationException {
         OptionalInt indexOpt = IntStream.range(0, this.scenarioExecutionReports.size())
             .filter(i -> this.scenarioExecutionReports.get(i).scenarioId.equals(testCase.id()))
             .findFirst();
@@ -79,6 +80,7 @@ public class CampaignExecutionReport {
                     .time(LocalDateTime.now())
                     .status(ServerReportStatus.RUNNING)
                     .duration(0)
+                    .environment(executionEnvironment)
                     .build()));
     }
 

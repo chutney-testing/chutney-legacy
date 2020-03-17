@@ -33,7 +33,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     @Override
     public List<ExecutionSummary> getExecutions(String scenarioId) {
         return namedParameterJdbcTemplate.query(
-            "SELECT ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, TEST_CASE_TITLE FROM SCENARIO_EXECUTION_HISTORY WHERE SCENARIO_ID = :scenarioId ORDER BY ID DESC LIMIT " + LIMIT_BLOC_SIZE,
+            "SELECT ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, TEST_CASE_TITLE, ENVIRONMENT FROM SCENARIO_EXECUTION_HISTORY WHERE SCENARIO_ID = :scenarioId ORDER BY ID DESC LIMIT " + LIMIT_BLOC_SIZE,
             ImmutableMap.<String, Object>builder().put("scenarioId", scenarioId).build(),
             executionSummaryRowMapper);
     }
@@ -46,8 +46,8 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
         executionParameters.put("scenarioId", scenarioId);
         executionParameters.put("id", nextId);
         namedParameterJdbcTemplate.update("INSERT INTO SCENARIO_EXECUTION_HISTORY"
-                + "(ID, SCENARIO_ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, REPORT, TEST_CASE_TITLE) VALUES "
-                + "(:id, :scenarioId, :executionTime, :duration, :status, :information, :error, :report, :title)",
+                + "(ID, SCENARIO_ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, REPORT, TEST_CASE_TITLE, ENVIRONMENT) VALUES "
+                + "(:id, :scenarioId, :executionTime, :duration, :status, :information, :error, :report, :title, :environment)",
             executionParameters);
 
         return ImmutableExecutionHistory.Execution.builder()
@@ -60,7 +60,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     public Execution getExecution(String scenarioId, Long reportId) throws ReportNotFoundException {
         try {
             return namedParameterJdbcTemplate.queryForObject(
-                "SELECT ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, REPORT, TEST_CASE_TITLE FROM SCENARIO_EXECUTION_HISTORY WHERE ID = :reportId",
+                "SELECT ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, REPORT, TEST_CASE_TITLE, ENVIRONMENT FROM SCENARIO_EXECUTION_HISTORY WHERE ID = :reportId",
                 ImmutableMap.<String, Object>builder().put("reportId", reportId).build(),
                 executionRowMapper);
         } catch (EmptyResultDataAccessException e) {
@@ -83,7 +83,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
 
         return namedParameterJdbcTemplate.update(
             "UPDATE SCENARIO_EXECUTION_HISTORY SET "
-                + "EXECUTION_TIME = :executionTime, DURATION = :duration, STATUS = :status, INFORMATION = :information, ERROR = :error, REPORT = :report, TEST_CASE_TITLE = :title "
+                + "EXECUTION_TIME = :executionTime, DURATION = :duration, STATUS = :status, INFORMATION = :information, ERROR = :error, REPORT = :report, TEST_CASE_TITLE = :title, ENVIRONMENT= :environment "
                 + "WHERE ID = :id",
             executionParameters);
     }
@@ -102,7 +102,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     @Override
     public List<ExecutionSummary> getExecutionsWithStatus(ServerReportStatus status) {
         return namedParameterJdbcTemplate.query(
-            "SELECT ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, TEST_CASE_TITLE FROM SCENARIO_EXECUTION_HISTORY WHERE STATUS = :status",
+            "SELECT ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, TEST_CASE_TITLE, ENVIRONMENT FROM SCENARIO_EXECUTION_HISTORY WHERE STATUS = :status",
             ImmutableMap.<String, Object>builder().put("status", status.name()).build(),
             executionSummaryRowMapper);
     }
@@ -123,6 +123,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
             .error("Execution was interrupted !")
             .report("")
             .testCaseTitle(executionSummary.testCaseTitle())
+            .environment(executionSummary.environment())
             .build();
     }
 
@@ -135,6 +136,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
         executionParameters.put("error", execution.error().map(error -> StringUtils.substring(error, 0, 512)).orElse(null));
         executionParameters.put("report", execution.report());
         executionParameters.put("title", execution.testCaseTitle());
+        executionParameters.put("environment", execution.environment());
         return executionParameters;
     }
 }
