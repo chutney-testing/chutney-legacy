@@ -17,14 +17,8 @@ Feature: Simple parser feature
             it is very good
                 Execute (success) subsubstep success
 
-    Scenario: Direct Fail
-        When Do fail
-
-    Scenario: SubStep fail
-        When something is good
-            Do (fail) substep fail
-
-    Scenario: SubSubStep fail
-        When it is very good
-            it is very good
-                Execute fail
+    Scenario: Deep SubStep fail
+        When There is a first step
+            I'm a sub step
+                I'm a sub sub step
+                    Execute fail
