@@ -28,7 +28,27 @@ Scenario: kafka basic publish success
                             "X--API-VERSION": "1.0"
                         }
                     }
-                }
+                },
+               {
+                 "name": "Consume from broker",
+                  "type": "kafka-basic-consume",
+                  "target": "test_kafka",
+                  "inputs": {
+                      "topic": "mon-topic",
+                      "group": "chutney"
+                  },
+                  "outputs": {
+                     "payload" : "${#payloads[0]}"
+                  }
+                },
+               {
+                   "name": "Check Payload"
+                   "type": "string-assert",
+                   "inputs": {
+                       "document": "${#payload}",
+                       "expected": "bodybuilder"
+                   }
+               }
             ]
         }
         }
