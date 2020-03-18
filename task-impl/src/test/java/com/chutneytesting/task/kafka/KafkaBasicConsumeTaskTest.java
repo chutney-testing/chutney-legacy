@@ -144,7 +144,6 @@ public class KafkaBasicConsumeTaskTest {
         containerProperties.setMessageListener(ReflectionTestUtils.invokeMethod(task, "createMessageListener"));
         ConcurrentMessageListenerContainer<String, String> messageListenerContainer = new ConcurrentMessageListenerContainer<>(cf, containerProperties);
         ReflectionTestUtils.setField(task, "messageListenerContainer", messageListenerContainer);
-        MessageListener<String, String> listener = (MessageListener<String, String>) messageListenerContainer.getContainerProperties().getMessageListener();
 
         //when
         TaskExecutionResult taskExecutionResult = task.execute();

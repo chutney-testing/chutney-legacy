@@ -27,7 +27,6 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
-import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
@@ -35,17 +34,13 @@ import org.springframework.kafka.listener.MessageListener;
 
 public class KafkaBasicConsumeTask implements Task {
 
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(KafkaBasicConsumeTask.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private final String topic;
-    private final String group;
     private final Logger logger;
     private final Integer nbMessages;
     private final String timeout;
     private final String selector;
-    // we probably want to add something more, like 'auto.offset.reset', see: https://kafka.apache.org/documentation/#consumerconfigs
-    private final Map<String, String> properties;
     private final ConsumerFactory<String, String> consumerFactory;
     private final CountDownLatch countDownLatch;
     private final List<Map<String, Object>> consumedMessages = new ArrayList<>();
@@ -61,12 +56,10 @@ public class KafkaBasicConsumeTask implements Task {
                                  @Input("timeout") String timeout,
                                  Logger logger) {
         this.topic = topic;
-        this.group = group;
-        this.properties = defaultIfNull(properties, Collections.emptyMap());
         this.nbMessages = defaultIfNull(nbMessages, 1);
         this.selector = selector;
         this.timeout = defaultIfEmpty(timeout, "60 sec");
-        this.consumerFactory = new KafkaConsumerFactoryFactory().create(target, this.group, this.properties);
+        this.consumerFactory = new KafkaConsumerFactoryFactory().create(target, group, defaultIfNull(properties, Collections.emptyMap()));
         this.countDownLatch = new CountDownLatch(this.nbMessages);
         this.messageListenerContainer = createMessageListenerContainer(createMessageListener());
         this.logger = logger;
