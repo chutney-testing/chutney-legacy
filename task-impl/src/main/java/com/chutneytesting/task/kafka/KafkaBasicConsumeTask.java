@@ -111,7 +111,7 @@ public class KafkaBasicConsumeTask implements Task {
                         addMessageToResultAndCountDown(message);
                     }
                 } catch (JsonProcessingException e) {
-                    LOGGER.warn("Received a message, however cannot read process it as json, Ignoring message selection.", e);
+                    logger.info("Received a message, however cannot read process it as json, Ignoring message selection.");
                 }
             }
         };
@@ -127,7 +127,7 @@ public class KafkaBasicConsumeTask implements Task {
         try {
             payload = OBJECT_MAPPER.readValue(record.value(), Map.class);
         } catch (IOException e) {
-            LOGGER.warn("Received a message, however cannot read it as Json fallback as String.", e);
+            logger.info("Received a message, however cannot read it as Json fallback as String.");
             payload = record.value();
         }
         return payload;
