@@ -5,6 +5,7 @@
 server/conf/
 /backups
 .env/
+/ui/coverage
 
 ######################
 # Chutney persistence dir

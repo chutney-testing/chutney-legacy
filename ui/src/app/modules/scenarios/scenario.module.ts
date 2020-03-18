@@ -72,7 +72,6 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
         ComponentEditionComponent,
         ExecuteComponent,
         HeaderComponent,
-
     ],
     providers: [
         {

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { EventManagerService } from '@shared/event-manager.service';
 import { ScenarioService } from '@core/services';
 import { SelectableTags, ScenarioIndex, ScenarioType } from '@model';
 import { distinct, flatMap } from '@shared/tools/array-utils';
@@ -30,7 +29,6 @@ export class ScenariiComponent implements OnInit {
     constructor(
         private router: Router,
         private scenarioService: ScenarioService,
-        private eventManager: EventManagerService,
         private stateService: StateService
     ) {
     }

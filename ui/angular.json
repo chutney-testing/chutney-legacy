@@ -87,6 +87,11 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src/styles"
+              ]
+            },
             "styles": [
               "src/styles/vendor.scss",
               "src/styles/global.scss",
@@ -94,7 +99,9 @@
               "src/styles/tags.scss",
               "src/styles/themes/default.theme.scss"
             ],
-            "scripts": [],
+            "scripts": [
+              "node_modules/asciidoctor.js/dist/asciidoctor.min.js"
+            ],
             "assets": [
               "src/assets",
               "src/manifest.json",

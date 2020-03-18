@@ -78,7 +78,7 @@
 
 <div class="row">
     <ng-container *ngIf="!listView">
-        <div class="d-flex mr-auto ml-3"
+        <div id="cards" class="d-flex mr-auto ml-3"
              *ngFor="let scenario of (scenarii |  scenarioSearch : tagData.selected() : scenarioTypeData.selected() : tagData.isNoTagSelected() : tagData.isSelectAll()  | searchTextPipe  : scenariiFilter : ['title', 'description']  | sortByField : sortField : asc)">
             <chutney-scenario-card [scenario]="scenario"></chutney-scenario-card>
         </div>
