@@ -17,6 +17,7 @@ public class KafkaConsumerFactoryFactory {
         Map<String, Object> consumerConfig = ImmutableMap.<String, Object>builder()
             .put(BOOTSTRAP_SERVERS_CONFIG, target.url())
             .put(GROUP_ID_CONFIG, group)
+            .putAll(target.properties())
             .putAll(properties)
             .build();
 
