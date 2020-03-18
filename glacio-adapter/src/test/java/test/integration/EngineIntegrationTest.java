@@ -68,6 +68,20 @@ public class EngineIntegrationTest {
         assertThat(reports.get(0).status).isEqualTo(Status.SUCCESS);
     }
 
+    @Test
+    public void should_execute_context_put_feature() {
+        // Given
+        String feature = fileContent("integration/context-put_parser.feature");
+        List<StepDefinition> stepDefinitions = glacioAdapter.toChutneyStepDefinition(feature);
+
+        // When
+        List<StepExecutionReport> reports = new ArrayList<>();
+        stepDefinitions.forEach(stepDefinition -> reports.add(execute(stepDefinition)));
+
+        // Then
+        assertThat(reports.get(0).status).isEqualTo(Status.SUCCESS);
+    }
+
     private StepExecutionReport execute(StepDefinition stepDefinition) {
         Long executionId = executionEngine.execute(stepDefinition, ScenarioExecution.createScenarioExecution());
         return reporter.subscribeOnExecution(executionId).blockingLast();
