@@ -65,3 +65,4 @@ com.chutneytesting.task.assertion.XsdValidationTask
 com.chutneytesting.task.assertion.CompareTask
 
 com.chutneytesting.task.kafka.KafkaBasicPublishTask
+com.chutneytesting.task.kafka.KafkaBasicConsumeTask
