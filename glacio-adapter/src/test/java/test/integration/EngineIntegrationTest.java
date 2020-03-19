@@ -15,6 +15,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import org.assertj.core.util.Files;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +73,51 @@ public class EngineIntegrationTest {
     public void should_execute_context_put_feature() {
         // Given
         String feature = fileContent("integration/context-put_parser.feature");
+        List<StepDefinition> stepDefinitions = glacioAdapter.toChutneyStepDefinition(feature);
+
+        // When
+        List<StepExecutionReport> reports = new ArrayList<>();
+        stepDefinitions.forEach(stepDefinition -> reports.add(execute(stepDefinition)));
+
+        // Then
+        assertThat(reports.get(0).status).isEqualTo(Status.SUCCESS);
+    }
+
+    @Test
+    @Ignore
+    public void should_execute_http_feature() {
+        // Given
+        String feature = fileContent("integration/http_parser.feature");
+        List<StepDefinition> stepDefinitions = glacioAdapter.toChutneyStepDefinition(feature);
+
+        // When
+        List<StepExecutionReport> reports = new ArrayList<>();
+        stepDefinitions.forEach(stepDefinition -> reports.add(execute(stepDefinition)));
+
+        // Then
+        assertThat(reports.get(0).status).isEqualTo(Status.SUCCESS);
+    }
+
+    @Test
+    @Ignore
+    public void should_execute_sql_feature() {
+        // Given
+        String feature = fileContent("integration/sql_parser.feature");
+        List<StepDefinition> stepDefinitions = glacioAdapter.toChutneyStepDefinition(feature);
+
+        // When
+        List<StepExecutionReport> reports = new ArrayList<>();
+        stepDefinitions.forEach(stepDefinition -> reports.add(execute(stepDefinition)));
+
+        // Then
+        assertThat(reports.get(0).status).isEqualTo(Status.SUCCESS);
+    }
+
+    @Test
+    @Ignore
+    public void should_execute_blackbox_feature() {
+        // Given
+        String feature = fileContent("integration/blackbox.feature");
         List<StepDefinition> stepDefinitions = glacioAdapter.toChutneyStepDefinition(feature);
 
         // When
