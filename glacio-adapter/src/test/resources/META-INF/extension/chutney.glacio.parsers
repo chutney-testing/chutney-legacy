@@ -1,2 +1,3 @@
-com.chutneytesting.engine.api.glacio.parse.GlacioSimpleParser
-test.unit.com.chutneytesting.engine.api.glacio.parse.SimpleSuccessParser
+test.unit.com.chutneytesting.engine.api.glacio.parse.SuccessParser
+test.unit.com.chutneytesting.engine.api.glacio.parse.DebugParser
+test.unit.com.chutneytesting.engine.api.glacio.parse.NoGlacioParser
