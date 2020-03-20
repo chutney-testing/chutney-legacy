@@ -5,6 +5,7 @@ import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.engine.domain.environment.ImmutableTarget;
 import com.chutneytesting.engine.domain.environment.Target;
+import com.chutneytesting.task.domain.TaskTemplateRegistry;
 import com.github.fridujo.glacio.ast.DataTable;
 import com.github.fridujo.glacio.ast.DocString;
 import com.github.fridujo.glacio.ast.Step;
@@ -18,10 +19,16 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
 
-public class GlacioSimpleParser implements GlacioExecutableStepParser {
+public class GlacioDefaultParser implements GlacioExecutableStepParser {
 
     private final static Pattern STEP_TEXT_PATTERN = Pattern.compile("^(?<task>\\(.*\\) )?(?<text>.*)$");
     private final static Predicate<String> STEP_TEXT_PREDICATE = STEP_TEXT_PATTERN.asPredicate();
+
+    private final TaskTemplateRegistry taskTemplateRegistry;
+
+    public GlacioDefaultParser(TaskTemplateRegistry taskTemplateRegistry) {
+        this.taskTemplateRegistry = taskTemplateRegistry;
+    }
 
     @Override
     public Integer priority() {
@@ -37,12 +44,15 @@ public class GlacioSimpleParser implements GlacioExecutableStepParser {
     public String parseTaskType(Step step) {
         Matcher matcher = STEP_TEXT_PATTERN.matcher(step.getText());
         if (matcher.matches()) {
-            String stepText = ofNullable(matcher.group("text")).orElse("");
             return ofNullable(matcher.group("task"))
                 .map(this::extractTaskId)
-                .orElse(stepText);
+                .filter(taskId -> this.taskTemplateRegistry.getByIdentifier(taskId).isPresent())
+                .orElseGet(() ->
+                    ofNullable(matcher.group("text"))
+                        .filter(taskId -> this.taskTemplateRegistry.getByIdentifier(taskId).isPresent())
+                        .orElseThrow(() -> new IllegalArgumentException("Cannot identify task from step text : " + step.getText())));
         }
-        throw new IllegalArgumentException("Cannot parse task type from step text : "+step.getText());
+        throw new IllegalArgumentException("Cannot extract task type from step text : "+step.getText());
     }
 
     @Override

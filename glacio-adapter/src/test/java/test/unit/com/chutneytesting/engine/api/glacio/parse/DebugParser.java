@@ -5,14 +5,14 @@ import com.github.fridujo.glacio.ast.Step;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-public class SimpleSuccessParser implements GlacioExecutableStepParser {
+public class DebugParser implements GlacioExecutableStepParser {
 
-    private final Pattern STEP_TEXT_PATTERN = Pattern.compile("^This step is always a success !!$");
+    private final Pattern STEP_TEXT_PATTERN = Pattern.compile("^I want to see all context variables$");
     private final Predicate<String> STEP_TEXT_PREDICATE = STEP_TEXT_PATTERN.asPredicate();
 
     @Override
     public Integer priority() {
-        return 1000;
+        return 2000;
     }
 
     @Override
@@ -22,6 +22,6 @@ public class SimpleSuccessParser implements GlacioExecutableStepParser {
 
     @Override
     public String parseTaskType(Step step) {
-        return "success";
+        return "debug";
     }
 }
