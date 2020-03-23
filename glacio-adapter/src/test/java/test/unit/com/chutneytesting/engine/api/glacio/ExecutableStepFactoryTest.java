@@ -61,21 +61,21 @@ public class ExecutableStepFactoryTest {
     @Test
     public void should_delegate_step_parsing_to_filtered_parsers() {
         // Given
-        String stepText = "success";
         GlacioExecutableStepParser parserToBeSelected = mock(GlacioExecutableStepParser.class);
-        when(parserToBeSelected.couldParse(stepText)).thenReturn(true);
+        when(parserToBeSelected.couldParse(any())).thenReturn(true);
         GlacioExecutableStepParser parserFiltered = mock(GlacioExecutableStepParser.class);
-        when(parserFiltered.couldParse(stepText)).thenReturn(false);
-        when(glacioExecutableStepParsers.stream()).thenReturn(Stream.of(parserToBeSelected, parserFiltered));
+        when(parserFiltered.couldParse(any())).thenReturn(false);
+        when(glacioExecutableStepParsers.stream())
+            .thenReturn(Stream.of(parserToBeSelected, parserFiltered));
 
-        Step successStep = buildSimpleStepWithText(EXECUTABLE_KEYWORD_EXECUTE + " " + stepText);
+        Step successStep = buildSimpleStepWithText(EXECUTABLE_KEYWORD_EXECUTE + " success");
 
         // When
         sut.build(successStep);
 
         // Then
-        verify(parserToBeSelected).couldParse(stepText);
-        verify(parserFiltered).couldParse(stepText);
+        verify(parserToBeSelected).couldParse(any());
+        verify(parserFiltered).couldParse(any());
         verify(parserToBeSelected).parseStep(any());
         verify(parserFiltered, times(0)).parseStep(any());
     }
@@ -83,22 +83,22 @@ public class ExecutableStepFactoryTest {
     @Test
     public void should_try_selected_parsers_one_after_the_other_if_parsing_failed() {
         // Given
-        String stepText = "success";
         GlacioExecutableStepParser parserWithException = mock(GlacioExecutableStepParser.class);
-        when(parserWithException.couldParse(stepText)).thenReturn(true);
+        when(parserWithException.couldParse(any())).thenReturn(true);
         when(parserWithException.parseStep(any())).thenThrow(Exception.class);
         GlacioExecutableStepParser secondParser = mock(GlacioExecutableStepParser.class);
-        when(secondParser.couldParse(stepText)).thenReturn(true);
-        when(glacioExecutableStepParsers.stream()).thenReturn(Stream.of(parserWithException, secondParser));
+        when(secondParser.couldParse(any())).thenReturn(true);
+        when(glacioExecutableStepParsers.stream())
+            .thenReturn(Stream.of(parserWithException, secondParser));
 
-        Step successStep = buildSimpleStepWithText(EXECUTABLE_KEYWORD_EXECUTE + " " + stepText);
+        Step successStep = buildSimpleStepWithText(EXECUTABLE_KEYWORD_EXECUTE + " success");
 
         // When
         sut.build(successStep);
 
         // Then
-        verify(parserWithException).couldParse(stepText);
-        verify(secondParser).couldParse(stepText);
+        verify(parserWithException).couldParse(any());
+        verify(secondParser).couldParse(any());
         verify(parserWithException).parseStep(any());
         verify(secondParser).parseStep(any());
     }
@@ -117,21 +117,20 @@ public class ExecutableStepFactoryTest {
     @Parameters(value = {EXECUTABLE_KEYWORD_DO, EXECUTABLE_KEYWORD_EXECUTE})
     public void should_remove_keyword_from_step_text_before_delegating_parsing(String keyword) {
         // Given
-        String stepText = "success";
+        String stepName = "success";
+        Step successStep = buildSimpleStepWithText(keyword + " " + stepName);
         GlacioExecutableStepParser parser = mock(GlacioExecutableStepParser.class);
-        when(parser.couldParse(stepText)).thenReturn(true);
+        when(parser.couldParse(any())).thenReturn(true);
         when(glacioExecutableStepParsers.stream()).thenReturn(Stream.of(parser));
-
-        Step successStep = buildSimpleStepWithText(keyword + " " + stepText);
 
         // When
         sut.build(successStep);
 
         // Then
         ArgumentCaptor<Step> stepArg = ArgumentCaptor.forClass(Step.class);
-        verify(parser).couldParse(stepText);
+        verify(parser).couldParse(any());
         verify(parser).parseStep(stepArg.capture());
-        assertThat(stepArg.getValue().getText()).isEqualTo(stepText);
+        assertThat(stepArg.getValue().getText()).isEqualTo(stepName);
     }
 
     private Step buildSimpleStepWithText(String stepText) {

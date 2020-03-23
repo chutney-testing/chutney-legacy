@@ -14,7 +14,7 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class GlacioContextPutParser implements GlacioExecutableStepParser {
+public class GlacioContextPutParser extends GlacioParser {
 
     private final static Pattern STEP_TEXT_PATTERN = Pattern.compile("^(?:add|put|store) (?:variables )?(?:(?:in|to|into) context )?(?<entries>.*)$");
     private final static Predicate<String> STEP_TEXT_PREDICATE = STEP_TEXT_PATTERN.asPredicate();
@@ -32,8 +32,8 @@ public class GlacioContextPutParser implements GlacioExecutableStepParser {
     }
 
     @Override
-    public boolean couldParse(String stepText) {
-        return STEP_TEXT_PREDICATE.test(stepText);
+    public boolean couldParse(Step step) {
+        return STEP_TEXT_PREDICATE.test(step.getText());
     }
 
     @Override
@@ -92,7 +92,7 @@ public class GlacioContextPutParser implements GlacioExecutableStepParser {
     private String trimEntryValue(String entryValue) {
         String trimedEntryValue = entryValue.trim();
         if (trimedEntryValue.startsWith("\"") && trimedEntryValue.endsWith("\"")) {
-            return trimedEntryValue.substring(1, trimedEntryValue.length()-1).trim();
+            return trimedEntryValue.substring(1, trimedEntryValue.length() - 1).trim();
         }
         return trimedEntryValue;
     }
