@@ -18,7 +18,8 @@ describe('ScenariiComponent', () => {
     TestBed.resetTestingModule();
     const scenarioService = jasmine.createSpyObj('ScenarioService', ['findScenarios']);
     const mockScenarioIndex = [new ScenarioIndex('1', 'title1', 'description', 'source', new Date(), [], []),
-                               new ScenarioIndex('2', 'title2', 'description', 'source', new Date(), [], [])];
+                               new ScenarioIndex('2', 'title2', 'description', 'source', new Date(), [], []),
+                               new ScenarioIndex('3', 'another scenario', 'description', 'source', new Date(), [], [])];
     scenarioService.findScenarios.and.returnValue(of(mockScenarioIndex));
     TestBed.configureTestingModule({
       imports: [
@@ -27,7 +28,7 @@ describe('ScenariiComponent', () => {
         MoleculesModule,
         SharedModule,
         MomentModule,
-        NgbModule
+        NgbModule,
       ],
       declarations: [
         ScenariiComponent
@@ -38,7 +39,7 @@ describe('ScenariiComponent', () => {
     }).compileComponents();
   }));
 
-  it('should create the component ScenariiComponent with two scenarios', () => {
+  it('should create the component ScenariiComponent with three scenarios', () => {
     const fixture = TestBed.createComponent(ScenariiComponent);
     fixture.detectChanges();
 
@@ -46,11 +47,40 @@ describe('ScenariiComponent', () => {
     expect(app).toBeTruthy();
 
     const html: HTMLElement = fixture.nativeElement;
-    const cards = html.querySelectorAll('#cards > chutney-scenario-card');
+    const cards = getCards(html);
 
-    expect(cards.length).toBe(2);
-    expect(cards[0].querySelector('.scenario-title').textContent).toBe('title1');
-    expect(cards[1].querySelector('.scenario-title').textContent).toBe('title2');
-    expect(fixture.componentInstance.scenarii.length).toBe(2);
+    expect(cards.length).toBe(3);
+    expect(titleOf(cards[0])).toBe('another scenario');
+    expect(titleOf(cards[1])).toBe('title1');
+    expect(titleOf(cards[2])).toBe('title2');
+    expect(fixture.componentInstance.scenarii.length).toBe(3);
+  });
+
+  it('should filter the list of scenario', () => {
+    const fixture = TestBed.createComponent(ScenariiComponent);
+    fixture.detectChanges();
+
+    const html: HTMLElement = fixture.nativeElement;
+
+    const searchInput: HTMLInputElement = html.querySelector('#scenario-search');
+    sendInput(searchInput, 'another');
+    fixture.detectChanges();
+
+    const cards = getCards(html);
+    expect(cards.length).toBe(1);
+    expect(titleOf(cards[0])).toBe('another scenario');
   });
 });
+
+function getCards(html: HTMLElement) {
+  return html.querySelectorAll('#cards > chutney-scenario-card');
+}
+
+function titleOf(elt: Element) {
+  return elt.querySelector('.scenario-title').textContent;
+}
+
+function sendInput(input: HTMLInputElement, value: string) {
+  input.value = value;
+  input.dispatchEvent(new Event('input'));
+}
