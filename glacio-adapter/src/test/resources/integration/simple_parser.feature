@@ -5,20 +5,20 @@ Feature: Simple parser feature
 
     Scenario: Simple Success/Debug
         Given Do debug
-        And Execute (success) direct success
+        And Run (success) direct success
         When something is good
             Do (debug) substep debug
         And it is very good
-            Execute success
+            Run success
         Then it is very good
             it is very good
                 Do debug
         And it is very good
             it is very good
-                Execute (success) subsubstep success
+                Run (success) subsubstep success
 
     Scenario: Deep SubStep fail
         When There is a first step
             I'm a sub step
                 I'm a sub sub step
-                    Execute fail
+                    Run fail

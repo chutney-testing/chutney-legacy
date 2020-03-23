@@ -21,8 +21,8 @@ public class ExecutableStepFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExecutableStepFactory.class);
 
     public final static String EXECUTABLE_KEYWORD_DO = "Do";
-    public final static String EXECUTABLE_KEYWORD_EXECUTE = "Execute";
-    private final static Pattern EXECUTABLE_STEP_TEXT_PATTERN = Pattern.compile("^(" + EXECUTABLE_KEYWORD_DO + "|" + EXECUTABLE_KEYWORD_EXECUTE + ") (?<text>.*)$");
+    public final static String EXECUTABLE_KEYWORD_RUN = "Run";
+    private final static Pattern EXECUTABLE_STEP_TEXT_PATTERN = Pattern.compile("^(" + EXECUTABLE_KEYWORD_DO + "|" + EXECUTABLE_KEYWORD_RUN + ") (?<text>.*)$");
     private final static Predicate<String> EXECUTABLE_STEP_TEXT_PREDICATE = EXECUTABLE_STEP_TEXT_PATTERN.asPredicate();
 
     private TreeSet<GlacioExecutableStepParser> glacioExecutableStepParsers;
