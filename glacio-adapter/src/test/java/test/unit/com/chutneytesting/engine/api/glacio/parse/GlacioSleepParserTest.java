@@ -29,7 +29,9 @@ public class GlacioSleepParserTest {
     })
     public void should_parse_some_step_text(String stepText) {
         loopOverRandomString(4, 10, 100, (randomString) ->
-            assertThat(sut.couldParse(stepText + " " + randomString)).isTrue()
+            assertThat(
+                sut.couldParse(buildSimpleStepWithText(stepText + " " + randomString)))
+                .isTrue()
         );
     }
 
@@ -37,15 +39,17 @@ public class GlacioSleepParserTest {
     public void should_parse_only_sleep_task() {
         String sleepTaskType = "sleep";
         loopOverRandomString(10, 30, 30, (randomString) ->
-                assertThat(sut.parseTaskType(buildSimpleStepWithText(randomString)))
-                    .isEqualTo(sleepTaskType)
+            assertThat(
+                sut.parseTaskType(buildSimpleStepWithText(randomString)))
+                .isEqualTo(sleepTaskType)
         );
     }
 
     @Test
     public void should_parse_duration_input_from_step_text() {
         loopOverRandomString(4, 10, 100, (randomString) ->
-            assertThat(sut.parseTaskInputs(buildSimpleStepWithText("sleep for " + randomString)))
+            assertThat(
+                sut.parseTaskInputs(buildSimpleStepWithText("sleep for " + randomString)))
                 .containsExactly(entry("duration", randomString))
         );
     }

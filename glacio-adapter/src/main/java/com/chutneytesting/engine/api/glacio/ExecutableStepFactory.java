@@ -22,7 +22,7 @@ public class ExecutableStepFactory {
 
     public final static String EXECUTABLE_KEYWORD_DO = "Do";
     public final static String EXECUTABLE_KEYWORD_EXECUTE = "Execute";
-    private final static Pattern EXECUTABLE_STEP_TEXT_PATTERN = Pattern.compile("^("+EXECUTABLE_KEYWORD_DO+"|"+EXECUTABLE_KEYWORD_EXECUTE+") (?<text>.*)$");
+    private final static Pattern EXECUTABLE_STEP_TEXT_PATTERN = Pattern.compile("^(" + EXECUTABLE_KEYWORD_DO + "|" + EXECUTABLE_KEYWORD_EXECUTE + ") (?<text>.*)$");
     private final static Predicate<String> EXECUTABLE_STEP_TEXT_PREDICATE = EXECUTABLE_STEP_TEXT_PATTERN.asPredicate();
 
     private TreeSet<GlacioExecutableStepParser> glacioExecutableStepParsers;
@@ -33,21 +33,19 @@ public class ExecutableStepFactory {
 
     public StepDefinition build(Step step) {
         Matcher matcher = EXECUTABLE_STEP_TEXT_PATTERN.matcher(step.getText());
-        while(matcher.find()) {
-            if (matcher.groupCount() == 2) {
-                String stepText = ofNullable(matcher.group("text")).orElse("");
-                return delegateStepParsing(cleanStepText(stepText, step));
-            }
+        if (matcher.matches()) {
+            String stepText = ofNullable(matcher.group("text")).orElse("");
+            return delegateStepParsing(cleanStepText(stepText, step));
         }
         throw new IllegalArgumentException("Step is not executable : " + step);
     }
 
     private StepDefinition delegateStepParsing(Step step) {
         List<GlacioExecutableStepParser> avalaibleParsers = this.glacioExecutableStepParsers.stream()
-            .filter(parser -> parser.couldParse(step.getText()))
+            .filter(parser -> parser.couldParse(step))
             .collect(Collectors.toList());
 
-        for (GlacioExecutableStepParser parser: avalaibleParsers) {
+        for (GlacioExecutableStepParser parser : avalaibleParsers) {
             try {
                 return parser.parseStep(step);
             } catch (Exception e) {
@@ -55,7 +53,7 @@ public class ExecutableStepFactory {
             }
         }
 
-        throw new IllegalArgumentException("No parsers to parse step : "+step);
+        throw new IllegalArgumentException("No parsers to parse step : " + step);
     }
 
     public boolean isExecutableStep(Step step) {

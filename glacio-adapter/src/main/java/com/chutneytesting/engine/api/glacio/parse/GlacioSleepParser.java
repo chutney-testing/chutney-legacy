@@ -9,7 +9,7 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class GlacioSleepParser implements GlacioExecutableStepParser {
+public class GlacioSleepParser extends GlacioParser {
 
     private final static Pattern STEP_TEXT_PATTERN = Pattern.compile("^(?:sleep|a?wait|stop|rest|(?:stand by)) (?:(for|during) )?(?<duration>.*)$");
     private final static Predicate<String> STEP_TEXT_PREDICATE = STEP_TEXT_PATTERN.asPredicate();
@@ -20,8 +20,8 @@ public class GlacioSleepParser implements GlacioExecutableStepParser {
     }
 
     @Override
-    public boolean couldParse(String stepText) {
-        return STEP_TEXT_PREDICATE.test(stepText);
+    public boolean couldParse(Step step) {
+        return STEP_TEXT_PREDICATE.test(step.getText());
     }
 
     @Override
