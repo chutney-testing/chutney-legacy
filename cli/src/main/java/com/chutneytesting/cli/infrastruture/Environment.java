@@ -18,5 +18,6 @@ public interface Environment {
         return "";
     }
 
+    @JsonDeserialize(using = TargetJsonDeserializer.class)
     List<Target> targets();
 }

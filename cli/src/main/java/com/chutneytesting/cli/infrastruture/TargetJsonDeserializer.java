@@ -1,26 +1,48 @@
-package com.chutneytesting.engine.domain.environment;
+package com.chutneytesting.cli.infrastruture;
 
 import static com.chutneytesting.engine.domain.environment.SecurityInfo.SecurityInfoBuilder;
 import static java.util.Optional.ofNullable;
 
+import com.chutneytesting.engine.domain.environment.ImmutableTarget;
+import com.chutneytesting.engine.domain.environment.SecurityInfo;
+import com.chutneytesting.engine.domain.environment.Target;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.google.common.collect.ImmutableCollection;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 // TODO file/http model must be placed in appropriate space without coupling to domain-used one {@link Target}
-public class TargetJsonDeserializer extends JsonDeserializer<Target> {
+public class TargetJsonDeserializer extends JsonDeserializer<List<Target>> {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
     @Override
-    public Target deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+    public List<Target> deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
 
-        JsonNode targetNode = jsonParser.getCodec().readTree(jsonParser);
+        JsonNode targetsNode = jsonParser.getCodec().readTree(jsonParser);
+
+        if (!targetsNode.isArray()) {
+            return Collections.emptyList();
+        }
+
+        List<Target> targets = new ArrayList<>();
+        for (final JsonNode objNode : targetsNode) {
+            targets.add(deserialize(objNode));
+        }
+
+        return Collections.unmodifiableList(targets);
+    }
+
+    private Target deserialize(JsonNode targetNode) throws IOException {
         ImmutableTarget.Builder targetBuilder = ImmutableTarget.builder();
 
         if (targetNode.hasNonNull("name")) {
