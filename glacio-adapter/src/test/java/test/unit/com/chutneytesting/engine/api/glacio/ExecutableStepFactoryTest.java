@@ -1,7 +1,7 @@
 package test.unit.com.chutneytesting.engine.api.glacio;
 
 import static com.chutneytesting.engine.api.glacio.ExecutableStepFactory.EXECUTABLE_KEYWORD_DO;
-import static com.chutneytesting.engine.api.glacio.ExecutableStepFactory.EXECUTABLE_KEYWORD_EXECUTE;
+import static com.chutneytesting.engine.api.glacio.ExecutableStepFactory.EXECUTABLE_KEYWORD_RUN;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,7 +29,7 @@ import org.mockito.ArgumentCaptor;
 @RunWith(JUnitParamsRunner.class)
 public class ExecutableStepFactoryTest {
 
-    private static List<String> EXECUTABLE_STEP_KEYWORDS = Lists.list(EXECUTABLE_KEYWORD_DO, EXECUTABLE_KEYWORD_EXECUTE);
+    private static List<String> EXECUTABLE_STEP_KEYWORDS = Lists.list(EXECUTABLE_KEYWORD_DO, EXECUTABLE_KEYWORD_RUN);
 
     private ExecutableStepFactory sut;
     private TreeSet<GlacioExecutableStepParser> glacioExecutableStepParsers;
@@ -41,7 +41,7 @@ public class ExecutableStepFactoryTest {
     }
 
     @Test
-    @Parameters(value = {EXECUTABLE_KEYWORD_DO, EXECUTABLE_KEYWORD_EXECUTE, "", "not executable"})
+    @Parameters(value = {EXECUTABLE_KEYWORD_DO, EXECUTABLE_KEYWORD_RUN, "", "not executable"})
     public void should_qualify_step_as_executable(String executableKeyword) {
         // Given
         boolean expected = EXECUTABLE_STEP_KEYWORDS.contains(executableKeyword);
@@ -68,7 +68,7 @@ public class ExecutableStepFactoryTest {
         when(glacioExecutableStepParsers.stream())
             .thenReturn(Stream.of(parserToBeSelected, parserFiltered));
 
-        Step successStep = buildSimpleStepWithText(EXECUTABLE_KEYWORD_EXECUTE + " success");
+        Step successStep = buildSimpleStepWithText(EXECUTABLE_KEYWORD_RUN + " success");
 
         // When
         sut.build(successStep);
@@ -91,7 +91,7 @@ public class ExecutableStepFactoryTest {
         when(glacioExecutableStepParsers.stream())
             .thenReturn(Stream.of(parserWithException, secondParser));
 
-        Step successStep = buildSimpleStepWithText(EXECUTABLE_KEYWORD_EXECUTE + " success");
+        Step successStep = buildSimpleStepWithText(EXECUTABLE_KEYWORD_RUN + " success");
 
         // When
         sut.build(successStep);
@@ -107,14 +107,14 @@ public class ExecutableStepFactoryTest {
     public void should_throw_exception_when_no_parser_found() {
         String stepText = "success";
         when(glacioExecutableStepParsers.stream()).thenReturn(Stream.empty());
-        Step successStep = buildSimpleStepWithText(EXECUTABLE_KEYWORD_EXECUTE + " " + stepText);
+        Step successStep = buildSimpleStepWithText(EXECUTABLE_KEYWORD_RUN + " " + stepText);
 
         // When
         sut.build(successStep);
     }
 
     @Test
-    @Parameters(value = {EXECUTABLE_KEYWORD_DO, EXECUTABLE_KEYWORD_EXECUTE})
+    @Parameters(value = {EXECUTABLE_KEYWORD_DO, EXECUTABLE_KEYWORD_RUN})
     public void should_remove_keyword_from_step_text_before_delegating_parsing(String keyword) {
         // Given
         String stepName = "success";
