@@ -45,32 +45,32 @@ public class TargetSpiImpl implements Target {
 
         @Override
         public Optional<Credential> credential() {
-            return delegate.credential().map(CredentialSpiImpl::new);
+            return Optional.ofNullable(delegate.credential).map(CredentialSpiImpl::new);
         }
 
         @Override
         public Optional<String> trustStore() {
-            return delegate.trustStore();
+            return Optional.ofNullable(delegate.trustStore);
         }
 
         @Override
         public Optional<String> trustStorePassword() {
-            return delegate.trustStorePassword();
+            return Optional.ofNullable(delegate.trustStorePassword);
         }
 
         @Override
         public Optional<String> keyStore() {
-            return delegate.keyStore();
+            return Optional.ofNullable(delegate.keyStore);
         }
 
         @Override
         public Optional<String> keyStorePassword() {
-            return delegate.keyStorePassword();
+            return Optional.ofNullable(delegate.keyStorePassword);
         }
 
         @Override
         public Optional<String> privateKey() {
-            return delegate.privateKey();
+            return Optional.ofNullable(delegate.privateKey);
         }
     }
 

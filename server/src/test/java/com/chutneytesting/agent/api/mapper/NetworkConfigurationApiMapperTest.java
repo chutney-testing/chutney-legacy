@@ -71,7 +71,7 @@ public class NetworkConfigurationApiMapperTest {
         assertThat(singleValue.name).as("target name").isEqualTo("s1");
         assertThat(singleValue.url).as("target url").isEqualTo("proto://host:12/lol");
         assertThat(singleValue.properties).as("target properties").isEmpty();
-        assertThat(singleValue.security.credential().get()).as("target security").isEqualTo(SecurityInfo.Credential.of("user1", ""));
+        assertThat(singleValue.security.credential).as("target security").isEqualTo(SecurityInfo.Credential.of("user1", ""));
     }
 
     @Test

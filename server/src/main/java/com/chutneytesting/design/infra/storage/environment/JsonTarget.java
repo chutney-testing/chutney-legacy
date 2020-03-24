@@ -1,12 +1,11 @@
 package com.chutneytesting.design.infra.storage.environment;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.chutneytesting.design.domain.environment.Target;
 import com.chutneytesting.design.domain.environment.Target.TargetId;
 import com.chutneytesting.engine.domain.environment.SecurityInfo;
 import com.chutneytesting.engine.domain.environment.SecurityInfo.Credential;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.Map;
-import java.util.Optional;
 
 @JsonDeserialize(using = TargetJsonDeserializer.class)
 public class JsonTarget {
@@ -78,7 +77,7 @@ public class JsonTarget {
 
         public static JsonSecurityInfo from(SecurityInfo security) {
             return new JsonSecurityInfo(
-                JsonCredential.from(security.credential()),
+                JsonCredential.from(security.credential),
                 security.trustStore,
                 security.trustStorePassword,
                 security.keyStore,
@@ -97,11 +96,8 @@ public class JsonTarget {
             this.password = password;
         }
 
-        public static JsonCredential from(Optional<Credential> credential) {
-            if(credential.isPresent()) {
-                return new JsonCredential(credential.get().username, credential.get().password);
-            }
-            return new JsonCredential("", "");
+        public static JsonCredential from(Credential credential) {
+            return new JsonCredential(credential.username, credential.password);
         }
     }
 }

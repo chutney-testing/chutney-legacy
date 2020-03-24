@@ -3,7 +3,6 @@ package com.chutneytesting.engine.domain.environment;
 import static java.util.Optional.ofNullable;
 
 import java.util.Objects;
-import java.util.Optional;
 
 public class SecurityInfo {
 
@@ -25,28 +24,6 @@ public class SecurityInfo {
 
     public static SecurityInfoBuilder builder() {
         return new SecurityInfoBuilder();
-    }
-
-    public Optional<Credential> credential() { return ofNullable(credential); }
-
-    public Optional<String> trustStore() {
-        return ofNullable(trustStore);
-    }
-
-    public Optional<String> trustStorePassword() {
-        return ofNullable(trustStorePassword);
-    }
-
-    public Optional<String> keyStore() {
-        return ofNullable(keyStore);
-    }
-
-    public Optional<String> keyStorePassword() {
-        return ofNullable(keyStorePassword);
-    }
-
-    public Optional<String> privateKey() {
-        return ofNullable(privateKey);
     }
 
     @Override

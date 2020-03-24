@@ -61,12 +61,13 @@ public class EnvironmentApiMapper {
     }
 
     private SecurityApiDto toDto(SecurityInfo security) {
-        String username = security.credential().map(c -> c.username).orElse(null);
-        String password = security.credential().map(c -> c.password).orElse(null);
-        String keyStore = security.keyStore().orElse(null);
-        String keyStorePassword = security.keyStorePassword().orElse(null);
-        String trustStore = security.trustStore().orElse(null);
-        String trustStorePassword = security.trustStorePassword().orElse(null);
+        // TODO - manage nulls
+        String username = ofNullable(security.credential).map(c -> c.username).orElse(null);
+        String password = ofNullable(security.credential).map(c -> c.password).orElse(null);
+        String keyStore = ofNullable(security.keyStore).orElse(null);
+        String keyStorePassword = ofNullable(security.keyStorePassword).orElse(null);
+        String trustStore = ofNullable(security.trustStore).orElse(null);
+        String trustStorePassword = ofNullable(security.trustStorePassword).orElse(null);
         return new SecurityApiDto(username, password, keyStore, keyStorePassword, trustStore, trustStorePassword);
     }
 }

@@ -3,10 +3,12 @@ package com.chutneytesting.engine.domain.execution.engine;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
+import com.chutneytesting.engine.domain.environment.SecurityInfo;
 import com.chutneytesting.engine.domain.environment.Target;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.engine.parameterResolver.TargetSpiImpl;
 import com.chutneytesting.task.spi.FinallyAction;
+import java.util.Optional;
 import org.junit.Test;
 
 public class FinallyActionMapperTest {
@@ -34,6 +36,6 @@ public class FinallyActionMapperTest {
         Target targetCopy = stepDefinition.getTarget().get();
         assertThat(targetCopy.name).isEqualTo("test-target");
         assertThat(targetCopy.url).isEqualTo("proto://host:12345");
-        assertThat(targetCopy.security.credential()).isEmpty();
+        assertThat(targetCopy.security.credential).isEqualTo(SecurityInfo.Credential.NONE);
     }
 }

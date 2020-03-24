@@ -60,11 +60,12 @@ public class TargetMetadataDto {
             target.name,
             target.url,
             toEntryList(target.properties),
-            target.security.credential().map(c -> c.username).orElse(null),
-            target.security.credential().map(c -> c.password).orElse(null),
-            target.security.keyStore().orElse(null),
-            target.security.keyStorePassword().orElse(null),
-            target.security.privateKey().orElse(null)
+            // TODO - manage nulls
+            Optional.ofNullable(target.security.credential).map(c -> c.username).orElse(null),
+            Optional.ofNullable(target.security.credential).map(c -> c.password).orElse(null),
+            Optional.ofNullable(target.security.keyStore).orElse(null),
+            Optional.ofNullable(target.security.keyStorePassword).orElse(null),
+            Optional.ofNullable(target.security.privateKey).orElse(null)
         );
     }
 
