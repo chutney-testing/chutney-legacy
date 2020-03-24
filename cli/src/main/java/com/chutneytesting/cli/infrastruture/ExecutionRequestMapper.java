@@ -101,11 +101,11 @@ public class ExecutionRequestMapper {
 
     private static TargetDto toDto(Target target) {
         return new TargetDto(
-            target.id().name(),
-            target.url(),
-            target.properties(),
-            target.security(),
-            target.agents().orElse(Collections.emptyList())
+            target.id.name,
+            target.url,
+            target.properties,
+            target.security,
+            target.agents.orElse(Collections.emptyList())
         );
     }
 }

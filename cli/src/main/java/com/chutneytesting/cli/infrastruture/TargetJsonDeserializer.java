@@ -3,7 +3,6 @@ package com.chutneytesting.cli.infrastruture;
 import static com.chutneytesting.engine.domain.environment.SecurityInfo.SecurityInfoBuilder;
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.engine.domain.environment.ImmutableTarget;
 import com.chutneytesting.engine.domain.environment.SecurityInfo;
 import com.chutneytesting.engine.domain.environment.Target;
 import com.fasterxml.jackson.core.JsonParser;
@@ -12,8 +11,6 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.google.common.collect.ImmutableCollection;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,16 +40,16 @@ public class TargetJsonDeserializer extends JsonDeserializer<List<Target>> {
     }
 
     private Target deserialize(JsonNode targetNode) throws IOException {
-        ImmutableTarget.Builder targetBuilder = ImmutableTarget.builder();
+        Target.TargetBuilder targetBuilder = Target.builder();
 
         if (targetNode.hasNonNull("name")) {
-            targetBuilder.id(Target.TargetId.of(targetNode.get("name").textValue()));
+            targetBuilder.withId(targetNode.get("name").textValue());
         }
         if (targetNode.hasNonNull("url")) {
-            targetBuilder.url(targetNode.get("url").textValue());
+            targetBuilder.withUrl(targetNode.get("url").textValue());
         }
         if (targetNode.hasNonNull("properties")) {
-            targetBuilder.putAllProperties(mapper.readValue(targetNode.get("properties").toString(), new TypeReference<Map<String, ? extends String>>() {
+            targetBuilder.withProperties(mapper.readValue(targetNode.get("properties").toString(), new TypeReference<Map<String, ? extends String>>() {
             }));
         }
         if (targetNode.hasNonNull("security")) {
@@ -81,7 +78,7 @@ public class TargetJsonDeserializer extends JsonDeserializer<List<Target>> {
                     secuBuilder.credential(SecurityInfo.Credential.of(username, password));
                 }
             }
-            targetBuilder.security(secuBuilder.build());
+            targetBuilder.withSecurity(secuBuilder.build());
         }
         return targetBuilder.build();
     }

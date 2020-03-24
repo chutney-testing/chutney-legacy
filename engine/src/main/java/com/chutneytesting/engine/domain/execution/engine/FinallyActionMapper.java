@@ -3,13 +3,11 @@ package com.chutneytesting.engine.domain.execution.engine;
 import static com.chutneytesting.engine.domain.environment.NoTarget.NO_TARGET;
 import static com.chutneytesting.engine.domain.environment.SecurityInfo.Credential;
 
-import java.util.Optional;
-
-import com.chutneytesting.engine.domain.environment.ImmutableTarget;
 import com.chutneytesting.engine.domain.environment.SecurityInfo;
 import com.chutneytesting.engine.domain.environment.Target;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.task.spi.FinallyAction;
+import java.util.Optional;
 
 class FinallyActionMapper {
 
@@ -18,7 +16,7 @@ class FinallyActionMapper {
             "Finally action generated",
             finallyAction.target()
                 .map(this::mapTarget)
-                .orElse(ImmutableTarget.copyOf(NO_TARGET)),
+                .orElse(Target.builder().copyOf(NO_TARGET).build()),
             finallyAction.actionIdentifier(),
             null,
             finallyAction.inputs(),
@@ -28,11 +26,11 @@ class FinallyActionMapper {
     }
 
     private Target mapTarget(com.chutneytesting.task.spi.injectable.Target target) {
-        return ImmutableTarget.builder()
-            .id(Target.TargetId.of(target.name()))
-            .url(target.url())
-            .security(mapSecu(target.security()))
-            .properties(target.properties())
+        return Target.builder()
+            .withId(target.name())
+            .withUrl(target.url())
+            .withSecurity(mapSecu(target.security()))
+            .withProperties(target.properties())
             .build();
     }
 

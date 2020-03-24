@@ -41,11 +41,11 @@ class ExecutionRequestMapper {
 
     private static TargetDto extractTarget(StepDefinition definition) {
         return definition.getTarget().map(t -> new TargetDto(
-                t.id().name(),
-                t.url(),
-                t.properties(),
-                t.security(),
-                t.agents().orElse(emptyList())
+                t.id.name,
+                t.url,
+                t.properties,
+                t.security,
+                t.agents.orElse(emptyList())
             ))
             .orElse(null);
     }

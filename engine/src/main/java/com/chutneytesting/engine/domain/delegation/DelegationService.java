@@ -21,7 +21,7 @@ public class DelegationService {
             return localStepExecutor;
         }
 
-        Optional<List<NamedHostAndPort>> agents = target.get().agents();
+        Optional<List<NamedHostAndPort>> agents = target.get().agents;
         if (agents.isPresent() && !agents.get().isEmpty()) {
             NamedHostAndPort nextAgent = agents.get().get(0);
             // TODO should we do that here ?

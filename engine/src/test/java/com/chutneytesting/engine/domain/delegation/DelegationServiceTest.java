@@ -1,15 +1,11 @@
 package com.chutneytesting.engine.domain.delegation;
 
-import static com.chutneytesting.engine.domain.environment.ImmutableTarget.copyOf;
-import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-import com.chutneytesting.engine.domain.environment.ImmutableTarget;
 import com.chutneytesting.engine.domain.environment.Target;
-import com.chutneytesting.engine.domain.environment.Target.TargetId;
 import com.chutneytesting.engine.domain.execution.engine.DefaultStepExecutor;
 import com.chutneytesting.engine.domain.execution.engine.StepExecutor;
 import com.google.common.collect.Lists;
@@ -23,18 +19,16 @@ import org.junit.runner.RunWith;
 public class DelegationServiceTest {
 
     public static Object[] parametersForShould_return_local_executor() {
-
-        Target targetWithNoName = createTarget();
-        Target targetWithNoAgents = copyOf(createTarget())
-            .withId(TargetId.of("name"));
-        Target targetWithEmptyAgentsList = copyOf(createTarget())
-            .withId(TargetId.of("name"))
-            .withAgents(emptyList());
+        Target targetWithNoName = Target.builder()
+            .withUrl("proto://host:12345")
+            .build();
+        Target targetWithNoAgents = Target.builder().copyOf(targetWithNoName)
+            .withId("name")
+            .build();
         return new Object[][]{
             {empty()},
             {of(targetWithNoName)},
             {of(targetWithNoAgents)},
-            {of(targetWithEmptyAgentsList)},
         };
     }
 
@@ -55,24 +49,17 @@ public class DelegationServiceTest {
     public void should_return_remote_executor() {
         // Given
         DelegationService delegationService = new DelegationService(mock(DefaultStepExecutor.class), mock(DelegationClient.class));
-        Target targetWithAgent = copyOf(createTarget())
-            .withId(TargetId.of("name"))
-            .withAgents(Lists.newArrayList(new NamedHostAndPort("name", "host", 12345)));
+        Target targetWithAgent = Target.builder()
+            .withId("name")
+            .withAgents(Lists.newArrayList(new NamedHostAndPort("name", "host", 12345)))
+            .build();
 
         // When
         StepExecutor actual = delegationService.findExecutor(of(targetWithAgent));
 
         // Then
         assertThat(actual).as("StepExecutor").isInstanceOf(RemoteStepExecutor.class);
-        assertThat(targetWithAgent.agents().get()).isEmpty();
+        assertThat(targetWithAgent.agents).isEmpty();
     }
-
-    private static Target createTarget() {
-        return ImmutableTarget.builder()
-            .id(Target.TargetId.of(""))
-            .url("proto://host:12345")
-            .build();
-    }
-
 
 }
