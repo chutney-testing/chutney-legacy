@@ -1,6 +1,5 @@
 package com.chutneytesting.engine.domain.execution.engine;
 
-import static com.chutneytesting.engine.domain.environment.NoTarget.NO_TARGET;
 import static com.chutneytesting.engine.domain.environment.SecurityInfo.Credential;
 
 import com.chutneytesting.engine.domain.environment.SecurityInfo;
@@ -16,7 +15,7 @@ class FinallyActionMapper {
             "Finally action generated",
             finallyAction.target()
                 .map(this::mapTarget)
-                .orElse(Target.builder().copyOf(NO_TARGET).build()),
+                .orElse(Target.NONE),
             finallyAction.actionIdentifier(),
             null,
             finallyAction.inputs(),

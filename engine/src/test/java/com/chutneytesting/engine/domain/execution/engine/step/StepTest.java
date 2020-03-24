@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
 import com.chutneytesting.engine.domain.delegation.RemoteStepExecutor;
-import com.chutneytesting.engine.domain.environment.NoTarget;
 import com.chutneytesting.engine.domain.environment.Target;
 import com.chutneytesting.engine.domain.execution.RxBus;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
@@ -40,7 +39,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class StepTest {
 
     private StepDataEvaluator dataEvaluator = new StepDataEvaluator(new SpelFunctions());
-    private Target fakeTarget = NoTarget.NO_TARGET;
+    private Target fakeTarget = Target.NONE;
 
     @Test
     public void stop_should_not_execute_test() {

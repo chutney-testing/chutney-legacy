@@ -1,6 +1,5 @@
 package com.chutneytesting.engine.domain.report;
 
-import static com.chutneytesting.engine.domain.environment.NoTarget.NO_TARGET;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -26,7 +25,7 @@ import org.junit.Test;
 
 public class ReporterTest {
 
-    private Target fakeTarget = NO_TARGET;
+    private Target fakeTarget = Target.NONE;
     private StepDataEvaluator dataEvaluator = new StepDataEvaluator(new SpelFunctions());
 
     private Reporter sut;

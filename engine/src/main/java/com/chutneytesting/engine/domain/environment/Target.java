@@ -12,6 +12,8 @@ import java.util.Map;
 
 public class Target {
 
+    public static final Target NONE = Target.builder().build();
+
     public final TargetId id;
     public final String url;
     public final URI uri;
