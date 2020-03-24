@@ -84,12 +84,12 @@ public class TargetSpiImpl implements Target {
 
         @Override
         public String username() {
-            return delegate.username();
+            return delegate.username;
         }
 
         @Override
         public String password() {
-            return delegate.password();
+            return delegate.password;
         }
     }
 }

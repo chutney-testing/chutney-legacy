@@ -60,8 +60,8 @@ public class TargetMetadataDto {
             target.name,
             target.url,
             toEntryList(target.properties),
-            target.security.credential().map(Credential::username).orElse(null),
-            target.security.credential().map(Credential::password).orElse(null),
+            target.security.credential().map(c -> c.username).orElse(null),
+            target.security.credential().map(c -> c.password).orElse(null),
             target.security.keyStore().orElse(null),
             target.security.keyStorePassword().orElse(null),
             target.security.privateKey().orElse(null)

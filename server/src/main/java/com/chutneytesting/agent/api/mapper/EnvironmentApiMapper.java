@@ -61,8 +61,8 @@ public class EnvironmentApiMapper {
     }
 
     private SecurityApiDto toDto(SecurityInfo security) {
-        String username = security.credential().map(Credential::username).orElse(null);
-        String password = security.credential().map(Credential::password).orElse(null);
+        String username = security.credential().map(c -> c.username).orElse(null);
+        String password = security.credential().map(c -> c.password).orElse(null);
         String keyStore = security.keyStore().orElse(null);
         String keyStorePassword = security.keyStorePassword().orElse(null);
         String trustStore = security.trustStore().orElse(null);

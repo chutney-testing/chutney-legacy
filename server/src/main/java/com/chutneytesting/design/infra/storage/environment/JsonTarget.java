@@ -79,11 +79,11 @@ public class JsonTarget {
         public static JsonSecurityInfo from(SecurityInfo security) {
             return new JsonSecurityInfo(
                 JsonCredential.from(security.credential()),
-                security.getTrustStore(),
-                security.getTrustStorePassword(),
-                security.getKeyStore(),
-                security.getKeyStorePassword(),
-                security.getPrivateKey()
+                security.trustStore,
+                security.trustStorePassword,
+                security.keyStore,
+                security.keyStorePassword,
+                security.privateKey
             );
         }
     }
@@ -99,7 +99,7 @@ public class JsonTarget {
 
         public static JsonCredential from(Optional<Credential> credential) {
             if(credential.isPresent()) {
-                return new JsonCredential(credential.get().username(), credential.get().password());
+                return new JsonCredential(credential.get().username, credential.get().password);
             }
             return new JsonCredential("", "");
         }
