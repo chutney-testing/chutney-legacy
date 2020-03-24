@@ -88,10 +88,6 @@ public class Target {
         }
     }
 
-    public String name() {
-        return this.name;
-    }
-
     private URI getUrlAsURI(String url) {
         try {
             return new URI(url);

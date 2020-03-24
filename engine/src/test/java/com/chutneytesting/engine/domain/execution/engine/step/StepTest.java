@@ -148,20 +148,16 @@ public class StepTest {
     @Test
     public void target_is_set_in_scenario_context_in_order_to_be_used_by_evaluated_inputs() {
         // Given
-        Target mockTarget = mock(Target.class);
-        when(mockTarget.name())
-            .thenReturn("fakeTargetName");
+        Target fakeTarget = Target.builder().withName("fakeTargetName").build();
 
         Map<String, Object> inputs = new HashMap<>();
-        inputs.put("targetName", "${#target.name()}");
+        inputs.put("targetName", "${#target.name}");
 
-        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, inputs, null, null);
-        Step step = new Step(dataEvaluator, fakeStepDefinition, Optional.of(mockTarget), mock(StepExecutor.class), Lists.emptyList());
-
-        ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", this.fakeTarget, "taskType", null, inputs, null, null);
+        Step step = new Step(dataEvaluator, fakeStepDefinition, Optional.of(fakeTarget), mock(StepExecutor.class), Lists.emptyList());
 
         // When
-        step.execute(ScenarioExecution.createScenarioExecution(), scenarioContext);
+        step.execute(ScenarioExecution.createScenarioExecution(), new ScenarioContextImpl());
 
         // Then
         StepContext context = (StepContext) ReflectionTestUtils.getField(step, "stepContext");

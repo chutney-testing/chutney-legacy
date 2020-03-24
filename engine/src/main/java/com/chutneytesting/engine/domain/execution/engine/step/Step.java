@@ -1,6 +1,8 @@
 package com.chutneytesting.engine.domain.execution.engine.step;
 
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableMap;
+import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.engine.domain.environment.Target;
 import com.chutneytesting.engine.domain.execution.RxBus;
@@ -80,7 +82,7 @@ public class Step {
 
         try {
             makeTargetAccessibleForInputEvaluation(scenarioContext, target);
-            Map<String, Object> evaluatedInputs = Collections.unmodifiableMap(dataEvaluator.evaluateNamedDataWithContextVariables(definition.inputs, scenarioContext));
+            Map<String, Object> evaluatedInputs = unmodifiableMap(dataEvaluator.evaluateNamedDataWithContextVariables(definition.inputs, scenarioContext));
 
             Try
                 .exec(() -> new StepContextImpl(evaluatedInputs, scenarioContext))
@@ -148,7 +150,7 @@ public class Step {
     }
 
     public void failure(Exception e) {
-        failure(Optional.ofNullable(e.getMessage()).orElse(e.toString()));
+        failure(ofNullable(e.getMessage()).orElse(e.toString()));
     }
 
     public void failure(String... message) {
@@ -263,7 +265,7 @@ public class Step {
 
         @Override
         public Map<String, Object> getEvaluatedInputs() {
-            return evaluatedInputs;
+            return ofNullable(evaluatedInputs).orElse(emptyMap());
         }
 
         @Override
@@ -278,11 +280,11 @@ public class Step {
 
         @Override
         public Map<String, Object> getStepOutputs() { // TODO any - clarify that it is only used for outputs evaluation
-            return Collections.unmodifiableMap(stepOutputs);
+            return unmodifiableMap(ofNullable(stepOutputs).orElse(emptyMap()));
         }
 
         StepContext copy() {
-            return new StepContextImpl(scenarioContext.unmodifiable(), Collections.unmodifiableMap(evaluatedInputs), Collections.unmodifiableMap(stepOutputs));
+            return new StepContextImpl(scenarioContext.unmodifiable(), unmodifiableMap(evaluatedInputs), unmodifiableMap(stepOutputs));
         }
     }
 }

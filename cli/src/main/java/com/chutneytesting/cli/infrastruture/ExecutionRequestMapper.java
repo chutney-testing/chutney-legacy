@@ -46,7 +46,7 @@ public class ExecutionRequestMapper {
         if(targetName == null || targetName.isEmpty()){
             return Optional.empty();
         }
-        return originalEnvironmentObject.targets().stream().filter( t -> t.name().equals(targetName)).findFirst();
+        return originalEnvironmentObject.targets().stream().filter( t -> t.name.equals(targetName)).findFirst();
     }
 
     private static StepDefinitionCore buildStepDefinitionCore(ScenarioContent.UnmarshalledStepDefinition dto, Environment originalEnvironmentObject) {
@@ -99,7 +99,7 @@ public class ExecutionRequestMapper {
 
     private static TargetDto toDto(Target target) {
         return new TargetDto(
-            target.name(),
+            target.name,
             target.url,
             target.properties,
             target.security,
