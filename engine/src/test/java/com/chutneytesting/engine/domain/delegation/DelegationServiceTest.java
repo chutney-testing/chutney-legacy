@@ -23,7 +23,7 @@ public class DelegationServiceTest {
             .withUrl("proto://host:12345")
             .build();
         Target targetWithNoAgents = Target.builder().copyOf(targetWithNoName)
-            .withId("name")
+            .withName("name")
             .build();
         return new Object[][]{
             {empty()},
@@ -50,7 +50,7 @@ public class DelegationServiceTest {
         // Given
         DelegationService delegationService = new DelegationService(mock(DefaultStepExecutor.class), mock(DelegationClient.class));
         Target targetWithAgent = Target.builder()
-            .withId("name")
+            .withName("name")
             .withAgents(Lists.newArrayList(new NamedHostAndPort("name", "host", 12345)))
             .build();
 

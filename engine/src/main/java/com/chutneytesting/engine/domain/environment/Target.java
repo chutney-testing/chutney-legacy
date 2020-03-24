@@ -14,15 +14,15 @@ public class Target {
 
     public static final Target NONE = Target.builder().build();
 
-    public final TargetId id;
+    public final String name;
     public final String url;
     public final URI uri;
     public final Map<String, String> properties;
     public final SecurityInfo security;
     public final List<NamedHostAndPort> agents;
 
-    private Target(TargetId id, String url, Map<String, String> properties, SecurityInfo security, List<NamedHostAndPort> agents) {
-        this.id = id;
+    private Target(String name, String url, Map<String, String> properties, SecurityInfo security, List<NamedHostAndPort> agents) {
+        this.name = name;
         this.url = url;
         this.uri = getUrlAsURI(url);
         this.properties = properties;
@@ -35,7 +35,7 @@ public class Target {
     }
 
     public static class TargetBuilder {
-        private TargetId id;
+        private String name;
         private String url;
         private Map<String, String> properties;
         private List<NamedHostAndPort> agents;
@@ -45,7 +45,7 @@ public class Target {
 
         public Target build() {
             return new Target(
-                ofNullable(id).orElse(Target.TargetId.of("")),
+                ofNullable(name).orElse(""),
                 ofNullable(url).orElse(""),
                 ofNullable(properties).orElse(Collections.emptyMap()),
                 ofNullable(security).orElse(SecurityInfo.builder().build()),
@@ -53,13 +53,8 @@ public class Target {
             );
         }
 
-        public TargetBuilder withId(TargetId id) {
-            this.id = id;
-            return this;
-        }
-
-        public TargetBuilder withId(String id) {
-            this.id = Target.TargetId.of(id);
+        public TargetBuilder withName(String name) {
+            this.name = name;
             return this;
         }
 
@@ -74,7 +69,7 @@ public class Target {
         }
 
         public TargetBuilder copyOf(Target target) {
-            this.id = target.id;
+            this.name = target.name;
             this.url = target.url;
             this.properties = target.properties;
             this.agents = target.agents;
@@ -94,7 +89,7 @@ public class Target {
     }
 
     public String name() {
-        return this.id.name;
+        return this.name;
     }
 
     private URI getUrlAsURI(String url) {
@@ -102,18 +97,6 @@ public class Target {
             return new URI(url);
         } catch (URISyntaxException e) {
             throw new IllegalStateException(e);
-        }
-    }
-
-    public static class TargetId {
-        public final String name;
-
-        private TargetId(String name) {
-            this.name = name;
-        }
-
-        static TargetId of(String name) {
-            return new TargetId(name);
         }
     }
 

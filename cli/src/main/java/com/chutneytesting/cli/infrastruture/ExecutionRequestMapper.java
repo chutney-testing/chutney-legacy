@@ -99,7 +99,7 @@ public class ExecutionRequestMapper {
 
     private static TargetDto toDto(Target target) {
         return new TargetDto(
-            target.id.name,
+            target.name(),
             target.url,
             target.properties,
             target.security,

@@ -26,7 +26,7 @@ class FinallyActionMapper {
 
     private Target mapTarget(com.chutneytesting.task.spi.injectable.Target target) {
         return Target.builder()
-            .withId(target.name())
+            .withName(target.name())
             .withUrl(target.url())
             .withSecurity(mapSecu(target.security()))
             .withProperties(target.properties())

@@ -115,7 +115,7 @@ public class HttpClientTest {
     }
 
     private StepDefinition createFakeStepDefinition() {
-        Target target = Target.builder().withId("name").withUrl("url").build();
+        Target target = Target.builder().withName("name").withUrl("url").build();
         StepStrategyDefinition strategy = new StepStrategyDefinition("onestrategy", new StrategyProperties());
         return new StepDefinition("name",
             target,

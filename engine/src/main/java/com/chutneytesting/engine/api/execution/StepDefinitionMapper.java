@@ -43,7 +43,7 @@ class StepDefinitionMapper {
 
     private static Target fromDto(TargetDto targetDto) {
         return Target.builder()
-            .withId(targetDto.id)
+            .withName(targetDto.id)
             .withUrl(targetDto.url)
             .withAgents(targetDto.agents)
             .withProperties(targetDto.properties)

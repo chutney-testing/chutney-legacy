@@ -16,7 +16,7 @@ public class FinallyActionMapperTest {
     @Test
     public void upright_finally_action_copy() {
         Target domainTarget = Target.builder()
-            .withId("test-target")
+            .withName("test-target")
             .withUrl("proto://host:12345")
             .build();
         com.chutneytesting.task.spi.injectable.Target taskTarget = new TargetSpiImpl(domainTarget);

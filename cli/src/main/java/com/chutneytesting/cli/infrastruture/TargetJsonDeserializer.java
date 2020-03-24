@@ -43,7 +43,7 @@ public class TargetJsonDeserializer extends JsonDeserializer<List<Target>> {
         Target.TargetBuilder targetBuilder = Target.builder();
 
         if (targetNode.hasNonNull("name")) {
-            targetBuilder.withId(targetNode.get("name").textValue());
+            targetBuilder.withName(targetNode.get("name").textValue());
         }
         if (targetNode.hasNonNull("url")) {
             targetBuilder.withUrl(targetNode.get("url").textValue());

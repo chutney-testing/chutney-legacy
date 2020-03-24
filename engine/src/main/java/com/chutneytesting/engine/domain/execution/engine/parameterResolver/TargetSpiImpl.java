@@ -17,7 +17,7 @@ public class TargetSpiImpl implements Target {
 
     @Override
     public TargetId id() {
-        return () -> delegate.id.name;
+        return delegate::name;
     }
 
     @Override
