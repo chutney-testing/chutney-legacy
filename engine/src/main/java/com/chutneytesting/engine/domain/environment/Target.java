@@ -9,7 +9,6 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public class Target {
 
@@ -18,9 +17,9 @@ public class Target {
     public final URI uri;
     public final Map<String, String> properties;
     public final SecurityInfo security;
-    public final Optional<List<NamedHostAndPort>> agents;
+    public final List<NamedHostAndPort> agents;
 
-    private Target(TargetId id, String url, Map<String, String> properties, SecurityInfo security, Optional<List<NamedHostAndPort>> agents) {
+    private Target(TargetId id, String url, Map<String, String> properties, SecurityInfo security, List<NamedHostAndPort> agents) {
         this.id = id;
         this.url = url;
         this.uri = getUrlAsURI(url);
@@ -37,7 +36,7 @@ public class Target {
         private TargetId id;
         private String url;
         private Map<String, String> properties;
-        private Optional<List<NamedHostAndPort>> agents;
+        private List<NamedHostAndPort> agents;
         private SecurityInfo security;
 
         private TargetBuilder() {}
@@ -48,7 +47,7 @@ public class Target {
                 ofNullable(url).orElse(""),
                 ofNullable(properties).orElse(Collections.emptyMap()),
                 ofNullable(security).orElse(SecurityInfo.builder().build()),
-                ofNullable(agents).orElse(Optional.of(emptyList()))
+                ofNullable(agents).orElse(emptyList())
             );
         }
 
@@ -87,7 +86,7 @@ public class Target {
         }
 
         public TargetBuilder withAgents(List<NamedHostAndPort> agents) {
-            this.agents = Optional.of(agents);
+            this.agents = agents;
             return this;
         }
     }

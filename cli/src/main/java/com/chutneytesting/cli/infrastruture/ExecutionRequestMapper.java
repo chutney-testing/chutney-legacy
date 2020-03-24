@@ -105,7 +105,7 @@ public class ExecutionRequestMapper {
             target.url,
             target.properties,
             target.security,
-            target.agents.orElse(Collections.emptyList())
+            target.agents
         );
     }
 }

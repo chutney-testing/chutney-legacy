@@ -1,7 +1,5 @@
 package com.chutneytesting.engine.infrastructure.delegation;
 
-import static java.util.Collections.emptyList;
-
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepStrategyDefinitionRequestDto;
@@ -45,7 +43,7 @@ class ExecutionRequestMapper {
                 t.url,
                 t.properties,
                 t.security,
-                t.agents.orElse(emptyList())
+                t.agents
             ))
             .orElse(null);
     }
