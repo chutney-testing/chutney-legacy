@@ -3,7 +3,6 @@ package com.chutneytesting.engine.domain.environment;
 import static com.chutneytesting.engine.domain.environment.SecurityInfo.builder;
 
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -16,7 +15,6 @@ import org.immutables.value.Value;
 public interface Target {
 
     @Value.Parameter
-    @JsonIgnore
     TargetId id();
 
     @Value.Parameter
@@ -38,7 +36,6 @@ public interface Target {
     Optional<List<NamedHostAndPort>> agents();
 
     @Value.Derived
-    @JsonIgnore
     default URI getUrlAsURI() {
         try {
             return new URI(url());
