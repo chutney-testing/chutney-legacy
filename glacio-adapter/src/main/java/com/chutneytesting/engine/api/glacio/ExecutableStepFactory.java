@@ -5,62 +5,80 @@ import static java.util.Optional.ofNullable;
 import com.chutneytesting.engine.api.glacio.parse.GlacioExecutableStepParser;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.github.fridujo.glacio.ast.Step;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.Collection;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
-@Component
 public class ExecutableStepFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExecutableStepFactory.class);
 
-    public final static String EXECUTABLE_KEYWORD_DO = "Do";
-    public final static String EXECUTABLE_KEYWORD_RUN = "Run";
-    private final static Pattern EXECUTABLE_STEP_TEXT_PATTERN = Pattern.compile("^(" + EXECUTABLE_KEYWORD_DO + "|" + EXECUTABLE_KEYWORD_RUN + ") (?<text>.*)$");
-    private final static Predicate<String> EXECUTABLE_STEP_TEXT_PREDICATE = EXECUTABLE_STEP_TEXT_PATTERN.asPredicate();
+    private final static String EXECUTABLE_STEP_TEXT_PATTERN_STRING = "^(?<keyword>%s) (?<parserKeyword>\\w*)( .*)?$";
 
-    private TreeSet<GlacioExecutableStepParser> glacioExecutableStepParsers;
+    private Map<Locale, Pair<Pattern, Predicate<String>>> executableStepTextPatternsCache = new ConcurrentHashMap<>();
 
-    public ExecutableStepFactory(TreeSet<GlacioExecutableStepParser> glacioExecutableStepParsers) {
-        this.glacioExecutableStepParsers = glacioExecutableStepParsers;
+    private final Map<Locale, Map<EXECUTABLE_KEYWORD, Set<String>>> executableStepLanguagesKeywords;
+    private final Map<Pair<Locale, String>, GlacioExecutableStepParser> glacioExecutableStepParsersLanguages;
+    private final GlacioExecutableStepParser defaultGlacioParser;
+
+    public ExecutableStepFactory(Map<Locale, Map<EXECUTABLE_KEYWORD, Set<String>>> executableStepLanguagesKeywords,
+                                 Map<Pair<Locale, String>, GlacioExecutableStepParser> glacioExecutableStepParsersLanguages,
+                                 GlacioExecutableStepParser defaultGlacioParser) {
+        this.executableStepLanguagesKeywords = executableStepLanguagesKeywords;
+        this.glacioExecutableStepParsersLanguages = glacioExecutableStepParsersLanguages;
+        this.defaultGlacioParser = defaultGlacioParser;
     }
 
-    public StepDefinition build(Step step) {
-        Matcher matcher = EXECUTABLE_STEP_TEXT_PATTERN.matcher(step.getText());
-        if (matcher.matches()) {
-            String stepText = ofNullable(matcher.group("text")).orElse("");
-            return delegateStepParsing(cleanStepText(stepText, step));
-        }
-        throw new IllegalArgumentException("Step is not executable : " + step);
-    }
-
-    private StepDefinition delegateStepParsing(Step step) {
-        List<GlacioExecutableStepParser> avalaibleParsers = this.glacioExecutableStepParsers.stream()
-            .filter(parser -> parser.couldParse(step))
-            .collect(Collectors.toList());
-
-        for (GlacioExecutableStepParser parser : avalaibleParsers) {
-            try {
-                return parser.parseStep(step);
-            } catch (Exception e) {
-                LOGGER.warn("Error parsing step : {}", step, e);
+    public StepDefinition build(Locale lang, Step step) {
+        Optional<Pair<Pattern, Predicate<String>>> pattern = ofNullable(executableStepTextPatternsCache.get(lang));
+        if (pattern.isPresent()) {
+            Matcher matcher = pattern.get().getLeft().matcher(step.getText());
+            if (matcher.matches()) {
+                String keyword = ofNullable(matcher.group("keyword")).orElse("");
+                String parserKeyword = ofNullable(matcher.group("parserKeyword")).orElse("");
+                return delegateStepParsing(Pair.of(lang, parserKeyword), cleanStepText(keyword, step));
             }
         }
-
-        throw new IllegalArgumentException("No parsers to parse step : " + step);
+        throw new IllegalArgumentException("Step cannot be qualified as executable : " + step);
     }
 
-    public boolean isExecutableStep(Step step) {
-        return EXECUTABLE_STEP_TEXT_PREDICATE.test(step.getText());
+    private StepDefinition delegateStepParsing(Pair<Locale, String> parserKeyword, Step step) {
+        return Optional.ofNullable(glacioExecutableStepParsersLanguages.get(parserKeyword))
+            .orElse(defaultGlacioParser)
+            .parseStep(step);
     }
 
-    private Step cleanStepText(String stepText, Step step) {
-        return new Step(step.getPosition(), stepText, step.getSubsteps(), step.getDocString(), step.getDataTable());
+    public boolean isExecutableStep(Locale lang, Step step) {
+        Pair<Pattern, Predicate<String>> pattern = ofNullable(executableStepTextPatternsCache.get(lang))
+            .orElseGet(() -> compileAndCachePattern(lang));
+        return pattern.getRight().test(step.getText());
     }
+
+    private Step cleanStepText(String keyword, Step step) {
+        return new Step(step.getPosition(), step.getText().substring(keyword.length() + 1), step.getSubsteps(), step.getDocString(), step.getDataTable());
+    }
+
+    private Pair<Pattern, Predicate<String>> compileAndCachePattern(Locale lang) {
+        Map<EXECUTABLE_KEYWORD, Set<String>> executable_keywordSetMap = ofNullable(executableStepLanguagesKeywords.get(lang))
+            .orElseThrow(() -> new IllegalArgumentException("Language " + lang + " not supported. Define it in configuration file."));
+
+        executable_keywordSetMap.values().stream()
+            .flatMap(Collection::stream)
+            .reduce((k1, k2) -> k1 + "|" + k2)
+            .map(p -> Pattern.compile(String.format(EXECUTABLE_STEP_TEXT_PATTERN_STRING, p)))
+            .ifPresent(p -> executableStepTextPatternsCache.put(lang, Pair.of(p, p.asPredicate())));
+
+        return executableStepTextPatternsCache.get(lang);
+    }
+
+    public enum EXECUTABLE_KEYWORD {DO}
 }

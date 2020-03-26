@@ -68,13 +68,13 @@ public class GlacioAdapterTest {
     public void should_delegate_test_for_executable_step_for_each_glacio_step() {
         String feature = fileContent("unit/multiple_non_executable_steps.feature");
         sut.toChutneyStepDefinition(feature);
-        verify(executableStepFactory, times(14)).isExecutableStep(any());
+        verify(executableStepFactory, times(14)).isExecutableStep(any(), any());
     }
 
     @Test
     public void should_delegate_adaptation_for_executable_steps() {
         String feature = fileContent("unit/multiple_non_executable_steps.feature");
-        when(executableStepFactory.isExecutableStep(any()))
+        when(executableStepFactory.isExecutableStep(any(), any()))
             .thenReturn(
                 false,                  // When
                     true,
@@ -85,8 +85,8 @@ public class GlacioAdapterTest {
                     false, true,
                     true);
         sut.toChutneyStepDefinition(feature);
-        verify(executableStepFactory, times(12)).isExecutableStep(any());
-        verify(executableStepFactory, times(7)).build(any());
+        verify(executableStepFactory, times(12)).isExecutableStep(any(), any());
+        verify(executableStepFactory, times(7)).build(any(), any());
     }
 
     private void assertSizeAndName(StepDefinition step, String expectedName, Integer expectedSize) {

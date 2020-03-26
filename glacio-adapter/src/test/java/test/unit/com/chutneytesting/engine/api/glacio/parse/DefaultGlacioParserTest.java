@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.engine.api.glacio.parse.GlacioDefaultParser;
+import com.chutneytesting.engine.api.glacio.parse.DefaultGlacioParser;
 import com.chutneytesting.task.domain.TaskTemplate;
 import com.chutneytesting.task.domain.TaskTemplateRegistry;
 import com.github.fridujo.glacio.ast.Position;
@@ -18,21 +18,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(JUnitParamsRunner.class)
-public class GlacioDefaultParserTest {
+public class DefaultGlacioParserTest {
 
-    private GlacioDefaultParser sut;
+    private DefaultGlacioParser sut;
 
     private TaskTemplateRegistry taskTemplateRegistry;
 
     @Before
     public void setUp() {
         taskTemplateRegistry = mock(TaskTemplateRegistry.class);
-        sut = new GlacioDefaultParser(taskTemplateRegistry);
-    }
-
-    @Test
-    public void should_have_the_lowest_priority() {
-        assertThat(sut.priority()).isEqualTo(Integer.MAX_VALUE);
+        sut = new DefaultGlacioParser(taskTemplateRegistry);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -44,7 +39,7 @@ public class GlacioDefaultParserTest {
     public void should_take_taskid_in_parenthesis() {
         String taskId = "succces";
         when(taskTemplateRegistry.getByIdentifier(taskId)).thenReturn(Optional.of(mock(TaskTemplate.class)));
-        assertThat(sut.parseTaskType(buildSimpleStepWithText("("+taskId+") it's a step name with taskid delcared")))
+        assertThat(sut.parseTaskType(buildSimpleStepWithText("(" + taskId + ") it's a step name with taskid delcared")))
             .isEqualTo(taskId);
     }
 

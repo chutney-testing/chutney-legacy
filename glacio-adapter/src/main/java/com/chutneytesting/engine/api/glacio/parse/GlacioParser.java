@@ -45,5 +45,4 @@ public abstract class GlacioParser implements GlacioExecutableStepParser {
     public StepStrategyDefinition parseStepStrategy(Step step) {
         return null;
     }
-
 }
