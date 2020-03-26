@@ -46,7 +46,7 @@ export class CampaignService {
         }));
     }
 
-    findAllCampaignsForScenario(id: number): Observable<Array<Campaign>>{
+    findAllCampaignsForScenario(id: number): Observable<Array<Campaign>> {
         return this.http.get<Array<Campaign>>(environment.backend + this.resourceUrl + `/scenario/${id}`)
             .pipe(map((res: Array<Campaign>) => {
                 return res;
