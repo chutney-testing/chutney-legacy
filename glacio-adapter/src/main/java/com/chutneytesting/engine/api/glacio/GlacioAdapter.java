@@ -12,6 +12,7 @@ import com.github.fridujo.glacio.parsing.i18n.GherkinLanguages;
 import com.github.fridujo.glacio.parsing.lexer.Lexer;
 import com.github.fridujo.glacio.parsing.parser.AstParser;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
@@ -29,35 +30,35 @@ public class GlacioAdapter {
         List<Scenario> scenarios = feature.getScenarios();
 
         return scenarios.stream()
-            .map(s -> toStepDefinition(feature.getName(), s))
+            .map(s -> toStepDefinition(feature.getName(), Locale.ENGLISH, s))
             .collect(Collectors.toList());
     }
 
-    private StepDefinition toStepDefinition(String featureName, Scenario scenario) {
+    private StepDefinition toStepDefinition(String featureName, Locale lang, Scenario scenario) {
         String name = featureName + " - " + scenario.getName();
 
         List<StepDefinition> subSteps = scenario.getSteps().stream()
-            .map(this::toStepDefinition)
+            .map(rootStep -> toStepDefinition(lang, rootStep))
             .collect(Collectors.toList());
 
         return buildNonExecutableStep(subSteps, name);
     }
 
-    private StepDefinition toStepDefinition(RootStep rootStep) {
-        if (this.executableStepFactory.isExecutableStep(rootStep)) {
-            return this.executableStepFactory.build(rootStep);
+    private StepDefinition toStepDefinition(Locale lang, RootStep rootStep) {
+        if (this.executableStepFactory.isExecutableStep(lang, rootStep)) {
+            return this.executableStepFactory.build(lang, rootStep);
         } else {
-            List<StepDefinition> subSteps = toStepSubStepsDefinitions(rootStep);
+            List<StepDefinition> subSteps = toStepSubStepsDefinitions(lang, rootStep);
             String name = rootStep.getKeyword().getLiteral() + rootStep.getText();
             return buildNonExecutableStep(subSteps, name);
         }
     }
 
-    private StepDefinition toStepDefinition(Step step) {
-        if (this.executableStepFactory.isExecutableStep(step)) {
-            return this.executableStepFactory.build(step);
+    private StepDefinition toStepDefinition(Locale lang, Step step) {
+        if (this.executableStepFactory.isExecutableStep(lang, step)) {
+            return this.executableStepFactory.build(lang, step);
         } else {
-            List<StepDefinition> subSteps = toStepSubStepsDefinitions(step);
+            List<StepDefinition> subSteps = toStepSubStepsDefinitions(lang, step);
             return buildNonExecutableStep(subSteps, step.getText());
         }
     }
@@ -66,9 +67,9 @@ public class GlacioAdapter {
         return new StepDefinition(text, null, "", null, emptyMap(), subSteps, emptyMap());
     }
 
-    private List<StepDefinition> toStepSubStepsDefinitions(Step step) {
+    private List<StepDefinition> toStepSubStepsDefinitions(Locale lang, Step step) {
         return step.getSubsteps().stream()
-            .map(this::toStepDefinition)
+            .map(subStep -> toStepDefinition(lang, subStep))
             .collect(Collectors.toList());
     }
 

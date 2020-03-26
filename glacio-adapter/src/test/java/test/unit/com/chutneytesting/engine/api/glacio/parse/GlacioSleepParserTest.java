@@ -1,11 +1,13 @@
 package test.unit.com.chutneytesting.engine.api.glacio.parse;
 
+import static org.apache.commons.lang3.StringUtils.capitalize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static test.unit.com.chutneytesting.engine.api.glacio.parse.GlacioParserHelper.buildSimpleStepWithText;
 import static test.unit.com.chutneytesting.engine.api.glacio.parse.GlacioParserHelper.loopOverRandomString;
 
 import com.chutneytesting.engine.api.glacio.parse.GlacioSleepParser;
+import java.util.Locale;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.junit.Test;
@@ -19,20 +21,14 @@ public class GlacioSleepParserTest {
     @Test
     @Parameters({
         "sleep",
-        "sleep for",
-        "sleep during",
         "await",
         "wait",
         "stop",
-        "rest",
-        "stand by"
+        "rest"
     })
-    public void should_parse_some_step_text(String stepText) {
-        loopOverRandomString(4, 10, 100, (randomString) ->
-            assertThat(
-                sut.couldParse(buildSimpleStepWithText(stepText + " " + randomString)))
-                .isTrue()
-        );
+    public void english_keywords(String keyword) {
+        assertThat(sut.keywords().get(Locale.ENGLISH)).contains(keyword);
+        assertThat(sut.keywords().get(Locale.ENGLISH)).contains(capitalize(keyword));
     }
 
     @Test

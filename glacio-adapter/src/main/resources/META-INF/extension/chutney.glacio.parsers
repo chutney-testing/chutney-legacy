@@ -1,3 +1,2 @@
-com.chutneytesting.engine.api.glacio.parse.GlacioDefaultParser
 com.chutneytesting.engine.api.glacio.parse.GlacioSleepParser
 com.chutneytesting.engine.api.glacio.parse.GlacioContextPutParser

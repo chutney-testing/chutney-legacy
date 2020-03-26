@@ -11,33 +11,23 @@ import com.github.fridujo.glacio.ast.DocString;
 import com.github.fridujo.glacio.ast.Step;
 import com.github.fridujo.glacio.ast.TableCell;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Predicate;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
 
-public class GlacioDefaultParser extends GlacioParser {
+public class DefaultGlacioParser extends GlacioParser {
 
     private final static Pattern STEP_TEXT_PATTERN = Pattern.compile("^(?<task>\\(.*\\) )?(?<text>.*)$");
-    private final static Predicate<String> STEP_TEXT_PREDICATE = STEP_TEXT_PATTERN.asPredicate();
 
     private final TaskTemplateRegistry taskTemplateRegistry;
 
-    public GlacioDefaultParser(TaskTemplateRegistry taskTemplateRegistry) {
+    public DefaultGlacioParser(TaskTemplateRegistry taskTemplateRegistry) {
         this.taskTemplateRegistry = taskTemplateRegistry;
-    }
-
-    @Override
-    public Integer priority() {
-        return Integer.MAX_VALUE;
-    }
-
-    @Override
-    public boolean couldParse(Step step) {
-        return STEP_TEXT_PREDICATE.test(step.getText());
     }
 
     @Override
@@ -148,5 +138,10 @@ public class GlacioDefaultParser extends GlacioParser {
                 tableRow -> tableRow.getCells().get(0).getValue(),
                 tableRow -> tableRow.getCells().get(1).getValue()
             ));
+    }
+
+    @Override
+    public Map<Locale, Set<String>> keywords() {
+        throw new UnsupportedOperationException();
     }
 }
