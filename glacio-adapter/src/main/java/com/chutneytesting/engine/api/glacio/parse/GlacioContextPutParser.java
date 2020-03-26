@@ -5,35 +5,26 @@ import static java.util.Optional.ofNullable;
 import com.github.fridujo.glacio.ast.DataTable;
 import com.github.fridujo.glacio.ast.Step;
 import com.github.fridujo.glacio.ast.TableCell;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Predicate;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GlacioContextPutParser extends GlacioParser {
 
-    private final static Pattern STEP_TEXT_PATTERN = Pattern.compile("^(?:add|put|store) (?:variables )?(?:(?:in|to|into) context )?(?<entries>.*)$");
-    private final static Predicate<String> STEP_TEXT_PREDICATE = STEP_TEXT_PATTERN.asPredicate();
-
+    private final static Pattern STEP_TEXT_PATTERN = Pattern.compile("^(?:[Aa]dd|[Pp]ut|[Ss]tore) (?:variables )?(?:(?:in|to|into) context )?(?<entries>.*)$");
     private final static Pattern ENTRIES_TEXT_PATTERN = Pattern.compile("(?: )?(?<key>[^\"][^ ]+[^\"]|\"[^\"]+\") (?<value>[^\"][^ ]+[^\"]|\"[^\"]+\")");
-
-    @Override
-    public Integer priority() {
-        return 2000000001;
-    }
 
     @Override
     public String parseTaskType(Step step) {
         return "context-put";
-    }
-
-    @Override
-    public boolean couldParse(Step step) {
-        return STEP_TEXT_PREDICATE.test(step.getText());
     }
 
     @Override
@@ -95,5 +86,12 @@ public class GlacioContextPutParser extends GlacioParser {
             return trimedEntryValue.substring(1, trimedEntryValue.length() - 1).trim();
         }
         return trimedEntryValue;
+    }
+
+    @Override
+    public Map<Locale, Set<String>> keywords() {
+        Map<Locale, Set<String>> keywords = new HashMap<>();
+        keywords.put(Locale.ENGLISH, new HashSet<>(Arrays.asList("Add", "add", "Put", "put", "Store", "store")));
+        return keywords;
     }
 }

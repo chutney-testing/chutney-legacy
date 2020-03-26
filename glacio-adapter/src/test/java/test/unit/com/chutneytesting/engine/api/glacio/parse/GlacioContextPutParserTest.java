@@ -1,5 +1,6 @@
 package test.unit.com.chutneytesting.engine.api.glacio.parse;
 
+import static org.apache.commons.lang3.StringUtils.capitalize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static test.unit.com.chutneytesting.engine.api.glacio.parse.GlacioParserHelper.buildDataTableStepWithText;
@@ -9,6 +10,7 @@ import static test.unit.com.chutneytesting.engine.api.glacio.parse.GlacioParserH
 
 import com.chutneytesting.engine.api.glacio.parse.GlacioContextPutParser;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.stream.IntStream;
@@ -26,21 +28,12 @@ public class GlacioContextPutParserTest {
     @Test
     @Parameters({
         "add",
-        "add in context",
-        "add to context",
-        "add into context",
-        "add variables in context",
-        "add variables to context",
-        "add variables into context",
         "put",
         "store"
     })
-    public void should_parse_some_step_text(String stepText) {
-        loopOverRandomString(1, 50, 12, (randomString) ->
-            assertThat(
-                sut.couldParse(buildSimpleStepWithText(stepText + " " + randomString)))
-                .isTrue()
-        );
+    public void keywords(String keyword) {
+        assertThat(sut.keywords().get(Locale.ENGLISH)).contains(keyword);
+        assertThat(sut.keywords().get(Locale.ENGLISH)).contains(capitalize(keyword));
     }
 
     @Test

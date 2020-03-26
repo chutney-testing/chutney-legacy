@@ -3,26 +3,19 @@ package com.chutneytesting.engine.api.glacio.parse;
 import static java.util.Optional.ofNullable;
 
 import com.github.fridujo.glacio.ast.Step;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
-import java.util.function.Predicate;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GlacioSleepParser extends GlacioParser {
 
-    private final static Pattern STEP_TEXT_PATTERN = Pattern.compile("^(?:sleep|a?wait|stop|rest|(?:stand by)) (?:(for|during) )?(?<duration>.*)$");
-    private final static Predicate<String> STEP_TEXT_PREDICATE = STEP_TEXT_PATTERN.asPredicate();
-
-    @Override
-    public Integer priority() {
-        return 2000000000;
-    }
-
-    @Override
-    public boolean couldParse(Step step) {
-        return STEP_TEXT_PREDICATE.test(step.getText());
-    }
+    private final static Pattern STEP_TEXT_PATTERN = Pattern.compile("^(?:[Ss]leep|[Aa]?[Ww]ait|[Ss]top|[Rr]est) (?:(for|during) )?(?<duration>.*)$");
 
     @Override
     public Map<String, Object> parseTaskInputs(Step step) {
@@ -38,5 +31,13 @@ public class GlacioSleepParser extends GlacioParser {
     @Override
     public String parseTaskType(Step step) {
         return "sleep";
+    }
+
+    @Override
+    public Map<Locale, Set<String>> keywords() {
+        Map<Locale, Set<String>> keywords = new HashMap<>();
+        keywords.put(Locale.ENGLISH,
+            new HashSet<>(Arrays.asList("Sleep", "sleep", "Await", "await", "Wait", "wait", "Stop", "stop", "Rest", "rest")));
+        return keywords;
     }
 }
