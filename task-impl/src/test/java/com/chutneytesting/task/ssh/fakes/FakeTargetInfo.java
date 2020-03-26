@@ -50,8 +50,8 @@ public class FakeTargetInfo {
         }
 
         @Override
-        public TargetId id() {
-            return new HardcodedTargetId("SSH_SERVER");
+        public String name() {
+            return "SSH_SERVER";
         }
 
         @Override
@@ -69,19 +69,5 @@ public class FakeTargetInfo {
             return securityInfo;
         }
 
-        private class HardcodedTargetId implements TargetId {
-            private final String name;
-
-            HardcodedTargetId(String ssh_server) {
-                this.name = ssh_server;
-            }
-
-            @Override
-            public String name() {
-                return name;
-            }
-        }
     }
-
-
 }

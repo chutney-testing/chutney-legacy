@@ -6,17 +6,13 @@ import java.util.Map;
 
 public interface Target {
 
-    TargetId id();
+    String name();
 
     String url();
 
     Map<String, String> properties();
 
     SecurityInfo security();
-
-    default String name() {
-        return this.id().name();
-    }
 
     default URI getUrlAsURI() {
         try {
@@ -26,7 +22,4 @@ public interface Target {
         }
     }
 
-    interface TargetId {
-        String name();
-    }
 }
