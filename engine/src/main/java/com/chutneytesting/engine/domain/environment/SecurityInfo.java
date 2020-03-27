@@ -6,12 +6,12 @@ import java.util.Objects;
 
 public class SecurityInfo {
 
-    public final Credential credential;
-    public final String trustStore;
-    public final String trustStorePassword;
-    public final String keyStore;
-    public final String keyStorePassword;
-    public final String privateKey;
+    private Credential credential;
+    private String trustStore;
+    private String trustStorePassword;
+    private String keyStore;
+    private String keyStorePassword;
+    private String privateKey;
 
     private SecurityInfo(Credential credential, String trustStore, String trustStorePassword, String keyStore, String keyStorePassword, String privateKey) {
         this.credential = credential;
@@ -24,6 +24,50 @@ public class SecurityInfo {
 
     public static SecurityInfoBuilder builder() {
         return new SecurityInfoBuilder();
+    }
+
+    public Credential credential() {
+        return hasCredential() ? credential : Credential.NONE;
+    }
+
+    public boolean hasCredential() {
+        return ofNullable(credential).isPresent()
+            && !Credential.NONE.equals(credential);
+    }
+
+    public String trustStore() {
+        return ofNullable(trustStore).orElse("");
+    }
+
+    public boolean hasTrustStore() {
+        return ofNullable(trustStore).isPresent()
+            && !"".equals(trustStore);
+    }
+
+    public String trustStorePassword() {
+        return ofNullable(trustStorePassword).orElse("");
+    }
+
+    public String keyStore() {
+        return ofNullable(keyStore).orElse("");
+    }
+
+    public boolean hasKeyStore() {
+        return ofNullable(keyStore).isPresent()
+            && !"".equals(keyStore);
+    }
+
+    public String keyStorePassword() {
+        return ofNullable(keyStorePassword).orElse("");
+    }
+
+    public String privateKey() {
+        return ofNullable(privateKey).orElse("");
+    }
+
+    public boolean hasPrivateKey() {
+        return ofNullable(privateKey).isPresent()
+            && !"".equals(privateKey);
     }
 
     @Override
@@ -56,12 +100,12 @@ public class SecurityInfo {
 
         public SecurityInfo build() {
             return new SecurityInfo(
-                ofNullable(credential).orElse(Credential.NONE),
-                ofNullable(trustStore).orElse(""),
-                ofNullable(trustStorePassword).orElse(""),
-                ofNullable(keyStore).orElse(""),
-                ofNullable(keyStorePassword).orElse(""),
-                ofNullable(privateKey).orElse("")
+                credential,
+                trustStore,
+                trustStorePassword,
+                keyStore,
+                keyStorePassword,
+                privateKey
             );
         }
 
@@ -98,7 +142,8 @@ public class SecurityInfo {
     }
 
     public static class Credential {
-        public static final Credential NONE = null;
+        public static final Credential NONE = new NoCredential();
+
         public final String username;
         public final String password;
 
@@ -123,6 +168,12 @@ public class SecurityInfo {
         @Override
         public int hashCode() {
             return Objects.hash(username, password);
+        }
+
+        private static class NoCredential extends Credential {
+            private NoCredential() {
+                super("", "");
+            }
         }
     }
 }

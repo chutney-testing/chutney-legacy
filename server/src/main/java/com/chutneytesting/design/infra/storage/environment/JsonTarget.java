@@ -1,5 +1,5 @@
 package com.chutneytesting.design.infra.storage.environment;
-
+// TODO - remove deps on engine domain
 import com.chutneytesting.design.domain.environment.Target;
 import com.chutneytesting.design.domain.environment.Target.TargetId;
 import com.chutneytesting.engine.domain.environment.SecurityInfo;
@@ -77,12 +77,12 @@ public class JsonTarget {
 
         public static JsonSecurityInfo from(SecurityInfo security) {
             return new JsonSecurityInfo(
-                JsonCredential.from(security.credential),
-                security.trustStore,
-                security.trustStorePassword,
-                security.keyStore,
-                security.keyStorePassword,
-                security.privateKey
+                JsonCredential.from(security.credential()),
+                security.trustStore(),
+                security.trustStorePassword(),
+                security.keyStore(),
+                security.keyStorePassword(),
+                security.privateKey()
             );
         }
     }

@@ -1,8 +1,8 @@
 package com.chutneytesting.engine.api.execution;
 
-
 import static java.util.stream.Collectors.toList;
 
+import com.chutneytesting.engine.domain.environment.SecurityInfo;
 import com.chutneytesting.engine.domain.environment.Target;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
@@ -47,7 +47,22 @@ class StepDefinitionMapper {
             .withUrl(targetDto.url)
             .withAgents(targetDto.agents)
             .withProperties(targetDto.properties)
-            .withSecurity(targetDto.security)
+            .withSecurity(fromDto(targetDto.security))
             .build();
+    }
+
+    private static SecurityInfo fromDto(SecurityInfoDto dto) {
+        return SecurityInfo.builder()
+            .credential(fromDto(dto.credential))
+            .keyStore(dto.keyStore)
+            .keyStorePassword(dto.keyStorePassword)
+            .trustStore(dto.trustStore)
+            .trustStorePassword(dto.trustStorePassword)
+            .privateKey(dto.privateKey)
+            .build();
+    }
+
+    private static SecurityInfo.Credential fromDto(CredentialDto credential) {
+        return SecurityInfo.Credential.of(credential.username, credential.password);
     }
 }

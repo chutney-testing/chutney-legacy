@@ -1,23 +1,20 @@
 package com.chutneytesting.engine.api.execution;
 
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.chutneytesting.engine.domain.environment.SecurityInfo;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public class TargetDto {
 
-    public String id;
-    public String url;
-    public Map<String, String> properties;
-    public SecurityInfo security;
-    public String name;
-    public List<NamedHostAndPort> agents;
+    public final String id;
+    public final String url;
+    public final Map<String, String> properties;
+    public final SecurityInfoDto security;
+    public final String name;
+    public final List<NamedHostAndPort> agents;
 
-    public TargetDto() { }
-
-    public TargetDto(String id, String url, Map<String, String> properties, SecurityInfo security, List<NamedHostAndPort> agents) {
+    public TargetDto(String id, String url, Map<String, String> properties, SecurityInfoDto security, List<NamedHostAndPort> agents) {
         this.id = id;
         this.name = id;
         this.url = url;
@@ -53,4 +50,5 @@ public class TargetDto {
             ", agents=" + agents +
             '}';
     }
+
 }

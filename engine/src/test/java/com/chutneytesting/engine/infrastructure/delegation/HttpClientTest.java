@@ -63,7 +63,7 @@ public class HttpClientTest {
     }
 
     @Test
-    public void should_delagate_execution_to_endpoint() throws JsonProcessingException {
+    public void should_delegate_execution_to_endpoint() throws JsonProcessingException {
         //G
         StepDefinition stepDefinition = createFakeStepDefinition();
         NamedHostAndPort remoteHost = new NamedHostAndPort("name", "localhost", server.httpsPort());

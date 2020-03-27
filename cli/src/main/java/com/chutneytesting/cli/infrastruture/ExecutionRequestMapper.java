@@ -1,8 +1,11 @@
 package com.chutneytesting.cli.infrastruture;
 
+import com.chutneytesting.engine.api.execution.CredentialDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
+import com.chutneytesting.engine.api.execution.SecurityInfoDto;
 import com.chutneytesting.engine.api.execution.TargetDto;
+import com.chutneytesting.engine.domain.environment.SecurityInfo;
 import com.chutneytesting.engine.domain.environment.Target;
 import java.util.List;
 import java.util.Optional;
@@ -102,8 +105,23 @@ public class ExecutionRequestMapper {
             target.name,
             target.url,
             target.properties,
-            target.security,
+            toDto(target.security),
             target.agents
         );
+    }
+
+    private static SecurityInfoDto toDto(SecurityInfo security) {
+        return new SecurityInfoDto(
+            toDto(security.credential()),
+            security.trustStore(),
+            security.trustStorePassword(),
+            security.keyStore(),
+            security.keyStorePassword(),
+            security.privateKey()
+        );
+    }
+
+    private static CredentialDto toDto(SecurityInfo.Credential credential) {
+        return new CredentialDto(credential.username, credential.password);
     }
 }
