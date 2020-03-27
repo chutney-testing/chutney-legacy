@@ -124,6 +124,16 @@
                                     <arguments>run-script build</arguments>
                                 </configuration>
                             </execution>
+                            <execution>
+                                <id>angular tests</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <phase>test</phase>
+                                <configuration>
+                                    <arguments>run-script test</arguments>
+                                </configuration>
+                            </execution>
                         </executions>
                     </plugin>
                 </plugins>

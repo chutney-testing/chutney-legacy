@@ -30,6 +30,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
     scenarios: Array<ScenarioIndex> = [];
     scenarioOK: number;
     scenarioKO: number;
+    scenarioSTOPPED: number;
 
     currentCampaignExecutionReport: CampaignExecutionReport;
     currentScenariosReportsOutlines: Array<ScenarioExecutionReportOutline> = [];
@@ -73,7 +74,9 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.subscriptionLoadCampaign.unsubscribe();
+        if (this.subscriptionLoadCampaign) {
+            this.subscriptionLoadCampaign.unsubscribe();
+        }
         this.unsuscribeCampaign();
     }
 
@@ -121,6 +124,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
 
     refreshScenarioCount(report: CampaignExecutionReport) {
         this.scenarioOK = report.scenarioExecutionReports.filter(s => s.status === 'SUCCESS').length;
+        this.scenarioSTOPPED = report.scenarioExecutionReports.filter(s => s.status === 'STOPPED').length;
         this.scenarioKO = this.countFailedScenario(report);
     }
 

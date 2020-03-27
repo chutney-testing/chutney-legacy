@@ -6,9 +6,11 @@ with nixpkgs; mkShell {
 
   buildInputs = [
     unstable.nodejs-12_x
+    chromium
     geckodriver
   ];
 
   NPM_CONFIG_PROXY = builtins.getEnv "http_proxy";
+  CHROME_BIN = "${chromium}/bin/chromium";
 
 }

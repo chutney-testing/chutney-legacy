@@ -59,15 +59,15 @@
             <div class="row tile tile-click tile-ko tile-selected"
                 (click)="currentCampaignExecutionReport = null"
                 [ngClass]="{
-                        'tile-ok': scenarioKO == 0,
-                        'tile-ko': scenarioKO > 0,
+                        'tile-ok': scenarioKO == 0 && scenarioSTOPPED == 0,
+                        'tile-ko': scenarioKO > 0 || scenarioSTOPPED > 0,
                         'tile-selected': currentCampaignExecutionReport == null
                     }"
                 >
-                <div class="col" style="color:white; text-align: center;">
-                    <strong>
-                        {{scenarioOK}} OK - {{scenarioKO}} KO
-                    </strong>
+                <div id="scenarioSummary" class="col scenario-summary">
+                    <span *ngIf="scenarioOK > 0"> {{scenarioOK}} OK </span>
+                    <span *ngIf="scenarioKO > 0"> {{scenarioKO}} KO </span>
+                    <span *ngIf="scenarioSTOPPED > 0"> {{scenarioSTOPPED}} Stopped </span> 
                 </div>
             </div>
         </div>
@@ -78,7 +78,7 @@
                  (click)="selectReport(report)"
                  [ngClass]="{
                     'tile-ok': report.status == 'SUCCESS',
-                    'tile-ko': report.status == 'FAILURE',
+                    'tile-ko': report.status == 'FAILURE' || report.status == 'STOPPED',
                     'tile-selected': report.executionId == currentCampaignExecutionReport?.executionId,
                     'tile-running': report.status == 'RUNNING'}">
 
@@ -86,7 +86,7 @@
                     <i class="fa fa-circle" aria-hidden="true"
                        [ngClass]="{
                         'circle-ok': report.status == 'SUCCESS',
-                        'circle-ko': report.status == 'FAILURE',
+                        'circle-ko': report.status == 'FAILURE' || report.status == 'STOPPED',
                         'circle-running': report.status == 'RUNNING'}"><span
                         class="execution-id">#{{report.executionId}}</span></i>
                 </div>
@@ -96,7 +96,6 @@
                     <em *ngIf="isOlderThan(report.startDate, 4)">{{report.startDate | amDateFormat: 'DD MMM. YYYY HH:mm' }}</em>
                     <div><em>({{ 'global.time.in' | translate }} {{report.duration | amDuration:'ms' }})</em></div>
                 </div>
-               
             </div>
         </div>
     </div>
