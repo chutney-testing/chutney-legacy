@@ -1,4 +1,4 @@
-package test.unit.com.chutneytesting.engine.api.glacio.parse;
+package test.unit.com.chutneytesting.engine.api.glacio.parse.context;
 
 import static org.apache.commons.lang3.StringUtils.capitalize;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.entry;
 import static test.unit.com.chutneytesting.engine.api.glacio.parse.GlacioParserHelper.buildSimpleStepWithText;
 import static test.unit.com.chutneytesting.engine.api.glacio.parse.GlacioParserHelper.loopOverRandomString;
 
-import com.chutneytesting.engine.api.glacio.parse.GlacioSleepParser;
+import com.chutneytesting.engine.api.glacio.parse.context.GlacioSleepParser;
 import java.util.Locale;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -45,7 +45,7 @@ public class GlacioSleepParserTest {
     public void should_parse_duration_input_from_step_text() {
         loopOverRandomString(4, 10, 100, (randomString) ->
             assertThat(
-                sut.parseTaskInputs(buildSimpleStepWithText("sleep for " + randomString)))
+                sut.parseStep(buildSimpleStepWithText("sleep for " + randomString)).inputs)
                 .containsExactly(entry("duration", randomString))
         );
     }

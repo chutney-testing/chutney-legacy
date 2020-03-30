@@ -4,26 +4,19 @@ import static com.chutneytesting.tools.Streams.identity;
 import static java.util.Optional.empty;
 
 import com.chutneytesting.engine.api.glacio.ExecutableStepFactory.EXECUTABLE_KEYWORD;
-import com.chutneytesting.engine.api.glacio.parse.DefaultGlacioParser;
+import com.chutneytesting.engine.api.glacio.parse.default_.DefaultGlacioParser;
 import com.chutneytesting.engine.api.glacio.parse.GlacioExecutableStepParser;
 import com.chutneytesting.task.domain.TaskTemplateRegistry;
 import com.chutneytesting.tools.ThrowingFunction;
 import com.chutneytesting.tools.loader.ExtensionLoaders;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import net.minidev.json.JSONObject;
-import net.minidev.json.JSONValue;
-import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,27 +30,8 @@ public class GlacioAdapterSpringConfiguration {
 
     @Bean
     public Map<Locale, Map<EXECUTABLE_KEYWORD, Set<String>>> executableStepLanguagesKeywords() throws IOException {
-        Map<Locale, Map<EXECUTABLE_KEYWORD, Set<String>>> executableStepLanguagesKeywords = new HashMap<>();
-        for (URL url : Collections.list(GlacioAdapterSpringConfiguration.class
-            .getClassLoader().getResources("META-INF/extension/chutney.glacio-languages.json"))) {
-
-            try (InputStream is = url.openStream()) {
-                JSONObject langObject = (JSONObject) JSONValue.parse(is);
-                langObject.forEach((lang, keyWordObject) -> {
-                    Locale localeKey = LocaleUtils.toLocale(lang);
-                    Map<EXECUTABLE_KEYWORD, Set<String>> keywords =
-                        Optional.ofNullable(executableStepLanguagesKeywords.get(localeKey)).orElseGet(HashMap::new);
-                    ((JSONObject) keyWordObject).forEach((k, keyword) -> {
-                        EXECUTABLE_KEYWORD execKeyword = EXECUTABLE_KEYWORD.valueOf(k.toUpperCase());
-                        Set<String> keywordsSet = Optional.ofNullable(keywords.get(execKeyword)).orElseGet(HashSet::new);
-                        keywordsSet.addAll((List<String>) keyword);
-                        keywords.put(execKeyword, keywordsSet);
-                    });
-                    executableStepLanguagesKeywords.put(localeKey, keywords);
-                });
-            }
-        }
-        return executableStepLanguagesKeywords;
+        return GherkinLanguageFileReader.readAsMapLocale(EXECUTABLE_KEYWORD.class, GlacioAdapterSpringConfiguration.class
+            .getClassLoader().getResources("META-INF/extension/chutney.glacio-languages.json"));
     }
 
     @Bean
