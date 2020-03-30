@@ -1,16 +1,23 @@
 package com.chutneytesting.engine.domain.execution.engine.evaluation;
 
+import static java.util.Optional.ofNullable;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 abstract class Strings {
+
+    private static final Map<String, Pattern> PATTERN_CACHE = new HashMap<>();
+
     private Strings() {
     }
 
     public static String replaceExpressions(String template, Function<String, Object> evaluator, String prefix, String suffix) {
         final StringBuffer sb = new StringBuffer();
-        Pattern pattern = Pattern.compile(escapeForRegex(prefix) + "(.*?)" + escapeForRegex(suffix), Pattern.DOTALL);
+        Pattern pattern = cachePattern(escapeForRegex(prefix) + "(.*?)" + escapeForRegex(suffix));
         final Matcher matcher = pattern.matcher(template);
         while (matcher.find()) {
             String key = matcher.group(1);
@@ -25,7 +32,7 @@ abstract class Strings {
     }
 
     public static Object replaceExpression(String template, Function<String, Object> transformer, String prefix, String suffix) {
-        final Pattern pattern = Pattern.compile("^" + escapeForRegex(prefix) + "(.*?)" + escapeForRegex(suffix) + "$", Pattern.DOTALL);
+        final Pattern pattern = cachePattern("^" + escapeForRegex(prefix) + "(.*?)" + escapeForRegex(suffix) + "$");
         final Matcher matcher = pattern.matcher(template);
         if (matcher.matches()) {
             String key = matcher.group(1);
@@ -40,5 +47,13 @@ abstract class Strings {
             .replaceAll("\\$", Matcher.quoteReplacement("\\$"))
             .replaceAll("\\{", Matcher.quoteReplacement("\\{"))
             .replaceAll("\\}", Matcher.quoteReplacement("\\}"));
+    }
+
+    private static Pattern cachePattern(String pattern) {
+        return ofNullable(PATTERN_CACHE.get(pattern)).orElseGet(() -> {
+            Pattern compiledPattern = Pattern.compile(pattern, Pattern.DOTALL);
+            PATTERN_CACHE.put(pattern, compiledPattern);
+            return compiledPattern;
+        });
     }
 }
