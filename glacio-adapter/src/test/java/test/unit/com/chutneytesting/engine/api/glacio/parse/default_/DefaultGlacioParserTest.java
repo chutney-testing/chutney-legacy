@@ -1,4 +1,4 @@
-package test.unit.com.chutneytesting.engine.api.glacio.parse;
+package test.unit.com.chutneytesting.engine.api.glacio.parse.default_;
 
 import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.engine.api.glacio.parse.DefaultGlacioParser;
+import com.chutneytesting.engine.api.glacio.parse.default_.DefaultGlacioParser;
 import com.chutneytesting.task.domain.TaskTemplate;
 import com.chutneytesting.task.domain.TaskTemplateRegistry;
 import com.github.fridujo.glacio.ast.Position;

@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.RandomStringUtils;
 
-final class GlacioParserHelper {
+public final class GlacioParserHelper {
 
     public static void loopOverRandomString(int stepTextMinLength, int stepTextMaxLength, int randomLoopMax, Consumer<String> assertToRun) {
         IntStream.range(stepTextMinLength, stepTextMaxLength)

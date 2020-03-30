@@ -1,7 +1,6 @@
 package com.chutneytesting.engine.api.glacio.parse;
 
 import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 
 import com.chutneytesting.engine.domain.environment.Target;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
@@ -10,6 +9,11 @@ import com.github.fridujo.glacio.ast.Step;
 import java.util.Map;
 
 public abstract class GlacioParser implements GlacioExecutableStepParser {
+
+    protected TargetParser targetParser;
+    protected InputsParser inputsParser;
+    protected OutputsParser outputsParser;
+    protected StrategyParser strategyParser;
 
     @Override
     public final StepDefinition parseStep(Step step) {
@@ -30,19 +34,20 @@ public abstract class GlacioParser implements GlacioExecutableStepParser {
         return step.getText();
     }
 
-    public Map<String, Object> parseTaskInputs(Step step) {
-        return emptyMap();
+    private Map<String, Object> parseTaskInputs(Step step) {
+        return inputsParser.parseTaskInputs(step);
     }
 
-    public Map<String, Object> parseTaskOutputs(Step step) {
-        return emptyMap();
+    private Map<String, Object> parseTaskOutputs(Step step) {
+        return outputsParser.parseTaskOutputs(step);
     }
 
-    public Target parseStepTarget(Step step) {
-        return null;
+    private Target parseStepTarget(Step step) {
+        return targetParser.parseStepTarget(step);
     }
 
-    public StepStrategyDefinition parseStepStrategy(Step step) {
-        return null;
+    private StepStrategyDefinition parseStepStrategy(Step step) {
+        return strategyParser.parseStepStrategy(step);
     }
+
 }
