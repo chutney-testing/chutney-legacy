@@ -4,7 +4,7 @@ import static java.util.Locale.ENGLISH;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.engine.api.glacio.parse.GlacioParser;
-import com.chutneytesting.engine.api.glacio.parse.InputsParser;
+import com.chutneytesting.engine.api.glacio.parse.StepParser;
 import com.chutneytesting.engine.api.glacio.parse.default_.EmptyParser;
 import com.github.fridujo.glacio.ast.DataTable;
 import com.github.fridujo.glacio.ast.Step;
@@ -24,10 +24,10 @@ import java.util.regex.Pattern;
 public class GlacioContextPutParser extends GlacioParser {
 
     public GlacioContextPutParser() {
-        this.targetParser = EmptyParser.instance;
+        this.targetParser = EmptyParser.noTargetParser;
         this.inputsParser = new ContextPutInputsParser();
-        this.outputsParser = EmptyParser.instance;
-        this.strategyParser = EmptyParser.instance;
+        this.outputsParser = EmptyParser.emptyMapParser;
+        this.strategyParser = EmptyParser.noStrategyParser;
     }
 
     @Override
@@ -42,12 +42,12 @@ public class GlacioContextPutParser extends GlacioParser {
         return keywords;
     }
 
-    private class ContextPutInputsParser implements InputsParser {
+    private class ContextPutInputsParser implements StepParser<Map<String, Object>> {
 
         private final Pattern ENTRIES_PATTERN = Pattern.compile("(?: )?(?<key>[^\"][^ ]+[^\"]|\"[^\"]+\") (?<value>[^\"][^ ]+[^\"]|\"[^\"]+\")");
 
         @Override
-        public Map<String, Object> parseTaskInputs(Step step) {
+        public Map<String, Object> parseStep(Step step) {
             Map<String, Object> entries = new HashMap<>();
             // DataTable or substeps entries
             if (step.getDataTable().isPresent()) {

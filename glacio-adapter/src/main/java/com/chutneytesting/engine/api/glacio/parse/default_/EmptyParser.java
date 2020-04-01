@@ -2,39 +2,39 @@ package com.chutneytesting.engine.api.glacio.parse.default_;
 
 import static java.util.Collections.emptyMap;
 
-import com.chutneytesting.engine.api.glacio.parse.InputsParser;
-import com.chutneytesting.engine.api.glacio.parse.OutputsParser;
-import com.chutneytesting.engine.api.glacio.parse.StrategyParser;
-import com.chutneytesting.engine.api.glacio.parse.TargetParser;
+import com.chutneytesting.engine.api.glacio.parse.StepParser;
 import com.chutneytesting.engine.domain.environment.Target;
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
 import com.github.fridujo.glacio.ast.Step;
 import java.util.Map;
 
-public final class EmptyParser implements InputsParser, OutputsParser, TargetParser, StrategyParser {
+public final class EmptyParser {
 
-    public static final EmptyParser instance = new EmptyParser();
+    public static final StepParser<Map<String, Object>> emptyMapParser = new EmptyMapParser();
+    public static final StepParser<StepStrategyDefinition> noStrategyParser = new NoStrategyParser();
+    public static final StepParser<Target> noTargetParser = new NoTargetParser();
 
     private EmptyParser() {
     }
 
-    @Override
-    public Map<String, Object> parseTaskInputs(Step step) {
-        return emptyMap();
+    private static class EmptyMapParser implements StepParser<Map<String, Object>> {
+        @Override
+        public Map<String, Object> parseStep(Step step) {
+            return emptyMap();
+        }
     }
 
-    @Override
-    public Map<String, Object> parseTaskOutputs(Step step) {
-        return emptyMap();
+    private static class NoStrategyParser implements StepParser<StepStrategyDefinition> {
+        @Override
+        public StepStrategyDefinition parseStep(Step step) {
+            return null;
+        }
     }
 
-    @Override
-    public StepStrategyDefinition parseStepStrategy(Step step) {
-        return null;
-    }
-
-    @Override
-    public Target parseStepTarget(Step step) {
-        return null;
+    private static class NoTargetParser implements StepParser<Target> {
+        @Override
+        public Target parseStep(Step step) {
+            return null;
+        }
     }
 }

@@ -15,12 +15,8 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ExecutableStepFactory {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExecutableStepFactory.class);
 
     private final static String EXECUTABLE_STEP_TEXT_PATTERN_STRING = "^(?<keyword>%s) (?<parserKeyword>\\w*)( .*)?$";
 
