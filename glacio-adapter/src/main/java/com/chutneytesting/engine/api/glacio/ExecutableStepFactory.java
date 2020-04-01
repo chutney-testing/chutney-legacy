@@ -18,7 +18,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class ExecutableStepFactory {
 
-    private final static String EXECUTABLE_STEP_TEXT_PATTERN_STRING = "^(?<keyword>%s) (?<parserKeyword>\\w*)( .*)?$";
+    private final static String EXECUTABLE_STEP_TEXT_PATTERN_STRING = "^(?<keyword>%s) (?<parserKeyword>\\S*)( .*)?$";
 
     private Map<Locale, Pair<Pattern, Predicate<String>>> executableStepTextPatternsCache = new ConcurrentHashMap<>();
 
