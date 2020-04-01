@@ -84,6 +84,20 @@ public class EngineIntegrationTest {
     }
 
     @Test
+    public void should_execute_context_put_feature_with_default_parser() {
+        // Given
+        String feature = fileContent("integration/context-tasks_default-parser.feature");
+        List<StepDefinition> stepDefinitions = glacioAdapter.toChutneyStepDefinition(feature);
+
+        // When
+        List<StepExecutionReport> reports = new ArrayList<>();
+        stepDefinitions.forEach(stepDefinition -> reports.add(execute(stepDefinition)));
+
+        // Then
+        assertThat(reports.get(0).status).isEqualTo(Status.SUCCESS);
+    }
+
+    @Test
     @Ignore
     public void should_execute_http_feature() {
         // Given
