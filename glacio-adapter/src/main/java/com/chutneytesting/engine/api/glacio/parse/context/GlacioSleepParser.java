@@ -20,10 +20,10 @@ public class GlacioSleepParser extends GlacioParser {
     private final static Pattern STEP_TEXT_PATTERN = Pattern.compile("^(?:[Ss]leep|[Aa]?[Ww]ait|[Ss]top|[Rr]est) (?:(for|during) )?(?<duration>.*)$");
 
     public GlacioSleepParser() {
-        this.targetParser  = EmptyParser.instance;
+        this.targetParser  = EmptyParser.noTargetParser;
         this.inputsParser = GlacioSleepParser::parseTaskInputs;
-        this.outputsParser = EmptyParser.instance;
-        this.strategyParser = EmptyParser.instance;
+        this.outputsParser = EmptyParser.emptyMapParser;
+        this.strategyParser = EmptyParser.noStrategyParser;
     }
 
     @Override

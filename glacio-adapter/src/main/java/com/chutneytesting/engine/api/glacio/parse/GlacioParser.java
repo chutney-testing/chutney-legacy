@@ -10,10 +10,10 @@ import java.util.Map;
 
 public abstract class GlacioParser implements GlacioExecutableStepParser {
 
-    protected TargetParser targetParser;
-    protected InputsParser inputsParser;
-    protected OutputsParser outputsParser;
-    protected StrategyParser strategyParser;
+    protected StepParser<Target> targetParser;
+    protected StepParser<Map<String, Object>> inputsParser;
+    protected StepParser<Map<String, Object>> outputsParser;
+    protected StepParser<StepStrategyDefinition> strategyParser;
 
     @Override
     public final StepDefinition parseStep(Step step) {
@@ -35,19 +35,19 @@ public abstract class GlacioParser implements GlacioExecutableStepParser {
     }
 
     private Map<String, Object> parseTaskInputs(Step step) {
-        return inputsParser.parseTaskInputs(step);
+        return inputsParser.parseStep(step);
     }
 
     private Map<String, Object> parseTaskOutputs(Step step) {
-        return outputsParser.parseTaskOutputs(step);
+        return outputsParser.parseStep(step);
     }
 
     private Target parseStepTarget(Step step) {
-        return targetParser.parseStepTarget(step);
+        return targetParser.parseStep(step);
     }
 
     private StepStrategyDefinition parseStepStrategy(Step step) {
-        return strategyParser.parseStepStrategy(step);
+        return strategyParser.parseStep(step);
     }
 
 }
