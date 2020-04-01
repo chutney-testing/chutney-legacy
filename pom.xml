@@ -107,7 +107,7 @@
         <cucumber.version>1.2.5</cucumber.version>
         <mockrunner-jms.version>1.1.2</mockrunner-jms.version>
         <sshd.version>1.6.0</sshd.version>
-        <eddsa.version>0.2.0</eddsa.version>
+        <eddsa.version>0.3.0</eddsa.version>
         <activemq.version>5.15.11</activemq.version>
         <rabbitmq-mock.version>1.0.14</rabbitmq-mock.version>
         <wire-mock.version>2.19.0</wire-mock.version>
