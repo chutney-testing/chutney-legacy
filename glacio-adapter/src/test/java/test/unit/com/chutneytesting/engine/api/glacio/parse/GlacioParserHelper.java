@@ -27,15 +27,15 @@ public final class GlacioParserHelper {
     }
 
     public static Step buildSimpleStepWithText(String stepText) {
-        return new Step(buildZeroPosition(), stepText, emptyList(), empty(), empty());
+        return new Step(zeroPosition, stepText, emptyList(), empty(), empty());
     }
 
     public static Step buildDataTableStepWithText(String stepText, String dataTableString) {
-        return new Step(buildZeroPosition(), stepText, emptyList(), empty(), of(buildDataTableFromString(dataTableString)));
+        return new Step(zeroPosition, stepText, emptyList(), empty(), of(buildDataTableFromString(dataTableString)));
     }
 
     public static Step buildSubStepsStepWithText(String stepText, String subStepsString) {
-        return new Step(buildZeroPosition(), stepText, buildSimpleSubStepsFromString(subStepsString), empty(), empty());
+        return new Step(zeroPosition, stepText, buildSimpleSubStepsFromString(subStepsString), empty(), empty());
     }
 
     public static DataTable buildDataTableFromString(String dataTableString) {
@@ -48,9 +48,9 @@ public final class GlacioParserHelper {
                     cells.add(new TableCell(value.trim()));
                 }
             }
-            rows.add(new TableRow(buildZeroPosition(), cells));
+            rows.add(new TableRow(zeroPosition, cells));
         }
-        return new DataTable(buildZeroPosition(), rows);
+        return new DataTable(zeroPosition, rows);
     }
 
     public static List<Step> buildSimpleSubStepsFromString(String subStepsString) {
@@ -61,7 +61,5 @@ public final class GlacioParserHelper {
         return subSteps;
     }
 
-    private static Position buildZeroPosition() {
-        return new Position(0, 0);
-    }
+    public final static Position zeroPosition = new Position(0, 0);
 }
