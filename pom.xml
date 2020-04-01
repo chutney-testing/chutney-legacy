@@ -95,7 +95,7 @@
         <mongodb.version>3.8.0</mongodb.version>
         <orientdb.version>3.0.28</orientdb.version>
         <lucene.version>7.3.0</lucene.version>
-        <selenium.version>3.14.0</selenium.version>
+        <selenium.version>3.141.59</selenium.version>
         <rxjava.version>2.2.6</rxjava.version>
         <groovy.version>2.5.0</groovy.version>
 
