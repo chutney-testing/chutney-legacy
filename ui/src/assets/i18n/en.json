@@ -324,7 +324,10 @@
             "export": "Export",
             "import": "Import",
             "create": "Create",
-            "replay": "Replay"
+            "replay": "Replay",
+            "stop": "Stop",
+            "resume": "Resume",
+            "pause": "Pause"
         },
         "bdd": {
             "given": "Given",

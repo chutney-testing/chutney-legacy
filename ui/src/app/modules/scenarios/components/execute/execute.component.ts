@@ -2,10 +2,10 @@ import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { delay } from 'rxjs/operators';
 
 import { TestCase, ScenarioComponent, KeyValue } from '@model';
 import { ScenarioExecutionService, ComponentService } from '@core/services';
-import { delay } from 'rxjs/operators';
 
 @Component({
     selector: 'chutney-execute',
@@ -89,7 +89,7 @@ export class ExecuteComponent implements OnInit, OnDestroy {
         const parameters = this.componentForm.controls.parameters as FormArray;
         parameters.controls.forEach((ctlr, i) => {
             dataset.push(new KeyValue(this.testCase.dataSet[i].key, ctlr.value))
-        })
+        });
         return dataset;
     }
 
