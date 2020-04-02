@@ -1,19 +1,9 @@
-import {
-    Component,
-    EventEmitter,
-    Input,
-    OnChanges,
-    Output,
-    SimpleChange,
-    SimpleChanges,
-    OnInit,
-    OnDestroy
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { interval, Subscription } from 'rxjs';
 
 import { Execution } from '@model';
-import { interval, Subscription } from 'rxjs/index';
 import { ScenarioExecutionService } from '@core/services';
-import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'chutney-execution-history',
@@ -38,7 +28,8 @@ export class HistoryComponent implements OnInit, OnDestroy, OnChanges {
     constructor(
         private scenarioExecutionService: ScenarioExecutionService,
         private route: ActivatedRoute,
-    ) { }
+    ) {
+    }
 
     ngOnChanges(simpleChanges: SimpleChanges) {
         this.findScenarioExecutions();
@@ -52,7 +43,6 @@ export class HistoryComponent implements OnInit, OnDestroy, OnChanges {
             } else {
                 this.selectedLast = true;
             }
-            this.findScenarioExecutions();
         });
     }
 

@@ -4,6 +4,7 @@ export class ScenarioExecutionReport {
     constructor(
         public executionId: number,
         public report: StepExecutionReport,
+        public environment: string,
         public scenarioName?: string
     ) { }
 }

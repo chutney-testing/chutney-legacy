@@ -2,10 +2,6 @@ package com.chutneytesting.execution.domain.scenario;
 
 import static io.reactivex.schedulers.Schedulers.io;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Ascii;
-import com.google.common.base.Joiner;
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;
@@ -18,6 +14,10 @@ import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.execution.domain.report.StepExecutionReportCore;
 import com.chutneytesting.execution.domain.state.ExecutionStateRepository;
 import com.chutneytesting.instrument.domain.Metrics;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Ascii;
+import com.google.common.base.Joiner;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import java.time.LocalDateTime;
@@ -128,7 +128,7 @@ public class ScenarioExecutionEngineAsync {
             // Create report
             .map(report -> {
                 LOGGER.trace("Map report for execution {}", executionId);
-                return new ScenarioExecutionReport(executionId, executionRequest.testCase.metadata().title(), report);
+                return new ScenarioExecutionReport(executionId, executionRequest.testCase.metadata().title(), executionRequest.environment, report);
             })
 
             .doOnNext(report -> updateHistory(executionId, executionRequest, report))

@@ -1,6 +1,7 @@
 package com.chutneytesting.execution.domain.history;
 
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -8,6 +9,7 @@ import org.immutables.value.Value;
 
 @Value.Immutable
 @Value.Enclosing
+@JsonSerialize(as= ImmutableExecutionHistory.class)
 public interface ExecutionHistory {
 
     @Value.Parameter

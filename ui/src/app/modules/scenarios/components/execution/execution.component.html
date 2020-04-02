@@ -39,7 +39,7 @@
                     <small
                         class="text-muted ml-2">{{'global.time.at' | translate}} {{scenarioExecutionReport.report.startDate | date:'medium'}}</small>
                     <small
-                        class="text-muted ml-2"> - {{'admin.targets.environment' | translate}} : {{currentExecution?.environment}}</small>
+                        class="text-muted ml-2"> - {{'admin.targets.environment' | translate}} : {{scenarioExecutionReport.environment}}</small>
                 </h1>
                 <div *ngIf="lastExecutionRunning">
                     <button type="button" class="btn btn-dark m-2" (click)="stopScenario()"
