@@ -6,8 +6,8 @@ import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitio
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepStrategyDefinitionRequestDto;
 import com.chutneytesting.engine.api.execution.SecurityInfoDto;
 import com.chutneytesting.engine.api.execution.TargetDto;
-import com.chutneytesting.engine.domain.environment.SecurityInfo;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
+import com.chutneytesting.task.spi.injectable.SecurityInfo;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,16 +52,16 @@ class ExecutionRequestMapper {
 
     private static SecurityInfoDto from(SecurityInfo security) {
         return new SecurityInfoDto(
-            from(security.credential()),
-            security.trustStore(),
-            security.trustStorePassword(),
-            security.keyStore(),
-            security.keyStorePassword(),
-            security.privateKey()
+            security.credential().map(ExecutionRequestMapper::from).orElse(null),
+            security.trustStore().orElse(null),
+            security.trustStorePassword().orElse(null),
+            security.keyStore().orElse(null),
+            security.keyStorePassword().orElse(null),
+            security.privateKey().orElse(null)
         );
     }
 
     private static CredentialDto from(SecurityInfo.Credential credential) {
-        return new CredentialDto(credential.username, credential.password);
+        return new CredentialDto(credential.username(), credential.password());
     }
 }

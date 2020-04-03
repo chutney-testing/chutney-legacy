@@ -8,7 +8,6 @@ import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.engine.parameterResolver.ContextParameterResolver;
 import com.chutneytesting.engine.domain.execution.engine.parameterResolver.DelegateLogger;
 import com.chutneytesting.engine.domain.execution.engine.parameterResolver.InputParameterResolver;
-import com.chutneytesting.engine.domain.execution.engine.parameterResolver.TargetSpiImpl;
 import com.chutneytesting.engine.domain.execution.engine.parameterResolver.TypedValueParameterResolver;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.engine.step.StepContext;
@@ -79,7 +78,7 @@ public class DefaultStepExecutor implements StepExecutor {
     private List<ParameterResolver> gatherResolvers(ScenarioExecution scenarioExecution, StepContext stepContext, Target target, Step step) {
         List<ParameterResolver> parameterResolvers = new ArrayList<>();
         parameterResolvers.add(new InputParameterResolver(stepContext.getEvaluatedInputs()));
-        parameterResolvers.add(new TypedValueParameterResolver<>(com.chutneytesting.task.spi.injectable.Target.class, new TargetSpiImpl(target)));
+        parameterResolvers.add(new TypedValueParameterResolver<>(com.chutneytesting.task.spi.injectable.Target.class, target));
         parameterResolvers.add(new TypedValueParameterResolver<>(Logger.class, new DelegateLogger(step::addInformation, step::failure)));
         parameterResolvers.add(new TypedValueParameterResolver<>(StepDefinition.class, step.definition()));
         parameterResolvers.add(new TypedValueParameterResolver<>(FinallyActionRegistry.class, finallyAction -> scenarioExecution.registerFinallyAction(finallyAction)));

@@ -5,8 +5,9 @@ import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
 import com.chutneytesting.engine.api.execution.SecurityInfoDto;
 import com.chutneytesting.engine.api.execution.TargetDto;
-import com.chutneytesting.engine.domain.environment.SecurityInfo;
+import com.chutneytesting.engine.domain.environment.SecurityInfoImpl;
 import com.chutneytesting.engine.domain.environment.Target;
+import com.chutneytesting.task.spi.injectable.SecurityInfo;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -110,18 +111,18 @@ public class ExecutionRequestMapper {
         );
     }
 
-    private static SecurityInfoDto toDto(SecurityInfo security) {
+    private static SecurityInfoDto toDto(SecurityInfoImpl security) {
         return new SecurityInfoDto(
-            toDto(security.credential()),
-            security.trustStore(),
-            security.trustStorePassword(),
-            security.keyStore(),
-            security.keyStorePassword(),
-            security.privateKey()
+            security.credential().map(ExecutionRequestMapper::toDto).orElse(null),
+            security.trustStore().orElse(null),
+            security.trustStorePassword().orElse(null),
+            security.keyStore().orElse(null),
+            security.keyStorePassword().orElse(null),
+            security.privateKey().orElse(null)
         );
     }
 
     private static CredentialDto toDto(SecurityInfo.Credential credential) {
-        return new CredentialDto(credential.username, credential.password);
+        return new CredentialDto(credential.username(), credential.password());
     }
 }

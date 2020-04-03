@@ -2,9 +2,11 @@ package com.chutneytesting.engine.domain.environment;
 
 import static java.util.Optional.ofNullable;
 
+import com.chutneytesting.task.spi.injectable.SecurityInfo;
 import java.util.Objects;
+import java.util.Optional;
 
-public class SecurityInfo {
+public class SecurityInfoImpl implements SecurityInfo {
 
     private Credential credential;
     private String trustStore;
@@ -13,7 +15,7 @@ public class SecurityInfo {
     private String keyStorePassword;
     private String privateKey;
 
-    private SecurityInfo(Credential credential, String trustStore, String trustStorePassword, String keyStore, String keyStorePassword, String privateKey) {
+    private SecurityInfoImpl(Credential credential, String trustStore, String trustStorePassword, String keyStore, String keyStorePassword, String privateKey) {
         this.credential = credential;
         this.trustStore = trustStore;
         this.trustStorePassword = trustStorePassword;
@@ -26,8 +28,9 @@ public class SecurityInfo {
         return new SecurityInfoBuilder();
     }
 
-    public Credential credential() {
-        return hasCredential() ? credential : Credential.NONE;
+    @Override
+    public Optional<SecurityInfo.Credential> credential() {
+        return hasCredential() ? Optional.of(credential) : Optional.of(Credential.NONE);
     }
 
     public boolean hasCredential() {
@@ -35,8 +38,29 @@ public class SecurityInfo {
             && !Credential.NONE.equals(credential);
     }
 
-    public String trustStore() {
-        return ofNullable(trustStore).orElse("");
+    @Override
+    public Optional<String> trustStore() {
+        return Optional.ofNullable(trustStore);
+    }
+
+    @Override
+    public Optional<String> trustStorePassword() {
+        return Optional.ofNullable(trustStorePassword);
+    }
+
+    @Override
+    public Optional<String> keyStore() {
+        return Optional.ofNullable(keyStore);
+    }
+
+    @Override
+    public Optional<String> keyStorePassword() {
+        return Optional.ofNullable(keyStorePassword);
+    }
+
+    @Override
+    public Optional<String> privateKey() {
+        return Optional.ofNullable(privateKey);
     }
 
     public boolean hasTrustStore() {
@@ -44,25 +68,9 @@ public class SecurityInfo {
             && !"".equals(trustStore);
     }
 
-    public String trustStorePassword() {
-        return ofNullable(trustStorePassword).orElse("");
-    }
-
-    public String keyStore() {
-        return ofNullable(keyStore).orElse("");
-    }
-
     public boolean hasKeyStore() {
         return ofNullable(keyStore).isPresent()
             && !"".equals(keyStore);
-    }
-
-    public String keyStorePassword() {
-        return ofNullable(keyStorePassword).orElse("");
-    }
-
-    public String privateKey() {
-        return ofNullable(privateKey).orElse("");
     }
 
     public boolean hasPrivateKey() {
@@ -74,7 +82,7 @@ public class SecurityInfo {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SecurityInfo that = (SecurityInfo) o;
+        SecurityInfoImpl that = (SecurityInfoImpl) o;
         return Objects.equals(credential, that.credential) &&
             Objects.equals(trustStore, that.trustStore) &&
             Objects.equals(trustStorePassword, that.trustStorePassword) &&
@@ -98,8 +106,8 @@ public class SecurityInfo {
 
         private SecurityInfoBuilder() {}
 
-        public SecurityInfo build() {
-            return new SecurityInfo(
+        public SecurityInfoImpl build() {
+            return new SecurityInfoImpl(
                 credential,
                 trustStore,
                 trustStorePassword,
@@ -141,7 +149,7 @@ public class SecurityInfo {
 
     }
 
-    public static class Credential {
+    public static class Credential implements SecurityInfo.Credential {
         public static final Credential NONE = new NoCredential();
 
         public final String username;
@@ -168,6 +176,16 @@ public class SecurityInfo {
         @Override
         public int hashCode() {
             return Objects.hash(username, password);
+        }
+
+        @Override
+        public String username() {
+            return username;
+        }
+
+        @Override
+        public String password() {
+            return password;
         }
 
         private static class NoCredential extends Credential {

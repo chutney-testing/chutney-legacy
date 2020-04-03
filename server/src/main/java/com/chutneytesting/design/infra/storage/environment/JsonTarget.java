@@ -1,5 +1,7 @@
 package com.chutneytesting.design.infra.storage.environment;
-// TODO - remove deps on engine domain
+
+import static java.util.Optional.ofNullable;
+
 import com.chutneytesting.design.domain.environment.SecurityInfo;
 import com.chutneytesting.design.domain.environment.Target;
 import com.chutneytesting.design.domain.environment.Target.TargetId;
@@ -76,7 +78,7 @@ public class JsonTarget {
 
         public static JsonSecurityInfo from(SecurityInfo security) {
             return new JsonSecurityInfo(
-                JsonCredential.from(security.credential),
+                ofNullable(security.credential).map(JsonCredential::from).orElse(null),
                 security.trustStore,
                 security.trustStorePassword,
                 security.keyStore,

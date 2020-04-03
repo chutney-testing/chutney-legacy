@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class Target {
+public class Target implements com.chutneytesting.task.spi.injectable.Target {
 
     public static final Target NONE = Target.builder().build();
 
@@ -18,10 +18,10 @@ public class Target {
     public final String url;
     public final URI uri;
     public final Map<String, String> properties;
-    public final SecurityInfo security;
+    public final SecurityInfoImpl security;
     public final List<NamedHostAndPort> agents;
 
-    private Target(String name, String url, Map<String, String> properties, SecurityInfo security, List<NamedHostAndPort> agents) {
+    private Target(String name, String url, Map<String, String> properties, SecurityInfoImpl security, List<NamedHostAndPort> agents) {
         this.name = name;
         this.url = url;
         this.uri = getUrlAsURI(url);
@@ -34,12 +34,32 @@ public class Target {
         return new TargetBuilder();
     }
 
+    @Override
+    public String name() {
+        return name;
+    }
+
+    @Override
+    public String url() {
+        return url;
+    }
+
+    @Override
+    public Map<String, String> properties() {
+        return properties;
+    }
+
+    @Override
+    public com.chutneytesting.task.spi.injectable.SecurityInfo security() {
+        return security;
+    }
+
     public static class TargetBuilder {
         private String name;
         private String url;
         private Map<String, String> properties;
         private List<NamedHostAndPort> agents;
-        private SecurityInfo security;
+        private SecurityInfoImpl security;
 
         private TargetBuilder() {}
 
@@ -48,7 +68,7 @@ public class Target {
                 ofNullable(name).orElse(""),
                 ofNullable(url).orElse(""),
                 ofNullable(properties).orElse(Collections.emptyMap()),
-                ofNullable(security).orElse(SecurityInfo.builder().build()),
+                ofNullable(security).orElse(SecurityInfoImpl.builder().build()),
                 ofNullable(agents).orElse(emptyList())
             );
         }
@@ -77,7 +97,7 @@ public class Target {
             return this;
         }
 
-        public TargetBuilder withSecurity(SecurityInfo securityInfo) {
+        public TargetBuilder withSecurity(SecurityInfoImpl securityInfo) {
             this.security = securityInfo;
             return this;
         }

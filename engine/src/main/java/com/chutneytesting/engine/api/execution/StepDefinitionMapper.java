@@ -2,12 +2,14 @@ package com.chutneytesting.engine.api.execution;
 
 import static java.util.stream.Collectors.toList;
 
-import com.chutneytesting.engine.domain.environment.SecurityInfo;
+import com.chutneytesting.engine.domain.environment.SecurityInfoImpl;
 import com.chutneytesting.engine.domain.environment.Target;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
 import com.chutneytesting.engine.domain.execution.strategies.StrategyProperties;
 import java.util.List;
+import java.util.Optional;
+import org.immutables.value.internal.$guava$.base.$Optional;
 
 class StepDefinitionMapper {
 
@@ -51,8 +53,8 @@ class StepDefinitionMapper {
             .build();
     }
 
-    private static SecurityInfo fromDto(SecurityInfoDto dto) {
-        return SecurityInfo.builder()
+    private static SecurityInfoImpl fromDto(SecurityInfoDto dto) {
+        return SecurityInfoImpl.builder()
             .credential(fromDto(dto.credential))
             .keyStore(dto.keyStore)
             .keyStorePassword(dto.keyStorePassword)
@@ -62,7 +64,9 @@ class StepDefinitionMapper {
             .build();
     }
 
-    private static SecurityInfo.Credential fromDto(CredentialDto credential) {
-        return SecurityInfo.Credential.of(credential.username, credential.password);
+    private static SecurityInfoImpl.Credential fromDto(CredentialDto credential) {
+        return Optional.ofNullable(credential)
+            .map(c -> SecurityInfoImpl.Credential.of(c.username, c.password))
+            .orElse(SecurityInfoImpl.Credential.NONE);
     }
 }

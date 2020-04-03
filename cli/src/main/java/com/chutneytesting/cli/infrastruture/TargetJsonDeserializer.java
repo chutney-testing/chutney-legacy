@@ -1,9 +1,9 @@
 package com.chutneytesting.cli.infrastruture;
 
-import static com.chutneytesting.engine.domain.environment.SecurityInfo.SecurityInfoBuilder;
+import static com.chutneytesting.engine.domain.environment.SecurityInfoImpl.SecurityInfoBuilder;
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.engine.domain.environment.SecurityInfo;
+import com.chutneytesting.engine.domain.environment.SecurityInfoImpl;
 import com.chutneytesting.engine.domain.environment.Target;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -54,7 +54,7 @@ public class TargetJsonDeserializer extends JsonDeserializer<List<Target>> {
         }
         if (targetNode.hasNonNull("security")) {
             JsonNode secu = targetNode.get("security");
-            SecurityInfoBuilder secuBuilder = SecurityInfo.builder();
+            SecurityInfoBuilder secuBuilder = SecurityInfoImpl.builder();
             if (secu.hasNonNull("trustStore")) {
                 secuBuilder.trustStore(secu.get("trustStore").textValue());
             }
@@ -75,7 +75,7 @@ public class TargetJsonDeserializer extends JsonDeserializer<List<Target>> {
                 if (credential.hasNonNull("username")) {
                     String username = credential.get("username").textValue();
                     String password = ofNullable(credential.get("password")).map(JsonNode::textValue).orElse("");
-                    secuBuilder.credential(SecurityInfo.Credential.of(username, password));
+                    secuBuilder.credential(SecurityInfoImpl.Credential.of(username, password));
                 }
             }
             targetBuilder.withSecurity(secuBuilder.build());

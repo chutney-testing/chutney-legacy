@@ -1,6 +1,7 @@
 package com.chutneytesting.execution.domain.scenario;
 
 import static io.reactivex.schedulers.Schedulers.io;
+import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.execution.domain.ExecutionRequest;
@@ -109,7 +110,7 @@ public class ScenarioExecutionEngineAsync {
             followResult = executionEngine.executeAndFollow(executionRequest);
         } catch (Exception e) {
             LOGGER.error("Cannot execute test case [" + executionRequest.testCase.id() + "]", e.getMessage());
-            setExecutionToFailed(executionRequest.testCase.id(), storedExecution, e.getMessage());
+            setExecutionToFailed(executionRequest.testCase.id(), storedExecution, ofNullable(e.getMessage()).orElse(e.toString()));
             throw new FailedExecutionAttempt(e, storedExecution.executionId(), executionRequest.testCase.metadata().title());
         }
         return followResult;

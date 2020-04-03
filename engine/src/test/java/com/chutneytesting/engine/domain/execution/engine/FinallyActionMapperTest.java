@@ -3,11 +3,11 @@ package com.chutneytesting.engine.domain.execution.engine;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
-import com.chutneytesting.engine.domain.environment.SecurityInfo;
+import com.chutneytesting.engine.domain.environment.SecurityInfoImpl;
 import com.chutneytesting.engine.domain.environment.Target;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
-import com.chutneytesting.engine.domain.execution.engine.parameterResolver.TargetSpiImpl;
 import com.chutneytesting.task.spi.FinallyAction;
+import java.util.Optional;
 import org.junit.Test;
 
 public class FinallyActionMapperTest {
@@ -20,7 +20,7 @@ public class FinallyActionMapperTest {
             .withName("test-target")
             .withUrl("proto://host:12345")
             .build();
-        com.chutneytesting.task.spi.injectable.Target taskTarget = new TargetSpiImpl(domainTarget);
+        com.chutneytesting.task.spi.injectable.Target taskTarget = domainTarget;
         FinallyAction finallyAction = FinallyAction.Builder
             .forAction("test-action")
             .withTarget(taskTarget)
@@ -36,6 +36,6 @@ public class FinallyActionMapperTest {
         assertThat(targetCopy.name).isEqualTo("test-target");
         assertThat(targetCopy.url).isEqualTo("proto://host:12345");
         assertThat(targetCopy.security.hasCredential()).isFalse();
-        assertThat(targetCopy.security.credential()).isEqualTo(SecurityInfo.Credential.NONE);
+        assertThat(targetCopy.security.credential()).isEqualTo(Optional.of(SecurityInfoImpl.Credential.NONE));
     }
 }
