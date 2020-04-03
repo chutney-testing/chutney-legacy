@@ -12,22 +12,22 @@ public class TargetSpiImpl implements Target {
 
     public TargetSpiImpl(com.chutneytesting.engine.domain.environment.Target delegate) {
         this.delegate = delegate;
-        this.security = new SecurityInfoSpiImpl(delegate.security());
+        this.security = new SecurityInfoSpiImpl(delegate.security);
     }
 
     @Override
-    public TargetId id() {
-        return () -> delegate.id().name();
+    public String name() {
+        return delegate.name;
     }
 
     @Override
     public String url() {
-        return delegate.url();
+        return delegate.url;
     }
 
     @Override
     public Map<String, String> properties() {
-        return delegate.properties();
+        return delegate.properties;
     }
 
     @Override

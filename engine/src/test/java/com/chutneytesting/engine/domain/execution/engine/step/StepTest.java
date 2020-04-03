@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
 import com.chutneytesting.engine.domain.delegation.RemoteStepExecutor;
-import com.chutneytesting.engine.domain.environment.NoTarget;
 import com.chutneytesting.engine.domain.environment.Target;
 import com.chutneytesting.engine.domain.execution.RxBus;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
@@ -40,7 +39,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class StepTest {
 
     private StepDataEvaluator dataEvaluator = new StepDataEvaluator(new SpelFunctions());
-    private Target fakeTarget = NoTarget.NO_TARGET;
+    private Target fakeTarget = Target.NONE;
 
     @Test
     public void stop_should_not_execute_test() {
@@ -149,20 +148,16 @@ public class StepTest {
     @Test
     public void target_is_set_in_scenario_context_in_order_to_be_used_by_evaluated_inputs() {
         // Given
-        Target mockTarget = mock(Target.class);
-        when(mockTarget.name())
-            .thenReturn("fakeTargetName");
+        Target fakeTarget = Target.builder().withName("fakeTargetName").build();
 
         Map<String, Object> inputs = new HashMap<>();
-        inputs.put("targetName", "${#target.name()}");
+        inputs.put("targetName", "${#target.name}");
 
-        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, inputs, null, null);
-        Step step = new Step(dataEvaluator, fakeStepDefinition, Optional.of(mockTarget), mock(StepExecutor.class), Lists.emptyList());
-
-        ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", this.fakeTarget, "taskType", null, inputs, null, null);
+        Step step = new Step(dataEvaluator, fakeStepDefinition, Optional.of(fakeTarget), mock(StepExecutor.class), Lists.emptyList());
 
         // When
-        step.execute(ScenarioExecution.createScenarioExecution(), scenarioContext);
+        step.execute(ScenarioExecution.createScenarioExecution(), new ScenarioContextImpl());
 
         // Then
         StepContext context = (StepContext) ReflectionTestUtils.getField(step, "stepContext");

@@ -3,7 +3,6 @@ package com.chutneytesting.engine.api.execution;
 
 import static java.util.stream.Collectors.toList;
 
-import com.chutneytesting.engine.domain.environment.ImmutableTarget;
 import com.chutneytesting.engine.domain.environment.Target;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
@@ -43,12 +42,12 @@ class StepDefinitionMapper {
     }
 
     private static Target fromDto(TargetDto targetDto) {
-        return ImmutableTarget.builder()
-            .id(ImmutableTarget.TargetId.of(targetDto.id))
-            .url(targetDto.url)
-            .agents(targetDto.agents)
-            .properties(targetDto.properties)
-            .security(targetDto.security)
+        return Target.builder()
+            .withName(targetDto.id)
+            .withUrl(targetDto.url)
+            .withAgents(targetDto.agents)
+            .withProperties(targetDto.properties)
+            .withSecurity(targetDto.security)
             .build();
     }
 }

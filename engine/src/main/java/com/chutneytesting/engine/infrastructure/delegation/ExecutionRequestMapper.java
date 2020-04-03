@@ -1,7 +1,5 @@
 package com.chutneytesting.engine.infrastructure.delegation;
 
-import static java.util.Collections.emptyList;
-
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepStrategyDefinitionRequestDto;
@@ -41,11 +39,11 @@ class ExecutionRequestMapper {
 
     private static TargetDto extractTarget(StepDefinition definition) {
         return definition.getTarget().map(t -> new TargetDto(
-                t.id().name(),
-                t.url(),
-                t.properties(),
-                t.security(),
-                t.agents().orElse(emptyList())
+                t.name,
+                t.url,
+                t.properties,
+                t.security,
+                t.agents
             ))
             .orElse(null);
     }

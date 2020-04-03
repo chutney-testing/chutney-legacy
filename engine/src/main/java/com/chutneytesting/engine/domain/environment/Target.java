@@ -1,63 +1,99 @@
 package com.chutneytesting.engine.domain.environment;
 
-import static com.chutneytesting.engine.domain.environment.SecurityInfo.builder;
+import static java.util.Collections.emptyList;
+import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import org.immutables.value.Value;
 
-@Value.Immutable
-@Value.Enclosing
-@JsonSerialize(as = ImmutableTarget.class)
-@JsonDeserialize(using = TargetJsonDeserializer.class)
-public interface Target {
+public class Target {
 
-    @Value.Parameter
-    @JsonIgnore
-    TargetId id();
+    public static final Target NONE = Target.builder().build();
 
-    @Value.Parameter
-    String url();
+    public final String name;
+    public final String url;
+    public final URI uri;
+    public final Map<String, String> properties;
+    public final SecurityInfo security;
+    public final List<NamedHostAndPort> agents;
 
-    Map<String, String> properties();
-
-    @Value.Default
-    default SecurityInfo security() {
-        return builder().build();
+    private Target(String name, String url, Map<String, String> properties, SecurityInfo security, List<NamedHostAndPort> agents) {
+        this.name = name;
+        this.url = url;
+        this.uri = getUrlAsURI(url);
+        this.properties = properties;
+        this.security = security;
+        this.agents = agents;
     }
 
-    @Value.Derived
-    default String name() {
-        return this.id().name();
+    public static TargetBuilder builder() {
+        return new TargetBuilder();
     }
 
-    @Value.Parameter
-    Optional<List<NamedHostAndPort>> agents();
+    public static class TargetBuilder {
+        private String name;
+        private String url;
+        private Map<String, String> properties;
+        private List<NamedHostAndPort> agents;
+        private SecurityInfo security;
 
-    @Value.Derived
-    @JsonIgnore
-    default URI getUrlAsURI() {
+        private TargetBuilder() {}
+
+        public Target build() {
+            return new Target(
+                ofNullable(name).orElse(""),
+                ofNullable(url).orElse(""),
+                ofNullable(properties).orElse(Collections.emptyMap()),
+                ofNullable(security).orElse(SecurityInfo.builder().build()),
+                ofNullable(agents).orElse(emptyList())
+            );
+        }
+
+        public TargetBuilder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public TargetBuilder withUrl(String url) {
+            this.url = url;
+            return this;
+        }
+
+        public TargetBuilder withProperties(Map<String, String> properties) {
+            this.properties = properties;
+            return this;
+        }
+
+        public TargetBuilder copyOf(Target target) {
+            this.name = target.name;
+            this.url = target.url;
+            this.properties = target.properties;
+            this.agents = target.agents;
+            this.security = target.security;
+            return this;
+        }
+
+        public TargetBuilder withSecurity(SecurityInfo securityInfo) {
+            this.security = securityInfo;
+            return this;
+        }
+
+        public TargetBuilder withAgents(List<NamedHostAndPort> agents) {
+            this.agents = agents;
+            return this;
+        }
+    }
+
+    private URI getUrlAsURI(String url) {
         try {
-            return new URI(url());
+            return new URI(url);
         } catch (URISyntaxException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    @Value.Immutable
-    interface TargetId {
-        @Value.Parameter
-        String name();
-
-        static TargetId of(String name) {
-            return ImmutableTarget.TargetId.of(name);
-        }
-    }
 }

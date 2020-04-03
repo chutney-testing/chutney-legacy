@@ -17,15 +17,15 @@ public class DelegationService {
     }
 
     public StepExecutor findExecutor(Optional<Target> target) {
-        if (!target.isPresent() || target.get().name().isEmpty()) {
+        if (!target.isPresent() || target.get().name.isEmpty()) {
             return localStepExecutor;
         }
 
-        Optional<List<NamedHostAndPort>> agents = target.get().agents();
-        if (agents.isPresent() && !agents.get().isEmpty()) {
-            NamedHostAndPort nextAgent = agents.get().get(0);
+        List<NamedHostAndPort> agents = target.get().agents;
+        if (!agents.isEmpty()) {
+            NamedHostAndPort nextAgent = agents.get(0);
             // TODO should we do that here ?
-            agents.get().remove(0);
+            agents.remove(0);
             return new RemoteStepExecutor(delegationClient, nextAgent);
         } else {
             return localStepExecutor;

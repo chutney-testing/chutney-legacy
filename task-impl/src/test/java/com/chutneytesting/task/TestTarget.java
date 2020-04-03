@@ -7,21 +7,21 @@ import java.util.Map;
 
 public class TestTarget implements Target {
 
-    private final TargetId targetId;
+    private final String name;
     private final String url;
     private final Map<String, String> properties;
     private final SecurityInfo security;
 
-    private TestTarget(TargetId targetId, String url, Map<String, String> properties, SecurityInfo security) {
-        this.targetId = targetId;
+    private TestTarget(String name, String url, Map<String, String> properties, SecurityInfo security) {
+        this.name = name;
         this.url = url;
         this.properties = (properties != null) ? properties : new HashMap<>();
         this.security = security;
     }
 
     @Override
-    public TargetId id() {
-        return targetId;
+    public String name() {
+        return name;
     }
 
     @Override
@@ -39,38 +39,20 @@ public class TestTarget implements Target {
         return security;
     }
 
-    static class TestTargetId implements TargetId {
-        private final String name;
-
-        TestTargetId(String name) {
-            this.name = name;
-        }
-
-        static TargetId of(String id) {
-            return new TestTargetId(id);
-        }
-
-        @Override
-        public String name() {
-            return name;
-        }
-    }
-
     public static final class TestTargetBuilder {
-        private TargetId targetId;
+        private String name;
         private String url;
         private Map<String, String> properties = new HashMap<>();
         private SecurityInfo security;
 
-        private TestTargetBuilder() {
-        }
+        private TestTargetBuilder() {}
 
         public static TestTargetBuilder builder() {
             return new TestTargetBuilder();
         }
 
-        public TestTargetBuilder withTargetId(String targetId) {
-            this.targetId = TestTargetId.of(targetId);
+        public TestTargetBuilder withTargetId(String name) {
+            this.name = name;
             return this;
         }
 
@@ -95,7 +77,7 @@ public class TestTarget implements Target {
         }
 
         public TestTarget build() {
-            return new TestTarget(targetId, url, properties, security);
+            return new TestTarget(name, url, properties, security);
         }
     }
 }

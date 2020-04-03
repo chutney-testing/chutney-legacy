@@ -3,9 +3,7 @@ package com.chutneytesting.cli.infrastruture;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
 import com.chutneytesting.engine.api.execution.TargetDto;
-import com.chutneytesting.engine.domain.environment.NoTarget;
 import com.chutneytesting.engine.domain.environment.Target;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,7 +31,7 @@ public class ExecutionRequestMapper {
             dto.scenario().name()
                 .orElse(""),
             dto.scenario().target()
-                .map(t -> getTarget(t, originalEnvironmentObject).orElse(NoTarget.NO_TARGET)),
+                .map(t -> getTarget(t, originalEnvironmentObject).orElse(Target.NONE)),
             dto.scenario().type()
                 .orElse(""),
             strategy,
@@ -48,7 +46,7 @@ public class ExecutionRequestMapper {
         if(targetName == null || targetName.isEmpty()){
             return Optional.empty();
         }
-        return originalEnvironmentObject.targets().stream().filter( t -> t.name().equals(targetName)).findFirst();
+        return originalEnvironmentObject.targets().stream().filter( t -> t.name.equals(targetName)).findFirst();
     }
 
     private static StepDefinitionCore buildStepDefinitionCore(ScenarioContent.UnmarshalledStepDefinition dto, Environment originalEnvironmentObject) {
@@ -66,7 +64,7 @@ public class ExecutionRequestMapper {
             dto.name()
                 .orElse(""),
             dto.target()
-                .map(t -> getTarget(t, originalEnvironmentObject).orElse(NoTarget.NO_TARGET)),
+                .map(t -> getTarget(t, originalEnvironmentObject).orElse(Target.NONE)),
             dto.type()
                 .orElse(""),
             strategy,
@@ -91,7 +89,7 @@ public class ExecutionRequestMapper {
 
         return new StepDefinitionRequestDto(
             definition.name,
-            toDto(definition.target.orElse(NoTarget.NO_TARGET)),
+            toDto(definition.target.orElse(Target.NONE)),
             strategy,
             definition.type,
             definition.inputs,
@@ -101,11 +99,11 @@ public class ExecutionRequestMapper {
 
     private static TargetDto toDto(Target target) {
         return new TargetDto(
-            target.id().name(),
-            target.url(),
-            target.properties(),
-            target.security(),
-            target.agents().orElse(Collections.emptyList())
+            target.name,
+            target.url,
+            target.properties,
+            target.security,
+            target.agents
         );
     }
 }

@@ -106,8 +106,8 @@ public class StepExecutionReportBuilder {
 
     public StepExecutionReportBuilder setTarget(Target target) {
         if (target != null) {
-            this.targetName = target.name();
-            this.targetUrl = target.url();
+            this.targetName = target.name;
+            this.targetUrl = target.url;
         }
         return this;
     }

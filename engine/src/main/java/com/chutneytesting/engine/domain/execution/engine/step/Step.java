@@ -1,10 +1,9 @@
 package com.chutneytesting.engine.domain.execution.engine.step;
 
-import static com.chutneytesting.engine.domain.environment.NoTarget.NO_TARGET;
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableMap;
+import static java.util.Optional.ofNullable;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.chutneytesting.engine.domain.environment.Target;
 import com.chutneytesting.engine.domain.execution.RxBus;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
@@ -18,6 +17,9 @@ import com.chutneytesting.engine.domain.execution.event.EndStepExecutionEvent;
 import com.chutneytesting.engine.domain.execution.event.PauseStepExecutionEvent;
 import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
+import com.chutneytesting.tools.Try;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
@@ -26,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import com.chutneytesting.tools.Try;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +51,7 @@ public class Step {
     public Step(StepDataEvaluator dataEvaluator, StepDefinition definition, Optional<Target> target, StepExecutor executor, List<Step> steps) {
         this.dataEvaluator = dataEvaluator;
         this.definition = definition;
-        this.target = target.orElse(NO_TARGET);
+        this.target = target.orElse(Target.NONE);
         this.executor = executor;
         this.steps = steps;
         this.state = new StepState();
@@ -81,7 +82,7 @@ public class Step {
 
         try {
             makeTargetAccessibleForInputEvaluation(scenarioContext, target);
-            Map<String, Object> evaluatedInputs = Collections.unmodifiableMap(dataEvaluator.evaluateNamedDataWithContextVariables(definition.inputs, scenarioContext));
+            Map<String, Object> evaluatedInputs = unmodifiableMap(dataEvaluator.evaluateNamedDataWithContextVariables(definition.inputs, scenarioContext));
 
             Try
                 .exec(() -> new StepContextImpl(evaluatedInputs, scenarioContext))
@@ -149,7 +150,7 @@ public class Step {
     }
 
     public void failure(Exception e) {
-        failure(Optional.ofNullable(e.getMessage()).orElse(e.toString()));
+        failure(ofNullable(e.getMessage()).orElse(e.toString()));
     }
 
     public void failure(String... message) {
@@ -264,7 +265,7 @@ public class Step {
 
         @Override
         public Map<String, Object> getEvaluatedInputs() {
-            return evaluatedInputs;
+            return ofNullable(evaluatedInputs).orElse(emptyMap());
         }
 
         @Override
@@ -279,11 +280,11 @@ public class Step {
 
         @Override
         public Map<String, Object> getStepOutputs() { // TODO any - clarify that it is only used for outputs evaluation
-            return Collections.unmodifiableMap(stepOutputs);
+            return unmodifiableMap(ofNullable(stepOutputs).orElse(emptyMap()));
         }
 
         StepContext copy() {
-            return new StepContextImpl(scenarioContext.unmodifiable(), Collections.unmodifiableMap(evaluatedInputs), Collections.unmodifiableMap(stepOutputs));
+            return new StepContextImpl(scenarioContext.unmodifiable(), unmodifiableMap(evaluatedInputs), unmodifiableMap(stepOutputs));
         }
     }
 }
