@@ -37,4 +37,15 @@ public class SecurityInfoDto {
         return Objects.hash(credential, trustStore, trustStorePassword, keyStore, keyStorePassword, privateKey);
     }
 
+    @Override
+    public String toString() {
+        return "SecurityInfoDto{" +
+            "credential=" + credential +
+            ", trustStore='" + trustStore + '\'' +
+            ", trustStorePassword='" + trustStorePassword + '\'' +
+            ", keyStore='" + keyStore + '\'' +
+            ", keyStorePassword='" + keyStorePassword + '\'' +
+            ", privateKey='" + privateKey + '\'' +
+            '}';
+    }
 }

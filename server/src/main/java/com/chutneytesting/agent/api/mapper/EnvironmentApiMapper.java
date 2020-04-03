@@ -1,16 +1,14 @@
 package com.chutneytesting.agent.api.mapper;
 
 import static com.google.common.base.Strings.nullToEmpty;
-import static com.chutneytesting.engine.domain.environment.SecurityInfo.Credential;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto.EnvironmentApiDto;
 import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto.SecurityApiDto;
 import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto.TargetsApiDto;
 import com.chutneytesting.design.domain.environment.Environment;
+import com.chutneytesting.design.domain.environment.SecurityInfo;
 import com.chutneytesting.design.domain.environment.Target;
-import com.chutneytesting.engine.domain.environment.SecurityInfo;
-import com.chutneytesting.engine.domain.environment.SecurityInfo.SecurityInfoBuilder;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -38,10 +36,10 @@ public class EnvironmentApiMapper {
     }
 
     private SecurityInfo fromDto(SecurityApiDto security) {
-        SecurityInfoBuilder builder = SecurityInfo.builder();
+        SecurityInfo.SecurityInfoBuilder builder = SecurityInfo.builder();
 
         if (security.username != null || security.password != null) {
-            builder.credential(Credential.of(nullToEmpty(security.username), nullToEmpty(security.password)));
+            builder.credential(SecurityInfo.Credential.of(nullToEmpty(security.username), nullToEmpty(security.password)));
         }
         ofNullable(security.keyStore).ifPresent(k -> builder.keyStore(k));
         ofNullable(security.keyStorePassword).ifPresent(k -> builder.keyStorePassword(k));
@@ -62,12 +60,12 @@ public class EnvironmentApiMapper {
 
     private SecurityApiDto toDto(SecurityInfo security) {
         // TODO - manage nulls
-        String username = ofNullable(security.credential()).map(c -> c.username).orElse(null);
-        String password = ofNullable(security.credential()).map(c -> c.password).orElse(null);
-        String keyStore = ofNullable(security.keyStore()).orElse(null);
-        String keyStorePassword = ofNullable(security.keyStorePassword()).orElse(null);
-        String trustStore = ofNullable(security.trustStore()).orElse(null);
-        String trustStorePassword = ofNullable(security.trustStorePassword()).orElse(null);
+        String username = ofNullable(security.credential).map(c -> c.username).orElse(null);
+        String password = ofNullable(security.credential).map(c -> c.password).orElse(null);
+        String keyStore = ofNullable(security.keyStore).orElse(null);
+        String keyStorePassword = ofNullable(security.keyStorePassword).orElse(null);
+        String trustStore = ofNullable(security.trustStore).orElse(null);
+        String trustStorePassword = ofNullable(security.trustStorePassword).orElse(null);
         return new SecurityApiDto(username, password, keyStore, keyStorePassword, trustStore, trustStorePassword);
     }
 }

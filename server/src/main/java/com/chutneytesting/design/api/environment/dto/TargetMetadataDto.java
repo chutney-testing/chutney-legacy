@@ -1,10 +1,8 @@
 package com.chutneytesting.design.api.environment.dto;
 
+import com.chutneytesting.design.domain.environment.SecurityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.chutneytesting.design.domain.environment.Target;
-import com.chutneytesting.engine.domain.environment.SecurityInfo;
-import com.chutneytesting.engine.domain.environment.SecurityInfo.Credential;
-import com.chutneytesting.engine.domain.environment.SecurityInfo.SecurityInfoBuilder;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -40,12 +38,12 @@ public class TargetMetadataDto {
     }
 
     public Target toTarget(String environment) {
-        SecurityInfoBuilder securityInfo = SecurityInfo.builder()
+        SecurityInfo.SecurityInfoBuilder securityInfo = SecurityInfo.builder()
             .keyStore(keyStore.orElse(null))
             .keyStorePassword(keyStorePassword.orElse(null))
             .privateKey(privateKey.orElse(null));
         if (username.isPresent() || password.isPresent()) {
-            securityInfo.credential(Credential.of(username.orElse(""), password.orElse("")));
+            securityInfo.credential(SecurityInfo.Credential.of(username.orElse(""), password.orElse("")));
         }
         return Target.builder()
             .withId(Target.TargetId.of(name, environment))
@@ -61,11 +59,11 @@ public class TargetMetadataDto {
             target.url,
             toEntryList(target.properties),
             // TODO - manage nulls
-            Optional.ofNullable(target.security.credential()).map(c -> c.username).orElse(null),
-            Optional.ofNullable(target.security.credential()).map(c -> c.password).orElse(null),
-            Optional.ofNullable(target.security.keyStore()).orElse(null),
-            Optional.ofNullable(target.security.keyStorePassword()).orElse(null),
-            Optional.ofNullable(target.security.privateKey()).orElse(null)
+            Optional.ofNullable(target.security.credential).map(c -> c.username).orElse(null),
+            Optional.ofNullable(target.security.credential).map(c -> c.password).orElse(null),
+            Optional.ofNullable(target.security.keyStore).orElse(null),
+            Optional.ofNullable(target.security.keyStorePassword).orElse(null),
+            Optional.ofNullable(target.security.privateKey).orElse(null)
         );
     }
 

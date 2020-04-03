@@ -7,7 +7,6 @@ import static java.util.Collections.unmodifiableMap;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.chutneytesting.engine.domain.environment.SecurityInfo;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

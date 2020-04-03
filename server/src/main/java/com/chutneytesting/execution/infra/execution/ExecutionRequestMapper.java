@@ -10,6 +10,7 @@ import com.chutneytesting.agent.domain.network.NetworkDescription;
 import com.chutneytesting.design.domain.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.compose.FunctionalStep;
 import com.chutneytesting.design.domain.environment.EnvironmentRepository;
+import com.chutneytesting.design.domain.environment.SecurityInfo;
 import com.chutneytesting.design.domain.environment.Target;
 import com.chutneytesting.design.domain.scenario.gwt.GwtStep;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
@@ -20,7 +21,6 @@ import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
 import com.chutneytesting.engine.api.execution.SecurityInfoDto;
 import com.chutneytesting.engine.api.execution.TargetDto;
-import com.chutneytesting.engine.domain.environment.SecurityInfo;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.compiler.ScenarioConversionException;
 import com.chutneytesting.task.api.EmbeddedTaskEngine;
@@ -167,12 +167,12 @@ public class ExecutionRequestMapper {
 
     private static SecurityInfoDto toDto(SecurityInfo security) {
         return new SecurityInfoDto(
-            toDto(security.credential()),
-            security.trustStore(),
-            security.trustStorePassword(),
-            security.keyStore(),
-            security.keyStorePassword(),
-            security.privateKey()
+            ofNullable(security.credential).map(ExecutionRequestMapper::toDto).orElse(null),
+            security.trustStore,
+            security.trustStorePassword,
+            security.keyStore,
+            security.keyStorePassword,
+            security.privateKey
         );
     }
 

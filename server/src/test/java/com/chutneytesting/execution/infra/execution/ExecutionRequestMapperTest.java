@@ -68,8 +68,7 @@ public class ExecutionRequestMapperTest {
         // Given
         String expectedType = "task-id";
         String expectedTargetId = "target name";
-        CredentialDto credentialDto = new CredentialDto("", "");
-        SecurityInfoDto securityDto = new SecurityInfoDto(credentialDto, "", "", "", "", "");
+        SecurityInfoDto securityDto = new SecurityInfoDto(null, null, null, null, null, null);
         TargetDto expectedTarget = new TargetDto(expectedTargetId, "", emptyMap(), securityDto, emptyList());
 
         Map<String, Object> expectedOutputs = Maps.of("output1", "value1", "output2", "value2");
@@ -164,8 +163,7 @@ public class ExecutionRequestMapperTest {
     }
 
     private void assertRootStepDefinitionRequestDto(ExecutionRequestDto.StepDefinitionRequestDto stepDefinitionRequestDto, String name) {
-        CredentialDto credentialDto = new CredentialDto("", "");
-        SecurityInfoDto securityDto = new SecurityInfoDto(credentialDto, "", "", "", "", "");
+        SecurityInfoDto securityDto = new SecurityInfoDto(null, null, null, null, null, null);
 
         assertThat(stepDefinitionRequestDto).isNotNull();
         assertThat(stepDefinitionRequestDto.name).isEqualTo(name);
