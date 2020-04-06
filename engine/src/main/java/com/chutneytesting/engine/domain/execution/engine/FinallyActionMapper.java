@@ -1,8 +1,9 @@
 package com.chutneytesting.engine.domain.execution.engine;
 
-import com.chutneytesting.engine.domain.environment.Target;
+import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.task.spi.FinallyAction;
+import com.chutneytesting.task.spi.injectable.Target;
 
 class FinallyActionMapper {
 
@@ -11,7 +12,7 @@ class FinallyActionMapper {
             "Finally action generated",
             finallyAction.target()
                 .map(this::mapTarget)
-                .orElse(Target.NONE),
+                .orElse(TargetImpl.NONE),
             finallyAction.actionIdentifier(),
             null,
             finallyAction.inputs(),
@@ -20,8 +21,8 @@ class FinallyActionMapper {
         );
     }
 
-    private Target mapTarget(com.chutneytesting.task.spi.injectable.Target target) {
-        return (Target) target;
+    private TargetImpl mapTarget(Target target) {
+        return (TargetImpl) target;
     }
 
 }

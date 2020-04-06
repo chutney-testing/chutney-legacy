@@ -4,7 +4,7 @@ import static com.chutneytesting.engine.domain.environment.SecurityInfoImpl.Secu
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.engine.domain.environment.SecurityInfoImpl;
-import com.chutneytesting.engine.domain.environment.Target;
+import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -18,12 +18,12 @@ import java.util.List;
 import java.util.Map;
 
 // TODO file/http model must be placed in appropriate space without coupling to domain-used one {@link Target}
-public class TargetJsonDeserializer extends JsonDeserializer<List<Target>> {
+public class TargetJsonDeserializer extends JsonDeserializer<List<TargetImpl>> {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
     @Override
-    public List<Target> deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+    public List<TargetImpl> deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
 
         JsonNode targetsNode = jsonParser.getCodec().readTree(jsonParser);
 
@@ -31,7 +31,7 @@ public class TargetJsonDeserializer extends JsonDeserializer<List<Target>> {
             return Collections.emptyList();
         }
 
-        List<Target> targets = new ArrayList<>();
+        List<TargetImpl> targets = new ArrayList<>();
         for (final JsonNode objNode : targetsNode) {
             targets.add(deserialize(objNode));
         }
@@ -39,8 +39,8 @@ public class TargetJsonDeserializer extends JsonDeserializer<List<Target>> {
         return Collections.unmodifiableList(targets);
     }
 
-    private Target deserialize(JsonNode targetNode) throws IOException {
-        Target.TargetBuilder targetBuilder = Target.builder();
+    private TargetImpl deserialize(JsonNode targetNode) throws IOException {
+        TargetImpl.TargetBuilder targetBuilder = TargetImpl.builder();
 
         if (targetNode.hasNonNull("name")) {
             targetBuilder.withName(targetNode.get("name").textValue());

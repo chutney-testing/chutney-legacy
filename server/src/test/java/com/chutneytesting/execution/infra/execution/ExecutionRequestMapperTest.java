@@ -16,7 +16,6 @@ import com.chutneytesting.design.domain.environment.EnvironmentRepository;
 import com.chutneytesting.design.domain.environment.Target;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.raw.RawTestCase;
-import com.chutneytesting.engine.api.execution.CredentialDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.SecurityInfoDto;
 import com.chutneytesting.engine.api.execution.TargetDto;

@@ -1,7 +1,7 @@
 package com.chutneytesting.engine.domain.execution.engine;
 
 import com.chutneytesting.engine.domain.delegation.DelegationService;
-import com.chutneytesting.engine.domain.environment.Target;
+import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.ExecutionEngine;
 import com.chutneytesting.engine.domain.execution.RxBus;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
@@ -90,7 +90,7 @@ public class DefaultExecutionEngine implements ExecutionEngine {
 
     private Step buildStep(StepDefinition definition) {
         LOGGER.debug("Build : " + definition);
-        final Optional<Target> target = definition.getTarget();
+        final Optional<TargetImpl> target = definition.getTarget();
         final StepExecutor executor = delegationService.findExecutor(target);
         final List<Step> steps = Collections.unmodifiableList(definition.steps.stream().map(this::buildStep).collect(Collectors.toList()));
 

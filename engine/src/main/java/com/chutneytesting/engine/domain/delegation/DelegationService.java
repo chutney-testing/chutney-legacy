@@ -1,6 +1,6 @@
 package com.chutneytesting.engine.domain.delegation;
 
-import com.chutneytesting.engine.domain.environment.Target;
+import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.engine.StepExecutor;
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +16,7 @@ public class DelegationService {
         this.delegationClient = delegationClient;
     }
 
-    public StepExecutor findExecutor(Optional<Target> target) {
+    public StepExecutor findExecutor(Optional<TargetImpl> target) {
         if (!target.isPresent() || target.get().name.isEmpty()) {
             return localStepExecutor;
         }

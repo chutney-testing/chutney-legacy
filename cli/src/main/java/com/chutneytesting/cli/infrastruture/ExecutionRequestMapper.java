@@ -6,7 +6,7 @@ import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitio
 import com.chutneytesting.engine.api.execution.SecurityInfoDto;
 import com.chutneytesting.engine.api.execution.TargetDto;
 import com.chutneytesting.engine.domain.environment.SecurityInfoImpl;
-import com.chutneytesting.engine.domain.environment.Target;
+import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.task.spi.injectable.SecurityInfo;
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +35,7 @@ public class ExecutionRequestMapper {
             dto.scenario().name()
                 .orElse(""),
             dto.scenario().target()
-                .map(t -> getTarget(t, originalEnvironmentObject).orElse(Target.NONE)),
+                .map(t -> getTarget(t, originalEnvironmentObject).orElse(TargetImpl.NONE)),
             dto.scenario().type()
                 .orElse(""),
             strategy,
@@ -46,7 +46,7 @@ public class ExecutionRequestMapper {
             dto.scenario().outputs());
     }
 
-    private static Optional<Target> getTarget(String targetName, Environment originalEnvironmentObject) {
+    private static Optional<TargetImpl> getTarget(String targetName, Environment originalEnvironmentObject) {
         if(targetName == null || targetName.isEmpty()){
             return Optional.empty();
         }
@@ -68,7 +68,7 @@ public class ExecutionRequestMapper {
             dto.name()
                 .orElse(""),
             dto.target()
-                .map(t -> getTarget(t, originalEnvironmentObject).orElse(Target.NONE)),
+                .map(t -> getTarget(t, originalEnvironmentObject).orElse(TargetImpl.NONE)),
             dto.type()
                 .orElse(""),
             strategy,
@@ -93,7 +93,7 @@ public class ExecutionRequestMapper {
 
         return new StepDefinitionRequestDto(
             definition.name,
-            toDto(definition.target.orElse(Target.NONE)),
+            toDto(definition.target.orElse(TargetImpl.NONE)),
             strategy,
             definition.type,
             definition.inputs,
@@ -101,7 +101,7 @@ public class ExecutionRequestMapper {
             definition.outputs);
     }
 
-    private static TargetDto toDto(Target target) {
+    private static TargetDto toDto(TargetImpl target) {
         return new TargetDto(
             target.name,
             target.url,

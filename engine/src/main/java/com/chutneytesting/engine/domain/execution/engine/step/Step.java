@@ -4,7 +4,7 @@ import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.engine.domain.environment.Target;
+import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.RxBus;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
@@ -42,16 +42,16 @@ public class Step {
 
     private final StepState state;
     private final List<Step> steps;
-    private final Target target;
+    private final TargetImpl target;
     private final StepExecutor executor;
     private final StepDataEvaluator dataEvaluator;
 
     private StepContextImpl stepContext;
 
-    public Step(StepDataEvaluator dataEvaluator, StepDefinition definition, Optional<Target> target, StepExecutor executor, List<Step> steps) {
+    public Step(StepDataEvaluator dataEvaluator, StepDefinition definition, Optional<TargetImpl> target, StepExecutor executor, List<Step> steps) {
         this.dataEvaluator = dataEvaluator;
         this.definition = definition;
-        this.target = target.orElse(Target.NONE);
+        this.target = target.orElse(TargetImpl.NONE);
         this.executor = executor;
         this.steps = steps;
         this.state = new StepState();
@@ -190,7 +190,7 @@ public class Step {
         return state.errors();
     }
 
-    public Target target() {
+    public TargetImpl target() {
         return target;
     }
 
@@ -218,7 +218,7 @@ public class Step {
         return !steps.isEmpty();
     }
 
-    private void makeTargetAccessibleForInputEvaluation(ScenarioContext scenarioContext, Target target) {
+    private void makeTargetAccessibleForInputEvaluation(ScenarioContext scenarioContext, TargetImpl target) {
         scenarioContext.put("target", target);
     }
 

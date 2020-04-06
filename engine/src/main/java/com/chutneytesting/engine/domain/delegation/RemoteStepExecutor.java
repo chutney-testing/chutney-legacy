@@ -1,7 +1,7 @@
 package com.chutneytesting.engine.domain.delegation;
 
 import com.google.common.collect.Lists;
-import com.chutneytesting.engine.domain.environment.Target;
+import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.engine.StepExecutor;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
@@ -23,7 +23,7 @@ public class RemoteStepExecutor implements StepExecutor {
     }
 
     @Override
-    public void execute(ScenarioExecution scenarioExecution, StepContext localStepContext, Target target, Step step) {
+    public void execute(ScenarioExecution scenarioExecution, StepContext localStepContext, TargetImpl target, Step step) {
         try {
             StepExecutionReport remoteReport = delegationClient.handDown(step.definition(), agentInfo);
 

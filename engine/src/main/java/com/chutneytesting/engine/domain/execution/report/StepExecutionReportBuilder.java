@@ -2,7 +2,7 @@ package com.chutneytesting.engine.domain.execution.report;
 
 import static java.util.Collections.emptyList;
 
-import com.chutneytesting.engine.domain.environment.Target;
+import com.chutneytesting.engine.domain.environment.TargetImpl;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -104,7 +104,7 @@ public class StepExecutionReportBuilder {
         return this;
     }
 
-    public StepExecutionReportBuilder setTarget(Target target) {
+    public StepExecutionReportBuilder setTarget(TargetImpl target) {
         if (target != null) {
             this.targetName = target.name;
             this.targetUrl = target.url;

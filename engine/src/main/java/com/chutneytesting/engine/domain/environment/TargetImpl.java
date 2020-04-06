@@ -4,15 +4,16 @@ import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
+import com.chutneytesting.task.spi.injectable.Target;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class Target implements com.chutneytesting.task.spi.injectable.Target {
+public class TargetImpl implements Target {
 
-    public static final Target NONE = Target.builder().build();
+    public static final TargetImpl NONE = TargetImpl.builder().build();
 
     public final String name;
     public final String url;
@@ -21,7 +22,7 @@ public class Target implements com.chutneytesting.task.spi.injectable.Target {
     public final SecurityInfoImpl security;
     public final List<NamedHostAndPort> agents;
 
-    private Target(String name, String url, Map<String, String> properties, SecurityInfoImpl security, List<NamedHostAndPort> agents) {
+    private TargetImpl(String name, String url, Map<String, String> properties, SecurityInfoImpl security, List<NamedHostAndPort> agents) {
         this.name = name;
         this.url = url;
         this.uri = getUrlAsURI(url);
@@ -63,8 +64,8 @@ public class Target implements com.chutneytesting.task.spi.injectable.Target {
 
         private TargetBuilder() {}
 
-        public Target build() {
-            return new Target(
+        public TargetImpl build() {
+            return new TargetImpl(
                 ofNullable(name).orElse(""),
                 ofNullable(url).orElse(""),
                 ofNullable(properties).orElse(Collections.emptyMap()),
@@ -88,7 +89,7 @@ public class Target implements com.chutneytesting.task.spi.injectable.Target {
             return this;
         }
 
-        public TargetBuilder copyOf(Target target) {
+        public TargetBuilder copyOf(TargetImpl target) {
             this.name = target.name;
             this.url = target.url;
             this.properties = target.properties;

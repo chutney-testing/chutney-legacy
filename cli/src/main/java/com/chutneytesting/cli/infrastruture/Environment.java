@@ -2,7 +2,7 @@ package com.chutneytesting.cli.infrastruture;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.chutneytesting.engine.domain.environment.Target;
+import com.chutneytesting.engine.domain.environment.TargetImpl;
 import java.util.List;
 import org.immutables.value.Value;
 
@@ -19,5 +19,5 @@ public interface Environment {
     }
 
     @JsonDeserialize(using = TargetJsonDeserializer.class)
-    List<Target> targets();
+    List<TargetImpl> targets();
 }

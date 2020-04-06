@@ -2,7 +2,7 @@ package com.chutneytesting.engine.domain.execution.engine;
 
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.engine.domain.environment.Target;
+import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.engine.parameterResolver.ContextParameterResolver;
@@ -17,6 +17,7 @@ import com.chutneytesting.task.domain.parameter.ParameterResolver;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.FinallyActionRegistry;
 import com.chutneytesting.task.spi.injectable.Logger;
+import com.chutneytesting.task.spi.injectable.Target;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +34,7 @@ public class DefaultStepExecutor implements StepExecutor {
     }
 
     @Override
-    public void execute(ScenarioExecution scenarioExecution, StepContext stepContext, Target targetServer, Step step) {
+    public void execute(ScenarioExecution scenarioExecution, StepContext stepContext, TargetImpl targetServer, Step step) {
         String type = step.type();
 
         Optional<TaskTemplate> matchedTask = taskTemplateRegistry.getByIdentifier(type);
@@ -75,10 +76,10 @@ public class DefaultStepExecutor implements StepExecutor {
         }
     }
 
-    private List<ParameterResolver> gatherResolvers(ScenarioExecution scenarioExecution, StepContext stepContext, Target target, Step step) {
+    private List<ParameterResolver> gatherResolvers(ScenarioExecution scenarioExecution, StepContext stepContext, TargetImpl target, Step step) {
         List<ParameterResolver> parameterResolvers = new ArrayList<>();
         parameterResolvers.add(new InputParameterResolver(stepContext.getEvaluatedInputs()));
-        parameterResolvers.add(new TypedValueParameterResolver<>(com.chutneytesting.task.spi.injectable.Target.class, target));
+        parameterResolvers.add(new TypedValueParameterResolver<>(Target.class, target));
         parameterResolvers.add(new TypedValueParameterResolver<>(Logger.class, new DelegateLogger(step::addInformation, step::failure)));
         parameterResolvers.add(new TypedValueParameterResolver<>(StepDefinition.class, step.definition()));
         parameterResolvers.add(new TypedValueParameterResolver<>(FinallyActionRegistry.class, finallyAction -> scenarioExecution.registerFinallyAction(finallyAction)));

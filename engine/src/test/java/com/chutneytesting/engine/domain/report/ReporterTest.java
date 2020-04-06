@@ -3,7 +3,7 @@ package com.chutneytesting.engine.domain.report;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-import com.chutneytesting.engine.domain.environment.Target;
+import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.RxBus;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
@@ -25,7 +25,7 @@ import org.junit.Test;
 
 public class ReporterTest {
 
-    private Target fakeTarget = Target.NONE;
+    private TargetImpl fakeTarget = TargetImpl.NONE;
     private StepDataEvaluator dataEvaluator = new StepDataEvaluator(new SpelFunctions());
 
     private Reporter sut;

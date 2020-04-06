@@ -1,6 +1,6 @@
 package com.chutneytesting.cli.infrastruture;
 
-import com.chutneytesting.engine.domain.environment.Target;
+import com.chutneytesting.engine.domain.environment.TargetImpl;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +19,7 @@ public class StepDefinitionCore {
     /**
      * Target on which to execute the current step.
      */
-    public final Optional<Target> target;
+    public final Optional<TargetImpl> target;
 
     /**
      * Type of the step, should match an extension.
@@ -42,7 +42,7 @@ public class StepDefinitionCore {
 
     public StepDefinitionCore(GwtType gwtType,
                               String name,
-                              Optional<Target> target,
+                              Optional<TargetImpl> target,
                               String type,
                               StepStrategyDefinitionCore strategy,
                               Map<String, Object> inputs,

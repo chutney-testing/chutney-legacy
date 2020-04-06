@@ -40,27 +40,27 @@ public class SecurityInfoImpl implements SecurityInfo {
 
     @Override
     public Optional<String> trustStore() {
-        return Optional.ofNullable(trustStore);
+        return ofNullable(trustStore);
     }
 
     @Override
     public Optional<String> trustStorePassword() {
-        return Optional.ofNullable(trustStorePassword);
+        return ofNullable(trustStorePassword);
     }
 
     @Override
     public Optional<String> keyStore() {
-        return Optional.ofNullable(keyStore);
+        return ofNullable(keyStore);
     }
 
     @Override
     public Optional<String> keyStorePassword() {
-        return Optional.ofNullable(keyStorePassword);
+        return ofNullable(keyStorePassword);
     }
 
     @Override
     public Optional<String> privateKey() {
-        return Optional.ofNullable(privateKey);
+        return ofNullable(privateKey);
     }
 
     public boolean hasTrustStore() {
