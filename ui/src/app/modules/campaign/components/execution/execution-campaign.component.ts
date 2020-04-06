@@ -2,6 +2,10 @@ import { Component, OnDestroy, OnInit, ViewChildren, QueryList } from '@angular/
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, Observable, Subscription, timer } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
+import { FileSaverService } from 'ngx-filesaver';
+import * as JSZip from 'jszip';
+import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
+
 import {
     Campaign,
     CampaignExecutionReport,
@@ -11,9 +15,6 @@ import {
     ScenarioIndex
 } from '@core/model';
 import { CampaignService, ScenarioService, EnvironmentAdminService } from '@core/services';
-import { FileSaverService } from 'ngx-filesaver';
-import * as JSZip from 'jszip';
-import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'chutney-execution-campaign',
@@ -104,7 +105,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
             this.running = CampaignService.existRunningCampaignReport(this.campaign.campaignExecutionReports);
             if (this.running) {
                 this.unsuscribeCampaign();
-                this.campaignSub = timer(10000).subscribe(() =>  {
+                this.campaignSub = timer(10000).subscribe(() => {
                         this.loadCampaign(this.campaign.id, true);
                     }
                 );
@@ -156,7 +157,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
             },
             () => this.running = false
         );
-        this.campaignSub = timer(1500).subscribe(() =>  {
+        this.campaignSub = timer(1500).subscribe(() => {
             this.loadCampaign(this.campaign.id, true);
             this.loadScenarios(this.campaign.id);
         });
@@ -236,10 +237,6 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
         });
     }
 
-    closeExecutionPanel() {
-        this.currentCampaignExecutionReport = null;
-    }
-
     replayFailed() {
         this.running = true;
         this.campaignService.replayFailedScenario(this.currentCampaignExecutionReport.executionId).subscribe(
@@ -252,7 +249,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
             },
             () => this.running = false
         );
-        this.campaignSub = timer(1500).subscribe(() =>  {
+        this.campaignSub = timer(1500).subscribe(() => {
             this.loadCampaign(this.campaign.id, true);
             this.loadScenarios(this.campaign.id);
         });

@@ -66,6 +66,16 @@ export function sortBy<T>(collection: Array<T>, keyExtractor: (T) => any): Array
     return collection;
 }
 
+export function pairwise<T>(list: Array<T>): Array<Array<T>> {
+    if (list.length < 2) { return []; }
+    const first = list[0],
+        rest = list.slice(1),
+        pairs = rest.map(function (x) {
+            return [first, x];
+        });
+    return pairs.concat(pairwise(rest));
+}
+
 function compare<T>(a: T, b: T): number {
     if (a < b)
         return -1;

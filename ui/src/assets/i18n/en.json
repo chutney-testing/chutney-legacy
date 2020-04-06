@@ -116,16 +116,32 @@
             }
         },
         "execution": {
-            "actual": "Last full execution",
+            "name": "Execution",
+            "last": {
+                "actual": "Last full execution",
+                "ok": "OK",
+                "ko": "KO",
+                "stop": "Stopped"
+            },
             "replay": "Replay failed scenarios",
             "on_env": "on environment",
             "history": {
                 "title": "Execution history"
             },
             "scenarios": {
+                "header": {
+                    "title": "Title",
+                    "tags": "Tags",
+                    "creation": "Created"
+                },
                 "title": "Campaign scenarios",
                 "result": "Execution result",
                 "item": {
+                    "header": {
+                        "id": "Id",
+                        "state": "State",
+                        "title": "Title"
+                    },
                     "title": "Go to the executions of",
                     "description.none": "No description",
                     "executions.link": "Go to the executions of"
@@ -187,7 +203,6 @@
             "graph": {
                 "agents": {
                     "title": "Agents",
-                    "search": "Filter targets names",
                     "name": "Name",
                     "url": "URL",
                     "reach": "Reach",
@@ -195,6 +210,7 @@
                 },
                 "targets": {
                     "title": "Targets",
+                    "search": "Filter targets names",
                     "environment": "Environment",
                     "name": "Name",
                     "url": "URL",

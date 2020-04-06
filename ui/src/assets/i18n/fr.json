@@ -116,16 +116,32 @@
             }
         },
         "execution": {
-            "actual": "Dernière execution complète",
+            "name": "Execution",
+            "last": {
+                "actual": "Dernière execution complète",
+                "ok": "OK",
+                "ko": "KO",
+                "stop": "Stoppés"
+            },
             "replay": "Rejouer les scénarios en échec",
             "on_env": "sur l'environnement",
             "history": {
                 "title": "Historique des executions"
             },
             "scenarios": {
+                "header": {
+                    "title": "Titre",
+                    "tags": "Tags",
+                    "creation": "Créé"
+                },
                 "title": "Scénarios dans la campagne",
                 "result": "Résultat de l'exécution",
                 "item": {
+                    "header": {
+                        "id": "Id",
+                        "state": "Etat",
+                        "title": "Titre"
+                    },
                     "title": "Voir les exécutions de",
                     "description.none": "Aucune description",
                     "executions.link": "Voir les exécutions de"
