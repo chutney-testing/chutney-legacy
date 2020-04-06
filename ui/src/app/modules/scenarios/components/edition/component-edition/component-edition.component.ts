@@ -31,6 +31,8 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
     collapseParam = true;
     collapseComponentsParameters: Array<boolean> = [];
 
+    modificationsSaved = false;
+
     constructor(private componentService: ComponentService,
                 private router: Router,
                 private route: ActivatedRoute,
@@ -66,19 +68,15 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
         this.dragEndSubscription.unsubscribe();
     }
 
-    canDeactivatePage(): boolean {
-        return true;
-    }
-
     save() {
         this.scenarioComponent.componentSteps = this.componentTasksCreated;
         this.updateScenarioParameters();
-        let tags = this.componentForm.value['tags'] + '';
-        this.scenarioComponent.tags = tags.length != 0 ? tags.split(',') : [];
-
+        const tags = this.componentForm.value['tags'] + '';
+        this.scenarioComponent.tags = tags.length !== 0 ? tags.split(',') : [];
         // Call service
         this.componentService.saveComponentTestCase(this.scenarioComponent).subscribe(
             (response) => {
+                this.modificationsSaved = true;
                 this.router.navigateByUrl('/scenario/' + response + '/execution/last')
                     .then(null);
             },
@@ -157,7 +155,6 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
                     this.initFormComponentParameters();
                     this.initFormComponentRefsParametersValues();
                     this.componentForm.controls['tags'].setValue(this.scenarioComponent.tags);
-
                     if (duplicate) {
                         this.scenarioComponent.id = null;
                         this.scenarioComponent.creationDate = null;
@@ -217,4 +214,62 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
         }
     }
 
+    // Verify of page was updated
+    canDeactivatePage(): boolean {
+        let scenarioNotModified = true;
+
+        // check components steps id
+        if (this.scenarioComponent.componentSteps.length === this.componentTasksCreated.length) {
+            for (let i = 0; i < this.componentTasksCreated.length; i++) {
+                scenarioNotModified = scenarioNotModified &&
+                    this.scenarioComponent.componentSteps[i].id ===  this.componentTasksCreated[i].id;
+            }
+        } else {
+            scenarioNotModified = false;
+        }
+
+        // Check tags
+        const tmp = this.componentForm.value['tags'] + '';
+        const tags = tmp.length !== 0 ? tmp.split(',') : [];
+        if (this.scenarioComponent.tags.length === tags.length) {
+            for (let i = 0; i < this.scenarioComponent.tags.length; i++) {
+                scenarioNotModified = scenarioNotModified &&
+                tags[i] === this.scenarioComponent.tags[i];
+            }
+        } else {
+            scenarioNotModified = false;
+        }
+
+        // Check scenario parameters
+        const parameters = this.componentForm.controls.parameters as FormArray;
+        if (this.scenarioComponent.parameters.length === parameters.length) {
+            for (let i = 0; i < this.scenarioComponent.parameters.length; i++) {
+                const parameter = parameters.get(i.toString()) as FormGroup;
+                scenarioNotModified = scenarioNotModified &&
+                                        parameter.get('key').value === this.scenarioComponent.parameters[i].key &&
+                                        parameter.get('value').value === this.scenarioComponent.parameters[i].value;
+            }
+        } else {
+            scenarioNotModified = false;
+        }
+
+        // Check component dataset
+        const componentsValues = this.componentForm.controls.componentsValues as FormArray;
+        if (this.scenarioComponent.componentSteps.length === componentsValues.length) {
+            this.scenarioComponent.componentSteps.forEach((componentTask, componentIndex) => {
+                if (componentTask.dataSet.length === componentsValues.get(componentIndex.toString()).value.length) {
+                    componentTask.dataSet.forEach((parameter, parameterIndex) => {
+                        scenarioNotModified = scenarioNotModified &&
+                                parameter.value === componentsValues.get(componentIndex.toString()).get(parameterIndex.toString()).value;
+                    });
+                } else {
+                    scenarioNotModified = false;
+                }
+            });
+        } else {
+            scenarioNotModified = false;
+        }
+
+        return this.modificationsSaved || scenarioNotModified;
+    }
 }

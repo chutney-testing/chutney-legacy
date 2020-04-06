@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { EventManagerService } from '@shared';
-import { CanDeactivatePage } from '@core/guards';
 import { CampaignService, ScenarioService } from '@core/services';
 import { Campaign } from '@model';
 
