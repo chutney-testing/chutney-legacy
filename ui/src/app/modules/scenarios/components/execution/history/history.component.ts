@@ -1,19 +1,9 @@
-import {
-    Component,
-    EventEmitter,
-    Input,
-    OnChanges,
-    Output,
-    SimpleChange,
-    SimpleChanges,
-    OnInit,
-    OnDestroy
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { interval, Subscription } from 'rxjs';
 
 import { Execution } from '@model';
-import { interval, Subscription } from 'rxjs/index';
 import { ScenarioExecutionService } from '@core/services';
-import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'chutney-execution-history',
@@ -38,10 +28,14 @@ export class HistoryComponent implements OnInit, OnDestroy, OnChanges {
     constructor(
         private scenarioExecutionService: ScenarioExecutionService,
         private route: ActivatedRoute,
-    ) { }
+    ) {
+    }
 
     ngOnChanges(simpleChanges: SimpleChanges) {
-        this.findScenarioExecutions();
+        if (simpleChanges['selectedExecutionId'] && !this.checkExecutionIdInHistory(simpleChanges['selectedExecutionId'].currentValue)) {
+            this.selectedLast = true;
+            this.findScenarioExecutions();
+        }
     }
 
     ngOnInit() {
@@ -52,7 +46,6 @@ export class HistoryComponent implements OnInit, OnDestroy, OnChanges {
             } else {
                 this.selectedLast = true;
             }
-            this.findScenarioExecutions();
         });
     }
 
@@ -62,6 +55,7 @@ export class HistoryComponent implements OnInit, OnDestroy, OnChanges {
 
     selectExecution(execution: Execution) {
         this.selectedExecutionId = execution.executionId;
+        this.selectedLast = (this.executions.length > 0 && this.executions[0].executionId === execution.executionId);
         this.onselectExecution.emit(execution);
     }
 
@@ -125,5 +119,12 @@ export class HistoryComponent implements OnInit, OnDestroy, OnChanges {
         if (this._checkRunningExecutionsSubscription) {
             this._checkRunningExecutionsSubscription.unsubscribe();
         }
+    }
+
+    private checkExecutionIdInHistory(executionId: number): boolean {
+        return this.executions
+            .filter(value => value.executionId == executionId)
+            .length > 0;
+
     }
 }

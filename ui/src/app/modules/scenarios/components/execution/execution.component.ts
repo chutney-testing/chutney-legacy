@@ -23,7 +23,6 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     executionError: String;
 
     currentScenarioId: string;
-    currentExecution: Execution;
     currentExecutionId: number;
 
     scenarioExecutionReport: ScenarioExecutionReport;
@@ -84,9 +83,9 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
 
     onLastIdExecution(execution: Execution) {
         if (Execution.NO_EXECUTION === execution) {
-            this.currentExecution = null;
+            this.currentExecutionId = null;
         } else {
-            this.currentExecution = execution;
+            this.currentExecutionId = execution.executionId;
             if (!this.scenarioExecutionAsyncSubscription || this.scenarioExecutionAsyncSubscription.closed) {
                 if ('RUNNING' === execution.status) {
                     this.observeScenarioExecution(execution.executionId);
@@ -98,7 +97,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     onSelectExecution(execution: Execution) {
-        this.currentExecution = execution;
+        this.currentExecutionId = execution.executionId;
         this.executionError = '';
 
         if (this.scenarioExecutionAsyncSubscription) {
@@ -114,6 +113,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
 
     loadScenarioExecution(executionId: number) {
         this.executionError = '';
+        this.currentExecutionId = executionId;
         this.scenarioExecutionService.findExecutionReport(this.currentScenarioId, executionId)
             .subscribe((scenarioExecutionReport: ScenarioExecutionReport) => {
 
@@ -160,7 +160,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     stopScenario() {
-        this.scenarioExecutionService.stopScenario(this.currentScenarioId, this.currentExecution.executionId).subscribe(() => {
+        this.scenarioExecutionService.stopScenario(this.currentScenarioId, this.currentExecutionId).subscribe(() => {
         }, error => {
             const body = JSON.parse(error._body);
             this.executionError = 'Cannot stop scenario : ' + error.status + ' ' + error.statusText + ' ' + body.message;
@@ -169,7 +169,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     pauseScenario() {
-        this.scenarioExecutionService.pauseScenario(this.currentScenarioId, this.currentExecution.executionId).subscribe(() => {
+        this.scenarioExecutionService.pauseScenario(this.currentScenarioId, this.currentExecutionId).subscribe(() => {
         }, error => {
             const body = JSON.parse(error._body);
             this.executionError = 'Cannot pause scenario : ' + error.status + ' ' + error.statusText + ' ' + body.message;
@@ -177,12 +177,12 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     resumeScenario() {
-        this.scenarioExecutionService.resumeScenario(this.currentScenarioId, this.currentExecution.executionId)
+        this.scenarioExecutionService.resumeScenario(this.currentScenarioId, this.currentExecutionId)
             .pipe(
                 delay(1000)
             )
             .subscribe(
-                () => this.loadScenarioExecution(Number(this.currentExecution.executionId)),
+                () => this.loadScenarioExecution(Number(this.currentExecutionId)),
                 error => {
                     const body = JSON.parse(error._body);
                     this.executionError = 'Cannot resume scenario : ' + error.status + ' ' + error.statusText + ' ' + body.message;

@@ -6,9 +6,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Maps;
 import com.chutneytesting.design.domain.campaign.ScenarioExecutionReportCampaign;
 import com.chutneytesting.execution.api.report.surefire.Testsuite.Testcase;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
@@ -17,6 +14,9 @@ import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.execution.domain.report.StepExecutionReportCore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Maps;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -38,7 +38,7 @@ public class SurefireScenarioExecutionReportBuilderTest {
                 stepReport("step 1", 24L, ServerReportStatus.SUCCESS,
                     stepReport("step1.1", 23L, ServerReportStatus.SUCCESS)));
 
-        ScenarioExecutionReport report = new ScenarioExecutionReport(1L, "scenario name", successStepReport);
+        ScenarioExecutionReport report = new ScenarioExecutionReport(1L, "scenario name", "", successStepReport);
         ExecutionHistory.Execution execution = ImmutableExecutionHistory.Execution
             .builder()
             .executionId(report.executionId)
@@ -90,7 +90,7 @@ public class SurefireScenarioExecutionReportBuilderTest {
                 stepReport("step2", 420L, ServerReportStatus.FAILURE),
                 stepReport("step3", 0L, ServerReportStatus.NOT_EXECUTED));
 
-        ScenarioExecutionReport report = new ScenarioExecutionReport(1L, "scenario name", failureStepReport);
+        ScenarioExecutionReport report = new ScenarioExecutionReport(1L, "scenario name", "", failureStepReport);
         ExecutionHistory.Execution execution = ImmutableExecutionHistory.Execution
             .builder()
             .executionId(report.executionId)

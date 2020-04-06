@@ -2,6 +2,7 @@ package com.chutneytesting.execution.api;
 
 import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.fromFrontId;
 
+import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +31,7 @@ class ScenarioExecutionHistoryController {
 
     @CrossOrigin(origins = "*")
     @GetMapping(path = "/api/ui/scenario/{scenarioId}/execution/{executionId}/v1", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public String getExecutionReport(@PathVariable("scenarioId") String scenarioId, @PathVariable("executionId") Long executionId) {
-        return executionHistoryRepository.getExecution(fromFrontId(Optional.of(scenarioId)), executionId).report();
+    public ExecutionHistory.Execution getExecutionReport(@PathVariable("scenarioId") String scenarioId, @PathVariable("executionId") Long executionId) {
+        return executionHistoryRepository.getExecution(fromFrontId(Optional.of(scenarioId)), executionId);
     }
 }

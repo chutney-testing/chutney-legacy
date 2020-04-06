@@ -75,10 +75,10 @@ export class ScenarioExecutionService {
                 es = new EventSource(url);
                 es.onerror = () => obs.error('Error loading execution');
                 es.addEventListener('partial', (evt: any) => {
-                    obs.next(this.buildExecutionReport(JSON.parse(evt.data)));
+                    obs.next(this.buildExecutionReportFromEvent(JSON.parse(evt.data)));
                 });
                 es.addEventListener('last', (evt: any) => {
-                    obs.next(this.buildExecutionReport(JSON.parse(evt.data)));
+                    obs.next(this.buildExecutionReportFromEvent(JSON.parse(evt.data)));
                     obs.complete();
                 });
             } catch (error) {
@@ -96,7 +96,17 @@ export class ScenarioExecutionService {
     private buildExecutionReport(jsonResponse: any): ScenarioExecutionReport {
         return new ScenarioExecutionReport(
             jsonResponse.executionId,
+            JSON.parse(jsonResponse.report).report,
+            jsonResponse.environment,
+            jsonResponse.testCaseTitle
+        );
+    }
+
+    private buildExecutionReportFromEvent(jsonResponse: any): ScenarioExecutionReport {
+        return new ScenarioExecutionReport(
+            jsonResponse.executionId,
             jsonResponse.report,
+            jsonResponse.environment,
             jsonResponse.scenarioName
         );
     }

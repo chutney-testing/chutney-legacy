@@ -80,6 +80,6 @@ public class ScenarioExecutionEngine {
         TestCase testCaseProcessed = testCasePreProcessors.apply(testCase);
 
         StepExecutionReportCore finalStepReport = executionEngine.execute(new ExecutionRequest(testCaseProcessed, environment));
-        return new ScenarioExecutionReport(0L, testCaseProcessed.metadata().title(), finalStepReport);
+        return new ScenarioExecutionReport(0L, testCaseProcessed.metadata().title(), environment, finalStepReport);
     }
 }

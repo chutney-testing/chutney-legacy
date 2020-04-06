@@ -30,49 +30,60 @@
         <div class="float-right">
             <chutney-scenario-campaigns [idScenario]="currentScenarioId"></chutney-scenario-campaigns>
         </div>
-        <div class="steps" *ngIf="scenarioExecutionReport?.report">
-            <div class="badge-container">
-                <h1>
-                    <chutney-execution-badge [status]="scenarioExecutionReport.report.status" [spin]="true"></chutney-execution-badge>
-                    <small
-                        class="text-muted ml-2">{{'global.time.in' | translate}} {{scenarioExecutionReport.report.duration | duration}}</small>
-                    <small
-                        class="text-muted ml-2">{{'global.time.at' | translate}} {{scenarioExecutionReport.report.startDate | date:'medium'}}</small>
-                    <small
-                        class="text-muted ml-2"> - {{'admin.targets.environment' | translate}} : {{currentExecution?.environment}}</small>
-                </h1>
-                <div *ngIf="lastExecutionRunning">
-                    <button type="button" class="btn btn-dark m-2" (click)="stopScenario()"
-                            [disabled]="scenarioExecutionReport.report.status != 'RUNNING'">
-                        <span class="fa fa-stop"></span>
-                        <span class="btn-label">stop</span>
-                    </button>
+        <ng-container *ngIf="scenarioExecutionReport?.report">
+            <div class="row steps">
+                <div class="badge-container w-100">
+                    <span>
+                        <h2 class="d-inline m-0">
+                            <chutney-execution-badge [status]="scenarioExecutionReport.report.status" [spin]="true"></chutney-execution-badge>
+                        </h2>
+                        <small class="text-muted ml-2">
+                            {{'global.time.in' | translate}} {{scenarioExecutionReport.report.duration | duration}}
+                        </small>
+                        <small class="text-muted ml-2">
+                            {{'global.time.at' | translate}} {{scenarioExecutionReport.report.startDate | date:'medium'}}
+                        </small>
+                        <small class="text-muted ml-2">
+                            - {{'admin.targets.environment' | translate}} : <b>{{scenarioExecutionReport.environment}}</b>
+                        </small>
+                    </span>
+                    <div class="text-sm-center">
+                        <div *ngIf="scenarioExecutionReport.report.status == 'RUNNING' || scenarioExecutionReport.report.status == 'PAUSED'"
+                              class="btn-group btn-group-sm mt-1 justify-content-center position-relative">
+                            <button type="button" class="btn btn-secondary" (click)="stopScenario()"
+                                    [disabled]="scenarioExecutionReport.report.status != 'RUNNING'">
+                                <span class="fa fa-stop"></span>
+                                <span class="btn-label">{{'global.actions.stop' | translate}}</span>
+                            </button>
 
-                    <button type="button" class="btn btn-dark m-2" (click)="pauseScenario()"
-                            [disabled]="scenarioExecutionReport.report.status != 'RUNNING'">
-                        <span class="fa fa-pause"></span>
-                        <span class="btn-label">pause</span>
-                    </button>
+                            <button type="button" class="btn btn-secondary mr-1 ml-1" (click)="pauseScenario()"
+                                    [disabled]="scenarioExecutionReport.report.status != 'RUNNING'">
+                                <span class="fa fa-pause"></span>
+                                <span class="btn-label">{{'global.actions.pause' | translate}}</span>
+                            </button>
 
-                    <button type="button" class="btn btn-dark m-2" (click)="resumeScenario()"
-                            [disabled]="scenarioExecutionReport.report.status != 'PAUSED'">
-                        <span class="fa fa-play"></span>
-                        <span class="btn-label">resume</span>
+                            <button type="button" class="btn btn-secondary" (click)="resumeScenario()"
+                                    [disabled]="scenarioExecutionReport.report.status != 'PAUSED'">
+                                <span class="fa fa-play"></span>
+                                <span class="btn-label">{{'global.actions.resume' | translate}}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="btn-group float-right">
+                    <button type="button" class="btn btn-sm btn-secondary m-2" (click)="expandAll()">
+                        <span class="btn-label">
+                            {{toggleScenarioDetails ? ('scenarios.execution.actions.details.show' | translate) : ('scenarios.execution.actions.details.hide' | translate)}}
+                        </span>
                     </button>
                 </div>
             </div>
-            <div class="btn-group float-right">
-                <button type="button" class="btn btn-sm btn-secondary m-2" (click)="expandAll()">
-                    <span class="btn-label">
-                        {{toggleScenarioDetails ? ('scenarios.execution.actions.details.show' | translate) : ('scenarios.execution.actions.details.hide' | translate)}}
-                    </span>
-                </button>
+            <div class="steps">
+                <chutney-scenario-step-report *ngFor="let report of scenarioExecutionReport.report.steps; let i = index"
+                                              [id]="i"
+                                              [step]="report"></chutney-scenario-step-report>
             </div>
-            <div class="clearfix"></div>
-            <chutney-scenario-step-report *ngFor="let report of scenarioExecutionReport.report.steps; let i = index"
-                                      [id]="i"
-                                      [step]="report"></chutney-scenario-step-report>
-        </div>
+            </ng-container>
     </div>
 </div>
 
