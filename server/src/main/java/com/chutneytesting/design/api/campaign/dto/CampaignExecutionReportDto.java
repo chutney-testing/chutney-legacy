@@ -1,10 +1,12 @@
 package com.chutneytesting.design.api.campaign.dto;
 
+import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CampaignExecutionReportDto {
@@ -42,9 +44,13 @@ public class CampaignExecutionReportDto {
     }
 
     public long getDuration() {
-        return scenarioExecutionReports.stream()
-            .mapToLong(ScenarioExecutionReportOutlineDto::getDuration)
-            .sum();
+        Optional<LocalDateTime> latestExecutionEndDate = scenarioExecutionReports.stream()
+            .map(report -> report.getStartDate().plus(report.getDuration(), ChronoUnit.MILLIS))
+            .max(LocalDateTime::compareTo);
+
+        return latestExecutionEndDate
+            .map(endDate -> ChronoUnit.MILLIS.between(startDate, endDate))
+            .orElse(0L);
     }
 
     public LocalDateTime getStartDate() {
