@@ -7,6 +7,7 @@ import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.OptionalInt;
@@ -50,7 +51,7 @@ public class CampaignExecutionReport {
     }
 
     public void initExecution(List<TestCase> testCases, String executionEnvironment) {
-        testCases.stream().forEach(testCase -> {
+        testCases.forEach(testCase ->
             this.scenarioExecutionReports.add(
                 new ScenarioExecutionReportCampaign(
                     testCase.id(),
@@ -62,8 +63,7 @@ public class CampaignExecutionReport {
                         .status(ServerReportStatus.NOT_EXECUTED)
                         .duration(0)
                         .environment(executionEnvironment)
-                        .build()));
-        });
+                        .build())));
     }
 
     public void startScenarioExecution(TestCase testCase, String executionEnvironment) throws UnsupportedOperationException {
@@ -131,6 +131,10 @@ public class CampaignExecutionReport {
             .filter(Objects::nonNull)
             .map(ExecutionHistory.ExecutionProperties::status)
             .collect(Collectors.collectingAndThen(Collectors.toList(), ServerReportStatus::worst));
+    }
+
+    public static Comparator<CampaignExecutionReport> executionIdComparator() {
+        return Comparator.comparingLong(value -> value.executionId);
     }
 
     @Override

@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -74,12 +73,10 @@ public class CampaignController {
         Campaign campaign = campaignRepository.findById(campaignId);
         List<CampaignExecutionReport> reports = campaignRepository.findExecutionsById(campaignId);
         if(!isEmpty(reports)) {
-            sortCampaignExecutionReports(reports);
+            reports.sort(CampaignExecutionReport.executionIdComparator().reversed());
         }
-        Optional<CampaignExecutionReport> currentExecution = campaignExecutionEngine.currentExecution(campaignId);
-        if(currentExecution.isPresent()) {
-            addCurrentExecution(reports, currentExecution.get());
-        }
+        campaignExecutionEngine.currentExecution(campaignId)
+            .ifPresent(report -> addCurrentExecution(reports, report));
         return toDto(campaign, reports);
     }
 
@@ -131,13 +128,5 @@ public class CampaignController {
             currentCampaignExecutionReports = new ArrayList<>();
         }
         currentCampaignExecutionReports.add(0, campaignExecutionReport);
-    }
-
-    private void sortCampaignExecutionReports(List<CampaignExecutionReport> listToSort) {
-        listToSort.sort(executionComparatorReportByExecutionId());
-    }
-
-    private static Comparator<CampaignExecutionReport> executionComparatorReportByExecutionId() {
-        return Comparator.<CampaignExecutionReport>comparingLong(value -> value.executionId).reversed();
     }
 }
