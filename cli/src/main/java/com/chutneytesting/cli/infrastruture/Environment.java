@@ -1,8 +1,8 @@
 package com.chutneytesting.cli.infrastruture;
 
+import com.chutneytesting.task.spi.injectable.Target;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.chutneytesting.engine.domain.environment.TargetImpl;
 import java.util.List;
 import org.immutables.value.Value;
 
@@ -19,5 +19,5 @@ public interface Environment {
     }
 
     @JsonDeserialize(using = TargetJsonDeserializer.class)
-    List<TargetImpl> targets();
+    List<Target> targets();
 }

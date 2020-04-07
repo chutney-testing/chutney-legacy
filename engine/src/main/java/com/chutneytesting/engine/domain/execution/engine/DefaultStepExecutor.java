@@ -2,7 +2,6 @@ package com.chutneytesting.engine.domain.execution.engine;
 
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.engine.parameterResolver.ContextParameterResolver;
@@ -34,7 +33,7 @@ public class DefaultStepExecutor implements StepExecutor {
     }
 
     @Override
-    public void execute(ScenarioExecution scenarioExecution, StepContext stepContext, TargetImpl targetServer, Step step) {
+    public void execute(ScenarioExecution scenarioExecution, StepContext stepContext, Target targetServer, Step step) {
         String type = step.type();
 
         Optional<TaskTemplate> matchedTask = taskTemplateRegistry.getByIdentifier(type);
@@ -76,7 +75,7 @@ public class DefaultStepExecutor implements StepExecutor {
         }
     }
 
-    private List<ParameterResolver> gatherResolvers(ScenarioExecution scenarioExecution, StepContext stepContext, TargetImpl target, Step step) {
+    private List<ParameterResolver> gatherResolvers(ScenarioExecution scenarioExecution, StepContext stepContext, Target target, Step step) {
         List<ParameterResolver> parameterResolvers = new ArrayList<>();
         parameterResolvers.add(new InputParameterResolver(stepContext.getEvaluatedInputs()));
         parameterResolvers.add(new TypedValueParameterResolver<>(Target.class, target));

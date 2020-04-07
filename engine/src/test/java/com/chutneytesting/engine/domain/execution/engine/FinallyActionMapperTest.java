@@ -33,10 +33,10 @@ public class FinallyActionMapperTest {
         assertThat(stepDefinition.type).isEqualTo("test-action");
         assertThat(stepDefinition.inputs).containsOnly(entry("test-input", "test"));
         assertThat(stepDefinition.getTarget()).isPresent();
-        TargetImpl targetCopy = stepDefinition.getTarget().get();
-        assertThat(targetCopy.name).isEqualTo("test-target");
-        assertThat(targetCopy.url).isEqualTo("proto://host:12345");
-        assertThat(targetCopy.security.hasCredential()).isFalse();
-        assertThat(targetCopy.security.credential()).isEqualTo(Optional.of(SecurityInfoImpl.Credential.NONE));
+        Target targetCopy = stepDefinition.getTarget().get();
+        assertThat(targetCopy.name()).isEqualTo("test-target");
+        assertThat(targetCopy.url()).isEqualTo("proto://host:12345");
+        assertThat(((SecurityInfoImpl)targetCopy.security()).hasCredential()).isFalse();
+        assertThat(targetCopy.security().credential()).isEqualTo(Optional.of(SecurityInfoImpl.Credential.NONE));
     }
 }

@@ -26,6 +26,7 @@ import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReportBuilder;
 import com.chutneytesting.engine.infrastructure.delegation.HttpClient;
+import com.chutneytesting.task.spi.injectable.Target;
 import io.reactivex.schedulers.Schedulers;
 import java.time.Instant;
 import java.util.HashMap;
@@ -39,7 +40,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class StepTest {
 
     private StepDataEvaluator dataEvaluator = new StepDataEvaluator(new SpelFunctions());
-    private TargetImpl fakeTarget = TargetImpl.NONE;
+    private Target fakeTarget = TargetImpl.NONE;
 
     @Test
     public void stop_should_not_execute_test() {

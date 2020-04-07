@@ -5,9 +5,9 @@ import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
 import com.chutneytesting.engine.api.execution.SecurityInfoDto;
 import com.chutneytesting.engine.api.execution.TargetDto;
-import com.chutneytesting.engine.domain.environment.SecurityInfoImpl;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.task.spi.injectable.SecurityInfo;
+import com.chutneytesting.task.spi.injectable.Target;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -46,11 +46,11 @@ public class ExecutionRequestMapper {
             dto.scenario().outputs());
     }
 
-    private static Optional<TargetImpl> getTarget(String targetName, Environment originalEnvironmentObject) {
+    private static Optional<Target> getTarget(String targetName, Environment originalEnvironmentObject) {
         if(targetName == null || targetName.isEmpty()){
             return Optional.empty();
         }
-        return originalEnvironmentObject.targets().stream().filter( t -> t.name.equals(targetName)).findFirst();
+        return originalEnvironmentObject.targets().stream().filter( t -> t.name().equals(targetName)).findFirst();
     }
 
     private static StepDefinitionCore buildStepDefinitionCore(ScenarioContent.UnmarshalledStepDefinition dto, Environment originalEnvironmentObject) {
@@ -101,17 +101,17 @@ public class ExecutionRequestMapper {
             definition.outputs);
     }
 
-    private static TargetDto toDto(TargetImpl target) {
+    private static TargetDto toDto(Target target) {
         return new TargetDto(
-            target.name,
-            target.url,
-            target.properties,
-            toDto(target.security),
-            target.agents
+            target.name(),
+            target.url(),
+            target.properties(),
+            toDto(target.security()),
+            ((TargetImpl) target).agents
         );
     }
 
-    private static SecurityInfoDto toDto(SecurityInfoImpl security) {
+    private static SecurityInfoDto toDto(SecurityInfo security) {
         return new SecurityInfoDto(
             security.credential().map(ExecutionRequestMapper::toDto).orElse(null),
             security.trustStore().orElse(null),

@@ -59,7 +59,6 @@ public class EnvironmentApiMapper {
     }
 
     private SecurityApiDto toDto(SecurityInfo security) {
-        // TODO - manage nulls
         String username = ofNullable(security.credential).map(c -> c.username).orElse(null);
         String password = ofNullable(security.credential).map(c -> c.password).orElse(null);
         String keyStore = ofNullable(security.keyStore).orElse(null);

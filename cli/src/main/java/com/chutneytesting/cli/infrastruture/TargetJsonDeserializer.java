@@ -5,6 +5,7 @@ import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.engine.domain.environment.SecurityInfoImpl;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
+import com.chutneytesting.task.spi.injectable.Target;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -18,12 +19,12 @@ import java.util.List;
 import java.util.Map;
 
 // TODO file/http model must be placed in appropriate space without coupling to domain-used one {@link Target}
-public class TargetJsonDeserializer extends JsonDeserializer<List<TargetImpl>> {
+public class TargetJsonDeserializer extends JsonDeserializer<List<Target>> {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
     @Override
-    public List<TargetImpl> deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+    public List<Target> deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
 
         JsonNode targetsNode = jsonParser.getCodec().readTree(jsonParser);
 
@@ -31,7 +32,7 @@ public class TargetJsonDeserializer extends JsonDeserializer<List<TargetImpl>> {
             return Collections.emptyList();
         }
 
-        List<TargetImpl> targets = new ArrayList<>();
+        List<Target> targets = new ArrayList<>();
         for (final JsonNode objNode : targetsNode) {
             targets.add(deserialize(objNode));
         }
@@ -39,7 +40,7 @@ public class TargetJsonDeserializer extends JsonDeserializer<List<TargetImpl>> {
         return Collections.unmodifiableList(targets);
     }
 
-    private TargetImpl deserialize(JsonNode targetNode) throws IOException {
+    private Target deserialize(JsonNode targetNode) throws IOException {
         TargetImpl.TargetBuilder targetBuilder = TargetImpl.builder();
 
         if (targetNode.hasNonNull("name")) {

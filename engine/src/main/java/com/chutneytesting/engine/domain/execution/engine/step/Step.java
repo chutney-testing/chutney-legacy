@@ -17,6 +17,7 @@ import com.chutneytesting.engine.domain.execution.event.EndStepExecutionEvent;
 import com.chutneytesting.engine.domain.execution.event.PauseStepExecutionEvent;
 import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
+import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.tools.Try;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -42,13 +43,13 @@ public class Step {
 
     private final StepState state;
     private final List<Step> steps;
-    private final TargetImpl target;
+    private final Target target;
     private final StepExecutor executor;
     private final StepDataEvaluator dataEvaluator;
 
     private StepContextImpl stepContext;
 
-    public Step(StepDataEvaluator dataEvaluator, StepDefinition definition, Optional<TargetImpl> target, StepExecutor executor, List<Step> steps) {
+    public Step(StepDataEvaluator dataEvaluator, StepDefinition definition, Optional<Target> target, StepExecutor executor, List<Step> steps) {
         this.dataEvaluator = dataEvaluator;
         this.definition = definition;
         this.target = target.orElse(TargetImpl.NONE);
@@ -190,7 +191,7 @@ public class Step {
         return state.errors();
     }
 
-    public TargetImpl target() {
+    public Target target() {
         return target;
     }
 
@@ -218,7 +219,7 @@ public class Step {
         return !steps.isEmpty();
     }
 
-    private void makeTargetAccessibleForInputEvaluation(ScenarioContext scenarioContext, TargetImpl target) {
+    private void makeTargetAccessibleForInputEvaluation(ScenarioContext scenarioContext, Target target) {
         scenarioContext.put("target", target);
     }
 

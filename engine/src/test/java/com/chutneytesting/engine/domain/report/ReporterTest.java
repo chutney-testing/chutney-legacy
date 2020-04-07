@@ -14,6 +14,7 @@ import com.chutneytesting.engine.domain.execution.event.EndScenarioExecutionEven
 import com.chutneytesting.engine.domain.execution.event.StartScenarioExecutionEvent;
 import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
+import com.chutneytesting.task.spi.injectable.Target;
 import io.reactivex.observers.TestObserver;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,7 +26,7 @@ import org.junit.Test;
 
 public class ReporterTest {
 
-    private TargetImpl fakeTarget = TargetImpl.NONE;
+    private Target fakeTarget = TargetImpl.NONE;
     private StepDataEvaluator dataEvaluator = new StepDataEvaluator(new SpelFunctions());
 
     private Reporter sut;

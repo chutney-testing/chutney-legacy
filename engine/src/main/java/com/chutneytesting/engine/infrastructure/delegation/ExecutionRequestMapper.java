@@ -6,6 +6,7 @@ import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitio
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepStrategyDefinitionRequestDto;
 import com.chutneytesting.engine.api.execution.SecurityInfoDto;
 import com.chutneytesting.engine.api.execution.TargetDto;
+import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.task.spi.injectable.SecurityInfo;
 import java.util.List;
@@ -40,8 +41,8 @@ class ExecutionRequestMapper {
     }
 
     private static TargetDto extractTarget(StepDefinition definition) {
-        return definition.getTarget().map(t -> new TargetDto(
-                t.name,
+        return definition.getTarget().map(t -> (TargetImpl) t).map(t -> new TargetDto(
+                t.name(),
                 t.url,
                 t.properties,
                 from(t.security),

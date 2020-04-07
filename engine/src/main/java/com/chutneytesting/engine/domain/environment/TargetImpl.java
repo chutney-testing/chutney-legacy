@@ -4,6 +4,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
+import com.chutneytesting.task.spi.injectable.SecurityInfo;
 import com.chutneytesting.task.spi.injectable.Target;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -13,7 +14,7 @@ import java.util.Map;
 
 public class TargetImpl implements Target {
 
-    public static final TargetImpl NONE = TargetImpl.builder().build();
+    public static final Target NONE = TargetImpl.builder().build();
 
     public final String name;
     public final String url;
@@ -51,7 +52,7 @@ public class TargetImpl implements Target {
     }
 
     @Override
-    public com.chutneytesting.task.spi.injectable.SecurityInfo security() {
+    public SecurityInfo security() {
         return security;
     }
 

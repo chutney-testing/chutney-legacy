@@ -1,8 +1,10 @@
 package com.chutneytesting.design.api.environment.dto;
 
+import static java.util.Optional.ofNullable;
+
 import com.chutneytesting.design.domain.environment.SecurityInfo;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.chutneytesting.design.domain.environment.Target;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -58,17 +60,16 @@ public class TargetMetadataDto {
             target.name,
             target.url,
             toEntryList(target.properties),
-            // TODO - manage nulls
-            Optional.ofNullable(target.security.credential).map(c -> c.username).orElse(null),
-            Optional.ofNullable(target.security.credential).map(c -> c.password).orElse(null),
-            Optional.ofNullable(target.security.keyStore).orElse(null),
-            Optional.ofNullable(target.security.keyStorePassword).orElse(null),
-            Optional.ofNullable(target.security.privateKey).orElse(null)
+            ofNullable(target.security.credential).map(c -> c.username).orElse(null),
+            ofNullable(target.security.credential).map(c -> c.password).orElse(null),
+            ofNullable(target.security.keyStore).orElse(null),
+            ofNullable(target.security.keyStorePassword).orElse(null),
+            ofNullable(target.security.privateKey).orElse(null)
         );
     }
 
     private Optional<String> emptyToNull(String s) {
-        return Optional.ofNullable("".equals(s) ? null : s);
+        return ofNullable("".equals(s) ? null : s);
     }
 
     private <T> List<T> nulltoEmpty(List<T> list) {
