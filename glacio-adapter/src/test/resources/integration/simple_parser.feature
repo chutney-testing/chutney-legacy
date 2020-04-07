@@ -4,10 +4,10 @@ Feature: Simple parser feature
     Could execute simple tasks, i.e. ones without target, strategy, inputs nor outputs
 
     Scenario: Simple Success/Debug
-        Given Do debug
+        Given Do: debug
         And Run (success) direct success
         When something is good
-            Do (debug) substep debug
+            Do: (debug) substep debug
         And it is very good
             Run success
         Then it is very good
@@ -21,4 +21,4 @@ Feature: Simple parser feature
         When There is a first step
             I'm a sub step
                 I'm a sub sub step
-                    Run fail
+                    Run: fail

@@ -18,8 +18,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class ExecutableStepFactory {
 
-    private final static String EXECUTABLE_STEP_TEXT_PATTERN_STRING = "^(?<keyword>%s) (?<parserKeyword>\\S*)( .*)?$";
-
+    private final static String EXECUTABLE_STEP_TEXT_PATTERN_STRING = "^(?<trigger>%s)(\\W+)(?<sentence>(?<action>\\w+)(\\s+.*)?)$";
     private Map<Locale, Pair<Pattern, Predicate<String>>> executableStepTextPatternsCache = new ConcurrentHashMap<>();
 
     private final Map<Locale, Map<EXECUTABLE_KEYWORD, Set<String>>> executableStepLanguagesKeywords;
@@ -39,9 +38,9 @@ public class ExecutableStepFactory {
         if (pattern.isPresent()) {
             Matcher matcher = pattern.get().getLeft().matcher(step.getText());
             if (matcher.matches()) {
-                String keyword = ofNullable(matcher.group("keyword")).orElse("");
-                String parserKeyword = ofNullable(matcher.group("parserKeyword")).orElse("");
-                return delegateStepParsing(Pair.of(lang, parserKeyword), cleanStepText(keyword, step));
+                String action = ofNullable(matcher.group("action")).orElse("");
+                String sentence = ofNullable(matcher.group("sentence")).orElse("");
+                return delegateStepParsing(Pair.of(lang, action), rebuildStepUsing(sentence, step));
             }
         }
         throw new IllegalArgumentException("Step cannot be qualified as executable : " + step);
@@ -59,8 +58,8 @@ public class ExecutableStepFactory {
         return pattern.getRight().test(step.getText());
     }
 
-    private Step cleanStepText(String keyword, Step step) {
-        return new Step(step.getPosition(), step.getText().substring(keyword.length() + 1), step.getSubsteps(), step.getDocString(), step.getDataTable());
+    private Step rebuildStepUsing(String sentence, Step step) {
+        return new Step(step.getPosition(), sentence, step.getSubsteps(), step.getDocString(), step.getDataTable());
     }
 
     private Pair<Pattern, Predicate<String>> compileAndCachePattern(Locale lang) {
