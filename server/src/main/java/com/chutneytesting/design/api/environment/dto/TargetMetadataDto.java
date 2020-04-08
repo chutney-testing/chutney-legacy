@@ -1,10 +1,10 @@
 package com.chutneytesting.design.api.environment.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import static java.util.Optional.ofNullable;
+
+import com.chutneytesting.design.domain.environment.SecurityInfo;
 import com.chutneytesting.design.domain.environment.Target;
-import com.chutneytesting.engine.domain.environment.SecurityInfo;
-import com.chutneytesting.engine.domain.environment.SecurityInfo.Credential;
-import com.chutneytesting.engine.domain.environment.SecurityInfo.SecurityInfoBuilder;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -40,12 +40,12 @@ public class TargetMetadataDto {
     }
 
     public Target toTarget(String environment) {
-        SecurityInfoBuilder securityInfo = SecurityInfo.builder()
+        SecurityInfo.SecurityInfoBuilder securityInfo = SecurityInfo.builder()
             .keyStore(keyStore.orElse(null))
             .keyStorePassword(keyStorePassword.orElse(null))
             .privateKey(privateKey.orElse(null));
         if (username.isPresent() || password.isPresent()) {
-            securityInfo.credential(Credential.of(username.orElse(""), password.orElse("")));
+            securityInfo.credential(SecurityInfo.Credential.of(username.orElse(""), password.orElse("")));
         }
         return Target.builder()
             .withId(Target.TargetId.of(name, environment))
@@ -60,16 +60,16 @@ public class TargetMetadataDto {
             target.name,
             target.url,
             toEntryList(target.properties),
-            target.security.credential().map(Credential::username).orElse(null),
-            target.security.credential().map(Credential::password).orElse(null),
-            target.security.keyStore().orElse(null),
-            target.security.keyStorePassword().orElse(null),
-            target.security.privateKey().orElse(null)
+            ofNullable(target.security.credential).map(c -> c.username).orElse(null),
+            ofNullable(target.security.credential).map(c -> c.password).orElse(null),
+            ofNullable(target.security.keyStore).orElse(null),
+            ofNullable(target.security.keyStorePassword).orElse(null),
+            ofNullable(target.security.privateKey).orElse(null)
         );
     }
 
     private Optional<String> emptyToNull(String s) {
-        return Optional.ofNullable("".equals(s) ? null : s);
+        return ofNullable("".equals(s) ? null : s);
     }
 
     private <T> List<T> nulltoEmpty(List<T> list) {

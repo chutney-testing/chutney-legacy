@@ -8,8 +8,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.Resources;
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.design.domain.compose.ComposableScenario;
 import com.chutneytesting.design.domain.compose.ComposableTestCase;
@@ -19,10 +17,12 @@ import com.chutneytesting.design.domain.environment.Target;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.raw.RawTestCase;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
+import com.chutneytesting.engine.api.execution.SecurityInfoDto;
 import com.chutneytesting.engine.api.execution.TargetDto;
-import com.chutneytesting.engine.domain.environment.SecurityInfo;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.task.api.EmbeddedTaskEngine;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.io.Resources;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -67,7 +67,8 @@ public class ExecutionRequestMapperTest {
         // Given
         String expectedType = "task-id";
         String expectedTargetId = "target name";
-        TargetDto expectedTarget = new TargetDto(expectedTargetId, "", emptyMap(), SecurityInfo.builder().build(), emptyList());
+        SecurityInfoDto securityDto = new SecurityInfoDto(null, null, null, null, null, null);
+        TargetDto expectedTarget = new TargetDto(expectedTargetId, "", emptyMap(), securityDto, emptyList());
 
         Map<String, Object> expectedOutputs = Maps.of("output1", "value1", "output2", "value2");
 
@@ -161,11 +162,13 @@ public class ExecutionRequestMapperTest {
     }
 
     private void assertRootStepDefinitionRequestDto(ExecutionRequestDto.StepDefinitionRequestDto stepDefinitionRequestDto, String name) {
+        SecurityInfoDto securityDto = new SecurityInfoDto(null, null, null, null, null, null);
+
         assertThat(stepDefinitionRequestDto).isNotNull();
         assertThat(stepDefinitionRequestDto.name).isEqualTo(name);
         assertThat(stepDefinitionRequestDto.type).isNullOrEmpty();
         assertThat(stepDefinitionRequestDto.target).isEqualTo(
-            new TargetDto("", "", emptyMap(), SecurityInfo.builder().build(), emptyList())
+            new TargetDto("", "", emptyMap(), securityDto, emptyList())
         );
         assertThat(stepDefinitionRequestDto.inputs).isNullOrEmpty();
         assertThat(stepDefinitionRequestDto.outputs).isNullOrEmpty();

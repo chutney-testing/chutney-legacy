@@ -3,10 +3,12 @@ package com.chutneytesting.engine.domain.execution.engine;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
-import com.chutneytesting.engine.domain.environment.Target;
+import com.chutneytesting.engine.domain.environment.SecurityInfoImpl;
+import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
-import com.chutneytesting.engine.domain.execution.engine.parameterResolver.TargetSpiImpl;
 import com.chutneytesting.task.spi.FinallyAction;
+import com.chutneytesting.task.spi.injectable.Target;
+import java.util.Optional;
 import org.junit.Test;
 
 public class FinallyActionMapperTest {
@@ -15,11 +17,11 @@ public class FinallyActionMapperTest {
 
     @Test
     public void upright_finally_action_copy() {
-        Target domainTarget = Target.builder()
+        TargetImpl domainTarget = TargetImpl.builder()
             .withName("test-target")
             .withUrl("proto://host:12345")
             .build();
-        com.chutneytesting.task.spi.injectable.Target taskTarget = new TargetSpiImpl(domainTarget);
+        Target taskTarget = domainTarget;
         FinallyAction finallyAction = FinallyAction.Builder
             .forAction("test-action")
             .withTarget(taskTarget)
@@ -32,8 +34,9 @@ public class FinallyActionMapperTest {
         assertThat(stepDefinition.inputs).containsOnly(entry("test-input", "test"));
         assertThat(stepDefinition.getTarget()).isPresent();
         Target targetCopy = stepDefinition.getTarget().get();
-        assertThat(targetCopy.name).isEqualTo("test-target");
-        assertThat(targetCopy.url).isEqualTo("proto://host:12345");
-        assertThat(targetCopy.security.credential()).isEmpty();
+        assertThat(targetCopy.name()).isEqualTo("test-target");
+        assertThat(targetCopy.url()).isEqualTo("proto://host:12345");
+        assertThat(((SecurityInfoImpl)targetCopy.security()).hasCredential()).isFalse();
+        assertThat(targetCopy.security().credential()).isEqualTo(Optional.of(SecurityInfoImpl.Credential.NONE));
     }
 }

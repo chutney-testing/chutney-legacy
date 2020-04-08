@@ -1,10 +1,11 @@
 package com.chutneytesting.cli.infrastruture;
 
-import static com.chutneytesting.engine.domain.environment.SecurityInfo.SecurityInfoBuilder;
+import static com.chutneytesting.engine.domain.environment.SecurityInfoImpl.SecurityInfoBuilder;
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.engine.domain.environment.SecurityInfo;
-import com.chutneytesting.engine.domain.environment.Target;
+import com.chutneytesting.engine.domain.environment.SecurityInfoImpl;
+import com.chutneytesting.engine.domain.environment.TargetImpl;
+import com.chutneytesting.task.spi.injectable.Target;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -40,7 +41,7 @@ public class TargetJsonDeserializer extends JsonDeserializer<List<Target>> {
     }
 
     private Target deserialize(JsonNode targetNode) throws IOException {
-        Target.TargetBuilder targetBuilder = Target.builder();
+        TargetImpl.TargetBuilder targetBuilder = TargetImpl.builder();
 
         if (targetNode.hasNonNull("name")) {
             targetBuilder.withName(targetNode.get("name").textValue());
@@ -54,7 +55,7 @@ public class TargetJsonDeserializer extends JsonDeserializer<List<Target>> {
         }
         if (targetNode.hasNonNull("security")) {
             JsonNode secu = targetNode.get("security");
-            SecurityInfoBuilder secuBuilder = SecurityInfo.builder();
+            SecurityInfoBuilder secuBuilder = SecurityInfoImpl.builder();
             if (secu.hasNonNull("trustStore")) {
                 secuBuilder.trustStore(secu.get("trustStore").textValue());
             }
@@ -75,7 +76,7 @@ public class TargetJsonDeserializer extends JsonDeserializer<List<Target>> {
                 if (credential.hasNonNull("username")) {
                     String username = credential.get("username").textValue();
                     String password = ofNullable(credential.get("password")).map(JsonNode::textValue).orElse("");
-                    secuBuilder.credential(SecurityInfo.Credential.of(username, password));
+                    secuBuilder.credential(SecurityInfoImpl.Credential.of(username, password));
                 }
             }
             targetBuilder.withSecurity(secuBuilder.build());

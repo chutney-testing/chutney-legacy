@@ -1,12 +1,12 @@
 package com.chutneytesting.design.infra.storage.environment;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import static java.util.Optional.ofNullable;
+
+import com.chutneytesting.design.domain.environment.SecurityInfo;
 import com.chutneytesting.design.domain.environment.Target;
 import com.chutneytesting.design.domain.environment.Target.TargetId;
-import com.chutneytesting.engine.domain.environment.SecurityInfo;
-import com.chutneytesting.engine.domain.environment.SecurityInfo.Credential;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.Map;
-import java.util.Optional;
 
 @JsonDeserialize(using = TargetJsonDeserializer.class)
 public class JsonTarget {
@@ -37,9 +37,9 @@ public class JsonTarget {
     public Target toTarget(String envName) {
         SecurityInfo secu = null;
         if(security != null) {
-            Credential cred = null;
+            SecurityInfo.Credential cred = null;
             if(security.credential != null) {
-                cred = Credential.of(security.credential.username, security.credential.password);
+                cred = SecurityInfo.Credential.of(security.credential.username, security.credential.password);
             }
             secu = SecurityInfo.builder()
                 .credential(cred)
@@ -78,12 +78,12 @@ public class JsonTarget {
 
         public static JsonSecurityInfo from(SecurityInfo security) {
             return new JsonSecurityInfo(
-                JsonCredential.from(security.credential()),
-                security.getTrustStore(),
-                security.getTrustStorePassword(),
-                security.getKeyStore(),
-                security.getKeyStorePassword(),
-                security.getPrivateKey()
+                ofNullable(security.credential).map(JsonCredential::from).orElse(null),
+                security.trustStore,
+                security.trustStorePassword,
+                security.keyStore,
+                security.keyStorePassword,
+                security.privateKey
             );
         }
     }
@@ -97,11 +97,8 @@ public class JsonTarget {
             this.password = password;
         }
 
-        public static JsonCredential from(Optional<Credential> credential) {
-            if(credential.isPresent()) {
-                return new JsonCredential(credential.get().username(), credential.get().password());
-            }
-            return new JsonCredential("", "");
+        public static JsonCredential from(SecurityInfo.Credential credential) {
+            return new JsonCredential(credential.username, credential.password);
         }
     }
 }

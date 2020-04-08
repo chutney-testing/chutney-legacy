@@ -13,9 +13,9 @@ import com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration;
 import com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration.AgentNetworkConfiguration;
 import com.chutneytesting.agent.domain.configure.NetworkConfiguration;
 import com.chutneytesting.design.domain.environment.Environment;
+import com.chutneytesting.design.domain.environment.SecurityInfo;
 import com.chutneytesting.design.domain.environment.Target;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.chutneytesting.engine.domain.environment.SecurityInfo;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,7 +71,7 @@ public class NetworkConfigurationApiMapperTest {
         assertThat(singleValue.name).as("target name").isEqualTo("s1");
         assertThat(singleValue.url).as("target url").isEqualTo("proto://host:12/lol");
         assertThat(singleValue.properties).as("target properties").isEmpty();
-        assertThat(singleValue.security.credential().get()).as("target security").isEqualTo(SecurityInfo.Credential.of("user1", ""));
+        assertThat(singleValue.security.credential).as("target security").isEqualTo(SecurityInfo.Credential.of("user1", ""));
     }
 
     @Test

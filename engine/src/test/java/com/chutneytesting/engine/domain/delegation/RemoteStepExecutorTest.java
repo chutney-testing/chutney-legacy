@@ -9,7 +9,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.common.collect.Lists;
-import com.chutneytesting.engine.domain.environment.Target;
+import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.engine.StepExecutor;
 import com.chutneytesting.engine.domain.execution.engine.evaluation.StepDataEvaluator;
@@ -47,7 +47,7 @@ public class RemoteStepExecutorTest {
 
         // When
         RemoteStepExecutor remoteStepExecutor = new RemoteStepExecutor(mockHttpClient, mockDelegate);
-        remoteStepExecutor.execute(null, spyCurrentStepContext, mock(Target.class), spyCurrentStep);
+        remoteStepExecutor.execute(null, spyCurrentStepContext, mock(TargetImpl.class), spyCurrentStep);
 
         // Then
         verify(spyCurrentStepContext, times(1)).addScenarioContext(fakeRemoteReport.scenarioContext);
@@ -78,7 +78,7 @@ public class RemoteStepExecutorTest {
 
         // When & Then
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> /* When */ remoteStepExecutor.execute(null, mockCurrentStepContext, mock(Target.class), mock(Step.class)));
+            .isThrownBy(() -> /* When */ remoteStepExecutor.execute(null, mockCurrentStepContext, mock(TargetImpl.class), mock(Step.class)));
     }
 
     @Test
@@ -103,7 +103,7 @@ public class RemoteStepExecutorTest {
 
         // When
         RemoteStepExecutor remoteStepExecutor = new RemoteStepExecutor(mockHttpClient, mockDelegate);
-        remoteStepExecutor.execute(null, spyCurrentStepContext, mock(Target.class), spyCurrentStep);
+        remoteStepExecutor.execute(null, spyCurrentStepContext, mock(TargetImpl.class), spyCurrentStep);
 
         // Then
         verify(spyCurrentStepContext, times(1)).addScenarioContext(fakeRemoteReport.scenarioContext);

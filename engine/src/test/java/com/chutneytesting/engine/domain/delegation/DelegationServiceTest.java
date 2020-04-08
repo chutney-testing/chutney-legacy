@@ -5,9 +5,10 @@ import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-import com.chutneytesting.engine.domain.environment.Target;
+import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.engine.DefaultStepExecutor;
 import com.chutneytesting.engine.domain.execution.engine.StepExecutor;
+import com.chutneytesting.task.spi.injectable.Target;
 import com.google.common.collect.Lists;
 import java.util.Optional;
 import junitparams.JUnitParamsRunner;
@@ -19,10 +20,10 @@ import org.junit.runner.RunWith;
 public class DelegationServiceTest {
 
     public static Object[] parametersForShould_return_local_executor() {
-        Target targetWithNoName = Target.builder()
+        TargetImpl targetWithNoName = TargetImpl.builder()
             .withUrl("proto://host:12345")
             .build();
-        Target targetWithNoAgents = Target.builder().copyOf(targetWithNoName)
+        TargetImpl targetWithNoAgents = TargetImpl.builder().copyOf(targetWithNoName)
             .withName("name")
             .build();
         return new Object[][]{
@@ -49,7 +50,7 @@ public class DelegationServiceTest {
     public void should_return_remote_executor() {
         // Given
         DelegationService delegationService = new DelegationService(mock(DefaultStepExecutor.class), mock(DelegationClient.class));
-        Target targetWithAgent = Target.builder()
+        TargetImpl targetWithAgent = TargetImpl.builder()
             .withName("name")
             .withAgents(Lists.newArrayList(new NamedHostAndPort("name", "host", 12345)))
             .build();

@@ -7,7 +7,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.engine.domain.environment.Target;
+import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.engine.step.StepContext;
 import com.chutneytesting.task.TestTaskTemplateFactory.ComplexeTask;
@@ -33,7 +33,7 @@ public class DefaultStepExecutorTest {
         StepContext stepContext = mock(StepContext.class);
 
         StepExecutor stepExecutor = new DefaultStepExecutor(taskTemplateRegistry);
-        stepExecutor.execute(null, stepContext, mock(Target.class), step);
+        stepExecutor.execute(null, stepContext, mock(TargetImpl.class), step);
 
         verify(taskTemplate.create(any()), times(1)).execute();
         verify(step, times(0)).failure(any(Exception.class));
@@ -50,7 +50,7 @@ public class DefaultStepExecutorTest {
         StepContext stepContext = mock(StepContext.class);
 
         StepExecutor stepExecutor = new DefaultStepExecutor(taskTemplateRegistry);
-        stepExecutor.execute(null, stepContext, mock(Target.class), step);
+        stepExecutor.execute(null, stepContext, mock(TargetImpl.class), step);
 
         verify(step, times(1)).failure("Task [null] failed: java.lang.RuntimeException");
     }
@@ -72,7 +72,7 @@ public class DefaultStepExecutorTest {
         Step step = mock(Step.class, RETURNS_DEEP_STUBS);
 
         StepExecutor stepExecutor = new DefaultStepExecutor(taskTemplateRegistry);
-        stepExecutor.execute(null, stepContext, mock(Target.class), step);
+        stepExecutor.execute(null, stepContext, mock(TargetImpl.class), step);
 
         verify(step, times(0)).failure(any(Exception.class));
     }

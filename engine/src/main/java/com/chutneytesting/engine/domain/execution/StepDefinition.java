@@ -2,8 +2,8 @@ package com.chutneytesting.engine.domain.execution;
 
 import static java.util.Objects.requireNonNull;
 
-import com.chutneytesting.engine.domain.environment.Target;
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
+import com.chutneytesting.task.spi.injectable.Target;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;

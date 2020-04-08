@@ -1,7 +1,8 @@
 package com.chutneytesting.engine.domain.delegation;
 
-import com.chutneytesting.engine.domain.environment.Target;
+import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.engine.StepExecutor;
+import com.chutneytesting.task.spi.injectable.Target;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,11 +18,11 @@ public class DelegationService {
     }
 
     public StepExecutor findExecutor(Optional<Target> target) {
-        if (!target.isPresent() || target.get().name.isEmpty()) {
+        if (!target.isPresent() || target.get().name().isEmpty()) {
             return localStepExecutor;
         }
 
-        List<NamedHostAndPort> agents = target.get().agents;
+        List<NamedHostAndPort> agents = ((TargetImpl) target.get()).agents;
         if (!agents.isEmpty()) {
             NamedHostAndPort nextAgent = agents.get(0);
             // TODO should we do that here ?

@@ -1,6 +1,6 @@
 package com.chutneytesting.cli.infrastruture;
 
-import com.chutneytesting.engine.domain.environment.Target;
+import com.chutneytesting.task.spi.injectable.Target;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;

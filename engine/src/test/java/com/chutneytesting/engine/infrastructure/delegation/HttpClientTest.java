@@ -10,7 +10,7 @@ import com.chutneytesting.engine.api.execution.StatusDto;
 import com.chutneytesting.engine.api.execution.StepExecutionReportDto;
 import com.chutneytesting.engine.domain.delegation.CannotDelegateException;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.chutneytesting.engine.domain.environment.Target;
+import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
@@ -63,7 +63,7 @@ public class HttpClientTest {
     }
 
     @Test
-    public void should_delagate_execution_to_endpoint() throws JsonProcessingException {
+    public void should_delegate_execution_to_endpoint() throws JsonProcessingException {
         //G
         StepDefinition stepDefinition = createFakeStepDefinition();
         NamedHostAndPort remoteHost = new NamedHostAndPort("name", "localhost", server.httpsPort());
@@ -115,7 +115,7 @@ public class HttpClientTest {
     }
 
     private StepDefinition createFakeStepDefinition() {
-        Target target = Target.builder().withName("name").withUrl("url").build();
+        TargetImpl target = TargetImpl.builder().withName("name").withUrl("url").build();
         StepStrategyDefinition strategy = new StepStrategyDefinition("onestrategy", new StrategyProperties());
         return new StepDefinition("name",
             target,

@@ -1,7 +1,6 @@
 package com.chutneytesting.engine.domain.execution.engine;
 
 import com.chutneytesting.engine.domain.delegation.DelegationService;
-import com.chutneytesting.engine.domain.environment.Target;
 import com.chutneytesting.engine.domain.execution.ExecutionEngine;
 import com.chutneytesting.engine.domain.execution.RxBus;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
@@ -15,6 +14,7 @@ import com.chutneytesting.engine.domain.execution.event.StartScenarioExecutionEv
 import com.chutneytesting.engine.domain.execution.strategies.StepExecutionStrategies;
 import com.chutneytesting.engine.domain.execution.strategies.StepExecutionStrategy;
 import com.chutneytesting.engine.domain.report.Reporter;
+import com.chutneytesting.task.spi.injectable.Target;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;

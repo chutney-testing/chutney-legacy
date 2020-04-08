@@ -1,13 +1,13 @@
 package com.chutneytesting.engine.domain.delegation;
 
-import com.google.common.collect.Lists;
-import com.chutneytesting.engine.domain.environment.Target;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.engine.StepExecutor;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.engine.step.StepContext;
 import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
+import com.chutneytesting.task.spi.injectable.Target;
+import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.Map;
 import org.springframework.util.Assert;

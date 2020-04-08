@@ -3,6 +3,7 @@ package blackbox.stepdef;
 import static org.springframework.util.SocketUtils.findAvailableTcpPort;
 
 import blackbox.restclient.RestClient;
+import com.chutneytesting.design.domain.environment.SecurityInfo;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.google.common.io.Resources;
 import cucumber.api.DataTable;
@@ -13,8 +14,6 @@ import com.chutneytesting.design.api.environment.dto.EnvironmentMetadataDto;
 import com.chutneytesting.design.api.environment.dto.TargetMetadataDto;
 import com.chutneytesting.design.domain.environment.Environment;
 import com.chutneytesting.design.domain.environment.Target;
-import com.chutneytesting.engine.domain.environment.SecurityInfo;
-import com.chutneytesting.engine.domain.environment.SecurityInfo.Credential;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -90,9 +89,9 @@ public class TargetStepDefs {
             absolutePath = new File(Resources.getResource(keyStorePath).getPath()).toString();
         }
 
-        Credential credential = null;
+        SecurityInfo.Credential credential = null;
         if (username != null && pwd != null) {
-            credential = Credential.of(username, pwd);
+            credential = SecurityInfo.Credential.of(username, pwd);
         }
 
         SecurityInfo secu = SecurityInfo.builder()

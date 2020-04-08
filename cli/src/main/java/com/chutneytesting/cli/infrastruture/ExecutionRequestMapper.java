@@ -1,9 +1,13 @@
 package com.chutneytesting.cli.infrastruture;
 
+import com.chutneytesting.engine.api.execution.CredentialDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
+import com.chutneytesting.engine.api.execution.SecurityInfoDto;
 import com.chutneytesting.engine.api.execution.TargetDto;
-import com.chutneytesting.engine.domain.environment.Target;
+import com.chutneytesting.engine.domain.environment.TargetImpl;
+import com.chutneytesting.task.spi.injectable.SecurityInfo;
+import com.chutneytesting.task.spi.injectable.Target;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,7 +35,7 @@ public class ExecutionRequestMapper {
             dto.scenario().name()
                 .orElse(""),
             dto.scenario().target()
-                .map(t -> getTarget(t, originalEnvironmentObject).orElse(Target.NONE)),
+                .map(t -> getTarget(t, originalEnvironmentObject).orElse(TargetImpl.NONE)),
             dto.scenario().type()
                 .orElse(""),
             strategy,
@@ -46,7 +50,7 @@ public class ExecutionRequestMapper {
         if(targetName == null || targetName.isEmpty()){
             return Optional.empty();
         }
-        return originalEnvironmentObject.targets().stream().filter( t -> t.name.equals(targetName)).findFirst();
+        return originalEnvironmentObject.targets().stream().filter( t -> t.name().equals(targetName)).findFirst();
     }
 
     private static StepDefinitionCore buildStepDefinitionCore(ScenarioContent.UnmarshalledStepDefinition dto, Environment originalEnvironmentObject) {
@@ -64,7 +68,7 @@ public class ExecutionRequestMapper {
             dto.name()
                 .orElse(""),
             dto.target()
-                .map(t -> getTarget(t, originalEnvironmentObject).orElse(Target.NONE)),
+                .map(t -> getTarget(t, originalEnvironmentObject).orElse(TargetImpl.NONE)),
             dto.type()
                 .orElse(""),
             strategy,
@@ -89,7 +93,7 @@ public class ExecutionRequestMapper {
 
         return new StepDefinitionRequestDto(
             definition.name,
-            toDto(definition.target.orElse(Target.NONE)),
+            toDto(definition.target.orElse(TargetImpl.NONE)),
             strategy,
             definition.type,
             definition.inputs,
@@ -99,11 +103,26 @@ public class ExecutionRequestMapper {
 
     private static TargetDto toDto(Target target) {
         return new TargetDto(
-            target.name,
-            target.url,
-            target.properties,
-            target.security,
-            target.agents
+            target.name(),
+            target.url(),
+            target.properties(),
+            toDto(target.security()),
+            ((TargetImpl) target).agents
         );
+    }
+
+    private static SecurityInfoDto toDto(SecurityInfo security) {
+        return new SecurityInfoDto(
+            security.credential().map(ExecutionRequestMapper::toDto).orElse(null),
+            security.trustStore().orElse(null),
+            security.trustStorePassword().orElse(null),
+            security.keyStore().orElse(null),
+            security.keyStorePassword().orElse(null),
+            security.privateKey().orElse(null)
+        );
+    }
+
+    private static CredentialDto toDto(SecurityInfo.Credential credential) {
+        return new CredentialDto(credential.username(), credential.password());
     }
 }

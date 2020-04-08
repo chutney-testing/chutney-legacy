@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
 import com.chutneytesting.engine.domain.delegation.RemoteStepExecutor;
-import com.chutneytesting.engine.domain.environment.Target;
+import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.RxBus;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
@@ -26,6 +26,7 @@ import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReportBuilder;
 import com.chutneytesting.engine.infrastructure.delegation.HttpClient;
+import com.chutneytesting.task.spi.injectable.Target;
 import io.reactivex.schedulers.Schedulers;
 import java.time.Instant;
 import java.util.HashMap;
@@ -39,7 +40,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class StepTest {
 
     private StepDataEvaluator dataEvaluator = new StepDataEvaluator(new SpelFunctions());
-    private Target fakeTarget = Target.NONE;
+    private Target fakeTarget = TargetImpl.NONE;
 
     @Test
     public void stop_should_not_execute_test() {
@@ -148,7 +149,7 @@ public class StepTest {
     @Test
     public void target_is_set_in_scenario_context_in_order_to_be_used_by_evaluated_inputs() {
         // Given
-        Target fakeTarget = Target.builder().withName("fakeTargetName").build();
+        TargetImpl fakeTarget = TargetImpl.builder().withName("fakeTargetName").build();
 
         Map<String, Object> inputs = new HashMap<>();
         inputs.put("targetName", "${#target.name}");
