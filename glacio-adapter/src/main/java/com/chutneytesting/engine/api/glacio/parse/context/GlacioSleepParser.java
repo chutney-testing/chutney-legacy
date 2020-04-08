@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 
 public class GlacioSleepParser extends GlacioParser {
 
-    private final static Pattern STEP_TEXT_PATTERN = Pattern.compile("^(?:[Ss]leep|[Aa]?[Ww]ait|[Ss]top|[Rr]est) (?:(for|during) )?(?<duration>.*)$");
+    private final static Pattern STEP_TEXT_PATTERN = Pattern.compile("^(?:[Ss]leep|[Aa]?[Ww]ait|[Ss]top|[Rr]est|[Pp]ause) (?:(for|during) )?(?<duration>.*)$");
 
     public GlacioSleepParser() {
         this.targetParser  = EmptyParser.noTargetParser;
@@ -35,7 +35,7 @@ public class GlacioSleepParser extends GlacioParser {
     public Map<Locale, Set<String>> keywords() {
         Map<Locale, Set<String>> keywords = new HashMap<>();
         keywords.put(Locale.ENGLISH,
-            new HashSet<>(Arrays.asList("Sleep", "sleep", "Await", "await", "Wait", "wait", "Stop", "stop", "Rest", "rest")));
+            new HashSet<>(Arrays.asList("Sleep", "sleep", "Await", "await", "Wait", "wait", "Stop", "stop", "Rest", "rest", "Pause", "pause")));
         return keywords;
     }
 
