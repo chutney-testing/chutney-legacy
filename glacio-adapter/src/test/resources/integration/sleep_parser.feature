@@ -14,4 +14,4 @@ Feature: Sleep feature
                 Do success
                 Execute pause during 200 ms
                 Do success
-                Execute stop for 200 ms
+                Execute pause for 200 ms
