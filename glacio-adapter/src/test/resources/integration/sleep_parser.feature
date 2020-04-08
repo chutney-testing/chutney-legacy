@@ -12,6 +12,6 @@ Feature: Sleep feature
             I wait for some more short periods of time
                 Execute await 300 ms
                 Do success
-                Execute stand by during 200 ms
+                Execute pause during 200 ms
                 Do success
                 Execute stop for 200 ms
