@@ -42,13 +42,7 @@ public class EngineIntegrationTest {
 
     @Test
     public void should_execute_simple_feature() {
-        // Given
-        String feature = fileContent("integration/simple_parser.feature");
-        List<StepDefinition> stepDefinitions = glacioAdapter.toChutneyStepDefinition(feature);
-
-        // When
-        List<StepExecutionReport> reports = new ArrayList<>();
-        stepDefinitions.forEach(stepDefinition -> reports.add(execute(stepDefinition)));
+        List<StepExecutionReport> reports = executeFeature("integration/simple_parser.feature");
 
         // Then
         assertThat(reports.get(0).status).isEqualTo(Status.SUCCESS); // Success/Debug scenario
@@ -57,13 +51,7 @@ public class EngineIntegrationTest {
 
     @Test
     public void should_execute_sleep_feature() {
-        // Given
-        String feature = fileContent("integration/sleep_parser.feature");
-        List<StepDefinition> stepDefinitions = glacioAdapter.toChutneyStepDefinition(feature);
-
-        // When
-        List<StepExecutionReport> reports = new ArrayList<>();
-        stepDefinitions.forEach(stepDefinition -> reports.add(execute(stepDefinition)));
+        List<StepExecutionReport> reports = executeFeature("integration/sleep_parser.feature");
 
         // Then
         assertThat(reports.get(0).status).isEqualTo(Status.SUCCESS);
@@ -71,13 +59,7 @@ public class EngineIntegrationTest {
 
     @Test
     public void should_execute_context_put_feature() {
-        // Given
-        String feature = fileContent("integration/context-put_parser.feature");
-        List<StepDefinition> stepDefinitions = glacioAdapter.toChutneyStepDefinition(feature);
-
-        // When
-        List<StepExecutionReport> reports = new ArrayList<>();
-        stepDefinitions.forEach(stepDefinition -> reports.add(execute(stepDefinition)));
+        List<StepExecutionReport> reports = executeFeature("integration/context-put_parser.feature");
 
         // Then
         assertThat(reports.get(0).status).isEqualTo(Status.SUCCESS);
@@ -85,13 +67,7 @@ public class EngineIntegrationTest {
 
     @Test
     public void should_execute_context_put_feature_with_default_parser() {
-        // Given
-        String feature = fileContent("integration/context-tasks_default-parser.feature");
-        List<StepDefinition> stepDefinitions = glacioAdapter.toChutneyStepDefinition(feature);
-
-        // When
-        List<StepExecutionReport> reports = new ArrayList<>();
-        stepDefinitions.forEach(stepDefinition -> reports.add(execute(stepDefinition)));
+        List<StepExecutionReport> reports = executeFeature("integration/context-tasks_default-parser.feature");
 
         // Then
         assertThat(reports.get(0).status).isEqualTo(Status.SUCCESS);
@@ -100,13 +76,7 @@ public class EngineIntegrationTest {
     @Test
     @Ignore
     public void should_execute_http_feature() {
-        // Given
-        String feature = fileContent("integration/http_parser.feature");
-        List<StepDefinition> stepDefinitions = glacioAdapter.toChutneyStepDefinition(feature);
-
-        // When
-        List<StepExecutionReport> reports = new ArrayList<>();
-        stepDefinitions.forEach(stepDefinition -> reports.add(execute(stepDefinition)));
+        List<StepExecutionReport> reports = executeFeature("integration/http_parser.feature");
 
         // Then
         assertThat(reports.get(0).status).isEqualTo(Status.SUCCESS);
@@ -115,13 +85,7 @@ public class EngineIntegrationTest {
     @Test
     @Ignore
     public void should_execute_sql_feature() {
-        // Given
-        String feature = fileContent("integration/sql_parser.feature");
-        List<StepDefinition> stepDefinitions = glacioAdapter.toChutneyStepDefinition(feature);
-
-        // When
-        List<StepExecutionReport> reports = new ArrayList<>();
-        stepDefinitions.forEach(stepDefinition -> reports.add(execute(stepDefinition)));
+        List<StepExecutionReport> reports = executeFeature("integration/sql_parser.feature");
 
         // Then
         assertThat(reports.get(0).status).isEqualTo(Status.SUCCESS);
@@ -130,16 +94,22 @@ public class EngineIntegrationTest {
     @Test
     @Ignore
     public void should_execute_blackbox_feature() {
+        List<StepExecutionReport> reports = executeFeature("integration/blackbox.feature");
+
+        // Then
+        assertThat(reports.get(0).status).isEqualTo(Status.SUCCESS);
+    }
+
+
+    private List<StepExecutionReport> executeFeature(String s) {
         // Given
-        String feature = fileContent("integration/blackbox.feature");
+        String feature = fileContent(s);
         List<StepDefinition> stepDefinitions = glacioAdapter.toChutneyStepDefinition(feature);
 
         // When
         List<StepExecutionReport> reports = new ArrayList<>();
         stepDefinitions.forEach(stepDefinition -> reports.add(execute(stepDefinition)));
-
-        // Then
-        assertThat(reports.get(0).status).isEqualTo(Status.SUCCESS);
+        return reports;
     }
 
     private StepExecutionReport execute(StepDefinition stepDefinition) {

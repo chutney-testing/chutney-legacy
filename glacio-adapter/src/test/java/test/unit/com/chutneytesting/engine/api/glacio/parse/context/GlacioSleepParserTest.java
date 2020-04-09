@@ -23,7 +23,6 @@ public class GlacioSleepParserTest {
         "sleep",
         "await",
         "wait",
-        "stop",
         "rest"
     })
     public void english_keywords(String keyword) {
