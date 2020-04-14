@@ -58,18 +58,18 @@
             </div>
             <div class="testcase-edition col-9">
                 <div class="row mt-0">
-                    <div class="col-7 border-right">
+                    <div class="col-8 border-right">
                         <div class="row font-weight-bold">
                             <span class="legend-title">{{'components.testcase.edition.blocks.steps' | translate}}</span>
                         </div>
-                        <div class="p-3 border drop-zone" dragula="COPYABLE"
+                        <div class="p-2 border drop-zone" dragula="COPYABLE"
                              [(dragulaModel)]="componentTasksCreated" id="right"
                              title="{{'components.shared.edition.draganddrop' | translate}}">
                             <div *ngFor="let component of componentTasksCreated; let i=index" class="card"
                                  formArrayName="componentsValues">
-                                <div class="card-body pointer" [formArrayName]="i">
+                                <div class="card-body pointer p-3" [formArrayName]="i">
                                     <div class="float-sm-right">
-                                        <button type="button" class="btn btn-outline-danger"
+                                        <button type="button" class="btn btn-sm btn-outline-danger"
                                                 (click)="removeComponent(i)">
                                             <span class="fa fa-trash"></span>
                                         </button>
@@ -81,10 +81,10 @@
                                             ({{component.implementation.identifier}})
                                         </span>
                                     <div *ngIf="component.dataSet?.length > 0" class="scenario-components-parameters">
-                                        <fieldset [ngClass]="collapseComponentsParameters[i] ? 'border-top pl-2' : 'border p-2'">
+                                        <fieldset class ="w-100" [ngClass]="collapseComponentsParameters[i] ? 'border-top pl-2' : 'border p-2'">
                                             <legend class="m-0 font-weight-bold"
                                                     (click)="switchCollapseComponentsParameters(i)">
-                                                    <span class="legend-title">
+                                                    <span class="legend-title pl-3">
                                                         {{'components.shared.edition.blocks.parameters' | translate}}
                                                     </span>
                                                 <button class="btn btn-sm btn-light btn-outline-dark ml-sm-1 border-0"
@@ -110,7 +110,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-5">
+                    <div class="col-4">
                         <div class="row font-weight-bold">
                             <span class="mr-5 cursor-default" (click)="switchCollapseParam()">{{'components.shared.edition.blocks.parameters' | translate}}</span>
                             <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
@@ -128,13 +128,21 @@
                             <div class="row" formArrayName="parameters"
                                  *ngFor="let parameter of componentForm.get('parameters')?.controls; let i = index;">
                                 <ng-container [formGroupName]="i">
-                                    <input type="text" class="col-4 form-control mr-2 small-text" formControlName="key"
-                                           placeholder="key"/>
-                                    <textarea class="col form-control mr-2 small-text" formControlName="value" rows="1"
-                                              placeholder="value"></textarea>
-                                    <button type="button" class="btn btn-outline-danger delete-button-height" (click)="removeParameter(i)">
-                                        <span class="fa fa-trash"></span>
-                                    </button>
+                                    <div  class="row w-100 mb-1">
+                                        <div class="col-9 pl-0">
+                                            <input type="text" class="form-control mr-2 small-text" formControlName="key"
+                                                   placeholder="key"/>
+                                        </div>
+                                        <div class="col pr-0">
+                                            <button type="button" class="btn btn-outline-danger delete-button-height float-right" (click)="removeParameter(i)">
+                                                <span class="fa fa-trash"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="w-100 pl-4">
+                                        <textarea class="form-control mr-2 small-text" formControlName="value" rows="1"
+                                                  placeholder="value"></textarea>
+                                    </div>
                                 </ng-container>
                             </div>
                         </ng-container>

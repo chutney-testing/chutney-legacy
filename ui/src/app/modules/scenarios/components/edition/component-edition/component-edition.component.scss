@@ -2,7 +2,7 @@
 
 .component-edition-content {
     position: fixed;
-    top: 64px;
+    top: 50px;
     width: calc(100vw - 50px);
 }
 
@@ -63,6 +63,7 @@
 .edition-body {
     .drop-zone {
         background-color: lightgray;
+        font-size: 12px;
         min-height: 60px;
     }
 }
@@ -73,12 +74,16 @@
     table {
         table-layout: fixed;
     }
+
+    .table-sm {
+        font-size: 12px;
+    }
 }
 
 .testcase-edition {
     position: absolute;
     right: 0;
-    max-height: calc(100vh - (64px + 120px + 10px));
+    max-height: calc(100vh - (50px + 120px + 10px));
     overflow-y: auto;
 }
 
@@ -157,7 +162,8 @@ fieldset legend {
 
 .table-scroll {
     overflow-y: auto;
-    height: calc(100vh - (64px /*menu*/ + (120px + 10px) /*header*/ + (1.5em + 0.75rem + 2px + 0.5rem + 2px) /*search*/ + 1rem /*inner table margin*/ + 0px));
+    overflow-x: hidden;
+    height: calc(100vh - (50px /*menu*/ + (120px + 10px) /*header*/ + (1.5em + 0.75rem + 2px + 0.5rem + 2px) /*search*/ + 1rem /*inner table margin*/ + 0px));
 }
 
 .small-text {
