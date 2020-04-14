@@ -3,8 +3,8 @@
 
 .menu-item {
     height: $nav-height;
-    padding: 16px;
-    font-size: 16px;
+    padding: 10px;
+    font-size: 15px;
     border: none;
     cursor: pointer;
     white-space: nowrap;
@@ -25,7 +25,7 @@
 }
 
 .menu-item--active {
-    font-size: 32px;
+    font-size: 20px;
     font-weight: bold;
     height: $nav-height;
     padding-top: 0;
@@ -35,7 +35,7 @@
     }
 
     img {
-        width: 28px;
-        height: 28px;
+        width: 20px;
+        height: 20px;
     }
 }
