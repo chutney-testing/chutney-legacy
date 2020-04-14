@@ -1,6 +1,6 @@
-<div class="card-body pointer" [formGroup]="cardForm">
+<div class="card-body pointer p-2" [formGroup]="cardForm">
     <div class="float-sm-right">
-        <button type="button" class="btn btn-outline-danger" (click)="delete()"
+        <button type="button" class="btn btn-sm btn-outline-danger" (click)="delete()"
             title="{{'global.actions.delete' | translate}}">
             <span class="fa fa-trash"></span>
         </button>
@@ -12,20 +12,20 @@
         ({{component.implementation.identifier}})
     </span>
     <div *ngIf="component.dataSet?.length > 0" class="scenario-components-parameters">
-        <fieldset [ngClass]="collapseComponentsParameters ? 'border-top pl-2' : 'border p-2'">
+        <fieldset class="w-100" [ngClass]="collapseComponentsParameters ? 'border-top pl-2' : 'border p-2'">
             <legend class="pl-3 pr-3 mb-0 font-weight-bold" (click)="switchCollapseComponentsParameter()">
                 <span class="legend-title">
                     {{'components.shared.edition.blocks.parameters' | translate}}
                 </span>
-                <button class="btn btn-light btn-outline-dark ml-sm-1 border-0" type="button"
+                <button class="btn btn-sm btn-light btn-outline-dark ml-sm-1 border-0" type="button"
                     title="{{(collapseComponentsParameters ? 'global.actions.show' : 'global.actions.hide') | translate}}">
                     <span class="fa" [ngClass]="collapseComponentsParameters ? 'fa-eye' : 'fa-eye-slash'"></span>
                 </button>
             </legend>
             <div *ngIf="!collapseComponentsParameters" class="form-group mb-0">
                 <div class="row" *ngFor="let parameter of component.dataSet; let j=index">
-                    <label class="col-2 col-form-label" for="{{'name' + componentIndex + '_' + j}}">{{parameter.key}}</label>
-                    <div class="col-10">
+                    <label class="col-3 col-form-label" for="{{'name' + componentIndex + '_' + j}}">{{parameter.key}}</label>
+                    <div class="col-9">
                         <input type="text" class="form-control" id="{{'name' + componentIndex + '_' + j}}" [formControlName]="j" />
                     </div>
                 </div>

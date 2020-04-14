@@ -41,7 +41,7 @@
             </div>
             <hr/>
             <div class="table-scroll-with-tags-filter">
-                <table class="table table-striped table-hover">
+                <table class="table table-sm table-striped table-hover">
                     <tbody dragula="COPYABLE" id="left"
                            [dragulaModel]="componentTasks | searchTextPipe: componentFilter:['name']">
                     <tr class="pointer d-flex mr-auto"
@@ -62,7 +62,7 @@
                    placeholder="{{'components.action.list.filter.placeholder' | translate}}"
                    [(ngModel)]="taskFilter"/>
             <div class="table-scroll">
-                <table class="table table-striped table-hover">
+                <table class="table table-sm table-striped table-hover">
                     <tbody>
                     <tr *ngFor="let task of tasks | searchTextPipe: taskFilter:['identifier']" (click)="select(task)"
                         class="pointer"
@@ -103,7 +103,7 @@
                         </div>
                         <div class="row">
                             <div class="col-1"></div>
-                            <textarea formControlName="name" rows="4"
+                            <textarea formControlName="name" rows="2"
                                       class="col form-control no-resize is-{{componentForm.get('name').valid ? '' : 'in'}}valid"
                                       placeholder="{{'components.shared.edition.fields.intention.placeholder' | translate}}">
                         </textarea>
@@ -130,7 +130,7 @@
                             </div>
                             <div class="col">
                                 <textarea formControlName="tags" type="text" class="form-control no-resize" name="tags"
-                                          id="tags" rows="3"></textarea>
+                                          id="tags" rows="2"></textarea>
                             </div>
                         </div>
                     </div>
@@ -144,7 +144,7 @@
                         </div>
                         <div class="bg-draggable mt-2 border"
                              title="{{'components.shared.edition.draganddrop' | translate}}">
-                            <div class="p-3"
+                            <div [ngClass]="componentTasksCreated.length > 0 ? 'drop-zone' : 'drop-zone-empty'"
                                  dragula="COPYABLE"
                                  [(dragulaModel)]="componentTasksCreated" id="right">
                                 <div *ngFor="let component of componentTasksCreated; let i=index"
