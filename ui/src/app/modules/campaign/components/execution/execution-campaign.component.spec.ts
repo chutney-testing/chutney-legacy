@@ -1,18 +1,19 @@
-import { TestBed, async, fakeAsync, flushMicrotasks, tick } from '@angular/core/testing';
+import { TestBed, async } from '@angular/core/testing';
+import { ActivatedRoute } from '@angular/router';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { TranslateModule } from '@ngx-translate/core';
-import { SharedModule } from '@shared/shared.module';
-import { MoleculesModule } from '../../../../molecules/molecules.module';
-
 import { MomentModule } from 'angular2-moment';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { of } from 'rxjs';
+
 import { CampaignExecutionComponent } from './execution-campaign.component';
-import { ActivatedRoute } from '@angular/router';
+import { SharedModule } from '@shared/shared.module';
+import { MoleculesModule } from '../../../../molecules/molecules.module';
 import { ActivatedRouteStub } from 'src/app/testing/activated-route-stub';
 import { Campaign, TestCase, CampaignExecutionReport, ScenarioExecutionReportOutline } from '@core/model';
 import { ScenarioService, CampaignService, EnvironmentAdminService } from '@core/services';
+import { TranslateTestingModule } from '../../../../testing/translate-testing.module';
+
 
 describe('CampaignExecutionComponent', () => {
 
@@ -38,7 +39,7 @@ describe('CampaignExecutionComponent', () => {
       imports: [
         HttpClientTestingModule,
         RouterTestingModule,
-        TranslateModule.forRoot(),
+        TranslateTestingModule,
         MoleculesModule,
         SharedModule,
         MomentModule,

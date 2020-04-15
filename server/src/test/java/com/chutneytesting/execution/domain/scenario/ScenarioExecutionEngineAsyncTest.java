@@ -11,7 +11,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.raw.RawTestCase;
@@ -27,6 +26,7 @@ import com.chutneytesting.execution.domain.report.StepExecutionReportCoreBuilder
 import com.chutneytesting.execution.domain.state.ExecutionStateRepository;
 import com.chutneytesting.execution.domain.state.RunningScenarioState;
 import com.chutneytesting.instrument.domain.Metrics;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.reactivex.Observable;
 import io.reactivex.observers.TestObserver;
 import io.reactivex.plugins.RxJavaPlugins;
@@ -273,10 +273,11 @@ public class ScenarioExecutionEngineAsyncTest {
             .build();
     }
 
-    private StepExecutionReportCore stepExecution(String stepName, ServerReportStatus stepStatus, long executionId, List<StepExecutionReportCore> subStepsReports) {
+    private StepExecutionReportCore stepExecution(String stepName, ServerReportStatus stepStatus, long executionId, List<StepExecutionReportCore> subStepsReports, Instant startDate) {
         return new StepExecutionReportCoreBuilder()
             .setName(stepName)
             .setExecutionId(executionId)
+            .setStartDate(startDate)
             .setStatus(stepStatus)
             .setSteps(subStepsReports)
             .createStepExecutionReport();
@@ -284,23 +285,24 @@ public class ScenarioExecutionEngineAsyncTest {
 
     private Triple<Pair<Observable<StepExecutionReportCore>, Long>, List<StepExecutionReportCore>, TestScheduler> stubEngineExecution(long executionId, long delay) {
         final List<String> stepNames = Arrays.asList("name", "sub 1", "sub 2");
+        Instant startDate = Instant.now();
         final List<StepExecutionReportCore> reportsList = Arrays.asList(
             stepExecution(stepNames.get(0), ServerReportStatus.NOT_EXECUTED, executionId,
                 Arrays.asList(
-                    stepExecution(stepNames.get(1), ServerReportStatus.NOT_EXECUTED, executionId, null),
-                    stepExecution(stepNames.get(2), ServerReportStatus.NOT_EXECUTED, executionId, null))),
+                    stepExecution(stepNames.get(1), ServerReportStatus.NOT_EXECUTED, executionId, null, startDate),
+                    stepExecution(stepNames.get(2), ServerReportStatus.NOT_EXECUTED, executionId, null, startDate)), startDate),
             stepExecution(stepNames.get(0), ServerReportStatus.RUNNING, executionId,
                 Arrays.asList(
-                    stepExecution(stepNames.get(1), ServerReportStatus.RUNNING, executionId, null),
-                    stepExecution(stepNames.get(2), ServerReportStatus.NOT_EXECUTED, executionId, null))),
+                    stepExecution(stepNames.get(1), ServerReportStatus.RUNNING, executionId, null, startDate),
+                    stepExecution(stepNames.get(2), ServerReportStatus.NOT_EXECUTED, executionId, null, startDate)), startDate),
             stepExecution(stepNames.get(0), ServerReportStatus.RUNNING, executionId,
                 Arrays.asList(
-                    stepExecution(stepNames.get(1), ServerReportStatus.SUCCESS, executionId, null),
-                    stepExecution(stepNames.get(2), ServerReportStatus.RUNNING, executionId, null))),
+                    stepExecution(stepNames.get(1), ServerReportStatus.SUCCESS, executionId, null, startDate),
+                    stepExecution(stepNames.get(2), ServerReportStatus.RUNNING, executionId, null, startDate)), startDate),
             stepExecution(stepNames.get(0), ServerReportStatus.SUCCESS, executionId,
                 Arrays.asList(
-                    stepExecution(stepNames.get(1), ServerReportStatus.SUCCESS, executionId, null),
-                    stepExecution(stepNames.get(2), ServerReportStatus.SUCCESS, executionId, null))));
+                    stepExecution(stepNames.get(1), ServerReportStatus.SUCCESS, executionId, null, startDate),
+                    stepExecution(stepNames.get(2), ServerReportStatus.SUCCESS, executionId, null, startDate)), startDate));
 
         Observable<StepExecutionReportCore> observable = Observable.fromIterable(reportsList);
         TestScheduler testScheduler = null;

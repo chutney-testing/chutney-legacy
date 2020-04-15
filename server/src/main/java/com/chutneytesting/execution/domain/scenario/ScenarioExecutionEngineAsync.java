@@ -22,6 +22,7 @@ import com.google.common.base.Joiner;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -219,7 +220,7 @@ public class ScenarioExecutionEngineAsync {
      */
     private DetachedExecution summarize(ScenarioExecutionReport scenarioReport, String environment) {
         return ImmutableExecutionHistory.DetachedExecution.builder()
-            .time(LocalDateTime.now())
+            .time(scenarioReport.report.startDate.atZone(ZoneId.systemDefault()).toLocalDateTime())
             .duration(scenarioReport.report.duration)
             .status(scenarioReport.report.status)
             .info(joinAndTruncateMessages(searchInfo(scenarioReport.report)))

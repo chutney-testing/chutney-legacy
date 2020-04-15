@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -111,6 +112,8 @@ public class CampaignExecutionEngine {
             throw new RuntimeException(e);
         } finally {
             campaignExecutionReport.endCampaignExecution();
+            LOGGER.info("Save campaign {} execution {} with status {}", campaign.id, campaignExecutionReport.executionId, campaignExecutionReport.status());
+            campaignRepository.saveReport(campaign.id, campaignExecutionReport);
             currentCampaignExecutionsStopRequests.remove(executionId);
             currentCampaignExecutions.remove(campaign.id);
         }
@@ -118,7 +121,11 @@ public class CampaignExecutionEngine {
 
     private CampaignExecutionReport execute(Campaign campaign, CampaignExecutionReport campaignExecutionReport, List<String> scenariosToExecute) {
         LOGGER.trace("Execute campaign {} : {}", campaign.id, campaign.title);
-        List<TestCase> testCases = scenariosToExecute.stream().map(id -> testCaseRepository.findById(id)).filter(t -> t !=null).collect(Collectors.toList());
+        List<TestCase> testCases = scenariosToExecute.stream()
+            .map(testCaseRepository::findById)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+
         campaignExecutionReport.initExecution(testCases, campaign.executionEnvironment());
         Stream<TestCase> scenarioStream;
         if(campaign.parallelRun) {
@@ -149,8 +156,6 @@ public class CampaignExecutionEngine {
                     .ifPresent(campaignExecutionReport::endScenarioExecution);
             }
         });
-        LOGGER.info("save" + campaignExecutionReport.status());
-        campaignRepository.saveReport(campaign.id, campaignExecutionReport);
         return campaignExecutionReport;
     }
 
