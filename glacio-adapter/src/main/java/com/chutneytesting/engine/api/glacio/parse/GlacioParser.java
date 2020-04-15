@@ -7,19 +7,31 @@ import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
 import com.github.fridujo.glacio.ast.Step;
 import java.util.Map;
+import java.util.Optional;
+import java.util.OptionalInt;
 
 public abstract class GlacioParser implements GlacioExecutableStepParser {
 
-    protected StepParser<Target> targetParser;
+    protected StepParser<Optional<Target>> targetParser;
     protected StepParser<Map<String, Object>> inputsParser;
     protected StepParser<Map<String, Object>> outputsParser;
     protected StepParser<StepStrategyDefinition> strategyParser;
 
+    public GlacioParser(StepParser<Optional<Target>> targetParser,
+                        StepParser<Map<String, Object>> inputsParser,
+                        StepParser<Map<String, Object>> outputsParser,
+                        StepParser<StepStrategyDefinition> strategyParser) {
+        this.targetParser = targetParser;
+        this.inputsParser = inputsParser;
+        this.outputsParser = outputsParser;
+        this.strategyParser = strategyParser;
+    }
+
     @Override
-    public final StepDefinition parseStep(Step step) {
+    public final StepDefinition mapToStepDefinition(Step step) {
         return new StepDefinition(
             parseStepName(step),
-            parseStepTarget(step),
+            parseStepTarget(step).orElse(null),
             parseTaskType(step),
             parseStepStrategy(step),
             parseTaskInputs(step),
@@ -42,7 +54,7 @@ public abstract class GlacioParser implements GlacioExecutableStepParser {
         return outputsParser.parseStep(step);
     }
 
-    private Target parseStepTarget(Step step) {
+    private Optional<Target> parseStepTarget(Step step) {
         return targetParser.parseStep(step);
     }
 
