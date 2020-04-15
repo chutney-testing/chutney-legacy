@@ -121,7 +121,7 @@
                 "actual": "Dernière execution complète",
                 "ok": "OK",
                 "ko": "KO",
-                "stop": "Stoppés"
+                "stop": "Stoppées"
             },
             "replay": "Rejouer les scénarios en échec",
             "on_env": "sur l'environnement",
