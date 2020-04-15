@@ -8,10 +8,10 @@
 .create-scenario {
     background: $vert2;
     border:none;
-    height: 120px;
+    height: 85px;
     font-size: 11px;
     text-align: center;
-    width:75px;
+    width:50px;
 
     button {
         color: $grisfonce2;
@@ -34,8 +34,8 @@
 }
 
 .header-scenario {
-    margin-top: 30px;
-    margin-bottom: 20px;
+    margin-top: 20px;
+    margin-bottom: 10px;
 }
 
 .btn-group-xs > .btn, .btn-xs {
@@ -82,6 +82,10 @@
 
 .table-link {
     color: #212529; // Bootstrap table default color
+}
+
+.table-sm {
+    font-size: 14px;
 }
 
 ::ng-deep {

@@ -1,17 +1,18 @@
 @import 'colors';
 
 .small-font {
-    font-size: 0.9em;
+    font-size: 0.5em;
 }
 
 .table-scroll {
     overflow-y: auto;
-    height: calc(100vh - (64px /*menu*/ + 10px /*row margin*/ + 38px /*menu buttons*/ + (1.5em + 0.75rem + 2px + 0.5rem + 2px) /*search*/ + 1rem /*inner table margin*/ + 0px));
+    height: calc(100vh - (50px /*menu*/ + 10px /*row margin*/ + 38px /*menu buttons*/ + (1.5em + 0.75rem + 2px + 0.5rem + 2px) /*search*/ + 1rem /*inner table margin*/ + 0px));
 }
 
 .table-scroll-with-tags-filter {
     overflow-y: auto;
-    height: calc(100vh - (64px /*menu*/ + 10px /*row margin*/ + 38px /*menu buttons*/ + (1.5em + 0.75rem + 2px + 0.5rem + 2px) /*search*/ + (35px + 102px) /*tags*/ + (1px + 2rem) /*hr*/ + 1rem /*inner table margin*/ + 0px));
+    overflow-x: hidden;
+    height: calc(100vh - (50px /*menu*/ + 10px /*row margin*/ + 38px /*menu buttons*/ + (1.5em + 0.75rem + 2px + 0.5rem + 2px) /*search*/ + (35px + 102px) /*tags*/ + (1px + 2rem) /*hr*/ + 1rem /*inner table margin*/ + 0px));
 }
 
 .tags-scroll {
@@ -24,7 +25,10 @@
 
     table {
         table-layout: fixed;
-        font-size: 0.9rem;
+    }
+
+    .table-sm {
+        font-size: 12px;
     }
 }
 
@@ -66,11 +70,11 @@
     right: 0;
 
     .edition-header {
-        height: 170px;
+        height: 140px;
     }
 
     .edition-body {
-        height: calc(100vh - (64px + 10px + 170px + 10px + 10px));
+        height: calc(100vh - (50px + 10px + 140px + 10px + 10px));
         overflow-y: auto;
     }
 }
@@ -81,4 +85,13 @@ textarea.no-resize {
 
 .bg-draggable {
     background-color: lightgray;
+}
+
+.drop-zone {
+    font-size: 12px;
+    padding: .5rem .5rem 0rem !important;
+}
+
+.drop-zone-empty {
+    padding: 2rem !important;
 }
