@@ -1,4 +1,4 @@
-package com.chutneytesting.engine.api.glacio.parse.context;
+package com.chutneytesting.engine.api.glacio.parse.specific;
 
 import static java.util.Locale.ENGLISH;
 import static java.util.Optional.ofNullable;
@@ -24,10 +24,10 @@ import java.util.regex.Pattern;
 public class GlacioContextPutParser extends GlacioParser {
 
     public GlacioContextPutParser() {
-        this.targetParser = EmptyParser.noTargetParser;
-        this.inputsParser = new ContextPutInputsParser();
-        this.outputsParser = EmptyParser.emptyMapParser;
-        this.strategyParser = EmptyParser.noStrategyParser;
+        super(EmptyParser.noTargetParser,
+            new ContextPutInputsParser(),
+            EmptyParser.emptyMapParser,
+            EmptyParser.noStrategyParser);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class GlacioContextPutParser extends GlacioParser {
         return keywords;
     }
 
-    private class ContextPutInputsParser implements StepParser<Map<String, Object>> {
+    private static class ContextPutInputsParser implements StepParser<Map<String, Object>> {
 
         private final Pattern ENTRIES_PATTERN = Pattern.compile("(?: )?(?<key>[^\"][^ ]+[^\"]|\"[^\"]+\") (?<value>[^\"][^ ]+[^\"]|\"[^\"]+\")");
 

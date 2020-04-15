@@ -1,4 +1,4 @@
-package test.unit.com.chutneytesting.engine.api.glacio.parse.context;
+package test.unit.com.chutneytesting.engine.api.glacio.parse.specific;
 
 import static org.apache.commons.lang3.StringUtils.capitalize;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -8,7 +8,7 @@ import static test.unit.com.chutneytesting.engine.api.glacio.parse.GlacioParserH
 import static test.unit.com.chutneytesting.engine.api.glacio.parse.GlacioParserHelper.buildSubStepsStepWithText;
 import static test.unit.com.chutneytesting.engine.api.glacio.parse.GlacioParserHelper.loopOverRandomString;
 
-import com.chutneytesting.engine.api.glacio.parse.context.GlacioContextPutParser;
+import com.chutneytesting.engine.api.glacio.parse.specific.GlacioContextPutParser;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -52,7 +52,7 @@ public class GlacioContextPutParserTest {
         Map<String, Object> expectedEntriesInput = buildExpectedEntriesInput(wordsCount / 2 + 1, "var ", "val ue");
 
         assertThat(
-            sut.parseStep(buildDataTableStepWithText("add variables", dataTableString)).inputs)
+            sut.mapToStepDefinition(buildDataTableStepWithText("add variables", dataTableString)).inputs)
             .containsExactly(entry("entries", expectedEntriesInput));
     }
 
@@ -62,7 +62,7 @@ public class GlacioContextPutParserTest {
         Map<String, Object> expectedEntriesInput = buildExpectedEntriesInput(count + 1, "var", "value");
 
         assertThat(
-            sut.parseStep(buildSubStepsStepWithText("add variables", subStepsString)).inputs)
+            sut.mapToStepDefinition(buildSubStepsStepWithText("add variables", subStepsString)).inputs)
             .containsExactly(entry("entries", expectedEntriesInput));
     }
 
@@ -72,7 +72,7 @@ public class GlacioContextPutParserTest {
         Map<String, Object> expectedEntriesInput = buildExpectedEntriesInput(count + 1, "var ", "val ue");
 
         assertThat(
-            sut.parseStep(buildSubStepsStepWithText("add variables", subStepsString)).inputs)
+            sut.mapToStepDefinition(buildSubStepsStepWithText("add variables", subStepsString)).inputs)
             .containsExactly(entry("entries", expectedEntriesInput));
     }
 

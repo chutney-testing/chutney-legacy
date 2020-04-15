@@ -49,7 +49,7 @@ public class ExecutableStepFactory {
     private StepDefinition delegateStepParsing(Pair<Locale, String> parserKeyword, Step step) {
         return Optional.ofNullable(glacioExecutableStepParsersLanguages.get(parserKeyword))
             .orElse(defaultGlacioParser)
-            .parseStep(step);
+            .mapToStepDefinition(step);
     }
 
     public boolean isExecutableStep(Locale lang, Step step) {

@@ -1,4 +1,4 @@
-package com.chutneytesting.engine.api.glacio.parse.context;
+package com.chutneytesting.engine.api.glacio.parse.specific;
 
 import static java.util.Optional.ofNullable;
 
@@ -20,10 +20,10 @@ public class GlacioSleepParser extends GlacioParser {
     private final static Pattern STEP_TEXT_PATTERN = Pattern.compile("^(?:[Ss]leep|[Aa]?[Ww]ait|[Rr]est|[Pp]ause) (?:(for|during) )?(?<duration>.*)$");
 
     public GlacioSleepParser() {
-        this.targetParser  = EmptyParser.noTargetParser;
-        this.inputsParser = GlacioSleepParser::parseTaskInputs;
-        this.outputsParser = EmptyParser.emptyMapParser;
-        this.strategyParser = EmptyParser.noStrategyParser;
+        super(EmptyParser.noTargetParser,
+            GlacioSleepParser::parseTaskInputs,
+            EmptyParser.emptyMapParser,
+            EmptyParser.noStrategyParser);
     }
 
     @Override

@@ -18,7 +18,7 @@ public class EmptyParserTest {
 
     @Test
     public void should_give_static_access_to_no_target_step_parser() {
-        assertThat(EmptyParser.noTargetParser.parseStep(step)).isNull();
+        assertThat(EmptyParser.noTargetParser.parseStep(step)).isEmpty();
     }
 
     @Test

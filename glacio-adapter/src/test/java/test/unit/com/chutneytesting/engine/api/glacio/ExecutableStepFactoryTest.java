@@ -93,7 +93,7 @@ public class ExecutableStepFactoryTest {
 
         // Then
         ArgumentCaptor<Step> stepArg = ArgumentCaptor.forClass(Step.class);
-        verify(parserMock).parseStep(stepArg.capture());
+        verify(parserMock).mapToStepDefinition(stepArg.capture());
         assertThat(stepArg.getValue().getText()).isEqualTo(parserKeyword + " " + stepName);
     }
 
@@ -110,7 +110,7 @@ public class ExecutableStepFactoryTest {
 
         // Then
         ArgumentCaptor<Step> stepArg = ArgumentCaptor.forClass(Step.class);
-        verify(defaultGlacioParser).parseStep(stepArg.capture());
+        verify(defaultGlacioParser).mapToStepDefinition(stepArg.capture());
         assertThat(stepArg.getValue().getText()).isEqualTo(unknownParserKeyword + " " + stepName);
     }
 

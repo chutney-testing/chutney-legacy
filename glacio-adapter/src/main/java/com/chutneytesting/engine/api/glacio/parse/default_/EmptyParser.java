@@ -7,12 +7,13 @@ import com.chutneytesting.engine.domain.environment.Target;
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
 import com.github.fridujo.glacio.ast.Step;
 import java.util.Map;
+import java.util.Optional;
 
 public final class EmptyParser {
 
     public static final StepParser<Map<String, Object>> emptyMapParser = new EmptyMapParser();
     public static final StepParser<StepStrategyDefinition> noStrategyParser = new NoStrategyParser();
-    public static final StepParser<Target> noTargetParser = new NoTargetParser();
+    public static final StepParser<Optional<Target>> noTargetParser = new NoTargetParser();
 
     private EmptyParser() {
     }
@@ -31,10 +32,10 @@ public final class EmptyParser {
         }
     }
 
-    private static class NoTargetParser implements StepParser<Target> {
+    private static class NoTargetParser implements StepParser<Optional<Target>> {
         @Override
-        public Target parseStep(Step step) {
-            return null;
+        public Optional<Target> parseStep(Step step) {
+            return Optional.empty();
         }
     }
 }
