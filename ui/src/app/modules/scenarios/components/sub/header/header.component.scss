@@ -30,7 +30,6 @@ button span:not(:first-child) {
         }
 
         .description{
-            margin-top: 10px;
             background-color: $vert2;
             font-size: 13px;
             font-weight: 300;
@@ -40,10 +39,9 @@ button span:not(:first-child) {
             letter-spacing: normal;
             color: #333333;
             margin-left: 40px;
-            height:20px;
             overflow: hidden;
         }
-        
+
         .header-tag {
             margin-left: 40px;
             height:25px;
