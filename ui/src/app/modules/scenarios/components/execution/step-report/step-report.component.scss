@@ -4,10 +4,10 @@
 
 @include border-animation(
     $animation_name: running-report-step-border-anim,
-    $fromWidth: 0 3px 0 0,
+    $fromWidth: 0 0 0 3px,
     $fromStyle: solid,
     $fromColor: rgba($grisfonce2, 0),
-    $toWidth: 0 5px 0 0,
+    $toWidth: 0 0 0 5px,
     $toStyle: solid,
     $toColor: rgba($grisfonce2, 50)
 );
