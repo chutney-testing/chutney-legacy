@@ -28,11 +28,13 @@ import com.chutneytesting.design.domain.environment.EnvironmentService;
 import com.chutneytesting.design.domain.environment.InvalidEnvironmentNameException;
 import com.chutneytesting.design.domain.environment.Target;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.assertj.core.util.Lists;
@@ -60,7 +62,8 @@ public class EnvironmentControllerV2Test {
     @Test
     @Parameters({
         "",
-        "env2, env1"
+        "env1, env2",
+        "c, b, a"
     })
     public void listEnvironments_returns_all_available(String[] environmentNames) throws Exception {
         // Given existing env and targets
@@ -71,8 +74,12 @@ public class EnvironmentControllerV2Test {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.length()", equalTo(environmentNames.length)));
 
-        for (int i = 0; i < environmentNames.length; i++) {
-            resultActions.andExpect(jsonPath("$.[" + i + "].description", equalTo(environmentNames[i] + " description")));
+        List<String> expectedEnvNames = stream(environmentNames)
+            .sorted(Comparator.naturalOrder())
+            .collect(Collectors.toList());
+
+        for (int i = 0; i < expectedEnvNames.size(); i++) {
+            resultActions.andExpect(jsonPath("$.[" + i + "].description", equalTo(expectedEnvNames.get(i) + " description")));
         }
     }
 

@@ -9,6 +9,7 @@ import com.chutneytesting.design.domain.environment.EnvironmentNotFoundException
 import com.chutneytesting.design.domain.environment.EnvironmentService;
 import com.chutneytesting.design.domain.environment.InvalidEnvironmentNameException;
 import com.chutneytesting.design.domain.environment.TargetNotFoundException;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -36,7 +37,10 @@ public class EnvironmentControllerV2 {
     @CrossOrigin(origins = "*")
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Set<EnvironmentMetadataDto> listEnvironments() {
-        return environmentService.listEnvironments().stream().map(EnvironmentMetadataDto::from).collect(Collectors.toCollection(LinkedHashSet::new));
+        return environmentService.listEnvironments().stream()
+            .map(EnvironmentMetadataDto::from)
+            .sorted(Comparator.comparing(e -> e.name))
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @CrossOrigin(origins = "*")
@@ -60,13 +64,19 @@ public class EnvironmentControllerV2 {
     @CrossOrigin(origins = "*")
     @GetMapping(path = "/{environmentName}/target", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Set<TargetMetadataDto> listTargets(@PathVariable("environmentName") String environmentName) throws EnvironmentNotFoundException {
-        return environmentService.listTargets(environmentName).stream().map(TargetMetadataDto::from).collect(Collectors.toCollection(LinkedHashSet::new));
+        return environmentService.listTargets(environmentName).stream()
+            .map(TargetMetadataDto::from)
+            .sorted(Comparator.comparing(t -> t.name))
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @CrossOrigin(origins = "*")
     @GetMapping(path = "/target", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Set<TargetMetadataDto> listTargets() throws EnvironmentNotFoundException {
-        return environmentService.listTargets().stream().map(TargetMetadataDto::from).collect(Collectors.toCollection(LinkedHashSet::new));
+        return environmentService.listTargets().stream()
+            .map(TargetMetadataDto::from)
+            .sorted(Comparator.comparing(t -> t.name))
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @CrossOrigin(origins = "*")
