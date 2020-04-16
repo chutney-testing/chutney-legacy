@@ -18,7 +18,6 @@ import { debounceTime, takeUntil } from 'rxjs/operators';
 import { ComponentService } from '@core/services';
 import { distinct, flatMap } from '@shared/tools';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EventManagerService } from '@shared';
 
 @Component({
     selector: 'chutney-create-component',
@@ -51,6 +50,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     editableComponent: ComponentTask;
     componentForm: FormGroup;
     componentTasksCreated: Array<ComponentTask> = [];
+    componentsParametersValues_subscriptions: Array<Array<Subscription>> = [];
     executionResult: any;
 
     collapseScenario = false;
@@ -71,7 +71,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         private dragulaService: DragulaService,
         private translate: TranslateService,
         private route: ActivatedRoute,
-        private eventManager: EventManagerService,
         private router: Router
     ) {
     }
@@ -165,7 +164,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.dragulaService.destroy('COPYABLE');
         this.unsubscribe$.complete();
         if (this.routeParamsSubscription) {
-            this.eventManager.destroy(this.routeParamsSubscription);
+            this.routeParamsSubscription.unsubscribe();
         }
     }
 
@@ -220,7 +219,20 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     removeStep(index: number) {
         this.componentTasksCreated.splice(index, 1);
-        (this.componentForm.controls.componentsParametersValues as FormArray).removeAt(index);
+        const componentsParametersValues = this.componentForm.controls.componentsParametersValues as FormArray;
+        componentsParametersValues.removeAt(index);
+
+        this.clearComponentsParametersValuesSubscriptions(index);
+        for (let componentIndex=index; componentIndex<this.componentTasksCreated.length; componentIndex++) {
+            const componentTask = this.componentTasksCreated[componentIndex];
+            const componentTaskParameters_sub = [];
+            componentTask.dataSet.forEach((parameter, parameterIndex) => {
+                const ctrl = (componentsParametersValues.controls[componentIndex] as FormArray).controls[parameterIndex] as FormControl;
+                const crtl_subscription: Subscription = this.setComponentsParametersValuesSubscriptions(ctrl, componentIndex, parameterIndex);
+                componentTaskParameters_sub.push(crtl_subscription);
+            });
+            this.componentsParametersValues_subscriptions.push(componentTaskParameters_sub);
+        }
     }
 
     resetData() {
@@ -307,6 +319,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
         this.clearFormArray(this.componentForm.controls.parameters as FormArray);
         this.clearFormArray(this.componentForm.controls.componentsParametersValues as FormArray);
+        this.clearComponentsParametersValuesSubscriptions();
     }
 
     clearFormArray (formArray: FormArray) {
@@ -323,24 +336,40 @@ export class CreateComponent implements OnInit, OnDestroy {
     private initComponentTasksValues() {
         const componentsParametersValues = this.componentForm.controls.componentsParametersValues as FormArray;
         this.clearFormArray(componentsParametersValues);
+        this.clearComponentsParametersValuesSubscriptions();
 
         this.componentTasksCreated.forEach((componentTask, componentIndex) => {
             const componentTaskParameters = this.formBuilder.array([]);
+            const componentTaskParameters_sub = [];
             componentTask.dataSet.forEach((parameter, parameterIndex) => {
                 const ctrl = this.formBuilder.control(parameter.value) as FormControl;
-                ctrl.valueChanges.pipe(
-                    debounceTime(250)
-                ).subscribe(() => {
-                    if (this.componentTasksCreated[componentIndex] &&
-                        componentsParametersValues.get(componentIndex.toString()).get(parameterIndex.toString())) {
-                        this.componentTasksCreated[componentIndex].dataSet[parameterIndex].value =
-                            componentsParametersValues.get(componentIndex.toString()).get(parameterIndex.toString()).value;
-                    }
-                });
+                const crtl_subscription: Subscription = this.setComponentsParametersValuesSubscriptions(ctrl, componentIndex, parameterIndex);
                 componentTaskParameters.push(ctrl);
+                componentTaskParameters_sub.push(crtl_subscription);
             });
             componentsParametersValues.push(componentTaskParameters);
+            this.componentsParametersValues_subscriptions.push(componentTaskParameters_sub);
         });
+    }
+
+    private setComponentsParametersValuesSubscriptions(ctrl: FormControl, componentIndex, parameterIndex) {
+        const componentsParametersValues = this.componentForm.controls.componentsParametersValues as FormArray;
+        return ctrl.valueChanges.pipe(
+            debounceTime(250)
+        ).subscribe(() => {
+            if (this.componentTasksCreated[componentIndex] &&
+                componentsParametersValues.get(componentIndex.toString()).get(parameterIndex.toString())) {
+                this.componentTasksCreated[componentIndex].dataSet[parameterIndex].value =
+                    componentsParametersValues.get(componentIndex.toString()).get(parameterIndex.toString()).value;
+            }
+        });
+    }
+
+    private clearComponentsParametersValuesSubscriptions(fromIndex: number = 0): void {
+        for (let i=fromIndex; i<this.componentsParametersValues_subscriptions.length; i++) {
+            this.componentsParametersValues_subscriptions[i].forEach(sub => sub.unsubscribe());
+        }
+        this.componentsParametersValues_subscriptions.splice(fromIndex, this.componentsParametersValues_subscriptions.length);
     }
 
     saveComponent(componentTask: ComponentTask) {
