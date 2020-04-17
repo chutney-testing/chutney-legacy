@@ -1,7 +1,8 @@
-import { escapeRegExp } from '@shared/tools';
 import { FunctionalStep } from '@model';
-import { distinct } from '@shared/tools';
-import { isNullOrBlankString, escapeHtml } from '@shared/tools';
+
+import { escapeRegExp } from './regexp-utils';
+import { distinct } from './array-utils';
+import { isNullOrBlankString, escapeHtml } from './string-utils';
 
 
 export function getStepParamRegExp(stepParamName: string, no_suffix: string = ''): RegExp {

@@ -1,13 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { FormGroup, FormArray, FormBuilder } from '@angular/forms';
 import { Subscription, combineLatest } from 'rxjs';
 import { DragulaService } from 'ng2-dragula';
-import { debounceTime } from 'rxjs/operators';
 
-import { FormGroup, FormArray, FormBuilder, FormControl } from '@angular/forms';
 import { ComponentTask, KeyValue, ScenarioComponent } from '@model';
-import {ComponentService} from '@core/services';
-import { newInstance } from '@shared/tools/array-utils';
+import { ComponentService } from '@core/services';
 import { CanDeactivatePage } from '@core/guards';
 
 @Component({
@@ -23,13 +21,11 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
     componentFilter: string;
     componentForm: FormGroup = this.formBuilder.group({
         parameters: this.formBuilder.array([]),
-        componentsValues: this.formBuilder.array([]),
         tags: ''
     });
     componentTasksCreated: Array<ComponentTask> = [];
 
     collapseParam = true;
-    collapseComponentsParameters: Array<boolean> = [];
 
     modificationsSaved = false;
 
@@ -43,7 +39,6 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
     }
 
     private loadSubscription: Subscription;
-    private dragEndSubscription: Subscription;
 
     ngOnInit() {
         this.initDragAndDrop();
@@ -65,7 +60,6 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
     ngOnDestroy() {
         this.loadSubscription.unsubscribe();
         this.dragulaService.destroy('COPYABLE');
-        this.dragEndSubscription.unsubscribe();
     }
 
     save() {
@@ -112,23 +106,13 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
 
     removeComponent(index: number) {
         this.componentTasksCreated.splice(index, 1);
-        this.collapseComponentsParameters.splice(index, 1);
-        (this.componentForm.controls.componentsValues as FormArray).removeAt(index);
     }
 
     switchCollapseParam() {
         this.collapseParam = !this.collapseParam;
     }
 
-    switchCollapseComponentsParameters(index: number) {
-        this.collapseComponentsParameters[index] = !this.collapseComponentsParameters[index];
-        this.collapseComponentsParameters = newInstance(this.collapseComponentsParameters);
-    }
-
     private initDragAndDrop() {
-        this.dragEndSubscription = this.dragulaService.dragend('COPYABLE').subscribe(() => {
-            this.initFormComponentRefsParametersValues();
-        });
         this.dragulaService.createGroup('COPYABLE', {
             copy: (el, source) => {
                 return source.id === 'left';
@@ -150,10 +134,8 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
                     this.scenarioComponent = componentScenario;
                     componentScenario.componentSteps.forEach((componentTask: ComponentTask) => {
                         this.componentTasksCreated.push(componentTask.clone());
-                        this.collapseComponentsParameters = this.componentTasksCreated.map(() => true);
                     });
                     this.initFormComponentParameters();
-                    this.initFormComponentRefsParametersValues();
                     this.componentForm.controls['tags'].setValue(this.scenarioComponent.tags);
                     if (duplicate) {
                         this.scenarioComponent.id = null;
@@ -166,29 +148,6 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
                 }
             );
         }
-    }
-
-    private initFormComponentRefsParametersValues() {
-        this.collapseComponentsParameters = [];
-        this.componentForm.controls.componentsValues = this.formBuilder.array([]);
-        const componentsValues = this.componentForm.controls.componentsValues as FormArray;
-
-        this.componentTasksCreated.forEach((componentTask, componentIndex) => {
-            const componentTastParameters = this.formBuilder.array([]);
-            componentTask.dataSet.forEach((parameter, parameterIndex) => {
-                const ctrl = this.formBuilder.control(parameter.value) as FormControl;
-                ctrl.valueChanges.pipe(
-                    debounceTime(500)
-                ).subscribe(() => {
-                    this.componentTasksCreated[componentIndex].dataSet[parameterIndex].value =
-                        componentsValues.get(componentIndex.toString()).get(parameterIndex.toString()).value;
-                });
-                componentTastParameters.push(ctrl);
-            });
-            componentsValues.push(componentTastParameters);
-
-            this.collapseComponentsParameters.push(true);
-        });
     }
 
     private initFormComponentParameters() {
@@ -222,7 +181,7 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
         if (this.scenarioComponent.componentSteps.length === this.componentTasksCreated.length) {
             for (let i = 0; i < this.componentTasksCreated.length; i++) {
                 scenarioNotModified = scenarioNotModified &&
-                    this.scenarioComponent.componentSteps[i].id ===  this.componentTasksCreated[i].id;
+                    this.scenarioComponent.componentSteps[i].id === this.componentTasksCreated[i].id;
             }
         } else {
             scenarioNotModified = false;
@@ -234,7 +193,7 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
         if (this.scenarioComponent.tags.length === tags.length) {
             for (let i = 0; i < this.scenarioComponent.tags.length; i++) {
                 scenarioNotModified = scenarioNotModified &&
-                tags[i] === this.scenarioComponent.tags[i];
+                    tags[i] === this.scenarioComponent.tags[i];
             }
         } else {
             scenarioNotModified = false;
@@ -246,21 +205,20 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
             for (let i = 0; i < this.scenarioComponent.parameters.length; i++) {
                 const parameter = parameters.get(i.toString()) as FormGroup;
                 scenarioNotModified = scenarioNotModified &&
-                                        parameter.get('key').value === this.scenarioComponent.parameters[i].key &&
-                                        parameter.get('value').value === this.scenarioComponent.parameters[i].value;
+                    parameter.get('key').value === this.scenarioComponent.parameters[i].key &&
+                    parameter.get('value').value === this.scenarioComponent.parameters[i].value;
             }
         } else {
             scenarioNotModified = false;
         }
 
         // Check component dataset
-        const componentsValues = this.componentForm.controls.componentsValues as FormArray;
-        if (this.scenarioComponent.componentSteps.length === componentsValues.length) {
+        if (this.scenarioComponent.componentSteps.length === this.componentTasksCreated.length) {
             this.scenarioComponent.componentSteps.forEach((componentTask, componentIndex) => {
-                if (componentTask.dataSet.length === componentsValues.get(componentIndex.toString()).value.length) {
+                if (this.componentTasksCreated[componentIndex].dataSet.length === this.componentTasksCreated[componentIndex].dataSet.length) {
                     componentTask.dataSet.forEach((parameter, parameterIndex) => {
                         scenarioNotModified = scenarioNotModified &&
-                                parameter.value === componentsValues.get(componentIndex.toString()).get(parameterIndex.toString()).value;
+                            parameter.value === this.componentTasksCreated[componentIndex].dataSet[parameterIndex].value;
                     });
                 } else {
                     scenarioNotModified = false;

@@ -1,6 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { combineLatest, Observable, Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { DragulaService } from 'ng2-dragula';
+
 import {
     ComponentTask,
     Implementation,
@@ -12,12 +17,8 @@ import {
     Task
 } from '@model';
 import { delay } from '@shared/tools/async-utils';
-import { combineLatest, Observable, Subject, Subscription } from 'rxjs';
-import { DragulaService } from 'ng2-dragula';
-import { debounceTime, takeUntil } from 'rxjs/operators';
 import { ComponentService } from '@core/services';
 import { distinct, flatMap } from '@shared/tools';
-import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
     selector: 'chutney-create-component',
@@ -38,8 +39,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     message: string;
 
     // const message
-    actionUpdatedMessage;
-    actionCreatedMessage;
+    private savedMessage;
 
     // Simple component
     taskFilter: string;
@@ -50,7 +50,6 @@ export class CreateComponent implements OnInit, OnDestroy {
     editableComponent: ComponentTask;
     componentForm: FormGroup;
     componentTasksCreated: Array<ComponentTask> = [];
-    componentsParametersValues_subscriptions: Array<Array<Subscription>> = [];
     executionResult: any;
 
     collapseScenario = false;
@@ -86,7 +85,9 @@ export class CreateComponent implements OnInit, OnDestroy {
             this.componentTasks = results[1];
 
             this.setSelectedTags();
-            this.routeParamsSubscription = this.route.params.subscribe((params) => {
+            this.routeParamsSubscription = this.route.params.pipe(
+                takeUntil(this.unsubscribe$)
+            ).subscribe((params) => {
                 this.initSelectedComponent(params['id']);
             });
         });
@@ -96,30 +97,18 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.componentForm = this.formBuilder.group({
             name: ['', Validators.required],
             parameters: this.formBuilder.array([]),
-            componentsParametersValues: this.formBuilder.array([]),
             tags: '',
             strategy: new FormControl()
         });
     }
 
     private initTranslation() {
-        this.translate.get('components.action.messages.update').subscribe((res: string) => {
-            this.actionUpdatedMessage = res;
-        });
-        this.translate.get('components.action.messages.create').subscribe((res: string) => {
-            this.actionCreatedMessage = res;
+        this.translate.get('global.actions.done.saved').subscribe((res: string) => {
+            this.savedMessage = res;
         });
     }
 
     private initDragAndDrop() {
-        this.dragulaService.dragend('COPYABLE')
-            .pipe(
-                takeUntil(this.unsubscribe$)
-            )
-            .subscribe(
-                () => this.initComponentTasksValues()
-            );
-
         this.dragulaService.createGroup('COPYABLE', {
             copy: (el, source) => {
                 return source.id === 'left';
@@ -163,13 +152,10 @@ export class CreateComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.dragulaService.destroy('COPYABLE');
         this.unsubscribe$.complete();
-        if (this.routeParamsSubscription) {
-            this.routeParamsSubscription.unsubscribe();
-        }
     }
 
     initNewComponent() {
-        this.setComponentForm(new ComponentTask('', null, [], [], [], [], null));
+        this.fillFormValuesWith(new ComponentTask('', null, [], [], [], [], null));
     }
 
     editComponentTask(componentToEdit: ComponentTask) {
@@ -179,8 +165,7 @@ export class CreateComponent implements OnInit, OnDestroy {
             this.componentService.findParents(componentToEdit.id).subscribe(
                 (res) => { this.parents = res; }
             );
-
-            this.setComponentForm(componentToEdit);
+            this.fillFormValuesWith(componentToEdit);
         } else {
             this.editableComponent = null;
             this.componentTasksCreated = [];
@@ -219,20 +204,6 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     removeStep(index: number) {
         this.componentTasksCreated.splice(index, 1);
-        const componentsParametersValues = this.componentForm.controls.componentsParametersValues as FormArray;
-        componentsParametersValues.removeAt(index);
-
-        this.clearComponentsParametersValuesSubscriptions(index);
-        for (let componentIndex=index; componentIndex<this.componentTasksCreated.length; componentIndex++) {
-            const componentTask = this.componentTasksCreated[componentIndex];
-            const componentTaskParameters_sub = [];
-            componentTask.dataSet.forEach((parameter, parameterIndex) => {
-                const ctrl = (componentsParametersValues.controls[componentIndex] as FormArray).controls[parameterIndex] as FormControl;
-                const crtl_subscription: Subscription = this.setComponentsParametersValuesSubscriptions(ctrl, componentIndex, parameterIndex);
-                componentTaskParameters_sub.push(crtl_subscription);
-            });
-            this.componentsParametersValues_subscriptions.push(componentTaskParameters_sub);
-        }
     }
 
     resetData() {
@@ -318,58 +289,12 @@ export class CreateComponent implements OnInit, OnDestroy {
         }
 
         this.clearFormArray(this.componentForm.controls.parameters as FormArray);
-        this.clearFormArray(this.componentForm.controls.componentsParametersValues as FormArray);
-        this.clearComponentsParametersValuesSubscriptions();
     }
 
     clearFormArray (formArray: FormArray) {
         while (formArray.length !== 0) {
             formArray.removeAt(0);
         }
-    }
-
-    private setComponentForm(selectedComponent: ComponentTask) {
-        this.fillFormValuesWith(selectedComponent);
-        this.initComponentTasksValues();
-    }
-
-    private initComponentTasksValues() {
-        const componentsParametersValues = this.componentForm.controls.componentsParametersValues as FormArray;
-        this.clearFormArray(componentsParametersValues);
-        this.clearComponentsParametersValuesSubscriptions();
-
-        this.componentTasksCreated.forEach((componentTask, componentIndex) => {
-            const componentTaskParameters = this.formBuilder.array([]);
-            const componentTaskParameters_sub = [];
-            componentTask.dataSet.forEach((parameter, parameterIndex) => {
-                const ctrl = this.formBuilder.control(parameter.value) as FormControl;
-                const crtl_subscription: Subscription = this.setComponentsParametersValuesSubscriptions(ctrl, componentIndex, parameterIndex);
-                componentTaskParameters.push(ctrl);
-                componentTaskParameters_sub.push(crtl_subscription);
-            });
-            componentsParametersValues.push(componentTaskParameters);
-            this.componentsParametersValues_subscriptions.push(componentTaskParameters_sub);
-        });
-    }
-
-    private setComponentsParametersValuesSubscriptions(ctrl: FormControl, componentIndex, parameterIndex) {
-        const componentsParametersValues = this.componentForm.controls.componentsParametersValues as FormArray;
-        return ctrl.valueChanges.pipe(
-            debounceTime(250)
-        ).subscribe(() => {
-            if (this.componentTasksCreated[componentIndex] &&
-                componentsParametersValues.get(componentIndex.toString()).get(parameterIndex.toString())) {
-                this.componentTasksCreated[componentIndex].dataSet[parameterIndex].value =
-                    componentsParametersValues.get(componentIndex.toString()).get(parameterIndex.toString()).value;
-            }
-        });
-    }
-
-    private clearComponentsParametersValuesSubscriptions(fromIndex: number = 0): void {
-        for (let i=fromIndex; i<this.componentsParametersValues_subscriptions.length; i++) {
-            this.componentsParametersValues_subscriptions[i].forEach(sub => sub.unsubscribe());
-        }
-        this.componentsParametersValues_subscriptions.splice(fromIndex, this.componentsParametersValues_subscriptions.length);
     }
 
     saveComponent(componentTask: ComponentTask) {
@@ -387,7 +312,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     showMessage() {
         (async () => {
-            this.message = 'Saved';
+            this.message = this.savedMessage;
             await delay(3000);
             this.message = null;
         })();

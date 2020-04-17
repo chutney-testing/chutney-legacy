@@ -147,15 +147,11 @@
                             <div [ngClass]="componentTasksCreated.length > 0 ? 'drop-zone' : 'drop-zone-empty'"
                                  dragula="COPYABLE"
                                  [(dragulaModel)]="componentTasksCreated" id="right">
-                                <div *ngFor="let component of componentTasksCreated; let i=index"
-                                     formArrayName="componentsParametersValues"
-                                     class="card mb-2">
-                                    <chutney-card-component
-                                        [cardForm]="componentForm.controls.componentsParametersValues.controls[i]"
+                                <div *ngFor="let component of componentTasksCreated; let i=index" class="card mb-2">
+                                    <chutney-component-card
                                         [component]="component"
-                                        [componentIndex]="i"
                                         (deleteEvent)="removeStep(i)">
-                                    </chutney-card-component>
+                                    </chutney-component-card>
                                 </div>
                             </div>
                         </div>

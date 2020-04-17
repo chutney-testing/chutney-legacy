@@ -1,0 +1,22 @@
+$fontsize: 0.7rem;
+
+.scenario-components-parameters {
+    font-size: $fontsize;
+
+    legend {
+        font-size: $fontsize;
+        width: auto;
+    }
+}
+
+.scenario-components-identifier {
+    font-size: $fontsize;
+}
+
+.param-value-input {
+    font-size: inherit;
+}
+
+.btn-sm {
+    font-size: $fontsize;
+}
