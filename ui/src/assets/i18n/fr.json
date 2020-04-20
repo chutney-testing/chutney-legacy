@@ -11,7 +11,9 @@
             "documentation": "Documentation",
             "showroom": "Showroom",
             "component": "Composants",
-            "backups": "Sauvegardes"
+            "backups": "Sauvegardes",
+            "variable": "Variable",
+            "dataset": "Dataset"
         }
     },
     "home": {

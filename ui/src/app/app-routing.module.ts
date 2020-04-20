@@ -22,6 +22,7 @@ export const appRoutes: Routes = [
             { path: 'component', loadChildren: './modules/component/component.module#ComponentModule' },
             { path: 'variable', loadChildren: './modules/global-variable/global-variable.module#GlobalVariableModule' },
             { path: 'backups', loadChildren: './modules/backups/backups.module#BackupsModule' },
+            { path: 'dataset', loadChildren: './modules/dataset/dataset.module#DatasetModule' },
         ]
     },
     { path: 'login', component: LoginComponent },
