@@ -10,3 +10,4 @@ export * from './scenario-search.pipe';
 export * from './without-scenario-pipe';
 export * from './component-search.pipe';
 export * from './scenario-search-campaign.pipe';
+export * from './dataset-search.pipe';

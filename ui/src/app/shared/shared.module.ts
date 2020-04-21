@@ -33,6 +33,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MomentModule } from 'angular2-moment';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ThumbnailPipe } from '@shared/pipes/thumbnail.pipe';
+import { DataSetSearchPipe } from './pipes/dataset-search.pipe';
 
 @NgModule({
     imports: [
@@ -65,6 +66,7 @@ import { ThumbnailPipe } from '@shared/pipes/thumbnail.pipe';
         EnvironmentComboComponent,
         ExecutionBadgeComponent,
         ThumbnailPipe,
+        DataSetSearchPipe,
         ComponentCardComponent
     ],
     exports: [
@@ -89,6 +91,7 @@ import { ThumbnailPipe } from '@shared/pipes/thumbnail.pipe';
         EnvironmentComboComponent,
         ExecutionBadgeComponent,
         ThumbnailPipe,
+        DataSetSearchPipe,
         ComponentCardComponent
     ],
     entryComponents: [
