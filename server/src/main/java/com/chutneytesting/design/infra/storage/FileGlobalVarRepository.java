@@ -18,8 +18,10 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -54,7 +56,8 @@ public class FileGlobalVarRepository implements GlobalvarRepository {
             pathStream
                 .filter(Files::isRegularFile)
                 .map(FileUtils::getNameWithoutExtension)
-                .collect(Collectors.toSet()));
+                .sorted(Comparator.naturalOrder())
+                .collect(Collectors.toCollection(LinkedHashSet::new)));
     }
 
     @Override

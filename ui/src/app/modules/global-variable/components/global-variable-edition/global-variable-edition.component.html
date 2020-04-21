@@ -16,11 +16,12 @@
                placeholder="Add a new file" [(ngModel)]="currentFileName"/>
     </div>
     <div class="box2">
-        <button type="button"
-                class="btn btn-danger"
-                (click)="deleteFile()">
-            <span class="fa fa-trash"></span><br/>
-        </button>
+        <chutney-delete-confirm-dialog
+            [dialogMessage]="('global.confirm.question' | translate) + ' ' + ('global.actions.delete' | translate) + '\n' + currentFileName"
+            [label]="'Delete file'"
+            [disabled]="null"
+            (deleteEvent)="deleteFile()">
+        </chutney-delete-confirm-dialog>
     </div>
     <div class="box2">
         <button type="button" class="btn btn-primary m-2 box2" (click)="help = !help">
