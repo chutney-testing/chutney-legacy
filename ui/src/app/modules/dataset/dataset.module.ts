@@ -13,6 +13,8 @@ import { SharedModule } from '@shared/shared.module';
 
 import { DatasetListComponent } from './components/dataset-list/dataset-list.component';
 import { DatasetRoute } from './dataset.routes';
+import { MoleculesModule } from 'src/app/molecules/molecules.module';
+import { AngularMultiSelectModule } from 'angular2-multiselect-dropdown';
 
 
 const ROUTES = [
@@ -28,7 +30,9 @@ const ROUTES = [
         SharedModule,
         NgbModule,
         MomentModule,
-        TranslateModule
+        TranslateModule,
+        MoleculesModule,
+        AngularMultiSelectModule
     ],
     declarations: [
         DatasetListComponent
