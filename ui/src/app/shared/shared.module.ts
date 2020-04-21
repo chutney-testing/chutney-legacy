@@ -34,6 +34,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ThumbnailPipe } from '@shared/pipes/thumbnail.pipe';
 import {AceEditorComponent} from "@shared/ace-editor/ace-editor.component";
 import {AceEditorModule} from "ng2-ace-editor";
+import { DataSetSearchPipe } from './pipes/dataset-search.pipe';
 
 @NgModule({
     imports: [
@@ -68,6 +69,7 @@ import {AceEditorModule} from "ng2-ace-editor";
         ThumbnailPipe,
         ComponentCardComponent,
         AceEditorComponent
+        DataSetSearchPipe,
     ],
     exports: [
         TruncatePipe,
@@ -92,6 +94,7 @@ import {AceEditorModule} from "ng2-ace-editor";
         ThumbnailPipe,
         ComponentCardComponent,
         AceEditorComponent
+        DataSetSearchPipe,
     ],
     entryComponents: [
         TechnicalStepComponent

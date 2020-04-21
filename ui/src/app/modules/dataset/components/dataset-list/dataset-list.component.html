@@ -1,3 +1,63 @@
-<div class="row p-5">
-    TODO
+<div class="p-3">
+    <div class="row">
+        <div class="col-md-5">
+            <chutney-forms-search-field [id]="'dataset-search'" [placeholder]="'global.actions.search' | translate"
+                (searchInputEvent)="filterSearchChange($event)">
+            </chutney-forms-search-field>
+        </div>
+        <div class="col-md-4">
+            <button type="button" class="btn btn-outline-primary" (click)="createDataSet()">
+                <span class="fa fa-plus" aria-hidden="true"></span> {{ 'global.actions.create' | translate }}
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <angular2-multiselect [data]="itemList"
+                [settings]="settings" 
+                (onSelect)="onItemSelect($event)"
+                (onDeSelect)="OnItemDeSelect($event)" 
+                formControlName="tags">
+            </angular2-multiselect>
+        </div>
+    </div>
+
+    <div class="row">
+        <table class="table table-sm table-striped table-hover">
+            <thead><tr>
+                <th scope="col" class="w5">&nbsp;</th>
+                <th scope="col" class="w20">Name</th>
+                <th scope="col" class="w10">Tags</th>
+                <th scope="col" class="w60">Description</th>
+                <th scope="col" class="w5">LastUpdated</th>
+            </tr></thead>
+            <tbody><tr *ngFor="let dataset of (datasets |  dataSetSearch : selectedTags | searchTextPipe  : dataSetFilter : ['name', 'description'])"
+                [routerLink]="['/dataset', dataset.id]"
+                style="cursor: pointer">
+
+                <td><span>{{dataset.id}}</span></td>
+                <td><span>{{dataset.name}}</span></td>
+
+                <td>
+                    <span *ngIf="dataset.tags.length <= 3">
+                        <span *ngFor="let tag of dataset.tags" 
+                        class="chutney-tag chutney-tag-selected">{{tag}}</span>
+                    </span>
+                    <span *ngIf="dataset.tags.length > 3">
+                        <span *ngFor="let tag of dataset.tags | slice:0:2" 
+                            class="chutney-tag chutney-tag-selected">{{tag}}</span>
+                        <button type="button" class="chutney-tag chutney-tag-selected"
+                            ngbPopover="{{dataset.tags}}" placement="left"
+                            triggers="mouseenter:mouseleave" container="body">
+                            ...
+                        </button>
+                    </span>
+                </td>
+
+                <td><span>{{dataset.description}}</span></td>
+                <td><span>{{dataset.lastUpdated | amLocale:'fr' | amTimeAgo}}</span></td>
+            </tr></tbody>
+        </table>
+
+    </div>
 </div>

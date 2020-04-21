@@ -13,3 +13,4 @@ export * from './entry.model';
 export * from './task.model';
 export * from './table.model';
 export * from './sql-result.model';
+export * from './dataset.model';
