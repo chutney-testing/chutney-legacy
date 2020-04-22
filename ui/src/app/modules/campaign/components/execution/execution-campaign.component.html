@@ -132,7 +132,8 @@
                     <tr>
                         <th scope="col" class="w5">{{ 'campaigns.execution.scenarios.item.header.id' | translate }}</th>
                         <th scope="col" class="w5">{{ 'campaigns.execution.scenarios.item.header.state' | translate }}</th>
-                        <th scope="col" class="w90">{{ 'campaigns.execution.scenarios.item.header.title' | translate }}</th>
+                        <th scope="col" class="w80">{{ 'campaigns.execution.scenarios.item.header.title' | translate }}</th>
+                        <th scope="col" class="w10">{{ 'campaigns.execution.scenarios.item.header.duration' | translate }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -150,6 +151,9 @@
                                 title="{{ 'campaigns.execution.scenarios.item.executions.link' | translate }} {{scenarioReportOutline.scenarioName}}">
                                 {{scenarioReportOutline.scenarioName}}
                             </a>
+                        </td>
+                        <td>
+                                <span class=" small_text">{{scenarioReportOutline.duration | duration:'short' }}</span>
                         </td>
                     </tr>
                 </tbody>

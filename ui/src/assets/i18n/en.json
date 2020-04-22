@@ -132,7 +132,8 @@
                 "header": {
                     "title": "Title",
                     "tags": "Tags",
-                    "creation": "Created"
+                    "creation": "Created",
+                    "duration": "Duration"
                 },
                 "title": "Campaign scenarios",
                 "result": "Execution result",
