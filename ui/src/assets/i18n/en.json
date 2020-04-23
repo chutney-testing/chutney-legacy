@@ -132,8 +132,7 @@
                 "header": {
                     "title": "Title",
                     "tags": "Tags",
-                    "creation": "Created",
-                    "duration": "Duration"
+                    "creation": "Created"
                 },
                 "title": "Campaign scenarios",
                 "result": "Execution result",
@@ -141,7 +140,8 @@
                     "header": {
                         "id": "Id",
                         "state": "State",
-                        "title": "Title"
+                        "title": "Title",
+                        "duration": "Duration"
                     },
                     "title": "Go to the executions of",
                     "description.none": "No description",
