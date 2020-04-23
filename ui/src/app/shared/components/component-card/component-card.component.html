@@ -1,32 +1,33 @@
-<div class="card-body pointer p-2" [formGroup]="cardForm">
+<div *ngIf="component" id="component-{{uid}}" class="card-body pointer p-2" [formGroup]="cardForm">
     <div class="float-sm-right">
         <button type="button" class="btn btn-sm btn-outline-danger" (click)="delete()"
-            title="{{'global.actions.delete' | translate}}">
+                title="{{'global.actions.delete' | translate}}">
             <span class="fa fa-trash"></span>
         </button>
     </div>
     <span class="fa" [ngClass]="component.implementation ? 'fa-clone' : 'fa-cubes'"></span>
     <span class="ml-2">{{component.name}}</span>
     <span *ngIf="component.implementation?.identifier"
-        class="scenario-components-identifier mr-3 font-italic pl-3 float-right font-weight-bold">
+          class="scenario-components-identifier mr-3 font-italic pl-3 float-right font-weight-bold">
         ({{component.implementation.identifier}})
     </span>
     <div *ngIf="component.dataSet?.length > 0" class="scenario-components-parameters">
         <fieldset class="w-100" [ngClass]="collapseComponentsParameters ? 'border-top pl-2' : 'border p-2'">
             <legend class="pl-3 pr-3 mb-0 font-weight-bold" (click)="switchCollapseComponentsParameter()">
-                <span class="legend-title">
+                <span>
                     {{'components.shared.edition.blocks.parameters' | translate}}
                 </span>
                 <button class="btn btn-sm btn-light btn-outline-dark ml-sm-1 border-0" type="button"
-                    title="{{(collapseComponentsParameters ? 'global.actions.show' : 'global.actions.hide') | translate}}">
+                        title="{{(collapseComponentsParameters ? 'global.actions.show' : 'global.actions.hide') | translate}}">
                     <span class="fa" [ngClass]="collapseComponentsParameters ? 'fa-eye' : 'fa-eye-slash'"></span>
                 </button>
             </legend>
             <div *ngIf="!collapseComponentsParameters" class="form-group mb-0">
-                <div class="row" *ngFor="let parameter of component.dataSet; let j=index">
-                    <label class="col-3 col-form-label" for="{{'name' + componentIndex + '_' + j}}">{{parameter.key}}</label>
+                <div class="row m-1" *ngFor="let parameter of component.dataSet; let j=index">
+                    <label class="col-3 col-form-label" for="{{'name' + uid + '_' + j}}">{{parameter.key}}</label>
                     <div class="col-9">
-                        <input type="text" class="form-control" id="{{'name' + componentIndex + '_' + j}}" [formControlName]="j" />
+                        <input type="text" class="param-value-input form-control" id="{{'name' + uid + '_' + j}}"
+                               [formControlName]="parameter.key"/>
                     </div>
                 </div>
             </div>

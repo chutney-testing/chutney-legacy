@@ -281,10 +281,6 @@
             "edition": {
                 "select": "Select your action to create a component"
             },
-            "messages": {
-                "create": "Action created",
-                "update": "Action updated"
-            },
             "refvar" : {
                 "label": "var",
                 "switchTo.tooltip": "Replace list/map elements by a contextual variable",
@@ -330,7 +326,7 @@
             "delete": "Delete",
             "save": "Save",
             "record": "Save",
-            "update": "update",
+            "update": "Update",
             "cancel": "Cancel",
             "login": "Log in",
             "close": "Close",
@@ -344,7 +340,11 @@
             "replay": "Replay",
             "stop": "Stop",
             "resume": "Resume",
-            "pause": "Pause"
+            "pause": "Pause",
+
+            "done": {
+                "saved": "Saved"
+            }
         },
         "bdd": {
             "given": "Given",

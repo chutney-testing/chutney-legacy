@@ -281,10 +281,6 @@
             "edition": {
                 "select": "Sélectionner une action pour créer un composant"
             },
-            "messages": {
-                "create": "Action créée",
-                "update": "Action mise à jour"
-            },
             "refvar" : {
                 "label": "var",
                 "switchTo.tooltip": "Remplacer les éléments d'une Liste ou d'une Map par une variable contextuelle",
@@ -344,7 +340,11 @@
             "replay": "Rejouer",
             "stop": "Stopper",
             "resume": "Reprendre",
-            "pause": "Suspendre"
+            "pause": "Suspendre",
+
+            "done": {
+                "saved": "Sauvegarde réalisée"
+            }
         },
         "bdd": {
             "given": "Etant donné",

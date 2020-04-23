@@ -26,12 +26,12 @@ import {
     TechnicalStepComponent,
     FunctionalStepComponent,
     EnvironmentComboComponent,
-    ExecutionBadgeComponent
+    ExecutionBadgeComponent, ComponentCardComponent
 } from './components';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { MomentModule } from 'angular2-moment';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ThumbnailPipe } from '@shared/pipes/thumbnail.pipe';
 
 @NgModule({
@@ -40,7 +40,8 @@ import { ThumbnailPipe } from '@shared/pipes/thumbnail.pipe';
         RouterModule,
         TranslateModule,
         MomentModule,
-        FormsModule
+        FormsModule,
+        ReactiveFormsModule
     ],
     declarations: [
         TruncatePipe,
@@ -63,7 +64,8 @@ import { ThumbnailPipe } from '@shared/pipes/thumbnail.pipe';
         FunctionalStepComponent,
         EnvironmentComboComponent,
         ExecutionBadgeComponent,
-        ThumbnailPipe
+        ThumbnailPipe,
+        ComponentCardComponent
     ],
     exports: [
         TruncatePipe,
@@ -86,7 +88,8 @@ import { ThumbnailPipe } from '@shared/pipes/thumbnail.pipe';
         FunctionalStepComponent,
         EnvironmentComboComponent,
         ExecutionBadgeComponent,
-        ThumbnailPipe
+        ThumbnailPipe,
+        ComponentCardComponent
     ],
     entryComponents: [
         TechnicalStepComponent

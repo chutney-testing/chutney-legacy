@@ -7,7 +7,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MomentModule } from 'angular2-moment';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-
 // Internal common
 import { SharedModule } from '@shared/shared.module';
 import { MoleculesModule } from 'src/app/molecules/molecules.module';
@@ -22,7 +21,6 @@ import { ParametersComponent } from './components/sub/parameters/parameters.comp
 
 import { ExecutionPanelComponent } from './components/sub/execution-panel/execution-panel.component';
 import { ChildPanelComponent } from './components/sub/child-panel/child-panel.component';
-import { CardComponent } from './components/sub/card/card.component';
 import { ToolbarComponent } from './components/sub/toolbar/toolbar.component';
 import { StrategyParameterFormComponent } from '@modules/component/components/sub/strategy-form/parameter-form/strategy-parameter-form.component';
 
@@ -55,8 +53,7 @@ const ROUTES = [
         ParametersComponent,
         ToolbarComponent,
         ExecutionPanelComponent,
-        ChildPanelComponent,
-        CardComponent
+        ChildPanelComponent
     ],
 })
 export class ComponentModule {
