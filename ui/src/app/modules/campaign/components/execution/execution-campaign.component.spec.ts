@@ -64,7 +64,7 @@ describe('CampaignExecutionComponent', () => {
     expect(app).toBeTruthy();
   }));
 
-  it('should agregate campaign report status to summarize them', (() => {
+  it('should aggregate campaign report status to summarize them', (() => {
     const campaignMock = new Campaign();
     const campaignReport = new CampaignExecutionReport();
     campaignMock.campaignExecutionReports.push(campaignReport);
@@ -89,9 +89,9 @@ describe('CampaignExecutionComponent', () => {
     fixture.detectChanges();
 
     const c = fixture.componentInstance;
-    expect(c.scenarioOK).toBe(3);
-    expect(c.scenarioKO).toBe(2);
-    expect(c.scenarioSTOPPED).toBe(1);
+    expect(c.last.passed).toBe(3);
+    expect(c.last.failed).toBe(2);
+    expect(c.last.stopped).toBe(1);
 
     const scenarioSummary = html.querySelector('#scenarioSummary');
     expect(scenarioSummary.textContent).toBe(' 3 OK  2 KO  1 Stopped ');

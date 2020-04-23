@@ -55,19 +55,19 @@
 <div class="row">
     <div class="history-panel col col-md-2">
         <h2>{{ 'campaigns.execution.last.actual' | translate }}</h2>
-        <div class="reports">
+        <div class="reports" *ngIf="last">
             <div class="row tile tile-click tile-ko tile-selected"
                 (click)="currentCampaignExecutionReport = null"
                 [ngClass]="{
-                        'tile-ok': scenarioKO == 0 && scenarioSTOPPED == 0,
-                        'tile-ko': scenarioKO > 0 || scenarioSTOPPED > 0,
+                        'tile-ok': last.allPassed(),
+                        'tile-ko': last.hasFailure() || last.hasStopped(),
                         'tile-selected': currentCampaignExecutionReport == null
                     }"
                 >
                 <div id="scenarioSummary" class="col scenario-summary">
-                    <span *ngIf="scenarioOK > 0"> {{scenarioOK}} {{ 'campaigns.execution.last.ok' | translate }} </span>
-                    <span *ngIf="scenarioKO > 0"> {{scenarioKO}} {{ 'campaigns.execution.last.ko' | translate }} </span>
-                    <span *ngIf="scenarioSTOPPED > 0"> {{scenarioSTOPPED}} {{ 'campaigns.execution.last.stop' | translate }} </span>
+                    <span *ngIf="last.hasPassed()"> {{last.passed}} {{ 'campaigns.execution.last.ok' | translate }} </span>
+                    <span *ngIf="last.hasFailure()"> {{last.failed}} {{ 'campaigns.execution.last.ko' | translate }} </span>
+                    <span *ngIf="last.hasStopped()"> {{last.stopped}} {{ 'campaigns.execution.last.stop' | translate }} </span>
                 </div>
             </div>
         </div>
@@ -102,7 +102,7 @@
 
     <div class="col-md-10 pl-4" *ngIf="currentCampaignExecutionReport">
 
-        <div *ngIf="countFailedScenario(currentCampaignExecutionReport) > 0">
+        <div *ngIf="current.hasFailure()">
             <div class="d-inline-block mb-4">
                 {{ 'campaigns.execution.replay' | translate }}: <br/>
                 <button id="replay-btn" type="button" class="btn btn-success"
@@ -120,6 +120,12 @@
         </span>
         <chutney-execution-badge [status]="currentCampaignExecutionReport.status"
                                 [spin]="true"></chutney-execution-badge>
+
+        <span class="m-2" *ngIf="current.hasPassed()"> {{current.passed}} {{ 'campaigns.execution.last.ok' | translate }}, </span>
+        <span class="m-2" *ngIf="current.hasFailure()"> {{current.failed}} {{ 'campaigns.execution.last.ko' | translate }}, </span>
+        <span class="m-2" *ngIf="current.hasStopped()"> {{current.stopped}} {{ 'campaigns.execution.last.stop' | translate }}, </span>
+        <span class="m-2"> of {{current.total}}  </span>
+
         <small class="text-muted ml-2">{{ 'global.time.in' | translate }}
             {{currentCampaignExecutionReport.duration | duration}}</small>
         <small class="text-muted ml-2" *ngIf="currentCampaignExecutionReport">

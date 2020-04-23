@@ -29,9 +29,9 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
 
     campaign: Campaign;
     scenarios: Array<ScenarioIndex> = [];
-    scenarioOK: number;
-    scenarioKO: number;
-    scenarioSTOPPED: number;
+
+    last: CampaignReport;
+    current: CampaignReport;
 
     currentCampaignExecutionReport: CampaignExecutionReport;
     currentScenariosReportsOutlines: Array<ScenarioExecutionReportOutline> = [];
@@ -111,26 +111,16 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
                 );
             }
 
-            this.refreshScenarioCount(this.getLastNotPartialReport());
+            this.last = new CampaignReport(this.getLastCompleteReport());
         }
     }
 
-    getLastNotPartialReport() {
+    getLastCompleteReport() {
         for (const report of this.campaign.campaignExecutionReports) {
             if (!report.partialExecution) {
                 return report;
             }
         }
-    }
-
-    refreshScenarioCount(report: CampaignExecutionReport) {
-        this.scenarioOK = report.scenarioExecutionReports.filter(s => s.status === 'SUCCESS').length;
-        this.scenarioSTOPPED = report.scenarioExecutionReports.filter(s => s.status === 'STOPPED').length;
-        this.scenarioKO = this.countFailedScenario(report);
-    }
-
-    countFailedScenario(report: CampaignExecutionReport) {
-        return report.scenarioExecutionReports.filter(s => s.status === 'FAILURE').length;
     }
 
     loadScenarios(campaignId) {
@@ -171,6 +161,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
     }
 
     selectReport(campaignExecutionReport: CampaignExecutionReport) {
+        this.current = new CampaignReport(campaignExecutionReport);
         this.currentCampaignExecutionReport = campaignExecutionReport;
         this.currentScenariosReportsOutlines = campaignExecutionReport.scenarioExecutionReports;
     }
@@ -265,3 +256,41 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
         }
     }
 }
+
+class CampaignReport {
+    report: CampaignExecutionReport;
+
+    passed: number;
+    failed: number;
+    stopped: number;
+    total: number;
+
+    constructor(report: CampaignExecutionReport) {
+        this.report = report;
+        this.passed = this.countScenarioByStatus('SUCCESS', report);
+        this.failed = this.countScenarioByStatus('FAILURE', report);
+        this.stopped = this.countScenarioByStatus('STOPPED', report);
+        this.total = this.passed + this.failed + this.stopped;
+    }
+
+    countScenarioByStatus(status: String, report: CampaignExecutionReport) {
+        return report.scenarioExecutionReports.filter(s => s.status === status).length;
+    }
+
+    allPassed() {
+        return !this.hasStopped() && !this.hasStopped() ;
+    }
+
+    hasPassed() {
+        return this.passed > 0;
+    }
+
+    hasFailure() {
+        return this.failed > 0;
+    }
+
+    hasStopped() {
+        return this.stopped > 0;
+    }
+
+};
