@@ -1,10 +1,10 @@
-<div class="row page-header m-5">
+<div class="row page-header m-4 pl-2">
     <div class="col-md-5">
         <h4>{{campaign && campaign.title | uppercase}}
             <small class="text-muted"> {{campaign && campaign.description}}</small>
         </h4>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div class="btn-toolbar">
             <button *ngIf="running" type="button" class="btn btn-dark" (click)="stopScenario()">
                 <span class="fa fa-stop mr-2"></span>
@@ -24,7 +24,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-5">
         <div class="btn-toolbar">
             <button type="button" class="btn btn-light border" (click)="editCampaign(campaign)">
                 <span class="fa fa-pencil-alt mr-2"></span>
@@ -101,11 +101,10 @@
     </div>
 
     <div class="col-md-10 pl-4" *ngIf="currentCampaignExecutionReport">
-
         <div *ngIf="current.hasFailure()">
-            <div class="d-inline-block mb-4">
-                {{ 'campaigns.execution.replay' | translate }}: <br/>
-                <button id="replay-btn" type="button" class="btn btn-success"
+            <div class="d-inline-block mb-2">
+                <button id="replay-btn" type="button" class="btn btn-sm btn-success"
+                        title="{{ 'campaigns.execution.replay' | translate }}"
                         [disabled]="running || (scenarios && scenarios.length == 0)"
                         (click)="replayFailed()">
                     <span class="fa fa-play mr-2" aria-hidden="true"></span>
@@ -133,18 +132,19 @@
             {{currentCampaignExecutionReport.startDate  | amDateFormat: 'DD MMM. YYYY HH:mm' }}
         </small>
         <div class="table-responsive">
-            <table class="table table-striped table-hover">
+            <table class="table table-sm table-striped table-hover">
                 <thead>
                     <tr>
                         <th scope="col" class="w5">{{ 'campaigns.execution.scenarios.item.header.id' | translate }}</th>
                         <th scope="col" class="w5">{{ 'campaigns.execution.scenarios.item.header.state' | translate }}</th>
-                        <th scope="col" class="w90">{{ 'campaigns.execution.scenarios.item.header.title' | translate }}</th>
+                        <th scope="col" class="w80">{{ 'campaigns.execution.scenarios.item.header.title' | translate }}</th>
+                        <th scope="col" class="w10">{{ 'campaigns.execution.scenarios.item.header.duration' | translate }}</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let scenarioReportOutline of currentScenariosReportsOutlines">
                         <td>
-                            <span class="font-weight-bold">{{scenarioReportOutline.scenarioId}}</span>
+                            <span class="font-weight-bold small_text">{{scenarioReportOutline.scenarioId}}</span>
                         </td>
                         <td>
                             <chutney-execution-badge [status]="scenarioReportOutline.status"
@@ -157,6 +157,9 @@
                                 {{scenarioReportOutline.scenarioName}}
                             </a>
                         </td>
+                        <td>
+                                <span class=" small_text">{{scenarioReportOutline.duration | duration:'short' }}</span>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -165,7 +168,7 @@
     <div class="col-md-10  pl-4" *ngIf="!currentCampaignExecutionReport">
         <span class="font-weight-bold">{{ 'campaigns.execution.scenarios.title' | translate }}</span>
         <div class="table-responsive">
-            <table class="table table-striped table-hover">
+            <table class="table table-sm table-striped table-hover">
                 <thead>
                 <tr>
                     <th scope="col" class="w1">&nbsp;</th>

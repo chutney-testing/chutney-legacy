@@ -140,7 +140,8 @@
                     "header": {
                         "id": "Id",
                         "state": "State",
-                        "title": "Title"
+                        "title": "Title",
+                        "duration": "Duration"
                     },
                     "title": "Go to the executions of",
                     "description.none": "No description",

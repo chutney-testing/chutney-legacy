@@ -1,5 +1,5 @@
 <div class="row m-4">
-    <div class="col-md-8 pl-0">
+    <div class="col-md-8 pl-3">
         <div class="input-group">
             <input type="text" class="form-control" placeholder="{{ 'campaigns.search.placeholder' | translate }}"
                 [(ngModel)]="campaignFilter">
@@ -12,10 +12,10 @@
     </div>
 </div>
 <div class="row m-4">
-    <div class="col-md-6">
+    <div class="col-md-6 pr-2">
         <h2>Campagnes</h2>
         <div class="table-responsive" *ngIf="campaigns.length > 0">
-            <table class="table table-striped table-hover">
+            <table class="table table-sm table-striped table-hover">
                 <tbody>
                     <tr *ngFor="let campaign of (campaigns | searchTextPipe : campaignFilter:['title','description'])">
                         <td class="small_text w95">
@@ -46,10 +46,10 @@
             <span>{{ 'campaigns.list.empty' | translate }}</span>
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6 pl-2">
         <h2>Dernières executions</h2>
         <div class="table-responsive" *ngIf="campaigns.length > 0">
-            <table class="table table-striped">
+            <table class="table table-sm table-striped">
                 <tbody>
                     <tr *ngFor="let report of lastCampaignReports" class="small_text">
                         <td class="w25">{{ report.startDate | amDateFormat: 'DD MMM. YYYY HH:mm' }}</td>
