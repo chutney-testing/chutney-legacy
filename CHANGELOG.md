@@ -1,9 +1,142 @@
-# Change Log
+# Changelog
 
-## Edit this file
-[Guidelines](https://keepachangelog.com/en/1.0.0/) : https://keepachangelog.com/en/1.0.0/
+## [1.1.3](https://github.com/chutney-testing/chutney/tree/1.1.3) (2020-04-24)
 
-## Unreleased
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.1.2...1.1.3)
+
+**Implemented enhancements:**
+
+- Add number of scenario run on campaign report [\#96](https://github.com/chutney-testing/chutney/issues/96)
+
+**Fixed bugs:**
+
+- Component/Scenario edition : Cannot update step parameter value after precedent step deletion [\#107](https://github.com/chutney-testing/chutney/issues/107)
+- Campaign run duration on parallels run [\#86](https://github.com/chutney-testing/chutney/issues/86)
+- Execution environment for scenario not displayed for direct access [\#85](https://github.com/chutney-testing/chutney/issues/85)
+- Need more labels in campaign report [\#73](https://github.com/chutney-testing/chutney/issues/73)
+- No alert when closing component screen [\#70](https://github.com/chutney-testing/chutney/issues/70)
+- Target are not sorted in chrome [\#22](https://github.com/chutney-testing/chutney/issues/22)
+- Scenario description are truncated [\#21](https://github.com/chutney-testing/chutney/issues/21)
+
+**Closed issues:**
+
+- Add an alert when removing global var [\#91](https://github.com/chutney-testing/chutney/issues/91)
+
+**Merged pull requests:**
+
+- Feat/ui improve campaign ux [\#115](https://github.com/chutney-testing/chutney/pull/115) ([rbenyoussef](https://github.com/rbenyoussef))
+- feat\(ui\): Show number of passed/failed scenarios on campaign report [\#114](https://github.com/chutney-testing/chutney/pull/114) ([bessonm](https://github.com/bessonm))
+- Bugfix/alert on globalvar deletion [\#109](https://github.com/chutney-testing/chutney/pull/109) ([bessonm](https://github.com/bessonm))
+- fix\(ui\): Component edition - Must recreate steps parameter values [\#108](https://github.com/chutney-testing/chutney/pull/108) ([boddissattva](https://github.com/boddissattva))
+- Feat/ui improve scenario execution report [\#105](https://github.com/chutney-testing/chutney/pull/105) ([rbenyoussef](https://github.com/rbenyoussef))
+- bugfix\(ui\): Sort target and environment names [\#104](https://github.com/chutney-testing/chutney/pull/104) ([bessonm](https://github.com/bessonm))
+- bugfix\(ui\): Show scenario description without truncation [\#103](https://github.com/chutney-testing/chutney/pull/103) ([bessonm](https://github.com/bessonm))
+- Feat/ui display improvement [\#102](https://github.com/chutney-testing/chutney/pull/102) ([rbenyoussef](https://github.com/rbenyoussef))
+- Fix/86 [\#93](https://github.com/chutney-testing/chutney/pull/93) ([boddissattva](https://github.com/boddissattva))
+- Tech/clean engine target model [\#89](https://github.com/chutney-testing/chutney/pull/89) ([bessonm](https://github.com/bessonm))
+- Fix \#85 [\#88](https://github.com/chutney-testing/chutney/pull/88) ([boddissattva](https://github.com/boddissattva))
+- bugfix\(ui\): Add alert when leaving component scenario edition with mo… [\#87](https://github.com/chutney-testing/chutney/pull/87) ([nbrouand](https://github.com/nbrouand))
+- Tech/reduce cli coupling [\#84](https://github.com/chutney-testing/chutney/pull/84) ([bessonm](https://github.com/bessonm))
+- feat\(ui\): Add stop label for campaign execution report summarize [\#78](https://github.com/chutney-testing/chutney/pull/78) ([nbrouand](https://github.com/nbrouand))
+- chore\(ui\): Add a test on scenarii.component.spec.ts [\#77](https://github.com/chutney-testing/chutney/pull/77) ([nbrouand](https://github.com/nbrouand))
+- chore\(ui\): Add some ng test [\#76](https://github.com/chutney-testing/chutney/pull/76) ([nbrouand](https://github.com/nbrouand))
+
+## [1.1.2](https://github.com/chutney-testing/chutney/tree/1.1.2) (2020-03-19)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.1.1...1.1.2)
+
+**Implemented enhancements:**
+
+- Add a new task to consume message from a kafka topic [\#38](https://github.com/chutney-testing/chutney/issues/38)
+- Display environment execution for scenario [\#20](https://github.com/chutney-testing/chutney/issues/20)
+
+**Fixed bugs:**
+
+- Trim all tags [\#59](https://github.com/chutney-testing/chutney/issues/59)
+
+**Closed issues:**
+
+- Wrong redirection when cancelling campaign edition [\#58](https://github.com/chutney-testing/chutney/issues/58)
+
+**Merged pull requests:**
+
+- Feature/add kafka basic consume task [\#68](https://github.com/chutney-testing/chutney/pull/68) ([bessonm](https://github.com/bessonm))
+- feat\(core + ui\): Add environment info to scenario execution history [\#66](https://github.com/chutney-testing/chutney/pull/66) ([nbrouand](https://github.com/nbrouand))
+- Avoid NullPointerException with message having null value as header [\#65](https://github.com/chutney-testing/chutney/pull/65) ([GeVa2072](https://github.com/GeVa2072))
+- feat\(ui\): In campaign edition, cancel redirect to edited campaign [\#64](https://github.com/chutney-testing/chutney/pull/64) ([nbrouand](https://github.com/nbrouand))
+- bugfix\(server\): uppercase and trim tags at saved [\#62](https://github.com/chutney-testing/chutney/pull/62) ([nbrouand](https://github.com/nbrouand))
+
+## [1.1.1](https://github.com/chutney-testing/chutney/tree/1.1.1) (2020-03-10)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.1.0...1.1.1)
+
+**Merged pull requests:**
+
+- bugfix\(ui\): NPE on saveComponent + Add more ui coherence between comp… [\#61](https://github.com/chutney-testing/chutney/pull/61) ([nbrouand](https://github.com/nbrouand))
+- chore: Share Intellij run config [\#57](https://github.com/chutney-testing/chutney/pull/57) ([bessonm](https://github.com/bessonm))
+
+## [1.1.0](https://github.com/chutney-testing/chutney/tree/1.1.0) (2020-03-06)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.0.0...1.1.0)
+
+**Implemented enhancements:**
+
+- Font size smaller on campaign page  [\#18](https://github.com/chutney-testing/chutney/issues/18)
+
+**Fixed bugs:**
+
+- Navigation between component sometime broken [\#24](https://github.com/chutney-testing/chutney/issues/24)
+- Pop up should not appear on scenario execution page [\#16](https://github.com/chutney-testing/chutney/issues/16)
+- Id not reload when creating component [\#15](https://github.com/chutney-testing/chutney/issues/15)
+
+**Merged pull requests:**
+
+- feat\(core\): Parameterized component strategies [\#60](https://github.com/chutney-testing/chutney/pull/60) ([bessonm](https://github.com/bessonm))
+- Fix/parameters escaping [\#56](https://github.com/chutney-testing/chutney/pull/56) ([boddissattva](https://github.com/boddissattva))
+- bugfix\(ui\): Fix broken redirection on child component [\#55](https://github.com/chutney-testing/chutney/pull/55) ([nbrouand](https://github.com/nbrouand))
+- bugfix\(ui\): Remove canDeactivate guard on execution history page [\#54](https://github.com/chutney-testing/chutney/pull/54) ([nbrouand](https://github.com/nbrouand))
+- Tech/clean up [\#53](https://github.com/chutney-testing/chutney/pull/53) ([bessonm](https://github.com/bessonm))
+- feat\(ui\): Reduce font size on campaign page [\#52](https://github.com/chutney-testing/chutney/pull/52) ([nbrouand](https://github.com/nbrouand))
+- Chore/travis zulip hook [\#50](https://github.com/chutney-testing/chutney/pull/50) ([bessonm](https://github.com/bessonm))
+- chore\(deps\): Bump picocli from 3.9.0 to 4.2.0 [\#49](https://github.com/chutney-testing/chutney/pull/49) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- chore\(deps-dev\): Bump rabbitmq-mock from 1.0.4 to 1.0.14 [\#48](https://github.com/chutney-testing/chutney/pull/48) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- chore\(deps\): Bump build-helper-maven-plugin from 1.12 to 3.0.0 [\#47](https://github.com/chutney-testing/chutney/pull/47) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- chore\(deps\): Bump maven-clean-plugin from 3.0.0 to 3.1.0 [\#46](https://github.com/chutney-testing/chutney/pull/46) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- chore\(deps-dev\): Bump activemq.version from 5.15.0 to 5.15.11 [\#45](https://github.com/chutney-testing/chutney/pull/45) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- doc: Update release management [\#43](https://github.com/chutney-testing/chutney/pull/43) ([bessonm](https://github.com/bessonm))
+- chore: Update project info [\#41](https://github.com/chutney-testing/chutney/pull/41) ([bessonm](https://github.com/bessonm))
+- fix\(core+ui\): Set id on newly created component. [\#37](https://github.com/chutney-testing/chutney/pull/37) ([boddissattva](https://github.com/boddissattva))
+
+## [1.0.0](https://github.com/chutney-testing/chutney/tree/1.0.0) (2020-02-26)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/d734d7933351ed031c3c598b0a2de7098153b42f...1.0.0)
+
+**Fixed bugs:**
+
+- Global var character escaped twice [\#9](https://github.com/chutney-testing/chutney/issues/9)
+
+**Closed issues:**
+
+- Add a new task to consume message from a kafka topic [\#39](https://github.com/chutney-testing/chutney/issues/39)
+
+**Merged pull requests:**
+
+- chore\(ui\): Generate sources archive [\#40](https://github.com/chutney-testing/chutney/pull/40) ([boddissattva](https://github.com/boddissattva))
+- Bugfix/escaped char [\#36](https://github.com/chutney-testing/chutney/pull/36) ([nbrouand](https://github.com/nbrouand))
+- Revert "Ignore IntelliJ root configuration files" [\#35](https://github.com/chutney-testing/chutney/pull/35) ([nbrouand](https://github.com/nbrouand))
+- chore: Licence compliance with Fossa [\#34](https://github.com/chutney-testing/chutney/pull/34) ([bessonm](https://github.com/bessonm))
+- Add randomLong Generator [\#33](https://github.com/chutney-testing/chutney/pull/33) ([GeVa2072](https://github.com/GeVa2072))
+- Fix use of == instead of equals method [\#32](https://github.com/chutney-testing/chutney/pull/32) ([GeVa2072](https://github.com/GeVa2072))
+- chore: Add Travis deployment. Fix project version. [\#14](https://github.com/chutney-testing/chutney/pull/14) ([boddissattva](https://github.com/boddissattva))
+- Fix typo in Selenium documentation snippet [\#13](https://github.com/chutney-testing/chutney/pull/13) ([ledoyen](https://github.com/ledoyen))
+- Fix Finally Action target mapping error [\#12](https://github.com/chutney-testing/chutney/pull/12) ([ledoyen](https://github.com/ledoyen))
+- Allow use of external npm installation [\#11](https://github.com/chutney-testing/chutney/pull/11) ([ledoyen](https://github.com/ledoyen))
+- Ignore IntelliJ root configuration files [\#10](https://github.com/chutney-testing/chutney/pull/10) ([ledoyen](https://github.com/ledoyen))
+- chore: Add to Travis build JDK version and install command [\#4](https://github.com/chutney-testing/chutney/pull/4) ([nbrouand](https://github.com/nbrouand))
+- Bump npm from 5.8.0 to 6.13.4 in /ui [\#2](https://github.com/chutney-testing/chutney/pull/2) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump amqp-client from 5.3.0 to 5.8.0 [\#1](https://github.com/chutney-testing/chutney/pull/1) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+# Before open source
 
 ## 2019-09-10: v2.0.0-34
 
