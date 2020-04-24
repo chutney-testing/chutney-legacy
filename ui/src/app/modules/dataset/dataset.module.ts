@@ -15,6 +15,7 @@ import { DatasetListComponent } from './components/dataset-list/dataset-list.com
 import { DatasetRoute } from './dataset.routes';
 import { MoleculesModule } from 'src/app/molecules/molecules.module';
 import { AngularMultiSelectModule } from 'angular2-multiselect-dropdown';
+import { DatasetEditionComponent } from './components/dataset-edition/dataset-edition.component';
 
 
 const ROUTES = [
@@ -35,7 +36,8 @@ const ROUTES = [
         AngularMultiSelectModule
     ],
     declarations: [
-        DatasetListComponent
+        DatasetListComponent,
+        DatasetEditionComponent
     ],
     entryComponents: [
 
