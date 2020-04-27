@@ -12,7 +12,7 @@ import { TranslateModule, TranslateLoader, MissingTranslationHandler } from '@ng
 import { ModalModule } from 'ngx-bootstrap';
 import { DragulaModule } from 'ng2-dragula';
 // Internal common
-import { SharedModule } from './shared/shared.module';
+import { SharedModule } from '@shared/shared.module';
 import { AppRoutingModule } from './app-routing.module';
 import { CoreModule } from '@core/core.module';
 import { AppComponent } from './app.component';
