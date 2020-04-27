@@ -30,7 +30,7 @@ export class ScenarioIndex {
         }
     }
 
-    public numberofExecution() {
+    public numberOfExecution() {
         if (this.executions && this.executions.length > 0) {
             return this.executions.length;
         } else {

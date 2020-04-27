@@ -13,17 +13,18 @@
 <div class="header-scenario">
     <div class="row">
         <div class="mx-auto col-md-5">
-            <chutney-forms-search-field [id]="'scenario-search'" [placeholder]="'scenarios.search.placeholder' | translate"
-                                    (searchInputEvent)="filterSearchChange($event)"></chutney-forms-search-field>
+            <chutney-forms-search-field [id]="'scenario-search'"
+                                        [placeholder]="'scenarios.search.placeholder' | translate"
+                                        (searchInputEvent)="filterSearchChange($event)"></chutney-forms-search-field>
         </div>
     </div>
     <div class="row ml-2">
         <div style="min-width: 170px;">
             <button *ngIf=" !isSelectAll()" type="button" class="btn btn-xs btn-default m-2" (click)="selectAll()">
-                <span class="fa fa-check"></span> Tout sélectionner
+                <span class="fa fa-check"></span> {{ 'scenarios.search.sources.settings.selectAllText' | translate }}
             </button>
             <button *ngIf="isSelectAll()" type="button" class="btn btn-xs btn-default m-2" (click)="unSelectAll()">
-                <span class="fa fa-times"></span> Tout désélectionner
+                <span class="fa fa-times"></span> {{ 'scenarios.search.sources.settings.deselectAllText' | translate }}
             </button>
         </div>
         <div class="d-flex flex-wrap">
@@ -89,13 +90,13 @@
             <tr>
                 <th scope="col" style="width: 1%">&nbsp;</th>
                 <th scope="col" style="width: 1%">&nbsp;</th>
-                <th scope="col" style="width: 1%">Etat</th>
-                <th scope="col" style="width: 10%">Executé</th>
-                <th scope="col" style="width: 5%">Nb.Exec</th>
-                <th scope="col" style="width: 50%">Titre</th>
+                <th scope="col" style="width: 1%">{{ 'scenarios.list.header.status'  | translate  }}</th>
+                <th scope="col" style="width: 10%">{{ 'scenarios.list.header.execLast'  | translate  }}</th>
+                <th scope="col" style="width: 5%">{{ 'scenarios.list.header.execCount'  | translate  }}</th>
+                <th scope="col" style="width: 50%">{{ 'scenarios.list.header.title'  | translate  }}</th>
                 <th scope="col" style="width: 1%">&nbsp;</th>
-                <th scope="col" style="width: 12%">Tags</th>
-                <th scope="col" style="width: 10%">Créé</th>
+                <th scope="col" style="width: 12%">{{ 'scenarios.list.header.tags'  | translate  }}</th>
+                <th scope="col" style="width: 10%">{{ 'scenarios.list.header.creation'  | translate  }}</th>
             </tr>
             </thead>
             <tbody>
@@ -104,7 +105,7 @@
                 style="cursor: pointer">
 
                 <td>
-                    <span >{{i+1}}</span>
+                    <span>{{i + 1}}</span>
                 </td>
 
                 <td>
@@ -119,10 +120,11 @@
                     {{ scenario.lastTimeExec() != null ? (scenario.lastTimeExec() | amLocale:'fr' | amTimeAgo) : "" }}
                 </td>
 
-                <td scope="row" class="text-center">{{scenario.numberofExecution()}}</td>
+                <td scope="row" class="text-center">{{scenario.numberOfExecution()}}</td>
 
                 <td>
-                    <a class="table-link" [routerLink]="['/scenario', scenario.id, 'execution', 'last']" (click)="$event.stopPropagation()">{{scenario.title}}</a>
+                    <a class="table-link" [routerLink]="['/scenario', scenario.id, 'execution', 'last']"
+                       (click)="$event.stopPropagation()">{{scenario.title}}</a>
                 </td>
 
                 <td>
@@ -136,14 +138,14 @@
                 <td>
                     <span *ngIf="scenario.tags.length <= 3">
                         <span *ngFor="let tag of scenario.tags"
-                        class="chutney-tag chutney-tag-selected">{{tag}}</span>
+                              class="chutney-tag chutney-tag-selected">{{tag}}</span>
                     </span>
                     <span *ngIf="scenario.tags.length > 3">
                         <span *ngFor="let tag of scenario.tags | slice:0:2"
-                            class="chutney-tag chutney-tag-selected">{{tag}}</span>
+                              class="chutney-tag chutney-tag-selected">{{tag}}</span>
                         <button type="button" class="chutney-tag chutney-tag-selected"
-                            ngbPopover="{{scenario.tags}}" placement="left"
-                            triggers="mouseenter:mouseleave" container="body">
+                                ngbPopover="{{scenario.tags}}" placement="left"
+                                triggers="mouseenter:mouseleave" container="body">
                             ...
                         </button>
                     </span>

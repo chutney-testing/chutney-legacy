@@ -12,7 +12,7 @@ export class ScenarioCardComponent implements OnInit {
 
   lastExecutionStatus: string;
   lastExecutionDate: Date;
-  numberofExecution: number;
+  numberOfExecution: number;
 
   constructor() { }
 
@@ -21,9 +21,9 @@ export class ScenarioCardComponent implements OnInit {
       if (this.scenario.executions && this.scenario.executions.length > 0) {
         this.lastExecutionStatus = this.scenario.executions[0].status;
         this.lastExecutionDate = this.scenario.executions[0].time;
-        this.numberofExecution = this.scenario.executions.length;
+        this.numberOfExecution = this.scenario.executions.length;
       } else {
-        this.numberofExecution = 0;
+        this.numberOfExecution = 0;
         this.lastExecutionStatus = 'NOT_EXECUTED';
       }
     }
