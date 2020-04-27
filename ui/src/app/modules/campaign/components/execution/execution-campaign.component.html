@@ -182,7 +182,7 @@
                     [routerLink]="['/scenario', scenario.id, 'execution', 'last']"
                     class="pointer">
                     <td>
-                        <span class="fa" [ngClass]="scenario.isComposed() ? 'fa-cubes' : 'fa-pencil-alt'"></span>
+                        <span class="fa" [ngClass]="scenario.isComposed ? 'fa-cubes' : 'fa-pencil-alt'"></span>
                     </td>
                     <td>
                         <a class="table-link" [routerLink]="['/scenario', scenario.id,'execution', 'last']"

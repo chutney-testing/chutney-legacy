@@ -66,14 +66,14 @@
         </button>
     </div>
     <div>
-        <span (click)="orderByCreationDate()"
-              [ngClass]="statusCreationDateSort ? 'active' : 'not-active'">{{ 'scenarios.search.created'  | translate  }}</span>
-        <div [ngClass]="statusCreationDateSort ? 'arrow' : ''"></div>
+        <span (click)="sortBy('creationDate')"
+              [ngClass]="sortField == 'creationDate' ? 'active' : 'not-active'">{{ 'scenarios.search.created'  | translate  }}</span>
+        <div [ngClass]="sortField == 'creationDate' ? 'arrow' : ''"></div>
     </div>
     <div class="ml-3">
-        <span (click)="orderByLastExecuted()"
-              [ngClass]="statusLastExecutedSort ? 'active' : 'not-active'">{{ 'scenarios.search.executed'  | translate  }}</span>
-        <div [ngClass]="statusLastExecutedSort ? 'arrow' : ''"></div>
+        <span (click)="sortBy('lastExecution')"
+              [ngClass]="sortField == 'lastExecution' ? 'active' : 'not-active'">{{ 'scenarios.search.executed'  | translate  }}</span>
+        <div [ngClass]="sortField == 'lastExecution' ? 'arrow' : ''"></div>
     </div>
 </div>
 
@@ -88,39 +88,65 @@
         <table class="table table-sm table-striped table-hover">
             <thead>
             <tr>
+                <th class="filter" scope="col" style="width: 3%" (click)="sortBy('id')">ID
+                    <span *ngIf="sortField == 'id' && !sortReverse" class="fa fa-caret-down"></span>
+                    <span *ngIf="sortField == 'id' && sortReverse" class="fa fa-caret-up"></span>
+                </th>
                 <th scope="col" style="width: 1%">&nbsp;</th>
+                <th class="filter" scope="col" style="width: 3%" (click)="sortBy('status')">{{ 'scenarios.list.header.status'  | translate  }}
+                    <span *ngIf="sortField == 'status' && !sortReverse" class="fa fa-caret-down"></span>
+                    <span *ngIf="sortField == 'status' && sortReverse" class="fa fa-caret-up"></span>
+                </th>
+                <th class="filter" scope="col" style="width: 10%" (click)="sortBy('lastExecution')">{{ 'scenarios.list.header.execLast'  | translate  }}
+                    <span *ngIf="sortField == 'lastExecution' && !sortReverse" class="fa fa-caret-down"></span>
+                    <span *ngIf="sortField == 'lastExecution' && sortReverse" class="fa fa-caret-up"></span>
+                </th>
+                <th class="filter" scope="col" style="width: 5%" (click)="sortBy('executionCount')">{{ 'scenarios.list.header.execCount'  | translate  }}
+                    <span *ngIf="sortField == 'executionCount' && !sortReverse" class="fa fa-caret-down"></span>
+                    <span *ngIf="sortField == 'executionCount' && sortReverse" class="fa fa-caret-up"></span>
+                </th>
+                <th class="filter" scope="col" style="width: 50%" (click)="sortBy('title')">{{ 'scenarios.list.header.title'  | translate  }}
+                    <span *ngIf="sortField == 'title' && !sortReverse" class="fa fa-caret-down"></span>
+                    <span *ngIf="sortField == 'title' && sortReverse" class="fa fa-caret-up"></span>
+                </th>
                 <th scope="col" style="width: 1%">&nbsp;</th>
-                <th scope="col" style="width: 1%">{{ 'scenarios.list.header.status'  | translate  }}</th>
-                <th scope="col" style="width: 10%">{{ 'scenarios.list.header.execLast'  | translate  }}</th>
-                <th scope="col" style="width: 5%">{{ 'scenarios.list.header.execCount'  | translate  }}</th>
-                <th scope="col" style="width: 50%">{{ 'scenarios.list.header.title'  | translate  }}</th>
-                <th scope="col" style="width: 1%">&nbsp;</th>
-                <th scope="col" style="width: 12%">{{ 'scenarios.list.header.tags'  | translate  }}</th>
-                <th scope="col" style="width: 10%">{{ 'scenarios.list.header.creation'  | translate  }}</th>
+                <th class="filter" scope="col" style="width: 12%" (click)="sortBy('tags')">{{ 'scenarios.list.header.tags'  | translate  }}
+                    <span *ngIf="sortField == 'tags' && !sortReverse" class="fa fa-caret-down"></span>
+                    <span *ngIf="sortField == 'tags' && sortReverse" class="fa fa-caret-up"></span>
+                </th>
+                <th class="filter" scope="col" style="width: 10%" (click)="sortBy('creationDate')">{{ 'scenarios.list.header.creation'  | translate  }}
+                    <span *ngIf="sortField == 'creationDate' && !sortReverse" class="fa fa-caret-down"></span>
+                    <span *ngIf="sortField == 'creationDate' && sortReverse" class="fa fa-caret-up"></span>
+                </th>
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let scenario of (scenarios |  scenarioSearch : tagData.selected() : scenarioTypeData.selected() : tagData.isNoTagSelected() : tagData.isSelectAll() | searchTextPipe  : scenariosFilter : ['title', 'description']  | sortByField : sortField : asc) ; let i=index"
+            <!--
+            <tr *ngFor="let scenario of
+            (scenarios | scenarioSearch : tagData.selected() : scenarioTypeData.selected() : tagData.isNoTagSelected() : tagData.isSelectAll()
+                       | searchTextPipe  : scenariosFilter : ['title', 'description']
+                       | sortByField : sortField : asc) ; let i=index"-->
+            <tr *ngFor="let scenario of filteredScenarios"
                 [routerLink]="['/scenario', scenario.id, 'execution', 'last']"
                 style="cursor: pointer">
 
                 <td>
-                    <span>{{i + 1}}</span>
+                    <span>{{scenario.id}}</span>
                 </td>
 
                 <td>
-                    <span class="fa" [ngClass]="scenario.isComposed() ? 'fa-cubes' : 'fa-pencil-alt'"></span>
+                    <span class="fa" [ngClass]="scenario.isComposed ? 'fa-cubes' : 'fa-pencil-alt'"></span>
                 </td>
 
                 <td scope="row" class="text-center">
-                    <chutney-execution-badge [status]="scenario.status()"></chutney-execution-badge>
+                    <chutney-execution-badge [status]="scenario.status"></chutney-execution-badge>
                 </td>
 
                 <td scope="row" class="text-center">
-                    {{ scenario.lastTimeExec() != null ? (scenario.lastTimeExec() | amLocale:'fr' | amTimeAgo) : "" }}
+                    {{ scenario.lastExecution != null ? (scenario.lastExecution | amLocale:'fr' | amTimeAgo) : "" }}
                 </td>
 
-                <td scope="row" class="text-center">{{scenario.numberOfExecution()}}</td>
+                <td scope="row" class="text-center">{{scenario.executionCount}}</td>
 
                 <td>
                     <a class="table-link" [routerLink]="['/scenario', scenario.id, 'execution', 'last']"

@@ -20,11 +20,15 @@ export class ScenariosComponent implements OnInit {
     allScenarioTypes = [ScenarioType.FORM, ScenarioType.COMPOSED];
     scenarioTypeData = new SelectableTags<ScenarioType>();
 
-    sortField = 'title';
     statusCreationDateSort = false;
     statusLastExecutedSort = false;
-    asc = false;
     listView = true;
+
+    asc = false;
+
+    filteredScenarios: any;
+    sortField: any;
+    public sortReverse: any;
 
     constructor(
         private router: Router,
@@ -49,6 +53,29 @@ export class ScenariosComponent implements OnInit {
 
     filterSearchChange(searchFilter: string) {
         this.scenariosFilter = searchFilter;
+    }
+
+    sortBy(property) {
+        this.sortReverse = !this.sortReverse;
+        this.sortScenarios(property, this.sortReverse)
+    }
+
+    sortScenarios(property, reverseOrder) {
+        this.sortField = property;
+        this.filteredScenarios.sort(this.dynamicSort(property, reverseOrder));
+    }
+
+    dynamicSort(property, reverseOrder) {
+        let sortScenarios = 1;
+
+        if (reverseOrder) {
+            sortScenarios = -1;
+        }
+
+        return function (a, b) {
+            let result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+            return result * sortScenarios;
+        }
     }
 
     isSelectAll() {
@@ -88,7 +115,9 @@ export class ScenariosComponent implements OnInit {
         this.scenarioService.findScenarios().subscribe(
             (res) => {
                 this.scenarios = res;
+                this.filteredScenarios = res;
                 this.initSelectedTags();
+                this.sortScenarios('title', false);
             },
             (error) => console.log(error)
         );
@@ -114,23 +143,6 @@ export class ScenariosComponent implements OnInit {
         }
     }
 
-    public orderByCreationDate() {
-        this.statusCreationDateSort = !this.statusCreationDateSort;
-        this.sortField = this.statusCreationDateSort ? 'creationDate' : 'title';
-        this.asc = this.statusCreationDateSort;
-        if (this.statusCreationDateSort) {
-            this.statusLastExecutedSort = false;
-        }
-    }
-
-    public orderByLastExecuted() {
-        this.statusLastExecutedSort = !this.statusLastExecutedSort;
-        this.sortField = this.statusLastExecutedSort ? 'executions.0.time' : 'title';
-        this.asc = this.statusLastExecutedSort;
-        if (this.statusLastExecutedSort) {
-            this.statusCreationDateSort = false;
-        }
-    }
 }
 
 

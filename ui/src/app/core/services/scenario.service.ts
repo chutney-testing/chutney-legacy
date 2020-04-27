@@ -78,7 +78,6 @@ export class ScenarioService {
                 s.metadata.executions
             ));
 
-            res.sort((a, b) => a.title.localeCompare(b.title));
             return res;
         }));
     }

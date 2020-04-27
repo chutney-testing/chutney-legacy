@@ -22,6 +22,6 @@ export class ScenarioSearchPipe implements PipeTransform {
     }
 
     private scenarioTypePresent(scenarioTypes: ScenarioType[], scenario: ScenarioIndex): boolean {
-        return intersection(scenarioTypes, [scenario.getType()]).length > 0;
+        return intersection(scenarioTypes, [scenario.type]).length > 0;
     }
 }
