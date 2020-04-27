@@ -37,6 +37,8 @@ public class StepDefinitionDto {
 
     public final Map<String, Object> outputs;
 
+    public final String environment;
+
     public final StepStrategyDefinitionDto strategy;
 
     public StepDefinitionDto(String name,
@@ -45,7 +47,8 @@ public class StepDefinitionDto {
                              StepStrategyDefinitionDto strategy,
                              Map<String, Object> inputs,
                              List<StepDefinitionDto> steps,
-                             Map<String, Object> outputs) {
+                             Map<String, Object> outputs,
+                             String environment) {
         this.name = name;
         this.target = target;
         this.type = type;
@@ -53,6 +56,7 @@ public class StepDefinitionDto {
         this.inputs = inputs != null ? Collections.unmodifiableMap(inputs) : Collections.emptyMap();
         this.steps = steps != null ? Collections.unmodifiableList(steps) : Collections.emptyList();
         this.outputs = outputs != null ? Collections.unmodifiableMap(outputs) : Collections.emptyMap();
+        this.environment = environment;
     }
 
     public Optional<TargetDto> getTarget() {

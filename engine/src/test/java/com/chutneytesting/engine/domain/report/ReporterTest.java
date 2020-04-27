@@ -27,6 +27,7 @@ import org.junit.Test;
 public class ReporterTest {
 
     private Target fakeTarget = TargetImpl.NONE;
+    private String environment = "";
     private StepDataEvaluator dataEvaluator = new StepDataEvaluator(new SpelFunctions());
 
     private Reporter sut;
@@ -139,16 +140,16 @@ public class ReporterTest {
 
     private Step buildFakeScenario() {
         List<StepDefinition> subSubSteps = new ArrayList<>();
-        StepDefinition subSubStepDef1 = new StepDefinition("fakeStep1", fakeTarget, "taskType", null, null, null, null);
-        StepDefinition subSubStepDef2 = new StepDefinition("fakeStep2", fakeTarget, "taskType", null, null, null, null);
+        StepDefinition subSubStepDef1 = new StepDefinition("fakeStep1", fakeTarget, "taskType", null, null, null, null, environment);
+        StepDefinition subSubStepDef2 = new StepDefinition("fakeStep2", fakeTarget, "taskType", null, null, null, null, environment);
         subSubSteps.add(subSubStepDef1);
         subSubSteps.add(subSubStepDef2);
-        StepDefinition subStepDef1 = new StepDefinition("fakeParentStep", fakeTarget, "taskType", null, null, subSubSteps, null);
-        StepDefinition subStepDef2 = new StepDefinition("fakeParentEmptyStep", fakeTarget, "taskType", null, null, null, null);
+        StepDefinition subStepDef1 = new StepDefinition("fakeParentStep", fakeTarget, "taskType", null, null, subSubSteps, null, environment);
+        StepDefinition subStepDef2 = new StepDefinition("fakeParentEmptyStep", fakeTarget, "taskType", null, null, null, null, environment);
         List<StepDefinition> steps = new ArrayList<>();
         steps.add(subStepDef1);
         steps.add(subStepDef2);
-        StepDefinition rootStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, steps, null);
+        StepDefinition rootStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, steps, null, environment);
 
         return buildStep(rootStepDefinition);
     }

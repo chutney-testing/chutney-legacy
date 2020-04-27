@@ -123,7 +123,8 @@ public class HttpClientTest {
             strategy,
             new HashMap<>(),
             Collections.emptyList(),
-            new HashMap<>());
+            new HashMap<>(),
+            "ENV");
     }
 
     public ObjectMapper objectMapper() {

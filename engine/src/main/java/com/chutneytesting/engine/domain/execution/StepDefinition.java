@@ -33,6 +33,8 @@ public class StepDefinition {
 
     public final Map<String, Object> outputs;
 
+    public final String environment;
+
     /**
      * Target on which to execute the current step.
      * Can be null, a step can have no target defined
@@ -50,7 +52,8 @@ public class StepDefinition {
                           StepStrategyDefinition strategy,
                           Map<String, Object> inputs,
                           List<StepDefinition> steps,
-                          Map<String, Object> outputs) {
+                          Map<String, Object> outputs,
+                          String environment) {
         this.name = requireNonNull(name, "The argument <name> must not be null");
         this.type = requireNonNull(type, "The argument <type> must not be null");
 
@@ -60,6 +63,7 @@ public class StepDefinition {
         this.inputs = inputs != null ? Collections.unmodifiableMap(inputs) : Collections.emptyMap();
         this.steps = steps != null ? Collections.unmodifiableList(steps) : Collections.emptyList();
         this.outputs = outputs != null ? Collections.unmodifiableMap(outputs) : Collections.emptyMap();
+        this.environment = environment;
     }
 
     public Optional<Target> getTarget() {

@@ -43,7 +43,8 @@ public class ExecutionRequestMapper {
             dto.scenario().steps().stream()
                 .map(s -> buildStepDefinitionCore(s, originalEnvironmentObject))
                 .collect(Collectors.toList()),
-            dto.scenario().outputs());
+            dto.scenario().outputs(),
+            originalEnvironmentObject.name());
     }
 
     private static Optional<Target> getTarget(String targetName, Environment originalEnvironmentObject) {
@@ -76,7 +77,8 @@ public class ExecutionRequestMapper {
             dto.steps().stream()
                 .map(s -> buildStepDefinitionCore(s, originalEnvironmentObject))
                 .collect(Collectors.toList()),
-            dto.outputs());
+            dto.outputs(),
+            originalEnvironmentObject.name());
     }
 
     private static StepDefinitionRequestDto getStepDefinitionRequestFromStepDef(StepDefinitionCore definition) {
@@ -98,7 +100,8 @@ public class ExecutionRequestMapper {
             definition.type,
             definition.inputs,
             steps,
-            definition.outputs);
+            definition.outputs,
+            definition.environment);
     }
 
     private static TargetDto toDto(Target target) {

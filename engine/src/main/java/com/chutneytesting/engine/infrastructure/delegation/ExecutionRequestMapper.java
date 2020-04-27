@@ -37,7 +37,8 @@ class ExecutionRequestMapper {
             definition.type,
             definition.inputs,
             steps,
-            definition.outputs);
+            definition.outputs,
+            "");
     }
 
     private static TargetDto extractTarget(StepDefinition definition) {

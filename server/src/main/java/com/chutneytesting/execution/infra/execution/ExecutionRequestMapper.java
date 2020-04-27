@@ -103,7 +103,8 @@ public class ExecutionRequestMapper {
             definition.type,
             definition.inputs,
             steps,
-            definition.outputs);
+            definition.outputs,
+            env);
     }
 
     private StepDefinitionRequestDto convertGwt(ExecutionRequest executionRequest) {
@@ -115,7 +116,8 @@ public class ExecutionRequestMapper {
             null,
             emptyMap(),
             convert(gwtTestCase.scenario.steps(), executionRequest.environment),
-            emptyMap()
+            emptyMap(),
+            executionRequest.environment
         );
     }
 
@@ -133,7 +135,8 @@ public class ExecutionRequestMapper {
             step.implementation.map(i -> i.type).orElse(""),
             step.implementation.map(i -> i.inputs).orElse(emptyMap()),
             convert(step.subSteps, env),
-            step.implementation.map(i -> i.outputs).orElse(emptyMap())
+            step.implementation.map(i -> i.outputs).orElse(emptyMap()),
+            env
         );
     }
 
@@ -210,7 +213,8 @@ public class ExecutionRequestMapper {
                 null,
                 null,
                 convertComposableSteps(composableTestCase.composableScenario.functionalSteps, executionRequest.environment),
-                null
+                null,
+                executionRequest.environment
             );
         } catch (Exception e) {
             throw new ScenarioConversionException(composableTestCase.metadata().id(), e);
@@ -231,7 +235,8 @@ public class ExecutionRequestMapper {
             implementation.map(ComposableImplementation::type).orElse(""),
             implementation.map(ComposableImplementation::inputs).orElse(emptyMap()),
             functionalStep.steps.stream().map(f -> convert(f, env)).collect(Collectors.toList()),
-            implementation.map(ComposableImplementation::outputs).orElse(emptyMap())
+            implementation.map(ComposableImplementation::outputs).orElse(emptyMap()),
+            env
         );
     }
 
