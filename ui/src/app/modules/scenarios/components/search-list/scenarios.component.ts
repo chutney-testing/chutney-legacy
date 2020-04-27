@@ -7,14 +7,14 @@ import { distinct, flatMap } from '@shared/tools/array-utils';
 import { StateService } from 'src/app/shared/state/state.service';
 
 @Component({
-    selector: 'chutney-scenarii',
-    templateUrl: './scenarii.component.html',
-    styleUrls: ['./scenarii.component.scss']
+    selector: 'chutney-scenarios',
+    templateUrl: './scenarios.component.html',
+    styleUrls: ['./scenarios.component.scss']
 })
-export class ScenariiComponent implements OnInit {
+export class ScenariosComponent implements OnInit {
 
-    scenarii: Array<ScenarioIndex> = [];
-    scenariiFilter: string;
+    scenarios: Array<ScenarioIndex> = [];
+    scenariosFilter: string;
 
     tagData = new SelectableTags<String>();
     allScenarioTypes = [ScenarioType.FORM, ScenarioType.COMPOSED];
@@ -48,7 +48,7 @@ export class ScenariiComponent implements OnInit {
     }
 
     filterSearchChange(searchFilter: string) {
-        this.scenariiFilter = searchFilter;
+        this.scenariosFilter = searchFilter;
     }
 
     isSelectAll() {
@@ -87,7 +87,7 @@ export class ScenariiComponent implements OnInit {
     private loadAll() {
         this.scenarioService.findScenarios().subscribe(
             (res) => {
-                this.scenarii = res;
+                this.scenarios = res;
                 this.initSelectedTags();
             },
             (error) => console.log(error)
@@ -103,7 +103,7 @@ export class ScenariiComponent implements OnInit {
     }
 
     private findAllTags() {
-        return distinct(flatMap(this.scenarii, (sc) => sc.tags)).sort();
+        return distinct(flatMap(this.scenarios, (sc) => sc.tags)).sort();
     }
 
     private initSelectedTypes() {

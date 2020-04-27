@@ -1,7 +1,7 @@
 import { TestBed, async } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TranslateModule } from '@ngx-translate/core';
-import { ScenariiComponent } from './scenarii.component';
+import { ScenariosComponent } from './scenarios.component';
 import { SharedModule } from '@shared/shared.module';
 
 import { MoleculesModule } from '../../../../molecules/molecules.module';
@@ -12,7 +12,7 @@ import { of } from 'rxjs';
 import { ScenarioIndex } from '@core/model';
 import { ScenarioService } from '@core/services';
 
-describe('ScenariiComponent', () => {
+describe('ScenariosComponent', () => {
 
    beforeEach(async(() => {
     TestBed.resetTestingModule();
@@ -31,7 +31,7 @@ describe('ScenariiComponent', () => {
         NgbModule,
       ],
       declarations: [
-        ScenariiComponent
+        ScenariosComponent
       ],
       providers: [
         { provide: ScenarioService, useValue: scenarioService }
@@ -39,8 +39,8 @@ describe('ScenariiComponent', () => {
     }).compileComponents();
   }));
 
-  it('should create the component ScenariiComponent with three scenarios', () => {
-    const fixture = TestBed.createComponent(ScenariiComponent);
+  it('should create the component ScenariosComponent with three scenarios', () => {
+    const fixture = TestBed.createComponent(ScenariosComponent);
     fixture.detectChanges();
 
     const app = fixture.debugElement.componentInstance;
@@ -53,11 +53,11 @@ describe('ScenariiComponent', () => {
     expect(titleOf(cards[0])).toBe('another scenario');
     expect(titleOf(cards[1])).toBe('title1');
     expect(titleOf(cards[2])).toBe('title2');
-    expect(fixture.componentInstance.scenarii.length).toBe(3);
+    expect(fixture.componentInstance.scenarios.length).toBe(3);
   });
 
   it('should filter the list of scenario', () => {
-    const fixture = TestBed.createComponent(ScenariiComponent);
+    const fixture = TestBed.createComponent(ScenariosComponent);
     fixture.detectChanges();
 
     const html: HTMLElement = fixture.nativeElement;

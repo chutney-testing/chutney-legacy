@@ -79,7 +79,7 @@
 <div class="row">
     <ng-container *ngIf="!listView">
         <div id="cards" class="d-flex mr-auto ml-3"
-             *ngFor="let scenario of (scenarii |  scenarioSearch : tagData.selected() : scenarioTypeData.selected() : tagData.isNoTagSelected() : tagData.isSelectAll()  | searchTextPipe  : scenariiFilter : ['title', 'description']  | sortByField : sortField : asc)">
+             *ngFor="let scenario of (scenarios |  scenarioSearch : tagData.selected() : scenarioTypeData.selected() : tagData.isNoTagSelected() : tagData.isSelectAll()  | searchTextPipe  : scenariosFilter : ['title', 'description']  | sortByField : sortField : asc)">
             <chutney-scenario-card [scenario]="scenario"></chutney-scenario-card>
         </div>
     </ng-container>
@@ -99,7 +99,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let scenario of (scenarii |  scenarioSearch : tagData.selected() : scenarioTypeData.selected() : tagData.isNoTagSelected() : tagData.isSelectAll() | searchTextPipe  : scenariiFilter : ['title', 'description']  | sortByField : sortField : asc) ; let i=index"
+            <tr *ngFor="let scenario of (scenarios |  scenarioSearch : tagData.selected() : scenarioTypeData.selected() : tagData.isNoTagSelected() : tagData.isSelectAll() | searchTextPipe  : scenariosFilter : ['title', 'description']  | sortByField : sortField : asc) ; let i=index"
                 [routerLink]="['/scenario', scenario.id, 'execution', 'last']"
                 style="cursor: pointer">
 
@@ -135,11 +135,11 @@
 
                 <td>
                     <span *ngIf="scenario.tags.length <= 3">
-                        <span *ngFor="let tag of scenario.tags" 
+                        <span *ngFor="let tag of scenario.tags"
                         class="chutney-tag chutney-tag-selected">{{tag}}</span>
                     </span>
                     <span *ngIf="scenario.tags.length > 3">
-                        <span *ngFor="let tag of scenario.tags | slice:0:2" 
+                        <span *ngFor="let tag of scenario.tags | slice:0:2"
                             class="chutney-tag chutney-tag-selected">{{tag}}</span>
                         <button type="button" class="chutney-tag chutney-tag-selected"
                             ngbPopover="{{scenario.tags}}" placement="left"
