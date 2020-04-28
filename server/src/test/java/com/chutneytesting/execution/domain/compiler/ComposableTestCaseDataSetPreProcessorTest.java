@@ -41,7 +41,8 @@ public class ComposableTestCaseDataSetPreProcessorTest {
         String actionImplementation = "{\"identifier\": \"http-get\", \"target\": \"%1$s\", \"inputs\": []}";
         String stepName = "step with %1$s - %2$s - %3$s";
         String testCaseTitle = "test case testCaseTitle with parameter %1$s";
-        String testCaseDescription = "test case description with parameter %1$s";
+        String testCaseDescription = "test case description with parameter %1$s - %2$s";
+        String environment = "exec env";
 
         Strategy retryStrategy =
             new Strategy("retry", Maps.of("timeout", "10 s", "delay", "10 s"));
@@ -90,7 +91,7 @@ public class ComposableTestCaseDataSetPreProcessorTest {
             TestCaseMetadataImpl.builder()
                 .withCreationDate(Instant.now())
                 .withTitle(format(testCaseTitle, "**testcase title**"))
-                .withDescription(format(testCaseDescription, "**testcase description**"))
+                .withDescription(format(testCaseDescription, "**testcase description**", "**environment**"))
                 .build(),
             ComposableScenario.builder()
                 .withFunctionalSteps(
@@ -113,12 +114,12 @@ public class ComposableTestCaseDataSetPreProcessorTest {
 
         ComposableTestCaseDataSetPreProcessor sut = new ComposableTestCaseDataSetPreProcessor(globalvarRepository);
         // When
-        final ComposableTestCase composableTestCaseProcessed = sut.apply(composableTestCase);
+        final ComposableTestCase composableTestCaseProcessed = sut.apply(composableTestCase, environment);
 
         // Then
         assertThat(composableTestCaseProcessed.id()).isEqualTo(composableTestCase.id());
         assertThat(composableTestCaseProcessed.metadata.title()).isEqualTo(format(testCaseTitle, dataSet.get("testcase title")));
-        assertThat(composableTestCaseProcessed.metadata.description()).isEqualTo(format(testCaseDescription, dataSet.get("testcase description")));
+        assertThat(composableTestCaseProcessed.metadata.description()).isEqualTo(format(testCaseDescription, dataSet.get("testcase description"), environment));
 
         FunctionalStep firstStep = composableTestCaseProcessed.composableScenario.functionalSteps.get(0);
         assertThat(firstStep.name).isEqualTo(format(stepName, dataSet.get("testcase param"), dataSet.get("step target"), firstStep.dataSet.get("target")));
@@ -150,6 +151,7 @@ public class ComposableTestCaseDataSetPreProcessorTest {
         );
         assertStepActions(actionName, thirdStep, step.steps.get(2).dataSet.get("target"), retryStrategy);
     }
+
 
     private FunctionalStep buildStepFromActionWithDataSet(FunctionalStep action, String targetDataSetValue) {
         return FunctionalStep.builder()

@@ -77,7 +77,7 @@ public class ScenarioExecutionEngine {
     }
 
     private ScenarioExecutionReport simpleSyncExecution(String environment, TestCase testCase) {
-        TestCase testCaseProcessed = testCasePreProcessors.apply(testCase);
+        TestCase testCaseProcessed = testCasePreProcessors.apply(testCase,environment);
 
         StepExecutionReportCore finalStepReport = executionEngine.execute(new ExecutionRequest(testCaseProcessed, environment));
         return new ScenarioExecutionReport(0L, testCaseProcessed.metadata().title(), environment, finalStepReport);

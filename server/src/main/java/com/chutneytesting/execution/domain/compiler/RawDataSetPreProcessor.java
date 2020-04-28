@@ -15,7 +15,7 @@ public class RawDataSetPreProcessor implements TestCasePreProcessor<RawTestCase>
     }
 
     @Override
-    public RawTestCase apply(RawTestCase testCase) {
+    public RawTestCase apply(RawTestCase testCase, String environment) {
         return RawTestCase.builder()
             .withMetadata(testCase.metadata)
             .withScenario(replaceParams(testCase.content, globalvarRepository.getFlatMap(), testCase.dataSet(), StringEscapeUtils::escapeJson))

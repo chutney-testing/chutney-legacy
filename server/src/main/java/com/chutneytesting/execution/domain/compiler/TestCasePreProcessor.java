@@ -8,7 +8,7 @@ import java.util.function.Function;
 
 public interface TestCasePreProcessor<T extends TestCase> {
 
-    T apply(T testCase);
+    T apply(T testCase, String environment);
 
     default boolean test(T testCase) {
         Type type = ((ParameterizedType) getClass().getGenericInterfaces()[0]).getActualTypeArguments()[0];
@@ -31,6 +31,11 @@ public interface TestCasePreProcessor<T extends TestCase> {
             stringReplaced = stringReplaced.replace("**" + entry.getKey() + "**", escapeValueFunction.apply(entry.getValue()));
         }
         return stringReplaced;
+    }
+
+    default void makeEnvironmentNameAsGlobalVariable(Map<String, String> globalVariable, String environment) {
+        if(environment != null && !environment.isEmpty())
+            globalVariable.put("environment", environment);
     }
 
 }

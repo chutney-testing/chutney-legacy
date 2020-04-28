@@ -107,7 +107,7 @@ public class ScenarioExecutionEngineAsyncTest {
         final long executionId = 3L;
 
         when(executionStateRepository.runningState(scenarioId)).thenReturn(Optional.empty());
-        when(testCasePreProcessors.apply(any())).thenReturn(testCase);
+        when(testCasePreProcessors.apply(any(),any())).thenReturn(testCase);
         when(executionEngine.executeAndFollow(any())).thenReturn(Pair.of(Observable.empty(), 0L));
 
         ExecutionHistory.Execution storedExecution = stubHistoryExecution(scenarioId, executionId);
@@ -129,7 +129,7 @@ public class ScenarioExecutionEngineAsyncTest {
 
         // Then
         verify(executionStateRepository).runningState(scenarioId);
-        verify(testCasePreProcessors).apply(any(RawTestCase.class));
+        verify(testCasePreProcessors).apply(any(RawTestCase.class),any());
         verify(executionEngine).executeAndFollow(any());
         ArgumentCaptor<ExecutionHistory.DetachedExecution> argumentCaptor = ArgumentCaptor.forClass(ExecutionHistory.DetachedExecution.class);
         verify(executionHistoryRepository).store(eq(scenarioId), argumentCaptor.capture());
@@ -202,7 +202,7 @@ public class ScenarioExecutionEngineAsyncTest {
         final RawTestCase testCase = emptyTestCase();
 
         when(executionStateRepository.runningState(scenarioId)).thenReturn(Optional.empty());
-        when(testCasePreProcessors.apply(any())).thenReturn(testCase);
+        when(testCasePreProcessors.apply(any(),any())).thenReturn(testCase);
 
         stubHistoryExecution(scenarioId, executionId);
         final List<StepExecutionReportCore> reportsList = stubEngineExecution(executionId, 0).getMiddle();

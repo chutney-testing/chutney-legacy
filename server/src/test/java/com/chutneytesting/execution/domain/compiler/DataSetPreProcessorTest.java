@@ -44,7 +44,7 @@ public class DataSetPreProcessorTest {
             .build();
 
         // When
-        RawTestCase actual = dataSetPreProcessor.apply(fakeTestCase);
+        RawTestCase actual = dataSetPreProcessor.apply(fakeTestCase,null);
 
         // Then
         String expectedContent = "a blabla step with a value and another value and value1";
@@ -85,7 +85,7 @@ public class DataSetPreProcessorTest {
         GwtDataSetPreProcessor dataSetPreProcessor = new GwtDataSetPreProcessor(new GwtScenarioMapper(), globalvarRepository);
 
         // When
-        GwtTestCase actual = dataSetPreProcessor.apply(parameterizedTestCase);
+        GwtTestCase actual = dataSetPreProcessor.apply(parameterizedTestCase,null);
 
         // Then
         GwtTestCase evaluatedTestCase = GwtTestCase.builder()
