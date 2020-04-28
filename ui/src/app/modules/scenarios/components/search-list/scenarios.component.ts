@@ -117,9 +117,9 @@ export class ScenariosComponent implements OnInit {
         this.tagData.toggleNoTag();
     }
 
-    changeListView(list: boolean) {
-        this.listView = list;
-        this.stateService.changeScenarioList(list);
+    toggleListView() {
+        this.listView = !this.listView;
+        this.stateService.changeScenarioList(this.listView);
     }
 
     private loadAll() {

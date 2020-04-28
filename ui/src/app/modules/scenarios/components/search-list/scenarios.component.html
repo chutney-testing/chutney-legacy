@@ -58,10 +58,10 @@
 
 <div class="row justify-content-center" style="min-height: 50px;">
     <div class="position-absolute" style="left: 0;">
-        <button *ngIf="!listView" type="button" class="btn btn-default m-2" (click)="changeListView(true)">
+        <button *ngIf="!listView" type="button" class="btn btn-default m-2" (click)="toggleListView()">
             <span class="fa fa-list"></span>
         </button>
-        <button *ngIf="listView" type="button" class="btn btn-default m-2" (click)="changeListView(false)">
+        <button *ngIf="listView" type="button" class="btn btn-default m-2" (click)="toggleListView()">
             <span class="fa fa-th"></span>
         </button>
     </div>
