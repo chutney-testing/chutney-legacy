@@ -13,9 +13,9 @@
 <div class="header-scenario">
     <div class="row">
         <div class="mx-auto col-md-5">
-            <chutney-forms-search-field [id]="'scenario-search'"
+            <chutney-forms-search-field #scenariosFilter [id]="'scenario-search'"
                                         [placeholder]="'scenarios.search.placeholder' | translate"
-                                        (searchInputEvent)="filterSearchChange($event)"></chutney-forms-search-field>
+                                        (searchInputEvent)="filterOnTextContent($event)"></chutney-forms-search-field>
         </div>
     </div>
     <div class="row ml-2">
@@ -80,7 +80,7 @@
 <div class="row">
     <ng-container *ngIf="!listView">
         <div id="cards" class="d-flex mr-auto ml-3"
-             *ngFor="let scenario of (scenarios |  scenarioSearch : tagData.selected() : scenarioTypeData.selected() : tagData.isNoTagSelected() : tagData.isSelectAll()  | searchTextPipe  : scenariosFilter : ['title', 'description']  | sortByField : sortField : asc)">
+             *ngFor="let scenario of filteredScenarios">
             <chutney-scenario-card [scenario]="scenario"></chutney-scenario-card>
         </div>
     </ng-container>
@@ -121,11 +121,6 @@
             </tr>
             </thead>
             <tbody>
-            <!--
-            <tr *ngFor="let scenario of
-            (scenarios | scenarioSearch : tagData.selected() : scenarioTypeData.selected() : tagData.isNoTagSelected() : tagData.isSelectAll()
-                       | searchTextPipe  : scenariosFilter : ['title', 'description']
-                       | sortByField : sortField : asc) ; let i=index"-->
             <tr *ngFor="let scenario of filteredScenarios"
                 [routerLink]="['/scenario', scenario.id, 'execution', 'last']"
                 style="cursor: pointer">

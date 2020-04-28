@@ -14,19 +14,16 @@ import { StateService } from 'src/app/shared/state/state.service';
 export class ScenariosComponent implements OnInit {
 
     scenarios: Array<ScenarioIndex> = [];
-    scenariosFilter: string;
+    filteredScenarios: Array<ScenarioIndex> = [];
 
+    listView = true;
+
+    // Filtering
     tagData = new SelectableTags<String>();
     allScenarioTypes = [ScenarioType.FORM, ScenarioType.COMPOSED];
     scenarioTypeData = new SelectableTags<ScenarioType>();
 
-    statusCreationDateSort = false;
-    statusLastExecutedSort = false;
-    listView = true;
-
-    asc = false;
-
-    filteredScenarios: any;
+    // Sorting
     sortField: any;
     public sortReverse: any;
 
@@ -51,8 +48,22 @@ export class ScenariosComponent implements OnInit {
         }
     }
 
-    filterSearchChange(searchFilter: string) {
-        this.scenariosFilter = searchFilter;
+    filterOnTextContent(searchFilter: string) {
+        this.filteredScenarios = this.filter(this.scenarios, searchFilter, ['title', 'description']);
+        this.sortScenarios(this.sortField, this.sortReverse);
+    }
+
+    filter(input: any, filtertext: string, args: any[]) {
+        return input.filter((item) => {
+            return filtertext === undefined
+                || filtertext === ''
+                || args.map(a => item[a] !== undefined && this.normalize(item[a]).indexOf(this.normalize(filtertext)) !== -1)
+                    .reduce( (p, c) => p || c);
+        });
+    }
+
+    private normalize(value) {
+        return value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     }
 
     sortBy(property) {
