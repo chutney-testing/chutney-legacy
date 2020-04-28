@@ -34,8 +34,9 @@ public interface TestCasePreProcessor<T extends TestCase> {
     }
 
     default void makeEnvironmentNameAsGlobalVariable(Map<String, String> globalVariable, String environment) {
-        if(environment != null && !environment.isEmpty())
+        if(environment != null && !environment.isEmpty()){
             globalVariable.put("environment", environment);
+        }
     }
 
 }
