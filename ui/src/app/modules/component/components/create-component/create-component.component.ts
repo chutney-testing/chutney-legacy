@@ -331,7 +331,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
 
     unSelectAll() {
-        this.tagData.unSelectAll();
+        this.tagData.deselectAll();
     }
 
     toggleNoTag() {

@@ -99,8 +99,8 @@ export class ScenariosComponent implements OnInit {
         this.stateService.changeScenarioType(this.scenarioTypeData.selected());
     }
 
-    unSelectAll() {
-        this.tagData.unSelectAll();
+    deselectAll() {
+        this.tagData.deselectAll();
     }
 
     toggleTagSelect(tag: String) {

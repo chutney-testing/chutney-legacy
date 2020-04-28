@@ -23,7 +23,7 @@ export class SelectableTags<T> {
         this.noTag = true;
     }
 
-    unSelectAll() {
+    deselectAll() {
         this.selectedTags = [];
         this.noTag = false;
     }

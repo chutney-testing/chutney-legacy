@@ -23,7 +23,7 @@
             <button *ngIf=" !isSelectAll()" type="button" class="btn btn-xs btn-default m-2" (click)="selectAll()">
                 <span class="fa fa-check"></span> {{ 'scenarios.search.sources.settings.selectAllText' | translate }}
             </button>
-            <button *ngIf="isSelectAll()" type="button" class="btn btn-xs btn-default m-2" (click)="unSelectAll()">
+            <button *ngIf="isSelectAll()" type="button" class="btn btn-xs btn-default m-2" (click)="deselectAll()">
                 <span class="fa fa-times"></span> {{ 'scenarios.search.sources.settings.deselectAllText' | translate }}
             </button>
         </div>
