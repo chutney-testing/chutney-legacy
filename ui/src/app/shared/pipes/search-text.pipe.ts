@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { filterOnTextContent } from '@shared/tools';
 
 @Pipe({
     name: 'searchTextPipe'
@@ -6,16 +7,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class SearchTextPipe implements PipeTransform {
 
     transform(input: any, filtertext: string, args: any[]) {
-
-        return input.filter((item) => {
-            return filtertext === undefined
-                || filtertext === ''
-                || args.map(a => item[a] !== undefined && this.normalize(item[a]).indexOf(this.normalize(filtertext)) !== -1)
-                        .reduce( (p, c) => p || c);
-        });
+        return filterOnTextContent(input, filtertext, args);
     }
 
-    private normalize(value) {
-        return value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    }
 }

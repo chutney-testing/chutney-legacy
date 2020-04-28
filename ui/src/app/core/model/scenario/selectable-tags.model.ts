@@ -34,7 +34,6 @@ export class SelectableTags<T> {
 
     toggleSelect(item: T) {
         if (this.selectedTags.length === this.allTags.length) {
-            this.noTag = false;
             this.selectedTags = [item];
         } else {
             if (this.isSelected(item)) {
@@ -49,6 +48,10 @@ export class SelectableTags<T> {
 
     selectTags(items: Array<T>) {
         this.selectedTags = items;
+    }
+
+    setNoTag(noTag) {
+        this.noTag = noTag;
     }
 
     toggleNoTag() {

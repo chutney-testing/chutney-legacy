@@ -1,43 +1,118 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { ScenarioService } from '@core/services';
-import { SelectableTags, ScenarioIndex, ScenarioType } from '@model';
-import { distinct, flatMap } from '@shared/tools/array-utils';
-import { StateService } from 'src/app/shared/state/state.service';
+import { ScenarioIndex, ScenarioType, SelectableTags } from '@model';
+import { distinct, filterOnTextContent, flatMap, intersection } from '@shared/tools/array-utils';
+import { StateService } from '@shared/state/state.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'chutney-scenarios',
     templateUrl: './scenarios.component.html',
     styleUrls: ['./scenarios.component.scss']
 })
-export class ScenariosComponent implements OnInit {
+export class ScenariosComponent implements OnInit, OnDestroy {
+
+    SCENARIO_TYPES = [ScenarioType.FORM, ScenarioType.COMPOSED];
+    urlParams: Subscription;
 
     scenarios: Array<ScenarioIndex> = [];
-    filteredScenarios: Array<ScenarioIndex> = [];
 
-    listView = true;
+    listView = false;
 
-    // Filtering
-    tagData = new SelectableTags<String>();
-    allScenarioTypes = [ScenarioType.FORM, ScenarioType.COMPOSED];
-    scenarioTypeData = new SelectableTags<ScenarioType>();
+    // Filter
+    viewedScenarios: Array<ScenarioIndex> = [];
+    textFilter: any = '';
+    tagFilter = new SelectableTags<String>();
+    scenarioTypeFilter = new SelectableTags<ScenarioType>();
 
-    // Sorting
-    sortField: any;
-    public sortReverse: any;
+    // Order
+    orderBy = 'title';
+    reverseOrder = false;
 
     constructor(
         private router: Router,
         private scenarioService: ScenarioService,
-        private stateService: StateService
+        private stateService: StateService,
+        private readonly activatedRoute: ActivatedRoute,
     ) {
     }
 
-    ngOnInit() {
-        this.initSelectedTypes();
-        this.loadAll();
-        this.listView = this.stateService.getScenarioListValue();
+    async ngOnInit() {
+        try {
+            this.scenarios = await this.getScenarios();
+            this.applyDefaultState();
+            this.applySavedState();
+            this.applyUriState();
+            this.applyFilters();
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    ngOnDestroy(): void {
+        this.urlParams.unsubscribe();
+    }
+
+    private async getScenarios() {
+        return this.scenarioService.findScenarios().toPromise();
+    }
+
+    private applyDefaultState() {
+        this.viewedScenarios = this.scenarios;
+        this.scenarioTypeFilter.initialize(this.SCENARIO_TYPES);
+        this.tagFilter.initialize(this.findAllTags());
+    }
+
+    private findAllTags() {
+        return distinct(flatMap(this.scenarios, (sc) => sc.tags)).sort();
+    }
+
+    private applySavedState() {
+        this.setView();
+        this.setSelectedTypes();
+        this.setSelectedTags();
+    }
+
+    private setView() {
+        const listView = this.stateService.getScenarioListValue();
+        if (listView) {
+            this.listView = listView;
+        }
+    }
+
+    private setSelectedTypes() {
+        const savedScenarioType = this.stateService.getScenarioType();
+        if (savedScenarioType != null && savedScenarioType.length > 0) {
+            this.scenarioTypeFilter.selectTags(savedScenarioType);
+        }
+    }
+
+    private setSelectedTags() {
+        const savedTags = this.stateService.getTags();
+        if (savedTags != null && savedTags.length > 0) {
+            this.tagFilter.selectTags(savedTags);
+        }
+
+        const noTag = this.stateService.getNoTag();
+        if (noTag != null) {
+            this.tagFilter.setNoTag(noTag);
+        }
+    }
+
+    private applyUriState() {
+        this.urlParams = this.activatedRoute.params.subscribe(
+            (params) => {
+                if (params['text']) { this.textFilter = params['text']; }
+                if (params['orderBy']) { this.orderBy = params['orderBy']; }
+                if (params['reverseOrder']) { this.reverseOrder = params['reverseOrder']; }
+                if (params['type']) { this.scenarioTypeFilter.selectTags(params['type'].split(',')); }
+                if (params['noTag']) { this.tagFilter.setNoTag(params['noTag']); }
+                if (params['tags']) { this.tagFilter.selectTags(params['tags'].split(',')); }
+            },
+            (error) => console.log(error)
+        );
     }
 
     createNewScenario(compose: boolean) {
@@ -48,32 +123,22 @@ export class ScenariosComponent implements OnInit {
         }
     }
 
-    filterOnTextContent(searchFilter: string) {
-        this.filteredScenarios = this.filter(this.scenarios, searchFilter, ['title', 'description']);
-        this.sortScenarios(this.sortField, this.sortReverse);
+    toggleListView() {
+        this.listView = !this.listView;
+        this.stateService.changeScenarioList(this.listView);
     }
 
-    filter(input: any, filtertext: string, args: any[]) {
-        return input.filter((item) => {
-            return filtertext === undefined
-                || filtertext === ''
-                || args.map(a => item[a] !== undefined && this.normalize(item[a]).indexOf(this.normalize(filtertext)) !== -1)
-                    .reduce( (p, c) => p || c);
-        });
-    }
-
-    private normalize(value) {
-        return value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    }
+    // Ordering //
 
     sortBy(property) {
-        this.sortReverse = !this.sortReverse;
-        this.sortScenarios(property, this.sortReverse)
+        this.reverseOrder = !this.reverseOrder;
+        this.orderBy = property;
+        this.applyFilters();
     }
 
     sortScenarios(property, reverseOrder) {
-        this.sortField = property;
-        this.filteredScenarios.sort(this.dynamicSort(property, reverseOrder));
+        this.orderBy = property;
+        this.viewedScenarios.sort(this.dynamicSort(property, reverseOrder));
     }
 
     dynamicSort(property, reverseOrder) {
@@ -84,76 +149,103 @@ export class ScenariosComponent implements OnInit {
         }
 
         return function (a, b) {
-            let result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+            const result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
             return result * sortScenarios;
-        }
+        };
     }
 
-    isSelectAll() {
-        return this.tagData.isSelectAll();
+    // Filtering //
+
+    updateTextFilter(text: string) {
+        this.textFilter = text;
+        this.applyFilters();
     }
 
     selectAll() {
-        this.tagData.selectAll();
-        this.stateService.changeTags(this.tagData.selected());
-        this.stateService.changeScenarioType(this.scenarioTypeData.selected());
+        this.tagFilter.selectAll();
+        this.stateService.changeTags(this.tagFilter.selected());
+        this.stateService.changeNoTag(this.tagFilter.setNoTag(true));
+        this.stateService.changeScenarioType(this.scenarioTypeFilter.selected());
+        this.applyFilters();
+    }
+
+    isSelectAll() {
+        return this.tagFilter.isSelectAll();
     }
 
     deselectAll() {
-        this.tagData.deselectAll();
+        this.tagFilter.deselectAll();
+        this.stateService.changeNoTag(false);
+        this.applyFilters();
     }
 
-    toggleTagSelect(tag: String) {
-        this.tagData.toggleSelect(tag);
-        this.stateService.changeTags(this.tagData.selected());
+    toggleScenarioTypeFilter(scenarioType: ScenarioType) {
+        this.scenarioTypeFilter.toggleSelect(scenarioType);
+        this.stateService.changeScenarioType(this.scenarioTypeFilter.selected());
+        this.applyFilters();
     }
 
-    toggleScenarioTypeSelect(scenarioType: ScenarioType) {
-        this.scenarioTypeData.toggleSelect(scenarioType);
-        this.stateService.changeScenarioType(this.scenarioTypeData.selected());
+    toggleNoTagFilter() {
+        this.tagFilter.toggleNoTag();
+        this.stateService.changeNoTag(this.tagFilter.isNoTagSelected());
+        this.applyFilters();
     }
 
-    toggleNoTag() {
-        this.tagData.toggleNoTag();
+    toggleTagFilter(tag: String) {
+        this.tagFilter.toggleSelect(tag);
+        this.stateService.changeTags(this.tagFilter.selected());
+        this.applyFilters();
     }
 
-    toggleListView() {
-        this.listView = !this.listView;
-        this.stateService.changeScenarioList(this.listView);
+    applyFilters() {
+        this.viewedScenarios = filterOnTextContent(this.scenarios, this.textFilter, ['title', 'id']);
+        this.viewedScenarios = this.filterOnAttributes();
+        this.sortScenarios(this.orderBy, this.reverseOrder);
+        this.applyFiltersToRoute();
     }
 
-    private loadAll() {
-        this.scenarioService.findScenarios().subscribe(
-            (res) => {
-                this.scenarios = res;
-                this.filteredScenarios = res;
-                this.initSelectedTags();
-                this.sortScenarios('title', false);
-            },
-            (error) => console.log(error)
+    private filterOnAttributes() {
+        const input = this.viewedScenarios;
+        const tags = this.tagFilter.selected();
+        const scenarioTypes = this.scenarioTypeFilter.selected();
+        const noTag = this.tagFilter.isNoTagSelected();
+        const all = this.tagFilter.isSelectAll();
+
+        return all ? input : input.filter((item: ScenarioIndex) => {
+            return (this.tagPresent(tags, item)
+                || this.noTagPresent(noTag, item))
+                && this.scenarioTypePresent(scenarioTypes, item);
+        });
+    }
+
+    private tagPresent(tags: String[], scenario: ScenarioIndex): boolean {
+        return intersection(tags, scenario.tags).length > 0;
+    }
+
+    private noTagPresent(noTag: boolean, scenario: ScenarioIndex): boolean {
+        return noTag && scenario.tags.length === 0;
+    }
+
+    private scenarioTypePresent(scenarioTypes: ScenarioType[], scenario: ScenarioIndex): boolean {
+        return intersection(scenarioTypes, [scenario.type]).length > 0;
+    }
+
+    private applyFiltersToRoute(): void {
+        this.router.navigate(
+            [{
+                text: this.textFilter,
+                orderBy: this.orderBy,
+                reverseOrder: this.reverseOrder,
+                type: this.scenarioTypeFilter.selected().toString(),
+                noTag: this.tagFilter.isNoTagSelected(),
+                tags: this.tagFilter.selected().toString()
+            }],
+            {
+                relativeTo: this.activatedRoute,
+                replaceUrl: true
+            }
         );
-    }
-
-    private initSelectedTags() {
-        this.tagData.initialize(this.findAllTags());
-        const savedTags = this.stateService.getTags();
-        if (savedTags != null && savedTags.length > 0) {
-            this.tagData.selectTags(savedTags);
-        }
-    }
-
-    private findAllTags() {
-        return distinct(flatMap(this.scenarios, (sc) => sc.tags)).sort();
-    }
-
-    private initSelectedTypes() {
-        this.scenarioTypeData.initialize(this.allScenarioTypes);
-        const savedScenarioType = this.stateService.getScenarioType();
-        if (savedScenarioType != null && savedScenarioType.length > 0) {
-            this.scenarioTypeData.selectTags(savedScenarioType);
-        }
+        document.title = `Chutney scenarios`;
     }
 
 }
-
-

@@ -10,7 +10,7 @@ export class SearchFieldComponent implements OnInit {
     @Input() id: string;
     @Input() placeholder: string;
     @Output() searchInputEvent = new EventEmitter<string>();
-    searchInput:  string;
+    @Input() searchInput:  string;
 
   constructor() { }
 

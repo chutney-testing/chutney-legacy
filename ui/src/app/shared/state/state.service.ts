@@ -43,4 +43,13 @@ export class StateService {
         this.state.scenarioTypes = scenarioTypes;
         this.save();
     }
+
+    public changeNoTag(noTag) {
+        this.state.noTag = noTag;
+        this.save();
+    }
+
+    public getNoTag() {
+        return this.state.noTag;
+    }
 }

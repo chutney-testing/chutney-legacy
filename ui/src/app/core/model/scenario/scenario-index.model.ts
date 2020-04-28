@@ -18,14 +18,14 @@ export class ScenarioIndex {
         public tags: Array<string> = [],
         public executions?: Array<Execution>
     ) {
-        this.status = this.getStatus();
+        this.status = this.findStatus();
         this.lastExecution = this.lastTimeExec();
-        this.executionCount = this.numberOfExecution();
-        this.isComposed = this.getIfComposed();
-        this.type = this.getType();
+        this.executionCount = this.countExecutions();
+        this.isComposed = this.findIfComposed();
+        this.type = this.setType();
     }
 
-    private getStatus() {
+    private findStatus() {
         if (this.executions && this.executions.length > 0) {
             return this.executions[0].status;
         } else {
@@ -41,7 +41,7 @@ export class ScenarioIndex {
         }
     }
 
-    private numberOfExecution() {
+    private countExecutions() {
         if (this.executions && this.executions.length > 0) {
             return this.executions.length;
         } else {
@@ -49,11 +49,11 @@ export class ScenarioIndex {
         }
     }
 
-    private getIfComposed(): boolean {
+    private findIfComposed(): boolean {
         return TestCase.isComposed(this.id);
     }
 
-    private getType(): ScenarioType {
+    private setType(): ScenarioType {
         return this.isComposed ? ScenarioType.COMPOSED : ScenarioType.FORM;
     }
 }

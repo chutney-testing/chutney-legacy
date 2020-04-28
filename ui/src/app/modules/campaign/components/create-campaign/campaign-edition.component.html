@@ -141,21 +141,21 @@
                         <table class="table table-striped table-hover">
                             <tbody>
                                 <tr
-                                    *ngFor="let scenario of scenarios |  scenarioCampaignSearch : selectedTags | searchTextPipe  : scenariosFilter : ['title', 'description'] | withoutScenario:scenariosToAdd">
-                                    <td style="width: 3%">
+                                    *ngFor="let scenario of scenarios |  scenarioCampaignSearch : selectedTags | searchTextPipe  : scenariosFilter : ['title', 'id'] | withoutScenario:scenariosToAdd">
+                                    <td class="w-3">
                                         <button type="button" class="btn btn-outline-success btn-sm"
                                             (click)="addScenario(scenario)">
                                             <span class="fa fa-arrow-circle-left"></span>
                                         </button>
                                     </td>
-                                    <td class="text-nowrap" style="width: 10%">{{scenario?.id}}</td>
-                                    <td class="scenario-title-cell" style="width: 70%">{{scenario?.title}}</td>
-                                    <td style="width: 15%">
+                                    <td class="text-nowrap w-10">{{scenario?.id}}</td>
+                                    <td class="scenario-title-cell w-70">{{scenario?.title}}</td>
+                                    <td class="w-15">
                                         <span *ngFor="let tag of scenario.tags">
                                             <span class="chutney-tag chutney-tag-selected">{{tag}}</span>
                                         </span>
                                     </td>
-                                    <td style="width: 2%">
+                                    <td class="w-2">
                                         <button type="button" class="btn btn-link mr-0"
                                             ngbPopover="{{scenario.description}}" placement="left"
                                             triggers="mouseenter:mouseleave" container="body">
