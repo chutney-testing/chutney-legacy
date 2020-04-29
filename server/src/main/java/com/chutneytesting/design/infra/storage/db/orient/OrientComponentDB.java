@@ -1,9 +1,9 @@
 package com.chutneytesting.design.infra.storage.db.orient;
 
-import com.orientechnologies.orient.core.db.ODatabasePool;
-import com.orientechnologies.orient.core.db.ODatabaseType;
 import com.chutneytesting.admin.domain.Backupable;
 import com.chutneytesting.design.infra.storage.db.orient.changelog.OrientChangelogExecutor;
+import com.orientechnologies.orient.core.db.ODatabasePool;
+import com.orientechnologies.orient.core.db.ODatabaseType;
 import java.io.OutputStream;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +33,19 @@ public class OrientComponentDB implements Backupable {
     public static final String GE_STEP_CLASS = "Denote";
     public static final String GE_STEP_CLASS_PROPERTY_RANK = "rank";
     public static final String GE_STEP_CLASS_PROPERTY_PARAMETERS = "parameters";
+
+    public static final String DATASET_CLASS = "DataSet";
+    public static final String DATASET_HISTORY_CLASS = "DataSetHistory";
+    public static final String DATASET_CLASS_PROPERTY_NAME = "name";
+    public static final String DATASET_CLASS_PROPERTY_DESCRIPTION = "description";
+    public static final String DATASET_CLASS_PROPERTY_CREATIONDATE = "created";
+    public static final String DATASET_CLASS_PROPERTY_TAGS = "tags";
+    public static final String DATASET_CLASS_PROPERTY_VALUES_UNIQUE = "uniqueValues";
+    public static final String DATASET_CLASS_PROPERTY_VALUES_MULTIPLE = "multipleValues";
+    public static final String DATASET_HISTORY_CLASS_PROPERTY_VERSION = "version";
+    public static final String DATASET_HISTORY_CLASS_PROPERTY_LAST = "last";
+    public static final String DATASET_HISTORY_CLASS_PROPERTY_PATCH= "patch";
+    public static final String DATASET_HISTORY_CLASS_INDEX_LAST = "idx_" + DATASET_HISTORY_CLASS + "_" + DATASET_HISTORY_CLASS_PROPERTY_LAST;
 
 
     private OrientDBManager orientDBManager;

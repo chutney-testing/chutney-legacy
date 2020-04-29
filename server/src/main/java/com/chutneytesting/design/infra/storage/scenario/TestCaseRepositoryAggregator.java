@@ -1,6 +1,6 @@
 package com.chutneytesting.design.infra.storage.scenario;
 
-import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.isComposableTestCaseId;
+import static com.chutneytesting.tools.ui.OrientUtils.isOrientId;
 
 import com.chutneytesting.design.domain.compose.ComposableTestCaseRepository;
 import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
@@ -72,7 +72,7 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
 
     @Override
     public TestCase findById(String scenarioId) {
-        if (isComposableTestCaseId(scenarioId)) {
+        if (isOrientId(scenarioId)) {
             return composableTestCaseRepository.findById(scenarioId);
         } else {
             TestCaseData testCaseData = repositories()

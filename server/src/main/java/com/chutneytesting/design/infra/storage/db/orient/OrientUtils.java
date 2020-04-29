@@ -74,7 +74,11 @@ public final class OrientUtils {
             }
             return dbSession.getClass(className);
         } else {
-            return dbSession.createClass(className, superClassName);
+            if (superClassName != null) {
+                return dbSession.createClass(className, superClassName);
+            } else {
+                return dbSession.createClass(className);
+            }
         }
     }
 
@@ -123,9 +127,13 @@ public final class OrientUtils {
 
     public static Optional<OElement> load(final String recordId, final ODatabaseSession dbSession) {
         if (!recordId.isEmpty() && ORecordId.isA(recordId)) {
-            return Optional.ofNullable(dbSession.load(
-                new ORecordId(recordId))
-            );
+            try {
+                return Optional.ofNullable(dbSession.load(
+                    new ORecordId(recordId))
+                );
+            } catch(Exception e) {
+                // do nothing
+            }
         }
         return Optional.empty();
     }
