@@ -1,7 +1,7 @@
 package com.chutneytesting.design.api.compose.mapper;
 
-import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.fromFrontId;
-import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.toFrontId;
+import static com.chutneytesting.tools.ui.OrientUtils.fromFrontId;
+import static com.chutneytesting.tools.ui.OrientUtils.toFrontId;
 import static java.util.stream.Collectors.toList;
 
 import com.chutneytesting.design.api.compose.dto.FunctionalStepDto;

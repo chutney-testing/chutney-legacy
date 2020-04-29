@@ -1,9 +1,8 @@
 package com.chutneytesting.execution.api;
 
-import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.fromFrontId;
-import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.isComposableFrontId;
+import static com.chutneytesting.tools.ui.OrientUtils.fromFrontId;
+import static com.chutneytesting.tools.ui.OrientUtils.isOrientId;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.chutneytesting.design.api.compose.dto.KeyValue;
 import com.chutneytesting.design.domain.compose.ComposableTestCaseRepository;
 import com.chutneytesting.design.domain.compose.FunctionalStep;
@@ -11,9 +10,10 @@ import com.chutneytesting.design.domain.compose.StepRepository;
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.execution.domain.ExecutionRequest;
+import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngineAsync;
-import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Observable;
 import java.io.IOException;
@@ -80,7 +80,7 @@ public class ScenarioExecutionUiController {
     public String executeScenarioAsyncWithDataSet(@PathVariable("scenarioId") String scenarioId, @PathVariable("env") String env, @RequestBody List<KeyValue> dataSet) {
         LOGGER.debug("executeScenarioAsync for scenarioId='{}' with dataset '{}'", scenarioId, dataSet);
         TestCase testCase;
-        if (isComposableFrontId(scenarioId)) {
+        if (isOrientId(scenarioId)) {
             testCase = composableTestCaseRepository.findById(fromFrontId(Optional.of(scenarioId)));
         } else {
             testCase = testCaseRepository.findById(scenarioId);

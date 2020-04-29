@@ -1,7 +1,7 @@
 package com.chutneytesting.design.api.scenario.v2_0;
 
-import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.fromFrontId;
-import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.toFrontId;
+import static com.chutneytesting.tools.ui.OrientUtils.fromFrontId;
+import static com.chutneytesting.tools.ui.OrientUtils.toFrontId;
 
 import com.chutneytesting.design.api.scenario.v2_0.dto.GwtTestCaseDto;
 import com.chutneytesting.design.api.scenario.v2_0.dto.RawTestCaseDto;
