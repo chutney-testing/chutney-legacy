@@ -19,7 +19,7 @@ public class GwtDataSetPreProcessor implements TestCasePreProcessor<GwtTestCase>
     }
 
     @Override
-    public GwtTestCase apply(GwtTestCase testCase) {
+    public GwtTestCase apply(GwtTestCase testCase, String environment) {
         return GwtTestCase.builder()
             .withMetadata(testCase.metadata)
             .withDataSet(testCase.dataSet)

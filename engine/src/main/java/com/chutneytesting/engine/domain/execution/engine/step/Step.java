@@ -83,6 +83,7 @@ public class Step {
 
         try {
             makeTargetAccessibleForInputEvaluation(scenarioContext, target);
+            makeEnvironmentAccessibleForInputEvaluation(scenarioContext);
             Map<String, Object> evaluatedInputs = unmodifiableMap(dataEvaluator.evaluateNamedDataWithContextVariables(definition.inputs, scenarioContext));
 
             Try
@@ -221,6 +222,10 @@ public class Step {
 
     private void makeTargetAccessibleForInputEvaluation(ScenarioContext scenarioContext, Target target) {
         scenarioContext.put("target", target);
+    }
+
+    private void makeEnvironmentAccessibleForInputEvaluation(ScenarioContext scenarioContext) {
+        scenarioContext.put("environment", definition.environment);
     }
 
     private void copyStepResultsToScenarioContext(StepContextImpl stepContext, ScenarioContext scenarioContext) {

@@ -38,7 +38,8 @@ class StepDefinitionMapper {
             strategy,
             dto.inputs,
             steps,
-            dto.outputs
+            dto.outputs,
+            dto.environment
         );
     }
 

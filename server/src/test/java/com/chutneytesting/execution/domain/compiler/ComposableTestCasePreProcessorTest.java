@@ -31,6 +31,7 @@ public class ComposableTestCasePreProcessorTest {
 
     private GlobalvarRepository globalvarRepository;
     private ObjectMapper objectMapper = new WebConfiguration().objectMapper();
+    private String environment = "exec env";
 
     private ComposableTestCasePreProcessor sut;
 
@@ -50,7 +51,7 @@ public class ComposableTestCasePreProcessorTest {
         final String SECOND_ITERATION_VALUE = "iteration_2";
 
         when(globalvarRepository.getFlatMap())
-            .thenReturn(singletonMap(GLOBAL_PARAMETER, "[{\"" + VALUE + "\":\"" + FIRST_ITERATION_VALUE + "\"}, {\"value\":\"" + SECOND_ITERATION_VALUE + "\"}]"));
+            .thenReturn(new HashMap<>(Maps.of(GLOBAL_PARAMETER, "[{\"" + VALUE + "\":\"" + FIRST_ITERATION_VALUE + "\"}, {\"value\":\"" + SECOND_ITERATION_VALUE + "\"}]")));
 
         sut = new ComposableTestCasePreProcessor(objectMapper, globalvarRepository);
 
@@ -77,7 +78,7 @@ public class ComposableTestCasePreProcessorTest {
         ComposableTestCase composableTestase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
-        ComposableTestCase actual = sut.apply(composableTestase);
+        ComposableTestCase actual = sut.apply(composableTestase, environment);
 
         // Then
         assertThat(actual.composableScenario.functionalSteps.size()).isEqualTo(1);
@@ -97,7 +98,7 @@ public class ComposableTestCasePreProcessorTest {
         final String SECOND_ITERATION_VALUE = "iteration_2";
 
         when(globalvarRepository.getFlatMap())
-            .thenReturn(singletonMap(GLOBAL_PARAMETER, "[{\"" + VALUE + "\":\"" + FIRST_ITERATION_VALUE + "\"}, {\"value\":\"" + SECOND_ITERATION_VALUE + "\"}]"));
+            .thenReturn(new HashMap<>(Maps.of(GLOBAL_PARAMETER, "[{\"" + VALUE + "\":\"" + FIRST_ITERATION_VALUE + "\"}, {\"value\":\"" + SECOND_ITERATION_VALUE + "\"}]")));
 
         sut = new ComposableTestCasePreProcessor(objectMapper, globalvarRepository);
 
@@ -125,7 +126,7 @@ public class ComposableTestCasePreProcessorTest {
         ComposableTestCase composableTestase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario, dataset);
 
         // When
-        ComposableTestCase actual = sut.apply(composableTestase);
+        ComposableTestCase actual = sut.apply(composableTestase, environment);
 
         // Then
         assertThat(actual.composableScenario.functionalSteps.size()).isEqualTo(1);
@@ -220,7 +221,7 @@ public class ComposableTestCasePreProcessorTest {
             dataSet);
 
         // When
-        final ComposableTestCase composableTestCaseProcessed = sut.apply(composableTestCase);
+        final ComposableTestCase composableTestCaseProcessed = sut.apply(composableTestCase, environment);
 
         // Then
         assertThat(composableTestCaseProcessed.id()).isEqualTo(composableTestCase.id());
@@ -349,7 +350,7 @@ public class ComposableTestCasePreProcessorTest {
                 .build(),
             dataSet);
 
-        final ComposableTestCase composableTestCaseProcessed = sut.apply(composableTestCase);
+        final ComposableTestCase composableTestCaseProcessed = sut.apply(composableTestCase, environment);
 
         // Then
         assertThat(composableTestCaseProcessed.id()).isEqualTo(composableTestCase.id());

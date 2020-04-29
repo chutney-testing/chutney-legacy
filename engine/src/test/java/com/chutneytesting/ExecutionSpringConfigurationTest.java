@@ -147,7 +147,8 @@ public class ExecutionSpringConfigurationTest {
             "error",
             Collections.emptyMap(),
             Collections.emptyList(),
-            Collections.emptyMap()
+            Collections.emptyMap(),
+            ""
         );
         ExecutionRequestDto requestDto = new ExecutionRequestDto(stepDefinition);
 
@@ -167,7 +168,8 @@ public class ExecutionSpringConfigurationTest {
                   "success",
                   Collections.emptyMap(),
                   Collections.emptyList(),
-                  Collections.emptyMap()
+                  Collections.emptyMap(),
+            ""
               );
     }
 
@@ -183,7 +185,8 @@ public class ExecutionSpringConfigurationTest {
             null,
             Collections.emptyMap(),
             steps,
-            Collections.emptyMap()
+            Collections.emptyMap(),
+            ""
         );
     }
 
@@ -195,7 +198,8 @@ public class ExecutionSpringConfigurationTest {
             "sleep",
             Maps.newHashMap("duration", "500 ms"),
             null,
-            Collections.emptyMap()
+            Collections.emptyMap(),
+            ""
         );
     }
 

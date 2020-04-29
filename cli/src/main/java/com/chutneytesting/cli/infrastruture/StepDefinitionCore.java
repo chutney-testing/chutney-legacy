@@ -22,6 +22,11 @@ public class StepDefinitionCore {
     public final Optional<Target> target;
 
     /**
+     * Environment on which to execute the current step.
+     */
+    public final String environment;
+
+    /**
      * Type of the step, should match an extension.
      */
     public final String type;
@@ -47,7 +52,8 @@ public class StepDefinitionCore {
                               StepStrategyDefinitionCore strategy,
                               Map<String, Object> inputs,
                               List<StepDefinitionCore> steps,
-                              Map<String, Object> outputs) {
+                              Map<String, Object> outputs,
+                              String environment) {
         this.gwtType = gwtType;
         this.name = name;
         this.target = target;
@@ -56,6 +62,7 @@ public class StepDefinitionCore {
         this.inputs = inputs != null ? Collections.unmodifiableMap(inputs) : Collections.emptyMap();
         this.steps = steps != null ? Collections.unmodifiableList(steps) : Collections.emptyList();
         this.outputs = outputs != null ? Collections.unmodifiableMap(outputs) : Collections.emptyMap();
+        this.environment = environment;
     }
 
     @Override

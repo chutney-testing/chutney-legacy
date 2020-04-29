@@ -34,6 +34,7 @@ public class DefaultExecutionEngineTest {
     private final StepDataEvaluator dataEvaluator = mock(StepDataEvaluator.class, Answers.RETURNS_DEEP_STUBS);
     private final StepExecutionStrategies stepExecutionStrategies = mock(StepExecutionStrategies.class, Answers.RETURNS_DEEP_STUBS);
     private final DelegationService delegationService = mock(DelegationService.class, Answers.RETURNS_DEEP_STUBS);
+    private final String fakeEnvironment = "";
 
     @Test
     public void runtime_exception_should_be_catch_by_fault_barrier() {
@@ -46,7 +47,7 @@ public class DefaultExecutionEngineTest {
         DefaultExecutionEngine engine = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter);
         StrategyProperties strategyProperties = new StrategyProperties();
         StepStrategyDefinition strategyDefinition = new StepStrategyDefinition("retry", strategyProperties);
-        StepDefinition stepDefinition = new StepDefinition("name", null, "type", strategyDefinition, null, null, null);
+        StepDefinition stepDefinition = new StepDefinition("name", null, "type", strategyDefinition, null, null, null, fakeEnvironment);
 
         //When
         Long executionId = engine.execute(stepDefinition, ScenarioExecution.createScenarioExecution());
@@ -70,7 +71,7 @@ public class DefaultExecutionEngineTest {
 
         StrategyProperties strategyProperties = new StrategyProperties();
         StepStrategyDefinition strategyDefinition = new StepStrategyDefinition("retry", strategyProperties);
-        StepDefinition stepDefinition = new StepDefinition("name", null, "type", strategyDefinition, null, null, null);
+        StepDefinition stepDefinition = new StepDefinition("name", null, "type", strategyDefinition, null, null, null, fakeEnvironment);
 
         ScenarioExecution mockScenarioExecution = mock(ScenarioExecution.class);
 
@@ -94,7 +95,7 @@ public class DefaultExecutionEngineTest {
 
         StrategyProperties strategyProperties = new StrategyProperties();
         StepStrategyDefinition strategyDefinition = new StepStrategyDefinition("retry", strategyProperties);
-        StepDefinition stepDefinition = new StepDefinition("name", null, "type", strategyDefinition, null, null, null);
+        StepDefinition stepDefinition = new StepDefinition("name", null, "type", strategyDefinition, null, null, null, fakeEnvironment);
 
         ScenarioExecution scenarioExecution = ScenarioExecution.createScenarioExecution();
         scenarioExecution.registerFinallyAction(FinallyAction.Builder.forAction("final").build());
@@ -123,7 +124,7 @@ public class DefaultExecutionEngineTest {
         DefaultExecutionEngine engineUnderTest = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter);
         StrategyProperties strategyProperties = new StrategyProperties();
         StepStrategyDefinition strategyDefinition = new StepStrategyDefinition("retry", strategyProperties);
-        StepDefinition stepDefinition = new StepDefinition("name", null, "type", strategyDefinition, null, null, null);
+        StepDefinition stepDefinition = new StepDefinition("name", null, "type", strategyDefinition, null, null, null, fakeEnvironment);
 
         ScenarioExecution mockScenarioExecution = mock(ScenarioExecution.class);
 

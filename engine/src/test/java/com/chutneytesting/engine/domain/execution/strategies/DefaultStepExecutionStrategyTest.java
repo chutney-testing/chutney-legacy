@@ -124,7 +124,7 @@ public class DefaultStepExecutionStrategyTest {
     }
 
     private StepDefinition buildStepDef(String name, String type) {
-        return new StepDefinition(name, null, type, null, null, null, null);
+        return new StepDefinition(name, null, type, null, null, null, null,"");
     }
 
     private static void visit(Step step, Consumer<Step> action) {

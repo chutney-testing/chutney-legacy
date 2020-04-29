@@ -26,13 +26,25 @@ public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcess
     }
 
     @Override
-    public ComposableTestCase apply(ComposableTestCase testCase) {
+    public ComposableTestCase apply(ComposableTestCase testCase, String environment) {
         Map<String, String> globalVariable = globalvarRepository.getFlatMap();
+        makeEnvironmentNameAsGlobalVariable(globalVariable, environment);
         return new ComposableTestCase(
             testCase.id,
             applyToMetadata(testCase.metadata, testCase.dataSet, globalVariable),
             applyToScenario(testCase.composableScenario, testCase.dataSet, globalVariable),
             testCase.dataSet);
+    }
+
+    public ComposableTestCase applyOnStrategy(ComposableTestCase testCase, String environment) {
+        Map<String, String> globalVariable = globalvarRepository.getFlatMap();
+        makeEnvironmentNameAsGlobalVariable(globalVariable,environment);
+        Map<String,String> testCaseDataSet = applyOnCurrentStepDataSet(testCase.dataSet, emptyMap(), globalVariable);
+        return new ComposableTestCase(
+            testCase.id,
+            testCase.metadata,
+            applyOnStrategy(testCase.composableScenario, testCaseDataSet, globalVariable),
+            testCaseDataSet);
     }
 
     private TestCaseMetadata applyToMetadata(TestCaseMetadata metadata, Map<String, String> dataSet, Map<String, String> globalVariable) {
@@ -85,16 +97,6 @@ public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcess
             }));
 
         return scopedDataset;
-    }
-
-    ComposableTestCase applyOnStrategy(ComposableTestCase testCase) {
-        Map<String, String> globalVariable = globalvarRepository.getFlatMap();
-        Map<String,String> testCaseDataSet = applyOnCurrentStepDataSet(testCase.dataSet, emptyMap(), globalVariable);
-        return new ComposableTestCase(
-            testCase.id,
-            testCase.metadata,
-            applyOnStrategy(testCase.composableScenario, testCaseDataSet, globalVariable),
-            testCaseDataSet);
     }
 
     private ComposableScenario applyOnStrategy(ComposableScenario composableScenario, Map<String, String> testCaseDataSet, Map<String, String> globalVariable) {

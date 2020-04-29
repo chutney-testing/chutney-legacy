@@ -88,7 +88,7 @@ public class ScenarioExecutionEngineAsync {
         // Before execution check
         verifyScenarioNotAlreadyRunning(executionRequest.testCase.id());
         // Compile testcase for execution
-        ExecutionRequest executionRequestProcessed = new ExecutionRequest(testCasePreProcessors.apply(executionRequest.testCase), executionRequest.environment);
+        ExecutionRequest executionRequestProcessed = new ExecutionRequest(testCasePreProcessors.apply(executionRequest.testCase,executionRequest.environment), executionRequest.environment);
         // Initialize execution history
         ExecutionHistory.Execution storedExecution = storeInitialReport(executionRequest.testCase.id(), executionRequest.testCase.metadata().title(), executionRequest.environment);
         // Start engine execution

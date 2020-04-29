@@ -12,11 +12,11 @@ public class TestCasePreProcessors {
         this.processors = Collections.unmodifiableList(processors);
     }
 
-    public <T extends TestCase> T apply(final T testCase) {
+    public <T extends TestCase> T apply(final T testCase, String environment) {
         T tmp = testCase;
         for (TestCasePreProcessor<T> p : processors) {
             if(p.test(tmp)) {
-                tmp = p.apply(tmp);
+                tmp = p.apply(tmp,environment);
             }
         }
         return tmp;
