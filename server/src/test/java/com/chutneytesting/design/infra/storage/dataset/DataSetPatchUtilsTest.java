@@ -26,6 +26,8 @@ import org.junit.Test;
 
 public class DataSetPatchUtilsTest {
 
+    private Charset UTF8 = Charset.forName("UTF-8");
+
     @Test
     public void should_map_dataset_as_string() throws IOException, URISyntaxException {
         // Given
@@ -33,13 +35,13 @@ public class DataSetPatchUtilsTest {
 
         // When
         List<String> rawValues = stringLines(dataSetValues(dataSet, false));
-        List<String> rawDataSetText = Files.readAllLines(rawTestResources(), Charset.forName("UTF-8"));
+        List<String> rawDataSetText = Files.readAllLines(rawTestResources(), UTF8);
         // Then
         assertThat(rawValues).containsExactlyElementsOf(rawDataSetText);
 
         // When
         List<String> prettyValues = stringLines(dataSetValues(dataSet, true));
-        List<String> prettyDataSetText = Files.readAllLines(prettyTestResources(), Charset.forName("UTF-8"));
+        List<String> prettyDataSetText = Files.readAllLines(prettyTestResources(), UTF8);
         // Then
         assertThat(prettyValues).containsExactlyElementsOf(prettyDataSetText);
     }
@@ -48,8 +50,8 @@ public class DataSetPatchUtilsTest {
     public void should_map_string_as_dataset_values() throws IOException, URISyntaxException {
         // Given
         DataSet dataSet = testDataSet();
-        String raw = new String(Files.readAllBytes(rawTestResources()), Charset.forName("UTF-8"));
-        String pretty = new String(Files.readAllBytes(prettyTestResources()), Charset.forName("UTF-8"));
+        String raw = new String(Files.readAllBytes(rawTestResources()), UTF8);
+        String pretty = new String(Files.readAllBytes(prettyTestResources()), UTF8);
 
         // When
         Pair<Map<String, String>, List<Map<String, String>>> rawValues = extractValues(raw);

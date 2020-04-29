@@ -2,6 +2,7 @@ package com.chutneytesting.design.api.compose.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,6 +34,6 @@ public interface KeyValue {
     static Map<String,String> toMap(List<KeyValue> list) {
         return list.stream()
             .filter( kv -> StringUtils.isNoneBlank(kv.key()) )
-            .collect(Collectors.toMap(KeyValue::key, KeyValue::value, (k1, k2) -> k1));
+            .collect(Collectors.toMap(KeyValue::key, KeyValue::value, (k1, k2) -> k1, LinkedHashMap::new));
     }
 }

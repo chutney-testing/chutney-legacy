@@ -194,4 +194,17 @@ public class OrientChangelog {
 
         try (OResultSet ignored = dbSession.command(FSTEP_LUCENE_INDEX_QUERY)) { }
     }
+
+    @ChangelogOrder(order = 9, uuid = "20200424-init-dataset-model")
+    public static void initDataSetModel(ODatabaseSession dbSession) {
+        OrientUtils.createClass(OrientComponentDB.DATASET_CLASS, null, 1, dbSession);
+
+        OClass oDataSetHistoryClass = OrientUtils.createClass(OrientComponentDB.DATASET_HISTORY_CLASS, null, 0, dbSession);
+        OProperty refIdProperty = oDataSetHistoryClass.createProperty(OrientComponentDB.DATASET_HISTORY_CLASS_PROPERTY_LAST, OType.LINK);
+        refIdProperty.setMandatory(true);
+
+        oDataSetHistoryClass.createIndex(OrientComponentDB.DATASET_HISTORY_CLASS_INDEX_LAST, OClass.INDEX_TYPE.NOTUNIQUE.toString(), null, null, "AUTOSHARDING", new String[]{OrientComponentDB.DATASET_HISTORY_CLASS_PROPERTY_LAST});
+
+        LOGGER.info("DataSet model created");
+    }
 }
