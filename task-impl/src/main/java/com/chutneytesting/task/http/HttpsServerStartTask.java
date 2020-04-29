@@ -34,9 +34,9 @@ public class HttpsServerStartTask implements Task {
                                 FinallyActionRegistry finallyActionRegistry,
                                 @Input("port") String port,
                                 @Input("truststore-path") String trustStorePath,
-                                @Input("truststore-passowrd") String trustStorePassword,
+                                @Input("truststore-password") String trustStorePassword,
                                 @Input("keystore-path") String keyStorePath,
-                                @Input("keystore-passowrd") String keyStorePassword) {
+                                @Input("keystore-password") String keyStorePassword) {
     	this.logger = logger;
         this.finallyActionRegistry = finallyActionRegistry;
         this.port = NumberUtils.toInt(port, DEFAULT_HTTPS_PORT);

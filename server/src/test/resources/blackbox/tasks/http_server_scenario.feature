@@ -26,7 +26,7 @@ Scenario: Http post request local server endpoint
                    "inputs":{
                       "port": "8443",
                       "truststore-path": "%%trustStoreAbsolutePath%%",
-                      "truststore-passowrd": "truststore"
+                      "truststore-password": "truststore"
                    }
                 },
                 {
