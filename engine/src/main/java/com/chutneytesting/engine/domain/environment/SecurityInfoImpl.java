@@ -30,7 +30,7 @@ public class SecurityInfoImpl implements SecurityInfo {
 
     @Override
     public Optional<SecurityInfo.Credential> credential() {
-        return hasCredential() ? Optional.of(credential) : Optional.of(Credential.NONE);
+        return hasCredential() ? Optional.of(credential) : Optional.empty();
     }
 
     public boolean hasCredential() {
