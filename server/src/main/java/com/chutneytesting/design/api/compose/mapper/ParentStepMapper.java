@@ -1,5 +1,7 @@
 package com.chutneytesting.design.api.compose.mapper;
 
+import static com.chutneytesting.tools.ui.OrientUtils.toFrontId;
+
 import com.chutneytesting.design.api.compose.dto.ImmutableNameIdDto;
 import com.chutneytesting.design.api.compose.dto.ImmutableParentsStepDto;
 import com.chutneytesting.design.api.compose.dto.ParentsStepDto;
@@ -9,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.toFrontId;
 
 public class ParentStepMapper {
 
