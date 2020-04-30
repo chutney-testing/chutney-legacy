@@ -8,7 +8,6 @@ import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.task.spi.FinallyAction;
 import com.chutneytesting.task.spi.injectable.Target;
-import java.util.Optional;
 import org.junit.Test;
 
 public class FinallyActionMapperTest {
@@ -37,6 +36,6 @@ public class FinallyActionMapperTest {
         assertThat(targetCopy.name()).isEqualTo("test-target");
         assertThat(targetCopy.url()).isEqualTo("proto://host:12345");
         assertThat(((SecurityInfoImpl)targetCopy.security()).hasCredential()).isFalse();
-        assertThat(targetCopy.security().credential()).isEqualTo(Optional.of(SecurityInfoImpl.Credential.NONE));
+        assertThat(targetCopy.security().credential()).isEmpty();
     }
 }
