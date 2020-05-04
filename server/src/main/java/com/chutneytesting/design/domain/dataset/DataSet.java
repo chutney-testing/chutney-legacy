@@ -4,20 +4,28 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class DataSet {
 
     public final String id;
-    public final DataSetMetaData metadata;
+    public final String name;
+    public final String description;
+    public final Instant creationDate;
+    public final List<String> tags;
     public final Map<String, String> uniqueValues;
     public final List<Map<String, String>> multipleValues;
 
-    private DataSet(String id, DataSetMetaData metadata, Map<String, String> uniqueValues, List<Map<String, String>> multipleValues) {
+    private DataSet(String id, String name, String description, Instant creationDate, List<String> tags, Map<String, String> uniqueValues, List<Map<String, String>> multipleValues) {
         this.id = id;
-        this.metadata = metadata;
+        this.name = name;
+        this.description = description;
+        this.creationDate = creationDate;
+        this.tags = tags;
         this.uniqueValues = uniqueValues;
         this.multipleValues = multipleValues;
     }
@@ -26,23 +34,31 @@ public class DataSet {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         DataSet dataSet = (DataSet) o;
-        return id.equals(dataSet.id) &&
-            metadata.equals(dataSet.metadata) &&
-            uniqueValues.equals(dataSet.uniqueValues) &&
-            multipleValues.equals(dataSet.multipleValues);
+
+        return Objects.equals(id, dataSet.id) &&
+            Objects.equals(name, dataSet.name) &&
+            Objects.equals(description, dataSet.description) &&
+            Objects.equals(creationDate, dataSet.creationDate) &&
+            Objects.equals(tags, dataSet.tags) &&
+            Objects.equals(uniqueValues, dataSet.uniqueValues) &&
+            Objects.equals(multipleValues, dataSet.multipleValues);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, metadata, uniqueValues, multipleValues);
+        return Objects.hash(id, name, description, creationDate, tags, uniqueValues, multipleValues);
     }
 
     @Override
     public String toString() {
         return "DataSet{" +
             "id='" + id + '\'' +
-            ", metadata=" + metadata +
+            ", name='" + name + '\'' +
+            ", description='" + description + '\'' +
+            ", creationDate=" + creationDate +
+            ", tags=" + tags +
             ", uniqueValues=" + uniqueValues +
             ", multipleValues=" + multipleValues +
             '}';
@@ -56,7 +72,10 @@ public class DataSet {
         private static String DEFAULT_ID = "-1";
 
         private String id;
-        private DataSetMetaData metadata;
+        private String name;
+        private String description;
+        private Instant creationDate;
+        private List<String> tags;
         private Map<String, String> uniqueValues;
         private List<Map<String, String>> multipleValues;
 
@@ -70,7 +89,10 @@ public class DataSet {
 
             return new DataSet(
                 ofNullable(id).orElse(DEFAULT_ID),
-                ofNullable(metadata).orElseGet(() -> DataSetMetaData.builder().build()),
+                ofNullable(name).orElse(""),
+                ofNullable(description).orElse(""),
+                ofNullable(creationDate).orElseGet(Instant::now),
+                (ofNullable(tags).orElse(emptyList())).stream().map(String::toUpperCase).map(String::trim).collect(Collectors.toList()),
                 ofNullable(uniqueValues).orElse(emptyMap()),
                 ofNullable(multipleValues).orElse(emptyList())
             );
@@ -81,8 +103,23 @@ public class DataSet {
             return this;
         }
 
-        public DataSetBuilder withMetaData(DataSetMetaData metaData) {
-            this.metadata = metaData;
+        public DataSetBuilder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public DataSetBuilder withDescription(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public DataSetBuilder withCreationDate(Instant creationDate) {
+            this.creationDate = creationDate;
+            return this;
+        }
+
+        public DataSetBuilder withTags(List<String> tags) {
+            this.tags = tags;
             return this;
         }
 
@@ -99,7 +136,10 @@ public class DataSet {
         public DataSetBuilder fromDataSet(DataSet dataset) {
             return new DataSetBuilder()
                 .withId(dataset.id)
-                .withMetaData(dataset.metadata)
+                .withName(dataset.name)
+                .withDescription(dataset.description)
+                .withCreationDate(dataset.creationDate)
+                .withTags(dataset.tags)
                 .withUniqueValues(dataset.uniqueValues)
                 .withMultipleValues(dataset.multipleValues);
         }

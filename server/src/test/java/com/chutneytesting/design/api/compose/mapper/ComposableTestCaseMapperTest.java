@@ -2,8 +2,8 @@ package com.chutneytesting.design.api.compose.mapper;
 
 import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.fromDto;
 import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.toDto;
-import static com.chutneytesting.tools.ui.OrientUtils.fromFrontId;
-import static com.chutneytesting.tools.ui.OrientUtils.toFrontId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.design.api.compose.dto.ComposableTestCaseDto;

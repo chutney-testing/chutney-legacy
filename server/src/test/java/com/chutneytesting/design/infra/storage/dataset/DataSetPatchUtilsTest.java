@@ -8,7 +8,6 @@ import static com.chutneytesting.design.infra.storage.dataset.DataSetPatchUtils.
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.design.domain.dataset.DataSet;
-import com.chutneytesting.design.domain.dataset.DataSetMetaData;
 import com.github.difflib.patch.PatchFailedException;
 import com.google.common.io.Resources;
 import java.io.IOException;
@@ -90,7 +89,7 @@ public class DataSetPatchUtilsTest {
 
     private DataSet testDataSet() {
         return DataSet.builder()
-            .withMetaData(DataSetMetaData.builder().withName("n").build())
+            .withName("n")
             .withUniqueValues(Maps.of("p1", "value1", "param2", "v2"))
             .withMultipleValues(
                 Arrays.asList(

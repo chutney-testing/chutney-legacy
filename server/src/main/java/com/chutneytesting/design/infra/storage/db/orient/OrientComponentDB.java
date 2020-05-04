@@ -43,9 +43,9 @@ public class OrientComponentDB implements Backupable {
     public static final String DATASET_CLASS_PROPERTY_VALUES_UNIQUE = "uniqueValues";
     public static final String DATASET_CLASS_PROPERTY_VALUES_MULTIPLE = "multipleValues";
     public static final String DATASET_HISTORY_CLASS_PROPERTY_VERSION = "version";
-    public static final String DATASET_HISTORY_CLASS_PROPERTY_LAST = "last";
+    public static final String DATASET_HISTORY_CLASS_PROPERTY_DATASET_ID = "dataSetId";
     public static final String DATASET_HISTORY_CLASS_PROPERTY_PATCH= "patch";
-    public static final String DATASET_HISTORY_CLASS_INDEX_LAST = "idx_" + DATASET_HISTORY_CLASS + "_" + DATASET_HISTORY_CLASS_PROPERTY_LAST;
+    public static final String DATASET_HISTORY_CLASS_INDEX_LAST = "idx_" + DATASET_HISTORY_CLASS + "_" + DATASET_HISTORY_CLASS_PROPERTY_DATASET_ID;
 
 
     private OrientDBManager orientDBManager;

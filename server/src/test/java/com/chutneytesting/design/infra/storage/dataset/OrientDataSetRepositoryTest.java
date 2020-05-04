@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import com.chutneytesting.design.domain.dataset.DataSet;
-import com.chutneytesting.design.domain.dataset.DataSetMetaData;
 import com.chutneytesting.design.domain.dataset.DataSetNotFoundException;
 import com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB;
 import com.chutneytesting.tests.AbstractOrientDatabaseTest;
@@ -58,10 +57,10 @@ public class OrientDataSetRepositoryTest extends AbstractOrientDatabaseTest {
         // Then
         assertThat(foundDataSet).isNotNull();
         assertThat(foundDataSet.id).isEqualTo(dataSet.id);
-        assertThat(foundDataSet.metadata.name).isEqualTo(dataSet.metadata.name);
-        assertThat(foundDataSet.metadata.description).isEqualTo(dataSet.metadata.description);
-        assertThat(foundDataSet.metadata.creationDate).isAfter(beforeCreation);
-        assertThat(foundDataSet.metadata.tags).isEqualTo(dataSet.metadata.tags);
+        assertThat(foundDataSet.name).isEqualTo(dataSet.name);
+        assertThat(foundDataSet.description).isEqualTo(dataSet.description);
+        assertThat(foundDataSet.creationDate).isAfter(beforeCreation);
+        assertThat(foundDataSet.tags).isEqualTo(dataSet.tags);
         assertThat(foundDataSet.uniqueValues).isEqualTo(dataSet.uniqueValues);
         assertThat(foundDataSet.multipleValues).isEqualTo(dataSet.multipleValues);
     }
@@ -84,14 +83,9 @@ public class OrientDataSetRepositoryTest extends AbstractOrientDatabaseTest {
         DataSet foundUpdatedDataSet = saveAndReload(
             DataSet.builder()
                 .fromDataSet(dataSet)
-                .withMetaData(
-                    DataSetMetaData.builder()
-                        .fromDataSetMetaData(dataSet.metadata)
-                        .withName(name)
-                        .withDescription(description)
-                        .withTags(tags)
-                        .build()
-                )
+                .withName(name)
+                .withDescription(description)
+                .withTags(tags)
                 .withMultipleValues(multipleValues)
                 .build()
         );
@@ -99,10 +93,10 @@ public class OrientDataSetRepositoryTest extends AbstractOrientDatabaseTest {
         // Then
         assertThat(foundUpdatedDataSet).isNotNull();
         assertThat(foundUpdatedDataSet.id).isEqualTo(dataSet.id);
-        assertThat(foundUpdatedDataSet.metadata.name).isEqualTo(name);
-        assertThat(foundUpdatedDataSet.metadata.description).isEqualTo(description);
-        assertThat(foundUpdatedDataSet.metadata.creationDate).isEqualTo(dataSet.metadata.creationDate);
-        assertThat(foundUpdatedDataSet.metadata.tags).isEqualTo(tags);
+        assertThat(foundUpdatedDataSet.name).isEqualTo(name);
+        assertThat(foundUpdatedDataSet.description).isEqualTo(description);
+        assertThat(foundUpdatedDataSet.creationDate).isEqualTo(dataSet.creationDate);
+        assertThat(foundUpdatedDataSet.tags).isEqualTo(tags);
         assertThat(foundUpdatedDataSet.uniqueValues).isEqualTo(dataSet.uniqueValues);
         assertThat(foundUpdatedDataSet.multipleValues).isEqualTo(multipleValues);
     }
@@ -137,13 +131,14 @@ public class OrientDataSetRepositoryTest extends AbstractOrientDatabaseTest {
     @Test
     public void should_find_all_datasets() {
         // Given
-        Map<String, DataSetMetaData> expectedDataSets =
+        List<DataSet> expectedDataSets =
             IntStream.range(0, 10)
                 .mapToObj(i -> saveAndReload(fullDataSetBuilder().build()))
-                .collect(Collectors.toMap(d -> d.id, d -> d.metadata));
+                .map(ds -> DataSet.builder().fromDataSet(ds).withUniqueValues(null).withMultipleValues(null).build())
+                .collect(Collectors.toList());
 
         // When
-        Map<String, DataSetMetaData> all = sut.findAll();
+        List<DataSet> all = sut.findAll();
 
         // Then
         assertThat(all).isEqualTo(expectedDataSets);
@@ -155,13 +150,9 @@ public class OrientDataSetRepositoryTest extends AbstractOrientDatabaseTest {
 
     private DataSet.DataSetBuilder fullDataSetBuilder() {
         return DataSet.builder()
-            .withMetaData(
-                DataSetMetaData.builder()
-                    .withName("name")
-                    .withDescription("description")
-                    .withTags(Lists.list("tag1", "tag2"))
-                    .build()
-            )
+            .withName("name")
+            .withDescription("description")
+            .withTags(Lists.list("tag1", "tag2"))
             .withUniqueValues(Maps.of("uk1", "uv1", "uk2", "uv2"))
             .withMultipleValues(Lists.list(
                 Maps.of("mk1", "mv11", "mk2", "mv21"),

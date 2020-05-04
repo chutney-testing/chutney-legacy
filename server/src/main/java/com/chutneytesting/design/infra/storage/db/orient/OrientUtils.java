@@ -1,6 +1,9 @@
 package com.chutneytesting.design.infra.storage.db.orient;
 
+import static java.util.Optional.empty;
+
 import com.orientechnologies.orient.core.db.ODatabaseSession;
+import com.orientechnologies.orient.core.exception.ORecordNotFoundException;
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OType;
@@ -131,11 +134,11 @@ public final class OrientUtils {
                 return Optional.ofNullable(dbSession.load(
                     new ORecordId(recordId))
                 );
-            } catch(Exception e) {
-                // do nothing
+            } catch(ORecordNotFoundException e) {
+                return empty();
             }
         }
-        return Optional.empty();
+        return empty();
     }
 
     public static void reloadIfDirty(OElement element) {

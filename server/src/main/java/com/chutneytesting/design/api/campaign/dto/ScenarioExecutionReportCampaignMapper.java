@@ -1,7 +1,7 @@
 package com.chutneytesting.design.api.campaign.dto;
 
-import static com.chutneytesting.tools.ui.OrientUtils.fromFrontId;
-import static com.chutneytesting.tools.ui.OrientUtils.toFrontId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
 import static java.util.Optional.of;
 
 import com.chutneytesting.design.domain.campaign.ScenarioExecutionReportCampaign;

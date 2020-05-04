@@ -12,7 +12,7 @@ import org.springframework.util.SocketUtils;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(strict = true, plugin = {"pretty", "json:target/cucumber-report.json"},
-    features = {"classpath:blackbox/"}, tags = {"@DataSet"})
+    features = {"classpath:blackbox/"}, tags = {"~@Ignore"})
 public class CucumberIT {
 
     private static TemporaryFolder tmpFolder = new TemporaryFolder();

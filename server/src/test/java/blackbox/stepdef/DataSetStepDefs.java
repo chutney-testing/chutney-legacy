@@ -1,6 +1,7 @@
 package blackbox.stepdef;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import blackbox.restclient.RestClient;
@@ -105,7 +106,8 @@ public class DataSetStepDefs {
     @Then("the list of version numbers is")
     public void the_list_of_version_numbers_is(List<Integer> versions) {
         DataSetDto dataSetDto = lastSavedDataSetDto();
-        assertThat(dataSetVersionNumbers(dataSetDto.id().get())).containsExactlyElementsOf(versions);
+        List<Integer> versionsNumbers = dataSetVersionNumbers(dataSetDto.id().get()).stream().map(DataSetDto::version).collect(toList());
+        assertThat(versionsNumbers).containsExactlyElementsOf(versions);
     }
 
     @Then("the search for the dataset bring the last version")
@@ -129,11 +131,14 @@ public class DataSetStepDefs {
                 .withBody(dataSetDto)
                 .post(String.class);
 
-            LOGGER.info("New dataset saved : " + dataSetDto);
             String body = requireNonNull(responseEntity.getBody());
-            savedDataSetDtos.add(ImmutableDataSetDto.builder().from(dataSetDto).id(body).build());
+            dataSetDto = om.readValue(body, DataSetDto.class);
+            LOGGER.info("New dataset saved : " + dataSetDto);
+            savedDataSetDtos.add(dataSetDto);
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             throw new IllegalArgumentException("Unable to save dataset [" + dataSetDto + "]");
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to read saved dataset [" + dataSetDto.id() + "]");
         }
     }
 
@@ -192,14 +197,14 @@ public class DataSetStepDefs {
         }
     }
 
-    private List<Integer> dataSetVersionNumbers(String dataSetId) {
+    private List<DataSetDto> dataSetVersionNumbers(String dataSetId) {
         try {
             final ResponseEntity<String> responseEntity = restClient.defaultRequest()
                 .withUrl(DataSetController.BASE_URL + "/" + dataSetId + "/versions")
                 .get();
 
             assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-            return om.readValue(responseEntity.getBody(), new TypeReference<List<Integer>>() {
+            return om.readValue(responseEntity.getBody(), new TypeReference<List<DataSetDto>>() {
             });
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             throw new IllegalArgumentException("Unable to find dataset [" + dataSetId + "] version numbers");

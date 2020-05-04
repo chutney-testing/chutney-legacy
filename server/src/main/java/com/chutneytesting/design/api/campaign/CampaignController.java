@@ -3,7 +3,7 @@ package com.chutneytesting.design.api.campaign;
 import static com.chutneytesting.design.api.campaign.dto.CampaignMapper.fromDto;
 import static com.chutneytesting.design.api.campaign.dto.CampaignMapper.toDto;
 import static com.chutneytesting.design.api.campaign.dto.CampaignMapper.toDtoWithoutReport;
-import static com.chutneytesting.tools.ui.OrientUtils.isOrientId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.isComposableDomainId;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import com.chutneytesting.design.api.campaign.dto.CampaignDto;
@@ -84,7 +84,7 @@ public class CampaignController {
     public List<TestCaseIndexDto> getCampaignScenarios(@PathVariable("campaignId") Long campaignId) {
         return campaignRepository.findScenariosIds(campaignId).stream()
             .map(id -> {
-                if (isOrientId(id)) {
+                if (isComposableDomainId(id)) {
                     return composableTestCaseRepository.findById(id).metadata();
                 } else {
                     return testCaseRepository.findMetadataById(id);

@@ -1,12 +1,12 @@
 package com.chutneytesting.design.api.campaign.dto;
 
-import static com.chutneytesting.tools.ui.OrientUtils.fromFrontId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 import com.chutneytesting.design.domain.campaign.Campaign;
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
-import com.chutneytesting.tools.ui.OrientUtils;
+import com.chutneytesting.tools.ui.ComposableIdUtils;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +19,7 @@ public class CampaignMapper {
             campaign.title,
             campaign.description,
             campaign.scenarioIds.stream()
-                .map(OrientUtils::toFrontId)
+                .map(ComposableIdUtils::toFrontId)
                 .collect(toList()),
             campaign.dataSet,
             emptyList(),
@@ -35,7 +35,7 @@ public class CampaignMapper {
             campaign.title,
             campaign.description,
             campaign.scenarioIds.stream()
-                                .map(OrientUtils::toFrontId)
+                                .map(ComposableIdUtils::toFrontId)
                                 .collect(toList()),
             campaign.dataSet,
             reportToDto(campaignExecutionReports),

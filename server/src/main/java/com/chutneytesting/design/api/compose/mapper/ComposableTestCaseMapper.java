@@ -1,8 +1,8 @@
 package com.chutneytesting.design.api.compose.mapper;
 
 import static com.chutneytesting.design.domain.compose.ComposableTestCaseRepository.COMPOSABLE_TESTCASE_REPOSITORY_SOURCE;
-import static com.chutneytesting.tools.ui.OrientUtils.fromFrontId;
-import static com.chutneytesting.tools.ui.OrientUtils.toFrontId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
 
 import com.chutneytesting.design.api.compose.dto.ComposableTestCaseDto;
 import com.chutneytesting.design.api.compose.dto.FunctionalStepDto;

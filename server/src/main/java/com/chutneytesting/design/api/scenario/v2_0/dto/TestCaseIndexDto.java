@@ -1,6 +1,6 @@
 package com.chutneytesting.design.api.scenario.v2_0.dto;
 
-import static com.chutneytesting.tools.ui.OrientUtils.toFrontId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
 
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.execution.api.ExecutionSummaryDto;

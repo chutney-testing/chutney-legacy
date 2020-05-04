@@ -1,7 +1,7 @@
 package com.chutneytesting.execution.api;
 
-import static com.chutneytesting.tools.ui.OrientUtils.fromFrontId;
-import static com.chutneytesting.tools.ui.OrientUtils.isOrientId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.isComposableFrontId;
 
 import com.chutneytesting.design.api.compose.dto.KeyValue;
 import com.chutneytesting.design.domain.compose.ComposableTestCaseRepository;
@@ -80,7 +80,7 @@ public class ScenarioExecutionUiController {
     public String executeScenarioAsyncWithDataSet(@PathVariable("scenarioId") String scenarioId, @PathVariable("env") String env, @RequestBody List<KeyValue> dataSet) {
         LOGGER.debug("executeScenarioAsync for scenarioId='{}' with dataset '{}'", scenarioId, dataSet);
         TestCase testCase;
-        if (isOrientId(scenarioId)) {
+        if (isComposableFrontId(scenarioId)) {
             testCase = composableTestCaseRepository.findById(fromFrontId(Optional.of(scenarioId)));
         } else {
             testCase = testCaseRepository.findById(scenarioId);

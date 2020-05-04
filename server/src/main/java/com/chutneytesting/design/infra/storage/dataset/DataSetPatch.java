@@ -2,9 +2,9 @@ package com.chutneytesting.design.infra.storage.dataset;
 
 import static com.chutneytesting.design.infra.storage.dataset.DataSetPatchUtils.dataSetValues;
 import static com.chutneytesting.design.infra.storage.dataset.DataSetPatchUtils.unifiedDiff;
+import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.design.domain.dataset.DataSet;
-import com.chutneytesting.design.domain.dataset.DataSetMetaData;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
@@ -41,14 +41,14 @@ public class DataSetPatch {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DataSetPatch that = (DataSetPatch) o;
-        if (!Objects.equals(id, that.id)) return false;
-        if (!Objects.equals(refId, that.refId)) return false;
-        if (!Objects.equals(name, that.name)) return false;
-        if (!Objects.equals(description, that.description)) return false;
-        if (!Objects.equals(creationDate, that.creationDate)) return false;
-        if (!Objects.equals(tags, that.tags)) return false;
-        if (!Objects.equals(unifiedDiffValues, that.unifiedDiffValues)) return false;
-        return Objects.equals(version, that.version);
+        return Objects.equals(id, that.id) &&
+            Objects.equals(refId, that.refId) &&
+            Objects.equals(name, that.name) &&
+            Objects.equals(description, that.description) &&
+            Objects.equals(creationDate, that.creationDate) &&
+            Objects.equals(tags, that.tags) &&
+            Objects.equals(unifiedDiffValues, that.unifiedDiffValues) &&
+            Objects.equals(version, that.version);
     }
 
     @Override
@@ -127,21 +127,19 @@ public class DataSetPatch {
         }
 
         public DataSetPatchBuilder fromDataSets(DataSet newDataSet, DataSet previousDataSet) {
-            if (!Optional.ofNullable(previousDataSet).isPresent()) {
+            if (!ofNullable(previousDataSet).isPresent()) {
                 return fromDataSets(newDataSet);
             }
 
-            DataSetMetaData newMetaData = newDataSet.metadata;
-            DataSetMetaData previousMetadata = previousDataSet.metadata;
-            if (!newMetaData.name.equals(previousMetadata.name)) {
-                this.name = newMetaData.name;
+            if (!newDataSet.name.equals(previousDataSet.name)) {
+                this.name = newDataSet.name;
             }
-            if (!newMetaData.description.equals(previousMetadata.description)) {
-                this.description = newMetaData.description;
+            if (!newDataSet.description.equals(previousDataSet.description)) {
+                this.description = newDataSet.description;
             }
-            this.creationDate = newDataSet.metadata.creationDate;
-            if (!newMetaData.tags.equals(previousMetadata.tags)) {
-                this.tags = newMetaData.tags;
+            this.creationDate = newDataSet.creationDate;
+            if (!newDataSet.tags.equals(previousDataSet.tags)) {
+                this.tags = newDataSet.tags;
             }
             if (!newDataSet.uniqueValues.equals(previousDataSet.uniqueValues) || !newDataSet.multipleValues.equals(previousDataSet.multipleValues)) {
                 this.unifiedDiffValues = unifiedDiff(dataSetValues(newDataSet, false), dataSetValues(previousDataSet, false));
@@ -150,11 +148,10 @@ public class DataSetPatch {
         }
 
         private DataSetPatchBuilder fromDataSets(DataSet newDataSet) {
-            DataSetMetaData newMetaData = newDataSet.metadata;
-            this.name = newMetaData.name;
-            this.description = newMetaData.description;
-            this.creationDate = newDataSet.metadata.creationDate;
-            this.tags = newMetaData.tags;
+            this.name = newDataSet.name;
+            this.description = newDataSet.description;
+            this.creationDate = newDataSet.creationDate;
+            this.tags = newDataSet.tags;
             this.unifiedDiffValues = unifiedDiff(dataSetValues(newDataSet, false), "");
             return this;
         }

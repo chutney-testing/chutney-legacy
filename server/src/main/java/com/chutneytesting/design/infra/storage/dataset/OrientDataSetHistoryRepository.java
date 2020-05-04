@@ -4,8 +4,9 @@ import static com.chutneytesting.design.infra.storage.dataset.DataSetPatchUtils.
 import static com.chutneytesting.design.infra.storage.dataset.DataSetPatchUtils.patchString;
 import static com.chutneytesting.design.infra.storage.dataset.OrientDataSetHistoryMapper.dataSetPatchToElement;
 import static com.chutneytesting.design.infra.storage.dataset.OrientDataSetHistoryMapper.elementToDataSetPatch;
+import static com.chutneytesting.design.infra.storage.dataset.OrientDataSetMapper.elementToDataSetMetaDataBuilder;
 import static com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB.DATASET_HISTORY_CLASS;
-import static com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB.DATASET_HISTORY_CLASS_PROPERTY_LAST;
+import static com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB.DATASET_HISTORY_CLASS_PROPERTY_DATASET_ID;
 import static com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB.DATASET_HISTORY_CLASS_PROPERTY_VERSION;
 import static com.chutneytesting.design.infra.storage.db.orient.OrientUtils.close;
 import static com.chutneytesting.design.infra.storage.db.orient.OrientUtils.resultSetToCount;
@@ -14,7 +15,6 @@ import static java.util.Optional.empty;
 
 import com.chutneytesting.design.domain.dataset.DataSet;
 import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
-import com.chutneytesting.design.domain.dataset.DataSetMetaData;
 import com.chutneytesting.design.domain.dataset.DataSetNotFoundException;
 import com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB;
 import com.google.common.collect.Lists;
@@ -24,11 +24,10 @@ import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.OElement;
 import com.orientechnologies.orient.core.sql.executor.OResult;
 import com.orientechnologies.orient.core.sql.executor.OResultSet;
-import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +46,7 @@ public class OrientDataSetHistoryRepository implements DataSetHistoryRepository 
 
     private static final String QUERY_LAST_VERSION =
         "SELECT max(" + DATASET_HISTORY_CLASS_PROPERTY_VERSION + ") as maxVersion FROM " + DATASET_HISTORY_CLASS +
-            " WHERE " + DATASET_HISTORY_CLASS_PROPERTY_LAST + " = ?";
+            " WHERE " + DATASET_HISTORY_CLASS_PROPERTY_DATASET_ID + " = ?";
 
     @Override
     public Integer lastVersion(String dataSetId) {
@@ -56,18 +55,25 @@ public class OrientDataSetHistoryRepository implements DataSetHistoryRepository 
             if (lastVersion.hasNext()) {
                 return lastVersion.next().getProperty("maxVersion");
             }
-            throw new DataSetNotFoundException();
+            throw new DataSetNotFoundException(dataSetId);
         }
     }
 
     @Override
-    public Optional<Pair<String, Integer>> addVersion(DataSet newDataSet, DataSet previousDataSet) {
+    public Optional<Pair<String, Integer>> addVersion(DataSet newDataSet) {
         ODatabaseSession dbSession = null;
+        DataSet previousDataSet = null;
         try {
+            // Retrieve last version
+            Integer nextVersion = nextVersion(newDataSet.id);
+            if (nextVersion > 1) {
+                previousDataSet = version(newDataSet.id, nextVersion - 1);
+            }
+            // Create patch
             DataSetPatch dataSetPatch = DataSetPatch.builder()
                 .fromDataSets(newDataSet, previousDataSet)
                 .withRefId(newDataSet.id)
-                .withVersion(nextVersion(newDataSet.id))
+                .withVersion(nextVersion)
                 .build();
 
             if (dataSetPatch.hasPatchedValues()) {
@@ -77,7 +83,7 @@ public class OrientDataSetHistoryRepository implements DataSetHistoryRepository 
                 dataSetPatchToElement(dataSetPatch, oDataSetPatch);
                 oDataSetPatch.save();
                 dbSession.commit();
-                LOGGER.info("Save version {} of dataset {}-{}", dataSetPatch.version, dataSetPatch.refId, newDataSet.metadata.name);
+                LOGGER.info("Save version {} of dataset {}-{}", dataSetPatch.version, dataSetPatch.refId, newDataSet.name);
                 return Optional.of(Pair.of(oDataSetPatch.getIdentity().toString(null).toString(), dataSetPatch.version));
             }
         } catch (Exception e) {
@@ -90,22 +96,30 @@ public class OrientDataSetHistoryRepository implements DataSetHistoryRepository 
     }
 
     private static final String QUERY_ALL_VERSIONS =
-        "SELECT " + DATASET_HISTORY_CLASS_PROPERTY_VERSION + " FROM " + DATASET_HISTORY_CLASS +
-            " WHERE " + DATASET_HISTORY_CLASS_PROPERTY_LAST + " = ?";
+        "SELECT FROM " + DATASET_HISTORY_CLASS +
+            " WHERE " + DATASET_HISTORY_CLASS_PROPERTY_DATASET_ID + " = ?" +
+            " ORDER BY " + DATASET_HISTORY_CLASS_PROPERTY_VERSION;
 
     @Override
-    public List<Integer> allVersionNumbers(String dataSetId) {
+    public Map<Integer, DataSet> allVersions(String dataSetId) {
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
             OResultSet allVersions = dbSession.query(QUERY_ALL_VERSIONS, dataSetId);
-            return Lists.newArrayList(allVersions).stream()
-                .map(rs -> (Integer) rs.getProperty("version"))
-                .sorted(Comparator.naturalOrder())
-                .collect(Collectors.toList());
+            Map<Integer, DataSet> allVersionsMap = new LinkedHashMap<>();
+            while(allVersions.hasNext()) {
+                Optional<OElement> element = allVersions.next().getElement();
+                if (element.isPresent()) {
+                    OElement oDataSet = element.get();
+                    DataSet.DataSetBuilder dataSetBuilder = elementToDataSetMetaDataBuilder(oDataSet)
+                        .withId(dataSetId);
+                    allVersionsMap.put(oDataSet.getProperty(DATASET_HISTORY_CLASS_PROPERTY_VERSION), dataSetBuilder.build());
+                }
+            }
+            return allVersionsMap;
         }
     }
 
     private static final String QUERY_FIND_VERSION = "SELECT FROM " + DATASET_HISTORY_CLASS +
-        " WHERE " + DATASET_HISTORY_CLASS_PROPERTY_LAST + " = ?" +
+        " WHERE " + DATASET_HISTORY_CLASS_PROPERTY_DATASET_ID + " = ?" +
         " AND " + DATASET_HISTORY_CLASS_PROPERTY_VERSION + " <= ?" +
         " ORDER BY " + DATASET_HISTORY_CLASS_PROPERTY_VERSION;
 
@@ -114,29 +128,27 @@ public class OrientDataSetHistoryRepository implements DataSetHistoryRepository 
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
             OResultSet query = dbSession.query(QUERY_FIND_VERSION, dataSetId, version);
             if (query.hasNext()) {
-                DataSetMetaData.DataSetMetaDataBuilder dataSetMetaDataBuilder = DataSetMetaData.builder();
+                DataSet.DataSetBuilder dataSetBuilder = DataSet.builder().withId(dataSetId);
                 String datasetValues = "";
                 for (OResult rs : Lists.newArrayList(query)) {
                     Optional<OElement> element = rs.getElement();
                     if (element.isPresent()) {
                         DataSetPatch dataSetPatch = elementToDataSetPatch(element.get());
                         if (dataSetPatch.name != null) {
-                            dataSetMetaDataBuilder.withName(dataSetPatch.name);
+                            dataSetBuilder.withName(dataSetPatch.name);
                         }
                         if (dataSetPatch.description != null) {
-                            dataSetMetaDataBuilder.withDescription(dataSetPatch.description);
+                            dataSetBuilder.withDescription(dataSetPatch.description);
                         }
-                        dataSetMetaDataBuilder.withCreationDate(dataSetPatch.creationDate);
+                        dataSetBuilder.withCreationDate(dataSetPatch.creationDate);
                         if (dataSetPatch.tags != null) {
-                            dataSetMetaDataBuilder.withTags(dataSetPatch.tags);
+                            dataSetBuilder.withTags(dataSetPatch.tags);
                         }
                         datasetValues = patchString(datasetValues, dataSetPatch);
                     }
                 }
                 Pair<Map<String, String>, List<Map<String, String>>> values = extractValues(datasetValues);
-                return DataSet.builder()
-                    .withId(dataSetId)
-                    .withMetaData(dataSetMetaDataBuilder.build())
+                return dataSetBuilder
                     .withUniqueValues(values.getLeft())
                     .withMultipleValues(values.getRight())
                     .build();
@@ -145,10 +157,10 @@ public class OrientDataSetHistoryRepository implements DataSetHistoryRepository 
             LOGGER.error("Error finding dataset [{}] version {}", dataSetId, version, e);
             throw new RuntimeException(e);
         }
-        throw new DataSetNotFoundException();
+        throw new DataSetNotFoundException(dataSetId);
     }
 
-    private static final String QUERY_DELETE_DATASET = "DELETE FROM " + DATASET_HISTORY_CLASS + " WHERE " + DATASET_HISTORY_CLASS_PROPERTY_LAST + " = ?";
+    private static final String QUERY_DELETE_DATASET = "DELETE FROM " + DATASET_HISTORY_CLASS + " WHERE " + DATASET_HISTORY_CLASS_PROPERTY_DATASET_ID + " = ?";
 
     @Override
     public void removeHistory(String dataSetId) {

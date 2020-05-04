@@ -9,7 +9,6 @@ import static com.chutneytesting.design.infra.storage.db.orient.OrientUtils.load
 import static com.chutneytesting.design.infra.storage.db.orient.OrientUtils.rollback;
 
 import com.chutneytesting.design.domain.dataset.DataSet;
-import com.chutneytesting.design.domain.dataset.DataSetMetaData;
 import com.chutneytesting.design.domain.dataset.DataSetNotFoundException;
 import com.chutneytesting.design.domain.dataset.DataSetRepository;
 import com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB;
@@ -19,8 +18,7 @@ import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.OElement;
 import com.orientechnologies.orient.core.sql.executor.OResultSet;
-import java.util.AbstractMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -60,7 +58,7 @@ public class OrientDataSetRepository implements DataSetRepository {
     public DataSet findById(String dataSetId) {
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
             OElement element = load(dataSetId, dbSession)
-                .orElseThrow(DataSetNotFoundException::new);
+                .orElseThrow(() -> new DataSetNotFoundException(dataSetId));
             return elementToDataSet(element);
         }
     }
@@ -72,7 +70,7 @@ public class OrientDataSetRepository implements DataSetRepository {
             dbSession = componentDBPool.acquire();
             dbSession.begin();
             OElement removedODataSet = load(dataSetId, dbSession)
-                .orElseThrow(DataSetNotFoundException::new)
+                .orElseThrow(() -> new DataSetNotFoundException(dataSetId))
                 .delete();
             DataSet removedDataSet = elementToDataSet(removedODataSet);
             dbSession.commit();
@@ -86,15 +84,15 @@ public class OrientDataSetRepository implements DataSetRepository {
     private static final String QUERY_SELECT_ALL = "SELECT @rid FROM " + DATASET_CLASS;
 
     @Override
-    public Map<String, DataSetMetaData> findAll() {
+    public List<DataSet> findAll() {
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
             OResultSet allSteps = dbSession.query(QUERY_SELECT_ALL);
             return Lists.newArrayList(allSteps).stream()
                 .map(rs -> {
                     OElement element = dbSession.load(new ORecordId(rs.getProperty("@rid").toString()));
-                    return new AbstractMap.SimpleEntry<>(element.getIdentity().toString(), elementToDataSetMetaData(element));
+                    return elementToDataSetMetaData(element);
                 })
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .collect(Collectors.toList());
         }
     }
 

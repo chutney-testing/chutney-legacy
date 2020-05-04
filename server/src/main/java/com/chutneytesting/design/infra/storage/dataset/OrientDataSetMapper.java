@@ -8,42 +8,45 @@ import static com.chutneytesting.design.infra.storage.db.orient.OrientComponentD
 import static com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB.DATASET_CLASS_PROPERTY_VALUES_UNIQUE;
 
 import com.chutneytesting.design.domain.dataset.DataSet;
-import com.chutneytesting.design.domain.dataset.DataSetMetaData;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.OElement;
 import java.sql.Date;
 
 class OrientDataSetMapper {
 
-    static void dataSetToElement(final DataSet dataSet, OElement oDataSet) {
-        dataSetMetaDataToElement(dataSet.metadata, oDataSet);
+    protected static void dataSetToElement(final DataSet dataSet, OElement oDataSet) {
+        dataSetMetaDataToElement(dataSet, oDataSet);
         oDataSet.setProperty(DATASET_CLASS_PROPERTY_VALUES_UNIQUE, dataSet.uniqueValues, OType.EMBEDDEDMAP);
         oDataSet.setProperty(DATASET_CLASS_PROPERTY_VALUES_MULTIPLE, dataSet.multipleValues, OType.EMBEDDEDLIST);
     }
 
-    private static void dataSetMetaDataToElement(final DataSetMetaData dataSetMetaData, OElement oDataSet) {
-        oDataSet.setProperty(DATASET_CLASS_PROPERTY_NAME, dataSetMetaData.name, OType.STRING);
-        oDataSet.setProperty(DATASET_CLASS_PROPERTY_DESCRIPTION, dataSetMetaData.description, OType.STRING);
-        oDataSet.setProperty(DATASET_CLASS_PROPERTY_CREATIONDATE, Date.from(dataSetMetaData.creationDate), OType.DATETIME);
-        oDataSet.setProperty(DATASET_CLASS_PROPERTY_TAGS, dataSetMetaData.tags, OType.EMBEDDEDLIST);
+    private static void dataSetMetaDataToElement(final DataSet dataSet, OElement oDataSet) {
+        oDataSet.setProperty(DATASET_CLASS_PROPERTY_NAME, dataSet.name, OType.STRING);
+        oDataSet.setProperty(DATASET_CLASS_PROPERTY_DESCRIPTION, dataSet.description, OType.STRING);
+        oDataSet.setProperty(DATASET_CLASS_PROPERTY_CREATIONDATE, Date.from(dataSet.creationDate), OType.DATETIME);
+        oDataSet.setProperty(DATASET_CLASS_PROPERTY_TAGS, dataSet.tags, OType.EMBEDDEDLIST);
     }
 
-    static DataSet elementToDataSet(OElement oDataSet) {
-        DataSet.DataSetBuilder builder = DataSet.builder()
-            .withId(oDataSet.getIdentity().toString())
-            .withMetaData(elementToDataSetMetaData(oDataSet))
+    protected static DataSet elementToDataSet(OElement oDataSet) {
+        DataSet.DataSetBuilder builder = elementToDataSetMetaDataBuilder(oDataSet);
+
+        builder
             .withUniqueValues(oDataSet.getProperty(DATASET_CLASS_PROPERTY_VALUES_UNIQUE))
             .withMultipleValues(oDataSet.getProperty(DATASET_CLASS_PROPERTY_VALUES_MULTIPLE));
 
         return builder.build();
     }
 
-    static DataSetMetaData elementToDataSetMetaData(OElement oDataSet) {
-        return DataSetMetaData.builder()
+    protected static DataSet elementToDataSetMetaData(OElement oDataSet) {
+        return elementToDataSetMetaDataBuilder(oDataSet).build();
+    }
+
+    protected static DataSet.DataSetBuilder elementToDataSetMetaDataBuilder(OElement oDataSet) {
+        return DataSet.builder()
+            .withId(oDataSet.getIdentity().toString())
             .withName(oDataSet.getProperty(DATASET_CLASS_PROPERTY_NAME))
             .withDescription(oDataSet.getProperty(DATASET_CLASS_PROPERTY_DESCRIPTION))
             .withCreationDate(((java.util.Date) oDataSet.getProperty(DATASET_CLASS_PROPERTY_CREATIONDATE)).toInstant())
-            .withTags(oDataSet.getProperty(DATASET_CLASS_PROPERTY_TAGS))
-            .build();
+            .withTags(oDataSet.getProperty(DATASET_CLASS_PROPERTY_TAGS));
     }
 }

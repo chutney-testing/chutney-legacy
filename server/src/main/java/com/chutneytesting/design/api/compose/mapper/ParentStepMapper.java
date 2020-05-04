@@ -1,6 +1,6 @@
 package com.chutneytesting.design.api.compose.mapper;
 
-import static com.chutneytesting.tools.ui.OrientUtils.toFrontId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
 
 import com.chutneytesting.design.api.compose.dto.ImmutableNameIdDto;
 import com.chutneytesting.design.api.compose.dto.ImmutableParentsStepDto;

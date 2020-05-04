@@ -1,8 +1,8 @@
 package com.chutneytesting.design.api.compose;
 
 import static com.chutneytesting.design.api.compose.mapper.FunctionalStepMapper.fromDto;
-import static com.chutneytesting.tools.ui.OrientUtils.fromFrontId;
-import static com.chutneytesting.tools.ui.OrientUtils.toFrontId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
 
 import com.chutneytesting.design.api.compose.dto.FunctionalStepDto;
 import com.chutneytesting.design.api.compose.dto.ParentsStepDto;

@@ -2,14 +2,15 @@ package com.chutneytesting.design.api.dataset;
 
 import static com.chutneytesting.design.api.dataset.DataSetMapper.fromDto;
 import static com.chutneytesting.design.api.dataset.DataSetMapper.toDto;
-import static com.chutneytesting.tools.ui.OrientUtils.fromFrontId;
-import static com.chutneytesting.tools.ui.OrientUtils.toFrontId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
 
 import com.chutneytesting.design.domain.dataset.DataSet;
 import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.dataset.DataSetRepository;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,22 +38,20 @@ public class DataSetController {
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public List<DataSetDto> findAll() {
-        return dataSetRepository.findAll().entrySet()
+        return dataSetRepository.findAll()
             .stream()
-            .map(e -> toDto(e.getKey(), e.getValue()))
+            .map(ds -> toDto(ds, lastVersionNumber(ds.id)))
             .sorted(DataSetDto.dataSetComparator)
             .collect(Collectors.toList());
     }
 
     @PostMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public String save(@RequestBody DataSetDto dataSetDto) {
-        DataSet oldDataSet = dataSetDto.id().map(id -> dataSetRepository.findById(fromFrontId(id))).orElse(null);
-
+    public DataSetDto save(@RequestBody DataSetDto dataSetDto) {
         DataSet newDataSet = fromDto(dataSetDto);
         String newDataSetId = dataSetRepository.save(newDataSet);
         newDataSet = DataSet.builder().fromDataSet(newDataSet).withId(newDataSetId).build();
-        dataSetHistoryRepository.addVersion(newDataSet, oldDataSet);
-        return toFrontId(newDataSetId);
+        Optional<Pair<String, Integer>> savedVersion = dataSetHistoryRepository.addVersion(newDataSet);
+        return toDto(newDataSet, savedVersion.map(Pair::getRight).orElseGet(() -> lastVersionNumber(newDataSetId)));
     }
 
     @DeleteMapping(path = "/{dataSetId}")
@@ -65,7 +64,8 @@ public class DataSetController {
     @GetMapping(path = "/{dataSetId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public DataSetDto findById(@PathVariable String dataSetId) {
         return toDto(
-            dataSetRepository.findById(fromFrontId(dataSetId))
+            dataSetRepository.findById(fromFrontId(dataSetId)),
+            lastVersionNumber(dataSetId)
         );
     }
 
@@ -75,12 +75,14 @@ public class DataSetController {
     }
 
     @GetMapping(path = "/{dataSetId}/versions", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public List<Integer> allVersionNumbers(@PathVariable String dataSetId) {
-        return dataSetHistoryRepository.allVersionNumbers(fromFrontId(dataSetId));
+    public List<DataSetDto> allVersionNumbers(@PathVariable String dataSetId) {
+        return dataSetHistoryRepository.allVersions(fromFrontId(dataSetId)).entrySet().stream()
+            .map(e -> toDto(e.getValue(), e.getKey()))
+            .collect(Collectors.toList());
     }
 
     @GetMapping(path = {"/{dataSetId}/{version}", "/{dataSetId}/versions/{version}"}, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public DataSetDto version(@PathVariable String dataSetId, @PathVariable Integer version) {
-        return toDto(dataSetHistoryRepository.version(fromFrontId(dataSetId), version));
+        return toDto(dataSetHistoryRepository.version(fromFrontId(dataSetId), version), version);
     }
 }

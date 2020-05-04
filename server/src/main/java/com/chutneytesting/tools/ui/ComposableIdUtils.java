@@ -3,10 +3,10 @@ package com.chutneytesting.tools.ui;
 import java.util.Optional;
 import org.springframework.lang.NonNull;
 
-public final class OrientUtils {
+public final class ComposableIdUtils {
 
     public static String toFrontId(@NonNull String id) {
-        if (isOrientId(id)) {
+        if (isComposableDomainId(id)) {
             return id.replace("#", "").replace(":", "-");
         }
         return id;
@@ -18,18 +18,18 @@ public final class OrientUtils {
 
     public static String fromFrontId(Optional<String> id) {
         return id.map(s -> {
-            if (isOrientFrontId(s)) {
+            if (isComposableFrontId(s)) {
                 return "#" + s.replace("-", ":");
             }
             return s;
         }).orElse("");
     }
 
-    public static boolean isOrientFrontId(String frontId) {
+    public static boolean isComposableFrontId(String frontId) {
         return frontId.contains("-");
     }
 
-    public static boolean isOrientId(String testCaseId) {
+    public static boolean isComposableDomainId(String testCaseId) {
         return testCaseId.contains("#") && testCaseId.contains(":");
     }
 }
