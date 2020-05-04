@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.4](https://github.com/chutney-testing/chutney/tree/1.1.4) (2020-04-30)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.1.3...1.1.4)
+
+**Implemented enhancements:**
+
+- Add environment name to context and global variable [\#19](https://github.com/chutney-testing/chutney/issues/19)
+
+**Merged pull requests:**
+
+- bugfix: Task using isPresent [\#121](https://github.com/chutney-testing/chutney/pull/121) ([bessonm](https://github.com/bessonm))
+- Feat/add environment name to context and global variables [\#120](https://github.com/chutney-testing/chutney/pull/120) ([rbenyoussef](https://github.com/rbenyoussef))
+
 ## [1.1.3](https://github.com/chutney-testing/chutney/tree/1.1.3) (2020-04-24)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.1.2...1.1.3)

@@ -166,7 +166,7 @@ As a general rule, the style and formatting of commit messages should follow the
 ```
 
 
-#### Prepare next development
+### Prepare next development
 
 ```shell
   mvn versions:set -DnewVersion=<NEXT_DEV_VERSION> -DgenerateBackupPoms=false && mvn versions:set-scm-tag -DnewTag=HEAD -DgenerateBackupPoms=false
@@ -174,6 +174,17 @@ As a general rule, the style and formatting of commit messages should follow the
   git add . && git commit -m "chore: Prepare next development <NEXT_DEV_VERSION>"
   git push origin
 ```
+
+### Update Changelog and release
+
+- [Generate a token here](https://github.com/settings/tokens/new?description=GitHub%20Changelog%20Generator%20token) - you only need "repo" scope for private repositories
+- Generate changelog with https://github.com/github-changelog-generator/github-changelog-generator
+
+```shell
+github_changelog_generator -u chutney-testing -p chutney --token <YOUR_TOKEN> --since-tag <previous RELEASE_VERSION>
+```
+- Update [CHANGELOG.md](https://github.com/chutney-testing/chutney/blob/master/CHANGELOG.md)
+- Update [Release <RELEASE_VERSION>](https://github.com/chutney-testing/chutney/releases)
 
 ## <a name="task"></a> Adding a task
 
