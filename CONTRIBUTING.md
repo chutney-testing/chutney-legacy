@@ -2,7 +2,6 @@
 
 ## Summary
 
-* [Useful links](#links)
 * [How to contribute to the documentation](#doc)
 * [How to make a Pull Request](#pr)
 * [Code convention](#code)
@@ -14,10 +13,6 @@
 * [Release Management](#release)
 * [Add a new Task](#task)
 * [Licensing](#oss)
-
-## <a name="links"></a> Useful links
-
-// TODO
 
 
 ## <a name="doc"></a> How to contribute to the documentation
@@ -142,15 +137,11 @@ As a general rule, the style and formatting of commit messages should follow the
 
 * http://karma-runner.github.io/0.10/dev/git-commit-msg.html
 
-## <a name="dep"></a> Dependency management
-
-// TODO
-
 
 ## <a name="build"></a> Build Process
 
-// TODO
-
+We use travis to build and release Chutney.
+[![Build Status](https://travis-ci.org/chutney-testing/chutney.svg?branch=master)](https://travis-ci.org/chutney-testing/chutney)
 
 ## <a name="release"></a> Release Management
 
@@ -187,8 +178,6 @@ github_changelog_generator -u chutney-testing -p chutney --token <YOUR_TOKEN> --
 - Update [Release <RELEASE_VERSION>](https://github.com/chutney-testing/chutney/releases)
 
 ## <a name="task"></a> Adding a task
-
-// TODO
 
  Create a new maven module with _chutney-parent_ as parent.
   And name your module such as _chutney-task-\[task-name\]_
@@ -303,21 +292,12 @@ This file contains :
     "3-clause BSD" license.  For details, see deps/superwidget/_
 * do not list dependencies under the ALv2
 
-##### In binary distribution
-// TODO
-
 #### NOTICE file
 
 ##### In source distribution
 
 _The NOTICE file is not for conveying information to downstream consumers -- it
 is a way to *compel* downstream consumers to *relay* certain required notices._
-
-##### In binary distribution
-// TODO
-
-#### License Headers
-// TODO
 
 #### Examples
 
@@ -441,21 +421,6 @@ Helps to give an overview of dependencies licenses.
 * https://github.com/bbc/apache2-license-checker
 
 Helps to give an overview of dependencies licenses and compatibility with ALv2.
-
-### How to manage LICENSE file
-// TODO - choose tool and provide instructions
-
-### How to manage NOTICE file
-// TODO - choose tool and provide instructions
-
-### How to manage license headers
-// TODO - choose tool and provide instructions
-
-### How to prevent a build with unwanted dependency
-// TODO - choose tool and provide instructions
-
-### How to manage bundled distribution
-// TODO - choose tool and provide instructions
 
 ### Unresolved questions - HELP WANTED -
 * Should test dependencies be taken into account for source distribution ?
