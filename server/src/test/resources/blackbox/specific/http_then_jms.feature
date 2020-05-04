@@ -29,7 +29,7 @@ Scenario: Http forward to jms server test
                    "inputs":{
                       "port": "##local_server_port##",
                       "truststore-path": "%%trustStoreAbsolutePath%%",
-                      "truststore-passowrd": "truststore"
+                      "truststore-password": "truststore"
                    }
                 },
                 {
