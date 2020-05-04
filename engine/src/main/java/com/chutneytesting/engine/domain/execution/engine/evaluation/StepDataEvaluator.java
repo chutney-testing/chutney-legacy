@@ -119,7 +119,7 @@ public class StepDataEvaluator {
     private boolean isObjectEvaluation(String template) {
         Pattern pattern = Pattern.compile(escapeForRegex(EVALUATION_STRING_PREFIX) + "(.*?)" + escapeForRegex(EVALUATION_STRING_SUFFIX), Pattern.DOTALL);
         Matcher matcher = pattern.matcher(template);
-        return matcher.find() && matcher.start() == 0;
+        return matcher.find() && matcher.start() == 0 && matcher.end() == template.length();
     }
 
     private Expression parseExpression(ExpressionParser parser, String expressionAsString) {
