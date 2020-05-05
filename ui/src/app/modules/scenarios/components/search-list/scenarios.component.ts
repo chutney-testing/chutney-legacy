@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ScenarioService } from '@core/services';
@@ -35,7 +35,7 @@ export class ScenariosComponent implements OnInit, OnDestroy {
         private router: Router,
         private scenarioService: ScenarioService,
         private stateService: StateService,
-        private readonly activatedRoute: ActivatedRoute,
+        private readonly route: ActivatedRoute,
     ) {
     }
 
@@ -102,14 +102,15 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     }
 
     private applyUriState() {
-        this.urlParams = this.activatedRoute.params.subscribe(
+        this.urlParams = this.route.queryParams.subscribe(
             (params) => {
                 if (params['text']) { this.textFilter = params['text']; }
                 if (params['orderBy']) { this.orderBy = params['orderBy']; }
-                if (params['reverseOrder']) { this.reverseOrder = params['reverseOrder']; }
+                if (params['reverseOrder']) { this.reverseOrder = params['reverseOrder'] === 'true'; }
                 if (params['type']) { this.scenarioTypeFilter.selectTags(params['type'].split(',')); }
-                if (params['noTag']) { this.tagFilter.setNoTag(params['noTag']); }
+                if (params['noTag']) { this.tagFilter.setNoTag(params['noTag'] === 'true'); }
                 if (params['tags']) { this.tagFilter.selectTags(params['tags'].split(',')); }
+                this.applyFilters();
             },
             (error) => console.log(error)
         );
@@ -234,21 +235,17 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     }
 
     private applyFiltersToRoute(): void {
-        this.router.navigate(
-            [{
+        this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: {
                 text: this.textFilter,
                 orderBy: this.orderBy,
                 reverseOrder: this.reverseOrder,
                 type: this.scenarioTypeFilter.selected().toString(),
                 noTag: this.tagFilter.isNoTagSelected(),
                 tags: this.tagFilter.selected().toString()
-            }],
-            {
-                relativeTo: this.activatedRoute,
-                replaceUrl: true
             }
-        );
-        document.title = `Chutney scenarios`;
+        });
     }
 
 }

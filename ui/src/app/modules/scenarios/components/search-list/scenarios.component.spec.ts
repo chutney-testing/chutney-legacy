@@ -47,6 +47,7 @@ describe('ScenariosComponent', () => {
 
     it('should create the component ScenariosComponent with three scenarios', async(() => {
         const fixture = TestBed.createComponent(ScenariosComponent);
+        activatedRouteStub.setParamMap({orderBy: 'id'});
         fixture.detectChanges();
         fixture.whenStable().then(() => {
             fixture.detectChanges();
@@ -80,7 +81,7 @@ describe('ScenariosComponent', () => {
 
     it('should apply filters from the URL', async(() => {
         const fixture = TestBed.createComponent(ScenariosComponent);
-        activatedRouteStub.setParamMap({ text: 'title', orderBy: 'title', reverseOrder: true});
+        activatedRouteStub.setParamMap({ text: 'title', orderBy: 'title', reverseOrder: 'true'});
         fixture.detectChanges();
         fixture.whenStable().then(() => {
             fixture.detectChanges();
