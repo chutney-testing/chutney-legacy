@@ -64,6 +64,7 @@
         <button *ngIf="listView" type="button" class="btn btn-default m-2" (click)="toggleListView()">
             <span class="fa fa-th"></span>
         </button>
+        <span >{{viewedScenarios.length}} / {{scenarios.length}}</span>
     </div>
     <div>
         <span (click)="sortBy('creationDate')"
