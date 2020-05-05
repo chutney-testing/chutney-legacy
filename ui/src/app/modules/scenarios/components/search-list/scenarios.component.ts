@@ -206,16 +206,19 @@ export class ScenariosComponent implements OnInit, OnDestroy {
 
     private filterOnAttributes() {
         const input = this.viewedScenarios;
-        const tags = this.tagFilter.selected();
-        const scenarioTypes = this.scenarioTypeFilter.selected();
-        const noTag = this.tagFilter.isNoTagSelected();
-        const all = this.tagFilter.isSelectAll();
+        if (this.tagFilter.isSelectAll() && this.scenarioTypeFilter.isSelectAll()) {
+            return input;
+        }
 
-        return all ? input : input.filter((item: ScenarioIndex) => {
-            return (this.tagPresent(tags, item)
-                || this.noTagPresent(noTag, item))
-                && this.scenarioTypePresent(scenarioTypes, item);
-        });
+        const tags = this.tagFilter.selected();
+        const noTag = this.tagFilter.isNoTagSelected();
+        const scenarioTypes = this.scenarioTypeFilter.selected();
+
+        return input.filter((scenario: ScenarioIndex) => {
+            return (this.tagPresent(tags, scenario)
+                    || this.noTagPresent(noTag, scenario))
+                    && this.scenarioTypePresent(scenarioTypes, scenario);
+            });
     }
 
     private tagPresent(tags: String[], scenario: ScenarioIndex): boolean {
