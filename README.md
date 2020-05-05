@@ -1,4 +1,4 @@
-# <img src="ui/src/assets/logo/logo.svg" height="60" width="60"/> 
+# <img src="ui/src/assets/logo/logo.svg" width="400"/> 
 ## Spice up your spec , Better `taste` your app !
 
 [![Build Status](https://travis-ci.org/chutney-testing/chutney.svg?branch=master)](https://travis-ci.org/chutney-testing/chutney)
@@ -20,6 +20,12 @@ Those Tasks are extensions and you can easily develop yours, even proprietary or
 
 In addition, Chutney provide SpEL evaluation and extensible [Function](https://github.com/chutney-testing/chutney/blob/master/task-spi/src/main/java/com/chutneytesting/task/spi/SpelFunction.java) in order to ease the use of managing scenario data like JSON path or Date comparison.  
 
+Currently, there are 2 ways of writing scenarios :
+- json file 
+    - [example](#json) 
+    - [documentation (in french only)](ui/src/assets/doc/user_manual.adoc)
+- Creating directly the step with ui. We called that composed scenario. 
+    - [example](#component)
 
 ## Summary
 
@@ -32,8 +38,10 @@ In addition, Chutney provide SpEL evaluation and extensible [Function](https://g
     * [Project History](#story)
     * [En cours](#wip)
     * [Horizons](#horizon)
-
-
+* [Example](#example)
+    * [Json scenario example](#json)
+    * [Composed scenario example](#component)
+    
 ## <a name="why"></a> Why another test tool ?
 
 Chutney is an opinionated test tool based upon the practice of Specification by Example. 
@@ -107,27 +115,26 @@ To help you start, we invite you to read:
 
 To contribute to this documentation (README, CONTRIBUTING, etc.), we conforms to the [CommonMark Spec](https://spec.commonmark.org/)
 
-
 -------------
-
 
 ## <a name="team"></a> Team
 
 You can write to us at: https://chutney-testing.zulipchat.com/
 
 Core contributors :
-
-  * Loic Ledoyen
-  * Mael Besson
-  * Matthieu Gensollen
-  * Nicolas Brouand
+  * [Mael Besson](https://github.com/bessonm)
+  * [Nicolas Brouand](https://github.com/nbrouand)
+  * [Matthieu Gensollen](https://github.com/boddissattva)
+  * [Loic Ledoyen](https://github.com/ledoyen)
 
 ### <a name="contributors"></a> Contributors
 
 We strive to provide a benevolent environment and support any [contribution](#contrib).
 
 Before going open source, Chutney was inner-sourced and received contribution from 30 persons:
-// TODO
+- [David Dewalle](https://github.com/ddewalle)
+- Abir Hammami
+- [Yue Gao](https://github.com/yueshigao)
 
 
 -------------
@@ -153,4 +160,188 @@ Over the past 2 years Chutney has diverge from our initial goals due to contextu
 
 On the horizon we want to provide a custom and seamless experience to each profile of the 3 amigos.
 
+## <a name="example"></a> Example
+### <a name="json"></a> Json example
 
+A scenario (withtout technical information) can be :
+
+```
+Given a user authentified
+    HTTP call on authentication api
+    Check authentication http OK
+When the user try to do something
+    HTTP call on my something service
+    Check something http OK
+Then verify something did something
+    HTTP call to verify something is ok
+        Retrieve data
+        Verify data updated
+```
+
+
+With technical description (which can be executed by the engine): 
+```
+{
+  title: Example scenario
+  description: Make people want to use chutney
+  givens:
+  [
+    {
+      description: A user authentified
+      subSteps:
+      [
+        {
+          description: HTTP call on authentication api
+          implementation:
+          {
+            type: http-post
+            target: MY_APPLICATION_TARGET
+            inputs:
+            {
+              timeout: 5 sec
+              uri: /api/authentication
+              headers:
+              {
+                Content-Type: application/json;charset=UTF-8
+              }
+              body:
+              {
+                login: ${#target.security().credential().get().username()}
+                password: ${#target.security().credential().get().password()}
+              }
+            }
+            outputs:
+            {
+              securityToken: ${#headers.get('x-auth-token').get(0)}
+            }
+          }
+        }
+        {
+          description: Check authentication http OK
+          implementation:
+          {
+            type: string-assert
+            inputs:
+            {
+              document: ${#status.toString()}
+              expected: "200"
+            }
+          }
+        }
+      ]
+    }
+  ]
+  when:
+  {
+    description: the user try to do something
+    subSteps:
+    [
+      {
+        description: HTTP call on my something service
+        implementation:
+        {
+          type: http-post
+          target: MY_APPLICATION_TARGET
+          inputs:
+          {
+            timeout: 5 sec
+            uri: /api/service/something
+            headers:
+            {
+              x-auth-token: ${#securityToken}
+              Accept: application/json, text/plain, */*
+              Content-Type: application/json;charset=UTF-8
+            }
+            body:
+            {
+              
+            }
+          }
+          outputs:
+          {
+            id: ${#json(#body, '$.id')}
+          }
+        }
+      }
+      {
+        description: Check something http OK
+        implementation:
+        {
+          type: string-assert
+          inputs:
+          {
+            document: ${#status.toString()}
+            expected: "200"
+          }
+        }
+      }
+    ]
+  }
+  thens:
+  [
+    {
+      description: Verify something did something
+	  strategy:
+	  {
+		type: retry-with-timeout
+		parameters:
+		{
+		  retryDelay: 5 sec
+		  timeOut: 1 min
+		}
+	  }
+      subSteps:
+      [
+        {
+          description: HTTP call to verify something is ok
+          subSteps:
+          [
+            {
+              description: Retrieve data
+              implementation:
+              {
+                type: http-get
+                target: MY_APPLICATION_TARGET
+                inputs:
+                {
+                  timeout: 15 sec
+                  uri: /api/data/${#id}/something?action=TEST
+                  headers:
+                  {
+                    x-auth-token: ${#securityToken}
+                    Content-Type: application/json;charset=UTF-8
+                  }
+                }
+                outputs:
+                {
+                  data: ${#json(#body, '$.[0].data').toString()}
+                }
+              }
+            }
+            {
+              description: Verify data updated
+              implementation:
+              {
+                type: string-assert
+                inputs:
+                {
+                  document: ${#data}
+                  expected: EVERYTHINGISOK
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+### <a name="component"></a> Composed scenario
+
+#### Create components
+<img src="ui/src/assets/doc/step1.png" width="600"> 
+
+#### Create composed scenario
+<img src="ui/src/assets/doc/step2.png" width="600"/> 

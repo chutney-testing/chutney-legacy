@@ -19,8 +19,6 @@ Si vous rencontrez un problème, vous pouvez contacter l'équipe :
 
 == Utiliser les valeurs définies dans le context
 
-TIP: http://zed332wj:8350/#/scenario/163/execution/474[Live Demo]
-
 Après avoir déclaré des valeurs, elles sont accèssibles depuis n'importe qu'elle étape grâce à la clef donnée.
 
 WARNING: Si une prochaine étape ajoute une autre valeur en utilisant la même clef,
@@ -32,7 +30,7 @@ L'utilisation doit se faire à l'intérieur d'un bloc *d'évaluation* : `${ }`
 Exemple, `${#clef_définie}`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
     "type":"context-put",
@@ -60,8 +58,6 @@ Exemple, `${#clef_définie}`
 
 == Injecter des données utilisables dans un scénario
 
-TIP: http://zed332wj:8350/#/scenario/162/execution/460[Live Demo]
-
 Par exemple, pour créer une variable avec :
 
 * Une valeur fixe : `"ADS" : "0217DA00014822"`
@@ -75,7 +71,7 @@ Cette action prend 1 paramètre en entrée :
 ** C'est une `Map`, c'est à dire une *liste* de *"clef": "valeur"*
 
 .Exemple
-[source,json]
+[source]
 ----
 {
     "type":"context-put", <1>
@@ -95,7 +91,7 @@ Cette action prend 1 paramètre en entrée :
 == Exécuter une requête SQL
 
 .Exemple
-[source,json]
+[source]
 ----
 {
     "type":"sql",  <1>
@@ -128,7 +124,7 @@ Une liste de Records :
 === Appel http GET - `http-get`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
    "type":"http-get",
@@ -159,7 +155,7 @@ Une liste de Records :
 === Appel http POST - `http-post`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
    "type":"http-post",
@@ -192,7 +188,7 @@ Une liste de Records :
 === Appel http PUT - `http-put`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
    "type":"http-put",
@@ -225,7 +221,7 @@ Une liste de Records :
 === Appel http DELETE - `http-delete`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
    "type":"http-delete",
@@ -256,7 +252,7 @@ Une liste de Records :
 === Démarrage d'un serveur https - `https-server-start`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
    "type":"https-server-start",
@@ -281,7 +277,7 @@ Une liste de Records :
 === Récupération des messages d'un serveur https `https-listener`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
    "type":"https-listener",
@@ -307,7 +303,7 @@ Une liste de Records :
 === Arrêt d'un serveur https - `https-server-stop`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
    "type":"https-stop",
@@ -324,7 +320,7 @@ Une liste de Records :
 === Validation de json - `json-assert`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
    "type":"json-assert",
@@ -346,7 +342,7 @@ Une liste de Records :
 Un objet logger est disponible avec info(), error() qui va logger directement les infos au niveau du step
 
 .Exemple
-[source,json]
+[source]
 ----
 {
    "type":"compare",
@@ -367,7 +363,7 @@ Un objet logger est disponible avec info(), error() qui va logger directement le
 Un objet logger est disponible avec info(), error() qui va logger directement les infos au niveau du step
 
 .Exemple
-[source,json]
+[source]
 ----
 {
    "type":"compare",
@@ -386,7 +382,7 @@ Un objet logger est disponible avec info(), error() qui va logger directement le
 === Validation entre deux documents json`json-compare`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
    "type":"json-compare",
@@ -408,7 +404,7 @@ Un objet logger est disponible avec info(), error() qui va logger directement le
 === Validation de XML - `xml-assert`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
    "type":"xml-assert",
@@ -428,7 +424,7 @@ Un objet logger est disponible avec info(), error() qui va logger directement le
 === Validation sur des objets du contexte du scénario - `assert`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
    "type":"assert",
@@ -449,7 +445,7 @@ Un objet logger est disponible avec info(), error() qui va logger directement le
 WARNING: Ne fonctionne qu'avec des xsd packagé dans Chutney
 
 .Exemple
-[source,json]
+[source]
 ----
 {
    "type":"xsd-validation",
@@ -468,7 +464,7 @@ WARNING: Ne fonctionne qu'avec des xsd packagé dans Chutney
 === Suppression de messages dans une queue jms - `jms-clean-queue`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
    "type":"jms-clean-queue",
@@ -487,7 +483,7 @@ WARNING: Ne fonctionne qu'avec des xsd packagé dans Chutney
 WARNING: Ne récupère que des javax.jms.TextMessage
 
 .Exemple
-[source,json]
+[source]
 ----
 {
    "type":"jms-listener",
@@ -512,7 +508,7 @@ WARNING: Ne récupère que des javax.jms.TextMessage
 N'envoi que des javax.jms.TextMessage
 
 .Exemple
-[source,json]
+[source]
 ----
 {
    "type":"jms-sender",
@@ -538,7 +534,7 @@ N'envoi que des javax.jms.TextMessage
 === Création du queue Rabbitmq temporaire bindé `amqp-create-bound-temporary-queue`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
   "type": "amqp-create-bound-temporary-queue",
@@ -565,7 +561,7 @@ N'envoi que des javax.jms.TextMessage
 === Suppression d'une queue RabbitMq - `amqp-delete-queue`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
   "type": "amqp-delete-queue",
@@ -588,7 +584,7 @@ N'envoi que des javax.jms.TextMessage
 === Queue à unbind d'un exchange rabbitmq - `amqp-unbind-queue`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
   "type": "amqp-unbind-queue",
@@ -609,7 +605,7 @@ N'envoi que des javax.jms.TextMessage
 === Envoi d'un message sur un broker Rabbitmq - `amqp-basic-publish`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
   "type": "amqp-basic-publish",
@@ -646,7 +642,7 @@ N'envoi que des javax.jms.TextMessage
 === Récupérer un message sur un broker rabbitmq `amqp-basic-get`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
   "type": "amqp-basic-get",
@@ -670,7 +666,7 @@ N'envoi que des javax.jms.TextMessage
 === Vider des queues rabbitmq - `amqp-clean-queues`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
   "type": "amqp-create-bound-temporary-queue",
@@ -689,7 +685,7 @@ N'envoi que des javax.jms.TextMessage
 === Initialisation d'un driver selenium - `selenium-driver-init`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
   "type": "selenium-driver-init",
@@ -711,7 +707,7 @@ N'envoi que des javax.jms.TextMessage
 
 === Click sur un élément - `selenium-click`
 .Exemple
-[source,json]
+[source]
 ----
 {
     "type": "selenium-click"
@@ -732,7 +728,7 @@ N'envoi que des javax.jms.TextMessage
 
 === Fermeture d'un diver selenium - `selenium-close`
 .Exemple
-[source,json]
+[source]
 ----
 {
     "type": "selenium-close"
@@ -747,7 +743,7 @@ N'envoi que des javax.jms.TextMessage
 
 === Ouvrir une page - `selenium-get`
 .Exemple
-[source,json]
+[source]
 ----
 {
     "type": "selenium-get"
@@ -770,7 +766,7 @@ N'envoi que des javax.jms.TextMessage
 === Récupérer du texte - `selenium-get-text`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
     "type": "selenium-click"
@@ -795,7 +791,7 @@ N'envoi que des javax.jms.TextMessage
 
 === Fermeture d'un driver selenium - `selenium-quit`
 .Exemple
-[source,json]
+[source]
 ----
 {
     "type": "selenium-quit"
@@ -812,7 +808,7 @@ N'envoi que des javax.jms.TextMessage
 Le screeshot est logger au niveau de la tache au format image/png;base64
 
 .Exemple
-[source,json]
+[source]
 ----
 {
     "type": "selenium-screenshot
@@ -827,7 +823,7 @@ Le screeshot est logger au niveau de la tache au format image/png;base64
 === Ecrire du texte dans un champs - `selenium-send-keys`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
     "type": "selenium-send-keys"
@@ -850,7 +846,7 @@ Le screeshot est logger au niveau de la tache au format image/png;base64
 
 === Switch de window - `selenium-switch-to`
 .Exemple
-[source,json]
+[source]
 ----
 {
     "type": "selenium-send-keys"
@@ -871,7 +867,7 @@ Le screeshot est logger au niveau de la tache au format image/png;base64
 === Attente tant qu'un élément n'est pas affiché - `selenium-wait`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
     "type": "selenium-wait"
@@ -894,7 +890,7 @@ Le screeshot est logger au niveau de la tache au format image/png;base64
 === Mongo - Compter le nombre de document - `mongo-count`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
     "type": "mongo-count"
@@ -916,7 +912,7 @@ Le screeshot est logger au niveau de la tache au format image/png;base64
 === Mongo - Supprimer des documents - `mongo-delete`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
     "type": "mongo-delete"
@@ -937,7 +933,7 @@ Le screeshot est logger au niveau de la tache au format image/png;base64
 
 === Mongo - Récupérer des documents - `mongo-find`
 .Exemple
-[source,json]
+[source]
 ----
 {
     "type": "mongo-find"
@@ -960,7 +956,7 @@ Le screeshot est logger au niveau de la tache au format image/png;base64
 
 === Mongo - Insérer un document -`mongo-insert`
 .Exemple
-[source,json]
+[source]
 ----
 {
     "type": "mongo-insert"
@@ -979,7 +975,7 @@ Le screeshot est logger au niveau de la tache au format image/png;base64
 WARNING: pour le paramètre arrayFilters, seulement de puis la version mongodb 3.5.12
 
 .Exemple
-[source,json]
+[source]
 ----
 {
     "type": "mongo-update"
@@ -1005,7 +1001,7 @@ WARNING: pour le paramètre arrayFilters, seulement de puis la version mongodb 3
 === Mongo - Lister les collections - `mongo-list`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
     "type": "mongo-list"
@@ -1024,7 +1020,7 @@ WARNING: pour le paramètre arrayFilters, seulement de puis la version mongodb 3
 Va logger tout le contexte du scénario au niveau du report du step
 
 .Exemple
-[source,json]
+[source]
 ----
 {
     "type": "debug"
@@ -1033,7 +1029,7 @@ Va logger tout le contexte du scénario au niveau du report du step
 
 === Attente - `sleep`
 .Exemple
-[source,json]
+[source]
 ----
 {
     "type": "sleep"
@@ -1049,7 +1045,7 @@ Va logger tout le contexte du scénario au niveau du report du step
 
 === Envoi d'un message sur un broker Kafka - `kafka-basic-publish`
 .Exemple
-[source,json]
+[source]
 ----
 {
   "type": "kafka-basic-publish",
@@ -1078,7 +1074,7 @@ Va logger tout le contexte du scénario au niveau du report du step
 
 === Consommer un message sur un broker Kafka - `kafka-basic-consume`
 .Exemple
-[source,json]
+[source]
 ----
 {
   "type": "kafka-basic-consume",
@@ -1116,7 +1112,7 @@ Va logger tout le contexte du scénario au niveau du report du step
 === Envoi de commandes ssh - `ssh-client`
 
 .Exemple
-[source,json]
+[source]
 ----
 {
   "type": "ssh-client",
@@ -1146,7 +1142,7 @@ Va logger tout le contexte du scénario au niveau du report du step
 Un objet logger est disponible avec info(), error() qui va logger directement les infos au niveau du step
 
 .Exemple
-[source,json]
+[source]
 ----
 {
   "type": "groovy",
@@ -1176,7 +1172,7 @@ Un objet logger est disponible avec info(), error() qui va logger directement le
 Cette fonction est principaglement pour générer UUID.
 
 .Exemple
-[source,json]
+[source]
 ----
 {
   "inputs": {
@@ -1204,7 +1200,7 @@ Un random UUID est généré.
 Cette fonction est pour enregistrer une value dans un Json document, en utilisant son json path.
 
 .Exemple
-[source,json]
+[source]
 ----
 {
    "type": "http-get", <1>
@@ -1236,7 +1232,7 @@ Cette fonction est pour enregistrer une value dans un Json document, en utilisan
 Cette fonction est pour enregistrer une value dans un xml document, en utilisant son path.
 
 .Exemple STANDARD_XML
-[source,json]
+[source]
 ----
 { "inputs":
    {
@@ -1283,7 +1279,7 @@ Cette fonction est pour enregistrer une value dans un xml document, en utilisant
 Cette function est pour parser la date de type String à different type, selon le formateur fourni.
 
 .Exemple 01
-[source,json]
+[source]
 ----
 {
   "inputs": {
@@ -1308,7 +1304,7 @@ Quand il n'y a pas de formatteur fourni, l'output est type Instant.
 ----
 
 .Exemple 02
-[source,json]
+[source]
 ----
 {
   "inputs": {
@@ -1333,7 +1329,7 @@ Avec date et son formatteur "yyyy-MM-dd", l'output est type LocalDate.
 ----
 
 .Exemple 03
-[source,json]
+[source]
 ----
 {
   "inputs": {
@@ -1358,7 +1354,7 @@ Avec date et son formatteur "yyyy-MM-dd'T'HH:mm:ssx", l'output est type ZonedDat
 ----
 
 Exemple 04
-[source,json]
+[source]
 ----
 {
   "inputs": {
@@ -1391,7 +1387,7 @@ String str_replace(String input, String regularExpression, String replacement)
 ```
 
 .Exemple
-[source,json]
+[source]
 ----
 {
   "description": "Remplace poivron par pimiento",
@@ -1413,7 +1409,7 @@ String str_replace(String input, String regularExpression, String replacement)
 <3> Le résultat de cet exemple est : "vrai", car la variable le mot poivron est remplacé par pimiento
 
 .Exemple
-[source,json]
+[source]
 ----
 {
   "inputs": {
@@ -1449,7 +1445,7 @@ Dans ce cas, il faut indiquer au système que la valeur _null_ ne doit pas être
 Pour ce faire, il faut utiliser la fonction `nullable` pour englober l'expression dont la valeur peut être nulle.
 
 .Exemple
-[source,json]
+[source]
 ----
 {
   "description": "Assert nullable value",
@@ -1483,7 +1479,7 @@ Aujourd'hui, il existe 2 strategies :
 * Dès qu'une étape est en échec alors tout le test s'arrête.
 
 .Exemple :
-[source,json]
+[source]
 ----
 {
     "name": "Etape exécuter une seule fois",
@@ -1509,7 +1505,7 @@ Aujourd'hui, il existe 2 strategies :
 TIP: La stratégie `sequential` est appliquée par défaut. Il n'est pas nécessaire de l'écrire sur chaque étape.
 
 .Exemple sans déclarer de stratégie :
-[source,json]
+[source]
 ----
 {
     "name": "Etape exécuter une seule fois",
@@ -1535,7 +1531,7 @@ Pour cela,
 il faut utiliser la strategy `retry-with-timeout`.
 
 .Exemple :
-[source,json]
+[source]
 ----
 {
     "name": "Etape relancer plusieurs fois",
