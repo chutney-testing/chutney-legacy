@@ -160,6 +160,44 @@ public class StepDataEvaluatorTest {
         evaluator.evaluateNamedDataWithContextVariables(inputs, scenarioContext);
     }
 
+    @Test
+    public void should_evaluate_multiple_spel() {
+        // Given
+        ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
+
+        Map<String, Object> context = new HashMap<>();
+        context.put("variable_toto", "toto");
+        context.put("variable_tata", "tata");
+
+        scenarioContext.putAll(context);
+
+
+        Map<String, Object> inputs = new HashMap<>();
+        inputs.put("dateTimeFormat", "ss");
+        inputs.put("singleVariable", "${#variable_toto}");
+        inputs.put("singleVariableWithTextAfterSpel", "Text - ${#variable_toto}");
+        inputs.put("singleVariableWithTextBeforeSpel", "${#variable_toto} - text");
+
+        inputs.put("consecutiveVariables", "${#variable_toto}${#variable_tata}");
+
+        inputs.put("twoVariablesSeparedByText", "${#variable_toto} - text - ${#variable_tata}");
+        inputs.put("twoVariablesWithTextAtBeginning", "Text - ${#variable_toto} - ${#variable_tata}");
+        inputs.put("twoVariablesWithTextAtTheEnd", "${#variable_toto} - ${#variable_tata} - text");
+
+        // When
+        Map<String, Object> evaluatedInputs = evaluator.evaluateNamedDataWithContextVariables(inputs, scenarioContext);
+
+        assertThat(evaluatedInputs.get("singleVariable")).isEqualTo("toto");
+        assertThat(evaluatedInputs.get("singleVariableWithTextAfterSpel")).isEqualTo("Text - toto");
+        assertThat(evaluatedInputs.get("singleVariableWithTextBeforeSpel")).isEqualTo("toto - text");
+
+        assertThat(evaluatedInputs.get("consecutiveVariables")).isEqualTo("tototata");
+
+        assertThat(evaluatedInputs.get("twoVariablesSeparedByText")).isEqualTo("toto - text - tata");
+        assertThat(evaluatedInputs.get("twoVariablesWithTextAtBeginning")).isEqualTo("Text - toto - tata");
+        assertThat(evaluatedInputs.get("twoVariablesWithTextAtTheEnd")).isEqualTo("toto - tata - text");
+    }
+
     private class TestObject {
         private String attribute;
         public TestObject(String attribute) {
