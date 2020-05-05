@@ -83,7 +83,6 @@
         <commonstext.version>1.8</commonstext.version>
         <commonsio.version>2.6</commonsio.version>
         <jgit.version>4.9.1.201712030800-r</jgit.version>
-        <jool.version>0.9.12</jool.version>
         <jdom2.version>2.0.6</jdom2.version>
         <jsonpath.version>2.4.0</jsonpath.version>
         <org.everit.json.schema.version>1.11.0</org.everit.json.schema.version>
@@ -294,11 +293,6 @@
                 <groupId>org.eclipse.jgit</groupId>
                 <artifactId>org.eclipse.jgit</artifactId>
                 <version>${jgit.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jooq</groupId>
-                <artifactId>jool</artifactId>
-                <version>${jool.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jdom</groupId>
