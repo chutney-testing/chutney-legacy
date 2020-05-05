@@ -104,7 +104,7 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     private applyUriState() {
         this.urlParams = this.route.queryParams.subscribe(
             (params) => {
-                if (params['text']) { this.textFilter = params['text']; }
+                if (params['text']) { this.textFilter = params['text']; } else { this.textFilter = ''; }
                 if (params['orderBy']) { this.orderBy = params['orderBy']; }
                 if (params['reverseOrder']) { this.reverseOrder = params['reverseOrder'] === 'true'; }
                 if (params['type']) { this.scenarioTypeFilter.selectTags(params['type'].split(',')); }

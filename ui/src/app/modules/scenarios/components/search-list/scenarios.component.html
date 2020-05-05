@@ -15,6 +15,7 @@
         <div class="mx-auto col-md-5">
             <chutney-forms-search-field [id]="'scenario-search'"
                                         [placeholder]="'scenarios.search.placeholder' | translate"
+                                        [searchInput]="textFilter"
                                         (searchInputEvent)="updateTextFilter($event)"></chutney-forms-search-field>
         </div>
     </div>
