@@ -199,7 +199,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let scenario of scenarios"
+                <tr *ngFor="let scenario of orderedScenarios"
                     [routerLink]="['/scenario', scenario.id, 'execution', 'last']"
                     class="pointer">
                     <td>

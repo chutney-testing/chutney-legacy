@@ -15,7 +15,7 @@ import {
     TestCase
 } from '@core/model';
 import { CampaignService, EnvironmentAdminService, ScenarioService } from '@core/services';
-import { sortByAndOrder } from '@shared/tools';
+import { newInstance, sortByAndOrder } from '@shared/tools';
 
 @Component({
     selector: 'chutney-execution-campaign',
@@ -30,6 +30,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
 
     campaign: Campaign;
     scenarios: Array<ScenarioIndex> = [];
+    orderedScenarios: Array<ScenarioIndex> = [];
 
     last: CampaignReport;
     current: CampaignReport;
@@ -131,6 +132,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
         this.campaignService.findAllScenarios(campaignId).subscribe(
             (scenarios) => {
                 this.scenarios = scenarios;
+                this.orderedScenarios = newInstance(scenarios);
             },
             (error) => {
                 console.log(error);
@@ -144,7 +146,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
     }
 
     sortLastBy(property) {
-        this.sortBy(this.scenarios, property);
+        this.sortBy(this.orderedScenarios, property);
     }
 
     sortBy(collection: any, property) {
@@ -186,9 +188,16 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
     }
 
     selectReport(campaignExecutionReport: CampaignExecutionReport) {
+        this.resetOrdering();
         this.current = new CampaignReport(campaignExecutionReport);
         this.currentCampaignExecutionReport = campaignExecutionReport;
-        this.currentScenariosReportsOutlines = campaignExecutionReport.scenarioExecutionReports;
+        this.currentScenariosReportsOutlines = newInstance(campaignExecutionReport.scenarioExecutionReports);
+    }
+
+    private resetOrdering() {
+        this.orderBy = '';
+        this.reverseOrder = false;
+        this.orderedScenarios = newInstance(this.scenarios);
     }
 
     editCampaign(campaign: Campaign) {
