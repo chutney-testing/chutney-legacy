@@ -57,31 +57,6 @@ public class ScenarioExecutionEngineAsyncTest {
     }
 
     @Test
-    public void should_check_already_running_scenario_when_execute() {
-        // Given
-        final String scenarioId = "1";
-        TestCase mockTestCase = mock(TestCase.class);
-        when(mockTestCase.id()).thenReturn(scenarioId);
-        ExecutionRequest request = new ExecutionRequest(mockTestCase, "");
-        final ScenarioExecutionEngineAsync sut = new ScenarioExecutionEngineAsync(
-            executionHistoryRepository,
-            executionEngine,
-            executionStateRepository,
-            metrics,
-            testCasePreProcessors,
-            new ObjectMapper()
-        );
-
-        when(executionStateRepository.runningState(scenarioId))
-            .thenReturn(Optional.of(RunningScenarioState.of(scenarioId)));
-
-        // When / Then
-        assertThatThrownBy(() -> sut.execute(request))
-            .isInstanceOf(ScenarioAlreadyRunningException.class)
-            .hasMessageContaining(scenarioId);
-    }
-
-    @Test
     public void should_not_follow_not_existing_scenario_execution() {
         final String scenarioId = "1";
         final ScenarioExecutionEngineAsync sut = new ScenarioExecutionEngineAsync(
@@ -106,7 +81,6 @@ public class ScenarioExecutionEngineAsyncTest {
         final String scenarioId = testCase.id();
         final long executionId = 3L;
 
-        when(executionStateRepository.runningState(scenarioId)).thenReturn(Optional.empty());
         when(testCasePreProcessors.apply(any(),any())).thenReturn(testCase);
         when(executionEngine.executeAndFollow(any())).thenReturn(Pair.of(Observable.empty(), 0L));
 
@@ -128,7 +102,6 @@ public class ScenarioExecutionEngineAsyncTest {
         sut.execute(request);
 
         // Then
-        verify(executionStateRepository).runningState(scenarioId);
         verify(testCasePreProcessors).apply(any(RawTestCase.class),any());
         verify(executionEngine).executeAndFollow(any());
         ArgumentCaptor<ExecutionHistory.DetachedExecution> argumentCaptor = ArgumentCaptor.forClass(ExecutionHistory.DetachedExecution.class);

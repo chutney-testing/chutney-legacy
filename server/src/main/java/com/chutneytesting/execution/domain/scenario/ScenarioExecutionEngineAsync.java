@@ -85,8 +85,6 @@ public class ScenarioExecutionEngineAsync {
      * @return execution id.
      */
     public Long execute(ExecutionRequest executionRequest) {
-        // Before execution check
-        verifyScenarioNotAlreadyRunning(executionRequest.testCase.id());
         // Compile testcase for execution
         ExecutionRequest executionRequestProcessed = new ExecutionRequest(testCasePreProcessors.apply(executionRequest.testCase,executionRequest.environment), executionRequest.environment);
         // Initialize execution history
@@ -205,12 +203,6 @@ public class ScenarioExecutionEngineAsync {
 
     public void setDebounceMilliSeconds(long debounceMilliSeconds) {
         this.debounceMilliSeconds = debounceMilliSeconds;
-    }
-
-    private void verifyScenarioNotAlreadyRunning(String scenarioId) throws ScenarioAlreadyRunningException {
-        executionStateRepository.runningState(scenarioId).ifPresent(runningScenarioState -> {
-            throw new ScenarioAlreadyRunningException(runningScenarioState);
-        });
     }
 
     /**

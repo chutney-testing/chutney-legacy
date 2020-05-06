@@ -1,6 +1,6 @@
 <ng-container *ngIf="testCase">
     <chutney-header [testCase]="testCase"
-                [canExecute]="lastExecutionRunning || parseError"
+                [canExecute]="parseError"
                 (executeEvent)="executeScenario($event)">
     </chutney-header>
 </ng-container>
