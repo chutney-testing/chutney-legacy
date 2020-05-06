@@ -35,6 +35,7 @@ export class SelectableTags<T> {
     toggleSelect(item: T) {
         if (this.selectedTags.length === this.allTags.length) {
             this.selectedTags = [item];
+            this.noTag = false;
         } else {
             if (this.isSelected(item)) {
                 this.selectedTags.splice(this.selectedTags.indexOf(item), 1);

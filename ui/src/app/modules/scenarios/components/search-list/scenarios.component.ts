@@ -91,7 +91,7 @@ export class ScenariosComponent implements OnInit, OnDestroy {
 
     private setSelectedTags() {
         const savedTags = this.stateService.getTags();
-        if (savedTags != null && savedTags.length > 0) {
+        if (savedTags != null) {
             this.tagFilter.selectTags(savedTags);
         }
 
