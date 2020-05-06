@@ -90,33 +90,33 @@
         <table class="table table-sm table-striped table-hover">
             <thead>
             <tr>
-                <th class="filter w-3" scope="col" (click)="sortBy('id')">ID
+                <th class="filter w3" scope="col" (click)="sortBy('id')">ID
                     <span *ngIf="orderBy == 'id' && !reverseOrder" class="fa fa-caret-down"></span>
                     <span *ngIf="orderBy == 'id' && reverseOrder" class="fa fa-caret-up"></span>
                 </th>
-                <th scope="col" style="width: 1%">&nbsp;</th>
-                <th class="filter w-3" scope="col" (click)="sortBy('status')">{{ 'scenarios.list.header.status'  | translate  }}
+                <th scope="col" class="w1">&nbsp;</th>
+                <th class="filter w3" scope="col" (click)="sortBy('status')">{{ 'scenarios.list.header.status'  | translate  }}
                     <span *ngIf="orderBy == 'status' && !reverseOrder" class="fa fa-caret-down"></span>
                     <span *ngIf="orderBy == 'status' && reverseOrder" class="fa fa-caret-up"></span>
                 </th>
-                <th class="filter w-10" scope="col" (click)="sortBy('lastExecution')">{{ 'scenarios.list.header.execLast'  | translate  }}
+                <th class="filter w10" scope="col" (click)="sortBy('lastExecution')">{{ 'scenarios.list.header.execLast'  | translate  }}
                     <span *ngIf="orderBy == 'lastExecution' && !reverseOrder" class="fa fa-caret-down"></span>
                     <span *ngIf="orderBy == 'lastExecution' && reverseOrder" class="fa fa-caret-up"></span>
                 </th>
-                <th class="filter w-5" scope="col" (click)="sortBy('executionCount')">{{ 'scenarios.list.header.execCount'  | translate  }}
+                <th class="filter w5" scope="col" (click)="sortBy('executionCount')">{{ 'scenarios.list.header.execCount'  | translate  }}
                     <span *ngIf="orderBy == 'executionCount' && !reverseOrder" class="fa fa-caret-down"></span>
                     <span *ngIf="orderBy == 'executionCount' && reverseOrder" class="fa fa-caret-up"></span>
                 </th>
-                <th class="filter w-50" scope="col" (click)="sortBy('title')">{{ 'scenarios.list.header.title'  | translate  }}
+                <th class="filter w50" scope="col" (click)="sortBy('title')">{{ 'scenarios.list.header.title'  | translate  }}
                     <span *ngIf="orderBy == 'title' && !reverseOrder" class="fa fa-caret-down"></span>
                     <span *ngIf="orderBy == 'title' && reverseOrder" class="fa fa-caret-up"></span>
                 </th>
-                <th scope="col" style="width: 1%">&nbsp;</th>
-                <th class="filter w-12" scope="col" (click)="sortBy('tags')">{{ 'scenarios.list.header.tags'  | translate  }}
+                <th scope="col" class="w1">&nbsp;</th>
+                <th class="filter w12" scope="col" (click)="sortBy('tags')">{{ 'scenarios.list.header.tags'  | translate  }}
                     <span *ngIf="orderBy == 'tags' && !reverseOrder" class="fa fa-caret-down"></span>
                     <span *ngIf="orderBy == 'tags' && reverseOrder" class="fa fa-caret-up"></span>
                 </th>
-                <th class="filter w-10" scope="col" (click)="sortBy('creationDate')">{{ 'scenarios.list.header.creation'  | translate  }}
+                <th class="filter w10" scope="col" (click)="sortBy('creationDate')">{{ 'scenarios.list.header.creation'  | translate  }}
                     <span *ngIf="orderBy == 'creationDate' && !reverseOrder" class="fa fa-caret-down"></span>
                     <span *ngIf="orderBy == 'creationDate' && reverseOrder" class="fa fa-caret-up"></span>
                 </th>
