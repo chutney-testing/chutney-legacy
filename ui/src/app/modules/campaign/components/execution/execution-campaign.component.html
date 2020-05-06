@@ -135,10 +135,22 @@
             <table class="table table-sm table-striped table-hover">
                 <thead>
                     <tr>
-                        <th scope="col" class="w5">{{ 'campaigns.execution.scenarios.item.header.id' | translate }}</th>
-                        <th scope="col" class="w5">{{ 'campaigns.execution.scenarios.item.header.state' | translate }}</th>
-                        <th scope="col" class="w80">{{ 'campaigns.execution.scenarios.item.header.title' | translate }}</th>
-                        <th scope="col" class="w10">{{ 'campaigns.execution.scenarios.item.header.duration' | translate }}</th>
+                        <th scope="col" class="filter w5" (click)="sortCurrentBy('scenarioId')">{{ 'campaigns.execution.scenarios.item.header.id' | translate }}
+                            <span *ngIf="orderBy == 'scenarioId' && !reverseOrder" class="fa fa-caret-down"></span>
+                            <span *ngIf="orderBy == 'scenarioId' && reverseOrder" class="fa fa-caret-up"></span>
+                        </th>
+                        <th scope="col" class="filter w5" (click)="sortCurrentBy('status')">{{ 'campaigns.execution.scenarios.item.header.state' | translate }}
+                            <span *ngIf="orderBy == 'status' && !reverseOrder" class="fa fa-caret-down"></span>
+                            <span *ngIf="orderBy == 'status' && reverseOrder" class="fa fa-caret-up"></span>
+                        </th>
+                        <th scope="col" class="filter w80" (click)="sortCurrentBy('scenarioName')">{{ 'campaigns.execution.scenarios.item.header.title' | translate }}
+                            <span *ngIf="orderBy == 'scenarioName' && !reverseOrder" class="fa fa-caret-down"></span>
+                            <span *ngIf="orderBy == 'scenarioName' && reverseOrder" class="fa fa-caret-up"></span>
+                        </th>
+                        <th scope="col" class="filter w10" (click)="sortCurrentBy('duration')">{{ 'campaigns.execution.scenarios.item.header.duration' | translate }}
+                            <span *ngIf="orderBy == 'duration' && !reverseOrder" class="fa fa-caret-down"></span>
+                            <span *ngIf="orderBy == 'duration' && reverseOrder" class="fa fa-caret-up"></span>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -172,13 +184,22 @@
                 <thead>
                 <tr>
                     <th scope="col" class="w1">&nbsp;</th>
-                    <th scope="col" class="w70">{{ 'campaigns.execution.scenarios.header.title' | translate }}</th>
-                    <th scope="col" class="w15">{{ 'campaigns.execution.scenarios.header.tags' | translate }}</th>
-                    <th scope="col" class="w14">{{ 'campaigns.execution.scenarios.header.creation' | translate }}</th>
+                    <th scope="col" class="filter w70" (click)="sortLastBy('title')">{{ 'campaigns.execution.scenarios.header.title' | translate }}
+                        <span *ngIf="orderBy == 'title' && !reverseOrder" class="fa fa-caret-down"></span>
+                        <span *ngIf="orderBy == 'title' && reverseOrder" class="fa fa-caret-up"></span>
+                    </th>
+                    <th scope="col" class="filter w15" (click)="sortLastBy('tags')">{{ 'campaigns.execution.scenarios.header.tags' | translate }}
+                        <span *ngIf="orderBy == 'tags' && !reverseOrder" class="fa fa-caret-down"></span>
+                        <span *ngIf="orderBy == 'tags' && reverseOrder" class="fa fa-caret-up"></span>
+                    </th>
+                    <th scope="col" class="filter w14" (click)="sortLastBy('creationDate')">{{ 'campaigns.execution.scenarios.header.creation' | translate }}
+                        <span *ngIf="orderBy == 'creationDate' && !reverseOrder" class="fa fa-caret-down"></span>
+                        <span *ngIf="orderBy == 'creationDate' && reverseOrder" class="fa fa-caret-up"></span>
+                    </th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let scenario of scenarios"
+                <tr *ngFor="let scenario of orderedScenarios"
                     [routerLink]="['/scenario', scenario.id, 'execution', 'last']"
                     class="pointer">
                     <td>

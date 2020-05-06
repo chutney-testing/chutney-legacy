@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChildren, QueryList } from '@angular/core';
+import { Component, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, Observable, Subscription, timer } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -9,12 +9,13 @@ import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 import {
     Campaign,
     CampaignExecutionReport,
-    ScenarioExecutionReportOutline,
-    TestCase,
     EnvironmentMetadata,
-    ScenarioIndex
+    ScenarioExecutionReportOutline,
+    ScenarioIndex,
+    TestCase
 } from '@core/model';
-import { CampaignService, ScenarioService, EnvironmentAdminService } from '@core/services';
+import { CampaignService, EnvironmentAdminService, ScenarioService } from '@core/services';
+import { newInstance, sortByAndOrder } from '@shared/tools';
 
 @Component({
     selector: 'chutney-execution-campaign',
@@ -29,6 +30,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
 
     campaign: Campaign;
     scenarios: Array<ScenarioIndex> = [];
+    orderedScenarios: Array<ScenarioIndex> = [];
 
     last: CampaignReport;
     current: CampaignReport;
@@ -39,11 +41,14 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
 
     environments: EnvironmentMetadata[];
 
+    orderBy: any;
+    reverseOrder: any;
+
     @ViewChildren(NgbDropdown)
     private executeDropDown: QueryList<NgbDropdown>;
 
     running = false;
-    // todo: ajouter errorMessage dans le template
+    // todo: add errorMessage in template
     errorMessage: any;
 
     private subscriptionLoadCampaign: Subscription;
@@ -78,7 +83,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
         if (this.subscriptionLoadCampaign) {
             this.subscriptionLoadCampaign.unsubscribe();
         }
-        this.unsuscribeCampaign();
+        this.unsubscribeCampaign();
     }
 
     loadCampaign(campaignId: number, selectLast: boolean) {
@@ -104,7 +109,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
             }
             this.running = CampaignService.existRunningCampaignReport(this.campaign.campaignExecutionReports);
             if (this.running) {
-                this.unsuscribeCampaign();
+                this.unsubscribeCampaign();
                 this.campaignSub = timer(10000).subscribe(() => {
                         this.loadCampaign(this.campaign.id, true);
                     }
@@ -127,11 +132,33 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
         this.campaignService.findAllScenarios(campaignId).subscribe(
             (scenarios) => {
                 this.scenarios = scenarios;
+                this.orderedScenarios = newInstance(scenarios);
             },
             (error) => {
                 console.log(error);
                 this.errorMessage = error;
             }
+        );
+    }
+
+    sortCurrentBy(property) {
+        this.sortBy(this.currentScenariosReportsOutlines, property);
+    }
+
+    sortLastBy(property) {
+        this.sortBy(this.orderedScenarios, property);
+    }
+
+    sortBy(collection: any, property) {
+        if (this.orderBy === property) {
+            this.reverseOrder = !this.reverseOrder;
+        }
+        this.orderBy = property;
+
+        return sortByAndOrder(
+            collection,
+            (i) => i[this.orderBy],
+            this.reverseOrder
         );
     }
 
@@ -161,9 +188,16 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
     }
 
     selectReport(campaignExecutionReport: CampaignExecutionReport) {
+        this.resetOrdering();
         this.current = new CampaignReport(campaignExecutionReport);
         this.currentCampaignExecutionReport = campaignExecutionReport;
-        this.currentScenariosReportsOutlines = campaignExecutionReport.scenarioExecutionReports;
+        this.currentScenariosReportsOutlines = newInstance(campaignExecutionReport.scenarioExecutionReports);
+    }
+
+    private resetOrdering() {
+        this.orderBy = '';
+        this.reverseOrder = false;
+        this.orderedScenarios = newInstance(this.scenarios);
     }
 
     editCampaign(campaign: Campaign) {
@@ -250,7 +284,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
         this.campaign.campaignExecutionReports.sort((a, b) => b.executionId - a.executionId);
     }
 
-    private unsuscribeCampaign() {
+    private unsubscribeCampaign() {
         if (this.campaignSub) {
             this.campaignSub.unsubscribe();
         }
@@ -278,7 +312,7 @@ class CampaignReport {
     }
 
     allPassed() {
-        return !this.hasStopped() && !this.hasStopped() ;
+        return !this.hasStopped() && !this.hasStopped();
     }
 
     hasPassed() {
@@ -293,4 +327,4 @@ class CampaignReport {
         return this.stopped > 0;
     }
 
-};
+}

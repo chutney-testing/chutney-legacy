@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { ScenarioService } from '@core/services';
 import { ScenarioIndex, ScenarioType, SelectableTags } from '@model';
-import { distinct, filterOnTextContent, flatMap, intersection } from '@shared/tools/array-utils';
+import { distinct, filterOnTextContent, flatMap, intersection, sortByAndOrder } from '@shared/tools/array-utils';
 import { StateService } from '@shared/state/state.service';
 import { Subscription } from 'rxjs';
 
@@ -132,27 +132,16 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     // Ordering //
 
     sortBy(property) {
-        this.reverseOrder = !this.reverseOrder;
+        if (this.orderBy === property) {
+            this.reverseOrder = !this.reverseOrder;
+        }
+
         this.orderBy = property;
         this.applyFilters();
     }
 
     sortScenarios(property, reverseOrder) {
-        this.orderBy = property;
-        this.viewedScenarios.sort(this.dynamicSort(property, reverseOrder));
-    }
-
-    dynamicSort(property, reverseOrder) {
-        let sortScenarios = 1;
-
-        if (reverseOrder) {
-            sortScenarios = -1;
-        }
-
-        return function (a, b) {
-            const result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
-            return result * sortScenarios;
-        };
+        this.viewedScenarios = sortByAndOrder(this.viewedScenarios, i => i[property], reverseOrder);
     }
 
     // Filtering //

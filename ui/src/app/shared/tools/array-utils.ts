@@ -3,7 +3,7 @@ export function newInstance<T>(collection: Array<T>): Array<T> {
 }
 
 export function distinct<T>(collection: Array<T>,
-    equalityFunction: (val1: T, val2: T) => boolean = (val1, val2) => val1 === val2
+                            equalityFunction: (val1: T, val2: T) => boolean = (val1, val2) => val1 === val2
 ): Array<T> {
     const distinctValues = [];
 
@@ -17,13 +17,13 @@ export function distinct<T>(collection: Array<T>,
 }
 
 export function flatMap<T, U>(collection: Array<T>,
-    mappingFunction: (value: T) => Array<U>
+                              mappingFunction: (value: T) => Array<U>
 ): Array<U> {
     return collection.reduce((acc, x) => acc.concat(mappingFunction(x)), []);
 }
 
 export function contains<T>(collection: Array<T>, valueToSearch: T,
-    equalityFunction: (val1: T, val2: T) => boolean = (val1, val2) => val1 === val2
+                            equalityFunction: (val1: T, val2: T) => boolean = (val1, val2) => val1 === val2
 ): boolean {
     for (let i = 0; i < collection.length; i++) {
         if (equalityFunction(collection[i], valueToSearch)) {
@@ -34,7 +34,7 @@ export function contains<T>(collection: Array<T>, valueToSearch: T,
 }
 
 export function containsAll<T>(collection1: Array<T>, collection2: Array<T>,
-    equalityFunction: (val1: T, val2: T) => boolean = (val1, val2) => val1 === val2
+                               equalityFunction: (val1: T, val2: T) => boolean = (val1, val2) => val1 === val2
 ): boolean {
     let found = false;
     for (let i = 0; i < collection1.length; i++) {
@@ -48,8 +48,8 @@ export function containsAll<T>(collection1: Array<T>, collection2: Array<T>,
 
 
 export function intersection<T>(firstCollection: Array<T>,
-    secondCollection: Array<T>,
-    equalityFunction: (val1: T, val2: T) => boolean = (val1, val2) => val1 === val2
+                                secondCollection: Array<T>,
+                                equalityFunction: (val1: T, val2: T) => boolean = (val1, val2) => val1 === val2
 ): Array<T> {
     return distinct(
         firstCollection
@@ -61,8 +61,23 @@ export function intersection<T>(firstCollection: Array<T>,
         );
 }
 
-export function sortBy<T>(collection: Array<T>, keyExtractor: (T) => any): Array<T> {
-    collection.sort((a, b) => compare(keyExtractor(a), keyExtractor(b)));
+function compare<T>(a: T, b: T): number {
+    if (a < b) {
+        return -1;
+    }
+    if (a > b) {
+        return 1;
+    }
+    return 0;
+}
+
+export function sortByAndOrder<T>(collection: Array<T>, keyExtractor: (T) => any, reverseOrder: boolean): Array<T> {
+    collection.sort((a, b) => {
+        if (reverseOrder) {
+            return compare(keyExtractor(b), keyExtractor(a));
+        }
+        return compare(keyExtractor(a), keyExtractor(b));
+    });
     return collection;
 }
 
@@ -74,14 +89,6 @@ export function pairwise<T>(list: Array<T>): Array<Array<T>> {
             return [first, x];
         });
     return pairs.concat(pairwise(rest));
-}
-
-function compare<T>(a: T, b: T): number {
-    if (a < b)
-        return -1;
-    if (a > b)
-        return 1;
-    return 0;
 }
 
 function normalize(value) {
