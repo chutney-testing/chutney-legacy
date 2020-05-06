@@ -83,3 +83,16 @@ function compare<T>(a: T, b: T): number {
         return 1;
     return 0;
 }
+
+function normalize(value) {
+    return value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+export function filterOnTextContent(input: any, filter: string, attr: any[]) {
+    return input.filter((item) => {
+        return filter === undefined
+            || filter === ''
+            || attr.map(a => item[a] !== undefined && normalize(item[a]).indexOf(normalize(filter)) !== -1)
+                .reduce((p, c) => p || c);
+    });
+}

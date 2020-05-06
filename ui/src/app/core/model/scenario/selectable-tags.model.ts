@@ -23,7 +23,7 @@ export class SelectableTags<T> {
         this.noTag = true;
     }
 
-    unSelectAll() {
+    deselectAll() {
         this.selectedTags = [];
         this.noTag = false;
     }
@@ -34,8 +34,8 @@ export class SelectableTags<T> {
 
     toggleSelect(item: T) {
         if (this.selectedTags.length === this.allTags.length) {
-            this.noTag = false;
             this.selectedTags = [item];
+            this.noTag = false;
         } else {
             if (this.isSelected(item)) {
                 this.selectedTags.splice(this.selectedTags.indexOf(item), 1);
@@ -49,6 +49,10 @@ export class SelectableTags<T> {
 
     selectTags(items: Array<T>) {
         this.selectedTags = items;
+    }
+
+    setNoTag(noTag) {
+        this.noTag = noTag;
     }
 
     toggleNoTag() {

@@ -1,0 +1,183 @@
+<div class="create-scenario-wrapper">
+    <div class="create-scenario">
+        <button type="button" class="btn btn-xs" title="{{ 'scenarios.search.create.form' | translate }}"
+                (click)="createNewScenario(false)">
+            <span class="fa fa-pencil-alt fa-2x"></span>
+        </button>
+        <button type="button" class="btn btn-xs" title="{{ 'scenarios.search.create.component' | translate }}"
+                (click)="createNewScenario(true)">
+            <span class="fa fa-cubes fa-2x"></span>
+        </button>
+    </div>
+</div>
+<div class="header-scenario">
+    <div class="row">
+        <div class="mx-auto col-md-5">
+            <chutney-forms-search-field [id]="'scenario-search'"
+                                        [placeholder]="'scenarios.search.placeholder' | translate"
+                                        [searchInput]="textFilter"
+                                        (searchInputEvent)="updateTextFilter($event)"></chutney-forms-search-field>
+        </div>
+    </div>
+    <div class="row ml-2">
+        <div style="min-width: 170px;">
+            <button *ngIf=" !isSelectAll()" type="button" class="btn btn-xs btn-default m-2" (click)="selectAll()">
+                <span class="fa fa-check"></span> {{ 'scenarios.search.sources.settings.selectAllText' | translate }}
+            </button>
+            <button *ngIf="isSelectAll()" type="button" class="btn btn-xs btn-default m-2" (click)="deselectAll()">
+                <span class="fa fa-times"></span> {{ 'scenarios.search.sources.settings.deselectAllText' | translate }}
+            </button>
+        </div>
+        <div class="d-flex flex-wrap">
+            <span *ngFor="let scenarioType of SCENARIO_TYPES; let i=index"
+                  class="scenario-type-filter align-self-center fa"
+                  [ngClass]="{'scenario-type-filter-selected' : scenarioTypeFilter.isSelected(scenarioType),
+                              'scenario-type-filter' : !scenarioTypeFilter.isSelected(scenarioType),
+                              'mr-2': i < SCENARIO_TYPES.length - 1,
+                              'fa-pencil-alt': scenarioType === SCENARIO_TYPES[0],
+                              'fa-cubes': scenarioType === SCENARIO_TYPES[1]}"
+                  (click)="toggleScenarioTypeFilter(scenarioType)"></span>
+            <div class="border-right border-dark ml-2 mr-2"></div>
+            <div class="align-self-center">
+                <button class="chutney-tag"
+                        [ngClass]="tagFilter.isNoTagSelected() ? 'chutney-tag-selected' : 'chutney-tag-unselected'"
+                        (click)="toggleNoTagFilter()">
+                    NO_TAG
+                </button>
+            </div>
+            <div class="border-right border-dark ml-2 mr-2"></div>
+            <div *ngFor="let tag of tagFilter.all()" class="align-self-center">
+                <button
+                    [ngClass]="tagFilter.isSelected(tag)? 'chutney-tag chutney-tag-selected' : 'chutney-tag chutney-tag-unselected'"
+                    (click)="toggleTagFilter(tag)">
+                    {{tag}}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center" style="min-height: 50px;">
+    <div class="position-absolute" style="left: 0;">
+        <button *ngIf="!listView" type="button" class="btn btn-default m-2" (click)="toggleListView()">
+            <span class="fa fa-list"></span>
+        </button>
+        <button *ngIf="listView" type="button" class="btn btn-default m-2" (click)="toggleListView()">
+            <span class="fa fa-th"></span>
+        </button>
+        <span >{{viewedScenarios.length}} / {{scenarios.length}}</span>
+    </div>
+    <div>
+        <span (click)="sortBy('creationDate')"
+              [ngClass]="orderBy == 'creationDate' ? 'active' : 'not-active'">{{ 'scenarios.search.created'  | translate  }}</span>
+        <div [ngClass]="orderBy == 'creationDate' ? 'arrow' : ''"></div>
+    </div>
+    <div class="ml-3">
+        <span (click)="sortBy('lastExecution')"
+              [ngClass]="orderBy == 'lastExecution' ? 'active' : 'not-active'">{{ 'scenarios.search.executed'  | translate  }}</span>
+        <div [ngClass]="orderBy == 'lastExecution' ? 'arrow' : ''"></div>
+    </div>
+</div>
+
+<div class="row">
+    <ng-container *ngIf="!listView">
+        <div id="cards" class="d-flex mr-auto ml-3"
+             *ngFor="let scenario of viewedScenarios">
+            <chutney-scenario-card [scenario]="scenario"></chutney-scenario-card>
+        </div>
+    </ng-container>
+    <div *ngIf="listView" class="table-responsive mb-3 ml-3 mr-3">
+        <table class="table table-sm table-striped table-hover">
+            <thead>
+            <tr>
+                <th class="filter w-3" scope="col" (click)="sortBy('id')">ID
+                    <span *ngIf="orderBy == 'id' && !reverseOrder" class="fa fa-caret-down"></span>
+                    <span *ngIf="orderBy == 'id' && reverseOrder" class="fa fa-caret-up"></span>
+                </th>
+                <th scope="col" style="width: 1%">&nbsp;</th>
+                <th class="filter w-3" scope="col" (click)="sortBy('status')">{{ 'scenarios.list.header.status'  | translate  }}
+                    <span *ngIf="orderBy == 'status' && !reverseOrder" class="fa fa-caret-down"></span>
+                    <span *ngIf="orderBy == 'status' && reverseOrder" class="fa fa-caret-up"></span>
+                </th>
+                <th class="filter w-10" scope="col" (click)="sortBy('lastExecution')">{{ 'scenarios.list.header.execLast'  | translate  }}
+                    <span *ngIf="orderBy == 'lastExecution' && !reverseOrder" class="fa fa-caret-down"></span>
+                    <span *ngIf="orderBy == 'lastExecution' && reverseOrder" class="fa fa-caret-up"></span>
+                </th>
+                <th class="filter w-5" scope="col" (click)="sortBy('executionCount')">{{ 'scenarios.list.header.execCount'  | translate  }}
+                    <span *ngIf="orderBy == 'executionCount' && !reverseOrder" class="fa fa-caret-down"></span>
+                    <span *ngIf="orderBy == 'executionCount' && reverseOrder" class="fa fa-caret-up"></span>
+                </th>
+                <th class="filter w-50" scope="col" (click)="sortBy('title')">{{ 'scenarios.list.header.title'  | translate  }}
+                    <span *ngIf="orderBy == 'title' && !reverseOrder" class="fa fa-caret-down"></span>
+                    <span *ngIf="orderBy == 'title' && reverseOrder" class="fa fa-caret-up"></span>
+                </th>
+                <th scope="col" style="width: 1%">&nbsp;</th>
+                <th class="filter w-12" scope="col" (click)="sortBy('tags')">{{ 'scenarios.list.header.tags'  | translate  }}
+                    <span *ngIf="orderBy == 'tags' && !reverseOrder" class="fa fa-caret-down"></span>
+                    <span *ngIf="orderBy == 'tags' && reverseOrder" class="fa fa-caret-up"></span>
+                </th>
+                <th class="filter w-10" scope="col" (click)="sortBy('creationDate')">{{ 'scenarios.list.header.creation'  | translate  }}
+                    <span *ngIf="orderBy == 'creationDate' && !reverseOrder" class="fa fa-caret-down"></span>
+                    <span *ngIf="orderBy == 'creationDate' && reverseOrder" class="fa fa-caret-up"></span>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let scenario of viewedScenarios"
+                [routerLink]="['/scenario', scenario.id, 'execution', 'last']" (click)="$event.stopPropagation()"
+                style="cursor: pointer">
+
+                <td>
+                    <span>{{scenario.id}}</span>
+                </td>
+
+                <td>
+                    <span class="fa" [ngClass]="scenario.isComposed ? 'fa-cubes' : 'fa-pencil-alt'"></span>
+                </td>
+
+                <td scope="row" class="text-center">
+                    <chutney-execution-badge [status]="scenario.status"></chutney-execution-badge>
+                </td>
+
+                <td scope="row" class="text-center">
+                    {{ scenario.lastExecution != null ? (scenario.lastExecution | amLocale:'fr' | amTimeAgo) : "" }}
+                </td>
+
+                <td scope="row" class="text-center">{{scenario.executionCount}}</td>
+
+                <td>
+                    <a class="table-link" [routerLink]="['/scenario', scenario.id, 'execution', 'last']"
+                       (click)="$event.stopPropagation()">{{scenario.title}}</a>
+                </td>
+
+                <td>
+                    <button type="button" class="btn btn-sm btn-link mr-0"
+                            ngbPopover="{{scenario.description}}" placement="left"
+                            triggers="mouseenter:mouseleave" container="body">
+                        <span class="fa fa-info-circle" aria-hidden="true"></span>
+                    </button>
+                </td>
+
+                <td>
+                    <span *ngIf="scenario.tags.length <= 3">
+                        <span *ngFor="let tag of scenario.tags"
+                              class="chutney-tag chutney-tag-selected">{{tag}}</span>
+                    </span>
+                    <span *ngIf="scenario.tags.length > 3">
+                        <span *ngFor="let tag of scenario.tags | slice:0:2"
+                              class="chutney-tag chutney-tag-selected">{{tag}}</span>
+                        <button type="button" class="chutney-tag chutney-tag-selected"
+                                ngbPopover="{{scenario.tags}}" placement="left"
+                                triggers="mouseenter:mouseleave" container="body">
+                            ...
+                        </button>
+                    </span>
+                </td>
+                <td scope="row">
+                    {{ scenario.creationDate | amLocale:'fr' | amTimeAgo }}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

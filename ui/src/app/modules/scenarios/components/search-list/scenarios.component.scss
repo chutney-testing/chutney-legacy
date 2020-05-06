@@ -7,11 +7,11 @@
 
 .create-scenario {
     background: $vert2;
-    border:none;
+    border: none;
     height: 85px;
     font-size: 11px;
     text-align: center;
-    width:50px;
+    width: 50px;
 
     button {
         color: $grisfonce2;
@@ -27,9 +27,9 @@
     }
 }
 
-.scenarii-card{
+.scenarios-card {
     width: 390px;
-    height:152px;
+    height: 152px;
     border-radius: 8px;
 }
 
@@ -43,11 +43,11 @@
     font-size: .75rem;
     line-height: .5;
     border-radius: .2rem;
-    margin:0;
-  }
+    margin: 0;
+}
 
-.label-success{
-    background-color:$vert2;
+.label-success {
+    background-color: $vert2;
 }
 
 .active {
@@ -60,7 +60,7 @@
 .not-active {
     font-size: 14px;
     color: $grisfonce3;
-    border-bottom:none;
+    border-bottom: none;
     cursor: pointer;
 }
 
@@ -86,6 +86,10 @@
 
 .table-sm {
     font-size: 14px;
+}
+
+.filter {
+    cursor: pointer;
 }
 
 ::ng-deep {

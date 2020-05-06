@@ -3,7 +3,7 @@
   <div class="rotateObj">
     <h2
       [ngClass]="{'stop': lastExecutionStatus=='STOPPED' ,'ok': lastExecutionStatus=='SUCCESS' , 'ko': lastExecutionStatus=='FAILURE', 'not_executed': lastExecutionStatus=='NOT_EXECUTED' }">
-            <span>{{numberofExecution}} executions</span>
+            <span>{{numberOfExecution}} executions</span>
     </h2>
   </div>
   <div class="scenario-card">
@@ -17,7 +17,7 @@
         <span class="badge badge-info mr-1">{{tag}}</span>
       </div>
       <div class="float-left" *ngIf="lastExecutionDate">{{ 'scenarios.search.lastExecution' | translate }} : {{lastExecutionDate | amDateFormat: 'DD/MM HH:mm' }}</div>
-      <div class="float-right fa" [ngClass]="scenario.isComposed() ? 'fa-cubes' : 'fa-pencil-alt'"></div>
+      <div class="float-right fa" [ngClass]="scenario.isComposed ? 'fa-cubes' : 'fa-pencil-alt'"></div>
     </div>
   </div>
 

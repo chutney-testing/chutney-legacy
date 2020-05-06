@@ -3,10 +3,12 @@ import { convertToParamMap } from '@angular/router';
 
 export class ActivatedRouteStub {
 
-    params = {};
+    params = of({});
+    queryParams = of({});
 
-    snapshot = { queryParamMap: {
-        }
+    snapshot = {
+        queryParamMap: {},
+        _lastPathIndex: 0
     };
 
     constructor() {
@@ -14,6 +16,7 @@ export class ActivatedRouteStub {
 
     setParamMap(params?: Object) {
         this.params = of(params);
+        this.queryParams = of(params);
     }
 
     setSnapshotQueryParamMap(params?: Object) {

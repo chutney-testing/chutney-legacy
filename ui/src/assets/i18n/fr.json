@@ -3,7 +3,6 @@
         "principal": {
             "scenarios": "Scénarios",
             "campaigns": "Campagnes",
-            "steps": "Référentiel",
             "targets": "Targets",
             "workers": "Agents",
             "databaseAdmin": "BDD",
@@ -35,7 +34,7 @@
                 "settings": {
                     "text": "Sélectionner des sources",
                     "selectAllText": "Tout sélectionner",
-                    "unSelectAllText": "Tout désélectionner",
+                    "deselectAllText": "Tout désélectionner",
                     "searchPlaceholderText": "Rechercher"
                 }
             }
@@ -48,6 +47,14 @@
             "empty": "Aucun scénario disponible",
             "actions": {
                 "create": "Nouveau scénario"
+            },
+            "header": {
+                "creation": "Créé",
+                "execCount": "Nb.Exec",
+                "execLast": "Executé",
+                "status": "Etat",
+                "tags": "Tags",
+                "title": "Titre"
             }
         },
         "execution": {
@@ -171,7 +178,7 @@
                 "pick": {
                     "title": "Scénarios disponibles"
                 }
-            }, 
+            },
             "options": "Options",
             "parallelRun": "Execution parallèle des scénarios",
             "retryAuto": "1 retry auto sur les scénarios en échec"

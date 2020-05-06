@@ -3,7 +3,6 @@
         "principal": {
             "scenarios": "Scenarios",
             "campaigns": "Campaigns",
-            "steps": "Steps",
             "targets": "Targets",
             "workers": "Nodes",
             "databaseAdmin": "DB",
@@ -35,7 +34,7 @@
                 "settings": {
                     "text": "Select sources",
                     "selectAllText": "Select all",
-                    "unSelectAllText": "Unselect all",
+                    "deselectAllText": "Deselect all",
                     "searchPlaceholderText": "Search"
                 }
             }
@@ -48,6 +47,14 @@
             "empty": "No scenario available",
             "actions": {
                 "create": "New scenario"
+            },
+            "header": {
+                "creation": "Created",
+                "execCount": "Exec. Count",
+                "execLast": "Ran",
+                "status": "Status",
+                "tags": "Tags",
+                "title": "Title"
             }
         },
         "execution": {
@@ -171,7 +178,7 @@
                 "pick": {
                     "title": "Available scenarios"
                 }
-            }, 
+            },
             "options": "Options",
             "parallelRun": "Parallel run",
             "retryAuto": "1 auto retry on failed scenario"

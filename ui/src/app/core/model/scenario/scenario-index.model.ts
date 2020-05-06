@@ -3,6 +3,12 @@ import { TestCase } from '@core/model/scenario/test-case.model';
 
 export class ScenarioIndex {
 
+    public status;
+    public lastExecution;
+    public executionCount;
+    public isComposed;
+    public type;
+
     constructor(
         public id?: string,
         public title?: string,
@@ -12,9 +18,14 @@ export class ScenarioIndex {
         public tags: Array<string> = [],
         public executions?: Array<Execution>
     ) {
+        this.status = this.findStatus();
+        this.lastExecution = this.lastTimeExec();
+        this.executionCount = this.countExecutions();
+        this.isComposed = this.findIfComposed();
+        this.type = this.setType();
     }
 
-    public status() {
+    private findStatus() {
         if (this.executions && this.executions.length > 0) {
             return this.executions[0].status;
         } else {
@@ -22,7 +33,7 @@ export class ScenarioIndex {
         }
     }
 
-    public lastTimeExec() {
+    private lastTimeExec() {
         if (this.executions && this.executions.length > 0) {
             return this.executions[0].time;
         } else {
@@ -30,7 +41,7 @@ export class ScenarioIndex {
         }
     }
 
-    public numberofExecution() {
+    private countExecutions() {
         if (this.executions && this.executions.length > 0) {
             return this.executions.length;
         } else {
@@ -38,12 +49,12 @@ export class ScenarioIndex {
         }
     }
 
-    public isComposed(): boolean {
+    private findIfComposed(): boolean {
         return TestCase.isComposed(this.id);
     }
 
-    public getType(): ScenarioType {
-        return this.isComposed() ? ScenarioType.COMPOSED : ScenarioType.FORM;
+    private setType(): ScenarioType {
+        return this.isComposed ? ScenarioType.COMPOSED : ScenarioType.FORM;
     }
 }
 

@@ -18,7 +18,7 @@ import {
 import { SharedModule } from '@shared/shared.module';
 // Internal
 import { scenarioRoute } from './scenario.routes';
-import { ScenariiComponent } from './components/scenarii/scenarii.component';
+import { ScenariosComponent } from './components/search-list/scenarios.component';
 import { StepReportComponent } from './components/execution/step-report/step-report.component';
 import { StepComponent } from './components/execution/step/step.component';
 import { HistoryComponent } from './components/execution/history/history.component';
@@ -61,7 +61,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
         NgbDropdownModule
     ],
     declarations: [
-        ScenariiComponent,
+        ScenariosComponent,
         ScenarioExecutionComponent,
         StepReportComponent,
         StepComponent,

@@ -19,10 +19,10 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
 
     campaign = new Campaign();
     submitted: boolean;
-    scenarii: Array<ScenarioIndex> = [];
-    scenariiToAdd: Array<ScenarioIndex> = [];
+    scenarios: Array<ScenarioIndex> = [];
+    scenariosToAdd: Array<ScenarioIndex> = [];
     errorMessage: any;
-    scenariiFilter: string;
+    scenariosFilter: string;
     subscription = new Subscription();
 
     hasParam = true;
@@ -117,7 +117,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     loadAllScenarios() {
         this.subscription = this.scenarioService.findScenarios().subscribe(
             (res) => {
-                this.scenarii = res;
+                this.scenarios = res;
                 this.routeParamsSubscription = this.route.params.subscribe((params) => {
                     this.load(params['id']);
                 });
@@ -128,7 +128,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     }
 
     private initTags() {
-        const allTagsInScenario: string[] =  distinct(flatMap(this.scenarii, (sc) => sc.tags)).sort();
+        const allTagsInScenario: string[] =  distinct(flatMap(this.scenarios, (sc) => sc.tags)).sort();
         let index = 0;
         this.itemList = allTagsInScenario.map(t => {
             index++;
@@ -179,7 +179,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         this.campaign.parallelRun = formValue['parallelRun'];
         this.campaign.retryAuto = formValue['retryAuto'];
 
-        this.setCampaignScenariosIdsToAdd(this.scenariiToAdd);
+        this.setCampaignScenariosIdsToAdd(this.scenariosToAdd);
         if (this.campaign.id !== undefined) {
             this.subscribeToSaveResponse(
                 this.campaignService.update(this.campaign));
@@ -190,12 +190,12 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     }
 
     setCampaignScenarios() {
-        this.scenariiToAdd = [];
+        this.scenariosToAdd = [];
         if (this.campaign.scenarioIds) {
             for (const idScenario of this.campaign.scenarioIds) {
-                const scenarioFound = this.scenarii.find((x) => x.id === idScenario);
-                if (!this.scenariiToAdd.some((s) => s.id === scenarioFound.id)) {
-                    this.scenariiToAdd.push(scenarioFound);
+                const scenarioFound = this.scenarios.find((x) => x.id === idScenario);
+                if (!this.scenariosToAdd.some((s) => s.id === scenarioFound.id)) {
+                    this.scenariosToAdd.push(scenarioFound);
                 }
             }
         }
@@ -209,7 +209,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
             params.removeAt(0);
         }
 
-        for (const scenario of this.scenariiToAdd) {
+        for (const scenario of this.scenariosToAdd) {
             if (TestCase.isComposed(scenario.id)) {
                 this.componentService.findComponentTestCase(scenario.id).subscribe((testCase: ScenarioComponent) => {
                     testCase.dataSet.forEach((keyValue: KeyValue) => {
@@ -226,9 +226,9 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         }
     }
 
-    setCampaignScenariosIdsToAdd(scenariiToAdd: Array<ScenarioIndex>) {
+    setCampaignScenariosIdsToAdd(scenariosToAdd: Array<ScenarioIndex>) {
         this.campaign.scenarioIds = [];
-        for (const scenario of scenariiToAdd) {
+        for (const scenario of scenariosToAdd) {
             if (!this.campaign.scenarioIds.some((s) => s === scenario.id)) {
                 this.campaign.scenarioIds.push(scenario.id);
             }
@@ -236,16 +236,16 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     }
 
     addScenario(scenario: ScenarioIndex) {
-        if (!this.scenariiToAdd.some((s) => s.id === scenario.id)) {
-            this.scenariiToAdd.push(scenario);
+        if (!this.scenariosToAdd.some((s) => s.id === scenario.id)) {
+            this.scenariosToAdd.push(scenario);
             this.updateCampaignDataSet();
             this.refreshForPipe();
         }
     }
 
     removeScenario(scenario: ScenarioIndex) {
-        const index = this.scenariiToAdd.indexOf(scenario);
-        this.scenariiToAdd.splice(index, 1);
+        const index = this.scenariosToAdd.indexOf(scenario);
+        this.scenariosToAdd.splice(index, 1);
         this.updateCampaignDataSet();
         this.refreshForPipe();
     }
@@ -279,7 +279,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
 
     private refreshForPipe() {
         // force instance to change for pipe refresh
-        this.scenariiToAdd = Object.assign([], this.scenariiToAdd);
+        this.scenariosToAdd = Object.assign([], this.scenariosToAdd);
     }
 
     setSelectedEnvironment(event: EnvironmentMetadata) {
