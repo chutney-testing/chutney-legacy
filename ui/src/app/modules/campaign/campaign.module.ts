@@ -16,6 +16,7 @@ import { CampaignExecutionComponent } from './components/execution/execution-cam
 import { CampaignEditionComponent } from './components/create-campaign/campaign-edition.component';
 import { DragulaModule } from 'ng2-dragula';
 import { AngularMultiSelectModule } from 'angular2-multiselect-dropdown';
+import { ChartsModule } from 'ng2-charts';
 
 const ROUTES = [
     ...CampaignRoute
@@ -32,7 +33,8 @@ const ROUTES = [
         MomentModule,
         TranslateModule,
         DragulaModule,
-        AngularMultiSelectModule
+        AngularMultiSelectModule,
+        ChartsModule
     ],
     declarations: [
         CampaignListComponent,

@@ -13,6 +13,7 @@ import { ActivatedRouteStub } from 'src/app/testing/activated-route-stub';
 import { Campaign, TestCase, CampaignExecutionReport, ScenarioExecutionReportOutline } from '@core/model';
 import { ScenarioService, CampaignService, EnvironmentAdminService } from '@core/services';
 import { TranslateTestingModule } from '../../../../testing/translate-testing.module';
+import { ChartsModule } from 'ng2-charts';
 
 
 describe('CampaignExecutionComponent', () => {
@@ -43,6 +44,7 @@ describe('CampaignExecutionComponent', () => {
         MoleculesModule,
         SharedModule,
         MomentModule,
+        ChartsModule,
         NgbModule.forRoot()],
       declarations: [
         CampaignExecutionComponent
