@@ -1,6 +1,6 @@
 package com.chutneytesting.execution.api;
 
-import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.fromFrontId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
 
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;

@@ -1,10 +1,11 @@
 package com.chutneytesting.design.api.scenario.v2_0.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
+
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.execution.api.ExecutionSummaryDto;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.List;
 import org.immutables.value.Value;
 
@@ -18,7 +19,7 @@ public interface TestCaseIndexDto {
     static TestCaseIndexDto from(TestCaseMetadata testCaseMetadata, List<ExecutionSummaryDto> executions) {
         return ImmutableTestCaseIndexDto.builder()
             .metadata(ImmutableGwtTestCaseMetadataDto.builder()
-                .id(ComposableTestCaseMapper.toFrontId(testCaseMetadata.id()))
+                .id(toFrontId(testCaseMetadata.id()))
                 .creationDate(testCaseMetadata.creationDate())
                 .title(testCaseMetadata.title())
                 .description(testCaseMetadata.description())

@@ -7,13 +7,13 @@ import static com.chutneytesting.design.infra.storage.db.orient.changelog.Orient
 import static com.chutneytesting.design.infra.storage.db.orient.changelog.OrientChangelogExecutor.filterFStepSchemaScripts;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.chutneytesting.tests.AbstractOrientDatabaseTest;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.db.ODatabaseType;
 import com.orientechnologies.orient.core.index.OIndex;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OProperty;
 import com.orientechnologies.orient.core.metadata.schema.OType;
-import com.chutneytesting.tests.AbstractOrientDatabaseTest;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -107,7 +107,7 @@ public class OrientComponentDBTest extends AbstractOrientDatabaseTest {
     @Test
     public void should_ChangeLog_completed_when_database_initialized() {
         try (ODatabaseSession dbSession = sut.dbPool().acquire()) {
-            OClass changeLogClass = dbSession.getClass("DBChangeLog");
+            OClass changeLogClass = dbSession.getClass(DBCHANGELOG_CLASS);
             assertThat(changeLogClass).isNotNull();
             assertThat(changeLogClass.getClusterIds()).hasSize(1);
             assertThat(changeLogClass.count()).isEqualTo(filterFStepSchemaScripts().count());
@@ -139,7 +139,7 @@ public class OrientComponentDBTest extends AbstractOrientDatabaseTest {
         int denoteCount = 0;
         int funcstepCount = 0;
         int testcaseCount = 0;
-        for (String entryName: entriesNames) {
+        for (String entryName : entriesNames) {
             if (entryName.startsWith(DBCHANGELOG_CLASS.toLowerCase())) dbchangelogCount++;
             if (entryName.startsWith(GE_STEP_CLASS.toLowerCase())) denoteCount++;
             if (entryName.startsWith(STEP_CLASS.toLowerCase())) funcstepCount++;
@@ -149,5 +149,15 @@ public class OrientComponentDBTest extends AbstractOrientDatabaseTest {
         assertThat(denoteCount).isPositive();
         assertThat(funcstepCount).isPositive();
         assertThat(testcaseCount).isPositive();
+    }
+
+    @Test
+    public void should_dataset_classes_exist_when_database_initialized() {
+        try (ODatabaseSession dbSession = sut.dbPool().acquire()) {
+            OClass dataSetClass = dbSession.getClass(OrientComponentDB.DATASET_CLASS);
+            OClass dataSetHistoryClass = dbSession.getClass(OrientComponentDB.DATASET_HISTORY_CLASS);
+            assertThat(dataSetClass).isNotNull();
+            assertThat(dataSetHistoryClass).isNotNull();
+        }
     }
 }

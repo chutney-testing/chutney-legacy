@@ -4,9 +4,6 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.orientechnologies.common.log.OLogManager;
-import com.orientechnologies.orient.core.db.ODatabaseSession;
-import com.orientechnologies.orient.core.storage.ORecordDuplicatedException;
 import com.chutneytesting.design.domain.compose.FunctionalStep;
 import com.chutneytesting.design.domain.compose.FunctionalStepCyclicDependencyException;
 import com.chutneytesting.design.domain.compose.ParentStepId;
@@ -19,6 +16,9 @@ import com.chutneytesting.tests.AbstractOrientDatabaseTest;
 import com.chutneytesting.tools.ImmutablePaginationRequestParametersDto;
 import com.chutneytesting.tools.ImmutableSortRequestParametersDto;
 import com.chutneytesting.tools.PaginatedDto;
+import com.orientechnologies.common.log.OLogManager;
+import com.orientechnologies.orient.core.db.ODatabaseSession;
+import com.orientechnologies.orient.core.storage.ORecordDuplicatedException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,8 +69,7 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
         final FunctionalStep fStep = saveAndReload(
             buildFunctionalStep(
                 "a thing is connected",
-                new Strategy("retry-with-timeout", parameters),
-                null
+                new Strategy("retry-with-timeout", parameters)
             )
         );
 
@@ -113,7 +112,7 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
         final FunctionalStep fStep = saveAndReload(
             buildFunctionalStep(
                 "a thing is connected",
-                new Strategy("Loop", Collections.singletonMap("data","someData"))
+                new Strategy("Loop", Collections.singletonMap("data", "someData"))
             )
         );
 
@@ -151,12 +150,12 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
         final FunctionalStep f25 = saveAndReload(
             buildFunctionalStep("then sub 5 with implementation", StepUsage.THEN, " {\r\"type\": \"debug\"\r} "));
         final FunctionalStep f2 = buildFunctionalStep("then", StepUsage.THEN, f21, f22, f23, f24, f25);
-        List<FunctionalStep> steps = Arrays.asList(f1,f2);
+        List<FunctionalStep> steps = Arrays.asList(f1, f2);
 
         // When
         String record1 = sut.save(f1);
         String record2 = sut.save(f2);
-        List<String> recordIds = Arrays.asList(record1,record2);
+        List<String> recordIds = Arrays.asList(record1, record2);
 
         // Then
         assertScenarioRids(steps, recordIds);
@@ -571,7 +570,7 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
 
 
     @Test
-    public void changelog_n5_should_update_selenium_tasks(){
+    public void changelog_n5_should_update_selenium_tasks() {
         // G
         final FunctionalStep step = saveAndReload(
             buildFunctionalStep("selenium-get", StepUsage.THEN, "{\n" +

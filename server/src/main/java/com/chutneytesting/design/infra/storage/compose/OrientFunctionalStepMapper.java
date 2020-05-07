@@ -14,16 +14,16 @@ import static com.chutneytesting.design.infra.storage.db.orient.OrientUtils.relo
 import static com.chutneytesting.design.infra.storage.db.orient.OrientUtils.setOrRemoveProperty;
 import static java.util.Optional.ofNullable;
 
+import com.chutneytesting.design.domain.compose.FunctionalStep;
+import com.chutneytesting.design.domain.compose.StepUsage;
+import com.chutneytesting.design.domain.compose.Strategy;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.ODirection;
 import com.orientechnologies.orient.core.record.OEdge;
+import com.orientechnologies.orient.core.record.OElement;
 import com.orientechnologies.orient.core.record.ORecord;
 import com.orientechnologies.orient.core.record.OVertex;
-import com.orientechnologies.orient.core.record.impl.ODocument;
-import com.chutneytesting.design.domain.compose.FunctionalStep;
-import com.chutneytesting.design.domain.compose.StepUsage;
-import com.chutneytesting.design.domain.compose.Strategy;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,9 +44,9 @@ public class OrientFunctionalStepMapper {
         setOrRemoveProperty(step, STEP_CLASS_PROPERTY_IMPLEMENTATION, functionalStep.implementation, OType.STRING);
         setOrRemoveProperty(step, STEP_CLASS_PROPERTY_TAGS, functionalStep.tags, OType.EMBEDDEDLIST);
 
-        ODocument strategy = new ODocument()
-            .field("name", functionalStep.strategy.type, OType.STRING)
-            .field("parameters", functionalStep.strategy.parameters, OType.EMBEDDEDMAP);
+        OElement strategy = dbSession.newElement();
+        strategy.setProperty("name", functionalStep.strategy.type, OType.STRING);
+        strategy.setProperty("parameters", functionalStep.strategy.parameters, OType.EMBEDDEDMAP);
 
         setOrRemoveProperty(step, STEP_CLASS_PROPERTY_STRATEGY, strategy, OType.EMBEDDED);
         step.setProperty(STEP_CLASS_PROPERTY_PARAMETERS, functionalStep.parameters, OType.EMBEDDEDMAP);
@@ -95,7 +95,7 @@ public class OrientFunctionalStepMapper {
         Map<String, String> parameters = vertex.getProperty(STEP_CLASS_PROPERTY_PARAMETERS);
         ofNullable(parameters).ifPresent(builder::addParameters);
 
-        ODocument strategy = vertex.getProperty(STEP_CLASS_PROPERTY_STRATEGY);
+        OElement strategy = vertex.getProperty(STEP_CLASS_PROPERTY_STRATEGY);
         Optional.ofNullable(strategy).ifPresent( s ->
             builder.withStrategy(new Strategy(strategy.getProperty("name"), strategy.getProperty("parameters")))
         );

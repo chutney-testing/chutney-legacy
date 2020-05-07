@@ -1,9 +1,9 @@
 package com.chutneytesting.design.api.compose;
 
 import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.fromDto;
-import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.fromFrontId;
 import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.toDto;
-import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.toFrontId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
 
 import com.chutneytesting.design.api.compose.dto.ComposableTestCaseDto;
 import com.chutneytesting.design.domain.compose.ComposableTestCaseRepository;

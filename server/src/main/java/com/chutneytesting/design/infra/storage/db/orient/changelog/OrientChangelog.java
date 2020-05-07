@@ -13,8 +13,8 @@ import com.orientechnologies.orient.core.index.OIndexManager;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OProperty;
 import com.orientechnologies.orient.core.metadata.schema.OType;
+import com.orientechnologies.orient.core.record.OElement;
 import com.orientechnologies.orient.core.record.OVertex;
-import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.executor.OResult;
 import com.orientechnologies.orient.core.sql.executor.OResultSet;
 import java.util.Arrays;
@@ -133,9 +133,9 @@ public class OrientChangelog {
                 .filter(o -> o.getProperty("strategy") == null)
                 .map(OResult::getVertex)
                 .forEach(ov -> ov.ifPresent(v -> {
-                    ODocument strategy = new ODocument()
-                        .field("name", "", OType.STRING)
-                        .field("parameters", Collections.emptyMap(), OType.EMBEDDEDMAP);
+                    OElement strategy = dbSession.newElement();
+                    strategy.setProperty("name", "", OType.STRING);
+                    strategy.setProperty("parameters", Collections.emptyMap(), OType.EMBEDDEDMAP);
                     v.setProperty(OrientComponentDB.STEP_CLASS_PROPERTY_STRATEGY, strategy, OType.EMBEDDED);
                     v.save();
                 }));
@@ -148,9 +148,9 @@ public class OrientChangelog {
                 .filter(o -> ((OResult) o.getProperty("strategy")).hasProperty("data"))
                 .map(OResult::getVertex)
                 .forEach(ov -> ov.ifPresent(v -> {
-                    ODocument strategy = new ODocument()
-                        .field("name", "Loop", OType.STRING)
-                        .field("parameters", Collections.singletonMap("data", ((ODocument) v.getProperty("strategy")).getProperty("data")), OType.EMBEDDEDMAP);
+                    OElement strategy = dbSession.newElement();
+                    strategy.setProperty("name", "Loop", OType.STRING);
+                    strategy.setProperty("parameters", Collections.singletonMap("data", ((OElement) v.getProperty("strategy")).getProperty("data")), OType.EMBEDDEDMAP);
                     v.setProperty(OrientComponentDB.STEP_CLASS_PROPERTY_STRATEGY, strategy, OType.EMBEDDED);
                     v.save();
                 }));
@@ -164,11 +164,11 @@ public class OrientChangelog {
                 .map(OResult::getVertex)
                 .forEach(ov -> ov.ifPresent(v -> {
                     Map<String, Object> parameters = new HashMap<>(2);
-                    parameters.put("timeOut", ((ODocument) v.getProperty("strategy")).getProperty("timeOut"));
-                    parameters.put("retryDelay", ((ODocument) v.getProperty("strategy")).getProperty("retryDelay"));
-                    ODocument strategy = new ODocument()
-                        .field("name", "retry-with-timeout", OType.STRING)
-                        .field("parameters", parameters, OType.EMBEDDEDMAP);
+                    parameters.put("timeOut", ((OElement) v.getProperty("strategy")).getProperty("timeOut"));
+                    parameters.put("retryDelay", ((OElement) v.getProperty("strategy")).getProperty("retryDelay"));
+                    OElement strategy = dbSession.newElement();
+                    strategy.setProperty("name", "retry-with-timeout", OType.STRING);
+                    strategy.setProperty("parameters", parameters, OType.EMBEDDEDMAP);
                     v.setProperty(OrientComponentDB.STEP_CLASS_PROPERTY_STRATEGY, strategy, OType.EMBEDDED);
                     v.save();
                 }));
@@ -193,5 +193,18 @@ public class OrientChangelog {
         }
 
         try (OResultSet ignored = dbSession.command(FSTEP_LUCENE_INDEX_QUERY)) { }
+    }
+
+    @ChangelogOrder(order = 9, uuid = "20200424-init-dataset-model")
+    public static void initDataSetModel(ODatabaseSession dbSession) {
+        OrientUtils.createClass(OrientComponentDB.DATASET_CLASS, null, 1, dbSession);
+
+        OClass oDataSetHistoryClass = OrientUtils.createClass(OrientComponentDB.DATASET_HISTORY_CLASS, null, 0, dbSession);
+        OProperty refIdProperty = oDataSetHistoryClass.createProperty(OrientComponentDB.DATASET_HISTORY_CLASS_PROPERTY_DATASET_ID, OType.LINK);
+        refIdProperty.setMandatory(true);
+
+        oDataSetHistoryClass.createIndex(OrientComponentDB.DATASET_HISTORY_CLASS_INDEX_LAST, OClass.INDEX_TYPE.NOTUNIQUE.toString(), null, null, "AUTOSHARDING", new String[]{OrientComponentDB.DATASET_HISTORY_CLASS_PROPERTY_DATASET_ID});
+
+        LOGGER.info("DataSet model created");
     }
 }

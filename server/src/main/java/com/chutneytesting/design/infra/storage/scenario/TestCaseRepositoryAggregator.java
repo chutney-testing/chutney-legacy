@@ -1,7 +1,5 @@
 package com.chutneytesting.design.infra.storage.scenario;
 
-import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.isComposableTestCaseId;
-
 import com.chutneytesting.design.domain.compose.ComposableTestCaseRepository;
 import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.TestCase;
@@ -13,6 +11,7 @@ import com.chutneytesting.design.infra.storage.scenario.jdbc.DatabaseTestCaseRep
 import com.chutneytesting.design.infra.storage.scenario.jdbc.TestCaseData;
 import com.chutneytesting.design.infra.storage.scenario.jdbc.TestCaseDataMapper;
 import com.chutneytesting.documentation.infra.ExamplesRepository;
+import com.orientechnologies.orient.core.id.ORecordId;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -72,7 +71,7 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
 
     @Override
     public TestCase findById(String scenarioId) {
-        if (isComposableTestCaseId(scenarioId)) {
+        if (isComposableScenarioId(scenarioId)) { // TODO - Composable testcase repo should be able to be taken as others testcase repo
             return composableTestCaseRepository.findById(scenarioId);
         } else {
             TestCaseData testCaseData = repositories()
@@ -112,6 +111,10 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
             LOGGER.warn("Could not aggregate scenarios from repository : " + repository.alias(), e);
             return Stream.empty();
         }
+    }
+
+    private boolean isComposableScenarioId(String scenarioId) {
+        return ORecordId.isA(scenarioId);
     }
 
 }
