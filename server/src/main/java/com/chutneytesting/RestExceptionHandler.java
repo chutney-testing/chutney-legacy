@@ -14,7 +14,6 @@ import com.chutneytesting.execution.domain.compiler.ScenarioConversionException;
 import com.chutneytesting.execution.domain.campaign.CampaignAlreadyRunningException;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionNotFoundException;
 import com.chutneytesting.execution.domain.scenario.FailedExecutionAttempt;
-import com.chutneytesting.execution.domain.scenario.ScenarioAlreadyRunningException;
 import com.chutneytesting.execution.domain.scenario.ScenarioNotRunningException;
 import com.chutneytesting.security.domain.CurrentUserNotFound;
 import java.time.format.DateTimeParseException;
@@ -70,8 +69,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
-    @ExceptionHandler({ ScenarioAlreadyRunningException.class,
-                        AlreadyExistingTargetException.class,
+    @ExceptionHandler({ AlreadyExistingTargetException.class,
                         AlreadyExistingEnvironmentException.class,
                         CampaignAlreadyRunningException.class
     })

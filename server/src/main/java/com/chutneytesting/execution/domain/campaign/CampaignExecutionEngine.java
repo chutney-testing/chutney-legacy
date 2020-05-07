@@ -13,7 +13,6 @@ import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.execution.domain.scenario.FailedExecutionAttempt;
-import com.chutneytesting.execution.domain.scenario.ScenarioAlreadyRunningException;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
 import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
 import java.util.ArrayList;
@@ -171,7 +170,7 @@ public class CampaignExecutionEngine {
             LOGGER.warn("Failed execution attempt for scenario {} for campaign {}", testCase.id(), campaign.id);
             executionId = e.executionId;
             scenarioName = e.title;
-        } catch (ScenarioAlreadyRunningException | ScenarioNotFoundException | ScenarioNotParsableException se) {
+        } catch (ScenarioNotFoundException | ScenarioNotParsableException se) {
             LOGGER.error("Scenario error for scenario {} for campaign {}", testCase.id(), campaign.id, se);
             // TODO - Do not hide scenario problem
             return null;

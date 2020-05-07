@@ -40,7 +40,7 @@ public class ScenarioExecutionEngine {
      * @param testCase The TestCase to be execute.
      * @return an execution Report.
      */
-    public ScenarioExecutionReport execute(TestCase testCase, String environment) throws ScenarioAlreadyRunningException, ScenarioNotFoundException, ScenarioNotParsableException {
+    public ScenarioExecutionReport execute(TestCase testCase, String environment) throws ScenarioNotFoundException, ScenarioNotParsableException {
         return executionEngineAsync.followExecution(testCase.id(), executionEngineAsync.execute(new ExecutionRequest(testCase, environment))).blockingLast();
     }
 
@@ -62,7 +62,7 @@ public class ScenarioExecutionEngine {
         return simpleSyncExecution(environment, testCase);
     }
 
-    public ScenarioExecutionReport execute(FunctionalStep functionalStep, String environment) throws ScenarioAlreadyRunningException, ScenarioNotFoundException, ScenarioNotParsableException {
+    public ScenarioExecutionReport execute(FunctionalStep functionalStep, String environment) throws ScenarioNotFoundException, ScenarioNotParsableException {
         TestCase testCase = new ComposableTestCase(
             "no_scenario_id",
             TestCaseMetadataImpl.builder()
