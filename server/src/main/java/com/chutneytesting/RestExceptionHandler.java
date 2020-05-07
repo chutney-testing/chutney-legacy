@@ -3,6 +3,7 @@ package com.chutneytesting;
 import com.chutneytesting.admin.domain.BackupNotFoundException;
 import com.chutneytesting.design.domain.campaign.CampaignNotFoundException;
 import com.chutneytesting.design.domain.compose.FunctionalStepNotFoundException;
+import com.chutneytesting.design.domain.dataset.DataSetNotFoundException;
 import com.chutneytesting.design.domain.environment.AlreadyExistingEnvironmentException;
 import com.chutneytesting.design.domain.environment.AlreadyExistingTargetException;
 import com.chutneytesting.design.domain.environment.EnvironmentNotFoundException;
@@ -55,53 +56,60 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
-    @ExceptionHandler({ TargetNotFoundException.class,
-                        ScenarioNotFoundException.class,
-                        CampaignNotFoundException.class,
-                        CampaignExecutionNotFoundException.class,
-                        EnvironmentNotFoundException.class,
-                        FunctionalStepNotFoundException.class,
-                        CurrentUserNotFound.class,
-                        BackupNotFoundException.class
+    @ExceptionHandler({
+        TargetNotFoundException.class,
+        ScenarioNotFoundException.class,
+        CampaignNotFoundException.class,
+        CampaignExecutionNotFoundException.class,
+        EnvironmentNotFoundException.class,
+        FunctionalStepNotFoundException.class,
+        CurrentUserNotFound.class,
+        BackupNotFoundException.class,
+        DataSetNotFoundException.class
     })
     protected ResponseEntity<Object> notFound(RuntimeException ex, WebRequest request) {
         String bodyOfResponse = ex.getMessage();
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
-    @ExceptionHandler({ ScenarioNotRunningException.class
+    @ExceptionHandler({
+        ScenarioNotRunningException.class
     })
     protected ResponseEntity<Object> notRunning(RuntimeException ex, WebRequest request) {
         String bodyOfResponse = ex.getMessage();
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
-    @ExceptionHandler({ AlreadyExistingTargetException.class,
-                        AlreadyExistingEnvironmentException.class,
-                        CampaignAlreadyRunningException.class
+    @ExceptionHandler({
+        AlreadyExistingTargetException.class,
+        AlreadyExistingEnvironmentException.class,
+        CampaignAlreadyRunningException.class
     })
     protected ResponseEntity<Object> alreadyRunning(RuntimeException ex, WebRequest request) {
         String bodyOfResponse = ex.getMessage();
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
 
-    @ExceptionHandler({ ScenarioConversionException.class,
-                        ScenarioNotParsableException.class
+    @ExceptionHandler({
+        ScenarioConversionException.class,
+        ScenarioNotParsableException.class
     })
     protected ResponseEntity<Object> scenarioSemanticallyIncorrect(RuntimeException ex, WebRequest request) {
         String bodyOfResponse = ex.getMessage();
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.UNPROCESSABLE_ENTITY, request);
     }
 
-    @ExceptionHandler({ DateTimeParseException.class,
-                        InvalidEnvironmentNameException.class
+    @ExceptionHandler({
+        DateTimeParseException.class,
+        InvalidEnvironmentNameException.class
     })
     protected ResponseEntity<Object> badRequest(RuntimeException ex, WebRequest request) {
         String bodyOfResponse = ex.getMessage();
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
-    @ExceptionHandler({ IllegalArgumentException.class
+    @ExceptionHandler({
+        IllegalArgumentException.class
     })
     protected ResponseEntity<Object> illegalArgument(RuntimeException ex, WebRequest request) {
         String bodyOfResponse = ex.getMessage();

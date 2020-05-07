@@ -1,6 +1,8 @@
 package com.chutneytesting.design.api.compose.mapper;
 
 import static com.chutneytesting.design.domain.compose.ComposableTestCaseRepository.COMPOSABLE_TESTCASE_REPOSITORY_SOURCE;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
 
 import com.chutneytesting.design.api.compose.dto.ComposableTestCaseDto;
 import com.chutneytesting.design.api.compose.dto.FunctionalStepDto;
@@ -12,9 +14,7 @@ import com.chutneytesting.design.domain.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import org.springframework.lang.NonNull;
 
 public class ComposableTestCaseMapper {
 
@@ -44,34 +44,6 @@ public class ComposableTestCaseMapper {
             )
             .tags(composableTestCase.metadata.tags())
             .build();
-    }
-
-    public static String toFrontId(@NonNull String id) {
-        if (isComposableTestCaseId(id)) {
-            return id.replace("#", "").replace(":", "-");
-        }
-        return id;
-    }
-
-    public static String fromFrontId(String id) {
-        return fromFrontId(Optional.of(id));
-    }
-
-    public static String fromFrontId(Optional<String> id) {
-        return id.map(s -> {
-            if (isComposableFrontId(s)) {
-                return "#" + s.replace("-", ":");
-            }
-            return s;
-        }).orElse("");
-    }
-
-    public static boolean isComposableFrontId(String frontId) {
-        return frontId.contains("-");
-    }
-
-    public static boolean isComposableTestCaseId(String testCaseId) {
-        return testCaseId.contains("#") && testCaseId.contains(":");
     }
 
     private static TestCaseMetadata testCaseMetadataFromDto(ComposableTestCaseDto composableTestCaseDto) {
