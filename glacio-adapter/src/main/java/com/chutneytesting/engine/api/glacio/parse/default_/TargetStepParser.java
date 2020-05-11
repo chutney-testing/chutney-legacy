@@ -4,14 +4,13 @@ import static com.chutneytesting.engine.api.glacio.parse.default_.ParsingTools.a
 import static com.chutneytesting.engine.api.glacio.parse.default_.ParsingTools.removeKeyword;
 
 import com.chutneytesting.engine.api.glacio.parse.StepParser;
-import com.chutneytesting.engine.domain.environment.ImmutableTarget;
-import com.chutneytesting.engine.domain.environment.Target;
+import com.chutneytesting.engine.domain.environment.TargetImpl;
+import com.chutneytesting.task.spi.injectable.Target;
 import com.github.fridujo.glacio.ast.Step;
-import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-public class TargetStepParser implements StepParser<Optional<Target>> {
+public class TargetStepParser implements StepParser<Target> {
 
     private final Pattern startWithPredicate;
     private final Predicate<String> predicate;
@@ -22,7 +21,7 @@ public class TargetStepParser implements StepParser<Optional<Target>> {
     }
 
     @Override
-    public Optional<Target> parseStep(Step step) {
+    public Target parseStep(Step step) {
         return step.getSubsteps().stream()
             .filter(substep -> {
                 System.out.println(substep);
@@ -30,15 +29,16 @@ public class TargetStepParser implements StepParser<Optional<Target>> {
             })
             .map(s -> removeKeyword(startWithPredicate, s))
             .map(this::parseTargetStep)
-            .findFirst();
+            .findFirst()
+            .orElse(TargetImpl.NONE);
     }
 
     private Target parseTargetStep(Step step) {
         String targetName = step.getText().trim();
         // Todo map with target files.
-        return ImmutableTarget.builder()
-            .id(ImmutableTarget.TargetId.of(targetName))
-            .url("fakeurl")
+        return TargetImpl.builder()
+            .withName(targetName)
+            .withUrl("fakeurl")
             .build();
     }
 

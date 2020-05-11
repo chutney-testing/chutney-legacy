@@ -22,6 +22,8 @@ import org.junit.runner.RunWith;
 @RunWith(JUnitParamsRunner.class)
 public class GlacioContextPutParserTest {
 
+    private static final String ENVIRONMENT = "ENV";
+
     private GlacioContextPutParser sut = new GlacioContextPutParser();
 
     @Test
@@ -52,7 +54,7 @@ public class GlacioContextPutParserTest {
         Map<String, Object> expectedEntriesInput = buildExpectedEntriesInput(wordsCount / 2 + 1, "var ", "val ue");
 
         assertThat(
-            sut.mapToStepDefinition(buildDataTableStepWithText("add variables", dataTableString)).inputs)
+            sut.mapToStepDefinition(ENVIRONMENT, buildDataTableStepWithText("add variables", dataTableString)).inputs)
             .containsExactly(entry("entries", expectedEntriesInput));
     }
 
@@ -62,7 +64,7 @@ public class GlacioContextPutParserTest {
         Map<String, Object> expectedEntriesInput = buildExpectedEntriesInput(count + 1, "var", "value");
 
         assertThat(
-            sut.mapToStepDefinition(buildSubStepsStepWithText("add variables", subStepsString)).inputs)
+            sut.mapToStepDefinition(ENVIRONMENT, buildSubStepsStepWithText("add variables", subStepsString)).inputs)
             .containsExactly(entry("entries", expectedEntriesInput));
     }
 
@@ -72,7 +74,7 @@ public class GlacioContextPutParserTest {
         Map<String, Object> expectedEntriesInput = buildExpectedEntriesInput(count + 1, "var ", "val ue");
 
         assertThat(
-            sut.mapToStepDefinition(buildSubStepsStepWithText("add variables", subStepsString)).inputs)
+            sut.mapToStepDefinition(ENVIRONMENT, buildSubStepsStepWithText("add variables", subStepsString)).inputs)
             .containsExactly(entry("entries", expectedEntriesInput));
     }
 

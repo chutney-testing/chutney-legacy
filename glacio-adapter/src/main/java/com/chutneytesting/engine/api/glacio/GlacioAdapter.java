@@ -1,6 +1,7 @@
 package com.chutneytesting.engine.api.glacio;
 
 import static java.util.Collections.emptyMap;
+import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.github.fridujo.glacio.ast.Feature;
@@ -25,51 +26,56 @@ public class GlacioAdapter {
         this.executableStepFactory = executableStepFactory;
     }
 
-    public List<StepDefinition> toChutneyStepDefinition(String text) {
+    public List<StepDefinition> toChutneyStepDefinition(String text, String environment) {
         Feature feature = this.toFeature(text);
         List<Scenario> scenarios = feature.getScenarios();
 
         return scenarios.stream()
-            .map(s -> toStepDefinition(feature.getName(), Locale.ENGLISH, s))
+            .map(s -> toStepDefinition(
+                feature.getName(),
+                feature.getLanguage().map(ps -> new Locale(ps.getValue())).orElse(Locale.ENGLISH),
+                ofNullable(environment).orElse(""),
+                s)
+            )
             .collect(Collectors.toList());
     }
 
-    private StepDefinition toStepDefinition(String featureName, Locale lang, Scenario scenario) {
+    private StepDefinition toStepDefinition(String featureName, Locale lang, String environment, Scenario scenario) {
         String name = featureName + " - " + scenario.getName();
 
         List<StepDefinition> subSteps = scenario.getSteps().stream()
-            .map(rootStep -> toStepDefinition(lang, rootStep))
+            .map(rootStep -> toStepDefinition(lang, environment, rootStep))
             .collect(Collectors.toList());
 
-        return buildNonExecutableStep(subSteps, name);
+        return buildNonExecutableStep(subSteps, environment, name);
     }
 
-    private StepDefinition toStepDefinition(Locale lang, RootStep rootStep) {
+    private StepDefinition toStepDefinition(Locale lang, String environment, RootStep rootStep) {
         if (this.executableStepFactory.isExecutableStep(lang, rootStep)) {
-            return this.executableStepFactory.build(lang, rootStep);
+            return this.executableStepFactory.build(lang, environment, rootStep);
         } else {
-            List<StepDefinition> subSteps = toStepSubStepsDefinitions(lang, rootStep);
+            List<StepDefinition> subSteps = toStepSubStepsDefinitions(lang, environment, rootStep);
             String name = rootStep.getKeyword().getLiteral() + rootStep.getText();
-            return buildNonExecutableStep(subSteps, name);
+            return buildNonExecutableStep(subSteps, environment, name);
         }
     }
 
-    private StepDefinition toStepDefinition(Locale lang, Step step) {
+    private StepDefinition toStepDefinition(Locale lang, String environment, Step step) {
         if (this.executableStepFactory.isExecutableStep(lang, step)) {
-            return this.executableStepFactory.build(lang, step);
+            return this.executableStepFactory.build(lang, environment, step);
         } else {
-            List<StepDefinition> subSteps = toStepSubStepsDefinitions(lang, step);
-            return buildNonExecutableStep(subSteps, step.getText());
+            List<StepDefinition> subSteps = toStepSubStepsDefinitions(lang, environment, step);
+            return buildNonExecutableStep(subSteps, environment, step.getText());
         }
     }
 
-    private StepDefinition buildNonExecutableStep(List<StepDefinition> subSteps, String text) {
-        return new StepDefinition(text, null, "", null, emptyMap(), subSteps, emptyMap());
+    private StepDefinition buildNonExecutableStep(List<StepDefinition> subSteps, String environment, String text) {
+        return new StepDefinition(text, null, "", null, emptyMap(), subSteps, emptyMap(), environment);
     }
 
-    private List<StepDefinition> toStepSubStepsDefinitions(Locale lang, Step step) {
+    private List<StepDefinition> toStepSubStepsDefinitions(Locale lang, String environment, Step step) {
         return step.getSubsteps().stream()
-            .map(subStep -> toStepDefinition(lang, subStep))
+            .map(subStep -> toStepDefinition(lang, environment, subStep))
             .collect(Collectors.toList());
     }
 

@@ -12,5 +12,5 @@ public interface GlacioExecutableStepParser {
     Map<Locale, Set<String>> keywords();
 
     /** TODO put description here **/
-    StepDefinition mapToStepDefinition(Step step);
+    StepDefinition mapToStepDefinition(String environment, Step step);
 }

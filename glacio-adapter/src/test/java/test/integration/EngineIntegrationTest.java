@@ -28,6 +28,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ContextConfiguration
 public class EngineIntegrationTest {
 
+    private static final String ENVIRONMENT = "ENV";
+
     @Configuration
     @ComponentScan("com.chutneytesting")
     public static class SpringConfig {
@@ -104,7 +106,7 @@ public class EngineIntegrationTest {
     private List<StepExecutionReport> executeFeature(String s) {
         // Given
         String feature = fileContent(s);
-        List<StepDefinition> stepDefinitions = glacioAdapter.toChutneyStepDefinition(feature);
+        List<StepDefinition> stepDefinitions = glacioAdapter.toChutneyStepDefinition(feature, ENVIRONMENT);
 
         // When
         List<StepExecutionReport> reports = new ArrayList<>();

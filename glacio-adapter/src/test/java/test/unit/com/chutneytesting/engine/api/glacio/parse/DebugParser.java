@@ -3,9 +3,6 @@ package test.unit.com.chutneytesting.engine.api.glacio.parse;
 import static java.util.Arrays.asList;
 
 import com.chutneytesting.engine.api.glacio.parse.GlacioParser;
-import com.chutneytesting.engine.api.glacio.parse.StepParser;
-import com.chutneytesting.engine.domain.environment.Target;
-import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
 import com.github.fridujo.glacio.ast.Step;
 import java.util.HashMap;
 import java.util.HashSet;

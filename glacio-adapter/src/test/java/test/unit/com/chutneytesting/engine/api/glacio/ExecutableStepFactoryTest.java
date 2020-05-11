@@ -5,6 +5,7 @@ import static java.util.Locale.ENGLISH;
 import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -32,6 +33,7 @@ import org.mockito.ArgumentCaptor;
 public class ExecutableStepFactoryTest {
 
     private final static Set<String> ENGLISH_EXECUTABLE_STEP_KEYWORD = Sets.newHashSet("Do", "Run");
+    private static final String ENVIRONMENT = "ENV";
 
     private ExecutableStepFactory sut;
     private GlacioExecutableStepParser defaultGlacioParser;
@@ -74,7 +76,7 @@ public class ExecutableStepFactoryTest {
     public void should_throw_exception_when_build_a_non_qualified_step(String stepText) {
         Step step = buildSimpleStepWithText(stepText);
 
-        assertThatThrownBy(() -> sut.build(ENGLISH, step))
+        assertThatThrownBy(() -> sut.build(ENGLISH, ENVIRONMENT, step))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -89,11 +91,11 @@ public class ExecutableStepFactoryTest {
         assertThat(sut.isExecutableStep(ENGLISH, successStep)).isTrue();
 
         // When
-        sut.build(ENGLISH, successStep);
+        sut.build(ENGLISH, ENVIRONMENT, successStep);
 
         // Then
         ArgumentCaptor<Step> stepArg = ArgumentCaptor.forClass(Step.class);
-        verify(parserMock).mapToStepDefinition(stepArg.capture());
+        verify(parserMock).mapToStepDefinition(eq(ENVIRONMENT), stepArg.capture());
         assertThat(stepArg.getValue().getText()).isEqualTo(parserKeyword + " " + stepName);
     }
 
@@ -106,11 +108,11 @@ public class ExecutableStepFactoryTest {
         assertThat(sut.isExecutableStep(ENGLISH, successStep)).isTrue();
 
         // When
-        sut.build(ENGLISH, successStep);
+        sut.build(ENGLISH, ENVIRONMENT, successStep);
 
         // Then
         ArgumentCaptor<Step> stepArg = ArgumentCaptor.forClass(Step.class);
-        verify(defaultGlacioParser).mapToStepDefinition(stepArg.capture());
+        verify(defaultGlacioParser).mapToStepDefinition(eq(ENVIRONMENT), stepArg.capture());
         assertThat(stepArg.getValue().getText()).isEqualTo(unknownParserKeyword + " " + stepName);
     }
 

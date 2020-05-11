@@ -16,6 +16,8 @@ import org.junit.runner.RunWith;
 @RunWith(JUnitParamsRunner.class)
 public class GlacioSleepParserTest {
 
+    private static final String ENVIRONMENT = "ENV";
+
     private GlacioSleepParser sut = new GlacioSleepParser();
 
     @Test
@@ -44,7 +46,7 @@ public class GlacioSleepParserTest {
     public void should_parse_duration_input_from_step_text() {
         loopOverRandomString(4, 10, 100, (randomString) ->
             assertThat(
-                sut.mapToStepDefinition(buildSimpleStepWithText("sleep for " + randomString)).inputs)
+                sut.mapToStepDefinition(ENVIRONMENT, buildSimpleStepWithText("sleep for " + randomString)).inputs)
                 .containsExactly(entry("duration", randomString))
         );
     }
