@@ -16,6 +16,8 @@ import {
 } from '@core/model';
 import { CampaignService, EnvironmentAdminService, ScenarioService } from '@core/services';
 import { newInstance, sortByAndOrder } from '@shared/tools';
+import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
+import { Label, Color } from 'ng2-charts';
 
 @Component({
     selector: 'chutney-execution-campaign',
@@ -52,6 +54,26 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
     errorMessage: any;
 
     private subscriptionLoadCampaign: Subscription;
+
+
+    public lineChartData: ChartDataSets[] = [];
+    public lineChartLabels: Label[] = [];
+    public lineChartOptions: (ChartOptions) = {
+        responsive: true,
+    };
+    public lineChartColors: Color[] = [
+        {
+            borderColor: 'green',
+            backgroundColor: 'rgba(0,255,0,0.1)'
+        },
+        {
+            borderColor: 'red',
+            backgroundColor: 'rgba(255,0,0,0.3)'
+        },
+    ];
+    public lineChartLegend = false;
+    public lineChartType = 'line';
+    public lineChartPlugins = [];
 
     constructor(private campaignService: CampaignService,
                 private route: ActivatedRoute,
@@ -115,9 +137,18 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
                     }
                 );
             }
-
+            this.setChartData(campaign.campaignExecutionReports);
             this.last = new CampaignReport(this.getLastCompleteReport());
         }
+    }
+
+    setChartData(reports: Array<CampaignExecutionReport>) {
+        const scenarioOK = reports.filter(r => !r.partialExecution).map(r => r.scenarioExecutionReports
+                                    .filter(s => s.status === 'SUCCESS').length).reverse();
+        const scenarioKO = reports.filter(r => !r.partialExecution).map(r => r.scenarioExecutionReports
+                                .filter(s => s.status === 'FAILURE').length).reverse();
+        this.lineChartData = [{ data: scenarioOK}, { data: scenarioKO}];
+        this.lineChartLabels = reports.filter(r => !r.partialExecution).map(r => '' + r.executionId).reverse();
     }
 
     getLastCompleteReport() {

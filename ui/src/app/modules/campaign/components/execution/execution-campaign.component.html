@@ -42,7 +42,6 @@
         </div>
     </div>
 </div>
-
 <div class="row bg-danger" *ngIf="executionError">
     <div class="col-2 pl-0">
         <button type="button" class="btn text-white" (click)="executionError = ''">
@@ -177,7 +176,7 @@
             </table>
         </div>
     </div>
-    <div class="col-md-10  pl-4" *ngIf="!currentCampaignExecutionReport">
+    <div class="col-md-7  pl-4" *ngIf="!currentCampaignExecutionReport">
         <span class="font-weight-bold">{{ 'campaigns.execution.scenarios.title' | translate }}</span>
         <div class="table-responsive">
             <table class="table table-sm table-striped table-hover">
@@ -225,5 +224,16 @@
         <div *ngIf="scenarios && scenarios.length == 0" class="alert alert-dark col-md-12 not-found text-muted">
             <span>{{ 'campaigns.execution.scenarios.empty' | translate }}</span>
         </div>
+    </div>
+    <div *ngIf="!currentCampaignExecutionReport && lineChartData.length > 0" class="col-md-3">
+        <canvas baseChart 
+        [datasets]="lineChartData"
+        [labels]="lineChartLabels"
+        [options]="lineChartOptions"
+        [colors]="lineChartColors"
+        [legend]="lineChartLegend"
+        [chartType]="lineChartType"
+        [plugins]="lineChartPlugins">
+      </canvas>
     </div>
 </div>
