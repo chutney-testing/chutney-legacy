@@ -128,7 +128,8 @@
                 "actual": "Last full execution",
                 "ok": "OK",
                 "ko": "KO",
-                "stop": "Stopped"
+                "stop": "Stopped",
+                "notexecuted": "Not executed"
             },
             "replay": "Replay failed scenarios",
             "on_env": "on environment",
@@ -373,6 +374,9 @@
             "delete": "Do you confirm your deletion request ?",
             "yes": "Yes",
             "no": "No"
+        },
+        "smallword": {
+            "of": "of"
         }
     }
 }

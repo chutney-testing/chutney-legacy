@@ -10,9 +10,9 @@ import com.chutneytesting.design.domain.environment.InvalidEnvironmentNameExcept
 import com.chutneytesting.design.domain.environment.TargetNotFoundException;
 import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.ScenarioNotParsableException;
-import com.chutneytesting.execution.domain.compiler.ScenarioConversionException;
 import com.chutneytesting.execution.domain.campaign.CampaignAlreadyRunningException;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionNotFoundException;
+import com.chutneytesting.execution.domain.compiler.ScenarioConversionException;
 import com.chutneytesting.execution.domain.scenario.FailedExecutionAttempt;
 import com.chutneytesting.execution.domain.scenario.ScenarioNotRunningException;
 import com.chutneytesting.security.domain.CurrentUserNotFound;
@@ -23,6 +23,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -39,8 +40,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return super.handleHttpMessageNotReadable(ex, headers, status, request);
     }
 
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotWritable(HttpMessageNotWritableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        LOGGER.warn(ex.getMessage());
+        return super.handleHttpMessageNotWritable(ex, headers, status, request);
+    }
+
     @ExceptionHandler({ RuntimeException.class,
-                        FailedExecutionAttempt.class
+                        FailedExecutionAttempt.class,
     })
     public ResponseEntity<Object> _500(RuntimeException ex, WebRequest request) {
         LOGGER.error("Controller global exception handler", ex);

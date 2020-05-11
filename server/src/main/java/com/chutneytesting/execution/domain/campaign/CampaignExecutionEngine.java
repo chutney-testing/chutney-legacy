@@ -10,11 +10,11 @@ import com.chutneytesting.design.domain.scenario.ScenarioNotParsableException;
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
+import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.execution.domain.scenario.FailedExecutionAttempt;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
-import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -135,10 +135,7 @@ public class CampaignExecutionEngine {
 
         scenarioStream.forEach(testCase ->  {
             // Is stop requested ?
-            if (currentCampaignExecutionsStopRequests.get(campaignExecutionReport.executionId)) {
-                campaignExecutionReport.stopCampaignExecution();
-                return;
-            } else {
+            if (!currentCampaignExecutionsStopRequests.get(campaignExecutionReport.executionId)) {
                 // Override scenario dataset by campaign's one
                 Map<String, String> ds = new HashMap<>(testCase.dataSet());
                 ds.putAll(campaign.dataSet);

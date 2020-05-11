@@ -2,10 +2,16 @@ package com.chutneytesting.design.infra.storage.campaign;
 
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import com.chutneytesting.design.domain.campaign.Campaign;
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
 import com.chutneytesting.design.domain.campaign.ScenarioExecutionReportCampaign;
+import com.chutneytesting.design.domain.scenario.TestCase;
+import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
+import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
@@ -29,7 +35,14 @@ public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
     @Before
     public void setUp() {
         scenarioExecutions = new HashMap<>();
-        sut = new CampaignExecutionRepository(namedParameterJdbcTemplate);
+        TestCaseRepository testCaseRepositoryMock = mock(TestCaseRepository.class);
+        CampaignExecutionReportMapper campaignExecutionReportMapper = new CampaignExecutionReportMapper(testCaseRepositoryMock);
+        TestCase mockTestCase = mock(TestCase.class);
+        TestCaseMetadata mockTestCaseMetadata = mock(TestCaseMetadata.class);
+        when(mockTestCaseMetadata.title()).thenReturn("scenario title");
+        when(mockTestCase.metadata()).thenReturn(mockTestCaseMetadata);
+        when(testCaseRepositoryMock.findById(any())).thenReturn(mockTestCase);
+        sut = new CampaignExecutionRepository(namedParameterJdbcTemplate, campaignExecutionReportMapper);
     }
 
     @Test

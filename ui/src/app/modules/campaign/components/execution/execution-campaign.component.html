@@ -59,14 +59,14 @@
                 (click)="currentCampaignExecutionReport = null"
                 [ngClass]="{
                         'tile-ok': last.allPassed(),
-                        'tile-ko': last.hasFailure() || last.hasStopped(),
+                        'tile-ko': last.hasFailure() && !(last.hasStopped() || last.hasNotExecuted()),
+                        'tile-stop': last.hasStopped() || last.hasNotExecuted(),
                         'tile-selected': currentCampaignExecutionReport == null
                     }"
                 >
                 <div id="scenarioSummary" class="col scenario-summary">
                     <span *ngIf="last.hasPassed()"> {{last.passed}} {{ 'campaigns.execution.last.ok' | translate }} </span>
                     <span *ngIf="last.hasFailure()"> {{last.failed}} {{ 'campaigns.execution.last.ko' | translate }} </span>
-                    <span *ngIf="last.hasStopped()"> {{last.stopped}} {{ 'campaigns.execution.last.stop' | translate }} </span>
                 </div>
             </div>
         </div>
@@ -120,11 +120,12 @@
         </span>
         <chutney-execution-badge [status]="currentCampaignExecutionReport.status"
                                 [spin]="true"></chutney-execution-badge>
-
-        <span class="m-2" *ngIf="current.hasPassed()"> {{current.passed}} {{ 'campaigns.execution.last.ok' | translate }}, </span>
-        <span class="m-2" *ngIf="current.hasFailure()"> {{current.failed}} {{ 'campaigns.execution.last.ko' | translate }}, </span>
-        <span class="m-2" *ngIf="current.hasStopped()"> {{current.stopped}} {{ 'campaigns.execution.last.stop' | translate }}, </span>
-        <span class="m-2"> of {{current.total}}  </span>
+        <br/>
+        <span *ngIf="current.hasPassed()"> {{current.passed}} {{ 'campaigns.execution.last.ok' | translate }},</span>
+        <span *ngIf="current.hasFailure()"> {{current.failed}} {{ 'campaigns.execution.last.ko' | translate }},</span>
+        <span *ngIf="current.hasStopped()"> {{current.stopped}} {{ 'campaigns.execution.last.stop' | translate }},</span>
+        <span *ngIf="current.hasNotExecuted()"> {{current.notexecuted}} {{ 'campaigns.execution.last.notexecuted' | translate }}</span>
+        <span> {{ 'global.smallword.of' | translate }} {{current.total}}</span>
 
         <small class="text-muted ml-2">{{ 'global.time.in' | translate }}
             {{currentCampaignExecutionReport.duration | duration}}</small>

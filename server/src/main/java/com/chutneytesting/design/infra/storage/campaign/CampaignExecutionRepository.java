@@ -21,16 +21,16 @@ class CampaignExecutionRepository {
     private final NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate;
     private static final int LIMIT_BLOC_SIZE = 20;
 
-    CampaignExecutionRepository(NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate) {
+    CampaignExecutionRepository(NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate, CampaignExecutionReportMapper repository) {
         this.uiNamedParameterJdbcTemplate = uiNamedParameterJdbcTemplate;
-        campaignExecutionReportMapper = new CampaignExecutionReportMapper();
+        this.campaignExecutionReportMapper = repository;
     }
 
     private static final String QUERY_FIND_CAMPAIGN_EXECUTION_HISTORY =
-        "SELECT C.CAMPAIGN_ID, C.ID, C.SCENARIO_ID, C.SCENARIO_EXECUTION_ID, C.PARTIAL_EXECUTION, C.EXECUTION_ENVIRONMENT, SEH.TEST_CASE_TITLE, "
+        "SELECT C.CAMPAIGN_ID, C.ID, C.SCENARIO_ID, C.SCENARIO_EXECUTION_ID, C.PARTIAL_EXECUTION, C.EXECUTION_ENVIRONMENT, "
             + "SEH.EXECUTION_TIME, SEH.DURATION, SEH.STATUS, SEH.INFORMATION, SEH.ERROR, SEH.ENVIRONMENT, CA.TITLE as CAMPAIGN_TITLE "
             + "FROM CAMPAIGN_EXECUTION_HISTORY C "
-            + "INNER JOIN SCENARIO_EXECUTION_HISTORY SEH ON SEH.ID = C.SCENARIO_EXECUTION_ID "
+            + "LEFT OUTER JOIN SCENARIO_EXECUTION_HISTORY SEH ON SEH.ID = C.SCENARIO_EXECUTION_ID "
             + "INNER JOIN CAMPAIGN CA ON CA.ID = C.CAMPAIGN_ID "
             + "WHERE C.CAMPAIGN_ID = :idCampaign "
             + "AND C.ID IN ("

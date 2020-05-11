@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 public enum Status {
     SUCCESS, WARN, FAILURE, NOT_EXECUTED, STOPPED, PAUSED, RUNNING, EXECUTED;
 
-    private static final Ordering<Status> EXECUTION_STATUS_STATUS_ORDERING = Ordering.explicit(EXECUTED, PAUSED, RUNNING, FAILURE, WARN, STOPPED, NOT_EXECUTED, SUCCESS);
+    private static final Ordering<Status> EXECUTION_STATUS_STATUS_ORDERING = Ordering.explicit(EXECUTED, PAUSED, RUNNING, STOPPED, FAILURE, WARN, NOT_EXECUTED, SUCCESS);
 
     public static Status worst(List<Status> severalStatus) {
 
