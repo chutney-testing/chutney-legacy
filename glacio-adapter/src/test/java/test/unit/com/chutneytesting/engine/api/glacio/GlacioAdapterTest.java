@@ -2,6 +2,7 @@ package test.unit.com.chutneytesting.engine.api.glacio;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -14,11 +15,18 @@ import com.google.common.io.Resources;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Locale;
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 import org.assertj.core.util.Files;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(JUnitParamsRunner.class)
 public class GlacioAdapterTest {
+
+    private static final String ENVIRONMENT = "ENV";
 
     private GlacioAdapter sut;
     private ExecutableStepFactory executableStepFactory;
@@ -30,10 +38,33 @@ public class GlacioAdapterTest {
     }
 
     @Test
+    @Parameters({
+        "en unit/lang_default.feature",
+        "fr unit/lang_fr.feature"
+    })
+    public void should_use_feature_language_hint_with_english_default(String langFeature) {
+        String[] s = langFeature.split(" ");
+        Locale expectedLocale = new Locale(s[0]);
+        String featureFilePath = s[1];
+
+        String feature = fileContent(featureFilePath);
+        when(executableStepFactory.isExecutableStep(any(), any()))
+            .thenReturn(true);
+        when(executableStepFactory.build(any(), any(), any()))
+            .thenReturn(null);
+
+        List<StepDefinition> stepDefinitions = sut.toChutneyStepDefinition(feature, null);
+
+        assertThat(stepDefinitions).hasSize(1);
+        verify(executableStepFactory).isExecutableStep(eq(expectedLocale), any());
+        verify(executableStepFactory).build(eq(expectedLocale), eq(""), any());
+    }
+
+    @Test
     public void should_adapt_as_many_glacio_scenarios_as_feature_has() {
         String featureName = "Feature with multiple scenarios";
         String feature = fileContent("unit/multiple_scenarios.feature");
-        List<StepDefinition> stepDefinitions = sut.toChutneyStepDefinition(feature);
+        List<StepDefinition> stepDefinitions = sut.toChutneyStepDefinition(feature, ENVIRONMENT);
         assertThat(stepDefinitions).hasSize(3);
         assertThat(stepDefinitions)
             .extracting(stepDefinition -> stepDefinition.name)
@@ -47,7 +78,7 @@ public class GlacioAdapterTest {
     @Test
     public void should_adapt_as_many_non_executable_steps_glacio_scenario_has() {
         String feature = fileContent("unit/multiple_non_executable_steps.feature");
-        List<StepDefinition> stepDefinitions = sut.toChutneyStepDefinition(feature);
+        List<StepDefinition> stepDefinitions = sut.toChutneyStepDefinition(feature, ENVIRONMENT);
         assertThat(stepDefinitions).hasSize(1);
         assertThat(stepDefinitions.get(0).steps).hasSize(2);
 
@@ -67,8 +98,8 @@ public class GlacioAdapterTest {
     @Test
     public void should_delegate_test_for_executable_step_for_each_glacio_step() {
         String feature = fileContent("unit/multiple_non_executable_steps.feature");
-        sut.toChutneyStepDefinition(feature);
-        verify(executableStepFactory, times(14)).isExecutableStep(any(), any());
+        sut.toChutneyStepDefinition(feature, ENVIRONMENT);
+        verify(executableStepFactory, times(14)).isExecutableStep(eq(Locale.ENGLISH), any());
     }
 
     @Test
@@ -77,16 +108,16 @@ public class GlacioAdapterTest {
         when(executableStepFactory.isExecutableStep(any(), any()))
             .thenReturn(
                 false,                  // When
-                    true,
-                    false, true,
-                    false, true, true,
+                true,
+                false, true,
+                false, true, true,
                 false,                  // Then
-                    true,               // Test that no adaptation get further executable step
-                    false, true,
-                    true);
-        sut.toChutneyStepDefinition(feature);
-        verify(executableStepFactory, times(12)).isExecutableStep(any(), any());
-        verify(executableStepFactory, times(7)).build(any(), any());
+                true,               // Test that no adaptation get further executable step
+                false, true,
+                true);
+        sut.toChutneyStepDefinition(feature, ENVIRONMENT);
+        verify(executableStepFactory, times(12)).isExecutableStep(eq(Locale.ENGLISH), any());
+        verify(executableStepFactory, times(7)).build(eq(Locale.ENGLISH), eq(ENVIRONMENT), any());
     }
 
     private void assertSizeAndName(StepDefinition step, String expectedName, Integer expectedSize) {

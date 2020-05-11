@@ -33,23 +33,23 @@ public class ExecutableStepFactory {
         this.defaultGlacioParser = defaultGlacioParser;
     }
 
-    public StepDefinition build(Locale lang, Step step) {
+    public StepDefinition build(Locale lang, String environment, Step step) {
         Optional<Pair<Pattern, Predicate<String>>> pattern = ofNullable(executableStepTextPatternsCache.get(lang));
         if (pattern.isPresent()) {
             Matcher matcher = pattern.get().getLeft().matcher(step.getText());
             if (matcher.matches()) {
                 String action = ofNullable(matcher.group("action")).orElse("");
                 String sentence = ofNullable(matcher.group("sentence")).orElse("");
-                return delegateStepParsing(Pair.of(lang, action), rebuildStepUsing(sentence, step));
+                return delegateStepParsing(Pair.of(lang, action), environment, rebuildStepUsing(sentence, step));
             }
         }
         throw new IllegalArgumentException("Step cannot be qualified as executable : " + step);
     }
 
-    private StepDefinition delegateStepParsing(Pair<Locale, String> parserKeyword, Step step) {
+    private StepDefinition delegateStepParsing(Pair<Locale, String> parserKeyword, String environment, Step step) {
         return Optional.ofNullable(glacioExecutableStepParsersLanguages.get(parserKeyword))
             .orElse(defaultGlacioParser)
-            .mapToStepDefinition(step);
+            .mapToStepDefinition(environment, step);
     }
 
     public boolean isExecutableStep(Locale lang, Step step) {

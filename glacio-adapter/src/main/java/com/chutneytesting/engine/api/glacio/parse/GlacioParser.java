@@ -2,22 +2,20 @@ package com.chutneytesting.engine.api.glacio.parse;
 
 import static java.util.Collections.emptyList;
 
-import com.chutneytesting.engine.domain.environment.Target;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
+import com.chutneytesting.task.spi.injectable.Target;
 import com.github.fridujo.glacio.ast.Step;
 import java.util.Map;
-import java.util.Optional;
-import java.util.OptionalInt;
 
 public abstract class GlacioParser implements GlacioExecutableStepParser {
 
-    protected StepParser<Optional<Target>> targetParser;
+    protected StepParser<Target> targetParser;
     protected StepParser<Map<String, Object>> inputsParser;
     protected StepParser<Map<String, Object>> outputsParser;
     protected StepParser<StepStrategyDefinition> strategyParser;
 
-    public GlacioParser(StepParser<Optional<Target>> targetParser,
+    public GlacioParser(StepParser<Target> targetParser,
                         StepParser<Map<String, Object>> inputsParser,
                         StepParser<Map<String, Object>> outputsParser,
                         StepParser<StepStrategyDefinition> strategyParser) {
@@ -28,15 +26,16 @@ public abstract class GlacioParser implements GlacioExecutableStepParser {
     }
 
     @Override
-    public final StepDefinition mapToStepDefinition(Step step) {
+    public final StepDefinition mapToStepDefinition(String environment, Step step) {
         return new StepDefinition(
             parseStepName(step),
-            parseStepTarget(step).orElse(null),
+            parseStepTarget(step),
             parseTaskType(step),
             parseStepStrategy(step),
             parseTaskInputs(step),
             emptyList(),
-            parseTaskOutputs(step)
+            parseTaskOutputs(step),
+            environment
         );
     }
 
@@ -54,7 +53,7 @@ public abstract class GlacioParser implements GlacioExecutableStepParser {
         return outputsParser.parseStep(step);
     }
 
-    private Optional<Target> parseStepTarget(Step step) {
+    private Target parseStepTarget(Step step) {
         return targetParser.parseStep(step);
     }
 

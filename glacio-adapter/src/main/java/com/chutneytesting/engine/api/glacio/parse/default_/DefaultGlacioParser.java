@@ -3,14 +3,11 @@ package com.chutneytesting.engine.api.glacio.parse.default_;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.engine.api.glacio.parse.GlacioParser;
-import com.chutneytesting.engine.api.glacio.parse.StepParser;
-import com.chutneytesting.engine.domain.environment.Target;
 import com.chutneytesting.task.domain.TaskTemplateRegistry;
 import com.github.fridujo.glacio.ast.Step;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
