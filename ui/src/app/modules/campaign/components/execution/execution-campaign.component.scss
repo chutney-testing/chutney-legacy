@@ -124,6 +124,10 @@ h3 {
         background-color: $labelko;
     }
 
+    .tile-stop {
+        background-color: $grisfonce2;
+    }
+
     .tile-selected {
         margin: 10px -20px 10px 20px;
     }
@@ -150,6 +154,10 @@ h3 {
 
     .circle-ko {
         color: #d9534f;
+    }
+
+    .circle-stop {
+        color: $grisfonce1;
     }
 }
 

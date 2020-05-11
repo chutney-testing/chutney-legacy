@@ -77,7 +77,8 @@
                  (click)="selectReport(report)"
                  [ngClass]="{
                     'tile-ok': report.status == 'SUCCESS',
-                    'tile-ko': report.status == 'FAILURE' || report.status == 'STOPPED',
+                    'tile-ko': report.status == 'FAILURE',
+                    'tile-stop': report.status == 'STOPPED',
                     'tile-selected': report.executionId == currentCampaignExecutionReport?.executionId,
                     'tile-running': report.status == 'RUNNING'}">
 
@@ -85,7 +86,8 @@
                     <i class="fa fa-circle" aria-hidden="true"
                        [ngClass]="{
                         'circle-ok': report.status == 'SUCCESS',
-                        'circle-ko': report.status == 'FAILURE' || report.status == 'STOPPED',
+                        'circle-ko': report.status == 'FAILURE',
+                        'circle-stop': report.status == 'STOPPED',
                         'circle-running': report.status == 'RUNNING'}"><span
                         class="execution-id">#{{report.executionId}}</span></i>
                 </div>
