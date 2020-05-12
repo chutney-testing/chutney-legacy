@@ -1,0 +1,44 @@
+<div class="mt-3" [formGroup]="dataGridForm">
+    <div class="col">
+        <button type="button" class="box2 btn btn-info" (click)="addColumn()">
+            <span class="fa fa-plus" aria-hidden="true"></span> column
+        </button>
+        <button type="button" class="box2 btn btn-info" (click)="addLine()">
+            <span class="fa fa-plus" aria-hidden="true"></span> line
+        </button>
+    </div>
+
+    <table class="table table-sm table-striped table-hover">
+        <thead>
+        <tr>
+            <th></th>
+            <th scope="col" *ngFor="let header of headers; let i = index">
+                <button type="button" class="box2 btn btn-outline-danger delete-button-height"
+                        (click)="removeColumn(i)"
+                        title="{{'global.actions.delete' | translate}}">
+                    <div class="fa fa-trash"></div>
+                </button>
+                <input type="text" class="box2" id="{{i}}-header" value="{{header}}" required
+                       (input)="updateHeader(i, $event.target.value)"/>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let line of dataGrid; let i = index">
+            <td>
+                <button type="button" class="box2 btn btn-outline-danger delete-button-height"
+                        (click)="removeLine(i)"
+                        title="{{'global.actions.delete' | translate}}">
+                    <div class="fa fa-trash"></div>
+                </button>
+            </td>
+            <td *ngFor="let keyValue of line; let j = index">
+                <input type="text" class="box2" id="{{i-j}}-value" value="{{keyValue.value}}" required
+                       (input)="updateValue(i, j, $event.target.value)"/></td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+
