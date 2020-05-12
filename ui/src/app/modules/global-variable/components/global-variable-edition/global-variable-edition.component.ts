@@ -102,7 +102,7 @@ export class GlobalVariableEditionComponent implements OnInit {
     }
 
     deleteFile() {
-        console.log("bou");
+        console.log('bou');
         (async () => {
             this.message = 'Deleting...';
             await this.delay(1000);

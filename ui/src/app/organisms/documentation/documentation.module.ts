@@ -7,7 +7,7 @@ import { DocumentationRoute } from './documentation.routes';
 
 import { AtomsModule } from '../../atoms/atoms.module';
 import { DocumentationComponent } from './documentation.component';
-import { MoleculesModule } from "../../molecules/molecules.module";
+import { MoleculesModule } from '../../molecules/molecules.module';
 
 @NgModule({
   imports: [
