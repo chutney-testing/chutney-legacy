@@ -2,7 +2,9 @@ package test.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.chutneytesting.ExecutionSpringConfiguration;
 import com.chutneytesting.engine.api.glacio.GlacioAdapter;
+import com.chutneytesting.engine.api.glacio.GlacioAdapterSpringConfiguration;
 import com.chutneytesting.engine.domain.execution.ExecutionEngine;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
@@ -19,21 +21,14 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration
+@ContextConfiguration(classes = {ExecutionSpringConfiguration.class, GlacioAdapterSpringConfiguration.class})
 public class EngineIntegrationTest {
 
     private static final String ENVIRONMENT = "ENV";
-
-    @Configuration
-    @ComponentScan("com.chutneytesting")
-    public static class SpringConfig {
-    }
 
     @Autowired
     private ExecutionEngine executionEngine;

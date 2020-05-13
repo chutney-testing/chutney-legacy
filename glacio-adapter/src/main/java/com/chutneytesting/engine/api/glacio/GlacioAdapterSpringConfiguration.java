@@ -4,8 +4,8 @@ import static com.chutneytesting.tools.Streams.identity;
 import static java.util.Optional.empty;
 
 import com.chutneytesting.engine.api.glacio.ExecutableStepFactory.EXECUTABLE_KEYWORD;
-import com.chutneytesting.engine.api.glacio.parse.default_.DefaultGlacioParser;
 import com.chutneytesting.engine.api.glacio.parse.GlacioExecutableStepParser;
+import com.chutneytesting.engine.api.glacio.parse.default_.DefaultGlacioParser;
 import com.chutneytesting.task.domain.TaskTemplateRegistry;
 import com.chutneytesting.tools.ThrowingFunction;
 import com.chutneytesting.tools.loader.ExtensionLoaders;
@@ -60,6 +60,11 @@ public class GlacioAdapterSpringConfiguration {
                                                        Map<Pair<Locale, String>, GlacioExecutableStepParser> glacioExecutableStepParsersLanguages,
                                                        TaskTemplateRegistry taskTemplateRegistry) {
         return new ExecutableStepFactory(executableStepLanguagesKeywords, glacioExecutableStepParsersLanguages, new DefaultGlacioParser(taskTemplateRegistry));
+    }
+
+    @Bean
+    public GlacioAdapter glacioAdapter(ExecutableStepFactory executableStepFactory) {
+        return new GlacioAdapter(executableStepFactory);
     }
 
     private Optional<GlacioExecutableStepParser> instantiateGlacioParser(Class<?> clazz) throws IllegalAccessException, InstantiationException {

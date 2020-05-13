@@ -15,9 +15,7 @@ import com.github.fridujo.glacio.parsing.parser.AstParser;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
-import org.springframework.stereotype.Component;
 
-@Component
 public class GlacioAdapter {
 
     private ExecutableStepFactory executableStepFactory;
