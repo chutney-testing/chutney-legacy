@@ -8,11 +8,10 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.design.domain.compose.ComposableScenario;
 import com.chutneytesting.design.domain.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.compose.FunctionalStep;
-import com.chutneytesting.design.domain.environment.EnvironmentRepository;
+import com.chutneytesting.design.domain.environment.EnvironmentService;
 import com.chutneytesting.design.domain.environment.Target;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.raw.RawTestCase;
@@ -38,11 +37,10 @@ import org.junit.Test;
 public class ExecutionRequestMapperTest {
 
     private ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
-    private EnvironmentRepository environmentRepository = mock(EnvironmentRepository.class);
-    private CurrentNetworkDescription currentNetworkDescription = mock(CurrentNetworkDescription.class);
+    private EnvironmentService environmentService = mock(EnvironmentService.class);
     private EmbeddedTaskEngine embeddedTaskEngine = mock(EmbeddedTaskEngine.class);
 
-    private ExecutionRequestMapper sut = new ExecutionRequestMapper(objectMapper, environmentRepository, currentNetworkDescription, embeddedTaskEngine);
+    private ExecutionRequestMapper sut = new ExecutionRequestMapper(objectMapper, environmentService, embeddedTaskEngine);
 
     @Test
     public void should_map_test_case_to_execution_request() {
@@ -128,9 +126,9 @@ public class ExecutionRequestMapperTest {
                 .build()
         );
 
-        when(environmentRepository.getAndValidateServer(eq(expectedTargetId), any()))
+        when(environmentService.getTargetForExecution(any(), eq(expectedTargetId)))
             .thenReturn(Target.builder()
-                .withId(Target.TargetId.of(expectedTargetId,"envName"))
+                .withId(Target.TargetId.of(expectedTargetId, "envName"))
                 .withUrl("")
                 .build());
 

@@ -1,8 +1,14 @@
 package com.chutneytesting.design.domain.environment;
 
+import static com.chutneytesting.design.domain.environment.NoTarget.NO_TARGET;
+
+import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
+import com.chutneytesting.agent.domain.network.Agent;
+import com.chutneytesting.agent.domain.network.NetworkDescription;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -13,9 +19,11 @@ public class EnvironmentService {
     private final Logger logger = LoggerFactory.getLogger(EnvironmentService.class);
 
     private final EnvironmentRepository environmentRepository;
+    private final CurrentNetworkDescription currentNetworkDescription;
 
-    public EnvironmentService(EnvironmentRepository environmentRepository) {
+    public EnvironmentService(EnvironmentRepository environmentRepository, CurrentNetworkDescription currentNetworkDescription) {
         this.environmentRepository = environmentRepository;
+        this.currentNetworkDescription = currentNetworkDescription;
     }
 
     public Set<Environment> listEnvironments() {
@@ -93,5 +101,24 @@ public class EnvironmentService {
         Environment newEnvironment = environment.updateTarget(previousTargetName, targetToUpdate);
         environmentRepository.save(newEnvironment);
         logger.debug("Updated target " + previousTargetName + " as " + targetToUpdate.name);
+    }
+
+    public Target getTargetForExecution(String environmentName, String targetName) {
+        if (targetName == null || targetName.isEmpty()) {
+            return NO_TARGET;
+        }
+
+        Target target = environmentRepository.getAndValidateServer(targetName, environmentName);
+
+        Optional<NetworkDescription> networkDescription = currentNetworkDescription.findCurrent();
+        if (networkDescription.isPresent() && networkDescription.get().localAgent().isPresent()) {
+            final Agent localAgent = networkDescription.get().localAgent().get();
+            List<Agent> agents = localAgent.findFellowAgentForReaching(target.id);
+            return Target.builder()
+                .copyOf(target)
+                .withAgents(agents.stream().map(a -> a.agentInfo).collect(Collectors.toList()))
+                .build();
+        }
+        return target;
     }
 }
