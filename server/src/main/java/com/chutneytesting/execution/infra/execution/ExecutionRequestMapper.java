@@ -4,12 +4,9 @@ import static com.chutneytesting.design.domain.environment.NoTarget.NO_TARGET;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
-import com.chutneytesting.agent.domain.network.Agent;
-import com.chutneytesting.agent.domain.network.NetworkDescription;
 import com.chutneytesting.design.domain.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.compose.FunctionalStep;
-import com.chutneytesting.design.domain.environment.EnvironmentRepository;
+import com.chutneytesting.design.domain.environment.EnvironmentService;
 import com.chutneytesting.design.domain.environment.SecurityInfo;
 import com.chutneytesting.design.domain.environment.Target;
 import com.chutneytesting.design.domain.scenario.gwt.GwtStep;
@@ -44,14 +41,12 @@ import org.springframework.stereotype.Component;
 public class ExecutionRequestMapper {
 
     private final ObjectMapper objectMapper;
-    private final EnvironmentRepository environmentRepository;
-    private final CurrentNetworkDescription currentNetworkDescription;
+    private final EnvironmentService environmentService;
     private final EmbeddedTaskEngine embeddedTaskEngine;
 
-    public ExecutionRequestMapper(ObjectMapper objectMapper, EnvironmentRepository environmentRepository, CurrentNetworkDescription currentNetworkDescription, EmbeddedTaskEngine embeddedTaskEngine) {
+    public ExecutionRequestMapper(ObjectMapper objectMapper, EnvironmentService environmentService, EmbeddedTaskEngine embeddedTaskEngine) {
         this.objectMapper = objectMapper;
-        this.environmentRepository = environmentRepository;
-        this.currentNetworkDescription = currentNetworkDescription;
+        this.environmentService = environmentService;
         this.embeddedTaskEngine = embeddedTaskEngine;
     }
 
@@ -98,7 +93,7 @@ public class ExecutionRequestMapper {
 
         return new StepDefinitionRequestDto(
             definition.name,
-            toDto(findTargetByName(definition.target, env)),
+            toDto(environmentService.getTargetForExecution(env, definition.target)),
             retryStrategy,
             definition.type,
             definition.inputs,
@@ -130,7 +125,7 @@ public class ExecutionRequestMapper {
     private StepDefinitionRequestDto convert(GwtStep step, String env) {
         return new StepDefinitionRequestDto(
             step.description,
-            step.implementation.map(i -> toDto(findTargetByName(i.target, env))).orElse(toDto(NO_TARGET)),
+            step.implementation.map(i -> toDto(environmentService.getTargetForExecution(env, i.target))).orElse(toDto(NO_TARGET)),
             step.strategy.map(this::mapStrategy).orElse(null),
             step.implementation.map(i -> i.type).orElse(""),
             step.implementation.map(i -> i.inputs).orElse(emptyMap()),
@@ -183,26 +178,6 @@ public class ExecutionRequestMapper {
         return new CredentialDto(credential.username, credential.password);
     }
 
-    // TODO - see if it might be validated before in the domain
-    private Target findTargetByName(String targetName, String environment) {
-        if (targetName == null || targetName.isEmpty()) {
-            return NO_TARGET;
-        }
-
-        Target target = environmentRepository.getAndValidateServer(targetName, environment);
-
-        Optional<NetworkDescription> networkDescription = currentNetworkDescription.findCurrent();
-        if (networkDescription.isPresent() && networkDescription.get().localAgent().isPresent()) {
-            final Agent localAgent = networkDescription.get().localAgent().get();
-            List<Agent> agents = localAgent.findFellowAgentForReaching(target.id);
-            return Target.builder()
-                .copyOf(target)
-                .withAgents(agents.stream().map(a -> a.agentInfo).collect(Collectors.toList()))
-                .build();
-        }
-        return target;
-    }
-
     private StepDefinitionRequestDto convertComposable(ExecutionRequest executionRequest) {
         ComposableTestCase composableTestCase = (ComposableTestCase) executionRequest.testCase;
         try {
@@ -230,7 +205,7 @@ public class ExecutionRequestMapper {
 
         return new StepDefinitionRequestDto(
             functionalStep.name,
-            toDto(findTargetByName(implementation.map(ComposableImplementation::targetName).orElse(""), env)),
+            toDto(environmentService.getTargetForExecution(env, implementation.map(ComposableImplementation::targetName).orElse(""))),
             this.mapStrategy(functionalStep.strategy),
             implementation.map(ComposableImplementation::type).orElse(""),
             implementation.map(ComposableImplementation::inputs).orElse(emptyMap()),
