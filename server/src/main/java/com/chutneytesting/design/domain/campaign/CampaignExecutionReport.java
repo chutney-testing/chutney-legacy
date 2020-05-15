@@ -89,10 +89,6 @@ public class CampaignExecutionReport {
         this.scenarioExecutionReports.set(index, scenarioExecutionReportCampaign);
     }
 
-    public void stopCampaignExecution() {
-        this.status = ServerReportStatus.STOPPED;
-    }
-
     public void endCampaignExecution() {
         if (!this.status.isFinal()) {
             this.status = findStatus(this.scenarioExecutionReports);
@@ -125,12 +121,16 @@ public class CampaignExecutionReport {
     }
 
     private ServerReportStatus findStatus(List<ScenarioExecutionReportCampaign> scenarioExecutionReports) {
-        return scenarioExecutionReports.stream()
+        ServerReportStatus foundStatus = scenarioExecutionReports.stream()
             .filter(Objects::nonNull)
             .map(report -> report.execution)
             .filter(Objects::nonNull)
             .map(ExecutionHistory.ExecutionProperties::status)
             .collect(Collectors.collectingAndThen(Collectors.toList(), ServerReportStatus::worst));
+        if(foundStatus.equals(ServerReportStatus.NOT_EXECUTED)) {
+            return ServerReportStatus.STOPPED;
+        }
+        return foundStatus;
     }
 
     public static Comparator<CampaignExecutionReport> executionIdComparator() {

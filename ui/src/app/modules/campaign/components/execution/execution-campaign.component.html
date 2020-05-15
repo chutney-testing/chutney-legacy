@@ -59,14 +59,14 @@
                 (click)="currentCampaignExecutionReport = null"
                 [ngClass]="{
                         'tile-ok': last.allPassed(),
-                        'tile-ko': last.hasFailure() || last.hasStopped(),
+                        'tile-ko': last.hasFailure() && !(last.hasStopped() || last.hasNotExecuted()),
+                        'tile-stop': last.hasStopped() || last.hasNotExecuted(),
                         'tile-selected': currentCampaignExecutionReport == null
                     }"
                 >
                 <div id="scenarioSummary" class="col scenario-summary">
                     <span *ngIf="last.hasPassed()"> {{last.passed}} {{ 'campaigns.execution.last.ok' | translate }} </span>
                     <span *ngIf="last.hasFailure()"> {{last.failed}} {{ 'campaigns.execution.last.ko' | translate }} </span>
-                    <span *ngIf="last.hasStopped()"> {{last.stopped}} {{ 'campaigns.execution.last.stop' | translate }} </span>
                 </div>
             </div>
         </div>
@@ -77,7 +77,8 @@
                  (click)="selectReport(report)"
                  [ngClass]="{
                     'tile-ok': report.status == 'SUCCESS',
-                    'tile-ko': report.status == 'FAILURE' || report.status == 'STOPPED',
+                    'tile-ko': report.status == 'FAILURE',
+                    'tile-stop': report.status == 'STOPPED',
                     'tile-selected': report.executionId == currentCampaignExecutionReport?.executionId,
                     'tile-running': report.status == 'RUNNING'}">
 
@@ -85,7 +86,8 @@
                     <i class="fa fa-circle" aria-hidden="true"
                        [ngClass]="{
                         'circle-ok': report.status == 'SUCCESS',
-                        'circle-ko': report.status == 'FAILURE' || report.status == 'STOPPED',
+                        'circle-ko': report.status == 'FAILURE',
+                        'circle-stop': report.status == 'STOPPED',
                         'circle-running': report.status == 'RUNNING'}"><span
                         class="execution-id">#{{report.executionId}}</span></i>
                 </div>
@@ -118,11 +120,12 @@
         </span>
         <chutney-execution-badge [status]="currentCampaignExecutionReport.status"
                                 [spin]="true"></chutney-execution-badge>
-
-        <span class="m-2" *ngIf="current.hasPassed()"> {{current.passed}} {{ 'campaigns.execution.last.ok' | translate }}, </span>
-        <span class="m-2" *ngIf="current.hasFailure()"> {{current.failed}} {{ 'campaigns.execution.last.ko' | translate }}, </span>
-        <span class="m-2" *ngIf="current.hasStopped()"> {{current.stopped}} {{ 'campaigns.execution.last.stop' | translate }}, </span>
-        <span class="m-2"> of {{current.total}}  </span>
+        <br/>
+        <span *ngIf="current.hasPassed()"> {{current.passed}} {{ 'campaigns.execution.last.ok' | translate }},</span>
+        <span *ngIf="current.hasFailure()"> {{current.failed}} {{ 'campaigns.execution.last.ko' | translate }},</span>
+        <span *ngIf="current.hasStopped()"> {{current.stopped}} {{ 'campaigns.execution.last.stop' | translate }},</span>
+        <span *ngIf="current.hasNotExecuted()"> {{current.notexecuted}} {{ 'campaigns.execution.last.notexecuted' | translate }}</span>
+        <span> {{ 'global.smallword.of' | translate }} {{current.total}}</span>
 
         <small class="text-muted ml-2">{{ 'global.time.in' | translate }}
             {{currentCampaignExecutionReport.duration | duration}}</small>

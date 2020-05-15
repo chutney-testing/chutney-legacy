@@ -83,7 +83,6 @@ describe('CampaignExecutionComponent', () => {
     campaignReport.scenarioExecutionReports.push(reportOK);
     campaignReport.scenarioExecutionReports.push(reportKO);
     campaignReport.scenarioExecutionReports.push(reportKO);
-    campaignReport.scenarioExecutionReports.push(reportSTOPPED);
     campaignService.find.and.returnValue(of(campaignMock));
 
     const fixture = TestBed.createComponent(CampaignExecutionComponent);
@@ -93,10 +92,11 @@ describe('CampaignExecutionComponent', () => {
     const c = fixture.componentInstance;
     expect(c.last.passed).toBe(3);
     expect(c.last.failed).toBe(2);
-    expect(c.last.stopped).toBe(1);
+    expect(c.last.stopped).toBe(0);
+    expect(c.last.notexecuted).toBe(0);
 
     const scenarioSummary = html.querySelector('#scenarioSummary');
-    expect(scenarioSummary.textContent).toBe(' 3 OK  2 KO  1 Stopped ');
+    expect(scenarioSummary.textContent).toBe(' 3 OK  2 KO ');
 
   }));
 });

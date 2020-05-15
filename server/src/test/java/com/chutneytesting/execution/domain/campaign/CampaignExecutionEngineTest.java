@@ -161,6 +161,7 @@ public class CampaignExecutionEngineTest {
         assertThat(campaignExecutionReport.get().scenarioExecutionReports().get(1).status()).isEqualTo(ServerReportStatus.NOT_EXECUTED);
         assertThat(campaignExecutionReport.get().scenarioExecutionReports()).hasSize(2);
         assertThat(campaignExecutionReport.get().scenarioExecutionReports().get(0).execution.executionId()).isEqualTo(firstScenarioExecutionId);
+        assertThat(campaignExecutionReport.get().scenarioExecutionReports().get(1).execution.executionId()).isEqualTo(-1L);
     }
 
     @Test

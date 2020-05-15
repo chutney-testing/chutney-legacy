@@ -141,12 +141,11 @@ public class CampaignExecutionReportTest {
     }
 
     @Test
-    public void should_keep_stop_final_status_when_end_campaign_execution() {
+    public void should_calculate_stop_final_status_when_having_not_executed_scenario() {
         // Given
         CampaignExecutionReport campaignReport = new CampaignExecutionReport(1L, "...", false, "");
         addScenarioExecutions(campaignReport, "1", "title1", ServerReportStatus.SUCCESS);
-        addScenarioExecutions(campaignReport, "2", "title2", ServerReportStatus.FAILURE);
-        campaignReport.stopCampaignExecution();
+        addScenarioExecutions(campaignReport, "2", "title2", ServerReportStatus.NOT_EXECUTED);
 
         // When
         campaignReport.endCampaignExecution();

@@ -9,7 +9,7 @@ import { Component, Input, OnChanges } from '@angular/core';
 export class ExecutionBadgeComponent implements OnChanges {
 
   @Input() status: String;
-  @Input() spin: boolean = false;
+  @Input() spin = false;
 
   status_h: String;
   constructor() { }
@@ -33,7 +33,7 @@ export class ExecutionBadgeComponent implements OnChanges {
         this.status_h = 'STOP';
         break;
       case 'NOT_EXECUTED':
-        this.status_h = '';
+        this.status_h = 'NOT EXECUTED';
         break;
     }
   }

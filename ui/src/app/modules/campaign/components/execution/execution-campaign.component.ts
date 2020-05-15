@@ -153,7 +153,8 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
 
     getLastCompleteReport() {
         for (const report of this.campaign.campaignExecutionReports) {
-            if (!report.partialExecution) {
+            const campaignReport = new CampaignReport(report);
+            if (!report.partialExecution && !campaignReport.hasNotExecuted() && !campaignReport.hasStopped()) {
                 return report;
             }
         }
@@ -328,6 +329,7 @@ class CampaignReport {
     passed: number;
     failed: number;
     stopped: number;
+    notexecuted: number;
     total: number;
 
     constructor(report: CampaignExecutionReport) {
@@ -335,7 +337,8 @@ class CampaignReport {
         this.passed = this.countScenarioByStatus('SUCCESS', report);
         this.failed = this.countScenarioByStatus('FAILURE', report);
         this.stopped = this.countScenarioByStatus('STOPPED', report);
-        this.total = this.passed + this.failed + this.stopped;
+        this.notexecuted = this.countScenarioByStatus('NOT_EXECUTED', report);
+        this.total = this.passed + this.failed + this.stopped + this.notexecuted;
     }
 
     countScenarioByStatus(status: String, report: CampaignExecutionReport) {
@@ -358,4 +361,7 @@ class CampaignReport {
         return this.stopped > 0;
     }
 
+    hasNotExecuted() {
+        return this.notexecuted > 0;
+    }
 }

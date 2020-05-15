@@ -1,5 +1,6 @@
 package com.chutneytesting.design.infra.storage.campaign;
 
+import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.google.common.collect.Lists;
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
 import com.chutneytesting.design.domain.campaign.ScenarioExecutionReportCampaign;
@@ -10,6 +11,7 @@ import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
@@ -20,9 +22,17 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.stereotype.Component;
 
-class CampaignExecutionReportMapper implements ResultSetExtractor<List<CampaignExecutionReport>> {
+@Component
+public class CampaignExecutionReportMapper implements ResultSetExtractor<List<CampaignExecutionReport>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(CampaignExecutionReportMapper.class);
+
+    private final TestCaseRepository repository;
+
+    CampaignExecutionReportMapper(TestCaseRepository repository) {
+        this.repository = repository;
+    }
 
     // TODO : Joint should be done in CampaignExecutionRepository.
     @Override
@@ -33,11 +43,11 @@ class CampaignExecutionReportMapper implements ResultSetExtractor<List<CampaignE
             long campaignExecutionId = resultset.getLong("ID");
             String scenarioId = resultset.getString("SCENARIO_ID");
             long scenarioExecutionId = resultset.getLong("SCENARIO_EXECUTION_ID");
-            String scenarioName = resultset.getString("TEST_CASE_TITLE");
             String title = resultset.getString("CAMPAIGN_TITLE");
             boolean partialExecution = resultset.getBoolean("PARTIAL_EXECUTION");
             String executionEnvironment = resultset.getString("EXECUTION_ENVIRONMENT");
             Long campaignId = resultset.getLong("CAMPAIGN_ID");
+            String scenarioName = repository.findById(scenarioId).metadata().title();
             try {
                 ScenarioExecutionReportCampaign scenarioExecutionReport = readScenarioExecutionReport(resultset, scenarioId, scenarioName);
                 scenarioByCampaignId.putIfAbsent(campaignExecutionId, Lists.newArrayList());
@@ -56,12 +66,24 @@ class CampaignExecutionReportMapper implements ResultSetExtractor<List<CampaignE
     }
 
     private ScenarioExecutionReportCampaign readScenarioExecutionReport(ResultSet resultset, String scenarioId, String scenarioName) throws SQLException, ReportNotFoundException {
-        ExecutionHistory.ExecutionSummary execution = mapExecutionWithoutReport(resultset);
+        ExecutionHistory.ExecutionSummary execution;
+        if(resultset.getLong("SCENARIO_EXECUTION_ID") == -1) {
+            execution =  ImmutableExecutionHistory.ExecutionSummary.builder()
+                .executionId(-1L)
+                .testCaseTitle(scenarioName)
+                .time(LocalDateTime.now())
+                .status(ServerReportStatus.NOT_EXECUTED)
+                .duration(0)
+                .environment("")
+                .build();
+        } else {
+            execution = mapExecutionWithoutReport(resultset, scenarioName);
+        }
         return new ScenarioExecutionReportCampaign(scenarioId, scenarioName, execution);
     }
 
 
-    private ExecutionHistory.ExecutionSummary mapExecutionWithoutReport(ResultSet rs) throws SQLException {
+    private ExecutionHistory.ExecutionSummary mapExecutionWithoutReport(ResultSet rs, String scenarioName) throws SQLException {
         return ImmutableExecutionHistory.ExecutionSummary.builder()
             .executionId(rs.getLong("SCENARIO_EXECUTION_ID"))
             .time(Instant.ofEpochMilli(rs.getLong("EXECUTION_TIME")).atZone(ZoneId.systemDefault()).toLocalDateTime())
@@ -69,7 +91,7 @@ class CampaignExecutionReportMapper implements ResultSetExtractor<List<CampaignE
             .status(ServerReportStatus.valueOf(rs.getString("STATUS")))
             .info(Optional.ofNullable(rs.getString("INFORMATION")))
             .error(Optional.ofNullable(rs.getString("ERROR")))
-            .testCaseTitle(rs.getString("TEST_CASE_TITLE"))
+            .testCaseTitle(scenarioName)
             .environment(rs.getString("ENVIRONMENT"))
             .build();
     }
