@@ -74,7 +74,6 @@ public class Step {
         }
 
         if (scenarioExecution.hasToStop()) {
-            state.addInformation("Stop requested before executing this step");
             stopExecution(scenarioExecution);
             return Status.STOPPED;
         }
@@ -113,7 +112,8 @@ public class Step {
         RxBus.getInstance().post(new EndStepExecutionEvent(scenarioExecution, this));
     }
 
-    private void stopExecution(ScenarioExecution scenarioExecution) {
+    public void stopExecution(ScenarioExecution scenarioExecution) {
+        state.addInformation("Stop requested before executing this step");
         state.stopExecution();
         RxBus.getInstance().post(new EndStepExecutionEvent(scenarioExecution, this));
     }

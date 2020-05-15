@@ -1,16 +1,21 @@
 package com.chutneytesting.engine.domain.execution.strategies;
 
+import static com.chutneytesting.engine.domain.execution.ScenarioExecution.createScenarioExecution;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalMatchers.and;
 import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.report.Status;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +26,7 @@ import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.stubbing.OngoingStubbing;
+import org.springframework.util.ReflectionUtils;
 
 @RunWith(JUnitParamsRunner.class)
 public class RetryWithTimeOutStrategyTest {
@@ -42,7 +48,7 @@ public class RetryWithTimeOutStrategyTest {
         StepStrategyDefinition strategyDefinition = new StepStrategyDefinition("", strategyProperties);
         Step step = mock(Step.class);
         when(step.strategy()).thenReturn(Optional.of(strategyDefinition));
-        strategyUnderTest.execute(null, step, null, null);
+        strategyUnderTest.execute(createScenarioExecution(), step, null, null);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -52,7 +58,7 @@ public class RetryWithTimeOutStrategyTest {
 
         Step step = mock(Step.class);
         when(step.strategy()).thenReturn(Optional.of(strategyDefinition));
-        strategyUnderTest.execute(null, step, null, null);
+        strategyUnderTest.execute(createScenarioExecution(), step, null, null);
     }
 
     @Test
@@ -64,10 +70,10 @@ public class RetryWithTimeOutStrategyTest {
         // When
         Step step = mock(Step.class);
         when(step.strategy()).thenReturn(Optional.of(strategyDefinition));
-        strategyUnderTest.execute(null, step, null, null);
+        strategyUnderTest.execute(createScenarioExecution(), step, null, null);
 
         // Then
-        verify(step, times(1)).execute(null, null);
+        verify(step, times(1)).execute(any(), any());
     }
 
     @Test
@@ -77,10 +83,25 @@ public class RetryWithTimeOutStrategyTest {
 
         Step step = mockStep(Status.FAILURE);
         when(step.strategy()).thenReturn(Optional.of(strategyDefinition));
-        strategyUnderTest.execute(null, step, null, null);
+        strategyUnderTest.execute(createScenarioExecution(), step, null, null);
 
-        verify(step, times(20)).execute(null, null);
+        verify(step, times(20)).execute(any(), any());
         verify(step, times(19)).resetExecution();
+    }
+
+    @Test
+    public void step_fails_do_not_retry_if_stop_requested() {
+        StrategyProperties strategyProperties = properties("0.1 sec", "5 ms");
+        StepStrategyDefinition strategyDefinition = new StepStrategyDefinition("", strategyProperties);
+
+        Step step = mockStep(Status.FAILURE);
+        when(step.strategy()).thenReturn(Optional.of(strategyDefinition));
+        ScenarioExecution scenarioExecution = createScenarioExecution();
+        stopExecution(scenarioExecution);
+        Status stepExecutedStatus = strategyUnderTest.execute(scenarioExecution, step, null, null);
+
+        verify(step, times(1)).execute(any(), any());
+        assertThat(stepExecutedStatus).isEqualTo(Status.STOPPED);
     }
 
     @Test
@@ -90,9 +111,9 @@ public class RetryWithTimeOutStrategyTest {
 
         Step step = mockStep(Status.FAILURE, Status.FAILURE, Status.FAILURE, Status.SUCCESS);
         when(step.strategy()).thenReturn(Optional.of(strategyDefinition));
-        strategyUnderTest.execute(null, step, null, null);
+        strategyUnderTest.execute(createScenarioExecution(), step, null, null);
 
-        verify(step, times(4)).execute(null, null);
+        verify(step, times(4)).execute(any(), any());
     }
 
     @Test
@@ -125,7 +146,7 @@ public class RetryWithTimeOutStrategyTest {
         StepStrategyDefinition strategyDefinition = new StepStrategyDefinition("", properties);
         when(rootStep.strategy()).thenReturn(Optional.of(strategyDefinition));
 
-        strategy.execute(null, rootStep, null, strategies);
+        strategy.execute(createScenarioExecution(), rootStep, null, strategies);
 
         strategiesMock.forEach(strat -> verify(strat, times(1)).execute(any(), any(), any(), any()));
     }
@@ -161,11 +182,11 @@ public class RetryWithTimeOutStrategyTest {
         StepStrategyDefinition strategyDefinition = new StepStrategyDefinition("", properties);
         when(rootStep.strategy()).thenReturn(Optional.of(strategyDefinition));
 
-        strategyUnderTest.execute(null, rootStep, null, strategies);
+        strategyUnderTest.execute(createScenarioExecution(), rootStep, null, strategies);
 
-        verify(strategy1, times(10)).execute(null, step1, null, strategies);
-        verify(strategy2, times(7)).execute(null, step2, null, strategies);
-        verify(strategy3, times(7)).execute(null, step3, null, strategies);
+        verify(strategy1, times(10)).execute(any(), eq(step1), any(), eq(strategies));
+        verify(strategy2, times(7)).execute(any(), eq(step2), any(), eq(strategies));
+        verify(strategy3, times(7)).execute(any(), eq(step3), any(), eq(strategies));
     }
 
     @Test
@@ -176,9 +197,9 @@ public class RetryWithTimeOutStrategyTest {
         Step step = mockStep(stepStatus);
         when(step.strategy()).thenReturn(Optional.of(strategyDefinition));
 
-        strategyUnderTest.execute(null, step, null, null);
+        strategyUnderTest.execute(createScenarioExecution(), step, null, null);
 
-        verify(step, times(stepStatus.length-1)).resetExecution();
+        verify(step, times(stepStatus.length - 1)).resetExecution();
     }
 
     @Test
@@ -189,7 +210,7 @@ public class RetryWithTimeOutStrategyTest {
         Step step = mockStep(stepStatus);
         when(step.strategy()).thenReturn(Optional.of(strategyDefinition));
 
-        strategyUnderTest.execute(null, step, null, null);
+        strategyUnderTest.execute(createScenarioExecution(), step, null, null);
 
         verify(step, times(2 * stepStatus.length))
             .addInformation(
@@ -235,12 +256,20 @@ public class RetryWithTimeOutStrategyTest {
     }
 
     @SuppressWarnings("unused")
-    private Object[] retryStepParameters(){
-        return new Object[] {
-            new Object[] {Status.SUCCESS},
-            new Object[] {Status.FAILURE, Status.SUCCESS},
-            new Object[] {Status.FAILURE, Status.FAILURE, Status.SUCCESS},
-            new Object[] {Status.FAILURE, Status.FAILURE, Status.FAILURE, Status.SUCCESS},
+    private Object[] retryStepParameters() {
+        return new Object[]{
+            new Object[]{Status.SUCCESS},
+            new Object[]{Status.FAILURE, Status.SUCCESS},
+            new Object[]{Status.FAILURE, Status.FAILURE, Status.SUCCESS},
+            new Object[]{Status.FAILURE, Status.FAILURE, Status.FAILURE, Status.SUCCESS},
         };
     }
+
+
+    private void stopExecution(ScenarioExecution scenarioExecution) {
+        Field stopField = ReflectionUtils.findField(ScenarioExecution.class, "stop");
+        stopField.setAccessible(true);
+        ReflectionUtils.setField(stopField, scenarioExecution, true);
+    }
+
 }

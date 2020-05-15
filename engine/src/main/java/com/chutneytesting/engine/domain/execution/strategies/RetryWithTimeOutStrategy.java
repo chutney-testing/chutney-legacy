@@ -90,6 +90,10 @@ public class RetryWithTimeOutStrategy implements StepExecutionStrategy {
                               ScenarioContext scenarioContext, StepExecutionStrategies strategies) {
         Status st = DefaultStepExecutionStrategy.instance.execute(scenarioExecution, step, scenarioContext, strategies); // TODO - how do you cancel a try ? I call this a spam strategy, not a retry one !
         if (st == Status.FAILURE) {
+            if (scenarioExecution.hasToStop()) {
+                step.stopExecution(scenarioExecution);
+                return Status.STOPPED;
+            }
             return st;
         }
         return Status.SUCCESS;
