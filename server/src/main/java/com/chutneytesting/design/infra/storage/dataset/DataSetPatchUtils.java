@@ -124,8 +124,8 @@ public final class DataSetPatchUtils {
             List<String> diffLines = stringLines(unifiedDiffValues.get());
             if (diffLines.size() > 0 && (diffLines.size() != 1 && !"".equals(diffLines.get(0))) ) {
                 List<String> diff = new ArrayList<>(diffLines);
-                diff.add(0, "+++ t\n");
-                diff.add(0, "--- t\n");
+                /*diff.add(0, "+++ t\n");
+                diff.add(0, "--- t\n");*/
                 Patch<String> patch = UnifiedDiffUtils.parseUnifiedDiff(diff);
                 List<String> patchedOriginal = DiffUtils.patch(originalLines, patch);
 

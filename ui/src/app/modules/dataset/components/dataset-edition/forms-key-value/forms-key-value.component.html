@@ -6,23 +6,27 @@
     </div>
 
     <div class="form" *ngFor="let keyValue of keyValues; let i = index">
-        <div class='wrap'>
-            <button type="button" class="box2 btn btn-outline-info delete-button-height"
-                    (click)="addKeyValueLine(i)"
-                    title="{{'global.actions.add' | translate}}">
-                <span class="fa fa-plus"></span>
-            </button>
-            <button type="button" class="box2 btn btn-outline-danger delete-button-height"
-                    (click)="removeKeyValueLine(i)"
-                    title="{{'global.actions.delete' | translate}}">
-                <span class="fa fa-trash"></span>
-            </button>
-            <input type="text" class="box2" id="key" value="{{keyValue.key}}" required
-                   (input)="updateKey(i, $event.target.value)"/>
-        </div>
-        <div class='wrap'>
-            <textarea class="value" rows="1" max-rows="20" cols="100%" [value]="keyValue.value" required
-                      (input)="updateValue(i, $event.target.value)"></textarea>
+        <div class="row">
+            <div style="flex: 0 0 100px;">
+                <button type="button" class="btn btn-outline-info delete-button-height"
+                        (click)="addKeyValueLine(i)"
+                        title="{{'global.actions.add' | translate}}">
+                    <span class="fa fa-plus"></span>
+                </button>
+                <button type="button" class="btn btn-outline-danger delete-button-height ml-1"
+                        (click)="removeKeyValueLine(i)"
+                        title="{{'global.actions.delete' | translate}}">
+                    <span class="fa fa-trash"></span>
+                </button>
+            </div>
+            <div class='col-md-2'>
+                <input type="text" class="form-control" id="key" value="{{keyValue.key}}" required 
+                    (input)="updateKey(i, $event.target.value)"/>
+            </div>
+            <div class='col-md-8'>
+                <textarea class="form-control" rows="1" max-rows="20" cols="100%" [value]="keyValue.value" required
+                    (input)="updateValue(i, $event.target.value)"></textarea>
+            </div>
         </div>
     </div>
 
