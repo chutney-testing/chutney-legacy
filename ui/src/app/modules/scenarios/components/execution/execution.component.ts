@@ -7,7 +7,7 @@ import { debounceTime, delay } from 'rxjs/internal/operators';
 
 import { EventManagerService } from '@shared/event-manager.service';
 
-import { Execution, ScenarioComponent, ScenarioExecutionReport, TestCase } from '@model';
+import { Execution, ScenarioComponent, ScenarioExecutionReport, TestCase, GwtTestCase } from '@model';
 import { ComponentService, ScenarioExecutionService, ScenarioService } from '@core/services';
 
 @Component({
@@ -19,6 +19,9 @@ import { ComponentService, ScenarioExecutionService, ScenarioService } from '@co
 export class ScenarioExecutionComponent implements OnInit, OnDestroy {
 
     testCase: TestCase = null;
+    scenarioComponent: ScenarioComponent = null;
+    scenarioGwt: GwtTestCase = null;
+
     parseError: String;
     executionError: String;
 
@@ -69,10 +72,14 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
         if (this.isComposed(this.currentScenarioId)) {
             this.componentService.findComponentTestCase(this.currentScenarioId).subscribe((testCase: ScenarioComponent) => {
                 this.testCase = TestCase.fromComponent(testCase);
+                this.scenarioComponent = testCase;
             });
         } else {
             this.scenarioService.findRawTestCase(this.currentScenarioId).subscribe((testCase: TestCase) => {
                 this.testCase = testCase;
+            });
+            this.scenarioService.findTestCase(this.currentScenarioId).subscribe((testCase: GwtTestCase) => {
+                this.scenarioGwt = testCase;
             });
         }
     }
@@ -97,17 +104,23 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     onSelectExecution(execution: Execution) {
-        this.currentExecutionId = execution.executionId;
-        this.executionError = '';
+        if (execution !== null) {
+            this.currentExecutionId = execution.executionId;
+            this.executionError = '';
 
-        if (this.scenarioExecutionAsyncSubscription) {
-            this.scenarioExecutionAsyncSubscription.unsubscribe();
-        }
+            if (this.scenarioExecutionAsyncSubscription) {
+                this.scenarioExecutionAsyncSubscription.unsubscribe();
+            }
 
-        if ('RUNNING' === execution.status) {
-            this.observeScenarioExecution(execution.executionId);
+            if ('RUNNING' === execution.status) {
+                this.observeScenarioExecution(execution.executionId);
+            } else {
+                this.loadScenarioExecution(execution.executionId);
+            }
         } else {
-            this.loadScenarioExecution(execution.executionId);
+            this.currentExecutionId = null;
+            this.executionError = '';
+            this.scenarioExecutionReport = null;
         }
     }
 

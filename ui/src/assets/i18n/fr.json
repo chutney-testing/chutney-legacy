@@ -376,7 +376,8 @@
             "no": "Non"
         },
         "smallword": {
-            "of": "de"
+            "of": "de",
+            "On": "Sur"
         }
     }
 }

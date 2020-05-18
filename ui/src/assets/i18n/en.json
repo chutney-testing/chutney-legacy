@@ -376,7 +376,8 @@
             "no": "No"
         },
         "smallword": {
-            "of": "of"
+            "of": "of",
+            "On": "On"
         }
     }
 }

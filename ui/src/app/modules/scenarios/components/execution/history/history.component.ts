@@ -32,19 +32,20 @@ export class HistoryComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     ngOnChanges(simpleChanges: SimpleChanges) {
-        if (simpleChanges['selectedExecutionId'] && !this.checkExecutionIdInHistory(simpleChanges['selectedExecutionId'].currentValue)) {
+        if (simpleChanges['selectedExecutionId'] &&
+            !this.checkExecutionIdInHistory(simpleChanges['selectedExecutionId'].currentValue) &&
+            !(simpleChanges['selectedExecutionId'].currentValue === null && simpleChanges['selectedExecutionId'].previousValue !== null)
+            ) {
             this.selectedLast = true;
             this.findScenarioExecutions();
         }
     }
 
     ngOnInit() {
+        this.selectedLast = false;
         this.route.params.subscribe((params) => {
             if (params['execId'] && params['execId'] !== 'last') {
                 this.selectedExecutionId = params['execId'];
-                this.selectedLast = false;
-            } else {
-                this.selectedLast = true;
             }
         });
     }
@@ -54,9 +55,15 @@ export class HistoryComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     selectExecution(execution: Execution) {
-        this.selectedExecutionId = execution.executionId;
-        this.selectedLast = (this.executions.length > 0 && this.executions[0].executionId === execution.executionId);
-        this.onselectExecution.emit(execution);
+        if (this.selectedExecutionId !== execution.executionId) {
+            this.selectedExecutionId = execution.executionId;
+            this.selectedLast = (this.executions.length > 0 && this.executions[0].executionId === execution.executionId);
+            this.onselectExecution.emit(execution);
+        } else {
+            this.selectedExecutionId = null;
+            this.selectedLast = false;
+            this.onselectExecution.emit(null);
+        }
     }
 
     findScenarioExecutions() {
@@ -123,7 +130,7 @@ export class HistoryComponent implements OnInit, OnDestroy, OnChanges {
 
     private checkExecutionIdInHistory(executionId: number): boolean {
         return this.executions
-            .filter(value => value.executionId == executionId)
+            .filter(value => value.executionId === executionId)
             .length > 0;
 
     }

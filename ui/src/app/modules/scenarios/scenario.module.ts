@@ -31,6 +31,8 @@ import { DragulaModule } from 'ng2-dragula';
 import { ExecuteComponent } from './components/execute/execute.component';
 import { HeaderComponent } from './components/sub/header/header.component';
 import { ScenarioCampaignsComponent } from '@modules/scenarios/components/sub/scenario-campaigns/scenario-campaigns.component';
+import { ComponentReadComponent } from './components/execution/component-read/component-read.component';
+import { GwtReadComponent } from './components/execution/gwt-read/gwt-read.component';
 
 const ROUTES = [
     ...scenarioRoute
@@ -72,6 +74,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
         ComponentEditionComponent,
         ExecuteComponent,
         HeaderComponent,
+        ComponentReadComponent,
+        GwtReadComponent
     ],
     providers: [
         {

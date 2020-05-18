@@ -1,0 +1,28 @@
+<div class="ml-3 mb-2 mt-2">
+    <span *ngIf="step.implementation" class="mr-2 fa fa-sm eye-color pointer"  [ngClass]="showImplementation ? 'fa-angle-down' : 'fa-angle-right'" (click)="showImplementation = !showImplementation"></span>
+    <span class="step-name">{{ step.name }} </span> <small *ngIf="step.implementation"> ({{ step.implementation.identifier }})</small>
+    <span class="small" *ngIf="step.strategy !== null && step.strategy.type === 'Retry'"> 
+        <span class="ml-2 fa fa-sm fa-redo " title="{{ step.strategy.parameters | stringify}}"></span>
+    </span>
+    <div *ngIf="step.implementation" class="ml-2 implementation">
+        <div class="ml-2 small" *ngIf="showImplementation">
+            <span *ngIf="step.implementation.hasTarget"> {{'global.smallword.On' | translate}} {{ step.implementation.target }} </span>
+            <div *ngFor="let input of step.implementation.inputs">
+                {{ input.name }}: {{ input.value }}
+            </div>
+            <div *ngFor="let input of step.implementation.listInputs">
+                {{ input.name}}: <div class="ml-2" *ngFor="let value of input.values"> {{value}}</div>
+            </div>
+            <div *ngFor="let input of step.implementation.mapInputs">
+                {{ input.name}}: <div class="ml-2" *ngFor="let value of input.values">{{value.key}}: {{value.value}}</div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngFor="let child of step.children">
+        <chutney-component-read [step] = child></chutney-component-read>
+    </div>
+
+</div>
+
+
