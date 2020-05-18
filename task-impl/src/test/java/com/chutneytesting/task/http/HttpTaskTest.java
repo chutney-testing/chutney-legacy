@@ -120,7 +120,7 @@ public class HttpTaskTest {
         Target targetMock = mockTarget("http://nowhere.com:42");
 
         // when
-        Task httpDeleteTask = new HttpDeleteTask(targetMock, logger, "", null, "1000 ms");
+        Task httpDeleteTask = new HttpDeleteTask(targetMock, logger, "", null, "5 ms");
         TaskExecutionResult executionResult = httpDeleteTask.execute();
 
         // then
