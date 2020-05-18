@@ -44,7 +44,7 @@ public class GlacioContextPutParser extends GlacioParser {
 
     private static class ContextPutInputsParser implements StepParser<Map<String, Object>> {
 
-        private final Pattern ENTRIES_PATTERN = Pattern.compile("(?: )?(?<key>[^\"][^ ]+[^\"]|\"[^\"]+\") (?<value>[^\"][^ ]+[^\"]|\"[^\"]+\")");
+        private final Pattern ENTRIES_PATTERN = Pattern.compile("^(?<key>[^\"][^\\s]+[^\"]|\"[^\"]+\")\\s?(?<value>.*)$");
 
         @Override
         public Map<String, Object> parseStep(Step step) {
@@ -74,7 +74,7 @@ public class GlacioContextPutParser extends GlacioParser {
         private Map<? extends String, ?> extractDataTableEntries(DataTable dataTable) {
             Map<String, Object> entries = new HashMap<>();
             dataTable.getRows().forEach(tableRow -> {
-                while (tableRow.getCells().size() >= 2) {
+                if (tableRow.getCells().size() == 2) {
                     List<TableCell> cells = tableRow.getCells().subList(0, 2);
                     entries.put(cells.get(0).getValue(), cells.get(1).getValue());
                     cells.clear();

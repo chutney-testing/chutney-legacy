@@ -29,7 +29,7 @@ public abstract class GlacioParser implements GlacioExecutableStepParser {
     public final StepDefinition mapToStepDefinition(String environment, Step step) {
         return new StepDefinition(
             parseStepName(step),
-            parseStepTarget(step),
+            parseStepTarget(environment, step),
             parseTaskType(step),
             parseStepStrategy(step),
             parseTaskInputs(step),
@@ -53,8 +53,8 @@ public abstract class GlacioParser implements GlacioExecutableStepParser {
         return outputsParser.parseStep(step);
     }
 
-    private Target parseStepTarget(Step step) {
-        return targetParser.parseStep(step);
+    private Target parseStepTarget(String environment, Step step) {
+        return targetParser.parseStepForEnv(environment, step);
     }
 
     private StepStrategyDefinition parseStepStrategy(Step step) {

@@ -9,13 +9,10 @@ import static test.unit.com.chutneytesting.engine.api.glacio.parse.GlacioParserH
 import static test.unit.com.chutneytesting.engine.api.glacio.parse.GlacioParserHelper.loopOverRandomString;
 
 import com.chutneytesting.engine.api.glacio.parse.specific.GlacioContextPutParser;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.stream.IntStream;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import org.apache.groovy.util.Maps;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -48,86 +45,26 @@ public class GlacioContextPutParserTest {
     }
 
     @Test
-    @Parameters(method = "dataTableParameters")
-    public void should_parse_entries_input_from_step_datatable(String dataTableString) {
-        int wordsCount = new StringTokenizer(dataTableString, "|").countTokens();
-        Map<String, Object> expectedEntriesInput = buildExpectedEntriesInput(wordsCount / 2 + 1, "var ", "val ue");
-
+    public void should_parse_entries_input_from_step_datatable() {
+        String dataTableString = "| var1 | val ue1 |\n| var 2 | value2 |";
         assertThat(
             sut.mapToStepDefinition(ENVIRONMENT, buildDataTableStepWithText("add variables", dataTableString)).inputs)
-            .containsExactly(entry("entries", expectedEntriesInput));
+            .containsExactly(entry("entries", Maps.of("var1", "val ue1", "var 2", "value2")));
     }
 
     @Test
-    @Parameters(method = "subStepsWithoutSpacesParameters")
-    public void should_parse_entries_input_from_step_substeps_without_spaces(String subStepsString, Integer count) {
-        Map<String, Object> expectedEntriesInput = buildExpectedEntriesInput(count + 1, "var", "value");
-
+    public void should_parse_entries_input_from_step_substeps_without_spaces() {
+        String subStepsString = "var1 value1\nvar2 value2";
         assertThat(
             sut.mapToStepDefinition(ENVIRONMENT, buildSubStepsStepWithText("add variables", subStepsString)).inputs)
-            .containsExactly(entry("entries", expectedEntriesInput));
+            .containsExactly(entry("entries", Maps.of("var1", "value1", "var2", "value2")));
     }
 
     @Test
-    @Parameters(method = "subStepsWithSpacesParameters")
-    public void should_parse_entries_input_from_step_substeps_with_spaces(String subStepsString, Integer count) {
-        Map<String, Object> expectedEntriesInput = buildExpectedEntriesInput(count + 1, "var ", "val ue");
-
+    public void should_parse_entries_input_from_step_substeps_with_spaces() {
+        String subStepsString = "var1 val ue1\n\"var 2\" value2";
         assertThat(
             sut.mapToStepDefinition(ENVIRONMENT, buildSubStepsStepWithText("add variables", subStepsString)).inputs)
-            .containsExactly(entry("entries", expectedEntriesInput));
-    }
-
-    @SuppressWarnings("unused")
-    private Object[] dataTableParameters() {
-        return new Object[]{
-            new Object[]{"| var 1 | val ue1 |"},
-            new Object[]{"| var 1  | val ue1 | var 2 | val ue2 |"},
-            new Object[]{"| var 1 | val ue1 | var 2  | val ue2 |\n| var 3 | val ue3 |"}
-        };
-    }
-
-    @SuppressWarnings("unused")
-    private Object[] subStepsWithoutSpacesParameters() {
-        return new Object[]{
-            new Object[]{
-                "var1 value1", 1
-            },
-            new Object[]{
-                "var1 value1" + "\n" +
-                    "var2 value2 var3 value3", 3
-            },
-            new Object[]{
-                "var1 value1 var2 value2" + "\n" +
-                    "var3 value3" + "\n" +
-                    "var4 value4 var5 value5 var6 value6", 6
-            }
-        };
-    }
-
-    @SuppressWarnings("unused")
-    private Object[] subStepsWithSpacesParameters() {
-        return new Object[]{
-            new Object[]{
-                "\"var 1\" \"val ue1\"", 1
-            },
-            new Object[]{
-                "\"var 1 \" \" val ue1\"" + "\n" +
-                    "\"var 2\" \"val ue2\" \" var 3\" \"val ue3\"", 3
-            },
-            new Object[]{
-                "\"var 1\" \" val ue1\" \"var 2\" \"val ue2 \"" + "\n" +
-                    "\"var 3\" \"val ue3\"" + "\n" +
-                    "\"var 4\" \"val ue4 \" \"var 5\" \"val ue5\" \"var 6\" \" val ue6\"", 6
-            }
-        };
-    }
-
-    private Map<String, Object> buildExpectedEntriesInput(int count, String keyStringPrefix, String valueStringPrefix) {
-        Map<String, Object> expectedEntriesInput = new HashMap<>();
-        IntStream.range(1, count).forEach(idx ->
-            expectedEntriesInput.put(keyStringPrefix + idx, valueStringPrefix + idx)
-        );
-        return expectedEntriesInput;
+            .containsExactly(entry("entries", Maps.of("var1", "val ue1", "var 2", "value2")));
     }
 }

@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 public class ParsingTools {
 
-    private ParsingTools() {};
+    private ParsingTools() {}
 
     static Step removeKeyword(Pattern pattern, Step step) {
         Matcher matcher = pattern.matcher(step.getText());

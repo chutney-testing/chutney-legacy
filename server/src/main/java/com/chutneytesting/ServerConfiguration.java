@@ -1,6 +1,5 @@
 package com.chutneytesting;
 
-import com.chutneytesting.agent.domain.configure.LocalServerIdentifier;
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.design.domain.campaign.CampaignRepository;
 import com.chutneytesting.design.domain.environment.EnvironmentRepository;
@@ -22,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
-import java.util.Optional;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import liquibase.integration.spring.SpringLiquibase;
@@ -59,18 +57,6 @@ public class ServerConfiguration {
         liquibase.setChangeLog("classpath:changelog/db.changelog-master.xml");
         liquibase.setDataSource(dataSource);
         return liquibase;
-    }
-
-    @Bean
-    LocalServerIdentifier localServerIdentifier(@Value("${server.port}") int port,
-                                                @Value("${localAgent.defaultName:#{null}}") Optional<String> defaultLocalName,
-                                                @Value("${localAgent.defaultHostName:#{null}}") Optional<String> defaultLocalHostName
-    ) throws UnknownHostException {
-        InetAddress localHost = InetAddress.getLocalHost();
-        return new LocalServerIdentifier(
-            port,
-            defaultLocalName.orElse(localHost.getHostName()),
-            defaultLocalHostName.orElse(localHost.getCanonicalHostName()));
     }
 
     @Bean

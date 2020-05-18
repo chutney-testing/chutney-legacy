@@ -18,7 +18,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class ExecutableStepFactory {
 
-    private final static String EXECUTABLE_STEP_TEXT_PATTERN_STRING = "^(?<trigger>%s)(\\W+)(?<sentence>(?<action>\\w+)(\\s+.*)?)$";
+    private final static String EXECUTABLE_STEP_TEXT_PATTERN_STRING = "^(?:%s)(?:\\W?\\s+)(?<sentence>(?<action>[a-zA-Z\\-_0-9]+)(\\s+.*)?)$";
     private Map<Locale, Pair<Pattern, Predicate<String>>> executableStepTextPatternsCache = new ConcurrentHashMap<>();
 
     private final Map<Locale, Map<EXECUTABLE_KEYWORD, Set<String>>> executableStepLanguagesKeywords;
@@ -36,7 +36,7 @@ public class ExecutableStepFactory {
     public StepDefinition build(Locale lang, String environment, Step step) {
         Optional<Pair<Pattern, Predicate<String>>> pattern = ofNullable(executableStepTextPatternsCache.get(lang));
         if (pattern.isPresent()) {
-            Matcher matcher = pattern.get().getLeft().matcher(step.getText());
+            Matcher matcher = pattern.get().getLeft().matcher(step.getText().trim());
             if (matcher.matches()) {
                 String action = ofNullable(matcher.group("action")).orElse("");
                 String sentence = ofNullable(matcher.group("sentence")).orElse("");
@@ -55,7 +55,7 @@ public class ExecutableStepFactory {
     public boolean isExecutableStep(Locale lang, Step step) {
         Pair<Pattern, Predicate<String>> pattern = ofNullable(executableStepTextPatternsCache.get(lang))
             .orElseGet(() -> compileAndCachePattern(lang));
-        return pattern.getRight().test(step.getText());
+        return pattern.getRight().test(step.getText().trim());
     }
 
     private Step rebuildStepUsing(String sentence, Step step) {

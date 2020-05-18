@@ -5,9 +5,9 @@ Feature: Simple parser feature
 
     Scenario: Simple Success/Debug
         Given Do: debug
-        And Run (success) direct success
+        And Run success direct success
         When something is good
-            Do: (debug) substep debug
+            Execute debug substep debug
         And it is very good
             Run success
         Then it is very good
@@ -15,10 +15,10 @@ Feature: Simple parser feature
                 Do debug
         And it is very good
             it is very good
-                Run (success) subsubstep success
+                Run! success subsubstep success
 
     Scenario: Deep SubStep fail
         When There is a first step
             I'm a sub step
                 I'm a sub sub step
-                    Run: fail
+                    Run fail
