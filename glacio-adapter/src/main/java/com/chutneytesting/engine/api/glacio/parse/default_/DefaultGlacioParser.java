@@ -2,6 +2,7 @@ package com.chutneytesting.engine.api.glacio.parse.default_;
 
 import static java.util.Optional.ofNullable;
 
+import com.chutneytesting.design.domain.environment.EnvironmentService;
 import com.chutneytesting.engine.api.glacio.parse.GlacioParser;
 import com.chutneytesting.task.domain.TaskTemplateRegistry;
 import com.github.fridujo.glacio.ast.Step;
@@ -13,12 +14,12 @@ import java.util.regex.Pattern;
 
 public class DefaultGlacioParser extends GlacioParser {
 
-    private final static Pattern STEP_TEXT_PATTERN = Pattern.compile("^(?<task>\\(.*\\) )?(?<text>.*)$");
+    private final static Pattern STEP_TEXT_PATTERN = Pattern.compile("^(?<task>[a-zA-Z\\-_0-9]*)?\\s*(?<text>.*)$");
 
     private final TaskTemplateRegistry taskTemplateRegistry;
 
-    public DefaultGlacioParser(TaskTemplateRegistry taskTemplateRegistry) {
-        super(new TargetStepParser("On"),
+    public DefaultGlacioParser(TaskTemplateRegistry taskTemplateRegistry, EnvironmentService environmentService) {
+        super(new TargetStepParser(environmentService, "On"),
             new FilteredByKeywordsSubStepMapStepParser(new EntryStepParser(), "With"),
             new FilteredByKeywordsSubStepMapStepParser(new EntryStepParser(), "Take", "Keep"),
             EmptyParser.noStrategyParser);
@@ -30,7 +31,6 @@ public class DefaultGlacioParser extends GlacioParser {
         Matcher matcher = STEP_TEXT_PATTERN.matcher(step.getText());
         if (matcher.matches()) {
             return ofNullable(matcher.group("task"))
-                .map(this::extractTaskId)
                 .filter(taskId -> this.taskTemplateRegistry.getByIdentifier(taskId).isPresent())
                 .orElseGet(() ->
                     ofNullable(matcher.group("text"))
@@ -38,11 +38,6 @@ public class DefaultGlacioParser extends GlacioParser {
                         .orElseThrow(() -> new IllegalArgumentException("Cannot identify task from step text : " + step.getText())));
         }
         throw new IllegalArgumentException("Cannot extract task type from step text : " + step.getText());
-    }
-
-    private String extractTaskId(String taskGroup) {
-        String withoutFirstChar = taskGroup.substring(1);
-        return withoutFirstChar.substring(0, withoutFirstChar.length() - 2);
     }
 
     @Override

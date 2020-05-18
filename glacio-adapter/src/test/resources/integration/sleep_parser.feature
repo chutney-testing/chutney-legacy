@@ -3,15 +3,16 @@
 Feature: Sleep feature
     Could execute sleep task as glacio feature
 
-    Scenario: Simple inputs with sleep task
+    Scenario: Define sleep tasks with specific parser
         When The night is out there
-            I rest for short time periods
-                Do sleep for 1 sec
-                Execute success
-                Do rest during 200 ms
-            I wait for some more short periods of time
-                Execute await 300 ms
-                Do success
-                Execute pause during 200 ms
-                Do success
-                Execute pause for 200 ms
+            Do success
+        Then I rest for short time periods
+            Do: sleep for 1 sec
+            Execute success
+            Do rest during 200 ms
+        And I wait for some more short periods of time
+            Execute await 300 ms
+            Do success
+            Execute pause during 120 ms
+            Do success
+            Execute: Wait for 390 ms

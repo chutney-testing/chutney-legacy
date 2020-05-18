@@ -16,7 +16,7 @@
         <!-- Internal -->
         <dependency>
             <groupId>com.chutneytesting</groupId>
-            <artifactId>engine</artifactId>
+            <artifactId>server</artifactId>
             <version>${project.version}</version>
         </dependency>
 

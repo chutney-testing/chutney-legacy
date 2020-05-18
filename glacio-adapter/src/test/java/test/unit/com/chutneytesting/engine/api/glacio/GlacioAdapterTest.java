@@ -13,7 +13,7 @@ import com.chutneytesting.engine.api.glacio.GlacioAdapter;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.google.common.io.Resources;
 import java.io.File;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 import junitparams.JUnitParamsRunner;
@@ -126,6 +126,6 @@ public class GlacioAdapterTest {
     }
 
     private String fileContent(String resourcePath) {
-        return Files.contentOf(new File(Resources.getResource(resourcePath).getPath()), Charset.forName("UTF-8"));
+        return Files.contentOf(new File(Resources.getResource(resourcePath).getPath()), StandardCharsets.UTF_8);
     }
 }

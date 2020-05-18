@@ -15,8 +15,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import test.unit.com.chutneytesting.engine.api.glacio.parse.DebugParser;
@@ -26,11 +24,6 @@ import test.unit.com.chutneytesting.engine.api.glacio.parse.SuccessParser;
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {ExecutionSpringConfiguration.class, GlacioAdapterSpringConfiguration.class})
 public class GlacioAdapterSpringConfigurationTest {
-
-    @Configuration
-    @ComponentScan("com.chutneytesting")
-    public static class SpringConfig {
-    }
 
     @Autowired
     private List<GlacioExecutableStepParser> glacioExecutableStepParsers;
