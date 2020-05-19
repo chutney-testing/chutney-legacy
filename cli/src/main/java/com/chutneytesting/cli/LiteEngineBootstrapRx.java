@@ -1,6 +1,6 @@
 package com.chutneytesting.cli;
 
-import com.chutneytesting.ExecutionSpringConfiguration;
+import com.chutneytesting.ExecutionConfiguration;
 import com.chutneytesting.cli.infrastruture.ExecutionRequestMapper;
 import com.chutneytesting.cli.infrastruture.ImmutableEnvironment;
 import com.chutneytesting.cli.infrastruture.ImmutableScenarioContent;
@@ -19,11 +19,6 @@ import java.nio.file.Files;
 import org.hjson.JsonValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.Banner.Mode;
-import org.springframework.boot.WebApplicationType;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -46,16 +41,15 @@ public class LiteEngineBootstrapRx implements Runnable {
 
     @Override
     public void run() {
-        final ApplicationContext context = startSpringContext();
+        ExecutionConfiguration executionConfiguration = new ExecutionConfiguration();
 
         ImmutableEnvironment originalEnvironmentObject = getEnvironment(environmentFile);
-
-        final TestEngine testEngine = (TestEngine) context.getBean("embeddedTestEngine");
+        final TestEngine testEngine = executionConfiguration.embeddedTestEngine();
 
         Observable.fromArray(scenarios)
-            .map(filePath -> getScenario(filePath))
+            .map(this::getScenario)
             .map(scenario ->  ExecutionRequestMapper.toDto(scenario, originalEnvironmentObject))
-            .map(requestDto -> testEngine.executeAsync(requestDto))
+            .map(testEngine::executeAsync)
             .concatMap(executionId -> {
                 Observable<StepExecutionReportDto> reports = testEngine.receiveNotification(executionId);
                 reports.subscribeOn(Schedulers.io())
@@ -98,15 +92,6 @@ public class LiteEngineBootstrapRx implements Runnable {
             .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
             .withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
         return objectMapper;
-    }
-
-    private ConfigurableApplicationContext startSpringContext() {
-        SpringApplicationBuilder appBuilder = new SpringApplicationBuilder(ExecutionSpringConfiguration.class)
-            .registerShutdownHook(true)
-            .web(WebApplicationType.NONE)
-            .bannerMode(Mode.OFF);
-
-        return appBuilder.build().run();
     }
 
     public static void main(String... args) {

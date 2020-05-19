@@ -17,6 +17,7 @@ import com.chutneytesting.execution.domain.state.ExecutionStateRepository;
 import com.chutneytesting.execution.infra.execution.ExecutionRequestMapper;
 import com.chutneytesting.execution.infra.execution.ServerTestEngineJavaImpl;
 import com.chutneytesting.instrument.domain.Metrics;
+import com.chutneytesting.task.api.EmbeddedTaskEngine;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -26,7 +27,6 @@ import javax.sql.DataSource;
 import liquibase.integration.spring.SpringLiquibase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jms.activemq.ActiveMQAutoConfiguration;
@@ -49,6 +49,11 @@ public class ServerConfiguration {
     @PostConstruct
     public void logPort() throws UnknownHostException {
         LOGGER.debug("Starting server " + InetAddress.getLocalHost().getCanonicalHostName() + " on " + port);
+    }
+
+    @Bean
+    public ExecutionConfiguration executionConfiguration(@Value("${chutney.engine.reporter.publisher.ttl:5}") Long reporterTTL) {
+        return new ExecutionConfiguration(reporterTTL);
     }
 
     @Bean
@@ -108,9 +113,18 @@ public class ServerConfiguration {
     }
 
     @Bean
-    ServerTestEngine javaTestEngine(@Qualifier("embeddedTestEngine") TestEngine testEngine,
-                                    ExecutionRequestMapper executionRequestMapper) {
-        return new ServerTestEngineJavaImpl(testEngine, executionRequestMapper);
+    TestEngine embeddedTestEngine(ExecutionConfiguration executionConfiguration) {
+        return executionConfiguration.embeddedTestEngine();
+    }
+
+    @Bean
+    ServerTestEngine javaTestEngine(TestEngine embeddedTestEngine, ExecutionRequestMapper executionRequestMapper) {
+        return new ServerTestEngineJavaImpl(embeddedTestEngine, executionRequestMapper);
+    }
+
+    @Bean
+    EmbeddedTaskEngine embeddedTaskEngine(ExecutionConfiguration executionConfiguration) {
+        return new EmbeddedTaskEngine(executionConfiguration.taskTemplateRegistry());
     }
 
 }

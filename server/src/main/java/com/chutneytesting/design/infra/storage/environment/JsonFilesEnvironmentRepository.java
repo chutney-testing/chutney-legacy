@@ -2,15 +2,16 @@ package com.chutneytesting.design.infra.storage.environment;
 
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.chutneytesting.design.domain.environment.CannotDeleteEnvironmentException;
 import com.chutneytesting.design.domain.environment.Environment;
 import com.chutneytesting.design.domain.environment.EnvironmentNotFoundException;
 import com.chutneytesting.design.domain.environment.EnvironmentRepository;
 import com.chutneytesting.design.domain.environment.InvalidEnvironmentNameException;
 import com.chutneytesting.tools.ZipUtils;
+import com.chutneytesting.tools.file.FileUtils;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -23,12 +24,11 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.ZipOutputStream;
-import com.chutneytesting.tools.file.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 @Repository
-class JsonFilesEnvironmentRepository implements EnvironmentRepository {
+public class JsonFilesEnvironmentRepository implements EnvironmentRepository {
 
     private static final String NAME_VALIDATION_REGEX = "[a-zA-Z0-9_\\-]{3,20}";
     private static final Pattern NAME_VALIDATION_PATTERN = Pattern.compile(NAME_VALIDATION_REGEX);
@@ -40,7 +40,7 @@ class JsonFilesEnvironmentRepository implements EnvironmentRepository {
         .enable(SerializationFeature.INDENT_OUTPUT)
         .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
-    JsonFilesEnvironmentRepository(@Value("${configuration-folder:conf}") String storeFolderPath) throws UncheckedIOException {
+    public JsonFilesEnvironmentRepository(@Value("${configuration-folder:conf}") String storeFolderPath) throws UncheckedIOException {
         this.storeFolderPath = Paths.get(storeFolderPath).toAbsolutePath();
         initFolder(this.storeFolderPath);
     }
