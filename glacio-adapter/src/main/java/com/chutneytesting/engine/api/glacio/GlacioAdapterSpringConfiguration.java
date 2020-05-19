@@ -3,6 +3,7 @@ package com.chutneytesting.engine.api.glacio;
 import static com.chutneytesting.tools.Streams.identity;
 import static java.util.Optional.empty;
 
+import com.chutneytesting.ExecutionConfiguration;
 import com.chutneytesting.agent.NodeNetworkSpringConfiguration;
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.design.domain.environment.EnvironmentRepository;
@@ -10,7 +11,6 @@ import com.chutneytesting.design.domain.environment.EnvironmentService;
 import com.chutneytesting.engine.api.glacio.ExecutableStepFactory.EXECUTABLE_KEYWORD;
 import com.chutneytesting.engine.api.glacio.parse.GlacioExecutableStepParser;
 import com.chutneytesting.engine.api.glacio.parse.default_.DefaultGlacioParser;
-import com.chutneytesting.task.domain.TaskTemplateRegistry;
 import com.chutneytesting.tools.ThrowingFunction;
 import com.chutneytesting.tools.loader.ExtensionLoaders;
 import java.io.IOException;
@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -35,6 +36,11 @@ import org.springframework.context.annotation.Import;
 public class GlacioAdapterSpringConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GlacioAdapterSpringConfiguration.class);
+
+    @Value("${chutney.engine.reporter.publisher.ttl:5}")
+    private Long reporterTTL;
+
+    private ExecutionConfiguration executionConfiguration = new ExecutionConfiguration(reporterTTL);
 
     @Bean
     public Map<Locale, Map<EXECUTABLE_KEYWORD, Set<String>>> executableStepLanguagesKeywords() throws IOException {
@@ -66,9 +72,12 @@ public class GlacioAdapterSpringConfiguration {
     @Bean
     public ExecutableStepFactory executableStepFactory(Map<Locale, Map<EXECUTABLE_KEYWORD, Set<String>>> executableStepLanguagesKeywords,
                                                        Map<Pair<Locale, String>, GlacioExecutableStepParser> glacioExecutableStepParsersLanguages,
-                                                       TaskTemplateRegistry taskTemplateRegistry,
                                                        EnvironmentService environmentService) {
-        return new ExecutableStepFactory(executableStepLanguagesKeywords, glacioExecutableStepParsersLanguages, new DefaultGlacioParser(taskTemplateRegistry, environmentService));
+        return new ExecutableStepFactory(
+            executableStepLanguagesKeywords,
+            glacioExecutableStepParsersLanguages,
+            new DefaultGlacioParser(executionConfiguration.taskTemplateRegistry(), environmentService)
+        );
     }
 
     @Bean

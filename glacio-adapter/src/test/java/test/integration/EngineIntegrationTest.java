@@ -3,7 +3,7 @@ package test.integration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
-import com.chutneytesting.ExecutionSpringConfiguration;
+import com.chutneytesting.ExecutionConfiguration;
 import com.chutneytesting.engine.api.glacio.GlacioAdapter;
 import com.chutneytesting.engine.api.glacio.GlacioAdapterSpringConfiguration;
 import com.chutneytesting.engine.domain.execution.ExecutionEngine;
@@ -28,18 +28,18 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {ExecutionSpringConfiguration.class, GlacioAdapterSpringConfiguration.class})
+@ContextConfiguration(classes = {GlacioAdapterSpringConfiguration.class})
 @TestPropertySource(properties = {
     "configuration-folder=src/test/resources/conf"
 })
 public class EngineIntegrationTest {
 
     private static final String ENVIRONMENT = "ENV";
+    private static ExecutionConfiguration executionConfiguration = new ExecutionConfiguration();
 
-    @Autowired
-    private ExecutionEngine executionEngine;
-    @Autowired
-    private Reporter reporter;
+    private ExecutionEngine executionEngine = executionConfiguration.executionEngine();
+    private Reporter reporter = executionConfiguration.reporter();
+
     @Autowired
     private GlacioAdapter glacioAdapter;
 

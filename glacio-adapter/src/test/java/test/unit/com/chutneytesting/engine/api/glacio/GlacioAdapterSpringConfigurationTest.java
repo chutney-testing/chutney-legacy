@@ -2,7 +2,7 @@ package test.unit.com.chutneytesting.engine.api.glacio;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.ExecutionSpringConfiguration;
+import com.chutneytesting.ExecutionConfiguration;
 import com.chutneytesting.engine.api.glacio.ExecutableStepFactory.EXECUTABLE_KEYWORD;
 import com.chutneytesting.engine.api.glacio.GlacioAdapterSpringConfiguration;
 import com.chutneytesting.engine.api.glacio.parse.GlacioExecutableStepParser;
@@ -22,7 +22,7 @@ import test.unit.com.chutneytesting.engine.api.glacio.parse.NoGlacioParser;
 import test.unit.com.chutneytesting.engine.api.glacio.parse.SuccessParser;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {ExecutionSpringConfiguration.class, GlacioAdapterSpringConfiguration.class})
+@ContextConfiguration(classes = {ExecutionConfiguration.class, GlacioAdapterSpringConfiguration.class})
 public class GlacioAdapterSpringConfigurationTest {
 
     @Autowired
