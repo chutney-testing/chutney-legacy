@@ -1,10 +1,21 @@
 <div class="mt-3" [formGroup]="keyValuesForm">
-    <div class="col">
+    <div class="row">
+        <button type="button" class="btn btn-info" (click)="exportKeyValue()">
+            <span class="fa fa-plus" aria-hidden="true"></span> {{ 'global.actions.export' | translate }}
+        </button>
+
+        <div class="file btn btn-info div-file ml-2">
+            <span class="fa fa-plus" aria-hidden="true"></span> {{ 'global.actions.import' | translate }}
+            <input class="input-file" type="file" name="file" multiple="false" (change)="importKeyValue($event.target.files)"/>
+        </div>
+
+    </div>
+    <div class="row">
         <button type="button" class="btn btn-info" (click)="addKeyValueLine()">
             <span class="fa fa-plus" aria-hidden="true"></span> {{ 'global.actions.add' | translate }}
         </button>
     </div>
-
+    
     <div class="form" *ngFor="let keyValue of keyValues; let i = index">
         <div class="row">
             <div style="flex: 0 0 100px;">

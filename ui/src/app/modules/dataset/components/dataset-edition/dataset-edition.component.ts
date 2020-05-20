@@ -19,8 +19,6 @@ export class DatasetEditionComponent implements OnInit, OnDestroy {
     datasetForm: FormGroup;
     private routeParamsSubscription: Subscription;
 
-    dataGridMock: Array<KeyValue> = [];
-
     constructor(private dataSetService: DataSetService,
                 private router: Router,
                 private route: ActivatedRoute,
@@ -29,16 +27,6 @@ export class DatasetEditionComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        let values: string[] = ['X', 'Y', 'Z'];
-        let values2: string[] = ['X2', 'Y2', 'Z2'];
-        let values3: string[] = ['X3', 'Y3', 'Z3'];
-        let columns = new KeyValue('A', values);
-        let columns2 = new KeyValue('B', values2);
-        let columns3 = new KeyValue('C', values3);
-
-        this.dataGridMock.push(columns);
-        this.dataGridMock.push(columns2);
-        this.dataGridMock.push(columns3);
 
         this.datasetForm = this.formBuilder.group({
             name: ['', Validators.required],

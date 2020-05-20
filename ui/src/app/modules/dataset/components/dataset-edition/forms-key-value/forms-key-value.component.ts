@@ -9,6 +9,8 @@ import {
     ValidationErrors
 } from '@angular/forms';
 import { KeyValue } from '@model';
+import { FileSaverService } from 'ngx-filesaver';
+import * as JSZip from 'jszip';
 
 @Component({
     selector: 'chutney-forms-key-value',
@@ -32,9 +34,11 @@ export class FormsKeyValueComponent implements OnChanges, ControlValueAccessor {
     @Input() keyValues: Array<KeyValue> = [];
 
     keyValuesForm: FormArray;
-    registeredControls: number[] = [];
 
-    constructor(private fb: FormBuilder) {
+    constructor(
+        private fb: FormBuilder,
+        private fileSaverService: FileSaverService,
+    ) {
         this.keyValuesForm = this.fb.array([]);
     }
 
@@ -51,7 +55,6 @@ export class FormsKeyValueComponent implements OnChanges, ControlValueAccessor {
                 i,
                 this.fb.control(kv)
             );
-            this.registeredControls.push(i);
             i++;
         });
     }
@@ -92,8 +95,10 @@ export class FormsKeyValueComponent implements OnChanges, ControlValueAccessor {
     }
 
     private clearForm() {
-        this.registeredControls.forEach(i => this.keyValuesForm.removeAt(i));
-        this.registeredControls = [];
+        const numberofLine = this.keyValuesForm.controls.length;
+        for (let index = 0; index < numberofLine; index++) {
+            this.keyValuesForm.removeAt(0);
+        }
     }
 
     // CVA
@@ -104,7 +109,7 @@ export class FormsKeyValueComponent implements OnChanges, ControlValueAccessor {
     };
 
     writeValue(val: any): void {
-        val && this.keyValuesForm.setValue(val, {emitEvent: false});
+        val && this.keyValuesForm.setValue(val, { emitEvent: false });
     }
 
     registerOnChange(fn: any): void {
@@ -127,5 +132,37 @@ export class FormsKeyValueComponent implements OnChanges, ControlValueAccessor {
                 message: 'fields are invalid'
             }
         };
+    }
+
+    exportKeyValue() {
+        const fileName = `keyvalue.csv`;
+        let fileContent = '';
+        const delimiter = ';';
+
+        this.keyValuesForm.value.forEach(element => {
+            fileContent += element.key + delimiter + element.value + '\n';
+        });
+
+        this.fileSaverService.saveText(fileContent, fileName);
+    }
+
+    importKeyValue(files: FileList) {
+        const file = files.item(0);
+        const fileReader = new FileReader();
+        fileReader.onload = (e) => {
+            this.clearForm();
+            const content = '' + fileReader.result;
+            const lines = content.split('\n');
+            lines.forEach(l => {
+                const oneLine = l.split(';');
+                if (oneLine.length === 2) {
+                    this.keyValuesForm.push(
+                        this.fb.control(new KeyValue(oneLine[0], oneLine[1]))
+                    );
+                }
+            });
+            this.keyValuesForm.enable();
+        };
+        fileReader.readAsText(file);
     }
 }
