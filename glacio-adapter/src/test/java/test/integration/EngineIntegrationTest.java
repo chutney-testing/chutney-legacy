@@ -5,43 +5,38 @@ import static org.assertj.core.api.Assertions.entry;
 
 import com.chutneytesting.ExecutionConfiguration;
 import com.chutneytesting.engine.api.glacio.GlacioAdapter;
-import com.chutneytesting.engine.api.glacio.GlacioAdapterSpringConfiguration;
-import com.chutneytesting.engine.domain.execution.ExecutionEngine;
+import com.chutneytesting.engine.api.glacio.GlacioAdapterConfiguration;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
-import com.chutneytesting.engine.domain.report.Reporter;
 import com.google.common.io.Resources;
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.groovy.util.Maps;
 import org.assertj.core.util.Files;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {GlacioAdapterSpringConfiguration.class})
-@TestPropertySource(properties = {
-    "configuration-folder=src/test/resources/conf"
-})
 public class EngineIntegrationTest {
 
     private static final String ENVIRONMENT = "ENV";
-    private static ExecutionConfiguration executionConfiguration = new ExecutionConfiguration();
+    private static String ENV_FOLDER_PATH = "src/test/resources/conf";
+    private static ExecutionConfiguration executionConfiguration;
 
-    private ExecutionEngine executionEngine = executionConfiguration.executionEngine();
-    private Reporter reporter = executionConfiguration.reporter();
+    private static GlacioAdapter glacioAdapter;
 
-    @Autowired
-    private GlacioAdapter glacioAdapter;
+    @BeforeClass
+    public static void setUp() throws IOException {
+        executionConfiguration = new ExecutionConfiguration();
+        GlacioAdapterConfiguration glacioAdapterConfiguration = new GlacioAdapterConfiguration(executionConfiguration, ENV_FOLDER_PATH, ENV_FOLDER_PATH + "/endpoints.json");
+
+        glacioAdapter = glacioAdapterConfiguration.glacioAdapter();
+    }
 
     @Test
     public void should_execute_simple_feature() {
@@ -166,8 +161,8 @@ public class EngineIntegrationTest {
     }
 
     private StepExecutionReport execute(StepDefinition stepDefinition) {
-        Long executionId = executionEngine.execute(stepDefinition, ScenarioExecution.createScenarioExecution());
-        return reporter.subscribeOnExecution(executionId).blockingLast();
+        Long executionId = executionConfiguration.executionEngine().execute(stepDefinition, ScenarioExecution.createScenarioExecution());
+        return executionConfiguration.reporter().subscribeOnExecution(executionId).blockingLast();
     }
 
     private String fileContent(String resourcePath) {

@@ -2,37 +2,38 @@ package test.unit.com.chutneytesting.engine.api.glacio;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.ExecutionConfiguration;
 import com.chutneytesting.engine.api.glacio.ExecutableStepFactory.EXECUTABLE_KEYWORD;
-import com.chutneytesting.engine.api.glacio.GlacioAdapterSpringConfiguration;
+import com.chutneytesting.engine.api.glacio.GlacioAdapterConfiguration;
 import com.chutneytesting.engine.api.glacio.parse.GlacioExecutableStepParser;
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 import test.unit.com.chutneytesting.engine.api.glacio.parse.DebugParser;
 import test.unit.com.chutneytesting.engine.api.glacio.parse.NoGlacioParser;
 import test.unit.com.chutneytesting.engine.api.glacio.parse.SuccessParser;
 
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {ExecutionConfiguration.class, GlacioAdapterSpringConfiguration.class})
-public class GlacioAdapterSpringConfigurationTest {
+public class GlacioAdapterConfigurationTest {
 
-    @Autowired
-    private List<GlacioExecutableStepParser> glacioExecutableStepParsers;
-    @Autowired
-    private Map<Locale, Map<EXECUTABLE_KEYWORD, Set<String>>> executableStepLanguagesKeywords;
-    @Autowired
-    private Map<Pair<Locale, String>, GlacioExecutableStepParser> glacioExecutableStepParsersLanguages;
+    private static List<GlacioExecutableStepParser> glacioExecutableStepParsers;
+    private static Map<Locale, Map<EXECUTABLE_KEYWORD, Set<String>>> executableStepLanguagesKeywords;
+    private static Map<Pair<Locale, String>, GlacioExecutableStepParser> glacioExecutableStepParsersLanguages;
 
     private final Locale testLang = new Locale("tt", "TT");
+
+    @BeforeClass
+    public static void setUp() throws IOException {
+        GlacioAdapterConfiguration glacioAdapterConfiguration = new GlacioAdapterConfiguration();
+
+        glacioExecutableStepParsers = glacioAdapterConfiguration.glacioExecutableStepParsers();
+        executableStepLanguagesKeywords = glacioAdapterConfiguration.executableStepLanguagesKeywords();
+        glacioExecutableStepParsersLanguages = glacioAdapterConfiguration.glacioExecutableStepParsersLanguages();
+    }
 
     @Test
     public void should_load_declared_parsers() {
