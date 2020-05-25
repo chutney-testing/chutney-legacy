@@ -8,8 +8,8 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import blackbox.stepdef.TestContext;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import cucumber.api.java.After;
-import cucumber.api.java.en.Given;
+import io.cucumber.java.After;
+import io.cucumber.java.en.Given;
 
 public class HttpStepsDef {
 

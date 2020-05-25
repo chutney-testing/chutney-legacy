@@ -2,9 +2,9 @@ package blackbox.stepdef;
 
 import blackbox.restclient.RestClient;
 import com.google.common.io.Resources;
-import cucumber.api.java.After;
-import cucumber.api.java.Before;
-import cucumber.api.java.en.Given;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.en.Given;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -62,7 +62,7 @@ public class ComponentStepDefs {
         });
     }
 
-    @Given("a composable testcase (.*)")
+    @Given("^a composable testcase (.*)$")
     public void saveComponentTestCase(String testCaseName) {
         final ResponseEntity<String> testCaseId = secureRestClient.defaultRequest()
             .withUrl(COMPONENT_BASE_URL)

@@ -17,7 +17,8 @@ Feature: Replace scenario parameters with data set or global var values
 
     Scenario: Execute composable testcase with global vars
         Given composable task components
-            | context-put | assert-equals |
+            | context-put |
+            | assert-equals |
         And a composable testcase composable-testcase_for_global_vars
         When last saved scenario is executed
         Then the report status is SUCCESS

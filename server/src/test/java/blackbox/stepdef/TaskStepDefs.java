@@ -1,12 +1,12 @@
 package blackbox.stepdef;
 
+import blackbox.restclient.RestClient;
+import com.chutneytesting.task.api.TaskDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cucumber.api.DataTable;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
-import com.chutneytesting.task.api.TaskDto;
-import blackbox.restclient.RestClient;
+import io.cucumber.datatable.DataTable;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -14,6 +14,7 @@ import java.util.Map;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.JSONValue;
+import org.apache.commons.lang3.StringUtils;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,14 +58,15 @@ public class TaskStepDefs {
         JSONArray jsonResponse = (JSONArray) JSONValue.parse((String)context.getExecutionReport());
 
         jsonResponse.forEach(jsonTask -> {
-            String taskId = ((JSONObject)jsonTask).getAsString("identifier");
-            String target = ((JSONObject)jsonTask).getAsString("target");
+            JSONObject task = (JSONObject) jsonTask;
+            String taskId = task.getAsString("identifier");
+            String target = task.getAsString("target");
             if (!expectedTaskMap.containsKey(taskId)) {
                 LOGGER.warn("Task {} not checked", taskId);
                 // Assertions.fail("Task ["+taskId+"] not found in response");
             } else {
                 TaskDto expectedTaskDto = new TaskDto(taskId, Boolean.valueOf(target), inputsFromDataTableRow(expectedTaskMap.get(taskId)));
-                assertTaskAsJson(expectedTaskDto, (JSONObject) jsonTask);
+                assertTaskAsJson(expectedTaskDto, task);
             }
         });
     }
@@ -88,7 +90,7 @@ public class TaskStepDefs {
     }
 
     private List<TaskDto.InputsDto> inputsFromDataTableRow(String taskDataString) {
-        if (taskDataString.isEmpty()) {
+        if (StringUtils.isBlank(taskDataString)) {
             return Collections.emptyList();
         }
 
