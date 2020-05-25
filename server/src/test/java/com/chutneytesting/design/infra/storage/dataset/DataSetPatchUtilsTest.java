@@ -5,6 +5,7 @@ import static com.chutneytesting.design.infra.storage.dataset.DataSetPatchUtils.
 import static com.chutneytesting.design.infra.storage.dataset.DataSetPatchUtils.patchString;
 import static com.chutneytesting.design.infra.storage.dataset.DataSetPatchUtils.stringLines;
 import static com.chutneytesting.design.infra.storage.dataset.DataSetPatchUtils.unifiedDiff;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.design.domain.dataset.DataSet;
@@ -12,7 +13,6 @@ import com.github.difflib.patch.PatchFailedException;
 import com.google.common.io.Resources;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,7 +25,6 @@ import org.junit.Test;
 
 public class DataSetPatchUtilsTest {
 
-    private Charset UTF8 = Charset.forName("UTF-8");
 
     @Test
     public void should_map_dataset_as_string() throws IOException, URISyntaxException {
@@ -34,13 +33,13 @@ public class DataSetPatchUtilsTest {
 
         // When
         List<String> rawValues = stringLines(dataSetValues(dataSet, false));
-        List<String> rawDataSetText = Files.readAllLines(rawTestResources(), UTF8);
+        List<String> rawDataSetText = Files.readAllLines(rawTestResources(), UTF_8);
         // Then
         assertThat(rawValues).containsExactlyElementsOf(rawDataSetText);
 
         // When
         List<String> prettyValues = stringLines(dataSetValues(dataSet, true));
-        List<String> prettyDataSetText = Files.readAllLines(prettyTestResources(), UTF8);
+        List<String> prettyDataSetText = Files.readAllLines(prettyTestResources(), UTF_8);
         // Then
         assertThat(prettyValues).containsExactlyElementsOf(prettyDataSetText);
     }
@@ -49,8 +48,8 @@ public class DataSetPatchUtilsTest {
     public void should_map_string_as_dataset_values() throws IOException, URISyntaxException {
         // Given
         DataSet dataSet = testDataSet();
-        String raw = new String(Files.readAllBytes(rawTestResources()), UTF8);
-        String pretty = new String(Files.readAllBytes(prettyTestResources()), UTF8);
+        String raw = new String(Files.readAllBytes(rawTestResources()), UTF_8);
+        String pretty = new String(Files.readAllBytes(prettyTestResources()), UTF_8);
 
         // When
         Pair<Map<String, String>, List<Map<String, String>>> rawValues = extractValues(raw);
@@ -67,7 +66,7 @@ public class DataSetPatchUtilsTest {
     public void should_create_then_apply_diff() throws PatchFailedException {
         // Given
         String original = "p1 | value1\n" +
-            "param2 | v2\n" +
+            "pouetpouet | v2\n" +
             "\n" +
             "| p3 | param4 |\n" +
             "| v31 | value41 |\n" +
@@ -81,6 +80,7 @@ public class DataSetPatchUtilsTest {
 
         // When
         String patch = unifiedDiff(revised, original);
+
         String originalPatched = patchString(original, DataSetPatch.builder().withUnifiedDiffValues(patch).build());
 
         // Then
