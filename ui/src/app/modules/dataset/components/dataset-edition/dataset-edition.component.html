@@ -11,7 +11,6 @@
         </div>
 
         <div class="box2">
-
             <button type="button" [disabled]="!isValid()" (click)="confirm()" class="btn btn-success m-2">
                 <span class="fa fa-check"></span>&nbsp;
                 <span>{{ 'global.actions.record' | translate }}</span>
@@ -36,20 +35,20 @@
             <ul class="nav nav-tabs">
                 <li class="nav-item pointer">
                     <a class="nav-link" [ngClass]="{ 'active':activeTab==='keyValue'}"
-                       (click)="selectTab('keyValue')">Key/Value</a>
+                       (click)="selectTab('keyValue')"><span class="fa fa-list" aria-hidden="true"></span></a>
                 </li>
                 <li class="nav-item pointer">
                     <a class="nav-link" [ngClass]="{ 'active':activeTab==='multiKeyValue'}"
-                       (click)="selectTab('multiKeyValue')">List of values</a>
+                       (click)="selectTab('multiKeyValue')"><span class="fa fa-th" aria-hidden="true"></span></a>
                 </li>
             </ul>
 
             <div class="tab-content clearfix">
                 <div class="tab-pane" id="keyValue" [ngClass]="{ 'active':activeTab==='keyValue'}">
-                    <chutney-forms-key-value [keyValues]="dataset.uniqueValues" formControlName="keyValues"></chutney-forms-key-value>
+                    <chutney-forms-key-value formControlName="keyValues"></chutney-forms-key-value>
                 </div>
                 <div class="tab-pane" id="mulitKeyValue" [ngClass]="{ 'active':activeTab==='multiKeyValue'}">
-                    <chutney-forms-data-grid [dataGrid]="dataset.multipleValues" formControlName="multiKeyValues"></chutney-forms-data-grid>
+                    <chutney-forms-data-grid formControlName="multiKeyValues"></chutney-forms-data-grid>
                 </div>
             </div>
         </div>

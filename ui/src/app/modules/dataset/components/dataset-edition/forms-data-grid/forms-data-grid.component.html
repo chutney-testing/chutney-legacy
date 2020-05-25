@@ -1,40 +1,58 @@
 <div class="mt-3" [formGroup]="dataGridForm">
-    <div class="col mb-3">
-        <button type="button" class="btn btn-info" (click)="addColumn()">
-            <span class="fa fa-plus" aria-hidden="true"></span> column
+    <div class="float-right">
+        <button type="button" class="btn btn-info" (click)="exportMultiKeyValue()">
+            <span class="fa fa-file-csv" aria-hidden="true"></span> {{ 'global.actions.export' | translate }}
         </button>
-        <button type="button" class="btn btn-info ml-2" (click)="addLine()">
-            <span class="fa fa-plus" aria-hidden="true"></span> line
+        <div class="btn btn-info div-file ml-2">
+            <span class="fa fa-file-import" aria-hidden="true"></span> {{ 'global.actions.import' | translate }}
+            <input class="input-file" type="file" name="file" multiple="false"
+                   (change)="importMultiKeyValue($event.target.files)"/>
+        </div>
+    </div>
+    <div class="row">
+        <button type="button" class="btn btn-info" (click)="addLine()">
+            {{ 'global.actions.add' | translate }} <span class="fa fa-grip-lines" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="btn btn-info ml-2" (click)="addColumn()">
+            {{ 'global.actions.add' | translate }} <span class="fa fa-grip-lines-vertical" aria-hidden="true"></span>
         </button>
     </div>
 
-    <table class="table table-sm table-striped table-hover">
-        <thead>
+    <div>
+        <table class="table table-sm table-striped table-hover">
+            <thead>
             <tr>
                 <th style="width:30px">
                 </th>
-                <th scope="col" *ngFor="let header of headers; let i = index" style="min-width:250px ">
-                    <button type="button" class="btn btn-outline-danger delete-button-height inline" (click)="removeColumn(i)"
-                        title="{{'global.actions.delete' | translate}}">
-                        <div class="fa fa-trash"></div>
-                    </button>
-                    <input type="text" class="form-control inline w80 ml-2" id="{{i}}-header" value="{{header}}" required
-                        (input)="updateHeader(i, $event.target.value)" />
+                <th class="header" scope="col" *ngFor="let header of headers; let i = index" style="min-width:250px ">
+                    <div style="text-align: center; margin-bottom: 2px;">
+                        <button type="button" class="btn btn-outline-danger delete-button-height removeBtn"
+                                (click)="removeColumn(i)"
+                                title="{{'global.actions.delete' | translate}}">
+                            <span class="fa fa-times"></span>
+                        </button>
+                    </div>
+                    <input type="text" class="form-control" id="{{i}}-header" placeholder="{{ 'dataset.key' | translate }}" value="{{header}}"
+                           (input)="updateHeader(i, $event.target.value)"/>
                 </th>
             </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let line of dataGrid; let i = index">
+            </thead>
+            <tbody>
+            <tr *ngFor="let line of dataGridForm.controls; let i = index">
                 <td style="width:30px">
                     <button type="button" class="btn btn-outline-danger delete-button-height" (click)="removeLine(i)"
-                        title="{{'global.actions.delete' | translate}}">
-                        <div class="fa fa-trash"></div>
+                            title="{{'global.actions.delete' | translate}}">
+                        <span class="fa fa-times"></span>
                     </button>
                 </td>
-                <td *ngFor="let keyValue of line; let j = index" style="min-width:250px">
-                    <input type="text" class="form-control" id="{{i-j}}-value" value="{{keyValue.value}}" required
-                        (input)="updateValue(i, j, $event.target.value)" /></td>
+                <td [formGroupName]="i" *ngFor="let keyValue of line.controls; let j = index" style="min-width:250px">
+                    <div [formGroupName]="j">
+                        <input type="text" class="form-control" id="{{i-j}}-value"
+                               formControlName="value" placeholder="{{ 'dataset.value' | translate }}"/>
+                    </div>
+                </td>
             </tr>
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 </div>

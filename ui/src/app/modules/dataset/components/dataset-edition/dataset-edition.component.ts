@@ -15,7 +15,7 @@ export class DatasetEditionComponent implements OnInit, OnDestroy {
 
     dataset: Dataset = new Dataset('', '', [], new Date(), [], [], 0);
 
-    activeTab = 'multiKeyValue';
+    activeTab = 'keyValue';
     datasetForm: FormGroup;
     private routeParamsSubscription: Subscription;
 
@@ -53,6 +53,8 @@ export class DatasetEditionComponent implements OnInit, OnDestroy {
                     this.datasetForm.controls.name.patchValue(this.dataset.name);
                     this.datasetForm.controls.description.patchValue(this.dataset.description);
                     this.datasetForm.controls.tags.patchValue(this.dataset.tags.join(', '));
+                    this.datasetForm.controls.keyValues.patchValue(this.dataset.uniqueValues);
+                    this.datasetForm.controls.multiKeyValues.patchValue(this.dataset.multipleValues);
                 }
             );
 

@@ -1,16 +1,15 @@
-import { Component, forwardRef, Input, OnChanges } from '@angular/core';
+import { Component, forwardRef } from '@angular/core';
 import {
     AbstractControl,
     ControlValueAccessor,
     FormArray,
-    FormBuilder,
+    FormBuilder, FormGroup,
     NG_VALIDATORS,
     NG_VALUE_ACCESSOR,
     ValidationErrors
 } from '@angular/forms';
 import { KeyValue } from '@model';
 import { FileSaverService } from 'ngx-filesaver';
-import * as JSZip from 'jszip';
 
 @Component({
     selector: 'chutney-forms-key-value',
@@ -29,11 +28,10 @@ import * as JSZip from 'jszip';
         }
     ]
 })
-export class FormsKeyValueComponent implements OnChanges, ControlValueAccessor {
-
-    @Input() keyValues: Array<KeyValue> = [];
+export class FormsKeyValueComponent implements ControlValueAccessor {
 
     keyValuesForm: FormArray;
+    isDisabled: boolean;
 
     constructor(
         private fb: FormBuilder,
@@ -42,100 +40,42 @@ export class FormsKeyValueComponent implements OnChanges, ControlValueAccessor {
         this.keyValuesForm = this.fb.array([]);
     }
 
-    // OnChanges
-    ngOnChanges(): void {
-        this.createForm();
+    insertNewKeyValue(i?: number) {
+        this.addKeyValue('', '', i+1);
     }
 
-    private createForm() {
-        this.clearForm();
-        let i = 0;
-        this.keyValues.forEach(kv => {
-            this.keyValuesForm.insert(
-                i,
-                this.fb.control(kv)
-            );
-            i++;
+    private addKeyValue(key?: string, value?: string, i?: number): void {
+        if (i == null) {
+            i = this.keyValuesForm.length + 1;
+        }
+
+        this.keyValuesForm.insert(i, this.createKeyValue(key, value));
+    }
+
+    private createKeyValue(key?: string, value?: string): FormGroup {
+        return this.fb.group({
+            key: key ? key : '',
+            value: value ? value : ''
         });
     }
 
-    addKeyValueLine(i?: number) {
-        if (i === undefined) {
-            i = this.keyValuesForm.length;
-        }
-
-        const keyValue = new KeyValue('', '');
-        this.keyValuesForm.insert(
-            i + 1,
-            this.fb.control(keyValue)
-        );
-
-        this.keyValues = this.keyValuesForm.getRawValue();
-    }
-
-    removeKeyValueLine(i: number) {
-        if (i === undefined) {
+    removeKeyValueLine(i?: number) {
+        if (i == null) {
             i = this.keyValuesForm.length;
         }
 
         this.keyValuesForm.removeAt(i);
-        this.keyValues = this.keyValuesForm.getRawValue();
-    }
-
-    updateKey(index: number, event: string) {
-        this.keyValuesForm.controls[index].patchValue(
-            new KeyValue(event, this.keyValuesForm.value[index].value)
-        );
-    }
-
-    updateValue(index: number, event: string) {
-        this.keyValuesForm.controls[index].patchValue(
-            new KeyValue(this.keyValuesForm.value[index].key, event)
-        );
     }
 
     private clearForm() {
-        const numberofLine = this.keyValuesForm.controls.length;
-        for (let index = 0; index < numberofLine; index++) {
+        const lineCount = this.keyValuesForm.controls.length;
+        for (let index = 0; index < lineCount; index++) {
             this.keyValuesForm.removeAt(0);
         }
     }
 
-    // CVA
-    onTouched: () => void = () => {
-    };
-
-    propagateChange = (_: any) => {
-    };
-
-    writeValue(val: any): void {
-        val && this.keyValuesForm.setValue(val, { emitEvent: false });
-    }
-
-    registerOnChange(fn: any): void {
-        this.propagateChange = fn;
-        this.keyValuesForm.valueChanges.subscribe(fn);
-    }
-
-    registerOnTouched(fn: any): void {
-        this.onTouched = fn;
-    }
-
-    setDisabledState?(isDisabled: boolean): void {
-        isDisabled ? this.keyValuesForm.disable() : this.keyValuesForm.enable();
-    }
-
-    validate(c: AbstractControl): ValidationErrors | null {
-        return this.keyValuesForm.valid ? null : {
-            invalidForm: {
-                valid: false,
-                message: 'fields are invalid'
-            }
-        };
-    }
-
     exportKeyValue() {
-        const fileName = `keyvalue.csv`;
+        const fileName = 'chutney_dataset_keyvalues.csv';
         let fileContent = '';
         const delimiter = ';';
 
@@ -156,13 +96,50 @@ export class FormsKeyValueComponent implements OnChanges, ControlValueAccessor {
             lines.forEach(l => {
                 const oneLine = l.split(';');
                 if (oneLine.length === 2) {
-                    this.keyValuesForm.push(
-                        this.fb.control(new KeyValue(oneLine[0], oneLine[1]))
-                    );
+                    this.addKeyValue(oneLine[0], oneLine[1]);
                 }
             });
             this.keyValuesForm.enable();
         };
         fileReader.readAsText(file);
+    }
+
+    // CVA
+    onChanged: any = () => {};
+
+    onTouched: any = () => {};
+
+    propagateChange: any = () => {};
+
+    writeValue(val: Array<KeyValue>): void {
+        if (val != null && val.length > 0) {
+            if (this.keyValuesForm.length === 0) {
+                val.forEach(kv => {
+                   this.addKeyValue(kv.key, kv.value)
+                });
+            }
+        }
+    }
+
+    registerOnChange(fn: any): void {
+        this.propagateChange = fn;
+        this.keyValuesForm.valueChanges.subscribe(fn);
+    }
+
+    registerOnTouched(fn: any): void {
+        this.onTouched = fn;
+    }
+
+    setDisabledState(isDisabled: boolean): void {
+        this.isDisabled = isDisabled;
+    }
+
+    validate(c: AbstractControl): ValidationErrors | null {
+        return this.keyValuesForm.valid ? null : {
+            invalidForm: {
+                valid: false,
+                message: 'fields are invalid'
+            }
+        };
     }
 }
