@@ -1,8 +1,8 @@
 package blackbox.stepdef.tasks;
 
 import blackbox.stepdef.edition.EditionStepDef;
-import cucumber.api.java.Before;
-import cucumber.api.java.en.Given;
+import io.cucumber.java.Before;
+import io.cucumber.java.en.Given;
 import java.io.File;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.AssumptionViolatedException;

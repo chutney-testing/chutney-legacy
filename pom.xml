@@ -105,15 +105,15 @@
         <assertj.version>3.15.0</assertj.version>
         <mockito.version>2.8.9</mockito.version>
         <junitparams.version>1.1.0</junitparams.version>
-        <cucumber.version>1.2.5</cucumber.version>
+        <cucumber.version>5.7.0</cucumber.version>
         <mockrunner-jms.version>1.1.2</mockrunner-jms.version>
         <sshd.version>1.6.0</sshd.version>
         <eddsa.version>0.2.0</eddsa.version>
         <activemq.version>5.15.11</activemq.version>
         <rabbitmq-mock.version>1.0.14</rabbitmq-mock.version>
         <wire-mock.version>2.26.3</wire-mock.version>
-        <pitest.version>1.4.9</pitest.version>
-        <pitest-cucumber.version>0.8</pitest-cucumber.version>
+        <pitest.version>1.5.1</pitest.version>
+        <pitest-cucumber.version>0.10</pitest-cucumber.version>
         <otj-pg-embedded.version>0.13.1</otj-pg-embedded.version>
         <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
         <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
@@ -155,13 +155,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>info.cukes</groupId>
+            <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
             <version>${cucumber.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>info.cukes</groupId>
+            <groupId>io.cucumber</groupId>
             <artifactId>cucumber-junit</artifactId>
             <version>${cucumber.version}</version>
             <scope>test</scope>
@@ -410,25 +410,25 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>info.cukes</groupId>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-core</artifactId>
                 <version>${cucumber.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>info.cukes</groupId>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-java</artifactId>
                 <version>${cucumber.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>info.cukes</groupId>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-junit</artifactId>
                 <version>${cucumber.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>info.cukes</groupId>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-spring</artifactId>
                 <version>${cucumber.version}</version>
                 <scope>test</scope>

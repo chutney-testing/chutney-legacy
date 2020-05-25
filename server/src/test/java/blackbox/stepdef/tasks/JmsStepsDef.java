@@ -1,8 +1,8 @@
 package blackbox.stepdef.tasks;
 
 import blackbox.stepdef.TestContext;
-import cucumber.api.java.After;
-import cucumber.api.java.en.Given;
+import io.cucumber.java.After;
+import io.cucumber.java.en.Given;
 import org.apache.activemq.broker.BrokerService;
 
 public class JmsStepsDef {
