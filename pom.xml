@@ -101,10 +101,10 @@
         <glacio.version>0.0.1-SNAPSHOT</glacio.version>
 
         <!-- Test dependencies versions -->
-        <junit.version>4.12</junit.version>
+        <junit4.version>4.13</junit4.version>
+        <junit.version>5.6.2</junit.version>
         <assertj.version>3.15.0</assertj.version>
         <mockito.version>2.8.9</mockito.version>
-        <junitparams.version>1.1.0</junitparams.version>
         <cucumber.version>5.7.0</cucumber.version>
         <mockrunner-jms.version>1.1.2</mockrunner-jms.version>
         <sshd.version>1.6.0</sshd.version>
@@ -131,9 +131,34 @@
             <version>${sl4j.api.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
+            <version>${junit4.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -146,30 +171,6 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>${mockito.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>pl.pragmatists</groupId>
-            <artifactId>JUnitParams</artifactId>
-            <version>${junitparams.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-java</artifactId>
-            <version>${cucumber.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-junit</artifactId>
-            <version>${cucumber.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.alexvictoor</groupId>
-            <artifactId>pitest-cucumber-plugin</artifactId>
-            <version>${pitest-cucumber.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -392,10 +393,23 @@
 
             <!-- Test dependencies -->
             <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-test</artifactId>
                 <version>${springboot.version}</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.sshd</groupId>
@@ -426,6 +440,12 @@
                 <artifactId>cucumber-junit</artifactId>
                 <version>${cucumber.version}</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
@@ -438,6 +458,12 @@
                 <artifactId>mockrunner-jms</artifactId>
                 <version>${mockrunner-jms.version}</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.activemq</groupId>
@@ -487,6 +513,12 @@
                 <groupId>org.pitest</groupId>
                 <artifactId>pitest</artifactId>
                 <version>${pitest.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.github.alexvictoor</groupId>
+                <artifactId>pitest-cucumber-plugin</artifactId>
+                <version>${pitest-cucumber.version}</version>
                 <scope>test</scope>
             </dependency>
 
@@ -577,7 +609,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.12.4</version>
+                    <version>3.0.0-M4</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

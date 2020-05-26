@@ -16,14 +16,12 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import org.assertj.core.util.Files;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-@RunWith(JUnitParamsRunner.class)
 public class GlacioAdapterTest {
 
     private static final String ENVIRONMENT = "ENV";
@@ -31,14 +29,14 @@ public class GlacioAdapterTest {
     private GlacioAdapter sut;
     private ExecutableStepFactory executableStepFactory;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         executableStepFactory = mock(ExecutableStepFactory.class);
         sut = new GlacioAdapter(executableStepFactory);
     }
 
-    @Test
-    @Parameters({
+    @ParameterizedTest
+    @ValueSource(strings = {
         "en unit/lang_default.feature",
         "fr unit/lang_fr.feature"
     })

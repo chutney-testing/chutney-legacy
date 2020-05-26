@@ -3,19 +3,14 @@ package com.chutneytesting.task.spi.time;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.util.function.Supplier;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-import junitparams.naming.TestCaseName;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(JUnitParamsRunner.class)
 public class DurationTest {
 
-    @Test
-    @Parameters
-    @TestCaseName("{0} is parsed to {1} ms")
+    @ParameterizedTest(name = "\"{0} is parsed to {1} ms\"")
+    @MethodSource("parametersForParsing_nominal_cases")
     public void parsing_nominal_cases(String durationAsString, long expectedMilliseconds, String expectedStringRepresentation) {
         Duration duration = Duration.parse(durationAsString);
         SoftAssertions softly = new SoftAssertions();
@@ -32,10 +27,9 @@ public class DurationTest {
         };
     }
 
-    @Test
-    @Parameters
-    @TestCaseName("Parsing {0} fails")
-    public void parsing_error_cases(String duration, String expectedErrorMessage) throws Exception {
+    @ParameterizedTest(name = "Parsing {0} fails")
+    @MethodSource("parametersForParsing_error_cases")
+    public void parsing_error_cases(String duration, String expectedErrorMessage) {
         assertThatExceptionOfType(IllegalArgumentException.class)
             .isThrownBy(() -> Duration.parse(duration))
             .withMessage("Cannot parse duration: " + duration + "\n" +

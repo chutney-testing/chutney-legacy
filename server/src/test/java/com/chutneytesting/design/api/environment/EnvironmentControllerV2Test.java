@@ -36,11 +36,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import org.assertj.core.util.Lists;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -48,7 +47,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-@RunWith(JUnitParamsRunner.class)
 public class EnvironmentControllerV2Test {
 
     private final String basePath = "/api/v2/environment";
@@ -61,12 +59,16 @@ public class EnvironmentControllerV2Test {
         .setControllerAdvice(new RestExceptionHandler())
         .build();
 
-    @Test
-    @Parameters({
-        "",
-        "env1, env2",
-        "c, b, a"
-    })
+    private static Object[] params_listEnvironments_returns_all_available() {
+        return new Object[]{
+            new Object[]{new String[]{}},
+            new Object[]{new String[]{"env1", "env2"}},
+            new Object[]{new String[]{"c", "b", "a"}}
+        };
+    }
+
+    @ParameterizedTest
+    @MethodSource("params_listEnvironments_returns_all_available")
     public void listEnvironments_returns_all_available(String[] environmentNames) throws Exception {
         // Given existing env and targets
         stream(environmentNames).forEach(this::addAvailableEnvironment);
@@ -204,11 +206,15 @@ public class EnvironmentControllerV2Test {
         assertThat(savedEnvironment.description).isEqualTo("test2 description");
     }
 
-    @Test
-    @Parameters({
-        "",
-        "target1, target2"
-    })
+    private static Object[] params_listTargets_returns_all_available() {
+        return new Object[]{
+            new Object[]{new String[]{}},
+            new Object[]{new String[]{"target1", "target2"}}
+        };
+    }
+
+    @ParameterizedTest
+    @MethodSource("params_listTargets_returns_all_available")
     public void listTargets_returns_all_available(String[] targetNames) throws Exception {
         addAvailableEnvironment("env test", targetNames);
 

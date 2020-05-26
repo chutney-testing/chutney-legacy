@@ -10,21 +10,19 @@ import static test.unit.com.chutneytesting.engine.api.glacio.parse.GlacioParserH
 
 import com.chutneytesting.engine.api.glacio.parse.specific.GlacioContextPutParser;
 import java.util.Locale;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import org.apache.groovy.util.Maps;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-@RunWith(JUnitParamsRunner.class)
 public class GlacioContextPutParserTest {
 
     private static final String ENVIRONMENT = "ENV";
 
     private GlacioContextPutParser sut = new GlacioContextPutParser();
 
-    @Test
-    @Parameters({
+    @ParameterizedTest
+    @ValueSource(strings = {
         "add",
         "put",
         "store"

@@ -1,6 +1,7 @@
 package com.chutneytesting.engine.domain.execution.engine.evaluation;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.chutneytesting.engine.domain.execution.engine.scenario.ScenarioContextImpl;
 import com.chutneytesting.engine.domain.execution.evaluation.SpelFunctions;
@@ -10,19 +11,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 @SuppressWarnings("unchecked")
-@RunWith(JUnitParamsRunner.class)
 public class StepDataEvaluatorTest {
 
     private StepDataEvaluator evaluator = new StepDataEvaluator(new SpelFunctions());
 
     @Test
-    public void testInputDataEvaluator() throws Exception {
+    public void testInputDataEvaluator() {
         TestObject testObject = new TestObject("attributeValue");
 
         Map<String, Object> context = new HashMap<>();
@@ -127,8 +126,8 @@ public class StepDataEvaluatorTest {
         assertThat(evaluatedSet).contains("attributeValue");
     }
 
-    @Test(expected = com.chutneytesting.engine.domain.execution.engine.evaluation.EvaluationException.class)
-    @Parameters({
+    @ParameterizedTest()
+    @ValueSource(strings = {
         "${T(java.lang.Runtime).getRuntime().exec(\"echo I_c4n_5cr3w_Y0ur_1if3\")}",
         "${\"\".getClass().forName(\"java.lang.Runtime\").getMethod(\"getRuntime\")}",
         "${T(com.chutneytesting.engine.domain.execution.engine.evaluation.StepDataEvaluator).getClass().forName('java.lang.Runtime').getRuntime()}",
@@ -143,7 +142,10 @@ public class StepDataEvaluatorTest {
         inputs.put("MaliciousInjection", magicSpel);
 
         // When
-        evaluator.evaluateNamedDataWithContextVariables(inputs, scenarioContext);
+        assertThatThrownBy(() ->
+            evaluator.evaluateNamedDataWithContextVariables(inputs, scenarioContext)
+        )
+            .isInstanceOf(com.chutneytesting.engine.domain.execution.engine.evaluation.EvaluationException.class);
     }
 
     @Test
