@@ -63,6 +63,25 @@ public class DataSetPatchUtilsTest {
     }
 
     @Test
+    public void should_create_then_apply_diff_with_dataSet_create_with_dataSetValues() throws PatchFailedException {
+        // Given
+        String original = "";
+        String finalDataset = "a | c\n";
+
+        // When
+        String version1 = dataSetValues(DataSet.builder().withUniqueValues(Maps.of("a", "b")).build(), false);
+        String patch1 = unifiedDiff(version1, original);
+        String revised1Patched = patchString(original, DataSetPatch.builder().withUnifiedDiffValues(patch1).build());
+
+        String version2 = dataSetValues(DataSet.builder().withUniqueValues(Maps.of("a", "c")).build(), false);
+        String patch2 = unifiedDiff(version2, revised1Patched);
+        String revised2Patched = patchString(revised1Patched, DataSetPatch.builder().withUnifiedDiffValues(patch2).build());
+
+        // Then
+        assertThat(revised2Patched).isEqualTo(finalDataset);
+    }
+
+    @Test
     public void should_create_then_apply_diff() throws PatchFailedException {
         // Given
         String original = "p1 | value1\n" +
