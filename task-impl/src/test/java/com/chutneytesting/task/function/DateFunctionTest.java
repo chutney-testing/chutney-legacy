@@ -10,7 +10,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.Temporal;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DateFunctionTest {
 

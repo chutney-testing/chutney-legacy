@@ -11,8 +11,8 @@ import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.task.sql.core.Records;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
@@ -29,7 +29,7 @@ public class SqlTaskTest {
 
     private Logger logger = new TestLogger();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         new EmbeddedDatabaseBuilder()
             .setName(DB_NAME)

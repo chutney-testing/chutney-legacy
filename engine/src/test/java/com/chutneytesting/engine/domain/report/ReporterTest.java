@@ -21,8 +21,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ReporterTest {
 
@@ -34,7 +34,7 @@ public class ReporterTest {
     private Step step;
     private ScenarioExecution scenarioExecution;
 
-    @Before
+    @BeforeEach
     public void before() {
         step = buildFakeScenario();
         sut = new Reporter();

@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import org.bson.BsonDocument;
 import com.chutneytesting.tools.CloseableResource;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.OngoingStubbing;
 import org.springframework.test.util.ReflectionTestUtils;

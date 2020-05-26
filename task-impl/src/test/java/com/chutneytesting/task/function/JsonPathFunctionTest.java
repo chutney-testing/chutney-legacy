@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import org.assertj.core.api.Assertions;
 import org.json.JSONException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("unchecked")
 public class JsonPathFunctionTest {

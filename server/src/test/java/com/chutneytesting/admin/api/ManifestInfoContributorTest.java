@@ -2,7 +2,7 @@ package com.chutneytesting.admin.api;
 
 import com.google.common.collect.ImmutableMap;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.actuate.info.Info;
 import org.springframework.boot.actuate.info.InfoContributor;
 

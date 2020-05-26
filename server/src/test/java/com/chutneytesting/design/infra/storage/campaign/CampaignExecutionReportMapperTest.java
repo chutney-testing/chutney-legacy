@@ -14,15 +14,15 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class CampaignExecutionReportMapperTest {
     private CampaignExecutionReportMapper sut;
     private ExecutionHistoryRepository scenarioExecutionHistoryRepository;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         scenarioExecutionHistoryRepository = Mockito.mock(ExecutionHistoryRepository.class);
         sut = new CampaignExecutionReportMapper();

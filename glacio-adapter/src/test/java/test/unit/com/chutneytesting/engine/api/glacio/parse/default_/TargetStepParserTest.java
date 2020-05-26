@@ -10,8 +10,8 @@ import com.chutneytesting.engine.api.glacio.parse.default_.TargetStepParser;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.github.fridujo.glacio.ast.Step;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TargetStepParserTest {
 
@@ -19,7 +19,7 @@ public class TargetStepParserTest {
 
     private TargetStepParser sut;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         environmentService = mock(EnvironmentService.class);
         sut = new TargetStepParser(environmentService, "On");

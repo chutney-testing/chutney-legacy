@@ -1,6 +1,7 @@
 package com.chutneytesting.design.api.compose;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
@@ -9,7 +10,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.chutneytesting.RestExceptionHandler;
 import com.chutneytesting.design.api.compose.dto.ComposableTestCaseDto;
 import com.chutneytesting.design.api.compose.dto.ImmutableComposableScenarioDto;
@@ -19,13 +19,9 @@ import com.chutneytesting.design.domain.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.compose.ComposableTestCaseRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.MethodRule;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -44,20 +40,15 @@ public class ComponentEditionControllerTest {
             )
             .build();
 
-    @Rule
-    public MethodRule mockitoRule = MockitoJUnit.rule();
-
-    @Mock
-    private ComposableTestCaseRepository composableTestCaseRepository;
-    @Mock
-    private TestCaseRepository testCaseRepository;
-    @InjectMocks
-    private ComponentEditionController sut;
+    private ComposableTestCaseRepository composableTestCaseRepository = mock(ComposableTestCaseRepository.class);
+    private TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
 
     private MockMvc mockMvc;
 
-    @Before
+    @BeforeEach
     public void setUp() {
+        ComponentEditionController sut = new ComponentEditionController(composableTestCaseRepository, testCaseRepository);
+
         mockMvc = MockMvcBuilders.standaloneSetup(sut)
             .setControllerAdvice(new RestExceptionHandler())
             .build();

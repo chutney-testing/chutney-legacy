@@ -5,7 +5,7 @@ import static org.mockito.Mockito.mock;
 
 import javax.jms.JMSException;
 import javax.jms.Session;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ConsumerFactoryTest {
 

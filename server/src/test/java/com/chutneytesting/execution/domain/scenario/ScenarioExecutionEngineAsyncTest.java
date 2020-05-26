@@ -11,7 +11,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.raw.RawTestCase;
 import com.chutneytesting.execution.domain.ExecutionRequest;
@@ -24,7 +23,6 @@ import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.execution.domain.report.StepExecutionReportCore;
 import com.chutneytesting.execution.domain.report.StepExecutionReportCoreBuilder;
 import com.chutneytesting.execution.domain.state.ExecutionStateRepository;
-import com.chutneytesting.execution.domain.state.RunningScenarioState;
 import com.chutneytesting.instrument.domain.Metrics;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.reactivex.Observable;
@@ -39,8 +37,8 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 public class ScenarioExecutionEngineAsyncTest {
@@ -51,7 +49,7 @@ public class ScenarioExecutionEngineAsyncTest {
     private Metrics metrics = mock(Metrics.class);
     private TestCasePreProcessors testCasePreProcessors = mock(TestCasePreProcessors.class);
 
-    @After
+    @AfterEach
     public void after() {
         RxJavaPlugins.reset();
     }

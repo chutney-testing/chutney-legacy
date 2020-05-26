@@ -9,7 +9,7 @@ import java.util.Optional;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.TextMessage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class XpathBodySelectorParserTest {
 

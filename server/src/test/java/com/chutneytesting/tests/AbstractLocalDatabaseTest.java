@@ -12,7 +12,7 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.rules.TemporaryFolder;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -44,7 +44,7 @@ public abstract class AbstractLocalDatabaseTest {
         initializeLiquibase();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         jdbcTemplate.execute("DELETE FROM CAMPAIGN_EXECUTION_HISTORY");
         jdbcTemplate.execute("DELETE FROM SCENARIO_EXECUTION_HISTORY");

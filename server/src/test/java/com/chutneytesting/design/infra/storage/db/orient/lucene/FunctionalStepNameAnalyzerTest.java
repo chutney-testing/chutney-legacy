@@ -10,7 +10,7 @@ import java.util.Random;
 import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.WordlistLoader;
 import org.apache.lucene.util.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class FunctionalStepNameAnalyzerTest {
 

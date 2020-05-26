@@ -38,8 +38,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.util.Lists;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -63,7 +63,7 @@ public class CampaignControllerTest {
     private CampaignDto existingCampaign;
     private final ObjectMapper om = new WebConfiguration().objectMapper();
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         resultExtractor = new ResultExtractor();
 

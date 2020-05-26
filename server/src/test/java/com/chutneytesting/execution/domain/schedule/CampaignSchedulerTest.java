@@ -10,8 +10,8 @@ import static org.mockito.Mockito.when;
 import com.google.common.collect.Lists;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import java.time.LocalTime;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 public class CampaignSchedulerTest {
@@ -20,7 +20,7 @@ public class CampaignSchedulerTest {
     private SchedulerRepository schedulerRepository = mock(SchedulerRepository.class);
     private CampaignExecutionEngine campaignExecutionEngine = mock(CampaignExecutionEngine.class);
 
-    @Before
+    @BeforeEach
     public void setUp() {
         campaignScheduler = new CampaignScheduler(campaignExecutionEngine, schedulerRepository);
     }
