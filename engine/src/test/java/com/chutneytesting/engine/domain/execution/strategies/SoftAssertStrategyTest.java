@@ -12,7 +12,7 @@ import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.engine.scenario.ScenarioContext;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.report.Status;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SoftAssertStrategyTest {
 

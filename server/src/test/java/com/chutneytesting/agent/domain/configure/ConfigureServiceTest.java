@@ -2,6 +2,7 @@ package com.chutneytesting.agent.domain.configure;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -10,28 +11,22 @@ import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.agent.domain.explore.ExploreAgentsService;
 import com.chutneytesting.design.domain.environment.Environment;
 import com.chutneytesting.design.domain.environment.EnvironmentRepository;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.MethodRule;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ConfigureServiceTest {
 
-    @Rule public MethodRule mockitoRule = MockitoJUnit.rule();
+    private ConfigureService sut;
 
-    @Mock
-    private ExploreAgentsService exploreAgentsService;
-    @Mock
-    private CurrentNetworkDescription currentNetworkDescription;
-    @Mock
-    private LocalServerIdentifier localServerIdentifier;
-    @Mock
-    private EnvironmentRepository environmentRepository;
+    private ExploreAgentsService exploreAgentsService = mock(ExploreAgentsService.class);
+    private CurrentNetworkDescription currentNetworkDescription = mock(CurrentNetworkDescription.class);
+    private LocalServerIdentifier localServerIdentifier = mock(LocalServerIdentifier.class);
+    private EnvironmentRepository environmentRepository = mock(EnvironmentRepository.class);
 
-    @InjectMocks
-    private ConfigureService configureService;
+    @BeforeEach
+    public void setUp() {
+        sut = new ConfigureService(exploreAgentsService, currentNetworkDescription, localServerIdentifier, environmentRepository);
+    }
 
     @Test
     public void configure_should_explore_and_wrapup_description_while_saving_environment() {
@@ -44,7 +39,7 @@ public class ConfigureServiceTest {
         when(localServerIdentifier.withLocalHost(same(networkConfiguration))).thenReturn(networkConfiguration);
         when(environmentRepository.getEnvironment("GLOBAL")).thenReturn(Environment.builder().withName("ENV1").build());
 
-        configureService.configure(networkConfiguration);
+        sut.configure(networkConfiguration);
 
         verify(exploreAgentsService).explore(networkConfiguration);
         verify(currentNetworkDescription).switchTo(any());

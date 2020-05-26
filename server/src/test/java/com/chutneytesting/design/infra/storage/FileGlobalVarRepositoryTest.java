@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import com.chutneytesting.tools.ThrowingConsumer;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 public class FileGlobalVarRepositoryTest {
 
@@ -24,7 +24,7 @@ public class FileGlobalVarRepositoryTest {
     private static final String STORE_PATH = org.assertj.core.util.Files.temporaryFolder().toString();
     private FileGlobalVarRepository sut;
 
-    @After
+    @AfterEach
     public void tearDown() throws IOException {
         Files.walk(Paths.get(STORE_PATH + "/global_var"))
             .filter(Files::isRegularFile)

@@ -12,7 +12,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.chutneytesting.WebConfiguration;
 import com.chutneytesting.agent.api.dto.ExploreResultApiDto;
 import com.chutneytesting.agent.api.dto.ExploreResultApiDto.AgentLinkEntity;
@@ -23,23 +22,18 @@ import com.chutneytesting.agent.api.mapper.NetworkConfigurationApiMapper;
 import com.chutneytesting.agent.api.mapper.NetworkDescriptionApiMapper;
 import com.chutneytesting.agent.domain.configure.ConfigureService;
 import com.chutneytesting.agent.domain.configure.GetCurrentNetworkDescriptionService;
-import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.agent.domain.explore.ExploreAgentsService;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
 import com.chutneytesting.design.domain.environment.EnvironmentRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.MethodRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Answers;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -49,29 +43,25 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class NodeNetworkControllerTest {
 
-    @Rule public MethodRule mockitoRule = MockitoJUnit.rule();
+    private ConfigureService configureService = mock(ConfigureService.class);
+    private ExploreAgentsService exploreAgentsService = mock(ExploreAgentsService.class, Answers.RETURNS_DEEP_STUBS);
+    private NetworkDescriptionApiMapper networkDescriptionApiMapper = mock(NetworkDescriptionApiMapper.class);
+    private ExploreResultApiMapper exploreResultApiMapper = mock(ExploreResultApiMapper.class);
+    private NetworkConfigurationApiMapper networkConfigurationApiMapper = mock(NetworkConfigurationApiMapper.class);
+    //private CurrentNetworkDescription currentNetworkDescription = mock(CurrentNetworkDescription.class);
+    private GetCurrentNetworkDescriptionService getCurrentNetworkDescription = mock(GetCurrentNetworkDescriptionService.class);
+    private EnvironmentRepository environmentRepository = mock(EnvironmentRepository.class);
 
-    @Mock
-    ConfigureService configureService;
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS) ExploreAgentsService exploreAgentsService;
-    @Mock NetworkDescriptionApiMapper networkDescriptionApiMapper;
-    @Mock ExploreResultApiMapper exploreResultApiMapper;
-    @Mock NetworkConfigurationApiMapper networkConfigurationApiMapper;
-    @Mock CurrentNetworkDescription currentNetworkDescription;
-    @Mock GetCurrentNetworkDescriptionService getCurrentNetworkDescription;
-    @Mock EnvironmentRepository environmentRepository;
+    private ObjectMapper objectMapper = new WebConfiguration().objectMapper();
+    private MockMvc mockMvc;
 
-    @InjectMocks
-    NodeNetworkController controller;
+    @BeforeEach
+    public void setUp() {
+        NodeNetworkController sut = new NodeNetworkController(configureService, getCurrentNetworkDescription, exploreAgentsService,
+            environmentRepository, networkDescriptionApiMapper, exploreResultApiMapper, networkConfigurationApiMapper);
 
-    ObjectMapper objectMapper = new WebConfiguration().objectMapper();
-
-    MockMvc mockMvc;
-
-    @Before
-    public void setUp() throws Exception {
         mockMvc = MockMvcBuilders
-            .standaloneSetup(controller)
+            .standaloneSetup(sut)
             .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper))
             .build();
     }

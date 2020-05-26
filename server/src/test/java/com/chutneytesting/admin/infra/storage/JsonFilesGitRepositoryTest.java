@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.design.infra.storage.scenario.git.GitRepository;
 import java.nio.file.Files;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class JsonFilesGitRepositoryTest {
 

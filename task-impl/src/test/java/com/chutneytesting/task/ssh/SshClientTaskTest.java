@@ -18,15 +18,15 @@ import java.util.List;
 import java.util.Map;
 import org.apache.sshd.common.util.OsUtils;
 import org.apache.sshd.server.SshServer;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class SshClientTaskTest {
 
     private static SshServer fakeSshServer;
 
-    @BeforeClass
+    @BeforeAll
     public static void prepare_ssh_server() throws Exception {
         fakeSshServer = buildLocalServer();
         fakeSshServer.start();
@@ -104,7 +104,7 @@ public class SshClientTaskTest {
         assertThat(actualResult.status).isEqualTo(Failure);
     }
 
-    @AfterClass
+    @AfterAll
     public static void stop_ssh_server() throws Exception {
         fakeSshServer.stop();
     }

@@ -22,9 +22,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class GitTestCaseRepositoryTest {
 
@@ -37,7 +37,7 @@ public class GitTestCaseRepositoryTest {
     String scenario2Id = String.valueOf("testFile2.json".hashCode());
     private JsonMapper<TestCaseData> jsonMapper;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         testPath = Paths.get(System.getProperty("user.home") + "/" + testDirectory);
         file1 = testPath.resolve("testFile1.json");
@@ -166,7 +166,7 @@ public class GitTestCaseRepositoryTest {
         Files.createFile(file1);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         cleanTestDirectory();
     }

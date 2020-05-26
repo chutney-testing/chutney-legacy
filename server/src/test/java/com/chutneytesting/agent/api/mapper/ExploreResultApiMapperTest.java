@@ -13,7 +13,7 @@ import com.chutneytesting.agent.domain.explore.ImmutableExploreResult.Link;
 import com.chutneytesting.design.domain.environment.Target;
 import java.util.Arrays;
 import org.assertj.core.api.Condition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ExploreResultApiMapperTest {
 

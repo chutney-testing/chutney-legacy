@@ -13,14 +13,14 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.assertj.core.util.Files;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class OldFormatAdapterTest {
 
     private ObjectMapper objectMapper;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new Jdk8Module())

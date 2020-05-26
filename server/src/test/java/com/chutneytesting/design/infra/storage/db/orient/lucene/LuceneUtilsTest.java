@@ -6,7 +6,7 @@ import static com.chutneytesting.design.infra.storage.db.orient.lucene.LuceneUti
 import static com.chutneytesting.design.infra.storage.db.orient.lucene.LuceneUtils.forceAllRequiredTerm;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class LuceneUtilsTest {
 

@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SimpleMessageConsumerTest {
 

@@ -14,8 +14,8 @@ import com.chutneytesting.admin.infra.storage.JsonFilesGitRepository;
 import com.chutneytesting.design.infra.storage.scenario.git.GitRepository;
 import java.util.HashSet;
 import java.util.Set;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,7 +31,7 @@ public class GitRepositoryAdminControllerTest {
 
     private final ObjectMapper om = new ObjectMapper().findAndRegisterModules();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         reset(jsonFilesGitRepository);
         GitRepositoryAdminController gitRepositoryAdminController = new GitRepositoryAdminController(jsonFilesGitRepository);

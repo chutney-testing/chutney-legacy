@@ -6,7 +6,7 @@ import com.chutneytesting.task.TestTaskTemplateFactory.ComplexeTask;
 import com.chutneytesting.task.TestTaskTemplateFactory.TwoConstructorTask;
 import com.chutneytesting.task.TestTaskTemplateFactory.TwoParametersTask;
 import com.chutneytesting.task.TestTaskTemplateFactory.ValidSimpleTask;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TaskTemplateParserV2Test {
 

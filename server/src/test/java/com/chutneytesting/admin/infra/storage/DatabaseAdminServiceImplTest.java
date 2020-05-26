@@ -11,7 +11,7 @@ import com.chutneytesting.tools.PaginationRequestWrapperDto;
 import java.util.Collections;
 import java.util.Optional;
 import org.assertj.core.api.Condition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DatabaseAdminServiceImplTest extends AbstractLocalDatabaseTest {
 

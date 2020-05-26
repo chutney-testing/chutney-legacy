@@ -25,12 +25,9 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicReference;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.MethodRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.junit.MockitoJUnit;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -39,15 +36,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class GwtTestCaseControllerTest {
 
-    @Rule
-    public MethodRule mockitoRule = MockitoJUnit.rule();
-
     private MockMvc mockMvc;
     private TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
     private ExecutionHistoryRepository executionHistoryRepository = mock(ExecutionHistoryRepository.class);
     private ComposableTestCaseRepository composableTestCaseRepository = mock(ComposableTestCaseRepository.class);
 
-    @Before
+    @BeforeEach
     public void setUp() {
         GwtTestCaseController testCaseController = new GwtTestCaseController(testCaseRepository, executionHistoryRepository, composableTestCaseRepository);
         mockMvc = MockMvcBuilders.standaloneSetup(testCaseController).build();

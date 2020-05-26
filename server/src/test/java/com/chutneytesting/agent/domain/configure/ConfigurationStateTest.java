@@ -6,7 +6,7 @@ import static com.chutneytesting.agent.domain.configure.ConfigurationState.NOT_S
 import static com.chutneytesting.agent.domain.configure.ConfigurationState.WRAPING_UP;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ConfigurationStateTest {
     @Test

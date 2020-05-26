@@ -21,7 +21,7 @@ import com.chutneytesting.engine.domain.execution.report.StepExecutionReportBuil
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class RemoteStepExecutorTest {
 

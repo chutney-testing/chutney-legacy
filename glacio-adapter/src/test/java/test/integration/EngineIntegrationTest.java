@@ -18,20 +18,21 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.groovy.util.Maps;
 import org.assertj.core.util.Files;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class EngineIntegrationTest {
 
     private static final String ENVIRONMENT = "ENV";
-    private static String ENV_FOLDER_PATH = "src/test/resources/conf";
     private static ExecutionConfiguration executionConfiguration;
 
     private static GlacioAdapter glacioAdapter;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws IOException {
+        String ENV_FOLDER_PATH = "src/test/resources/conf";
+
         executionConfiguration = new ExecutionConfiguration();
         GlacioAdapterConfiguration glacioAdapterConfiguration = new GlacioAdapterConfiguration(executionConfiguration, ENV_FOLDER_PATH, ENV_FOLDER_PATH + "/endpoints.json");
 
@@ -132,7 +133,7 @@ public class EngineIntegrationTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void should_execute_sql_feature() {
         List<StepExecutionReport> reports = executeFeature("integration/sql_parser.feature");
 
@@ -141,7 +142,7 @@ public class EngineIntegrationTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void should_execute_blackbox_feature() {
         List<StepExecutionReport> reports = executeFeature("integration/blackbox.feature");
 

@@ -17,15 +17,15 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.groovy.util.Maps;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class ComposableTestCaseDataSetPreProcessorTest {
 
     private GlobalvarRepository globalvarRepository;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         globalvarRepository = Mockito.mock(GlobalvarRepository.class);
         Map<String, String> map = new HashMap<>();

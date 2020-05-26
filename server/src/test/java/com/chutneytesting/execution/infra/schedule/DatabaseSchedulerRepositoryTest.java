@@ -7,14 +7,14 @@ import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class DatabaseSchedulerRepositoryTest extends AbstractLocalDatabaseTest {
 
     private DatabaseSchedulerRepository schedulerRepo;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         schedulerRepo = new DatabaseSchedulerRepository(namedParameterJdbcTemplate);
     }

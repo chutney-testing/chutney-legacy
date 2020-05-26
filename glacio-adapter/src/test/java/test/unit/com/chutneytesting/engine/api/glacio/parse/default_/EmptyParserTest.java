@@ -6,7 +6,7 @@ import static test.unit.com.chutneytesting.engine.api.glacio.parse.GlacioParserH
 import com.chutneytesting.engine.api.glacio.parse.default_.EmptyParser;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.github.fridujo.glacio.ast.Step;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class EmptyParserTest {
 

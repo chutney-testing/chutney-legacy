@@ -16,8 +16,8 @@ import com.chutneytesting.engine.api.glacio.parse.StepParser;
 import com.chutneytesting.engine.api.glacio.parse.default_.FilteredByKeywordsSubStepMapStepParser;
 import com.github.fridujo.glacio.ast.Step;
 import java.util.Map;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 public class FilteredByKeywordsSubStepMapStepParserTest {
@@ -25,7 +25,7 @@ public class FilteredByKeywordsSubStepMapStepParserTest {
     private FilteredByKeywordsSubStepMapStepParser sut;
     private StepParser<Map.Entry<String, Object>> entryStepParser;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         entryStepParser = mock(StepParser.class);
     }

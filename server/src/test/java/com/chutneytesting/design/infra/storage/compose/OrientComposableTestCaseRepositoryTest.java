@@ -21,16 +21,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.apache.groovy.util.Maps;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDatabaseTest {
 
     private static ComposableTestCaseRepository sut;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         OrientFunctionalStepRepositoryTest.initComponentDB(DATABASE_NAME);
         sut = new OrientComposableTestCaseRepository(orientComponentDB);
@@ -81,12 +81,12 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
             .build();
     }
 
-    @After
+    @AfterEach
     public void after() {
         truncateCollection(DATABASE_NAME, OrientComponentDB.TESTCASE_CLASS);
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() {
         OrientFunctionalStepRepositoryTest.destroyDB(DATABASE_NAME);
     }

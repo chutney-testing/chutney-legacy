@@ -31,30 +31,30 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import org.apache.groovy.util.Maps;
 import org.assertj.core.api.Assertions;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings({"SameParameterValue", "OptionalUsedAsFieldOrParameterType", "OptionalGetWithoutIsPresent"})
 public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTest {
 
     private static StepRepository sut;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         OrientFunctionalStepRepositoryTest.initComponentDB(DATABASE_NAME);
         sut = new OrientFunctionalStepRepository(orientComponentDB);
         OLogManager.instance().setWarnEnabled(false);
     }
 
-    @After
+    @AfterEach
     public void after() {
         truncateCollection(DATABASE_NAME, OrientComponentDB.STEP_CLASS);
         truncateCollection(DATABASE_NAME, OrientComponentDB.GE_STEP_CLASS);
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() {
         OrientFunctionalStepRepositoryTest.destroyDB(DATABASE_NAME);
     }

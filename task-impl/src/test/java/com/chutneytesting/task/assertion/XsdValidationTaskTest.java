@@ -2,7 +2,7 @@ package com.chutneytesting.task.assertion;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.TaskExecutionResult.Status;

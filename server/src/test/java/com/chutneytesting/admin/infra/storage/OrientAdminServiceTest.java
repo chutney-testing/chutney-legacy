@@ -18,10 +18,10 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("ConstantConditions")
 public class OrientAdminServiceTest extends AbstractOrientDatabaseTest {
@@ -31,7 +31,7 @@ public class OrientAdminServiceTest extends AbstractOrientDatabaseTest {
     private static StepRepository orientRepository;
     private static DatabaseAdminService sut;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         OrientAdminServiceTest.initComponentDB(DATABASE_NAME);
 
@@ -40,13 +40,13 @@ public class OrientAdminServiceTest extends AbstractOrientDatabaseTest {
         OLogManager.instance().setWarnEnabled(false);
     }
 
-    @After
+    @AfterEach
     public void after() {
         truncateCollection(DATABASE_NAME, STEP_CLASS);
         truncateCollection(DATABASE_NAME, GE_STEP_CLASS);
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws Exception {
         OrientAdminServiceTest.destroyDB(DATABASE_NAME);
     }

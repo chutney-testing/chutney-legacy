@@ -1,6 +1,7 @@
 package com.chutneytesting.design.infra.storage.environment;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.chutneytesting.design.domain.environment.Environment;
 import com.chutneytesting.design.domain.environment.EnvironmentNotFoundException;
@@ -8,6 +9,7 @@ import com.chutneytesting.design.domain.environment.EnvironmentRepository;
 import com.chutneytesting.design.domain.environment.InvalidEnvironmentNameException;
 import com.chutneytesting.design.domain.environment.SecurityInfo;
 import com.chutneytesting.design.domain.environment.Target;
+import com.chutneytesting.tools.ThrowingConsumer;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -19,9 +21,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import com.chutneytesting.tools.ThrowingConsumer;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 public class JsonFilesEnvironmentRepositoryTest {
 
@@ -29,7 +30,7 @@ public class JsonFilesEnvironmentRepositoryTest {
 
     private final EnvironmentRepository sut = new JsonFilesEnvironmentRepository(CONFIGURATION_FOLDER.toString());
 
-    @After
+    @AfterEach
     public void after() {
         try (Stream<Path> confStream = Files.list(CONFIGURATION_FOLDER)) {
             confStream.forEach(ThrowingConsumer.toUnchecked(Files::delete));
@@ -91,20 +92,23 @@ public class JsonFilesEnvironmentRepositoryTest {
         assertThat(sut.listNames()).hasSize(0);
     }
 
-    @Test(expected = EnvironmentNotFoundException.class)
+    @Test()
     public void delete_missing_environment_throws() {
-        sut.delete("MISSING_ENV");
+        assertThatThrownBy(() -> sut.delete("MISSING_ENV"))
+            .isInstanceOf(EnvironmentNotFoundException.class);
     }
 
-    @Test(expected = EnvironmentNotFoundException.class)
+    @Test()
     public void find_missing_environment_return_default_environment() {
         sut.listNames().forEach(sut::delete);
-        sut.findByName("MISSING_ENV");
+        assertThatThrownBy(() -> sut.findByName("MISSING_ENV"))
+            .isInstanceOf(EnvironmentNotFoundException.class);
     }
 
-    @Test(expected = InvalidEnvironmentNameException.class)
+    @Test()
     public void save_environment_with_illegal_name_throws() {
-        sut.save(Environment.builder().withName("illegal name").withDescription("some description").build());
+        assertThatThrownBy(() -> sut.save(Environment.builder().withName("illegal name").withDescription("some description").build()))
+            .isInstanceOf(InvalidEnvironmentNameException.class);
     }
 
     @Test

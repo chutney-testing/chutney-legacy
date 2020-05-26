@@ -12,7 +12,7 @@ import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import org.assertj.core.util.Lists;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CampaignExecutionReportTest {
 

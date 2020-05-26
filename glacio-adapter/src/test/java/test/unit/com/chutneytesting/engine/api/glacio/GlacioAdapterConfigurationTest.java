@@ -12,8 +12,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import test.unit.com.chutneytesting.engine.api.glacio.parse.DebugParser;
 import test.unit.com.chutneytesting.engine.api.glacio.parse.NoGlacioParser;
 import test.unit.com.chutneytesting.engine.api.glacio.parse.SuccessParser;
@@ -26,7 +26,7 @@ public class GlacioAdapterConfigurationTest {
 
     private final Locale testLang = new Locale("tt", "TT");
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws IOException {
         GlacioAdapterConfiguration glacioAdapterConfiguration = new GlacioAdapterConfiguration();
 
