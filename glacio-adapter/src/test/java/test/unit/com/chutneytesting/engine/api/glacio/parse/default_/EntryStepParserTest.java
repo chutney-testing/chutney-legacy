@@ -16,27 +16,24 @@ import com.github.fridujo.glacio.ast.Step;
 import com.github.fridujo.glacio.ast.TableCell;
 import com.github.fridujo.glacio.ast.TableRow;
 import java.util.Optional;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import org.apache.groovy.util.Maps;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(JUnitParamsRunner.class)
 public class EntryStepParserTest {
 
     private EntryStepParser sut = new EntryStepParser();
 
-    @Test
-    @Parameters(method = "stepTextParameters")
+    @ParameterizedTest
+    @MethodSource("stepTextParameters")
     public void should_use_step_text_as_simple_entry(String stepKey, String stepValue) {
         Step step = mock(Step.class);
         when(step.getText()).thenReturn(stepKey + " " + stepValue);
         assertThat(sut.parseStep(step)).isEqualTo(entry(stepKey, stepValue));
     }
 
-    @Test
-    @Parameters(method = "docstringParameters")
+    @ParameterizedTest
+    @MethodSource("docstringParameters")
     public void should_use_step_docstring_as_simple_entry_value(String stepText, DocString stepDocString) {
         Step step = mock(Step.class);
         when(step.getText()).thenReturn(stepText);
@@ -44,8 +41,8 @@ public class EntryStepParserTest {
         assertThat(sut.parseStep(step)).isEqualTo(entry(stepText, stepDocString.getContent()));
     }
 
-    @Test
-    @Parameters(method = "datatableListParameters")
+    @ParameterizedTest
+    @MethodSource("datatableListParameters")
     public void should_use_step_datatable_as_list_entry_value_when_datatable_with_one_column(String stepText, DataTable stepDatatable) {
         Step step = mock(Step.class);
         when(step.getText()).thenReturn(stepText);
@@ -53,8 +50,8 @@ public class EntryStepParserTest {
         assertThat(sut.parseStep(step)).isEqualTo(entry(stepText, asList("a11", "a21", "a31")));
     }
 
-    @Test
-    @Parameters(method = "datatableSimpleMapParameters")
+    @ParameterizedTest
+    @MethodSource("datatableSimpleMapParameters")
     public void should_use_step_datatable_as_map_entry_value_when_datatable_with_two_columns(String stepText, DataTable stepDatatable) {
         Step step = mock(Step.class);
         when(step.getText()).thenReturn(stepText);
@@ -63,8 +60,8 @@ public class EntryStepParserTest {
             .isEqualTo(entry(stepText, Maps.of("a11", "a12", "a21", "a22", "a31", "a32")));
     }
 
-    @Test
-    @Parameters(method = "datatableListMapParameters")
+    @ParameterizedTest
+    @MethodSource("datatableListMapParameters")
     public void should_use_step_datatable_as_map_entry_value_when_datatable_with_more_than_two_columns(String stepText, DataTable stepDatatable) {
         Step step = mock(Step.class);
         when(step.getText()).thenReturn(stepText);
@@ -73,21 +70,21 @@ public class EntryStepParserTest {
             .isEqualTo(entry(stepText, Maps.of("a11", asList("a12", "a13"), "a21", asList("a22", "a23"), "a31", asList("a32", "a33"))));
     }
 
-    public static Object stepTextParameters() {
+    private static Object[] stepTextParameters() {
         return new Object[]{
             new Object[]{"key", "value"},
             new Object[]{"key", "value with space"}
         };
     }
 
-    public static Object docstringParameters() {
+    private static Object[] docstringParameters() {
         return new Object[]{
             new Object[]{"stepTextForKey", new DocString(zeroPosition, empty(), "simple one line docString")},
             new Object[]{"i'am a key", new DocString(zeroPosition, empty(), "docstring\non\nmultipleline")}
         };
     }
 
-    public static Object datatableListParameters() {
+    private static Object[] datatableListParameters() {
         return new Object[]{
             new Object[]{"stepTextForKey",
                 new DataTable(zeroPosition,
@@ -101,7 +98,7 @@ public class EntryStepParserTest {
         };
     }
 
-    public static Object datatableSimpleMapParameters() {
+    private static Object[] datatableSimpleMapParameters() {
         return new Object[]{
             new Object[]{"stepTextForKey",
                 new DataTable(zeroPosition,
@@ -115,7 +112,7 @@ public class EntryStepParserTest {
         };
     }
 
-    public static Object datatableListMapParameters() {
+    private static Object[] datatableListMapParameters() {
         return new Object[]{
             new Object[]{"stepTextForKey",
                 new DataTable(zeroPosition,

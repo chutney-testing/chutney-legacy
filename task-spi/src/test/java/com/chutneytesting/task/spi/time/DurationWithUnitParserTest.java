@@ -3,21 +3,18 @@ package com.chutneytesting.task.spi.time;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Optional;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-import junitparams.naming.TestCaseName;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(JUnitParamsRunner.class)
 public class DurationWithUnitParserTest {
 
     private DurationParser durationWithUnitParser = new DurationWithUnitParser();
 
-    @Test
-    @Parameters
-    @TestCaseName("{0} is parsed to {1} ms")
+    @ParameterizedTest(name = "{0} is parsed to {1} ms")
+    @MethodSource("parametersForParsing_nominal_cases")
     public void parsing_nominal_cases(String durationAsString, long expectedMilliseconds, String expectedStringRepresentation) throws Exception {
         Optional<Duration> optionalDuration = durationWithUnitParser.parse(durationAsString);
         assertThat(optionalDuration).as("Parsing result").isPresent();
@@ -41,9 +38,8 @@ public class DurationWithUnitParserTest {
         };
     }
 
-    @Test
-    @Parameters
-    @TestCaseName("{0} is not valid")
+    @ParameterizedTest(name = "{0} is not valid")
+    @MethodSource("parametersForUnmatched_parsing")
     public void unmatched_parsing(String literalDuration) {
         Optional<Duration> optionalDuration = durationWithUnitParser.parse(literalDuration);
         assertThat(optionalDuration).as("Parsing result").isEmpty();

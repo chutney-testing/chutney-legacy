@@ -3,6 +3,7 @@ package test.unit.com.chutneytesting.engine.api.glacio.parse.default_;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -13,12 +14,9 @@ import com.chutneytesting.task.domain.TaskTemplateRegistry;
 import com.github.fridujo.glacio.ast.Position;
 import com.github.fridujo.glacio.ast.Step;
 import java.util.Optional;
-import junitparams.JUnitParamsRunner;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-@RunWith(JUnitParamsRunner.class)
 public class DefaultGlacioParserTest {
 
     private DefaultGlacioParser sut;
@@ -26,16 +24,17 @@ public class DefaultGlacioParserTest {
     private TaskTemplateRegistry taskTemplateRegistry;
     private EnvironmentService environmentService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         taskTemplateRegistry = mock(TaskTemplateRegistry.class);
         environmentService = mock(EnvironmentService.class);
         sut = new DefaultGlacioParser(taskTemplateRegistry, environmentService);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test()
     public void should_throw_exception_when_taskid_not_found_in_registry() {
-        sut.parseTaskType(buildSimpleStepWithText("taskId"));
+        assertThatThrownBy(() -> sut.parseTaskType(buildSimpleStepWithText("taskId")))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

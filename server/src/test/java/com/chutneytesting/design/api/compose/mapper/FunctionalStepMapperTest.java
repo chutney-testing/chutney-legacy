@@ -11,14 +11,12 @@ import com.chutneytesting.design.domain.compose.FunctionalStep;
 import com.chutneytesting.design.domain.compose.StepUsage;
 import java.util.Arrays;
 import java.util.Collections;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import org.apache.groovy.util.Maps;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
-@RunWith(JUnitParamsRunner.class)
 public class FunctionalStepMapperTest {
 
     @Test
@@ -39,8 +37,8 @@ public class FunctionalStepMapperTest {
         assertThat(functionalStepDto.name()).isEqualTo(FSTEP_NAME);
     }
 
-    @Test
-    @Parameters({"GIVEN", "WHEN", "THEN"})
+    @ParameterizedTest
+    @ValueSource(strings = {"GIVEN", "WHEN", "THEN"})
     public void should_map_func_usage_step_to_dto_when_toDto_called(StepUsage stepUsage) {
         // Given
         FunctionalStep fStep = FunctionalStep.builder()

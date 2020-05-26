@@ -10,13 +10,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(JUnitParamsRunner.class)
 public class AssertTaskTest {
 
     public static Object[] parametersForShould_success_when_true_and_failed_when_false() {
@@ -26,8 +23,8 @@ public class AssertTaskTest {
         };
     }
 
-    @Test
-    @Parameters
+    @ParameterizedTest
+    @MethodSource("parametersForShould_success_when_true_and_failed_when_false")
     public void should_success_when_true_and_failed_when_false(Boolean value, TaskExecutionResult.Status expected) {
         // Given
         List<Map<String, Boolean>> assertions = new ArrayList<>();

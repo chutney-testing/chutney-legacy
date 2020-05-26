@@ -6,23 +6,20 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.google.common.io.Resources;
+import com.chutneytesting.task.TestLogger;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.FinallyActionRegistry;
 import com.chutneytesting.task.spi.injectable.Logger;
-import com.chutneytesting.task.TestLogger;
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.google.common.io.Resources;
 import java.util.concurrent.TimeUnit;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.springframework.util.SocketUtils;
 
-@RunWith(JUnitParamsRunner.class)
 public class HttpsServerStartTaskTest {
 
     private static int wireMockPort = SocketUtils.findAvailableTcpPort();
@@ -32,7 +29,6 @@ public class HttpsServerStartTaskTest {
 
     public static Object[] parametersForShould_start_https_server() {
         Logger logger = new TestLogger();
-
 
         Task httpsServerStartTask = new HttpsServerStartTask(logger, finallyActionRegistry, String.valueOf(wireMockPort), TRUSTSTORE_JKS, "truststore", null, null);
 
@@ -44,8 +40,8 @@ public class HttpsServerStartTaskTest {
         };
     }
 
-    @Test
-    @Parameters
+    @ParameterizedTest
+    @MethodSource("parametersForShould_start_https_server")
     public void should_start_https_server(Task httpsServerStartTask) throws InterruptedException {
         reset(finallyActionRegistry);
         WireMockServer server = null;

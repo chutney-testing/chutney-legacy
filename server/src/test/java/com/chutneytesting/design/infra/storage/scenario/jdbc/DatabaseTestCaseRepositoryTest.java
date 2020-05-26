@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.mock;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableMap;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.gwt.GwtScenario;
@@ -13,18 +11,18 @@ import com.chutneytesting.design.domain.scenario.gwt.GwtStep;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import com.chutneytesting.instrument.domain.Metrics;
 import com.chutneytesting.tests.AbstractLocalDatabaseTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.jdbc.core.RowMapper;
 
-@RunWith(JUnitParamsRunner.class)
 public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
 
     private static final TestCaseData.TestCaseDataBuilder TEST_CASE_DATA_BUILDER = TestCaseData.builder()
@@ -163,8 +161,8 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
         };
     }
 
-    @Test
-    @Parameters
+    @ParameterizedTest
+    @MethodSource("parametersForShould_update_scenario_fields")
     public void should_update_scenario_fields(String testName, TestCaseData.TestCaseDataBuilder builder) {
         // Given: an existing scenarioTemplate in the repository
         final String scenarioId = repository.save(TEST_CASE_DATA_BUILDER.build());
