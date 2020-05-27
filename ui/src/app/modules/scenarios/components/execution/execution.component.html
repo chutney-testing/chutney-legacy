@@ -27,7 +27,7 @@
                 <em>{{executionError}}</em>
             </div>
         </div>
-        <div class="float-right">
+        <div class="mb-2">
             <chutney-scenario-campaigns [idScenario]="currentScenarioId"></chutney-scenario-campaigns>
         </div>
         <ng-container *ngIf="scenarioExecutionReport?.report">
@@ -84,6 +84,23 @@
                                               [step]="report"></chutney-scenario-step-report>
             </div>
             </ng-container>
+        <div *ngIf="!scenarioExecutionReport" class="border background-white">
+            <ng-container *ngIf="scenarioComponent">
+                <div *ngFor="let step of scenarioComponent.componentSteps">
+                    <chutney-component-read [step] = step></chutney-component-read>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="scenarioGwt">
+                <div *ngFor="let step of scenarioGwt.scenario.givens">
+                    <chutney-gwt-read [step] = step [type]="'given'"></chutney-gwt-read>
+                </div>
+                <chutney-gwt-read [step] = scenarioGwt.scenario.when [type]="'when'"></chutney-gwt-read>
+                <div *ngFor="let step of scenarioGwt.scenario.thens">
+                    <chutney-gwt-read [step] = step [type]="'then'"></chutney-gwt-read>
+                </div>
+            </ng-container>
+
+        </div>
     </div>
 </div>
 

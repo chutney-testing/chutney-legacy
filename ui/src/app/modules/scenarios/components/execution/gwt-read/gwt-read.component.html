@@ -1,0 +1,21 @@
+<div class="ml-3 mb-2 mt-2">
+    <span *ngIf="step.implementation" class="mr-2 fa fa-sm eye-color pointer"  [ngClass]="showImplementation ? 'fa-angle-down' : 'fa-angle-right'" (click)="showImplementation = !showImplementation"></span>
+    <span class="step-name">{{ step.sentence }}</span>
+    <span class="small" *ngIf="step.strategy !== null && step.strategy.type === 'retry-with-timeout'"> 
+        <span class="ml-2 fa fa-sm fa-redo" title="{{ step.strategy.parameters | stringify}}"></span>
+    </span>
+    <ng-container *ngIf="step.implementation">
+        <pre class="ml-2 small implementation" *ngIf="showImplementation">
+{{ step.implementation.task }}
+        </pre>
+    </ng-container>
+
+    <div *ngFor="let child of step.subSteps">
+        <chutney-gwt-read [step] = child [type] = ''></chutney-gwt-read>
+    </div>
+
+</div>
+
+
+
+
