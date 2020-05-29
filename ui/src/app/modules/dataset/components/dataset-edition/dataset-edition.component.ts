@@ -5,25 +5,29 @@ import { Dataset, KeyValue } from '@model';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { CanDeactivatePage } from '@core/guards';
 
 @Component({
     selector: 'chutney-dataset-edition',
     templateUrl: './dataset-edition.component.html',
     styleUrls: ['./dataset-edition.component.scss']
 })
-export class DatasetEditionComponent implements OnInit, OnDestroy {
+export class DatasetEditionComponent extends CanDeactivatePage implements OnInit, OnDestroy {
 
     dataset: Dataset = new Dataset('', '', [], new Date(), [], [], 0);
 
     activeTab = 'keyValue';
     datasetForm: FormGroup;
     private routeParamsSubscription: Subscription;
+    private previousDataSet: Dataset;
+    private modificationsSaved: boolean = false;
 
     constructor(private dataSetService: DataSetService,
                 private router: Router,
                 private route: ActivatedRoute,
                 private validationService: ValidationService,
                 private formBuilder: FormBuilder) {
+        super();
     }
 
     ngOnInit(): void {
@@ -65,9 +69,17 @@ export class DatasetEditionComponent implements OnInit, OnDestroy {
         return this.validationService.isNotEmpty(this.datasetForm.value['name']);
     }
 
-    confirm() {
-        this.dataSetService.save(this.createDataset())
-            .subscribe(() => this.router.navigateByUrl('/dataset'));
+    save() {
+        const dataset = this.createDataset();
+        this.dataSetService.save(dataset)
+            .subscribe(() => {
+                this.modificationsSaved = true;
+                this.previousDataSet = dataset;
+            });
+    }
+
+    canDeactivatePage(): boolean {
+        return this.modificationsSaved || this.createDataset().equals(this.previousDataSet);
     }
 
     cancel() {
