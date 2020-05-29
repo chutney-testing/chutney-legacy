@@ -68,6 +68,7 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
             this.dataSetService.findById(id).subscribe(
                 (res) => {
                     this.dataset = res;
+                    this.previousDataSet = this.dataset;
                     this.datasetForm.controls.name.patchValue(this.dataset.name);
                     this.datasetForm.controls.description.patchValue(this.dataset.description);
                     this.datasetForm.controls.tags.patchValue(this.dataset.tags.join(', '));
@@ -87,10 +88,10 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
         const dataset = this.createDataset();
         this.dataSetService.save(dataset)
             .subscribe( (res) => {
-                this.modificationsSaved = true;
-                this.previousDataSet = dataset;
-                this.notify(this.savedMessage);
+                this.previousDataSet = res;
                 this.dataset = res;
+                this.notify(this.savedMessage);
+                this.modificationsSaved = true;
             });
     }
 
