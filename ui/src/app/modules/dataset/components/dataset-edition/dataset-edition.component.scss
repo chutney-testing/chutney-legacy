@@ -2,3 +2,15 @@
     display: inline-block;
     margin: 1em;
 }
+
+.notification {
+    position: absolute;
+    top: 0;
+    padding: 2px;
+    width: 100%;
+}
+
+.notification:empty
+{
+    display:none;
+}

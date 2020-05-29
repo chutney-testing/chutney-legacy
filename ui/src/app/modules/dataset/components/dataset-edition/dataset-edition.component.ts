@@ -6,6 +6,8 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CanDeactivatePage } from '@core/guards';
+import { delay } from '@shared/tools';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'chutney-dataset-edition',
@@ -21,11 +23,14 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
     private routeParamsSubscription: Subscription;
     private previousDataSet: Dataset;
     private modificationsSaved: boolean = false;
+    message;
+    private savedMessage: string;
 
     constructor(private dataSetService: DataSetService,
                 private router: Router,
                 private route: ActivatedRoute,
                 private validationService: ValidationService,
+                private translate: TranslateService,
                 private formBuilder: FormBuilder) {
         super();
     }
@@ -42,6 +47,15 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
 
         this.routeParamsSubscription = this.route.params.subscribe((params) => {
             this.load(params['id']);
+        });
+
+        this.initTranslation();
+
+    }
+
+    private initTranslation() {
+        this.translate.get('global.actions.done.saved').subscribe((res: string) => {
+            this.savedMessage = res;
         });
     }
 
@@ -72,10 +86,20 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
     save() {
         const dataset = this.createDataset();
         this.dataSetService.save(dataset)
-            .subscribe(() => {
+            .subscribe( (res) => {
                 this.modificationsSaved = true;
                 this.previousDataSet = dataset;
+                this.notify(this.savedMessage);
+                this.dataset = res;
             });
+    }
+
+    notify(message: string) {
+        (async () => {
+            this.message = message;
+            await delay(3000);
+            this.message = null;
+        })();
     }
 
     canDeactivatePage(): boolean {

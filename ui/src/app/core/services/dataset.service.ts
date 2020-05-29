@@ -48,8 +48,8 @@ export class DataSetService {
             ));
     }
 
-    save(dataset: Dataset): Observable<Object> {
-        return this.httpClient.post(environment.backend + this.resourceUrl, dataset);
+    save(dataset: Dataset): Observable<Dataset> {
+        return this.httpClient.post<Dataset>(environment.backend + this.resourceUrl, dataset);
     }
 
     delete(id: String): Observable<Object> {
