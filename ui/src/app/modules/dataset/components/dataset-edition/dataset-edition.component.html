@@ -27,7 +27,7 @@
         <div *ngIf="dataset.name" class="box2 float-right">
             <chutney-delete-confirm-dialog
                 [dialogMessage]="('global.confirm.question' | translate) + ' ' + ('global.actions.delete' | translate) + '\n' + dataset.name"
-                [label]="'Delete file'"
+                [label]="'Delete dataset'"
                 [disabled]="null"
                 (deleteEvent)="deleteDataset()">
             </chutney-delete-confirm-dialog>
