@@ -95,7 +95,7 @@
         <orientdb.version>3.0.30</orientdb.version>
         <lucene.version>7.3.0</lucene.version>
         <selenium.version>3.14.0</selenium.version>
-        <rxjava.version>2.2.6</rxjava.version>
+        <rxjava.version>2.2.19</rxjava.version>
         <groovy.version>2.5.0</groovy.version>
 
         <!-- Test dependencies versions -->
