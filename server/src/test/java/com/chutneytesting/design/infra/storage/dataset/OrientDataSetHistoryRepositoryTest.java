@@ -9,6 +9,7 @@ import com.chutneytesting.design.domain.dataset.DataSetNotFoundException;
 import com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB;
 import com.chutneytesting.tests.AbstractOrientDatabaseTest;
 import com.orientechnologies.common.log.OLogManager;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.apache.commons.lang3.tuple.Pair;
@@ -55,6 +56,19 @@ public class OrientDataSetHistoryRepositoryTest extends AbstractOrientDatabaseTe
         addFirstVersion();
         DataSet originalCopy = DataSet.builder().fromDataSet(originalDataSet).build();
         Optional<Pair<String, Integer>> versionId = sut.addVersion(originalCopy);
+        assertThat(versionId).isEmpty();
+    }
+
+    @Test
+    public void should_not_work() {
+        DataSet premier = DataSet.builder()
+            .fromDataSet(originalDataSet)
+            .withMultipleValues(Collections.emptyList())
+            .withUniqueValues(Collections.emptyMap())
+            .build();
+
+        Optional<Pair<String, Integer>> versionId = sut.addVersion(premier);
+        versionId = sut.addVersion(premier);
         assertThat(versionId).isEmpty();
     }
 

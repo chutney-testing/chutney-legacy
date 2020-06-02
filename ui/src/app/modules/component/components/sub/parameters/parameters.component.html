@@ -1,16 +1,16 @@
 <div [formGroup]="parentForm" class="mt-3">
-        <span class="font-weight-bold"
-             (click)="switchCollapseParam()">{{'components.shared.edition.blocks.parameters' | translate}}</span>
-        <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
-                (click)="switchCollapseParam()"
-                title="{{(collapseParam ? 'global.actions.show' : 'global.actions.hide') | translate}}">
-            <span class="fa" [ngClass]="collapseParam ? 'fa-eye' : 'fa-eye-slash'"></span>
-        </button>
-        <button class="btn btn-sm btn-light btn-outline-dark border-0 ml-sm-1"
-                (click)="collapseParam = false; addParameters();"
-                title="{{'global.actions.add' | translate}}">
-            <span class="fa fa-plus"></span>
-        </button>
+    <span class="font-weight-bold"
+          (click)="switchCollapseParam()">{{'components.shared.edition.blocks.parameters' | translate}}</span>
+    <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
+            (click)="switchCollapseParam()"
+            title="{{(collapseParam ? 'global.actions.show' : 'global.actions.hide') | translate}}">
+        <span class="fa" [ngClass]="collapseParam ? 'fa-eye' : 'fa-eye-slash'"></span>
+    </button>
+    <button class="btn btn-sm btn-light btn-outline-dark border-0 ml-sm-1"
+            (click)="collapseParam = false; addParameters();"
+            title="{{'global.actions.add' | translate}}">
+        <span class="fa fa-plus"></span>
+    </button>
     <ng-container *ngIf="!collapseParam">
         <div class="row" formArrayName="parameters"
              *ngFor="let parameter of parentForm.get('parameters')?.controls; let i = index;">

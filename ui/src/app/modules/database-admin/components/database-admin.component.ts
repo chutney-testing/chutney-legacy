@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 import { Sqlresult, sqlResultFromObject } from '@model';
-import { PaginationInstance } from "ngx-pagination";
+import { PaginationInstance } from 'ngx-pagination';
 import { DatabaseAdminService } from '@core/services';
 
 @Component({
@@ -39,8 +39,8 @@ export class DatabaseAdminComponent {
       this.databaseAdminService.paginate(this.statement, this.database, this.paginationInstanceConfig.currentPage, this.paginationInstanceConfig.itemsPerPage)
         .subscribe(
           (res: Array<Object>) => {
-            this.sqlResult = sqlResultFromObject(res["data"][0]);
-            this.paginationInstanceConfig.totalItems = res["totalCount"];
+            this.sqlResult = sqlResultFromObject(res['data'][0]);
+            this.paginationInstanceConfig.totalItems = res['totalCount'];
           },
           (error) => {
             console.log(error);

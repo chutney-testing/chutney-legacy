@@ -47,8 +47,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return super.handleHttpMessageNotWritable(ex, headers, status, request);
     }
 
-    @ExceptionHandler({ RuntimeException.class,
-                        FailedExecutionAttempt.class,
+    @ExceptionHandler({
+        RuntimeException.class,
+        FailedExecutionAttempt.class
     })
     public ResponseEntity<Object> _500(RuntimeException ex, WebRequest request) {
         LOGGER.error("Controller global exception handler", ex);

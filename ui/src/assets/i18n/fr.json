@@ -191,6 +191,10 @@
             "deletion.suffix": " ?"
         }
     },
+    "dataset": {
+        "key": "Clé",
+        "value": "Valeur"
+    },
     "admin": {
         "targets": {
             "name.placeholder": "Nom du serveur",

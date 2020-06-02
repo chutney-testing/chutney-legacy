@@ -1,58 +1,58 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '@env/environment';
-import { Campaign, CampaignExecutionReport, TestCase, ScenarioIndex, Dataset, KeyValue } from '@model';
+import { Dataset } from '@model';
 import { HttpClient } from '@angular/common/http';
-import { distinct } from '@shared/tools';
 
 @Injectable({
     providedIn: 'root'
 })
 export class DataSetService {
 
-    private resourceUrl = '';
+    private resourceUrl = '/api/v1/datasets';
 
-    constructor(private http: HttpClient) { }
+    constructor(private httpClient: HttpClient) { }
 
     findAll(): Observable<Array<Dataset>> {
-        const mockDataSet1 = new Dataset('Name of the dataset 1',
-                                    'description of the dataset 1', ['tag1', 'tag2'], new Date(), [], [], 'id1');
-        const mockDataSet2 = new Dataset('Name of the dataset 2',
-                                    'description of the dataset 2', ['tag3', 'tag4'], new Date(), [], [], 'id2');
-        const mockDataSet3 = new Dataset('Name of the dataset 3',
-                                    'description of the dataset 3', ['tag1', 'tag3'], new Date(), [], [], 'id3');
-        const mockDataSet4 = new Dataset('Name of the dataset 4',
-                                    'description of the dataset 4', ['tag2', 'tag3'], new Date(), [], [], 'id4');
-        return of([mockDataSet1, mockDataSet2, mockDataSet3, mockDataSet4]);
+        return this.httpClient.get<Array<Dataset>>(environment.backend + this.resourceUrl)
+            .pipe(map((res: Array<any>) => {
+                res = res.map(dto => new Dataset(
+                    dto.name,
+                    dto.description,
+                    dto.tags,
+                    dto.lastUpdated,
+                    dto.uniqueValues,
+                    dto.multipleValues,
+                    dto.version,
+                    dto.id
+                ));
+
+                return res;
+            }));
     }
 
     findById(id: string): Observable<Dataset> {
-        const uniquesValues = [new KeyValue('clef1', 'value1'), new KeyValue('clef2', 'value2'), new KeyValue('clef3', 'value3'),
-                               new KeyValue('clef4', 'value4'), new KeyValue('clef5', 'value5'), new KeyValue('clef6', 'value6'),
-                               new KeyValue('clef7', 'value4'), new KeyValue('clef8', 'value5'), new KeyValue('clef9', 'value6') ];
-        const multipleValues = [
-            [new KeyValue('clef1', 'value1'), new KeyValue('clef2', 'value2'), new KeyValue('clef3', 'value3'),
-            new KeyValue('clef4', 'value4'), new KeyValue('clef5', 'value5'), new KeyValue('clef6', 'value6'),
-            new KeyValue('clef7', 'value8'), new KeyValue('clef8', 'value5'), new KeyValue('clef9', 'value6')],
-            [new KeyValue('clef1', 'value1'), new KeyValue('clef2', 'value2'), new KeyValue('clef3', 'value3'),
-            new KeyValue('clef4', 'value4'), new KeyValue('clef5', 'value5'), new KeyValue('clef6', 'value6'),
-            new KeyValue('clef7', 'value8'), new KeyValue('clef8', 'value5'), new KeyValue('clef9', 'value6')],
-            [new KeyValue('clef1', 'value1'), new KeyValue('clef2', 'value2'), new KeyValue('clef3', 'value3'),
-            new KeyValue('clef4', 'value4'), new KeyValue('clef5', 'value5'), new KeyValue('clef6', 'value6'),
-            new KeyValue('clef7', 'value8'), new KeyValue('clef8', 'value5'), new KeyValue('clef9', 'value6')],
-            [new KeyValue('clef1', 'value1'), new KeyValue('clef2', 'value2'), new KeyValue('clef3', 'value3'),
-            new KeyValue('clef4', 'value4'), new KeyValue('clef5', 'value5'), new KeyValue('clef6', 'value6'),
-            new KeyValue('clef7', 'value8'), new KeyValue('clef8', 'value5'), new KeyValue('clef9', 'value6')],
-            [new KeyValue('clef1', 'value1'), new KeyValue('clef2', 'value2'), new KeyValue('clef3', 'value3'),
-            new KeyValue('clef4', 'value4'), new KeyValue('clef5', 'value5'), new KeyValue('clef6', 'value6'),
-            new KeyValue('clef7', 'value8'), new KeyValue('clef8', 'value5'), new KeyValue('clef9', 'value6')],
-            [new KeyValue('clef1', 'value1'), new KeyValue('clef2', 'value2'), new KeyValue('clef3', 'value3'),
-            new KeyValue('clef4', 'value4'), new KeyValue('clef5', 'value5'), new KeyValue('clef6', 'value6'),
-            new KeyValue('clef7', 'value8'), new KeyValue('clef8', 'value5'), new KeyValue('clef9', 'value6')]
-        ];
-        const mockDataSet = new Dataset('Name of the dataset',
-                                    'description of the dataset', ['tag1', 'tag2'], new Date(), uniquesValues, multipleValues, 'id');
-        return of(mockDataSet);
+        return this.httpClient.get<Dataset>(environment.backend + this.resourceUrl + '/' + id)
+            .pipe(map((dto: any) => {
+                    return new Dataset(
+                        dto.name,
+                        dto.description,
+                        dto.tags,
+                        dto.lastUpdated,
+                        dto.uniqueValues,
+                        dto.multipleValues,
+                        dto.version,
+                        dto.id);
+                }
+            ));
+    }
+
+    save(dataset: Dataset): Observable<Dataset> {
+        return this.httpClient.post<Dataset>(environment.backend + this.resourceUrl, dataset);
+    }
+
+    delete(id: String): Observable<Object> {
+        return this.httpClient.delete(environment.backend + this.resourceUrl + '/' + id);
     }
 }

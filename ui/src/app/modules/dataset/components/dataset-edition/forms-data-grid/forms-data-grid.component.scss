@@ -1,0 +1,41 @@
+@import 'colors';
+
+table {
+    overflow: hidden;
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+td, th {
+    position: relative;
+    border: 0px;
+}
+
+.header {
+    background: #cccccc;
+}
+
+.removeBtn:hover::after {
+    content: "";
+    position: absolute;
+    background-color: $grisclair1;
+    left: 0;
+    top: -5000px;
+    height: 10000px;
+    width: 100%;
+    z-index: -1;
+}
+
+.div-file {
+    position: relative;
+    overflow: hidden;
+}
+
+.input-file {
+    position: absolute;
+    font-size: 50px;
+    opacity: 0;
+    right: 0;
+    top: 0;
+}

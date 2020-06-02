@@ -25,7 +25,8 @@ import {
     TechnicalStepComponent,
     FunctionalStepComponent,
     EnvironmentComboComponent,
-    ExecutionBadgeComponent, ComponentCardComponent
+    ExecutionBadgeComponent,
+    ComponentCardComponent
 } from './components';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -68,7 +69,7 @@ import { DataSetSearchPipe } from './pipes/dataset-search.pipe';
         ExecutionBadgeComponent,
         ThumbnailPipe,
         ComponentCardComponent,
-        AceEditorComponent
+        AceEditorComponent,
         DataSetSearchPipe,
     ],
     exports: [
@@ -93,7 +94,7 @@ import { DataSetSearchPipe } from './pipes/dataset-search.pipe';
         ExecutionBadgeComponent,
         ThumbnailPipe,
         ComponentCardComponent,
-        AceEditorComponent
+        AceEditorComponent,
         DataSetSearchPipe,
     ],
     entryComponents: [

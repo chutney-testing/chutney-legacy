@@ -1,7 +1,7 @@
-import { Injectable } from "@angular/core";
-import { CanDeactivate } from "@angular/router";
-import { CanDeactivatePage } from "./page";
-import { TranslateService } from "@ngx-translate/core";
+import { Injectable } from '@angular/core';
+import { CanDeactivate } from '@angular/router';
+import { CanDeactivatePage } from './page';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root'

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { newInstance } from '@shared/tools';
 import { DataSetService } from '@core/services';
-import { Dataset } from '@core/model';
+import { Dataset } from '@model';
 import { distinct, flatMap } from '@shared/tools/array-utils';
 
 @Component({
@@ -13,7 +13,7 @@ export class DatasetListComponent implements OnInit {
 
     datasets: Array<Dataset> = [];
 
-    preview: Dataset;
+    preview: Dataset = null;
 
     dataSetFilter = '';
     itemList = [];
@@ -40,16 +40,20 @@ export class DatasetListComponent implements OnInit {
     }
 
     showPreview(dataset: Dataset) {
-        this.dataSetService.findById(dataset.id).subscribe(
-            (res) => {
-                this.preview = res;
-            },
-            (error) => console.log(error)
-        );
+        if (this.preview === null || this.preview.id !== dataset.id) {
+            this.dataSetService.findById(dataset.id).subscribe(
+                (res) => {
+                    this.preview = res;
+                },
+                (error) => console.log(error)
+            );
+        } else {
+            this.preview = null;
+        }
     }
 
     private initTags() {
-        const allTagsInDataset: string[] =  distinct(flatMap(this.datasets, (sc) => sc.tags)).sort();
+        const allTagsInDataset: string[] = distinct(flatMap(this.datasets, (sc) => sc.tags)).sort();
         let index = 0;
         this.itemList = allTagsInDataset.map(t => {
             index++;
@@ -68,6 +72,6 @@ export class DatasetListComponent implements OnInit {
 
     onItemDeSelect(item: any) {
         this.selectedTags.splice(this.selectedTags.indexOf(item.itemName), 1);
-        this.selectedTags =  newInstance(this.selectedTags);
+        this.selectedTags = newInstance(this.selectedTags);
     }
 }

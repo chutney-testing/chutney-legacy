@@ -10,7 +10,7 @@ import {
     Validators
 } from '@angular/forms';
 import { ParameterDefinition } from '@model';
-import { durationValidator } from "@shared/validators/duration.validator";
+import { durationValidator } from '@shared/validators/duration.validator';
 
 @Component({
     selector: 'chutney-strategy-parameters-form',
@@ -52,13 +52,13 @@ export class StrategyParameterFormComponent implements OnChanges, ControlValueAc
         this.parameters.forEach(p => {
             this.parameterForm.addControl(
                 p.name,
-                this.fb.control(this.findValue(p.name, this.values), StrategyParameterFormComponent.findValidatorFor(p.type))
+                this.fb.control(this.findValue(p.name, this.values), this.findValidatorFor(p.type))
             );
             this.registeredControls.push(p.name);
         });
     }
 
-    private static findValidatorFor(type: string) {
+    private findValidatorFor(type: string) {
         switch (type) {
             case 'duration':
                 return durationValidator();
@@ -83,7 +83,7 @@ export class StrategyParameterFormComponent implements OnChanges, ControlValueAc
         }
 
         return kv.find(t => t.find(x => true) === name)[1];
-     }
+    }
 
     // CVA
     onTouched: () => void = () => {};
