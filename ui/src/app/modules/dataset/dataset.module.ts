@@ -16,6 +16,9 @@ import { DatasetRoute } from './dataset.routes';
 import { MoleculesModule } from 'src/app/molecules/molecules.module';
 import { AngularMultiSelectModule } from 'angular2-multiselect-dropdown';
 import { DatasetEditionComponent } from './components/dataset-edition/dataset-edition.component';
+import { AtomsModule } from '../../atoms/atoms.module';
+import { FormsKeyValueComponent } from '@modules/dataset/components/dataset-edition/forms-key-value/forms-key-value.component';
+import { FormsDataGridComponent } from '@modules/dataset/components/dataset-edition/forms-data-grid/forms-data-grid.component';
 
 
 const ROUTES = [
@@ -33,11 +36,14 @@ const ROUTES = [
         MomentModule,
         TranslateModule,
         MoleculesModule,
-        AngularMultiSelectModule
+        AngularMultiSelectModule,
+        AtomsModule
     ],
     declarations: [
         DatasetListComponent,
-        DatasetEditionComponent
+        DatasetEditionComponent,
+        FormsKeyValueComponent,
+        FormsDataGridComponent
     ],
     entryComponents: [
 

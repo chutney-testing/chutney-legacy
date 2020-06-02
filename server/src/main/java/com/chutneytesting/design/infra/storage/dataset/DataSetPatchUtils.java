@@ -1,15 +1,13 @@
 package com.chutneytesting.design.infra.storage.dataset;
 
 import static java.util.Collections.emptyMap;
-import static java.util.Optional.empty;
 
 import com.chutneytesting.design.domain.dataset.DataSet;
-import com.chutneytesting.tools.Try;
 import com.github.difflib.DiffUtils;
 import com.github.difflib.UnifiedDiffUtils;
+import com.github.difflib.algorithm.DiffException;
 import com.github.difflib.patch.Patch;
 import com.github.difflib.patch.PatchFailedException;
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -17,12 +15,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
-import org.eclipse.jgit.diff.DiffFormatter;
-import org.eclipse.jgit.diff.EditList;
-import org.eclipse.jgit.diff.MyersDiff;
-import org.eclipse.jgit.diff.RawText;
-import org.eclipse.jgit.diff.RawTextComparator;
 
 public final class DataSetPatchUtils {
 
@@ -103,18 +97,14 @@ public final class DataSetPatchUtils {
     }
 
     public static String unifiedDiff(String revised, String original) {
-        RawText originalRaw = new RawText(original.getBytes());
-        RawText revisedRaw = new RawText(revised.getBytes());
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        EditList edits = new EditList();
-        edits.addAll(MyersDiff.INSTANCE.diff(RawTextComparator.DEFAULT, originalRaw, revisedRaw));
-        Try.unsafe(() -> {
-            new DiffFormatter(out).format(edits, originalRaw, revisedRaw);
-            return empty();
-        });
-
-        return out.toString();
+        try {
+            List<String> originalLines = stringLines(original);
+            Patch<String> diff = DiffUtils.diff(originalLines, stringLines(revised));
+            List<String> unifiedDiff = UnifiedDiffUtils.generateUnifiedDiff("original", "revised", originalLines, diff, 0);
+            return unifiedDiff.stream().collect(Collectors.joining("\r"));
+        } catch (DiffException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static String patchString(String original, DataSetPatch dataSetPatch) throws PatchFailedException {
@@ -122,10 +112,8 @@ public final class DataSetPatchUtils {
         if (unifiedDiffValues.isPresent()) {
             List<String> originalLines = stringLines(original);
             List<String> diffLines = stringLines(unifiedDiffValues.get());
-            if (diffLines.size() > 0) {
+            if (diffLines.size() > 0 && (diffLines.size() != 1 && !"".equals(diffLines.get(0)))) {
                 List<String> diff = new ArrayList<>(diffLines);
-                diff.add(0, "+++ t\n");
-                diff.add(0, "--- t\n");
                 Patch<String> patch = UnifiedDiffUtils.parseUnifiedDiff(diff);
                 List<String> patchedOriginal = DiffUtils.patch(originalLines, patch);
 

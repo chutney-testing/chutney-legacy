@@ -73,7 +73,7 @@ export class KeyValue implements Clonable<KeyValue> {
 
     constructor(
         public key: string,
-        public value: string
+        public value: any
     ) {
     }
 

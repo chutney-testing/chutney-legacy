@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { PaginationInstance } from "ngx-pagination";
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { PaginationInstance } from 'ngx-pagination';
 
 import { Table } from '@model';
 
