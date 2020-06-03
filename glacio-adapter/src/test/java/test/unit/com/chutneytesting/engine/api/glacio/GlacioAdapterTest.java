@@ -1,5 +1,6 @@
 package test.unit.com.chutneytesting.engine.api.glacio;
 
+import static com.chutneytesting.engine.api.glacio.GlacioAdapter.DEFAULT_ENV;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -24,7 +25,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 public class GlacioAdapterTest {
 
-    private static final String ENVIRONMENT = "ENV";
+    private static final String ENVIRONMENT = DEFAULT_ENV;
 
     private GlacioAdapter sut;
     private ExecutableStepFactory executableStepFactory;
@@ -55,14 +56,14 @@ public class GlacioAdapterTest {
 
         assertThat(stepDefinitions).hasSize(1);
         verify(executableStepFactory).isExecutableStep(eq(expectedLocale), any());
-        verify(executableStepFactory).build(eq(expectedLocale), eq(""), any());
+        verify(executableStepFactory).build(eq(expectedLocale), eq(DEFAULT_ENV), any());
     }
 
     @Test
     public void should_adapt_as_many_glacio_scenarios_as_feature_has() {
         String featureName = "Feature with multiple scenarios";
         String feature = fileContent("unit/multiple_scenarios.feature");
-        List<StepDefinition> stepDefinitions = sut.toChutneyStepDefinition(feature, ENVIRONMENT);
+        List<StepDefinition> stepDefinitions = sut.toChutneyStepDefinition(feature);
         assertThat(stepDefinitions).hasSize(3);
         assertThat(stepDefinitions)
             .extracting(stepDefinition -> stepDefinition.name)

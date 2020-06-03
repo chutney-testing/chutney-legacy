@@ -15,7 +15,7 @@ public class UncheckedException extends RuntimeException {
         super("Occurred in silenced function", checkedException);
     }
 
-    static RuntimeException throwUncheckedException(Exception e) {
+    public static RuntimeException throwUncheckedException(Exception e) {
         if (e instanceof RuntimeException) {
             return (RuntimeException) e;
         } else {
