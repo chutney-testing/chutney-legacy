@@ -295,6 +295,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.junit.vintage</groupId>
+                        <artifactId>junit-vintage-engine</artifactId>
+                        <version>${junit.version}</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <argLine>-Xms1024m -Xmx1024m</argLine>
                 </configuration>

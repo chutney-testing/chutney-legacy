@@ -75,8 +75,16 @@ public class GlacioAdapterConfiguration {
         glacioAdapter = createGlacioAdapter();
     }
 
+    public ExecutionConfiguration executionConfiguration() {
+        return executionConfiguration;
+    }
+
     public GlacioAdapter glacioAdapter() {
         return glacioAdapter;
+    }
+
+    public EnvironmentService environmentService() {
+        return environmentService;
     }
 
     public List<GlacioExecutableStepParser> glacioExecutableStepParsers() {

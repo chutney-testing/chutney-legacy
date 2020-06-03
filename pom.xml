@@ -63,6 +63,7 @@
         <module>cli</module>
         <module>packaging</module>
         <module>glacio-adapter</module>
+        <module>chutney-junit</module>
     </modules>
 
     <properties>
@@ -101,7 +102,6 @@
         <glacio.version>0.0.1-SNAPSHOT</glacio.version>
 
         <!-- Test dependencies versions -->
-        <junit4.version>4.13</junit4.version>
         <junit.version>5.6.2</junit.version>
         <assertj.version>3.15.0</assertj.version>
         <mockito.version>2.8.9</mockito.version>
@@ -132,33 +132,7 @@
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit4.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -173,7 +147,6 @@
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <dependencyManagement>
@@ -185,7 +158,7 @@
             </dependency>
             <dependency>
                 <groupId>com.chutneytesting</groupId>
-                <artifactId>core</artifactId>
+                <artifactId>server</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -214,6 +187,11 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.chutneytesting</groupId>
+                <artifactId>glacio-adapter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <artifactId>glacio-parser</artifactId>
                 <groupId>com.github.fridujo</groupId>
                 <version>${glacio.version}</version>
@@ -225,6 +203,14 @@
                 <artifactId>value</artifactId>
                 <version>${immutables.version}</version>
                 <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
             <!-- Spring dependencies -->
@@ -393,23 +379,16 @@
 
             <!-- Test dependencies -->
             <dependency>
-                <groupId>org.junit</groupId>
-                <artifactId>junit-bom</artifactId>
-                <version>${junit.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
+                <groupId>com.chutneytesting</groupId>
+                <artifactId>chutney-junit-api</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-test</artifactId>
                 <version>${springboot.version}</version>
                 <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>junit</groupId>
-                        <artifactId>junit</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.sshd</groupId>
@@ -458,12 +437,6 @@
                 <artifactId>mockrunner-jms</artifactId>
                 <version>${mockrunner-jms.version}</version>
                 <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>junit</groupId>
-                        <artifactId>junit</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.activemq</groupId>
@@ -521,7 +494,6 @@
                 <version>${pitest-cucumber.version}</version>
                 <scope>test</scope>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 
@@ -610,6 +582,13 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.0.0-M4</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.junit.jupiter</groupId>
+                            <artifactId>junit-jupiter-engine</artifactId>
+                            <version>${junit.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -733,7 +712,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <execute />
+                                        <execute/>
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>

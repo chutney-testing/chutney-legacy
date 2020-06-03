@@ -18,10 +18,16 @@ import java.util.stream.Collectors;
 
 public class GlacioAdapter {
 
+    public static final String DEFAULT_ENV = "ENV";
+
     private ExecutableStepFactory executableStepFactory;
 
     public GlacioAdapter(ExecutableStepFactory executableStepFactory) {
         this.executableStepFactory = executableStepFactory;
+    }
+
+    public List<StepDefinition> toChutneyStepDefinition(String text) {
+        return toChutneyStepDefinition(text, DEFAULT_ENV);
     }
 
     public List<StepDefinition> toChutneyStepDefinition(String text, String environment) {
@@ -32,7 +38,7 @@ public class GlacioAdapter {
             .map(s -> toStepDefinition(
                 feature.getName(),
                 feature.getLanguage().map(ps -> new Locale(ps.getValue())).orElse(Locale.ENGLISH),
-                ofNullable(environment).orElse(""),
+                ofNullable(environment).orElse(DEFAULT_ENV),
                 s)
             )
             .collect(Collectors.toList());
