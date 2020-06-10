@@ -1,0 +1,5 @@
+
+chutney:
+  datasource:
+    internal:
+      url: jdbc:h2:mem:${random.int[97,123]}
