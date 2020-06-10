@@ -1,0 +1,35 @@
+
+chutney:
+  mem-auth:
+    users:
+      -
+        id: user
+        name: user
+        firstname: user
+        lastname: user
+        mail: user@user.com
+        password: user
+        profiles:
+          -
+            UTILISATEUR
+      -
+        id: admin
+        name: admin
+        firstname: admin
+        lastname: admin
+        mail: admin@admin.com
+        password: admin
+        profiles:
+          -
+            ADMINISTRATEUR
+      -
+        id: both
+        name: both
+        firstname: both
+        lastname: both
+        mail: both@both.com
+        password: both
+        profiles:
+          -
+            UTILISATEUR
+            ADMINISTRATEUR
