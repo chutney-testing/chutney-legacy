@@ -8,11 +8,11 @@ Feature: Context-put feature
             Do success
         Then Use datatable
             Do put in context
-            | var1 | value1 splitted |
+            | var1 | value1 split |
             | var 2 | value2 |
         And Use substeps
             Execute Store variables
-                var1 value1 splitted
+                var1 value1 split
                 "var 2" value2
 
     Scenario: Define context-put tasks with default parser
@@ -21,5 +21,5 @@ Feature: Context-put feature
         Then Use default parsing syntax
             Run context-put my first put
                 With entries
-                | var1 | value1 splitted |
+                | var1 | value1 split |
                 | var 2 | value2 |

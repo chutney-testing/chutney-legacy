@@ -21,7 +21,7 @@ public class ScenarioTagListMapperTest {
     }
 
     @Test
-    public void string_should_be_splitted_on_comma_separator() throws Exception {
+    public void string_should_be_split_on_comma_separator() throws Exception {
         List<String> actual = ScenarioTagListMapper.tagsStringToList("  T1  , T2   ,  T3  ");
         assertThat(actual).containsExactly("T1", "T2", "T3");
     }

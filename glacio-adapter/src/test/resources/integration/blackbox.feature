@@ -76,3 +76,24 @@ Feature: Assertions Task test
                 With mode equals
                 With actual ${#jsonPath(#body, "$.status")}
                 With expected SUCCESS
+
+
+#    @Ignore
+#    Scenario: Execution by UI controller
+#        Given an existing valid scenario embedding XML content (retry: 5 times for 10 minutes)
+#            Execute HTTP POST
+#            To CHUTNEY_DEV on scenario_saving_service
+#            With headers
+#            | Content-Type | application/json |
+#            With body @import:path/to/valid/scenario_with_xml.json
+#            Expect: Status is 201
+#        When last saved scenario is executed (softly:)
+#            Execute http-post
+#            On CHUTNEY_DEV <host>
+#            With uri /api/ui/scenario/execution/v1/${#body}
+#            With body {}
+#        Then the report status is SUCCESS
+#            Do compare
+#            With mode equals
+#            With actual ${#jsonPath(#body, "$.status")}
+#            With expected SUCCESS

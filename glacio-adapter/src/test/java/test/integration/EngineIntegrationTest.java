@@ -96,16 +96,16 @@ public class EngineIntegrationTest {
         assertThat(report.steps).hasSize(3);
         assertThat(report.steps.get(0).steps.get(0).type).isEqualTo("success");
         assertThat(report.steps.get(1).steps.get(0).type).isEqualTo("context-put");
-        assertThat(report.steps.get(1).steps.get(0).evaluatedInputs).containsExactly(entry("entries", Maps.of("var1", "value1 splitted", "var 2", "value2")));
+        assertThat(report.steps.get(1).steps.get(0).evaluatedInputs).containsExactly(entry("entries", Maps.of("var1", "value1 split", "var 2", "value2")));
         assertThat(report.steps.get(2).steps.get(0).type).isEqualTo("context-put");
-        assertThat(report.steps.get(2).steps.get(0).evaluatedInputs).containsExactly(entry("entries", Maps.of("var1", "value1 splitted", "var 2", "value2")));
+        assertThat(report.steps.get(2).steps.get(0).evaluatedInputs).containsExactly(entry("entries", Maps.of("var1", "value1 split", "var 2", "value2")));
 
         report = reports.get(1); // Default parser
         assertThat(report.status).isEqualTo(Status.SUCCESS);
         assertThat(report.steps).hasSize(2);
         assertThat(report.steps.get(0).steps.get(0).type).isEqualTo("success");
         assertThat(report.steps.get(1).steps.get(0).type).isEqualTo("context-put");
-        assertThat(report.steps.get(1).steps.get(0).evaluatedInputs).containsExactly(entry("entries", Maps.of("var1", "value1 splitted", "var 2", "value2")));
+        assertThat(report.steps.get(1).steps.get(0).evaluatedInputs).containsExactly(entry("entries", Maps.of("var1", "value1 split", "var 2", "value2")));
     }
 
     @Test
