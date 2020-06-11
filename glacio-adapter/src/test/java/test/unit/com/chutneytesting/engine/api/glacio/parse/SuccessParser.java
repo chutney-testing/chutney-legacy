@@ -1,7 +1,7 @@
 package test.unit.com.chutneytesting.engine.api.glacio.parse;
 
 import com.chutneytesting.engine.api.glacio.parse.GlacioParser;
-import com.github.fridujo.glacio.ast.Step;
+import com.github.fridujo.glacio.model.Step;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;

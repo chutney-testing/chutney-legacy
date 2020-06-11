@@ -13,8 +13,7 @@ import static org.mockito.Mockito.when;
 import com.chutneytesting.engine.api.glacio.ExecutableStepFactory;
 import com.chutneytesting.engine.api.glacio.ExecutableStepFactory.EXECUTABLE_KEYWORD;
 import com.chutneytesting.engine.api.glacio.parse.GlacioExecutableStepParser;
-import com.github.fridujo.glacio.ast.Position;
-import com.github.fridujo.glacio.ast.Step;
+import com.github.fridujo.glacio.model.Step;
 import com.google.common.collect.Sets;
 import java.util.HashMap;
 import java.util.Locale;
@@ -115,6 +114,6 @@ public class ExecutableStepFactoryTest {
     }
 
     private Step buildSimpleStepWithText(String stepText) {
-        return new Step(new Position(0, 0), stepText, emptyList(), empty(), empty());
+        return new Step(false, empty(), stepText, empty(), emptyList());
     }
 }

@@ -4,11 +4,11 @@ import static java.util.Locale.ENGLISH;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.engine.api.glacio.parse.GlacioParser;
+import com.chutneytesting.engine.api.glacio.parse.ParserHelper;
 import com.chutneytesting.engine.api.glacio.parse.StepParser;
 import com.chutneytesting.engine.api.glacio.parse.default_.EmptyParser;
-import com.github.fridujo.glacio.ast.DataTable;
-import com.github.fridujo.glacio.ast.Step;
-import com.github.fridujo.glacio.ast.TableCell;
+import com.github.fridujo.glacio.model.DataTable;
+import com.github.fridujo.glacio.model.Step;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -50,8 +50,9 @@ public class GlacioContextPutParser extends GlacioParser {
         public Map<String, Object> parseStep(Step step) {
             Map<String, Object> entries = new HashMap<>();
             // DataTable or substeps entries
-            if (step.getDataTable().isPresent()) {
-                entries.putAll(extractDataTableEntries(step.getDataTable().get()));
+            Optional<DataTable> dataTable = ParserHelper.stepDataTable(step);
+            if (dataTable.isPresent()) {
+                entries.putAll(extractDataTableEntries(dataTable.get()));
             } else if (!step.getSubsteps().isEmpty()) {
                 entries.putAll(extractSubStepsEntries(step.getSubsteps()));
             }
@@ -75,8 +76,8 @@ public class GlacioContextPutParser extends GlacioParser {
             Map<String, Object> entries = new HashMap<>();
             dataTable.getRows().forEach(tableRow -> {
                 if (tableRow.getCells().size() == 2) {
-                    List<TableCell> cells = tableRow.getCells().subList(0, 2);
-                    entries.put(cells.get(0).getValue(), cells.get(1).getValue());
+                    List<String> cells = tableRow.getCells().subList(0, 2);
+                    entries.put(cells.get(0), cells.get(1));
                     cells.clear();
                 }
             });

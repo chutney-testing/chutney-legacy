@@ -7,14 +7,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static test.unit.com.chutneytesting.engine.api.glacio.parse.GlacioParserHelper.zeroPosition;
 
 import com.chutneytesting.engine.api.glacio.parse.default_.EntryStepParser;
-import com.github.fridujo.glacio.ast.DataTable;
-import com.github.fridujo.glacio.ast.DocString;
-import com.github.fridujo.glacio.ast.Step;
-import com.github.fridujo.glacio.ast.TableCell;
-import com.github.fridujo.glacio.ast.TableRow;
+import com.github.fridujo.glacio.model.DataTable;
+import com.github.fridujo.glacio.model.DocString;
+import com.github.fridujo.glacio.model.Step;
 import java.util.Optional;
 import org.apache.groovy.util.Maps;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -37,7 +34,7 @@ public class EntryStepParserTest {
     public void should_use_step_docstring_as_simple_entry_value(String stepText, DocString stepDocString) {
         Step step = mock(Step.class);
         when(step.getText()).thenReturn(stepText);
-        when(step.getDocString()).thenReturn(Optional.of(stepDocString));
+        when(step.getArgument()).thenReturn(Optional.of(stepDocString));
         assertThat(sut.parseStep(step)).isEqualTo(entry(stepText, stepDocString.getContent()));
     }
 
@@ -46,7 +43,7 @@ public class EntryStepParserTest {
     public void should_use_step_datatable_as_list_entry_value_when_datatable_with_one_column(String stepText, DataTable stepDatatable) {
         Step step = mock(Step.class);
         when(step.getText()).thenReturn(stepText);
-        when(step.getDataTable()).thenReturn(Optional.of(stepDatatable));
+        when(step.getArgument()).thenReturn(Optional.of(stepDatatable));
         assertThat(sut.parseStep(step)).isEqualTo(entry(stepText, asList("a11", "a21", "a31")));
     }
 
@@ -55,7 +52,7 @@ public class EntryStepParserTest {
     public void should_use_step_datatable_as_map_entry_value_when_datatable_with_two_columns(String stepText, DataTable stepDatatable) {
         Step step = mock(Step.class);
         when(step.getText()).thenReturn(stepText);
-        when(step.getDataTable()).thenReturn(Optional.of(stepDatatable));
+        when(step.getArgument()).thenReturn(Optional.of(stepDatatable));
         assertThat(sut.parseStep(step))
             .isEqualTo(entry(stepText, Maps.of("a11", "a12", "a21", "a22", "a31", "a32")));
     }
@@ -65,7 +62,7 @@ public class EntryStepParserTest {
     public void should_use_step_datatable_as_map_entry_value_when_datatable_with_more_than_two_columns(String stepText, DataTable stepDatatable) {
         Step step = mock(Step.class);
         when(step.getText()).thenReturn(stepText);
-        when(step.getDataTable()).thenReturn(Optional.of(stepDatatable));
+        when(step.getArgument()).thenReturn(Optional.of(stepDatatable));
         assertThat(sut.parseStep(step))
             .isEqualTo(entry(stepText, Maps.of("a11", asList("a12", "a13"), "a21", asList("a22", "a23"), "a31", asList("a32", "a33"))));
     }
@@ -79,19 +76,19 @@ public class EntryStepParserTest {
 
     private static Object[] docstringParameters() {
         return new Object[]{
-            new Object[]{"stepTextForKey", new DocString(zeroPosition, empty(), "simple one line docString")},
-            new Object[]{"i'am a key", new DocString(zeroPosition, empty(), "docstring\non\nmultipleline")}
+            new Object[]{"stepTextForKey", new DocString(empty(), "simple one line docString")},
+            new Object[]{"i'am a key", new DocString(empty(), "docstring\non\nmultipleline")}
         };
     }
 
     private static Object[] datatableListParameters() {
         return new Object[]{
             new Object[]{"stepTextForKey",
-                new DataTable(zeroPosition,
+                new DataTable(
                     asList(
-                        new TableRow(zeroPosition, singletonList(new TableCell("a11"))),
-                        new TableRow(zeroPosition, singletonList(new TableCell("a21"))),
-                        new TableRow(zeroPosition, singletonList(new TableCell("a31")))
+                        new DataTable.Row(singletonList("a11")),
+                        new DataTable.Row(singletonList("a21")),
+                        new DataTable.Row(singletonList("a31"))
                     )
                 )
             }
@@ -101,11 +98,11 @@ public class EntryStepParserTest {
     private static Object[] datatableSimpleMapParameters() {
         return new Object[]{
             new Object[]{"stepTextForKey",
-                new DataTable(zeroPosition,
+                new DataTable(
                     asList(
-                        new TableRow(zeroPosition, asList(new TableCell("a11"), new TableCell("a12"))),
-                        new TableRow(zeroPosition, asList(new TableCell("a21"), new TableCell("a22"))),
-                        new TableRow(zeroPosition, asList(new TableCell("a31"), new TableCell("a32")))
+                        new DataTable.Row(asList("a11", "a12")),
+                        new DataTable.Row(asList("a21", "a22")),
+                        new DataTable.Row(asList("a31", "a32"))
                     )
                 )
             }
@@ -115,11 +112,11 @@ public class EntryStepParserTest {
     private static Object[] datatableListMapParameters() {
         return new Object[]{
             new Object[]{"stepTextForKey",
-                new DataTable(zeroPosition,
+                new DataTable(
                     asList(
-                        new TableRow(zeroPosition, asList(new TableCell("a11"), new TableCell("a12"), new TableCell("a13"))),
-                        new TableRow(zeroPosition, asList(new TableCell("a21"), new TableCell("a22"), new TableCell("a23"))),
-                        new TableRow(zeroPosition, asList(new TableCell("a31"), new TableCell("a32"), new TableCell("a33")))
+                        new DataTable.Row(asList("a11", "a12", "a13")),
+                        new DataTable.Row(asList("a21", "a22", "a23")),
+                        new DataTable.Row(asList("a31", "a32", "a33"))
                     )
                 )
             }

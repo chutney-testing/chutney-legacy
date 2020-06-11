@@ -11,8 +11,7 @@ import com.chutneytesting.design.domain.environment.EnvironmentService;
 import com.chutneytesting.engine.api.glacio.parse.default_.DefaultGlacioParser;
 import com.chutneytesting.task.domain.TaskTemplate;
 import com.chutneytesting.task.domain.TaskTemplateRegistry;
-import com.github.fridujo.glacio.ast.Position;
-import com.github.fridujo.glacio.ast.Step;
+import com.github.fridujo.glacio.model.Step;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,7 +52,7 @@ public class DefaultGlacioParserTest {
             .isEqualTo(taskIdAsText);
     }
 
-    private Step buildSimpleStepWithText(String stepText) {
-        return new Step(new Position(0, 0), stepText, emptyList(), empty(), empty());
+    public static Step buildSimpleStepWithText(String stepText) {
+        return new Step(false, empty(), stepText, empty(), emptyList());
     }
 }

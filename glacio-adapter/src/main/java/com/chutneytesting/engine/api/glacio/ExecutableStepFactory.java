@@ -4,7 +4,7 @@ import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.engine.api.glacio.parse.GlacioExecutableStepParser;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
-import com.github.fridujo.glacio.ast.Step;
+import com.github.fridujo.glacio.model.Step;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
@@ -59,7 +59,7 @@ public class ExecutableStepFactory {
     }
 
     private Step rebuildStepUsing(String sentence, Step step) {
-        return new Step(step.getPosition(), sentence, step.getSubsteps(), step.getDocString(), step.getDataTable());
+        return new Step(step.isBackground(), step.getKeyword(), sentence, step.getArgument(), step.getSubsteps());
     }
 
     private Pair<Pattern, Predicate<String>> compileAndCachePattern(Locale lang) {
