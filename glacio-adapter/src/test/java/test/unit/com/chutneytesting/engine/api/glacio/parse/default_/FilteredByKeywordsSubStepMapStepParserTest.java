@@ -10,11 +10,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static test.unit.com.chutneytesting.engine.api.glacio.parse.GlacioParserHelper.zeroPosition;
 
 import com.chutneytesting.engine.api.glacio.parse.StepParser;
 import com.chutneytesting.engine.api.glacio.parse.default_.FilteredByKeywordsSubStepMapStepParser;
-import com.github.fridujo.glacio.ast.Step;
+import com.github.fridujo.glacio.model.Step;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,12 +33,12 @@ public class FilteredByKeywordsSubStepMapStepParserTest {
     public void should_filter_substeps_with_keywords_and_collect_results_from_delegate_to_entry_parser() {
         // Given
         Step step = mock(Step.class);
-        Step firstStep = new Step(zeroPosition, "TEST step name 1", emptyList(), empty(), empty());
-        Step thirdStep = new Step(zeroPosition, "TST step name 3", emptyList(), empty(), empty());
+        Step firstStep = new Step(false, empty(), "TEST step name 1", empty(), emptyList());
+        Step thirdStep = new Step(false, empty(), "TST step name 3", empty(), emptyList());
         when(step.getSubsteps())
             .thenReturn(asList(
                 firstStep,
-                new Step(zeroPosition, "TTT step name", emptyList(), empty(), empty()),
+                new Step(false, empty(), "TTT step name", empty(), emptyList()),
                 thirdStep
             ));
         when(entryStepParser.parseStep(any())).thenReturn(entry("one", "v1"), entry("two", "v2"));

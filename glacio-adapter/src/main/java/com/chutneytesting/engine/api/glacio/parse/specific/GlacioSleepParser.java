@@ -4,7 +4,7 @@ import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.engine.api.glacio.parse.GlacioParser;
 import com.chutneytesting.engine.api.glacio.parse.default_.EmptyParser;
-import com.github.fridujo.glacio.ast.Step;
+import com.github.fridujo.glacio.model.Step;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;

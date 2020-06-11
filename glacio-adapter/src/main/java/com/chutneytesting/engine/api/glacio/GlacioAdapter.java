@@ -4,14 +4,14 @@ import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.engine.domain.execution.StepDefinition;
-import com.github.fridujo.glacio.ast.Feature;
-import com.github.fridujo.glacio.ast.RootStep;
-import com.github.fridujo.glacio.ast.Scenario;
-import com.github.fridujo.glacio.ast.Step;
-import com.github.fridujo.glacio.parsing.charstream.CharStream;
+import com.github.fridujo.glacio.model.Example;
+import com.github.fridujo.glacio.model.Feature;
+import com.github.fridujo.glacio.model.Step;
 import com.github.fridujo.glacio.parsing.i18n.GherkinLanguages;
-import com.github.fridujo.glacio.parsing.lexer.Lexer;
-import com.github.fridujo.glacio.parsing.parser.AstParser;
+import com.github.fridujo.glacio.parsing.model.ModelParser;
+import com.github.fridujo.glacio.parsing.model.StringSource;
+import java.io.UncheckedIOException;
+import java.net.URI;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -32,36 +32,26 @@ public class GlacioAdapter {
 
     public List<StepDefinition> toChutneyStepDefinition(String text, String environment) {
         Feature feature = this.toFeature(text);
-        List<Scenario> scenarios = feature.getScenarios();
+        List<Example> examples = feature.getExamples();
 
-        return scenarios.stream()
+        return examples.stream()
             .map(s -> toStepDefinition(
                 feature.getName(),
-                feature.getLanguage().map(ps -> new Locale(ps.getValue())).orElse(Locale.ENGLISH),
+                new Locale(feature.getLanguage().getCode()),
                 ofNullable(environment).orElse(DEFAULT_ENV),
                 s)
             )
             .collect(Collectors.toList());
     }
 
-    private StepDefinition toStepDefinition(String featureName, Locale lang, String environment, Scenario scenario) {
-        String name = featureName + " - " + scenario.getName();
+    private StepDefinition toStepDefinition(String featureName, Locale lang, String environment, Example example) {
+        String name = featureName + " - " + example.getName();
 
-        List<StepDefinition> subSteps = scenario.getSteps().stream()
+        List<StepDefinition> subSteps = example.getSteps().stream()
             .map(rootStep -> toStepDefinition(lang, environment, rootStep))
             .collect(Collectors.toList());
 
         return buildNonExecutableStep(subSteps, environment, name);
-    }
-
-    private StepDefinition toStepDefinition(Locale lang, String environment, RootStep rootStep) {
-        if (this.executableStepFactory.isExecutableStep(lang, rootStep)) {
-            return this.executableStepFactory.build(lang, environment, rootStep);
-        } else {
-            List<StepDefinition> subSteps = toStepSubStepsDefinitions(lang, environment, rootStep);
-            String name = rootStep.getKeyword().getLiteral() + rootStep.getText();
-            return buildNonExecutableStep(subSteps, environment, name);
-        }
     }
 
     private StepDefinition toStepDefinition(Locale lang, String environment, Step step) {
@@ -84,8 +74,27 @@ public class GlacioAdapter {
     }
 
     private Feature toFeature(String text) {
-        Lexer lexer = new Lexer(new CharStream(text));
-        AstParser astParser = new AstParser(lexer, GherkinLanguages.load());
-        return astParser.parseFeature();
+
+        StringSource source = new TextStringSource(text);
+        ModelParser parser = new ModelParser(GherkinLanguages.load());
+        return parser.parse(source);
+    }
+
+    private static class TextStringSource implements StringSource {
+        private final String content;
+
+        private TextStringSource(String content) {
+            this.content = content;
+        }
+
+        @Override
+        public String getContent() throws UncheckedIOException {
+            return content;
+        }
+
+        @Override
+        public URI getURI() {
+            return null;
+        }
     }
 }

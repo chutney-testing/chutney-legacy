@@ -9,7 +9,7 @@ import com.chutneytesting.design.domain.environment.EnvironmentService;
 import com.chutneytesting.engine.api.glacio.parse.default_.TargetStepParser;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.task.spi.injectable.Target;
-import com.github.fridujo.glacio.ast.Step;
+import com.github.fridujo.glacio.model.Step;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

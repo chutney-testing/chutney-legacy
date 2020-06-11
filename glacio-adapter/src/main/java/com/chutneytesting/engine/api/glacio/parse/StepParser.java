@@ -1,6 +1,6 @@
 package com.chutneytesting.engine.api.glacio.parse;
 
-import com.github.fridujo.glacio.ast.Step;
+import com.github.fridujo.glacio.model.Step;
 
 public interface StepParser<T> {
     T parseStep(Step step);

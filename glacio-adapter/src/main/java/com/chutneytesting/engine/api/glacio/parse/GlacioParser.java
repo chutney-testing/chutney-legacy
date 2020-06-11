@@ -5,7 +5,7 @@ import static java.util.Collections.emptyList;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
 import com.chutneytesting.task.spi.injectable.Target;
-import com.github.fridujo.glacio.ast.Step;
+import com.github.fridujo.glacio.model.Step;
 import java.util.Map;
 
 public abstract class GlacioParser implements GlacioExecutableStepParser {

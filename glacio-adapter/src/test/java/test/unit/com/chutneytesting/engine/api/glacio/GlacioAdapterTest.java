@@ -15,6 +15,7 @@ import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.google.common.io.Resources;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import org.assertj.core.util.Files;
@@ -82,13 +83,13 @@ public class GlacioAdapterTest {
         assertThat(stepDefinitions.get(0).steps).hasSize(2);
 
         StepDefinition whenStepDefinition = stepDefinitions.get(0).steps.get(0);
-        assertSizeAndName(whenStepDefinition, "When We try something", 3);
+        assertSizeAndName(whenStepDefinition, "We try something", 3);
         assertSizeAndName(whenStepDefinition.steps.get(0), "First substep of action step", 0);
         assertSizeAndName(whenStepDefinition.steps.get(1), "Second substep of action step", 1);
         assertSizeAndName(whenStepDefinition.steps.get(2), "Third substep of action step", 2);
 
         StepDefinition thenStepDefinition = stepDefinitions.get(0).steps.get(1);
-        assertSizeAndName(thenStepDefinition, "Then An assert is ok", 3);
+        assertSizeAndName(thenStepDefinition, "An assert is ok", 3);
         assertSizeAndName(thenStepDefinition.steps.get(0), "First substep of assert step", 2);
         assertSizeAndName(thenStepDefinition.steps.get(1), "Second substep of assert step", 1);
         assertSizeAndName(thenStepDefinition.steps.get(2), "Third substep of assert step", 0);
@@ -117,6 +118,61 @@ public class GlacioAdapterTest {
         sut.toChutneyStepDefinition(feature, ENVIRONMENT);
         verify(executableStepFactory, times(12)).isExecutableStep(eq(Locale.ENGLISH), any());
         verify(executableStepFactory, times(7)).build(eq(Locale.ENGLISH), eq(ENVIRONMENT), any());
+    }
+
+    @Test
+    public void should_adapt_scenario_with_feature_background() {
+        String feature = fileContent("unit/with_background.feature");
+        List<StepDefinition> stepDefinitions = sut.toChutneyStepDefinition(feature, ENVIRONMENT);
+
+        assertThat(stepDefinitions).hasSize(1);
+        StepDefinition scenario = stepDefinitions.get(0);
+        assertThat(scenario.steps).hasSize(4);
+
+        StepDefinition stepDefinition = scenario.steps.get(0);
+        assertSizeAndName(stepDefinition, "A background step", 0);
+
+        stepDefinition = scenario.steps.get(1);
+        assertSizeAndName(stepDefinition, "Another one with substeps", 2);
+        assertSizeAndName(stepDefinition.steps.get(0), "First substep", 0);
+        assertSizeAndName(stepDefinition.steps.get(1), "Second substep", 0);
+
+        stepDefinition = scenario.steps.get(2);
+        assertSizeAndName(stepDefinition, "Something happens", 0);
+
+        stepDefinition = scenario.steps.get(3);
+        assertSizeAndName(stepDefinition, "Background step shoud be taken into account", 0);
+    }
+
+    @Test
+    public void should_adapt_scenario_with_scenario_outline() {
+        String feature = fileContent("unit/with_scenario_outline.feature");
+        List<List<String>> examples = Arrays.asList(
+            Arrays.asList("first", "value11", "value12", "1"),
+            Arrays.asList("second", "value21", "value22", "2")
+        );
+
+        List<StepDefinition> stepDefinitions = sut.toChutneyStepDefinition(feature, ENVIRONMENT);
+
+        assertThat(stepDefinitions).hasSize(examples.size());
+
+        for (int i = 0; i < examples.size(); i++) {
+            List<String> example = examples.get(i);
+
+            StepDefinition scenario = stepDefinitions.get(i);
+            assertThat(scenario.steps).hasSize(3);
+
+            StepDefinition stepDefinition = scenario.steps.get(0);
+            assertSizeAndName(stepDefinition, "A step outline " + example.get(0), 0);
+
+            stepDefinition = scenario.steps.get(1);
+            assertSizeAndName(stepDefinition, "Parse this step " + example.get(0) + " with substeps", 2);
+            assertSizeAndName(stepDefinition.steps.get(0), "First substep with param " + example.get(1), 0);
+            assertSizeAndName(stepDefinition.steps.get(1), "Second substep with param " + example.get(2), 0);
+
+            stepDefinition = scenario.steps.get(2);
+            assertSizeAndName(stepDefinition, "Multiple scenarios " + example.get(3) + " should be parsed", 0);
+        }
     }
 
     private void assertSizeAndName(StepDefinition step, String expectedName, Integer expectedSize) {

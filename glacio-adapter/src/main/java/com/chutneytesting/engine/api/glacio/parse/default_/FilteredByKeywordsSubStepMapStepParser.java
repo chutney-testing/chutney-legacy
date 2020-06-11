@@ -4,7 +4,7 @@ import static com.chutneytesting.engine.api.glacio.parse.default_.ParsingTools.a
 import static com.chutneytesting.engine.api.glacio.parse.default_.ParsingTools.removeKeyword;
 
 import com.chutneytesting.engine.api.glacio.parse.StepParser;
-import com.github.fridujo.glacio.ast.Step;
+import com.github.fridujo.glacio.model.Step;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Predicate;
