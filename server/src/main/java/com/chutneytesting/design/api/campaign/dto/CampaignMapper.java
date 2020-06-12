@@ -53,7 +53,7 @@ public class CampaignMapper {
             dto.getScenarioIds().stream()
                                 .map( id -> fromFrontId(Optional.of(id)) )
                                 .collect(toList()),
-            dto.getDataSet(),
+            dto.getComputedParameters(),
             dto.safeGetScheduleTime().map(LocalTime::parse).orElse(null),
             dto.getEnvironment(),
             dto.isParallelRun(),

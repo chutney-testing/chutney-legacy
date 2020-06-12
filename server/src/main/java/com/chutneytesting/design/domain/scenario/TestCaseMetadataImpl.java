@@ -6,6 +6,7 @@ import static java.util.Optional.ofNullable;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public final class TestCaseMetadataImpl implements TestCaseMetadata {
@@ -15,22 +16,28 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
     public final String description;
     public final List<String> tags;
     public final Instant creationDate;
-
+    public final Optional<String> datasetId;
     public final String repositorySource;
 
-    private TestCaseMetadataImpl(String id, String title, String description, List<String> tags, Instant creationDate, String repositorySource) {
+    private TestCaseMetadataImpl(String id, String title, String description, List<String> tags, Instant creationDate, String repositorySource, String datasetId) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.tags = tags;
         this.creationDate = creationDate;
         this.repositorySource = repositorySource;
+        this.datasetId = ofNullable(datasetId);
     }
 
 
     @Override
     public String id() {
         return id;
+    }
+
+    @Override
+    public Optional<String> datasetId() {
+        return datasetId;
     }
 
     @Override
@@ -99,6 +106,7 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
         private List<String> tags;
         private Instant creationDate;
         private String repositorySource;
+        private String datasetId;
 
         private TestCaseMetadataBuilder() {}
 
@@ -109,12 +117,18 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
                 ofNullable(description).orElse(""),
                 (ofNullable(tags).orElse(emptyList())).stream().map(String::toUpperCase).map(String::trim).collect(Collectors.toList()),
                 ofNullable(creationDate).orElse(Instant.now()),
-                ofNullable(repositorySource).orElse(TestCaseRepository.DEFAULT_REPOSITORY_SOURCE)
+                ofNullable(repositorySource).orElse(TestCaseRepository.DEFAULT_REPOSITORY_SOURCE),
+                ofNullable(datasetId).orElse(null)
             );
         }
 
         public TestCaseMetadataBuilder withId(String id) {
             this.id = id;
+            return this;
+        }
+
+        public TestCaseMetadataBuilder withDatasetId(String datasetId) {
+            this.datasetId = datasetId;
             return this;
         }
 
@@ -150,7 +164,8 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
                 .withDescription(testCaseMetadata.description())
                 .withCreationDate(testCaseMetadata.creationDate())
                 .withTags(testCaseMetadata.tags())
-                .withRepositorySource(testCaseMetadata.repositorySource());
+                .withRepositorySource(testCaseMetadata.repositorySource())
+                .withDatasetId(testCaseMetadata.datasetId().orElse(null));
         }
 
     }

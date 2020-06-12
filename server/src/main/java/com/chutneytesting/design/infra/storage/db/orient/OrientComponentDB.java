@@ -29,6 +29,7 @@ public class OrientComponentDB implements Backupable {
     public static final String TESTCASE_CLASS_PROPERTY_CREATIONDATE = "created";
     public static final String TESTCASE_CLASS_PROPERTY_TAGS = "tags";
     public static final String TESTCASE_CLASS_PROPERTY_PARAMETERS = "parameters";
+    public static final String TESTCASE_CLASS_PROPERTY_DATASET_ID = "datasetId";
 
     public static final String GE_STEP_CLASS = "Denote";
     public static final String GE_STEP_CLASS_PROPERTY_RANK = "rank";

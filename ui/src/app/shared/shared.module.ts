@@ -34,6 +34,7 @@ import { MomentModule } from 'angular2-moment';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ThumbnailPipe } from '@shared/pipes/thumbnail.pipe';
 import { DataSetSearchPipe } from './pipes/dataset-search.pipe';
+import { DatasetSelectionComponent } from '@shared/components/dataset-selection/dataset-selection.component';
 
 @NgModule({
     imports: [
@@ -67,7 +68,8 @@ import { DataSetSearchPipe } from './pipes/dataset-search.pipe';
         ExecutionBadgeComponent,
         ThumbnailPipe,
         DataSetSearchPipe,
-        ComponentCardComponent
+        ComponentCardComponent,
+        DatasetSelectionComponent,
     ],
     exports: [
         TruncatePipe,
@@ -92,7 +94,8 @@ import { DataSetSearchPipe } from './pipes/dataset-search.pipe';
         ExecutionBadgeComponent,
         ThumbnailPipe,
         DataSetSearchPipe,
-        ComponentCardComponent
+        ComponentCardComponent,
+        DatasetSelectionComponent,
     ],
     entryComponents: [
         TechnicalStepComponent

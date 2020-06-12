@@ -108,8 +108,9 @@ export class ComponentService {
                 scenarioComponent.componentSteps.map((componentTask: ComponentTask) => this.mapComponentTaskToDto(componentTask)),
                 scenarioComponent.parameters
             ),
-            scenarioComponent.dataSet,
-            scenarioComponent.tags
+            scenarioComponent.computedParameters,
+            scenarioComponent.tags,
+            scenarioComponent.datasetId
         );
 
     }
@@ -123,7 +124,7 @@ export class ComponentService {
             [],
             componentTask.parameters,
             componentTask.strategy,
-            componentTask.dataSet);
+            componentTask.computedParameters);
     }
 
     private mapJsonToScenarioComponent(jsonObject: any): ScenarioComponent {
@@ -134,8 +135,9 @@ export class ComponentService {
             jsonObject.creationDate,
             jsonObject.scenario.componentSteps.map((json: any) => this.mapToComponentTask(json)),
             jsonObject.scenario.parameters.map(elt => new KeyValue(elt.key, elt.value)),
-            jsonObject.dataSet.map(elt => new KeyValue(elt.key, elt.value)),
-            jsonObject.tags
+            jsonObject.computedParameters.map(elt => new KeyValue(elt.key, elt.value)),
+            jsonObject.tags,
+            jsonObject.datasetId
         );
     }
 
@@ -145,7 +147,7 @@ export class ComponentService {
             Implementation.deserialize(JSON.parse(jsonObject.task)),
             jsonObject.steps.map(c => this.mapToComponentTask(c)),
             jsonObject.parameters.map(elt => new KeyValue(elt.key, elt.value)),
-            jsonObject.dataSet.map(elt => new KeyValue(elt.key, elt.value)),
+            jsonObject.computedParameters.map(elt => new KeyValue(elt.key, elt.value)),
             jsonObject.tags,
             jsonObject.strategy != null ? new Strategy(jsonObject.strategy.type, jsonObject.strategy.parameters) : null,
             jsonObject.id
@@ -161,7 +163,7 @@ export class ComponentService {
             component.children.map(c => this.mapToComponentTaskDto(c)),
             component.parameters,
             component.strategy,
-            component.dataSet,
+            component.computedParameters,
             component.tags
         );
     }
@@ -174,8 +176,9 @@ export class TestCaseComponentDto {
         public description: string = 'Description',
         public creationDate?: Date,
         public scenario: ScenarioComponentDto = new ScenarioComponentDto(),
-        public dataSet: Array<KeyValue> = [],
-        public tags: Array<string> = []) {
+        public computedParameters: Array<KeyValue> = [],
+        public tags: Array<string> = [],
+        public datasetId: string = null) {
     }
 }
 
@@ -195,7 +198,7 @@ export class ComponentTaskDto {
         public steps: Array<ComponentTaskDto>,
         public parameters: Array<KeyValue>,
         public strategy: Strategy,
-        public dataSet: Array<KeyValue> = [],
+        public computedParameters: Array<KeyValue> = [],
         public tags: Array<String> = []) {
     }
 }

@@ -47,7 +47,7 @@ public class ComposableTestCaseMapperTest {
                             .parameters(Arrays.asList(
                                 ImmutableKeyValue.builder().key("key valued").value("value").build(),
                                 ImmutableKeyValue.builder().key("empty key").value("").build()))
-                            .dataSet(
+                            .computedParameters(
                                 KeyValue.fromMap(
                                     Maps.of(
                                         "key valued", "value",
@@ -63,7 +63,7 @@ public class ComposableTestCaseMapperTest {
                     ))
                     .build()
             )
-            .dataSet(
+            .computedParameters(
                 KeyValue.fromMap(
                     Maps.of(
                         "empty key", "",

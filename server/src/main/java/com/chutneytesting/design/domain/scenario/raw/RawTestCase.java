@@ -28,7 +28,7 @@ public class RawTestCase implements TestCase {
     }
 
     @Override
-    public Map<String, String> dataSet() {
+    public Map<String, String> computedParameters() {
         return dataSet;
     }
 

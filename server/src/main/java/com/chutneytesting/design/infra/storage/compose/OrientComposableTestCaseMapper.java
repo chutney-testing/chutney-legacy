@@ -4,6 +4,7 @@ import static com.chutneytesting.design.domain.compose.ComposableTestCaseReposit
 import static com.chutneytesting.design.infra.storage.compose.OrientFunctionalStepMapper.buildFunctionalStepsChildren;
 import static com.chutneytesting.design.infra.storage.compose.OrientFunctionalStepMapper.setFunctionalStepVertexDenotations;
 import static com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_CREATIONDATE;
+import static com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_DATASET_ID;
 import static com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_DESCRIPTION;
 import static com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_PARAMETERS;
 import static com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_TAGS;
@@ -31,6 +32,7 @@ class OrientComposableTestCaseMapper {
         setOnlyOnceProperty(dbTestCase, TESTCASE_CLASS_PROPERTY_CREATIONDATE, Date.from(composableTestCase.metadata.creationDate()), OType.DATETIME);
         dbTestCase.setProperty(TESTCASE_CLASS_PROPERTY_TAGS, composableTestCase.metadata.tags(), OType.EMBEDDEDLIST);
         setOrRemoveProperty(dbTestCase, TESTCASE_CLASS_PROPERTY_PARAMETERS, composableTestCase.composableScenario.parameters, OType.EMBEDDEDMAP);
+        setOrRemoveProperty(dbTestCase, TESTCASE_CLASS_PROPERTY_DATASET_ID, composableTestCase.metadata.datasetId().orElse(null), OType.STRING);
         setFunctionalStepVertexDenotations(dbTestCase, composableTestCase.composableScenario.functionalSteps, dbSession);
     }
 
@@ -42,6 +44,7 @@ class OrientComposableTestCaseMapper {
             .withCreationDate(((Date)dbTestCase.getProperty(TESTCASE_CLASS_PROPERTY_CREATIONDATE)).toInstant())
             .withRepositorySource(COMPOSABLE_TESTCASE_REPOSITORY_SOURCE)
             .withTags(dbTestCase.getProperty(TESTCASE_CLASS_PROPERTY_TAGS))
+            .withDatasetId(dbTestCase.getProperty(TESTCASE_CLASS_PROPERTY_DATASET_ID))
             .build();
 
         List<FunctionalStep> functionalStepRefs = buildFunctionalStepsChildren(dbTestCase, dbSession);

@@ -12,20 +12,20 @@ public class ComposableTestCase implements TestCase {
     public final String id; // TODO - To delete
     public final TestCaseMetadata metadata;
     public final ComposableScenario composableScenario;
-    public final Map<String, String> dataSet; // TODO - refactor dataset - here it's for execution phase
+    public final Map<String, String> computedParameters; // TODO - refactor dataset - here it's for execution phase
 
     public ComposableTestCase(String id, TestCaseMetadata metadata, ComposableScenario composableScenario) {
         this.id = id;
         this.metadata = metadata;
         this.composableScenario = composableScenario;
-        this.dataSet = buildDataSet();
+        this.computedParameters = buildDataSet();
     }
 
-    public ComposableTestCase(String id, TestCaseMetadata metadata, ComposableScenario composableScenario, Map<String, String> dataSet) {
+    public ComposableTestCase(String id, TestCaseMetadata metadata, ComposableScenario composableScenario, Map<String, String> computedParameters) {
         this.id = id;
         this.metadata = metadata;
         this.composableScenario = composableScenario;
-        this.dataSet = dataSet;
+        this.computedParameters = computedParameters;
     }
 
     @Override
@@ -39,8 +39,8 @@ public class ComposableTestCase implements TestCase {
     }
 
     @Override
-    public Map<String, String> dataSet() {
-        return dataSet;
+    public Map<String, String> computedParameters() {
+        return computedParameters;
     }
 
     @Override
@@ -61,12 +61,12 @@ public class ComposableTestCase implements TestCase {
         return Objects.equals(id, that.id) &&
             Objects.equals(metadata, that.metadata) &&
             Objects.equals(composableScenario, that.composableScenario) &&
-            Objects.equals(dataSet, that.dataSet);
+            Objects.equals(computedParameters, that.computedParameters);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, metadata, composableScenario, dataSet);
+        return Objects.hash(id, metadata, composableScenario, computedParameters);
     }
 
     // TODO - refactor dataset
@@ -88,7 +88,7 @@ public class ComposableTestCase implements TestCase {
             "id='" + id + '\'' +
             ", metadata=" + metadata +
             ", composableScenario=" + composableScenario +
-            ", dataSet=" + dataSet +
+            ", dataSet=" + computedParameters +
             '}';
     }
 }

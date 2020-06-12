@@ -35,7 +35,7 @@ public class ComposableTestCaseMapper {
             .title(composableTestCase.metadata.title())
             .description(composableTestCase.metadata.description())
             .creationDate(composableTestCase.metadata.creationDate())
-            .dataSet(KeyValue.fromMap(composableTestCase.dataSet))
+            .computedParameters(KeyValue.fromMap(composableTestCase.computedParameters))
             .scenario(
                 ImmutableComposableScenarioDto.builder()
                     .addAllComponentSteps(toComponentSteps(composableTestCase))
@@ -43,6 +43,7 @@ public class ComposableTestCaseMapper {
                     .build()
             )
             .tags(composableTestCase.metadata.tags())
+            .datasetId(composableTestCase.metadata.datasetId())
             .build();
     }
 
@@ -53,6 +54,7 @@ public class ComposableTestCaseMapper {
             .withCreationDate(composableTestCaseDto.creationDate())
             .withRepositorySource(COMPOSABLE_TESTCASE_REPOSITORY_SOURCE)
             .withTags(composableTestCaseDto.tags())
+            .withDatasetId(composableTestCaseDto.datasetId().orElse(null))
             .build();
     }
 

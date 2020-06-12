@@ -7,7 +7,7 @@ export class Campaign {
         public description: string = '',
         public scenarioIds: Array<string> = [],
         public campaignExecutionReports: Array<CampaignExecutionReport> = [],
-        public dataSet: Map<string, string> = new Map(),
+        public computedParameters: Map<string, string> = new Map(),
         public environment: string = '',
         public scheduleTime?: string,
         public parallelRun?: false,

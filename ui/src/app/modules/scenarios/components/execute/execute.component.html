@@ -27,7 +27,7 @@
                     <div class="row"
                          *ngFor="let parameter of componentForm.get('parameters')?.controls; let i=index">
                         <label for="{{i}}" class="col-3 mb-0 align-self-center">
-                            {{testCase.dataSet[i].key}}
+                            {{testCase.computedParameters[i].key}}
                         </label>
                         <textarea id="{{i}}" [rows]="1" type="text" class="col-9 form-control"
                                   [formControlName]="i" required></textarea>

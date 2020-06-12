@@ -137,7 +137,7 @@ public class CampaignExecutionEngine {
             // Is stop requested ?
             if (!currentCampaignExecutionsStopRequests.get(campaignExecutionReport.executionId)) {
                 // Override scenario dataset by campaign's one
-                Map<String, String> ds = new HashMap<>(testCase.dataSet());
+                Map<String, String> ds = new HashMap<>(testCase.computedParameters());
                 ds.putAll(campaign.dataSet);
                 // Init scenario execution in campaign report
                 campaignExecutionReport.startScenarioExecution(testCase, campaign.executionEnvironment());
