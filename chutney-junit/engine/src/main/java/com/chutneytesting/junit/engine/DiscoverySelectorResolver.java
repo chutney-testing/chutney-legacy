@@ -16,8 +16,10 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.junit.platform.engine.EngineDiscoveryRequest;
+import org.junit.platform.engine.Filter;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
@@ -26,6 +28,7 @@ import org.junit.platform.engine.discovery.ClasspathResourceSelector;
 import org.junit.platform.engine.discovery.ClasspathRootSelector;
 import org.junit.platform.engine.discovery.DirectorySelector;
 import org.junit.platform.engine.discovery.FileSelector;
+import org.junit.platform.engine.discovery.PackageNameFilter;
 import org.junit.platform.engine.discovery.PackageSelector;
 import org.junit.platform.engine.discovery.UriSelector;
 import org.junit.platform.engine.support.descriptor.ClassSource;
@@ -33,9 +36,11 @@ import org.junit.platform.engine.support.descriptor.MethodSource;
 import org.junit.platform.engine.support.descriptor.UriSource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.util.ResourceUtils;
 
 public class DiscoverySelectorResolver {
+
+    public static final String FEATURE_SEGMENT_TYPE = "feature";
+    public static final String SCENARIO_SEGMENT_TYPE = "scenario";
 
     private static final String FEATURE_EXTENSION = ".feature";
 
@@ -48,7 +53,7 @@ public class DiscoverySelectorResolver {
     }
 
     public void resolveSelectors(EngineDiscoveryRequest engineDiscoveryRequest, ChutneyEngineDescriptor engineDescriptor) {
-        //Predicate<String> packageNameFilter = Filter.composeFilters(engineDiscoveryRequest.getFiltersByType(PackageNameFilter.class)).toPredicate();
+        Predicate<String> packageNameFilter = Filter.composeFilters(engineDiscoveryRequest.getFiltersByType(PackageNameFilter.class)).toPredicate();
 
         List<ClassSelector> classSelectors = engineDiscoveryRequest.getSelectorsByType(ClassSelector.class);
         classSelectors.forEach(cs -> resolveClass(engineDescriptor, cs.getJavaClass()));
@@ -60,42 +65,38 @@ public class DiscoverySelectorResolver {
         directorySelectors.forEach(ds -> resolveDirectory(engineDescriptor, ds.getDirectory()));
 
         List<ClasspathRootSelector> classpathRootSelectors = engineDiscoveryRequest.getSelectorsByType(ClasspathRootSelector.class);
-        classpathRootSelectors.forEach(crs -> resolveClassPathRoot(engineDescriptor, crs.getClasspathRoot()));
+        classpathRootSelectors.forEach(crs -> resolveClassPathRoot(engineDescriptor, crs.getClasspathRoot(), packageNameFilter));
 
         List<PackageSelector> packageSelectors = engineDiscoveryRequest.getSelectorsByType(PackageSelector.class);
-        packageSelectors.forEach(ps -> resolvePackage(engineDescriptor, ps.getPackageName()));
+        packageSelectors.stream()
+            .filter(ps -> packageNameFilter.test(ps.getPackageName()))
+            .forEach(ps -> resolvePackage(engineDescriptor, ps.getPackageName()));
 
         List<ClasspathResourceSelector> classpathResourceSelectors = engineDiscoveryRequest.getSelectorsByType(ClasspathResourceSelector.class);
-        classpathResourceSelectors.forEach(crs -> resolveClassPathResource(engineDescriptor, crs.getClasspathResourceName()));
+        classpathResourceSelectors.stream()
+            .filter(crs -> packageNameFilter.test(crs.getClasspathResourceName().replace("/", ".")))
+            .forEach(crs -> resolveClassPathResource(engineDescriptor, crs.getClasspathResourceName()));
 
         List<UriSelector> uriSelectors = engineDiscoveryRequest.getSelectorsByType(UriSelector.class);
         uriSelectors.forEach(us -> resolveURI(engineDescriptor, us.getUri()));
     }
 
     private void resolveURI(TestDescriptor parent, URI uri) {
-        resolveResource(parent, pathResolver.getResource(uri.toString()), UriSource.from(uri));
+        resolveResource(parent, pathResolver.getResource(uri.toString()));
     }
 
     private void resolveClassPathResource(TestDescriptor parent, String classPathResourceName) {
         if (hasFeatureExtension(classPathResourceName)) {
-            Resource resource = pathResolver.getResource(ResourceUtils.CLASSPATH_URL_PREFIX + classPathResourceName);
-            try {
-                resolveResource(parent, resource, UriSource.from(resource.getURI()));
-            } catch (IOException ioe) {
-                throw new UncheckedIOException(ioe);
-            }
+            Resource resource = pathResolver.getResource("classpath:" + classPathResourceName);
+            resolveResource(parent, resource);
         }
     }
 
     private void resolveClass(TestDescriptor parent, Class<?> aClass) {
         if (aClass.isAnnotationPresent(Chutney.class)) {
-            try {
-                classMode = true;
-                String classPackageName = aClass.getPackage().getName();
-                resolveClassPathRoot(parent, pathResolver.getResource(classPackageName.replace(".", "/")).getURI());
-            } catch (IOException ioe) {
-                throw new UncheckedIOException(ioe);
-            }
+            classMode = true;
+            String classPackageName = aClass.getPackage().getName();
+            resolvePackage(parent, classPackageName.replace(".", "/"));
         }
     }
 
@@ -103,18 +104,20 @@ public class DiscoverySelectorResolver {
         try {
             Resource[] resources = pathResolver.getResources("classpath*:" + packageName.replace(".", "/") + "/**/*" + FEATURE_EXTENSION);
             for (Resource resource : resources) {
-                resolveResource(parent, resource, UriSource.from(resource.getURI()));
+                resolveResource(parent, resource);
             }
         } catch (IOException ioe) {
             throw new UncheckedIOException("Cannot get resources from " + packageName, ioe);
         }
     }
 
-    private void resolveClassPathRoot(TestDescriptor parent, URI classpathRoot) {
+    private void resolveClassPathRoot(TestDescriptor parent, URI classpathRoot, Predicate<String> packageNameFilter) {
         try {
             Resource[] resources = pathResolver.getResources(classpathRoot.toString() + "/**/*" + FEATURE_EXTENSION);
             for (Resource resource : resources) {
-                resolveResource(parent, resource, UriSource.from(resource.getURI()));
+                if (packageNameFilter.test(resource.getURI().getPath().replace(classpathRoot.getPath(), "").replace("/", "."))) {
+                    resolveResource(parent, resource);
+                }
             }
         } catch (IOException ioe) {
             throw new UncheckedIOException("Cannot get resources from " + classpathRoot, ioe);
@@ -142,10 +145,10 @@ public class DiscoverySelectorResolver {
         }
     }
 
-    private void resolveResource(TestDescriptor parent, Resource resource, TestSource testSource) {
+    private void resolveResource(TestDescriptor parent, Resource resource) {
         if (resource.exists()) {
             try {
-                resolveFeature(parent, resourceName(resource), content(resource.getInputStream()), testSource);
+                resolveFeature(parent, resourceName(resource), content(resource.getInputStream()), UriSource.from(resource.getURI()));
             } catch (IOException ioe) {
                 throw new UncheckedIOException("Cannot get inputstream from " + resource.getDescription(), ioe);
             }
@@ -153,7 +156,7 @@ public class DiscoverySelectorResolver {
     }
 
     private void resolveFeature(TestDescriptor parent, String name, String featureContent, TestSource testSource) {
-        UniqueId uniqueId = parent.getUniqueId().append("feature", name);
+        UniqueId uniqueId = parent.getUniqueId().append(FEATURE_SEGMENT_TYPE, name);
         if (!parent.findByUniqueId(uniqueId).isPresent()) {
 
             FeatureDescriptor featureDescriptor = new FeatureDescriptor(uniqueId, name, featureSource(testSource));
@@ -167,7 +170,11 @@ public class DiscoverySelectorResolver {
 
     private void resolveScenario(FeatureDescriptor parentFeature, StepDefinition stepDefinition) {
         ScenarioDescriptor scenarioDescriptor =
-            new ScenarioDescriptor(parentFeature.getUniqueId().append("scenario", stepDefinition.name), stepDefinition.name, scenarioSource(stepDefinition.name, parentFeature.getSource().get()), stepDefinition);
+            new ScenarioDescriptor(
+                parentFeature.getUniqueId().append(SCENARIO_SEGMENT_TYPE, stepDefinition.name),
+                stepDefinition.name,
+                scenarioSource(stepDefinition.name, parentFeature.getSource().get()), stepDefinition);
+
         parentFeature.addChild(scenarioDescriptor);
     }
 
@@ -221,7 +228,6 @@ public class DiscoverySelectorResolver {
             }
             return ClassSource.from(name);
         }
-
         return testSource;
     }
 
@@ -229,7 +235,6 @@ public class DiscoverySelectorResolver {
         if (testSource instanceof ClassSource) {
             return MethodSource.from(((ClassSource) testSource).getClassName(), scenarioName, "");
         }
-
         return testSource;
     }
 }
