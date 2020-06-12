@@ -1,5 +1,50 @@
 # Changelog
 
+## [1.2.0](https://github.com/chutney-testing/chutney/tree/1.2.0) (2020-06-12)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.1.4...1.2.0)
+
+**Implemented enhancements:**
+
+- Campaign report [\#142](https://github.com/chutney-testing/chutney/issues/142)
+- Scenarios list : Show total number of scenarios [\#133](https://github.com/chutney-testing/chutney/issues/133)
+- Add sort and filter on table [\#111](https://github.com/chutney-testing/chutney/issues/111)
+- Remove limitation of running scenario while it's already running [\#90](https://github.com/chutney-testing/chutney/issues/90)
+- Keep search/filter during navigation [\#74](https://github.com/chutney-testing/chutney/issues/74)
+
+**Fixed bugs:**
+
+- Replay scenario for stopped campaign [\#118](https://github.com/chutney-testing/chutney/issues/118)
+- Issue with SpEL in component step [\#113](https://github.com/chutney-testing/chutney/issues/113)
+
+**Closed issues:**
+
+- Campaign history report - add stop status [\#141](https://github.com/chutney-testing/chutney/issues/141)
+- Campaign stopped - See not executed scenarios [\#140](https://github.com/chutney-testing/chutney/issues/140)
+- Stop scenario containing component with retry strategy [\#135](https://github.com/chutney-testing/chutney/issues/135)
+
+**Merged pull requests:**
+
+- feat\(ui\): Add current scenario read-only on execution page [\#148](https://github.com/chutney-testing/chutney/pull/148) ([nbrouand](https://github.com/nbrouand))
+- feat\(engine\): Allow to stop step in a retry strategy [\#146](https://github.com/chutney-testing/chutney/pull/146) ([nbrouand](https://github.com/nbrouand))
+- Feat/nice campaign history [\#145](https://github.com/chutney-testing/chutney/pull/145) ([nbrouand](https://github.com/nbrouand))
+- feat\(ui\):Add chart for campaign report [\#143](https://github.com/chutney-testing/chutney/pull/143) ([nbrouand](https://github.com/nbrouand))
+- refactor\(ui\): fix typo [\#139](https://github.com/chutney-testing/chutney/pull/139) ([rbenyoussef](https://github.com/rbenyoussef))
+- feat\(ui+core\): Remove restriction to execute a scenario already running [\#138](https://github.com/chutney-testing/chutney/pull/138) ([nbrouand](https://github.com/nbrouand))
+- feat\(ui\): Sort campaign report scenarios by properties [\#137](https://github.com/chutney-testing/chutney/pull/137) ([bessonm](https://github.com/bessonm))
+- Chore/comm [\#136](https://github.com/chutney-testing/chutney/pull/136) ([nbrouand](https://github.com/nbrouand))
+- bugfix\(engine\): issue with spel [\#134](https://github.com/chutney-testing/chutney/pull/134) ([rbenyoussef](https://github.com/rbenyoussef))
+- chore\(deps\): Bump sshj from 0.26.0 to 0.27.0 [\#130](https://github.com/chutney-testing/chutney/pull/130) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- chore\(deps\): Bump jool from 0.9.12 to 0.9.14 [\#129](https://github.com/chutney-testing/chutney/pull/129) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- chore\(deps\): Bump wiremock-standalone from 2.19.0 to 2.26.3 [\#128](https://github.com/chutney-testing/chutney/pull/128) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- chore\(deps\): Bump orientdb.version from 3.0.28 to 3.0.30 [\#127](https://github.com/chutney-testing/chutney/pull/127) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- chore\(deps\): Bump maven-source-plugin from 3.2.0 to 3.2.1 [\#126](https://github.com/chutney-testing/chutney/pull/126) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- bugfix\(ui\): show replay button for stopped campaign [\#125](https://github.com/chutney-testing/chutney/pull/125) ([rbenyoussef](https://github.com/rbenyoussef))
+- feat\(ui\): Bookmark scenarios search filters [\#124](https://github.com/chutney-testing/chutney/pull/124) ([bessonm](https://github.com/bessonm))
+- refactor\(core/engine\): Fix typo [\#123](https://github.com/chutney-testing/chutney/pull/123) ([bessonm](https://github.com/bessonm))
+- chore\(\): Add generate changelog in Contributing.md [\#122](https://github.com/chutney-testing/chutney/pull/122) ([nbrouand](https://github.com/nbrouand))
+
+
 ## [1.1.4](https://github.com/chutney-testing/chutney/tree/1.1.4) (2020-04-30)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.1.3...1.1.4)
