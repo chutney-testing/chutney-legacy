@@ -77,13 +77,7 @@ public class CampaignExecutionEngineTest {
 
     @Before
     public void setUp() {
-        User user = new User();
-        user.setId("user_id");
-        Authentication authentication = mock(Authentication.class);
-        SecurityContext securityContext = mock(SecurityContext.class);
-        when(authentication.getPrincipal()).thenReturn(user);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
+        fakeAuthentication();
         UserService userService = new UserService();
         sut = new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository, userService);
     }
@@ -170,7 +164,11 @@ public class CampaignExecutionEngineTest {
 
         // When
         AtomicReference<CampaignExecutionReport> campaignExecutionReport = new AtomicReference<>();
-        Executors.newFixedThreadPool(1).submit(() -> campaignExecutionReport.set(sut.executeScenarioInCampaign(emptyList(), campaign)));
+
+        Executors.newFixedThreadPool(1).submit(() -> {
+            fakeAuthentication();
+            campaignExecutionReport.set(sut.executeScenarioInCampaign(emptyList(), campaign));
+        });
 
         TimeUnit.MILLISECONDS.sleep(500);
         sut.stopExecution(0L);
@@ -378,6 +376,16 @@ public class CampaignExecutionEngineTest {
 
     private Long generateId() {
         return (long) campaignIdGenerator.nextInt(1000);
+    }
+
+    private void fakeAuthentication(){
+        User user = new User();
+        user.setId("user_id");
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(authentication.getPrincipal()).thenReturn(user);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
     }
 
     private ExecutionHistory.Execution executionWithId(Long executionId) {
