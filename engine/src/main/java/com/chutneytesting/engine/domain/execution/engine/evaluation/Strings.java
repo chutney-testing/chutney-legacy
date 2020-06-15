@@ -25,10 +25,10 @@ abstract class Strings {
     }
 
     public static Object replaceExpression(String template, Function<String, Object> transformer, String prefix, String suffix) {
-        final Pattern pattern = Pattern.compile("^" + escapeForRegex(prefix) + "(.*?)" + escapeForRegex(suffix) + "$", Pattern.DOTALL);
+        final Pattern pattern = Pattern.compile("^(\\s*)" + escapeForRegex(prefix) + "(.*?)" + escapeForRegex(suffix) + "(\\s*$)", Pattern.DOTALL);
         final Matcher matcher = pattern.matcher(template);
         if (matcher.matches()) {
-            String key = matcher.group(1);
+            String key = matcher.group(2);
             return transformer.apply(key);
         } else {
             return template;
