@@ -383,7 +383,8 @@
         },
         "smallword": {
             "of": "de",
-            "On": "Sur"
+            "On": "Sur",
+            "by": "par"
         }
     }
 }

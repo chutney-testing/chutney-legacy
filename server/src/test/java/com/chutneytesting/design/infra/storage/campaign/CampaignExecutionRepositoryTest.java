@@ -126,7 +126,7 @@ public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
         scenarioExecutions.get(scenarioId).put(scenarioExecutionId, execution);
         ScenarioExecutionReportCampaign scenarioExecutionReport = new ScenarioExecutionReportCampaign(scenarioId, scenarioName, execution);
 
-        CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(campaignExecutionId, campaignId, singletonList(scenarioExecutionReport), "title", false, "env", "#2:87", 5);
+        CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(campaignExecutionId, campaignId, singletonList(scenarioExecutionReport), "title", false, "env", "#2:87", 5, "user");
 
         sut.saveCampaignReport(campaignId, campaignExecutionReport);
     }
@@ -172,6 +172,7 @@ public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
             .environment("default")
             .datasetId("#2:87")
             .datasetVersion(5)
+            .user("user")
             .build();
     }
 }

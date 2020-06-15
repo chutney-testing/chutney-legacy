@@ -47,6 +47,7 @@ public class CampaignExecutionReportMapper implements ResultSetExtractor<List<Ca
             String title = resultset.getString("CAMPAIGN_TITLE");
             boolean partialExecution = resultset.getBoolean("PARTIAL_EXECUTION");
             String executionEnvironment = resultset.getString("EXECUTION_ENVIRONMENT");
+            String userId = resultset.getString("USER_ID");
             Long campaignId = resultset.getLong("CAMPAIGN_ID");
             String dataSetId = resultset.getString("EXECUTION_DATASET_ID");
             Integer dataSetVersion = ofNullable(resultset.getString("EXECUTION_DATASET_VERSION")).map(Integer::new).orElse(null);
@@ -55,7 +56,7 @@ public class CampaignExecutionReportMapper implements ResultSetExtractor<List<Ca
             try {
                 ScenarioExecutionReportCampaign scenarioExecutionReport = readScenarioExecutionReport(resultset, scenarioId, scenarioName);
                 scenarioByCampaignId.putIfAbsent(campaignExecutionId, Lists.newArrayList());
-                campaignExecutionReportByCampaignId.putIfAbsent(campaignExecutionId, new CampaignExecutionHolder(campaignExecutionId, title, partialExecution, executionEnvironment, campaignId, dataSetId, dataSetVersion));
+                campaignExecutionReportByCampaignId.putIfAbsent(campaignExecutionId, new CampaignExecutionHolder(campaignExecutionId, title, partialExecution, executionEnvironment, userId, campaignId, dataSetId, dataSetVersion));
                 scenarioByCampaignId.get(campaignExecutionId).add(scenarioExecutionReport);
             } catch (ReportNotFoundException e) {
                 LOGGER.warn("Campaign history reference a no longer existing scenario[" + scenarioId + "] execution[" + scenarioExecutionId + "]");
@@ -73,7 +74,8 @@ public class CampaignExecutionReportMapper implements ResultSetExtractor<List<Ca
                     campaignExecutionHolder.partialExecution,
                     campaignExecutionHolder.executionEnvironment,
                     campaignExecutionHolder.dataSetId,
-                    campaignExecutionHolder.dataSetVersion);
+                    campaignExecutionHolder.dataSetVersion,
+                    campaignExecutionHolder.userId);
             }).collect(Collectors.toList());
     }
 
@@ -87,6 +89,7 @@ public class CampaignExecutionReportMapper implements ResultSetExtractor<List<Ca
                 .status(ServerReportStatus.NOT_EXECUTED)
                 .duration(0)
                 .environment("")
+                .user("")
                 .build();
         } else {
             execution = mapExecutionWithoutReport(resultset, scenarioName);
@@ -107,6 +110,7 @@ public class CampaignExecutionReportMapper implements ResultSetExtractor<List<Ca
             .environment(rs.getString("ENVIRONMENT"))
             .datasetId(ofNullable(rs.getString("DATASET_ID")))
             .datasetVersion(ofNullable(rs.getString("DATASET_VERSION")).map(Integer::new))
+            .user(rs.getString("USER_ID"))
             .build();
     }
 
@@ -115,15 +119,17 @@ public class CampaignExecutionReportMapper implements ResultSetExtractor<List<Ca
         public final String title;
         public final boolean partialExecution;
         public final String executionEnvironment;
+        public final String userId;
         public final Long campaignId;
         public final String dataSetId;
         public final Integer dataSetVersion;
 
-        public CampaignExecutionHolder(Long id, String title, boolean partialExecution, String executionEnvironment, Long campaignId, String dataSetId, Integer dataSetVersion) {
+        public CampaignExecutionHolder(Long id, String title, boolean partialExecution, String executionEnvironment, String userId, Long campaignId, String dataSetId, Integer dataSetVersion) {
             this.id = id;
             this.title = title;
             this.partialExecution = partialExecution;
             this.executionEnvironment = executionEnvironment;
+            this.userId = userId;
             this.campaignId = campaignId;
             this.dataSetId = dataSetId;
             this.dataSetVersion = dataSetVersion;

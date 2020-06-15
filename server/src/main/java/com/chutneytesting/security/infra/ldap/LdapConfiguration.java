@@ -1,6 +1,6 @@
 package com.chutneytesting.security.infra.ldap;
 
-import com.chutneytesting.security.api.User;
+import com.chutneytesting.security.domain.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;

@@ -92,7 +92,7 @@ public class ScenarioExecutionEngineAsync {
      */
     public Long execute(ExecutionRequest executionRequest) {
         // Compile testcase for execution
-        ExecutionRequest executionRequestProcessed = new ExecutionRequest(testCasePreProcessors.apply(executionRequest), executionRequest.environment, executionRequest.withScenarioDefaultDataSet);
+        ExecutionRequest executionRequestProcessed = new ExecutionRequest(testCasePreProcessors.apply(executionRequest), executionRequest.environment, executionRequest.withScenarioDefaultDataSet, executionRequest.userId);
         // Initialize execution history
         ExecutionHistory.Execution storedExecution = storeInitialReport(executionRequestProcessed);
         // Start engine execution
@@ -134,7 +134,7 @@ public class ScenarioExecutionEngineAsync {
             // Create report
             .map(report -> {
                 LOGGER.trace("Map report for execution {}", executionId);
-                return new ScenarioExecutionReport(executionId, executionRequest.testCase.metadata().title(), executionRequest.environment, report);
+                return new ScenarioExecutionReport(executionId, executionRequest.testCase.metadata().title(), executionRequest.environment, executionRequest.userId, report);
             })
 
             .doOnNext(report -> updateHistory(executionId, executionRequest, report))
@@ -169,6 +169,7 @@ public class ScenarioExecutionEngineAsync {
             .environment(executionRequest.environment)
             .datasetId(executionDataSet.map(Pair::getLeft))
             .datasetVersion(executionDataSet.map(Pair::getRight))
+            .user(executionRequest.userId)
             .build();
 
         return executionHistoryRepository.store(executionRequest.testCase.id(), detachedExecution);
@@ -219,7 +220,7 @@ public class ScenarioExecutionEngineAsync {
      *
      * @param scenarioReport report to summarize
      */
-    private DetachedExecution summarize(ScenarioExecutionReport scenarioReport, String environment) {
+    private DetachedExecution summarize(ScenarioExecutionReport scenarioReport, String environment, String userId) {
         return ImmutableExecutionHistory.DetachedExecution.builder()
             .time(scenarioReport.report.startDate.atZone(ZoneId.systemDefault()).toLocalDateTime())
             .duration(scenarioReport.report.duration)
@@ -229,6 +230,7 @@ public class ScenarioExecutionEngineAsync {
             .report(serialize(scenarioReport)) // TODO - type me and move serialization to infra
             .testCaseTitle(scenarioReport.scenarioName)
             .environment(environment)
+            .user(userId)
             .build();
     }
 
@@ -276,7 +278,7 @@ public class ScenarioExecutionEngineAsync {
     private void updateHistory(long executionId, ExecutionRequest executionRequest, ScenarioExecutionReport report) {
         LOGGER.trace("Update history for execution {}", executionId);
         try {
-            executionHistoryRepository.update(executionRequest.testCase.id(), summarize(report, executionRequest.environment).attach(executionId));
+            executionHistoryRepository.update(executionRequest.testCase.id(), summarize(report, executionRequest.environment, executionRequest.userId).attach(executionId));
         } catch (Exception e) {
             LOGGER.error("Update history for execution {} failed", executionId, e);
         }

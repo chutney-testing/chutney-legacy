@@ -27,6 +27,7 @@ public class CampaignExecutionReport {
     public final String executionEnvironment;
     public final Optional<String> dataSetId;
     public final Optional<Integer> dataSetVersion;
+    public final String userId;
 
     // Not mandatory
     public final LocalDateTime startDate;
@@ -39,7 +40,8 @@ public class CampaignExecutionReport {
                                    boolean partialExecution,
                                    String executionEnvironment,
                                    String dataSetId,
-                                   Integer dataSetVersion) {
+                                   Integer dataSetVersion,
+                                   String userId) {
         this.executionId = executionId;
         this.campaignId = null;
         this.partialExecution = partialExecution;
@@ -50,6 +52,7 @@ public class CampaignExecutionReport {
         this.status = ServerReportStatus.RUNNING;
         this.dataSetId = ofNullable(dataSetId);
         this.dataSetVersion = ofNullable(dataSetVersion);
+        this.userId = userId;
     }
 
     public CampaignExecutionReport(Long executionId,
@@ -59,7 +62,8 @@ public class CampaignExecutionReport {
                                    boolean partialExecution,
                                    String executionEnvironment,
                                    String dataSetId,
-                                   Integer dataSetVersion) {
+                                   Integer dataSetVersion,
+                                   String userId) {
         this.executionId = executionId;
         this.campaignId = campaignId;
         this.campaignName = campaignName;
@@ -70,9 +74,10 @@ public class CampaignExecutionReport {
         this.executionEnvironment = executionEnvironment;
         this.dataSetId = ofNullable(dataSetId);
         this.dataSetVersion = ofNullable(dataSetVersion);
+        this.userId = userId;
     }
 
-    public void initExecution(List<TestCase> testCases, String executionEnvironment) {
+    public void initExecution(List<TestCase> testCases, String executionEnvironment, String userId) {
         testCases.forEach(testCase ->
             this.scenarioExecutionReports.add(
                 new ScenarioExecutionReportCampaign(
@@ -87,10 +92,11 @@ public class CampaignExecutionReport {
                         .environment(executionEnvironment)
                         .datasetId(dataSetId)
                         .datasetVersion(dataSetVersion)
+                        .user(userId)
                         .build())));
     }
 
-    public void startScenarioExecution(TestCase testCase, String executionEnvironment) throws UnsupportedOperationException {
+    public void startScenarioExecution(TestCase testCase, String executionEnvironment, String userId) throws UnsupportedOperationException {
         OptionalInt indexOpt = IntStream.range(0, this.scenarioExecutionReports.size())
             .filter(i -> this.scenarioExecutionReports.get(i).scenarioId.equals(testCase.id()))
             .findFirst();
@@ -107,6 +113,7 @@ public class CampaignExecutionReport {
                     .environment(executionEnvironment)
                     .datasetId(dataSetId)
                     .datasetVersion(dataSetVersion)
+                    .user(userId)
                     .build()));
     }
 

@@ -27,7 +27,7 @@ class CampaignExecutionRepository {
     }
 
     private static final String QUERY_FIND_CAMPAIGN_EXECUTION_HISTORY =
-        "SELECT C.CAMPAIGN_ID, C.ID, C.SCENARIO_ID, C.SCENARIO_EXECUTION_ID, C.PARTIAL_EXECUTION, C.EXECUTION_ENVIRONMENT, C.DATASET_ID as EXECUTION_DATASET_ID, C.DATASET_VERSION as EXECUTION_DATASET_VERSION, "
+        "SELECT C.CAMPAIGN_ID, C.ID, C.SCENARIO_ID, C.SCENARIO_EXECUTION_ID, C.PARTIAL_EXECUTION, C.EXECUTION_ENVIRONMENT, C.DATASET_ID as EXECUTION_DATASET_ID, C.DATASET_VERSION as EXECUTION_DATASET_VERSION, C.USER_ID, "
             + "SEH.EXECUTION_TIME, SEH.DURATION, SEH.STATUS, SEH.INFORMATION, SEH.ERROR, SEH.ENVIRONMENT, SEH.DATASET_ID, SEH.DATASET_VERSION, CA.TITLE as CAMPAIGN_TITLE "
             + "FROM CAMPAIGN_EXECUTION_HISTORY C "
             + "LEFT OUTER JOIN SCENARIO_EXECUTION_HISTORY SEH ON SEH.ID = C.SCENARIO_EXECUTION_ID "
@@ -50,7 +50,7 @@ class CampaignExecutionRepository {
 
     void saveCampaignReport(Long campaignId, CampaignExecutionReport report) {
         report.scenarioExecutionReports().forEach(
-            scenarioExecutionReport -> saveScenarioExecutionReport(campaignId, report.executionId, report.partialExecution, scenarioExecutionReport, report.executionEnvironment, report.dataSetId.orElse(null), report.dataSetVersion.orElse(null))
+            scenarioExecutionReport -> saveScenarioExecutionReport(campaignId, report.executionId, report.partialExecution, scenarioExecutionReport, report.executionEnvironment, report.dataSetId.orElse(null), report.dataSetVersion.orElse(null), report.userId)
         );
     }
 
@@ -59,7 +59,7 @@ class CampaignExecutionRepository {
         "order by C.ID desc " +
         "LIMIT :numberexec";
 
-    private static final String QUERY_FIND_EXECUTION_BY_EXEC_ID = "SELECT C.CAMPAIGN_ID, C.ID, C.SCENARIO_ID, C.SCENARIO_EXECUTION_ID, C.PARTIAL_EXECUTION, C.EXECUTION_ENVIRONMENT, C.DATASET_ID as EXECUTION_DATASET_ID, C.DATASET_VERSION as EXECUTION_DATASET_VERSION, SEH.TEST_CASE_TITLE, " +
+    private static final String QUERY_FIND_EXECUTION_BY_EXEC_ID = "SELECT C.CAMPAIGN_ID, C.ID, C.SCENARIO_ID, C.SCENARIO_EXECUTION_ID, C.PARTIAL_EXECUTION, C.EXECUTION_ENVIRONMENT, C.DATASET_ID as EXECUTION_DATASET_ID, C.DATASET_VERSION as EXECUTION_DATASET_VERSION, C.USER_ID, SEH.TEST_CASE_TITLE, " +
         "SEH.EXECUTION_TIME, SEH.DURATION, SEH.STATUS, SEH.INFORMATION, SEH.ERROR, SEH.ENVIRONMENT, SEH.DATASET_ID, SEH.DATASET_VERSION, CA.TITLE as CAMPAIGN_TITLE " +
         "FROM CAMPAIGN_EXECUTION_HISTORY C " +
         "INNER JOIN SCENARIO_EXECUTION_HISTORY SEH ON SEH.ID = C.SCENARIO_EXECUTION_ID " +
@@ -99,10 +99,10 @@ class CampaignExecutionRepository {
     }
 
     private static final String QUERY_SAVE_CAMPAIGN_EXECUTION_HISTORY =
-        "INSERT INTO CAMPAIGN_EXECUTION_HISTORY(CAMPAIGN_ID, ID, SCENARIO_ID, SCENARIO_EXECUTION_ID, PARTIAL_EXECUTION, EXECUTION_ENVIRONMENT, DATASET_ID, DATASET_VERSION) "
-            + "VALUES (:idCampaign, :idCampaignExecution, :idScenario, :idScenarioExecution, :partialExecution, :executionEnvironment, :dataSetId, :dataSetVersion)";
+        "INSERT INTO CAMPAIGN_EXECUTION_HISTORY(CAMPAIGN_ID, ID, SCENARIO_ID, SCENARIO_EXECUTION_ID, PARTIAL_EXECUTION, EXECUTION_ENVIRONMENT, DATASET_ID, DATASET_VERSION, USER_ID) "
+            + "VALUES (:idCampaign, :idCampaignExecution, :idScenario, :idScenarioExecution, :partialExecution, :executionEnvironment, :dataSetId, :dataSetVersion, :user)";
 
-    private int saveScenarioExecutionReport(Long campaignId, Long campaignExecutionId, boolean partialExecution, ScenarioExecutionReportCampaign scenarioExecutionReport, String executionEnvironment, String dataSetId, Integer dataSetVersion) {
+    private int saveScenarioExecutionReport(Long campaignId, Long campaignExecutionId, boolean partialExecution, ScenarioExecutionReportCampaign scenarioExecutionReport, String executionEnvironment, String dataSetId, Integer dataSetVersion, String userId) {
         HashMap<String, Object> parameters = Maps.newHashMap();
         parameters.put("idCampaign", campaignId);
         parameters.put("idCampaignExecution", campaignExecutionId);
@@ -112,6 +112,7 @@ class CampaignExecutionRepository {
         parameters.put("executionEnvironment", executionEnvironment);
         parameters.put("dataSetId", dataSetId);
         parameters.put("dataSetVersion", dataSetVersion);
+        parameters.put("user", userId);
         return uiNamedParameterJdbcTemplate.update(QUERY_SAVE_CAMPAIGN_EXECUTION_HISTORY, parameters);
     }
 

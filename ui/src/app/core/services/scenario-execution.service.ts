@@ -98,6 +98,7 @@ export class ScenarioExecutionService {
             jsonResponse.executionId,
             JSON.parse(jsonResponse.report).report,
             jsonResponse.environment,
+            jsonResponse.user,
             jsonResponse.testCaseTitle
         );
     }
@@ -107,6 +108,7 @@ export class ScenarioExecutionService {
             jsonResponse.executionId,
             jsonResponse.report,
             jsonResponse.environment,
+            jsonResponse.user,
             jsonResponse.scenarioName
         );
     }

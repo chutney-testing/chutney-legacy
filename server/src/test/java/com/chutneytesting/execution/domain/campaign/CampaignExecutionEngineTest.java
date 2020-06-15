@@ -33,6 +33,8 @@ import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
+import com.chutneytesting.security.domain.User;
+import com.chutneytesting.security.domain.UserService;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -51,6 +53,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StopWatch;
 
@@ -72,7 +77,15 @@ public class CampaignExecutionEngineTest {
 
     @Before
     public void setUp() {
-        sut = new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository);
+        User user = new User();
+        user.setId("user_id");
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(authentication.getPrincipal()).thenReturn(user);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+        UserService userService = new UserService();
+        sut = new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository, userService);
     }
 
     @Test
@@ -139,12 +152,12 @@ public class CampaignExecutionEngineTest {
     public void should_stop_execution_of_scenarios_when_requested() throws InterruptedException {
         // Given
         TestCase firstTestCase = createGwtTestCase("1");
-        GwtTestCase secondtTestCase = createGwtTestCase("2");
+        GwtTestCase secondTestCase = createGwtTestCase("2");
 
-        Campaign campaign = createCampaign(firstTestCase, secondtTestCase);
+        Campaign campaign = createCampaign(firstTestCase, secondTestCase);
 
         when(testCaseRepository.findById(firstTestCase.id())).thenReturn(firstTestCase);
-        when(testCaseRepository.findById(secondtTestCase.id())).thenReturn(secondtTestCase);
+        when(testCaseRepository.findById(secondTestCase.id())).thenReturn(secondTestCase);
 
         when(scenarioExecutionEngine.execute(any(ExecutionRequest.class))).then((Answer<ScenarioExecutionReport>) invocationOnMock -> {
             TimeUnit.MILLISECONDS.sleep(1000);
@@ -238,7 +251,7 @@ public class CampaignExecutionEngineTest {
         Field currentCampaignExecutionsField = ReflectionUtils.findField(CampaignExecutionEngine.class, "currentCampaignExecutions");
         currentCampaignExecutionsField.setAccessible(true);
         Map<Long, CampaignExecutionReport> field = (Map<Long, CampaignExecutionReport>) ReflectionUtils.getField(currentCampaignExecutionsField, sut);
-        CampaignExecutionReport mockReport = new CampaignExecutionReport(1L, "", false, "", null, null);
+        CampaignExecutionReport mockReport = new CampaignExecutionReport(1L, "", false, "", null, null, "");
         field.put(1L, mockReport);
 
         // When
@@ -300,8 +313,8 @@ public class CampaignExecutionEngineTest {
         Field currentCampaignExecutionsField = ReflectionUtils.findField(CampaignExecutionEngine.class, "currentCampaignExecutions");
         currentCampaignExecutionsField.setAccessible(true);
         Map<Long, CampaignExecutionReport> field = (Map<Long, CampaignExecutionReport>) ReflectionUtils.getField(currentCampaignExecutionsField, sut);
-        CampaignExecutionReport report = new CampaignExecutionReport(1L, 33L, emptyList(), "", false, "", null, null);
-        CampaignExecutionReport report2 = new CampaignExecutionReport(2L, 42L, emptyList(), "", false, "", null, null);
+        CampaignExecutionReport report = new CampaignExecutionReport(1L, 33L, emptyList(), "", false, "", null, null, "");
+        CampaignExecutionReport report2 = new CampaignExecutionReport(2L, 42L, emptyList(), "", false, "", null, null, "");
         field.put(1L, report);
         field.put(2L, report2);
 
@@ -376,6 +389,7 @@ public class CampaignExecutionEngineTest {
             .status(ServerReportStatus.SUCCESS)
             .report("")
             .environment("")
+            .user("")
             .build();
     }
 
@@ -388,6 +402,7 @@ public class CampaignExecutionEngineTest {
             .status(ServerReportStatus.FAILURE)
             .report("")
             .environment("")
+            .user("")
             .build();
     }
 

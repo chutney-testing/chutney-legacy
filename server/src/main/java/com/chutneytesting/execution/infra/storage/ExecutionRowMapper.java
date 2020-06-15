@@ -23,6 +23,7 @@ public class ExecutionRowMapper implements RowMapper<Execution> {
             .report(rs.getString("REPORT"))
             .testCaseTitle(rs.getString("TEST_CASE_TITLE"))
             .environment(rs.getString("ENVIRONMENT"))
+            .user(rs.getString("USER_ID"))
             .build();
     }
 }

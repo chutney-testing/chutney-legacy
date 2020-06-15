@@ -28,6 +28,7 @@ public interface ExecutionHistory {
         String environment();
         Optional<String> datasetId();
         Optional<Integer> datasetVersion();
+        String user();
     }
 
     interface Attached {

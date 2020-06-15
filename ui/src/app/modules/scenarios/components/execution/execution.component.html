@@ -44,7 +44,10 @@
                             {{'global.time.at' | translate}} {{scenarioExecutionReport.report.startDate | date:'medium'}}
                         </small>
                         <small class="text-muted ml-2">
-                            - {{'admin.targets.environment' | translate}} : <b>{{scenarioExecutionReport.environment}}</b>
+                            {{'global.smallword.by' | translate}} : <b>{{scenarioExecutionReport.user}}</b>
+                        </small>
+                        <small class="text-muted ml-2">
+                            -  {{'admin.targets.environment' | translate}} : <b>{{scenarioExecutionReport.environment}}</b>
                         </small>
                     </span>
                     <div class="text-sm-center">

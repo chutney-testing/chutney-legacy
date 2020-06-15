@@ -1,6 +1,6 @@
 package com.chutneytesting.security.infra.ldap;
 
-import com.chutneytesting.security.api.User;
+import com.chutneytesting.security.domain.User;
 import com.chutneytesting.security.domain.UserRoles;
 import java.util.ArrayList;
 import java.util.List;

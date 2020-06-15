@@ -18,6 +18,7 @@ import com.chutneytesting.execution.domain.state.ExecutionStateRepository;
 import com.chutneytesting.execution.infra.execution.ExecutionRequestMapper;
 import com.chutneytesting.execution.infra.execution.ServerTestEngineJavaImpl;
 import com.chutneytesting.instrument.domain.Metrics;
+import com.chutneytesting.security.domain.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -76,11 +77,13 @@ public class ServerConfiguration {
     @Bean
     ScenarioExecutionEngine scenarioExecutionEngine(ServerTestEngine executionEngine,
                                                     TestCasePreProcessors testCasePreProcessors,
-                                                    ScenarioExecutionEngineAsync executionEngineAsync) {
+                                                    ScenarioExecutionEngineAsync executionEngineAsync,
+                                                    UserService userService) {
         return new ScenarioExecutionEngine(
             executionEngine,
             testCasePreProcessors,
-            executionEngineAsync);
+            executionEngineAsync,
+            userService);
     }
 
     @Bean
@@ -115,14 +118,21 @@ public class ServerConfiguration {
                                                     ScenarioExecutionEngine scenarioExecutionEngine,
                                                     ExecutionHistoryRepository executionHistoryRepository,
                                                     TestCaseRepository testCaseRepository,
-                                                    DataSetHistoryRepository dataSetHistoryRepository) {
-        return new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository);
+                                                    DataSetHistoryRepository dataSetHistoryRepository,
+                                                    UserService userService) {
+        return new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository, userService);
     }
 
     @Bean
     EnvironmentService environmentService(EnvironmentRepository environmentRepository) {
         return new EnvironmentService(environmentRepository);
     }
+
+    @Bean
+    UserService userService() {
+        return new UserService();
+    }
+
 
     @Bean
     ServerTestEngine javaTestEngine(@Qualifier("embeddedTestEngine") TestEngine testEngine,

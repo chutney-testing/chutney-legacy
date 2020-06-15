@@ -1,6 +1,6 @@
 package com.chutneytesting.security.infra.ldap;
 
-import com.chutneytesting.security.api.User;
+import com.chutneytesting.security.domain.User;
 import java.util.List;
 import javax.naming.directory.SearchControls;
 import org.springframework.ldap.AuthenticationException;

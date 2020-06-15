@@ -91,6 +91,7 @@ public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabas
             .report("toto")
             .testCaseTitle("Fake title")
             .environment("")
+            .user("")
             .build();
         IntStream.range(0, 23).forEach(i -> executionHistoryRepository.store("1", execution));
 
@@ -207,6 +208,7 @@ public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabas
             .testCaseTitle("Fake title")
             .environment("")
             .datasetId("fake dataset id")
+            .user("")
             .build();
     }
 }

@@ -15,6 +15,7 @@ import com.chutneytesting.execution.domain.compiler.GwtScenarioMarshaller;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.report.StepExecutionReportCore;
+import com.chutneytesting.security.domain.UserService;
 import java.util.Collections;
 import java.util.Map;
 
@@ -28,7 +29,8 @@ public class ScenarioExecutionEngine {
 
     public ScenarioExecutionEngine(ServerTestEngine executionEngine,
                                    TestCasePreProcessors testCasePreProcessors,
-                                   ScenarioExecutionEngineAsync executionEngineAsync) {
+                                   ScenarioExecutionEngineAsync executionEngineAsync,
+                                   UserService userService) {
         this.executionEngineAsync = executionEngineAsync;
         this.executionEngine = executionEngine;
         this.testCasePreProcessors = testCasePreProcessors;
@@ -49,7 +51,7 @@ public class ScenarioExecutionEngine {
      * @param dataSet the scenario variables
      * @return an execution report
      */
-    public ScenarioExecutionReport execute(String content, Map<String, String> dataSet, String environment) {
+    public ScenarioExecutionReport execute(String content, Map<String, String> dataSet, String environment, String userId) {
         GwtScenario gwtScenario = marshaller.deserialize("test title for idea", "test description for idea", content);
         TestCase testCase = GwtTestCase.builder()
             .withMetadata(TestCaseMetadataImpl.builder()
@@ -60,11 +62,11 @@ public class ScenarioExecutionEngine {
             .withDataSet(dataSet)
             .build();
         return simpleSyncExecution(
-            new ExecutionRequest(testCase, environment)
+            new ExecutionRequest(testCase, environment, userId)
         );
     }
 
-    public ScenarioExecutionReport execute(FunctionalStep functionalStep, String environment) throws ScenarioNotFoundException, ScenarioNotParsableException {
+    public ScenarioExecutionReport execute(FunctionalStep functionalStep, String environment, String userId) throws ScenarioNotFoundException, ScenarioNotParsableException {
         TestCase testCase = new ComposableTestCase(
             "no_scenario_id",
             TestCaseMetadataImpl.builder()
@@ -76,14 +78,14 @@ public class ScenarioExecutionEngine {
                 .build());
 
         return simpleSyncExecution(
-            new ExecutionRequest(testCase, environment)
+            new ExecutionRequest(testCase, environment, userId)
         );
     }
 
     private ScenarioExecutionReport simpleSyncExecution(ExecutionRequest executionRequest) {
-        ExecutionRequest processedExecutionRequest = new ExecutionRequest(testCasePreProcessors.apply(executionRequest), executionRequest.environment);
+        ExecutionRequest processedExecutionRequest = new ExecutionRequest(testCasePreProcessors.apply(executionRequest), executionRequest.environment, executionRequest.userId);
 
         StepExecutionReportCore finalStepReport = executionEngine.execute(processedExecutionRequest);
-        return new ScenarioExecutionReport(0L, processedExecutionRequest.testCase.metadata().title(), executionRequest.environment, finalStepReport);
+        return new ScenarioExecutionReport(0L, processedExecutionRequest.testCase.metadata().title(), executionRequest.environment, executionRequest.userId, finalStepReport);
     }
 }

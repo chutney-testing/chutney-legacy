@@ -69,6 +69,7 @@ public class CampaignExecutionReportMapperTest {
                 assertThat(scenarioReport.execution.environment()).isEqualTo("env");
                 assertThat(scenarioReport.execution.datasetId()).hasValue("#55:12");
                 assertThat(scenarioReport.execution.datasetVersion()).hasValue(2);
+                assertThat(scenarioReport.execution.user()).isEqualTo("user");
             });
         });
     }
@@ -92,6 +93,7 @@ public class CampaignExecutionReportMapperTest {
         when(rs.getString("ENVIRONMENT")).thenReturn("env");
         when(rs.getString("DATASET_ID")).thenReturn("#55:12");
         when(rs.getString("DATASET_VERSION")).thenReturn("2");
+        when(rs.getString("USER_ID")).thenReturn("user");
         return rs;
     }
 
@@ -105,6 +107,7 @@ public class CampaignExecutionReportMapperTest {
             .testCaseTitle("fake")
             .environment("env")
             .datasetId("#55:12")
+            .user("user")
             .build();
     }
 }

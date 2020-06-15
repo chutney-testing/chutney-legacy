@@ -47,7 +47,7 @@ public class SurefireCampaignExecutionReportBuilderTest {
                 stepReport("step 1", 24L, ServerReportStatus.SUCCESS,
                     stepReport("step1.1", 23L, ServerReportStatus.SUCCESS)));
 
-        ScenarioExecutionReport success_report = new ScenarioExecutionReport(1L, "scenario name", "", successStepReport);
+        ScenarioExecutionReport success_report = new ScenarioExecutionReport(1L, "scenario name", "", "",successStepReport);
         ExecutionHistory.Execution success_execution = ImmutableExecutionHistory.Execution
             .builder()
             .executionId(success_report.executionId)
@@ -57,6 +57,7 @@ public class SurefireCampaignExecutionReportBuilderTest {
             .report(objectMapper.writeValueAsString(success_report))
             .testCaseTitle("fake")
             .environment("")
+            .user("")
             .build();
 
         ScenarioExecutionReportCampaign scenarioExecutionReportOK = new ScenarioExecutionReportCampaign("123", "test ♥ Scenario Title ok", success_execution.summary());
@@ -69,7 +70,7 @@ public class SurefireCampaignExecutionReportBuilderTest {
                 stepReport("step2", 420L, ServerReportStatus.FAILURE),
                 stepReport("step3", 0L, ServerReportStatus.NOT_EXECUTED));
 
-        ScenarioExecutionReport failure_report = new ScenarioExecutionReport(2L, "scenario name", "", failureStepReport);
+        ScenarioExecutionReport failure_report = new ScenarioExecutionReport(2L, "scenario name", "", "",failureStepReport);
         ExecutionHistory.Execution failure_execution = ImmutableExecutionHistory.Execution
             .builder()
             .executionId(failure_report.executionId)
@@ -79,14 +80,15 @@ public class SurefireCampaignExecutionReportBuilderTest {
             .report(objectMapper.writeValueAsString(failure_report))
             .testCaseTitle("fake")
             .environment("")
+            .user("")
             .build();
 
         ScenarioExecutionReportCampaign scenarioExecutionReportKO = new ScenarioExecutionReportCampaign("123", "test Scenario Title ko", failure_execution.summary());
         when(executionHistoryRepository.getExecution(scenarioExecutionReportKO.scenarioId, failure_report.executionId)).thenReturn(failure_execution);
 
         // And a campaign report with previous scenario executions
-        CampaignExecutionReport campaignExecutionReport1 = new CampaignExecutionReport(1L, 1L, Arrays.asList(scenarioExecutionReportOK, scenarioExecutionReportKO), "test Campaign Title", false, "", null, null);
-        CampaignExecutionReport campaignExecutionReport2 = new CampaignExecutionReport(1L, 1L, Arrays.asList(scenarioExecutionReportOK, scenarioExecutionReportKO), "test Campaign Title 2", false, "", null, null);
+        CampaignExecutionReport campaignExecutionReport1 = new CampaignExecutionReport(1L, 1L, Arrays.asList(scenarioExecutionReportOK, scenarioExecutionReportKO), "test Campaign Title", false, "", null, null, "");
+        CampaignExecutionReport campaignExecutionReport2 = new CampaignExecutionReport(1L, 1L, Arrays.asList(scenarioExecutionReportOK, scenarioExecutionReportKO), "test Campaign Title 2", false, "", null, null, "");
 
         // When we zip it
         byte[] zip = surefireCampaignExecutionReportBuilder.createReport(Lists.list(campaignExecutionReport1, campaignExecutionReport2));

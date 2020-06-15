@@ -1,6 +1,6 @@
 export class Execution {
 
-  public static NO_EXECUTION: Execution = new Execution(null, null, null, null, null, null);
+  public static NO_EXECUTION: Execution = new Execution(null, null, null, null, null, null, null);
 
   constructor(
     public duration: number,
@@ -9,6 +9,7 @@ export class Execution {
     public executionId: number,
     public time: Date,
     public environment: string,
+    public user: string,
     public info?: string,
     public error?: string,
   ) { }
@@ -25,6 +26,7 @@ export class Execution {
       jsonObject.executionId,
       new Date(jsonObject.time),
       jsonObject.environment,
+      jsonObject.user,
       jsonObject.info,
       jsonObject.error
     );
