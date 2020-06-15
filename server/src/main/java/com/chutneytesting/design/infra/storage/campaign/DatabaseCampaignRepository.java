@@ -97,7 +97,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
         Map<String, String> parameters = campaignParameterRepository.findCampaignParameters(campaign.id).stream()
             .collect(Collectors.toMap(cp -> cp.parameter, cp -> cp.value));
 
-        return new Campaign(campaign.id, campaign.title, campaign.description, campaign.scenarioIds, parameters, campaign.getScheduleTime(), campaign.executionEnvironment(), campaign.parallelRun, campaign.retryAuto);
+        return new Campaign(campaign.id, campaign.title, campaign.description, campaign.scenarioIds, parameters, campaign.getScheduleTime(), campaign.executionEnvironment(), campaign.parallelRun, campaign.retryAuto, campaign.datasetId);
     }
 
     @Override
@@ -151,7 +151,8 @@ public class DatabaseCampaignRepository implements CampaignRepository {
                 "SCHEDULE_TIME = :scheduletime, " +
                 "ENVIRONMENT = :environment, " +
                 "PARALLEL_RUN = :paralellRun, " +
-                "RETRY_AUTO = :retryAuto " +
+                "RETRY_AUTO = :retryAuto, " +
+                "DATASETID = :datasetId " +
                 "WHERE ID = :id"
             , map(Pair.of("id", campaign.id)
                 , Pair.of("title", campaign.title)
@@ -160,6 +161,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
                 , Pair.of("environment", campaign.executionEnvironment())
                 , Pair.of("paralellRun", campaign.parallelRun)
                 , Pair.of("retryAuto", campaign.retryAuto)
+                , Pair.of("datasetId", campaign.datasetId)
             ));
 
         updateScenarioReferences(campaign.id, campaign.scenarioIds);
@@ -171,8 +173,8 @@ public class DatabaseCampaignRepository implements CampaignRepository {
     private Long doSave(final Campaign unsavedCampaign) {
         final Long id = uiNamedParameterJdbcTemplate.queryForObject("SELECT nextval('CAMPAIGN_SEQ')", emptyMap(), Long.class);
 
-        uiNamedParameterJdbcTemplate.update("INSERT INTO CAMPAIGN(ID, TITLE, DESCRIPTION, SCHEDULE_TIME, ENVIRONMENT, PARALLEL_RUN, RETRY_AUTO) " +
-                "VALUES (:id, :title, :description, :scheduletime, :environment, :paralellRun, :retryAuto)"
+        uiNamedParameterJdbcTemplate.update("INSERT INTO CAMPAIGN(ID, TITLE, DESCRIPTION, SCHEDULE_TIME, ENVIRONMENT, PARALLEL_RUN, RETRY_AUTO, DATASETID) " +
+                "VALUES (:id, :title, :description, :scheduletime, :environment, :paralellRun, :retryAuto, :datasetId)"
             , map(Pair.of("id", id)
                 , Pair.of("title", unsavedCampaign.title)
                 , Pair.of("description", ofNullable(unsavedCampaign.description).orElse(""))
@@ -180,6 +182,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
                 , Pair.of("environment", unsavedCampaign.executionEnvironment())
                 , Pair.of("paralellRun", unsavedCampaign.parallelRun)
                 , Pair.of("retryAuto", unsavedCampaign.retryAuto)
+                , Pair.of("datasetId", unsavedCampaign.datasetId)
             ));
 
         updateScenarioReferences(id, unsavedCampaign.scenarioIds);
@@ -263,10 +266,11 @@ public class DatabaseCampaignRepository implements CampaignRepository {
             String description = rs.getString("DESCRIPTION");
             String scheduleTimeAsString = rs.getString("SCHEDULE_TIME");
             String environment = rs.getString("ENVIRONMENT");
+            String datasetId = rs.getString("DATASETID");
             Boolean parallelRun = rs.getBoolean("PARALLEL_RUN");
             Boolean retryAuto = rs.getBoolean("RETRY_AUTO");
             LocalTime localTime = scheduleTimeAsString != null ? LocalTime.parse(scheduleTimeAsString) : null;
-            return new Campaign(id, title, description, null, null, localTime, environment, parallelRun, retryAuto);
+            return new Campaign(id, title, description, null, null, localTime, environment, parallelRun, retryAuto, datasetId);
         }
     }
 }

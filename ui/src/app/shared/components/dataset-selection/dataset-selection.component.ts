@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DataSetService } from '@core/services';
-import { Dataset, ScenarioComponent, TestCase } from '@model';
+import { Dataset } from '@model';
 
 
 @Component({
@@ -13,7 +13,7 @@ export class DatasetSelectionComponent implements OnInit {
     @Input() selectedDatasetId: String;
     @Output() selectionEvent = new EventEmitter();
 
-    private datasets: Array<Dataset>;
+    datasets: Array<Dataset>;
 
     constructor(private datasetService: DataSetService) {
     }

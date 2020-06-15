@@ -19,6 +19,7 @@ public class CampaignDto {
     private final String environment;
     private final boolean parallelRun;
     private final boolean retryAuto;
+    private final String datasetId;
 
     public CampaignDto(@JsonProperty("id") Long id,
                        @JsonProperty("title") String title,
@@ -29,7 +30,8 @@ public class CampaignDto {
                        @JsonProperty("scheduleTime") String scheduleTime,
                        @JsonProperty("environment") String environment,
                        @JsonProperty("parallelRun") boolean parallelRun,
-                       @JsonProperty("retryAuto") boolean retryAuto) {
+                       @JsonProperty("retryAuto") boolean retryAuto,
+                       @JsonProperty("datasetId") String datasetId) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -40,6 +42,7 @@ public class CampaignDto {
         this.environment = environment;
         this.parallelRun = parallelRun;
         this.retryAuto = retryAuto;
+        this.datasetId = datasetId;
     }
 
     public Long getId() {
@@ -87,5 +90,9 @@ public class CampaignDto {
 
     public boolean isRetryAuto() {
         return retryAuto;
+    }
+
+    public String getDatasetId() {
+        return datasetId;
     }
 }

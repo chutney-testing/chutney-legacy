@@ -11,6 +11,7 @@ export class Campaign {
         public environment: string = '',
         public scheduleTime?: string,
         public parallelRun?: false,
-        public retryAuto?: false) {
+        public retryAuto?: false,
+        public datasetId?: string) {
     }
 }

@@ -50,7 +50,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class CampaignControllerTest {
 
-    private static final CampaignDto SAMPLE_CAMPAIGN = new CampaignDto(null, "test", "desc", Lists.newArrayList("1", "2", "3"), emptyMap(), emptyList(), "00:00", "env", false, false);
+    private static final CampaignDto SAMPLE_CAMPAIGN = new CampaignDto(null, "test", "desc", Lists.newArrayList("1", "2", "3"),
+        emptyMap(), emptyList(), "00:00", "env", false, false, null);
     private static final String urlTemplate = "/api/ui/campaign/v1/";
 
     private FakeCampaignRepository repository = new FakeCampaignRepository();
@@ -113,7 +114,7 @@ public class CampaignControllerTest {
             new HashMap<>(),
             existingCampaign.getCampaignExecutionReports(),
             "00:00",
-            existingCampaign.getEnvironment(), false, false);
+            existingCampaign.getEnvironment(), false, false, null);
 
         // When
         CampaignDto receivedCampaign = insertCampaign(modifiedCampaign);
@@ -135,7 +136,7 @@ public class CampaignControllerTest {
             emptyMap(),
             existingCampaign.getCampaignExecutionReports(),
             "00:00",
-            existingCampaign.getEnvironment(), false, false);
+            existingCampaign.getEnvironment(), false, false, null);
 
         // When
         CampaignDto receivedCampaign = insertCampaign(modifiedCampaign);
@@ -173,7 +174,7 @@ public class CampaignControllerTest {
     @Test
     public void should_find_all_existing_campaign() throws Exception {
         // Given
-        CampaignDto anotherExistingCampaign = insertCampaign(new CampaignDto(42L, "title", "description", emptyList(), emptyMap(), emptyList(), "00:00", "env", false, false));
+        CampaignDto anotherExistingCampaign = insertCampaign(new CampaignDto(42L, "title", "description", emptyList(), emptyMap(), emptyList(), "00:00", "env", false, false, null));
 
         // When
         execute(MockMvcRequestBuilders.get(urlTemplate))
@@ -190,7 +191,8 @@ public class CampaignControllerTest {
     public void should_find_campaigns_related_to_certain_scenario() throws Exception {
         // Given
         removeCampaign(existingCampaign.getId());
-        CampaignDto campaignToCreate = new CampaignDto(42L, "CAMPAIGN_LINKED_TO_SCENARIO", "description", Lists.newArrayList("4", "5", "6"), emptyMap(), emptyList(), "00:00", "env", false, false);
+        CampaignDto campaignToCreate = new CampaignDto(42L, "CAMPAIGN_LINKED_TO_SCENARIO", "description", Lists.newArrayList("4", "5", "6"),
+            emptyMap(), emptyList(), "00:00", "env", false, false, null);
         insertCampaign(campaignToCreate);
 
         // When
@@ -211,7 +213,8 @@ public class CampaignControllerTest {
     public void should_find_no_campaign_related_to_an_orphan_scenario() throws Exception {
         // Given
         removeCampaign(existingCampaign.getId());
-        CampaignDto campaignToCreate = new CampaignDto(42L, "CAMPAIGN_WITHOUT_SCENARIO", "description", emptyList(), emptyMap(), emptyList(), "00:00", "env", false, false);
+        CampaignDto campaignToCreate = new CampaignDto(42L, "CAMPAIGN_WITHOUT_SCENARIO", "description", emptyList(),
+            emptyMap(), emptyList(), "00:00", "env", false, false, null);
         insertCampaign(campaignToCreate);
 
         // When
@@ -262,7 +265,8 @@ public class CampaignControllerTest {
         ExecutionHistory.ExecutionSummary execution0 = mock(ExecutionHistory.ExecutionSummary.class);
         when(execution0.time()).thenReturn(LocalDateTime.now().minusDays(1));
         CampaignExecutionReport campaignExecutionReport0 = new CampaignExecutionReport(1L, 1L, singletonList(new ScenarioExecutionReportCampaign("20", "...", execution0)), "title", false, "");
-        CampaignDto anotherExistingCampaign = new CampaignDto(null, "title", "description", emptyList(), emptyMap(), emptyList(), "00:00", "env", false, false);
+        CampaignDto anotherExistingCampaign = new CampaignDto(null, "title", "description", emptyList(),
+            emptyMap(), emptyList(), "00:00", "env", false, false, null);
         anotherExistingCampaign = insertCampaign(anotherExistingCampaign);
         repository.saveReport(anotherExistingCampaign.getId(), campaignExecutionReport0);
 
@@ -290,7 +294,8 @@ public class CampaignControllerTest {
     public void should_retrieve_scenarios_of_a_campaign() throws Exception {
         // Given
         removeCampaign(existingCampaign.getId());
-        CampaignDto campaignToCreate = new CampaignDto(42L, "CAMPAIGN_LINKED_TO_SCENARIO", "description", Lists.newArrayList("55","44-44"), emptyMap(), emptyList(), "00:00", "env", false, false);
+        CampaignDto campaignToCreate = new CampaignDto(42L, "CAMPAIGN_LINKED_TO_SCENARIO", "description", Lists.newArrayList("55","44-44"),
+            emptyMap(), emptyList(), "00:00", "env", false, false, null);
         insertCampaign(campaignToCreate);
 
         when(composableTestCaseRepository.findById("#44:44")).thenReturn(new ComposableTestCase("#44:44", TestCaseMetadataImpl.builder().withId("#44:44").build(), ComposableScenario.builder()

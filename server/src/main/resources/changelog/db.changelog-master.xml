@@ -404,4 +404,15 @@
             <column name="ENVIRONMENT"  type="VARCHAR(20)" defaultValue=""></column>
         </addColumn>
     </changeSet>
+    <changeSet id="20200615" author="ICG">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="CAMPAIGN" columnName="DATASETID"/>
+            </not>
+        </preConditions>
+        <comment>Create column DATASETID in CAMPAIGN</comment>
+        <addColumn tableName="CAMPAIGN">
+            <column name="DATASETID"  type="VARCHAR(20)"></column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

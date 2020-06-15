@@ -38,7 +38,10 @@
             <div class="form-row">
                 <div class="form-group col-md-2">
                     <label>{{'menu.principal.dataset' | translate}}</label>
-                    <chutney-dataset-selection></chutney-dataset-selection>
+                    <chutney-dataset-selection
+                        [selectedDatasetId]="campaign.datasetId"
+                        (selectionEvent)="selectDataset($event)">
+                    </chutney-dataset-selection>
                 </div>
 
                 <div *ngIf="environments" class="form-group col-md-2">

@@ -188,6 +188,6 @@ public class GwtTestCaseControllerTest {
 
         ArgumentCaptor<GwtTestCase> testCase = ArgumentCaptor.forClass(GwtTestCase.class);
         verify(testCaseRepository).save(testCase.capture());
-        assertThat(testCase.getValue().dataSet).containsOnly(entry("testcase parameter quote", "**escape.quote**"), entry("testcase parameter apostrophe", "**escape.apostrophe**"));
+        assertThat(testCase.getValue().computedParameters()).containsOnly(entry("testcase parameter quote", "**escape.quote**"), entry("testcase parameter apostrophe", "**escape.apostrophe**"));
     }
 }

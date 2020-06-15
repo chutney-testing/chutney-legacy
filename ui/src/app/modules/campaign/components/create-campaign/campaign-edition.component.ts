@@ -38,6 +38,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     itemList = [];
     settings = {};
     selectedTags: string[] = [];
+    datasetId: string;
 
     constructor(
         private campaignService: CampaignService,
@@ -106,6 +107,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
                     this.selectedEnvironment = new EnvironmentMetadata(this.campaign.environment, '');
                     this.setCampaignScenarios();
                     this.updateCampaignParameters();
+                    this.datasetId = this.campaign.datasetId;
                 },
                 (error) => {
                     this.errorMessage = error._body;
@@ -178,6 +180,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         this.campaign.environment = this.selectedEnvironment.name;
         this.campaign.parallelRun = formValue['parallelRun'];
         this.campaign.retryAuto = formValue['retryAuto'];
+        this.campaign.datasetId = this.datasetId;
 
         this.setCampaignScenariosIdsToAdd(this.scenariosToAdd);
         if (this.campaign.id !== undefined) {
@@ -285,5 +288,9 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
 
     setSelectedEnvironment(event: EnvironmentMetadata) {
         this.selectedEnvironment = event;
+    }
+
+    selectDataset(datasetId: string) {
+        this.datasetId = datasetId;
     }
 }
