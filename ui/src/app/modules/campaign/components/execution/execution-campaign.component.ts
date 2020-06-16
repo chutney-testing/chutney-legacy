@@ -189,9 +189,22 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
 
         return sortByAndOrder(
             collection,
-            (i) => i[this.orderBy],
+            this.getKeyExtractorBy(property),
             this.reverseOrder
         );
+    }
+
+    private getKeyExtractorBy(property: string) {
+        if (property == 'title') {
+            return i => i[property] == null ? '' : i[property].toLowerCase();
+        }
+        if (property == 'creationDate') {
+            const now = Date.now();
+            return i => i[property] == null ? now - 1491841324 /*2017-04-10T16:22:04*/ : now - Date.parse(i[property]);
+        }
+        else {
+            return i => i[property] == null ? '' : i[property];
+        }
     }
 
     executeCampaign(env: string) {
