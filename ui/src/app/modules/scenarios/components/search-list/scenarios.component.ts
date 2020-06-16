@@ -143,9 +143,18 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     sortScenarios(property, reverseOrder) {
         this.viewedScenarios = sortByAndOrder(
             this.viewedScenarios,
-            i => i[property] == null ? '' : i[property],
-            reverseOrder
+            this.getKeyExtractorBy(property),
+            property == 'title' ? !reverseOrder : reverseOrder
         );
+    }
+
+    private getKeyExtractorBy(property: string) {
+        if (property == 'title') {
+            return i => i[property] == null ? '' : i[property].toLowerCase();
+        }
+        else {
+            return i => i[property] == null ? '' : i[property];
+        }
     }
 
     // Filtering //
@@ -240,5 +249,4 @@ export class ScenariosComponent implements OnInit, OnDestroy {
             }
         });
     }
-
 }
