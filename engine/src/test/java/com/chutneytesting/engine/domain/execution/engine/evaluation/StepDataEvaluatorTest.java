@@ -168,21 +168,23 @@ public class StepDataEvaluatorTest {
         Map<String, Object> context = new HashMap<>();
         context.put("variable_toto", "toto");
         context.put("variable_tata", "tata");
-
         scenarioContext.putAll(context);
 
-
         Map<String, Object> inputs = new HashMap<>();
-        inputs.put("dateTimeFormat", "ss");
         inputs.put("singleVariable", "${#variable_toto}");
         inputs.put("singleVariableWithTextAfterSpel", "Text - ${#variable_toto}");
         inputs.put("singleVariableWithTextBeforeSpel", "${#variable_toto} - text");
-
         inputs.put("consecutiveVariables", "${#variable_toto}${#variable_tata}");
-
         inputs.put("twoVariablesSeparedByText", "${#variable_toto} - text - ${#variable_tata}");
         inputs.put("twoVariablesWithTextAtBeginning", "Text - ${#variable_toto} - ${#variable_tata}");
         inputs.put("twoVariablesWithTextAtTheEnd", "${#variable_toto} - ${#variable_tata} - text");
+
+        // Object spel
+        inputs.put("object", "${{'k1': 'value1'}}");
+        inputs.put("objectWithSpaceAfter", "${{'k2': 'value2'}    }");
+        inputs.put("objectWithSpaceBefore", "${    {'k3': 'value3'}}");
+        inputs.put("objectWithSpaceAfterSuffix", "${{'k4': 'value4'}}    ");
+        inputs.put("objectWithSpaceBeforePrefix", "     ${{'k5': 'value5'}}");
 
         // When
         Map<String, Object> evaluatedInputs = evaluator.evaluateNamedDataWithContextVariables(inputs, scenarioContext);
@@ -190,12 +192,16 @@ public class StepDataEvaluatorTest {
         assertThat(evaluatedInputs.get("singleVariable")).isEqualTo("toto");
         assertThat(evaluatedInputs.get("singleVariableWithTextAfterSpel")).isEqualTo("Text - toto");
         assertThat(evaluatedInputs.get("singleVariableWithTextBeforeSpel")).isEqualTo("toto - text");
-
         assertThat(evaluatedInputs.get("consecutiveVariables")).isEqualTo("tototata");
-
         assertThat(evaluatedInputs.get("twoVariablesSeparedByText")).isEqualTo("toto - text - tata");
         assertThat(evaluatedInputs.get("twoVariablesWithTextAtBeginning")).isEqualTo("Text - toto - tata");
         assertThat(evaluatedInputs.get("twoVariablesWithTextAtTheEnd")).isEqualTo("toto - tata - text");
+
+        assertThat(((Map)evaluatedInputs.get("object")).get("k1")).isEqualTo("value1");
+        assertThat(((Map)evaluatedInputs.get("objectWithSpaceAfter")).get("k2")).isEqualTo("value2");
+        assertThat(((Map)evaluatedInputs.get("objectWithSpaceBefore")).get("k3")).isEqualTo("value3");
+        assertThat(((Map)evaluatedInputs.get("objectWithSpaceAfterSuffix")).get("k4")).isEqualTo("value4");
+        assertThat(((Map)evaluatedInputs.get("objectWithSpaceBeforePrefix")).get("k5")).isEqualTo("value5");
     }
 
     private class TestObject {
