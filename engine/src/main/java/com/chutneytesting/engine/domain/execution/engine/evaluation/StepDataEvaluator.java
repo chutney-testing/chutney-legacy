@@ -24,6 +24,9 @@ public class StepDataEvaluator {
 
     private static final String EVALUATION_STRING_PREFIX = "${";
     private static final String EVALUATION_STRING_SUFFIX = "}";
+    private static final String EVALUATION_STRING_ESCAPE = "\\";
+    private static final Pattern EVALUATION_OBJECT_PATTERN = Pattern.compile("(\\s*)" + escapeForRegex(EVALUATION_STRING_ESCAPE) + ")?" + escapeForRegex(EVALUATION_STRING_PREFIX) + "(.*?)" + escapeForRegex(EVALUATION_STRING_SUFFIX) + "(\\s*}?\\s*)", Pattern.DOTALL);
+
 
     private final SpelFunctions spelFunctions;
     private final ExpressionParser parser = new SpelExpressionParser();
@@ -60,9 +63,9 @@ public class StepDataEvaluator {
         if (object instanceof String) {
             String stringValue = (String) object;
             if (isObjectEvaluation(stringValue)) {
-                inputEvaluatedValue = Strings.replaceExpression(stringValue, s -> evaluate(parser, evaluationContext, s), EVALUATION_STRING_PREFIX, EVALUATION_STRING_SUFFIX);
+                inputEvaluatedValue = Strings.replaceExpression(stringValue, s -> evaluate(parser, evaluationContext, s), EVALUATION_STRING_PREFIX, EVALUATION_STRING_SUFFIX, EVALUATION_STRING_ESCAPE);
             } else {
-                inputEvaluatedValue = Strings.replaceExpressions(stringValue, s -> evaluate(parser, evaluationContext, s), EVALUATION_STRING_PREFIX, EVALUATION_STRING_SUFFIX);
+                inputEvaluatedValue = Strings.replaceExpressions(stringValue, s -> evaluate(parser, evaluationContext, s), EVALUATION_STRING_PREFIX, EVALUATION_STRING_SUFFIX, EVALUATION_STRING_ESCAPE);
             }
         } else if (object instanceof Map) {
             Map evaluatedMap = new HashMap();
@@ -117,8 +120,7 @@ public class StepDataEvaluator {
     }
 
     private boolean isObjectEvaluation(String template) {
-        Pattern pattern = Pattern.compile("(\\s*)" + escapeForRegex(EVALUATION_STRING_PREFIX) + "(.*?)" + escapeForRegex(EVALUATION_STRING_SUFFIX) + "(\\s*}?\\s*)", Pattern.DOTALL);
-        Matcher matcher = pattern.matcher(template);
+        Matcher matcher = EVALUATION_OBJECT_PATTERN.matcher(template);
         boolean result = matcher.find() && matcher.start() == 0 && matcher.end() == template.length();
         if(result) {
             return result;

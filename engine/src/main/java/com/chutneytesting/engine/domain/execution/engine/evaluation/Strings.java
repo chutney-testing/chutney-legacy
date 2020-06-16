@@ -15,15 +15,21 @@ abstract class Strings {
     private Strings() {
     }
 
-    public static String replaceExpressions(String template, Function<String, Object> evaluator, String prefix, String suffix) {
+    public static String replaceExpressions(String template, Function<String, Object> evaluator, String prefix, String suffix, String escape) {
         final StringBuffer sb = new StringBuffer();
-        Pattern pattern = cachePattern(escapeForRegex(prefix) + "(.*?)" + escapeForRegex(suffix));
+        Pattern pattern = cachePattern("(" + escapeForRegex(escape) + ")?" + escapeForRegex(prefix) + "(.*?)" + escapeForRegex(suffix));
         final Matcher matcher = pattern.matcher(template);
         while (matcher.find()) {
-            String key = matcher.group(1);
-            Object o = evaluator.apply(key);
-            if (o != null) {
-                String replacement = Matcher.quoteReplacement(String.valueOf(o));
+            String escapeMatch = matcher.group(1);
+            String key = matcher.group(2);
+            if (escapeMatch == null) {
+                Object o = evaluator.apply(key);
+                if (o != null) {
+                    String replacement = Matcher.quoteReplacement(String.valueOf(o));
+                    matcher.appendReplacement(sb, replacement);
+                }
+            } else {
+                String replacement = Matcher.quoteReplacement(prefix + key + suffix);
                 matcher.appendReplacement(sb, replacement);
             }
         }
@@ -31,12 +37,17 @@ abstract class Strings {
         return sb.toString();
     }
 
-    public static Object replaceExpression(String template, Function<String, Object> transformer, String prefix, String suffix) {
-        final Pattern pattern = cachePattern("^(\\s*)" + escapeForRegex(prefix) + "(.*?)" + escapeForRegex(suffix) + "(\\s*$)");
+    public static Object replaceExpression(String template, Function<String, Object> transformer, String prefix, String suffix, String escape) {
+        final Pattern pattern = cachePattern("^(\\s*)" + "(" + escapeForRegex(escape) + ")?" + escapeForRegex(prefix) + "(.*?)" + escapeForRegex(suffix) + "(\\s*$)");
         final Matcher matcher = pattern.matcher(template);
         if (matcher.matches()) {
+            String escapeMatch = matcher.group(1);
             String key = matcher.group(2);
-            return transformer.apply(key);
+            if (escapeMatch == null) {
+                return transformer.apply(key);
+            } else {
+                return prefix + key + suffix;
+            }
         } else {
             return template;
         }
@@ -44,6 +55,7 @@ abstract class Strings {
 
     public static String escapeForRegex(String literal) {
         return literal
+            .replaceAll("\\\\", Matcher.quoteReplacement("\\\\"))
             .replaceAll("\\$", Matcher.quoteReplacement("\\$"))
             .replaceAll("\\{", Matcher.quoteReplacement("\\{"))
             .replaceAll("\\}", Matcher.quoteReplacement("\\}"));
