@@ -67,6 +67,7 @@ public class StepDataEvaluatorTest {
         set.add("${#object.attribute()}");
 
         Map<String, Object> inputs = new HashMap<>();
+        inputs.put("escaped", "\\${noreplace}");
         inputs.put("stringRawValue", "rawValue");
         inputs.put("objectRawValue", testObject);
         inputs.put("destination", "${#destination}");
@@ -82,6 +83,7 @@ public class StepDataEvaluatorTest {
 
         assertThat(evaluatedInputs.get("stringRawValue")).isEqualTo("rawValue");
         assertThat(evaluatedInputs.get("objectRawValue")).isEqualTo(testObject);
+        assertThat(evaluatedInputs.get("escaped")).isEqualTo("${noreplace}");
         assertThat(evaluatedInputs.get("destination")).isEqualTo("stringDestination");
         assertThat(evaluatedInputs.get("jsonKey")).isEqualTo("{\"key\": \"value\"}");
         assertThat(evaluatedInputs.get("objectKey")).isEqualTo(testObject);
