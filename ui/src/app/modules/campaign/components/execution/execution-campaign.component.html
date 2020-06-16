@@ -138,20 +138,20 @@
                 <thead>
                     <tr>
                         <th scope="col" class="filter w5" (click)="sortCurrentBy('scenarioId')">{{ 'campaigns.execution.scenarios.item.header.id' | translate }}
-                            <span *ngIf="orderBy == 'scenarioId' && !reverseOrder" class="fa fa-caret-down"></span>
-                            <span *ngIf="orderBy == 'scenarioId' && reverseOrder" class="fa fa-caret-up"></span>
+                            <span *ngIf="orderBy == 'scenarioId' && reverseOrder" class="fa fa-caret-down"></span>
+                            <span *ngIf="orderBy == 'scenarioId' && !reverseOrder" class="fa fa-caret-up"></span>
                         </th>
                         <th scope="col" class="filter w5" (click)="sortCurrentBy('status')">{{ 'campaigns.execution.scenarios.item.header.state' | translate }}
-                            <span *ngIf="orderBy == 'status' && !reverseOrder" class="fa fa-caret-down"></span>
-                            <span *ngIf="orderBy == 'status' && reverseOrder" class="fa fa-caret-up"></span>
+                            <span *ngIf="orderBy == 'status' && reverseOrder" class="fa fa-caret-down"></span>
+                            <span *ngIf="orderBy == 'status' && !reverseOrder" class="fa fa-caret-up"></span>
                         </th>
                         <th scope="col" class="filter w80" (click)="sortCurrentBy('scenarioName')">{{ 'campaigns.execution.scenarios.item.header.title' | translate }}
-                            <span *ngIf="orderBy == 'scenarioName' && !reverseOrder" class="fa fa-caret-down"></span>
-                            <span *ngIf="orderBy == 'scenarioName' && reverseOrder" class="fa fa-caret-up"></span>
+                            <span *ngIf="orderBy == 'scenarioName' && reverseOrder" class="fa fa-caret-down"></span>
+                            <span *ngIf="orderBy == 'scenarioName' && !reverseOrder" class="fa fa-caret-up"></span>
                         </th>
                         <th scope="col" class="filter w10" (click)="sortCurrentBy('duration')">{{ 'campaigns.execution.scenarios.item.header.duration' | translate }}
-                            <span *ngIf="orderBy == 'duration' && !reverseOrder" class="fa fa-caret-down"></span>
-                            <span *ngIf="orderBy == 'duration' && reverseOrder" class="fa fa-caret-up"></span>
+                            <span *ngIf="orderBy == 'duration' && reverseOrder" class="fa fa-caret-down"></span>
+                            <span *ngIf="orderBy == 'duration' && !reverseOrder" class="fa fa-caret-up"></span>
                         </th>
                     </tr>
                 </thead>
@@ -187,16 +187,16 @@
                 <tr>
                     <th scope="col" class="w1">&nbsp;</th>
                     <th scope="col" class="filter w70" (click)="sortLastBy('title')">{{ 'campaigns.execution.scenarios.header.title' | translate }}
-                        <span *ngIf="orderBy == 'title' && !reverseOrder" class="fa fa-caret-down"></span>
-                        <span *ngIf="orderBy == 'title' && reverseOrder" class="fa fa-caret-up"></span>
+                        <span *ngIf="orderBy == 'title' && reverseOrder" class="fa fa-caret-down"></span>
+                        <span *ngIf="orderBy == 'title' && !reverseOrder" class="fa fa-caret-up"></span>
                     </th>
                     <th scope="col" class="filter w15" (click)="sortLastBy('tags')">{{ 'campaigns.execution.scenarios.header.tags' | translate }}
-                        <span *ngIf="orderBy == 'tags' && !reverseOrder" class="fa fa-caret-down"></span>
-                        <span *ngIf="orderBy == 'tags' && reverseOrder" class="fa fa-caret-up"></span>
+                        <span *ngIf="orderBy == 'tags' && reverseOrder" class="fa fa-caret-down"></span>
+                        <span *ngIf="orderBy == 'tags' && !reverseOrder" class="fa fa-caret-up"></span>
                     </th>
                     <th scope="col" class="filter w14" (click)="sortLastBy('creationDate')">{{ 'campaigns.execution.scenarios.header.creation' | translate }}
-                        <span *ngIf="orderBy == 'creationDate' && !reverseOrder" class="fa fa-caret-down"></span>
-                        <span *ngIf="orderBy == 'creationDate' && reverseOrder" class="fa fa-caret-up"></span>
+                        <span *ngIf="orderBy == 'creationDate' && reverseOrder" class="fa fa-caret-down"></span>
+                        <span *ngIf="orderBy == 'creationDate' && !reverseOrder" class="fa fa-caret-up"></span>
                     </th>
                 </tr>
                 </thead>
@@ -229,7 +229,7 @@
         </div>
     </div>
     <div *ngIf="!currentCampaignExecutionReport && lineChartData.length > 0" class="col-md-3">
-        <canvas baseChart 
+        <canvas baseChart
         [datasets]="lineChartData"
         [labels]="lineChartLabels"
         [options]="lineChartOptions"

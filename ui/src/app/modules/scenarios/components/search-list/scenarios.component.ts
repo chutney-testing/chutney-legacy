@@ -144,13 +144,17 @@ export class ScenariosComponent implements OnInit, OnDestroy {
         this.viewedScenarios = sortByAndOrder(
             this.viewedScenarios,
             this.getKeyExtractorBy(property),
-            property == 'title' ? !reverseOrder : reverseOrder
+            reverseOrder
         );
     }
 
     private getKeyExtractorBy(property: string) {
         if (property == 'title') {
             return i => i[property] == null ? '' : i[property].toLowerCase();
+        }
+        if (property == 'lastExecution' || property == 'creationDate') {
+            const now = Date.now();
+            return i => i[property] == null ? now - 1491841324 /*2017-04-10T16:22:04*/ : now - Date.parse(i[property]);
         }
         else {
             return i => i[property] == null ? '' : i[property];
