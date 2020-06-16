@@ -141,7 +141,11 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     }
 
     sortScenarios(property, reverseOrder) {
-        this.viewedScenarios = sortByAndOrder(this.viewedScenarios, i => i[property], reverseOrder);
+        this.viewedScenarios = sortByAndOrder(
+            this.viewedScenarios,
+            i => i[property] == null ? '' : i[property],
+            reverseOrder
+        );
     }
 
     // Filtering //
