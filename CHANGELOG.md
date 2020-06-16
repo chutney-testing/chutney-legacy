@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.2.1](https://github.com/chutney-testing/chutney/tree/1.2.1) (2020-06-16)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.0...1.2.1)
+
+**Fixed bugs:**
+
+- Wrong last execution order on scenarii list  [\#149](https://github.com/chutney-testing/chutney/issues/149)
+- bugfix\(ui\): Correctly order scenarios by last execution when one is not executed [\#174](https://github.com/chutney-testing/chutney/pull/174) ([bessonm](https://github.com/bessonm))
+- bugfix\(engine\): Parsing full objects in spel did not work \(introduced in pr134\) [\#173](https://github.com/chutney-testing/chutney/pull/173) ([nbrouand](https://github.com/nbrouand))
+
 ## [1.2.0](https://github.com/chutney-testing/chutney/tree/1.2.0) (2020-06-12)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.1.4...1.2.0)
