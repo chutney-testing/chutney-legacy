@@ -40,6 +40,7 @@
     "hjson": "^3.1.1",
     "jszip": "^3.2.2",
     "ng-click-outside": "^4.0.0",
+    "ng2-ace-editor": "^0.3.9",
     "ng2-charts": "^2.2.5",
     "ng2-dragula": "^2.1.1",
     "ngx-bootstrap": "^3.0.0",

@@ -16,6 +16,7 @@ import { SharedModule } from '@shared/shared.module';
 import { AppRoutingModule } from './app-routing.module';
 import { CoreModule } from '@core/core.module';
 import { AppComponent } from './app.component';
+import {AceEditorModule} from "ng2-ace-editor";
 
 @NgModule({
   declarations: [

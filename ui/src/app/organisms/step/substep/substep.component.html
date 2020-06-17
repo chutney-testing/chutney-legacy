@@ -1,6 +1,6 @@
 <chutney-collapsible-panel [title]="step.name + (step.usage ? ' -- ((' + step.usage.toLowerCase() + '))' : '')">
   <div *ngIf="step.task != undefined" class="technical-step">
-    <div chutneyAceEditor
+    <!-- <div chutneyAceEditor
          id="editor+'-'+i"
          [text]="step.task | prettyPrint"
          [mode]="'json'"
@@ -8,7 +8,7 @@
          [options]="{ maxLines: 5, minLines: 3, fontSize: '1rem', showGutter: false, enableBasicAutocompletion: false, showPrintMargin: false, showLineNumbers: false, showFoldWidgets: false, highlightActiveLine: false }"
          [readOnly]="true"
          style="width: 100%; overflow: auto;">
-    </div>
+    </div>-->
   </div>
   <ul *ngIf="step.steps.length > 0" class="first-ul">
     <li *ngFor="let subStep of step.steps;index as i" style="padding-top: 5px;">

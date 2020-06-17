@@ -1,5 +1,5 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
-import { AceEditorDirective } from '@shared/ace-editor/ace-editor.directive';
+//import { AceEditorDirective } from '@shared/ace-editor/ace-editor.directive';
 import { GlobalVariableService } from '@core/services/global-var.service';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -26,7 +26,7 @@ export class GlobalVariableEditionComponent implements OnInit {
 
     help = false;
 
-    @ViewChild(AceEditorDirective) aceEditorDirective: AceEditorDirective;
+    //@ViewChild(AceEditorDirective) aceEditorDirective: AceEditorDirective;
 
     constructor(private globalVariableService: GlobalVariableService) {
     }
@@ -70,9 +70,9 @@ export class GlobalVariableEditionComponent implements OnInit {
         if (editor) {
             editor.style.height = editorHeight + 'px';
         }
-        if (this.aceEditorDirective) {
-            this.aceEditorDirective.editor.resize();
-        }
+        //if (this.aceEditorDirective) {
+       //     this.aceEditorDirective.editor.resize();
+       // }
     }
 
     delay(ms: number) {
@@ -90,12 +90,12 @@ export class GlobalVariableEditionComponent implements OnInit {
     updateFileContent(selectedFileName: string) {
         if (selectedFileName === undefined) {
             this.data = '';
-            this.aceEditorDirective.editor.setValue('');
+           // this.aceEditorDirective.editor.setValue('');
         } else {
             this.globalVariableService.get(selectedFileName).subscribe(
                 response => {
                     this.data = response;
-                    this.aceEditorDirective.editor.setValue(response);
+               //     this.aceEditorDirective.editor.setValue(response);
                 }
             );
         }

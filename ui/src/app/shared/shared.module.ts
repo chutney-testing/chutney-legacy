@@ -1,7 +1,6 @@
 import { AlertService } from './alert.service';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AceEditorDirective } from './ace-editor/ace-editor.directive';
 import { HjsonParserService } from './hjson-parser/hjson-parser.service';
 import { InputFocusDirective } from '@shared/directives';
 import { EventManagerService } from './event-manager.service';
@@ -33,6 +32,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MomentModule } from 'angular2-moment';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ThumbnailPipe } from '@shared/pipes/thumbnail.pipe';
+import {AceEditorComponent} from "@shared/ace-editor/ace-editor.component";
+import {AceEditorModule} from "ng2-ace-editor";
 
 @NgModule({
     imports: [
@@ -41,14 +42,14 @@ import { ThumbnailPipe } from '@shared/pipes/thumbnail.pipe';
         TranslateModule,
         MomentModule,
         FormsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        AceEditorModule,
     ],
     declarations: [
         TruncatePipe,
         ObjectAsEntryListPipe,
         StringifyPipe,
         SearchTextPipe,
-        AceEditorDirective,
         ImplementationHostDirective,
         DurationPipe,
         PrettyPrintPipe,
@@ -65,14 +66,14 @@ import { ThumbnailPipe } from '@shared/pipes/thumbnail.pipe';
         EnvironmentComboComponent,
         ExecutionBadgeComponent,
         ThumbnailPipe,
-        ComponentCardComponent
+        ComponentCardComponent,
+        AceEditorComponent
     ],
     exports: [
         TruncatePipe,
         ObjectAsEntryListPipe,
         StringifyPipe,
         SearchTextPipe,
-        AceEditorDirective,
         ImplementationHostDirective,
         DurationPipe,
         PrettyPrintPipe,
@@ -89,7 +90,8 @@ import { ThumbnailPipe } from '@shared/pipes/thumbnail.pipe';
         EnvironmentComboComponent,
         ExecutionBadgeComponent,
         ThumbnailPipe,
-        ComponentCardComponent
+        ComponentCardComponent,
+        AceEditorComponent
     ],
     entryComponents: [
         TechnicalStepComponent

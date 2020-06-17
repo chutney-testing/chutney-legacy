@@ -5,7 +5,6 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { HomePage } from '@model';
 import { HomePageService } from '@core/services';
-import { AceEditorDirective } from '@shared/ace-editor/ace-editor.directive';
 
 @Component({
   selector: 'chutney-home-page-create-dialog',
@@ -26,7 +25,7 @@ export class HomePageCreateDialogComponent implements OnInit {
 
   private resizeInit = 0;
 
-  @ViewChild(AceEditorDirective) aceEditorDirective: AceEditorDirective;
+ // @ViewChild(AceEditorDirective) aceEditorDirective: AceEditorDirective;
 
   constructor(public activeModal: NgbActiveModal,
     private alertService: AlertService,
@@ -95,7 +94,7 @@ export class HomePageCreateDialogComponent implements OnInit {
     }
     document.getElementById('editor').style.height = this.resizeInit + 'px';
     (document.getElementsByClassName('modal-body')[0] as HTMLElement).style.height = this.resizeInit + 10 + 'px';
-    this.aceEditorDirective.editor.resize();
+   // this.aceEditorDirective.editor.resize();
   }
 
 }
