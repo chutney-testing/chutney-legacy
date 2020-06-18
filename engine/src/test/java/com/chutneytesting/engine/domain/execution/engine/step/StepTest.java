@@ -95,7 +95,7 @@ public class StepTest {
         outputs.put("aValue", "${#aValueToEvaluate}");
         outputs.put("anotherValue", "${#anotherValueToEvaluate}");
 
-        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, outputs,environment);
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, outputs, environment);
         Step step = new Step(dataEvaluator, fakeStepDefinition, Optional.empty(), stepExecutor, Lists.emptyList());
         ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
 
@@ -134,7 +134,7 @@ public class StepTest {
         outputs.put("anAliasForReuse", "${#aResultKeySetByATask}");
         outputs.put("anotherAliasForReuse", "${#anotherResultKeySetByATask}");
 
-        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, outputs,environment);
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, outputs, environment);
         Step step = new Step(dataEvaluator, fakeStepDefinition, Optional.empty(), fakeRemoteStepExecutor, Lists.emptyList());
         ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
 
@@ -157,7 +157,7 @@ public class StepTest {
         inputs.put("targetName", "${#target.name}");
         inputs.put("currentEnvironment", "${#environment}");
 
-        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", this.fakeTarget, "taskType", null, inputs, null, null,environment);
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", this.fakeTarget, "taskType", null, inputs, null, null, environment);
         Step step = new Step(dataEvaluator, fakeStepDefinition, Optional.of(fakeTarget), mock(StepExecutor.class), Lists.emptyList());
 
         // When
@@ -210,7 +210,7 @@ public class StepTest {
 
     @Test
     public void should_not_compute_substeps_status_if_current_status_is_failure() {
-        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, null,environment);
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, null, environment);
         Step step = new Step(dataEvaluator, fakeStepDefinition, Optional.empty(), mock(StepExecutor.class), Lists.list(mock(Step.class), mock(Step.class)));
         step.failure("...");
         assertThat(step.status()).isEqualTo(Status.FAILURE);
@@ -243,7 +243,7 @@ public class StepTest {
     }
 
     private Step buildEmptyStep(StepExecutor stepExecutor) {
-        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, null,environment);
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, null, environment);
         return new Step(dataEvaluator, fakeStepDefinition, Optional.empty(), stepExecutor, Lists.emptyList());
     }
 

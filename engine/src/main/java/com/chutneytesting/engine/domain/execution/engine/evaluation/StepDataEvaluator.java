@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
@@ -25,7 +24,7 @@ public class StepDataEvaluator {
     private static final String EVALUATION_STRING_PREFIX = "${";
     private static final String EVALUATION_STRING_SUFFIX = "}";
     private static final String EVALUATION_STRING_ESCAPE = "\\";
-    private static final Pattern EVALUATION_OBJECT_PATTERN = Pattern.compile("(\\s*)" + escapeForRegex(EVALUATION_STRING_ESCAPE) + ")?" + escapeForRegex(EVALUATION_STRING_PREFIX) + "(.*?)" + escapeForRegex(EVALUATION_STRING_SUFFIX) + "(\\s*}?\\s*)", Pattern.DOTALL);
+    private static final Pattern EVALUATION_OBJECT_PATTERN = Pattern.compile("^(?:" + escapeForRegex(EVALUATION_STRING_ESCAPE) + ")?" + escapeForRegex(EVALUATION_STRING_PREFIX) + "(?:(?!" + escapeForRegex(EVALUATION_STRING_PREFIX) + ").)*" + escapeForRegex(EVALUATION_STRING_SUFFIX) + "$", Pattern.DOTALL);
 
 
     private final SpelFunctions spelFunctions;
@@ -75,19 +74,19 @@ public class StepDataEvaluator {
                     Object valueValue = evaluateObject(value, evaluationContext);
                     evaluatedMap.put(keyValue, valueValue);
                     if (keyValue instanceof String) {
-                        evaluationContext.setVariable((String)keyValue, valueValue);
+                        evaluationContext.setVariable((String) keyValue, valueValue);
                     }
                 });
             inputEvaluatedValue = evaluatedMap;
         } else if (object instanceof List) {
             List evaluatedList = new ArrayList<>();
-            ((List)object).forEach(
+            ((List) object).forEach(
                 obj -> evaluatedList.add(evaluateObject(obj, evaluationContext))
             );
             inputEvaluatedValue = evaluatedList;
         } else if (object instanceof Set) {
             Set evaluatedSet = new HashSet<>();
-            ((Set)object).forEach(
+            ((Set) object).forEach(
                 obj -> evaluatedSet.add(evaluateObject(obj, evaluationContext))
             );
             inputEvaluatedValue = evaluatedSet;
@@ -120,12 +119,7 @@ public class StepDataEvaluator {
     }
 
     private boolean isObjectEvaluation(String template) {
-        Matcher matcher = EVALUATION_OBJECT_PATTERN.matcher(template);
-        boolean result = matcher.find() && matcher.start() == 0 && matcher.end() == template.length();
-        if(result) {
-            return result;
-        }
-        return result;
+        return EVALUATION_OBJECT_PATTERN.matcher(template.trim()).matches();
     }
 
     private Expression parseExpression(ExpressionParser parser, String expressionAsString) {

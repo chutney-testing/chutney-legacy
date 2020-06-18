@@ -38,8 +38,8 @@ abstract class Strings {
     }
 
     public static Object replaceExpression(String template, Function<String, Object> transformer, String prefix, String suffix, String escape) {
-        final Pattern pattern = cachePattern("^(\\s*)" + "(" + escapeForRegex(escape) + ")?" + escapeForRegex(prefix) + "(.*?)" + escapeForRegex(suffix) + "(\\s*$)");
-        final Matcher matcher = pattern.matcher(template);
+        final Pattern pattern = cachePattern("^(" + escapeForRegex(escape) + ")?" + escapeForRegex(prefix) + "(.*?)" + escapeForRegex(suffix) + "$");
+        final Matcher matcher = pattern.matcher(template.trim());
         if (matcher.matches()) {
             String escapeMatch = matcher.group(1);
             String key = matcher.group(2);
