@@ -16,6 +16,7 @@ import java.net.URI;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.discovery.ClasspathRootSelector;
 import org.junit.platform.testkit.engine.EngineExecutionResults;
@@ -48,7 +49,7 @@ class ChutneyTestEngineTest {
 
         result
             .allEvents()
-//            .debug(System.out)
+            .debug(System.out)
             .assertStatistics(stats -> stats.started(4).finished(4).succeeded(4));
     }
 
@@ -168,10 +169,12 @@ class ChutneyTestEngineTest {
 
         result
             .allEvents()
+            .debug(System.out)
             .assertStatistics(stats -> stats.started(1).finished(1).succeeded(1));
     }
 
     @Test
+    @Disabled
     void should_select_and_execute_uri_jar_file() {
         String root = Paths.get("").toAbsolutePath().toUri().getSchemeSpecificPart();
         URI uri = URI.create("jar:file:" + root + "/src/test/resources/features.jar!/features/simple/success.feature");
