@@ -13,6 +13,8 @@ com.chutneytesting.task.amqp.AmqpBasicPublishTask
 com.chutneytesting.task.amqp.AmqpBasicConsumeTask
 com.chutneytesting.task.amqp.AmqpBasicGetTask
 com.chutneytesting.task.amqp.AmqpCleanQueuesTask
+com.chutneytesting.task.amqp.QpidServerStartTask
+com.chutneytesting.task.amqp.QpidServerStopTask
 
 com.chutneytesting.task.mongo.MongoCountTask
 com.chutneytesting.task.mongo.MongoDeleteTask

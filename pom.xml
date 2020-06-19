@@ -94,6 +94,7 @@
         <generex.version>1.0.2</generex.version>
         <jms.version>2.0.1</jms.version>
         <amqp-client.version>5.8.0</amqp-client.version>
+        <qpid-broker.version>7.0.6</qpid-broker.version>
         <mongodb.version>3.8.0</mongodb.version>
         <orientdb.version>3.0.30</orientdb.version>
         <lucene.version>7.3.0</lucene.version>
@@ -326,6 +327,21 @@
                 <groupId>com.rabbitmq</groupId>
                 <artifactId>amqp-client</artifactId>
                 <version>${amqp-client.version}</version>
+            </dependency>
+            <dependency> <!-- Note that the below is qpid-broker-core and *not* qpid-broker. -->
+                <groupId>org.apache.qpid</groupId>
+                <artifactId>qpid-broker-core</artifactId>
+                <version>${qpid-broker.version}</version>
+            </dependency>
+            <dependency> <!-- AMQP protocol support is modular. Here we show support for 0-8/0-9 and 1.0. Support for 0-10 is excluded. -->
+                <groupId>org.apache.qpid</groupId>
+                <artifactId>qpid-broker-plugins-amqp-0-8-protocol</artifactId>
+                <version>${qpid-broker.version}</version>
+            </dependency>
+            <dependency> <!-- If a different store type is required it needs to be included here -->
+                <groupId>org.apache.qpid</groupId>
+                <artifactId>qpid-broker-plugins-memory-store</artifactId>
+                <version>${qpid-broker.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.mongodb</groupId>
