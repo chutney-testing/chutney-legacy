@@ -12,20 +12,10 @@ import { HomePageService } from '@core/services';
 })
 export class HomePageCreateDialogComponent implements OnInit {
 
-  editorTheme: EditorTheme = new EditorTheme('Monokai', 'monokai');
-  editorMode: EditorMode = new EditorMode('AsciiDoc', 'asciidoc');
-
   homePage: HomePage;
   isSaving: boolean;
-  aceOptions: any = {
-    fontSize: '13pt',
-    enableBasicAutocompletion: true,
-    showPrintMargin: false
-  };
 
   private resizeInit = 0;
-
- // @ViewChild(AceEditorDirective) aceEditorDirective: AceEditorDirective;
 
   constructor(public activeModal: NgbActiveModal,
     private alertService: AlertService,
@@ -84,27 +74,4 @@ export class HomePageCreateDialogComponent implements OnInit {
     this.alertService.error(error.message);
   }
 
-  resizeEditor() {
-    if (this.resizeInit === 0) {
-      const contentClientHeight = document.getElementsByClassName('modal-content')[0].clientHeight;
-      const headerClientHeight = document.getElementsByClassName('modal-header')[0].clientHeight + 1;
-      const footerClientHeight = document.getElementsByClassName('modal-footer')[0].clientHeight + 1;
-
-      this.resizeInit = contentClientHeight - (headerClientHeight + footerClientHeight) - 10;
-    }
-    document.getElementById('editor').style.height = this.resizeInit + 'px';
-    (document.getElementsByClassName('modal-body')[0] as HTMLElement).style.height = this.resizeInit + 10 + 'px';
-   // this.aceEditorDirective.editor.resize();
-  }
-
-}
-
-class EditorMode {
-  constructor(public label: string, public name: string) {
-  }
-}
-
-class EditorTheme {
-  constructor(public label: string, public name: string) {
-  }
 }

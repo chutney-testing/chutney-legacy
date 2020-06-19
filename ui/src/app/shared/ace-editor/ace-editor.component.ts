@@ -1,8 +1,14 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnChanges, Output, ViewChild} from '@angular/core';
+import { fromEvent } from 'rxjs';
+
 import 'brace';
 import 'brace/mode/json';
 import 'brace/mode/hjson';
 import 'brace/mode/html';
+import 'brace/mode/asciidoc';
+import 'brace/theme/monokai';
+import 'brace/theme/eclipse';
+import 'brace/theme/merbivore';
 
 @Component({
     selector: 'chutney-ace-editor',
@@ -12,30 +18,45 @@ import 'brace/mode/html';
 export class AceEditorComponent implements AfterViewInit, OnChanges {
 
     @Input() initialContent: string;
+    @Input() options: string;
     @Input() hasError: boolean;
+    @Input() modes: Array<string>
+    @Input() showConfiguration = true;
     @Output() textChangeEvent = new EventEmitter();
+    @Output() editorBlur = new EventEmitter();
 
     @ViewChild('editor') editor;
-    editorModes: Array<EditorMode> = [
-        new EditorMode('Json', 'json'), new EditorMode('Hjson', 'hjson')
-    ];
+
+    editorModes: Array<string> = ['json', 'hjson'];
     editorMode = this.editorModes[1];
 
+    editorThemes: Array<string> = ['monokai', 'eclipse', 'merbivore'];
+    editorTheme: string = this.editorThemes[0];
+
     constructor() {
+
     }
 
-
     ngAfterViewInit() {
-        this.editor.getEditor().setOptions({
-            showLineNumbers: true,
-            tabSize: 2
-        });
-        console.log(this.editorMode.name);
-        this.editor.mode = this.editorMode.name;
-        this.editor.options = {
-            fontSize: '13pt',
-            showPrintMargin: false
-        };
+        /* fromEvent(this.editor, 'blur').subscribe(event => {
+            console.log(event);
+            this.editorBlur.emit(event);
+        }); */
+
+        if (this.modes) {
+            this.editorModes = this.modes;
+        } else {
+            this.editor.mode = this.editorMode;
+        }
+        this.editor.theme = this.editorTheme;
+        if (this.options) {
+            this.editor.options = this.options;
+        } else {
+            this.editor.options = {
+                fontSize: '13pt',
+                showPrintMargin: false
+            };
+        }
     }
 
     ngOnChanges(): void {
@@ -45,18 +66,23 @@ export class AceEditorComponent implements AfterViewInit, OnChanges {
     }
 
     changingMode(event: any) {
-        this.editorMode = this.editorModes.filter(env => env.name === event.target.value)[0];
-        this.editor.mode = this.editorMode.name;
+        this.editorMode = this.editorModes.filter(env => env === event.target.value)[0];
+        this.editor.mode = this.editorMode;
+    }
+
+    changingTheme(event: any) {
+        this.editorTheme = this.editorThemes.filter(env => env === event.target.value)[0];
+        this.editor.theme = this.editorTheme;
     }
 
     onContentChange(event: any) {
         this.textChangeEvent.emit(event);
     }
 
-
-}
-
-class EditorMode {
-    constructor(public label: string, public name: string) {
+    forceContentChange(newContent: string) {
+        this.initialContent = newContent;
+        this.editor.value = newContent;
     }
+
 }
+

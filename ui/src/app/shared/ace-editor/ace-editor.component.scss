@@ -1,6 +1,6 @@
 .wrapper, .wrapper-with-error {
     width: 99%;
-    height: calc(95vh - 220px);
+    height: calc(95vh);
     top: 0;
     bottom: 0;
     left: 0;
@@ -10,4 +10,17 @@
 
 .wrapper-with-error {
     height: calc(95vh - 220px - 70px);
+}
+
+.ace-combo {
+    width:110px;
+    display: inline-block;
+    margin-right: 10px;
+    font-size: 10pt;
+}
+
+.ace-label {
+    font-size: 10pt;
+    margin-right: 5px;
+    margin-left: 5px;
 }

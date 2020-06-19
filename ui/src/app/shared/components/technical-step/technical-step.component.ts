@@ -43,18 +43,6 @@ export class TechnicalStepComponent implements AfterViewInit, AfterViewChecked {
     @ViewChild('preStepImplementation') preStepImplementation: ElementRef;
     private preStepImplementationUpdate: boolean = false;
 
-    editorTheme: EditorTheme = new EditorTheme('Monokai', 'monokai');
-    editorMode: EditorMode = new EditorMode('Hjson', 'hjson');
-
-    aceOptions: any = {
-        maxLines: 25,
-        minLines: 10,
-        fontSize: '12pt',
-        enableBasicAutocompletion: true,
-        showLineNumbers: false,
-        showPrintMargin: false
-    };
-
     constructor() {
     }
 
@@ -118,16 +106,5 @@ export class TechnicalStepComponent implements AfterViewInit, AfterViewChecked {
                 this.preStepImplementation.nativeElement.innerHTML = highlightUnknownParams(this.step.task);
             }
         }
-    }
-
-}
-
-class EditorMode {
-    constructor(public label: string, public name: string) {
-    }
-}
-
-class EditorTheme {
-    constructor(public label: string, public name: string) {
     }
 }

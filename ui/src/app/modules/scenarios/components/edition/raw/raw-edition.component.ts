@@ -107,6 +107,4 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
         this.modifiedContent = data;
         this.checkParseError();
     }
-
-
 }
