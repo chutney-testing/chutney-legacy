@@ -4,8 +4,6 @@ import com.chutneytesting.ExecutionConfiguration;
 import com.chutneytesting.engine.api.glacio.GlacioAdapterConfiguration;
 import com.chutneytesting.junit.api.Chutney;
 import com.chutneytesting.tools.UncheckedException;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.lang.reflect.Constructor;
 import java.util.Optional;
 import org.junit.platform.commons.support.ReflectionSupport;
@@ -14,8 +12,12 @@ import org.junit.platform.engine.ExecutionRequest;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ChutneyTestEngine extends HierarchicalTestEngine<ChutneyEngineExecutionContext> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ChutneyTestEngine.class);
 
     private final GlacioAdapterConfiguration glacioAdapterConfiguration;
     private final Object chutneyClass;
@@ -24,8 +26,9 @@ public class ChutneyTestEngine extends HierarchicalTestEngine<ChutneyEngineExecu
         try {
             glacioAdapterConfiguration = new GlacioAdapterConfiguration(new ExecutionConfiguration(), getEnvironmentDirectoryPath(), getAgentNetworkFilePath());
             chutneyClass = findChutneyClass();
-        } catch (IOException ioe) {
-            throw new UncheckedIOException(ioe);
+        } catch (Exception e) {
+            LOGGER.error("{} instantiation error", getId(), e);
+            throw UncheckedException.throwUncheckedException(e);
         }
     }
 
@@ -46,9 +49,14 @@ public class ChutneyTestEngine extends HierarchicalTestEngine<ChutneyEngineExecu
 
     @Override
     public TestDescriptor discover(EngineDiscoveryRequest engineDiscoveryRequest, UniqueId uniqueId) {
-        ChutneyEngineDescriptor engineDescriptor = new ChutneyEngineDescriptor(uniqueId, "Chutney", chutneyClass);
-        new DiscoverySelectorResolver(glacioAdapterConfiguration.glacioAdapter()).resolveSelectors(engineDiscoveryRequest, engineDescriptor);
-        return engineDescriptor;
+        try {
+            ChutneyEngineDescriptor engineDescriptor = new ChutneyEngineDescriptor(uniqueId, "Chutney", chutneyClass);
+            new DiscoverySelectorResolver(glacioAdapterConfiguration.glacioAdapter()).resolveSelectors(engineDiscoveryRequest, engineDescriptor);
+            return engineDescriptor;
+        } catch (Exception e) {
+            LOGGER.error("{} discovery error", getId(), e);
+            throw e;
+        }
     }
 
     @Override
