@@ -139,7 +139,8 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
                 }
 
             }, error => {
-                this.executionError = 'Problem retrieving report : ' + error.message;
+                console.error(error.message);
+                this.executionError = 'Cannot find execution n°' + executionId;
                 this.scenarioExecutionReport = null;
             });
     }

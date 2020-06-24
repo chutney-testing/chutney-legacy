@@ -173,6 +173,17 @@ public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabas
     }
 
     @Test
+    public void getExecution_throws_when_exist_but_not_on_this_scenario() {
+        Execution executionCreated = executionHistoryRepository.store("1", buildDetachedExecution(ServerReportStatus.RUNNING, "exec1", ""));
+
+        assertThat(executionHistoryRepository.getExecution("1", executionCreated.executionId())).isNotNull();
+
+        assertThatExceptionOfType(ReportNotFoundException.class)
+            .isThrownBy(() -> executionHistoryRepository.getExecution("12345", executionCreated.executionId()))
+            .withMessage("Unable to find report 1 of scenario 12345");
+    }
+
+    @Test
     public void should_truncate_report_info_and_error_on_save_or_update() {
         final String tooLongString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede.";
 
