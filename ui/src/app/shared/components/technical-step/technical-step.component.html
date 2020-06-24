@@ -13,19 +13,20 @@
         </div>
 
         <div style="min-height:150px; max-height:550px;margin-left: 20px;">
-        <chutney-ace-editor
-            [initialContent]="step.task"
-            [showConfiguration]="false"
-            [options]="{
+            <chutney-ace-editor #textEditor
+                [initialContent]="step.task"
+                [showConfiguration]="false"
+                [options]="{
                 maxLines: 25,
-                minLines: 25,
+                minLines: 10,
                 fontSize: '12pt',
                 showLineNumbers: false,
                 showPrintMargin: false
             }"
-            (textChangeEvent)="onScenarioContentChanged($event)">
-        </chutney-ace-editor>
-        <!-- (editorBlur)="implementationBlur()" -->
+                (textChangeEvent)="onScenarioContentChanged($event)"
+                (editorBlur)="implementationBlur()">
+            </chutney-ace-editor>
         </div>
+
     </div>
 </div>

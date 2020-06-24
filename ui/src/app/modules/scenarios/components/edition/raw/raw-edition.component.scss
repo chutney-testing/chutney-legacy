@@ -1,5 +1,10 @@
 @import 'colors';
 
+.scenario-editor {
+    height:calc(95vh - 220px);
+    width:99%;
+}
+
 .edition-header {
     position: fixed;
     width: 100%;

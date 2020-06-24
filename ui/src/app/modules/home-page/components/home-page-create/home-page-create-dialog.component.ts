@@ -8,7 +8,8 @@ import { HomePageService } from '@core/services';
 
 @Component({
   selector: 'chutney-home-page-create-dialog',
-  templateUrl: './home-page-create-dialog.component.html'
+  templateUrl: './home-page-create-dialog.component.html',
+  styleUrls: ['./home-page-create-dialog.component.scss']
 })
 export class HomePageCreateDialogComponent implements OnInit {
 

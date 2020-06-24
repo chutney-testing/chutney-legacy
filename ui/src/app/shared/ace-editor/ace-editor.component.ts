@@ -1,5 +1,14 @@
-import {AfterViewInit, Component, EventEmitter, Input, OnChanges, Output, ViewChild} from '@angular/core';
-import { fromEvent } from 'rxjs';
+import {
+    AfterViewChecked,
+    AfterViewInit,
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges, OnInit,
+    Output,
+    ViewChild
+} from '@angular/core';
+import {fromEvent, timer} from 'rxjs';
 
 import 'brace';
 import 'brace/mode/json';
@@ -15,7 +24,7 @@ import 'brace/theme/merbivore';
     templateUrl: './ace-editor.component.html',
     styleUrls: ['./ace-editor.component.scss']
 })
-export class AceEditorComponent implements AfterViewInit, OnChanges {
+export class AceEditorComponent implements OnInit, OnChanges {
 
     @Input() initialContent: string;
     @Input() options: string;
@@ -24,11 +33,12 @@ export class AceEditorComponent implements AfterViewInit, OnChanges {
     @Input() showConfiguration = true;
     @Output() textChangeEvent = new EventEmitter();
     @Output() editorBlur = new EventEmitter();
+    @Output() editorFocus = new EventEmitter();
 
     @ViewChild('editor') editor;
 
-    editorModes: Array<string> = ['json', 'hjson'];
-    editorMode = this.editorModes[1];
+    editorModes: Array<string>;
+    editorMode;
 
     editorThemes: Array<string> = ['monokai', 'eclipse', 'merbivore'];
     editorTheme: string = this.editorThemes[0];
@@ -37,17 +47,23 @@ export class AceEditorComponent implements AfterViewInit, OnChanges {
 
     }
 
-    ngAfterViewInit() {
-        /* fromEvent(this.editor, 'blur').subscribe(event => {
-            console.log(event);
+    ngOnInit() {
+        this.editor.getEditor().on('blur', () =>  {
             this.editorBlur.emit(event);
-        }); */
+        });
+        this.editor.getEditor().on('focus', () =>  {
+            this.editorFocus.emit(event);
+        });
 
         if (this.modes) {
             this.editorModes = this.modes;
+            this.editorMode  = this.modes[0];
         } else {
-            this.editor.mode = this.editorMode;
+            this.editorModes = ['json', 'hjson'];
+            this.editorMode = 'hjson';
         }
+
+        this.editor.mode = this.editorMode;
         this.editor.theme = this.editorTheme;
         if (this.options) {
             this.editor.options = this.options;
@@ -62,6 +78,11 @@ export class AceEditorComponent implements AfterViewInit, OnChanges {
     ngOnChanges(): void {
         if (this.editor.value.length === 0) {
             this.editor.value = this.initialContent;
+            timer(100).subscribe(() => {
+                this.editor.getEditor().clearSelection();
+                this.editor.getEditor().focus();
+                this.editor.getEditor().moveCursorTo(0,0);
+            });
         }
     }
 

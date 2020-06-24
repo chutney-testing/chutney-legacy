@@ -1,4 +1,9 @@
 .box2 {
     display: inline-block;
     margin: 1em;
-  }
+}
+
+.globalvar-editor {
+    height: calc(95vh - 190px);
+    width:99%;
+}

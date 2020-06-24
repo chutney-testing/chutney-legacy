@@ -28,9 +28,11 @@
     </div>
     <chutney-error-panel [errorMessage]="errorMessage"></chutney-error-panel>
 
-    <chutney-ace-editor
-        [hasError]="errorMessage"
-        [initialContent]="testCase.content"
-        (textChangeEvent)="onScenarioContentChanged($event)">
-    </chutney-ace-editor>
+    <div class="scenario-editor">
+        <chutney-ace-editor
+            [hasError]="errorMessage"
+            [initialContent]="testCase.content"
+            (textChangeEvent)="onScenarioContentChanged($event)">
+        </chutney-ace-editor>
+    </div>
 </div>
