@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import com.chutneytesting.design.domain.environment.EnvironmentService;
 import com.chutneytesting.engine.api.glacio.parse.default_.DefaultGlacioParser;
+import com.chutneytesting.engine.api.glacio.parse.default_.StrategyParser;
 import com.chutneytesting.task.domain.TaskTemplate;
 import com.chutneytesting.task.domain.TaskTemplateRegistry;
 import com.github.fridujo.glacio.model.Step;
@@ -22,12 +23,14 @@ public class DefaultGlacioParserTest {
 
     private TaskTemplateRegistry taskTemplateRegistry;
     private EnvironmentService environmentService;
+    private StrategyParser strategyParser;
 
     @BeforeEach
     public void setUp() {
         taskTemplateRegistry = mock(TaskTemplateRegistry.class);
         environmentService = mock(EnvironmentService.class);
-        sut = new DefaultGlacioParser(taskTemplateRegistry, environmentService);
+        strategyParser = mock(StrategyParser.class);
+        sut = new DefaultGlacioParser(taskTemplateRegistry, environmentService, strategyParser);
     }
 
     @Test()

@@ -1,5 +1,6 @@
 package test.integration;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
@@ -150,9 +151,93 @@ public class EngineIntegrationTest {
         assertThat(reports.get(0).status).isEqualTo(Status.SUCCESS);
     }
 
-    private List<StepExecutionReport> executeFeature(String s) {
+    @Test
+    public void should_execute_strategy_feature() {
+        List<StepExecutionReport> reports = executeFeature("integration/strategy_parser.feature");
+
+        /* Then */ it_should_continue_on_softly_failed_steps(reports.get(0));
+                   it_should_continue_on_softly_failed_steps(reports.get(1));
+                   it_should_continue_on_softly_failed_steps(reports.get(2));
+                   it_should_continue_on_softly_failed_steps(reports.get(3));
+
+        /* And  */ it_should_gracefully_fallback_on_unknown_strategy(reports.get(4));
+    }
+
+    private void it_should_continue_on_softly_failed_steps(StepExecutionReport report) {
+        assertThat(report.status).isEqualTo(Status.FAILURE);
+        assertThat(report.steps.get(0).status).isEqualTo(Status.FAILURE);
+        assertThat(report.steps.get(1).status).isEqualTo(Status.SUCCESS);
+    }
+
+    private void it_should_gracefully_fallback_on_unknown_strategy(StepExecutionReport report) {
+        assertThat(report.status).isEqualTo(Status.FAILURE);
+        assertThat(report.steps.get(0).status).isEqualTo(Status.FAILURE);
+        assertThat(report.steps.get(1).status).isEqualTo(Status.NOT_EXECUTED);
+    }
+
+    @Test
+    public void should_adapt_scenario_with_feature_background() {
+        String feature = fileContent("integration/with_background.feature");
+        List<StepDefinition> stepDefinitions = glacioAdapter.toChutneyStepDefinition(feature, ENVIRONMENT);
+
+        assertThat(stepDefinitions).hasSize(1);
+        StepDefinition scenario = stepDefinitions.get(0);
+        assertThat(scenario.steps).hasSize(4);
+
+        StepDefinition stepDefinition = scenario.steps.get(0);
+        assertSizeAndName(stepDefinition, "A background step", 0);
+
+        stepDefinition = scenario.steps.get(1);
+        assertSizeAndName(stepDefinition, "Another one with substeps", 2);
+        assertSizeAndName(stepDefinition.steps.get(0), "First substep", 0);
+        assertSizeAndName(stepDefinition.steps.get(1), "Second substep", 0);
+
+        stepDefinition = scenario.steps.get(2);
+        assertSizeAndName(stepDefinition, "Something happens", 0);
+
+        stepDefinition = scenario.steps.get(3);
+        assertSizeAndName(stepDefinition, "Background step should be taken into account", 0);
+    }
+
+    @Test
+    public void should_adapt_scenario_with_scenario_outline() {
+        String feature = fileContent("integration/with_scenario_outline.feature");
+        List<List<String>> examples = asList(
+            asList("first", "value11", "value12", "1"),
+            asList("second", "value21", "value22", "2")
+        );
+
+        List<StepDefinition> stepDefinitions = glacioAdapter.toChutneyStepDefinition(feature, ENVIRONMENT);
+
+        assertThat(stepDefinitions).hasSize(examples.size());
+
+        for (int i = 0; i < examples.size(); i++) {
+            List<String> example = examples.get(i);
+
+            StepDefinition scenario = stepDefinitions.get(i);
+            assertThat(scenario.steps).hasSize(3);
+
+            StepDefinition stepDefinition = scenario.steps.get(0);
+            assertSizeAndName(stepDefinition, "A step outline " + example.get(0), 0);
+
+            stepDefinition = scenario.steps.get(1);
+            assertSizeAndName(stepDefinition, "Parse this step " + example.get(0) + " with substeps", 2);
+            assertSizeAndName(stepDefinition.steps.get(0), "First substep with param " + example.get(1), 0);
+            assertSizeAndName(stepDefinition.steps.get(1), "Second substep with param " + example.get(2), 0);
+
+            stepDefinition = scenario.steps.get(2);
+            assertSizeAndName(stepDefinition, "Multiple scenarios " + example.get(3) + " should be parsed", 0);
+        }
+    }
+
+    private void assertSizeAndName(StepDefinition step, String expectedName, Integer expectedSize) {
+        assertThat(step.name).as("StepDefinition name").isEqualTo(expectedName);
+        assertThat(step.steps).as("StepDefinition substeps size").hasSize(expectedSize);
+    }
+
+    private List<StepExecutionReport> executeFeature(String filePath) {
         // Given
-        String feature = fileContent(s);
+        String feature = fileContent(filePath);
         List<StepDefinition> stepDefinitions = glacioAdapter.toChutneyStepDefinition(feature, ENVIRONMENT);
 
         // When

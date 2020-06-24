@@ -9,4 +9,4 @@ Feature: Feature with background
 
     Scenario: A scenario with steps
         When Something happens
-        Then Background step shoud be taken into account
+        Then Background step should be taken into account

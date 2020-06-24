@@ -2,7 +2,7 @@ package com.chutneytesting.engine.api.glacio.parse.specific;
 
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.engine.api.glacio.parse.GlacioParser;
+import com.chutneytesting.engine.api.glacio.parse.GlacioExecutableStepParser;
 import com.chutneytesting.engine.api.glacio.parse.default_.EmptyParser;
 import com.github.fridujo.glacio.model.Step;
 import java.util.Arrays;
@@ -15,7 +15,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class GlacioSleepParser extends GlacioParser {
+public class GlacioSleepParser extends GlacioExecutableStepParser {
 
     private final static Pattern STEP_TEXT_PATTERN = Pattern.compile("^(?:[Ss]leep|[Aa]?[Ww]ait|[Rr]est|[Pp]ause) (?:(for|during) )?(?<duration>.*)$");
 

@@ -3,7 +3,7 @@ package com.chutneytesting.engine.api.glacio.parse.specific;
 import static java.util.Locale.ENGLISH;
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.engine.api.glacio.parse.GlacioParser;
+import com.chutneytesting.engine.api.glacio.parse.GlacioExecutableStepParser;
 import com.chutneytesting.engine.api.glacio.parse.ParserHelper;
 import com.chutneytesting.engine.api.glacio.parse.StepParser;
 import com.chutneytesting.engine.api.glacio.parse.default_.EmptyParser;
@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class GlacioContextPutParser extends GlacioParser {
+public class GlacioContextPutParser extends GlacioExecutableStepParser {
 
     public GlacioContextPutParser() {
         super(EmptyParser.noTargetParser,

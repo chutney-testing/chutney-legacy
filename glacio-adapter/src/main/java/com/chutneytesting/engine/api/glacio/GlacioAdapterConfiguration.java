@@ -12,9 +12,14 @@ import com.chutneytesting.agent.infra.storage.JsonFileCurrentNetworkDescription;
 import com.chutneytesting.design.domain.environment.EnvironmentRepository;
 import com.chutneytesting.design.domain.environment.EnvironmentService;
 import com.chutneytesting.design.infra.storage.environment.JsonFilesEnvironmentRepository;
-import com.chutneytesting.engine.api.glacio.ExecutableStepFactory.EXECUTABLE_KEYWORD;
-import com.chutneytesting.engine.api.glacio.parse.GlacioExecutableStepParser;
+import com.chutneytesting.engine.api.glacio.StepFactory.EXECUTABLE_KEYWORD;
+import com.chutneytesting.engine.api.glacio.parse.GlacioBusinessStepParser;
+import com.chutneytesting.engine.api.glacio.parse.IParseExecutableStep;
+import com.chutneytesting.engine.api.glacio.parse.IParseStrategy;
 import com.chutneytesting.engine.api.glacio.parse.default_.DefaultGlacioParser;
+import com.chutneytesting.engine.api.glacio.parse.default_.StrategyParser;
+import com.chutneytesting.engine.api.glacio.parse.specific.StrategyRetryParser;
+import com.chutneytesting.engine.api.glacio.parse.specific.StrategySoftAssertParser;
 import com.chutneytesting.tools.ThrowingFunction;
 import com.chutneytesting.tools.loader.ExtensionLoaders;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -24,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -43,10 +49,11 @@ public class GlacioAdapterConfiguration {
 
     private GlacioAdapter glacioAdapter;
     private Map<Locale, Map<EXECUTABLE_KEYWORD, Set<String>>> executableStepLanguagesKeywords;
-    private List<GlacioExecutableStepParser> glacioExecutableStepParsers;
-    private Map<Pair<Locale, String>, GlacioExecutableStepParser> glacioExecutableStepParsersLanguages;
+    private List<IParseExecutableStep> glacioExecutableStepParsers;
+    private Map<Pair<Locale, String>, IParseExecutableStep> glacioExecutableStepParsersLanguages;
 
-    private ExecutableStepFactory executableStepFactory;
+    private StepFactory stepFactory;
+    private IParseStrategy strategyParser;
 
     private EnvironmentRepository environmentRepository;
     private CurrentNetworkDescription currentNetworkDescription;
@@ -71,7 +78,8 @@ public class GlacioAdapterConfiguration {
         currentNetworkDescription = createCurrentNetworkDescription(agentNetworkFilePath);
         environmentService = createEnvironmentService();
 
-        executableStepFactory = createExecutableStepFactory();
+        strategyParser = createStrategyDefinitionFactory();
+        stepFactory = createExecutableStepFactory();
         glacioAdapter = createGlacioAdapter();
     }
 
@@ -87,7 +95,7 @@ public class GlacioAdapterConfiguration {
         return environmentService;
     }
 
-    public List<GlacioExecutableStepParser> glacioExecutableStepParsers() {
+    public List<IParseExecutableStep> glacioExecutableStepParsers() {
         return glacioExecutableStepParsers;
     }
 
@@ -95,7 +103,7 @@ public class GlacioAdapterConfiguration {
         return executableStepLanguagesKeywords;
     }
 
-    public Map<Pair<Locale, String>, GlacioExecutableStepParser> glacioExecutableStepParsersLanguages() {
+    public Map<Pair<Locale, String>, IParseExecutableStep> glacioExecutableStepParsersLanguages() {
         return glacioExecutableStepParsersLanguages;
     }
 
@@ -104,7 +112,7 @@ public class GlacioAdapterConfiguration {
             .getClassLoader().getResources("META-INF/extension/chutney.glacio-languages.json"));
     }
 
-    private List<GlacioExecutableStepParser> createGlacioExecutableStepParsers() {
+    private List<IParseExecutableStep> createGlacioExecutableStepParsers() {
         return ExtensionLoaders
             .classpathToClass("META-INF/extension/chutney.glacio.parsers")
             .load()
@@ -116,8 +124,8 @@ public class GlacioAdapterConfiguration {
             .collect(Collectors.toList());
     }
 
-    private Map<Pair<Locale, String>, GlacioExecutableStepParser> createGlacioExecutableStepParsersLanguages() {
-        Optional<Map<Pair<Locale, String>, GlacioExecutableStepParser>> result = glacioExecutableStepParsers.stream()
+    private Map<Pair<Locale, String>, IParseExecutableStep> createGlacioExecutableStepParsersLanguages() {
+        Optional<Map<Pair<Locale, String>, IParseExecutableStep>> result = glacioExecutableStepParsers.stream()
             .map(this::parserPairKeywords)
             .reduce(this::mergeParserPairKeywords);
         return result.orElseGet(HashMap::new);
@@ -155,35 +163,42 @@ public class GlacioAdapterConfiguration {
         return new EnvironmentService(environmentRepository, currentNetworkDescription);
     }
 
-    private ExecutableStepFactory createExecutableStepFactory() {
-        return new ExecutableStepFactory(
+    private IParseStrategy createStrategyDefinitionFactory() {
+        return new StrategyParser(Arrays.asList(new StrategySoftAssertParser(), new StrategyRetryParser()));
+    }
+
+    private StepFactory createExecutableStepFactory() {
+        return new StepFactory(
             executableStepLanguagesKeywords,
             glacioExecutableStepParsersLanguages,
-            new DefaultGlacioParser(executionConfiguration.taskTemplateRegistry(), environmentService)
+            new DefaultGlacioParser(executionConfiguration.taskTemplateRegistry(),
+                                    environmentService,
+                                    strategyParser),
+            new GlacioBusinessStepParser(strategyParser)
         );
     }
 
     private GlacioAdapter createGlacioAdapter() {
-        return new GlacioAdapter(executableStepFactory);
+        return new GlacioAdapter(stepFactory);
     }
 
-    private Optional<GlacioExecutableStepParser> instantiateGlacioParser(Class<?> clazz) throws IllegalAccessException, InstantiationException {
-        if (!GlacioExecutableStepParser.class.isAssignableFrom(clazz)) {
+    private Optional<IParseExecutableStep> instantiateGlacioParser(Class<?> clazz) throws IllegalAccessException, InstantiationException {
+        if (!IParseExecutableStep.class.isAssignableFrom(clazz)) {
             LOGGER.warn("{} is declared as glacio parser but does not implement GlacioExecutableStepParser interface. Ignore it.", clazz.getSimpleName());
             return empty();
         }
-        Class<GlacioExecutableStepParser> parserClazz = (Class<GlacioExecutableStepParser>) clazz;
+        Class<IParseExecutableStep> parserClazz = (Class<IParseExecutableStep>) clazz;
         return Optional.of(parserClazz.newInstance());
     }
 
-    private Map<Pair<Locale, String>, GlacioExecutableStepParser> parserPairKeywords(GlacioExecutableStepParser parser) {
+    private Map<Pair<Locale, String>, IParseExecutableStep> parserPairKeywords(IParseExecutableStep parser) {
         return parser.keywords().entrySet().stream()
             .flatMap(e -> e.getValue().stream().map(v -> Pair.of(e.getKey(), v)))
             .collect(Collectors.toMap(o -> o, o -> parser));
     }
 
-    private Map<Pair<Locale, String>, GlacioExecutableStepParser> mergeParserPairKeywords(Map<Pair<Locale, String>, GlacioExecutableStepParser> o1,
-                                                                                          Map<Pair<Locale, String>, GlacioExecutableStepParser> o2) {
+    private Map<Pair<Locale, String>, IParseExecutableStep> mergeParserPairKeywords(Map<Pair<Locale, String>, IParseExecutableStep> o1,
+                                                                                    Map<Pair<Locale, String>, IParseExecutableStep> o2) {
         o2.forEach((k, v) -> o1.merge(k, v, (p1, p2) -> {
             LOGGER.warn("Same pair {} declared for parsers {} and {}. Take the first one.", k, p1.getClass().getSimpleName(), p2.getClass().getSimpleName());
             return p1;

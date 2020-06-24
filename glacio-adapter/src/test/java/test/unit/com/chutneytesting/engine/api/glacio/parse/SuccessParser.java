@@ -1,6 +1,6 @@
 package test.unit.com.chutneytesting.engine.api.glacio.parse;
 
-import com.chutneytesting.engine.api.glacio.parse.GlacioParser;
+import com.chutneytesting.engine.api.glacio.parse.GlacioExecutableStepParser;
 import com.github.fridujo.glacio.model.Step;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -9,7 +9,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-public class SuccessParser extends GlacioParser {
+public class SuccessParser extends GlacioExecutableStepParser {
 
     public SuccessParser() {
         super(null, null, null, null);

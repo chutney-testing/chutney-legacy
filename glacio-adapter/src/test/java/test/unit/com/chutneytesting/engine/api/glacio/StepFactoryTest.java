@@ -10,9 +10,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.engine.api.glacio.ExecutableStepFactory;
-import com.chutneytesting.engine.api.glacio.ExecutableStepFactory.EXECUTABLE_KEYWORD;
-import com.chutneytesting.engine.api.glacio.parse.GlacioExecutableStepParser;
+import com.chutneytesting.engine.api.glacio.StepFactory;
+import com.chutneytesting.engine.api.glacio.StepFactory.EXECUTABLE_KEYWORD;
+import com.chutneytesting.engine.api.glacio.parse.IParseBusinessStep;
+import com.chutneytesting.engine.api.glacio.parse.IParseExecutableStep;
+import com.chutneytesting.engine.api.glacio.parse.default_.StrategyParser;
 import com.github.fridujo.glacio.model.Step;
 import com.google.common.collect.Sets;
 import java.util.HashMap;
@@ -27,23 +29,28 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 
-public class ExecutableStepFactoryTest {
+public class StepFactoryTest {
 
     private final static Set<String> ENGLISH_EXECUTABLE_STEP_KEYWORD = Sets.newHashSet("Do", "Run");
     private static final String ENVIRONMENT = "ENV";
 
-    private ExecutableStepFactory sut;
-    private GlacioExecutableStepParser defaultGlacioParser;
-    private Map<Pair<Locale, String>, GlacioExecutableStepParser> glacioExecutableStepParsersLanguages;
+    private StepFactory sut;
+    private IParseExecutableStep defaultExecutableStepParser;
+    private IParseBusinessStep defaultBusinessStepParser;
+    private StrategyParser strategyParser;
+    private Map<Pair<Locale, String>, IParseExecutableStep> glacioExecutableStepParsersLanguages;
 
     @BeforeEach
     public void setUp() {
-        defaultGlacioParser = mock(GlacioExecutableStepParser.class);
+        defaultExecutableStepParser = mock(IParseExecutableStep.class);
+        defaultBusinessStepParser = mock(IParseBusinessStep.class);
+        strategyParser = mock(StrategyParser.class);
         glacioExecutableStepParsersLanguages = mock(HashMap.class);
-        sut = new ExecutableStepFactory(
+        sut = new StepFactory(
             Maps.of(ENGLISH, Maps.of(EXECUTABLE_KEYWORD.DO, ENGLISH_EXECUTABLE_STEP_KEYWORD)),
             glacioExecutableStepParsersLanguages,
-            defaultGlacioParser);
+            defaultExecutableStepParser,
+            defaultBusinessStepParser);
     }
 
     @ParameterizedTest
@@ -60,7 +67,7 @@ public class ExecutableStepFactoryTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"Do i'm exectuable", "I'm not executable"})
+    @ValueSource(strings = {"Do i'm executable", "I'm not executable"})
     public void should_throw_exception_when_qualifying_step_with_unknown_language(String stepText) {
         Step step = buildSimpleStepWithText(stepText);
 
@@ -69,11 +76,11 @@ public class ExecutableStepFactoryTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"Do i'm exectuable", "I'm not executable"})
+    @ValueSource(strings = {"Do i'm executable", "I'm not executable"})
     public void should_throw_exception_when_build_a_non_qualified_step(String stepText) {
         Step step = buildSimpleStepWithText(stepText);
 
-        assertThatThrownBy(() -> sut.build(ENGLISH, ENVIRONMENT, step))
+        assertThatThrownBy(() -> sut.buildExecutableStep(ENGLISH, ENVIRONMENT, step))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -82,17 +89,17 @@ public class ExecutableStepFactoryTest {
         // Given
         String parserKeyword = "OMG";
         String stepName = "step name";
-        GlacioExecutableStepParser parserMock = mock(GlacioExecutableStepParser.class);
+        IParseExecutableStep parserMock = mock(IParseExecutableStep.class);
         when(glacioExecutableStepParsersLanguages.get(Pair.of(ENGLISH, parserKeyword))).thenReturn(parserMock);
         Step successStep = buildSimpleStepWithText("Run " + parserKeyword + " " + stepName);
         assertThat(sut.isExecutableStep(ENGLISH, successStep)).isTrue();
 
         // When
-        sut.build(ENGLISH, ENVIRONMENT, successStep);
+        sut.buildExecutableStep(ENGLISH, ENVIRONMENT, successStep);
 
         // Then
         ArgumentCaptor<Step> stepArg = ArgumentCaptor.forClass(Step.class);
-        verify(parserMock).mapToStepDefinition(eq(ENVIRONMENT), stepArg.capture());
+        verify(parserMock).mapToStepDefinition(eq(ENGLISH), eq(ENVIRONMENT), stepArg.capture());
         assertThat(stepArg.getValue().getText()).isEqualTo(parserKeyword + " " + stepName);
     }
 
@@ -105,11 +112,11 @@ public class ExecutableStepFactoryTest {
         assertThat(sut.isExecutableStep(ENGLISH, successStep)).isTrue();
 
         // When
-        sut.build(ENGLISH, ENVIRONMENT, successStep);
+        sut.buildExecutableStep(ENGLISH, ENVIRONMENT, successStep);
 
         // Then
         ArgumentCaptor<Step> stepArg = ArgumentCaptor.forClass(Step.class);
-        verify(defaultGlacioParser).mapToStepDefinition(eq(ENVIRONMENT), stepArg.capture());
+        verify(defaultExecutableStepParser).mapToStepDefinition(eq(ENGLISH), eq(ENVIRONMENT), stepArg.capture());
         assertThat(stepArg.getValue().getText()).isEqualTo(unknownParserKeyword + " " + stepName);
     }
 

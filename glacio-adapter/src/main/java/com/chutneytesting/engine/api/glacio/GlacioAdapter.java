@@ -6,7 +6,6 @@ import static java.util.Optional.ofNullable;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.github.fridujo.glacio.model.Example;
 import com.github.fridujo.glacio.model.Feature;
-import com.github.fridujo.glacio.model.Step;
 import com.github.fridujo.glacio.parsing.i18n.GherkinLanguages;
 import com.github.fridujo.glacio.parsing.model.ModelParser;
 import com.github.fridujo.glacio.parsing.model.StringSource;
@@ -20,10 +19,10 @@ public class GlacioAdapter {
 
     public static final String DEFAULT_ENV = "ENV";
 
-    private ExecutableStepFactory executableStepFactory;
+    private final StepFactory stepFactory;
 
-    public GlacioAdapter(ExecutableStepFactory executableStepFactory) {
-        this.executableStepFactory = executableStepFactory;
+    public GlacioAdapter(StepFactory stepFactory) {
+        this.stepFactory = stepFactory;
     }
 
     public List<StepDefinition> toChutneyStepDefinition(String text) {
@@ -35,11 +34,11 @@ public class GlacioAdapter {
         List<Example> examples = feature.getExamples();
 
         return examples.stream()
-            .map(s -> toStepDefinition(
+            .map(scenario -> toStepDefinition(
                 feature.getName(),
                 new Locale(feature.getLanguage().getCode()),
                 ofNullable(environment).orElse(DEFAULT_ENV),
-                s)
+                scenario)
             )
             .collect(Collectors.toList());
     }
@@ -47,34 +46,18 @@ public class GlacioAdapter {
     private StepDefinition toStepDefinition(String featureName, Locale lang, String environment, Example example) {
         String name = featureName + " - " + example.getName();
 
-        List<StepDefinition> subSteps = example.getSteps().stream()
-            .map(rootStep -> toStepDefinition(lang, environment, rootStep))
+        List<StepDefinition> scenarioSteps = example.getSteps().stream()
+            .map(step -> this.stepFactory.toStepDefinition(lang, environment, step))
             .collect(Collectors.toList());
 
-        return buildNonExecutableStep(subSteps, environment, name);
+        return buildRootStep(scenarioSteps, environment, name);
     }
 
-    private StepDefinition toStepDefinition(Locale lang, String environment, Step step) {
-        if (this.executableStepFactory.isExecutableStep(lang, step)) {
-            return this.executableStepFactory.build(lang, environment, step);
-        } else {
-            List<StepDefinition> subSteps = toStepSubStepsDefinitions(lang, environment, step);
-            return buildNonExecutableStep(subSteps, environment, step.getText());
-        }
-    }
-
-    private StepDefinition buildNonExecutableStep(List<StepDefinition> subSteps, String environment, String text) {
+    private StepDefinition buildRootStep(List<StepDefinition> subSteps, String environment, String text) {
         return new StepDefinition(text, null, "", null, emptyMap(), subSteps, emptyMap(), environment);
     }
 
-    private List<StepDefinition> toStepSubStepsDefinitions(Locale lang, String environment, Step step) {
-        return step.getSubsteps().stream()
-            .map(subStep -> toStepDefinition(lang, environment, subStep))
-            .collect(Collectors.toList());
-    }
-
     private Feature toFeature(String text) {
-
         StringSource source = new TextStringSource(text);
         ModelParser parser = new ModelParser(GherkinLanguages.load());
         return parser.parse(source);

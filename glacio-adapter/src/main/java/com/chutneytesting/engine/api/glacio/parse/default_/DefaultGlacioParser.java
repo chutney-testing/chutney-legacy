@@ -3,7 +3,8 @@ package com.chutneytesting.engine.api.glacio.parse.default_;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.design.domain.environment.EnvironmentService;
-import com.chutneytesting.engine.api.glacio.parse.GlacioParser;
+import com.chutneytesting.engine.api.glacio.parse.GlacioExecutableStepParser;
+import com.chutneytesting.engine.api.glacio.parse.IParseStrategy;
 import com.chutneytesting.task.domain.TaskTemplateRegistry;
 import com.github.fridujo.glacio.model.Step;
 import java.util.Locale;
@@ -12,17 +13,17 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DefaultGlacioParser extends GlacioParser {
+public class DefaultGlacioParser extends GlacioExecutableStepParser {
 
     private final static Pattern STEP_TEXT_PATTERN = Pattern.compile("^(?<task>[a-zA-Z\\-_0-9]*)?\\s*(?<text>.*)$");
 
     private final TaskTemplateRegistry taskTemplateRegistry;
 
-    public DefaultGlacioParser(TaskTemplateRegistry taskTemplateRegistry, EnvironmentService environmentService) {
+    public DefaultGlacioParser(TaskTemplateRegistry taskTemplateRegistry, EnvironmentService environmentService, IParseStrategy strategyParser) {
         super(new TargetStepParser(environmentService, "On"),
             new FilteredByKeywordsSubStepMapStepParser(new EntryStepParser(), "With"),
             new FilteredByKeywordsSubStepMapStepParser(new EntryStepParser(), "Take", "Keep"),
-            EmptyParser.noStrategyParser);
+            strategyParser);
         this.taskTemplateRegistry = taskTemplateRegistry;
     }
 

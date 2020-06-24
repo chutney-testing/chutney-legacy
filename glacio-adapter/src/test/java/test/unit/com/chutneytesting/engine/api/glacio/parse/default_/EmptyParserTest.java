@@ -24,6 +24,6 @@ public class EmptyParserTest {
 
     @Test
     public void should_give_static_access_to_no_strategy_step_parser() {
-        assertThat(EmptyParser.noStrategyParser.parseStep(step)).isNull();
+        assertThat(EmptyParser.noStrategyParser.parseStep(step)).isEmpty();
     }
 }

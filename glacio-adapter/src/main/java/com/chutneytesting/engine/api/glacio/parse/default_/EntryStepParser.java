@@ -7,7 +7,6 @@ import com.chutneytesting.engine.api.glacio.parse.StepParser;
 import com.github.fridujo.glacio.model.DataTable;
 import com.github.fridujo.glacio.model.DocString;
 import com.github.fridujo.glacio.model.Step;
-import com.github.fridujo.glacio.model.StepArgument;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Map.Entry;

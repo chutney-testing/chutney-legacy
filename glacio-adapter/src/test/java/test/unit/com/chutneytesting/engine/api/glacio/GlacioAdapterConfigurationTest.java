@@ -2,9 +2,9 @@ package test.unit.com.chutneytesting.engine.api.glacio;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.engine.api.glacio.ExecutableStepFactory.EXECUTABLE_KEYWORD;
+import com.chutneytesting.engine.api.glacio.StepFactory.EXECUTABLE_KEYWORD;
 import com.chutneytesting.engine.api.glacio.GlacioAdapterConfiguration;
-import com.chutneytesting.engine.api.glacio.parse.GlacioExecutableStepParser;
+import com.chutneytesting.engine.api.glacio.parse.IParseExecutableStep;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
@@ -20,9 +20,9 @@ import test.unit.com.chutneytesting.engine.api.glacio.parse.SuccessParser;
 
 public class GlacioAdapterConfigurationTest {
 
-    private static List<GlacioExecutableStepParser> glacioExecutableStepParsers;
+    private static List<IParseExecutableStep> glacioExecutableStepParsers;
     private static Map<Locale, Map<EXECUTABLE_KEYWORD, Set<String>>> executableStepLanguagesKeywords;
-    private static Map<Pair<Locale, String>, GlacioExecutableStepParser> glacioExecutableStepParsersLanguages;
+    private static Map<Pair<Locale, String>, IParseExecutableStep> glacioExecutableStepParsersLanguages;
 
     private final Locale testLang = new Locale("tt", "TT");
 
@@ -37,7 +37,7 @@ public class GlacioAdapterConfigurationTest {
 
     @Test
     public void should_load_declared_parsers() {
-        List<GlacioExecutableStepParser> testParsers = glacioExecutableStepParsers.stream()
+        List<IParseExecutableStep> testParsers = glacioExecutableStepParsers.stream()
             .filter(parser -> (parser instanceof SuccessParser || parser instanceof DebugParser))
             .collect(Collectors.toList());
         assertThat(testParsers).hasSize(2);
@@ -45,7 +45,7 @@ public class GlacioAdapterConfigurationTest {
 
     @Test
     public void should_ignore_declared_parsers_which_dont_implements_interface() {
-        List<GlacioExecutableStepParser> testParsers = glacioExecutableStepParsers.stream()
+        List<IParseExecutableStep> testParsers = glacioExecutableStepParsers.stream()
             .filter(parser -> parser instanceof NoGlacioParser)
             .collect(Collectors.toList());
         assertThat(testParsers).isEmpty();
