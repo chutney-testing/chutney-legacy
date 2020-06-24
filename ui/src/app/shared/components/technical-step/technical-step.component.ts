@@ -1,16 +1,16 @@
 import {
+    AfterViewChecked,
+    AfterViewInit,
     Component,
+    ElementRef,
+    EventEmitter,
     Input,
     Output,
-    EventEmitter,
     ViewChild,
-    ElementRef,
-    ViewEncapsulation,
-    AfterViewInit,
-    AfterViewChecked, ViewChildren, ApplicationRef, ChangeDetectorRef
+    ViewEncapsulation
 } from '@angular/core';
 import {TechnicalStep} from '@model';
-import {BehaviorSubject, timer} from 'rxjs/index';
+import {BehaviorSubject} from 'rxjs/index';
 import {
     exampleParamsExistStepParams,
     highlightStepParams,
@@ -35,13 +35,12 @@ export class TechnicalStepComponent implements AfterViewInit, AfterViewChecked {
     @Output() stepParamsEvent = new EventEmitter();
     @Output() editionEvent = new EventEmitter();
 
-    implementationEdition: Boolean = false;
+    implementationEdition: boolean = false;
     placeholder: string = 'Add implementation';
 
     private scrollTo: boolean = false;
 
     @ViewChild('preStepImplementation') preStepImplementation: ElementRef;
-    @ViewChildren('textEditor') textEditor;
 
     private preStepImplementationUpdate: boolean = false;
 
