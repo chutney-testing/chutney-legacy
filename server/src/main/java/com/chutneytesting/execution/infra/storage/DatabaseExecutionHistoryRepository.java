@@ -60,8 +60,11 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     public Execution getExecution(String scenarioId, Long reportId) throws ReportNotFoundException {
         try {
             return namedParameterJdbcTemplate.queryForObject(
-                "SELECT ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, REPORT, TEST_CASE_TITLE, ENVIRONMENT FROM SCENARIO_EXECUTION_HISTORY WHERE ID = :reportId",
-                ImmutableMap.<String, Object>builder().put("reportId", reportId).build(),
+                "SELECT ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, REPORT, TEST_CASE_TITLE, ENVIRONMENT FROM SCENARIO_EXECUTION_HISTORY WHERE ID = :reportId and SCENARIO_ID = :scenarioId",
+                ImmutableMap.<String, Object>builder()
+                    .put("reportId", reportId)
+                    .put("scenarioId", scenarioId)
+                    .build(),
                 executionRowMapper);
         } catch (EmptyResultDataAccessException e) {
             throw new ReportNotFoundException(scenarioId, reportId);
