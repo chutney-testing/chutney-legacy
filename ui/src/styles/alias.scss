@@ -2,6 +2,10 @@
     .w#{$i} { width: 1%*$i; }
 }
 
+@for $i from 1 through 100 {
+    .h#{$i} { height: 1%*$i; }
+}
+
 .pointer {
     cursor: pointer;
 }

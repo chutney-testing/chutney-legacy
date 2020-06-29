@@ -17,7 +17,7 @@ export class GlobalVariableEditionComponent implements OnInit {
 
     help = false;
 
-    @ViewChild('aceEditorHomePage') aceEditorHomePage: AceEditorComponent;
+    @ViewChild('aceEditorGlobalVar') aceEditor: AceEditorComponent;
 
 
     constructor(private globalVariableService: GlobalVariableService) {
@@ -67,12 +67,12 @@ export class GlobalVariableEditionComponent implements OnInit {
     updateFileContent(selectedFileName: string) {
         if (selectedFileName === undefined) {
             this.data = '';
-            this.aceEditorHomePage.forceContentChange('');
+            this.aceEditor.forceContentChange('');
         } else {
             this.globalVariableService.get(selectedFileName).subscribe(
                 response => {
                     this.data = response;
-                    this.aceEditorHomePage.forceContentChange(response);
+                    this.aceEditor.forceContentChange(response);
                 }
             );
         }
