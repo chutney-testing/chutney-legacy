@@ -13,7 +13,7 @@
   <div class="header-right triangle-left col-md-4">
     <div class="form-group">
       <label class="form-control-label" for="tags">{{ 'scenarios.edition.form.tags' | translate }}</label>
-      <textarea type="text" class="form-control" name="tags" id="tags" [ngModel]="testCase.tags" (ngModelChange)="updateTags($event)"></textarea>
+      <textarea type="text" class="form-control" name="tags" id="tags" [ngModel]="testCase.tags" (ngModelChange)="updateTags($event)" rows="1"></textarea>
     </div>
   </div>
   <div class="action-pane">
@@ -23,44 +23,16 @@
   </div>
 </div>
 <div class="edition-body">
-    <div *ngIf="testCase" class="float-right">
+    <div *ngIf="testCase">
         <chutney-scenario-campaigns [idScenario]="testCase.id"></chutney-scenario-campaigns>
     </div>
-  <chutney-error-panel [errorMessage]="errorMessage"></chutney-error-panel>
-  <div class="form-group mt-3">
-    <div id="ace-editor-header">
-      <label>{{ 'scenarios.edition.form.content.title' | translate }} <span class="text-danger">*</span></label>
-      <button type="button" class="btn btn-link" (click)="editorOptionShowHide()"
-        [attr.aria-expanded]="!editorOptionCollapsed" aria-controls="collapseExample">
-        <small>{{ editorOptionCollapsed ? ('scenarios.edition.form.content.editor.actions.show' | translate) : ('scenarios.edition.form.content.editor.actions.hide' | translate) }}</small>
-      </button>
-      <small class="text-muted" [hidden]="!editorOptionCollapsed">mode {{editorMode.name}}</small>
-      <div id="collapseExample" class="" [ngbCollapse]="editorOptionCollapsed">
-        <div class="form-row align-items-end">
-          <div class="col-auto">
-            <label for="edition" class="mr-sm-2">{{ 'scenarios.edition.form.content.editor.mode' | translate }}</label>
-            <select class="mb-2 mr-sm-2 mb-sm-0" id="edition" [(ngModel)]="editorMode.name" name="editorMode">
-              <option *ngFor="let mode of editorModes" [value]="mode.name">{{mode.label}}</option>
-            </select>
-          </div>
-          <div class="col-auto">
-            <label for="theme" class="mr-sm-2">{{ 'scenarios.edition.form.content.editor.theme' | translate }}</label>
-            <select class="mb-2 mr-sm-2 mb-sm-0" id="theme" [(ngModel)]="editorTheme.name" name="editorTheme">
-              <option *ngFor="let theme of editorThemes" [value]="theme.name">{{theme.label}}</option>
-            </select>
-          </div>
+    <chutney-error-panel [errorMessage]="errorMessage"></chutney-error-panel>
 
-        </div>
-      </div>
+    <div class="scenario-editor">
+        <chutney-ace-editor
+            [hasError]="errorMessage"
+            [initialContent]="testCase.content"
+            (textChangeEvent)="onScenarioContentChanged($event)">
+        </chutney-ace-editor>
     </div>
-    <div chutneyAceEditor *ngIf="testCase.content"
-         id="editor"
-      [text]="testCase.content"
-      [mode]="editorMode.name"
-      [theme]="editorTheme.name"
-      [options]="aceOptions"
-      [readOnly]="false"
-      (textChanged)="onScenarioContentChanged($event)"
-      (editorRef)="resizeEditor()"></div>
-  </div>
 </div>

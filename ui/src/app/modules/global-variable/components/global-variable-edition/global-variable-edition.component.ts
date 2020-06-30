@@ -1,7 +1,7 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
-import { AceEditorDirective } from '@shared/ace-editor/ace-editor.directive';
-import { GlobalVariableService } from '@core/services/global-var.service';
-import { HttpErrorResponse } from '@angular/common/http';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {GlobalVariableService} from '@core/services/global-var.service';
+import {HttpErrorResponse} from '@angular/common/http';
+import {AceEditorComponent} from "@shared/ace-editor/ace-editor.component";
 
 @Component({
     selector: 'chutney-global-variable-edition',
@@ -10,15 +10,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class GlobalVariableEditionComponent implements OnInit {
 
-    editorTheme: EditorTheme = new EditorTheme('Monokai', 'monokai');
-    editorMode: EditorMode = new EditorMode('Hjson', 'hjson');
-
-    aceOptions: any = {
-        fontSize: '13pt',
-        enableBasicAutocompletion: true,
-        showPrintMargin: false
-    };
-
     data = '';
     fileNames;
     currentFileName;
@@ -26,7 +17,8 @@ export class GlobalVariableEditionComponent implements OnInit {
 
     help = false;
 
-    @ViewChild(AceEditorDirective) aceEditorDirective: AceEditorDirective;
+    @ViewChild('aceEditorGlobalVar') aceEditor: AceEditorComponent;
+
 
     constructor(private globalVariableService: GlobalVariableService) {
     }
@@ -60,21 +52,6 @@ export class GlobalVariableEditionComponent implements OnInit {
         })();
     }
 
-    resizeEditor() {
-
-        const mainContentClientHeight = document.getElementsByClassName('main-content')[0].clientHeight;
-
-        const editorHeight = mainContentClientHeight - 100;
-
-        const editor = document.getElementById('editor');
-        if (editor) {
-            editor.style.height = editorHeight + 'px';
-        }
-        if (this.aceEditorDirective) {
-            this.aceEditorDirective.editor.resize();
-        }
-    }
-
     delay(ms: number) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
@@ -90,19 +67,18 @@ export class GlobalVariableEditionComponent implements OnInit {
     updateFileContent(selectedFileName: string) {
         if (selectedFileName === undefined) {
             this.data = '';
-            this.aceEditorDirective.editor.setValue('');
+            this.aceEditor.forceContentChange('');
         } else {
             this.globalVariableService.get(selectedFileName).subscribe(
                 response => {
                     this.data = response;
-                    this.aceEditorDirective.editor.setValue(response);
+                    this.aceEditor.forceContentChange(response);
                 }
             );
         }
     }
 
     deleteFile() {
-        console.log("bou");
         (async () => {
             this.message = 'Deleting...';
             await this.delay(1000);
@@ -115,15 +91,5 @@ export class GlobalVariableEditionComponent implements OnInit {
                 },
                 error => this.handleError(error));
         })();
-    }
-}
-
-class EditorMode {
-    constructor(public label: string, public name: string) {
-    }
-}
-
-class EditorTheme {
-    constructor(public label: string, public name: string) {
     }
 }

@@ -1,12 +1,11 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { EventManagerService } from '@shared/event-manager.service';
-import { Subscription } from 'rxjs';
-import { TestCase } from '@model';
-import { AceEditorDirective } from '@shared/ace-editor/ace-editor.directive';
-import { HjsonParserService } from '@shared/hjson-parser/hjson-parser.service';
-import { ScenarioService } from '@core/services';
-import { CanDeactivatePage } from '@core/guards';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {EventManagerService} from '@shared/event-manager.service';
+import {Subscription} from 'rxjs';
+import {TestCase} from '@model';
+import {HjsonParserService} from '@shared/hjson-parser/hjson-parser.service';
+import {ScenarioService} from '@core/services';
+import {CanDeactivatePage} from '@core/guards';
 
 @Component({
     selector: 'chutney-raw-edition',
@@ -18,32 +17,10 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
     previousTestCase: TestCase;
     testCase: TestCase;
     modificationsSaved = false;
-
     errorMessage: any;
+    modifiedContent = '';
 
-    // TODO - there is an odd behavior on changing mode or theme, cannot change back to 1st option
-    editorModes: Array<EditorMode> = [
-        new EditorMode('JSON', 'json'), new EditorMode('Hjson', 'hjson')
-    ];
-    editorMode: EditorMode = this.editorModes[1];
-
-    editorThemes: Array<EditorTheme> = [
-        new EditorTheme('Monokai', 'monokai'), new EditorTheme('Eclipse', 'eclipse'), new EditorTheme('Terminal', 'terminal')
-    ];
-    editorTheme: EditorTheme = this.editorThemes[0];
-
-    editorOptionCollapsed = true;
-
-    aceOptions: any = {
-        fontSize: '13pt',
-        enableBasicAutocompletion: true,
-        showPrintMargin: false
-    };
-
-    private resizeInit = 0;
     private routeParamsSubscription: Subscription;
-
-    @ViewChild(AceEditorDirective) aceEditorDirective: AceEditorDirective;
 
     constructor(private scenarioService: ScenarioService,
                 private router: Router,
@@ -100,19 +77,16 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
     }
 
     private checkParseError() {
-        const previousErrorMessage = this.errorMessage;
         try {
-            this.hjsonParser.parse(this.testCase.content);
+            this.hjsonParser.parse(this.modifiedContent);
             this.errorMessage = null;
         } catch (e) {
             this.errorMessage = e;
         }
-        if (previousErrorMessage !== this.errorMessage) {
-            this.resizeEditor();
-        }
     }
 
     saveScenario() {
+        this.testCase.content = this.modifiedContent;
         this.scenarioService.createOrUpdateRawTestCase(this.testCase).subscribe(
             (response) => {
                 this.modificationsSaved = true;
@@ -130,51 +104,7 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
     }
 
     onScenarioContentChanged(data) {
-        this.testCase.content = data;
+        this.modifiedContent = data;
         this.checkParseError();
-    }
-
-    editorOptionShowHide() {
-        this.editorOptionCollapsed = !this.editorOptionCollapsed;
-        this.resizeEditor();
-    }
-
-    resizeEditor() {
-        if (this.resizeInit === 0) {
-            const mainContentClientHeight = document.getElementsByClassName('main-content')[0].clientHeight;
-            const mainContentHeaderClientHeight = document.getElementsByClassName('edition-header')[0].clientHeight;
-            const editorHeaderClientHeight = document.getElementById('ace-editor-header').clientHeight + 30;
-
-            this.resizeInit = mainContentClientHeight - mainContentHeaderClientHeight - editorHeaderClientHeight;
-        }
-
-        let editorHeight = this.resizeInit;
-
-        if (this.errorMessage) {
-            editorHeight -= 70;
-        }
-
-        // TODO remove horizontal scroll
-        if (!this.editorOptionCollapsed) {
-            editorHeight -= 50;
-        }
-
-        const editor = document.getElementById('editor');
-        if (editor) {
-            editor.style.height = editorHeight + 'px';
-        }
-        if (this.aceEditorDirective) {
-            this.aceEditorDirective.editor.resize();
-        }
-    }
-}
-
-class EditorMode {
-    constructor(public label: string, public name: string) {
-    }
-}
-
-class EditorTheme {
-    constructor(public label: string, public name: string) {
     }
 }

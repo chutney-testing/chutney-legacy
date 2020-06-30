@@ -60,7 +60,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
         // Internal common
         SharedModule,
         MoleculesModule,
-        NgbDropdownModule
+        NgbDropdownModule,
     ],
     declarations: [
         ScenariosComponent,

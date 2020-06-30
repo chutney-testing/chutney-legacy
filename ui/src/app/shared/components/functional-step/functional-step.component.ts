@@ -12,7 +12,7 @@ import {
     OnDestroy,
     AfterViewInit,
     OnChanges,
-    SimpleChanges
+    SimpleChanges, ChangeDetectorRef
 } from '@angular/core';
 import { Subject, BehaviorSubject, fromEvent, timer } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/internal/operators';
@@ -65,7 +65,8 @@ export class FunctionalStepComponent implements OnInit, OnChanges, OnDestroy, Af
     @ViewChild(ImplementationHostDirective) implementationHost: ImplementationHostDirective;
     @ViewChild('preStepDescription') preStepDescription: ElementRef;
 
-    constructor(private componentFactoryResolver: ComponentFactoryResolver) {
+    constructor(private componentFactoryResolver: ComponentFactoryResolver,
+                private cd: ChangeDetectorRef) {
     }
 
     ngOnInit() {
@@ -195,7 +196,10 @@ export class FunctionalStepComponent implements OnInit, OnChanges, OnDestroy, Af
         componentRef.exampleParams$ = this.exampleParams$;
         componentRef.stepParams = this.stepParams;
         componentRef.deleteEvent.subscribe(() => this.deleteImplementation());
-        componentRef.editionEvent.subscribe((edition: boolean) => this.stepImplementationEdition = edition);
+        componentRef.editionEvent.subscribe((edition: boolean) => {
+            this.stepImplementationEdition = edition;
+            this.cd.detectChanges();
+        });
 
         componentRef.stepParamsEvent.pipe(
             debounceTime(500)

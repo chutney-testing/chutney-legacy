@@ -1,0 +1,22 @@
+<div *ngIf="showConfiguration" class="mt-3">
+    <span class="text-danger"></span>
+    <div class="row vertical-align">
+        <label for="edition" class="ace-label">{{ 'scenarios.edition.form.content.editor.mode' | translate }}: </label>
+        <select class="form-control ace-combo" id="edition" name="editorMode" (change)="changingMode($event)">
+            <option *ngFor="let mode of editorModes" [value]="mode" [selected]="mode === editorMode">{{mode}}</option>
+        </select>
+        <label for="theme" class="ace-label">{{ 'scenarios.edition.form.content.editor.theme' | translate }}: </label>
+        <select class="form-control ace-combo" id="theme" (change)="changingTheme($event)" name="editorTheme">
+            <option *ngFor="let theme of editorThemes" [value]="theme"
+                    [selected]="theme === editorTheme">{{theme}}</option>
+        </select>
+    </div>
+</div>
+<div [ngClass]="!hasError ? 'wrapper' : 'wrapper-with-error'">
+    <ace-editor
+        #editor
+        [durationBeforeCallback]="50"
+        (textChanged)="onContentChange($event)"
+        class="w100 h100">
+    </ace-editor>
+</div>

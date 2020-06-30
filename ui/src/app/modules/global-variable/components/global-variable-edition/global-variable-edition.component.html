@@ -1,4 +1,4 @@
-<div *ngIf="data !== null" style="padding:25px;">
+<div *ngIf="data !== null" class="ml-3 mt-3">
 
     <div class="box2">
         <button type="button" class="btn btn-success m-2 box2" (click)="save()">
@@ -62,7 +62,11 @@ will generate keys :
         </pre>
     </div>
 
-    <div chutneyAceEditor id="editor" [text]="data" [mode]="editorMode.name" [theme]="editorTheme.name"
-         [options]="aceOptions" [readOnly]="false" (textChanged)="callBackFunc($event)"
-         (editorRef)="resizeEditor()"></div>
+    <div class="globalvar-editor">
+        <chutney-ace-editor #aceEditorGlobalVar
+            [hasError]="help"
+            [initialContent]="data"
+            (textChangeEvent)="callBackFunc($event)">
+        </chutney-ace-editor>
+    </div>
 </div>

@@ -1,22 +1,22 @@
 import {
+    AfterViewChecked,
+    AfterViewInit,
     Component,
+    ElementRef,
+    EventEmitter,
     Input,
     Output,
-    EventEmitter,
     ViewChild,
-    ElementRef,
-    ViewEncapsulation,
-    AfterViewInit,
-    AfterViewChecked
+    ViewEncapsulation
 } from '@angular/core';
-import { TechnicalStep } from '@model';
-import { BehaviorSubject, timer } from 'rxjs/index';
+import {TechnicalStep} from '@model';
+import {BehaviorSubject} from 'rxjs/index';
 import {
     exampleParamsExistStepParams,
     highlightStepParams,
     highlightUnknownParams
 } from '@shared/tools/function-step-utils';
-import { distinctUntilChanged } from 'rxjs/operators';
+import {distinctUntilChanged} from 'rxjs/operators';
 
 @Component({
     selector: 'chutney-technical-step',
@@ -41,19 +41,8 @@ export class TechnicalStepComponent implements AfterViewInit, AfterViewChecked {
     private scrollTo: boolean = false;
 
     @ViewChild('preStepImplementation') preStepImplementation: ElementRef;
+
     private preStepImplementationUpdate: boolean = false;
-
-    editorTheme: EditorTheme = new EditorTheme('Monokai', 'monokai');
-    editorMode: EditorMode = new EditorMode('Hjson', 'hjson');
-
-    aceOptions: any = {
-        maxLines: 25,
-        minLines: 10,
-        fontSize: '12pt',
-        enableBasicAutocompletion: true,
-        showLineNumbers: false,
-        showPrintMargin: false
-    };
 
     constructor() {
     }
@@ -93,21 +82,16 @@ export class TechnicalStepComponent implements AfterViewInit, AfterViewChecked {
 
     implementationBlur() {
         if (this.step) {
-            timer(100).subscribe(() => {
-                this.implementationEdition = false;
-                this.preStepImplementationUpdate = true;
-                this.editionEvent.emit(false);
-            });
-
+            this.implementationEdition = false;
+            this.preStepImplementationUpdate = true;
+            this.editionEvent.emit(false);
         }
     }
 
     implementationFocus() {
-        timer(100).subscribe(() => {
-            this.implementationEdition = true;
-            this.scrollTo = true;
-            this.editionEvent.emit(true);
-        });
+        this.implementationEdition = true;
+        this.scrollTo = true;
+        this.editionEvent.emit(true);
     }
 
     checkPreStepImplementation(exampleParamsSerialized: any) {
@@ -118,16 +102,5 @@ export class TechnicalStepComponent implements AfterViewInit, AfterViewChecked {
                 this.preStepImplementation.nativeElement.innerHTML = highlightUnknownParams(this.step.task);
             }
         }
-    }
-
-}
-
-class EditorMode {
-    constructor(public label: string, public name: string) {
-    }
-}
-
-class EditorTheme {
-    constructor(public label: string, public name: string) {
     }
 }

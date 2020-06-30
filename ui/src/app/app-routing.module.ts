@@ -11,7 +11,6 @@ export const appRoutes: Routes = [
             { path: '', redirectTo: '/login', pathMatch: 'full' },
             { path: 'home-page', loadChildren: './modules/home-page/home-page.module#HomePageModule' },
             { path: 'scenario', loadChildren: './modules/scenarios/scenario.module#ScenarioModule' },
-            { path: 'step', loadChildren: './organisms/step/step.module#StepModule' },
             { path: 'configurationAgent', loadChildren: './modules/agent-network/agent-network.module#AgentNetworkModule' },
             { path: 'campaign', loadChildren: './modules/campaign/campaign.module#CampaignModule' },
             { path: 'databaseAdmin', loadChildren: './modules/database-admin/database-admin.module#DatabaseAdminModule' },

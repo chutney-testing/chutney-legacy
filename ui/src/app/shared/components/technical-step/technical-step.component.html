@@ -12,14 +12,21 @@
             </button>
         </div>
 
-        <div chutneyAceEditor id="{{id}}+ace"
-             [text]="step.task"
-             [mode]="editorMode.name"
-             [theme]="editorTheme.name"
-             [options]="aceOptions"
-             [readOnly]="false"
-             (textChanged)="onScenarioContentChanged($event)"
-             (editorBlur)="implementationBlur()">
+        <div style="min-height:150px; max-height:550px;margin-left: 20px;">
+            <chutney-ace-editor #textEditor
+                [initialContent]="step.task"
+                [showConfiguration]="false"
+                [options]="{
+                maxLines: 25,
+                minLines: 10,
+                fontSize: '12pt',
+                showLineNumbers: false,
+                showPrintMargin: false
+            }"
+                (textChangeEvent)="onScenarioContentChanged($event)"
+                (editorBlur)="implementationBlur()">
+            </chutney-ace-editor>
         </div>
+
     </div>
 </div>
