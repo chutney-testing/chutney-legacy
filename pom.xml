@@ -105,7 +105,7 @@
         <junitparams.version>1.1.0</junitparams.version>
         <cucumber.version>1.2.5</cucumber.version>
         <mockrunner-jms.version>1.1.2</mockrunner-jms.version>
-        <sshd.version>1.6.0</sshd.version>
+        <sshd.version>2.5.0</sshd.version>
         <eddsa.version>0.2.0</eddsa.version>
         <activemq.version>5.15.11</activemq.version>
         <rabbitmq-mock.version>1.0.14</rabbitmq-mock.version>
