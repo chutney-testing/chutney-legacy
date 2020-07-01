@@ -109,7 +109,7 @@
         <eddsa.version>0.2.0</eddsa.version>
         <activemq.version>5.15.11</activemq.version>
         <rabbitmq-mock.version>1.0.14</rabbitmq-mock.version>
-        <wire-mock.version>2.26.3</wire-mock.version>
+        <wire-mock.version>2.27.0</wire-mock.version>
         <pitest.version>1.4.9</pitest.version>
         <pitest-cucumber.version>0.8</pitest-cucumber.version>
         <otj-pg-embedded.version>0.13.1</otj-pg-embedded.version>
