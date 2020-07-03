@@ -1,10 +1,10 @@
-import { Component, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, Observable, Subscription, timer } from 'rxjs';
-import { TranslateService } from '@ngx-translate/core';
-import { FileSaverService } from 'ngx-filesaver';
+import {Component, OnDestroy, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {combineLatest, Observable, Subscription, timer} from 'rxjs';
+import {TranslateService} from '@ngx-translate/core';
+import {FileSaverService} from 'ngx-filesaver';
 import * as JSZip from 'jszip';
-import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
+import {NgbDropdown} from '@ng-bootstrap/ng-bootstrap';
 
 import {
     Campaign,
@@ -14,10 +14,10 @@ import {
     ScenarioIndex,
     TestCase
 } from '@core/model';
-import { CampaignService, EnvironmentAdminService, ScenarioService } from '@core/services';
-import { newInstance, sortByAndOrder } from '@shared/tools';
-import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
-import { Label, Color } from 'ng2-charts';
+import {CampaignService, EnvironmentAdminService, ScenarioService} from '@core/services';
+import {newInstance, sortByAndOrder} from '@shared/tools';
+import {ChartOptions, ChartDataSets} from 'chart.js';
+import {Label, Color} from 'ng2-charts';
 
 @Component({
     selector: 'chutney-execution-campaign',
@@ -25,6 +25,8 @@ import { Label, Color } from 'ng2-charts';
     styleUrls: ['./execution-campaign.component.scss']
 })
 export class CampaignExecutionComponent implements OnInit, OnDestroy {
+
+    TIMER = 2000;
 
     deletionConfirmationTextPrefix: string;
     deletionConfirmationTextSuffix: string;
@@ -36,6 +38,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
 
     last: CampaignReport;
     current: CampaignReport;
+    stopRequested = false;
 
     currentCampaignExecutionReport: CampaignExecutionReport;
     currentScenariosReportsOutlines: Array<ScenarioExecutionReportOutline> = [];
@@ -81,7 +84,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
                 private translate: TranslateService,
                 private fileSaverService: FileSaverService,
                 private scenarioService: ScenarioService,
-                private environmentAdminService: EnvironmentAdminService
+                private environmentAdminService: EnvironmentAdminService,
     ) {
         translate.get('campaigns.confirm.deletion.prefix').subscribe((res: string) => {
             this.deletionConfirmationTextPrefix = res;
@@ -132,8 +135,8 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
             this.running = CampaignService.existRunningCampaignReport(this.campaign.campaignExecutionReports);
             if (this.running) {
                 this.unsubscribeCampaign();
-                this.campaignSub = timer(10000).subscribe(() => {
-                        this.loadCampaign(this.campaign.id, true);
+                this.campaignSub = timer(this.TIMER).subscribe(() => {
+                        this.updateRunningReport();
                     }
                 );
             }
@@ -142,12 +145,43 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
         }
     }
 
+    updateRunningReport() {
+        this.campaignService.find(this.campaign.id).subscribe(
+            (campaign) => {
+                const sortedReports = campaign.campaignExecutionReports.sort((a, b) => b.executionId - a.executionId);
+                if (this.campaign.campaignExecutionReports[0].executionId !== sortedReports[0].executionId) {
+                    // Add new running report
+                    this.campaign.campaignExecutionReports.unshift(sortedReports[0]);
+                    this.selectReport(sortedReports[0]);
+                } else {
+                    // Update running report
+                    this.campaign.campaignExecutionReports[0] = sortedReports[0];
+                    if (this.currentCampaignExecutionReport.executionId === sortedReports[0].executionId) {
+                        this.currentCampaignExecutionReport = sortedReports[0];
+                        this.currentScenariosReportsOutlines = newInstance(sortedReports[0].scenarioExecutionReports);
+                    }
+                }
+                this.unsubscribeCampaign();
+                if (sortedReports[0].status === 'RUNNING') {
+                    this.campaignSub = timer(this.TIMER).subscribe(() => {
+                            this.updateRunningReport();
+                        }
+                    );
+                }
+            },
+            (error) => {
+                console.log(error);
+                this.errorMessage = error;
+            }
+        );
+    }
+
     setChartData(reports: Array<CampaignExecutionReport>) {
         const scenarioOK = reports.filter(r => !r.partialExecution).map(r => r.scenarioExecutionReports
-                                    .filter(s => s.status === 'SUCCESS').length).reverse();
+            .filter(s => s.status === 'SUCCESS').length).reverse();
         const scenarioKO = reports.filter(r => !r.partialExecution).map(r => r.scenarioExecutionReports
-                                .filter(s => s.status === 'FAILURE').length).reverse();
-        this.lineChartData = [{ data: scenarioOK}, { data: scenarioKO}];
+            .filter(s => s.status === 'FAILURE').length).reverse();
+        this.lineChartData = [{data: scenarioOK}, {data: scenarioKO}];
         this.lineChartLabels = reports.filter(r => !r.partialExecution).map(r => '' + r.executionId).reverse();
     }
 
@@ -201,14 +235,14 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
         if (property == 'creationDate') {
             const now = Date.now();
             return i => i[property] == null ? now - 1491841324 /*2017-04-10T16:22:04*/ : now - Date.parse(i[property]);
-        }
-        else {
+        } else {
             return i => i[property] == null ? '' : i[property];
         }
     }
 
     executeCampaign(env: string) {
         this.running = true;
+        this.stopRequested = false;
         this.campaignService.executeCampaign(this.campaign.id, env).subscribe(
             () => {
                 // Do nothing
@@ -219,9 +253,8 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
             },
             () => this.running = false
         );
-        this.campaignSub = timer(1500).subscribe(() => {
-            this.loadCampaign(this.campaign.id, true);
-            this.loadScenarios(this.campaign.id);
+        this.campaignSub = timer(this.TIMER).subscribe(() => {
+            this.updateRunningReport();
         });
     }
 
@@ -301,6 +334,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
 
     stopScenario() {
         this.campaignService.stopExecution(this.campaign.id, this.currentCampaignExecutionReport.executionId).subscribe(() => {
+            this.stopRequested = true;
         }, error => {
             this.executionError = 'Cannot stop campaign : ' + error.status + ' ' + error.statusText + ' ' + error.error;
         }, () => {
@@ -319,9 +353,8 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
             },
             () => this.running = false
         );
-        this.campaignSub = timer(1500).subscribe(() => {
-            this.loadCampaign(this.campaign.id, true);
-            this.loadScenarios(this.campaign.id);
+        this.campaignSub = timer(this.TIMER).subscribe(() => {
+            this.updateRunningReport();
         });
     }
 
