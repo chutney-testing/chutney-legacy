@@ -9,6 +9,7 @@ import static test.unit.com.chutneytesting.engine.api.glacio.parse.GlacioParserH
 import static test.unit.com.chutneytesting.engine.api.glacio.parse.GlacioParserHelper.loopOverRandomString;
 
 import com.chutneytesting.engine.api.glacio.parse.specific.GlacioContextPutParser;
+import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
 import java.util.Locale;
 import org.apache.groovy.util.Maps;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 public class GlacioContextPutParserTest {
 
     private static final String ENVIRONMENT = "ENV";
+    private static final StepStrategyDefinition NO_STRATEGY_DEF = null;
 
     private GlacioContextPutParser sut = new GlacioContextPutParser();
 
@@ -46,7 +48,7 @@ public class GlacioContextPutParserTest {
     public void should_parse_entries_input_from_step_datatable() {
         String dataTableString = "| var1 | val ue1 |\n| var 2 | value2 |";
         assertThat(
-            sut.mapToStepDefinition(ENVIRONMENT, buildDataTableStepWithText("add variables", dataTableString)).inputs)
+            sut.mapToStepDefinition(ENVIRONMENT, buildDataTableStepWithText("add variables", dataTableString), NO_STRATEGY_DEF).inputs)
             .containsExactly(entry("entries", Maps.of("var1", "val ue1", "var 2", "value2")));
     }
 
@@ -54,7 +56,7 @@ public class GlacioContextPutParserTest {
     public void should_parse_entries_input_from_step_substeps_without_spaces() {
         String subStepsString = "var1 value1\nvar2 value2";
         assertThat(
-            sut.mapToStepDefinition(ENVIRONMENT, buildSubStepsStepWithText("add variables", subStepsString)).inputs)
+            sut.mapToStepDefinition(ENVIRONMENT, buildSubStepsStepWithText("add variables", subStepsString), NO_STRATEGY_DEF).inputs)
             .containsExactly(entry("entries", Maps.of("var1", "value1", "var2", "value2")));
     }
 
@@ -62,7 +64,7 @@ public class GlacioContextPutParserTest {
     public void should_parse_entries_input_from_step_substeps_with_spaces() {
         String subStepsString = "var1 val ue1\n\"var 2\" value2";
         assertThat(
-            sut.mapToStepDefinition(ENVIRONMENT, buildSubStepsStepWithText("add variables", subStepsString)).inputs)
+            sut.mapToStepDefinition(ENVIRONMENT, buildSubStepsStepWithText("add variables", subStepsString), NO_STRATEGY_DEF).inputs)
             .containsExactly(entry("entries", Maps.of("var1", "val ue1", "var 2", "value2")));
     }
 }

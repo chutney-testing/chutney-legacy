@@ -22,8 +22,7 @@ public class GlacioSleepParser extends GlacioExecutableStepParser {
     public GlacioSleepParser() {
         super(EmptyParser.noTargetParser,
             GlacioSleepParser::parseTaskInputs,
-            EmptyParser.emptyMapParser,
-            EmptyParser.noStrategyParser);
+            EmptyParser.emptyMapParser);
     }
 
     @Override

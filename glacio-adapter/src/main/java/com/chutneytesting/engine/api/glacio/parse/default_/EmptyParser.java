@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang3.tuple.Pair;
 
 public final class EmptyParser {
 
@@ -39,6 +40,11 @@ public final class EmptyParser {
         @Override
         public List<StepStrategyDefinition> parseStep(Locale lang, Step step) {
             return emptyList();
+        }
+
+        @Override
+        public Pair<Step, List<StepStrategyDefinition>> parseStepAndStripStrategy(Locale lang, Step step) {
+            return Pair.of(step, emptyList());
         }
     }
 

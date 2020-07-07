@@ -4,7 +4,9 @@ import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.engine.api.glacio.parse.IParseBusinessStep;
 import com.chutneytesting.engine.api.glacio.parse.IParseExecutableStep;
+import com.chutneytesting.engine.api.glacio.parse.IParseStrategy;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
+import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
 import com.github.fridujo.glacio.model.Step;
 import java.util.Collection;
 import java.util.List;
@@ -28,15 +30,18 @@ public class StepFactory {
     private final Map<Pair<Locale, String>, IParseExecutableStep> glacioExecutableStepParsersLanguages;
     private final IParseExecutableStep defaultExecutableStepParser;
     private final IParseBusinessStep defaultBusinessStepParser;
+    private final IParseStrategy defaultStrategyParser;
 
     public StepFactory(Map<Locale, Map<EXECUTABLE_KEYWORD, Set<String>>> executableStepLanguagesKeywords,
                        Map<Pair<Locale, String>, IParseExecutableStep> glacioExecutableStepParsersLanguages,
                        IParseExecutableStep defaultExecutableStepParser,
-                       IParseBusinessStep defaultBusinessStepParser) {
+                       IParseBusinessStep defaultBusinessStepParser,
+                       IParseStrategy strategyParser) {
         this.executableStepLanguagesKeywords = executableStepLanguagesKeywords;
         this.glacioExecutableStepParsersLanguages = glacioExecutableStepParsersLanguages;
         this.defaultExecutableStepParser = defaultExecutableStepParser;
         this.defaultBusinessStepParser = defaultBusinessStepParser;
+        this.defaultStrategyParser = strategyParser;
     }
 
     public enum EXECUTABLE_KEYWORD {DO}
@@ -48,39 +53,55 @@ public class StepFactory {
     }
 
     public StepDefinition toStepDefinition(Locale lang, String environment, Step step) {
+        Pair<Step, StepStrategyDefinition> result = buildStrategyDefinition(lang, step);
+
+        Step stepWithoutStrategy = result.getLeft();
+        StepStrategyDefinition stepStrategyDefinition = result.getRight();
+
         if (this.isExecutableStep(lang, step)) {
-            return this.buildExecutableStep(lang, environment, step);
+            return this.buildExecutableStep(lang, environment, stepWithoutStrategy, stepStrategyDefinition);
         } else {
-            return buildBusinessLevelStep(lang, environment, step);
+            return buildBusinessLevelStep(lang, environment, stepWithoutStrategy, stepStrategyDefinition);
         }
     }
 
-    public StepDefinition buildExecutableStep(Locale lang, String environment, Step step) {
+    private Pair<Step, StepStrategyDefinition> buildStrategyDefinition(Locale lang, Step step) {
+        Pair<Step, List<StepStrategyDefinition>> result = defaultStrategyParser.parseStepAndStripStrategy(lang, step);
+        if (result.getRight().size() > 0) {
+            return Pair.of(result.getLeft(), result.getRight().get(0));
+        }
+
+        return Pair.of(step, null);
+    }
+
+    public StepDefinition buildExecutableStep(Locale lang, String environment, Step step, StepStrategyDefinition stepStrategyDefinition) {
         Optional<Pair<Pattern, Predicate<String>>> pattern = ofNullable(executableStepTextPatternsCache.get(lang));
         if (pattern.isPresent()) {
             Matcher matcher = pattern.get().getLeft().matcher(step.getText().trim());
             if (matcher.matches()) {
                 String action = ofNullable(matcher.group("action")).orElse("");
                 String sentence = ofNullable(matcher.group("sentence")).orElse("");
-                return delegateStepParsing(lang, action, environment, rebuildStepUsing(sentence, step));
+                Step stepWithoutAction = this.removeActionFromStep(sentence, step);
+
+                return delegateStepParsing(lang, action, environment, stepWithoutAction, stepStrategyDefinition);
             }
         }
         throw new IllegalArgumentException("Step cannot be qualified as executable : " + step);
     }
 
-    private Step rebuildStepUsing(String sentence, Step step) {
+    private Step removeActionFromStep(String sentence, Step step) {
         return new Step(step.isBackground(), step.getKeyword(), sentence, step.getArgument(), step.getSubsteps());
     }
 
-    private StepDefinition delegateStepParsing(Locale lang, String action, String environment, Step step) {
+    private StepDefinition delegateStepParsing(Locale lang, String action, String environment, Step step, StepStrategyDefinition stepStrategyDefinition) {
         return Optional.ofNullable(glacioExecutableStepParsersLanguages.get(Pair.of(lang, action)))
             .orElse(defaultExecutableStepParser)
-            .mapToStepDefinition(lang, environment, step);
+            .mapToStepDefinition(environment, step, stepStrategyDefinition);
     }
 
-    private StepDefinition buildBusinessLevelStep(Locale lang, String environment, Step step) {
+    private StepDefinition buildBusinessLevelStep(Locale lang, String environment, Step step, StepStrategyDefinition stepStrategyDefinition) {
         List<StepDefinition> subSteps = buildSubSteps(lang, environment, step);
-        return this.defaultBusinessStepParser.mapToStepDefinition(lang, environment, step, subSteps);
+        return this.defaultBusinessStepParser.mapToStepDefinition(environment, step, subSteps, stepStrategyDefinition);
     }
 
     private List<StepDefinition> buildSubSteps(Locale lang, String environment, Step step) {

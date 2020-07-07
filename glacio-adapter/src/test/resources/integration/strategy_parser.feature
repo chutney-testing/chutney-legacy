@@ -33,20 +33,12 @@ Feature: Strategy parser feature
         Then it keeps going to the next step
             Do success
 
-    Scenario: See on sleep
-        When something
+    Scenario: Use a strategy with a specific parser
+        When using a specific parser like Sleep
             Do sleep for 1 sec (softly:)
-        Then it keeps going to the next step
+        Then the strategy doesn't affect parameters parsing
             Do success
 
-    Scenario: Simple http get
-        When Do http-get Request chutney-testing github page
-            On GITHUB_API
-            With uri /orgs/chutney-testing
-            With timeout 2000 s
-            With headers
-            | X-Extra-Header | An extra header |
-            Take statusOk ${200 == #status}
-            Take jsonBody ${#json(#body, '$')}
-            Keep headersString ${#headers}
-        Then Execute debug
+    Scenario: Use a strategy with the default parser
+        When Do fail (retry: every 5s for 3s)
+        Then it fails 3 times

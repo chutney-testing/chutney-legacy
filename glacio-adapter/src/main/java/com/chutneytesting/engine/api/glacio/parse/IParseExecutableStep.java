@@ -1,8 +1,7 @@
 package com.chutneytesting.engine.api.glacio.parse;
 
-import static java.util.Locale.ENGLISH;
-
 import com.chutneytesting.engine.domain.execution.StepDefinition;
+import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
 import com.github.fridujo.glacio.model.Step;
 import java.util.Locale;
 import java.util.Map;
@@ -14,10 +13,6 @@ public interface IParseExecutableStep {
     Map<Locale, Set<String>> keywords();
 
     /** TODO put description here **/
-    StepDefinition mapToStepDefinition(Locale lang, String environment, Step step);
-
-    default StepDefinition mapToStepDefinition(String environment, Step step) {
-        return mapToStepDefinition(ENGLISH, environment, step);
-    }
+    StepDefinition mapToStepDefinition(String environment, Step step, StepStrategyDefinition stepStrategyDefinition);
 
 }

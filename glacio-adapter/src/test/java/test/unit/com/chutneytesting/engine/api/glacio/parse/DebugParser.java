@@ -13,7 +13,7 @@ import java.util.Set;
 public class DebugParser extends GlacioExecutableStepParser {
 
     public DebugParser() {
-        super(null, null, null, null);
+        super(null, null, null);
     }
 
     @Override

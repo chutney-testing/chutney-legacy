@@ -30,7 +30,7 @@ public class DefaultGlacioParserTest {
         taskTemplateRegistry = mock(TaskTemplateRegistry.class);
         environmentService = mock(EnvironmentService.class);
         strategyParser = mock(StrategyParser.class);
-        sut = new DefaultGlacioParser(taskTemplateRegistry, environmentService, strategyParser);
+        sut = new DefaultGlacioParser(taskTemplateRegistry, environmentService);
     }
 
     @Test()

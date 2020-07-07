@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Locale;
 import org.assertj.core.util.Files;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -74,57 +73,10 @@ public class GlacioAdapterTest {
     }
 
     @Test
-    @Disabled
-    public void should_adapt_as_many_non_executable_steps_glacio_scenario_has() {
-        String feature = fileContent("unit/multiple_non_executable_steps.feature");
-        List<StepDefinition> stepDefinitions = sut.toChutneyStepDefinition(feature, ENVIRONMENT);
-        assertThat(stepDefinitions).hasSize(1);
-        assertThat(stepDefinitions.get(0).steps).hasSize(2);
-
-        StepDefinition whenStepDefinition = stepDefinitions.get(0).steps.get(0);
-        assertSizeAndName(whenStepDefinition, "We try something", 3);
-        assertSizeAndName(whenStepDefinition.steps.get(0), "First substep of action step", 0);
-        assertSizeAndName(whenStepDefinition.steps.get(1), "Second substep of action step", 1);
-        assertSizeAndName(whenStepDefinition.steps.get(2), "Third substep of action step", 2);
-
-        StepDefinition thenStepDefinition = stepDefinitions.get(0).steps.get(1);
-        assertSizeAndName(thenStepDefinition, "An assert is ok", 3);
-        assertSizeAndName(thenStepDefinition.steps.get(0), "First substep of assert step", 2);
-        assertSizeAndName(thenStepDefinition.steps.get(1), "Second substep of assert step", 1);
-        assertSizeAndName(thenStepDefinition.steps.get(2), "Third substep of assert step", 0);
-    }
-
-    @Test
     public void should_delegate_step_creation_for_all_first_level_steps() {
         String feature = fileContent("unit/multiple_non_executable_steps.feature");
         sut.toChutneyStepDefinition(feature, ENVIRONMENT);
         verify(stepFactory, times(2)).toStepDefinition(eq(Locale.ENGLISH), eq(ENVIRONMENT), any());
-    }
-
-    @Test
-    @Disabled
-    public void should_delegate_adaptation_for_executable_steps() {
-        String feature = fileContent("unit/multiple_non_executable_steps.feature");
-        StepDefinition fakeStepDef = new StepDefinition("fake", null, "", null, Collections.emptyMap(), Collections.emptyList(), Collections.emptyMap(), "");
-        when(stepFactory.buildExecutableStep(any(), any(), any())).thenReturn(fakeStepDef);
-        when(stepFactory.isExecutableStep(any(), any()))
-            .thenReturn(
-                false,              // When
-                true,
-                false, true,
-                false, true, true,
-                false,              // Then
-                true,               // Test that no adaptation get further executable step
-                false, true,
-                true);
-        sut.toChutneyStepDefinition(feature, ENVIRONMENT);
-        verify(stepFactory, times(12)).isExecutableStep(eq(Locale.ENGLISH), any());
-        verify(stepFactory, times(7)).buildExecutableStep(eq(Locale.ENGLISH), eq(ENVIRONMENT), any());
-    }
-
-    private void assertSizeAndName(StepDefinition step, String expectedName, Integer expectedSize) {
-        assertThat(step.name).as("StepDefinition name").isEqualTo(expectedName);
-        assertThat(step.steps).as("StepDefinition substeps size").hasSize(expectedSize);
     }
 
     private String fileContent(String resourcePath) {

@@ -1,12 +1,15 @@
 package test.unit.com.chutneytesting.engine.api.glacio.parse.default_;
 
+import static java.util.Collections.emptyList;
 import static java.util.Locale.ENGLISH;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.engine.api.glacio.parse.default_.StrategyParser;
 import com.chutneytesting.engine.api.glacio.parse.specific.StrategySoftAssertParser;
+import com.github.fridujo.glacio.model.Step;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 public class StrategyParserTest {
@@ -72,6 +75,16 @@ public class StrategyParserTest {
         StrategyParser strategyParser = sut.getStrategyParser(ENGLISH, "softly");
 
         assertThat(strategyParser).isInstanceOf(StrategySoftAssertParser.class);
+    }
+
+    @Test
+    void should_remove_strategies_from_step_sentence_to_avoid_later_conflict_when_parsing_inputs_parameters() {
+        Step step = new Step(false, Optional.empty(), "(softly:) Do a step (with a parenthesised comment) using 2 strategies (retry:) (should(: not be catch)", Optional.empty(), emptyList());
+        StrategyParser sut = new StrategyParser(Arrays.asList(new StrategySoftAssertParser()));
+
+        Step actual = sut.stripStrategyFrom(step);
+
+        assertThat(actual.getText()).isEqualToIgnoringCase("Do a step (with a parenthesised comment) using 2 strategies (should(: not be catch)");
     }
 
 }

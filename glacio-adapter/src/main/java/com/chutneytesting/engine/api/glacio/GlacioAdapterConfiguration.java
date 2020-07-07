@@ -164,7 +164,7 @@ public class GlacioAdapterConfiguration {
     }
 
     private IParseStrategy createStrategyDefinitionFactory() {
-        return new StrategyParser(Arrays.asList(new StrategySoftAssertParser(), new StrategyRetryParser()));
+        return new StrategyParser(Arrays.asList(new StrategySoftAssertParser(), new StrategyRetryParser())); // TODO : Load from FILE
     }
 
     private StepFactory createExecutableStepFactory() {
@@ -172,9 +172,9 @@ public class GlacioAdapterConfiguration {
             executableStepLanguagesKeywords,
             glacioExecutableStepParsersLanguages,
             new DefaultGlacioParser(executionConfiguration.taskTemplateRegistry(),
-                                    environmentService,
-                                    strategyParser),
-            new GlacioBusinessStepParser(strategyParser)
+                                    environmentService),
+            new GlacioBusinessStepParser(),
+            strategyParser
         );
     }
 

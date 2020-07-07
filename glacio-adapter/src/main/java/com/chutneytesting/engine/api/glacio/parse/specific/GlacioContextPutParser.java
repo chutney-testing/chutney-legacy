@@ -26,8 +26,7 @@ public class GlacioContextPutParser extends GlacioExecutableStepParser {
     public GlacioContextPutParser() {
         super(EmptyParser.noTargetParser,
             new ContextPutInputsParser(),
-            EmptyParser.emptyMapParser,
-            EmptyParser.noStrategyParser);
+            EmptyParser.emptyMapParser);
     }
 
     @Override
