@@ -12,34 +12,37 @@ public class CampaignDto {
     private final String title;
     private final String description;
     private final List<String> scenarioIds;
-    private final Map<String, String> dataSet;
+    private final Map<String, String> computedParameters;
     private final List<CampaignExecutionReportDto> campaignExecutionReports;
 
     private final String scheduleTime;
     private final String environment;
     private final boolean parallelRun;
     private final boolean retryAuto;
+    private final String datasetId;
 
     public CampaignDto(@JsonProperty("id") Long id,
                        @JsonProperty("title") String title,
                        @JsonProperty("description") String description,
                        @JsonProperty("scenarioIds") List<String> scenarioIds,
-                       @JsonProperty("dataSet") Map<String, String> dataSet,
+                       @JsonProperty("computedParameters") Map<String, String> computedParameters,
                        @JsonProperty("campaignExecutionReports") List<CampaignExecutionReportDto> campaignExecutionReports,
                        @JsonProperty("scheduleTime") String scheduleTime,
                        @JsonProperty("environment") String environment,
                        @JsonProperty("parallelRun") boolean parallelRun,
-                       @JsonProperty("retryAuto") boolean retryAuto) {
+                       @JsonProperty("retryAuto") boolean retryAuto,
+                       @JsonProperty("datasetId") String datasetId) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.scenarioIds = scenarioIds;
-        this.dataSet = dataSet;
+        this.computedParameters = computedParameters;
         this.campaignExecutionReports = Optional.ofNullable(campaignExecutionReports).orElse(new ArrayList<>());
         this.scheduleTime = scheduleTime;
         this.environment = environment;
         this.parallelRun = parallelRun;
         this.retryAuto = retryAuto;
+        this.datasetId = datasetId;
     }
 
     public Long getId() {
@@ -58,8 +61,8 @@ public class CampaignDto {
         return scenarioIds;
     }
 
-    public Map<String, String> getDataSet() {
-        return dataSet;
+    public Map<String, String> getComputedParameters() {
+        return computedParameters;
     }
 
     public List<CampaignExecutionReportDto> getCampaignExecutionReports() {
@@ -87,5 +90,9 @@ public class CampaignDto {
 
     public boolean isRetryAuto() {
         return retryAuto;
+    }
+
+    public String getDatasetId() {
+        return datasetId;
     }
 }

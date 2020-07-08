@@ -156,7 +156,7 @@ public class FunctionalStepMapperTest {
 
         // Then
         assertThat(functionalStepDto.parameters()).containsExactlyElementsOf(KeyValue.fromMap(fStep.parameters));
-        assertThat(functionalStepDto.dataSet()).containsExactlyElementsOf(KeyValue.fromMap(fStep.dataSet));
+        assertThat(functionalStepDto.computedParameters()).containsExactlyElementsOf(KeyValue.fromMap(fStep.dataSet));
     }
 
     @Test
@@ -186,7 +186,7 @@ public class FunctionalStepMapperTest {
                         "param2", ""
                     )
                 ))
-            .addAllDataSet(
+            .addAllComputedParameters(
                 KeyValue.fromMap(
                     Maps.of(
                         "param1", "param1 value",
@@ -208,6 +208,6 @@ public class FunctionalStepMapperTest {
         assertThat(step.steps.get(0).implementation.get()).isEqualTo(TECHNICAL_CONTENT);
         assertThat(step.steps.get(1).name).isEqualTo(dto.steps().get(1).name());
         assertThat(step.parameters).containsAllEntriesOf(KeyValue.toMap(dto.parameters()));
-        assertThat(step.dataSet).containsAllEntriesOf(KeyValue.toMap(dto.dataSet()));
+        assertThat(step.dataSet).containsAllEntriesOf(KeyValue.toMap(dto.computedParameters()));
     }
 }

@@ -26,7 +26,8 @@ public class CampaignMapper {
             campaign.getStringScheduleTime(),
             campaign.executionEnvironment(),
             campaign.parallelRun,
-            campaign.retryAuto);
+            campaign.retryAuto,
+            campaign.datasetId);
     }
 
     public static CampaignDto toDto(Campaign campaign, List<CampaignExecutionReport> campaignExecutionReports) {
@@ -42,7 +43,8 @@ public class CampaignMapper {
             campaign.getStringScheduleTime(),
             campaign.executionEnvironment(),
             campaign.parallelRun,
-            campaign.retryAuto);
+            campaign.retryAuto,
+            campaign.datasetId);
     }
 
     public static Campaign fromDto(CampaignDto dto) {
@@ -53,11 +55,12 @@ public class CampaignMapper {
             dto.getScenarioIds().stream()
                                 .map( id -> fromFrontId(Optional.of(id)) )
                                 .collect(toList()),
-            dto.getDataSet(),
+            dto.getComputedParameters(),
             dto.safeGetScheduleTime().map(LocalTime::parse).orElse(null),
             dto.getEnvironment(),
             dto.isParallelRun(),
-            dto.isRetryAuto()
+            dto.isRetryAuto(),
+            dto.getDatasetId()
         );
     }
 

@@ -85,6 +85,14 @@
                     </div>
                     <div class="col-4">
                         <div class="row font-weight-bold">
+                            <span class="mr-5">{{'menu.principal.dataset' | translate}}</span>
+                            <chutney-dataset-selection
+                                [selectedDatasetId]="scenarioComponent.datasetId"
+                                (selectionEvent)="selectDataset($event)">
+                            </chutney-dataset-selection>
+
+                        </div>
+                        <div class="row font-weight-bold">
                             <span class="mr-5 cursor-default"
                                   (click)="switchCollapseParam()">{{'components.shared.edition.blocks.parameters' | translate}}</span>
                             <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"

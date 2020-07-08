@@ -16,7 +16,7 @@ export class TestCase implements Equals<TestCase>, Clonable<TestCase> {
         public creationDate?: Date,
         public tags: Array<string> = [],
         public executions?: Array<Execution>,
-        public dataSet?: Array<KeyValue>
+        public computedParameters?: Array<KeyValue>
     ) {
     }
 
@@ -26,7 +26,7 @@ export class TestCase implements Equals<TestCase>, Clonable<TestCase> {
             && areEquals(this.description, obj.description)
             && areEquals(this.content, obj.content)
             && areEquals(this.tags, obj.tags)
-            && areEquals(this.dataSet, obj.dataSet);
+            && areEquals(this.computedParameters, obj.computedParameters);
     }
 
     public clone(): TestCase {
@@ -39,12 +39,12 @@ export class TestCase implements Equals<TestCase>, Clonable<TestCase> {
             null,
             cloneAsPossible(this.tags),
             null,
-            cloneAsPossible(this.dataSet)
+            cloneAsPossible(this.computedParameters)
         );
     }
 
     hasParameters(): boolean {
-        return (this.dataSet && this.dataSet.length > 0);
+        return (this.computedParameters && this.computedParameters.length > 0);
     }
 
     static isComposed(testCaseOrId: TestCase | string): boolean {
@@ -67,7 +67,7 @@ export class TestCase implements Equals<TestCase>, Clonable<TestCase> {
             raw.creationDate,
             raw.tags,
             raw.executions,
-            raw.dataSet
+            raw.computedParameters
         );
     }
 
@@ -81,7 +81,7 @@ export class TestCase implements Equals<TestCase>, Clonable<TestCase> {
             testCase.creationDate,
             [],
             null,
-            testCase.dataSet
+            testCase.computedParameters
         );
     }
 }

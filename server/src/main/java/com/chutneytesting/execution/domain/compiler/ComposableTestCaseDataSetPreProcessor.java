@@ -31,15 +31,15 @@ public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcess
         makeEnvironmentNameAsGlobalVariable(globalVariable, environment);
         return new ComposableTestCase(
             testCase.id,
-            applyToMetadata(testCase.metadata, testCase.dataSet, globalVariable),
-            applyToScenario(testCase.composableScenario, testCase.dataSet, globalVariable),
-            testCase.dataSet);
+            applyToMetadata(testCase.metadata, testCase.computedParameters, globalVariable),
+            applyToScenario(testCase.composableScenario, testCase.computedParameters, globalVariable),
+            testCase.computedParameters);
     }
 
     public ComposableTestCase applyOnStrategy(ComposableTestCase testCase, String environment) {
         Map<String, String> globalVariable = globalvarRepository.getFlatMap();
         makeEnvironmentNameAsGlobalVariable(globalVariable,environment);
-        Map<String,String> testCaseDataSet = applyOnCurrentStepDataSet(testCase.dataSet, emptyMap(), globalVariable);
+        Map<String,String> testCaseDataSet = applyOnCurrentStepDataSet(testCase.computedParameters, emptyMap(), globalVariable);
         return new ComposableTestCase(
             testCase.id,
             testCase.metadata,

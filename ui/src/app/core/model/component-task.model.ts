@@ -7,10 +7,10 @@ export class ComponentTask implements Clonable<ComponentTask> {
         public implementation: Implementation,
         public children: Array<ComponentTask>,
         public parameters: Array<KeyValue> = [],
-        public dataSet: Array<KeyValue> = [],
+        public computedParameters: Array<KeyValue> = [],
         public tags: Array<String> = [],
         public strategy: Strategy,
-        public id?: string
+        public id?: string,
     ) {
     }
 
@@ -20,11 +20,10 @@ export class ComponentTask implements Clonable<ComponentTask> {
             cloneAsPossible(this.implementation),
             cloneAsPossible(this.children),
             cloneAsPossible(this.parameters),
-            cloneAsPossible(this.dataSet),
+            cloneAsPossible(this.computedParameters),
             cloneAsPossible(this.tags),
             cloneAsPossible(this.strategy),
-            cloneAsPossible(this.id)
-        );
+            cloneAsPossible(this.id));
     }
 }
 

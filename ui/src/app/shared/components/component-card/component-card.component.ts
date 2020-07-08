@@ -49,15 +49,15 @@ export class ComponentCardComponent implements OnChanges, OnDestroy {
 
     private initForm() {
         this.cardForm = this.formBuilder.group({});
-        if (this.component && this.component.dataSet) {
-            this.component.dataSet.forEach((kv, index) => {
+        if (this.component && this.component.computedParameters) {
+            this.component.computedParameters.forEach((kv, index) => {
                 const ctrl: FormControl = this.formBuilder.control(kv.value);
                 this.cardForm.addControl(kv.key, ctrl);
                 this.parametersValueChangeSubscription.push(
                     ctrl.valueChanges.pipe(
                         debounceTime(250)
                     ).subscribe(v => {
-                        this.component.dataSet[index].value = v;
+                        this.component.computedParameters[index].value = v;
                     })
                 );
             });

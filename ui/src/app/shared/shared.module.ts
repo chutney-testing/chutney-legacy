@@ -36,6 +36,7 @@ import { ThumbnailPipe } from '@shared/pipes/thumbnail.pipe';
 import {AceEditorComponent} from "@shared/ace-editor/ace-editor.component";
 import {AceEditorModule} from "ng2-ace-editor";
 import { DataSetSearchPipe } from './pipes/dataset-search.pipe';
+import { DatasetSelectionComponent } from '@shared/components/dataset-selection/dataset-selection.component';
 
 @NgModule({
     imports: [
@@ -71,6 +72,7 @@ import { DataSetSearchPipe } from './pipes/dataset-search.pipe';
         ComponentCardComponent,
         AceEditorComponent,
         DataSetSearchPipe,
+        DatasetSelectionComponent,
     ],
     exports: [
         TruncatePipe,
@@ -96,6 +98,7 @@ import { DataSetSearchPipe } from './pipes/dataset-search.pipe';
         ComponentCardComponent,
         AceEditorComponent,
         DataSetSearchPipe,
+        DatasetSelectionComponent,
     ],
     entryComponents: [
         TechnicalStepComponent

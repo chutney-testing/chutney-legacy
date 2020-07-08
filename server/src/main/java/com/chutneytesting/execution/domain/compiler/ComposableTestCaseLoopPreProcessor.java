@@ -35,7 +35,7 @@ class ComposableTestCaseLoopPreProcessor {
             testCase.id,
             testCase.metadata,
             apply(testCase.composableScenario),
-            testCase.dataSet);
+            testCase.computedParameters);
     }
 
     private ComposableScenario apply(ComposableScenario composableScenario) {

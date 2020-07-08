@@ -38,6 +38,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     itemList = [];
     settings = {};
     selectedTags: string[] = [];
+    datasetId: string;
 
     constructor(
         private campaignService: CampaignService,
@@ -105,7 +106,8 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
                     this.campaignForm.controls['retryAuto'].setValue(this.campaign.retryAuto);
                     this.selectedEnvironment = new EnvironmentMetadata(this.campaign.environment, '');
                     this.setCampaignScenarios();
-                    this.updateCampaignDataSet();
+                    this.updateCampaignParameters();
+                    this.datasetId = this.campaign.datasetId;
                 },
                 (error) => {
                     this.errorMessage = error._body;
@@ -165,19 +167,20 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
             return;
         }
 
-        const dataset = new Map();
+        const computedParameters = new Map();
         formValue['parameters'].forEach((keyValue: KeyValue) => {
-            dataset[keyValue.key] = keyValue.value;
+            computedParameters[keyValue.key] = keyValue.value;
         });
 
         this.campaign.title = formValue['title'];
         this.campaign.description = formValue['description'];
         this.campaign.scenarioIds = formValue['scenarioIds'];
-        this.campaign.dataSet = dataset;
+        this.campaign.computedParameters = computedParameters;
         this.campaign.scheduleTime = formValue['scheduleTime'];
         this.campaign.environment = this.selectedEnvironment.name;
         this.campaign.parallelRun = formValue['parallelRun'];
         this.campaign.retryAuto = formValue['retryAuto'];
+        this.campaign.datasetId = this.datasetId;
 
         this.setCampaignScenariosIdsToAdd(this.scenariosToAdd);
         if (this.campaign.id !== undefined) {
@@ -201,7 +204,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         }
     }
 
-    updateCampaignDataSet() {
+    updateCampaignParameters() {
         const params = this.campaignForm.controls.parameters as FormArray;
         const addedParams = new Set();
 
@@ -212,11 +215,12 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         for (const scenario of this.scenariosToAdd) {
             if (TestCase.isComposed(scenario.id)) {
                 this.componentService.findComponentTestCase(scenario.id).subscribe((testCase: ScenarioComponent) => {
-                    testCase.dataSet.forEach((keyValue: KeyValue) => {
+                    testCase.computedParameters.forEach((keyValue: KeyValue) => {
                         if (!addedParams.has(keyValue.key)) {
                             params.push(this.formBuilder.group({
                                 key: keyValue.key,
-                                value: this.campaign.dataSet[keyValue.key] ? this.campaign.dataSet[keyValue.key] : ''
+                                value: this.campaign.computedParameters[keyValue.key] ?
+                                        this.campaign.computedParameters[keyValue.key] : ''
                             }));
                             addedParams.add(keyValue.key);
                         }
@@ -238,7 +242,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     addScenario(scenario: ScenarioIndex) {
         if (!this.scenariosToAdd.some((s) => s.id === scenario.id)) {
             this.scenariosToAdd.push(scenario);
-            this.updateCampaignDataSet();
+            this.updateCampaignParameters();
             this.refreshForPipe();
         }
     }
@@ -246,7 +250,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     removeScenario(scenario: ScenarioIndex) {
         const index = this.scenariosToAdd.indexOf(scenario);
         this.scenariosToAdd.splice(index, 1);
-        this.updateCampaignDataSet();
+        this.updateCampaignParameters();
         this.refreshForPipe();
     }
 
@@ -284,5 +288,9 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
 
     setSelectedEnvironment(event: EnvironmentMetadata) {
         this.selectedEnvironment = event;
+    }
+
+    selectDataset(datasetId: string) {
+        this.datasetId = datasetId;
     }
 }

@@ -4,7 +4,7 @@ import { FormGroup, FormArray, FormBuilder } from '@angular/forms';
 import { Subscription, combineLatest } from 'rxjs';
 import { DragulaService } from 'ng2-dragula';
 
-import { ComponentTask, KeyValue, ScenarioComponent } from '@model';
+import { ComponentTask, Dataset, KeyValue, ScenarioComponent } from '@model';
 import { ComponentService } from '@core/services';
 import { CanDeactivatePage } from '@core/guards';
 
@@ -24,10 +24,9 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
         tags: ''
     });
     componentTasksCreated: Array<ComponentTask> = [];
-
     collapseParam = true;
-
     modificationsSaved = false;
+    datasetId: string;
 
     constructor(private componentService: ComponentService,
                 private router: Router,
@@ -67,6 +66,8 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
         this.updateScenarioParameters();
         const tags = this.componentForm.value['tags'] + '';
         this.scenarioComponent.tags = tags.length !== 0 ? tags.split(',') : [];
+
+        this.scenarioComponent.datasetId = this.datasetId;
         // Call service
         this.componentService.saveComponentTestCase(this.scenarioComponent).subscribe(
             (response) => {
@@ -76,7 +77,7 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
             },
             (error) => {
                 console.log(error);
-                this.scenarioComponent.dataSet = [];
+                this.scenarioComponent.computedParameters = [];
             }
         );
     }
@@ -137,6 +138,7 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
                     });
                     this.initFormComponentParameters();
                     this.componentForm.controls['tags'].setValue(this.scenarioComponent.tags);
+                    this.datasetId = this.scenarioComponent.datasetId;
                     if (duplicate) {
                         this.scenarioComponent.id = null;
                         this.scenarioComponent.creationDate = null;
@@ -171,6 +173,10 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
                 this.scenarioComponent.parameters.push(new KeyValue(parameter.get('key').value, parameter.get('value').value));
             }
         }
+    }
+
+    selectDataset(datasetId: string) {
+        this.datasetId = datasetId;
     }
 
     // Verify of page was updated
@@ -212,13 +218,14 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
             scenarioNotModified = false;
         }
 
-        // Check component dataset
+        // Check component parameters
         if (this.scenarioComponent.componentSteps.length === this.componentTasksCreated.length) {
             this.scenarioComponent.componentSteps.forEach((componentTask, componentIndex) => {
-                if (this.componentTasksCreated[componentIndex].dataSet.length === this.componentTasksCreated[componentIndex].dataSet.length) {
-                    componentTask.dataSet.forEach((parameter, parameterIndex) => {
+                if (this.componentTasksCreated[componentIndex].computedParameters.length
+                            === this.componentTasksCreated[componentIndex].computedParameters.length) {
+                    componentTask.computedParameters.forEach((parameter, parameterIndex) => {
                         scenarioNotModified = scenarioNotModified &&
-                            parameter.value === this.componentTasksCreated[componentIndex].dataSet[parameterIndex].value;
+                            parameter.value === this.componentTasksCreated[componentIndex].computedParameters[parameterIndex].value;
                     });
                 } else {
                     scenarioNotModified = false;

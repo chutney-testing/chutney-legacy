@@ -11,7 +11,7 @@
           class="scenario-components-identifier mr-3 font-italic pl-3 float-right font-weight-bold">
         ({{component.implementation.identifier}})
     </span>
-    <div *ngIf="component.dataSet?.length > 0" class="scenario-components-parameters">
+    <div *ngIf="component.computedParameters?.length > 0" class="scenario-components-parameters">
         <fieldset class="w-100" [ngClass]="collapseComponentsParameters ? 'border-top pl-2' : 'border p-2'">
             <legend class="pl-3 pr-3 mb-0 font-weight-bold" (click)="switchCollapseComponentsParameter()">
                 <span>
@@ -23,7 +23,7 @@
                 </button>
             </legend>
             <div *ngIf="!collapseComponentsParameters" class="form-group mb-0">
-                <div class="row m-1" *ngFor="let parameter of component.dataSet; let j=index">
+                <div class="row m-1" *ngFor="let parameter of component.computedParameters; let j=index">
                     <label class="col-3 col-form-label" for="{{'name' + uid + '_' + j}}">{{parameter.key}}</label>
                     <div class="col-9">
                         <input type="text" class="param-value-input form-control" id="{{'name' + uid + '_' + j}}"

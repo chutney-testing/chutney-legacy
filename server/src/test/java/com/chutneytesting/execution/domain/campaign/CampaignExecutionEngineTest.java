@@ -344,11 +344,11 @@ public class CampaignExecutionEngineTest {
     }
 
     private Campaign createCampaign() {
-        return new Campaign(generateId(), "...", null, null, null, null, "campaignEnv", false, false);
+        return new Campaign(generateId(), "...", null, null, null, null, "campaignEnv", false, false, null);
     }
 
     private Campaign createCampaign(Long idCampaign) {
-        return new Campaign(idCampaign, "campaign1", null, emptyList(), emptyMap(), null, "env", false, false);
+        return new Campaign(idCampaign, "campaign1", null, emptyList(), emptyMap(), null, "env", false, false, null);
     }
 
     private Campaign createCampaign(TestCase firstTestCase, TestCase secondtTestCase) {
@@ -359,6 +359,6 @@ public class CampaignExecutionEngineTest {
         return createCampaign(firstTestCase, secondtTestCase, false,  retryAuto);
     }
     private Campaign createCampaign(TestCase firstTestCase, TestCase secondtTestCase, boolean parallelRun , boolean retryAuto) {
-        return new Campaign(1L, "campaign1", null, Lists.list(firstTestCase.id(), secondtTestCase.id()), emptyMap(), null, "env", parallelRun, retryAuto);
+        return new Campaign(1L, "campaign1", null, Lists.list(firstTestCase.id(), secondtTestCase.id()), emptyMap(), null, "env", parallelRun, retryAuto, null);
     }
 }

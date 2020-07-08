@@ -33,6 +33,6 @@ public interface RawTestCaseDto {
     }
 
     @Value.Default()
-    default List<KeyValue> dataSet() { return Collections.emptyList(); }
+    default List<KeyValue> computedParameters() { return Collections.emptyList(); }
 
 }

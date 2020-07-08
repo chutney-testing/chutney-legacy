@@ -33,7 +33,7 @@ public class FakeCampaignRepository implements CampaignRepository {
         if (campaign.id != null && campaignsById.containsKey(campaign.id)) {
             saved = campaign;
         } else {
-            saved = new Campaign(sequence.incrementAndGet(), campaign.title, campaign.description, campaign.scenarioIds, emptyMap(), campaign.getScheduleTime(), "env", false, false);
+            saved = new Campaign(sequence.incrementAndGet(), campaign.title, campaign.description, campaign.scenarioIds, emptyMap(), campaign.getScheduleTime(), "env", false, false, null);
         }
         campaignsById.put(saved.id, saved);
         campaignsByName.put(saved.title, saved);
@@ -44,7 +44,7 @@ public class FakeCampaignRepository implements CampaignRepository {
     @Override
     public void saveReport(Long campaignId, CampaignExecutionReport report) {
         Optional.ofNullable(campaignsById.get(campaignId)).ifPresent(campaign -> {
-            Campaign c = new Campaign(campaign.id, campaign.title, campaign.title, campaign.scenarioIds, campaign.dataSet, campaign.getScheduleTime(), campaign.executionEnvironment(), false, false);
+            Campaign c = new Campaign(campaign.id, campaign.title, campaign.title, campaign.scenarioIds, campaign.dataSet, campaign.getScheduleTime(), campaign.executionEnvironment(), false, false, null);
             createOrUpdate(c);
         });
 

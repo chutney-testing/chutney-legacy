@@ -122,15 +122,15 @@ describe('ComponentEditionComponent', () => {
         expect(c.canDeactivatePage()).toBe(false);
     });
 
-    it('Update component dataset should trigger scenario modified', () => {
+    it('Update component parameters should trigger scenario modified', () => {
         const componentTestCaseMock = new ScenarioComponent('id', '', '', new Date(), [task1, task2],
-            [new KeyValue('param', 'value1')], [new KeyValue('dataset', 'value1')], []);
+            [new KeyValue('param', 'value1')], [new KeyValue('param', 'value1')], []);
         componentService.findComponentTestCase.and.returnValue(of(componentTestCaseMock));
         const fixture = TestBed.createComponent(ComponentEditionComponent);
         fixture.detectChanges();
 
         const c = fixture.componentInstance;
-        c.componentTasksCreated[0].dataSet[0] = new KeyValue('dataset', 'value2');
+        c.componentTasksCreated[0].computedParameters[0] = new KeyValue('param', 'value2');
 
         expect(c.canDeactivatePage()).toBe(false);
     });
