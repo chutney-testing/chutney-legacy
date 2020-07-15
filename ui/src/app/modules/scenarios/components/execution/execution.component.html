@@ -43,7 +43,7 @@
                         <small class="text-muted ml-2">
                             {{'global.time.at' | translate}} {{scenarioExecutionReport.report.startDate | date:'medium'}}
                         </small>
-                        <small class="text-muted ml-2">
+                        <small *ngIf="scenarioExecutionReport.user" class="text-muted ml-2">
                             {{'global.smallword.by' | translate}} : <b>{{scenarioExecutionReport.user}}</b>
                         </small>
                         <small class="text-muted ml-2">
