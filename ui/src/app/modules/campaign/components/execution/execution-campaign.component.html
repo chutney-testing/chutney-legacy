@@ -6,11 +6,11 @@
     </div>
     <div class="col-md-2">
         <div class="btn-toolbar">
-            <button *ngIf="running" type="button" class="btn btn-dark" (click)="stopScenario()">
+            <button *ngIf="this.currentCampaignExecutionReport?.status === 'RUNNING'" type="button" class="btn btn-dark m-2" (click)="stopScenario()" [disabled]="stopRequested ">
                 <span class="fa fa-stop mr-2"></span>
                 <span class="btn-label">{{ 'global.actions.stop' | translate }}</span>
             </button>
-            <div ngbDropdown class="d-inline-block">
+            <div *ngIf="!running" ngbDropdown class="d-inline-block">
                 <button id="execute-campaign-btn" type="button" class="btn btn-success" ngbDropdownToggle
                         (click)="executeCampaignOnToggle()"
                         [disabled]="running || (scenarios && scenarios.length == 0)">
