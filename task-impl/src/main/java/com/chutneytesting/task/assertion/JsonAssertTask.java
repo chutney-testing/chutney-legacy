@@ -1,17 +1,20 @@
 package com.chutneytesting.task.assertion;
 
+import com.chutneytesting.task.assertion.json.JsonUtils;
+import com.chutneytesting.task.assertion.placeholder.PlaceholderAsserter;
+import com.chutneytesting.task.assertion.placeholder.PlaceholderAsserterUtils;
+import com.chutneytesting.task.spi.Task;
+import com.chutneytesting.task.spi.TaskExecutionResult;
+import com.chutneytesting.task.spi.injectable.Input;
+import com.chutneytesting.task.spi.injectable.Logger;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.ReadContext;
-import com.chutneytesting.task.spi.Task;
-import com.chutneytesting.task.spi.TaskExecutionResult;
-import com.chutneytesting.task.spi.injectable.Input;
-import com.chutneytesting.task.spi.injectable.Logger;
-import com.chutneytesting.task.assertion.json.JsonUtils;
 import java.math.BigDecimal;
 import java.util.Map;
+import java.util.Optional;
 
 public class JsonAssertTask implements Task {
 
@@ -54,9 +57,11 @@ public class JsonAssertTask implements Task {
                     Object expected = entry.getValue();
                     Object actualValue = document.read(path);
 
-                    boolean result;
-                    if (expected == null) {
-                        result = (actualValue == null);
+                boolean result;
+
+                    Optional<PlaceholderAsserter> asserts = PlaceholderAsserterUtils.getAsserterMatching(expected);
+                    if(asserts.isPresent()) {
+                        result = asserts.get().assertValue(logger, actualValue, expected);
                     } else if (actualValue == null) {
                         logger.error("Path [" + path + "] not found");
                         result = false;
@@ -67,11 +72,9 @@ public class JsonAssertTask implements Task {
                     } else {
                         result = expected.equals(actualValue);
                     }
-
                     if (!result) {
                         logger.error("On path [" + path + "], found [" + actualValue + "], expected was [" + expected + "]");
                     }
-
                     return result;
                 }
             );
