@@ -1,135 +1,164 @@
 package com.chutneytesting.execution.domain.compiler;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
-import static java.util.Optional.ofNullable;
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 
 import com.chutneytesting.design.domain.compose.ComposableScenario;
 import com.chutneytesting.design.domain.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.compose.FunctionalStep;
-import com.chutneytesting.design.domain.compose.Strategy;
-import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
-import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
-import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.design.domain.dataset.DataSet;
+import com.chutneytesting.design.domain.dataset.DataSetRepository;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import org.apache.commons.text.StringEscapeUtils;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcessor<ComposableTestCase> {
 
-    private GlobalvarRepository globalvarRepository;
+    private final DataSetRepository dataSetRepository;
 
-    ComposableTestCaseDataSetPreProcessor(GlobalvarRepository globalvarRepository) {
-        this.globalvarRepository = globalvarRepository;
+    public ComposableTestCaseDataSetPreProcessor(DataSetRepository dataSetRepository) {
+        this.dataSetRepository = dataSetRepository;
     }
 
     @Override
     public ComposableTestCase apply(ComposableTestCase testCase, String environment) {
-        Map<String, String> globalVariable = globalvarRepository.getFlatMap();
-        makeEnvironmentNameAsGlobalVariable(globalVariable, environment);
-        return new ComposableTestCase(
-            testCase.id,
-            applyToMetadata(testCase.metadata, testCase.computedParameters, globalVariable),
-            applyToScenario(testCase.composableScenario, testCase.computedParameters, globalVariable),
-            testCase.computedParameters);
-    }
+        Optional<DataSet> oDataSet = testCase.metadata.datasetId().map(dataSetRepository::findById);
+        if (!oDataSet.isPresent()) {
+            return testCase;
+        }
 
-    public ComposableTestCase applyOnStrategy(ComposableTestCase testCase, String environment) {
-        Map<String, String> globalVariable = globalvarRepository.getFlatMap();
-        makeEnvironmentNameAsGlobalVariable(globalVariable,environment);
-        Map<String,String> testCaseDataSet = applyOnCurrentStepDataSet(testCase.computedParameters, emptyMap(), globalVariable);
+        DataSet dataSet = oDataSet.get();
+        List<Map<String, String>> multipleValues = dataSet.multipleValues;
+
+        Map<Boolean, List<String>> matchedHeaders = new HashMap<>();
+        if (!multipleValues.isEmpty()) {
+            Set<String> valuesHeaders = multipleValues.get(0).keySet();
+            matchedHeaders = testCase.computedParameters.keySet().stream()
+                .collect(groupingBy(valuesHeaders::contains));
+        }
+        matchedHeaders.putIfAbsent(Boolean.TRUE, emptyList());
+        matchedHeaders.putIfAbsent(Boolean.FALSE, emptyList());
+
         return new ComposableTestCase(
             testCase.id,
             testCase.metadata,
-            applyOnStrategy(testCase.composableScenario, testCaseDataSet, globalVariable),
-            testCaseDataSet);
+            applyToScenario(testCase.composableScenario, matchedHeaders, dataSet),
+            applyToComputedParameters(testCase.computedParameters, matchedHeaders.get(Boolean.TRUE), dataSet));
     }
 
-    private TestCaseMetadata applyToMetadata(TestCaseMetadata metadata, Map<String, String> dataSet, Map<String, String> globalVariable) {
-        return TestCaseMetadataImpl.TestCaseMetadataBuilder
-            .from(metadata)
-            .withTitle(replaceParams(metadata.title(), globalVariable, dataSet))
-            .withDescription(replaceParams(metadata.description(), globalVariable, dataSet))
-            .build();
+    private Map<String, String> applyToComputedParameters(Map<String, String> computedParameters, List<String> matchedHeaders, DataSet dataSet) {
+        HashMap<String, String> parameters = new HashMap<>(computedParameters);
+
+        Map<String, String> uniqueValues = dataSet.uniqueValues;
+        computedParameters.keySet().stream()
+            .filter(uniqueValues::containsKey)
+            .forEach(key -> parameters.put(key, uniqueValues.get(key)));
+
+        computedParameters.keySet().stream()
+            .filter(matchedHeaders::contains)
+            .forEach(parameters::remove);
+
+        return parameters;
     }
 
-    private ComposableScenario applyToScenario(ComposableScenario composableScenario, Map<String, String> testCaseDataSet, Map<String, String> globalVariable) {
+    private ComposableScenario applyToScenario(ComposableScenario composableScenario, Map<Boolean, List<String>> matchedHeaders, DataSet dataSet) {
+        if (matchedHeaders.isEmpty()) {
+            return composableScenario;
+        }
+
         return ComposableScenario.builder()
             .withFunctionalSteps(
                 composableScenario.functionalSteps.stream()
-                    .map(step -> applyToFunctionalStep(step, testCaseDataSet, globalVariable))
-                    .collect(Collectors.toList())
+                    .map(fs -> applyToScenarioSteps(fs, matchedHeaders, dataSet))
+                    .collect(toList())
             )
             .withParameters(composableScenario.parameters)
             .build();
     }
 
-    private FunctionalStep applyToFunctionalStep(FunctionalStep functionalStep, Map<String, String> parentDataset, Map<String, String> globalVariable) {
-        Map<String, String> scopedDataset = applyOnCurrentStepDataSet(functionalStep.dataSet, parentDataset, globalVariable);
-        List<FunctionalStep> subSteps = functionalStep.steps;
+    private FunctionalStep applyToScenarioSteps(FunctionalStep functionalStep, Map<Boolean, List<String>> matchedHeaders, DataSet dataSet) {
+        Set<String> fsNovaluedEntries = findFunctionalStepNoValuedMatchedEntries(functionalStep.dataSet, matchedHeaders.get(Boolean.TRUE));
+        Map<String, Set<String>> fsValuedEntriesWithRef = findFunctionalStepValuedEntriesWithRef(functionalStep.dataSet, matchedHeaders.get(Boolean.TRUE));
 
-        // Preprocess substeps - Recurse
-        return FunctionalStep.builder()
-            .withName(replaceParams(functionalStep.name, globalvarRepository.getFlatMap(), scopedDataset))
-            .withSteps(
-                subSteps.stream()
-                    .map(f -> applyToFunctionalStep(f, scopedDataset, globalVariable))
-                    .collect(Collectors.toList())
-            )
-            .withImplementation(functionalStep.implementation.map(v -> replaceParams(v, globalvarRepository.getFlatMap(), scopedDataset, StringEscapeUtils::escapeJson)))
-            .withStrategy(functionalStep.strategy)
-            .overrideDataSetWith(scopedDataset)
-            .build();
-    }
+        if (fsNovaluedEntries.isEmpty() && fsValuedEntriesWithRef.isEmpty()) {
+            return functionalStep;
+        }
 
-    private Map<String, String> applyOnCurrentStepDataSet(Map<String, String> currentStepDataset, Map<String, String> parentDataset, Map<String, String> globalVariables) {
-        Map<String, String> scopedDataset = new HashMap<>();
-        Map<Boolean, List<Map.Entry<String, String>>> splitDataSet = currentStepDataset.entrySet().stream().collect(Collectors.groupingBy(o -> isBlank(o.getValue())));
+        Map<String, String> fsLeftEntries = functionalStep.dataSet.entrySet().stream()
+            .filter(e -> e.getValue().isEmpty())
+            .filter(e -> !fsNovaluedEntries.contains(e.getKey()))
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        ofNullable(splitDataSet.get(true))
-            .ifPresent(l -> l.forEach(e -> scopedDataset.put(e.getKey(), ofNullable(parentDataset.get(e.getKey())).orElse(""))));
-
-        ofNullable(splitDataSet.get(false))
-            .ifPresent(l -> l.forEach(e -> {
-                scopedDataset.put(e.getKey(), replaceParams(e.getValue(), globalVariables, parentDataset));
-            }));
-
-        return scopedDataset;
-    }
-
-    private ComposableScenario applyOnStrategy(ComposableScenario composableScenario, Map<String, String> testCaseDataSet, Map<String, String> globalVariable) {
-        return ComposableScenario.builder()
-            .withFunctionalSteps(
-                composableScenario.functionalSteps.stream()
-                    .map(step -> applyOnStepStrategy(step, testCaseDataSet, globalVariable))
-                    .collect(Collectors.toList())
-            )
-            .withParameters(composableScenario.parameters)
-            .build();
-    }
-
-    private FunctionalStep applyOnStepStrategy(FunctionalStep functionalStep, Map<String, String> parentDataset, Map<String, String> globalVariable) {
-        Map<String, String> scopedDataset = applyOnCurrentStepDataSet(functionalStep.dataSet, parentDataset, globalVariable);
+        matchedHeaders.get(Boolean.FALSE).forEach(s -> fsLeftEntries.put(s, ""));
 
         return FunctionalStep.builder()
-            .withName(functionalStep.name)
-            .withSteps(
-                functionalStep.steps.stream()
-                    .map(f -> applyOnStepStrategy(f, scopedDataset, globalVariable))
-                    .collect(Collectors.toList())
-            )
-            .withImplementation(functionalStep.implementation)
-            .withStrategy(applyToStrategy(functionalStep.strategy, scopedDataset, globalVariable))
-            .overrideDataSetWith(functionalStep.dataSet)
+            .from(functionalStep)
+            .withSteps(buildStepIterations(functionalStep, fsNovaluedEntries, fsValuedEntriesWithRef, dataSet.multipleValues))
+            .overrideDataSetWith(buildDatasetWithAliases(fsLeftEntries))
             .build();
     }
 
-    private Strategy applyToStrategy(Strategy strategy, Map<String, String> scopedDataset, Map<String, String> globalVariable) {
-        Map<String, Object> parameters = new HashMap<>();
-        strategy.parameters.forEach((key, value) -> parameters.put(key, replaceParams(value.toString(), scopedDataset, globalVariable)));
-        return new Strategy(strategy.type, parameters);
+    private Map<String, Set<String>> findFunctionalStepValuedEntriesWithRef(Map<String, String> fsDataSet, List<String> matchedHeaders) {
+        HashMap<String, Set<String>> valuedEntriesWithRef = new HashMap<>();
+        for (Map.Entry<String, String> fsData : fsDataSet.entrySet()) {
+            String value = fsData.getValue();
+            for (String matchedHeader : matchedHeaders) {
+                if (value.contains("**" + matchedHeader + "**")) {
+                    valuedEntriesWithRef.putIfAbsent(fsData.getKey(), new HashSet<>());
+                    valuedEntriesWithRef.get(fsData.getKey()).add(matchedHeader);
+                }
+            }
+        }
+        return valuedEntriesWithRef;
     }
 
+    private Set<String> findFunctionalStepNoValuedMatchedEntries(Map<String, String> fsDataSet, List<String> matchedHeaders) {
+        return fsDataSet.entrySet().stream()
+            .filter(e -> e.getValue().isEmpty() && matchedHeaders.contains(e.getKey()))
+            .map(Map.Entry::getKey)
+            .collect(toSet());
+    }
+
+    private List<FunctionalStep> buildStepIterations(FunctionalStep functionalStep, Set<String> fsNovaluedEntries, Map<String, Set<String>> fsValuedEntriesWithRef, List<Map<String, String>> multipleValues) {
+        Set<String> dataSetEntriesReferenced = fsValuedEntriesWithRef.values().stream().flatMap(Collection::stream).collect(toSet());
+        List<Map<String, String>> iterationData = multipleValues.stream()
+            .map(m ->
+                m.entrySet().stream()
+                    .filter(e -> fsNovaluedEntries.contains(e.getKey()) || dataSetEntriesReferenced.contains(e.getKey()))
+                    .collect(toMap(Map.Entry::getKey, Map.Entry::getValue))
+            )
+            .distinct()
+            .collect(toList());
+
+        AtomicInteger index = new AtomicInteger(0);
+        return iterationData.stream()
+            .map(mv -> {
+                index.getAndIncrement();
+
+                Map<String, String> newDataSet = new HashMap<>(functionalStep.dataSet);
+                functionalStep.dataSet.forEach((k, v) -> {
+                    if (fsNovaluedEntries.contains(k)) {
+                        newDataSet.put(k, mv.get(k));
+                    } else if (fsValuedEntriesWithRef.containsKey(k)) {
+                        newDataSet.put(k, replaceParams(v, emptyMap(), mv));
+                    }
+                });
+
+                return FunctionalStep.builder()
+                    .from(functionalStep)
+                    .withName(functionalStep.name + " - dataset iteration " + index)
+                    .overrideDataSetWith(newDataSet)
+                    .build();
+            })
+            .collect(toList());
+    }
 }

@@ -42,7 +42,7 @@ public class ComposableTestCaseLoopPreProcessorTest {
         ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
-        ComposableTestCase actual = sut.apply(composableTestCase);
+        ComposableTestCase actual = sut.apply(composableTestCase, "env");
 
         // Then
         assertThat(actual.composableScenario.functionalSteps).hasSize(1);
@@ -69,7 +69,7 @@ public class ComposableTestCaseLoopPreProcessorTest {
         ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
-        ComposableTestCase actual = sut.apply(composableTestCase);
+        ComposableTestCase actual = sut.apply(composableTestCase, "env");
 
         // Then
         assertThat(actual.composableScenario.functionalSteps).hasSize(1);
@@ -97,7 +97,7 @@ public class ComposableTestCaseLoopPreProcessorTest {
         ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
-        ComposableTestCase actual = sut.apply(composableTestCase);
+        ComposableTestCase actual = sut.apply(composableTestCase, "env");
 
         // Then
         assertThat(actual.composableScenario.functionalSteps).hasSize(1);
@@ -125,7 +125,7 @@ public class ComposableTestCaseLoopPreProcessorTest {
         ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
-        ComposableTestCase actual = sut.apply(composableTestCase);
+        ComposableTestCase actual = sut.apply(composableTestCase, "env");
 
         // Then
         assertThat(actual.composableScenario.functionalSteps).hasSize(1);
@@ -153,7 +153,7 @@ public class ComposableTestCaseLoopPreProcessorTest {
         ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
-        ComposableTestCase actual = sut.apply(composableTestCase);
+        ComposableTestCase actual = sut.apply(composableTestCase, "env");
 
         // Then
         assertThat(actual.composableScenario.functionalSteps).hasSize(1);
@@ -181,7 +181,7 @@ public class ComposableTestCaseLoopPreProcessorTest {
         ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
-        ComposableTestCase actual = sut.apply(composableTestCase);
+        ComposableTestCase actual = sut.apply(composableTestCase, "env");
 
         // Then
         assertThat(actual.composableScenario.functionalSteps).hasSize(1);
@@ -210,7 +210,7 @@ public class ComposableTestCaseLoopPreProcessorTest {
         ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
-        ComposableTestCase actual = sut.apply(composableTestCase);
+        ComposableTestCase actual = sut.apply(composableTestCase, "env");
 
         // Then
         assertThat(actual.composableScenario.functionalSteps).hasSize(1);
@@ -239,7 +239,7 @@ public class ComposableTestCaseLoopPreProcessorTest {
         ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
-        ComposableTestCase actual = sut.apply(composableTestCase);
+        ComposableTestCase actual = sut.apply(composableTestCase, "env");
 
         // Then
         assertThat(actual.composableScenario.functionalSteps).hasSize(1);
@@ -274,7 +274,7 @@ public class ComposableTestCaseLoopPreProcessorTest {
         ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
-        ComposableTestCase actual = sut.apply(composableTestCase);
+        ComposableTestCase actual = sut.apply(composableTestCase, "env");
 
         // Then
 
@@ -307,7 +307,7 @@ public class ComposableTestCaseLoopPreProcessorTest {
         ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
-        ComposableTestCase actual = sut.apply(composableTestCase);
+        ComposableTestCase actual = sut.apply(composableTestCase, "env");
 
         // Then
         assertThat(actual.composableScenario.functionalSteps).hasSize(1);
@@ -336,7 +336,7 @@ public class ComposableTestCaseLoopPreProcessorTest {
         ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
-        ComposableTestCase actual = sut.apply(composableTestCase);
+        ComposableTestCase actual = sut.apply(composableTestCase, "env");
 
         // Then
         assertThat(actual.composableScenario.functionalSteps).hasSize(1);

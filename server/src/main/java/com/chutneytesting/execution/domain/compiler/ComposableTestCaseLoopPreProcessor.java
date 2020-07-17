@@ -6,31 +6,28 @@ import com.chutneytesting.design.domain.compose.FunctionalStep;
 import com.chutneytesting.design.domain.compose.Strategy;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class ComposableTestCaseLoopPreProcessor {
+class ComposableTestCaseLoopPreProcessor implements TestCasePreProcessor<ComposableTestCase> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ComposableTestCaseLoopPreProcessor.class);
 
-    private ObjectMapper objectMapper;
-
-    private Pattern aliasPattern = Pattern.compile("^\\*\\*(.+)\\*\\*$");
+    private final ObjectMapper objectMapper;
 
     ComposableTestCaseLoopPreProcessor(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
-    ComposableTestCase apply(ComposableTestCase testCase) {
+    @Override
+    public ComposableTestCase apply(ComposableTestCase testCase, String environment) {
         return new ComposableTestCase(
             testCase.id,
             testCase.metadata,
@@ -84,20 +81,6 @@ class ComposableTestCaseLoopPreProcessor {
             LOGGER.error("Error reading json loop data", e);
             return functionalStep;
         }
-    }
-
-    // TODO - refactor dataset
-    private Map<String, String> buildDatasetWithAliases(Map<String, String> dataSet) {
-        Map<String, String> aliases = dataSet.entrySet().stream()
-            .filter(o -> isAlias(o.getValue()))
-            .collect(Collectors.toMap(a -> a.getValue().substring(2, a.getValue().length()-2), o -> ""));
-
-        aliases.putAll(dataSet);
-        return Collections.unmodifiableMap(aliases);
-    }
-
-    private boolean isAlias(String paramValue) {
-        return aliasPattern.matcher(paramValue).matches();
     }
 
     private List<FunctionalStep> createStepIterations(FunctionalStep functionalStep, List<Map<String, String>> iterationData) {
