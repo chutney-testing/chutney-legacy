@@ -20,6 +20,7 @@ import com.chutneytesting.design.domain.dataset.DataSet;
 import com.chutneytesting.design.domain.dataset.DataSetRepository;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.util.Collections;
@@ -83,7 +84,9 @@ public class ComposableTestCasePreProcessorTest {
         ComposableTestCase composableTestase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
-        ComposableTestCase actual = sut.apply(composableTestase, environment);
+        ComposableTestCase actual = sut.apply(
+            new ExecutionRequest(composableTestase, environment)
+        );
 
         // Then
         assertThat(actual.composableScenario.functionalSteps.size()).isEqualTo(1);
@@ -128,10 +131,12 @@ public class ComposableTestCasePreProcessorTest {
             .build();
 
         Map<String, String> dataset = singletonMap(PARAM_NAME, "**" + GLOBAL_PARAMETER + "**");
-        ComposableTestCase composableTestase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario, dataset);
+        ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario, dataset);
 
         // When
-        ComposableTestCase actual = sut.apply(composableTestase, environment);
+        ComposableTestCase actual = sut.apply(
+            new ExecutionRequest(composableTestCase, environment)
+        );
 
         // Then
         assertThat(actual.composableScenario.functionalSteps.size()).isEqualTo(1);
@@ -226,7 +231,9 @@ public class ComposableTestCasePreProcessorTest {
             dataSet);
 
         // When
-        final ComposableTestCase composableTestCaseProcessed = sut.apply(composableTestCase, environment);
+        final ComposableTestCase composableTestCaseProcessed = sut.apply(
+            new ExecutionRequest(composableTestCase, environment)
+        );
 
         // Then
         assertThat(composableTestCaseProcessed.id()).isEqualTo(composableTestCase.id());
@@ -355,7 +362,9 @@ public class ComposableTestCasePreProcessorTest {
                 .build(),
             dataSet);
 
-        final ComposableTestCase composableTestCaseProcessed = sut.apply(composableTestCase, environment);
+        final ComposableTestCase composableTestCaseProcessed = sut.apply(
+            new ExecutionRequest(composableTestCase, environment)
+        );
 
         // Then
         assertThat(composableTestCaseProcessed.id()).isEqualTo(composableTestCase.id());
@@ -512,7 +521,9 @@ public class ComposableTestCasePreProcessorTest {
         );
 
         // When
-        ComposableTestCase processedTestCase = sut.apply(testCase, "env");
+        ComposableTestCase processedTestCase = sut.apply(
+            new ExecutionRequest(testCase, "env", true)
+        );
 
         // Then
         assertThat(processedTestCase.metadata.title()).isEqualTo("testcase title for dataset unique value ref default title value");

@@ -16,6 +16,7 @@ import com.chutneytesting.design.domain.compose.FunctionalStep;
 import com.chutneytesting.design.domain.dataset.DataSet;
 import com.chutneytesting.design.domain.dataset.DataSetRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.execution.domain.ExecutionRequest;
 import java.util.List;
 import java.util.Map;
 import org.apache.groovy.util.Maps;
@@ -68,7 +69,9 @@ public class ComposableTestCaseDataSetPreProcessorTest {
 
         // When
         ComposableTestCaseDataSetPreProcessor sut = new ComposableTestCaseDataSetPreProcessor(dataSetRepository);
-        ComposableTestCase processedTestCase = sut.apply(testCase, "env");
+        ComposableTestCase processedTestCase = sut.apply(
+            new ExecutionRequest(testCase, "env")
+        );
 
         // Then
         assertThat(processedTestCase.computedParameters()).containsOnly(
@@ -133,7 +136,9 @@ public class ComposableTestCaseDataSetPreProcessorTest {
 
         // When
         ComposableTestCaseDataSetPreProcessor sut = new ComposableTestCaseDataSetPreProcessor(dataSetRepository);
-        ComposableTestCase processedTestCase = sut.apply(testCase, "env");
+        ComposableTestCase processedTestCase = sut.apply(
+            new ExecutionRequest(testCase, "env")
+        );
 
         // Then
         assertThat(processedTestCase.computedParameters).containsOnly(
@@ -234,7 +239,9 @@ public class ComposableTestCaseDataSetPreProcessorTest {
 
         // When
         ComposableTestCaseDataSetPreProcessor sut = new ComposableTestCaseDataSetPreProcessor(dataSetRepository);
-        ComposableTestCase processedTestCase = sut.apply(testCase, "env");
+        ComposableTestCase processedTestCase = sut.apply(
+            new ExecutionRequest(testCase, "env")
+        );
 
         // Then
         assertThat(processedTestCase.composableScenario.functionalSteps).hasSize(1);

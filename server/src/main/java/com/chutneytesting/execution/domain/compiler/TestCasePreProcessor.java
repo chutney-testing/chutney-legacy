@@ -3,6 +3,7 @@ package com.chutneytesting.execution.domain.compiler;
 import static java.util.Collections.unmodifiableMap;
 
 import com.chutneytesting.design.domain.scenario.TestCase;
+import com.chutneytesting.execution.domain.ExecutionRequest;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
 
 public interface TestCasePreProcessor<T extends TestCase> {
 
-    T apply(T testCase, String environment);
+    T apply(ExecutionRequest executionRequest);
 
     default boolean test(T testCase) {
         Type type = ((ParameterizedType) getClass().getGenericInterfaces()[0]).getActualTypeArguments()[0];

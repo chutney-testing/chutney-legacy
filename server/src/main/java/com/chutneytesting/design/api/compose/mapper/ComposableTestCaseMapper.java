@@ -26,7 +26,7 @@ public class ComposableTestCaseMapper {
             fromFrontId(composableTestCaseDto.id()),
             testCaseMetadataFromDto(composableTestCaseDto),
             composableScenarioFromDto(composableTestCaseDto)
-            );
+        );
     }
 
     public static ComposableTestCaseDto toDto(ComposableTestCase composableTestCase) {
@@ -43,7 +43,7 @@ public class ComposableTestCaseMapper {
                     .build()
             )
             .tags(composableTestCase.metadata.tags())
-            .datasetId(composableTestCase.metadata.datasetId())
+            .datasetId(toFrontId(composableTestCase.metadata.datasetId().orElse("")))
             .build();
     }
 
@@ -54,7 +54,7 @@ public class ComposableTestCaseMapper {
             .withCreationDate(composableTestCaseDto.creationDate())
             .withRepositorySource(COMPOSABLE_TESTCASE_REPOSITORY_SOURCE)
             .withTags(composableTestCaseDto.tags())
-            .withDatasetId(composableTestCaseDto.datasetId().orElse(null))
+            .withDatasetId(fromFrontId(composableTestCaseDto.datasetId()))
             .build();
     }
 
@@ -62,8 +62,8 @@ public class ComposableTestCaseMapper {
         return ComposableScenario.builder()
             .withFunctionalSteps(
                 composableTestCaseDto.scenario().componentSteps().stream()
-                .map(FunctionalStepMapper::fromDto)
-                .collect(Collectors.toList()))
+                    .map(FunctionalStepMapper::fromDto)
+                    .collect(Collectors.toList()))
             .withParameters(KeyValue.toMap(composableTestCaseDto.scenario().parameters()))
             .build();
     }

@@ -3,6 +3,7 @@ package com.chutneytesting.execution.domain.compiler;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.design.domain.scenario.gwt.GwtScenario;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
+import com.chutneytesting.execution.domain.ExecutionRequest;
 import java.util.Map;
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,8 @@ public class GwtDataSetPreProcessor implements TestCasePreProcessor<GwtTestCase>
     }
 
     @Override
-    public GwtTestCase apply(GwtTestCase testCase, String environment) {
+    public GwtTestCase apply(ExecutionRequest executionRequest) {
+        GwtTestCase testCase = (GwtTestCase) executionRequest.testCase;
         return GwtTestCase.builder()
             .withMetadata(testCase.metadata)
             .withDataSet(testCase.dataSet)

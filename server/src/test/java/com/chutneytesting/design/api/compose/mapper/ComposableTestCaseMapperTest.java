@@ -72,6 +72,7 @@ public class ComposableTestCaseMapperTest {
                     )
                 )
             )
+            .datasetId("66-7")
             .build();
 
     private final ComposableTestCase composableTestCase =
@@ -83,6 +84,7 @@ public class ComposableTestCaseMapperTest {
                 .withCreationDate(Instant.MIN)
                 .withTags(Arrays.asList("tag1","tag2"))
                 .withRepositorySource("ComposableTestCase")
+                .withDatasetId("#66:7")
                 .build(),
             ComposableScenario.builder()
                 .withFunctionalSteps(

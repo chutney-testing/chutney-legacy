@@ -3,6 +3,7 @@ package com.chutneytesting.execution.domain.compiler;
 import com.chutneytesting.design.domain.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.dataset.DataSetRepository;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
+import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 
@@ -20,9 +21,26 @@ public class ComposableTestCasePreProcessor implements TestCasePreProcessor<Comp
     }
 
     @Override
-    public ComposableTestCase apply(ComposableTestCase testCase, String environment) {
-        ComposableTestCase dataSetProcessedTestCase = dataSetPreProcessor.apply(testCase, environment);
-        ComposableTestCase loopStrategyProcessedTestCase = loopPreProcessor.apply(parametersResolutionPreProcessor.applyOnStrategy(dataSetProcessedTestCase, environment), environment);
-        return parametersResolutionPreProcessor.apply(loopStrategyProcessedTestCase, environment);
+    public ComposableTestCase apply(ExecutionRequest executionRequest) {
+        String environment = executionRequest.environment;
+
+        // Process scenario default dataset if requested
+        ComposableTestCase testCase = (ComposableTestCase) executionRequest.testCase;
+        if (executionRequest.withScenarioDefaultDataSet) {
+            testCase = dataSetPreProcessor.apply(
+                new ExecutionRequest(testCase, environment)
+            );
+        }
+        // Process loop strategy
+        testCase = loopPreProcessor.apply(
+            new ExecutionRequest(
+                parametersResolutionPreProcessor.applyOnStrategy(testCase, environment),
+                environment
+            )
+        );
+        // Process parameters (value them)
+        return parametersResolutionPreProcessor.apply(
+            new ExecutionRequest(testCase, environment)
+        );
     }
 }

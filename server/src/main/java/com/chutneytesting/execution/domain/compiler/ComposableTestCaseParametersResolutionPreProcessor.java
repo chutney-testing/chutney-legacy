@@ -11,6 +11,7 @@ import com.chutneytesting.design.domain.compose.Strategy;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.execution.domain.ExecutionRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,9 +27,10 @@ public class ComposableTestCaseParametersResolutionPreProcessor implements TestC
     }
 
     @Override
-    public ComposableTestCase apply(ComposableTestCase testCase, String environment) {
+    public ComposableTestCase apply(ExecutionRequest executionRequest) {
+        ComposableTestCase testCase = (ComposableTestCase) executionRequest.testCase;
         Map<String, String> globalVariable = globalvarRepository.getFlatMap();
-        makeEnvironmentNameAsGlobalVariable(globalVariable, environment);
+        makeEnvironmentNameAsGlobalVariable(globalVariable, executionRequest.environment);
         return new ComposableTestCase(
             testCase.id,
             applyToMetadata(testCase.metadata, testCase.computedParameters, globalVariable),
@@ -38,8 +40,8 @@ public class ComposableTestCaseParametersResolutionPreProcessor implements TestC
 
     public ComposableTestCase applyOnStrategy(ComposableTestCase testCase, String environment) {
         Map<String, String> globalVariable = globalvarRepository.getFlatMap();
-        makeEnvironmentNameAsGlobalVariable(globalVariable,environment);
-        Map<String,String> testCaseDataSet = applyOnCurrentStepDataSet(testCase.computedParameters, emptyMap(), globalVariable);
+        makeEnvironmentNameAsGlobalVariable(globalVariable, environment);
+        Map<String, String> testCaseDataSet = applyOnCurrentStepDataSet(testCase.computedParameters, emptyMap(), globalVariable);
         return new ComposableTestCase(
             testCase.id,
             testCase.metadata,

@@ -4,6 +4,7 @@ import com.chutneytesting.design.domain.compose.ComposableScenario;
 import com.chutneytesting.design.domain.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.compose.FunctionalStep;
 import com.chutneytesting.design.domain.compose.Strategy;
+import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
@@ -27,7 +28,8 @@ class ComposableTestCaseLoopPreProcessor implements TestCasePreProcessor<Composa
     }
 
     @Override
-    public ComposableTestCase apply(ComposableTestCase testCase, String environment) {
+    public ComposableTestCase apply(ExecutionRequest executionRequest) {
+        ComposableTestCase testCase = (ComposableTestCase) executionRequest.testCase;
         return new ComposableTestCase(
             testCase.id,
             testCase.metadata,

@@ -86,7 +86,7 @@ public class ScenarioExecutionEngineAsync {
      */
     public Long execute(ExecutionRequest executionRequest) {
         // Compile testcase for execution
-        ExecutionRequest executionRequestProcessed = new ExecutionRequest(testCasePreProcessors.apply(executionRequest.testCase,executionRequest.environment), executionRequest.environment);
+        ExecutionRequest executionRequestProcessed = new ExecutionRequest(testCasePreProcessors.apply(executionRequest), executionRequest.environment);
         // Initialize execution history
         ExecutionHistory.Execution storedExecution = storeInitialReport(executionRequest.testCase.id(), executionRequest.testCase.metadata().title(), executionRequest.environment);
         // Start engine execution
@@ -259,7 +259,7 @@ public class ScenarioExecutionEngineAsync {
         try {
             ExecutionHistory.Execution execution = executionHistoryRepository.getExecution(testCase.id(), executionId);
             metrics.onExecutionEnded(testCase.metadata().title(), execution.status(), execution.duration());
-        } catch(Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Send metrics for execution {} failed", executionId, e);
         }
     }

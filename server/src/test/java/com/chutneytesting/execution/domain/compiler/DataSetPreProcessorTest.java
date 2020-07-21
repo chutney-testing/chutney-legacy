@@ -13,6 +13,7 @@ import com.chutneytesting.design.domain.scenario.gwt.GwtStepImplementation;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import com.chutneytesting.design.domain.scenario.gwt.Strategy;
 import com.chutneytesting.design.domain.scenario.raw.RawTestCase;
+import com.chutneytesting.execution.domain.ExecutionRequest;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +45,9 @@ public class DataSetPreProcessorTest {
             .build();
 
         // When
-        RawTestCase actual = dataSetPreProcessor.apply(fakeTestCase,null);
+        RawTestCase actual = dataSetPreProcessor.apply(
+            new ExecutionRequest(fakeTestCase, null)
+        );
 
         // Then
         String expectedContent = "a blabla step with a value and another value and value1";
@@ -85,7 +88,9 @@ public class DataSetPreProcessorTest {
         GwtDataSetPreProcessor dataSetPreProcessor = new GwtDataSetPreProcessor(new GwtScenarioMapper(), globalvarRepository);
 
         // When
-        GwtTestCase actual = dataSetPreProcessor.apply(parameterizedTestCase,null);
+        GwtTestCase actual = dataSetPreProcessor.apply(
+            new ExecutionRequest(parameterizedTestCase, null)
+        );
 
         // Then
         GwtTestCase evaluatedTestCase = GwtTestCase.builder()

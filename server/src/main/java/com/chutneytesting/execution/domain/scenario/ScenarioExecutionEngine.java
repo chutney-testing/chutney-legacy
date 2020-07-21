@@ -59,7 +59,9 @@ public class ScenarioExecutionEngine {
             .withScenario(gwtScenario)
             .withDataSet(dataSet)
             .build();
-        return simpleSyncExecution(environment, testCase);
+        return simpleSyncExecution(
+            new ExecutionRequest(testCase, environment)
+        );
     }
 
     public ScenarioExecutionReport execute(FunctionalStep functionalStep, String environment) throws ScenarioNotFoundException, ScenarioNotParsableException {
@@ -73,13 +75,15 @@ public class ScenarioExecutionEngine {
                 .withFunctionalSteps(Collections.singletonList(functionalStep))
                 .build());
 
-        return simpleSyncExecution(environment, testCase);
+        return simpleSyncExecution(
+            new ExecutionRequest(testCase, environment)
+        );
     }
 
-    private ScenarioExecutionReport simpleSyncExecution(String environment, TestCase testCase) {
-        TestCase testCaseProcessed = testCasePreProcessors.apply(testCase,environment);
+    private ScenarioExecutionReport simpleSyncExecution(ExecutionRequest executionRequest) {
+        ExecutionRequest processedExecutionRequest = new ExecutionRequest(testCasePreProcessors.apply(executionRequest), executionRequest.environment);
 
-        StepExecutionReportCore finalStepReport = executionEngine.execute(new ExecutionRequest(testCaseProcessed, environment));
-        return new ScenarioExecutionReport(0L, testCaseProcessed.metadata().title(), environment, finalStepReport);
+        StepExecutionReportCore finalStepReport = executionEngine.execute(processedExecutionRequest);
+        return new ScenarioExecutionReport(0L, processedExecutionRequest.testCase.metadata().title(), executionRequest.environment, finalStepReport);
     }
 }

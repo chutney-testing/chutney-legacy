@@ -12,6 +12,7 @@ import com.chutneytesting.design.domain.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.compose.FunctionalStep;
 import com.chutneytesting.design.domain.dataset.DataSet;
 import com.chutneytesting.design.domain.dataset.DataSetRepository;
+import com.chutneytesting.execution.domain.ExecutionRequest;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,7 +31,8 @@ public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcess
     }
 
     @Override
-    public ComposableTestCase apply(ComposableTestCase testCase, String environment) {
+    public ComposableTestCase apply(ExecutionRequest executionRequest) {
+        ComposableTestCase testCase = (ComposableTestCase) executionRequest.testCase;
         Optional<DataSet> oDataSet = testCase.metadata.datasetId().map(dataSetRepository::findById);
         if (!oDataSet.isPresent()) {
             return testCase;

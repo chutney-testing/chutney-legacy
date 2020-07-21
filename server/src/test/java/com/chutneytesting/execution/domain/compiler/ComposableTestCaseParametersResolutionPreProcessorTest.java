@@ -14,6 +14,7 @@ import com.chutneytesting.design.domain.compose.FunctionalStep;
 import com.chutneytesting.design.domain.compose.Strategy;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.execution.domain.ExecutionRequest;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -115,7 +116,9 @@ public class ComposableTestCaseParametersResolutionPreProcessorTest {
 
         ComposableTestCaseParametersResolutionPreProcessor sut = new ComposableTestCaseParametersResolutionPreProcessor(globalvarRepository);
         // When
-        final ComposableTestCase composableTestCaseProcessed = sut.apply(composableTestCase, environment);
+        final ComposableTestCase composableTestCaseProcessed = sut.apply(
+            new ExecutionRequest(composableTestCase, environment)
+        );
 
         // Then
         assertThat(composableTestCaseProcessed.id()).isEqualTo(composableTestCase.id());
