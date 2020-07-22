@@ -1,13 +1,15 @@
 package com.chutneytesting.design.infra.storage.campaign;
 
-import com.chutneytesting.design.domain.scenario.TestCaseRepository;
-import com.google.common.collect.Lists;
+import static java.util.Optional.ofNullable;
+
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
 import com.chutneytesting.design.domain.campaign.ScenarioExecutionReportCampaign;
+import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
 import com.chutneytesting.execution.domain.history.ReportNotFoundException;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
+import com.google.common.collect.Lists;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
@@ -17,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,8 +68,8 @@ public class CampaignExecutionReportMapper implements ResultSetExtractor<List<Ca
 
     private ScenarioExecutionReportCampaign readScenarioExecutionReport(ResultSet resultset, String scenarioId, String scenarioName) throws SQLException, ReportNotFoundException {
         ExecutionHistory.ExecutionSummary execution;
-        if(resultset.getLong("SCENARIO_EXECUTION_ID") == -1) {
-            execution =  ImmutableExecutionHistory.ExecutionSummary.builder()
+        if (resultset.getLong("SCENARIO_EXECUTION_ID") == -1) {
+            execution = ImmutableExecutionHistory.ExecutionSummary.builder()
                 .executionId(-1L)
                 .testCaseTitle(scenarioName)
                 .time(LocalDateTime.now())
@@ -89,10 +90,12 @@ public class CampaignExecutionReportMapper implements ResultSetExtractor<List<Ca
             .time(Instant.ofEpochMilli(rs.getLong("EXECUTION_TIME")).atZone(ZoneId.systemDefault()).toLocalDateTime())
             .duration(rs.getLong("DURATION"))
             .status(ServerReportStatus.valueOf(rs.getString("STATUS")))
-            .info(Optional.ofNullable(rs.getString("INFORMATION")))
-            .error(Optional.ofNullable(rs.getString("ERROR")))
+            .info(ofNullable(rs.getString("INFORMATION")))
+            .error(ofNullable(rs.getString("ERROR")))
             .testCaseTitle(scenarioName)
             .environment(rs.getString("ENVIRONMENT"))
+            .datasetId(ofNullable(rs.getString("DATASET_ID")))
+            .datasetVersion(ofNullable(rs.getString("DATASET_VERSION")).map(Integer::new))
             .build();
     }
 

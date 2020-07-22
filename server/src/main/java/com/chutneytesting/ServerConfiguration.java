@@ -1,5 +1,6 @@
 package com.chutneytesting;
 
+import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.chutneytesting.agent.domain.configure.LocalServerIdentifier;
 import com.chutneytesting.design.domain.campaign.CampaignRepository;
@@ -89,6 +90,7 @@ public class ServerConfiguration {
                                                               Metrics metrics,
                                                               TestCasePreProcessors testCasePreProcessors,
                                                               ObjectMapper objectMapper,
+                                                              DataSetHistoryRepository dataSetHistoryRepository,
                                                               @Value("${chutney.execution.async.publisher.ttl:5}") long replayerRetention,
                                                               @Value("${chutney.execution.async.publisher.debounce:250}") long debounceMilliSeconds) {
         return new ScenarioExecutionEngineAsync(
@@ -98,6 +100,7 @@ public class ServerConfiguration {
             metrics,
             testCasePreProcessors,
             objectMapper,
+            dataSetHistoryRepository,
             replayerRetention,
             debounceMilliSeconds);
     }

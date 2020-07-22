@@ -1,6 +1,5 @@
 package com.chutneytesting.execution.infra.storage;
 
-import com.google.common.collect.ImmutableMap;
 import com.chutneytesting.execution.domain.history.ExecutionHistory.DetachedExecution;
 import com.chutneytesting.execution.domain.history.ExecutionHistory.Execution;
 import com.chutneytesting.execution.domain.history.ExecutionHistory.ExecutionSummary;
@@ -8,6 +7,7 @@ import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
 import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
 import com.chutneytesting.execution.domain.history.ReportNotFoundException;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
+import com.google.common.collect.ImmutableMap;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,7 +33,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     @Override
     public List<ExecutionSummary> getExecutions(String scenarioId) {
         return namedParameterJdbcTemplate.query(
-            "SELECT ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, TEST_CASE_TITLE, ENVIRONMENT FROM SCENARIO_EXECUTION_HISTORY WHERE SCENARIO_ID = :scenarioId ORDER BY ID DESC LIMIT " + LIMIT_BLOC_SIZE,
+            "SELECT ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, TEST_CASE_TITLE, ENVIRONMENT, DATASET_ID, DATASET_VERSION  FROM SCENARIO_EXECUTION_HISTORY WHERE SCENARIO_ID = :scenarioId ORDER BY ID DESC LIMIT " + LIMIT_BLOC_SIZE,
             ImmutableMap.<String, Object>builder().put("scenarioId", scenarioId).build(),
             executionSummaryRowMapper);
     }
@@ -46,21 +46,21 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
         executionParameters.put("scenarioId", scenarioId);
         executionParameters.put("id", nextId);
         namedParameterJdbcTemplate.update("INSERT INTO SCENARIO_EXECUTION_HISTORY"
-                + "(ID, SCENARIO_ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, REPORT, TEST_CASE_TITLE, ENVIRONMENT) VALUES "
-                + "(:id, :scenarioId, :executionTime, :duration, :status, :information, :error, :report, :title, :environment)",
+                + "(ID, SCENARIO_ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, REPORT, TEST_CASE_TITLE, ENVIRONMENT, DATASET_ID, DATASET_VERSION) VALUES "
+                + "(:id, :scenarioId, :executionTime, :duration, :status, :information, :error, :report, :title, :environment, :datasetId, :datasetVersion)",
             executionParameters);
 
         return ImmutableExecutionHistory.Execution.builder()
-                                                  .from(execution)
-                                                  .executionId(nextId)
-                                                  .build();
+            .from(execution)
+            .executionId(nextId)
+            .build();
     }
 
     @Override
     public Execution getExecution(String scenarioId, Long reportId) throws ReportNotFoundException {
         try {
             return namedParameterJdbcTemplate.queryForObject(
-                "SELECT ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, REPORT, TEST_CASE_TITLE, ENVIRONMENT FROM SCENARIO_EXECUTION_HISTORY WHERE ID = :reportId and SCENARIO_ID = :scenarioId",
+                "SELECT ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, REPORT, TEST_CASE_TITLE, ENVIRONMENT, DATASET_ID, DATASET_VERSION FROM SCENARIO_EXECUTION_HISTORY WHERE ID = :reportId AND SCENARIO_ID = :scenarioId",
                 ImmutableMap.<String, Object>builder()
                     .put("reportId", reportId)
                     .put("scenarioId", scenarioId)
@@ -86,7 +86,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
 
         return namedParameterJdbcTemplate.update(
             "UPDATE SCENARIO_EXECUTION_HISTORY SET "
-                + "EXECUTION_TIME = :executionTime, DURATION = :duration, STATUS = :status, INFORMATION = :information, ERROR = :error, REPORT = :report, TEST_CASE_TITLE = :title, ENVIRONMENT= :environment "
+                + "EXECUTION_TIME = :executionTime, DURATION = :duration, STATUS = :status, INFORMATION = :information, ERROR = :error, REPORT = :report "
                 + "WHERE ID = :id",
             executionParameters);
     }
@@ -105,7 +105,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     @Override
     public List<ExecutionSummary> getExecutionsWithStatus(ServerReportStatus status) {
         return namedParameterJdbcTemplate.query(
-            "SELECT ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, TEST_CASE_TITLE, ENVIRONMENT FROM SCENARIO_EXECUTION_HISTORY WHERE STATUS = :status",
+            "SELECT ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, TEST_CASE_TITLE, ENVIRONMENT, DATASET_ID, DATASET_VERSION FROM SCENARIO_EXECUTION_HISTORY WHERE STATUS = :status",
             ImmutableMap.<String, Object>builder().put("status", status.name()).build(),
             executionSummaryRowMapper);
     }
@@ -140,6 +140,8 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
         executionParameters.put("report", execution.report());
         executionParameters.put("title", execution.testCaseTitle());
         executionParameters.put("environment", execution.environment());
+        executionParameters.put("datasetId", execution.datasetId().orElse(null));
+        executionParameters.put("datasetVersion", execution.datasetVersion().orElse(null));
         return executionParameters;
     }
 }

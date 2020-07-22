@@ -11,6 +11,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.raw.RawTestCase;
 import com.chutneytesting.execution.domain.ExecutionRequest;
@@ -48,6 +49,7 @@ public class ScenarioExecutionEngineAsyncTest {
     private ExecutionStateRepository executionStateRepository = mock(ExecutionStateRepository.class);
     private Metrics metrics = mock(Metrics.class);
     private TestCasePreProcessors testCasePreProcessors = mock(TestCasePreProcessors.class);
+    private DataSetHistoryRepository dataSetHistoryRepository = mock(DataSetHistoryRepository.class);
 
     @After
     public void after() {
@@ -63,7 +65,8 @@ public class ScenarioExecutionEngineAsyncTest {
             executionStateRepository,
             metrics,
             testCasePreProcessors,
-            new ObjectMapper()
+            new ObjectMapper(),
+            dataSetHistoryRepository
         );
 
         // When / Then
@@ -91,6 +94,7 @@ public class ScenarioExecutionEngineAsyncTest {
             metrics,
             testCasePreProcessors,
             new ObjectMapper(),
+            dataSetHistoryRepository,
             0,
             0
         );
@@ -129,7 +133,8 @@ public class ScenarioExecutionEngineAsyncTest {
             executionStateRepository,
             metrics,
             testCasePreProcessors,
-            new ObjectMapper()
+            new ObjectMapper(),
+            dataSetHistoryRepository
         );
         sut.setRetentionDelaySeconds(1);
         sut.setDebounceMilliSeconds(0);
@@ -185,6 +190,7 @@ public class ScenarioExecutionEngineAsyncTest {
             metrics,
             testCasePreProcessors,
             new ObjectMapper(),
+            dataSetHistoryRepository,
             100,
             0
         );

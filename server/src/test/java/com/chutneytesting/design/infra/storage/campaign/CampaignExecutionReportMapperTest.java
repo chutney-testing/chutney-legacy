@@ -1,5 +1,6 @@
 package com.chutneytesting.design.infra.storage.campaign;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -55,17 +56,19 @@ public class CampaignExecutionReportMapperTest {
         when(testCaseRepositoryMock.findById(any())).thenReturn(mockTestCase);
         List<CampaignExecutionReport> campaignExecutionReports = sut.extractData(resultSet);
 
-        Assertions.assertThat(campaignExecutionReports).allSatisfy(report -> {
-            Assertions.assertThat(report.executionId).isEqualTo(campaignExecutionId);
-            Assertions.assertThat(report.campaignName).isEqualTo("Title");
-            Assertions.assertThat(report.scenarioExecutionReports()).allSatisfy(scenarioReport -> {
-                Assertions.assertThat(scenarioReport.scenarioId).isEqualTo(scenarioId);
-                Assertions.assertThat(scenarioReport.scenarioName).isEqualTo("scenario title");
-                Assertions.assertThat(scenarioReport.execution.executionId()).isEqualTo(scenarioExecutionId);
-                Assertions.assertThat(scenarioReport.execution.status()).isEqualTo(status);
-                Assertions.assertThat(scenarioReport.execution.duration()).isEqualTo(duration);
-                Assertions.assertThat(scenarioReport.execution.time()).isEqualTo(started);
-                Assertions.assertThat(scenarioReport.execution.environment()).isEqualTo("env");
+        assertThat(campaignExecutionReports).allSatisfy(report -> {
+            assertThat(report.executionId).isEqualTo(campaignExecutionId);
+            assertThat(report.campaignName).isEqualTo("Title");
+            assertThat(report.scenarioExecutionReports()).allSatisfy(scenarioReport -> {
+                assertThat(scenarioReport.scenarioId).isEqualTo(scenarioId);
+                assertThat(scenarioReport.scenarioName).isEqualTo("scenario title");
+                assertThat(scenarioReport.execution.executionId()).isEqualTo(scenarioExecutionId);
+                assertThat(scenarioReport.execution.status()).isEqualTo(status);
+                assertThat(scenarioReport.execution.duration()).isEqualTo(duration);
+                assertThat(scenarioReport.execution.time()).isEqualTo(started);
+                assertThat(scenarioReport.execution.environment()).isEqualTo("env");
+                assertThat(scenarioReport.execution.datasetId()).hasValue("#55:12");
+                assertThat(scenarioReport.execution.datasetVersion()).hasValue(2);
             });
         });
     }
@@ -87,6 +90,8 @@ public class CampaignExecutionReportMapperTest {
         when(rs.getString("ERROR")).thenReturn("");
         when(rs.getString("TEST_CASE_TITLE")).thenReturn("fake");
         when(rs.getString("ENVIRONMENT")).thenReturn("env");
+        when(rs.getString("DATASET_ID")).thenReturn("#55:12");
+        when(rs.getString("DATASET_VERSION")).thenReturn("2");
         return rs;
     }
 
@@ -99,6 +104,7 @@ public class CampaignExecutionReportMapperTest {
             .report("")
             .testCaseTitle("fake")
             .environment("env")
+            .datasetId("#55:12")
             .build();
     }
 }

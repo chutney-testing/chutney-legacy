@@ -1,8 +1,10 @@
 package com.chutneytesting.execution.domain.scenario;
 
 import static io.reactivex.schedulers.Schedulers.io;
+import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
+import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;
@@ -46,6 +48,7 @@ public class ScenarioExecutionEngineAsync {
     private final ExecutionStateRepository executionStateRepository;
     private final Metrics metrics;
     private final TestCasePreProcessors testCasePreProcessors;
+    private final DataSetHistoryRepository dataSetHistoryRepository;
 
     private Map<Long, Pair<Observable<ScenarioExecutionReport>, Long>> scenarioExecutions = new ConcurrentHashMap<>();
     private long retentionDelaySeconds;
@@ -56,8 +59,9 @@ public class ScenarioExecutionEngineAsync {
                                         ExecutionStateRepository executionStateRepository,
                                         Metrics metrics,
                                         TestCasePreProcessors testCasePreProcessors,
-                                        ObjectMapper objectMapper) {
-        this(executionHistoryRepository, executionEngine, executionStateRepository, metrics, testCasePreProcessors, objectMapper, DEFAULT_RETENTION_DELAY_SECONDS, DEFAULT_DEBOUNCE_MILLISECONDS);
+                                        ObjectMapper objectMapper,
+                                        DataSetHistoryRepository dataSetHistoryRepository) {
+        this(executionHistoryRepository, executionEngine, executionStateRepository, metrics, testCasePreProcessors, objectMapper, dataSetHistoryRepository, DEFAULT_RETENTION_DELAY_SECONDS, DEFAULT_DEBOUNCE_MILLISECONDS);
     }
 
     public ScenarioExecutionEngineAsync(ExecutionHistoryRepository executionHistoryRepository,
@@ -66,6 +70,7 @@ public class ScenarioExecutionEngineAsync {
                                         Metrics metrics,
                                         TestCasePreProcessors testCasePreProcessors,
                                         ObjectMapper objectMapper,
+                                        DataSetHistoryRepository dataSetHistoryRepository,
                                         long retentionDelaySeconds,
                                         long debounceMilliSeconds) {
         this.executionHistoryRepository = executionHistoryRepository;
@@ -74,21 +79,22 @@ public class ScenarioExecutionEngineAsync {
         this.metrics = metrics;
         this.testCasePreProcessors = testCasePreProcessors;
         this.objectMapper = objectMapper;
+        this.dataSetHistoryRepository = dataSetHistoryRepository;
         this.retentionDelaySeconds = retentionDelaySeconds;
         this.debounceMilliSeconds = debounceMilliSeconds;
     }
 
     /**
-     * Eexecute a test case with ExecutionEngine and store StepExecutionReport.
+     * Execute a test case with ExecutionEngine and store StepExecutionReport.
      *
      * @param executionRequest with the test case to execute and the environment chosen
      * @return execution id.
      */
     public Long execute(ExecutionRequest executionRequest) {
         // Compile testcase for execution
-        ExecutionRequest executionRequestProcessed = new ExecutionRequest(testCasePreProcessors.apply(executionRequest), executionRequest.environment);
+        ExecutionRequest executionRequestProcessed = new ExecutionRequest(testCasePreProcessors.apply(executionRequest), executionRequest.environment, executionRequest.withScenarioDefaultDataSet);
         // Initialize execution history
-        ExecutionHistory.Execution storedExecution = storeInitialReport(executionRequest.testCase.id(), executionRequest.testCase.metadata().title(), executionRequest.environment);
+        ExecutionHistory.Execution storedExecution = storeInitialReport(executionRequestProcessed);
         // Start engine execution
         Pair<Observable<StepExecutionReportCore>, Long> followResult = callEngineExecution(executionRequestProcessed, storedExecution);
         // Build execution observable
@@ -150,7 +156,8 @@ public class ScenarioExecutionEngineAsync {
         executionHistoryRepository.update(scenarioId, execution);
     }
 
-    private ExecutionHistory.Execution storeInitialReport(String scenarioId, String title, String environment) {
+    private ExecutionHistory.Execution storeInitialReport(ExecutionRequest executionRequest) {
+        Optional<Pair<String, Integer>> executionDataSet = findExecutionDataSet(executionRequest);
         DetachedExecution detachedExecution = ImmutableExecutionHistory.DetachedExecution.builder()
             .time(LocalDateTime.now())
             .duration(0L)
@@ -158,11 +165,13 @@ public class ScenarioExecutionEngineAsync {
             .info("")
             .error("")
             .report("")
-            .testCaseTitle(title)
-            .environment(environment)
+            .testCaseTitle(executionRequest.testCase.metadata().title())
+            .environment(executionRequest.environment)
+            .datasetId(executionDataSet.map(Pair::getLeft))
+            .datasetVersion(executionDataSet.map(Pair::getRight))
             .build();
 
-        return executionHistoryRepository.store(scenarioId, detachedExecution);
+        return executionHistoryRepository.store(executionRequest.testCase.id(), detachedExecution);
     }
 
     public Observable<ScenarioExecutionReport> followExecution(String scenarioId, Long executionId) {
@@ -298,5 +307,13 @@ public class ScenarioExecutionEngineAsync {
         } else {
             return report.errors;
         }
+    }
+
+    private Optional<Pair<String, Integer>> findExecutionDataSet(ExecutionRequest executionRequest) {
+        if (executionRequest.withScenarioDefaultDataSet) {
+            return executionRequest.testCase.metadata().datasetId()
+                .map(datasetId -> Pair.of(datasetId, dataSetHistoryRepository.lastVersion(datasetId)));
+        }
+        return empty();
     }
 }
