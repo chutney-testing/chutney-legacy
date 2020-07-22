@@ -152,7 +152,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
                 "ENVIRONMENT = :environment, " +
                 "PARALLEL_RUN = :paralellRun, " +
                 "RETRY_AUTO = :retryAuto, " +
-                "DATASETID = :datasetId " +
+                "DATASET_ID = :datasetId " +
                 "WHERE ID = :id"
             , map(Pair.of("id", campaign.id)
                 , Pair.of("title", campaign.title)
@@ -173,7 +173,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
     private Long doSave(final Campaign unsavedCampaign) {
         final Long id = uiNamedParameterJdbcTemplate.queryForObject("SELECT nextval('CAMPAIGN_SEQ')", emptyMap(), Long.class);
 
-        uiNamedParameterJdbcTemplate.update("INSERT INTO CAMPAIGN(ID, TITLE, DESCRIPTION, SCHEDULE_TIME, ENVIRONMENT, PARALLEL_RUN, RETRY_AUTO, DATASETID) " +
+        uiNamedParameterJdbcTemplate.update("INSERT INTO CAMPAIGN(ID, TITLE, DESCRIPTION, SCHEDULE_TIME, ENVIRONMENT, PARALLEL_RUN, RETRY_AUTO, DATASET_ID) " +
                 "VALUES (:id, :title, :description, :scheduletime, :environment, :paralellRun, :retryAuto, :datasetId)"
             , map(Pair.of("id", id)
                 , Pair.of("title", unsavedCampaign.title)
@@ -266,7 +266,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
             String description = rs.getString("DESCRIPTION");
             String scheduleTimeAsString = rs.getString("SCHEDULE_TIME");
             String environment = rs.getString("ENVIRONMENT");
-            String datasetId = rs.getString("DATASETID");
+            String datasetId = rs.getString("DATASET_ID");
             Boolean parallelRun = rs.getBoolean("PARALLEL_RUN");
             Boolean retryAuto = rs.getBoolean("RETRY_AUTO");
             LocalTime localTime = scheduleTimeAsString != null ? LocalTime.parse(scheduleTimeAsString) : null;

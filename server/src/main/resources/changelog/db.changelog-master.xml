@@ -407,12 +407,12 @@
     <changeSet id="20200615" author="ICG">
         <preConditions onFail="MARK_RAN">
             <not>
-                <columnExists tableName="CAMPAIGN" columnName="DATASETID"/>
+                <columnExists tableName="CAMPAIGN" columnName="DATASET_ID"/>
             </not>
         </preConditions>
-        <comment>Create column DATASETID in CAMPAIGN</comment>
+        <comment>Create column DATASET_ID in CAMPAIGN</comment>
         <addColumn tableName="CAMPAIGN">
-            <column name="DATASETID"  type="VARCHAR(20)"></column>
+            <column name="DATASET_ID"  type="VARCHAR(20)"></column>
         </addColumn>
     </changeSet>
 </databaseChangeLog>

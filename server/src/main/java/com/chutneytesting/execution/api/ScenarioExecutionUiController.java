@@ -60,7 +60,7 @@ public class ScenarioExecutionUiController {
     public String executeScenario(@PathVariable("scenarioId") String scenarioId, @PathVariable("env") String env) throws IOException {
         LOGGER.debug("executeScenario for scenarioId='{}'", scenarioId);
         TestCase testCase = testCaseRepository.findById(scenarioId);
-        ScenarioExecutionReport report = executionEngine.execute(testCase, env);
+        ScenarioExecutionReport report = executionEngine.execute(new ExecutionRequest(testCase, env));
         return objectMapper.writeValueAsString(report);
     }
 

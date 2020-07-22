@@ -9,6 +9,7 @@ import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.ScenarioNotParsableException;
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
+import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
@@ -17,7 +18,6 @@ import com.chutneytesting.execution.domain.scenario.FailedExecutionAttempt;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -107,7 +107,7 @@ public class CampaignExecutionEngine {
                 return execute(campaign, campaignExecutionReport, failedIds);
             }
         } catch (Exception e) {
-            LOGGER.error("Not managed exception occured",e);
+            LOGGER.error("Not managed exception occured", e);
             throw new RuntimeException(e);
         } finally {
             campaignExecutionReport.endCampaignExecution();
@@ -127,25 +127,22 @@ public class CampaignExecutionEngine {
 
         campaignExecutionReport.initExecution(testCases, campaign.executionEnvironment());
         Stream<TestCase> scenarioStream;
-        if(campaign.parallelRun) {
+        if (campaign.parallelRun) {
             scenarioStream = testCases.parallelStream();
         } else {
             scenarioStream = testCases.stream();
         }
 
-        scenarioStream.forEach(testCase ->  {
+        scenarioStream.forEach(testCase -> {
             // Is stop requested ?
             if (!currentCampaignExecutionsStopRequests.get(campaignExecutionReport.executionId)) {
-                // Override scenario dataset by campaign's one
-                Map<String, String> ds = new HashMap<>(testCase.computedParameters());
-                ds.putAll(campaign.dataSet);
                 // Init scenario execution in campaign report
                 campaignExecutionReport.startScenarioExecution(testCase, campaign.executionEnvironment());
                 // Execute scenario
-                ScenarioExecutionReportCampaign scenarioExecutionReport = executeScenario(campaign, testCase.withDataSet(ds));
+                ScenarioExecutionReportCampaign scenarioExecutionReport = executeScenario(campaign, testCase);
                 // Retry one time if failed
                 if (campaign.retryAuto && ServerReportStatus.FAILURE.equals(scenarioExecutionReport.status())) {
-                    scenarioExecutionReport = executeScenario(campaign, testCase.withDataSet(ds));
+                    scenarioExecutionReport = executeScenario(campaign, testCase);
                 }
                 // Add scenario report to campaign's one
                 Optional.ofNullable(scenarioExecutionReport)
@@ -160,7 +157,8 @@ public class CampaignExecutionEngine {
         String scenarioName;
         try {
             LOGGER.trace("Execute scenario {} for campaign {}", testCase.id(), campaign.id);
-            ScenarioExecutionReport scenarioExecutionReport = scenarioExecutionEngine.execute(testCase, campaign.executionEnvironment());
+            ExecutionRequest executionRequest = new ExecutionRequest(testCase, campaign.executionEnvironment(), true);
+            ScenarioExecutionReport scenarioExecutionReport = scenarioExecutionEngine.execute(executionRequest);
             executionId = scenarioExecutionReport.executionId;
             scenarioName = scenarioExecutionReport.scenarioName;
         } catch (FailedExecutionAttempt e) {

@@ -37,11 +37,11 @@ public class ScenarioExecutionEngine {
     /**
      * Retrieves a scenario from it's ID, executes it on  ExecutionEngine and store StepExecutionReport.
      *
-     * @param testCase The TestCase to be execute.
+     * @param executionRequest The request execution.
      * @return an execution Report.
      */
-    public ScenarioExecutionReport execute(TestCase testCase, String environment) throws ScenarioNotFoundException, ScenarioNotParsableException {
-        return executionEngineAsync.followExecution(testCase.id(), executionEngineAsync.execute(new ExecutionRequest(testCase, environment))).blockingLast();
+    public ScenarioExecutionReport execute(ExecutionRequest executionRequest) throws ScenarioNotFoundException, ScenarioNotParsableException {
+        return executionEngineAsync.followExecution(executionRequest.testCase.id(), executionEngineAsync.execute(executionRequest)).blockingLast();
     }
 
     /**
