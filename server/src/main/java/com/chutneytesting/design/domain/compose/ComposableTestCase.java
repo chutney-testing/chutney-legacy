@@ -2,6 +2,7 @@ package com.chutneytesting.design.domain.compose;
 
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
+import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -50,6 +51,17 @@ public class ComposableTestCase implements TestCase {
             metadata,
             composableScenario,
             dataSet
+        );
+    }
+
+    public TestCase withDataSetId(String dataSetId) {
+        return new ComposableTestCase(
+            id,
+            TestCaseMetadataImpl.TestCaseMetadataBuilder.from(metadata)
+                .withDatasetId(dataSetId)
+                .build(),
+            composableScenario,
+            computedParameters
         );
     }
 

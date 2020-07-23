@@ -1,10 +1,13 @@
 package com.chutneytesting.execution.domain.campaign;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import com.chutneytesting.design.domain.campaign.Campaign;
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
 import com.chutneytesting.design.domain.campaign.CampaignNotFoundException;
 import com.chutneytesting.design.domain.campaign.CampaignRepository;
 import com.chutneytesting.design.domain.campaign.ScenarioExecutionReportCampaign;
+import com.chutneytesting.design.domain.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.ScenarioNotParsableException;
 import com.chutneytesting.design.domain.scenario.TestCase;
@@ -18,6 +21,7 @@ import com.chutneytesting.execution.domain.scenario.FailedExecutionAttempt;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -157,7 +161,7 @@ public class CampaignExecutionEngine {
         String scenarioName;
         try {
             LOGGER.trace("Execute scenario {} for campaign {}", testCase.id(), campaign.id);
-            ExecutionRequest executionRequest = new ExecutionRequest(testCase, campaign.executionEnvironment(), true);
+            ExecutionRequest executionRequest = buildTestCaseExecutionrequest(campaign, testCase);
             ScenarioExecutionReport scenarioExecutionReport = scenarioExecutionEngine.execute(executionRequest);
             executionId = scenarioExecutionReport.executionId;
             scenarioName = scenarioExecutionReport.scenarioName;
@@ -173,6 +177,19 @@ public class CampaignExecutionEngine {
         // TODO - why an extra DB request when we already have the report above ?
         ExecutionHistory.Execution execution = executionHistoryRepository.getExecution(testCase.id(), executionId);
         return new ScenarioExecutionReportCampaign(testCase.id(), scenarioName, execution.summary());
+    }
+
+    private ExecutionRequest buildTestCaseExecutionrequest(Campaign campaign, TestCase testCase) {
+        String campaignDatasetId = campaign.datasetId;
+        // Override scenario dataset by campaign's one
+        if (isNotBlank(campaignDatasetId) && testCase instanceof ComposableTestCase) {
+            testCase = ((ComposableTestCase) testCase).withDataSetId(campaignDatasetId);
+            return new ExecutionRequest(testCase, campaign.executionEnvironment(), true);
+        } else {
+            Map<String, String> ds = new HashMap<>(testCase.computedParameters());
+            ds.putAll(campaign.dataSet);
+            return new ExecutionRequest(testCase.withDataSet(ds), campaign.executionEnvironment());
+        }
     }
 
     private CampaignExecutionReport executeCampaign(Campaign campaign) {
