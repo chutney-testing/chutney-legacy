@@ -2,8 +2,10 @@ package com.chutneytesting.security;
 
 import com.chutneytesting.security.infra.handlers.Http401FailureHandler;
 import com.chutneytesting.security.infra.handlers.HttpEmptyLogoutSuccessHandler;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
 public abstract class SecSecurityUILoginAbstractConfig extends WebSecurityConfigurerAdapter {
 
@@ -12,6 +14,9 @@ public abstract class SecSecurityUILoginAbstractConfig extends WebSecurityConfig
         http
             .csrf()
                 .disable()
+                .exceptionHandling()
+                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+            .and()
             .requiresChannel()
                 .anyRequest().requiresSecure()
             .and()
@@ -25,6 +30,9 @@ public abstract class SecSecurityUILoginAbstractConfig extends WebSecurityConfig
                 .logoutSuccessHandler(new HttpEmptyLogoutSuccessHandler())
             .and()
             .authorizeRequests()
+                .antMatchers("/api/v1/user/login").permitAll()
+                .antMatchers("/api/v1/user/logout").permitAll()
+                .antMatchers("/api/**").authenticated()
                 .anyRequest().permitAll();
     }
 
