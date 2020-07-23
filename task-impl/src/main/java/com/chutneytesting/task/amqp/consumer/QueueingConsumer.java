@@ -39,8 +39,8 @@ public class QueueingConsumer {
         this.messageCounter = new CountDownLatch(nbMessages);
     }
 
-    public Result consume() throws IOException, InterruptedException {
-        channel.basicConsume(queueName, this::deliveryCallback, this::cancelCallback);
+    public Result consume(boolean autoAck) throws IOException, InterruptedException {
+        channel.basicConsume(queueName, autoAck, this::deliveryCallback, this::cancelCallback);
         messageCounter.await(maxAwait, TimeUnit.MILLISECONDS);
         return result;
     }

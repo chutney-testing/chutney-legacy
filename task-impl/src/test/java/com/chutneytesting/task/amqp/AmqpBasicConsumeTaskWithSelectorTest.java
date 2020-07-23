@@ -73,6 +73,7 @@ public class AmqpBasicConsumeTaskWithSelectorTest {
             queueName,
             1,
             "$..[?($.headers.maVersion=='2.0' && $.payload.item.id==\"123\")]",
+            true,
             "10 sec",
             logger
         ), mockConnectionFactory);
@@ -137,6 +138,7 @@ public class AmqpBasicConsumeTaskWithSelectorTest {
             queueName,
             1,
             "$..[?($.headers.maVersion=='3.0')]",
+            true,
             "10 sec",
             logger
         ), mockConnectionFactory);
