@@ -1,5 +1,7 @@
 package com.chutneytesting.execution.domain.campaign;
 
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import com.chutneytesting.design.domain.campaign.Campaign;
@@ -8,6 +10,7 @@ import com.chutneytesting.design.domain.campaign.CampaignNotFoundException;
 import com.chutneytesting.design.domain.campaign.CampaignRepository;
 import com.chutneytesting.design.domain.campaign.ScenarioExecutionReportCampaign;
 import com.chutneytesting.design.domain.compose.ComposableTestCase;
+import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.ScenarioNotParsableException;
 import com.chutneytesting.design.domain.scenario.TestCase;
@@ -30,6 +33,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +49,7 @@ public class CampaignExecutionEngine {
     private final ScenarioExecutionEngine scenarioExecutionEngine;
     private final ExecutionHistoryRepository executionHistoryRepository;
     private final TestCaseRepository testCaseRepository;
+    private final DataSetHistoryRepository dataSetHistoryRepository;
 
     private Map<Long, CampaignExecutionReport> currentCampaignExecutions = new ConcurrentHashMap<>();
     private Map<Long, Boolean> currentCampaignExecutionsStopRequests = new ConcurrentHashMap<>();
@@ -52,11 +57,12 @@ public class CampaignExecutionEngine {
     public CampaignExecutionEngine(CampaignRepository campaignRepository,
                                    ScenarioExecutionEngine scenarioExecutionEngine,
                                    ExecutionHistoryRepository executionHistoryRepository,
-                                   TestCaseRepository testCaseRepository) {
+                                   TestCaseRepository testCaseRepository, DataSetHistoryRepository dataSetHistoryRepository) {
         this.campaignRepository = campaignRepository;
         this.scenarioExecutionEngine = scenarioExecutionEngine;
         this.executionHistoryRepository = executionHistoryRepository;
         this.testCaseRepository = testCaseRepository;
+        this.dataSetHistoryRepository = dataSetHistoryRepository;
     }
 
     public List<CampaignExecutionReport> executeByName(String campaignName) {
@@ -101,7 +107,8 @@ public class CampaignExecutionEngine {
         verifyNotAlreadyRunning(campaign);
 
         Long executionId = campaignRepository.newCampaignExecution();
-        CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(executionId, campaign.title, !failedIds.isEmpty(), campaign.executionEnvironment());
+        Optional<Pair<String, Integer>> executionDataSet = findExecutionDataSet(campaign);
+        CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(executionId, campaign.title, !failedIds.isEmpty(), campaign.executionEnvironment(), executionDataSet.map(Pair::getLeft).orElse(null), executionDataSet.map(Pair::getRight).orElse(null));
         currentCampaignExecutions.put(campaign.id, campaignExecutionReport);
         currentCampaignExecutionsStopRequests.put(executionId, Boolean.FALSE);
         try {
@@ -190,6 +197,14 @@ public class CampaignExecutionEngine {
             ds.putAll(campaign.dataSet);
             return new ExecutionRequest(testCase.withDataSet(ds), campaign.executionEnvironment());
         }
+    }
+
+    private Optional<Pair<String, Integer>> findExecutionDataSet(Campaign campaign) {
+        String datasetId = campaign.datasetId;
+        if (isNotBlank(datasetId)) {
+            return of(Pair.of(datasetId, dataSetHistoryRepository.lastVersion(datasetId)));
+        }
+        return empty();
     }
 
     private CampaignExecutionReport executeCampaign(Campaign campaign) {

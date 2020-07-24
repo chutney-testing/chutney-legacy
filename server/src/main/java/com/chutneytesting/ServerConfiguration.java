@@ -1,24 +1,24 @@
 package com.chutneytesting;
 
-import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.chutneytesting.agent.domain.configure.LocalServerIdentifier;
 import com.chutneytesting.design.domain.campaign.CampaignRepository;
+import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.environment.EnvironmentRepository;
 import com.chutneytesting.design.domain.environment.EnvironmentService;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.engine.api.execution.TestEngine;
+import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessor;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;
-import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
+import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngineAsync;
 import com.chutneytesting.execution.domain.scenario.ServerTestEngine;
-import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
 import com.chutneytesting.execution.domain.state.ExecutionStateRepository;
 import com.chutneytesting.execution.infra.execution.ExecutionRequestMapper;
 import com.chutneytesting.execution.infra.execution.ServerTestEngineJavaImpl;
 import com.chutneytesting.instrument.domain.Metrics;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
@@ -114,8 +114,9 @@ public class ServerConfiguration {
     CampaignExecutionEngine campaignExecutionEngine(CampaignRepository campaignRepository,
                                                     ScenarioExecutionEngine scenarioExecutionEngine,
                                                     ExecutionHistoryRepository executionHistoryRepository,
-                                                    TestCaseRepository testCaseRepository) {
-        return new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository);
+                                                    TestCaseRepository testCaseRepository,
+                                                    DataSetHistoryRepository dataSetHistoryRepository) {
+        return new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository);
     }
 
     @Bean

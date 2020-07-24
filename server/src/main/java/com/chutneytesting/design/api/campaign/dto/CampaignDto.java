@@ -37,7 +37,7 @@ public class CampaignDto {
         this.description = description;
         this.scenarioIds = scenarioIds;
         this.computedParameters = computedParameters;
-        this.campaignExecutionReports = Optional.ofNullable(campaignExecutionReports).orElse(new ArrayList<>());
+        this.campaignExecutionReports = Optional.ofNullable(campaignExecutionReports).orElseGet(ArrayList::new);
         this.scheduleTime = scheduleTime;
         this.environment = environment;
         this.parallelRun = parallelRun;
@@ -74,7 +74,7 @@ public class CampaignDto {
     }
 
     public Optional<String> safeGetScheduleTime() {
-        if(scheduleTime == null || scheduleTime.isEmpty()) {
+        if (scheduleTime == null || scheduleTime.isEmpty()) {
             return Optional.empty();
         }
         return Optional.of(scheduleTime);

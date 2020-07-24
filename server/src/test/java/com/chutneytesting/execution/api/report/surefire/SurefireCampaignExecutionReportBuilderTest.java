@@ -6,8 +6,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Maps;
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
 import com.chutneytesting.design.domain.campaign.ScenarioExecutionReportCampaign;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
@@ -16,6 +14,8 @@ import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.execution.domain.report.StepExecutionReportCore;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Maps;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -85,8 +85,8 @@ public class SurefireCampaignExecutionReportBuilderTest {
         when(executionHistoryRepository.getExecution(scenarioExecutionReportKO.scenarioId, failure_report.executionId)).thenReturn(failure_execution);
 
         // And a campaign report with previous scenario executions
-        CampaignExecutionReport campaignExecutionReport1 = new CampaignExecutionReport(1L, 1L,Arrays.asList(scenarioExecutionReportOK, scenarioExecutionReportKO), "test Campaign Title", false, "");
-        CampaignExecutionReport campaignExecutionReport2 = new CampaignExecutionReport(1L, 1L,Arrays.asList(scenarioExecutionReportOK, scenarioExecutionReportKO), "test Campaign Title 2", false, "");
+        CampaignExecutionReport campaignExecutionReport1 = new CampaignExecutionReport(1L, 1L, Arrays.asList(scenarioExecutionReportOK, scenarioExecutionReportKO), "test Campaign Title", false, "", null, null);
+        CampaignExecutionReport campaignExecutionReport2 = new CampaignExecutionReport(1L, 1L, Arrays.asList(scenarioExecutionReportOK, scenarioExecutionReportKO), "test Campaign Title 2", false, "", null, null);
 
         // When we zip it
         byte[] zip = surefireCampaignExecutionReportBuilder.createReport(Lists.list(campaignExecutionReport1, campaignExecutionReport2));

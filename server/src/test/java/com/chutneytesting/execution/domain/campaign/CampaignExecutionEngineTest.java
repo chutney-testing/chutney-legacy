@@ -21,6 +21,7 @@ import com.chutneytesting.design.domain.campaign.CampaignNotFoundException;
 import com.chutneytesting.design.domain.campaign.CampaignRepository;
 import com.chutneytesting.design.domain.compose.ComposableScenario;
 import com.chutneytesting.design.domain.compose.ComposableTestCase;
+import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
@@ -66,10 +67,12 @@ public class CampaignExecutionEngineTest {
     private ExecutionHistoryRepository executionHistoryRepository;
     @Mock
     private TestCaseRepository testCaseRepository;
+    @Mock
+    private DataSetHistoryRepository dataSetHistoryRepository;
 
     @Before
     public void setUp() {
-        sut = new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository);
+        sut = new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository);
     }
 
     @Test
@@ -235,7 +238,7 @@ public class CampaignExecutionEngineTest {
         Field currentCampaignExecutionsField = ReflectionUtils.findField(CampaignExecutionEngine.class, "currentCampaignExecutions");
         currentCampaignExecutionsField.setAccessible(true);
         Map<Long, CampaignExecutionReport> field = (Map<Long, CampaignExecutionReport>) ReflectionUtils.getField(currentCampaignExecutionsField, sut);
-        CampaignExecutionReport mockReport = new CampaignExecutionReport(1L, "", false, "");
+        CampaignExecutionReport mockReport = new CampaignExecutionReport(1L, "", false, "", null, null);
         field.put(1L, mockReport);
 
         // When
@@ -297,8 +300,8 @@ public class CampaignExecutionEngineTest {
         Field currentCampaignExecutionsField = ReflectionUtils.findField(CampaignExecutionEngine.class, "currentCampaignExecutions");
         currentCampaignExecutionsField.setAccessible(true);
         Map<Long, CampaignExecutionReport> field = (Map<Long, CampaignExecutionReport>) ReflectionUtils.getField(currentCampaignExecutionsField, sut);
-        CampaignExecutionReport report = new CampaignExecutionReport(1L, 33L, emptyList(), "", false, "");
-        CampaignExecutionReport report2 = new CampaignExecutionReport(2L, 42L, emptyList(), "", false, "");
+        CampaignExecutionReport report = new CampaignExecutionReport(1L, 33L, emptyList(), "", false, "", null, null);
+        CampaignExecutionReport report2 = new CampaignExecutionReport(2L, 42L, emptyList(), "", false, "", null, null);
         field.put(1L, report);
         field.put(2L, report2);
 

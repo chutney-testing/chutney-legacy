@@ -1,19 +1,20 @@
 package com.chutneytesting.tools.ui;
 
+import static java.util.Optional.ofNullable;
+
 import java.util.Optional;
-import org.springframework.lang.NonNull;
 
 public final class ComposableIdUtils {
 
-    public static String toFrontId(@NonNull String id) {
-        if (isComposableDomainId(id)) {
+    public static String toFrontId(String id) {
+        if (isComposableDomainId(ofNullable(id).orElse(""))) {
             return id.replace("#", "").replace(":", "-");
         }
         return id;
     }
 
     public static String fromFrontId(String id) {
-        return fromFrontId(Optional.of(id));
+        return fromFrontId(ofNullable(id));
     }
 
     public static String fromFrontId(Optional<String> id) {

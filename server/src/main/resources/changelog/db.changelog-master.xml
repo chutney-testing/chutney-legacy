@@ -428,4 +428,17 @@
             <column name="DATASET_VERSION" type="INTEGER"></column>
         </addColumn>
     </changeSet>
+    <changeSet id="20200724_dataset" author="ICG">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="CAMPAIGN_EXECUTION_HISTORY" columnName="DATASET_ID"/>
+                <columnExists tableName="CAMPAIGN_EXECUTION_HISTORY" columnName="DATASET_VERSION"/>
+            </not>
+        </preConditions>
+        <comment>Create columns DATASET_ID and DATASET_VERSION in CAMPAIGN_EXECUTION_HISTORY</comment>
+        <addColumn tableName="CAMPAIGN_EXECUTION_HISTORY">
+            <column name="DATASET_ID" type="VARCHAR(20)"></column>
+            <column name="DATASET_VERSION" type="INTEGER"></column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

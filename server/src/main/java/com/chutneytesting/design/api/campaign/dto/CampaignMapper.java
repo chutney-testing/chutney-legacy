@@ -1,6 +1,7 @@
 package com.chutneytesting.design.api.campaign.dto;
 
 import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
@@ -27,7 +28,7 @@ public class CampaignMapper {
             campaign.executionEnvironment(),
             campaign.parallelRun,
             campaign.retryAuto,
-            campaign.datasetId);
+            toFrontId(campaign.datasetId));
     }
 
     public static CampaignDto toDto(Campaign campaign, List<CampaignExecutionReport> campaignExecutionReports) {
@@ -36,15 +37,15 @@ public class CampaignMapper {
             campaign.title,
             campaign.description,
             campaign.scenarioIds.stream()
-                                .map(ComposableIdUtils::toFrontId)
-                                .collect(toList()),
+                .map(ComposableIdUtils::toFrontId)
+                .collect(toList()),
             campaign.dataSet,
             reportToDto(campaignExecutionReports),
             campaign.getStringScheduleTime(),
             campaign.executionEnvironment(),
             campaign.parallelRun,
             campaign.retryAuto,
-            campaign.datasetId);
+            toFrontId(campaign.datasetId));
     }
 
     public static Campaign fromDto(CampaignDto dto) {
@@ -53,14 +54,14 @@ public class CampaignMapper {
             dto.getTitle(),
             dto.getDescription(),
             dto.getScenarioIds().stream()
-                                .map( id -> fromFrontId(Optional.of(id)) )
-                                .collect(toList()),
+                .map(id -> fromFrontId(Optional.of(id)))
+                .collect(toList()),
             dto.getComputedParameters(),
             dto.safeGetScheduleTime().map(LocalTime::parse).orElse(null),
             dto.getEnvironment(),
             dto.isParallelRun(),
             dto.isRetryAuto(),
-            dto.getDatasetId()
+            fromFrontId(dto.getDatasetId())
         );
     }
 
