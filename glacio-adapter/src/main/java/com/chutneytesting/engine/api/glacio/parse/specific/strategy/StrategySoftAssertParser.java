@@ -1,4 +1,4 @@
-package com.chutneytesting.engine.api.glacio.parse.specific;
+package com.chutneytesting.engine.api.glacio.parse.specific.strategy;
 
 import com.chutneytesting.engine.api.glacio.parse.default_.StrategyParser;
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
@@ -11,11 +11,17 @@ import java.util.Set;
 
 public class StrategySoftAssertParser extends StrategyParser {
 
-    @Override
-    public Map<Locale, Set<String>> keywords() {
-        Map<Locale, Set<String>> keywords = new HashMap<>();
+    private final Map<Locale, Set<String>> keywords = new HashMap<>(2);
+
+    public StrategySoftAssertParser() {
         keywords.put(Locale.ENGLISH,
             new HashSet<>(Arrays.asList("soft", "softly")));
+        keywords.put(Locale.FRENCH,
+            new HashSet<>(Arrays.asList("soft", "softly", "doucement")));
+    }
+
+    @Override
+    public Map<Locale, Set<String>> keywords() {
         return keywords;
     }
 

@@ -172,9 +172,9 @@ public class EngineIntegrationTest {
     }
 
     private void it_should_gracefully_fallback_on_unknown_strategy(StepExecutionReport report) {
-        assertThat(report.status).isEqualTo(Status.FAILURE);
-        assertThat(report.steps.get(0).status).isEqualTo(Status.FAILURE);
-        assertThat(report.steps.get(1).status).isEqualTo(Status.NOT_EXECUTED);
+        assertThat(report.status).isEqualTo(Status.SUCCESS);
+        assertThat(report.steps.get(0).name).isEqualTo("a step succeeds");
+        assertThat(report.steps.get(0).strategy).isEmpty();
     }
 
     private void it_should_not_affect_parsing_action_parameters_of_specific_parsers(StepExecutionReport report) {
@@ -185,6 +185,15 @@ public class EngineIntegrationTest {
     private void it_should_work_with_default_parser(StepExecutionReport report) {
         assertThat(report.steps.get(0).strategy).isEqualTo("retry-with-timeout");
         assertThat(report.status).isEqualTo(Status.FAILURE);
+    }
+
+    @Test
+    public void should_execute_strategy_feature_with_i18n_params() {
+        List<StepExecutionReport> reports = executeFeature("integration/strategy_parser_fr.feature");
+
+        /* Then */ it_should_continue_on_softly_failed_steps(reports.get(0));
+        /* And there is no other error than the step failing as intended */
+        assertThat(reports.get(0).steps.get(0).steps.get(0).errors.get(0)).startsWith("Failed at");
     }
 
     private List<StepExecutionReport> executeFeature(String filePath) {

@@ -10,27 +10,25 @@ Feature: Strategy parser feature
             Do success
 
     Scenario: Fails softly, again
-        When A step (softly:) fails
+        When a step (softly:) fails
             Do fail
         Then it keeps going to the next step
             Do success
 
     Scenario: Fails softly on executable steps
-        When A step fails
+        When a step fails softly
             Do fail (softly:)
         Then it keeps going to the next step
             Do success
 
     Scenario: Fails softly without peeking other comments as strategies
-        When (softly:) Failing a (non-catchable(: comment in between) step (with another parenthesized comment)
+        When (softly:) failing a (non-catchable(: comment in between) step (with another parenthesized comment)
             Do fail (softly:)
         Then it keeps going to the next step
             Do success
 
     Scenario: Gracefully fallback to default strategy when type is unknown
-        When A step fails (unknown-strat:)
-            Do fail
-        Then it keeps going to the next step
+        When a step succeeds (unknown-strat:)
             Do success
 
     Scenario: Use a strategy with a specific parser
@@ -40,5 +38,5 @@ Feature: Strategy parser feature
             Do success
 
     Scenario: Use a strategy with the default parser
-        When Do fail (retry: every 5s for 3s)
+        When Do fail (retry: every 5 ms for 15 ms)
         Then it fails 3 times

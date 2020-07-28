@@ -1,6 +1,6 @@
-package test.unit.com.chutneytesting.engine.api.glacio.parse.specific;
+package test.unit.com.chutneytesting.engine.api.glacio.parse.specific.strategy;
 
-import com.chutneytesting.engine.api.glacio.parse.specific.StrategyRetryParser;
+import com.chutneytesting.engine.api.glacio.parse.specific.strategy.StrategyRetryParser;
 import com.chutneytesting.engine.domain.execution.strategies.StrategyProperties;
 import java.util.HashMap;
 import java.util.Locale;
@@ -19,6 +19,18 @@ public class StrategyRetryParserTest {
         expected.put("retryDelay", "2 s");
 
         StrategyProperties strategyProperties = sut.parseProperties(Locale.ENGLISH, "every 1 s for 2 s");
+
+        Assertions.assertThat(strategyProperties).isEqualTo(expected);
+
+    }
+
+    @Test
+    void should_parse_lang_parameters() {
+        Map<String, Object> expected = new HashMap<>(2);
+        expected.put("timeOut", "1 s");
+        expected.put("retryDelay", "2 s");
+
+        StrategyProperties strategyProperties = sut.parseProperties(Locale.FRENCH, "toutes les 1 s pendant 2 s");
 
         Assertions.assertThat(strategyProperties).isEqualTo(expected);
 

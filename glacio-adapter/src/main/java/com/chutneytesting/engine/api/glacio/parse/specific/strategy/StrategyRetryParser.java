@@ -1,4 +1,4 @@
-package com.chutneytesting.engine.api.glacio.parse.specific;
+package com.chutneytesting.engine.api.glacio.parse.specific.strategy;
 
 import static java.util.Optional.ofNullable;
 
@@ -17,14 +17,25 @@ import java.util.regex.Pattern;
 
 public class StrategyRetryParser extends StrategyParser {
 
-    private final String RETRY_PARAMETERS_PATTERN_STRING = "(?<timeout>every\\s+(?<tval>.*))(?<delay>(for|until)\\s+(?<dval>.*))";
-    private final Pattern pattern = Pattern.compile(RETRY_PARAMETERS_PATTERN_STRING);
+    private final String EN_RETRY_PARAMETERS_PATTERN_STRING = "(?<timeout>every\\s+(?<tval>.*))(?<delay>(for|until)\\s+(?<dval>.*))";
+    private final String FR_RETRY_PARAMETERS_PATTERN_STRING = "(?<timeout>toutes les\\s+(?<tval>.*))(?<delay>(pendant|jusqu'à)\\s+(?<dval>.*))";
+
+
+    private final Map<Locale, Set<String>> keywords = new HashMap<>(2);
+    private final Map<Locale, Pattern> patterns = new HashMap<>(2);
+
+    public StrategyRetryParser() {
+        keywords.put(Locale.ENGLISH,
+            new HashSet<>(Arrays.asList("retry", "retry-with-timeout", "retry_with_timeout")));
+        keywords.put(Locale.FRENCH,
+            new HashSet<>(Arrays.asList("refait", "rejoue", "relance", "recommence")));
+
+        patterns.put(Locale.ENGLISH, Pattern.compile(EN_RETRY_PARAMETERS_PATTERN_STRING));
+        patterns.put(Locale.FRENCH, Pattern.compile(FR_RETRY_PARAMETERS_PATTERN_STRING));
+    }
 
     @Override
     public Map<Locale, Set<String>> keywords() {
-        Map<Locale, Set<String>> keywords = new HashMap<>();
-        keywords.put(Locale.ENGLISH,
-            new HashSet<>(Arrays.asList("retry", "retry-with-timeout", "retry_with_timeout")));
         return keywords;
     }
 
@@ -36,7 +47,7 @@ public class StrategyRetryParser extends StrategyParser {
     @Override
     public StrategyProperties parseProperties(Locale lang, String parameters) {
         Map<String, Object> params = new HashMap<>(2);
-
+        Pattern pattern = patterns.get(lang);
         Matcher matcher = pattern.matcher(parameters.trim().replaceAll("\\s+", " "));
 
         while(matcher.find()) {

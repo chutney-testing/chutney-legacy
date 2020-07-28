@@ -5,7 +5,7 @@ import static java.util.Locale.ENGLISH;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.engine.api.glacio.parse.default_.StrategyParser;
-import com.chutneytesting.engine.api.glacio.parse.specific.StrategySoftAssertParser;
+import com.chutneytesting.engine.api.glacio.parse.specific.strategy.StrategySoftAssertParser;
 import com.github.fridujo.glacio.model.Step;
 import java.util.Arrays;
 import java.util.Map;
