@@ -3,16 +3,16 @@ package com.chutneytesting.task.amqp;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
+import com.chutneytesting.task.amqp.consumer.QueueingConsumer;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.task.spi.time.Duration;
-import com.chutneytesting.task.amqp.consumer.QueueingConsumer;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +27,7 @@ public class AmqpBasicConsumeTask implements Task {
     private final Integer nbMessages;
     private final String selector;
     private final String timeout;
+    private final Boolean ack;
     private final Logger logger;
 
     public AmqpBasicConsumeTask(Target target,
@@ -34,6 +35,7 @@ public class AmqpBasicConsumeTask implements Task {
                                 @Input("nb-messages") Integer nbMessages,
                                 @Input("selector") String selector,
                                 @Input("timeout") String timeout,
+                                @Input("ack") Boolean ack,
                                 Logger logger) {
         this.connectionFactory = connectionFactoryFactory.create(target);
         this.queueName = queueName;
@@ -41,6 +43,7 @@ public class AmqpBasicConsumeTask implements Task {
         this.nbMessages = defaultIfNull(nbMessages, 1);
         this.timeout = defaultIfEmpty(timeout, "60 sec");
         this.selector = selector;
+        this.ack = defaultIfNull(ack, true);
     }
 
 
@@ -48,7 +51,7 @@ public class AmqpBasicConsumeTask implements Task {
     public TaskExecutionResult execute() {
         try (Connection connection = connectionFactory.newConnection(); Channel channel = connection.createChannel()) {
             final long duration = Duration.parse(timeout).toMilliseconds();
-            QueueingConsumer.Result result = new QueueingConsumer(channel, queueName, nbMessages, selector, duration).consume();
+            QueueingConsumer.Result result = new QueueingConsumer(channel, queueName, nbMessages, selector, duration, ack).consume();
             if (result.messages.size() != nbMessages) {
                 logger.error("Unable to get the expected number of messages [" + nbMessages + "] during " + timeout + ".");
                 return TaskExecutionResult.ko();

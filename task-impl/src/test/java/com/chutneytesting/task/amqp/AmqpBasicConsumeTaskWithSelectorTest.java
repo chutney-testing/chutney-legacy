@@ -76,6 +76,7 @@ public class AmqpBasicConsumeTaskWithSelectorTest {
             1,
             "$..[?($.headers.maVersion=='2.0' && $.payload.item.id==\"123\")]",
             "10 sec",
+            true,
             logger
         ), mockConnectionFactory);
 
@@ -107,6 +108,7 @@ public class AmqpBasicConsumeTaskWithSelectorTest {
             1,
             "",
             "10 sec",
+            true,
             logger
         ), mockConnectionFactory);
 
@@ -165,11 +167,69 @@ public class AmqpBasicConsumeTaskWithSelectorTest {
             1,
             "$..[?($.headers.maVersion=='3.0')]",
             "10 sec",
+            true,
             logger
         ), mockConnectionFactory);
 
         TaskExecutionResult amqpBasicConsumeResult = amqpBasicConsumeTask.execute();
         assertThat(amqpBasicConsumeResult.status).isEqualTo(Status.Failure);
+    }
+
+    @Test
+    public void basicConsume_with_no_acknowledge_should_keep_messages_in_queue() throws IOException {
+        MockConnectionFactory mockConnectionFactory = new MockConnectionFactory();
+        TestLogger logger = new TestLogger();
+
+        Target target = TestTarget.TestTargetBuilder.builder()
+            .withTargetId("rabbit")
+            .withUrl("amqp://non_host:1234")
+            .withSecurity("guest", "guest")
+            .build();
+
+        MockChannel channel = mockConnectionFactory.newConnection().createChannel();
+        channel.exchangeDeclare("test-ex", "fanout");
+
+        String queueName = "toto";
+        Task amqpCreateBoundTemporaryQueueTask = mockConnectionFactory(new AmqpCreateBoundTemporaryQueueTask(
+            target,
+            "test-ex",
+            "test",
+            queueName,
+            logger,
+            new TestFinallyActionRegistry()
+        ), mockConnectionFactory);
+
+        TaskExecutionResult amqpCreateBoundTemporaryQueueResult = amqpCreateBoundTemporaryQueueTask.execute();
+        assertThat(amqpCreateBoundTemporaryQueueResult.status).isEqualTo(Status.Success);
+
+        Task amqpBasicPublishTask = mockConnectionFactory(new AmqpBasicPublishTask(
+            target,
+            "test-ex",
+            "test",
+            ImmutableMap.of("maVersion", "1.0", "timestamp", "987456321"),
+            Collections.singletonMap("content_type", "application/json"),
+            "{\"value\": \"test message\", \"id\": \"7777\"}",
+            logger
+        ), mockConnectionFactory);
+        assertThat(amqpBasicPublishTask.execute().status).isEqualTo(TaskExecutionResult.Status.Success);
+
+        Task amqpBasicConsumeTask = mockConnectionFactory(new AmqpBasicConsumeTask(
+            target,
+            queueName,
+            1,
+            "$..[?($.headers.maVersion=='1.0')]",
+            "10 sec",
+            false,
+            logger
+        ), mockConnectionFactory);
+
+        TaskExecutionResult amqpBasicConsumeResult = amqpBasicConsumeTask.execute();
+        assertThat(amqpBasicConsumeResult.status).isEqualTo(Status.Success);
+
+        channel.basicRecover();
+
+        TaskExecutionResult amqpBasicConsumeResultAgain = amqpBasicConsumeTask.execute();
+        assertThat(amqpBasicConsumeResultAgain.status).isEqualTo(Status.Success);
     }
 
     private List<Map<String, Object>> extractData(TaskExecutionResult amqpBasicConsumeResult, String dataName) {
