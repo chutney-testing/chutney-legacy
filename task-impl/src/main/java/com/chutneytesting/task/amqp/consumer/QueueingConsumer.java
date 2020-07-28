@@ -2,11 +2,10 @@ package com.chutneytesting.task.amqp.consumer;
 
 import static com.chutneytesting.task.amqp.utils.AmqpUtils.convertMapLongStringToString;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.chutneytesting.task.amqp.utils.JsonPathEvaluator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Delivery;
-import com.chutneytesting.task.amqp.utils.JsonPathEvaluator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,8 +64,9 @@ public class QueueingConsumer {
                 String messageAsString = OBJECT_MAPPER.writeValueAsString(message);
                 if (JsonPathEvaluator.evaluate(messageAsString, selector)) {
                     addMessageToResultAndCountDown(message);
+                    this.channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
                 }
-            } catch (JsonProcessingException e) {
+            } catch (IOException e) {
                 LOGGER.warn("Received a message, however cannot read process it as json, Ignoring message selection.", e);
             }
         }

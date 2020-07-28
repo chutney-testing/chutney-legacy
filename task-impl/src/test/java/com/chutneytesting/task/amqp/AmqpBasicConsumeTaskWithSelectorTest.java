@@ -3,6 +3,7 @@ package com.chutneytesting.task.amqp;
 import static com.chutneytesting.task.amqp.AmqpTasksTest.mockConnectionFactory;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.github.fridujo.rabbitmq.mock.MockChannel;
 import com.github.fridujo.rabbitmq.mock.MockConnectionFactory;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
@@ -31,7 +32,8 @@ public class AmqpBasicConsumeTaskWithSelectorTest {
             .withSecurity("guest", "guest")
             .build();
 
-        mockConnectionFactory.newConnection().createChannel().exchangeDeclare("test-ex", "fanout");
+        MockChannel channel = mockConnectionFactory.newConnection().createChannel();
+        channel.exchangeDeclare("test-ex", "fanout");
 
         String queueName = "toto";
         Task amqpCreateBoundTemporaryQueueTask = mockConnectionFactory(new AmqpCreateBoundTemporaryQueueTask(
@@ -80,19 +82,44 @@ public class AmqpBasicConsumeTaskWithSelectorTest {
         TaskExecutionResult amqpBasicConsumeResult = amqpBasicConsumeTask.execute();
         assertThat(amqpBasicConsumeResult.status).isEqualTo(Status.Success);
         assertThat(amqpBasicConsumeResult.outputs).hasSize(3);
-        final List<Map<String, Object>> body = (List<Map<String, Object>>) amqpBasicConsumeResult.outputs.get("body");
-        final List<Map<String, Object>> payloads = (List<Map<String, Object>>) amqpBasicConsumeResult.outputs.get("payloads");
-        final List<Map<String, Object>> headers = (List<Map<String, Object>>) amqpBasicConsumeResult.outputs.get("headers");
+
+        final List<Map<String, Object>> body = extractData(amqpBasicConsumeResult, "body");
+        final List<Map<String, Object>> payloads = extractData(amqpBasicConsumeResult, "payloads");
+        final List<Map<String, Object>> headers = extractData(amqpBasicConsumeResult, "headers");
         assertThat(body.size()).isEqualTo(1);
+
         final Map<String, Object> message = body.get(0);
         final Map<String, Object> payload1 = (Map<String, Object>) message.get("payload");
         assertThat(payload1.get("value")).isEqualTo("test message");
         assertThat(payload1.get("id")).isEqualTo("1111");
+
         final Map<String, Object> headers1 = (Map<String, Object>) message.get("headers");
         assertThat(headers1.get("maVersion")).isEqualTo("2.0");
         assertThat(payload1).isEqualTo(payloads.get(0));
         assertThat(headers1).isEqualTo(headers.get(0));
 
+        // Assert that message matching selector is ack and the other is not
+        channel.basicRecover();
+
+        Task amqpBasicConsumeTaskRemainingMessage = mockConnectionFactory(new AmqpBasicConsumeTask(
+            target,
+            queueName,
+            1,
+            "",
+            "10 sec",
+            logger
+        ), mockConnectionFactory);
+
+        TaskExecutionResult amqpBasicConsumeResultRemainingMessage = amqpBasicConsumeTaskRemainingMessage.execute();
+        assertThat(amqpBasicConsumeResultRemainingMessage.status).isEqualTo(Status.Success);
+
+        final List<Map<String, Object>> payloadsRemaining = extractData(amqpBasicConsumeResultRemainingMessage, "payloads");
+        assertThat(payloadsRemaining.size()).isEqualTo(1);
+
+        final List<Map<String, Object>> bodyRemaining = extractData(amqpBasicConsumeResultRemainingMessage, "body");
+        final Map<String, Object> messageRemaining = bodyRemaining.get(0);
+        final Map<String, Object> headersRemaining = (Map<String, Object>) messageRemaining.get("headers");
+        assertThat(headersRemaining.get("maVersion")).isEqualTo("1.0");
     }
 
     @Test
@@ -143,6 +170,9 @@ public class AmqpBasicConsumeTaskWithSelectorTest {
 
         TaskExecutionResult amqpBasicConsumeResult = amqpBasicConsumeTask.execute();
         assertThat(amqpBasicConsumeResult.status).isEqualTo(Status.Failure);
+    }
 
+    private List<Map<String, Object>> extractData(TaskExecutionResult amqpBasicConsumeResult, String dataName) {
+        return (List<Map<String, Object>>) amqpBasicConsumeResult.outputs.get(dataName);
     }
 }
