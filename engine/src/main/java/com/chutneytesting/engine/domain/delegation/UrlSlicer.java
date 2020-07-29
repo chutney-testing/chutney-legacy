@@ -19,6 +19,8 @@ public class UrlSlicer {
         portByProtocols.put("http", 80);
         portByProtocols.put("https", 443);
         portByProtocols.put("ssh", 22);
+        portByProtocols.put("amqp", 5672);
+        portByProtocols.put("amqps", 5671);
     }
 
     private static final Pattern[] patterns = {
