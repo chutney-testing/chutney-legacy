@@ -113,8 +113,6 @@ export class HistoryComponent implements OnInit, OnDestroy, OnChanges {
             if (this.executions[i].executionId === newExecutions[i].executionId) {
                 if (this.executions[i].status !== newExecutions[i].status) {
                     this.executions[i] = newExecutions[i];
-                } else {
-                    break;
                 }
             } else {
                 this.executions.splice(i, 0, newExecutions[i]);

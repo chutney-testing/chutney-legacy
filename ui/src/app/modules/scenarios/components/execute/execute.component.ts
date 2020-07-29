@@ -84,7 +84,7 @@ export class ExecuteComponent implements OnInit, OnDestroy {
         });
     }
 
-    private buildParametersFromForm(): Array<KeyValue> {
+    private buildDataSetFromForm(): Array<KeyValue> {
         const computedParameters: Array<KeyValue> = [];
         const parameters = this.componentForm.controls.parameters as FormArray;
         parameters.controls.forEach((ctlr, i) => {
