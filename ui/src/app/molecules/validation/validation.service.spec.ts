@@ -28,8 +28,8 @@ it('isValidUrl returns false on null', () => {
   expect(service.isValidUrl(null)).toBe(false);
 });
 
-it('isValidUrl returns false on missing port URL', () => {
-  expect(service.isValidUrl('test://test:')).toBe(false);
+it('isValidUrl returns true on missing port URL', () => {
+  expect(service.isValidUrl('test://test:')).toBe(true);
 });
 
 it('isValidUrl returns true on valid URL', () => {

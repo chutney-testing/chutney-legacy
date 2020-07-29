@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class ValidationService {
 
-    private urlRegex = new RegExp('^[a-z]+:\/\/[^:]+:[0-9]+.*$');
+    private urlRegex = new RegExp('^[a-z]+:\/\/[^:]+(:[0-9]+)?.*$');
     private environmentNameRegex = new RegExp('^[A-Z0-9_-]{3,20}$');
 
     constructor() { }
