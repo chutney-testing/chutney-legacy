@@ -55,6 +55,8 @@ public final class DataSetPatchUtils {
                     String[] uniqueValue = line.split(SEPARATOR_REGEX);
                     if (uniqueValue.length == 2) {
                         uniqueValues.put(uniqueValue[0].trim(), uniqueValue[1].trim());
+                    } else if (uniqueValue.length == 1) {
+                        uniqueValues.put(uniqueValue[0].trim(), "");
                     }
                 }
             }

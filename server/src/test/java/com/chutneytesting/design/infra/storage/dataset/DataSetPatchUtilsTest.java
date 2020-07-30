@@ -7,6 +7,7 @@ import static com.chutneytesting.design.infra.storage.dataset.DataSetPatchUtils.
 import static com.chutneytesting.design.infra.storage.dataset.DataSetPatchUtils.unifiedDiff;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 
 import com.chutneytesting.design.domain.dataset.DataSet;
 import com.github.difflib.patch.PatchFailedException;
@@ -60,6 +61,20 @@ public class DataSetPatchUtilsTest {
         assertThat(prettyValues.getLeft()).containsExactlyEntriesOf(dataSet.uniqueValues);
         assertThat(rawValues.getRight()).containsExactlyElementsOf(dataSet.multipleValues);
         assertThat(prettyValues.getRight()).containsExactlyElementsOf(dataSet.multipleValues);
+    }
+
+    @Test
+    public void should_map_string_as_dataset_values_for_unvalued_unique_values() {
+        // Given
+        String dataset = "key |\n";
+
+        // When
+        Pair<Map<String, String>, List<Map<String, String>>> values = extractValues(dataset);
+
+        // Then
+        assertThat(values.getLeft()).containsExactly(
+            entry("key", "")
+        );
     }
 
     @Test

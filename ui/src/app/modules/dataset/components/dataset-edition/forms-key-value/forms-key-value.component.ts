@@ -112,6 +112,7 @@ export class FormsKeyValueComponent implements ControlValueAccessor {
     propagateChange: any = () => {};
 
     writeValue(val: Array<KeyValue>): void {
+        this.clearForm();
         if (val != null && val.length > 0) {
             if (this.keyValuesForm.length === 0) {
                 val.forEach(kv => {

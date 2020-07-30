@@ -11,8 +11,6 @@ import {
 } from '@angular/forms';
 import { KeyValue } from '@model';
 import { FileSaverService } from 'ngx-filesaver';
-import { of, zip } from 'rxjs';
-import { map, toArray } from 'rxjs/operators';
 
 @Component({
     selector: 'chutney-forms-data-grid',
@@ -44,6 +42,7 @@ export class FormsDataGridComponent implements ControlValueAccessor {
     // Columns
 
     updateHeader(col: number, newHeader: string) {
+        this.headers[col] = newHeader;
         const lines = this.dataGridForm.controls;
         lines.forEach((line: FormArray) => {
             let cell = line.controls[col];
@@ -84,6 +83,7 @@ export class FormsDataGridComponent implements ControlValueAccessor {
     }
 
     private clearForm() {
+        this.headers = [];
         while (this.dataGridForm.length !== 0) {
             this.dataGridForm.removeAt(0)
         }
@@ -177,6 +177,7 @@ export class FormsDataGridComponent implements ControlValueAccessor {
     };
 
     writeValue(val: Array<Array<KeyValue>>): void {
+        this.clearForm();
         if (val != null && val.length > 0) {
             if (this.dataGridForm.length === 0) {
                 val.map(l => this.createLine(l))

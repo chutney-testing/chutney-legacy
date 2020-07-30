@@ -1,5 +1,6 @@
 import { Clonable, cloneAsPossible } from 'src/app/shared/clonable';
 import { Strategy } from '@core/model/scenario';
+import { areEquals } from '@shared';
 
 export class ComponentTask implements Clonable<ComponentTask> {
     constructor(
@@ -81,6 +82,12 @@ export class KeyValue implements Clonable<KeyValue> {
             cloneAsPossible(this.key),
             cloneAsPossible(this.value)
         );
+    }
+
+    public equals(obj: KeyValue): boolean {
+        return obj
+            && areEquals(this.key, obj.key)
+            && areEquals(this.value, obj.value);
     }
 }
 

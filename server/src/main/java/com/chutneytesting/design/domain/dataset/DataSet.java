@@ -3,12 +3,15 @@ package com.chutneytesting.design.domain.dataset;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 
 public class DataSet {
 
@@ -92,9 +95,9 @@ public class DataSet {
                 ofNullable(name).orElse(""),
                 ofNullable(description).orElse(""),
                 ofNullable(creationDate).orElseGet(Instant::now),
-                (ofNullable(tags).orElse(emptyList())).stream().map(String::toUpperCase).map(String::trim).collect(Collectors.toList()),
-                ofNullable(uniqueValues).orElse(emptyMap()),
-                ofNullable(multipleValues).orElse(emptyList())
+                (ofNullable(tags).orElse(emptyList())).stream().map(String::toUpperCase).map(String::trim).collect(toList()),
+                cleanUniqueValues(ofNullable(uniqueValues).orElse(emptyMap())),
+                cleanMultipleValues(ofNullable(multipleValues).orElse(emptyList()))
             );
         }
 
@@ -142,6 +145,25 @@ public class DataSet {
                 .withTags(dataset.tags)
                 .withUniqueValues(dataset.uniqueValues)
                 .withMultipleValues(dataset.multipleValues);
+        }
+
+        private Map<String, String> cleanUniqueValues(Map<String, String> uniqueValues) {
+            // Get rid of empty keys
+            return uniqueValues.entrySet().stream()
+                .filter(e -> isNotBlank(e.getKey()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        }
+
+        private List<Map<String, String>> cleanMultipleValues(List<Map<String, String>> multipleValues) {
+            // Get rid of empty keys and empty lines
+            return multipleValues.stream()
+                .map(this::cleanUniqueValues)
+                .filter(this::hasValuesNotBlank)
+                .collect(toList());
+        }
+
+        private boolean hasValuesNotBlank(Map<String, String> map) {
+            return map.values().stream().anyMatch(StringUtils::isNotBlank);
         }
     }
 }

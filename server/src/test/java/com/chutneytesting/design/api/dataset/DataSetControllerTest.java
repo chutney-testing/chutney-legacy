@@ -12,6 +12,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.chutneytesting.RestExceptionHandler;
@@ -123,14 +124,12 @@ public class DataSetControllerTest {
         // Given
         String id = "1-9";
         Pair<DataSet, DataSetDto> dataSet = dataSetMetaData(id, "name", 1);
-        DataSet oldDataSet = DataSet.builder().fromDataSet(dataSet.getLeft()).build();
-        when(dataSetRepository.findById(eq(fromFrontId(id)))).thenReturn(oldDataSet);
         when(dataSetRepository.save(any())).thenReturn(fromFrontId(id));
         when(dataSetHistoryRepository.addVersion(any())).thenReturn(Optional.of(Pair.of("#2:6", 2)));
 
         // When
         MvcResult mvcResult = mockMvc.perform(
-            post(DataSetController.BASE_URL)
+            put(DataSetController.BASE_URL)
                 .contentType(APPLICATION_JSON_UTF8_VALUE)
                 .content(om.writeValueAsString(dataSet.getRight())))
             .andExpect(status().isOk())

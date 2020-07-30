@@ -3,9 +3,11 @@ package com.chutneytesting.design.api.dataset;
 import static com.chutneytesting.design.api.dataset.DataSetMapper.fromDto;
 import static com.chutneytesting.design.api.dataset.DataSetMapper.toDto;
 import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
+import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.design.domain.dataset.DataSet;
 import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
+import com.chutneytesting.design.domain.dataset.DataSetNotFoundException;
 import com.chutneytesting.design.domain.dataset.DataSetRepository;
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,6 +55,21 @@ public class DataSetController {
         newDataSet = DataSet.builder().fromDataSet(newDataSet).withId(newDataSetId).build();
         Optional<Pair<String, Integer>> savedVersion = dataSetHistoryRepository.addVersion(newDataSet);
         return toDto(newDataSet, savedVersion.map(Pair::getRight).orElseGet(() -> lastVersionNumber(newDataSetId)));
+    }
+
+    @PutMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public DataSetDto update(@RequestBody DataSetDto dataSetDto) {
+        final DataSet dataSetToUpdate = fromDto(dataSetDto);
+        return ofNullable(dataSetToUpdate.id)
+            .map(id -> {
+                Optional<Pair<String, Integer>> savedVersion = dataSetHistoryRepository.addVersion(dataSetToUpdate);
+                if (savedVersion.isPresent()) {
+                    dataSetRepository.save(dataSetToUpdate);
+                    return toDto(dataSetToUpdate, savedVersion.get().getRight());
+                }
+                return findById(id);
+            })
+            .orElseThrow(() -> new DataSetNotFoundException(null));
     }
 
     @DeleteMapping(path = "/{dataSetId}")

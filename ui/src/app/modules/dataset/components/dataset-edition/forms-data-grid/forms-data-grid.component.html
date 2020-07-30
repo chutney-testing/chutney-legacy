@@ -33,7 +33,7 @@
                         </button>
                     </div>
                     <input type="text" class="form-control" id="{{i}}-header" placeholder="{{ 'dataset.key' | translate }}" value="{{header}}"
-                           (input)="updateHeader(i, $event.target.value)"/>
+                           (change)="updateHeader(i, $event.target.value)"/>
                 </th>
             </tr>
             </thead>

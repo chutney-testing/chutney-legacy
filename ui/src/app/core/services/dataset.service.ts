@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '@env/environment';
-import { Dataset } from '@model';
+import { Dataset, KeyValue } from '@model';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
@@ -22,8 +22,8 @@ export class DataSetService {
                     dto.description,
                     dto.tags,
                     dto.lastUpdated,
-                    dto.uniqueValues,
-                    dto.multipleValues,
+                    [],
+                    [],
                     dto.version,
                     dto.id
                 ));
@@ -34,25 +34,38 @@ export class DataSetService {
 
     findById(id: string): Observable<Dataset> {
         return this.httpClient.get<Dataset>(environment.backend + this.resourceUrl + '/' + id)
-            .pipe(map((dto: any) => {
-                    return new Dataset(
-                        dto.name,
-                        dto.description,
-                        dto.tags,
-                        dto.lastUpdated,
-                        dto.uniqueValues,
-                        dto.multipleValues,
-                        dto.version,
-                        dto.id);
-                }
-            ));
+            .pipe(
+                map(dto => this.fromDto(dto))
+            );
     }
 
     save(dataset: Dataset): Observable<Dataset> {
-        return this.httpClient.post<Dataset>(environment.backend + this.resourceUrl, dataset);
+        if (dataset.id && dataset.id.length > 0) {
+            return this.httpClient.put<Dataset>(environment.backend + this.resourceUrl, dataset)
+                .pipe(
+                    map(dto => this.fromDto(dto))
+                );
+        } else {
+            return this.httpClient.post<Dataset>(environment.backend + this.resourceUrl, dataset)
+                .pipe(
+                    map(dto => this.fromDto(dto))
+                );
+        }
     }
 
     delete(id: String): Observable<Object> {
         return this.httpClient.delete(environment.backend + this.resourceUrl + '/' + id);
+    }
+
+    private fromDto(dto: any): Dataset {
+        return new Dataset(
+            dto.name,
+            dto.description,
+            dto.tags,
+            dto.lastUpdated,
+            dto.uniqueValues.map(o => new KeyValue(o.key, o.value)),
+            dto.multipleValues.map(l => l.map(o => new KeyValue(o.key, o.value))),
+            dto.version,
+            dto.id);
     }
 }

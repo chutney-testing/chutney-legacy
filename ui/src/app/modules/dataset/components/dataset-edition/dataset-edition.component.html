@@ -4,7 +4,7 @@
 <div class="p-3">
     <ng-container [formGroup]="datasetForm">
         <div class="box2">
-            <input id="datasetName" class="form-control" placeholder="Name" formControlName="name" required/>
+            <input #dataSetName id="datasetName" class="form-control" placeholder="Name" formControlName="name" required/>
         </div>
         <div class="box2">
             <input id="datasetDescription" class="form-control" placeholder="Description" formControlName="description"/>
