@@ -118,6 +118,7 @@ public class AmqpTasksTest {
             5,
             "",
             "10 sec",
+            true,
             logger
         ), mockConnectionFactory);
 

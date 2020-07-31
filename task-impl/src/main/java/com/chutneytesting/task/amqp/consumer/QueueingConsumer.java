@@ -2,11 +2,10 @@ package com.chutneytesting.task.amqp.consumer;
 
 import static com.chutneytesting.task.amqp.utils.AmqpUtils.convertMapLongStringToString;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.chutneytesting.task.amqp.utils.JsonPathEvaluator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Delivery;
-import com.chutneytesting.task.amqp.utils.JsonPathEvaluator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,14 +26,16 @@ public class QueueingConsumer {
     private final Channel channel;
     private final String queueName;
     private final String selector;
+    private final boolean ackIfMatch;
     private final CountDownLatch messageCounter;
     private final Result result;
 
-    public QueueingConsumer(Channel channel, String queueName, int nbMessages, String selector, long maxAwait) {
+    public QueueingConsumer(Channel channel, String queueName, int nbMessages, String selector, long maxAwait, boolean ackIfMatch) {
         this.selector = selector;
         this.maxAwait = maxAwait;
         this.channel = channel;
         this.queueName = queueName;
+        this.ackIfMatch = ackIfMatch;
         this.result = new Result();
         this.messageCounter = new CountDownLatch(nbMessages);
     }
@@ -65,12 +66,19 @@ public class QueueingConsumer {
                 String messageAsString = OBJECT_MAPPER.writeValueAsString(message);
                 if (JsonPathEvaluator.evaluate(messageAsString, selector)) {
                     addMessageToResultAndCountDown(message);
+                    this.acknowledgeMessage(delivery);
                 }
-            } catch (JsonProcessingException e) {
+            } catch (IOException e) {
                 LOGGER.warn("Received a message, however cannot read process it as json, Ignoring message selection.", e);
             }
         }
 
+    }
+
+    private void acknowledgeMessage(Delivery delivery) throws IOException {
+        if (this.ackIfMatch) {
+            this.channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+        }
     }
 
     private void addMessageToResultAndCountDown(Map<String, Object> message) {
