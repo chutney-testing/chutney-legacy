@@ -1,5 +1,44 @@
 # Changelog
 
+## [1.2.2](https://github.com/chutney-testing/chutney/tree/1.2.2) (2020-07-31)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.1...1.2.2)
+
+**Implemented enhancements:**
+
+- Enhance json assert task [\#184](https://github.com/chutney-testing/chutney/issues/184)
+- Adding to context log [\#160](https://github.com/chutney-testing/chutney/issues/160)
+- Dataset - Execution [\#101](https://github.com/chutney-testing/chutney/issues/101)
+- Dataset - Selection of the dataset [\#100](https://github.com/chutney-testing/chutney/issues/100)
+- Dataset - Edition [\#99](https://github.com/chutney-testing/chutney/issues/99)
+- Dataset - Dataset CRUD [\#98](https://github.com/chutney-testing/chutney/issues/98)
+- Dataset - List dataset [\#97](https://github.com/chutney-testing/chutney/issues/97)
+
+**Fixed bugs:**
+
+- Refresh running scenario remove opened/closed chevron [\#191](https://github.com/chutney-testing/chutney/issues/191)
+- Stop execution campaign seems not working [\#162](https://github.com/chutney-testing/chutney/issues/162)
+- Inconsistency when execution id does not match the scenario /\#/scenario/xxx/execution/yyy [\#161](https://github.com/chutney-testing/chutney/issues/161)
+- NPE in contextput [\#156](https://github.com/chutney-testing/chutney/issues/156)
+- Maximize screen in json edition [\#150](https://github.com/chutney-testing/chutney/issues/150)
+
+**Closed issues:**
+
+- Allow target without port specified [\#189](https://github.com/chutney-testing/chutney/issues/189)
+
+**Merged pull requests:**
+
+- Fix/189 target whitout port [\#197](https://github.com/chutney-testing/chutney/pull/197) ([boddissattva](https://github.com/boddissattva))
+- Add option to acknowledge only messages matching selector, true by default [\#196](https://github.com/chutney-testing/chutney/pull/196) ([PKode](https://github.com/PKode))
+- Fix/191 : Scenario executions [\#195](https://github.com/chutney-testing/chutney/pull/195) ([boddissattva](https://github.com/boddissattva))
+- feat/extend\_composable\_testcase\_dataset\_management [\#192](https://github.com/chutney-testing/chutney/pull/192) ([boddissattva](https://github.com/boddissattva))
+- feat\(task\_impl\): Add placeholder for assert in  JsonTask [\#188](https://github.com/chutney-testing/chutney/pull/188) ([nbrouand](https://github.com/nbrouand))
+- feat\(ui\): Stop campaign bug.  [\#185](https://github.com/chutney-testing/chutney/pull/185) ([nbrouand](https://github.com/nbrouand))
+- bugfix\(ui + server\): Raise error when asking for report not corresponding to the scenarioId [\#178](https://github.com/chutney-testing/chutney/pull/178) ([nbrouand](https://github.com/nbrouand))
+- Bugfix/aceeditor [\#177](https://github.com/chutney-testing/chutney/pull/177) ([nbrouand](https://github.com/nbrouand))
+- bugfix\(task-impl\): Prevent NPE on null value + pretty log for most usual type [\#176](https://github.com/chutney-testing/chutney/pull/176) ([nbrouand](https://github.com/nbrouand))
+- chore\(ui\): Update node version to new LTS v12.18.0 [\#172](https://github.com/chutney-testing/chutney/pull/172) ([bessonm](https://github.com/bessonm))
+
 ## [1.2.1](https://github.com/chutney-testing/chutney/tree/1.2.1) (2020-06-16)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.0...1.2.1)
