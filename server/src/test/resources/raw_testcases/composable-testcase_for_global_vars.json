@@ -34,7 +34,7 @@
                     "parameters": {
                     }
                 },
-                "dataSet": [
+                "computedParameters": [
                     {
                         "key": "key",
                         "value": "slash"
@@ -67,7 +67,7 @@
                     "parameters": {
                     }
                 },
-                "dataSet": [
+                "computedParameters": [
                     {
                         "key": "actual",
                         "value": "${#slash}"
@@ -100,7 +100,7 @@
                     "parameters": {
                     }
                 },
-                "dataSet": [
+                "computedParameters": [
                     {
                         "key": "key",
                         "value": "apostrophe"
@@ -133,7 +133,7 @@
                     "parameters": {
                     }
                 },
-                "dataSet": [
+                "computedParameters": [
                     {
                         "key": "actual",
                         "value": "${#apostrophe}"
@@ -166,7 +166,7 @@
                     "parameters": {
                     }
                 },
-                "dataSet": [
+                "computedParameters": [
                     {
                         "key": "key",
                         "value": "quote"
@@ -199,7 +199,7 @@
                     "parameters": {
                     }
                 },
-                "dataSet": [
+                "computedParameters": [
                     {
                         "key": "actual",
                         "value": "${#quote}"
@@ -232,7 +232,7 @@
                     "parameters": {
                     }
                 },
-                "dataSet": [
+                "computedParameters": [
                     {
                         "key": "key",
                         "value": "backslash"
@@ -265,7 +265,7 @@
                     "parameters": {
                     }
                 },
-                "dataSet": [
+                "computedParameters": [
                     {
                         "key": "actual",
                         "value": "${#backslash}"
@@ -279,6 +279,6 @@
             }
         ]
     },
-    "dataSet": [],
+    "computedParameters": [],
     "tags": []
 }

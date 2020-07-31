@@ -31,5 +31,5 @@ public interface GwtTestCaseDto {
 
     GwtScenarioDto scenario();
 
-    Map<String, String> dataSet();
+    Map<String, String> computedParameters();
 }

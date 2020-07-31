@@ -1,12 +1,14 @@
 package com.chutneytesting.execution.domain.compiler;
 
 import static java.lang.String.format;
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.chutneytesting.WebConfiguration;
@@ -14,30 +16,34 @@ import com.chutneytesting.design.domain.compose.ComposableScenario;
 import com.chutneytesting.design.domain.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.compose.FunctionalStep;
 import com.chutneytesting.design.domain.compose.Strategy;
+import com.chutneytesting.design.domain.dataset.DataSet;
+import com.chutneytesting.design.domain.dataset.DataSetRepository;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.groovy.util.Maps;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 public class ComposableTestCasePreProcessorTest {
 
+    private final ObjectMapper objectMapper = new WebConfiguration().objectMapper();
+    private final String environment = "exec env";
+
     private GlobalvarRepository globalvarRepository;
-    private ObjectMapper objectMapper = new WebConfiguration().objectMapper();
-    private String environment = "exec env";
+    private DataSetRepository dataSetRepository;
 
     private ComposableTestCasePreProcessor sut;
 
     @Before
     public void setUp() {
-        globalvarRepository = Mockito.mock(GlobalvarRepository.class);
+        globalvarRepository = mock(GlobalvarRepository.class);
+        dataSetRepository = mock(DataSetRepository.class);
     }
 
     @Test
@@ -53,7 +59,7 @@ public class ComposableTestCasePreProcessorTest {
         when(globalvarRepository.getFlatMap())
             .thenReturn(new HashMap<>(Maps.of(GLOBAL_PARAMETER, "[{\"" + VALUE + "\":\"" + FIRST_ITERATION_VALUE + "\"}, {\"value\":\"" + SECOND_ITERATION_VALUE + "\"}]")));
 
-        sut = new ComposableTestCasePreProcessor(objectMapper, globalvarRepository);
+        sut = new ComposableTestCasePreProcessor(objectMapper, globalvarRepository, dataSetRepository);
 
         // Given
         Map<String, String> childParameters = singletonMap(VALUE,  /* empty: will be provided by Loop strategy */  "");
@@ -78,7 +84,9 @@ public class ComposableTestCasePreProcessorTest {
         ComposableTestCase composableTestase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
-        ComposableTestCase actual = sut.apply(composableTestase, environment);
+        ComposableTestCase actual = sut.apply(
+            new ExecutionRequest(composableTestase, environment)
+        );
 
         // Then
         assertThat(actual.composableScenario.functionalSteps.size()).isEqualTo(1);
@@ -100,7 +108,7 @@ public class ComposableTestCasePreProcessorTest {
         when(globalvarRepository.getFlatMap())
             .thenReturn(new HashMap<>(Maps.of(GLOBAL_PARAMETER, "[{\"" + VALUE + "\":\"" + FIRST_ITERATION_VALUE + "\"}, {\"value\":\"" + SECOND_ITERATION_VALUE + "\"}]")));
 
-        sut = new ComposableTestCasePreProcessor(objectMapper, globalvarRepository);
+        sut = new ComposableTestCasePreProcessor(objectMapper, globalvarRepository, dataSetRepository);
 
         // Given
         Map<String, String> childParameters = singletonMap(VALUE,  /* empty: will be provided by Loop strategy */  "");
@@ -123,10 +131,12 @@ public class ComposableTestCasePreProcessorTest {
             .build();
 
         Map<String, String> dataset = singletonMap(PARAM_NAME, "**" + GLOBAL_PARAMETER + "**");
-        ComposableTestCase composableTestase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario, dataset);
+        ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario, dataset);
 
         // When
-        ComposableTestCase actual = sut.apply(composableTestase, environment);
+        ComposableTestCase actual = sut.apply(
+            new ExecutionRequest(composableTestCase, environment)
+        );
 
         // Then
         assertThat(actual.composableScenario.functionalSteps.size()).isEqualTo(1);
@@ -143,7 +153,7 @@ public class ComposableTestCasePreProcessorTest {
         map.put("key.2", "value2");
         when(globalvarRepository.getFlatMap()).thenReturn(map);
 
-        sut = new ComposableTestCasePreProcessor(objectMapper, globalvarRepository);
+        sut = new ComposableTestCasePreProcessor(objectMapper, globalvarRepository, dataSetRepository);
 
         // Given
         String actionName = "simple action on target %1$s";
@@ -173,7 +183,7 @@ public class ComposableTestCasePreProcessorTest {
                 )
             )
             .withSteps(
-                Arrays.asList(
+                asList(
                     // aliasing child parameter name
                     buildStepFromActionWithDataSet(action, "**step target**"),
                     // make child parameter go up in step parameter
@@ -203,7 +213,7 @@ public class ComposableTestCasePreProcessorTest {
                 .build(),
             ComposableScenario.builder()
                 .withFunctionalSteps(
-                    Arrays.asList(
+                    asList(
                         buildStepFromStepWithDataSet(step, "**testcase param**", "", "hard testcase target"),
                         buildStepFromStepWithDataSet(step, "hard testcase param", "**testcase target**", ""),
                         buildStepFromStepWithDataSet(step, "", "hard testcase step target", "**testcase target**")
@@ -221,7 +231,9 @@ public class ComposableTestCasePreProcessorTest {
             dataSet);
 
         // When
-        final ComposableTestCase composableTestCaseProcessed = sut.apply(composableTestCase, environment);
+        final ComposableTestCase composableTestCaseProcessed = sut.apply(
+            new ExecutionRequest(composableTestCase, environment)
+        );
 
         // Then
         assertThat(composableTestCaseProcessed.id()).isEqualTo(composableTestCase.id());
@@ -267,7 +279,7 @@ public class ComposableTestCasePreProcessorTest {
         map.put("key.2", "value2");
         when(globalvarRepository.getFlatMap()).thenReturn(map);
 
-        sut = new ComposableTestCasePreProcessor(objectMapper, globalvarRepository);
+        sut = new ComposableTestCasePreProcessor(objectMapper, globalvarRepository, dataSetRepository);
 
         // Given
         String actionName = "simple action on target %1$s";
@@ -334,7 +346,7 @@ public class ComposableTestCasePreProcessorTest {
                 .build(),
             ComposableScenario.builder()
                 .withFunctionalSteps(
-                    Arrays.asList(
+                    asList(
                         buildStepFromStepWithDataSet(step, "**testcase param**", ""),
                         buildStepFromStepWithDataSet(step, "", "hard testcase step target")
                     )
@@ -350,7 +362,9 @@ public class ComposableTestCasePreProcessorTest {
                 .build(),
             dataSet);
 
-        final ComposableTestCase composableTestCaseProcessed = sut.apply(composableTestCase, environment);
+        final ComposableTestCase composableTestCaseProcessed = sut.apply(
+            new ExecutionRequest(composableTestCase, environment)
+        );
 
         // Then
         assertThat(composableTestCaseProcessed.id()).isEqualTo(composableTestCase.id());
@@ -411,6 +425,135 @@ public class ComposableTestCasePreProcessorTest {
         assertThat(step_2_2.steps.get(0).dataSet).containsOnly(
             entry("target", "target_it2")
         );
+    }
+
+    @Test
+    public void should_generate_composableTestCase_scenario_steps_with_dataset_values() {
+        // Given
+        Map<String, String> globalVars = new HashMap<>();
+        globalVars.put("global.key", "global var value");
+        when(globalvarRepository.getFlatMap()).thenReturn(globalVars);
+
+        String dataSetId = "666";
+        DataSet dataSet = DataSet.builder()
+            .withId(dataSetId)
+            .withUniqueValues(
+                Maps.of(
+                    "testcase param third", "dataset uv 1"
+                )
+            )
+            .withMultipleValues(
+                asList( // Note that first key has only two distincts values ...
+                    Maps.of("testcase param", "dataset mv 11", "testcase param second", "dataset mv 12"),
+                    Maps.of("testcase param", "dataset mv 11", "testcase param second", "dataset mv 22"),
+                    Maps.of("testcase param", "dataset mv 31", "testcase param second", "dataset mv 32")
+                )
+            )
+            .build();
+        when(dataSetRepository.findById(dataSetId)).thenReturn(
+            dataSet
+        );
+        sut = new ComposableTestCasePreProcessor(objectMapper, globalvarRepository, dataSetRepository);
+
+        Map<String, String> computedParameters = Maps.of(
+            "testcase title param", "default title value",
+            "testcase param", "",
+            "testcase param second", "with default value",
+            "testcase param third", ""
+        );
+        ComposableTestCase testCase = new ComposableTestCase(
+            "testcase id",
+            TestCaseMetadataImpl.builder()
+                .withTitle("testcase title for dataset unique value ref **testcase title param**")
+                .withDescription("testcase description for global var ref **global.key**")
+                .withDatasetId(dataSetId)
+                .build(),
+            ComposableScenario.builder()
+                .withFunctionalSteps(
+                    asList(
+                        // We want here to have only two iterations
+                        FunctionalStep.builder()
+                            .withName("step with iteration over one dataset's key **first step param**")
+                            .withSteps(
+                                singletonList(
+                                    FunctionalStep.builder()
+                                        .withName("substep name with **testcase param third**")
+                                        .overrideDataSetWith(
+                                            Maps.of("testcase param third", "")
+                                        )
+                                        .build()
+                                )
+                            )
+                            .overrideDataSetWith(
+                                Maps.of(
+                                    "first step param", "**testcase param**",
+                                    "testcase param third", ""
+                                )
+                            )
+                            .build(),
+                        // We want here to not iterate at all
+                        FunctionalStep.builder()
+                            .withName("step do not iterate over me")
+                            .withImplementation(of("{\"identifier\": \"http-get\", \"target\": \"**step 2 param** and **testcase param**\", \"inputs\": []}"))
+                            .overrideDataSetWith(
+                                Maps.of(
+                                    "step 2 param", "hard value 2",
+                                    "testcase param", "another hard value 2"
+                                )
+                            )
+                            .build(),
+                        // We want here to have three iterations
+                        FunctionalStep.builder()
+                            .withName("step with iteration over two dataset's keys **testcase param**")
+                            .withImplementation(of("{\"identifier\": \"http-**global.key**\", \"target\": \"**testcase param second** and **step 3 param**\", \"inputs\": []}"))
+                            .overrideDataSetWith(
+                                Maps.of(
+                                    "testcase param", "",
+                                    "testcase param second", "",
+                                    "step 3 param", "hard value 3"
+                                )
+                            )
+                            .build()
+                    )
+                )
+                .build(),
+            computedParameters
+        );
+
+        // When
+        ComposableTestCase processedTestCase = sut.apply(
+            new ExecutionRequest(testCase, "env", true)
+        );
+
+        // Then
+        assertThat(processedTestCase.metadata.title()).isEqualTo("testcase title for dataset unique value ref default title value");
+        assertThat(processedTestCase.metadata.description()).isEqualTo("testcase description for global var ref global var value");
+
+        assertThat(processedTestCase.composableScenario.functionalSteps)
+            .hasSize(testCase.composableScenario.functionalSteps.size());
+
+        FunctionalStep firstScenarioStep = processedTestCase.composableScenario.functionalSteps.get(0);
+        assertThat(firstScenarioStep.name).isEqualTo("step with iteration over one dataset's key **first step param**");
+        assertThat(firstScenarioStep.steps).hasSize(2);
+        assertThat(firstScenarioStep.steps.get(0).name).isEqualTo("step with iteration over one dataset's key dataset mv 11 - dataset iteration 1");
+        assertThat(firstScenarioStep.steps.get(0).steps.get(0).name).isEqualTo("substep name with dataset uv 1");
+        assertThat(firstScenarioStep.steps.get(1).name).isEqualTo("step with iteration over one dataset's key dataset mv 31 - dataset iteration 2");
+        assertThat(firstScenarioStep.steps.get(1).steps.get(0).name).isEqualTo("substep name with dataset uv 1");
+
+        FunctionalStep secondScenarioStep = processedTestCase.composableScenario.functionalSteps.get(1);
+        assertThat(secondScenarioStep.name).isEqualTo("step do not iterate over me");
+        assertThat(secondScenarioStep.implementation).isEqualTo(of("{\"identifier\": \"http-get\", \"target\": \"hard value 2 and another hard value 2\", \"inputs\": []}"));
+        assertThat(secondScenarioStep.steps).isEmpty();
+
+        FunctionalStep thirdScenarioStep = processedTestCase.composableScenario.functionalSteps.get(2);
+        assertThat(thirdScenarioStep.name).isEqualTo("step with iteration over two dataset's keys **testcase param**");
+        assertThat(thirdScenarioStep.steps).hasSize(3);
+        assertThat(thirdScenarioStep.steps.get(0).name).isEqualTo("step with iteration over two dataset's keys dataset mv 11 - dataset iteration 1");
+        assertThat(thirdScenarioStep.steps.get(0).implementation).isEqualTo(of("{\"identifier\": \"http-global var value\", \"target\": \"dataset mv 12 and hard value 3\", \"inputs\": []}"));
+        assertThat(thirdScenarioStep.steps.get(1).name).isEqualTo("step with iteration over two dataset's keys dataset mv 11 - dataset iteration 2");
+        assertThat(thirdScenarioStep.steps.get(1).implementation).isEqualTo(of("{\"identifier\": \"http-global var value\", \"target\": \"dataset mv 22 and hard value 3\", \"inputs\": []}"));
+        assertThat(thirdScenarioStep.steps.get(2).name).isEqualTo("step with iteration over two dataset's keys dataset mv 31 - dataset iteration 3");
+        assertThat(thirdScenarioStep.steps.get(2).implementation).isEqualTo(of("{\"identifier\": \"http-global var value\", \"target\": \"dataset mv 32 and hard value 3\", \"inputs\": []}"));
     }
 
     private FunctionalStep buildStepFromActionWithDataSet(FunctionalStep action, String targetDataSetValue) {

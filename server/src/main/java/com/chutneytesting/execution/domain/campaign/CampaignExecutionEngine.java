@@ -1,14 +1,21 @@
 package com.chutneytesting.execution.domain.campaign;
 
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import com.chutneytesting.design.domain.campaign.Campaign;
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
 import com.chutneytesting.design.domain.campaign.CampaignNotFoundException;
 import com.chutneytesting.design.domain.campaign.CampaignRepository;
 import com.chutneytesting.design.domain.campaign.ScenarioExecutionReportCampaign;
+import com.chutneytesting.design.domain.compose.ComposableTestCase;
+import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.ScenarioNotParsableException;
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
+import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
@@ -26,6 +33,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +49,7 @@ public class CampaignExecutionEngine {
     private final ScenarioExecutionEngine scenarioExecutionEngine;
     private final ExecutionHistoryRepository executionHistoryRepository;
     private final TestCaseRepository testCaseRepository;
+    private final DataSetHistoryRepository dataSetHistoryRepository;
 
     private Map<Long, CampaignExecutionReport> currentCampaignExecutions = new ConcurrentHashMap<>();
     private Map<Long, Boolean> currentCampaignExecutionsStopRequests = new ConcurrentHashMap<>();
@@ -48,11 +57,12 @@ public class CampaignExecutionEngine {
     public CampaignExecutionEngine(CampaignRepository campaignRepository,
                                    ScenarioExecutionEngine scenarioExecutionEngine,
                                    ExecutionHistoryRepository executionHistoryRepository,
-                                   TestCaseRepository testCaseRepository) {
+                                   TestCaseRepository testCaseRepository, DataSetHistoryRepository dataSetHistoryRepository) {
         this.campaignRepository = campaignRepository;
         this.scenarioExecutionEngine = scenarioExecutionEngine;
         this.executionHistoryRepository = executionHistoryRepository;
         this.testCaseRepository = testCaseRepository;
+        this.dataSetHistoryRepository = dataSetHistoryRepository;
     }
 
     public List<CampaignExecutionReport> executeByName(String campaignName) {
@@ -97,7 +107,8 @@ public class CampaignExecutionEngine {
         verifyNotAlreadyRunning(campaign);
 
         Long executionId = campaignRepository.newCampaignExecution();
-        CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(executionId, campaign.title, !failedIds.isEmpty(), campaign.executionEnvironment());
+        Optional<Pair<String, Integer>> executionDataSet = findExecutionDataSet(campaign);
+        CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(executionId, campaign.title, !failedIds.isEmpty(), campaign.executionEnvironment(), executionDataSet.map(Pair::getLeft).orElse(null), executionDataSet.map(Pair::getRight).orElse(null));
         currentCampaignExecutions.put(campaign.id, campaignExecutionReport);
         currentCampaignExecutionsStopRequests.put(executionId, Boolean.FALSE);
         try {
@@ -107,7 +118,7 @@ public class CampaignExecutionEngine {
                 return execute(campaign, campaignExecutionReport, failedIds);
             }
         } catch (Exception e) {
-            LOGGER.error("Not managed exception occured",e);
+            LOGGER.error("Not managed exception occured", e);
             throw new RuntimeException(e);
         } finally {
             campaignExecutionReport.endCampaignExecution();
@@ -127,25 +138,22 @@ public class CampaignExecutionEngine {
 
         campaignExecutionReport.initExecution(testCases, campaign.executionEnvironment());
         Stream<TestCase> scenarioStream;
-        if(campaign.parallelRun) {
+        if (campaign.parallelRun) {
             scenarioStream = testCases.parallelStream();
         } else {
             scenarioStream = testCases.stream();
         }
 
-        scenarioStream.forEach(testCase ->  {
+        scenarioStream.forEach(testCase -> {
             // Is stop requested ?
             if (!currentCampaignExecutionsStopRequests.get(campaignExecutionReport.executionId)) {
-                // Override scenario dataset by campaign's one
-                Map<String, String> ds = new HashMap<>(testCase.dataSet());
-                ds.putAll(campaign.dataSet);
                 // Init scenario execution in campaign report
                 campaignExecutionReport.startScenarioExecution(testCase, campaign.executionEnvironment());
                 // Execute scenario
-                ScenarioExecutionReportCampaign scenarioExecutionReport = executeScenario(campaign, testCase.withDataSet(ds));
+                ScenarioExecutionReportCampaign scenarioExecutionReport = executeScenario(campaign, testCase);
                 // Retry one time if failed
                 if (campaign.retryAuto && ServerReportStatus.FAILURE.equals(scenarioExecutionReport.status())) {
-                    scenarioExecutionReport = executeScenario(campaign, testCase.withDataSet(ds));
+                    scenarioExecutionReport = executeScenario(campaign, testCase);
                 }
                 // Add scenario report to campaign's one
                 Optional.ofNullable(scenarioExecutionReport)
@@ -160,7 +168,8 @@ public class CampaignExecutionEngine {
         String scenarioName;
         try {
             LOGGER.trace("Execute scenario {} for campaign {}", testCase.id(), campaign.id);
-            ScenarioExecutionReport scenarioExecutionReport = scenarioExecutionEngine.execute(testCase, campaign.executionEnvironment());
+            ExecutionRequest executionRequest = buildTestCaseExecutionrequest(campaign, testCase);
+            ScenarioExecutionReport scenarioExecutionReport = scenarioExecutionEngine.execute(executionRequest);
             executionId = scenarioExecutionReport.executionId;
             scenarioName = scenarioExecutionReport.scenarioName;
         } catch (FailedExecutionAttempt e) {
@@ -175,6 +184,27 @@ public class CampaignExecutionEngine {
         // TODO - why an extra DB request when we already have the report above ?
         ExecutionHistory.Execution execution = executionHistoryRepository.getExecution(testCase.id(), executionId);
         return new ScenarioExecutionReportCampaign(testCase.id(), scenarioName, execution.summary());
+    }
+
+    private ExecutionRequest buildTestCaseExecutionrequest(Campaign campaign, TestCase testCase) {
+        String campaignDatasetId = campaign.datasetId;
+        // Override scenario dataset by campaign's one
+        if (isNotBlank(campaignDatasetId) && testCase instanceof ComposableTestCase) {
+            testCase = ((ComposableTestCase) testCase).withDataSetId(campaignDatasetId);
+            return new ExecutionRequest(testCase, campaign.executionEnvironment(), true);
+        } else {
+            Map<String, String> ds = new HashMap<>(testCase.computedParameters());
+            ds.putAll(campaign.dataSet);
+            return new ExecutionRequest(testCase.withDataSet(ds), campaign.executionEnvironment());
+        }
+    }
+
+    private Optional<Pair<String, Integer>> findExecutionDataSet(Campaign campaign) {
+        String datasetId = campaign.datasetId;
+        if (isNotBlank(datasetId)) {
+            return of(Pair.of(datasetId, dataSetHistoryRepository.lastVersion(datasetId)));
+        }
+        return empty();
     }
 
     private CampaignExecutionReport executeCampaign(Campaign campaign) {

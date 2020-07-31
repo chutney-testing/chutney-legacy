@@ -223,7 +223,7 @@ public class CampaignExecutionStepDefs {
             emptyMap(),
             emptyList(),
             "00:00",
-            ENV, false, false);
+            ENV, false, false, null);
         context.putCampaign(campaign);
     }
 
@@ -235,7 +235,7 @@ public class CampaignExecutionStepDefs {
             emptyMap(),
             emptyList(),
             "00:00",
-            ENV, false, false);
+            ENV, false, false, null);
     }
 
     private void assertJsonExecutionReport(String executionReport) {

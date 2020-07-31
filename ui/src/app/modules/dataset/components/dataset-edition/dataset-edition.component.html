@@ -1,0 +1,59 @@
+<div class="notification text-center bg-info text-white">
+    <strong *ngIf="message">{{ message }}</strong>
+</div>
+<div class="p-3">
+    <ng-container [formGroup]="datasetForm">
+        <div class="box2">
+            <input #dataSetName id="datasetName" class="form-control" placeholder="Name" formControlName="name" required/>
+        </div>
+        <div class="box2">
+            <input id="datasetDescription" class="form-control" placeholder="Description" formControlName="description"/>
+        </div>
+        <div class="box2">
+            <input id="datasetTags"  class="form-control" placeholder="Tags" formControlName="tags"/>
+        </div>
+
+        <div class="box2">
+            <button type="button" [disabled]="!isValid()" (click)="save()" class="btn btn-success m-2">
+                <span class="fa fa-check"></span>&nbsp;
+                <span>{{ 'global.actions.record' | translate }}</span>
+            </button>
+            <button type="button" class="btn btn-secondary m-2" (click)="cancel()">
+                <span class="fa fa-times"></span>&nbsp;
+                <span>{{ 'global.actions.cancel' | translate }}</span>
+            </button>
+        </div>
+
+        <div *ngIf="dataset.name" class="box2 float-right">
+            <chutney-delete-confirm-dialog
+                [dialogMessage]="('global.confirm.question' | translate) + ' ' + ('global.actions.delete' | translate) + '\n' + dataset.name"
+                [label]="'Delete dataset'"
+                [disabled]="null"
+                (deleteEvent)="deleteDataset()">
+            </chutney-delete-confirm-dialog>
+            <span class="ml-4">v{{dataset.version}} - {{ dataset.lastUpdated.toString() | amLocale:'fr' | amTimeAgo }}</span>
+        </div>
+
+        <div>
+            <ul class="nav nav-tabs">
+                <li class="nav-item pointer">
+                    <a class="nav-link" [ngClass]="{ 'active':activeTab==='keyValue'}"
+                       (click)="selectTab('keyValue')"><span class="fa fa-list" aria-hidden="true"></span></a>
+                </li>
+                <li class="nav-item pointer">
+                    <a class="nav-link" [ngClass]="{ 'active':activeTab==='multiKeyValue'}"
+                       (click)="selectTab('multiKeyValue')"><span class="fa fa-th" aria-hidden="true"></span></a>
+                </li>
+            </ul>
+
+            <div class="tab-content clearfix">
+                <div class="tab-pane" id="keyValue" [ngClass]="{ 'active':activeTab==='keyValue'}">
+                    <chutney-forms-key-value formControlName="keyValues"></chutney-forms-key-value>
+                </div>
+                <div class="tab-pane" id="mulitKeyValue" [ngClass]="{ 'active':activeTab==='multiKeyValue'}">
+                    <chutney-forms-data-grid formControlName="multiKeyValues"></chutney-forms-data-grid>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+</div>

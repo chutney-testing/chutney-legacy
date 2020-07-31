@@ -11,8 +11,8 @@ export class ThumbnailPipe implements PipeTransform {
     public transform(value: SafeValue): SafeHtml {
         const doc = new DOMParser().parseFromString(value.toString(), 'text/html');
         const imgElements = doc.getElementsByTagName('img');
-        for (let i=0;i<imgElements.length;i++) {
-            let imgElement = imgElements.item(i);
+        for (let i = 0; i < imgElements.length; i++) {
+            const imgElement = imgElements.item(i);
             imgElement.classList.add('thumbnail');
             imgElement.insertAdjacentHTML('beforebegin', '<a href="' + imgElement.src + '" target="_blank">' + imgElement.outerHTML + '</a>');
             imgElement.remove();

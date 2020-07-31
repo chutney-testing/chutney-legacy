@@ -1,0 +1,100 @@
+<div class="p-3">
+    <div class="row">
+        <div class="col-md-5">
+            <chutney-forms-search-field [id]="'dataset-search'" [placeholder]="'global.actions.search' | translate"
+                                        (searchInputEvent)="filterSearchChange($event)">
+            </chutney-forms-search-field>
+        </div>
+        <div class="col-md-4">
+            <button type="button" class="btn btn-outline-primary" [routerLink]="['/dataset', 'edition']">
+                <span class="fa fa-plus" aria-hidden="true"></span> {{ 'global.actions.create' | translate }}
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <angular2-multiselect [data]="itemList"
+                                  [settings]="settings"
+                                  (onSelect)="onItemSelect($event)"
+                                  (onDeSelect)="onItemDeSelect($event)"
+                                  [(ngModel)]="selectedItem"
+            >
+            </angular2-multiselect>
+        </div>
+    </div>
+
+    <div class="row">
+        <div [ngClass]="preview ? 'col-md-8' : 'col'">
+            <table class="table table-sm table-striped table-hover">
+                <thead>
+                <tr>
+                    <th scope="col" class="w10">&nbsp;</th>
+                    <th scope="col" class="w25">Name</th>
+                    <th scope="col" class="w10">Tags</th>
+                    <th scope="col" class="w40">Description</th>
+                    <th scope="col" class="w15">LastUpdated</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let dataset of (datasets |  dataSetSearch : selectedTags | searchTextPipe  : dataSetFilter : ['name', 'description'])"
+                    (click)="showPreview(dataset)"
+                    style="cursor: pointer">
+
+                    <td>
+                        <button type="button" class="btn btn-outline-primary btn-sm"
+                                [routerLink]="['/dataset', dataset.id, 'edition']">
+                            <span class="fa fa-pencil-alt"
+                                  aria-hidden="true"></span> {{ 'global.actions.edit' | translate }}
+                        </button>
+                    </td>
+                    <td><span>{{dataset.name}}</span></td>
+
+                    <td>
+                        <span *ngIf="dataset.tags.length <= 3">
+                            <span *ngFor="let tag of dataset.tags"
+                                  class="chutney-tag chutney-tag-selected">{{tag}}</span>
+                        </span>
+                        <span *ngIf="dataset.tags.length > 3">
+                            <span *ngFor="let tag of dataset.tags | slice:0:2"
+                                  class="chutney-tag chutney-tag-selected">{{tag}}</span>
+                            <button type="button" class="chutney-tag chutney-tag-selected"
+                                    ngbPopover="{{dataset.tags}}" placement="left"
+                                    triggers="mouseenter:mouseleave" container="body">
+                                ...
+                            </button>
+                        </span>
+                    </td>
+                    <td><span>{{dataset.description}}</span></td>
+                    <td><span>{{dataset.lastUpdated | amDateFormat: 'YYYY-MM-DD HH:mm'}}</span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div *ngIf="preview" class="col-md-4 border pt-2 pl-3 pr-2" style="overflow-y: auto;overflow-x: auto;">
+            <button type="button" class="close float-right" aria-label="Close" (click)="preview = null">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <span>{{preview.name}}</span>
+            <div *ngFor="let uniqueValue of preview.uniqueValues">
+                <span>{{uniqueValue.key}}: {{uniqueValue.value}}</span>
+            </div>
+            <div class="row">
+                <table class="table table-sm table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th *ngFor="let header of preview.getMultipleValueHeader()">{{ header }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let multipleValue of preview.multipleValues">
+                        <td *ngFor="let value of multipleValue">{{ value.value }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="scrollbar scrollbar-primary">
+
+</div>

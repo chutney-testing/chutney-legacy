@@ -26,6 +26,8 @@ public interface ExecutionHistory {
         Optional<String> error();
         String testCaseTitle();
         String environment();
+        Optional<String> datasetId();
+        Optional<Integer> datasetVersion();
     }
 
     interface Attached {

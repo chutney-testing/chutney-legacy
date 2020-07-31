@@ -20,6 +20,44 @@
                         <span>{{ 'global.actions.cancel' | translate }}</span>
                     </button>
                 </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-7" [class.errors-input]="submitted && f.title.errors?.required">
+                    <label for="title">{{ 'campaigns.edition.form.title.label' | translate }}</label>
+                    <input type="text" id="title" class="form-control" formControlName="title">
+                    <div class="error-message" *ngIf="submitted && f.title.errors?.required">
+                        {{ 'campaigns.edition.form.title.required' | translate }}
+                    </div>
+                </div>
+
+                <div class="form-group col-md-5">
+                    <label for="description">{{ 'campaigns.edition.form.description' | translate }}</label>
+                    <input type="text" id="description" class="form-control" formControlName="description">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-2">
+                    <label>{{'menu.principal.dataset' | translate}}</label>
+                    <chutney-dataset-selection
+                        [selectedDatasetId]="campaign.datasetId"
+                        (selectionEvent)="selectDataset($event)">
+                    </chutney-dataset-selection>
+                </div>
+
+                <div *ngIf="environments" class="form-group col-md-2">
+                    <label>{{'admin.targets.environment' | translate}}</label>
+                    <chutney-environment-combo [environments]="environments" [defaultValue]="campaign.environment"
+                        (selectionEvent)="setSelectedEnvironment($event)">
+                    </chutney-environment-combo>
+                </div>
+
+                <div class="form-group col-md-2" [class.errors-input]="submitted && f.scheduleTime.errors">
+                    <label for="scheduleTime">{{ 'campaigns.edition.form.schedule.label' | translate }}</label>
+                    <input type="text" id="scheduleTime" class="form-control" formControlName="scheduleTime">
+                    <div class="error-message" *ngIf="submitted && f.scheduleTime.errors">
+                        {{ 'campaigns.edition.form.schedule.pattern' | translate }}
+                    </div>
+                </div>
                 <div class="col-md-6">
                     {{ 'campaigns.edition.options' | translate }} :
                     <div class="ml-4">
@@ -31,35 +69,6 @@
                             <input type="checkbox" class="form-check-input" id="retryAutoCheck" formControlName="retryAuto">
                             <label class="form-check-label" for="retryAutoCheck">{{ 'campaigns.edition.retryAuto' | translate }}</label>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-5" [class.errors-input]="submitted && f.title.errors?.required">
-                    <label for="title">{{ 'campaigns.edition.form.title.label' | translate }}</label>
-                    <input type="text" id="title" class="form-control" formControlName="title">
-                    <div class="error-message" *ngIf="submitted && f.title.errors?.required">
-                        {{ 'campaigns.edition.form.title.required' | translate }}
-                    </div>
-                </div>
-
-                <div class="form-group col-md-3">
-                    <label for="description">{{ 'campaigns.edition.form.description' | translate }}</label>
-                    <input type="text" id="description" class="form-control" formControlName="description">
-                </div>
-
-                <div *ngIf="environments" class="form-group col-md-2">
-                    <label>environment</label>
-                    <chutney-environment-combo [environments]="environments" [defaultValue]="campaign.environment"
-                        (selectionEvent)="setSelectedEnvironment($event)">
-                    </chutney-environment-combo>
-                </div>
-
-                <div class="form-group col-md-2" [class.errors-input]="submitted && f.scheduleTime.errors">
-                    <label for="scheduleTime">{{ 'campaigns.edition.form.schedule.label' | translate }}</label>
-                    <input type="text" id="scheduleTime" class="form-control" formControlName="scheduleTime">
-                    <div class="error-message" *ngIf="submitted && f.scheduleTime.errors">
-                        {{ 'campaigns.edition.form.schedule.pattern' | translate }}
                     </div>
                 </div>
             </div>

@@ -5,7 +5,7 @@ import { escapeHtml } from '@shared/tools/string-utils';
 export class PrettyPrintPipe implements PipeTransform {
   transform(value, escapeHtml: boolean = false): any {
     if (value instanceof Array) {
-      return value.map(v => this.beautify(v, escapeHtml)).join("<br/>");
+      return value.map(v => this.beautify(v, escapeHtml)).join('<br/>');
     } else {
       return this.beautify(value, escapeHtml);
     }
@@ -17,10 +17,10 @@ export class PrettyPrintPipe implements PipeTransform {
       let json = JSON.parse(content);
       if (typeof json === 'string') {
         content = json;
-        throw new Error("");
+        throw new Error('');
       } else if (Array.isArray(json)) {
           let b = '[';
-          for (let i=0 ; i < json.length ; i++) {
+          for (let i = 0 ; i < json.length ; i++) {
               b += this.beautify(json[i]);
               b += '\n';
           }

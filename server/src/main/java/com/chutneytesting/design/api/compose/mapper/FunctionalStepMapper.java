@@ -1,7 +1,7 @@
 package com.chutneytesting.design.api.compose.mapper;
 
-import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.fromFrontId;
-import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.toFrontId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
 import static java.util.stream.Collectors.toList;
 
 import com.chutneytesting.design.api.compose.dto.FunctionalStepDto;
@@ -38,7 +38,7 @@ public class FunctionalStepMapper {
 
         builder.strategy(toDto(functionalStep.strategy));
 
-        builder.addAllDataSet(KeyValue.fromMap(functionalStep.dataSet));
+        builder.addAllComputedParameters(KeyValue.fromMap(functionalStep.dataSet));
 
         return builder.build();
     }
@@ -75,7 +75,7 @@ public class FunctionalStepMapper {
             .withImplementation(dto.task())
             .withSteps(dto.steps().stream().map(FunctionalStepMapper::fromDto).collect(toList()))
             .withParameters(KeyValue.toMap(dto.parameters()))
-            .overrideDataSetWith(KeyValue.toMap(dto.dataSet()))
+            .overrideDataSetWith(KeyValue.toMap(dto.computedParameters()))
             .withTags(dto.tags().stream().map(String::trim).filter(t -> !t.isEmpty()).collect(toList()));
 
         return functionalStepBuilder.build();

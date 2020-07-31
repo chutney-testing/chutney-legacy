@@ -10,7 +10,7 @@ import {
     ValidationErrors
 } from '@angular/forms';
 import { of } from 'rxjs';
-import {ParameterDefinition, Strategy, StrategyDefinition} from '@model';
+import { ParameterDefinition, Strategy, StrategyDefinition } from '@model';
 
 @Component({
     selector: 'chutney-strategy-form',

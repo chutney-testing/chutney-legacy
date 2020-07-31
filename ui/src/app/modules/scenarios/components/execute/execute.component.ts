@@ -50,7 +50,7 @@ export class ExecuteComponent implements OnInit, OnDestroy {
     }
 
     execute() {
-        this.scenarioExecutionService.executeScenarioAsync(this.testCase.id, this.buildDataSetFromForm(), this.env)
+        this.scenarioExecutionService.executeScenarioAsync(this.testCase.id, this.buildParametersFromForm(), this.env)
             .pipe(
                 delay(1000)
             )
@@ -77,20 +77,20 @@ export class ExecuteComponent implements OnInit, OnDestroy {
         });
 
         const parameters = this.componentForm.controls.parameters as FormArray;
-        this.testCase.dataSet.forEach((keyValue) => {
+        this.testCase.computedParameters.forEach((keyValue) => {
             parameters.push(
                 this.formBuilder.control(keyValue.value, Validators.required)
             );
         });
     }
 
-    private buildDataSetFromForm(): Array<KeyValue> {
-        let dataset: Array<KeyValue> = [];
+    private buildParametersFromForm(): Array<KeyValue> {
+        const computedParameters: Array<KeyValue> = [];
         const parameters = this.componentForm.controls.parameters as FormArray;
         parameters.controls.forEach((ctlr, i) => {
-            dataset.push(new KeyValue(this.testCase.dataSet[i].key, ctlr.value))
+            computedParameters.push(new KeyValue(this.testCase.computedParameters[i].key, ctlr.value));
         });
-        return dataset;
+        return computedParameters;
     }
 
 }

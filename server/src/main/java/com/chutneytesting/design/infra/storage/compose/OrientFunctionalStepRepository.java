@@ -15,16 +15,6 @@ import static com.chutneytesting.design.infra.storage.db.orient.lucene.LuceneUti
 import static com.chutneytesting.design.infra.storage.db.orient.lucene.LuceneUtils.escapeLuceneSearchQuery;
 import static com.chutneytesting.design.infra.storage.db.orient.lucene.LuceneUtils.forceAllRequiredTerm;
 
-import com.google.common.collect.Lists;
-import com.orientechnologies.orient.core.db.ODatabasePool;
-import com.orientechnologies.orient.core.db.ODatabaseSession;
-import com.orientechnologies.orient.core.id.ORecordId;
-import com.orientechnologies.orient.core.record.ODirection;
-import com.orientechnologies.orient.core.record.OElement;
-import com.orientechnologies.orient.core.record.OVertex;
-import com.orientechnologies.orient.core.sql.executor.OResult;
-import com.orientechnologies.orient.core.sql.executor.OResultSet;
-import com.orientechnologies.orient.core.storage.ORecordDuplicatedException;
 import com.chutneytesting.design.domain.compose.FunctionalStep;
 import com.chutneytesting.design.domain.compose.FunctionalStepCyclicDependencyException;
 import com.chutneytesting.design.domain.compose.FunctionalStepNotFoundException;
@@ -37,6 +27,16 @@ import com.chutneytesting.tools.PaginatedDto;
 import com.chutneytesting.tools.PaginationRequestParametersDto;
 import com.chutneytesting.tools.SortRequestParametersDto;
 import com.chutneytesting.tools.SqlUtils;
+import com.google.common.collect.Lists;
+import com.orientechnologies.orient.core.db.ODatabasePool;
+import com.orientechnologies.orient.core.db.ODatabaseSession;
+import com.orientechnologies.orient.core.id.ORecordId;
+import com.orientechnologies.orient.core.record.ODirection;
+import com.orientechnologies.orient.core.record.OElement;
+import com.orientechnologies.orient.core.record.OVertex;
+import com.orientechnologies.orient.core.sql.executor.OResult;
+import com.orientechnologies.orient.core.sql.executor.OResultSet;
+import com.orientechnologies.orient.core.storage.ORecordDuplicatedException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -85,10 +85,8 @@ public class OrientFunctionalStepRepository implements StepRepository {
     @Override
     public FunctionalStep findById(final String recordId) {
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
-            OVertex element = dbSession.load(new ORecordId(recordId));
-            if (element == null) {
-                throw new FunctionalStepNotFoundException();
-            }
+            OVertex element = (OVertex)load(recordId, dbSession)
+                .orElseThrow(FunctionalStepNotFoundException::new);
             return vertexToFunctionalStep(element, dbSession).build();
         }
     }

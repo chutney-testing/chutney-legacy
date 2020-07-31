@@ -1,5 +1,6 @@
 import { Clonable, cloneAsPossible } from 'src/app/shared/clonable';
 import { Strategy } from '@core/model/scenario';
+import { areEquals } from '@shared';
 
 export class ComponentTask implements Clonable<ComponentTask> {
     constructor(
@@ -7,10 +8,10 @@ export class ComponentTask implements Clonable<ComponentTask> {
         public implementation: Implementation,
         public children: Array<ComponentTask>,
         public parameters: Array<KeyValue> = [],
-        public dataSet: Array<KeyValue> = [],
+        public computedParameters: Array<KeyValue> = [],
         public tags: Array<String> = [],
         public strategy: Strategy,
-        public id?: string
+        public id?: string,
     ) {
     }
 
@@ -20,11 +21,10 @@ export class ComponentTask implements Clonable<ComponentTask> {
             cloneAsPossible(this.implementation),
             cloneAsPossible(this.children),
             cloneAsPossible(this.parameters),
-            cloneAsPossible(this.dataSet),
+            cloneAsPossible(this.computedParameters),
             cloneAsPossible(this.tags),
             cloneAsPossible(this.strategy),
-            cloneAsPossible(this.id)
-        );
+            cloneAsPossible(this.id));
     }
 }
 
@@ -73,7 +73,7 @@ export class KeyValue implements Clonable<KeyValue> {
 
     constructor(
         public key: string,
-        public value: string
+        public value: any
     ) {
     }
 
@@ -82,6 +82,12 @@ export class KeyValue implements Clonable<KeyValue> {
             cloneAsPossible(this.key),
             cloneAsPossible(this.value)
         );
+    }
+
+    public equals(obj: KeyValue): boolean {
+        return obj
+            && areEquals(this.key, obj.key)
+            && areEquals(this.value, obj.value);
     }
 }
 

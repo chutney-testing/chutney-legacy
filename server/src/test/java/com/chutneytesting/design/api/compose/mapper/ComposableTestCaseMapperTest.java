@@ -1,9 +1,9 @@
 package com.chutneytesting.design.api.compose.mapper;
 
 import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.fromDto;
-import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.fromFrontId;
 import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.toDto;
-import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.toFrontId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.design.api.compose.dto.ComposableTestCaseDto;
@@ -47,7 +47,7 @@ public class ComposableTestCaseMapperTest {
                             .parameters(Arrays.asList(
                                 ImmutableKeyValue.builder().key("key valued").value("value").build(),
                                 ImmutableKeyValue.builder().key("empty key").value("").build()))
-                            .dataSet(
+                            .computedParameters(
                                 KeyValue.fromMap(
                                     Maps.of(
                                         "key valued", "value",
@@ -63,7 +63,7 @@ public class ComposableTestCaseMapperTest {
                     ))
                     .build()
             )
-            .dataSet(
+            .computedParameters(
                 KeyValue.fromMap(
                     Maps.of(
                         "empty key", "",
@@ -72,6 +72,7 @@ public class ComposableTestCaseMapperTest {
                     )
                 )
             )
+            .datasetId("66-7")
             .build();
 
     private final ComposableTestCase composableTestCase =
@@ -83,6 +84,7 @@ public class ComposableTestCaseMapperTest {
                 .withCreationDate(Instant.MIN)
                 .withTags(Arrays.asList("tag1","tag2"))
                 .withRepositorySource("ComposableTestCase")
+                .withDatasetId("#66:7")
                 .build(),
             ComposableScenario.builder()
                 .withFunctionalSteps(

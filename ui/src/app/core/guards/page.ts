@@ -1,4 +1,4 @@
-import {HostListener} from "@angular/core";
+import { HostListener } from '@angular/core';
 
 export abstract class CanDeactivatePage {
   abstract canDeactivatePage(): boolean;

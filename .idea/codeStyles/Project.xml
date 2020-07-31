@@ -47,6 +47,11 @@
         </value>
       </option>
     </JavaCodeStyleSettings>
+    <TypeScriptCodeStyleSettings version="0">
+      <option name="USE_DOUBLE_QUOTES" value="false" />
+      <option name="FORCE_QUOTE_STYlE" value="true" />
+      <option name="SPACES_WITHIN_IMPORTS" value="true" />
+    </TypeScriptCodeStyleSettings>
     <codeStyleSettings language="Gherkin">
       <indentOptions>
         <option name="CONTINUATION_INDENT_SIZE" value="4" />

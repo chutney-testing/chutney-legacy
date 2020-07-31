@@ -36,7 +36,7 @@ public interface FunctionalStepDto {
     default List<KeyValue> parameters() { return Collections.emptyList(); }
 
     @Value.Default()
-    default List<KeyValue> dataSet() { return Collections.emptyList(); }
+    default List<KeyValue> computedParameters() { return Collections.emptyList(); }
 
     enum StepUsage { STEP, GIVEN, WHEN, THEN }
 

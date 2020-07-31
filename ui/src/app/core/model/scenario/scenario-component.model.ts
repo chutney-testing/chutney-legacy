@@ -11,8 +11,9 @@ export class ScenarioComponent implements Equals<ScenarioComponent>, Clonable<Sc
         public creationDate?: Date,
         public componentSteps: Array<ComponentTask> = [],
         public parameters: Array<KeyValue> = [],
-        public dataSet: Array<KeyValue> = [],
-        public tags: Array<string> = []
+        public computedParameters: Array<KeyValue> = [],
+        public tags: Array<string> = [],
+        public datasetId: string = null
     ) {
     }
 
@@ -23,7 +24,8 @@ export class ScenarioComponent implements Equals<ScenarioComponent>, Clonable<Sc
             && areEquals(this.componentSteps, obj.componentSteps)
             && areEquals(this.parameters, obj.parameters)
             && areEquals(this.tags, obj.tags)
-            && areEquals(this.dataSet, obj.dataSet);
+            && areEquals(this.computedParameters, obj.computedParameters)
+            && areEquals(this.datasetId, obj.datasetId);
     }
 
     public clone(): ScenarioComponent {
@@ -34,8 +36,9 @@ export class ScenarioComponent implements Equals<ScenarioComponent>, Clonable<Sc
             cloneAsPossible(this.creationDate),
             cloneAsPossible(this.componentSteps),
             cloneAsPossible(this.parameters),
-            cloneAsPossible(this.dataSet),
-            cloneAsPossible(this.tags)
+            cloneAsPossible(this.computedParameters),
+            cloneAsPossible(this.tags),
+            cloneAsPossible(this.datasetId)
         );
     }
 }

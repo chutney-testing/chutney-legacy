@@ -1,5 +1,8 @@
 package com.chutneytesting.design.domain.campaign;
 
+import static java.time.LocalDateTime.now;
+import static java.util.Optional.ofNullable;
+
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
@@ -10,6 +13,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -21,6 +25,8 @@ public class CampaignExecutionReport {
     public final String campaignName;
     public final boolean partialExecution;
     public final String executionEnvironment;
+    public final Optional<String> dataSetId;
+    public final Optional<Integer> dataSetVersion;
 
     // Not mandatory
     public final LocalDateTime startDate;
@@ -28,18 +34,32 @@ public class CampaignExecutionReport {
     private final List<ScenarioExecutionReportCampaign> scenarioExecutionReports;
     public final Long campaignId;
 
-    public CampaignExecutionReport(Long executionId, String campaignName, boolean partialExecution, String executionEnvironment) {
+    public CampaignExecutionReport(Long executionId,
+                                   String campaignName,
+                                   boolean partialExecution,
+                                   String executionEnvironment,
+                                   String dataSetId,
+                                   Integer dataSetVersion) {
         this.executionId = executionId;
         this.campaignId = null;
         this.partialExecution = partialExecution;
         this.executionEnvironment = executionEnvironment;
         this.scenarioExecutionReports = new ArrayList<>();
         this.campaignName = campaignName;
-        this.startDate = LocalDateTime.now();
+        this.startDate = now();
         this.status = ServerReportStatus.RUNNING;
+        this.dataSetId = ofNullable(dataSetId);
+        this.dataSetVersion = ofNullable(dataSetVersion);
     }
 
-    public CampaignExecutionReport(Long executionId, Long campaignId, List<ScenarioExecutionReportCampaign> scenarioExecutionReports, String campaignName, boolean partialExecution, String executionEnvironment) {
+    public CampaignExecutionReport(Long executionId,
+                                   Long campaignId,
+                                   List<ScenarioExecutionReportCampaign> scenarioExecutionReports,
+                                   String campaignName,
+                                   boolean partialExecution,
+                                   String executionEnvironment,
+                                   String dataSetId,
+                                   Integer dataSetVersion) {
         this.executionId = executionId;
         this.campaignId = campaignId;
         this.campaignName = campaignName;
@@ -48,6 +68,8 @@ public class CampaignExecutionReport {
         this.status = findStatus(scenarioExecutionReports);
         this.partialExecution = partialExecution;
         this.executionEnvironment = executionEnvironment;
+        this.dataSetId = ofNullable(dataSetId);
+        this.dataSetVersion = ofNullable(dataSetVersion);
     }
 
     public void initExecution(List<TestCase> testCases, String executionEnvironment) {
@@ -59,10 +81,12 @@ public class CampaignExecutionReport {
                     ImmutableExecutionHistory.ExecutionSummary.builder()
                         .executionId(-1L)
                         .testCaseTitle(testCase.metadata().title())
-                        .time(LocalDateTime.now())
+                        .time(now())
                         .status(ServerReportStatus.NOT_EXECUTED)
                         .duration(0)
                         .environment(executionEnvironment)
+                        .datasetId(dataSetId)
+                        .datasetVersion(dataSetVersion)
                         .build())));
     }
 
@@ -77,10 +101,12 @@ public class CampaignExecutionReport {
                 ImmutableExecutionHistory.ExecutionSummary.builder()
                     .executionId(-1L)
                     .testCaseTitle(testCase.metadata().title())
-                    .time(LocalDateTime.now())
+                    .time(now())
                     .status(ServerReportStatus.RUNNING)
                     .duration(0)
                     .environment(executionEnvironment)
+                    .datasetId(dataSetId)
+                    .datasetVersion(dataSetVersion)
                     .build()));
     }
 
@@ -127,7 +153,7 @@ public class CampaignExecutionReport {
             .filter(Objects::nonNull)
             .map(ExecutionHistory.ExecutionProperties::status)
             .collect(Collectors.collectingAndThen(Collectors.toList(), ServerReportStatus::worst));
-        if(foundStatus.equals(ServerReportStatus.NOT_EXECUTED)) {
+        if (foundStatus.equals(ServerReportStatus.NOT_EXECUTED)) {
             return ServerReportStatus.STOPPED;
         }
         return foundStatus;

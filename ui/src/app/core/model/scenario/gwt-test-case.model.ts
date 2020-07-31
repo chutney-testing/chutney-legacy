@@ -30,7 +30,7 @@ export class GwtTestCase implements Equals<GwtTestCase>, Clonable<GwtTestCase> {
             Execution.deserializeExecutions(jsonObject.executions),
             jsonObject.tags,
             Scenario.deserialize(jsonObject.scenario),
-            ExampleParameters.deserialize(jsonObject.dataSet)
+            ExampleParameters.deserialize(jsonObject.computedParameters)
         );
     }
 
@@ -45,7 +45,7 @@ export class GwtTestCase implements Equals<GwtTestCase>, Clonable<GwtTestCase> {
         jsonObject['executions'] = this.executions;
         addOptionalParam(jsonObject, 'tags', this.tags);
         jsonObject['scenario'] = this.scenario.serialize();
-        addOptionalParam(jsonObject, 'dataSet', this.wrappedParams.serialize());
+        addOptionalParam(jsonObject, 'computedParameters', this.wrappedParams.serialize());
         return jsonObject;
     }
 

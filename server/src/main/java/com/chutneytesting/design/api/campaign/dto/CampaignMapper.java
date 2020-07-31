@@ -1,11 +1,13 @@
 package com.chutneytesting.design.api.campaign.dto;
 
+import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
-import com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper;
 import com.chutneytesting.design.domain.campaign.Campaign;
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
+import com.chutneytesting.tools.ui.ComposableIdUtils;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -18,14 +20,15 @@ public class CampaignMapper {
             campaign.title,
             campaign.description,
             campaign.scenarioIds.stream()
-                .map(ComposableTestCaseMapper::toFrontId)
+                .map(ComposableIdUtils::toFrontId)
                 .collect(toList()),
             campaign.dataSet,
             emptyList(),
             campaign.getStringScheduleTime(),
             campaign.executionEnvironment(),
             campaign.parallelRun,
-            campaign.retryAuto);
+            campaign.retryAuto,
+            toFrontId(campaign.datasetId));
     }
 
     public static CampaignDto toDto(Campaign campaign, List<CampaignExecutionReport> campaignExecutionReports) {
@@ -34,14 +37,15 @@ public class CampaignMapper {
             campaign.title,
             campaign.description,
             campaign.scenarioIds.stream()
-                                .map(ComposableTestCaseMapper::toFrontId)
-                                .collect(toList()),
+                .map(ComposableIdUtils::toFrontId)
+                .collect(toList()),
             campaign.dataSet,
             reportToDto(campaignExecutionReports),
             campaign.getStringScheduleTime(),
             campaign.executionEnvironment(),
             campaign.parallelRun,
-            campaign.retryAuto);
+            campaign.retryAuto,
+            toFrontId(campaign.datasetId));
     }
 
     public static Campaign fromDto(CampaignDto dto) {
@@ -50,13 +54,14 @@ public class CampaignMapper {
             dto.getTitle(),
             dto.getDescription(),
             dto.getScenarioIds().stream()
-                                .map( id -> ComposableTestCaseMapper.fromFrontId(Optional.of(id)) )
-                                .collect(toList()),
-            dto.getDataSet(),
+                .map(id -> fromFrontId(Optional.of(id)))
+                .collect(toList()),
+            dto.getComputedParameters(),
             dto.safeGetScheduleTime().map(LocalTime::parse).orElse(null),
             dto.getEnvironment(),
             dto.isParallelRun(),
-            dto.isRetryAuto()
+            dto.isRetryAuto(),
+            fromFrontId(dto.getDatasetId())
         );
     }
 

@@ -41,7 +41,7 @@ describe('ComponentCardComponent...', () => {
         describe('Render...', () => {
 
             const simpleComponent = buildComponentTask('Simple component');
-            const dataSetComponent = buildComponentTask('Component with dataset', null, buildDataSet(2));
+            const parametersComponent = buildComponentTask('Component with parameters', null, buildParameters(2));
             const actionComponent = buildComponentTask('Action component', buildImplementation('identifier'));
 
             it('should show delete button', () => {
@@ -69,7 +69,7 @@ describe('ComponentCardComponent...', () => {
             });
 
             it('should show component name', () => {
-                [simpleComponent, actionComponent, dataSetComponent].forEach(c => {
+                [simpleComponent, actionComponent, parametersComponent].forEach(c => {
                     component.component = c;
                     fixture.detectChanges();
                     expect(page.name.textContent).toEqual(c.name);
@@ -79,37 +79,37 @@ describe('ComponentCardComponent...', () => {
             it('should show identifer for component with implementation', () => {
                 component.component = actionComponent;
                 fixture.detectChanges();
-                expect(page.identifier.textContent.trim()).toEqual('('+component.component.implementation.identifier+')');
+                expect(page.identifier.textContent.trim()).toEqual('(' + component.component.implementation.identifier+')');
 
                 component.component = simpleComponent;
                 fixture.detectChanges();
                 expect(page.identifier).toBeNull();
             });
 
-            it('should show dataset form on collapse button click', () => {
+            it('should show parameters form on collapse button click', () => {
                 [simpleComponent, actionComponent].forEach(c => {
                     component.component = c;
                     fixture.detectChanges();
                     expect(page.parameters).toBeNull();
                 });
 
-                component.component = dataSetComponent;
+                component.component = parametersComponent;
                 fixture.detectChanges();
                 expect(page.parametersCollapseBtn).not.toBeNull();
                 // Not show by default
-                dataSetComponent.dataSet.forEach((kv, index) => {
+                parametersComponent.computedParameters.forEach((kv, index) => {
                     expect(page.parameterKey(index)).toBeUndefined();
                     expect(page.parameterValue(index)).toBeUndefined();
                 });
                 page.parametersCollapseBtn.click();
                 fixture.detectChanges();
-                dataSetComponent.dataSet.forEach((kv, index) => {
+                parametersComponent.computedParameters.forEach((kv, index) => {
                     expect(page.parameterKey(index).textContent).toEqual(kv.key);
                     expect(page.parameterValue(index).value).toEqual(kv.value);
                 });
                 page.parametersCollapseBtn.click();
                 fixture.detectChanges();
-                dataSetComponent.dataSet.forEach((kv, index) => {
+                parametersComponent.computedParameters.forEach((kv, index) => {
                     expect(page.parameterKey(index)).toBeUndefined();
                     expect(page.parameterValue(index)).toBeUndefined();
                 });
@@ -169,16 +169,17 @@ describe('ComponentCardComponent...', () => {
 
             const readHostComponentParameterValue = function (componentIndex, parameterIndex, readTime) {
                 return new Promise(resolve => {
-                    setTimeout(() => resolve(testHostComponent.componentTasks[componentIndex].dataSet[parameterIndex].value), readTime)
+                    setTimeout(() => resolve(testHostComponent.componentTasks[componentIndex].computedParameters[parameterIndex].value),
+                                            readTime)
                 });
             };
 
             const simpleComponent: ComponentTask = buildComponentTask('Simple component');
-            const datasetComponent: ComponentTask = buildComponentTask('Component with dataset', null, [new KeyValue(paramName, oldValue)]);
+            const parametersComponent: ComponentTask = buildComponentTask('Component with parameters', null, [new KeyValue(paramName, oldValue)]);
 
             beforeEach(() => {
                 // Set inputs and first render
-                testHostComponent.componentTasks.push(simpleComponent, datasetComponent);
+                testHostComponent.componentTasks.push(simpleComponent, parametersComponent);
                 fixture.detectChanges();
                 // Show all parameters
                 testHostComponent.componentCards.toArray().forEach(c => c.collapseComponentsParameters = false);
@@ -317,16 +318,21 @@ class HostPage {
     }
 }
 
-function buildComponentTask(name: string, implementation: Implementation = null, dataSet: Array<KeyValue> = [], id?: string): ComponentTask {
-    return new ComponentTask(name, implementation, [], [], dataSet, [], null, id);
+function buildComponentTask(name: string,
+                            implementation: Implementation = null,
+                            parameters: Array<KeyValue> = [],
+                            id?: string): ComponentTask {
+    return new ComponentTask(name, implementation, [], [], parameters, [], null, id);
 }
 
 function buildImplementation(identifier: string): Implementation {
     return new Implementation(identifier, null, false, [], [], [], []);
 }
 
-function buildDataSet(nb: number): Array<KeyValue> {
-    let r: Array<KeyValue> = [];
-    for (let i = 0; i < nb; i++) r.push(new KeyValue(`param${i}`, `value${i}`));
+function buildParameters(nb: number): Array<KeyValue> {
+    const r: Array<KeyValue> = [];
+    for (let i = 0; i < nb; i++) {
+        r.push(new KeyValue(`param${i}`, `value${i}`));
+    }
     return r;
 }

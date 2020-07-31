@@ -1,6 +1,9 @@
 package com.chutneytesting.design.infra.storage.campaign;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static java.time.LocalTime.now;
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -16,10 +19,7 @@ import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.tests.AbstractLocalDatabaseTest;
-import com.google.common.collect.Lists;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +54,7 @@ public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
         insertScenario(scenarioId, scenarioName);
         insertScenarioExec(scenarioId, "4", "SUCCESS");
 
-        currentCampaign = new Campaign(campaignId, "campaignName", "campaign description", Lists.newArrayList(scenarioId), emptyMap(),LocalTime.now(), "env", false, false);
+        currentCampaign = new Campaign(campaignId, "campaignName", "campaign description", newArrayList(scenarioId), emptyMap(), now(), "env", false, false, null);
         saveOneCampaignExecutionReport(campaignId, 1L, scenarioId, scenarioName, 4, ServerReportStatus.SUCCESS);
 
         assertAllExecutionHistoryPersisted();
@@ -70,7 +70,7 @@ public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
         insertScenarioExec(scenarioId, "4", "SUCCESS");
         insertScenarioExec(scenarioId, "5", "FAILURE");
 
-        currentCampaign = new Campaign(campaignId, "campaignName", "campaign description", Lists.newArrayList(scenarioId), emptyMap(), LocalTime.now(), "env", false, false);
+        currentCampaign = new Campaign(campaignId, "campaignName", "campaign description", newArrayList(scenarioId), emptyMap(), now(), "env", false, false, "#2:87");
         saveOneCampaignExecutionReport(campaignId, 1L, scenarioId, scenarioName, 4, ServerReportStatus.SUCCESS);
         saveOneCampaignExecutionReport(campaignId, 2L, scenarioId, scenarioName, 5, ServerReportStatus.FAILURE);
 
@@ -85,7 +85,7 @@ public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
         insertCampaign(campaignId);
         insertScenario(scenarioId, scenarioName);
 
-        currentCampaign = new Campaign(campaignId, "campaignName", "campaign description", Lists.newArrayList(scenarioId), emptyMap(),  LocalTime.now(), "env", false, false);
+        currentCampaign = new Campaign(campaignId, "campaignName", "campaign description", newArrayList(scenarioId), emptyMap(), now(), "env", false, false, null);
         saveOneCampaignExecutionReport(campaignId, 1L, scenarioId, scenarioName, 4, ServerReportStatus.SUCCESS);
 
         sut.clearAllExecutionHistory(campaignId);
@@ -107,7 +107,7 @@ public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
         insertScenarioExec(scenarioId, "6", "FAILURE");
         insertScenarioExec(scenarioId, "7", "FAILURE");
 
-        currentCampaign = new Campaign(campaignId, "campaignName", "campaign description", Lists.newArrayList(scenarioId), emptyMap(),  LocalTime.now(), "env", false, false);
+        currentCampaign = new Campaign(campaignId, "campaignName", "campaign description", newArrayList(scenarioId), emptyMap(), now(), "env", false, false, null);
         saveOneCampaignExecutionReport(campaignId, 1L, scenarioId, scenarioName, 4, ServerReportStatus.SUCCESS);
         saveOneCampaignExecutionReport(campaignId, 2L, scenarioId, scenarioName, 5, ServerReportStatus.FAILURE);
         saveOneCampaignExecutionReport(campaignId, 3L, scenarioId, scenarioName, 6, ServerReportStatus.SUCCESS);
@@ -126,7 +126,7 @@ public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
         scenarioExecutions.get(scenarioId).put(scenarioExecutionId, execution);
         ScenarioExecutionReportCampaign scenarioExecutionReport = new ScenarioExecutionReportCampaign(scenarioId, scenarioName, execution);
 
-        CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(campaignExecutionId, campaignId, Collections.singletonList(scenarioExecutionReport), "title", false, "env");
+        CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(campaignExecutionId, campaignId, singletonList(scenarioExecutionReport), "title", false, "env", "#2:87", 5);
 
         sut.saveCampaignReport(campaignId, campaignExecutionReport);
     }
@@ -141,22 +141,26 @@ public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
                 assertThat(scenarioExecutionReport.execution.executionId()).isEqualTo(exec.executionId());
                 assertThat(scenarioExecutionReport.execution.status()).isEqualTo(exec.status());
                 assertThat(scenarioExecutionReport.execution.environment()).isEqualTo(exec.environment());
+                assertThat(scenarioExecutionReport.execution.datasetId()).isEqualTo(exec.datasetId());
+                assertThat(scenarioExecutionReport.execution.datasetVersion()).isEqualTo(exec.datasetVersion());
             });
         });
     }
 
     private void insertCampaign(long campaignId) {
-        jdbcTemplate.execute("INSERT INTO CAMPAIGN VALUES (" + campaignId + ", 'campagne 1', 'description...', '00:11', 'GLOBAL', false, false)");
+        jdbcTemplate.execute("INSERT INTO CAMPAIGN VALUES (" + campaignId + ", 'campagne 1', 'description...', '00:11', 'GLOBAL', false, false, '')");
     }
 
     private void insertScenario(String scenarioId, String scenarioName) {
-        jdbcTemplate.execute("INSERT INTO SCENARIO (ID, TITLE, DESCRIPTION,CONTENT,VERSION) VALUES (" + scenarioId + ", '" + scenarioName + "', 'lol', 'truc', 'v2.1')");
+        jdbcTemplate.execute("INSERT INTO SCENARIO "
+        + "(ID, TITLE, DESCRIPTION, CONTENT, VERSION) VALUES "
+        +" (" + scenarioId + ", '" + scenarioName + "', 'lol', 'truc', 'v2.1')");
     }
 
     private void insertScenarioExec(String scenarioId, String execid, String status) {
         jdbcTemplate.execute("INSERT INTO SCENARIO_EXECUTION_HISTORY"
-            + "(ID, SCENARIO_ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, REPORT, TEST_CASE_TITLE, ENVIRONMENT) VALUES "
-            + "(" + execid + ", " + scenarioId + ",0,0,'" + status + "','','','','fake', 'default')");
+            + "(ID, SCENARIO_ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, REPORT, TEST_CASE_TITLE, ENVIRONMENT, DATASET_ID, DATASET_VERSION) VALUES "
+            + "(" + execid + ", " + scenarioId + ",0,0,'" + status + "','','','','fake', 'default', '#2:87', 5)");
     }
 
     private ExecutionHistory.ExecutionSummary generateScenarioExecution(long scenarioExecutionId, ServerReportStatus status) {
@@ -166,6 +170,8 @@ public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
             .status(status)
             .testCaseTitle("fake")
             .environment("default")
+            .datasetId("#2:87")
+            .datasetVersion(5)
             .build();
     }
 }

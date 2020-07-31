@@ -1,6 +1,7 @@
 package com.chutneytesting.execution.domain.compiler;
 
 import com.chutneytesting.design.domain.scenario.TestCase;
+import com.chutneytesting.execution.domain.ExecutionRequest;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,11 +13,11 @@ public class TestCasePreProcessors {
         this.processors = Collections.unmodifiableList(processors);
     }
 
-    public <T extends TestCase> T apply(final T testCase, String environment) {
-        T tmp = testCase;
+    public <T extends TestCase> T apply(ExecutionRequest executionRequest) {
+        T tmp = (T) executionRequest.testCase;
         for (TestCasePreProcessor<T> p : processors) {
-            if(p.test(tmp)) {
-                tmp = p.apply(tmp,environment);
+            if (p.test(tmp)) {
+                tmp = p.apply(executionRequest);
             }
         }
         return tmp;

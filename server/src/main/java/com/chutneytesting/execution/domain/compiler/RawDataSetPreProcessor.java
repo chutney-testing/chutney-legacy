@@ -2,6 +2,7 @@ package com.chutneytesting.execution.domain.compiler;
 
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.design.domain.scenario.raw.RawTestCase;
+import com.chutneytesting.execution.domain.ExecutionRequest;
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.stereotype.Component;
 
@@ -15,11 +16,11 @@ public class RawDataSetPreProcessor implements TestCasePreProcessor<RawTestCase>
     }
 
     @Override
-    public RawTestCase apply(RawTestCase testCase, String environment) {
+    public RawTestCase apply(ExecutionRequest executionRequest) {
+        RawTestCase testCase = (RawTestCase) executionRequest.testCase;
         return RawTestCase.builder()
             .withMetadata(testCase.metadata)
-            .withScenario(replaceParams(testCase.content, globalvarRepository.getFlatMap(), testCase.dataSet(), StringEscapeUtils::escapeJson))
+            .withScenario(replaceParams(testCase.content, globalvarRepository.getFlatMap(), testCase.computedParameters(), StringEscapeUtils::escapeJson))
             .build();
     }
-
 }

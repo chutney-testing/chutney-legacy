@@ -8,6 +8,11 @@ import static com.chutneytesting.design.infra.storage.db.orient.OrientUtils.dele
 import static com.chutneytesting.design.infra.storage.db.orient.OrientUtils.load;
 import static com.chutneytesting.design.infra.storage.db.orient.OrientUtils.rollback;
 
+import com.chutneytesting.design.domain.compose.ComposableTestCase;
+import com.chutneytesting.design.domain.compose.ComposableTestCaseRepository;
+import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
+import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
+import com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB;
 import com.google.common.collect.Lists;
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
@@ -16,11 +21,6 @@ import com.orientechnologies.orient.core.record.OElement;
 import com.orientechnologies.orient.core.record.OVertex;
 import com.orientechnologies.orient.core.sql.executor.OResultSet;
 import com.orientechnologies.orient.core.storage.ORecordDuplicatedException;
-import com.chutneytesting.design.domain.compose.ComposableTestCase;
-import com.chutneytesting.design.domain.compose.ComposableTestCaseRepository;
-import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
-import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
-import com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -63,10 +63,8 @@ public class OrientComposableTestCaseRepository implements ComposableTestCaseRep
     @Override
     public ComposableTestCase findById(String composableTestCaseId) {
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
-            OVertex element = dbSession.load(new ORecordId(composableTestCaseId));
-            if (element == null) {
-                throw new ScenarioNotFoundException(composableTestCaseId);
-            }
+            OVertex element = (OVertex)load(composableTestCaseId, dbSession)
+                .orElseThrow(() -> new ScenarioNotFoundException(composableTestCaseId));
             return vertexToTestCase(element, dbSession);
         }
     }

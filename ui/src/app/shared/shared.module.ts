@@ -25,7 +25,8 @@ import {
     TechnicalStepComponent,
     FunctionalStepComponent,
     EnvironmentComboComponent,
-    ExecutionBadgeComponent, ComponentCardComponent
+    ExecutionBadgeComponent,
+    ComponentCardComponent
 } from './components';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -34,6 +35,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ThumbnailPipe } from '@shared/pipes/thumbnail.pipe';
 import {AceEditorComponent} from "@shared/ace-editor/ace-editor.component";
 import {AceEditorModule} from "ng2-ace-editor";
+import { DataSetSearchPipe } from './pipes/dataset-search.pipe';
+import { DatasetSelectionComponent } from '@shared/components/dataset-selection/dataset-selection.component';
 
 @NgModule({
     imports: [
@@ -67,7 +70,9 @@ import {AceEditorModule} from "ng2-ace-editor";
         ExecutionBadgeComponent,
         ThumbnailPipe,
         ComponentCardComponent,
-        AceEditorComponent
+        AceEditorComponent,
+        DataSetSearchPipe,
+        DatasetSelectionComponent,
     ],
     exports: [
         TruncatePipe,
@@ -91,7 +96,9 @@ import {AceEditorModule} from "ng2-ace-editor";
         ExecutionBadgeComponent,
         ThumbnailPipe,
         ComponentCardComponent,
-        AceEditorComponent
+        AceEditorComponent,
+        DataSetSearchPipe,
+        DatasetSelectionComponent,
     ],
     entryComponents: [
         TechnicalStepComponent

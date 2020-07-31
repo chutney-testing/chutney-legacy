@@ -16,6 +16,7 @@ public class Campaign {
     public final Map<String, String> dataSet;
     public final boolean parallelRun;
     public final boolean retryAuto;
+    public final String datasetId;
 
     private final LocalTime scheduleTime;
     private String environment;
@@ -28,7 +29,8 @@ public class Campaign {
                     LocalTime scheduleTime,
                     String environment,
                     boolean parallelRun,
-                    boolean retryAuto) {
+                    boolean retryAuto,
+                    String datasetId) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -38,6 +40,7 @@ public class Campaign {
         this.retryAuto = retryAuto;
         this.scheduleTime = scheduleTime;
         this.environment = environment;
+        this.datasetId = datasetId;
     }
 
     public void addScenario(String scenarioId) {

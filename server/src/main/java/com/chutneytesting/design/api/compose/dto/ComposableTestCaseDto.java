@@ -31,8 +31,10 @@ public interface ComposableTestCaseDto {
 
     ComposableScenarioDto scenario();
 
+    Optional<String> datasetId();
+
     @Value.Default()
-    default List<KeyValue> dataSet() { return Collections.emptyList(); }
+    default List<KeyValue> computedParameters() { return Collections.emptyList(); }
 
     @Value.Immutable
     @JsonSerialize(as = ImmutableComposableScenarioDto.class)

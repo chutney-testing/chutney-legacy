@@ -1,13 +1,15 @@
 package com.chutneytesting.design.infra.storage.campaign;
 
-import com.chutneytesting.design.domain.scenario.TestCaseRepository;
-import com.google.common.collect.Lists;
+import static java.util.Optional.ofNullable;
+
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
 import com.chutneytesting.design.domain.campaign.ScenarioExecutionReportCampaign;
+import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
 import com.chutneytesting.execution.domain.history.ReportNotFoundException;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
+import com.google.common.collect.Lists;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
@@ -17,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,11 +48,14 @@ public class CampaignExecutionReportMapper implements ResultSetExtractor<List<Ca
             boolean partialExecution = resultset.getBoolean("PARTIAL_EXECUTION");
             String executionEnvironment = resultset.getString("EXECUTION_ENVIRONMENT");
             Long campaignId = resultset.getLong("CAMPAIGN_ID");
+            String dataSetId = resultset.getString("EXECUTION_DATASET_ID");
+            Integer dataSetVersion = ofNullable(resultset.getString("EXECUTION_DATASET_VERSION")).map(Integer::new).orElse(null);
+
             String scenarioName = repository.findById(scenarioId).metadata().title();
             try {
                 ScenarioExecutionReportCampaign scenarioExecutionReport = readScenarioExecutionReport(resultset, scenarioId, scenarioName);
                 scenarioByCampaignId.putIfAbsent(campaignExecutionId, Lists.newArrayList());
-                campaignExecutionReportByCampaignId.putIfAbsent(campaignExecutionId, new CampaignExecutionHolder(campaignExecutionId, title, partialExecution, executionEnvironment, campaignId));
+                campaignExecutionReportByCampaignId.putIfAbsent(campaignExecutionId, new CampaignExecutionHolder(campaignExecutionId, title, partialExecution, executionEnvironment, campaignId, dataSetId, dataSetVersion));
                 scenarioByCampaignId.get(campaignExecutionId).add(scenarioExecutionReport);
             } catch (ReportNotFoundException e) {
                 LOGGER.warn("Campaign history reference a no longer existing scenario[" + scenarioId + "] execution[" + scenarioExecutionId + "]");
@@ -61,14 +65,22 @@ public class CampaignExecutionReportMapper implements ResultSetExtractor<List<Ca
             map(entry -> {
                 Long campaignExecutionId = entry.getKey();
                 CampaignExecutionHolder campaignExecutionHolder = campaignExecutionReportByCampaignId.get(campaignExecutionId);
-                return new CampaignExecutionReport(campaignExecutionId, campaignExecutionHolder.campaignId, entry.getValue(), campaignExecutionHolder.title, campaignExecutionHolder.partialExecution, campaignExecutionHolder.executionEnvironment);
+                return new CampaignExecutionReport(
+                    campaignExecutionId,
+                    campaignExecutionHolder.campaignId,
+                    entry.getValue(),
+                    campaignExecutionHolder.title,
+                    campaignExecutionHolder.partialExecution,
+                    campaignExecutionHolder.executionEnvironment,
+                    campaignExecutionHolder.dataSetId,
+                    campaignExecutionHolder.dataSetVersion);
             }).collect(Collectors.toList());
     }
 
     private ScenarioExecutionReportCampaign readScenarioExecutionReport(ResultSet resultset, String scenarioId, String scenarioName) throws SQLException, ReportNotFoundException {
         ExecutionHistory.ExecutionSummary execution;
-        if(resultset.getLong("SCENARIO_EXECUTION_ID") == -1) {
-            execution =  ImmutableExecutionHistory.ExecutionSummary.builder()
+        if (resultset.getLong("SCENARIO_EXECUTION_ID") == -1) {
+            execution = ImmutableExecutionHistory.ExecutionSummary.builder()
                 .executionId(-1L)
                 .testCaseTitle(scenarioName)
                 .time(LocalDateTime.now())
@@ -89,10 +101,12 @@ public class CampaignExecutionReportMapper implements ResultSetExtractor<List<Ca
             .time(Instant.ofEpochMilli(rs.getLong("EXECUTION_TIME")).atZone(ZoneId.systemDefault()).toLocalDateTime())
             .duration(rs.getLong("DURATION"))
             .status(ServerReportStatus.valueOf(rs.getString("STATUS")))
-            .info(Optional.ofNullable(rs.getString("INFORMATION")))
-            .error(Optional.ofNullable(rs.getString("ERROR")))
+            .info(ofNullable(rs.getString("INFORMATION")))
+            .error(ofNullable(rs.getString("ERROR")))
             .testCaseTitle(scenarioName)
             .environment(rs.getString("ENVIRONMENT"))
+            .datasetId(ofNullable(rs.getString("DATASET_ID")))
+            .datasetVersion(ofNullable(rs.getString("DATASET_VERSION")).map(Integer::new))
             .build();
     }
 
@@ -102,13 +116,17 @@ public class CampaignExecutionReportMapper implements ResultSetExtractor<List<Ca
         public final boolean partialExecution;
         public final String executionEnvironment;
         public final Long campaignId;
+        public final String dataSetId;
+        public final Integer dataSetVersion;
 
-        public CampaignExecutionHolder(Long id, String title, boolean partialExecution, String executionEnvironment, Long campaignId) {
+        public CampaignExecutionHolder(Long id, String title, boolean partialExecution, String executionEnvironment, Long campaignId, String dataSetId, Integer dataSetVersion) {
             this.id = id;
             this.title = title;
             this.partialExecution = partialExecution;
             this.executionEnvironment = executionEnvironment;
             this.campaignId = campaignId;
+            this.dataSetId = dataSetId;
+            this.dataSetVersion = dataSetVersion;
         }
 
         @Override

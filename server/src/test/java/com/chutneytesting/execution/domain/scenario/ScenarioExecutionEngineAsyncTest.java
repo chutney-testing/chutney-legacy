@@ -11,7 +11,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.design.domain.scenario.TestCase;
+import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.raw.RawTestCase;
 import com.chutneytesting.execution.domain.ExecutionRequest;
@@ -24,7 +24,6 @@ import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.execution.domain.report.StepExecutionReportCore;
 import com.chutneytesting.execution.domain.report.StepExecutionReportCoreBuilder;
 import com.chutneytesting.execution.domain.state.ExecutionStateRepository;
-import com.chutneytesting.execution.domain.state.RunningScenarioState;
 import com.chutneytesting.instrument.domain.Metrics;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.reactivex.Observable;
@@ -50,6 +49,7 @@ public class ScenarioExecutionEngineAsyncTest {
     private ExecutionStateRepository executionStateRepository = mock(ExecutionStateRepository.class);
     private Metrics metrics = mock(Metrics.class);
     private TestCasePreProcessors testCasePreProcessors = mock(TestCasePreProcessors.class);
+    private DataSetHistoryRepository dataSetHistoryRepository = mock(DataSetHistoryRepository.class);
 
     @After
     public void after() {
@@ -65,7 +65,8 @@ public class ScenarioExecutionEngineAsyncTest {
             executionStateRepository,
             metrics,
             testCasePreProcessors,
-            new ObjectMapper()
+            new ObjectMapper(),
+            dataSetHistoryRepository
         );
 
         // When / Then
@@ -81,7 +82,7 @@ public class ScenarioExecutionEngineAsyncTest {
         final String scenarioId = testCase.id();
         final long executionId = 3L;
 
-        when(testCasePreProcessors.apply(any(),any())).thenReturn(testCase);
+        when(testCasePreProcessors.apply(any())).thenReturn(testCase);
         when(executionEngine.executeAndFollow(any())).thenReturn(Pair.of(Observable.empty(), 0L));
 
         ExecutionHistory.Execution storedExecution = stubHistoryExecution(scenarioId, executionId);
@@ -93,6 +94,7 @@ public class ScenarioExecutionEngineAsyncTest {
             metrics,
             testCasePreProcessors,
             new ObjectMapper(),
+            dataSetHistoryRepository,
             0,
             0
         );
@@ -102,7 +104,7 @@ public class ScenarioExecutionEngineAsyncTest {
         sut.execute(request);
 
         // Then
-        verify(testCasePreProcessors).apply(any(RawTestCase.class),any());
+        verify(testCasePreProcessors).apply(request);
         verify(executionEngine).executeAndFollow(any());
         ArgumentCaptor<ExecutionHistory.DetachedExecution> argumentCaptor = ArgumentCaptor.forClass(ExecutionHistory.DetachedExecution.class);
         verify(executionHistoryRepository).store(eq(scenarioId), argumentCaptor.capture());
@@ -131,7 +133,8 @@ public class ScenarioExecutionEngineAsyncTest {
             executionStateRepository,
             metrics,
             testCasePreProcessors,
-            new ObjectMapper()
+            new ObjectMapper(),
+            dataSetHistoryRepository
         );
         sut.setRetentionDelaySeconds(1);
         sut.setDebounceMilliSeconds(0);
@@ -175,7 +178,7 @@ public class ScenarioExecutionEngineAsyncTest {
         final RawTestCase testCase = emptyTestCase();
 
         when(executionStateRepository.runningState(scenarioId)).thenReturn(Optional.empty());
-        when(testCasePreProcessors.apply(any(),any())).thenReturn(testCase);
+        when(testCasePreProcessors.apply(any())).thenReturn(testCase);
 
         stubHistoryExecution(scenarioId, executionId);
         final List<StepExecutionReportCore> reportsList = stubEngineExecution(executionId, 0).getMiddle();
@@ -187,6 +190,7 @@ public class ScenarioExecutionEngineAsyncTest {
             metrics,
             testCasePreProcessors,
             new ObjectMapper(),
+            dataSetHistoryRepository,
             100,
             0
         );

@@ -10,7 +10,9 @@
             "documentation": "Documentation",
             "showroom": "Showroom",
             "component": "Composants",
-            "backups": "Sauvegardes"
+            "backups": "Sauvegardes",
+            "variable": "Variable",
+            "dataset": "Dataset"
         }
     },
     "home": {
@@ -188,6 +190,10 @@
             "deletion.prefix": "Etes-vous sûr de vouloir supprimer la campagne ",
             "deletion.suffix": " ?"
         }
+    },
+    "dataset": {
+        "key": "Clé",
+        "value": "Valeur"
     },
     "admin": {
         "targets": {
