@@ -49,8 +49,9 @@ export class ExecuteComponent implements OnInit, OnDestroy {
         this.scenarioExecutionService.testCaseToExecute = null;
     }
 
-    execute() {
-        this.scenarioExecutionService.executeScenarioAsync(this.testCase.id, this.buildParametersFromForm(), this.env)
+    execute(event: Event) {
+        (event.currentTarget as HTMLButtonElement).disabled = true;
+        this.scenarioExecutionService.executeScenarioAsync(this.testCase.id, this.buildDataSetFromForm(), this.env)
             .pipe(
                 delay(1000)
             )
@@ -84,7 +85,7 @@ export class ExecuteComponent implements OnInit, OnDestroy {
         });
     }
 
-    private buildParametersFromForm(): Array<KeyValue> {
+    private buildDataSetFromForm(): Array<KeyValue> {
         const computedParameters: Array<KeyValue> = [];
         const parameters = this.componentForm.controls.parameters as FormArray;
         parameters.controls.forEach((ctlr, i) => {

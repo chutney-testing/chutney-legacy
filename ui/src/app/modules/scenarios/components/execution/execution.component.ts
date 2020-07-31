@@ -91,7 +91,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     onLastIdExecution(execution: Execution) {
         if (Execution.NO_EXECUTION === execution) {
             this.currentExecutionId = null;
-        } else {
+        } else if (this.currentExecutionId !== execution.executionId) {
             this.currentExecutionId = execution.executionId;
             if (!this.scenarioExecutionAsyncSubscription || this.scenarioExecutionAsyncSubscription.closed) {
                 if ('RUNNING' === execution.status) {
@@ -135,6 +135,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
                 if (scenarioExecutionReport && scenarioExecutionReport.report.status === 'RUNNING') {
                     this.observeScenarioExecution(executionId);
                 } else {
+                    this.toggleScenarioDetails = true;
                     this.scenarioExecutionReport = scenarioExecutionReport;
                 }
 
@@ -214,6 +215,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
         return scenarioExecutionReportsObservable
             .pipe(debounceTime(500))
             .subscribe((scenarioExecutionReport: ScenarioExecutionReport) => {
+                this.toggleScenarioDetails = true;
                 this.scenarioExecutionReport = scenarioExecutionReport;
             }, (error) => {
                 if (error.status) {
