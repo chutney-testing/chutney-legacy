@@ -93,7 +93,7 @@
         <amqp-client.version>5.8.0</amqp-client.version>
         <mongodb.version>3.8.0</mongodb.version>
         <orientdb.version>3.0.30</orientdb.version>
-        <lucene.version>7.3.0</lucene.version>
+        <lucene.version>8.6.0</lucene.version>
         <selenium.version>3.14.0</selenium.version>
         <rxjava.version>2.2.6</rxjava.version>
         <groovy.version>2.5.0</groovy.version>
