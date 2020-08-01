@@ -96,7 +96,7 @@
         <lucene.version>7.3.0</lucene.version>
         <selenium.version>3.14.0</selenium.version>
         <rxjava.version>2.2.6</rxjava.version>
-        <groovy.version>2.5.0</groovy.version>
+        <groovy.version>3.0.5</groovy.version>
 
         <!-- Test dependencies versions -->
         <junit.version>4.12</junit.version>
