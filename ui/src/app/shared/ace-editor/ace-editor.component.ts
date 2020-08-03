@@ -1,16 +1,8 @@
-import {
-    AfterViewChecked,
-    AfterViewInit,
-    Component,
-    EventEmitter,
-    Input,
-    OnChanges, OnInit,
-    Output,
-    ViewChild
-} from '@angular/core';
-import {fromEvent, timer} from 'rxjs';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
+import { timer } from 'rxjs';
 
 import 'brace';
+import 'brace/ext/searchbox';
 import 'brace/mode/json';
 import 'brace/mode/hjson';
 import 'brace/mode/html';

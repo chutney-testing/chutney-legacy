@@ -158,9 +158,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
                 )
                 .subscribe(
                     executionId => {
-                        this.executionError = null;
-                        this.currentExecutionId = parseInt(executionId, 10);
-                        this.updateLocation(parseInt(executionId, 10));
+                        this.loadScenarioExecution(parseInt(executionId, 10));
                     },
                     error => {
                         this.executionError = error.error;
