@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.2.3](https://github.com/chutney-testing/chutney/tree/1.2.3) (2020-08-04)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.2...1.2.3)
+
+**Fixed bugs:**
+
+- Search using Ctrl-F was lost in ace editor component
+- Observe automatically a scenario's execution when it does not have parameters
+
+**Closed issues:**
+
+- Scenario Edition - Cannot use Ctrl-F to find content in editor [\#203](https://github.com/chutney-testing/chutney/issues/203)
+- Scenario execution - Observation is not automatic for scenarios without parameters [\#204](https://github.com/chutney-testing/chutney/issues/204)
+
+**Merged pull requests:**
+
+- Version 1.2.2 : ui bugs [\#205](https://github.com/chutney-testing/chutney/pull/205) ([boddissattva](https://github.com/boddissattva))
+
 ## [1.2.2](https://github.com/chutney-testing/chutney/tree/1.2.2) (2020-07-31)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.1...1.2.2)
