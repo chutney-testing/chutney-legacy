@@ -1,7 +1,7 @@
 <ng-container *ngIf="testCase">
     <chutney-header [testCase]="testCase"
-                [canExecute]="parseError"
-                (executeEvent)="executeScenario($event)">
+                    [canExecute]="parseError"
+                    (executeEvent)="executeScenario($event)">
     </chutney-header>
 </ng-container>
 
@@ -9,10 +9,10 @@
 <div class="row">
     <div class="col-sm-3half">
         <chutney-execution-history [scenarioId]="currentScenarioId"
-                               [selectedExecutionId] = "currentExecutionId"
-                               (onselectExecution)="onSelectExecution($event)"
-                               (onlastIdExecution)="onLastIdExecution($event)"
-                               (onlastStatusExecution)="onlastStatusExecution($event)"
+                                   [selectedExecutionId]="currentExecutionId"
+                                   (onselectExecution)="onSelectExecution($event)"
+                                   (onlastIdExecution)="onLastIdExecution($event)"
+                                   (onlastStatusExecution)="onlastStatusExecution($event)"
         ></chutney-execution-history>
     </div>
 
@@ -83,20 +83,20 @@
                                               [id]="i"
                                               [step]="report"></chutney-scenario-step-report>
             </div>
-            </ng-container>
+        </ng-container>
         <div *ngIf="!scenarioExecutionReport" class="border background-white">
             <ng-container *ngIf="scenarioComponent">
                 <div *ngFor="let step of scenarioComponent.componentSteps">
-                    <chutney-component-read [step] = step></chutney-component-read>
+                    <chutney-component-read [step]=step></chutney-component-read>
                 </div>
             </ng-container>
             <ng-container *ngIf="scenarioGwt">
                 <div *ngFor="let step of scenarioGwt.scenario.givens">
-                    <chutney-gwt-read [step] = step [type]="'given'"></chutney-gwt-read>
+                    <chutney-gwt-read [step]=step [type]="'given'"></chutney-gwt-read>
                 </div>
-                <chutney-gwt-read [step] = scenarioGwt.scenario.when [type]="'when'"></chutney-gwt-read>
+                <chutney-gwt-read [step]=scenarioGwt.scenario.when [type]="'when'"></chutney-gwt-read>
                 <div *ngFor="let step of scenarioGwt.scenario.thens">
-                    <chutney-gwt-read [step] = step [type]="'then'"></chutney-gwt-read>
+                    <chutney-gwt-read [step]=step [type]="'then'"></chutney-gwt-read>
                 </div>
             </ng-container>
 
