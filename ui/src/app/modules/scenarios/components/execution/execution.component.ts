@@ -32,6 +32,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
 
     lastExecutionRunning = false;
     toggleScenarioDetails = true;
+    toggleScenarioInfo = true;
 
     isComposed = TestCase.isComposed;
 
@@ -167,9 +168,14 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
         }
     }
 
-    expandAll() {
+    expandAllDetails() {
         this.toggleScenarioDetails = !this.toggleScenarioDetails;
         this.eventManager.broadcast({name: 'toggleScenarioDetails', expand: this.toggleScenarioDetails});
+    }
+
+    expandAllInfo() {
+        this.toggleScenarioInfo = !this.toggleScenarioInfo;
+        this.eventManager.broadcast({name: 'toggleScenarioInfo', expand: this.toggleScenarioInfo});
     }
 
     stopScenario() {

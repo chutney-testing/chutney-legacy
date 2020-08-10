@@ -71,7 +71,11 @@
                     </div>
                 </div>
                 <div class="btn-group float-right">
-                    <button type="button" class="btn btn-sm btn-secondary m-2" (click)="expandAll()">
+                    <button type="button" class="btn btn-sm btn-outline-info m-2" [ngClass]="!toggleScenarioInfo ? 'active' : ''" (click)="expandAllInfo()">
+                        <span class="btn-label"> {{ 'scenarios.execution.step.actions.informations' | translate }}
+                        </span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary m-2" [ngClass]="!toggleScenarioDetails ? 'active' : ''" (click)="expandAllDetails()">
                         <span class="btn-label">
                             {{toggleScenarioDetails ? ('scenarios.execution.actions.details.show' | translate) : ('scenarios.execution.actions.details.hide' | translate)}}
                         </span>

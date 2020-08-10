@@ -25,6 +25,9 @@ export class StepReportComponent implements OnInit, OnDestroy {
         this.expandAllSubscription = this.eventManager.subscribe('toggleScenarioDetails', (data) => {
             this.inputCollapsed = data.expand;
         });
+        this.expandAllSubscription = this.eventManager.subscribe('toggleScenarioInfo', (data) => {
+            this.informationCollapsed = data.expand;
+        });
         this.stepsCollapsed = ('PAUSED' !== this.step.status && 'RUNNING' !== this.step.status && 'FAILURE' !== this.step.status);
     }
 
