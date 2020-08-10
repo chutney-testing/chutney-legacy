@@ -95,15 +95,20 @@
                 </div>
             </ng-container>
             <ng-container *ngIf="scenarioGwt">
-                <div *ngFor="let step of scenarioGwt.scenario.givens">
-                    <chutney-gwt-read [step]=step [type]="'given'"></chutney-gwt-read>
+                <div *ngIf="scenarioGwt.scenario.givens.length > 0" class="gwt" id="given">
+                    <div *ngFor="let step of scenarioGwt.scenario.givens">
+                        <chutney-gwt-read [step]=step [type]="'given'"></chutney-gwt-read>
+                    </div>
                 </div>
-                <chutney-gwt-read [step]=scenarioGwt.scenario.when [type]="'when'"></chutney-gwt-read>
-                <div *ngFor="let step of scenarioGwt.scenario.thens">
-                    <chutney-gwt-read [step]=step [type]="'then'"></chutney-gwt-read>
+                <div *ngIf="scenarioGwt.scenario.when" class="gwt" id="when">
+                    <chutney-gwt-read [step]=scenarioGwt.scenario.when [type]="'when'"></chutney-gwt-read>
+                </div>
+                <div *ngIf="scenarioGwt.scenario.thens.length > 0" class="gwt" id="then">
+                    <div *ngFor="let step of scenarioGwt.scenario.thens">
+                        <chutney-gwt-read [step]=step [type]="'then'"></chutney-gwt-read>
+                    </div>
                 </div>
             </ng-container>
-
         </div>
     </div>
 </div>
