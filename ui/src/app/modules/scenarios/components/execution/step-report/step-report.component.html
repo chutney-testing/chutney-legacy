@@ -3,7 +3,7 @@
         [ngClass]="{'result-header-success': step != undefined && step.status == 'SUCCESS',
                     'result-header-error': step != undefined && step.status == 'FAILURE',
                     'result-header-running': step != undefined && (step.status == 'RUNNING' || step.status == 'PAUSED')}">
-      <div class="result-header" [ngClass]="step.steps && step.steps.length > 0 ? 'collapsible' : ''" (click)="stepsCollapsed = !stepsCollapsed">
+      <div class="result-header collapsible" (click)="collapse($event)">
           <div *ngIf="step && step.status != 'NOT_EXECUTED'" class="result-header-status">
             <div *ngIf="step && step.status != 'NOT_EXECUTED'" [ngbTooltip]="step.duration | duration" placement="left">{{step.duration | duration:'short'}}</div>
             <div *ngIf="step && step.status != 'NOT_EXECUTED'" class="exec-date" [ngbTooltip]="step.startDate | date" placement="left">{{step.startDate | date:'mediumTime'}}</div>

@@ -73,4 +73,11 @@ export class StepReportComponent implements OnInit, OnDestroy {
         event.stopPropagation();
     }
 
+    collapse(event: MouseEvent) {
+        this.stepsCollapsed = !this.stepsCollapsed;
+        this.informationCollapsed = this.stepsCollapsed;
+        this.inputCollapsed = this.stepsCollapsed;
+        this.errorsCollapsed = this.stepsCollapsed;
+        event.stopPropagation();
+    }
 }
