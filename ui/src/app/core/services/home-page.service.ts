@@ -1,10 +1,10 @@
-import { EventManagerService } from './../../shared/event-manager.service';
+import { EventManagerService } from '@shared/event-manager.service';
 
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { HomePage } from '@model';
-import { environment } from '../../../environments/environment';
+import { environment } from '@env/environment';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({

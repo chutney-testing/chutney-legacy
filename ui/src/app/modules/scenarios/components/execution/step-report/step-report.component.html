@@ -3,32 +3,31 @@
         [ngClass]="{'result-header-success': step != undefined && step.status == 'SUCCESS',
                     'result-header-error': step != undefined && step.status == 'FAILURE',
                     'result-header-running': step != undefined && (step.status == 'RUNNING' || step.status == 'PAUSED')}">
-      <div class="result-header">
+      <div class="result-header collapsible" (click)="collapse($event)">
           <div *ngIf="step && step.status != 'NOT_EXECUTED'" class="result-header-status">
             <div *ngIf="step && step.status != 'NOT_EXECUTED'" [ngbTooltip]="step.duration | duration" placement="left">{{step.duration | duration:'short'}}</div>
-            <div *ngIf="step && step.status != 'NOT_EXECUTED'" class="exec-date" [ngbTooltip]="step.startDate | date" placement="left">{{step.startDate | date:'mediumTime'}}</div>  
+            <div *ngIf="step && step.status != 'NOT_EXECUTED'" class="exec-date" [ngbTooltip]="step.startDate | date" placement="left">{{step.startDate | date:'mediumTime'}}</div>
           </div>
           <div class="col step-name">
               <span class="mr-5"><em>{{step.name}}</em></span>
               <div class="btn-toolbar">
                 <div *ngIf="getInformation().length > 0" class="btn-group btn-group-sm mr-2">
-                  <button type="button" class="btn btn-outline-info" (click)="informationCollapsed = !informationCollapsed" [attr.aria-expanded]="!informationCollapsed">{{ 'scenarios.execution.step.actions.informations' | translate }}</button>
+                  <button type="button" class="btn btn-outline-info" [ngClass]="!informationCollapsed ? 'active' : ''" (click)="showInformation($event)" [attr.aria-pressed]="!informationCollapsed" [attr.aria-expanded]="!informationCollapsed">{{ 'scenarios.execution.step.actions.informations' | translate }}</button>
                 </div>
                 <div *ngIf="getErrors().length > 1" class="btn-group btn-group-sm mr-2">
-                  <button type="button" class="btn btn-outline-danger" (click)="errorsCollapsed = !errorsCollapsed" [attr.aria-expanded]="!errorsCollapsed">{{ 'scenarios.execution.step.actions.errors' | translate }}</button>
+                  <button type="button" class="btn btn-outline-danger" [ngClass]="!errorsCollapsed ? 'active' : ''" (click)="showErrors($event)" [attr.aria-pressed]="!errorsCollapsed" [attr.aria-expanded]="!errorsCollapsed">{{ 'scenarios.execution.step.actions.errors' | translate }}</button>
                 </div>
                 <div class="btn-group btn-group-sm mr-2">
-                  <button type="button" class="btn btn-outline-secondary" (click)="inputCollapsed = !inputCollapsed" [attr.aria-expanded]="!inputCollapsed">{{ 'scenarios.execution.step.actions.details' | translate }}</button>
+                  <button type="button" class="btn btn-outline-secondary" [ngClass]="!inputCollapsed ? 'active' : ''" (click)="showDetails($event)" [attr.aria-pressed]="!inputCollapsed" [attr.aria-expanded]="!inputCollapsed">{{ 'scenarios.execution.step.actions.details' | translate }}</button>
                 </div>
                 <div *ngIf="step.steps && step.steps.length > 0" class="btn-group btn-group-sm steps-btn">
-                  <button type="button" class="btn fa" [ngClass]="stepsCollapsed ? 'fa-chevron-down' : 'fa-chevron-up'" (click)="stepsCollapsed = !stepsCollapsed" [attr.aria-expanded]="!stepsCollapsed"></button>
+                  <span class="fa" [ngClass]="stepsCollapsed ? 'fa-chevron-down' : 'fa-chevron-up'" [attr.aria-expanded]="!stepsCollapsed"></span>
                 </div>
               </div>
           </div>
       </div>
       <div class="result-body">
           <div class="step">
-                
                 <div class="inputs" [ngbCollapse]="inputCollapsed">
                     <div>
                       <b class="mr-1">{{step.type}}</b>
@@ -41,7 +40,7 @@
                     </div>
                   </div>
                 </div>
-  
+
                 <div [hidden]="getInformation().length == 0">
                     <div *ngIf="getInformation().length > 0" class="information" [ngbCollapse]="informationCollapsed">
                       <pre [innerHTML]="getInformation() | prettyPrint: true | thumbnail | safe: 'html'"></pre>
@@ -66,4 +65,3 @@
       </div>
     </div>
   </div>
-  

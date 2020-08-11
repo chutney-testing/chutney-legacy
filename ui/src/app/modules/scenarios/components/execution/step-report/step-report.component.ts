@@ -25,6 +25,9 @@ export class StepReportComponent implements OnInit, OnDestroy {
         this.expandAllSubscription = this.eventManager.subscribe('toggleScenarioDetails', (data) => {
             this.inputCollapsed = data.expand;
         });
+        this.expandAllSubscription = this.eventManager.subscribe('toggleScenarioInfo', (data) => {
+            this.informationCollapsed = data.expand;
+        });
         this.stepsCollapsed = ('PAUSED' !== this.step.status && 'RUNNING' !== this.step.status && 'FAILURE' !== this.step.status);
     }
 
@@ -58,4 +61,26 @@ export class StepReportComponent implements OnInit, OnDestroy {
         return size > 0;
     }
 
+    showInformation(event: MouseEvent) {
+        this.informationCollapsed = !this.informationCollapsed;
+        event.stopPropagation();
+    }
+
+    showDetails(event: MouseEvent) {
+        this.inputCollapsed = !this.inputCollapsed;
+        event.stopPropagation();
+    }
+
+    showErrors(event: MouseEvent) {
+        this.errorsCollapsed = !this.errorsCollapsed;
+        event.stopPropagation();
+    }
+
+    collapse(event: MouseEvent) {
+        this.stepsCollapsed = !this.stepsCollapsed;
+        this.informationCollapsed = this.stepsCollapsed;
+        this.inputCollapsed = this.stepsCollapsed;
+        this.errorsCollapsed = this.stepsCollapsed;
+        event.stopPropagation();
+    }
 }

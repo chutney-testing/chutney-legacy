@@ -1,7 +1,7 @@
 <ng-container *ngIf="testCase">
     <chutney-header [testCase]="testCase"
-                [canExecute]="parseError"
-                (executeEvent)="executeScenario($event)">
+                    [canExecute]="parseError"
+                    (executeEvent)="executeScenario($event)">
     </chutney-header>
 </ng-container>
 
@@ -9,10 +9,10 @@
 <div class="row">
     <div class="col-sm-3half">
         <chutney-execution-history [scenarioId]="currentScenarioId"
-                               [selectedExecutionId] = "currentExecutionId"
-                               (onselectExecution)="onSelectExecution($event)"
-                               (onlastIdExecution)="onLastIdExecution($event)"
-                               (onlastStatusExecution)="onlastStatusExecution($event)"
+                                   [selectedExecutionId]="currentExecutionId"
+                                   (onselectExecution)="onSelectExecution($event)"
+                                   (onlastIdExecution)="onLastIdExecution($event)"
+                                   (onlastStatusExecution)="onlastStatusExecution($event)"
         ></chutney-execution-history>
     </div>
 
@@ -71,7 +71,11 @@
                     </div>
                 </div>
                 <div class="btn-group float-right">
-                    <button type="button" class="btn btn-sm btn-secondary m-2" (click)="expandAll()">
+                    <button type="button" class="btn btn-sm btn-outline-info m-2" [ngClass]="!toggleScenarioInfo ? 'active' : ''" (click)="expandAllInfo()">
+                        <span class="btn-label"> {{ 'scenarios.execution.step.actions.informations' | translate }}
+                        </span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary m-2" [ngClass]="!toggleScenarioDetails ? 'active' : ''" (click)="expandAllDetails()">
                         <span class="btn-label">
                             {{toggleScenarioDetails ? ('scenarios.execution.actions.details.show' | translate) : ('scenarios.execution.actions.details.hide' | translate)}}
                         </span>
@@ -83,23 +87,28 @@
                                               [id]="i"
                                               [step]="report"></chutney-scenario-step-report>
             </div>
-            </ng-container>
+        </ng-container>
         <div *ngIf="!scenarioExecutionReport" class="border background-white">
             <ng-container *ngIf="scenarioComponent">
                 <div *ngFor="let step of scenarioComponent.componentSteps">
-                    <chutney-component-read [step] = step></chutney-component-read>
+                    <chutney-component-read [step]=step></chutney-component-read>
                 </div>
             </ng-container>
             <ng-container *ngIf="scenarioGwt">
-                <div *ngFor="let step of scenarioGwt.scenario.givens">
-                    <chutney-gwt-read [step] = step [type]="'given'"></chutney-gwt-read>
+                <div *ngIf="scenarioGwt.scenario.givens.length > 0" class="gwt" id="given">
+                    <div *ngFor="let step of scenarioGwt.scenario.givens">
+                        <chutney-gwt-read [step]=step [type]="'given'"></chutney-gwt-read>
+                    </div>
                 </div>
-                <chutney-gwt-read [step] = scenarioGwt.scenario.when [type]="'when'"></chutney-gwt-read>
-                <div *ngFor="let step of scenarioGwt.scenario.thens">
-                    <chutney-gwt-read [step] = step [type]="'then'"></chutney-gwt-read>
+                <div *ngIf="scenarioGwt.scenario.when" class="gwt" id="when">
+                    <chutney-gwt-read [step]=scenarioGwt.scenario.when [type]="'when'"></chutney-gwt-read>
+                </div>
+                <div *ngIf="scenarioGwt.scenario.thens.length > 0" class="gwt" id="then">
+                    <div *ngFor="let step of scenarioGwt.scenario.thens">
+                        <chutney-gwt-read [step]=step [type]="'then'"></chutney-gwt-read>
+                    </div>
                 </div>
             </ng-container>
-
         </div>
     </div>
 </div>

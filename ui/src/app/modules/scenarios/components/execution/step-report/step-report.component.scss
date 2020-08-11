@@ -34,7 +34,7 @@ div.step-container:hover {
 
 div.result-header {
     width: 100%;
-    
+
     display: flex;
     flex-wrap: wrap;
 
@@ -62,7 +62,10 @@ div.result-header {
         }
     }
 
+}
 
+.collapsible:hover {
+    cursor: pointer;
 }
 
 div.result-body {
@@ -98,7 +101,7 @@ div.result-header-error {
 
 
 div.step {
-    
+
     margin-top: 0;
     margin-bottom: 0;
     height: 100%;

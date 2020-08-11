@@ -26,6 +26,7 @@ button span:not(:first-child) {
 
 div.steps {
     margin-top: 20px;
+
     .btn-group {
         position: absolute;
         right: 15px;
@@ -66,4 +67,25 @@ div.steps {
 
 .background-white {
     background-color: white;
+}
+
+.gwt::before {
+    background: $neutral;
+    color: $grisfonce;
+    font-size: 9px;
+    font-weight: bold;
+    padding: 3px 5px;
+    text-transform: uppercase;
+}
+
+#given::before {
+    content: "Given";
+}
+
+#when::before {
+    content: "When";
+}
+
+#then::before {
+    content: "Then";
 }
