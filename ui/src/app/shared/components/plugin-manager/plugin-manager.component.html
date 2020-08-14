@@ -1,0 +1,8 @@
+<div>
+    <h1>Plugin Manager</h1>
+    <div *ngFor="let plugin of plugins; let i = index">
+        <chutney-plugin-section
+            [definition]="plugin.definition"
+        ></chutney-plugin-section>
+    </div>
+</div>

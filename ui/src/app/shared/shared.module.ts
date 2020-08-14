@@ -6,36 +6,38 @@ import { InputFocusDirective } from '@shared/directives';
 import { EventManagerService } from './event-manager.service';
 import { StateService } from './state/state.service';
 import {
-    ScenarioSearchPipe,
     ComponentSearchPipe,
-    TruncatePipe,
-    ObjectAsEntryListPipe,
-    StringifyPipe,
-    SearchTextPipe,
     DurationPipe,
+    ObjectAsEntryListPipe,
     PrettyPrintPipe,
-    SortByFieldPipe,
     SafePipe,
-    WithoutScenarioPipe,
-    ScenarioCampaignSearchPipe
+    ScenarioCampaignSearchPipe,
+    ScenarioSearchPipe,
+    SearchTextPipe,
+    SortByFieldPipe,
+    StringifyPipe,
+    TruncatePipe,
+    WithoutScenarioPipe
 } from './pipes';
 import { ImplementationHostDirective } from './directives';
 import {
-    ScenarioCardComponent,
-    TechnicalStepComponent,
-    FunctionalStepComponent,
+    ComponentCardComponent,
     EnvironmentComboComponent,
     ExecutionBadgeComponent,
-    ComponentCardComponent
+    FunctionalStepComponent,
+    PluginManagerComponent,
+    PluginSectionComponent,
+    ScenarioCardComponent,
+    TechnicalStepComponent
 } from './components';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { MomentModule } from 'angular2-moment';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ThumbnailPipe } from '@shared/pipes/thumbnail.pipe';
-import {AceEditorComponent} from "@shared/ace-editor/ace-editor.component";
-import {AceEditorModule} from "ng2-ace-editor";
-import { DataSetSearchPipe } from './pipes/dataset-search.pipe';
+import { AceEditorComponent } from '@shared/ace-editor/ace-editor.component';
+import { AceEditorModule } from 'ng2-ace-editor';
+import { DataSetSearchPipe } from '@shared/pipes';
 import { DatasetSelectionComponent } from '@shared/components/dataset-selection/dataset-selection.component';
 
 @NgModule({
@@ -73,6 +75,8 @@ import { DatasetSelectionComponent } from '@shared/components/dataset-selection/
         AceEditorComponent,
         DataSetSearchPipe,
         DatasetSelectionComponent,
+        PluginManagerComponent,
+        PluginSectionComponent,
     ],
     exports: [
         TruncatePipe,
@@ -99,6 +103,8 @@ import { DatasetSelectionComponent } from '@shared/components/dataset-selection/
         AceEditorComponent,
         DataSetSearchPipe,
         DatasetSelectionComponent,
+        PluginManagerComponent,
+        PluginSectionComponent,
     ],
     entryComponents: [
         TechnicalStepComponent
