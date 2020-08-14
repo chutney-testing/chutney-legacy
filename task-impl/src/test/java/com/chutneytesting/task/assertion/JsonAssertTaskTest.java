@@ -15,6 +15,29 @@ import org.junit.Test;
 public class JsonAssertTaskTest {
 
     @Test
+    public void should_take_zoned_date_when_asserting_dates() {
+        Map<String, Object> expected = new HashMap<>();
+        expected.put("$.something.onedate", "$isBeforeDate:2020-08-14T15:07:46.621Z");
+        expected.put("$.something.seconddate", "$isAfterDate:2020-08-14T16:56:56+02:00");
+
+        // Given
+        String fakeActualResult = "{" +
+            "\"something\":{" +
+            "\"onedate\":\"2020-08-14T16:56:56+02:00\"," +
+            "\"seconddate\":\"2020-08-14T15:07:46.621Z\"" +
+            "}}";
+
+        // When
+        JsonAssertTask jsonAssertTask = new JsonAssertTask(new TestLogger(),
+            fakeActualResult,
+            expected);
+        TaskExecutionResult result = jsonAssertTask.execute();
+
+        // Then
+        assertThat(result.status).isEqualTo(Success);
+    }
+
+    @Test
     public void should_execute_successful_assertions_with_placeholder() {
         Map<String, Object> expected = new HashMap<>();
         expected.put("$.something.value", "$isNotNull");
@@ -28,13 +51,13 @@ public class JsonAssertTaskTest {
         // Given
         String fakeActualResult = "{" +
             "\"something\":{" +
-                    "\"value\":3," +
-                    "\"alphabet\":\"abcdefg\"," +
-                    "\"valuenull\":null," +
-                    "\"matchregexp\":\"1983-10-26\"," +
-                    "\"onedate\":\"2000-01-01T10:11:12.123Z\"," +
-                    "\"seconddate\":\"2000-01-01T10:11:12.123Z\"" +
-                "}" +
+            "\"value\":3," +
+            "\"alphabet\":\"abcdefg\"," +
+            "\"valuenull\":null," +
+            "\"matchregexp\":\"1983-10-26\"," +
+            "\"onedate\":\"2000-01-01T10:11:12.123Z\"," +
+            "\"seconddate\":\"2000-01-01T10:11:12.123Z\"" +
+            "}" +
             "}";
 
         // When
