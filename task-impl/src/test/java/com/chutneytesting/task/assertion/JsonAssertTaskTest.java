@@ -19,12 +19,14 @@ public class JsonAssertTaskTest {
         Map<String, Object> expected = new HashMap<>();
         expected.put("$.something.onedate", "$isBeforeDate:2020-08-14T15:07:46.621Z");
         expected.put("$.something.seconddate", "$isAfterDate:2020-08-14T16:56:56+02:00");
+        expected.put("$.something.thirddate", "$isEqualDate:2020-08-14T17:07:46.621+02:00");
 
         // Given
         String fakeActualResult = "{" +
             "\"something\":{" +
             "\"onedate\":\"2020-08-14T16:56:56+02:00\"," +
-            "\"seconddate\":\"2020-08-14T15:07:46.621Z\"" +
+            "\"seconddate\":\"2020-08-14T15:07:46.621Z\"," +
+            "\"thirddate\":\"2020-08-14T15:07:46.621Z\"" +
             "}}";
 
         // When
@@ -47,6 +49,7 @@ public class JsonAssertTaskTest {
         expected.put("$.something.matchregexp", "$matches:\\d{4}-\\d{2}-\\d{2}");
         expected.put("$.something.onedate", "$isBeforeDate:2010-01-01T11:12:13.1230Z");
         expected.put("$.something.seconddate", "$isAfterDate:1998-07-14T02:03:04.456Z");
+        expected.put("$.something.thirddate", "$isEqualDate:2000-01-01T10:11:12.123Z");
 
         // Given
         String fakeActualResult = "{" +
@@ -56,7 +59,8 @@ public class JsonAssertTaskTest {
             "\"valuenull\":null," +
             "\"matchregexp\":\"1983-10-26\"," +
             "\"onedate\":\"2000-01-01T10:11:12.123Z\"," +
-            "\"seconddate\":\"2000-01-01T10:11:12.123Z\"" +
+            "\"seconddate\":\"2000-01-01T10:11:12.123Z\"," +
+            "\"thirddate\":\"2000-01-01T10:11:12.123Z\"" +
             "}" +
             "}";
 
