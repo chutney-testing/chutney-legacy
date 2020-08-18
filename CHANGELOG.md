@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.2.3](https://github.com/chutney-testing/chutney/tree/1.2.4) (2020-08-18)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.4...HEAD)
+
+**Merged pull requests:**
+
+- fix\(task-impl\): Use ZoneDateTime for json-assert on dates [\#218](https://github.com/chutney-testing/chutney/pull/218) ([boddissattva](https://github.com/boddissattva))
+- Feat/improve report ui [\#215](https://github.com/chutney-testing/chutney/pull/215) ([bessonm](https://github.com/bessonm))
+
 ## [1.2.3](https://github.com/chutney-testing/chutney/tree/1.2.3) (2020-08-04)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.2...1.2.3)
