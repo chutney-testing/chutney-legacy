@@ -8,6 +8,7 @@ import { ScenarioService, CampaignService, ComponentService, EnvironmentAdminSer
 import { DragulaService } from 'ng2-dragula';
 import { distinct, flatMap } from '@shared/tools/array-utils';
 import { newInstance } from '@shared/tools/array-utils';
+import { JiraLinkService } from '@core/services/jira-link.service';
 @Component({
     selector: 'chutney-campaign-edition',
     templateUrl: './campaign-edition.component.html',
@@ -39,11 +40,13 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     settings = {};
     selectedTags: string[] = [];
     datasetId: string;
+    jiraId: string;
 
     constructor(
         private campaignService: CampaignService,
         private scenarioService: ScenarioService,
         private componentService: ComponentService,
+        private jiraLinkService: JiraLinkService,
         private formBuilder: FormBuilder,
         private router: Router,
         private route: ActivatedRoute,
@@ -58,7 +61,8 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
             scheduleTime: ['', Validators.pattern('^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$')],
             parameters: this.formBuilder.array([]),
             parallelRun: false,
-            retryAuto: false
+            retryAuto: false,
+            jiraId: ''
         });
     }
 
@@ -108,6 +112,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
                     this.setCampaignScenarios();
                     this.updateCampaignParameters();
                     this.datasetId = this.campaign.datasetId;
+                    this.loadJiraLink();
                 },
                 (error) => {
                     this.errorMessage = error._body;
@@ -146,6 +151,18 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
             (error) => { console.log(error); this.errorMessage = error; }
 
         );
+    }
+
+    loadJiraLink() {
+        this.jiraLinkService.findByCampaignId(this.campaign.id).subscribe(
+            (jiraId) => {
+                this.campaignForm.controls['jiraId'].setValue(jiraId);
+            },
+            (error) => {
+                this.errorMessage = error._body;
+            }
+        );
+
     }
 
     clear() {
@@ -190,6 +207,9 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
             this.subscribeToSaveResponse(
                 this.campaignService.create(this.campaign));
         }
+
+        this.jiraId = formValue['jiraId'];
+        this.jiraLinkService.saveForCampaign(this.campaign.id, this.jiraId);
     }
 
     setCampaignScenarios() {

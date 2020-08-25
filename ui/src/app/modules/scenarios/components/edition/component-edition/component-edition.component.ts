@@ -7,6 +7,7 @@ import { DragulaService } from 'ng2-dragula';
 import { ComponentTask, Dataset, KeyValue, ScenarioComponent } from '@model';
 import { ComponentService } from '@core/services';
 import { CanDeactivatePage } from '@core/guards';
+import { JiraLinkService } from '@core/services/jira-link.service';
 
 @Component({
     selector: 'chutney-component-edition',
@@ -21,14 +22,17 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
     componentFilter: string;
     componentForm: FormGroup = this.formBuilder.group({
         parameters: this.formBuilder.array([]),
-        tags: ''
+        tags: '',
+        jiraId: ''
     });
     componentTasksCreated: Array<ComponentTask> = [];
     collapseParam = true;
     modificationsSaved = false;
     datasetId: string;
+    jiraId: string;
 
     constructor(private componentService: ComponentService,
+                private jiraLinkService: JiraLinkService,
                 private router: Router,
                 private route: ActivatedRoute,
                 private dragulaService: DragulaService,
@@ -65,6 +69,7 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
         this.scenarioComponent.componentSteps = this.componentTasksCreated;
         this.updateScenarioParameters();
         const tags = this.componentForm.value['tags'] + '';
+        this.jiraId = this.componentForm.value['jiraId'];
         this.scenarioComponent.tags = tags.length !== 0 ? tags.split(',') : [];
 
         this.scenarioComponent.datasetId = this.datasetId;
@@ -72,6 +77,7 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
         this.componentService.saveComponentTestCase(this.scenarioComponent).subscribe(
             (response) => {
                 this.modificationsSaved = true;
+                this.jiraLinkService.saveForScenario(response,this.jiraId);
                 this.router.navigateByUrl('/scenario/' + response + '/execution/last')
                     .then(null);
             },
@@ -149,6 +155,7 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
                     console.log(error);
                 }
             );
+            this.loadJiraLink(id);
         }
     }
 
@@ -177,6 +184,17 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
 
     selectDataset(datasetId: string) {
         this.datasetId = datasetId;
+    }
+
+    loadJiraLink(id: string) {
+        this.jiraLinkService.findByScenarioId(id).subscribe(
+            (jiraId) => {
+                this.componentForm.controls['jiraId'].setValue('jiraId');
+            },
+            (error) => {
+                console.log(error);
+            }
+        );
     }
 
     // Verify of page was updated

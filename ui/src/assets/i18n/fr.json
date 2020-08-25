@@ -12,7 +12,8 @@
             "component": "Composants",
             "backups": "Sauvegardes",
             "variable": "Variable",
-            "dataset": "Dataset"
+            "dataset": "Dataset",
+            "jiraId": "Identifiant jira"
         }
     },
     "home": {
