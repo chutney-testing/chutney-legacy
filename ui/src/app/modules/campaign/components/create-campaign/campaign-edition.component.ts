@@ -158,9 +158,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
             (jiraId) => {
                 this.campaignForm.controls['jiraId'].setValue(jiraId);
             },
-            (error) => {
-                this.errorMessage = error._body;
-            }
+            (error) => { console.log(error); this.errorMessage = error; }
         );
 
     }
@@ -209,7 +207,9 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         }
 
         this.jiraId = formValue['jiraId'];
-        this.jiraLinkService.saveForCampaign(this.campaign.id, this.jiraId);
+        this.jiraLinkService.saveForCampaign(this.campaign.id, this.jiraId).subscribe(
+            () => {},
+            (error) => { console.log(error); this.errorMessage = error; });
     }
 
     setCampaignScenarios() {

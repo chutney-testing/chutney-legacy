@@ -77,7 +77,10 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
         this.componentService.saveComponentTestCase(this.scenarioComponent).subscribe(
             (response) => {
                 this.modificationsSaved = true;
-                this.jiraLinkService.saveForScenario(response,this.jiraId);
+                this.jiraLinkService.saveForScenario(response,this.jiraId).subscribe(
+                    () => {},
+                    (error) => { console.log(error);}
+                );
                 this.router.navigateByUrl('/scenario/' + response + '/execution/last')
                     .then(null);
             },
@@ -189,11 +192,9 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
     loadJiraLink(id: string) {
         this.jiraLinkService.findByScenarioId(id).subscribe(
             (jiraId) => {
-                this.componentForm.controls['jiraId'].setValue('jiraId');
+                this.componentForm.controls['jiraId'].setValue(jiraId);
             },
-            (error) => {
-                console.log(error);
-            }
+            (error) => { console.log(error);}
         );
     }
 
