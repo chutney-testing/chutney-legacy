@@ -3,11 +3,11 @@ package com.chutneytesting.task.context;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.task.TestLogger;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.junit.Test;
 
 public class DebugTaskTest {
@@ -22,7 +22,7 @@ public class DebugTaskTest {
         inputs.put("my_first_input", "input_value");
         inputs.put("my_second_input", "input_value");
         inputs.put("my_third_input", "input_value");
-        Set<String> filter = Collections.emptySet();
+        List<String> filter = Collections.emptyList();
 
         sut = new DebugTask(logger, inputs, filter);
 
@@ -46,7 +46,7 @@ public class DebugTaskTest {
         inputs.put("my_second_input", "input_value");
         inputs.put("my_third_input", "input_value");
 
-        Set<String> filter = new HashSet<>();
+        List<String> filter = new ArrayList<>();
         filter.add("my_second_input");
 
         sut = new DebugTask(logger, inputs, filter);
@@ -69,9 +69,7 @@ public class DebugTaskTest {
         inputs.put("my_second_input", "input_value");
         inputs.put("my_third_input", "input_value");
 
-        Set<String> filter = null;
-
-        sut = new DebugTask(logger, inputs, filter);
+        sut = new DebugTask(logger, inputs, null);
 
         // W
         sut.execute();
