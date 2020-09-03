@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -264,7 +265,7 @@ public class ExecutionRequestMapper {
         }
 
         Map<String, Object> outputs() {
-            Map<String, Object> outputs = new HashMap<>();
+            Map<String, Object> outputs = new LinkedHashMap<>();
             if (implementation.hasNonNull("outputs")) {
                 final JsonNode outputsNode = implementation.get("outputs");
                 outputsNode.forEach(in -> {
@@ -276,7 +277,7 @@ public class ExecutionRequestMapper {
         }
 
         Map<String, Object> inputs() {
-            Map<String, Object> inputs = new HashMap<>();
+            Map<String, Object> inputs = new LinkedHashMap<>();
             // Simple inputs
             if (implementation.hasNonNull("inputs")) {
                 final JsonNode simpleInputs = implementation.get("inputs");
@@ -298,9 +299,10 @@ public class ExecutionRequestMapper {
             if (implementation.hasNonNull("mapInputs")) {
                 final JsonNode mapInputs = implementation.get("mapInputs");
                 mapInputs.forEach(in -> {
-                    Map<String, String> values = new HashMap<>();
-                    final JsonNode jsonValues = in.get("values");
-                    jsonValues.iterator().forEachRemaining(n -> values.put(n.get("key").asText(), n.get("value").asText()));
+                    LinkedHashMap<String, String> values = new LinkedHashMap<>();
+                    for (JsonNode next : in.get("values")) {
+                        values.put(next.get("key").asText(), next.get("value").asText());
+                    }
                     inputs.put(in.get("name").asText(), values);
                 });
             }

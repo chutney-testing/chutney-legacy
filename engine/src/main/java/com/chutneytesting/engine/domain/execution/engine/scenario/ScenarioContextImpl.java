@@ -1,9 +1,9 @@
 package com.chutneytesting.engine.domain.execution.engine.scenario;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 @SuppressWarnings("serial")
-public class ScenarioContextImpl extends HashMap<String, Object> implements ScenarioContext {
+public class ScenarioContextImpl extends LinkedHashMap<String, Object> implements ScenarioContext {
 
     public ScenarioContextImpl() {
         super();
