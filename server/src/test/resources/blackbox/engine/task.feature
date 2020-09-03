@@ -19,7 +19,7 @@ Feature: Engine tasks exposition
             | xml-assert                        | document,java.lang.String expected,java.util.Map                                                                                                              |
             | xsd-validation                    | xml,java.lang.String xsd,java.lang.String                                                                                                                     |
             | context-put                       | entries,java.util.Map                                                                                                                                         |
-            | debug                             | filters,java.util.Set                                                                                                                                         |
+            | debug                             | filters,java.util.List                                                                                                                                         |
             | fail                              |                                                                                                                                                               |
             | sleep                             | duration,java.lang.String                                                                                                                                     |
             | success                           |                                                                                                                                                               |
@@ -80,7 +80,7 @@ Feature: Engine tasks exposition
             | xml-assert                        | document,java.lang.String expected,java.util.Map                                                                                                              |
             | xsd-validation                    | xml,java.lang.String xsd,java.lang.String                                                                                                                     |
             | context-put                       | entries,java.util.Map                                                                                                                                         |
-            | debug                             | filters,java.util.Set                                                                                                                                         |
+            | debug                             | filters,java.util.List                                                                                                                                         |
             | fail                              |                                                                                                                                                               |
             | sleep                             | duration,java.lang.String                                                                                                                                     |
             | success                           |                                                                                                                                                               |
