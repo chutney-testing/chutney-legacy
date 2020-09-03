@@ -6,8 +6,8 @@ import com.chutneytesting.engine.domain.execution.evaluation.SpelFunctions;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,7 +33,7 @@ public class StepDataEvaluator {
     }
 
     public Map<String, Object> evaluateNamedDataWithContextVariables(final Map<String, Object> data, final Map<String, Object> contextVariables) throws EvaluationException {
-        Map<String, Object> evaluatedNamedData = new HashMap<>();
+        Map<String, Object> evaluatedNamedData = new LinkedHashMap<>();
 
         StandardEvaluationContext evaluationContext = new StandardEvaluationContext();
         evaluationContext.registerMethodFilter(java.lang.Runtime.class, methods -> Collections.emptyList());
@@ -65,7 +65,7 @@ public class StepDataEvaluator {
                 inputEvaluatedValue = Strings.replaceExpressions(stringValue, s -> evaluate(parser, evaluationContext, s), EVALUATION_STRING_PREFIX, EVALUATION_STRING_SUFFIX);
             }
         } else if (object instanceof Map) {
-            Map evaluatedMap = new HashMap();
+            Map evaluatedMap = new LinkedHashMap();
             ((Map) object).forEach(
                 (key, value) -> {
                     Object keyValue = evaluateObject(key, evaluationContext);
@@ -83,7 +83,7 @@ public class StepDataEvaluator {
             );
             inputEvaluatedValue = evaluatedList;
         } else if (object instanceof Set) {
-            Set evaluatedSet = new HashSet<>();
+            Set evaluatedSet = new LinkedHashSet();
             ((Set)object).forEach(
                 obj -> evaluatedSet.add(evaluateObject(obj, evaluationContext))
             );

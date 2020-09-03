@@ -24,7 +24,7 @@ import com.google.common.collect.Maps;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -245,7 +245,7 @@ public class Step {
         private final Map<String, Object> stepOutputs;
 
         private StepContextImpl(Map<String, Object> evaluatedInputs, ScenarioContext scenarioContext) throws EvaluationException {
-            this(scenarioContext, evaluatedInputs, new HashMap<>());
+            this(scenarioContext, evaluatedInputs, new LinkedHashMap<>());
         }
 
         private StepContextImpl(ScenarioContext scenarioContext, Map<String, Object> evaluatedInputs, Map<String, Object> stepOutputs) {
@@ -259,7 +259,7 @@ public class Step {
         }
 
         private Map<String, Object> allEvaluatedVariables() {
-            Map<String, Object> allResults = Maps.newHashMap(scenarioContext);
+            Map<String, Object> allResults = Maps.newLinkedHashMap(scenarioContext);
             allResults.putAll(stepOutputs);
             return allResults;
         }

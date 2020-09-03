@@ -25,9 +25,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
 import java.io.File;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -70,26 +72,34 @@ public class ExecutionRequestMapperTest {
         SecurityInfoDto securityDto = new SecurityInfoDto(null, null, null, null, null, null);
         TargetDto expectedTarget = new TargetDto(expectedTargetId, "", emptyMap(), securityDto, emptyList());
 
-        Map<String, Object> expectedOutputs = Maps.of("output1", "value1", "output2", "value2");
+        LinkedHashMap<String, Object> expectedOutputs = new LinkedHashMap<>();
+        expectedOutputs.put("output1", "value1");
+        expectedOutputs.put("output2", "value2");
+        expectedOutputs.put("output3", "value3");
+        expectedOutputs.put("output4", "value4");
 
-        Map<String, Object> expectedInputs = Maps.of(
-            // Simple inputs
-            "input 1 name", "v1 input 1 name",
-            "input name empty", null,
-            // List inputs
-            "list 1 input name", Arrays.asList("v1 list 1 input", "v2 list 1 input"),
-            "list 2 input name empty", emptyList(),
-            // Map inputs
-            "map 1 input name", Maps.of(
+        LinkedHashMap<String, Object> expectedInputs = new LinkedHashMap<>();
+        // Simple inputs
+        expectedInputs.put("input 1 name", "v1 input 1 name");
+        expectedInputs.put("input name empty", null);
+        // List inputs
+        expectedInputs.put("list 1 input name", Arrays.asList("v1 list 1 input", "v2 list 1 input"));
+        expectedInputs.put("list 2 input name empty", emptyList());
+        // Map inputs
+        expectedInputs.put("map 1 input name",
+            Maps.of(
                 "k1 map input", "v1 map 1 input",
-                "k2 map input", "v2 map 1 input"),
-            "map 2 input name with empty", Maps.of(
+                "k2 map input", "v2 map 1 input",
+                "k3 map input", "v3 map 1 input",
+                "k4 map input", "v4 map 1 input"));
+        expectedInputs.put("map 2 input name with empty",
+            Maps.of(
                 "k1 map input", "v1 map 2 input",
                 "k2 map input empty", ""
             )
         );
 
-        final String implementationFull = Files.contentOf(new File(Resources.getResource("raw_steps/raw_composable_implementation.json").getPath()), Charset.forName("UTF-8"));
+        final String implementationFull = Files.contentOf(new File(Resources.getResource("raw_steps/raw_composable_implementation.json").getPath()), StandardCharsets.UTF_8);
 
         List<FunctionalStep> steps = new ArrayList<>();
         steps.add(FunctionalStep.builder()
@@ -178,14 +188,22 @@ public class ExecutionRequestMapperTest {
                                                               String name,
                                                               String implementationType,
                                                               TargetDto implementationTarget,
-                                                              Map<String, Object> implementationInputs,
-                                                              Map<String, Object> implementationOuputs) {
+                                                              LinkedHashMap<String, Object> implementationInputs,
+                                                              LinkedHashMap<String, Object> implementationOuputs) {
         assertThat(stepDefinitionRequestDto).isNotNull();
         assertThat(stepDefinitionRequestDto.name).isEqualTo(name);
         assertThat(stepDefinitionRequestDto.type).isEqualTo(implementationType);
         assertThat(stepDefinitionRequestDto.target).isEqualTo(implementationTarget);
-        assertThat(stepDefinitionRequestDto.inputs).containsAllEntriesOf(implementationInputs);
-        assertThat(stepDefinitionRequestDto.outputs).containsAllEntriesOf(implementationOuputs);
+        stepDefinitionRequestDto.inputs.forEach((k, v) -> {
+            if (v instanceof String) {
+                assertThat(implementationInputs).containsEntry(k, v);
+            } else if (v instanceof List) {
+                assertThat((List) v).containsExactlyElementsOf((List) implementationInputs.get(k));
+            } else if (v instanceof Map) {
+                assertThat((Map) v).containsExactlyEntriesOf((Map) implementationInputs.get(k));
+            }
+        });
+        assertThat(stepDefinitionRequestDto.outputs).containsExactlyEntriesOf(implementationOuputs);
         assertThat(stepDefinitionRequestDto.steps).isEmpty();
     }
 }
