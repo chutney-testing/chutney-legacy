@@ -8,7 +8,7 @@ import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -56,11 +56,11 @@ public class FunctionalStep {
         private String id;
         private String name;
         private List<FunctionalStep> steps;
-        private Map<String, String> parameters = new HashMap<>();
+        private Map<String, String> parameters = new LinkedHashMap<>();
         private Optional<String> implementation;
         private Optional<StepUsage> usage;
         private Strategy strategy;
-        private Map<String, String> dataSet = new HashMap<>();
+        private Map<String, String> dataSet = new LinkedHashMap<>();
         private List<String> tags = new ArrayList<>();
 
         private FunctionalStepBuilder() {
@@ -147,7 +147,7 @@ public class FunctionalStep {
             this.implementation = instance.implementation;
             this.usage = instance.usage;
             this.strategy = instance.strategy;
-            this.dataSet = new HashMap<>(instance.dataSet);
+            this.dataSet = new LinkedHashMap<>(instance.dataSet);
             return this;
         }
     }

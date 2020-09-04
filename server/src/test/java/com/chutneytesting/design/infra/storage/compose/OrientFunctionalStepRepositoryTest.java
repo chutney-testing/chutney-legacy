@@ -410,29 +410,32 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
             )
         );
         Map<String, String> middleParentExpectedDataSet = Maps.of(
+            "action parameter with no default value", "",
+            "another action parameter with default value", "",
             "middle parent parameter with default value", "default middle parent parameter value",
             "middle parent parameter with not default value", "",
-            "another middle parent parameter with default value", "another default middle parent parameter value",
-            "action parameter with no default value", "",
-            "another action parameter with default value", "");
+            "another middle parent parameter with default value", "another default middle parent parameter value"
+        );
 
         Map<String, String> firstMiddleParentInstanceDataSet = Maps.of(
+            "action parameter with no default value", "first middle parent action no default value",
+            "another action parameter with default value", "first middle parent action value",
             "middle parent parameter with default value", "default middle parent parameter value",
             "middle parent parameter with not default value", "first middle parent instance not default value value",
-            "another middle parent parameter with default value", "",
-            "action parameter with no default value", "first middle parent action no default value",
-            "another action parameter with default value", "first middle parent action value");
+            "another middle parent parameter with default value", ""
+        );
         final FunctionalStep firstMiddleParentStepInstance = FunctionalStep.builder()
             .from(middleParentStep)
             .overrideDataSetWith(firstMiddleParentInstanceDataSet)
             .build();
 
         Map<String, String> secondMiddleParentInstanceDataSet = Maps.of(
+            "action parameter with no default value", "",
+            "another action parameter with default value", "second middle parent action value",
             "middle parent parameter with default value", "second middle parent parameter value",
             "middle parent parameter with not default value", "",
-            "another middle parent parameter with default value", "another second middle parent parameter value",
-            "action parameter with no default value", "",
-            "another action parameter with default value", "second middle parent action value");
+            "another middle parent parameter with default value", "another second middle parent parameter value"
+        );
         final FunctionalStep secondMiddleParentStepInstance = FunctionalStep.builder()
             .from(middleParentStep)
             .overrideDataSetWith(secondMiddleParentInstanceDataSet)
@@ -457,10 +460,11 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
             )
         );
         Map<String, String> parentExpectedDataSet = Maps.of(
-            "parent parameter", "parent parameter default value",
             "another middle parent parameter with default value", "",
+            "action parameter with no default value", "",
             "middle parent parameter with not default value", "",
-            "action parameter with no default value", "");
+            "parent parameter", "parent parameter default value"
+            );
 
         // When
         FunctionalStep foundAction = sut.findById(actionStep.id);
@@ -468,24 +472,24 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
         FunctionalStep foundParentFStep = sut.findById(parentStep.id);
 
         // Then
-        assertThat(foundAction.parameters).containsAllEntriesOf(actionParameters);
-        assertThat(foundAction.dataSet).containsAllEntriesOf(actionParameters);
+        assertThat(foundAction.parameters).containsExactlyEntriesOf(actionParameters);
+        assertThat(foundAction.dataSet).containsExactlyEntriesOf(actionParameters);
 
-        assertThat(foundMiddleParentFStep.steps.get(0).parameters).containsAllEntriesOf(actionParameters);
-        assertThat(foundMiddleParentFStep.steps.get(0).dataSet).containsAllEntriesOf(firstActionInstanceDataSet);
-        assertThat(foundMiddleParentFStep.steps.get(1).parameters).containsAllEntriesOf(actionParameters);
-        assertThat(foundMiddleParentFStep.steps.get(1).dataSet).containsAllEntriesOf(secondActionInstanceDataSet);
-        assertThat(foundMiddleParentFStep.parameters).containsAllEntriesOf(middleParentParameters);
-        assertThat(foundMiddleParentFStep.dataSet).containsAllEntriesOf(middleParentExpectedDataSet);
+        assertThat(foundMiddleParentFStep.steps.get(0).parameters).containsExactlyEntriesOf(actionParameters);
+        assertThat(foundMiddleParentFStep.steps.get(0).dataSet).containsExactlyEntriesOf(firstActionInstanceDataSet);
+        assertThat(foundMiddleParentFStep.steps.get(1).parameters).containsExactlyEntriesOf(actionParameters);
+        assertThat(foundMiddleParentFStep.steps.get(1).dataSet).containsExactlyEntriesOf(secondActionInstanceDataSet);
+        assertThat(foundMiddleParentFStep.parameters).containsExactlyEntriesOf(middleParentParameters);
+        assertThat(foundMiddleParentFStep.dataSet).containsExactlyEntriesOf(middleParentExpectedDataSet);
 
-        assertThat(foundParentFStep.parameters).containsAllEntriesOf(parentParameters);
-        assertThat(foundParentFStep.dataSet).containsAllEntriesOf(parentExpectedDataSet);
-        assertThat(foundParentFStep.steps.get(0).parameters).containsAllEntriesOf(middleParentParameters);
-        assertThat(foundParentFStep.steps.get(0).dataSet).containsAllEntriesOf(firstMiddleParentInstanceDataSet);
-        assertThat(foundParentFStep.steps.get(1).parameters).containsAllEntriesOf(actionParameters);
-        assertThat(foundParentFStep.steps.get(1).dataSet).containsAllEntriesOf(thirdActionInstanceDataSet);
-        assertThat(foundParentFStep.steps.get(2).parameters).containsAllEntriesOf(middleParentParameters);
-        assertThat(foundParentFStep.steps.get(2).dataSet).containsAllEntriesOf(secondMiddleParentInstanceDataSet);
+        assertThat(foundParentFStep.parameters).containsExactlyEntriesOf(parentParameters);
+        assertThat(foundParentFStep.dataSet).containsExactlyEntriesOf(parentExpectedDataSet);
+        assertThat(foundParentFStep.steps.get(0).parameters).containsExactlyEntriesOf(middleParentParameters);
+        assertThat(foundParentFStep.steps.get(0).dataSet).containsExactlyEntriesOf(firstMiddleParentInstanceDataSet);
+        assertThat(foundParentFStep.steps.get(1).parameters).containsExactlyEntriesOf(actionParameters);
+        assertThat(foundParentFStep.steps.get(1).dataSet).containsExactlyEntriesOf(thirdActionInstanceDataSet);
+        assertThat(foundParentFStep.steps.get(2).parameters).containsExactlyEntriesOf(middleParentParameters);
+        assertThat(foundParentFStep.steps.get(2).dataSet).containsExactlyEntriesOf(secondMiddleParentInstanceDataSet);
     }
 
     @Test
