@@ -1,6 +1,7 @@
 package com.chutneytesting.design.domain.campaign;
 
 import static java.time.LocalDateTime.now;
+import static java.util.Collections.unmodifiableList;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.design.domain.scenario.TestCase;
@@ -9,7 +10,6 @@ import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -63,7 +63,7 @@ public class CampaignExecutionReport {
         this.executionId = executionId;
         this.campaignId = campaignId;
         this.campaignName = campaignName;
-        this.scenarioExecutionReports = Collections.unmodifiableList(scenarioExecutionReports);
+        this.scenarioExecutionReports = scenarioExecutionReports;
         this.startDate = findStartDate(scenarioExecutionReports);
         this.status = findStatus(scenarioExecutionReports);
         this.partialExecution = partialExecution;
@@ -122,7 +122,10 @@ public class CampaignExecutionReport {
     }
 
     public List<ScenarioExecutionReportCampaign> scenarioExecutionReports() {
-        return Collections.unmodifiableList(scenarioExecutionReports);
+        if (findStatus(scenarioExecutionReports).isFinal()) {
+            scenarioExecutionReports.sort(ScenarioExecutionReportCampaign.executionIdComparator());
+        }
+        return unmodifiableList(scenarioExecutionReports);
     }
 
     public ServerReportStatus status() {

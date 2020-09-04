@@ -2,6 +2,7 @@ package com.chutneytesting.design.domain.campaign;
 
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
+import java.util.Comparator;
 import java.util.Objects;
 
 public class ScenarioExecutionReportCampaign {
@@ -19,6 +20,10 @@ public class ScenarioExecutionReportCampaign {
 
     public ServerReportStatus status() {
         return execution.status();
+    }
+
+    public static Comparator<ScenarioExecutionReportCampaign> executionIdComparator() {
+        return Comparator.comparingLong(value -> value.execution.executionId() > 0 ? value.execution.executionId() : Long.MAX_VALUE);
     }
 
     @Override
