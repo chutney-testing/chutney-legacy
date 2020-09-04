@@ -5,12 +5,14 @@ import com.chutneytesting.design.domain.campaign.CampaignRepository;
 import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.environment.EnvironmentRepository;
 import com.chutneytesting.design.domain.environment.EnvironmentService;
+import com.chutneytesting.design.domain.jira.JiraRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.engine.api.execution.TestEngine;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessor;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;
 import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
+import com.chutneytesting.execution.domain.jira.JiraExecutionEngine;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngineAsync;
 import com.chutneytesting.execution.domain.scenario.ServerTestEngine;
@@ -115,8 +117,9 @@ public class ServerConfiguration {
                                                     ScenarioExecutionEngine scenarioExecutionEngine,
                                                     ExecutionHistoryRepository executionHistoryRepository,
                                                     TestCaseRepository testCaseRepository,
-                                                    DataSetHistoryRepository dataSetHistoryRepository) {
-        return new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository);
+                                                    DataSetHistoryRepository dataSetHistoryRepository,
+                                                    JiraExecutionEngine jiraExecutionEngine) {
+        return new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository, jiraExecutionEngine);
     }
 
     @Bean
@@ -128,6 +131,11 @@ public class ServerConfiguration {
     ServerTestEngine javaTestEngine(@Qualifier("embeddedTestEngine") TestEngine testEngine,
                                     ExecutionRequestMapper executionRequestMapper) {
         return new ServerTestEngineJavaImpl(testEngine, executionRequestMapper);
+    }
+
+    @Bean
+    JiraExecutionEngine jiraExecutionEngine(JiraRepository jiraRepository) {
+        return new JiraExecutionEngine(jiraRepository);
     }
 
 }

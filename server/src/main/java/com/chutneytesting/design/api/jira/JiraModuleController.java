@@ -1,6 +1,7 @@
 package com.chutneytesting.design.api.jira;
 
 import com.chutneytesting.design.domain.jira.JiraRepository;
+import com.chutneytesting.design.domain.jira.JiraTargetConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,7 @@ public class JiraModuleController {
     public static final String BASE_URL = "/api/ui/jira/v1/";
     public static final String BASE_SCENARIO_URL = "scenario";
     public static final String BASE_CAMPAIGN_URL = "campaign";
+    public static final String BASE_CONFIGURATION_URL = "configuration";
 
     private final JiraRepository jiraRepository;
 
@@ -27,7 +29,7 @@ public class JiraModuleController {
 
 
     @GetMapping(path = BASE_SCENARIO_URL + "/{scenarioId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public JiraDto findByScenarioId(@PathVariable String scenarioId) {
+    public JiraDto getByScenarioId(@PathVariable String scenarioId) {
         String jiraId = jiraRepository.getByScenarioId(scenarioId);
         return ImmutableJiraDto.builder()
             .id(jiraId)
@@ -47,7 +49,7 @@ public class JiraModuleController {
     }
 
     @GetMapping(path = BASE_CAMPAIGN_URL + "/{campaignId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public JiraDto findByCampaignId(@PathVariable String campaignId) {
+    public JiraDto getByCampaignId(@PathVariable String campaignId) {
         String jiraId = jiraRepository.getByCampaignId(campaignId);
         return ImmutableJiraDto.builder()
             .id(jiraId)
@@ -55,7 +57,9 @@ public class JiraModuleController {
             .build();
     }
 
-    @PostMapping(path = BASE_CAMPAIGN_URL)
+    @PostMapping(path = BASE_CAMPAIGN_URL,
+        consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+        produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public JiraDto saveForCampaign(@RequestBody JiraDto jiraDto) {
         jiraRepository.saveForCampaign(jiraDto.chutneyId(), jiraDto.id());
         return ImmutableJiraDto.builder()
@@ -64,5 +68,21 @@ public class JiraModuleController {
             .build();
     }
 
+    @GetMapping(path = BASE_CONFIGURATION_URL , produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public JiraConfigurationDto getConfiguration() {
+        JiraTargetConfiguration jiraTargetConfiguration = jiraRepository.loadServerConfiguration();
+        return ImmutableJiraConfigurationDto.builder()
+            .url(jiraTargetConfiguration.url)
+            .username(jiraTargetConfiguration.username)
+            .password(jiraTargetConfiguration.password)
+            .build();
+    }
+
+    @PostMapping(path = BASE_CONFIGURATION_URL,
+        consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+        produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public void saveConfiguration(@RequestBody JiraConfigurationDto jiraConfigurationDto) {
+        jiraRepository.saveServerConfiguration(new JiraTargetConfiguration(jiraConfigurationDto.url(),jiraConfigurationDto.username(),jiraConfigurationDto.password()));
+    }
 
 }

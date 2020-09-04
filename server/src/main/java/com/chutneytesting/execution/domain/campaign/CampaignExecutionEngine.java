@@ -18,6 +18,7 @@ import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
+import com.chutneytesting.execution.domain.jira.JiraExecutionEngine;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.execution.domain.scenario.FailedExecutionAttempt;
@@ -50,6 +51,7 @@ public class CampaignExecutionEngine {
     private final ExecutionHistoryRepository executionHistoryRepository;
     private final TestCaseRepository testCaseRepository;
     private final DataSetHistoryRepository dataSetHistoryRepository;
+    private final JiraExecutionEngine jiraExecutionEngine;
 
     private Map<Long, CampaignExecutionReport> currentCampaignExecutions = new ConcurrentHashMap<>();
     private Map<Long, Boolean> currentCampaignExecutionsStopRequests = new ConcurrentHashMap<>();
@@ -57,12 +59,15 @@ public class CampaignExecutionEngine {
     public CampaignExecutionEngine(CampaignRepository campaignRepository,
                                    ScenarioExecutionEngine scenarioExecutionEngine,
                                    ExecutionHistoryRepository executionHistoryRepository,
-                                   TestCaseRepository testCaseRepository, DataSetHistoryRepository dataSetHistoryRepository) {
+                                   TestCaseRepository testCaseRepository,
+                                   DataSetHistoryRepository dataSetHistoryRepository,
+                                   JiraExecutionEngine jiraExecutionEngine) {
         this.campaignRepository = campaignRepository;
         this.scenarioExecutionEngine = scenarioExecutionEngine;
         this.executionHistoryRepository = executionHistoryRepository;
         this.testCaseRepository = testCaseRepository;
         this.dataSetHistoryRepository = dataSetHistoryRepository;
+        this.jiraExecutionEngine = jiraExecutionEngine;
     }
 
     public List<CampaignExecutionReport> executeByName(String campaignName) {
@@ -158,6 +163,8 @@ public class CampaignExecutionEngine {
                 // Add scenario report to campaign's one
                 Optional.ofNullable(scenarioExecutionReport)
                     .ifPresent(campaignExecutionReport::endScenarioExecution);
+                // update xray test
+                jiraExecutionEngine.updateTestExecution(campaign.id, scenarioExecutionReport);
             }
         });
         return campaignExecutionReport;

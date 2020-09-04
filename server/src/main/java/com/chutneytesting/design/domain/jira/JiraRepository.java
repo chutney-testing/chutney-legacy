@@ -11,4 +11,8 @@ public interface JiraRepository extends Backupable {
     String getByCampaignId(String campaignId);
 
     void saveForCampaign(String campaignId, String jiraId);
+
+    JiraTargetConfiguration loadServerConfiguration();
+
+    void saveServerConfiguration(JiraTargetConfiguration jiraTargetConfiguration);
 }
