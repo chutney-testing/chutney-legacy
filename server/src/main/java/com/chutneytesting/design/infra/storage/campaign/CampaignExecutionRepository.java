@@ -40,7 +40,7 @@ class CampaignExecutionRepository {
             + "ORDER BY 1 DESC "
             + "FETCH FIRST " + LIMIT_BLOC_SIZE + " ROWS ONLY"
             + ") "
-            + "ORDER BY C.ID DESC";
+            + "ORDER BY C.ID DESC, SEH.ID DESC";
 
     List<CampaignExecutionReport> findExecutionHistory(Long campaignId) {
         return uiNamedParameterJdbcTemplate.query(QUERY_FIND_CAMPAIGN_EXECUTION_HISTORY,
