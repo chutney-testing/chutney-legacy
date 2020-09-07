@@ -5,6 +5,7 @@
             "campaigns": "Campaigns",
             "targets": "Targets",
             "workers": "Nodes",
+            "configuration": "Configuration",
             "databaseAdmin": "DB",
             "storesAdmin": "Stores",
             "documentation": "Documentation",
