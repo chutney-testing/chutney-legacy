@@ -5,10 +5,12 @@ import java.util.List;
 public class Xray {
     private String testExecutionKey;
     private List<XrayTest> tests;
+    private XrayInfo info;
 
-    public Xray(String testExecutionKey, List<XrayTest> tests) {
+    public Xray(String testExecutionKey, List<XrayTest> tests, XrayInfo info) {
         this.testExecutionKey = testExecutionKey;
         this.tests = tests;
+        this.info = info;
     }
 
     public String getTestExecutionKey() {
@@ -25,5 +27,13 @@ public class Xray {
 
     public void setTests(List<XrayTest> tests) {
         this.tests = tests;
+    }
+
+    public XrayInfo getInfo() {
+        return info;
+    }
+
+    public void setInfo(XrayInfo info) {
+        this.info = info;
     }
 }

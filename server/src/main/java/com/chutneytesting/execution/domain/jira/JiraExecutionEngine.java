@@ -1,13 +1,25 @@
 package com.chutneytesting.execution.domain.jira;
 
-import com.chutneytesting.design.domain.campaign.ScenarioExecutionReportCampaign;
 import com.chutneytesting.design.domain.jira.JiraRepository;
 import com.chutneytesting.design.domain.jira.JiraTargetConfiguration;
 import com.chutneytesting.design.domain.jira.Xray;
+import com.chutneytesting.design.domain.jira.XrayEvidence;
+import com.chutneytesting.design.domain.jira.XrayInfo;
 import com.chutneytesting.design.domain.jira.XrayTest;
+import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
+import com.chutneytesting.execution.domain.report.StepExecutionReportCore;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import javax.net.ssl.SSLContext;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -32,26 +44,30 @@ public class JiraExecutionEngine {
 
 
     private final JiraRepository jiraRepository;
+    private final ObjectMapper objectMapper;
 
-    public JiraExecutionEngine(JiraRepository jiraRepository) {
+    public JiraExecutionEngine(JiraRepository jiraRepository, ObjectMapper objectMapper) {
         this.jiraRepository = jiraRepository;
+        this.objectMapper = objectMapper;
     }
 
-    public void updateTestExecution(Long campaignId, ScenarioExecutionReportCampaign scenarioExecutionReportCampaign) {
-
-        String testKey = jiraRepository.getByScenarioId(scenarioExecutionReportCampaign.scenarioId);
+    public void updateTestExecution(Long campaignId, String scenarioId, String stringReport) {
+        ScenarioExecutionReport scenarioExecutionReport = formatReport(stringReport);
+        String testKey = jiraRepository.getByScenarioId(scenarioId);
         String testExecutionKey = jiraRepository.getByCampaignId(campaignId.toString());
         if (!testKey.isEmpty() && !testExecutionKey.isEmpty()) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZZZZZ");
             XrayTest xrayTest = new XrayTest(
                 testKey,
-                scenarioExecutionReportCampaign.execution.time().toString(),
-                scenarioExecutionReportCampaign.execution.time()
-                    .plusNanos(scenarioExecutionReportCampaign.execution.duration() * 1000000)
-                    .toString(),
-                scenarioExecutionReportCampaign.execution.error().orElse(""),
-                scenarioExecutionReportCampaign.status().equals(ServerReportStatus.SUCCESS) ? SUCCESS_STATUS : FAILED_STATUS
+                scenarioExecutionReport.report.startDate.atZone(ZoneId.systemDefault()).format(formatter),
+                scenarioExecutionReport.report.startDate.plusNanos(scenarioExecutionReport.report.duration * 1000000).atZone(ZoneId.systemDefault()).format(formatter),
+                getErrors(scenarioExecutionReport.report).toString(),
+                scenarioExecutionReport.report.status.equals(ServerReportStatus.SUCCESS) ? SUCCESS_STATUS : FAILED_STATUS
             );
-            Xray xray = new Xray(testExecutionKey.toString(), Arrays.asList(xrayTest));
+
+            xrayTest.setEvidences(getEvidences(scenarioExecutionReport.report, ""));
+            XrayInfo info = new XrayInfo(Arrays.asList(scenarioExecutionReport.environment));
+            Xray xray = new Xray(testExecutionKey, Arrays.asList(xrayTest), info);
             updateRequest(xray);
             LOGGER.info("Update xray test {} of test execution {}", testKey, testExecutionKey);
         }
@@ -97,6 +113,61 @@ public class JiraExecutionEngine {
         restTemplate = new RestTemplate(requestFactory);
 
         return restTemplate;
+    }
+
+    private ScenarioExecutionReport formatReport(String stringReport) {
+        ScenarioExecutionReport report = null;
+        try {
+            report = objectMapper.readValue(stringReport, ScenarioExecutionReport.class);
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage());
+        }
+        return report;
+    }
+
+    private List<String> getErrors(StepExecutionReportCore stepExecutionReportCore) {
+        List<String> errors = new ArrayList<>();
+        getErrors(stepExecutionReportCore, "").forEach((k, v) -> errors.add(k + " => " + v));
+        return errors;
+    }
+
+    private Map<String, String> getErrors(StepExecutionReportCore stepExecutionReportCore, String parentStep) {
+        Map<String, String> errors = new HashMap<>();
+        if (!stepExecutionReportCore.errors.isEmpty()) {
+            errors.put(parentStep + " > " + stepExecutionReportCore.name,
+                stepExecutionReportCore.errors.stream().filter(s -> !s.startsWith("data:image/png")).collect(Collectors.toList()).toString());
+        }
+        if (!stepExecutionReportCore.steps.isEmpty()) {
+            stepExecutionReportCore.steps
+                .stream()
+                .forEach(step -> errors.putAll(getErrors(step, parentStep + " > " + stepExecutionReportCore.name)));
+        }
+        return errors;
+    }
+
+    private List<XrayEvidence> getEvidences(StepExecutionReportCore stepExecutionReportCore, String parentStep) {
+        List<XrayEvidence> evidences = new ArrayList<>();
+        if (!stepExecutionReportCore.errors.isEmpty()) {
+            evidences.addAll(
+                stepExecutionReportCore.errors
+                    .stream()
+                    .filter(s -> s.startsWith("data:image/png"))
+                    .map(s -> new XrayEvidence(s.replace("data:image/png;base64,", ""), formatEvidenceFilename(parentStep, stepExecutionReportCore.name) + ".png", "image/png"))
+                    .collect(Collectors.toList())
+            );
+        }
+        if (!stepExecutionReportCore.steps.isEmpty()) {
+            stepExecutionReportCore.steps
+                .stream()
+                .forEach(step -> evidences.addAll(getEvidences(step, formatEvidenceFilename(parentStep, stepExecutionReportCore.name))));
+        }
+        return evidences;
+    }
+
+    private String formatEvidenceFilename(String parentStep, String stepName) {
+        return parentStep.trim().replace(" ", "-")
+            + (parentStep.trim().isEmpty() ? "" : "_")
+            + stepName.trim().replace(" ", "-");
     }
 
     private void configureBasicAuth(String username, String password, RestTemplate restTemplate) {

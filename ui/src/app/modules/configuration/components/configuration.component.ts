@@ -19,6 +19,7 @@ export class ConfigurationComponent implements OnInit {
     
     message;
     private savedMessage: string;
+    isErrorNotification: boolean = false;
     
     constructor(private configurationService: ConfigurationService,
                 private translate: TranslateService,
@@ -44,14 +45,14 @@ export class ConfigurationComponent implements OnInit {
 
     loadConfiguration(){
         this.configurationService.get().subscribe(
-            (config: Configuration)=>{
+            (config: Configuration) => {
                 this.configuration = config;
                 this.configurationForm.controls.url.patchValue(config.url);
                 this.configurationForm.controls.username.patchValue(config.username);
-                this.configurationForm.controls.password.patchValue(config.password);       
+                this.configurationForm.controls.password.patchValue(config.password);
             },
             (error) => {
-                console.error(error);
+                this.notify(error,true);
             }
             );
     }
@@ -63,13 +64,14 @@ export class ConfigurationComponent implements OnInit {
         this.configuration = new Configuration(url, username, password);
         
         this.configurationService.save(this.configuration).subscribe(
-            res => {this.notify(this.savedMessage);},
-            error => {console.error(error);}
+            (res) => {this.notify(this.savedMessage, false);},
+            (error) => {this.notify(error,true);}
             );
     }
     
-    notify(message: string) {
+    notify(message: string, isErrorNotification: boolean) {
         (async () => {
+            this.isErrorNotification = isErrorNotification;
             this.message = message;
             await delay(3000);
             this.message = null;
@@ -77,7 +79,7 @@ export class ConfigurationComponent implements OnInit {
     }
     
     isValid(): boolean {
-        return this.validationService.isValidUrl(this.configurationForm.value['url']) || this.configurationForm.value['url'] == '';
+        return this.validationService.isValidUrl(this.configurationForm.value['url']) || this.configurationForm.value['url'] === '';
     }
                 
 }

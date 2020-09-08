@@ -17,29 +17,29 @@ export class JiraLinkService {
     }
 
     public findByScenarioId(scenarioId: string): Observable<string> {
-        return this.http.get<jiraDto>(environment.backend + this.scenarioUrl + '/' + scenarioId)
-            .pipe(map((jiraDto: jiraDto) => {
+        return this.http.get<JiraDto>(environment.backend + this.scenarioUrl + '/' + scenarioId)
+            .pipe(map((jiraDto: JiraDto) => {
                 return jiraDto.id;
         }));
     }
 
-    public saveForScenario(scenarioId: string, jiraId: string): Observable<jiraDto> {
-        return this.http.post<jiraDto>(environment.backend + this.scenarioUrl , new jiraDto(jiraId,scenarioId));
+    public saveForScenario(scenarioId: string, jiraId: string): Observable<JiraDto> {
+        return this.http.post<JiraDto>(environment.backend + this.scenarioUrl , new JiraDto(jiraId,scenarioId));
     }
 
     public findByCampaignId(campaignId: number): Observable<string> {
-        return this.http.get<jiraDto>(environment.backend + this.campaignUrl + '/' + campaignId)
-            .pipe(map((jiraDto: jiraDto) => {
+        return this.http.get<JiraDto>(environment.backend + this.campaignUrl + '/' + campaignId)
+            .pipe(map((jiraDto: JiraDto) => {
                 return jiraDto.id;
         }));
     }
 
-    public saveForCampaign(campaignId: number, jiraId: string): Observable<jiraDto> {
-        return this.http.post<jiraDto>(environment.backend + this.campaignUrl , new jiraDto(jiraId,campaignId.toString()));
+    public saveForCampaign(campaignId: number, jiraId: string): Observable<JiraDto> {
+        return this.http.post<JiraDto>(environment.backend + this.campaignUrl , new JiraDto(jiraId,campaignId.toString()));
     }
 }
 
-export class jiraDto {
+export class JiraDto {
     constructor(
         public id: string,
         public chutneyId: string) {

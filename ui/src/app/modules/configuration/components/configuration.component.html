@@ -1,5 +1,5 @@
 <div class="ml-3 mt-3">
-    <div class="notification text-center bg-info text-white">
+    <div [ngClass]="isErrorNotification ? 'bg-danger' : 'bg-info'" class="notification text-center text-white">
         <strong *ngIf="message">{{ message }}</strong>
     </div>
 

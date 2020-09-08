@@ -164,7 +164,8 @@ public class CampaignExecutionEngine {
                 Optional.ofNullable(scenarioExecutionReport)
                     .ifPresent(campaignExecutionReport::endScenarioExecution);
                 // update xray test
-                jiraExecutionEngine.updateTestExecution(campaign.id, scenarioExecutionReport);
+                ExecutionHistory.Execution execution = executionHistoryRepository.getExecution(scenarioExecutionReport.scenarioId, scenarioExecutionReport.execution.executionId());
+                jiraExecutionEngine.updateTestExecution(campaign.id, scenarioExecutionReport.scenarioId, execution.report());
             }
         });
         return campaignExecutionReport;

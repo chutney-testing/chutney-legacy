@@ -134,8 +134,8 @@ public class ServerConfiguration {
     }
 
     @Bean
-    JiraExecutionEngine jiraExecutionEngine(JiraRepository jiraRepository) {
-        return new JiraExecutionEngine(jiraRepository);
+    JiraExecutionEngine jiraExecutionEngine(JiraRepository jiraRepository, ObjectMapper objectMapper) {
+        return new JiraExecutionEngine(jiraRepository, objectMapper);
     }
 
 }

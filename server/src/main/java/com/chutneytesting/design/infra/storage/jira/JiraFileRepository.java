@@ -30,7 +30,7 @@ public class JiraFileRepository implements JiraRepository {
     private static final String CAMPAIGN_FILE = "campaign_link" + FILE_EXTENSION;
     private static final String CONFIGURATION_FILE = "server" + FILE_EXTENSION;
 
-    static final Path ROOT_DIRECTORY_NAME = Paths.get("jira");
+    private static final Path ROOT_DIRECTORY_NAME = Paths.get("jira");
 
     private final Path storeFolderPath;
 

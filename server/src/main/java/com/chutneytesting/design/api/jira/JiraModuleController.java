@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(com.chutneytesting.design.api.jira.JiraModuleController.BASE_URL)
+@RequestMapping(JiraModuleController.BASE_URL)
 @CrossOrigin(origins = "*")
 public class JiraModuleController {
 
