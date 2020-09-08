@@ -16,6 +16,8 @@ public class PlaceholderAsserterUtils {
         asserters.add(new AfterDateAsserter());
         asserters.add(new EqualDateAsserter());
         asserters.add(new MatchesStringAsserter());
+        asserters.add(new LessThanAsserter());
+        asserters.add(new GreaterThanAsserter());
     }
 
     public static final Optional<PlaceholderAsserter> getAsserterMatching(Object toMatch) {

@@ -22,17 +22,11 @@ public class JsonAssertTaskTest {
         expected.put("$.something.thirddate", "$isEqualDate:2020-08-14T17:07:46.621+02:00");
 
         // Given
-        String fakeActualResult = "{" +
-            "\"something\":{" +
-            "\"onedate\":\"2020-08-14T16:56:56+02:00\"," +
-            "\"seconddate\":\"2020-08-14T15:07:46.621Z\"," +
-            "\"thirddate\":\"2020-08-14T15:07:46.621Z\"" +
-            "}}";
+        String fakeActualResult = "{" + "\"something\":{" + "\"onedate\":\"2020-08-14T16:56:56+02:00\","
+                + "\"seconddate\":\"2020-08-14T15:07:46.621Z\"," + "\"thirddate\":\"2020-08-14T15:07:46.621Z\"" + "}}";
 
         // When
-        JsonAssertTask jsonAssertTask = new JsonAssertTask(new TestLogger(),
-            fakeActualResult,
-            expected);
+        JsonAssertTask jsonAssertTask = new JsonAssertTask(new TestLogger(), fakeActualResult, expected);
         TaskExecutionResult result = jsonAssertTask.execute();
 
         // Then
@@ -50,24 +44,17 @@ public class JsonAssertTaskTest {
         expected.put("$.something.onedate", "$isBeforeDate:2010-01-01T11:12:13.1230Z");
         expected.put("$.something.seconddate", "$isAfterDate:1998-07-14T02:03:04.456Z");
         expected.put("$.something.thirddate", "$isEqualDate:2000-01-01T10:11:12.123Z");
+        expected.put("$.something.anumber", "$isLessThan:42000");
+        expected.put("$.something.thenumber", "$isGreaterThan:45");
 
         // Given
-        String fakeActualResult = "{" +
-            "\"something\":{" +
-            "\"value\":3," +
-            "\"alphabet\":\"abcdefg\"," +
-            "\"valuenull\":null," +
-            "\"matchregexp\":\"1983-10-26\"," +
-            "\"onedate\":\"2000-01-01T10:11:12.123Z\"," +
-            "\"seconddate\":\"2000-01-01T10:11:12.123Z\"," +
-            "\"thirddate\":\"2000-01-01T10:11:12.123Z\"" +
-            "}" +
-            "}";
+        String fakeActualResult = "{" + "\"something\":{" + "\"value\":3," + "\"alphabet\":\"abcdefg\","
+                + "\"valuenull\":null," + "\"matchregexp\":\"1983-10-26\","
+                + "\"onedate\":\"2000-01-01T10:11:12.123Z\"," + "\"seconddate\":\"2000-01-01T10:11:12.123Z\","
+                + "\"thirddate\":\"2000-01-01T10:11:12.123Z\"," + "\"anumber\":4 100," + "\"thenumber\":46" + "}" + "}";
 
         // When
-        JsonAssertTask jsonAssertTask = new JsonAssertTask(new TestLogger(),
-            fakeActualResult,
-            expected);
+        JsonAssertTask jsonAssertTask = new JsonAssertTask(new TestLogger(), fakeActualResult, expected);
         TaskExecutionResult result = jsonAssertTask.execute();
 
         // Then
@@ -86,9 +73,7 @@ public class JsonAssertTaskTest {
         String fakeActualResult = "{\"something\":{\"value\":3},\"something_else\":{\"value\":5},\"a_thing\":{\"type\":\"my_type\"}}";
 
         // When
-        JsonAssertTask jsonAssertTask = new JsonAssertTask(mock(Logger.class),
-            fakeActualResult,
-            expected);
+        JsonAssertTask jsonAssertTask = new JsonAssertTask(mock(Logger.class), fakeActualResult, expected);
         TaskExecutionResult result = jsonAssertTask.execute();
 
         // Then
@@ -104,9 +89,7 @@ public class JsonAssertTaskTest {
         String fakeActualResult = "{\"something\":{\"value\":3}}";
 
         // When
-        JsonAssertTask jsonAssertTask = new JsonAssertTask(mock(Logger.class),
-            fakeActualResult,
-            expected);
+        JsonAssertTask jsonAssertTask = new JsonAssertTask(mock(Logger.class), fakeActualResult, expected);
         TaskExecutionResult result = jsonAssertTask.execute();
 
         // Then
@@ -122,9 +105,7 @@ public class JsonAssertTaskTest {
         String fakeInvalidJson = "{\"EXCEPTION 42 - BSOD\"}";
 
         // When
-        JsonAssertTask jsonAssertTask = new JsonAssertTask(mock(Logger.class),
-            fakeInvalidJson,
-            expected);
+        JsonAssertTask jsonAssertTask = new JsonAssertTask(mock(Logger.class), fakeInvalidJson, expected);
         TaskExecutionResult result = jsonAssertTask.execute();
 
         // Then
@@ -140,9 +121,7 @@ public class JsonAssertTaskTest {
         String fakeActualResult = "{\"xpath\":{\"to\":\"value\"}}";
 
         // When
-        JsonAssertTask jsonAssertTask = new JsonAssertTask(mock(Logger.class),
-            fakeActualResult,
-            expected);
+        JsonAssertTask jsonAssertTask = new JsonAssertTask(mock(Logger.class), fakeActualResult, expected);
         TaskExecutionResult result = jsonAssertTask.execute();
 
         // Then
@@ -158,9 +137,7 @@ public class JsonAssertTaskTest {
         String fakeActualResult = "{\"something\":{\"value\":400.0}}";
 
         // When
-        JsonAssertTask jsonAssertTask = new JsonAssertTask(mock(Logger.class),
-            fakeActualResult,
-            expected);
+        JsonAssertTask jsonAssertTask = new JsonAssertTask(mock(Logger.class), fakeActualResult, expected);
         TaskExecutionResult result = jsonAssertTask.execute();
 
         // Then
@@ -176,9 +153,7 @@ public class JsonAssertTaskTest {
         String fakeActualResult = "{\"something\":{\"value\": my_value}}";
 
         // When
-        JsonAssertTask jsonAssertTask = new JsonAssertTask(mock(Logger.class),
-            fakeActualResult,
-            expected);
+        JsonAssertTask jsonAssertTask = new JsonAssertTask(mock(Logger.class), fakeActualResult, expected);
         TaskExecutionResult result = jsonAssertTask.execute();
 
         // Then
