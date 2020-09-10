@@ -37,69 +37,84 @@ public class EnvironmentControllerV2 {
     @CrossOrigin(origins = "*")
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Set<EnvironmentMetadataDto> listEnvironments() {
-        return environmentService.listEnvironments().stream()
-            .map(EnvironmentMetadataDto::from)
-            .sorted(Comparator.comparing(e -> e.name))
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+        return environmentService.listEnvironments().stream().map(EnvironmentMetadataDto::from)
+                .sorted(Comparator.comparing(e -> e.name)).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @CrossOrigin(origins = "*")
     @PostMapping("")
-    public EnvironmentMetadataDto createEnvironment(@RequestBody EnvironmentMetadataDto environmentMetadataDto) throws InvalidEnvironmentNameException, AlreadyExistingEnvironmentException {
-        return EnvironmentMetadataDto.from(environmentService.createEnvironment(environmentMetadataDto.toEnvironment()));
+    public EnvironmentMetadataDto createEnvironment(@RequestBody EnvironmentMetadataDto environmentMetadataDto)
+            throws InvalidEnvironmentNameException, AlreadyExistingEnvironmentException {
+        return EnvironmentMetadataDto
+                .from(environmentService.createEnvironment(environmentMetadataDto.toEnvironment()));
     }
 
     @CrossOrigin(origins = "*")
     @DeleteMapping("/{environmentName}")
-    public void deleteEnvironment(@PathVariable("environmentName") String environmentName) throws EnvironmentNotFoundException, CannotDeleteEnvironmentException {
+    public void deleteEnvironment(@PathVariable("environmentName") String environmentName)
+            throws EnvironmentNotFoundException, CannotDeleteEnvironmentException {
         environmentService.deleteEnvironment(environmentName);
     }
 
     @CrossOrigin(origins = "*")
     @PutMapping("/{environmentName}")
-    public void updateEnvironment(@PathVariable("environmentName") String environmentName, @RequestBody EnvironmentMetadataDto environmentMetadataDto) throws InvalidEnvironmentNameException, EnvironmentNotFoundException {
+    public void updateEnvironment(@PathVariable("environmentName") String environmentName,
+            @RequestBody EnvironmentMetadataDto environmentMetadataDto)
+            throws InvalidEnvironmentNameException, EnvironmentNotFoundException {
         environmentService.updateEnvironment(environmentName, environmentMetadataDto.toEnvironment());
     }
 
     @CrossOrigin(origins = "*")
     @GetMapping(path = "/{environmentName}/target", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Set<TargetMetadataDto> listTargets(@PathVariable("environmentName") String environmentName) throws EnvironmentNotFoundException {
-        return environmentService.listTargets(environmentName).stream()
-            .map(TargetMetadataDto::from)
-            .sorted(Comparator.comparing(t -> t.name))
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+    public Set<TargetMetadataDto> listTargets(@PathVariable("environmentName") String environmentName)
+            throws EnvironmentNotFoundException {
+        return environmentService.listTargets(environmentName).stream().map(TargetMetadataDto::from)
+                .sorted(Comparator.comparing(t -> t.name)).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @CrossOrigin(origins = "*")
     @GetMapping(path = "/target", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Set<TargetMetadataDto> listTargets() throws EnvironmentNotFoundException {
-        return environmentService.listTargets().stream()
-            .map(TargetMetadataDto::from)
-            .sorted(Comparator.comparing(t -> t.name))
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+        return environmentService.listTargets().stream().map(TargetMetadataDto::from)
+                .sorted(Comparator.comparing(t -> t.name)).collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    @CrossOrigin(origins = "*")
+    @GetMapping("/{environmentName}")
+    public EnvironmentMetadataDto getEnvironnement(@PathVariable("environmentName") String environmentName)
+            throws EnvironmentNotFoundException {
+        return EnvironmentMetadataDto.from(environmentService.getEnvironment(environmentName));
     }
 
     @CrossOrigin(origins = "*")
     @GetMapping("/{environmentName}/target/{targetName}")
-    public TargetMetadataDto getTarget(@PathVariable("environmentName") String environmentName, @PathVariable("targetName") String targetName) throws EnvironmentNotFoundException, TargetNotFoundException {
+    public TargetMetadataDto getTarget(@PathVariable("environmentName") String environmentName,
+            @PathVariable("targetName") String targetName)
+            throws EnvironmentNotFoundException, TargetNotFoundException {
         return TargetMetadataDto.from(environmentService.getTarget(environmentName, targetName));
     }
 
     @CrossOrigin(origins = "*")
     @PostMapping("/{environmentName}/target")
-    public void addTarget(@PathVariable("environmentName") String environmentName, @RequestBody TargetMetadataDto targetMetadataDto) throws EnvironmentNotFoundException, AlreadyExistingTargetException {
+    public void addTarget(@PathVariable("environmentName") String environmentName,
+            @RequestBody TargetMetadataDto targetMetadataDto)
+            throws EnvironmentNotFoundException, AlreadyExistingTargetException {
         environmentService.addTarget(environmentName, targetMetadataDto.toTarget(environmentName));
     }
 
     @CrossOrigin(origins = "*")
     @DeleteMapping("/{environmentName}/target/{targetName}")
-    public void deleteTarget(@PathVariable("environmentName") String environmentName, @PathVariable("targetName") String targetName) throws EnvironmentNotFoundException, TargetNotFoundException {
+    public void deleteTarget(@PathVariable("environmentName") String environmentName,
+            @PathVariable("targetName") String targetName)
+            throws EnvironmentNotFoundException, TargetNotFoundException {
         environmentService.deleteTarget(environmentName, targetName);
     }
 
     @CrossOrigin(origins = "*")
     @PutMapping("/{environmentName}/target/{targetName}")
-    public void updateTarget(@PathVariable("environmentName") String environmentName, @PathVariable("targetName") String targetName, @RequestBody TargetMetadataDto targetMetadataDto) throws EnvironmentNotFoundException, TargetNotFoundException {
+    public void updateTarget(@PathVariable("environmentName") String environmentName,
+            @PathVariable("targetName") String targetName, @RequestBody TargetMetadataDto targetMetadataDto)
+            throws EnvironmentNotFoundException, TargetNotFoundException {
         environmentService.updateTarget(environmentName, targetName, targetMetadataDto.toTarget(environmentName));
     }
 
