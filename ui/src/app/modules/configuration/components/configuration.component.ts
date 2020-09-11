@@ -13,29 +13,30 @@ import { ValidationService } from '../../../molecules/validation/validation.serv
     styleUrls: ['./configuration.component.scss']
 })
 export class ConfigurationComponent implements OnInit {
-    
-    configuration: Configuration = new Configuration('','','');
+
+    configuration: Configuration = new Configuration('', '', '');
     configurationForm: FormGroup;
-    
+
     message;
     private savedMessage: string;
     isErrorNotification: boolean = false;
-    
+
     constructor(private configurationService: ConfigurationService,
                 private translate: TranslateService,
                 private validationService: ValidationService,
-                private formBuilder: FormBuilder) {}
-        
+                private formBuilder: FormBuilder) {
+    }
+
     ngOnInit() {
         this.configurationForm = this.formBuilder.group({
             url: ['', Validators.required],
             username: '',
             password: ''
         });
-        
+
         this.loadConfiguration();
         this.initTranslation();
-    } 
+    }
 
     private initTranslation() {
         this.translate.get('global.actions.done.saved').subscribe((res: string) => {
@@ -43,7 +44,7 @@ export class ConfigurationComponent implements OnInit {
         });
     }
 
-    loadConfiguration(){
+    loadConfiguration() {
         this.configurationService.get().subscribe(
             (config: Configuration) => {
                 this.configuration = config;
@@ -52,23 +53,27 @@ export class ConfigurationComponent implements OnInit {
                 this.configurationForm.controls.password.patchValue(config.password);
             },
             (error) => {
-                this.notify(error.error,true);
+                this.notify(error.error, true);
             }
-            );
+        );
     }
-        
+
     save() {
         const url = this.configurationForm.value['url'] ? this.configurationForm.value['url'] : '';
         const username = this.configurationForm.value['username'] ? this.configurationForm.value['username'] : '';
         const password = this.configurationForm.value['password'] ? this.configurationForm.value['password'] : '';
         this.configuration = new Configuration(url, username, password);
-        
+
         this.configurationService.save(this.configuration).subscribe(
-            (res) => {this.notify(this.savedMessage, false);},
-            (error) => {this.notify(error,true);}
-            );
+            (res) => {
+                this.notify(this.savedMessage, false);
+            },
+            (error) => {
+                this.notify(error.error, true);
+            }
+        );
     }
-    
+
     notify(message: string, isErrorNotification: boolean) {
         (async () => {
             this.isErrorNotification = isErrorNotification;
@@ -77,10 +82,9 @@ export class ConfigurationComponent implements OnInit {
             this.message = null;
         })();
     }
-    
+
     isValid(): boolean {
         return this.validationService.isValidUrl(this.configurationForm.value['url']) || this.configurationForm.value['url'] === '';
     }
-                
+
 }
-            

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NetworkConfiguration } from '@model';
-import { AgentNetwork } from '@model';
+import { AgentNetwork, NetworkConfiguration } from '@model';
 import { AgentNetworkService } from '@core/services';
 
 @Component({
@@ -26,7 +25,7 @@ export class AgentNetworkComponent implements OnInit {
   loadAll(): void {
     this.agentService.getDescription().subscribe(
       (description) => {this.description = description; },
-      (error) => {console.log(error); this.messages = error; }
+      (error) => { this.messages = error.error; }
     );
   }
 

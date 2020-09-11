@@ -1,10 +1,10 @@
-import {Component, OnDestroy, OnInit, QueryList, ViewChildren} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {combineLatest, Observable, Subscription, timer} from 'rxjs';
-import {TranslateService} from '@ngx-translate/core';
-import {FileSaverService} from 'ngx-filesaver';
+import { Component, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest, Observable, Subscription, timer } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import { FileSaverService } from 'ngx-filesaver';
 import * as JSZip from 'jszip';
-import {NgbDropdown} from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 
 import {
     Campaign,
@@ -14,10 +14,10 @@ import {
     ScenarioIndex,
     TestCase
 } from '@core/model';
-import {CampaignService, EnvironmentAdminService, ScenarioService} from '@core/services';
-import {newInstance, sortByAndOrder} from '@shared/tools';
-import {ChartOptions, ChartDataSets} from 'chart.js';
-import {Label, Color} from 'ng2-charts';
+import { CampaignService, EnvironmentAdminService, ScenarioService } from '@core/services';
+import { newInstance, sortByAndOrder } from '@shared/tools';
+import { ChartDataSets, ChartOptions } from 'chart.js';
+import { Color, Label } from 'ng2-charts';
 
 @Component({
     selector: 'chutney-execution-campaign',
@@ -120,8 +120,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
                 }
             },
             (error) => {
-                console.log(error);
-                this.errorMessage = error;
+                this.errorMessage = error.error;
             }
         );
     }
@@ -170,8 +169,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
                 }
             },
             (error) => {
-                console.log(error);
-                this.errorMessage = error;
+                this.errorMessage = error.error;
             }
         );
     }
@@ -201,8 +199,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
                 this.orderedScenarios = newInstance(scenarios);
             },
             (error) => {
-                console.log(error);
-                this.errorMessage = error;
+                this.errorMessage = error.error;
             }
         );
     }
@@ -248,8 +245,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
                 // Do nothing
             },
             (error) => {
-                console.log(error);
-                this.errorMessage = error;
+                this.errorMessage = error.error;
             },
             () => this.running = false
         );
@@ -290,8 +286,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
                     this.router.navigateByUrl('/campaign');
                 },
                 (error) => {
-                    console.log(error);
-                    this.errorMessage = error;
+                    this.errorMessage = error.error;
                 }
             );
         }
@@ -348,8 +343,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
                 // Do nothing
             },
             (error) => {
-                console.log(error);
-                this.errorMessage = error;
+                this.errorMessage = error.error;
             },
             () => this.running = false
         );
