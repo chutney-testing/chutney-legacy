@@ -20,6 +20,10 @@ export class EnvironmentAdminService {
         }));
     }
 
+	exportEnvironment(environmentName: string): Observable<Array<Target>> {
+		return this.http.get<Array<Target>>(server.backend + this.baseUrl + '/' + environmentName);
+	}
+
     createEnvironment(environment: EnvironmentMetadata): Observable<Object> {
         return this.http.post(server.backend + this.baseUrl, environment);
     }

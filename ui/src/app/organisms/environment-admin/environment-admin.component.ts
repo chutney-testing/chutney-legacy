@@ -206,6 +206,14 @@ export class EnvironmentAdminComponent implements OnInit {
         }
     }
 
+	exportEnvironment() {
+        const fileName = `${this.selectedEnvironment.name}.chutney.json`;
+        this.environmentAdminService.exportEnvironment(this.selectedEnvironment.name).subscribe(
+            res => { this.fileSaverService.saveText(JSON.stringify(res), fileName); },
+            error => { console.log(error); this.errorMessage = error.error; }
+        );
+    }
+
     reload() {
         (async () => {
             await this.delay(500);
