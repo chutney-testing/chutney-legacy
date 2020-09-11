@@ -1,11 +1,12 @@
 package com.chutneytesting.design.domain.jira;
 
 public class JiraTargetConfiguration {
-    public String url;
-    public String username;
-    public String password;
+    public final String url;
+    public final String username;
+    public final String password;
 
     public JiraTargetConfiguration() {
+        this("", "", "");
     }
 
     public JiraTargetConfiguration(String url, String username, String password) {

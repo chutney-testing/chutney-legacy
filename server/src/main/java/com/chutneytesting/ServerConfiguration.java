@@ -12,7 +12,7 @@ import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessor;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;
 import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
-import com.chutneytesting.execution.domain.jira.JiraExecutionEngine;
+import com.chutneytesting.execution.domain.jira.JiraXrayPlugin;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngineAsync;
 import com.chutneytesting.execution.domain.scenario.ServerTestEngine;
@@ -118,8 +118,8 @@ public class ServerConfiguration {
                                                     ExecutionHistoryRepository executionHistoryRepository,
                                                     TestCaseRepository testCaseRepository,
                                                     DataSetHistoryRepository dataSetHistoryRepository,
-                                                    JiraExecutionEngine jiraExecutionEngine) {
-        return new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository, jiraExecutionEngine);
+                                                    JiraXrayPlugin jiraXrayPlugin) {
+        return new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository, jiraXrayPlugin);
     }
 
     @Bean
@@ -134,8 +134,8 @@ public class ServerConfiguration {
     }
 
     @Bean
-    JiraExecutionEngine jiraExecutionEngine(JiraRepository jiraRepository, ObjectMapper objectMapper) {
-        return new JiraExecutionEngine(jiraRepository, objectMapper);
+    JiraXrayPlugin jiraXrayPlugin(JiraRepository jiraRepository, ObjectMapper objectMapper) {
+        return new JiraXrayPlugin(jiraRepository, objectMapper);
     }
 
 }

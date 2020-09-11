@@ -33,11 +33,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.support.BasicAuthenticationInterceptor;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-public class JiraExecutionEngine {
+public class JiraXrayPlugin {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JiraExecutionEngine.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JiraXrayPlugin.class);
     private static final String SUCCESS_STATUS = "PASS";
     private static final String FAILED_STATUS = "FAIL";
     private static final int TIMEOUT = 10 * 1000;
@@ -46,7 +47,7 @@ public class JiraExecutionEngine {
     private final JiraRepository jiraRepository;
     private final ObjectMapper objectMapper;
 
-    public JiraExecutionEngine(JiraRepository jiraRepository, ObjectMapper objectMapper) {
+    public JiraXrayPlugin(JiraRepository jiraRepository, ObjectMapper objectMapper) {
         this.jiraRepository = jiraRepository;
         this.objectMapper = objectMapper;
     }
@@ -56,6 +57,7 @@ public class JiraExecutionEngine {
         String testKey = jiraRepository.getByScenarioId(scenarioId);
         String testExecutionKey = jiraRepository.getByCampaignId(campaignId.toString());
         if (!testKey.isEmpty() && !testExecutionKey.isEmpty()) {
+            LOGGER.info("Update xray test {} of test execution {}", testKey, testExecutionKey);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZZZZZ");
             XrayTest xrayTest = new XrayTest(
                 testKey,
@@ -69,7 +71,6 @@ public class JiraExecutionEngine {
             XrayInfo info = new XrayInfo(Arrays.asList(scenarioExecutionReport.environment));
             Xray xray = new Xray(testExecutionKey, Arrays.asList(xrayTest), info);
             updateRequest(xray);
-            LOGGER.info("Update xray test {} of test execution {}", testKey, testExecutionKey);
         }
     }
 
@@ -77,14 +78,24 @@ public class JiraExecutionEngine {
         JiraTargetConfiguration jiraTargetConfiguration = jiraRepository.loadServerConfiguration();
         String updateUri = jiraTargetConfiguration.url + "/rest/raven/1.0/import/execution";
 
+        if (jiraTargetConfiguration.url.isEmpty()) {
+            LOGGER.error("Unable to update xray, jira url is undefined");
+            return;
+        }
+
         RestTemplate restTemplate = buildRestTemplate();
         configureBasicAuth(jiraTargetConfiguration.username, jiraTargetConfiguration.password, restTemplate);
 
-        ResponseEntity response = restTemplate.postForEntity(updateUri, xray, String.class);
-        if (response.getStatusCode().equals(HttpStatus.OK)) {
-            LOGGER.debug(response.toString());
-        } else {
-            LOGGER.error(response.toString());
+        try {
+            ResponseEntity response = restTemplate.postForEntity(updateUri, xray, String.class);
+            if (response.getStatusCode().equals(HttpStatus.OK)) {
+                LOGGER.debug(response.toString());
+                LOGGER.info("Xray successfully updated");
+            } else {
+                LOGGER.error(response.toString());
+            }
+        } catch (RestClientException e) {
+            LOGGER.error("Unable to update xray : " + e);
         }
     }
 

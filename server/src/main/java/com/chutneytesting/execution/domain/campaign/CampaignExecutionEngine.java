@@ -18,7 +18,7 @@ import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
-import com.chutneytesting.execution.domain.jira.JiraExecutionEngine;
+import com.chutneytesting.execution.domain.jira.JiraXrayPlugin;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.execution.domain.scenario.FailedExecutionAttempt;
@@ -51,7 +51,7 @@ public class CampaignExecutionEngine {
     private final ExecutionHistoryRepository executionHistoryRepository;
     private final TestCaseRepository testCaseRepository;
     private final DataSetHistoryRepository dataSetHistoryRepository;
-    private final JiraExecutionEngine jiraExecutionEngine;
+    private final JiraXrayPlugin jiraXrayPlugin;
 
     private Map<Long, CampaignExecutionReport> currentCampaignExecutions = new ConcurrentHashMap<>();
     private Map<Long, Boolean> currentCampaignExecutionsStopRequests = new ConcurrentHashMap<>();
@@ -61,13 +61,13 @@ public class CampaignExecutionEngine {
                                    ExecutionHistoryRepository executionHistoryRepository,
                                    TestCaseRepository testCaseRepository,
                                    DataSetHistoryRepository dataSetHistoryRepository,
-                                   JiraExecutionEngine jiraExecutionEngine) {
+                                   JiraXrayPlugin jiraXrayPlugin) {
         this.campaignRepository = campaignRepository;
         this.scenarioExecutionEngine = scenarioExecutionEngine;
         this.executionHistoryRepository = executionHistoryRepository;
         this.testCaseRepository = testCaseRepository;
         this.dataSetHistoryRepository = dataSetHistoryRepository;
-        this.jiraExecutionEngine = jiraExecutionEngine;
+        this.jiraXrayPlugin = jiraXrayPlugin;
     }
 
     public List<CampaignExecutionReport> executeByName(String campaignName) {
@@ -165,7 +165,7 @@ public class CampaignExecutionEngine {
                     .ifPresent(campaignExecutionReport::endScenarioExecution);
                 // update xray test
                 ExecutionHistory.Execution execution = executionHistoryRepository.getExecution(scenarioExecutionReport.scenarioId, scenarioExecutionReport.execution.executionId());
-                jiraExecutionEngine.updateTestExecution(campaign.id, scenarioExecutionReport.scenarioId, execution.report());
+                jiraXrayPlugin.updateTestExecution(campaign.id, scenarioExecutionReport.scenarioId, execution.report());
             }
         });
         return campaignExecutionReport;

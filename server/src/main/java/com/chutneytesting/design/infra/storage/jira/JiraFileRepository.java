@@ -2,7 +2,6 @@ package com.chutneytesting.design.infra.storage.jira;
 
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
 
-import com.chutneytesting.design.domain.jira.JiraConfigurationNotFoundException;
 import com.chutneytesting.design.domain.jira.JiraRepository;
 import com.chutneytesting.design.domain.jira.JiraTargetConfiguration;
 import com.chutneytesting.tools.ZipUtils;
@@ -28,7 +27,7 @@ public class JiraFileRepository implements JiraRepository {
     private static final String FILE_EXTENSION = ".json";
     private static final String SCENARIO_FILE = "scenario_link" + FILE_EXTENSION;
     private static final String CAMPAIGN_FILE = "campaign_link" + FILE_EXTENSION;
-    private static final String CONFIGURATION_FILE = "server" + FILE_EXTENSION;
+    private static final String CONFIGURATION_FILE = "jira_config" + FILE_EXTENSION;
 
     private static final Path ROOT_DIRECTORY_NAME = Paths.get("jira");
 
@@ -90,7 +89,7 @@ public class JiraFileRepository implements JiraRepository {
     private JiraTargetConfiguration doLoadServerConfiguration() {
         Path configurationFilePath = storeFolderPath.resolve(CONFIGURATION_FILE);
         if (!Files.exists(configurationFilePath)) {
-            throw new JiraConfigurationNotFoundException("Configuration file not found: " + configurationFilePath);
+            return new JiraTargetConfiguration("", "", "");
         }
         try {
             byte[] bytes = Files.readAllBytes(configurationFilePath);
@@ -147,7 +146,7 @@ public class JiraFileRepository implements JiraRepository {
             try {
                 Files.write(path, bytes);
             } catch (IOException e) {
-                throw new UnsupportedOperationException("Cannot toNode in configuration directory: " + storeFolderPath, e);
+                throw new UnsupportedOperationException("Cannot write in configuration directory: " + storeFolderPath, e);
             }
         } catch (IOException e) {
             throw new IllegalArgumentException("Cannot serialize " + map, e);

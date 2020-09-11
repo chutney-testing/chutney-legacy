@@ -1,11 +1,11 @@
-import{Component, OnInit}from '@angular/core';
-import {FormGroup, FormBuilder, Validators}from '@angular/forms';
-import { TranslateService}from '@ngx-translate/core';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Configuration } from '@core/model/configuration.model';
+import { ConfigurationService } from '@core/services/configuration.service';
+import { TranslateService } from '@ngx-translate/core';
+import { delay } from '@shared/tools';
+import { ValidationService } from '../../../molecules/validation/validation.service';
 
-import {delay}from '@shared/tools';
-import {ConfigurationService}from '@core/services/configuration.service';
-import {Configuration}from '@core/model/configuration.model';
-import {ValidationService}from '../../../molecules/validation/validation.service';
 
 @Component({
     selector: 'chutney-configuration',
@@ -52,7 +52,7 @@ export class ConfigurationComponent implements OnInit {
                 this.configurationForm.controls.password.patchValue(config.password);
             },
             (error) => {
-                this.notify(error,true);
+                this.notify(error.error,true);
             }
             );
     }

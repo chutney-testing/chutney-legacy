@@ -129,7 +129,7 @@ class JsonFilesEnvironmentRepository implements EnvironmentRepository {
             try {
                 Files.write(environmentPath, bytes);
             } catch (IOException e) {
-                throw new UnsupportedOperationException("Cannot toNode in configuration directory: " + storeFolderPath, e);
+                throw new UnsupportedOperationException("Cannot write in configuration directory: " + storeFolderPath, e);
             }
         } catch (IOException e) {
             throw new IllegalArgumentException("Cannot serialize " + environment, e);
