@@ -162,10 +162,12 @@ public class CampaignExecutionEngine {
                 }
                 // Add scenario report to campaign's one
                 Optional.ofNullable(scenarioExecutionReport)
-                    .ifPresent(campaignExecutionReport::endScenarioExecution);
-                // update xray test
-                ExecutionHistory.Execution execution = executionHistoryRepository.getExecution(scenarioExecutionReport.scenarioId, scenarioExecutionReport.execution.executionId());
-                jiraXrayPlugin.updateTestExecution(campaign.id, scenarioExecutionReport.scenarioId, execution.report());
+                    .ifPresent( serc -> {
+                        campaignExecutionReport.endScenarioExecution(serc);
+                        // update xray test
+                        ExecutionHistory.Execution execution = executionHistoryRepository.getExecution(serc.scenarioId, serc.execution.executionId());
+                        jiraXrayPlugin.updateTestExecution(campaign.id, serc.scenarioId, execution.report());
+                    });
             }
         });
         return campaignExecutionReport;
