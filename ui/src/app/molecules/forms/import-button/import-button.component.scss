@@ -1,0 +1,20 @@
+@import 'colors';
+
+.btn {
+    width: 118px;
+    height: 38px;
+    cursor: pointer;
+    position: relative;
+     
+    input[type='file'] {
+        width: 118px;
+        height: 38px;
+        opacity: 0;
+        margin-left: -12px;
+        top: 0px;
+        position: absolute; 
+        cursor: pointer;
+    }
+    
+}
+

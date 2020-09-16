@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import {Observable, Subscriber} from 'rxjs';
+import { FileSaverService } from 'ngx-filesaver';
+
 import { Target, EnvironmentMetadata } from '@model';
 import { ValidationService } from '../../molecules/validation/validation.service';
 import { EnvironmentAdminService } from '@core/services';
-import { FileSaverService } from 'ngx-filesaver';
-import {Observable, Subscriber} from 'rxjs';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import {sortByAndOrder} from '@shared/tools';
 
 @Component({
     selector: 'chutney-environment-admin',
@@ -155,8 +157,13 @@ export class EnvironmentAdminComponent implements OnInit {
     private findDuplicate(target: Target): Target[] {
         return this.targets.filter(t => this.isEqual(t, target));
     }
+    
 
-    private isEqual(first: Target, second: Target): boolean {
+    private findDuplicateEnv(env: EnvironmentMetadata): EnvironmentMetadata[] {
+        return this.environments.filter(t => this.isEqual(t, env));
+    }
+
+    private isEqual(first: any, second: any): boolean {
         return Object.is(first.name, second.name);
     }
 
@@ -172,6 +179,10 @@ export class EnvironmentAdminComponent implements OnInit {
     isValid(target: Target): boolean {
         return this.validationService.isNotEmpty(target.name)
             && this.validationService.isValidUrl(target.url);
+    }
+    
+    isValidEnv(env: EnvironmentMetadata): boolean {
+        return this.validationService.isNotEmpty(env.name);
     }
 
     initEnvironment() {
@@ -213,6 +224,65 @@ export class EnvironmentAdminComponent implements OnInit {
             error => { console.log(error); this.errorMessage = error.error; }
         );
     }
+    
+    //------------------------------------------------
+    importEnvironment(file: File) {
+        this.toEnvironment(file).subscribe(
+            (env) => {
+                if (!this.isValidEnv(env)) {
+                    this.errorMessage +=
+                        '<br>Error found in ' + file.name + ', environment name cannot be empty and url must match xxx://xxxxx:12345';
+                } else {
+                    try {
+                        const duplicates = this.findDuplicateEnv(env);
+                        if (duplicates.length !== 0) {
+                            if (confirm('Environment ['  + env.name + '] exists already.\n\n Do you want to update it ?')) {
+                                this.environmentAdminService.updateEnvironment(env.name, env).subscribe(
+                                    (res) => {
+                                        console.log(env.name + ' update ok');
+                                        
+                                    },
+                                    (error) => { console.log(error); this.errorMessage = error.error;}
+                                );
+                            }
+                        } else {
+                            this.environmentAdminService.createEnvironment(env).subscribe(
+                                (res) => {
+                                    console.log(env.name + ' create ok');
+                                    this.environments.push(env);
+                                    this.environments.sort((t1, t2) =>  t1.name.toUpperCase() > t2.name.toUpperCase() ? 1 : 0);
+                                },
+                                (error) => { console.log(error); this.errorMessage = error.error;}
+                            );
+                        }
+                    } catch ( error ) {
+                        console.error( 'File upload failed.' );
+                        console.error( error );
+                        this.errorMessage += '<br>' + error.toString();
+                    }
+                }
+            }
+        );
+    }
+    
+    private toEnvironment(file: File): Observable<EnvironmentMetadata> {
+        return Observable.create(
+            (sub: Subscriber<string>): void => {
+                const r = new FileReader();
+                r.onload = (ev: Event): void => {
+                    let environment;
+                    try {
+                        environment = JSON.parse((ev.target as any).result);
+                    } catch (ex) {
+                        this.errorMessage += '<br>' + 'Error found in: ' + file.name + ' -> ' + ex.toString();
+                    }
+                    sub.next(environment);
+                };
+                r.readAsText(file);
+            }
+        );
+    }
+    //------------------------------------------------ 
 
     reload() {
         (async () => {
@@ -233,6 +303,7 @@ export class EnvironmentAdminComponent implements OnInit {
     }
 
     changingValue(event: EnvironmentMetadata) {
+        console.log(event);
         this.selectedEnvironment = event;
         this.loadTarget();
     }

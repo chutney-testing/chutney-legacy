@@ -26,6 +26,7 @@ import { EditableBadgeComponent } from './forms/editable-badge/editable-badge.co
 import { AsciiDoctorComponent } from './asciidoctor/asciidoctor.component';
 import { ToastInfoComponent } from './toast/toast-info/toast-info';
 import {ImportFileComponent} from './forms/import-file/import-file.component';
+import {ImportButtonComponent} from './forms/import-button/import-button.component';
 
 
 @NgModule({
@@ -54,7 +55,8 @@ import {ImportFileComponent} from './forms/import-file/import-file.component';
         EditableTextAreaComponent,
         EditableBadgeComponent,
         AsciiDoctorComponent,
-        ToastInfoComponent
+        ToastInfoComponent,
+        ImportButtonComponent
     ],
     declarations: [
         DeleteConfirmDialogComponent,
@@ -70,7 +72,8 @@ import {ImportFileComponent} from './forms/import-file/import-file.component';
         EditableTextAreaComponent,
         EditableBadgeComponent,
         AsciiDoctorComponent,
-        ToastInfoComponent
+        ToastInfoComponent,
+        ImportButtonComponent
     ],
     providers: [
         ValidationService,
