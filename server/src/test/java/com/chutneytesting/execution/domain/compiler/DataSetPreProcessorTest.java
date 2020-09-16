@@ -46,7 +46,7 @@ public class DataSetPreProcessorTest {
 
         // When
         RawTestCase actual = dataSetPreProcessor.apply(
-            new ExecutionRequest(fakeTestCase, null)
+            new ExecutionRequest(fakeTestCase, null, "")
         );
 
         // Then
@@ -89,7 +89,7 @@ public class DataSetPreProcessorTest {
 
         // When
         GwtTestCase actual = dataSetPreProcessor.apply(
-            new ExecutionRequest(parameterizedTestCase, null)
+            new ExecutionRequest(parameterizedTestCase, null, "")
         );
 
         // Then

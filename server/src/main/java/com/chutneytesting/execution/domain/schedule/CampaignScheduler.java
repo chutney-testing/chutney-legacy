@@ -31,7 +31,7 @@ public class CampaignScheduler {
             .forEach(c -> {
                     LOGGER.info("Execute campaign with id [{}]", c);
                     try {
-                        campaignExecutionEngine.executeById(c);
+                        campaignExecutionEngine.executeById(c, "auto");
                     } catch (Exception e) {
                         LOGGER.error("Error during campaign execution", e);
                     }

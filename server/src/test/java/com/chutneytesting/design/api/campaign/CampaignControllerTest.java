@@ -264,11 +264,11 @@ public class CampaignControllerTest {
     @Test
     public void should_retrieve_user_execution_when_found_campaign() throws Exception {
         // Given
-        CampaignExecutionReport currentExecution = new CampaignExecutionReport(42L, existingCampaign.getTitle(), false, "", "user_1");
+        CampaignExecutionReport currentExecution = new CampaignExecutionReport(42L, existingCampaign.getTitle(), false, "", null, null, "user_1");
         when(campaignExecutionEngine.currentExecution(existingCampaign.getId()))
             .thenReturn(Optional.of(currentExecution));
 
-        CampaignExecutionReport report1 = new CampaignExecutionReport(1L, existingCampaign.getId(), emptyList(), "...", false, "", "user_2");
+        CampaignExecutionReport report1 = new CampaignExecutionReport(1L, existingCampaign.getId(), emptyList(), existingCampaign.getTitle(), false, "", null, null, "user_2");
 
         repository.saveReport(existingCampaign.getId(), report1);
 

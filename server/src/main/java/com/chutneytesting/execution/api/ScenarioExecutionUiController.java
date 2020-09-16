@@ -63,7 +63,8 @@ public class ScenarioExecutionUiController {
     public String executeScenario(@PathVariable("scenarioId") String scenarioId, @PathVariable("env") String env) throws IOException {
         LOGGER.debug("executeScenario for scenarioId='{}'", scenarioId);
         TestCase testCase = testCaseRepository.findById(scenarioId);
-        ScenarioExecutionReport report = executionEngine.execute(new ExecutionRequest(testCase, env));
+        String userId = userService.getCurrentUser().getId();
+        ScenarioExecutionReport report = executionEngine.execute(new ExecutionRequest(testCase, env, userId));
         return objectMapper.writeValueAsString(report);
     }
 
@@ -71,14 +72,16 @@ public class ScenarioExecutionUiController {
     public String executeComponent(@PathVariable("componentId") String componentId, @PathVariable("env") String env) throws IOException {
         LOGGER.debug("executeComponent for componentId={{}] on env [{}]", componentId, env);
         FunctionalStep functionalStep = stepRepository.findById(fromFrontId(Optional.of(componentId)));
-        ScenarioExecutionReport report = executionEngine.execute(functionalStep, env);
+        String userId = userService.getCurrentUser().getId();
+        ScenarioExecutionReport report = executionEngine.execute(functionalStep, env, userId);
         return objectMapper.writeValueAsString(report);
     }
 
     @PostMapping(path = "/api/idea/scenario/execution/{env}")
     public String executeScenarioWitRawContent(@RequestBody IdeaRequest ideaRequest, @PathVariable("env") String env) throws IOException {
         LOGGER.debug("execute Scenario v2 for content='{}' with parameters '{}'", ideaRequest.getContent(), ideaRequest.getParams());
-        ScenarioExecutionReport report = executionEngine.execute(ideaRequest.getContent(), ideaRequest.getParams(), env);
+        String userId = userService.getCurrentUser().getId();
+        ScenarioExecutionReport report = executionEngine.execute(ideaRequest.getContent(), ideaRequest.getParams(), env, userId);
         return objectMapper.writeValueAsString(report);
     }
 

@@ -23,24 +23,26 @@ public class ComposableTestCasePreProcessor implements TestCasePreProcessor<Comp
     @Override
     public ComposableTestCase apply(ExecutionRequest executionRequest) {
         String environment = executionRequest.environment;
+        String userId = executionRequest.userId;
 
         // Process scenario default dataset if requested
         ComposableTestCase testCase = (ComposableTestCase) executionRequest.testCase;
         if (executionRequest.withScenarioDefaultDataSet) {
             testCase = dataSetPreProcessor.apply(
-                new ExecutionRequest(testCase, environment)
+                new ExecutionRequest(testCase, environment, userId)
             );
         }
         // Process loop strategy
         testCase = loopPreProcessor.apply(
             new ExecutionRequest(
                 parametersResolutionPreProcessor.applyOnStrategy(testCase, environment),
-                environment
+                environment,
+                userId
             )
         );
         // Process parameters (value them)
         return parametersResolutionPreProcessor.apply(
-            new ExecutionRequest(testCase, environment)
+            new ExecutionRequest(testCase, environment, userId)
         );
     }
 }

@@ -33,8 +33,6 @@ import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
-import com.chutneytesting.security.domain.User;
-import com.chutneytesting.security.domain.UserService;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -53,9 +51,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StopWatch;
 
@@ -77,9 +72,7 @@ public class CampaignExecutionEngineTest {
 
     @Before
     public void setUp() {
-        fakeAuthentication();
-        UserService userService = new UserService();
-        sut = new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository, userService);
+        sut = new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository);
     }
 
     @Test
@@ -100,7 +93,7 @@ public class CampaignExecutionEngineTest {
             .thenReturn(executionWithId(secondScenarioExecutionId));
 
         // When
-        CampaignExecutionReport campaignExecutionReport = sut.executeScenarioInCampaign(emptyList(), campaign);
+        CampaignExecutionReport campaignExecutionReport = sut.executeScenarioInCampaign(emptyList(), campaign, "user");
 
         // Then
         verify(testCaseRepository, times(2)).findById(anyString());
@@ -129,7 +122,7 @@ public class CampaignExecutionEngineTest {
             .thenReturn(executionWithId(secondScenarioExecutionId));
 
         // When
-        CampaignExecutionReport campaignExecutionReport = sut.executeScenarioInCampaign(singletonList("2"), campaign);
+        CampaignExecutionReport campaignExecutionReport = sut.executeScenarioInCampaign(singletonList("2"), campaign, "user");
 
         // Then
         verify(testCaseRepository, times(1)).findById(anyString());
@@ -166,8 +159,7 @@ public class CampaignExecutionEngineTest {
         AtomicReference<CampaignExecutionReport> campaignExecutionReport = new AtomicReference<>();
 
         Executors.newFixedThreadPool(1).submit(() -> {
-            fakeAuthentication();
-            campaignExecutionReport.set(sut.executeScenarioInCampaign(emptyList(), campaign));
+            campaignExecutionReport.set(sut.executeScenarioInCampaign(emptyList(), campaign, "user"));
         });
 
         TimeUnit.MILLISECONDS.sleep(500);
@@ -202,7 +194,7 @@ public class CampaignExecutionEngineTest {
         when(executionHistoryRepository.getExecution(secondtTestCase.id(), 0L)).thenReturn(failedExecutionWithId(20L));
 
         // When
-        sut.executeScenarioInCampaign(emptyList(), campaign);
+        sut.executeScenarioInCampaign(emptyList(), campaign, "user");
 
         // Then
         verify(scenarioExecutionEngine, times(4)).execute(any(ExecutionRequest.class));
@@ -228,7 +220,7 @@ public class CampaignExecutionEngineTest {
         // When
         StopWatch watch = new StopWatch();
         watch.start();
-        sut.executeScenarioInCampaign(emptyList(), campaign);
+        sut.executeScenarioInCampaign(emptyList(), campaign, "user");
         watch.stop();
 
         // Then
@@ -239,7 +231,7 @@ public class CampaignExecutionEngineTest {
     @Test(expected = CampaignNotFoundException.class)
     public void should_throw_when_no_campaign_found_on_execute_by_id() {
         when(campaignRepository.findById(anyLong())).thenReturn(null);
-        sut.executeById(generateId());
+        sut.executeById(generateId(), "");
     }
 
     @Test(expected = CampaignAlreadyRunningException.class)
@@ -253,7 +245,7 @@ public class CampaignExecutionEngineTest {
         field.put(1L, mockReport);
 
         // When
-        sut.executeScenarioInCampaign(null, campaign);
+        sut.executeScenarioInCampaign(null, campaign, "user");
     }
 
     @Test
@@ -265,8 +257,8 @@ public class CampaignExecutionEngineTest {
         when(campaignRepository.findById(campaign.id)).thenReturn(campaign);
 
         // When
-        sut.executeById(campaign.id);
-        sut.executeByName(campaign.title);
+        sut.executeById(campaign.id, "");
+        sut.executeByName(campaign.title, "");
 
         // Then
         verify(campaignRepository).findById(campaign.id);
@@ -283,7 +275,8 @@ public class CampaignExecutionEngineTest {
 
         // When
         String executionEnv = "executionEnv";
-        sut.executeById(campaign.id, executionEnv);
+        String executionUser = "executionUser";
+        sut.executeById(campaign.id, executionEnv, executionUser);
 
         // Then
         verify(campaignRepository).findById(campaign.id);
@@ -298,7 +291,8 @@ public class CampaignExecutionEngineTest {
 
         // When
         String executionEnv = "executionEnv";
-        sut.executeByName(campaign.title, executionEnv);
+        String executionUser = "executionUser";
+        sut.executeByName(campaign.title, executionEnv, executionUser);
 
         // Then
         verify(campaignRepository).findByName(campaign.title);
@@ -329,7 +323,7 @@ public class CampaignExecutionEngineTest {
 
     @Test(expected = CampaignNotFoundException.class)
     public void should_throw_when_execute_unknown_campaign_execution() {
-        sut.executeById(generateId());
+        sut.executeById(generateId(), "");
     }
 
     @Test
@@ -356,7 +350,7 @@ public class CampaignExecutionEngineTest {
         when(executionHistoryRepository.getExecution(any(), any())).thenReturn(mock(ExecutionHistory.Execution.class));
 
         // When
-        sut.executeById(campaign.id);
+        sut.executeById(campaign.id, "user");
 
         // Then
         ArgumentCaptor<ExecutionRequest> argumentCaptor = ArgumentCaptor.forClass(ExecutionRequest.class);
@@ -376,16 +370,6 @@ public class CampaignExecutionEngineTest {
 
     private Long generateId() {
         return (long) campaignIdGenerator.nextInt(1000);
-    }
-
-    private void fakeAuthentication(){
-        User user = new User();
-        user.setId("user_id");
-        Authentication authentication = mock(Authentication.class);
-        SecurityContext securityContext = mock(SecurityContext.class);
-        when(authentication.getPrincipal()).thenReturn(user);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
     }
 
     private ExecutionHistory.Execution executionWithId(Long executionId) {

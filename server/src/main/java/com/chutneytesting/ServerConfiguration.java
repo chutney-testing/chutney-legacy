@@ -77,13 +77,11 @@ public class ServerConfiguration {
     @Bean
     ScenarioExecutionEngine scenarioExecutionEngine(ServerTestEngine executionEngine,
                                                     TestCasePreProcessors testCasePreProcessors,
-                                                    ScenarioExecutionEngineAsync executionEngineAsync,
-                                                    UserService userService) {
+                                                    ScenarioExecutionEngineAsync executionEngineAsync) {
         return new ScenarioExecutionEngine(
             executionEngine,
             testCasePreProcessors,
-            executionEngineAsync,
-            userService);
+            executionEngineAsync);
     }
 
     @Bean
@@ -118,9 +116,8 @@ public class ServerConfiguration {
                                                     ScenarioExecutionEngine scenarioExecutionEngine,
                                                     ExecutionHistoryRepository executionHistoryRepository,
                                                     TestCaseRepository testCaseRepository,
-                                                    DataSetHistoryRepository dataSetHistoryRepository,
-                                                    UserService userService) {
-        return new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository, userService);
+                                                    DataSetHistoryRepository dataSetHistoryRepository) {
+        return new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository);
     }
 
     @Bean

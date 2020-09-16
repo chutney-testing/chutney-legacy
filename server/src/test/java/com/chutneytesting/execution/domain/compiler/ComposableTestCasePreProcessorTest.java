@@ -34,6 +34,7 @@ public class ComposableTestCasePreProcessorTest {
 
     private final ObjectMapper objectMapper = new WebConfiguration().objectMapper();
     private final String environment = "exec env";
+    private final String userId = "exec user";
 
     private GlobalvarRepository globalvarRepository;
     private DataSetRepository dataSetRepository;
@@ -85,7 +86,7 @@ public class ComposableTestCasePreProcessorTest {
 
         // When
         ComposableTestCase actual = sut.apply(
-            new ExecutionRequest(composableTestase, environment)
+            new ExecutionRequest(composableTestase, environment, userId)
         );
 
         // Then
@@ -135,7 +136,7 @@ public class ComposableTestCasePreProcessorTest {
 
         // When
         ComposableTestCase actual = sut.apply(
-            new ExecutionRequest(composableTestCase, environment)
+            new ExecutionRequest(composableTestCase, environment, userId)
         );
 
         // Then
@@ -232,7 +233,7 @@ public class ComposableTestCasePreProcessorTest {
 
         // When
         final ComposableTestCase composableTestCaseProcessed = sut.apply(
-            new ExecutionRequest(composableTestCase, environment)
+            new ExecutionRequest(composableTestCase, environment, userId)
         );
 
         // Then
@@ -363,7 +364,7 @@ public class ComposableTestCasePreProcessorTest {
             dataSet);
 
         final ComposableTestCase composableTestCaseProcessed = sut.apply(
-            new ExecutionRequest(composableTestCase, environment)
+            new ExecutionRequest(composableTestCase, environment, userId)
         );
 
         // Then
@@ -522,7 +523,7 @@ public class ComposableTestCasePreProcessorTest {
 
         // When
         ComposableTestCase processedTestCase = sut.apply(
-            new ExecutionRequest(testCase, "env", true)
+            new ExecutionRequest(testCase, "env", true, userId)
         );
 
         // Then

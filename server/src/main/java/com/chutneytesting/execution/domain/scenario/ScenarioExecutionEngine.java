@@ -15,7 +15,6 @@ import com.chutneytesting.execution.domain.compiler.GwtScenarioMarshaller;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.report.StepExecutionReportCore;
-import com.chutneytesting.security.domain.UserService;
 import java.util.Collections;
 import java.util.Map;
 
@@ -29,8 +28,7 @@ public class ScenarioExecutionEngine {
 
     public ScenarioExecutionEngine(ServerTestEngine executionEngine,
                                    TestCasePreProcessors testCasePreProcessors,
-                                   ScenarioExecutionEngineAsync executionEngineAsync,
-                                   UserService userService) {
+                                   ScenarioExecutionEngineAsync executionEngineAsync) {
         this.executionEngineAsync = executionEngineAsync;
         this.executionEngine = executionEngine;
         this.testCasePreProcessors = testCasePreProcessors;
