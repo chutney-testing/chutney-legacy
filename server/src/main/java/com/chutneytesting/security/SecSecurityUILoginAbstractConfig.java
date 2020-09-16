@@ -33,7 +33,9 @@ public abstract class SecSecurityUILoginAbstractConfig extends WebSecurityConfig
                 .antMatchers("/api/v1/user/login").permitAll()
                 .antMatchers("/api/v1/user/logout").permitAll()
                 .antMatchers("/api/**").authenticated()
-                .anyRequest().permitAll();
+                .anyRequest().permitAll()
+            .and()
+                .httpBasic();
     }
 
 }

@@ -2,6 +2,7 @@ package blackbox.restclient;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.web.client.RestTemplate;
 
 public class RestClient {
@@ -16,6 +17,7 @@ public class RestClient {
     }
 
     public RestRequestBuilder request() {
+        restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor("user", "user"));
         return new RestRequestBuilder(restTemplate);
     }
 
