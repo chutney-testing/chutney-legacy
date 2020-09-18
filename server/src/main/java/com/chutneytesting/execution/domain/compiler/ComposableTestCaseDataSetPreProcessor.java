@@ -10,8 +10,10 @@ import static java.util.stream.Collectors.toSet;
 import com.chutneytesting.design.domain.compose.ComposableScenario;
 import com.chutneytesting.design.domain.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.compose.FunctionalStep;
+import com.chutneytesting.design.domain.compose.Strategy;
 import com.chutneytesting.design.domain.dataset.DataSet;
 import com.chutneytesting.design.domain.dataset.DataSetRepository;
+import com.chutneytesting.engine.domain.execution.strategies.DataSetIterationsStrategy;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import java.util.Collection;
 import java.util.HashMap;
@@ -104,6 +106,7 @@ public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcess
 
         return FunctionalStep.builder()
             .from(functionalStep)
+            .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
             .withSteps(buildStepIterations(functionalStep, fsNovaluedEntries, fsValuedEntriesWithRef, dataSet.multipleValues))
             .overrideDataSetWith(buildDatasetWithAliases(fsLeftEntries))
             .build();

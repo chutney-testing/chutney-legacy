@@ -1,2 +1,3 @@
 com.chutneytesting.engine.domain.execution.strategies.RetryWithTimeOutStrategy
 com.chutneytesting.engine.domain.execution.strategies.SoftAssertStrategy
+com.chutneytesting.engine.domain.execution.strategies.DataSetIterationsStrategy
