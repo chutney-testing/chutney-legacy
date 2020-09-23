@@ -15,6 +15,7 @@ public class CampaignExecutionReportMapper {
             campaignReport.startDate,
             campaignReport.status(),
             campaignReport.partialExecution,
-            campaignReport.executionEnvironment);
+            campaignReport.executionEnvironment,
+            campaignReport.userId);
     }
 }

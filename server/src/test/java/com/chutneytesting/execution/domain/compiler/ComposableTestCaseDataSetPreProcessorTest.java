@@ -70,7 +70,7 @@ public class ComposableTestCaseDataSetPreProcessorTest {
         // When
         ComposableTestCaseDataSetPreProcessor sut = new ComposableTestCaseDataSetPreProcessor(dataSetRepository);
         ComposableTestCase processedTestCase = sut.apply(
-            new ExecutionRequest(testCase, "env")
+            new ExecutionRequest(testCase, "env", "user")
         );
 
         // Then
@@ -137,7 +137,7 @@ public class ComposableTestCaseDataSetPreProcessorTest {
         // When
         ComposableTestCaseDataSetPreProcessor sut = new ComposableTestCaseDataSetPreProcessor(dataSetRepository);
         ComposableTestCase processedTestCase = sut.apply(
-            new ExecutionRequest(testCase, "env")
+            new ExecutionRequest(testCase, "env", "user")
         );
 
         // Then
@@ -240,7 +240,7 @@ public class ComposableTestCaseDataSetPreProcessorTest {
         // When
         ComposableTestCaseDataSetPreProcessor sut = new ComposableTestCaseDataSetPreProcessor(dataSetRepository);
         ComposableTestCase processedTestCase = sut.apply(
-            new ExecutionRequest(testCase, "env")
+            new ExecutionRequest(testCase, "env", "user")
         );
 
         // Then

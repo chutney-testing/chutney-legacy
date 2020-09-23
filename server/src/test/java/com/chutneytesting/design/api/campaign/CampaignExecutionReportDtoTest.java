@@ -80,6 +80,6 @@ public class CampaignExecutionReportDtoTest {
     }
 
     private CampaignExecutionReportDto fakeCampaignReport(LocalDateTime startDate, List<ScenarioExecutionReportOutlineDto> executions) {
-        return new CampaignExecutionReportDto(1L, executions, "...", startDate, ServerReportStatus.SUCCESS, false, "");
+        return new CampaignExecutionReportDto(1L, executions, "...", startDate, ServerReportStatus.SUCCESS, false, "", "");
     }
 }

@@ -7,8 +7,8 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.google.common.collect.Lists;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
+import com.google.common.collect.Lists;
 import java.time.LocalTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +39,7 @@ public class CampaignSchedulerTest {
         assertThat(scheduledTime.getValue()).isBeforeOrEqualTo(LocalTime.now());
         assertThat(scheduledTime.getValue()).isAfter(LocalTime.now().minusMinutes(1));
 
-        verify(campaignExecutionEngine).executeById(1L);
-        verify(campaignExecutionEngine).executeById(2L);
+        verify(campaignExecutionEngine).executeById(1L, "auto");
+        verify(campaignExecutionEngine).executeById(2L, "auto");
     }
 }

@@ -5,6 +5,7 @@ export class ScenarioExecutionReport {
         public executionId: number,
         public report: StepExecutionReport,
         public environment: string,
+        public user: string,
         public scenarioName?: string
     ) { }
 }

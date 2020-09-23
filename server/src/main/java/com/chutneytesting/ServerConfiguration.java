@@ -18,6 +18,7 @@ import com.chutneytesting.execution.domain.state.ExecutionStateRepository;
 import com.chutneytesting.execution.infra.execution.ExecutionRequestMapper;
 import com.chutneytesting.execution.infra.execution.ServerTestEngineJavaImpl;
 import com.chutneytesting.instrument.domain.Metrics;
+import com.chutneytesting.security.domain.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -123,6 +124,12 @@ public class ServerConfiguration {
     EnvironmentService environmentService(EnvironmentRepository environmentRepository) {
         return new EnvironmentService(environmentRepository);
     }
+
+    @Bean
+    UserService userService() {
+        return new UserService();
+    }
+
 
     @Bean
     ServerTestEngine javaTestEngine(@Qualifier("embeddedTestEngine") TestEngine testEngine,

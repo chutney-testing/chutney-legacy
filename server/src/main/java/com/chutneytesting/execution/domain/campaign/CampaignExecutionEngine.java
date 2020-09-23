@@ -65,26 +65,26 @@ public class CampaignExecutionEngine {
         this.dataSetHistoryRepository = dataSetHistoryRepository;
     }
 
-    public List<CampaignExecutionReport> executeByName(String campaignName) {
-        return executeByName(campaignName, null);
+    public List<CampaignExecutionReport> executeByName(String campaignName, String userId) {
+        return executeByName(campaignName, null, userId);
     }
 
-    public List<CampaignExecutionReport> executeByName(String campaignName, String environment) {
+    public List<CampaignExecutionReport> executeByName(String campaignName, String environment, String userId) {
         List<Campaign> campaigns = campaignRepository.findByName(campaignName);
         return campaigns.stream()
             .map(campaign -> selectExecutionEnvironment(campaign, Optional.ofNullable(environment)))
-            .map(this::executeCampaign)
+            .map(campaign -> executeCampaign(campaign, userId))
             .collect(Collectors.toList());
     }
 
-    public CampaignExecutionReport executeById(Long campaignId) {
-        return executeById(campaignId, null);
+    public CampaignExecutionReport executeById(Long campaignId, String userId) {
+        return executeById(campaignId, null, userId);
     }
 
-    public CampaignExecutionReport executeById(Long campaignId, String environment) {
+    public CampaignExecutionReport executeById(Long campaignId, String environment, String userId) {
         return Optional.ofNullable(campaignRepository.findById(campaignId))
             .map(campaign -> selectExecutionEnvironment(campaign, Optional.ofNullable(environment)))
-            .map(this::executeCampaign)
+            .map(campaign -> executeCampaign(campaign, userId))
             .orElseThrow(() -> new CampaignNotFoundException(campaignId));
     }
 
@@ -103,12 +103,12 @@ public class CampaignExecutionEngine {
         return true;
     }
 
-    public CampaignExecutionReport executeScenarioInCampaign(List<String> failedIds, Campaign campaign) {
+    public CampaignExecutionReport executeScenarioInCampaign(List<String> failedIds, Campaign campaign, String userId) {
         verifyNotAlreadyRunning(campaign);
 
         Long executionId = campaignRepository.newCampaignExecution();
         Optional<Pair<String, Integer>> executionDataSet = findExecutionDataSet(campaign);
-        CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(executionId, campaign.title, !failedIds.isEmpty(), campaign.executionEnvironment(), executionDataSet.map(Pair::getLeft).orElse(null), executionDataSet.map(Pair::getRight).orElse(null));
+        CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(executionId, campaign.title, !failedIds.isEmpty(), campaign.executionEnvironment(), executionDataSet.map(Pair::getLeft).orElse(null), executionDataSet.map(Pair::getRight).orElse(null), userId);
         currentCampaignExecutions.put(campaign.id, campaignExecutionReport);
         currentCampaignExecutionsStopRequests.put(executionId, Boolean.FALSE);
         try {
@@ -136,7 +136,7 @@ public class CampaignExecutionEngine {
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
-        campaignExecutionReport.initExecution(testCases, campaign.executionEnvironment());
+        campaignExecutionReport.initExecution(testCases, campaign.executionEnvironment(), campaignExecutionReport.userId);
         Stream<TestCase> scenarioStream;
         if (campaign.parallelRun) {
             scenarioStream = testCases.parallelStream();
@@ -148,12 +148,12 @@ public class CampaignExecutionEngine {
             // Is stop requested ?
             if (!currentCampaignExecutionsStopRequests.get(campaignExecutionReport.executionId)) {
                 // Init scenario execution in campaign report
-                campaignExecutionReport.startScenarioExecution(testCase, campaign.executionEnvironment());
+                campaignExecutionReport.startScenarioExecution(testCase, campaign.executionEnvironment(), campaignExecutionReport.userId);
                 // Execute scenario
-                ScenarioExecutionReportCampaign scenarioExecutionReport = executeScenario(campaign, testCase);
+                ScenarioExecutionReportCampaign scenarioExecutionReport = executeScenario(campaign, testCase, campaignExecutionReport.userId);
                 // Retry one time if failed
                 if (campaign.retryAuto && ServerReportStatus.FAILURE.equals(scenarioExecutionReport.status())) {
-                    scenarioExecutionReport = executeScenario(campaign, testCase);
+                    scenarioExecutionReport = executeScenario(campaign, testCase, campaignExecutionReport.userId);
                 }
                 // Add scenario report to campaign's one
                 Optional.ofNullable(scenarioExecutionReport)
@@ -163,12 +163,12 @@ public class CampaignExecutionEngine {
         return campaignExecutionReport;
     }
 
-    private ScenarioExecutionReportCampaign executeScenario(Campaign campaign, TestCase testCase) {
+    private ScenarioExecutionReportCampaign executeScenario(Campaign campaign, TestCase testCase, String userId) {
         Long executionId;
         String scenarioName;
         try {
             LOGGER.trace("Execute scenario {} for campaign {}", testCase.id(), campaign.id);
-            ExecutionRequest executionRequest = buildTestCaseExecutionrequest(campaign, testCase);
+            ExecutionRequest executionRequest = buildTestCaseExecutionrequest(campaign, testCase, userId);
             ScenarioExecutionReport scenarioExecutionReport = scenarioExecutionEngine.execute(executionRequest);
             executionId = scenarioExecutionReport.executionId;
             scenarioName = scenarioExecutionReport.scenarioName;
@@ -186,16 +186,16 @@ public class CampaignExecutionEngine {
         return new ScenarioExecutionReportCampaign(testCase.id(), scenarioName, execution.summary());
     }
 
-    private ExecutionRequest buildTestCaseExecutionrequest(Campaign campaign, TestCase testCase) {
+    private ExecutionRequest buildTestCaseExecutionrequest(Campaign campaign, TestCase testCase, String userId) {
         String campaignDatasetId = campaign.datasetId;
         // Override scenario dataset by campaign's one
         if (isNotBlank(campaignDatasetId) && testCase instanceof ComposableTestCase) {
             testCase = ((ComposableTestCase) testCase).withDataSetId(campaignDatasetId);
-            return new ExecutionRequest(testCase, campaign.executionEnvironment(), true);
+            return new ExecutionRequest(testCase, campaign.executionEnvironment(), true, userId);
         } else {
             Map<String, String> ds = new HashMap<>(testCase.computedParameters());
             ds.putAll(campaign.dataSet);
-            return new ExecutionRequest(testCase.withDataSet(ds), campaign.executionEnvironment());
+            return new ExecutionRequest(testCase.withDataSet(ds), campaign.executionEnvironment(), userId);
         }
     }
 
@@ -207,8 +207,8 @@ public class CampaignExecutionEngine {
         return empty();
     }
 
-    private CampaignExecutionReport executeCampaign(Campaign campaign) {
-        return executeScenarioInCampaign(Collections.emptyList(), campaign);
+    private CampaignExecutionReport executeCampaign(Campaign campaign, String userId) {
+        return executeScenarioInCampaign(Collections.emptyList(), campaign, userId);
     }
 
     private void verifyNotAlreadyRunning(Campaign campaign) {

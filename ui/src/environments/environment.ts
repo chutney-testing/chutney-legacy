@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  backend: 'https://' + window.location.hostname + ':8443'
+  backend: ''
 };
 
 /*

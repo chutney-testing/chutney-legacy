@@ -117,7 +117,7 @@ public class ComposableTestCaseParametersResolutionPreProcessorTest {
         ComposableTestCaseParametersResolutionPreProcessor sut = new ComposableTestCaseParametersResolutionPreProcessor(globalvarRepository);
         // When
         final ComposableTestCase composableTestCaseProcessed = sut.apply(
-            new ExecutionRequest(composableTestCase, environment)
+            new ExecutionRequest(composableTestCase, environment, "user")
         );
 
         // Then

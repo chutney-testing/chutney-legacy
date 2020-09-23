@@ -383,7 +383,8 @@
         },
         "smallword": {
             "of": "of",
-            "On": "On"
+            "On": "On",
+            "by": "by"
         }
     }
 }

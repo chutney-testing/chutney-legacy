@@ -30,13 +30,13 @@ export class ShowroomComponent {
         this.table = new Table(['name1', 'name2'], rows);
 
         this.scenarioSuccess = new TestCase('-1', 'Sucess scenario', 'description', 'content', 'repo', new Date(), ['tag1', 'tag2']);
-        this.scenarioSuccess.executions = [new Execution(1000, 'SUCCESS', 'report', -1, new Date(), 'Env')];
+        this.scenarioSuccess.executions = [new Execution(1000, 'SUCCESS', 'report', -1, new Date(), 'Env', 'User')];
         this.scenarioFailed = new TestCase('-1', 'Failed scenario', 'description', 'content', 'repo', new Date(), ['tag1', 'tag2']);
-        this.scenarioFailed.executions = [new Execution(1000, 'FAILURE', 'report', -1, new Date(), 'Env')];
+        this.scenarioFailed.executions = [new Execution(1000, 'FAILURE', 'report', -1, new Date(), 'Env', 'User')];
         this.scenarioNotExecuted = new TestCase('-1', 'Never executed', 'description', 'content', 'repo', new Date(), ['tag1', 'tag2']);
         this.scenarioInProgress = new TestCase('-1', 'In progress scenario', 'description', 'content', 'repo',
                                                                                                         new Date(), ['tag1', 'tag2']);
-        this.scenarioInProgress.executions = [new Execution(1000, 'in progress', 'report', -1, new Date(), 'Env')];
+        this.scenarioInProgress.executions = [new Execution(1000, 'in progress', 'report', -1, new Date(), 'Env', 'User')];
 
         this.step = new FunctionalStep('id', 'description', null, null, []);
         this.technicalStep = new TechnicalStep('task implemetation');

@@ -33,7 +33,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     @Override
     public List<ExecutionSummary> getExecutions(String scenarioId) {
         return namedParameterJdbcTemplate.query(
-            "SELECT ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, TEST_CASE_TITLE, ENVIRONMENT, DATASET_ID, DATASET_VERSION  FROM SCENARIO_EXECUTION_HISTORY WHERE SCENARIO_ID = :scenarioId ORDER BY ID DESC LIMIT " + LIMIT_BLOC_SIZE,
+            "SELECT ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, TEST_CASE_TITLE, ENVIRONMENT, DATASET_ID, DATASET_VERSION, USER_ID FROM SCENARIO_EXECUTION_HISTORY WHERE SCENARIO_ID = :scenarioId ORDER BY ID DESC LIMIT " + LIMIT_BLOC_SIZE,
             ImmutableMap.<String, Object>builder().put("scenarioId", scenarioId).build(),
             executionSummaryRowMapper);
     }
@@ -46,8 +46,8 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
         executionParameters.put("scenarioId", scenarioId);
         executionParameters.put("id", nextId);
         namedParameterJdbcTemplate.update("INSERT INTO SCENARIO_EXECUTION_HISTORY"
-                + "(ID, SCENARIO_ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, REPORT, TEST_CASE_TITLE, ENVIRONMENT, DATASET_ID, DATASET_VERSION) VALUES "
-                + "(:id, :scenarioId, :executionTime, :duration, :status, :information, :error, :report, :title, :environment, :datasetId, :datasetVersion)",
+                + "(ID, SCENARIO_ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, REPORT, TEST_CASE_TITLE, ENVIRONMENT, DATASET_ID, DATASET_VERSION, USER_ID) VALUES "
+                + "(:id, :scenarioId, :executionTime, :duration, :status, :information, :error, :report, :title, :environment, :datasetId, :datasetVersion, :user)",
             executionParameters);
 
         return ImmutableExecutionHistory.Execution.builder()
@@ -60,7 +60,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     public Execution getExecution(String scenarioId, Long reportId) throws ReportNotFoundException {
         try {
             return namedParameterJdbcTemplate.queryForObject(
-                "SELECT ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, REPORT, TEST_CASE_TITLE, ENVIRONMENT, DATASET_ID, DATASET_VERSION FROM SCENARIO_EXECUTION_HISTORY WHERE ID = :reportId AND SCENARIO_ID = :scenarioId",
+                "SELECT ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, REPORT, TEST_CASE_TITLE, ENVIRONMENT, DATASET_ID, DATASET_VERSION, USER_ID FROM SCENARIO_EXECUTION_HISTORY WHERE ID = :reportId AND SCENARIO_ID = :scenarioId",
                 ImmutableMap.<String, Object>builder()
                     .put("reportId", reportId)
                     .put("scenarioId", scenarioId)
@@ -105,7 +105,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     @Override
     public List<ExecutionSummary> getExecutionsWithStatus(ServerReportStatus status) {
         return namedParameterJdbcTemplate.query(
-            "SELECT ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, TEST_CASE_TITLE, ENVIRONMENT, DATASET_ID, DATASET_VERSION FROM SCENARIO_EXECUTION_HISTORY WHERE STATUS = :status",
+            "SELECT ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, TEST_CASE_TITLE, ENVIRONMENT, DATASET_ID, DATASET_VERSION, USER_ID FROM SCENARIO_EXECUTION_HISTORY WHERE STATUS = :status",
             ImmutableMap.<String, Object>builder().put("status", status.name()).build(),
             executionSummaryRowMapper);
     }
@@ -127,6 +127,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
             .report("")
             .testCaseTitle(executionSummary.testCaseTitle())
             .environment(executionSummary.environment())
+            .user(executionSummary.user())
             .build();
     }
 
@@ -142,6 +143,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
         executionParameters.put("environment", execution.environment());
         executionParameters.put("datasetId", execution.datasetId().orElse(null));
         executionParameters.put("datasetVersion", execution.datasetVersion().orElse(null));
+        executionParameters.put("user", execution.user());
         return executionParameters;
     }
 }

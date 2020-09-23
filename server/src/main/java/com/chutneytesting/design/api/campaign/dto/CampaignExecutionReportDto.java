@@ -18,6 +18,7 @@ public class CampaignExecutionReportDto {
     private List<ScenarioExecutionReportOutlineDto> scenarioExecutionReports;
     private boolean partialExecution;
     private String executionEnvironment;
+    private String userId;
 
     public CampaignExecutionReportDto(@JsonProperty("executionId") Long executionId,
                                       @JsonProperty("scenarioExecutionReports") List<ScenarioExecutionReportOutlineDto> scenarioExecutionReports,
@@ -25,7 +26,8 @@ public class CampaignExecutionReportDto {
                                       @JsonProperty("startDate") LocalDateTime startDate,
                                       @JsonProperty("status") ServerReportStatus status,
                                       @JsonProperty("partialExecution") boolean partialExecution,
-                                      @JsonProperty("executionEnvironment") String executionEnvironment) {
+                                      @JsonProperty("executionEnvironment") String executionEnvironment,
+                                      @JsonProperty("user") String userId) {
         this.executionId = executionId;
         this.scenarioExecutionReports = scenarioExecutionReports;
         this.campaignName = campaignName;
@@ -33,6 +35,7 @@ public class CampaignExecutionReportDto {
         this.status = status;
         this.partialExecution = partialExecution;
         this.executionEnvironment = executionEnvironment;
+        this.userId = userId;
     }
 
     public Long getExecutionId() {
@@ -78,5 +81,9 @@ public class CampaignExecutionReportDto {
 
     public String getExecutionEnvironment() {
         return executionEnvironment;
+    }
+
+    public String getUserId(){
+        return userId;
     }
 }

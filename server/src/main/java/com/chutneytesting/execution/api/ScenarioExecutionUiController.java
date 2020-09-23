@@ -14,6 +14,7 @@ import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngineAsync;
+import com.chutneytesting.security.domain.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Observable;
@@ -46,21 +47,24 @@ public class ScenarioExecutionUiController {
     private final ComposableTestCaseRepository composableTestCaseRepository;
     private final ObjectMapper objectMapper;
     private final StepRepository stepRepository;
+    private final UserService userService;
 
-    ScenarioExecutionUiController(ScenarioExecutionEngine executionEngine, ScenarioExecutionEngineAsync executionEngineAsync, TestCaseRepository testCaseRepository, ComposableTestCaseRepository composableTestCaseRepository, ObjectMapper objectMapper, StepRepository stepRepository) {
+    ScenarioExecutionUiController(ScenarioExecutionEngine executionEngine, ScenarioExecutionEngineAsync executionEngineAsync, TestCaseRepository testCaseRepository, ComposableTestCaseRepository composableTestCaseRepository, ObjectMapper objectMapper, StepRepository stepRepository, UserService userService) {
         this.executionEngine = executionEngine;
         this.executionEngineAsync = executionEngineAsync;
         this.testCaseRepository = testCaseRepository;
         this.composableTestCaseRepository = composableTestCaseRepository;
         this.objectMapper = objectMapper;
         this.stepRepository = stepRepository;
+        this.userService = userService;
     }
 
     @PostMapping(path = "/api/ui/scenario/execution/v1/{scenarioId}/{env}")
     public String executeScenario(@PathVariable("scenarioId") String scenarioId, @PathVariable("env") String env) throws IOException {
         LOGGER.debug("executeScenario for scenarioId='{}'", scenarioId);
         TestCase testCase = testCaseRepository.findById(scenarioId);
-        ScenarioExecutionReport report = executionEngine.execute(new ExecutionRequest(testCase, env));
+        String userId = userService.getCurrentUser().getId();
+        ScenarioExecutionReport report = executionEngine.execute(new ExecutionRequest(testCase, env, userId));
         return objectMapper.writeValueAsString(report);
     }
 
@@ -68,14 +72,16 @@ public class ScenarioExecutionUiController {
     public String executeComponent(@PathVariable("componentId") String componentId, @PathVariable("env") String env) throws IOException {
         LOGGER.debug("executeComponent for componentId={{}] on env [{}]", componentId, env);
         FunctionalStep functionalStep = stepRepository.findById(fromFrontId(Optional.of(componentId)));
-        ScenarioExecutionReport report = executionEngine.execute(functionalStep, env);
+        String userId = userService.getCurrentUser().getId();
+        ScenarioExecutionReport report = executionEngine.execute(functionalStep, env, userId);
         return objectMapper.writeValueAsString(report);
     }
 
     @PostMapping(path = "/api/idea/scenario/execution/{env}")
     public String executeScenarioWitRawContent(@RequestBody IdeaRequest ideaRequest, @PathVariable("env") String env) throws IOException {
         LOGGER.debug("execute Scenario v2 for content='{}' with parameters '{}'", ideaRequest.getContent(), ideaRequest.getParams());
-        ScenarioExecutionReport report = executionEngine.execute(ideaRequest.getContent(), ideaRequest.getParams(), env);
+        String userId = userService.getCurrentUser().getId();
+        ScenarioExecutionReport report = executionEngine.execute(ideaRequest.getContent(), ideaRequest.getParams(), env, userId);
         return objectMapper.writeValueAsString(report);
     }
 
@@ -91,7 +97,8 @@ public class ScenarioExecutionUiController {
         Map<String, String> inlineDataSet = ofNullable(dataSet)
             .map(KeyValue::toMap)
             .orElseGet(HashMap::new);
-        return executionEngineAsync.execute(new ExecutionRequest(testCase, env, inlineDataSet)).toString();
+        String userId = userService.getCurrentUser().getId();
+        return executionEngineAsync.execute(new ExecutionRequest(testCase, env, inlineDataSet, userId)).toString();
     }
 
     @GetMapping(path = "/api/ui/scenario/executionasync/v1/{scenarioId}/execution/{executionId}")

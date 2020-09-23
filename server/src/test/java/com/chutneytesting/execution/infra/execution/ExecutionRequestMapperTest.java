@@ -52,7 +52,7 @@ public class ExecutionRequestMapperTest {
         RawTestCase testCase = RawTestCase.builder()
             .withScenario(Files.contentOf(new File(Resources.getResource("raw_scenarios/scenario.json").getPath()), Charset.forName("UTF-8")))
             .build();
-        ExecutionRequest request = new ExecutionRequest(testCase, "");
+        ExecutionRequest request = new ExecutionRequest(testCase, "", "");
 
         // When
         ExecutionRequestDto executionRequestDto = sut.toDto(request);
@@ -145,7 +145,7 @@ public class ExecutionRequestMapperTest {
                 .build());
 
         // When
-        ExecutionRequest request = new ExecutionRequest(testCase, "");
+        ExecutionRequest request = new ExecutionRequest(testCase, "", "");
         final ExecutionRequestDto executionRequestDto = sut.toDto(request);
 
         // Then

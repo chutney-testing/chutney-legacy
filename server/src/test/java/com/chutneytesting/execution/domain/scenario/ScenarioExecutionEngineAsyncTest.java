@@ -100,7 +100,7 @@ public class ScenarioExecutionEngineAsyncTest {
         );
 
         // When
-        ExecutionRequest request = new ExecutionRequest(testCase, "Exec env");
+        ExecutionRequest request = new ExecutionRequest(testCase, "Exec env","Exec user");
         sut.execute(request);
 
         // Then
@@ -109,6 +109,7 @@ public class ScenarioExecutionEngineAsyncTest {
         ArgumentCaptor<ExecutionHistory.DetachedExecution> argumentCaptor = ArgumentCaptor.forClass(ExecutionHistory.DetachedExecution.class);
         verify(executionHistoryRepository).store(eq(scenarioId), argumentCaptor.capture());
         assertThat(argumentCaptor.getValue().environment()).isEqualTo("Exec env");
+        assertThat(argumentCaptor.getValue().user()).isEqualTo("Exec user");
 
         // Wait for background computation
         verify(executionStateRepository, timeout(250)).notifyExecutionStart(scenarioId);
@@ -141,7 +142,7 @@ public class ScenarioExecutionEngineAsyncTest {
 
         // When
         TestObserver<ScenarioExecutionReport> testObserver =
-            sut.buildScenarioExecutionReportObservable(new ExecutionRequest(emptyTestCase(), ""), executionId, engineStub.getLeft()).test();
+            sut.buildScenarioExecutionReportObservable(new ExecutionRequest(emptyTestCase(), "", ""), executionId, engineStub.getLeft()).test();
 
         // Then
         assertTestObserverStateWithValues(testObserver, 0, false);
@@ -196,7 +197,7 @@ public class ScenarioExecutionEngineAsyncTest {
         );
 
         // When
-        ExecutionRequest request = new ExecutionRequest(testCase, "");
+        ExecutionRequest request = new ExecutionRequest(testCase, "","");
         Long executionIdFromExecute = sut.execute(request);
         TestObserver<ScenarioExecutionReport> testObserver = sut.followExecution(testCase.id(), executionIdFromExecute).test();
 
@@ -304,6 +305,7 @@ public class ScenarioExecutionEngineAsyncTest {
             .report("")
             .testCaseTitle("fake")
             .environment("")
+            .user("")
             .build();
 
         when(executionHistoryRepository.store(eq(scenarioId), any())).thenReturn(storedExecution);

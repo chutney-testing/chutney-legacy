@@ -117,6 +117,7 @@
         <span class="m-2">
             {{'campaigns.execution.name' | translate}} <strong>#{{currentCampaignExecutionReport.executionId}}</strong>
             {{'campaigns.execution.on_env' | translate}} <strong>{{currentCampaignExecutionReport.executionEnvironment}}</strong>
+            {{currentCampaignExecutionReport.userId=='' ? '' : 'global.smallword.by' | translate }} <strong>{{currentCampaignExecutionReport.userId}}</strong>
         </span>
         <chutney-execution-badge [status]="currentCampaignExecutionReport.status"
                                 [spin]="true"></chutney-execution-badge>

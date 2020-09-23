@@ -93,7 +93,7 @@ public class CampaignExecutionEngineTest {
             .thenReturn(executionWithId(secondScenarioExecutionId));
 
         // When
-        CampaignExecutionReport campaignExecutionReport = sut.executeScenarioInCampaign(emptyList(), campaign);
+        CampaignExecutionReport campaignExecutionReport = sut.executeScenarioInCampaign(emptyList(), campaign, "user");
 
         // Then
         verify(testCaseRepository, times(2)).findById(anyString());
@@ -122,7 +122,7 @@ public class CampaignExecutionEngineTest {
             .thenReturn(executionWithId(secondScenarioExecutionId));
 
         // When
-        CampaignExecutionReport campaignExecutionReport = sut.executeScenarioInCampaign(singletonList("2"), campaign);
+        CampaignExecutionReport campaignExecutionReport = sut.executeScenarioInCampaign(singletonList("2"), campaign, "user");
 
         // Then
         verify(testCaseRepository, times(1)).findById(anyString());
@@ -139,12 +139,12 @@ public class CampaignExecutionEngineTest {
     public void should_stop_execution_of_scenarios_when_requested() throws InterruptedException {
         // Given
         TestCase firstTestCase = createGwtTestCase("1");
-        GwtTestCase secondtTestCase = createGwtTestCase("2");
+        GwtTestCase secondTestCase = createGwtTestCase("2");
 
-        Campaign campaign = createCampaign(firstTestCase, secondtTestCase);
+        Campaign campaign = createCampaign(firstTestCase, secondTestCase);
 
         when(testCaseRepository.findById(firstTestCase.id())).thenReturn(firstTestCase);
-        when(testCaseRepository.findById(secondtTestCase.id())).thenReturn(secondtTestCase);
+        when(testCaseRepository.findById(secondTestCase.id())).thenReturn(secondTestCase);
 
         when(scenarioExecutionEngine.execute(any(ExecutionRequest.class))).then((Answer<ScenarioExecutionReport>) invocationOnMock -> {
             TimeUnit.MILLISECONDS.sleep(1000);
@@ -157,7 +157,10 @@ public class CampaignExecutionEngineTest {
 
         // When
         AtomicReference<CampaignExecutionReport> campaignExecutionReport = new AtomicReference<>();
-        Executors.newFixedThreadPool(1).submit(() -> campaignExecutionReport.set(sut.executeScenarioInCampaign(emptyList(), campaign)));
+
+        Executors.newFixedThreadPool(1).submit(() -> {
+            campaignExecutionReport.set(sut.executeScenarioInCampaign(emptyList(), campaign, "user"));
+        });
 
         TimeUnit.MILLISECONDS.sleep(500);
         sut.stopExecution(0L);
@@ -191,7 +194,7 @@ public class CampaignExecutionEngineTest {
         when(executionHistoryRepository.getExecution(secondtTestCase.id(), 0L)).thenReturn(failedExecutionWithId(20L));
 
         // When
-        sut.executeScenarioInCampaign(emptyList(), campaign);
+        sut.executeScenarioInCampaign(emptyList(), campaign, "user");
 
         // Then
         verify(scenarioExecutionEngine, times(4)).execute(any(ExecutionRequest.class));
@@ -217,7 +220,7 @@ public class CampaignExecutionEngineTest {
         // When
         StopWatch watch = new StopWatch();
         watch.start();
-        sut.executeScenarioInCampaign(emptyList(), campaign);
+        sut.executeScenarioInCampaign(emptyList(), campaign, "user");
         watch.stop();
 
         // Then
@@ -228,7 +231,7 @@ public class CampaignExecutionEngineTest {
     @Test(expected = CampaignNotFoundException.class)
     public void should_throw_when_no_campaign_found_on_execute_by_id() {
         when(campaignRepository.findById(anyLong())).thenReturn(null);
-        sut.executeById(generateId());
+        sut.executeById(generateId(), "");
     }
 
     @Test(expected = CampaignAlreadyRunningException.class)
@@ -238,11 +241,11 @@ public class CampaignExecutionEngineTest {
         Field currentCampaignExecutionsField = ReflectionUtils.findField(CampaignExecutionEngine.class, "currentCampaignExecutions");
         currentCampaignExecutionsField.setAccessible(true);
         Map<Long, CampaignExecutionReport> field = (Map<Long, CampaignExecutionReport>) ReflectionUtils.getField(currentCampaignExecutionsField, sut);
-        CampaignExecutionReport mockReport = new CampaignExecutionReport(1L, "", false, "", null, null);
+        CampaignExecutionReport mockReport = new CampaignExecutionReport(1L, "", false, "", null, null, "");
         field.put(1L, mockReport);
 
         // When
-        sut.executeScenarioInCampaign(null, campaign);
+        sut.executeScenarioInCampaign(null, campaign, "user");
     }
 
     @Test
@@ -254,8 +257,8 @@ public class CampaignExecutionEngineTest {
         when(campaignRepository.findById(campaign.id)).thenReturn(campaign);
 
         // When
-        sut.executeById(campaign.id);
-        sut.executeByName(campaign.title);
+        sut.executeById(campaign.id, "");
+        sut.executeByName(campaign.title, "");
 
         // Then
         verify(campaignRepository).findById(campaign.id);
@@ -272,7 +275,8 @@ public class CampaignExecutionEngineTest {
 
         // When
         String executionEnv = "executionEnv";
-        sut.executeById(campaign.id, executionEnv);
+        String executionUser = "executionUser";
+        sut.executeById(campaign.id, executionEnv, executionUser);
 
         // Then
         verify(campaignRepository).findById(campaign.id);
@@ -287,7 +291,8 @@ public class CampaignExecutionEngineTest {
 
         // When
         String executionEnv = "executionEnv";
-        sut.executeByName(campaign.title, executionEnv);
+        String executionUser = "executionUser";
+        sut.executeByName(campaign.title, executionEnv, executionUser);
 
         // Then
         verify(campaignRepository).findByName(campaign.title);
@@ -300,8 +305,8 @@ public class CampaignExecutionEngineTest {
         Field currentCampaignExecutionsField = ReflectionUtils.findField(CampaignExecutionEngine.class, "currentCampaignExecutions");
         currentCampaignExecutionsField.setAccessible(true);
         Map<Long, CampaignExecutionReport> field = (Map<Long, CampaignExecutionReport>) ReflectionUtils.getField(currentCampaignExecutionsField, sut);
-        CampaignExecutionReport report = new CampaignExecutionReport(1L, 33L, emptyList(), "", false, "", null, null);
-        CampaignExecutionReport report2 = new CampaignExecutionReport(2L, 42L, emptyList(), "", false, "", null, null);
+        CampaignExecutionReport report = new CampaignExecutionReport(1L, 33L, emptyList(), "", false, "", null, null, "");
+        CampaignExecutionReport report2 = new CampaignExecutionReport(2L, 42L, emptyList(), "", false, "", null, null, "");
         field.put(1L, report);
         field.put(2L, report2);
 
@@ -318,7 +323,7 @@ public class CampaignExecutionEngineTest {
 
     @Test(expected = CampaignNotFoundException.class)
     public void should_throw_when_execute_unknown_campaign_execution() {
-        sut.executeById(generateId());
+        sut.executeById(generateId(), "");
     }
 
     @Test
@@ -345,7 +350,7 @@ public class CampaignExecutionEngineTest {
         when(executionHistoryRepository.getExecution(any(), any())).thenReturn(mock(ExecutionHistory.Execution.class));
 
         // When
-        sut.executeById(campaign.id);
+        sut.executeById(campaign.id, "user");
 
         // Then
         ArgumentCaptor<ExecutionRequest> argumentCaptor = ArgumentCaptor.forClass(ExecutionRequest.class);
@@ -376,6 +381,7 @@ public class CampaignExecutionEngineTest {
             .status(ServerReportStatus.SUCCESS)
             .report("")
             .environment("")
+            .user("")
             .build();
     }
 
@@ -388,6 +394,7 @@ public class CampaignExecutionEngineTest {
             .status(ServerReportStatus.FAILURE)
             .report("")
             .environment("")
+            .user("")
             .build();
     }
 

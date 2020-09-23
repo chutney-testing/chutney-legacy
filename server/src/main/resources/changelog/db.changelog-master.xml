@@ -404,6 +404,28 @@
             <column name="ENVIRONMENT"  type="VARCHAR(20)" defaultValue=""></column>
         </addColumn>
     </changeSet>
+    <changeSet id="20200605" author="ICG">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="CAMPAIGN_EXECUTION_HISTORY" columnName="USER_ID"/>
+            </not>
+        </preConditions>
+        <comment>Create column USER_ID in CAMPAIGN_EXECUTION_HISTORY</comment>
+        <addColumn tableName="CAMPAIGN_EXECUTION_HISTORY">
+            <column name="USER_ID"  type="VARCHAR(64)" defaultValue=""></column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="20200605-01" author="ICG">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="SCENARIO_EXECUTION_HISTORY" columnName="USER_ID"/>
+            </not>
+        </preConditions>
+        <comment>Create column USER_ID in SCENARIO_EXECUTION_HISTORY</comment>
+        <addColumn tableName="SCENARIO_EXECUTION_HISTORY">
+            <column name="USER_ID"  type="VARCHAR(64)" defaultValue=""></column>
+        </addColumn>
+    </changeSet>
     <changeSet id="20200615" author="ICG">
         <preConditions onFail="MARK_RAN">
             <not>

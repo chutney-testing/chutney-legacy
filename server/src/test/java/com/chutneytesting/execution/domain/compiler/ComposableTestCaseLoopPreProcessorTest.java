@@ -44,7 +44,7 @@ public class ComposableTestCaseLoopPreProcessorTest {
 
         // When
         ComposableTestCase actual = sut.apply(
-            new ExecutionRequest(composableTestCase, "env")
+            new ExecutionRequest(composableTestCase, "env", "user")
         );
 
         // Then
@@ -73,7 +73,7 @@ public class ComposableTestCaseLoopPreProcessorTest {
 
         // When
         ComposableTestCase actual = sut.apply(
-            new ExecutionRequest(composableTestCase, "env")
+            new ExecutionRequest(composableTestCase, "env", "user")
         );
 
         // Then
@@ -103,7 +103,7 @@ public class ComposableTestCaseLoopPreProcessorTest {
 
         // When
         ComposableTestCase actual = sut.apply(
-            new ExecutionRequest(composableTestCase, "env")
+            new ExecutionRequest(composableTestCase, "env", "user")
         );
 
         // Then
@@ -133,7 +133,7 @@ public class ComposableTestCaseLoopPreProcessorTest {
 
         // When
         ComposableTestCase actual = sut.apply(
-            new ExecutionRequest(composableTestCase, "env")
+            new ExecutionRequest(composableTestCase, "env", "user")
         );
 
         // Then
@@ -163,7 +163,7 @@ public class ComposableTestCaseLoopPreProcessorTest {
 
         // When
         ComposableTestCase actual = sut.apply(
-            new ExecutionRequest(composableTestCase, "env")
+            new ExecutionRequest(composableTestCase, "env", "user")
         );
 
         // Then
@@ -193,7 +193,7 @@ public class ComposableTestCaseLoopPreProcessorTest {
 
         // When
         ComposableTestCase actual = sut.apply(
-            new ExecutionRequest(composableTestCase, "env")
+            new ExecutionRequest(composableTestCase, "env", "user")
         );
 
         // Then
@@ -224,7 +224,7 @@ public class ComposableTestCaseLoopPreProcessorTest {
 
         // When
         ComposableTestCase actual = sut.apply(
-            new ExecutionRequest(composableTestCase, "env")
+            new ExecutionRequest(composableTestCase, "env", "user")
         );
 
         // Then
@@ -255,7 +255,7 @@ public class ComposableTestCaseLoopPreProcessorTest {
 
         // When
         ComposableTestCase actual = sut.apply(
-            new ExecutionRequest(composableTestCase, "env")
+            new ExecutionRequest(composableTestCase, "env", "user")
         );
 
         // Then
@@ -292,7 +292,7 @@ public class ComposableTestCaseLoopPreProcessorTest {
 
         // When
         ComposableTestCase actual = sut.apply(
-            new ExecutionRequest(composableTestCase, "env")
+            new ExecutionRequest(composableTestCase, "env", "user")
         );
 
         // Then
@@ -327,7 +327,7 @@ public class ComposableTestCaseLoopPreProcessorTest {
 
         // When
         ComposableTestCase actual = sut.apply(
-            new ExecutionRequest(composableTestCase, "env")
+            new ExecutionRequest(composableTestCase, "env", "user")
         );
 
         // Then
@@ -358,7 +358,7 @@ public class ComposableTestCaseLoopPreProcessorTest {
 
         // When
         ComposableTestCase actual = sut.apply(
-            new ExecutionRequest(composableTestCase, "env")
+            new ExecutionRequest(composableTestCase, "env", "user")
         );
 
         // Then

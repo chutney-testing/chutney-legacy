@@ -1,4 +1,4 @@
-package com.chutneytesting.security.api;
+package com.chutneytesting.security.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Collection;
