@@ -88,7 +88,7 @@ public class FileSystemBackupRepository implements BackupRepository {
         }
 
         if (backup.agentsNetwork) {
-            backup(currentNetworkDescription, backupPath.resolve(AGENTS_BACKUP_NAME), "agents netxork");
+            backup(currentNetworkDescription, backupPath.resolve(AGENTS_BACKUP_NAME), "agents network");
         }
 
         if (backup.globalVars) {

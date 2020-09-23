@@ -1,9 +1,8 @@
 package com.chutneytesting.engine.domain.execution.strategies;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
+import com.chutneytesting.ExecutionSpringConfiguration;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.TestTaskTemplateLoader;
@@ -22,41 +21,34 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
-import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class DataSetIterationsStrategyTest {
 
-    private DataSetIterationsStrategy dataSetIterationsStrategy = new DataSetIterationsStrategy();
     private DefaultStepExecutionStrategy defaultStepExecutionStrategy = DefaultStepExecutionStrategy.instance;
-    private SoftAssertStrategy softAssertStrategy = new SoftAssertStrategy();
-    private RetryWithTimeOutStrategy retryWithTimeOutStrategy = new RetryWithTimeOutStrategy();
     private StepDataEvaluator dataEvaluator = new StepDataEvaluator(new SpelFunctions());
     private StepExecutor stepExecutor = new DefaultStepExecutor(new DefaultTaskTemplateRegistry(new TaskTemplateLoaders(Collections.singletonList(new TestTaskTemplateLoader()))));
+    private StepExecutionStrategies strategies = new StepExecutionStrategies(new ExecutionSpringConfiguration().stepExecutionStrategies());
 
     @Test
     public void should_not_run_next_step_after_iteration_fail_within_default_strategy() {
-        Step rootStep =
-            buildStep("root step", "fake-type",
-                buildStep("step 1", "fake-type",
-                    buildStep("step 1.1", "success"),
-                    buildStep("step 1.2", "fail"),
-                    buildStep("step 1.3", "success")),
-                buildStep("step 2", "fake-type", buildStep("step 2.1", "fail"))
-            );
-        StepExecutionStrategies strategies = mock(StepExecutionStrategies.class);
-        when(strategies.buildStrategyFrom(rootStep)).thenReturn(defaultStepExecutionStrategy);
-        when(strategies.buildStrategyFrom(rootStep.subSteps().get(0))).thenReturn(dataSetIterationsStrategy);
-        when(strategies.buildStrategyFrom(rootStep.subSteps().get(1))).thenReturn(defaultStepExecutionStrategy);
-        when(strategies.buildStrategyFrom(rootStep.subSteps().get(0).subSteps().get(0))).thenReturn(defaultStepExecutionStrategy);
-        when(strategies.buildStrategyFrom(rootStep.subSteps().get(0).subSteps().get(1))).thenReturn(defaultStepExecutionStrategy);
-        when(strategies.buildStrategyFrom(rootStep.subSteps().get(0).subSteps().get(2))).thenReturn(defaultStepExecutionStrategy);
 
+        Step rootStep =
+            buildStep("root step", "fake-type", defaultStepExecutionStrategy,
+                buildStep("step 1", "fake-type", new DataSetIterationsStrategy(),
+                    buildStep("step 1.1", "success", defaultStepExecutionStrategy),
+                    buildStep("step 1.2", "fail", defaultStepExecutionStrategy),
+                    buildStep("step 1.3", "success", defaultStepExecutionStrategy)
+                ),
+                buildStep("step 2", "fake-type", defaultStepExecutionStrategy,
+                    buildStep("step 2.1", "fail", defaultStepExecutionStrategy)
+                )
+            );
 
         Status status = defaultStepExecutionStrategy.execute(ScenarioExecution.createScenarioExecution(), rootStep, new ScenarioContextImpl(), strategies);
-        Assertions.assertThat(status).isEqualTo(Status.FAILURE);
+        assertThat(status).isEqualTo(Status.FAILURE);
 
         Map<String, Status> expectedStatusByStepName = new HashMap<>();
         expectedStatusByStepName.put("root step", Status.FAILURE);
@@ -73,65 +65,22 @@ public class DataSetIterationsStrategyTest {
     }
 
     @Test
-    public void should_run_next_step_after_iteration_fail_within_soft_assert_strategy() {
-        Step rootStep =
-            buildStep("root step", "fake-type",
-                buildStep("step 1", "fake-type",
-                    buildStep("step 1.1", "success"),
-                    buildStep("step 1.2", "fail"),
-                    buildStep("step 1.3", "success")),
-                buildStep("step 2", "fake-type", buildStep("step 2.1", "fail"))
-            );
-        StepExecutionStrategies strategies = mock(StepExecutionStrategies.class);
-        when(strategies.buildStrategyFrom(rootStep)).thenReturn(defaultStepExecutionStrategy);
-        when(strategies.buildStrategyFrom(rootStep.subSteps().get(0))).thenReturn(dataSetIterationsStrategy);
-        when(strategies.buildStrategyFrom(rootStep.subSteps().get(1))).thenReturn(defaultStepExecutionStrategy);
-        when(strategies.buildStrategyFrom(rootStep.subSteps().get(0).subSteps().get(0))).thenReturn(softAssertStrategy);
-        when(strategies.buildStrategyFrom(rootStep.subSteps().get(0).subSteps().get(1))).thenReturn(softAssertStrategy);
-        when(strategies.buildStrategyFrom(rootStep.subSteps().get(0).subSteps().get(2))).thenReturn(softAssertStrategy);
-
-
-        Status status = defaultStepExecutionStrategy.execute(ScenarioExecution.createScenarioExecution(), rootStep, new ScenarioContextImpl(), strategies);
-        Assertions.assertThat(status).isEqualTo(Status.FAILURE);
-
-        Map<String, Status> expectedStatusByStepName = new HashMap<>();
-        expectedStatusByStepName.put("root step", Status.FAILURE);
-        expectedStatusByStepName.put("step 1", Status.FAILURE);
-        expectedStatusByStepName.put("step 1.1", Status.SUCCESS);
-        expectedStatusByStepName.put("step 1.2", Status.FAILURE);
-        expectedStatusByStepName.put("step 1.3", Status.SUCCESS);
-        expectedStatusByStepName.put("step 2", Status.FAILURE);
-        expectedStatusByStepName.put("step 2.1", Status.FAILURE);
-
-        SoftAssertions softly = new SoftAssertions();
-        visit(rootStep, subStep -> softly.assertThat(subStep.status()).isEqualTo(expectedStatusByStepName.get(getStepName(subStep))));
-        softly.assertAll();
-    }
-
-    @Test
     public void should_not_run_next_step_after_iteration_fail_within_retry_strategy() {
-        StrategyProperties strategyProperties = properties("50 ms", "5 ms");
-        StepStrategyDefinition strategyDefinition = new StepStrategyDefinition("", strategyProperties);
+        StrategyProperties strategyProperties = properties();
+
         Step rootStep =
-            buildStep("root step", "fake-type",
-                buildStep("step 1", "fake-type",
-                    buildStep("step 1.1", "success", strategyDefinition),
-                    buildStep("step 1.2", "fail", strategyDefinition),
-                    buildStep("step 1.3", "success", strategyDefinition)),
-                buildStep("step 2", "fake-type", buildStep("step 2.1", "fail"))
+            buildStep("root step", "fake-type", defaultStepExecutionStrategy,
+                buildStep("step 1", "fake-type", new DataSetIterationsStrategy(),
+                    buildStep("step 1.1", "success", new RetryWithTimeOutStrategy(), strategyProperties),
+                    buildStep("step 1.2", "fail", new RetryWithTimeOutStrategy(), strategyProperties),
+                    buildStep("step 1.3", "success", new RetryWithTimeOutStrategy(), strategyProperties)),
+                buildStep("step 2", "fake-type", defaultStepExecutionStrategy,
+                    buildStep("step 2.1", "fail", defaultStepExecutionStrategy)
+                )
             );
 
-
-        StepExecutionStrategies strategies = mock(StepExecutionStrategies.class);
-        when(strategies.buildStrategyFrom(rootStep)).thenReturn(defaultStepExecutionStrategy);
-        when(strategies.buildStrategyFrom(rootStep.subSteps().get(0))).thenReturn(dataSetIterationsStrategy);
-        when(strategies.buildStrategyFrom(rootStep.subSteps().get(1))).thenReturn(defaultStepExecutionStrategy);
-        when(strategies.buildStrategyFrom(rootStep.subSteps().get(0).subSteps().get(0))).thenReturn(retryWithTimeOutStrategy);
-        when(strategies.buildStrategyFrom(rootStep.subSteps().get(0).subSteps().get(1))).thenReturn(retryWithTimeOutStrategy);
-        when(strategies.buildStrategyFrom(rootStep.subSteps().get(0).subSteps().get(2))).thenReturn(retryWithTimeOutStrategy);
-
         Status status = defaultStepExecutionStrategy.execute(ScenarioExecution.createScenarioExecution(), rootStep, new ScenarioContextImpl(), strategies);
-        Assertions.assertThat(status).isEqualTo(Status.FAILURE);
+        assertThat(status).isEqualTo(Status.FAILURE);
 
         Map<String, Status> expectedStatusByStepName = new HashMap<>();
         expectedStatusByStepName.put("root step", Status.FAILURE);
@@ -152,22 +101,52 @@ public class DataSetIterationsStrategyTest {
 
     }
 
+    @Test
+    public void should_run_next_step_after_iteration_fail_within_soft_assert_strategy() {
+
+        Step rootStep =
+            buildStep("root step", "fake-type", defaultStepExecutionStrategy,
+                buildStep("step 1", "fake-type", new DataSetIterationsStrategy(),
+                    buildStep("step 1.1", "success", new SoftAssertStrategy()),
+                    buildStep("step 1.2", "fail", new SoftAssertStrategy()),
+                    buildStep("step 1.3", "success", new SoftAssertStrategy())),
+                buildStep("step 2", "fake-type", defaultStepExecutionStrategy,
+                    buildStep("step 2.1", "fail", defaultStepExecutionStrategy)
+                )
+            );
+
+        Status status = defaultStepExecutionStrategy.execute(ScenarioExecution.createScenarioExecution(), rootStep, new ScenarioContextImpl(), strategies);
+        assertThat(status).isEqualTo(Status.FAILURE);
+
+        Map<String, Status> expectedStatusByStepName = new HashMap<>();
+        expectedStatusByStepName.put("root step", Status.FAILURE);
+        expectedStatusByStepName.put("step 1", Status.FAILURE);
+        expectedStatusByStepName.put("step 1.1", Status.SUCCESS);
+        expectedStatusByStepName.put("step 1.2", Status.FAILURE);
+        expectedStatusByStepName.put("step 1.3", Status.SUCCESS);
+        expectedStatusByStepName.put("step 2", Status.FAILURE);
+        expectedStatusByStepName.put("step 2.1", Status.FAILURE);
+
+        SoftAssertions softly = new SoftAssertions();
+        visit(rootStep, subStep -> softly.assertThat(subStep.status()).isEqualTo(expectedStatusByStepName.get(getStepName(subStep))));
+        softly.assertAll();
+    }
 
     private static String getStepName(Step step) {
         StepDefinition stepDefinition = (StepDefinition) ReflectionTestUtils.getField(step, "definition");
         return (String) ReflectionTestUtils.getField(stepDefinition, "name");
     }
 
-    private Step buildStep(String name, String type, StepStrategyDefinition strategy, Step... subSteps) {
-        return new Step(dataEvaluator, buildStepDef(name, type, strategy), Optional.empty(), stepExecutor, Arrays.asList(subSteps));
+    private Step buildStep(String name, String type, StepExecutionStrategy strategy, Step... subSteps) {
+        return new Step(dataEvaluator, buildStepDef(name, type, strategy, new StrategyProperties()), Optional.empty(), stepExecutor, Arrays.asList(subSteps));
     }
 
-    private Step buildStep(String name, String type, Step... subSteps) {
-        return new Step(dataEvaluator, buildStepDef(name, type, null), Optional.empty(), stepExecutor, Arrays.asList(subSteps));
+    private Step buildStep(String name, String type, StepExecutionStrategy strategy, StrategyProperties strategyProperties, Step... subSteps) {
+        return new Step(dataEvaluator, buildStepDef(name, type, strategy, strategyProperties), Optional.empty(), stepExecutor, Arrays.asList(subSteps));
     }
 
-    private StepDefinition buildStepDef(String name, String type, StepStrategyDefinition strategy) {
-        return new StepDefinition(name, null, type, strategy, null, null, null, "");
+    private StepDefinition buildStepDef(String name, String type, StepExecutionStrategy strategy, StrategyProperties strategyProperties) {
+        return new StepDefinition(name, null, type, new StepStrategyDefinition(strategy.getType(), strategyProperties), null, null, null, "");
     }
 
     private static void visit(Step step, Consumer<Step> action) {
@@ -175,11 +154,10 @@ public class DataSetIterationsStrategyTest {
         action.accept(step);
     }
 
-    private StrategyProperties properties(String timeOut, String retryDelay) {
+    private StrategyProperties properties() {
         StrategyProperties strategyProperties = new StrategyProperties();
-        strategyProperties.setProperty("timeOut", timeOut);
-        strategyProperties.setProperty("retryDelay", retryDelay);
-
+        strategyProperties.setProperty("timeOut", "50 ms");
+        strategyProperties.setProperty("retryDelay", "5 ms");
         return strategyProperties;
     }
 

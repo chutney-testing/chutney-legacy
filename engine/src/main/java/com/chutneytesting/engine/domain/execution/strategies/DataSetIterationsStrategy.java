@@ -15,7 +15,6 @@ public final class DataSetIterationsStrategy implements StepExecutionStrategy {
     public static final String TYPE = "dataset-iterations-strategy";
     private static final Logger LOGGER = LoggerFactory.getLogger(DataSetIterationsStrategy.class);
 
-
     @Override
     public String getType() {
         return TYPE;
@@ -43,8 +42,7 @@ public final class DataSetIterationsStrategy implements StepExecutionStrategy {
             } finally {
                 step.endExecution(scenarioExecution);
             }
-            Status childStatus = Status.worst(childrenStatus);
-            return childStatus;
+            return Status.worst(childrenStatus);
         }
 
         return step.execute(scenarioExecution, scenarioContext);
