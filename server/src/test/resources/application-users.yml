@@ -1,6 +1,6 @@
 
 chutney:
-  mem-auth:
+  security:
     users:
       -
         id: user
