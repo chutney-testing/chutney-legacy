@@ -41,7 +41,7 @@ public class RetryWithTimeOutStrategy implements StepExecutionStrategy {
                           ScenarioContext scenarioContext,
                           StepExecutionStrategies strategies) throws IllegalStateException {
 
-        if(!step.strategy().isPresent()) {
+        if (!step.strategy().isPresent()) {
             throw new IllegalArgumentException("Should not have strategy definition empty for retry strategy");
         }
         StepStrategyDefinition strategyDefinition = step.strategy().get();
@@ -62,8 +62,9 @@ public class RetryWithTimeOutStrategy implements StepExecutionStrategy {
         Status st = Status.NOT_EXECUTED;
         int tries = 1;
         do {
-            step.addInformation("Retry strategy definition : [timeOut "+timeOut+"] [delay "+retryDelay+"]");
-            step.addInformation("Try number : "+(tries++));
+            Long tryStartTime = System.currentTimeMillis();
+            step.addInformation("Retry strategy definition : [timeOut " + timeOut + "] [delay " + retryDelay + "]");
+            step.addInformation("Try number : " + (tries++));
 
             st = executeAll(scenarioExecution, step, scenarioContext, strategies);
             if (st == Status.FAILURE) {
@@ -75,7 +76,7 @@ public class RetryWithTimeOutStrategy implements StepExecutionStrategy {
                 } finally {
                     step.stopWatch();
                 }
-                timeLeft -= retryDelayMs;
+                timeLeft -= System.currentTimeMillis() - tryStartTime;
             } else {
                 break;
             }

@@ -7,6 +7,7 @@ import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -77,16 +78,20 @@ public class RetryWithTimeOutStrategyTest {
     }
 
     @Test
-    public void step_fails_retry_until_timeout_execute_20_times() {
-        StrategyProperties strategyProperties = properties("0.1 sec", "5 ms");
+    public void step_fails_retry_until_timeout_exceed() {
+        StrategyProperties strategyProperties = properties("1 sec", "50 ms");
         StepStrategyDefinition strategyDefinition = new StepStrategyDefinition("", strategyProperties);
 
         Step step = mockStep(Status.FAILURE);
         when(step.strategy()).thenReturn(Optional.of(strategyDefinition));
-        strategyUnderTest.execute(createScenarioExecution(), step, null, null);
+        long start = System.currentTimeMillis();
+        ScenarioExecution scenarioExecution = createScenarioExecution();
+        strategyUnderTest.execute(scenarioExecution, step, null, null);
 
-        verify(step, times(20)).execute(any(), any());
-        verify(step, times(19)).resetExecution();
+        long executionDuration = System.currentTimeMillis() - start;
+        assertThat(executionDuration).isBetween(1000L, 2000L);
+        verify(step, atMost(20)).execute(any(), any());
+        verify(step, atMost(19)).resetExecution();
     }
 
     @Test
