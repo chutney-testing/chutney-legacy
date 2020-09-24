@@ -28,6 +28,7 @@ spring:
   profiles:
     active:
       - http-ssl
+      - users
       - mem-auth
       - db-h2
 

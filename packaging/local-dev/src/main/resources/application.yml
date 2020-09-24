@@ -40,7 +40,8 @@ spring:
   profiles:
     active:
       - http-ssl
-      - mem-auth
+      - users
+      - dev-auth
       - db-h2
 
 chutney:

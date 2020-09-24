@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { User, UserSession } from '@model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/internal/operators';
+
 import { environment } from '../../../environments/environment';
-import { map } from 'rxjs/internal/operators';
+import { User, UserSession } from '@model';
 
 @Injectable({
   providedIn: 'root'
@@ -12,15 +13,13 @@ export class LoginService {
 
   public static readonly USER_SESSION_KEY = 'userSession';
 
-  private currentUser: User;
-
   constructor(
     private http: HttpClient
   ) { }
 
   private SESSION_MAX_DURATION_IN_HOURS = 24;
 
-  login(username: string, password: string): Observable<{} | User> {
+  login(username: string, password: string): Observable<User> {
 
     const body = new URLSearchParams();
     body.set('username', username);
@@ -32,13 +31,8 @@ export class LoginService {
 
     return this.http.post<User>(environment.backend + '/api/v1/user/login', body.toString(), options)
       .pipe(
-        map(user => {
-          if (user) {
-            this.currentUser = user;
-            localStorage.setItem(LoginService.USER_SESSION_KEY, JSON.stringify(new UserSession(user, new Date().getTime())));
-          }
-          return user;
-        }));
+        tap(user => this.addUser(user))
+      );
   }
 
   logout() {
@@ -63,6 +57,12 @@ export class LoginService {
 
   private removeUser() {
     localStorage.removeItem(LoginService.USER_SESSION_KEY);
+  }
+
+  private addUser(user: User) {
+    if (user) {
+        localStorage.setItem(LoginService.USER_SESSION_KEY, JSON.stringify(new UserSession(user, new Date().getTime())));
+    }
   }
 }
 

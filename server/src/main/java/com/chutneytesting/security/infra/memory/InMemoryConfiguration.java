@@ -8,11 +8,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-@Profile("mem-auth")
+@Profile("users")
 public class InMemoryConfiguration {
 
     @Bean
-    @ConfigurationProperties("chutney.mem-auth")
+    @ConfigurationProperties("chutney.security")
     public InMemoryUsersProperties users() {
         return new InMemoryUsersProperties();
     }
