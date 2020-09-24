@@ -1,6 +1,5 @@
 package com.chutneytesting;
 
-
 import static com.chutneytesting.tools.Streams.identity;
 
 import com.chutneytesting.engine.api.execution.EmbeddedTestEngine;
@@ -26,11 +25,11 @@ import com.chutneytesting.task.domain.TaskTemplateParserV2;
 import com.chutneytesting.task.domain.TaskTemplateRegistry;
 import com.chutneytesting.task.infra.DefaultTaskTemplateLoader;
 import com.chutneytesting.task.spi.Task;
+import com.chutneytesting.tools.ThrowingFunction;
+import com.chutneytesting.tools.loader.ExtensionLoaders;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import com.chutneytesting.tools.ThrowingFunction;
-import com.chutneytesting.tools.loader.ExtensionLoaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -71,7 +70,7 @@ public class ExecutionSpringConfiguration {
     }
 
     @Bean
-    Set<StepExecutionStrategy> stepExecutionStrategies() {
+    public Set<StepExecutionStrategy> stepExecutionStrategies() {
         return ExtensionLoaders
             .classpathToClass("META-INF/extension/chutney.strategies")
             .load()
