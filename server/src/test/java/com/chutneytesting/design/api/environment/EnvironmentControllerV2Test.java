@@ -2,6 +2,7 @@ package com.chutneytesting.design.api.environment;
 
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toCollection;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -29,6 +30,7 @@ import com.chutneytesting.design.domain.environment.InvalidEnvironmentNameExcept
 import com.chutneytesting.design.domain.environment.Target;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -57,31 +59,41 @@ public class EnvironmentControllerV2Test {
     private final EnvironmentService environmentService = new EnvironmentService(environmentRepository);
     private final EnvironmentControllerV2 environmentControllerV2 = new EnvironmentControllerV2(environmentService);
     private final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(environmentControllerV2)
-            .setControllerAdvice(new RestExceptionHandler()).build();
+        .setControllerAdvice(new RestExceptionHandler())
+        .build();
 
     @Test
-    @Parameters({ "", "env1, env2", "c, b, a" })
+    @Parameters({
+        "",
+        "env1, env2",
+        "c, b, a"
+    })
     public void listEnvironments_returns_all_available(String[] environmentNames) throws Exception {
         // Given existing env and targets
         stream(environmentNames).forEach(this::addAvailableEnvironment);
 
-        ResultActions resultActions = mockMvc.perform(get(basePath)).andDo(MockMvcResultHandlers.log())
-                .andExpect(status().isOk()).andExpect(jsonPath("$.length()", equalTo(environmentNames.length)));
+        ResultActions resultActions = mockMvc.perform(get(basePath))
+            .andDo(MockMvcResultHandlers.log())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()", equalTo(environmentNames.length)));
 
-        List<String> expectedEnvNames = stream(environmentNames).sorted(Comparator.naturalOrder())
-                .collect(Collectors.toList());
+        List<String> expectedEnvNames = stream(environmentNames)
+            .sorted(Comparator.naturalOrder())
+            .collect(Collectors.toList());
 
         for (int i = 0; i < expectedEnvNames.size(); i++) {
-            resultActions.andExpect(
-                    jsonPath("$.[" + i + "].description", equalTo(expectedEnvNames.get(i) + " description")));
+            resultActions.andExpect(jsonPath("$.[" + i + "].description", equalTo(expectedEnvNames.get(i) + " description")));
         }
     }
 
     @Test
     public void createEnvironment_adds_it_to_repository() throws Exception {
-        mockMvc.perform(post(basePath).content("{\"name\": \"env test\", \"description\": \"test description\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)).andDo(MockMvcResultHandlers.log())
-                .andExpect(status().isOk());
+        mockMvc.perform(
+            post(basePath)
+                .content("{\"name\": \"env test\", \"description\": \"test description\"}")
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andDo(MockMvcResultHandlers.log())
+            .andExpect(status().isOk());
 
         ArgumentCaptor<Environment> environmentArgumentCaptor = ArgumentCaptor.forClass(Environment.class);
         verify(environmentRepository, times(1)).save(environmentArgumentCaptor.capture());
@@ -95,23 +107,31 @@ public class EnvironmentControllerV2Test {
     @Test
     public void createEnvironment_returns_400_when_name_is_invalid() throws Exception {
         doThrow(new InvalidEnvironmentNameException("message")).when(environmentRepository).save(any());
-        mockMvc.perform(post(basePath).content("{\"name\": \"env test\", \"description\": \"test description\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)).andDo(MockMvcResultHandlers.log())
-                .andExpect(status().isBadRequest());
+        mockMvc.perform(
+            post(basePath)
+                .content("{\"name\": \"env test\", \"description\": \"test description\"}")
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andDo(MockMvcResultHandlers.log())
+            .andExpect(status().isBadRequest());
     }
 
     @Test
     public void createEnvironment_returns_409_when_already_existing() throws Exception {
         addAvailableEnvironment("env test");
 
-        mockMvc.perform(post(basePath).content("{\"name\": \"env test\", \"description\": \"test description\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)).andDo(MockMvcResultHandlers.log())
-                .andExpect(status().isConflict());
+        mockMvc.perform(
+            post(basePath)
+                .content("{\"name\": \"env test\", \"description\": \"test description\"}")
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andDo(MockMvcResultHandlers.log())
+            .andExpect(status().isConflict());
     }
 
     @Test
     public void deleteEnvironment_deletes_it_from_repo() throws Exception {
-        mockMvc.perform(delete(basePath + "/env test")).andDo(MockMvcResultHandlers.log()).andExpect(status().isOk());
+        mockMvc.perform(delete(basePath + "/env test"))
+            .andDo(MockMvcResultHandlers.log())
+            .andExpect(status().isOk());
 
         verify(environmentRepository, times(1)).delete(eq("env test"));
     }
@@ -120,8 +140,9 @@ public class EnvironmentControllerV2Test {
     public void deleteEnvironment_returns_404_when_not_found() throws Exception {
         doThrow(new EnvironmentNotFoundException("message")).when(environmentRepository).delete(any());
 
-        mockMvc.perform(delete(basePath + "/env test")).andDo(MockMvcResultHandlers.log())
-                .andExpect(status().isNotFound());
+        mockMvc.perform(delete(basePath + "/env test"))
+            .andDo(MockMvcResultHandlers.log())
+            .andExpect(status().isNotFound());
     }
 
     @Test
@@ -129,9 +150,11 @@ public class EnvironmentControllerV2Test {
         when(environmentRepository.findByName(any())).thenThrow(new EnvironmentNotFoundException("message"));
 
         mockMvc.perform(
-                put(basePath + "/env test").content("{\"name\": \"env test\", \"description\": \"test description\"}")
-                        .contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andDo(MockMvcResultHandlers.log()).andExpect(status().isNotFound());
+            put(basePath + "/env test")
+                .content("{\"name\": \"env test\", \"description\": \"test description\"}")
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andDo(MockMvcResultHandlers.log())
+            .andExpect(status().isNotFound());
     }
 
     @Test
@@ -139,9 +162,11 @@ public class EnvironmentControllerV2Test {
         addAvailableEnvironment("env test");
 
         mockMvc.perform(
-                put(basePath + "/env test").content("{\"name\": \"env test\", \"description\": \"test description\"}")
-                        .contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andDo(MockMvcResultHandlers.log()).andExpect(status().isOk());
+            put(basePath + "/env test")
+                .content("{\"name\": \"env test\", \"description\": \"test description\"}")
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andDo(MockMvcResultHandlers.log())
+            .andExpect(status().isOk());
 
         ArgumentCaptor<Environment> environmentArgumentCaptor = ArgumentCaptor.forClass(Environment.class);
         verify(environmentRepository, times(1)).save(environmentArgumentCaptor.capture());
@@ -157,10 +182,12 @@ public class EnvironmentControllerV2Test {
     public void updateEnvironment_with_different_a_name_deletes_previous_one() throws Exception {
         addAvailableEnvironment("env test");
 
-        mockMvc.perform(put(basePath + "/env test")
+        mockMvc.perform(
+            put(basePath + "/env test")
                 .content("{\"description\": \"test2 description\", \"name\": \"env test 2\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)).andDo(MockMvcResultHandlers.log())
-                .andExpect(status().isOk());
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andDo(MockMvcResultHandlers.log())
+            .andExpect(status().isOk());
 
         ArgumentCaptor<Environment> environmentArgumentCaptor = ArgumentCaptor.forClass(Environment.class);
         verify(environmentRepository, times(1)).save(environmentArgumentCaptor.capture());
@@ -173,17 +200,21 @@ public class EnvironmentControllerV2Test {
     }
 
     @Test
-    @Parameters({ "", "target1, target2" })
+    @Parameters({
+        "",
+        "target1, target2"
+    })
     public void listTargets_returns_all_available(String[] targetNames) throws Exception {
         addAvailableEnvironment("env test", targetNames);
 
         ResultActions resultActions = mockMvc.perform(get(basePath + "/env test/target"))
-                .andDo(MockMvcResultHandlers.log()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", equalTo(targetNames.length)));
+            .andDo(MockMvcResultHandlers.log())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()", equalTo(targetNames.length)));
 
         for (int i = 0; i < targetNames.length; i++) {
             resultActions.andExpect(jsonPath("$.[" + i + "].name", equalTo(targetNames[i])))
-                    .andExpect(jsonPath("$.[" + i + "].url", equalTo("http://" + targetNames[i] + ":43")));
+                .andExpect(jsonPath("$.[" + i + "].url", equalTo("http://" + targetNames[i] + ":43")));
         }
     }
 
@@ -193,11 +224,13 @@ public class EnvironmentControllerV2Test {
         addAvailableEnvironment("env1", targetsNames.get(0), targetsNames.get(2));
         addAvailableEnvironment("env2", targetsNames.get(0), targetsNames.get(1));
 
-        ResultActions resultActions = mockMvc.perform(get(basePath + "/target")).andDo(MockMvcResultHandlers.log())
-                .andExpect(status().isOk()).andExpect(jsonPath("$", hasSize(3)));
+        ResultActions resultActions = mockMvc.perform(get(basePath + "/target"))
+            .andDo(MockMvcResultHandlers.log())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(3)));
 
         for (String targetName : targetsNames) {
-            resultActions.andExpect(jsonPath("$[?(@.name=='" + targetName + "')]", hasSize(1)));
+            resultActions.andExpect(jsonPath("$[?(@.name=='"+targetName+"')]", hasSize(1)));
         }
     }
 
@@ -206,9 +239,11 @@ public class EnvironmentControllerV2Test {
         addAvailableEnvironment("env test", "server 1");
 
         mockMvc.perform(
-                post(basePath + "/env test/target").content("{\"name\": \"server 2\", \"url\": \"ssh://somehost:42\"}")
-                        .contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andDo(MockMvcResultHandlers.log()).andExpect(status().isOk());
+            post(basePath + "/env test/target")
+                .content("{\"name\": \"server 2\", \"url\": \"ssh://somehost:42\"}")
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andDo(MockMvcResultHandlers.log())
+            .andExpect(status().isOk());
 
         ArgumentCaptor<Environment> environmentArgumentCaptor = ArgumentCaptor.forClass(Environment.class);
         verify(environmentRepository, times(1)).save(environmentArgumentCaptor.capture());
@@ -225,48 +260,57 @@ public class EnvironmentControllerV2Test {
         addAvailableEnvironment("env test", "server 1");
 
         mockMvc.perform(
-                post(basePath + "/env test/target").content("{\"name\": \"server 1\", \"url\": \"ssh://somehost:42\"}")
-                        .contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andDo(MockMvcResultHandlers.log()).andExpect(status().isConflict());
+            post(basePath + "/env test/target")
+                .content("{\"name\": \"server 1\", \"url\": \"ssh://somehost:42\"}")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+        )
+            .andDo(MockMvcResultHandlers.log())
+            .andExpect(status().isConflict());
     }
 
     @Test
     public void deleteTarget_deletes_it_from_repo() throws Exception {
         addAvailableEnvironment("env test", "server 1");
 
-        mockMvc.perform(delete(basePath + "/env test/target/server 1")).andDo(MockMvcResultHandlers.log())
-                .andExpect(status().isOk());
+        mockMvc.perform(delete(basePath + "/env test/target/server 1"))
+            .andDo(MockMvcResultHandlers.log())
+            .andExpect(status().isOk());
 
-        verify(environmentRepository, times(1))
-                .save(eq(Environment.builder().withName("env test").withDescription("env test description").build()));
+        verify(environmentRepository, times(1)).save(eq(Environment.builder().withName("env test").withDescription("env test description").build()));
     }
 
     @Test
     public void deleteTarget_returns_404_when_not_found() throws Exception {
         addAvailableEnvironment("env test", "server 1");
 
-        mockMvc.perform(delete(basePath + "/env test/target/server 2")).andDo(MockMvcResultHandlers.log())
-                .andExpect(status().isNotFound());
+        mockMvc.perform(delete(basePath + "/env test/target/server 2"))
+            .andDo(MockMvcResultHandlers.log())
+            .andExpect(status().isNotFound());
     }
 
     @Test
     public void updateTarget_returns_404_when_not_found() throws Exception {
         addAvailableEnvironment("env test", "server 1");
 
-        mockMvc.perform(put(basePath + "/env test/target/server 2")
+        mockMvc.perform(
+            put(basePath + "/env test/target/server 2")
                 .content("{\"name\": \"server 2\", \"url\": \"http://somehost2:42\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)).andDo(MockMvcResultHandlers.log())
-                .andExpect(status().isNotFound());
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andDo(MockMvcResultHandlers.log())
+            .andExpect(status().isNotFound());
     }
 
     @Test
     public void updateTarget_saves_it() throws Exception {
         addAvailableEnvironment("env test", "server 1");
 
-        mockMvc.perform(put(basePath + "/env test/target/server 1")
+        mockMvc.perform(
+            put(basePath + "/env test/target/server 1")
                 .content("{\"name\": \"server 1\", \"url\": \"http://somehost2:42\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)).andDo(MockMvcResultHandlers.log())
-                .andExpect(status().isOk());
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+        )
+            .andDo(MockMvcResultHandlers.log())
+            .andExpect(status().isOk());
 
         ArgumentCaptor<Environment> environmentArgumentCaptor = ArgumentCaptor.forClass(Environment.class);
         verify(environmentRepository, times(1)).save(environmentArgumentCaptor.capture());
@@ -281,10 +325,12 @@ public class EnvironmentControllerV2Test {
     public void updateTarget_with_different_a_name_deletes_previous_one() throws Exception {
         addAvailableEnvironment("env test", "server 1");
 
-        mockMvc.perform(put(basePath + "/env test/target/server 1")
+        mockMvc.perform(
+            put(basePath + "/env test/target/server 1")
                 .content("{\"name\": \"server 2\", \"url\": \"http://somehost2:42\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)).andDo(MockMvcResultHandlers.log())
-                .andExpect(status().isOk());
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andDo(MockMvcResultHandlers.log())
+            .andExpect(status().isOk());
 
         ArgumentCaptor<Environment> environmentArgumentCaptor = ArgumentCaptor.forClass(Environment.class);
         verify(environmentRepository, times(1)).save(environmentArgumentCaptor.capture());
@@ -300,18 +346,21 @@ public class EnvironmentControllerV2Test {
         String[] targetNames = { "a", "b" };
         String envName = "envTest";
         addAvailableEnvironment(envName, targetNames);
-        ResultActions result = mockMvc.perform(get(basePath + "/" + envName)).andDo(MockMvcResultHandlers.log())
-                .andExpect(status().isOk()).andExpect(jsonPath("$.name", equalTo(envName)))
-                .andExpect(jsonPath("$.description", equalTo(envName + " description")))
-                .andExpect(jsonPath("$.targets.length()", equalTo(targetNames.length)));
+        ResultActions result = mockMvc.perform(
+            get(basePath + "/" + envName))
+            .andDo(MockMvcResultHandlers.log())
+            .andExpect(status().isOk()).andExpect(jsonPath("$.name", equalTo(envName)))
+            .andExpect(jsonPath("$.description", equalTo(envName + " description")))
+            .andExpect(jsonPath("$.targets.length()", equalTo(targetNames.length)));
 
         for (String targetName : targetNames) {
-            result.andExpect(
-                    jsonPath("$.targets[?(@.name == '" + targetName + "')].length()", equalTo(Arrays.asList(8))))
-                    .andExpect(jsonPath("$.targets[?(@.name == '" + targetName + "')].properties.length()",
-                            equalTo(Arrays.asList(0))))
-                    .andExpect(jsonPath("$.targets[?(@.name == '" + targetName + "')].security.credential.username",
-                            equalTo(emptyList())));
+            result
+                .andExpect(jsonPath("$.targets[?(@.name == '" + targetName + "')].length()",
+                    equalTo(singletonList(8))))
+                .andExpect(jsonPath("$.targets[?(@.name == '" + targetName + "')].properties.length()",
+                    equalTo(singletonList(0))))
+                .andExpect(jsonPath("$.targets[?(@.name == '" + targetName + "')].security.credential.username",
+                    equalTo(emptyList())));
         }
     }
 
@@ -320,22 +369,33 @@ public class EnvironmentControllerV2Test {
     private void addAvailableEnvironment(String envName, String... targetNames) {
 
         Set<Target> targets = stream(targetNames)
-                .map(targetName -> Target.builder().withId(Target.TargetId.of(targetName, envName))
-                        .withUrl("http://" + targetName.replace(' ', '_') + ":43").withAgents(emptyList()).build())
-                .collect(toCollection(LinkedHashSet::new));
+            .map(targetName -> Target.builder()
+                .withId(Target.TargetId.of(targetName, envName))
+                .withUrl("http://" + targetName.replace(' ', '_') + ":43")
+                .withAgents(emptyList())
+                .build())
+            .collect(toCollection(LinkedHashSet::new));
 
-        registeredEnvironments.put(envName, Environment.builder().withName(envName)
-                .withDescription(envName + " description").withTargets(targets).build());
+        registeredEnvironments.put(
+            envName,
+            Environment.builder()
+                .withName(envName)
+                .withDescription(envName + " description")
+                .withTargets(targets)
+                .build()
+        );
 
-        when(environmentRepository.findByName(eq(envName))).thenAnswer(iom -> {
-            String envNameParam = iom.getArgument(0);
-            if (!registeredEnvironments.containsKey(envNameParam)) {
-                throw new EnvironmentNotFoundException("test env not found");
-            }
-            return registeredEnvironments.get(envNameParam);
-        });
+        when(environmentRepository.findByName(eq(envName)))
+            .thenAnswer(iom -> {
+                    String envNameParam = iom.getArgument(0);
+                    if (!registeredEnvironments.containsKey(envNameParam)) {
+                        throw new EnvironmentNotFoundException("test env not found");
+                    }
+                    return registeredEnvironments.get(envNameParam);
+                }
+            );
 
-        when(environmentRepository.listNames()).thenReturn(new ArrayList<>(registeredEnvironments.keySet()));
+        when(environmentRepository.listNames())
+            .thenReturn(new ArrayList<>(registeredEnvironments.keySet()));
     }
-
 }

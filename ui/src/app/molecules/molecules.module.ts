@@ -25,55 +25,55 @@ import { EditableTextAreaComponent } from './forms/editable-text-area/editable-t
 import { EditableBadgeComponent } from './forms/editable-badge/editable-badge.component';
 import { AsciiDoctorComponent } from './asciidoctor/asciidoctor.component';
 import { ToastInfoComponent } from './toast/toast-info/toast-info';
-import {ImportFileComponent} from './forms/import-file/import-file.component';
-import {ImportButtonComponent} from './forms/import-button/import-button.component';
+import { ImportFileComponent } from './forms/import-file/import-file.component';
+import { ImportButtonComponent } from './forms/import-button/import-button.component';
 
 
 @NgModule({
     imports: [
+        AtomsModule,
+        ClickOutsideModule,
         CommonModule,
         FormsModule,
-        TranslateModule,
         MomentModule,
-        AtomsModule,
-        SharedModule,
-        RouterModule,
         NgxPaginationModule,
-        ClickOutsideModule
+        RouterModule,
+        SharedModule,
+        TranslateModule,
     ],
     exports: [
-        DeleteConfirmDialogComponent,
-        CollapsiblePanelComponent,
-        ErrorPanelComponent,
-        PropertyTablePanelComponent,
-        TablePanelComponent,
-        EditableLabelComponent,
-        InputLineComponent,
-        ImportFileComponent,
-        SearchFieldComponent,
-        MenuItemComponent,
-        EditableTextAreaComponent,
-        EditableBadgeComponent,
         AsciiDoctorComponent,
+        CollapsiblePanelComponent,
+        DeleteConfirmDialogComponent,
+        EditableBadgeComponent,
+        EditableLabelComponent,
+        EditableTextAreaComponent,
+        ErrorPanelComponent,
+        ImportButtonComponent,
+        ImportFileComponent,
+        InputLineComponent,
+        MenuItemComponent,
+        PropertyTablePanelComponent,
+        SearchFieldComponent,
+        TablePanelComponent,
         ToastInfoComponent,
-        ImportButtonComponent
     ],
     declarations: [
-        DeleteConfirmDialogComponent,
-        CollapsiblePanelComponent,
-        ErrorPanelComponent,
-        PropertyTablePanelComponent,
-        TablePanelComponent,
-        EditableLabelComponent,
-        InputLineComponent,
-        ImportFileComponent,
-        SearchFieldComponent,
-        MenuItemComponent,
-        EditableTextAreaComponent,
-        EditableBadgeComponent,
         AsciiDoctorComponent,
+        CollapsiblePanelComponent,
+        DeleteConfirmDialogComponent,
+        EditableBadgeComponent,
+        EditableLabelComponent,
+        EditableTextAreaComponent,
+        ErrorPanelComponent,
+        ImportButtonComponent,
+        ImportFileComponent,
+        InputLineComponent,
+        MenuItemComponent,
+        PropertyTablePanelComponent,
+        SearchFieldComponent,
+        TablePanelComponent,
         ToastInfoComponent,
-        ImportButtonComponent
     ],
     providers: [
         ValidationService,

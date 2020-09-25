@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Target, EnvironmentMetadata } from '@model';
+import { EnvironmentMetadata, Target } from '@model';
 import { environment as server } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
@@ -12,17 +12,17 @@ export class EnvironmentAdminService {
 
     private baseUrl = '/api/v2/environment';
 
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient) {}
 
     listEnvironments(): Observable<Array<EnvironmentMetadata>> {
         return this.http.get<Array<EnvironmentMetadata>>(server.backend + this.baseUrl).pipe(map((res: Array<EnvironmentMetadata>) => {
-            return res.sort((t1, t2) =>  t1.name.toUpperCase() > t2.name.toUpperCase() ? 1 : 0);
+            return res.sort((t1, t2) => t1.name.toUpperCase() > t2.name.toUpperCase() ? 1 : 0);
         }));
     }
 
-	exportEnvironment(environmentName: string): Observable<Array<Target>> {
-		return this.http.get<Array<Target>>(server.backend + this.baseUrl + '/' + environmentName);
-	}
+    exportEnvironment(environmentName: string): Observable<Array<Target>> {
+        return this.http.get<Array<Target>>(server.backend + this.baseUrl + '/' + environmentName);
+    }
 
     createEnvironment(environment: EnvironmentMetadata): Observable<Object> {
         return this.http.post(server.backend + this.baseUrl, environment);

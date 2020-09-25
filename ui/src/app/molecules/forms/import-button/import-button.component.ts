@@ -1,4 +1,4 @@
-import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
     selector: 'chutney-import-button',
@@ -6,34 +6,34 @@ import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
     styleUrls: ['./import-button.component.scss']
 })
 export class ImportButtonComponent implements OnInit {
-    
+
     @Input() acceptedTypes = '(text/plain)|(application/json)';
     @Output() submitEvent = new EventEmitter();
 
     selectedFile: File;
 
     constructor() {}
-    
+
     ngOnInit() {
         document.getElementById('input-file-browser')
-                .addEventListener('change', (e) => this.handleFileSelection(e), false);
+            .addEventListener('change', (e) => this.handleFileSelection(e), false);
     }
-    
+
     private handleFileSelection(e) {
         e.stopPropagation();
         e.preventDefault();
-        
+
         let files = [];
         if (e.dataTransfer !== undefined) {
             files = Array.from(e.dataTransfer.files);
         } else if (e.target !== undefined) {
             files = Array.from(e.target.files);
         }
-        
-         this.selectFile(files);
-         this.import();
+
+        this.selectFile(files);
+        this.import();
     }
-    
+
     private selectFile(files: Array<File>) {
         this.selectedFile = files[0];
     }
@@ -41,5 +41,5 @@ export class ImportButtonComponent implements OnInit {
     import() {
         this.submitEvent.emit(this.selectedFile);
     }
-  
+
 }
