@@ -2,6 +2,7 @@ package com.chutneytesting.design.api.environment;
 
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toCollection;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -28,6 +29,8 @@ import com.chutneytesting.design.domain.environment.EnvironmentService;
 import com.chutneytesting.design.domain.environment.InvalidEnvironmentNameException;
 import com.chutneytesting.design.domain.environment.Target;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -88,8 +91,7 @@ public class EnvironmentControllerV2Test {
         mockMvc.perform(
             post(basePath)
                 .content("{\"name\": \"env test\", \"description\": \"test description\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-        )
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isOk());
 
@@ -108,8 +110,7 @@ public class EnvironmentControllerV2Test {
         mockMvc.perform(
             post(basePath)
                 .content("{\"name\": \"env test\", \"description\": \"test description\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-        )
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isBadRequest());
     }
@@ -121,8 +122,7 @@ public class EnvironmentControllerV2Test {
         mockMvc.perform(
             post(basePath)
                 .content("{\"name\": \"env test\", \"description\": \"test description\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-        )
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isConflict());
     }
@@ -152,8 +152,7 @@ public class EnvironmentControllerV2Test {
         mockMvc.perform(
             put(basePath + "/env test")
                 .content("{\"name\": \"env test\", \"description\": \"test description\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-        )
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isNotFound());
     }
@@ -165,8 +164,7 @@ public class EnvironmentControllerV2Test {
         mockMvc.perform(
             put(basePath + "/env test")
                 .content("{\"name\": \"env test\", \"description\": \"test description\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-        )
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isOk());
 
@@ -187,8 +185,7 @@ public class EnvironmentControllerV2Test {
         mockMvc.perform(
             put(basePath + "/env test")
                 .content("{\"description\": \"test2 description\", \"name\": \"env test 2\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-        )
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isOk());
 
@@ -244,8 +241,7 @@ public class EnvironmentControllerV2Test {
         mockMvc.perform(
             post(basePath + "/env test/target")
                 .content("{\"name\": \"server 2\", \"url\": \"ssh://somehost:42\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-        )
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isOk());
 
@@ -299,8 +295,7 @@ public class EnvironmentControllerV2Test {
         mockMvc.perform(
             put(basePath + "/env test/target/server 2")
                 .content("{\"name\": \"server 2\", \"url\": \"http://somehost2:42\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-        )
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isNotFound());
     }
@@ -333,8 +328,7 @@ public class EnvironmentControllerV2Test {
         mockMvc.perform(
             put(basePath + "/env test/target/server 1")
                 .content("{\"name\": \"server 2\", \"url\": \"http://somehost2:42\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-        )
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isOk());
 
@@ -345,6 +339,29 @@ public class EnvironmentControllerV2Test {
         assertThat(savedEnvironment).isNotNull();
         assertThat(savedEnvironment.targets).hasSize(1);
         assertThat(savedEnvironment.targets.iterator().next().name).isEqualTo("server 2");
+    }
+
+    @Test
+    public void should_get_environment_when_it_exists() throws Exception {
+        String[] targetNames = { "a", "b" };
+        String envName = "envTest";
+        addAvailableEnvironment(envName, targetNames);
+        ResultActions result = mockMvc.perform(
+            get(basePath + "/" + envName))
+            .andDo(MockMvcResultHandlers.log())
+            .andExpect(status().isOk()).andExpect(jsonPath("$.name", equalTo(envName)))
+            .andExpect(jsonPath("$.description", equalTo(envName + " description")))
+            .andExpect(jsonPath("$.targets.length()", equalTo(targetNames.length)));
+
+        for (String targetName : targetNames) {
+            result
+                .andExpect(jsonPath("$.targets[?(@.name == '" + targetName + "')].length()",
+                    equalTo(singletonList(8))))
+                .andExpect(jsonPath("$.targets[?(@.name == '" + targetName + "')].properties.length()",
+                    equalTo(singletonList(0))))
+                .andExpect(jsonPath("$.targets[?(@.name == '" + targetName + "')].security.credential.username",
+                    equalTo(emptyList())));
+        }
     }
 
     Map<String, Environment> registeredEnvironments = new LinkedHashMap<>();

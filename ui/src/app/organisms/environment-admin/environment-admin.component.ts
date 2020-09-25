@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Target, EnvironmentMetadata } from '@model';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Observable, Subscriber } from 'rxjs';
+import { FileSaverService } from 'ngx-filesaver';
+
+import { EnvironmentMetadata, Target } from '@model';
 import { ValidationService } from '../../molecules/validation/validation.service';
 import { EnvironmentAdminService } from '@core/services';
-import { FileSaverService } from 'ngx-filesaver';
-import {Observable, Subscriber} from 'rxjs';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
     selector: 'chutney-environment-admin',
@@ -153,11 +154,7 @@ export class EnvironmentAdminComponent implements OnInit {
     }
 
     private findDuplicate(target: Target): Target[] {
-        return this.targets.filter(t => this.isEqual(t, target));
-    }
-
-    private isEqual(first: Target, second: Target): boolean {
-        return Object.is(first.name, second.name);
+        return this.targets.filter(t => Object.is(t.name, target.name));
     }
 
     cancel() {
@@ -205,6 +202,84 @@ export class EnvironmentAdminComponent implements OnInit {
             );
         }
     }
+
+    // Import/Export Env------------------------------------------------
+
+	exportEnvironment() {
+        const fileName = `env.${this.selectedEnvironment.name}.chutney.json`;
+        this.environmentAdminService.exportEnvironment(this.selectedEnvironment.name).subscribe(
+            res => { this.fileSaverService.saveText(JSON.stringify(res), fileName); },
+            error => { console.log(error); this.errorMessage = error.error; }
+        );
+    }
+
+    private isValidEnv(env: EnvironmentMetadata): boolean {
+        return this.validationService.isNotEmpty(env.name);
+    }
+
+    private nameAlreadyExistFor(env: EnvironmentMetadata) {
+        const duplicates = this.findDuplicateEnv(env);
+        return duplicates.length !== 0;
+    }
+
+    private findDuplicateEnv(env: EnvironmentMetadata): EnvironmentMetadata[] {
+        return this.environments.filter(e => Object.is(e.name, env.name));
+    }
+
+    importEnvironment(file: File) {
+        this.toEnvironment(file).subscribe(
+            (env) => {
+                if (!this.isValidEnv(env)) {
+                    this.errorMessage +=
+                        '<br>Error found in ' + file.name + ', environment name cannot be empty and url must match xxx://xxxxx:12345';
+                } else {
+                    try {
+                        if (this.nameAlreadyExistFor(env)) {
+                            if (confirm('Environment ['  + env.name + '] exists already.\n\n Do you want to update it ?')) {
+                                this.environmentAdminService.updateEnvironment(env.name, env).subscribe(
+                                    (res) => { this.errorMessage = env.name + ' has been updated'; },
+                                    (error) => { this.errorMessage = error.error;}
+                                );
+                            }
+                        } else {
+                            this.environmentAdminService.createEnvironment(env).subscribe(
+                                (res) => {
+                                    this.environments.push(env);
+                                    this.environments.sort((t1, t2) =>  t1.name.toUpperCase() > t2.name.toUpperCase() ? 1 : 0);
+                                    this.errorMessage = env.name + ' has been created';
+                                },
+                                (error) => { this.errorMessage = error.error;}
+                            );
+                        }
+                    } catch ( error ) {
+                        console.error( 'File upload failed.' );
+                        console.error( error );
+                        this.errorMessage += '<br>' + error.toString();
+                    }
+                }
+            }
+        );
+    }
+
+    private toEnvironment(file: File): Observable<EnvironmentMetadata> {
+        return Observable.create(
+            (sub: Subscriber<string>): void => {
+                const r = new FileReader();
+                r.onload = (ev: Event): void => {
+                    let environment;
+                    try {
+                        environment = JSON.parse((ev.target as any).result);
+                    } catch (ex) {
+                        this.errorMessage += '<br>' + 'Error found in: ' + file.name + ' -> ' + ex.toString();
+                    }
+                    sub.next(environment);
+                };
+                r.readAsText(file);
+            }
+        );
+    }
+
+    // Import/Export Env------------------------------------------------
 
     reload() {
         (async () => {

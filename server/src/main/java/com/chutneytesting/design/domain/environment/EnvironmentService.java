@@ -27,12 +27,20 @@ public class EnvironmentService {
     }
 
     public Environment createEnvironment(Environment environment) throws InvalidEnvironmentNameException, AlreadyExistingEnvironmentException {
-        if (environmentRepository.listNames().stream().map(String::toUpperCase)
-            .collect(Collectors.toList()).contains(environment.name.toUpperCase())) {
+        if (envAlreadyExist(environment)) {
             throw new AlreadyExistingEnvironmentException("Environment [" + environment.name + "] already exists");
         }
         environmentRepository.save(environment);
         return environment;
+    }
+
+    private boolean envAlreadyExist(Environment environment) {
+        return environmentRepository.listNames().stream().map(String::toUpperCase)
+            .collect(Collectors.toList()).contains(environment.name.toUpperCase());
+    }
+
+    public Environment getEnvironment(String environmentName) throws EnvironmentNotFoundException {
+        return environmentRepository.findByName(environmentName);
     }
 
     public void deleteEnvironment(String environmentName) throws EnvironmentNotFoundException, CannotDeleteEnvironmentException {

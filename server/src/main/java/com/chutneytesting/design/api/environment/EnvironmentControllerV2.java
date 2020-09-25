@@ -80,6 +80,12 @@ public class EnvironmentControllerV2 {
     }
 
     @CrossOrigin(origins = "*")
+    @GetMapping("/{environmentName}")
+    public EnvironmentMetadataDto getEnvironnement(@PathVariable("environmentName") String environmentName) throws EnvironmentNotFoundException {
+        return EnvironmentMetadataDto.from(environmentService.getEnvironment(environmentName));
+    }
+
+    @CrossOrigin(origins = "*")
     @GetMapping("/{environmentName}/target/{targetName}")
     public TargetMetadataDto getTarget(@PathVariable("environmentName") String environmentName, @PathVariable("targetName") String targetName) throws EnvironmentNotFoundException, TargetNotFoundException {
         return TargetMetadataDto.from(environmentService.getTarget(environmentName, targetName));
