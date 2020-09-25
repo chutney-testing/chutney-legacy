@@ -1,0 +1,40 @@
+<div class="ml-3 mt-3">
+    <div [ngClass]="isErrorNotification ? 'bg-danger' : 'bg-info'" class="notification text-center text-white">
+        <strong *ngIf="message">{{ message }}</strong>
+    </div>
+
+    <div class="box2">
+        <button type="button" [disabled]="!isValid()" class="btn btn-success m-2 box2" (click)="save()">
+            Save
+            <span class="fa fa-check"></span>
+        </button>
+    </div>
+
+    <div [formGroup]="configurationForm">
+        <fieldset class="w-99 border p-2">
+            <legend class="w-auto pl-3 pr-3 mb-0">
+                <span>Configuration jira </span>
+            </legend>
+            <div>
+                <div class="row m-1">
+                    <label class="col-2 col-form-label" for="url">URL</label>
+                    <div class="col-10">
+                        <input type="text" class="form-control" id="url" formControlName="url"/>
+                    </div>
+                </div>
+                <div class="row m-1">
+                    <label class="col-2 col-form-label" for="username">username</label>
+                    <div class="col-10">
+                        <input type="text" class="form-control" id="username" formControlName="username"/>
+                    </div>
+                </div>
+                <div class="row m-1">
+                    <label class="col-2 col-form-label" for="password">password</label>
+                    <div class="col-10">
+                        <input type="text" class="form-control" id="password" formControlName="password"/>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</div>

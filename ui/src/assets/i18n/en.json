@@ -5,6 +5,7 @@
             "campaigns": "Campaigns",
             "targets": "Targets",
             "workers": "Nodes",
+            "configuration": "Configuration",
             "databaseAdmin": "DB",
             "storesAdmin": "Stores",
             "documentation": "Documentation",
@@ -12,7 +13,8 @@
             "component": "Components",
             "backups": "Backups",
             "variable": "Variable",
-            "dataset": "Dataset"
+            "dataset": "Dataset",
+            "jiraId": "Jira identifier"
         }
     },
     "home": {

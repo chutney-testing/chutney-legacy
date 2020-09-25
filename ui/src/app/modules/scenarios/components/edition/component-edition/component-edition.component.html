@@ -85,6 +85,13 @@
                     </div>
                     <div class="col-4">
                         <div class="row font-weight-bold">
+                            <span class="mr-5">{{'menu.principal.jiraId' | translate}}</span>
+                            <input type="text" class="form-control mr-2 small-text"
+                                formControlName="jiraId"
+                                placeholder="id jira"/>
+
+                        </div>
+                        <div class="row font-weight-bold">
                             <span class="mr-5">{{'menu.principal.dataset' | translate}}</span>
                             <chutney-dataset-selection
                                 [selectedDatasetId]="scenarioComponent.datasetId"

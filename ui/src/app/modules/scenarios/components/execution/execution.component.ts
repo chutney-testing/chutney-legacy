@@ -7,7 +7,7 @@ import { debounceTime, delay } from 'rxjs/internal/operators';
 
 import { EventManagerService } from '@shared/event-manager.service';
 
-import { Execution, ScenarioComponent, ScenarioExecutionReport, TestCase, GwtTestCase } from '@model';
+import { Execution, GwtTestCase, ScenarioComponent, ScenarioExecutionReport, TestCase } from '@model';
 import { ComponentService, ScenarioExecutionService, ScenarioService } from '@core/services';
 
 @Component({
@@ -225,7 +225,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
                 if (error.status) {
                     this.executionError = error.status + ' ' + error.statusText + ' ' + error._body;
                 } else {
-                    this.executionError = error;
+                    this.executionError = error.error;
                 }
                 this.scenarioExecutionReport = null;
             });

@@ -37,6 +37,12 @@
             </div>
             <div class="form-row">
                 <div class="form-group col-md-2">
+                    <label>{{'menu.principal.jiraId' | translate}}</label>
+                    <input type="text" class="form-control mr-2 small-text"
+                        formControlName="jiraId"
+                        placeholder="id jira"/>
+                </div>
+                <div class="form-group col-md-2">
                     <label>{{'menu.principal.dataset' | translate}}</label>
                     <chutney-dataset-selection
                         [selectedDatasetId]="campaign.datasetId"
@@ -44,7 +50,7 @@
                     </chutney-dataset-selection>
                 </div>
 
-                <div *ngIf="environments" class="form-group col-md-2">
+                <div *ngIf="environments" class="form-group col-md-2 ml-2">
                     <label>{{'admin.targets.environment' | translate}}</label>
                     <chutney-environment-combo [environments]="environments" [defaultValue]="campaign.environment"
                         (selectionEvent)="setSelectedEnvironment($event)">
