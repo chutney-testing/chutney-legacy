@@ -89,9 +89,10 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         this.selectedTags = newInstance(this.selectedTags);
     }
 
-
     // convenience getter for easy access to form fields
-    get f() { return this.campaignForm.controls; }
+    get f() {
+        return this.campaignForm.controls;
+    }
 
     ngOnDestroy() {
         this.subscription.unsubscribe();
@@ -210,14 +211,6 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
             this.subscribeToSaveResponse(
                 this.campaignService.create(this.campaign));
         }
-
-        this.jiraId = formValue['jiraId'];
-        this.jiraLinkService.saveForCampaign(this.campaign.id, this.jiraId).subscribe(
-            () => {
-            },
-            (error) => {
-                this.errorMessage = error.error;
-            });
     }
 
     setCampaignScenarios() {
@@ -295,6 +288,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     private onSaveSuccess(result: Campaign) {
         this.submitted = false;
         const url = '/campaign/' + result.id + '/execution';
+        this.updateJiraLink(result.id);
         this.router.navigateByUrl(url);
     }
 
@@ -320,5 +314,15 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
 
     selectDataset(datasetId: string) {
         this.datasetId = datasetId;
+    }
+
+    private updateJiraLink(campaignId: Number) {
+        this.jiraId = this.campaignForm.value['jiraId'];
+        this.jiraLinkService.saveForCampaign(campaignId, this.jiraId).subscribe(
+            () => {
+            },
+            (error) => {
+                this.errorMessage = error.error;
+            });
     }
 }
