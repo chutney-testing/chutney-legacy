@@ -1,6 +1,7 @@
 package com.chutneytesting.design.infra.storage.jira;
 
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
 
 import com.chutneytesting.design.domain.jira.JiraRepository;
 import com.chutneytesting.design.domain.jira.JiraTargetConfiguration;
@@ -55,19 +56,19 @@ public class JiraFileRepository implements JiraRepository {
 
     @Override
     public String getByScenarioId(String scenarioId) {
-        String scenarioIdFormatted = scenarioId.startsWith("#") ? scenarioId : "#" + scenarioId.replace("-", ":");
+        String scenarioIdFormatted = fromFrontId(scenarioId);
         return getById(SCENARIO_FILE, scenarioIdFormatted);
     }
 
     @Override
     public void saveForScenario(String scenarioFrontId, String jiraId) {
-        String scenarioId = "#" + scenarioFrontId.replace("-", ":");
+        String scenarioId = fromFrontId(scenarioFrontId);
         save(SCENARIO_FILE, scenarioId, jiraId);
     }
 
     @Override
     public void removeForScenario(String scenarioId) {
-        remove(SCENARIO_FILE, scenarioId);
+        remove(SCENARIO_FILE, fromFrontId(scenarioId));
     }
 
     @Override

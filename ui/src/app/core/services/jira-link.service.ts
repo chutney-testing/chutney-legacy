@@ -27,8 +27,8 @@ export class JiraLinkService {
         return this.http.post<JiraDto>(environment.backend + this.scenarioUrl, new JiraDto(jiraId, scenarioId));
     }
 
-    public removeForScenario(scenarioId: number) {
-        return this.http.delete<>(environment.backend + this.scenarioUrl  + "/" + scenarioId.toString());
+    public removeForScenario(scenarioId: string) {
+        return this.http.delete<>(environment.backend + this.scenarioUrl  + "/" + scenarioId);
     }
 
     public findByCampaignId(campaignId: number): Observable<string> {
