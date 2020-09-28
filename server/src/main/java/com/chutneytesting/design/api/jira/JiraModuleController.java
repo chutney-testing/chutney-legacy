@@ -4,6 +4,7 @@ import com.chutneytesting.design.domain.jira.JiraRepository;
 import com.chutneytesting.design.domain.jira.JiraTargetConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,6 +49,12 @@ public class JiraModuleController {
             .build();
     }
 
+    @DeleteMapping(path = BASE_SCENARIO_URL + "/{scenarioId}")
+    public void removeForScenario(@PathVariable String scenarioId) {
+        jiraRepository.removeForScenario(scenarioId);
+    }
+
+
     @GetMapping(path = BASE_CAMPAIGN_URL + "/{campaignId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public JiraDto getByCampaignId(@PathVariable String campaignId) {
         String jiraId = jiraRepository.getByCampaignId(campaignId);
@@ -66,6 +73,11 @@ public class JiraModuleController {
             .id(jiraDto.id())
             .chutneyId(jiraDto.chutneyId())
             .build();
+    }
+
+    @DeleteMapping(path = BASE_CAMPAIGN_URL + "/{campaignId}")
+    public void removeForCampaign(@PathVariable String campaignId) {
+        jiraRepository.removeForCampaign(campaignId);
     }
 
     @GetMapping(path = BASE_CONFIGURATION_URL , produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

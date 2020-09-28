@@ -8,11 +8,16 @@ public interface JiraRepository extends Backupable {
 
     void saveForScenario(String scenarioId, String jiraId);
 
+    void removeForScenario(String scenarioId);
+
     String getByCampaignId(String campaignId);
 
     void saveForCampaign(String campaignId, String jiraId);
 
+    void removeForCampaign(String campaignId);
+
     JiraTargetConfiguration loadServerConfiguration();
 
     void saveServerConfiguration(JiraTargetConfiguration jiraTargetConfiguration);
+
 }

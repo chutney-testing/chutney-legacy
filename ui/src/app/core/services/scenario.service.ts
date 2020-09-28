@@ -88,7 +88,7 @@ export class ScenarioService {
         }));
     }
 
-    createOrUpdateGwtTestCase(testCase: GwtTestCase): Observable<String> {
+    createOrUpdateGwtTestCase(testCase: GwtTestCase): Observable<string> {
         if (testCase.id === undefined) {
             return this.createGwtTestCase(testCase);
         } else {
@@ -96,12 +96,12 @@ export class ScenarioService {
         }
     }
 
-    createGwtTestCase(testCase: GwtTestCase): Observable<String> {
+    createGwtTestCase(testCase: GwtTestCase): Observable<string> {
         const gwtTestCaseJsonObject = ScenarioService.convertGwt(testCase);
         return this.httpClient.post<String>(environment.backend + this.resourceUrlV2, gwtTestCaseJsonObject);
     }
 
-    updateGwtTestCase(testCase: GwtTestCase): Observable<String> {
+    updateGwtTestCase(testCase: GwtTestCase): Observable<string> {
         const gwtTestCaseJsonObject = ScenarioService.convertGwt(testCase);
         return this.httpClient.patch<String>(environment.backend + this.resourceUrlV2, gwtTestCaseJsonObject);
     }

@@ -27,6 +27,10 @@ export class JiraLinkService {
         return this.http.post<JiraDto>(environment.backend + this.scenarioUrl, new JiraDto(jiraId, scenarioId));
     }
 
+    public removeForScenario(scenarioId: number) {
+        return this.http.delete<>(environment.backend + this.scenarioUrl  + "/" + scenarioId.toString());
+    }
+
     public findByCampaignId(campaignId: number): Observable<string> {
         return this.http.get<JiraDto>(environment.backend + this.campaignUrl + '/' + campaignId)
             .pipe(map((jiraDto: JiraDto) => {
@@ -36,6 +40,10 @@ export class JiraLinkService {
 
     public saveForCampaign(campaignId: number, jiraId: string): Observable<JiraDto> {
         return this.http.post<JiraDto>(environment.backend + this.campaignUrl, new JiraDto(jiraId, campaignId.toString()));
+    }
+
+    public removeForCampaign(campaignId: number) {
+        return this.http.delete<>(environment.backend + this.campaignUrl + "/" + campaignId.toString());
     }
 }
 

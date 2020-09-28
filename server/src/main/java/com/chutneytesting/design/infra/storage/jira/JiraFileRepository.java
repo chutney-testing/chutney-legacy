@@ -66,6 +66,11 @@ public class JiraFileRepository implements JiraRepository {
     }
 
     @Override
+    public void removeForScenario(String scenarioId) {
+        remove(SCENARIO_FILE, scenarioId);
+    }
+
+    @Override
     public String getByCampaignId(String campaignId) {
         return getById(CAMPAIGN_FILE, campaignId);
     }
@@ -73,6 +78,11 @@ public class JiraFileRepository implements JiraRepository {
     @Override
     public void saveForCampaign(String campaignId, String jiraId) {
         save(CAMPAIGN_FILE, campaignId, jiraId);
+    }
+
+    @Override
+    public void removeForCampaign(String campaignId) {
+        remove(CAMPAIGN_FILE, campaignId);
     }
 
     @Override
@@ -150,6 +160,23 @@ public class JiraFileRepository implements JiraRepository {
             }
         } catch (IOException e) {
             throw new IllegalArgumentException("Cannot serialize " + map, e);
+        }
+    }
+
+    private void remove(String filePath, String chutneyId) {
+        Path resolvedFilePath = storeFolderPath.resolve(filePath);
+        try {
+            Map<String, String> map = new HashMap<>();
+
+            if (Files.exists(resolvedFilePath)) {
+                byte[] bytes = Files.readAllBytes(resolvedFilePath);
+                map.putAll(objectMapper.readValue(bytes, Map.class));
+            }
+
+            map.remove(chutneyId);
+            doSave(resolvedFilePath, map);
+        } catch (IOException e) {
+            throw new UnsupportedOperationException("Cannot read configuration file: " + resolvedFilePath, e);
         }
     }
 

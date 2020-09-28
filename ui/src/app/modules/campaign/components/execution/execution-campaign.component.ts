@@ -18,6 +18,7 @@ import { CampaignService, EnvironmentAdminService, ScenarioService } from '@core
 import { newInstance, sortByAndOrder } from '@shared/tools';
 import { ChartDataSets, ChartOptions } from 'chart.js';
 import { Color, Label } from 'ng2-charts';
+import { JiraLinkService } from '@core/services/jira-link.service';
 
 @Component({
     selector: 'chutney-execution-campaign',
@@ -79,12 +80,13 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
     public lineChartPlugins = [];
 
     constructor(private campaignService: CampaignService,
+                private environmentAdminService: EnvironmentAdminService,
+                private fileSaverService: FileSaverService,
+                private jiraLinkService: JiraLinkService,
                 private route: ActivatedRoute,
                 private router: Router,
-                private translate: TranslateService,
-                private fileSaverService: FileSaverService,
                 private scenarioService: ScenarioService,
-                private environmentAdminService: EnvironmentAdminService,
+                private translate: TranslateService,
     ) {
         translate.get('campaigns.confirm.deletion.prefix').subscribe((res: string) => {
             this.deletionConfirmationTextPrefix = res;
@@ -279,10 +281,11 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
         this.router.navigateByUrl(url);
     }
 
-    deleteCampaign(idCampaign: number, title: string) {
+    deleteCampaign(campaignId: number, title: string) {
         if (confirm(this.deletionConfirmationTextPrefix + title.toUpperCase() + this.deletionConfirmationTextSuffix)) {
-            this.campaignService.delete(idCampaign).subscribe(
+            this.campaignService.delete(campaignId).subscribe(
                 (response) => {
+                    this.removeJiraLink(campaignId);
                     this.router.navigateByUrl('/campaign');
                 },
                 (error) => {
@@ -360,6 +363,13 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
         if (this.campaignSub) {
             this.campaignSub.unsubscribe();
         }
+    }
+
+    private removeJiraLink(campaignId: number) {
+        this.jiraLinkService.removeForCampaign(campaignId).subscribe(
+            () => {},
+            (error) => { console.log(error); }
+        );
     }
 }
 

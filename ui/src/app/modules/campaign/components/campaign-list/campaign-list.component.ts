@@ -1,9 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { Campaign, CampaignExecutionReport } from '@core/model';
 import { CampaignService } from '@core/services';
 import { Subscription, timer } from 'rxjs';
+import { JiraLinkService } from '@core/services/jira-link.service';
 
 @Component({
     selector: 'chutney-campaigns',
@@ -21,8 +22,9 @@ export class CampaignListComponent implements OnInit, OnDestroy {
     campaignFilter: string;
 
     constructor(private campaignService: CampaignService,
-                private translate: TranslateService,
+                private jiraLinkService: JiraLinkService,
                 private router: Router,
+                private translate: TranslateService,
     ) {
         translate.get('campaigns.confirm.deletion.prefix').subscribe((res: string) => {
             this.deletionConfirmationTextPrefix = res;
@@ -63,6 +65,7 @@ export class CampaignListComponent implements OnInit, OnDestroy {
         if (confirm(this.deletionConfirmationTextPrefix + title.toUpperCase() + this.deletionConfirmationTextSuffix)) {
             this.campaignService.delete(id).subscribe(
                 () => {
+                    this.removeJiraLink(id);
                     this.campaigns.splice(this.getIndexFromId(id), 1);
                     this.campaigns = this.campaigns.slice();
                 });
@@ -88,5 +91,12 @@ export class CampaignListComponent implements OnInit, OnDestroy {
 
     private unsuscribeLastCampaignReport() {
         if (this.lastCampaignReportsSub) this.lastCampaignReportsSub.unsubscribe();
+    }
+
+    private removeJiraLink(campaignId: number) {
+        this.jiraLinkService.removeForCampaign(campaignId).subscribe(
+            () => {},
+            (error) => { console.log(error); }
+        );
     }
 }
