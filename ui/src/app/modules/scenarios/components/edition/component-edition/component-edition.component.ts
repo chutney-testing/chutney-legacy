@@ -32,11 +32,11 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
     jiraId: string;
 
     constructor(private componentService: ComponentService,
-                private jiraLinkService: JiraLinkService,
-                private router: Router,
-                private route: ActivatedRoute,
                 private dragulaService: DragulaService,
-                private formBuilder: FormBuilder
+                private formBuilder: FormBuilder,
+                private jiraLinkService: JiraLinkService,
+                private route: ActivatedRoute,
+                private router: Router
     ) {
         super();
     }
@@ -77,9 +77,9 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
         this.componentService.saveComponentTestCase(this.scenarioComponent).subscribe(
             (response) => {
                 this.modificationsSaved = true;
-                this.jiraLinkService.saveForScenario(response,this.jiraId).subscribe(
+                this.jiraLinkService.saveForScenario(response, this.jiraId).subscribe(
                     () => {},
-                    (error) => { console.log(error);}
+                    (error) => { console.log(error); }
                 );
                 this.router.navigateByUrl('/scenario/' + response + '/execution/last')
                     .then(null);

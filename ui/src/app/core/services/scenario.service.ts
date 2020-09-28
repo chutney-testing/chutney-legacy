@@ -46,7 +46,7 @@ export class ScenarioService {
         }));
     }
 
-    createOrUpdateRawTestCase(testCase: TestCase): Observable<TestCase> {
+    createOrUpdateRawTestCase(testCase: TestCase): Observable<String> {
         if (testCase.id === undefined) {
             return this.createRawTestCase(testCase);
         } else {
@@ -54,15 +54,15 @@ export class ScenarioService {
         }
     }
 
-    createRawTestCase(testCase: TestCase): Observable<TestCase> {
+    createRawTestCase(testCase: TestCase): Observable<String> {
         const copy = ScenarioService.convert(testCase);
-        return this.httpClient.post<TestCase>(environment.backend + this.resourceUrl, copy);
+        return this.httpClient.post<String>(environment.backend + this.resourceUrl, copy);
     }
 
-    updateRawTestCase(testCase: TestCase): Observable<TestCase> {
+    updateRawTestCase(testCase: TestCase): Observable<String> {
         const copy = ScenarioService.convert(testCase);
         // an update should better use PUT :(
-        return this.httpClient.post<TestCase>(environment.backend + this.resourceUrl, copy);
+        return this.httpClient.post<String>(environment.backend + this.resourceUrl, copy);
     }
 
     findScenarios(): Observable<Array<ScenarioIndex>> {
