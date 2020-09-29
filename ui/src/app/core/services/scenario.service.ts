@@ -46,7 +46,7 @@ export class ScenarioService {
         }));
     }
 
-    createOrUpdateRawTestCase(testCase: TestCase): Observable<String> {
+    createOrUpdateRawTestCase(testCase: TestCase): Observable<string> {
         if (testCase.id === undefined) {
             return this.createRawTestCase(testCase);
         } else {
@@ -54,15 +54,15 @@ export class ScenarioService {
         }
     }
 
-    createRawTestCase(testCase: TestCase): Observable<String> {
+    createRawTestCase(testCase: TestCase): Observable<string> {
         const copy = ScenarioService.convert(testCase);
-        return this.httpClient.post<String>(environment.backend + this.resourceUrl, copy);
+        return this.httpClient.post<string>(environment.backend + this.resourceUrl, copy);
     }
 
-    updateRawTestCase(testCase: TestCase): Observable<String> {
+    updateRawTestCase(testCase: TestCase): Observable<string> {
         const copy = ScenarioService.convert(testCase);
         // an update should better use PUT :(
-        return this.httpClient.post<String>(environment.backend + this.resourceUrl, copy);
+        return this.httpClient.post<string>(environment.backend + this.resourceUrl, copy);
     }
 
     findScenarios(): Observable<Array<ScenarioIndex>> {
@@ -98,12 +98,12 @@ export class ScenarioService {
 
     createGwtTestCase(testCase: GwtTestCase): Observable<string> {
         const gwtTestCaseJsonObject = ScenarioService.convertGwt(testCase);
-        return this.httpClient.post<String>(environment.backend + this.resourceUrlV2, gwtTestCaseJsonObject);
+        return this.httpClient.post<string>(environment.backend + this.resourceUrlV2, gwtTestCaseJsonObject);
     }
 
     updateGwtTestCase(testCase: GwtTestCase): Observable<string> {
         const gwtTestCaseJsonObject = ScenarioService.convertGwt(testCase);
-        return this.httpClient.patch<String>(environment.backend + this.resourceUrlV2, gwtTestCaseJsonObject);
+        return this.httpClient.patch<string>(environment.backend + this.resourceUrlV2, gwtTestCaseJsonObject);
     }
 
     delete(id: string): Observable<Object> {

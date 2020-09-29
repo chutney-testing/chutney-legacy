@@ -316,11 +316,10 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         this.datasetId = datasetId;
     }
 
-    private updateJiraLink(campaignId: Number) {
+    private updateJiraLink(campaignId: number) {
         this.jiraId = this.campaignForm.value['jiraId'];
         this.jiraLinkService.saveForCampaign(campaignId, this.jiraId).subscribe(
-            () => {
-            },
+            () => {},
             (error) => {
                 this.errorMessage = error.error;
             });

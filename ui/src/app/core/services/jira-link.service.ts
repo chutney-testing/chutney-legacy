@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { environment } from '@env/environment';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -28,7 +28,7 @@ export class JiraLinkService {
     }
 
     public removeForScenario(scenarioId: string) {
-        return this.http.delete<>(environment.backend + this.scenarioUrl  + "/" + scenarioId);
+        return this.http.delete<HttpResponse<any>>(environment.backend + this.scenarioUrl  + "/" + scenarioId);
     }
 
     public findByCampaignId(campaignId: number): Observable<string> {
@@ -43,7 +43,7 @@ export class JiraLinkService {
     }
 
     public removeForCampaign(campaignId: number) {
-        return this.http.delete<>(environment.backend + this.campaignUrl + "/" + campaignId.toString());
+        return this.http.delete<HttpResponse<any>>(environment.backend + this.campaignUrl + "/" + campaignId.toString());
     }
 }
 
