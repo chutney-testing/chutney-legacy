@@ -61,7 +61,7 @@
             overflow: hidden;
         }
 
-        .description{
+        .description {
             margin-top: 10px;
             background-color: $vert2;
             margin-left: 40px;
@@ -99,7 +99,7 @@
         }
 
         .save-button:disabled {
-          cursor: not-allowed;
+            cursor: not-allowed;
         }
     }
 }
@@ -149,8 +149,8 @@
 
     .edition-content {
         .btn-danger {
-        font-size: 15px;
-      }
+            font-size: 15px;
+        }
     }
 
     .legend {
@@ -171,10 +171,12 @@
         margin-bottom: 1rem;
         background-image: url('../../../../../../assets/icons/btn/show-code.png');
     }
+
     .show-code-btn:hover, .show-code-btn:focus {
         background-image: url('../../../../../../assets/icons/btn/show-code_hover.png');
         outline: none;
     }
+
     .show-code-btn:active {
         background-image: url('../../../../../../assets/icons/btn/show-code_active.png');
     }

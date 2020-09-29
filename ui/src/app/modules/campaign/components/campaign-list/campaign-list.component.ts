@@ -96,7 +96,7 @@ export class CampaignListComponent implements OnInit, OnDestroy {
     private removeJiraLink(campaignId: number) {
         this.jiraLinkService.removeForCampaign(campaignId).subscribe(
             () => {},
-            (error) => { console.log(error); }
+            (error) => console.log(error)
         );
     }
 }

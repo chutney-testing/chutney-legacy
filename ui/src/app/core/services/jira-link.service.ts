@@ -4,6 +4,13 @@ import { environment } from '@env/environment';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+export class JiraDto {
+    constructor(
+        public id: string,
+        public chutneyId: string) {
+    }
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -28,7 +35,7 @@ export class JiraLinkService {
     }
 
     public removeForScenario(scenarioId: string) {
-        return this.http.delete<HttpResponse<any>>(environment.backend + this.scenarioUrl  + "/" + scenarioId);
+        return this.http.delete<HttpResponse<any>>(environment.backend + this.scenarioUrl  + '/' + scenarioId);
     }
 
     public findByCampaignId(campaignId: number): Observable<string> {
@@ -44,12 +51,5 @@ export class JiraLinkService {
 
     public removeForCampaign(campaignId: number) {
         return this.http.delete<HttpResponse<any>>(environment.backend + this.campaignUrl + "/" + campaignId.toString());
-    }
-}
-
-export class JiraDto {
-    constructor(
-        public id: string,
-        public chutneyId: string) {
     }
 }

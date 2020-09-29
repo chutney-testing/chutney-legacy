@@ -30,7 +30,7 @@ export class DatabaseAdminComponent {
     }
 
     execute() {
-        if (this.statement.length == 0) {
+        if (this.statement.length === 0) {
             return;
         }
 
