@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 @Configuration
-@Profile({"http-ssl"})
+@Profile({"undertow-https-redirect"})
 public class UndertowConfig {
 
     @Value("${server.port}")

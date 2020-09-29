@@ -23,7 +23,7 @@ public class InMemoryConfiguration {
     }
 
     @Bean
-    public InMemoryUserDetailsService userDetailsService() {
+    public InMemoryUserDetailsService inMemoryUserDetailsService() {
         return new InMemoryUserDetailsService(users());
     }
 }
