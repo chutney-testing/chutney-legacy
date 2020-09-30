@@ -1,28 +1,48 @@
 <div class="row edition-header">
-  <div class="header-left col-md-8">
-    <div class="title">
-      <chutney-forms-editable-label [id]="'title'" [placeholder]="'title'" [defaultValue]="'title'"
-                                [(model)]="testCase.title" [type]="'form-title'"></chutney-forms-editable-label>
+    <div class="header-left col-md-8">
+        <div class="title">
+            <chutney-forms-editable-label
+                [id]="'title'"
+                [placeholder]="'title'"
+                [defaultValue]="'title'"
+                [(model)]="testCase.title"
+                [type]="'form-title'">
+            </chutney-forms-editable-label>
+        </div>
+        <div class="description">
+            <chutney-forms-editable-text-area
+                [id]="'description'"
+                [placeholder]="'description'"
+                [defaultValue]="'description'"
+                [(model)]="testCase.description"
+                [type]="'form-title'">
+            </chutney-forms-editable-text-area>
+        </div>
     </div>
-    <div class="description">
-      <chutney-forms-editable-text-area [id]="'description'" [placeholder]="'description'" [defaultValue]="'description'"
-                                    [(model)]="testCase.description"
-                                    [type]="'form-title'"></chutney-forms-editable-text-area>
+    <div class="header-right triangle-left col-md-4">
+        <div class="form-group">
+            <label class="form-control-label" for="tags">{{ 'scenarios.edition.form.tags' | translate }}</label>
+            <textarea type="text" class="form-control" name="tags"
+                      id="tags" [ngModel]="testCase.tags" (ngModelChange)="updateTags($event)" rows="1"></textarea>
+        </div>
     </div>
-  </div>
-  <div class="header-right triangle-left col-md-4">
-    <div class="form-group">
-      <label class="form-control-label" for="tags">{{ 'scenarios.edition.form.tags' | translate }}</label>
-      <textarea type="text" class="form-control" name="tags" id="tags" [ngModel]="testCase.tags" (ngModelChange)="updateTags($event)" rows="1"></textarea>
-    </div>
-  </div>
-  <div class="action-pane">
-    <button class="save-button" data-toggle="tooltip" title="Sauvegarder" [disabled]="errorMessage"
+    <div class="action-pane">
+        <button class="save-button" data-toggle="tooltip" title="Sauvegarder" [disabled]="errorMessage"
             (click)="saveScenario()">
-    </button>
-  </div>
+        </button>
+    </div>
 </div>
-<div class="edition-body">
+<div class="plugins">
+    <form [formGroup]="pluginsForm" autocomplete="off">
+        <div class="form-group col-md-2">
+            <label for="jiraId">{{'menu.principal.jiraId' | translate}}</label>
+            <input type="text" class="form-control small-text" id="jiraId"
+                   formControlName="jiraId"
+                   placeholder="ex. LK-42"/>
+        </div>
+    </form>
+</div>
+<div>
     <div *ngIf="testCase">
         <chutney-scenario-campaigns [idScenario]="testCase.id"></chutney-scenario-campaigns>
     </div>

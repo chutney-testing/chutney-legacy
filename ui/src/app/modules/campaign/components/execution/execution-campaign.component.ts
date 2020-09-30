@@ -1,10 +1,10 @@
-import {Component, OnDestroy, OnInit, QueryList, ViewChildren} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {combineLatest, Observable, Subscription, timer} from 'rxjs';
-import {TranslateService} from '@ngx-translate/core';
-import {FileSaverService} from 'ngx-filesaver';
+import { Component, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest, Observable, Subscription, timer } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import { FileSaverService } from 'ngx-filesaver';
 import * as JSZip from 'jszip';
-import {NgbDropdown} from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 
 import {
     Campaign,
@@ -14,10 +14,11 @@ import {
     ScenarioIndex,
     TestCase
 } from '@core/model';
-import {CampaignService, EnvironmentAdminService, ScenarioService} from '@core/services';
-import {newInstance, sortByAndOrder} from '@shared/tools';
-import {ChartOptions, ChartDataSets} from 'chart.js';
-import {Label, Color} from 'ng2-charts';
+import { CampaignService, EnvironmentAdminService, ScenarioService } from '@core/services';
+import { newInstance, sortByAndOrder } from '@shared/tools';
+import { ChartDataSets, ChartOptions } from 'chart.js';
+import { Color, Label } from 'ng2-charts';
+import { JiraLinkService } from '@core/services/jira-link.service';
 
 @Component({
     selector: 'chutney-execution-campaign',
@@ -79,12 +80,13 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
     public lineChartPlugins = [];
 
     constructor(private campaignService: CampaignService,
+                private environmentAdminService: EnvironmentAdminService,
+                private fileSaverService: FileSaverService,
+                private jiraLinkService: JiraLinkService,
                 private route: ActivatedRoute,
                 private router: Router,
-                private translate: TranslateService,
-                private fileSaverService: FileSaverService,
                 private scenarioService: ScenarioService,
-                private environmentAdminService: EnvironmentAdminService,
+                private translate: TranslateService,
     ) {
         translate.get('campaigns.confirm.deletion.prefix').subscribe((res: string) => {
             this.deletionConfirmationTextPrefix = res;
@@ -120,8 +122,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
                 }
             },
             (error) => {
-                console.log(error);
-                this.errorMessage = error;
+                this.errorMessage = error.error;
             }
         );
     }
@@ -170,8 +171,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
                 }
             },
             (error) => {
-                console.log(error);
-                this.errorMessage = error;
+                this.errorMessage = error.error;
             }
         );
     }
@@ -201,8 +201,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
                 this.orderedScenarios = newInstance(scenarios);
             },
             (error) => {
-                console.log(error);
-                this.errorMessage = error;
+                this.errorMessage = error.error;
             }
         );
     }
@@ -248,8 +247,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
                 // Do nothing
             },
             (error) => {
-                console.log(error);
-                this.errorMessage = error;
+                this.errorMessage = error.error;
             },
             () => this.running = false
         );
@@ -283,15 +281,15 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
         this.router.navigateByUrl(url);
     }
 
-    deleteCampaign(idCampaign: number, title: string) {
+    deleteCampaign(campaignId: number, title: string) {
         if (confirm(this.deletionConfirmationTextPrefix + title.toUpperCase() + this.deletionConfirmationTextSuffix)) {
-            this.campaignService.delete(idCampaign).subscribe(
+            this.campaignService.delete(campaignId).subscribe(
                 (response) => {
+                    this.removeJiraLink(campaignId);
                     this.router.navigateByUrl('/campaign');
                 },
                 (error) => {
-                    console.log(error);
-                    this.errorMessage = error;
+                    this.errorMessage = error.error;
                 }
             );
         }
@@ -348,8 +346,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
                 // Do nothing
             },
             (error) => {
-                console.log(error);
-                this.errorMessage = error;
+                this.errorMessage = error.error;
             },
             () => this.running = false
         );
@@ -366,6 +363,13 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
         if (this.campaignSub) {
             this.campaignSub.unsubscribe();
         }
+    }
+
+    private removeJiraLink(campaignId: number) {
+        this.jiraLinkService.removeForCampaign(campaignId).subscribe(
+            () => {},
+            (error) => { console.log(error); }
+        );
     }
 }
 

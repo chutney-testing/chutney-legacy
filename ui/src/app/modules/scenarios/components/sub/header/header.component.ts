@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { FileSaverService } from 'ngx-filesaver';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
+import { JiraLinkService } from '@core/services/jira-link.service';
 
 @Component({
     selector: 'chutney-header',
@@ -28,12 +29,12 @@ export class HeaderComponent implements OnInit {
     @ViewChildren(NgbDropdown)
     private executeDropDown: QueryList<NgbDropdown>;
 
-    constructor(
-        private scenarioService: ScenarioService,
-        private componentService: ComponentService,
-        private fileSaverService: FileSaverService,
-        private router: Router,
-        private environmentAdminService: EnvironmentAdminService
+    constructor(private componentService: ComponentService,
+                private environmentAdminService: EnvironmentAdminService,
+                private fileSaverService: FileSaverService,
+                private jiraLinkService: JiraLinkService,
+                private router: Router,
+                private scenarioService: ScenarioService,
     ) {
     }
 
@@ -62,6 +63,7 @@ export class HeaderComponent implements OnInit {
             deleteObs = this.scenarioService.delete(id);
         }
         deleteObs.subscribe(() => {
+            this.removeJiraLink(id);
             this.router.navigateByUrl('/scenario')
                 .then(null);
         });
@@ -91,5 +93,12 @@ export class HeaderComponent implements OnInit {
     private isNotLocalSource(): boolean {
         const source = this.testCase.repositorySource;
         return source == null || source !== 'local';
+    }
+
+    private removeJiraLink(id: string) {
+        this.jiraLinkService.removeForScenario(id).subscribe(
+            () => {},
+            (error) => { console.log(error); }
+        );
     }
 }

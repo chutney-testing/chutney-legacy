@@ -1,11 +1,13 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {EventManagerService} from '@shared/event-manager.service';
-import {Subscription} from 'rxjs';
-import {TestCase} from '@model';
-import {HjsonParserService} from '@shared/hjson-parser/hjson-parser.service';
-import {ScenarioService} from '@core/services';
-import {CanDeactivatePage} from '@core/guards';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { EventManagerService } from '@shared/event-manager.service';
+import { Subscription } from 'rxjs';
+import { TestCase } from '@model';
+import { HjsonParserService } from '@shared/hjson-parser/hjson-parser.service';
+import { ScenarioService } from '@core/services';
+import { CanDeactivatePage } from '@core/guards';
+import { JiraLinkService } from '@core/services/jira-link.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
     selector: 'chutney-raw-edition',
@@ -19,18 +21,24 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
     modificationsSaved = false;
     errorMessage: any;
     modifiedContent = '';
+    pluginsForm: FormGroup;
 
     private routeParamsSubscription: Subscription;
 
-    constructor(private scenarioService: ScenarioService,
-                private router: Router,
+    constructor(private eventManager: EventManagerService,
+                private formBuilder: FormBuilder,
+                private hjsonParser: HjsonParserService,
+                private jiraLinkService: JiraLinkService,
                 private route: ActivatedRoute,
-                private eventManager: EventManagerService,
-                private hjsonParser: HjsonParserService
+                private router: Router,
+                private scenarioService: ScenarioService,
     ) {
         super();
         this.testCase = new TestCase();
         this.previousTestCase = this.testCase.clone();
+        this.pluginsForm = this.formBuilder.group({
+            jiraId: ''
+        });
     }
 
     ngOnInit() {
@@ -73,6 +81,7 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
                     this.errorMessage = error._body;
                 }
             );
+            this.loadJiraLink(id);
         }
     }
 
@@ -85,11 +94,25 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
         }
     }
 
+    private loadJiraLink(id: string) {
+        this.jiraLinkService.findByScenarioId(id).subscribe(
+            (jiraId) => {
+                this.pluginsForm.controls['jiraId'].setValue(jiraId);
+            },
+            (error) => { console.log(error); }
+        );
+    }
+
     saveScenario() {
         this.testCase.content = this.modifiedContent;
+        const jiraId = this.pluginsForm.value['jiraId'];
         this.scenarioService.createOrUpdateRawTestCase(this.testCase).subscribe(
             (response) => {
                 this.modificationsSaved = true;
+                this.jiraLinkService.saveForScenario(response, jiraId).subscribe(
+                    () => {},
+                    (error) => { console.log(error); }
+                );
                 this.router.navigateByUrl('/scenario/' + response + '/execution/last');
             },
             (error) => {

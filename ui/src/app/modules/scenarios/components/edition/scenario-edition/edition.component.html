@@ -2,13 +2,14 @@
     <div class="header-left col-md-8">
         <div class="title">
             <chutney-forms-editable-label [id]="'title'" [placeholder]="'title'" [defaultValue]="'title'"
-                                      [(model)]="gwtTestCase.title" [type]="'form-title'"></chutney-forms-editable-label>
+                                          [(model)]="gwtTestCase.title"
+                                          [type]="'form-title'"></chutney-forms-editable-label>
         </div>
         <div class="description">
             <chutney-forms-editable-text-area [id]="'description'" [placeholder]="'description'"
-                                          [defaultValue]="'description'"
-                                          [(model)]="gwtTestCase.description"
-                                          [type]="'form-title'"></chutney-forms-editable-text-area>
+                                              [defaultValue]="'description'"
+                                              [(model)]="gwtTestCase.description"
+                                              [type]="'form-title'"></chutney-forms-editable-text-area>
         </div>
     </div>
     <div class="header-right triangle-left col-md-4">
@@ -23,6 +24,16 @@
                 (click)="saveExample()">
         </button>
     </div>
+</div>
+<div class="plugins">
+    <form [formGroup]="pluginsForm" autocomplete="off">
+        <div class="form-group col-md-2">
+            <label for="jiraId">{{'menu.principal.jiraId' | translate}}</label>
+            <input type="text" class="form-control small-text" id="jiraId"
+                   formControlName="jiraId"
+                   placeholder="ex. LK-42"/>
+        </div>
+    </form>
 </div>
 <div class="edition-body">
     <div *ngIf="gwtTestCase" class="float-right">
@@ -52,7 +63,7 @@
             </div>
         </ng-container>
     </form>
-    <hr />
+    <hr/>
     <button class="show-code-btn btn float-right" (click)="switchCollapseTechnicalSteps()">
     </button>
     <div class="edition-content">
@@ -67,47 +78,44 @@
                 <div *ngIf="gwtTestCase.scenario.givens.length > 0" class="form-group form-steps">
                     <div *ngFor="let step of gwtTestCase.scenario.givens; index as i">
                         <chutney-functional-step [step]="step" [id]="'given-step-'+i" [exampleStepsType]="1"
-                                             [hideAnd]="false"
-                                             [stepWording]="stepWording('global.bdd.soit' | translate, i)"
-                                             [placeholder]="'global.bdd.given' | translate"
-                                             [exampleParams$]="exampleParams$"
-                                             [showTechnicalStep]="!collapseTechnicalSteps"
-                                             (deleteEvent)="deleteGivenStep(i)"
-                                             (andEvent)="addGivenStep(i)"
-                                             (refStepEvent)="setGivenStep(i, $event)"
-                                             (stepParamsEvent)="handleStepParamsEvent($event)"></chutney-functional-step>
+                                                 [hideAnd]="false"
+                                                 [stepWording]="stepWording('global.bdd.soit' | translate, i)"
+                                                 [placeholder]="'global.bdd.given' | translate"
+                                                 [exampleParams$]="exampleParams$"
+                                                 [showTechnicalStep]="!collapseTechnicalSteps"
+                                                 (deleteEvent)="deleteGivenStep(i)"
+                                                 (andEvent)="addGivenStep(i)"
+                                                 (refStepEvent)="setGivenStep(i, $event)"
+                                                 (stepParamsEvent)="handleStepParamsEvent($event)"></chutney-functional-step>
                     </div>
                 </div>
                 <div class="form-group form-steps">
                     <ng-container *ngFor="let step of [gwtTestCase.scenario.when]">
                         <chutney-functional-step [step]="step" [id]="'when-step'" [exampleStepsType]="1"
-                                             [hideAnd]="true"
-                                             [hideDelete]="true"
-                                             [stepWording]="'global.bdd.when' | translate"
-                                             [placeholder]="'global.bdd.when' | translate"
-                                             [exampleParams$]="exampleParams$"
-                                             [showTechnicalStep]="!collapseTechnicalSteps"
-                                             (refStepEvent)="setWhenStep($event)"
-                                             (stepParamsEvent)="handleStepParamsEvent($event)"></chutney-functional-step>
+                                                 [hideAnd]="true"
+                                                 [hideDelete]="true"
+                                                 [stepWording]="'global.bdd.when' | translate"
+                                                 [placeholder]="'global.bdd.when' | translate"
+                                                 [exampleParams$]="exampleParams$"
+                                                 [showTechnicalStep]="!collapseTechnicalSteps"
+                                                 (refStepEvent)="setWhenStep($event)"
+                                                 (stepParamsEvent)="handleStepParamsEvent($event)"></chutney-functional-step>
                     </ng-container>
                 </div>
                 <div class="form-group form-steps">
                     <div *ngFor="let step of gwtTestCase.scenario.thens; index as i">
                         <chutney-functional-step [step]="step" [id]="'then-step-'+i" [exampleStepsType]="1"
-                                             [hideAnd]="false"
-                                             [hideDelete]="i == 0"
-                                             [stepWording]="stepWording('global.bdd.then' | translate, i)"
-                                             [placeholder]="'global.bdd.then' | translate"
-                                             [exampleParams$]="exampleParams$"
-                                             [showTechnicalStep]="!collapseTechnicalSteps"
-                                             (deleteEvent)="deleteThenStep(i)"
-                                             (andEvent)="addThenStep(i)"
-                                             (refStepEvent)="setThenStep(i, $event)"
-                                             (stepParamsEvent)="handleStepParamsEvent($event)"></chutney-functional-step>
+                                                 [hideAnd]="false"
+                                                 [hideDelete]="i == 0"
+                                                 [stepWording]="stepWording('global.bdd.then' | translate, i)"
+                                                 [placeholder]="'global.bdd.then' | translate"
+                                                 [exampleParams$]="exampleParams$"
+                                                 [showTechnicalStep]="!collapseTechnicalSteps"
+                                                 (deleteEvent)="deleteThenStep(i)"
+                                                 (andEvent)="addThenStep(i)"
+                                                 (refStepEvent)="setThenStep(i, $event)"
+                                                 (stepParamsEvent)="handleStepParamsEvent($event)"></chutney-functional-step>
                     </div>
-                </div>
-                <div>
-
                 </div>
             </form>
 

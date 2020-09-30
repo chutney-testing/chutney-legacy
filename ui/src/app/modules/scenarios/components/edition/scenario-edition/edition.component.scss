@@ -9,15 +9,6 @@
     user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
 }
 
-.expcoll-btn {
-    width: 26px;
-    height: 26px;
-
-    img {
-      height: 26px;
-    }
-}
-
 .edition-header {
     position: fixed;
     width: 100%;
@@ -70,7 +61,7 @@
             overflow: hidden;
         }
 
-        .description{
+        .description {
             margin-top: 10px;
             background-color: $vert2;
             margin-left: 40px;
@@ -108,7 +99,7 @@
         }
 
         .save-button:disabled {
-          cursor: not-allowed;
+            cursor: not-allowed;
         }
     }
 }
@@ -155,12 +146,11 @@
 }
 
 .edition-body {
-    padding-top: calc(120px + 40px);
 
     .edition-content {
         .btn-danger {
-        font-size: 15px;
-      }
+            font-size: 15px;
+        }
     }
 
     .legend {
@@ -181,10 +171,12 @@
         margin-bottom: 1rem;
         background-image: url('../../../../../../assets/icons/btn/show-code.png');
     }
+
     .show-code-btn:hover, .show-code-btn:focus {
         background-image: url('../../../../../../assets/icons/btn/show-code_hover.png');
         outline: none;
     }
+
     .show-code-btn:active {
         background-image: url('../../../../../../assets/icons/btn/show-code_active.png');
     }
@@ -247,4 +239,8 @@
     right: 0;
     z-index: 100;
     margin: 150px;
+}
+
+.plugins {
+    padding-top: calc(120px + 10px);
 }

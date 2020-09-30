@@ -1,16 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
-import {
-    ComponentTask,
-    Implementation,
-    KeyValue,
-    ListInput,
-    MapInput,
-    SimpleInput,
-    Target,
-    Task
-} from '@model';
+import { ComponentTask, Implementation, KeyValue, ListInput, MapInput, SimpleInput, Target, Task } from '@model';
 import { ComponentService, EnvironmentAdminService } from '@core/services';
 import { newInstance } from '@shared/tools/array-utils';
 
@@ -155,11 +146,11 @@ export class ActionEditComponent implements OnChanges {
     execute(environment: string) {
         this.componentService.execute(this.editComponent, environment).subscribe(
             (res) => { this.executionResult = res; },
-            (error) => { this.executionResult = error; }
+            (error) => { this.executionResult = error.error; }
         );
     }
 
-    clearFormArray (formArray: FormArray) {
+    clearFormArray(formArray: FormArray) {
         while (formArray.length !== 0) {
             formArray.removeAt(0);
         }

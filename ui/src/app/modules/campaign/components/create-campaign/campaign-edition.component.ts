@@ -1,13 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 
-import { Router, ActivatedRoute } from '@angular/router';
-import { ScenarioIndex, Campaign, KeyValue, ScenarioComponent, EnvironmentMetadata, TestCase } from '@model';
-import { ScenarioService, CampaignService, ComponentService, EnvironmentAdminService } from '@core/services';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Campaign, EnvironmentMetadata, KeyValue, ScenarioComponent, ScenarioIndex, TestCase } from '@model';
+import { CampaignService, ComponentService, EnvironmentAdminService, ScenarioService } from '@core/services';
 import { DragulaService } from 'ng2-dragula';
-import { distinct, flatMap } from '@shared/tools/array-utils';
-import { newInstance } from '@shared/tools/array-utils';
+import { distinct, flatMap, newInstance } from '@shared/tools/array-utils';
+import { JiraLinkService } from '@core/services/jira-link.service';
+
 @Component({
     selector: 'chutney-campaign-edition',
     templateUrl: './campaign-edition.component.html',
@@ -39,11 +40,13 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     settings = {};
     selectedTags: string[] = [];
     datasetId: string;
+    jiraId: string;
 
     constructor(
         private campaignService: CampaignService,
         private scenarioService: ScenarioService,
         private componentService: ComponentService,
+        private jiraLinkService: JiraLinkService,
         private formBuilder: FormBuilder,
         private router: Router,
         private route: ActivatedRoute,
@@ -58,7 +61,8 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
             scheduleTime: ['', Validators.pattern('^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$')],
             parameters: this.formBuilder.array([]),
             parallelRun: false,
-            retryAuto: false
+            retryAuto: false,
+            jiraId: ''
         });
     }
 
@@ -82,12 +86,13 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
 
     OnItemDeSelect(item: any) {
         this.selectedTags.splice(this.selectedTags.indexOf(item.itemName), 1);
-        this.selectedTags =  newInstance(this.selectedTags);
+        this.selectedTags = newInstance(this.selectedTags);
     }
 
-
     // convenience getter for easy access to form fields
-    get f() { return this.campaignForm.controls; }
+    get f() {
+        return this.campaignForm.controls;
+    }
 
     ngOnDestroy() {
         this.subscription.unsubscribe();
@@ -108,6 +113,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
                     this.setCampaignScenarios();
                     this.updateCampaignParameters();
                     this.datasetId = this.campaign.datasetId;
+                    this.loadJiraLink();
                 },
                 (error) => {
                     this.errorMessage = error._body;
@@ -125,27 +131,42 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
                 });
                 this.initTags();
             },
-            (error) => { this.errorMessage = error; }
+            (error) => {
+                this.errorMessage = error.error;
+            }
         );
     }
 
     private initTags() {
-        const allTagsInScenario: string[] =  distinct(flatMap(this.scenarios, (sc) => sc.tags)).sort();
+        const allTagsInScenario: string[] = distinct(flatMap(this.scenarios, (sc) => sc.tags)).sort();
         let index = 0;
         this.itemList = allTagsInScenario.map(t => {
             index++;
-            return { 'id': index, 'itemName': t };
+            return {'id': index, 'itemName': t};
         });
     }
 
     loadEnvironment() {
         this.environmentAdminService.listEnvironments().subscribe(
             (res) => {
-                this.environments = res.sort((t1, t2) =>  t1.name.toUpperCase() > t2.name.toUpperCase() ? 1 : 0);
+                this.environments = res.sort((t1, t2) => t1.name.toUpperCase() > t2.name.toUpperCase() ? 1 : 0);
             },
-            (error) => { console.log(error); this.errorMessage = error; }
-
+            (error) => {
+                this.errorMessage = error.error;
+            }
         );
+    }
+
+    loadJiraLink() {
+        this.jiraLinkService.findByCampaignId(this.campaign.id).subscribe(
+            (jiraId) => {
+                this.campaignForm.controls['jiraId'].setValue(jiraId);
+            },
+            (error) => {
+                this.errorMessage = error.error;
+            }
+        );
+
     }
 
     clear() {
@@ -220,7 +241,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
                             params.push(this.formBuilder.group({
                                 key: keyValue.key,
                                 value: this.campaign.computedParameters[keyValue.key] ?
-                                        this.campaign.computedParameters[keyValue.key] : ''
+                                    this.campaign.computedParameters[keyValue.key] : ''
                             }));
                             addedParams.add(keyValue.key);
                         }
@@ -267,6 +288,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     private onSaveSuccess(result: Campaign) {
         this.submitted = false;
         const url = '/campaign/' + result.id + '/execution';
+        this.updateJiraLink(result.id);
         this.router.navigateByUrl(url);
     }
 
@@ -292,5 +314,14 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
 
     selectDataset(datasetId: string) {
         this.datasetId = datasetId;
+    }
+
+    private updateJiraLink(campaignId: number) {
+        this.jiraId = this.campaignForm.value['jiraId'];
+        this.jiraLinkService.saveForCampaign(campaignId, this.jiraId).subscribe(
+            () => {},
+            (error) => {
+                this.errorMessage = error.error;
+            });
     }
 }

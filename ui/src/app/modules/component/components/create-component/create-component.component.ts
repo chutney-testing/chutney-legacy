@@ -79,7 +79,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.initTranslation();
         this.initDragAndDrop();
 
-        this.initAllTasksAndComponents().subscribe( (results) => {
+        this.initAllTasksAndComponents().subscribe((results) => {
 
             this.tasks = results[0];
             this.componentTasks = results[1];
@@ -291,7 +291,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.clearFormArray(this.componentForm.controls.parameters as FormArray);
     }
 
-    clearFormArray (formArray: FormArray) {
+    clearFormArray(formArray: FormArray) {
         while (formArray.length !== 0) {
             formArray.removeAt(0);
         }
