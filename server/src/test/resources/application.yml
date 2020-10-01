@@ -27,7 +27,7 @@ spring:
     change-log: classpath:changelog/db.changelog-master.xml
   profiles:
     active:
-      - http-ssl
+      - undertow-https-redirect
       - users
       - mem-auth
       - db-h2

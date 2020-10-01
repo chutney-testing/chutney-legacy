@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 
 @Configuration
@@ -39,12 +38,12 @@ public class LdapConfiguration {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(LdapTemplate ldapTemplate, LdapAttributesProperties ldapAttributesProperties, AttributesMapper<User> attributesMapper) {
+    public LdapUserDetailsService ldapUserDetailsService(LdapTemplate ldapTemplate, LdapAttributesProperties ldapAttributesProperties, AttributesMapper<User> attributesMapper) {
         return new LdapUserDetailsService(ldapTemplate, ldapAttributesProperties, attributesMapper);
     }
 
     @Bean
-    public UserDetailsContextMapper userDetailsContextMapper(UserDetailsService userDetailsService) {
-        return new LdapUserDetailsContextMapper(userDetailsService);
+    public UserDetailsContextMapper userDetailsContextMapper(LdapUserDetailsService ldapUserDetailsService) {
+        return new LdapUserDetailsContextMapper(ldapUserDetailsService);
     }
 }
