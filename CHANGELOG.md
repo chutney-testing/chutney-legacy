@@ -1,8 +1,39 @@
 # Changelog
 
-## [1.2.3](https://github.com/chutney-testing/chutney/tree/1.2.4) (2020-08-18)
+## [1.2.5](https://github.com/chutney-testing/chutney/tree/1.2.5) (2020-09-01)
 
-[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.4...HEAD)
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.4...1.2.5)
+
+**Implemented enhancements:**
+
+- Do not break on generated step iterations [\#213](https://github.com/chutney-testing/chutney/issues/213)
+- Choose which variable to display with the debug task [\#209](https://github.com/chutney-testing/chutney/issues/209)
+- Add audit on execution request [\#116](https://github.com/chutney-testing/chutney/issues/116)
+
+**Closed issues:**
+
+- Strategy retry [\#92](https://github.com/chutney-testing/chutney/issues/92)
+
+**Merged pull requests:**
+
+- Allow ldap and inmemory authentication [\#232](https://github.com/chutney-testing/chutney/pull/232) ([boddissattva](https://github.com/boddissattva))
+- feat\(ui/server\): Notify campaign execution status to xray/jira [\#231](https://github.com/chutney-testing/chutney/pull/231) ([bessonm](https://github.com/bessonm))
+- Feat/export import environment [\#230](https://github.com/chutney-testing/chutney/pull/230) ([TuLinhNGUYEN](https://github.com/TuLinhNGUYEN))
+- fix : Unsecure api for development [\#229](https://github.com/chutney-testing/chutney/pull/229) ([boddissattva](https://github.com/boddissattva))
+- fix\(engine\): fix nested retry strategy [\#228](https://github.com/chutney-testing/chutney/pull/228) ([rbenyoussef](https://github.com/rbenyoussef))
+- feat\(server+engine\): do not break on generated step iterations [\#227](https://github.com/chutney-testing/chutney/pull/227) ([rbenyoussef](https://github.com/rbenyoussef))
+- feat\(task-impl\): create new json asserter \(lessThan and GreaterThan\) [\#226](https://github.com/chutney-testing/chutney/pull/226) ([TuLinhNGUYEN](https://github.com/TuLinhNGUYEN))
+- Ordering for inputs/outputs/parameters and fix debug task with filters parameter [\#225](https://github.com/chutney-testing/chutney/pull/225) ([boddissattva](https://github.com/boddissattva))
+- chore\(deps\): Bump jaxb2-maven-plugin from 2.3.1 to 2.5.0 [\#224](https://github.com/chutney-testing/chutney/pull/224) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- chore\(deps\): Bump maven-jar-plugin from 3.0.2 to 3.2.0 [\#223](https://github.com/chutney-testing/chutney/pull/223) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- chore\(deps-dev\): Bump activemq.version from 5.15.11 to 5.16.0 [\#222](https://github.com/chutney-testing/chutney/pull/222) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- chore\(deps\): Bump postgresql from 42.2.6 to 42.2.16 [\#221](https://github.com/chutney-testing/chutney/pull/221) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- feat\(task-impl\): Filter scenario context with debug task [\#216](https://github.com/chutney-testing/chutney/pull/216) ([bessonm](https://github.com/bessonm))
+- feat\(server+ui\): Register user on api actions [\#187](https://github.com/chutney-testing/chutney/pull/187) ([rbenyoussef](https://github.com/rbenyoussef))
+
+## [1.2.4](https://github.com/chutney-testing/chutney/tree/1.2.4) (2020-08-18)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.3...1.2.4)
 
 **Merged pull requests:**
 
