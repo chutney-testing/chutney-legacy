@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { FileSaverService } from 'ngx-filesaver';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
-import { JiraLinkService } from '@core/services/jira-link.service';
+import { JiraPluginService } from '@core/services/jira-plugin.service';
 
 @Component({
     selector: 'chutney-header',
@@ -32,7 +32,7 @@ export class HeaderComponent implements OnInit {
     constructor(private componentService: ComponentService,
                 private environmentAdminService: EnvironmentAdminService,
                 private fileSaverService: FileSaverService,
-                private jiraLinkService: JiraLinkService,
+                private jiraLinkService: JiraPluginService,
                 private router: Router,
                 private scenarioService: ScenarioService,
     ) {

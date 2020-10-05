@@ -7,7 +7,7 @@ import { CanDeactivatePage } from '@core/guards';
 import { EventManagerService } from '@shared';
 import { allStepsParamsFromFunctionStep } from '@shared/tools/function-step-utils';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { JiraLinkService } from '@core/services/jira-link.service';
+import { JiraPluginService } from '@core/services/jira-plugin.service';
 
 @Component({
     selector: 'chutney-edition',
@@ -33,7 +33,7 @@ export class EditionComponent extends CanDeactivatePage implements OnInit, OnDes
 
     constructor(private eventManager: EventManagerService,
                 private formBuilder: FormBuilder,
-                private jiraLinkService: JiraLinkService,
+                private jiraLinkService: JiraPluginService,
                 private route: ActivatedRoute,
                 private router: Router,
                 private scenarioService: ScenarioService,

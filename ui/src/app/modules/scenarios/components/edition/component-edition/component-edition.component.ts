@@ -7,7 +7,7 @@ import { DragulaService } from 'ng2-dragula';
 import { ComponentTask, KeyValue, ScenarioComponent } from '@model';
 import { ComponentService } from '@core/services';
 import { CanDeactivatePage } from '@core/guards';
-import { JiraLinkService } from '@core/services/jira-link.service';
+import { JiraPluginService } from '@core/services/jira-plugin.service';
 
 @Component({
     selector: 'chutney-component-edition',
@@ -34,7 +34,7 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
     constructor(private componentService: ComponentService,
                 private dragulaService: DragulaService,
                 private formBuilder: FormBuilder,
-                private jiraLinkService: JiraLinkService,
+                private jiraLinkService: JiraPluginService,
                 private route: ActivatedRoute,
                 private router: Router
     ) {

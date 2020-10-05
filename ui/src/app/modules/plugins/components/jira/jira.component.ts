@@ -1,27 +1,27 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Configuration } from '@core/model/configuration.model';
-import { ConfigurationService } from '@core/services/configuration.service';
+import { JiraPluginConfiguration } from '@core/model/jira-plugin-configuration.model';
+import { JiraPluginConfigurationService } from '@core/services/jira-plugin-configuration.service';
 import { TranslateService } from '@ngx-translate/core';
 import { delay } from '@shared/tools';
-import { ValidationService } from '../../../molecules/validation/validation.service';
+import { ValidationService } from '../../../../molecules/validation/validation.service';
 
 
 @Component({
-    selector: 'chutney-configuration',
-    templateUrl: './configuration.component.html',
-    styleUrls: ['./configuration.component.scss']
+    selector: 'chutney-config-jira',
+    templateUrl: './jira.component.html',
+    styleUrls: ['./jira.component.scss']
 })
-export class ConfigurationComponent implements OnInit {
+export class JiraComponent implements OnInit {
 
-    configuration: Configuration = new Configuration('', '', '');
+    configuration: JiraPluginConfiguration = new JiraPluginConfiguration('', '', '');
     configurationForm: FormGroup;
 
     message;
     private savedMessage: string;
     isErrorNotification: boolean = false;
 
-    constructor(private configurationService: ConfigurationService,
+    constructor(private configurationService: JiraPluginConfigurationService,
                 private translate: TranslateService,
                 private validationService: ValidationService,
                 private formBuilder: FormBuilder) {
@@ -46,7 +46,7 @@ export class ConfigurationComponent implements OnInit {
 
     loadConfiguration() {
         this.configurationService.get().subscribe(
-            (config: Configuration) => {
+            (config: JiraPluginConfiguration) => {
                 this.configuration = config;
                 this.configurationForm.controls.url.patchValue(config.url);
                 this.configurationForm.controls.username.patchValue(config.username);
@@ -62,7 +62,7 @@ export class ConfigurationComponent implements OnInit {
         const url = this.configurationForm.value['url'] ? this.configurationForm.value['url'] : '';
         const username = this.configurationForm.value['username'] ? this.configurationForm.value['username'] : '';
         const password = this.configurationForm.value['password'] ? this.configurationForm.value['password'] : '';
-        this.configuration = new Configuration(url, username, password);
+        this.configuration = new JiraPluginConfiguration(url, username, password);
 
         this.configurationService.save(this.configuration).subscribe(
             (res) => {

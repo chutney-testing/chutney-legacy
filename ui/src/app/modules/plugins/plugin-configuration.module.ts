@@ -4,22 +4,26 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { ConfigurationRoute } from './configuration.routes';
+import { PluginConfigurationRoute } from './plugin-configuration.routes';
 
 import { MoleculesModule } from '../../molecules/molecules.module';
-import { ConfigurationComponent } from './components/configuration.component';
+import { PluginConfigurationComponent } from './components/plugin-configuration.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { JiraComponent } from '@modules/plugins/components/jira/jira.component';
 
 @NgModule({
   imports: [
     CommonModule,
-    RouterModule.forChild(ConfigurationRoute),
+    RouterModule.forChild(PluginConfigurationRoute),
     FormsModule,
     TranslateModule,
     MoleculesModule,
     ReactiveFormsModule
   ],
-  declarations: [ConfigurationComponent],
+  declarations: [
+      JiraComponent,
+      PluginConfigurationComponent
+  ],
 })
-export class ConfigurationModule {
+export class PluginConfigurationModule {
 }

@@ -14,7 +14,7 @@ export class JiraDto {
 @Injectable({
     providedIn: 'root'
 })
-export class JiraLinkService {
+export class JiraPluginService {
 
     private url = '/api/ui/jira/v1/';
     private scenarioUrl = this.url + 'scenario';
