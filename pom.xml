@@ -55,6 +55,7 @@
 
     <modules>
         <module>server</module>
+        <module>nx</module>
         <module>ui</module>
         <module>engine</module>
         <module>task-spi</module>
