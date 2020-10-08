@@ -16,6 +16,8 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfiguration {
@@ -55,6 +57,17 @@ public class WebConfiguration {
     @Bean
     NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate(JdbcTemplate uiJdbcTemplate) {
         return new NamedParameterJdbcTemplate(uiJdbcTemplate);
+    }
+
+    @Bean
+    WebMvcConfigurer configurer () {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addResourceHandlers (ResourceHandlerRegistry registry) {
+                registry.addResourceHandler("/new/**")
+                    .addResourceLocations("classpath:/static-new/");
+            }
+        };
     }
 
     @Bean
