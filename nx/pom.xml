@@ -56,10 +56,10 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
+                            <outputDirectory>${project.build.outputDirectory}/static-new</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${basedir}/dist/chutney</directory>
+                                    <directory>${basedir}/dist/apps/chutney</directory>
                                     <filtering>false</filtering>
                                 </resource>
                             </resources>
