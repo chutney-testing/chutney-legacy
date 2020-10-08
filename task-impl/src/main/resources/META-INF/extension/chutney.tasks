@@ -66,3 +66,5 @@ com.chutneytesting.task.assertion.CompareTask
 
 com.chutneytesting.task.kafka.KafkaBasicPublishTask
 com.chutneytesting.task.kafka.KafkaBasicConsumeTask
+
+com.chutneytesting.task.micrometer.MicrometerCounterTask
