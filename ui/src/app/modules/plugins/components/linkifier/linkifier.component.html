@@ -1,0 +1,34 @@
+<div>
+    <fieldset class="w99 border p-2">
+        <legend class="w-auto pl-3 pr-3 mb-0">
+            <span>Navigation Patterns </span>
+        </legend>
+        <div [ngClass]="isErrorNotification ? 'bg-danger' : 'bg-info'" class="notification text-center text-white">
+            <strong *ngIf="message">{{ message }}</strong>
+        </div>
+
+        <div class="row m-1" [formGroup]="linkifierForm">
+            <div class="col">
+                <label class="sr-only" for="pattern">Pattern</label>
+                <input type="text" class="form-control" id="pattern" formControlName="pattern" placeholder="ex. #(?P&lt;id&gt;[0-9]+)"/>
+                <small id="patternHelpBlock" class="form-text text-muted">
+                    Given the pattern (?P&lt;project&gt;[a-zA-Z0-9_-]+)#(?P&lt;id&gt;[0-9]+), when you will write "fake#42" in a scenario title
+                </small>
+            </div>
+            <div class="col">
+                <label class="sr-only" for="link">Link</label>
+                <input type="text" class="form-control" id="link" formControlName="link" placeholder="ex. https://github.com/chutney-testing/chutney/issues/%(id)s"/>
+                <small id="linkHelpBlock" class="form-text text-muted">
+                    Then the template https://github.com/chutney-testing/%(project)s/issues/%(id)s will become a real link to https://github.com/chutney-testing/fake/issues/42
+                </small>
+            </div>
+        </div>
+
+        <div class="box2">
+            <button type="submit" [disabled]="!isValid()" class="btn btn-success" (click)="addLinkifier()">
+                Save
+                <span class="fa fa-check"></span>
+            </button>
+        </div>
+    </fieldset>
+</div>

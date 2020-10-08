@@ -10,6 +10,7 @@ import { MoleculesModule } from '../../molecules/molecules.module';
 import { PluginConfigurationComponent } from './components/plugin-configuration.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { JiraComponent } from '@modules/plugins/components/jira/jira.component';
+import { LinkifierComponent } from '@modules/plugins/components/linkifier/linkifier.component';
 
 @NgModule({
   imports: [
@@ -22,6 +23,7 @@ import { JiraComponent } from '@modules/plugins/components/jira/jira.component';
   ],
   declarations: [
       JiraComponent,
+      LinkifierComponent,
       PluginConfigurationComponent
   ],
 })
