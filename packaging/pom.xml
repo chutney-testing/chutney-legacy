@@ -38,6 +38,12 @@
                 <version>${chutney.version}</version>
                 <scope>runtime</scope>
             </dependency>
+            <dependency>
+                <groupId>com.chutneytesting</groupId>
+                <artifactId>nx</artifactId>
+                <version>${chutney.version}</version>
+                <scope>runtime</scope>
+            </dependency>
 
             <!-- External providers -->
             <dependency>
