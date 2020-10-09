@@ -68,3 +68,4 @@ com.chutneytesting.task.kafka.KafkaBasicPublishTask
 com.chutneytesting.task.kafka.KafkaBasicConsumeTask
 
 com.chutneytesting.task.micrometer.MicrometerCounterTask
+com.chutneytesting.task.micrometer.MicrometerGaugeTask
