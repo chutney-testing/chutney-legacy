@@ -58,11 +58,7 @@ public class MicrometerCounterTaskTest {
         TaskExecutionResult result = sut.execute();
 
         // Then
-        assertThat(result.status).isEqualTo(Success);
-        assertThat(result.outputs).containsOnlyKeys(OUTPUT_COUNTER);
-        assertThat(result.outputs)
-            .extractingByKey(OUTPUT_COUNTER)
-            .isInstanceOf(Counter.class);
+        assertSuccessAndCounterObjectType(result);
 
         Counter outputCounter = (Counter) result.outputs.get(OUTPUT_COUNTER);
         assertThat(globalRegistry.find(COUNTER_NAME).counter()).isEqualTo(outputCounter);
@@ -82,11 +78,7 @@ public class MicrometerCounterTaskTest {
         TaskExecutionResult result = sut.execute();
 
         // Then
-        assertThat(result.status).isEqualTo(Success);
-        assertThat(result.outputs).containsOnlyKeys(OUTPUT_COUNTER);
-        assertThat(result.outputs)
-            .extractingByKey(OUTPUT_COUNTER)
-            .isInstanceOf(Counter.class);
+        assertSuccessAndCounterObjectType(result);
 
         Counter outputCounter = (Counter) result.outputs.get(OUTPUT_COUNTER);
         assertThat(globalRegistry.find(COUNTER_NAME).counters()).isEmpty();
