@@ -1,5 +1,5 @@
 {
-  "npmScope": "nx",
+  "npmScope": "chutney",
   "affected": {
     "defaultBase": "master"
   },
@@ -29,6 +29,9 @@
     "chutney-e2e": {
       "tags": [],
       "implicitDependencies": ["chutney"]
+    },
+    "ui-material": {
+      "tags": []
     }
   }
 }
