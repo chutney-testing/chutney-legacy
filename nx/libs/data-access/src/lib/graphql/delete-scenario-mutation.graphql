@@ -1,0 +1,3 @@
+mutation deleteScenario($input: ID!){
+   deleteScenario(input: $input) @rest(type: "ScenarioDeleted", path: "api/scenario/v2/{args.input}", method: "DELETE")
+}
