@@ -1,9 +1,14 @@
-import { text, number, boolean } from '@storybook/addon-knobs';
+import { text, number, boolean, select } from '@storybook/addon-knobs';
 import { ExecutionBadgeComponent } from './execution-badge.component';
 
 export default {
   title: 'ExecutionBadgeComponent',
 };
+
+
+const values = ['RUNNING', 'PAUSED', 'FAILURE', 'SUCCESS'];
+
+const defaultValue = values[0];
 
 export const primary = () => ({
   moduleMetadata: {
@@ -11,6 +16,6 @@ export const primary = () => ({
   },
   component: ExecutionBadgeComponent,
   props: {
-    status: text('status', ''),
+    status: select('status', values, defaultValue),
   },
 });
