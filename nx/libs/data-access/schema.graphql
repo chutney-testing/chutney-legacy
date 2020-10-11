@@ -38,6 +38,7 @@ type Query {
 
 type Mutation {
   login(input: LoginInput!): User
+  deleteScenario(input: ID!): Boolean
 }
 
 scalar RestFunction
