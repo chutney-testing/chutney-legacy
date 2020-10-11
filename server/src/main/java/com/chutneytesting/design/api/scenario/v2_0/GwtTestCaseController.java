@@ -79,8 +79,10 @@ public class GwtTestCaseController {
     }
 
     @DeleteMapping(path = "/{testCaseId}")
-    public void removeScenarioById(@PathVariable("testCaseId") String testCaseId) {
+    public Boolean removeScenarioById(@PathVariable("testCaseId") String testCaseId) {
         testCaseRepository.removeById(testCaseId);
+        // should return a value boolean or the id
+        return Boolean.TRUE;
     }
 
     private List<TestCaseMetadata> findAllComposableTestCase() {
