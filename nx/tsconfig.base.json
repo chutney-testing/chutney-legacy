@@ -16,7 +16,13 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@chutney/ui-material": ["libs/ui-material/src/index.ts"]
+      "@chutney/ui-material": ["libs/ui-material/src/index.ts"],
+      "@chutney/ui-layout": ["libs/ui-layout/src/index.ts"],
+      "@chutney/data-access": ["libs/data-access/src/index.ts"],
+      "@chutney/feature-auth": ["libs/feature-auth/src/index.ts"],
+      "@chutney/feature-scenarios": ["libs/feature-scenarios/src/index.ts"],
+      "@chutney/utils": ["libs/utils/src/index.ts"],
+      "@chutney/ui-commons": ["libs/ui-commons/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

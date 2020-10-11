@@ -1,0 +1,77 @@
+mat-sidenav {
+  width: 280px;
+
+  .account-panel {
+    // background-image: url("../assets/logo_fonds_clairs.svg");
+    background-color: #ebebeb;
+    background-size: 100% 115px;
+    background-repeat: no-repeat;
+    color: white;
+
+    .avatar {
+      height: 110px;
+      line-height: 110px;
+      font-size: 64px;
+      margin: 0 12px;
+    }
+
+    ::ng-deep mat-expansion-panel {
+      background: none !important;
+      color: rgba(255, 255, 255, 0.85);
+      border: none !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+
+      .mat-expansion-panel-header {
+        background: none !important;
+
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.08) !important;
+        }
+      }
+
+      .mat-expansion-indicator::after {
+        color: rgba(255, 255, 255, 0.85);
+      }
+
+      .mat-expansion-panel-body {
+        padding: 0;
+      }
+    }
+  }
+}
+
+header {
+  [appBanner] {
+    transition-duration: 0.3s;
+    transition-property: background-image;
+    transition-timing-function: ease-in-out;
+    color: white;
+    height: 12rem;
+  }
+
+  mat-toolbar {
+    transition-duration: 0.3s;
+    transition-property: background-color, box-shadow;
+    transition-timing-function: ease-in-out;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 40;
+
+    &.transparent {
+      background: none;
+      color: white;
+    }
+
+    &.fixed {
+      position: fixed;
+    }
+
+    &.fixed-left {
+      left: 280px;
+      width: calc(100% - 280px);
+    }
+  }
+}

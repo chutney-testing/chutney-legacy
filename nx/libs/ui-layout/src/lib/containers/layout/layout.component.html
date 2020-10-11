@@ -1,0 +1,90 @@
+<mat-sidenav-container fullscreen>
+  <mat-sidenav
+    class="mat-elevation-z3"
+    [mode]="isSmallScreen ? 'over' : 'side'"
+    [(opened)]="siderLeftOpened"
+  >
+    <div class="account-panel">
+      <mat-icon class="avatar">account_circle</mat-icon>
+      <!--<app-logo></app-logo>-->
+      <mat-expansion-panel>
+        <mat-expansion-panel-header
+          collapsedHeight="40px"
+          expandedHeight="40px"
+          style="color: #00485e;"
+        >
+          <small>{{ (user$ | async)?.mail }}</small>
+        </mat-expansion-panel-header>
+        <mat-nav-list>
+          <a mat-list-item routerLink="/error">
+            <mat-icon matListIcon>account_box</mat-icon>
+            <span matline>My Profile</span>
+          </a>
+          <a mat-list-item (click)="logout()">
+            <mat-icon matListIcon>exit_to_app</mat-icon>
+            <span matLine>Log out</span>
+          </a>
+        </mat-nav-list>
+        <mat-divider></mat-divider>
+      </mat-expansion-panel>
+    </div>
+    <mat-nav-list>
+      <a mat-list-item routerLink="/dashboard">
+        <mat-icon matListIcon>dashboard</mat-icon>
+        <span matLine>Dashboard</span>
+      </a>
+      <mat-divider></mat-divider>
+      <h3 matSubheader>Tests</h3>
+      <a mat-list-item routerLink="/scenarios">
+        <mat-icon matListIcon>toc</mat-icon>
+        <span matLine>Scenarios</span>
+      </a>
+      <a mat-list-item routerLink="/campaigns">
+        <mat-icon matListIcon>playlist_play</mat-icon>
+        <span matLine>Campaigns</span>
+      </a>
+      <mat-divider></mat-divider>
+      <h3 matSubheader>Help</h3>
+      <a mat-list-item routerLink="/documentation">
+        <mat-icon matListIcon>help</mat-icon>
+        <span matLine>Help</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav
+    *ngIf="!fullscreen"
+    position="end"
+    mode="over"
+    [(opened)]="siderRightOpened"
+  >
+    <mat-toolbar>
+      <span>Setup</span>
+    </mat-toolbar>
+    <mat-nav-list>
+      <a mat-list-item routerLink="/targets">
+        <mat-icon matListIcon>track_changes</mat-icon>
+        <span matLine>Targets</span>
+      </a>
+      <a mat-list-item routerLink="/db">
+        <mat-icon matListIcon>storage</mat-icon>
+        <span matLine>DataBase</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <header *ngIf="!fullscreen">
+      <mat-toolbar [ngClass]="toolbarClass">
+        <button mat-icon-button (click)="siderLeftOpened = !siderLeftOpened">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <span fxFlex></span>
+        <button mat-icon-button (click)="siderRightOpened = !siderRightOpened">
+          <mat-icon>settings</mat-icon>
+        </button>
+      </mat-toolbar>
+      <section appBanner class="mat-elevation-z3"></section>
+    </header>
+
+    <ng-content></ng-content>
+  </mat-sidenav-content>
+</mat-sidenav-container>

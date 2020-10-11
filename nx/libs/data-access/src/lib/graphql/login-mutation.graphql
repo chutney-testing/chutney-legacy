@@ -1,0 +1,9 @@
+mutation login($input: LoginInput!, $bodySerializer: RestFunctionOrString!){
+   login(input: $input) @rest(type: "User", path: "api/v1/user/login", method: "POST", bodySerializer: $bodySerializer){
+       id
+       name
+       firstname
+       lastname
+       mail
+   }
+}

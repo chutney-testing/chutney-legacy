@@ -1,0 +1,53 @@
+<mat-card>
+  <mat-card-content>
+    <div>
+      <div class="logo">
+        <div class="icon-lock"></div>
+      </div>
+      <h4>Login to your account</h4>
+    </div>
+    <form
+      [formGroup]="loginForm"
+      fxLayout="column"
+      (ngSubmit)="onSubmit($event)"
+    >
+      <mat-form-field color="accent">
+        <input
+          matInput
+          placeholder="username"
+          type="text"
+          formControlName="username"
+        />
+        <mat-error>
+          <span
+            *ngIf="
+              loginForm.get('username').hasError('required') &&
+              loginForm.touched
+            "
+            >Required Field</span
+          >
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field color="accent">
+        <input
+          matInput
+          placeholder="password"
+          type="text"
+          formControlName="password"
+        />
+        <mat-error>
+          <span
+            *ngIf="
+              loginForm.get('password').hasError('required') &&
+              loginForm.touched
+            "
+            >Required Field</span
+          >
+        </mat-error>
+      </mat-form-field>
+      <button mat-fab color="accent">
+        <mat-icon>arrow_forward</mat-icon>
+      </button>
+    </form>
+  </mat-card-content>
+</mat-card>
