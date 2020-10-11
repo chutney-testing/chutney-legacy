@@ -13,10 +13,12 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { CovalentDialogsModule } from '@covalent/core/dialogs';
 
 @NgModule({
   imports: [
     FlexLayoutModule,
+    /* Material Modules*/
     MatInputModule,
     MatCardModule,
     MatButtonModule,
@@ -30,9 +32,12 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MatSelectModule,
     MatSnackBarModule,
     MatExpansionModule,
+    /** Covalent Modules */
+    CovalentDialogsModule,
   ],
   exports: [
     FlexLayoutModule,
+    /* Material modules*/
     MatInputModule,
     MatCardModule,
     MatButtonModule,
@@ -46,6 +51,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MatSelectModule,
     MatSnackBarModule,
     MatExpansionModule,
+    /** Covalent Modules */
+    CovalentDialogsModule,
   ],
 })
 export class UiMaterialModule {}
