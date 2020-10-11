@@ -1,0 +1,44 @@
+.tag {
+  box-sizing: border-box;
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 14px;
+  font-variant: tabular-nums;
+  line-height: 1.5715;
+  list-style: none;
+  font-feature-settings: 'tnum';
+  display: inline-block;
+  height: auto;
+  margin: 0 8px 0 0;
+  padding: 0 7px;
+  white-space: nowrap;
+  background: #fafafa;
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+  cursor: default;
+  opacity: 1;
+  transition: all 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+}
+
+.tag-success {
+  color: #52c41a;
+  background: #f6ffed;
+  border-color: #b7eb8f;
+}
+
+.tag-processing {
+  color: #1890ff;
+  background: #e6f7ff;
+  border-color: #91d5ff;
+}
+
+.tag-error {
+  color: #f5222d;
+  background: #fff1f0;
+  border-color: #ffa39e;
+}
+
+.tag-warning {
+  color: #fa8c16;
+  background: #fff7e6;
+  border-color: #ffd591;
+}

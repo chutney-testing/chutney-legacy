@@ -29,7 +29,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MatTableModule,
     MatSelectModule,
     MatSnackBarModule,
-    MatExpansionModule
+    MatExpansionModule,
   ],
   exports: [
     FlexLayoutModule,
@@ -45,7 +45,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MatTableModule,
     MatSelectModule,
     MatSnackBarModule,
-    MatExpansionModule
-  ]
+    MatExpansionModule,
+  ],
 })
 export class UiMaterialModule {}
