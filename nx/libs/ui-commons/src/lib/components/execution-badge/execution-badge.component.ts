@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 
 @Component({
-  selector: 'chutney-testing-execution-badge',
+  selector: 'chutney-execution-badge',
   templateUrl: './execution-badge.component.html',
   styleUrls: ['./execution-badge.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

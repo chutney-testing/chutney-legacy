@@ -5,7 +5,7 @@ import { isNullOrUndefined } from 'util';
 import { Scenario } from '@chutney/data-access';
 
 @Component({
-  selector: 'chutney-testing-scearios-list',
+  selector: 'chutney-scenarios-list',
   templateUrl: './scenarios-list.component.html',
   styleUrls: ['./scenarios-list.component.scss'],
 })
