@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subject } from 'rxjs';
 import { isNullOrUndefined } from 'util';
@@ -10,6 +10,9 @@ import { Scenario } from '@chutney/data-access';
   styleUrls: ['./scenarios-list.component.scss'],
 })
 export class ScenariosListComponent implements OnInit {
+
+  @Output() edit = new EventEmitter<number>();
+  @Output() delete = new EventEmitter<number>();
   displayedColumns: string[] = ['id', 'title', 'status', 'action'];
 
   constructor() {}
@@ -32,7 +35,11 @@ export class ScenariosListComponent implements OnInit {
     return this._scenariosDataSource;
   }
 
-  editScenario(id: any) {}
+  editScenario(id: any) {
+    this.edit.emit(id)
+  }
 
-  deleteScenario(id: any) {}
+  deleteScenario(id: any) {
+    this.delete.emit(id)
+  }
 }

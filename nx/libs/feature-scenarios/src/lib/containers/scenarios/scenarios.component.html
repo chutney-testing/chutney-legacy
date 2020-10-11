@@ -1,8 +1,10 @@
 <div class="mat-elevation-z8">
-  <mat-toolbar>
+  <mat-toolbar class="mat-elevation-z8">
     Scenarios
   </mat-toolbar>
   <chutney-scenarios-list
     [scenarios]="scenarios$ | async"
+    (edit)="onEdit($event)"
+    (delete)="onDelete($event)"
   ></chutney-scenarios-list>
 </div>
