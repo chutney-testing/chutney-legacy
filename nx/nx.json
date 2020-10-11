@@ -18,7 +18,13 @@
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e"]
+        "cacheableOperations": [
+          "build",
+          "lint",
+          "test",
+          "e2e",
+          "build-storybook"
+        ]
       }
     }
   },
@@ -32,6 +38,28 @@
     },
     "ui-material": {
       "tags": []
+    },
+    "ui-layout": {
+      "tags": []
+    },
+    "data-access": {
+      "tags": []
+    },
+    "feature-auth": {
+      "tags": []
+    },
+    "feature-scenarios": {
+      "tags": []
+    },
+    "utils": {
+      "tags": []
+    },
+    "ui-commons": {
+      "tags": []
+    },
+    "ui-commons-e2e": {
+      "tags": [],
+      "implicitDependencies": ["ui-commons"]
     }
   }
 }

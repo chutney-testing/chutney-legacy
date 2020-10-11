@@ -1,0 +1,101 @@
+input LoginInput {
+  username: String!
+  password: String!
+}
+
+type User {
+  id: ID!
+  name: String!
+  firstname: String!
+  lastname: String!
+  mail: String!
+}
+
+type ScenarioExecution {
+  executionId: ID!
+  time: String!
+  duration: Int!
+  status: String
+  info: String
+  error: String
+  testCaseTitle: String!
+  environment: String!
+  report: String
+}
+
+type Scenario {
+  id: ID!
+  title: String!
+  status: String!
+  executions: [ScenarioExecution]
+  tags: [String]
+}
+
+type Query {
+  user: User
+  scenarios: [Scenario]
+}
+
+type Mutation {
+  login(input: LoginInput!): User
+}
+
+scalar RestFunction
+scalar RestFunctionOrString
+
+"""
+Set up the endpoint you want to fetch over REST. The rest directive could be used
+at any depth in a query, but once it is used, nothing nested in it can be GraphQL
+data, it has to be from the RestLink or other resource (like the @client directive)
+"""
+directive @rest(
+  """
+  The GraphQL type this will return
+  """
+  type: String!
+  """
+  URI-path to the REST API. This could be a path or a full URL. If a path, the
+  endpoint given on link creation or from the context is concatenated with it to
+  produce a full `URI`. See also: `pathBuilder`
+  """
+  path: String!
+  """
+  The HTTP method to send the request via (i.e GET, PUT, POST)
+  """
+  method: String
+  """
+  Key to use when looking up the endpoint in the (optional) `endpoints` table if
+  provided to `RestLink` at creation time.
+  """
+  endpoint: String
+  """
+  If provided, this function gets to control what path is produced for this request.
+  """
+  pathBuilder: RestFunction
+  """
+  This is the name of the variable to use when looking to build a REST request-body
+  for a `PUT` or `POST` request. It defaults to `input` if not supplied.
+  """
+  bodyKey: String = "input"
+  """
+  If provided, this is the name a `function` that you provided to `variables`, that is
+  called when a request-body needs to be built. This lets you combine arguments or
+  encode the body in some format other than JSON.
+  """
+  bodyBuilder: RestFunction
+  """
+  String key to look up a function in `bodySerializers` or a custom serialization
+  function for the body/headers of this request before it is passed to the fetch call.
+  Defaults to `JSON.stringify` and setting `Content-Type: application-json`.
+  """
+  bodySerializer: RestFunctionOrString
+) on FIELD
+
+"Indicates that the client should resolve the field value locally as part of a query, e.g. in a React component"
+directive @client on FIELD
+
+directive @type(
+  """
+  The GraphQL type this will return
+  """
+  name: String!) on FIELD

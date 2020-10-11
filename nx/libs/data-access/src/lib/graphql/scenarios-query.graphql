@@ -1,0 +1,15 @@
+query scenarios {
+  scenarios @rest(type: "Scenario", path: "api/scenario/v2") {
+    id
+    title
+    tags
+    executions {
+      __typename
+      executionId
+      time
+      status
+      duration
+    }
+    status @client
+  }
+}
