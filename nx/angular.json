@@ -116,6 +116,32 @@
           }
         }
       }
+    },
+    "ui-material": {
+      "projectType": "library",
+      "root": "libs/ui-material",
+      "sourceRoot": "libs/ui-material/src",
+      "prefix": "chutney",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/ui-material/src/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/ui-material/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      }
     }
   },
   "cli": {
