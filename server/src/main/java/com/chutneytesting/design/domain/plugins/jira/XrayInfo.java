@@ -1,4 +1,4 @@
-package com.chutneytesting.design.domain.jira;
+package com.chutneytesting.design.domain.plugins.jira;
 
 import java.util.List;
 

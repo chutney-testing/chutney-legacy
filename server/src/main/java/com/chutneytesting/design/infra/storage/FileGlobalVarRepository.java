@@ -125,7 +125,7 @@ public class FileGlobalVarRepository implements GlobalvarRepository {
                 .filter(Files::isRegularFile)
                 .collect(Collectors.toMap(
                     p -> p,
-                    FileUtils::readAllBytes
+                    FileUtils::readContent
                 ))
         );
     }

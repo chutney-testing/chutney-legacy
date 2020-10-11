@@ -1,7 +1,7 @@
-package com.chutneytesting.design.api.jira;
+package com.chutneytesting.design.api.plugins.jira;
 
-import com.chutneytesting.design.domain.jira.JiraRepository;
-import com.chutneytesting.design.domain.jira.JiraTargetConfiguration;
+import com.chutneytesting.design.domain.plugins.jira.JiraRepository;
+import com.chutneytesting.design.domain.plugins.jira.JiraTargetConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,7 +27,6 @@ public class JiraModuleController {
     public JiraModuleController(JiraRepository jiraRepository) {
         this.jiraRepository = jiraRepository;
     }
-
 
     @GetMapping(path = BASE_SCENARIO_URL + "/{scenarioId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public JiraDto getByScenarioId(@PathVariable String scenarioId) {

@@ -1,5 +1,6 @@
 package com.chutneytesting.tools.file;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
@@ -48,11 +49,20 @@ public class FileUtils {
         }
     }
 
-    public static String readAllBytes(Path path) throws UncheckedIOException {
+    public static String readContent(Path path) throws UncheckedIOException {
         try {
             return new String(Files.readAllBytes(path));
         } catch (IOException e) {
             throw new UncheckedIOException("Cannot read variable file: " + path, e);
+        }
+    }
+
+    public static void writeContent(Path path, String content) throws UncheckedIOException {
+        try (FileOutputStream outputStream = new FileOutputStream(path.toString())) {
+            byte[] strToBytes = content.getBytes();
+            outputStream.write(strToBytes);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Cannot write into file: " + path, e);
         }
     }
 }

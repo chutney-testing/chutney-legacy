@@ -8,34 +8,34 @@ import com.chutneytesting.design.domain.environment.EnvironmentRepository;
 import com.chutneytesting.design.domain.environment.InvalidEnvironmentNameException;
 import com.chutneytesting.design.domain.environment.SecurityInfo;
 import com.chutneytesting.design.domain.environment.Target;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import com.chutneytesting.tools.ThrowingConsumer;
-import org.junit.After;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class JsonFilesEnvironmentRepositoryTest {
 
-    private static final Path CONFIGURATION_FOLDER = Paths.get("target", "conf");
+    @ClassRule
+    public static final TemporaryFolder TEMPORARY_FOLDER = new TemporaryFolder();
 
-    private final EnvironmentRepository sut = new JsonFilesEnvironmentRepository(CONFIGURATION_FOLDER.toString());
+    private static EnvironmentRepository sut;
 
-    @After
-    public void after() {
-        try (Stream<Path> confStream = Files.list(CONFIGURATION_FOLDER)) {
-            confStream.forEach(ThrowingConsumer.toUnchecked(Files::delete));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    @BeforeClass
+    public static void setUp() throws IOException {
+        String tmpConfDir = TEMPORARY_FOLDER.newFolder("conf").getAbsolutePath();
+        System.setProperty("configuration-folder", tmpConfDir);
+        System.setProperty("persistence-repository-folder", tmpConfDir);
+
+        sut = new JsonFilesEnvironmentRepository(tmpConfDir);
     }
 
     @Test
@@ -84,11 +84,11 @@ public class JsonFilesEnvironmentRepositoryTest {
     public void delete_environment_removes_it_from_list() {
         sut.save(Environment.builder().withName("TEST").withDescription("some description").build());
 
-        assertThat(sut.listNames()).hasSize(1);
+        assertThat(sut.listNames()).contains("TEST");
 
         sut.delete("TEST");
 
-        assertThat(sut.listNames()).hasSize(0);
+        assertThat(sut.listNames()).doesNotContain("TEST");
     }
 
     @Test(expected = EnvironmentNotFoundException.class)
@@ -110,23 +110,18 @@ public class JsonFilesEnvironmentRepositoryTest {
     @Test
     public void should_backup_env_files() throws IOException {
         // Given
-        Path backup = Paths.get("./target/backup", "env");
-        Files.createDirectories(backup.getParent());
-        Files.deleteIfExists(backup);
+        File env1 = TEMPORARY_FOLDER.newFile("conf/env1-tobackup.json");
+        File env2 = TEMPORARY_FOLDER.newFile("conf/env2-tobackup.json");
+        File envZip = TEMPORARY_FOLDER.newFile("env.zip");
 
-        Path env1Path = CONFIGURATION_FOLDER.resolve("env1-tobackup.json");
-        Files.createFile(env1Path);
-        Path env2Path = CONFIGURATION_FOLDER.resolve("env2-tobackup.json");
-        Files.createFile(env2Path);
-
-        try (OutputStream outputStream = Files.newOutputStream(Files.createFile(backup))) {
+        try (OutputStream outputStream = Files.newOutputStream(envZip.toPath())) {
             // When
             sut.backup(outputStream);
         }
 
         // Then
-        ZipFile zipFile = new ZipFile(backup.toString());
+        ZipFile zipFile = new ZipFile(envZip);
         List<String> entriesNames = zipFile.stream().map(ZipEntry::getName).collect(Collectors.toList());
-        assertThat(entriesNames).containsExactlyInAnyOrder(env1Path.getFileName().toString(), env2Path.getFileName().toString());
+        assertThat(entriesNames).containsExactlyInAnyOrder(env1.toPath().getFileName().toString(), env2.toPath().getFileName().toString());
     }
 }

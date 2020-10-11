@@ -1,11 +1,11 @@
 package com.chutneytesting.execution.domain.jira;
 
-import com.chutneytesting.design.domain.jira.JiraRepository;
-import com.chutneytesting.design.domain.jira.JiraTargetConfiguration;
-import com.chutneytesting.design.domain.jira.Xray;
-import com.chutneytesting.design.domain.jira.XrayEvidence;
-import com.chutneytesting.design.domain.jira.XrayInfo;
-import com.chutneytesting.design.domain.jira.XrayTest;
+import com.chutneytesting.design.domain.plugins.jira.JiraRepository;
+import com.chutneytesting.design.domain.plugins.jira.JiraTargetConfiguration;
+import com.chutneytesting.design.domain.plugins.jira.Xray;
+import com.chutneytesting.design.domain.plugins.jira.XrayEvidence;
+import com.chutneytesting.design.domain.plugins.jira.XrayInfo;
+import com.chutneytesting.design.domain.plugins.jira.XrayTest;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.execution.domain.report.StepExecutionReportCore;

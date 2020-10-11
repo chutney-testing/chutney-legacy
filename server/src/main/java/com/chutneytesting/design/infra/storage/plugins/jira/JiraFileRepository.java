@@ -1,10 +1,10 @@
-package com.chutneytesting.design.infra.storage.jira;
+package com.chutneytesting.design.infra.storage.plugins.jira;
 
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
 import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
 
-import com.chutneytesting.design.domain.jira.JiraRepository;
-import com.chutneytesting.design.domain.jira.JiraTargetConfiguration;
+import com.chutneytesting.design.domain.plugins.jira.JiraRepository;
+import com.chutneytesting.design.domain.plugins.jira.JiraTargetConfiguration;
 import com.chutneytesting.tools.ZipUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,8 +47,7 @@ public class JiraFileRepository implements JiraRepository {
     @Override
     public void backup(OutputStream outputStream) throws UncheckedIOException {
         try (ZipOutputStream zipOutPut = new ZipOutputStream(new BufferedOutputStream(outputStream, 4096))) {
-            Path jiraDirectoryPath = this.storeFolderPath;
-            ZipUtils.compressDirectoryToZipfile(jiraDirectoryPath.getParent(), jiraDirectoryPath.getFileName(), zipOutPut);
+            ZipUtils.compressDirectoryToZipfile(storeFolderPath.getParent(), storeFolderPath.getFileName(), zipOutPut);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
