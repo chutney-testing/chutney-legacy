@@ -5,5 +5,6 @@ import { ExecutionBadgeComponent } from './components/execution-badge/execution-
 @NgModule({
   imports: [CommonModule],
   declarations: [ExecutionBadgeComponent],
+  exports: [ExecutionBadgeComponent],
 })
 export class UiCommonsModule {}
