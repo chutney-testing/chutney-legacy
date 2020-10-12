@@ -6,7 +6,18 @@ import { APOLLO_OPTIONS } from 'apollo-angular';
 import { sortByKeys } from '@chutney/utils';
 import { ScenarioExecution } from '@chutney/data-access';
 
-const inMemoryCache = new InMemoryCache();
+const inMemoryCache = new InMemoryCache(
+  {
+    typePolicies: {
+      Scenario: {
+        keyFields: ["id"],
+      },
+      ScenarioExecution: {
+        keyFields: ["executionId"],
+      }
+    },
+  }
+);
 
 const restLink = new RestLink({
   uri: window.location.origin + '/',
@@ -17,7 +28,8 @@ const restLink = new RestLink({
       patchDeeper: RestLink.FunctionalTypePatcher
     ): any => {
       if (data.metadata) {
-        data = { __typename: 'Scenario', ...data.metadata };
+        data = {__typename: 'Scenario', ...data.metadata, ...data.metadata};
+        data.executions = data.executions.map(obj=> ({ ...obj, __typename: 'ScenarioExecution' }))
       }
       return data;
     },
