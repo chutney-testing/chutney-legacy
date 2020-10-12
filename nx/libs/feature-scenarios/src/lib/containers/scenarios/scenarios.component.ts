@@ -23,11 +23,11 @@ export class ScenariosComponent implements OnInit {
       .valueChanges.pipe(pluck('data', 'scenarios'));
   }
 
-  onEdit(id: number) {
-    console.log(`edit scenario with id${id}`);
+  onEdit(id: string) {
+    console.log(`edit scenario with id ${id}`);
   }
 
-  onDelete(id: number) {
+  onDelete(id: string) {
     this._dialogService.openConfirm({
       title: 'Confirm',
       message: 'After deletion, the scenario cannot be restored',

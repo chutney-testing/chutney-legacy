@@ -3,7 +3,7 @@ query scenarios {
     id
     title
     tags
-    executions {
+    executions @type(name: "ScenarioExecution"){
       __typename
       executionId
       time
