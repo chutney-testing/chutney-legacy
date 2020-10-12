@@ -72,3 +72,4 @@ com.chutneytesting.task.micrometer.MicrometerGaugeTask
 com.chutneytesting.task.micrometer.MicrometerTimerTask
 com.chutneytesting.task.micrometer.MicrometerTimerStartTask
 com.chutneytesting.task.micrometer.MicrometerTimerStopTask
+com.chutneytesting.task.micrometer.MicrometerSummaryTask
