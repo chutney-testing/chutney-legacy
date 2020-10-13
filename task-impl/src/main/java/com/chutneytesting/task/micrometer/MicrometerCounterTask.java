@@ -1,6 +1,8 @@
 package com.chutneytesting.task.micrometer;
 
-import static io.micrometer.core.instrument.Metrics.globalRegistry;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkDoubleOrNull;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkRegistry;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.toOutputs;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
@@ -10,9 +12,7 @@ import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MicrometerCounterTask implements Task {
 
@@ -40,7 +40,7 @@ public class MicrometerCounterTask implements Task {
         this.description = description;
         this.unit = unit;
         this.tags = tags;
-        this.increment = ofNullable(increment).map(Double::parseDouble).orElse(null);
+        this.increment = checkDoubleOrNull(increment);
         this.counter = counter;
         this.registry = registry;
     }
@@ -54,7 +54,7 @@ public class MicrometerCounterTask implements Task {
                 logger.info("Counter incremented by " + increment);
             }
             logger.info("Counter current count is " + counter.count());
-            return TaskExecutionResult.ok(toOutputs());
+            return TaskExecutionResult.ok(toOutputs(OUTPUT_COUNTER, counter));
         } catch (Exception e) {
             logger.error(e);
             return TaskExecutionResult.ko();
@@ -62,7 +62,7 @@ public class MicrometerCounterTask implements Task {
     }
 
     private Counter retrieveCounter(MeterRegistry registry) {
-        MeterRegistry registryToUse = ofNullable(registry).orElse(globalRegistry);
+        MeterRegistry registryToUse = checkRegistry(registry);
 
         Counter.Builder builder = Counter.builder(requireNonNull(name))
             .description(description)
@@ -71,11 +71,5 @@ public class MicrometerCounterTask implements Task {
         ofNullable(tags).ifPresent(t -> builder.tags(t.toArray(new String[0])));
 
         return builder.register(registryToUse);
-    }
-
-    private Map<String, Object> toOutputs() {
-        Map<String, Object> outputs = new HashMap<>();
-        outputs.put(OUTPUT_COUNTER, counter);
-        return outputs;
     }
 }

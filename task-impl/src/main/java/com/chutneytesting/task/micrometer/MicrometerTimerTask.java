@@ -1,6 +1,11 @@
 package com.chutneytesting.task.micrometer;
 
-import static io.micrometer.core.instrument.Metrics.globalRegistry;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkDurationOrNull;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkIntOrNull;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkMapOrNull;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkRegistry;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkTimeUnit;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.toOutputs;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
@@ -11,11 +16,7 @@ import com.chutneytesting.task.spi.injectable.Logger;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class MicrometerTimerTask implements Task {
@@ -60,17 +61,17 @@ public class MicrometerTimerTask implements Task {
         this.name = name;
         this.description = description;
         this.tags = tags;
-        this.bufferLength = ofNullable(bufferLength).map(Integer::parseInt).orElse(null);
-        this.expiry = ofNullable(expiry).map(this::parseDuration).orElse(null);
-        this.maxValue = ofNullable(maxValue).map(this::parseDuration).orElse(null);
-        this.minValue = ofNullable(minValue).map(this::parseDuration).orElse(null);
-        this.percentilePrecision = ofNullable(percentilePrecision).map(Integer::parseInt).orElse(null);
+        this.bufferLength = checkIntOrNull(bufferLength);
+        this.expiry = checkDurationOrNull(expiry);
+        this.maxValue = checkDurationOrNull(maxValue);
+        this.minValue = checkDurationOrNull(minValue);
+        this.percentilePrecision = checkIntOrNull(percentilePrecision);
         this.publishPercentilesHistogram = publishPercentilesHistogram;
-        this.percentiles = ofNullable(percentiles).map(this::parsePercentilesList).orElse(null);
-        this.sla = ofNullable(sla).map(this::parseSlaList).orElse(null);
+        this.percentiles = checkMapOrNull(percentiles, MicrometerTaskHelper::parsePercentilesList);
+        this.sla = checkMapOrNull(sla, MicrometerTaskHelper::parseSlaListToDurations);
 
-        this.timeunit = ofNullable(timeunit).map(TimeUnit::valueOf).orElse(TimeUnit.SECONDS);
-        this.record = ofNullable(record).map(this::parseDuration).orElse(null);
+        this.timeunit = checkTimeUnit(timeunit);
+        this.record = checkDurationOrNull(record);
         this.timer = timer;
         this.registry = registry;
     }
@@ -87,7 +88,7 @@ public class MicrometerTimerTask implements Task {
             logger.info("Timer current max time is " + timer.max(timeunit) + " " + timeunit);
             logger.info("Timer current mean time is " + timer.mean(timeunit) + " " + timeunit);
             logger.info("Timer current count is " + timer.count());
-            return TaskExecutionResult.ok(toOutputs());
+            return TaskExecutionResult.ok(toOutputs(OUTPUT_TIMER, timer));
         } catch (Exception e) {
             logger.error(e);
             return TaskExecutionResult.ko();
@@ -95,7 +96,7 @@ public class MicrometerTimerTask implements Task {
     }
 
     private Timer retrieveTimer(MeterRegistry registry) {
-        MeterRegistry registryToUse = ofNullable(registry).orElse(globalRegistry);
+        MeterRegistry registryToUse = checkRegistry(registry);
 
         Timer.Builder builder = Timer.builder(requireNonNull(name))
             .description(description)
@@ -111,29 +112,5 @@ public class MicrometerTimerTask implements Task {
         ofNullable(tags).ifPresent(t -> builder.tags(t.toArray(new String[0])));
 
         return builder.register(registryToUse);
-    }
-
-    private Map<String, Object> toOutputs() {
-        Map<String, Object> outputs = new HashMap<>();
-        outputs.put(OUTPUT_TIMER, timer);
-        return outputs;
-    }
-
-    private Duration parseDuration(String duration) {
-        return Duration.of(com.chutneytesting.task.spi.time.Duration.parse(duration).toMilliseconds(), ChronoUnit.MILLIS);
-    }
-
-    private double[] parsePercentilesList(String percentiles) {
-        return Arrays.stream(percentiles.split(","))
-            .map(String::trim)
-            .mapToDouble(Double::parseDouble)
-            .toArray();
-    }
-
-    private Duration[] parseSlaList(String sla) {
-        return Arrays.stream(sla.split(","))
-            .map(String::trim)
-            .map(this::parseDuration)
-            .toArray(Duration[]::new);
     }
 }

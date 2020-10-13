@@ -1,6 +1,12 @@
 package com.chutneytesting.task.micrometer;
 
-import static io.micrometer.core.instrument.Metrics.globalRegistry;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkDoubleOrNull;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkDurationOrNull;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkIntOrNull;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkLongOrNull;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkMapOrNull;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkRegistry;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.toOutputs;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
@@ -11,11 +17,7 @@ import com.chutneytesting.task.spi.injectable.Logger;
 import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.MeterRegistry;
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MicrometerSummaryTask implements Task {
 
@@ -62,17 +64,17 @@ public class MicrometerSummaryTask implements Task {
         this.description = description;
         this.unit = unit;
         this.tags = tags;
-        this.bufferLength = ofNullable(bufferLength).map(Integer::parseInt).orElse(null);
-        this.expiry = ofNullable(expiry).map(this::parseDuration).orElse(null);
-        this.maxValue = ofNullable(maxValue).map(Long::parseLong).orElse(null);
-        this.minValue = ofNullable(minValue).map(Long::parseLong).orElse(null);
-        this.percentilePrecision = ofNullable(percentilePrecision).map(Integer::parseInt).orElse(null);
+        this.bufferLength = checkIntOrNull(bufferLength);
+        this.expiry = checkDurationOrNull(expiry);
+        this.maxValue = checkLongOrNull(maxValue);
+        this.minValue = checkLongOrNull(minValue);
+        this.percentilePrecision = checkIntOrNull(percentilePrecision);
         this.publishPercentilesHistogram = publishPercentilesHistogram;
-        this.percentiles = ofNullable(percentiles).map(this::parsePercentilesList).orElse(null);
-        this.scale = ofNullable(scale).map(Double::parseDouble).orElse(null);
-        this.sla = ofNullable(sla).map(this::parseSlaList).orElse(null);
+        this.percentiles = checkMapOrNull(percentiles, MicrometerTaskHelper::parsePercentilesList);
+        this.scale = checkDoubleOrNull(scale);
+        this.sla = checkMapOrNull(sla, MicrometerTaskHelper::parseSlaListToLongs);
 
-        this.record = ofNullable(record).map(Double::parseDouble).orElse(null);
+        this.record = checkDoubleOrNull(record);
         this.distributionSummary = distributionSummary;
         this.registry = registry;
     }
@@ -89,7 +91,7 @@ public class MicrometerSummaryTask implements Task {
             logger.info("Distribution summary current max is " + distributionSummary.max());
             logger.info("Distribution summary current mean is " + distributionSummary.mean());
             logger.info("Distribution summary current count is " + distributionSummary.count());
-            return TaskExecutionResult.ok(toOutputs());
+            return TaskExecutionResult.ok(toOutputs(OUTPUT_SUMMARY, distributionSummary));
         } catch (Exception e) {
             logger.error(e);
             return TaskExecutionResult.ko();
@@ -97,7 +99,7 @@ public class MicrometerSummaryTask implements Task {
     }
 
     private DistributionSummary retrieveSummary(MeterRegistry registry) {
-        MeterRegistry registryToUse = ofNullable(registry).orElse(globalRegistry);
+        MeterRegistry registryToUse = checkRegistry(registry);
 
         DistributionSummary.Builder builder = DistributionSummary.builder(requireNonNull(name))
             .description(description)
@@ -115,29 +117,5 @@ public class MicrometerSummaryTask implements Task {
         ofNullable(tags).ifPresent(t -> builder.tags(t.toArray(new String[0])));
 
         return builder.register(registryToUse);
-    }
-
-    private Map<String, Object> toOutputs() {
-        Map<String, Object> outputs = new HashMap<>();
-        outputs.put(OUTPUT_SUMMARY, distributionSummary);
-        return outputs;
-    }
-
-    private Duration parseDuration(String duration) {
-        return Duration.of(com.chutneytesting.task.spi.time.Duration.parse(duration).toMilliseconds(), ChronoUnit.MILLIS);
-    }
-
-    private double[] parsePercentilesList(String percentiles) {
-        return Arrays.stream(percentiles.split(","))
-            .map(String::trim)
-            .mapToDouble(Double::parseDouble)
-            .toArray();
-    }
-
-    private long[] parseSlaList(String sla) {
-        return Arrays.stream(sla.split(","))
-            .map(String::trim)
-            .mapToLong(Long::parseLong)
-            .toArray();
     }
 }

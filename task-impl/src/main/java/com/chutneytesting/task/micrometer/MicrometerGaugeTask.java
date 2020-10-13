@@ -1,7 +1,7 @@
 package com.chutneytesting.task.micrometer;
 
-import static io.micrometer.core.instrument.Metrics.globalRegistry;
-import static java.util.Collections.emptyMap;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkRegistry;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.toOutputs;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
@@ -16,7 +16,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -64,7 +63,7 @@ public class MicrometerGaugeTask implements Task {
         try {
             Gauge gauge = this.retrieveGauge(registry);
             logger.info("Gauge current value is " + gauge.value());
-            return TaskExecutionResult.ok(toOutputs());
+            return TaskExecutionResult.ok(toOutputs(OUTPUT_GAUGE, gaugeObject));
         } catch (Exception e) {
             logger.error(e);
             return TaskExecutionResult.ko();
@@ -72,7 +71,7 @@ public class MicrometerGaugeTask implements Task {
     }
 
     private Gauge retrieveGauge(MeterRegistry registry) {
-        MeterRegistry registryToUse = ofNullable(registry).orElse(globalRegistry);
+        MeterRegistry registryToUse = checkRegistry(registry);
         Gauge.Builder builder;
 
         if (gaugeObject != null && gaugeFunction == null) {
@@ -114,15 +113,6 @@ public class MicrometerGaugeTask implements Task {
         ofNullable(tags).ifPresent(t -> finalBuilder.tags(t.toArray(new String[0])));
 
         return finalBuilder.register(registryToUse);
-    }
-
-    private Map<String, Object> toOutputs() {
-        if (gaugeObject != null) {
-            Map<String, Object> outputs = new HashMap<>();
-            outputs.put(OUTPUT_GAUGE, gaugeObject);
-            return outputs;
-        }
-        return emptyMap();
     }
 
     private Method retrieveMethod(String methodPath, Class cl) {

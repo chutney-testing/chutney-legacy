@@ -1,7 +1,7 @@
 package com.chutneytesting.task.micrometer;
 
-import static io.micrometer.core.instrument.Metrics.globalRegistry;
-import static java.util.Optional.ofNullable;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkRegistry;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.toOutputs;
 
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
@@ -9,8 +9,6 @@ import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MicrometerTimerStartTask implements Task {
 
@@ -22,7 +20,7 @@ public class MicrometerTimerStartTask implements Task {
     public MicrometerTimerStartTask(Logger logger,
                                     @Input("registry") MeterRegistry registry) {
         this.logger = logger;
-        this.registry = ofNullable(registry).orElse(globalRegistry);
+        this.registry = checkRegistry(registry);
     }
 
     @Override
@@ -30,16 +28,10 @@ public class MicrometerTimerStartTask implements Task {
         try {
             Timer.Sample sample = Timer.start(registry);
             logger.info("Timing sample started");
-            return TaskExecutionResult.ok(toOutputs(sample));
+            return TaskExecutionResult.ok(toOutputs(OUTPUT_TIMER_SAMPLE, sample));
         } catch (Exception e) {
             logger.error(e);
             return TaskExecutionResult.ko();
         }
-    }
-
-    private Map<String, Object> toOutputs(Timer.Sample sample) {
-        Map<String, Object> outputs = new HashMap<>();
-        outputs.put(OUTPUT_TIMER_SAMPLE, sample);
-        return outputs;
     }
 }
