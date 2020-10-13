@@ -10,25 +10,51 @@
         <div class="row m-1" [formGroup]="linkifierForm">
             <div class="col">
                 <label class="sr-only" for="pattern">Pattern</label>
-                <input type="text" class="form-control" id="pattern" formControlName="pattern" placeholder="ex. #(?P&lt;id&gt;[0-9]+)"/>
+                <input type="text" class="form-control" id="pattern" formControlName="pattern"
+                       placeholder="ex. #(?&lt;id&gt;[0-9]+)"/>
                 <small id="patternHelpBlock" class="form-text text-muted">
-                    Given the pattern (?P&lt;project&gt;[a-zA-Z0-9_-]+)#(?P&lt;id&gt;[0-9]+), when you will write "fake#42" in a scenario title
+                    Given the pattern (?&lt;project&gt;[a-zA-Z0-9_-]+)#(?&lt;id&gt;[0-9]+), when you will write
+                    "fake#42" in a scenario title
                 </small>
             </div>
             <div class="col">
                 <label class="sr-only" for="link">Link</label>
-                <input type="text" class="form-control" id="link" formControlName="link" placeholder="ex. https://github.com/chutney-testing/chutney/issues/%(id)s"/>
+                <input type="text" class="form-control" id="link" formControlName="link"
+                       placeholder="ex. https://github.com/chutney-testing/chutney/issues/$<id>"/>
                 <small id="linkHelpBlock" class="form-text text-muted">
-                    Then the template https://github.com/chutney-testing/%(project)s/issues/%(id)s will become a real link to https://github.com/chutney-testing/fake/issues/42
+                    Then the template https://github.com/chutney-testing/$&lt;project&gt;/issues/$&lt;id&gt; will become a real
+                    link to https://github.com/chutney-testing/fake/issues/42
                 </small>
             </div>
         </div>
 
         <div class="box2">
             <button type="submit" [disabled]="!isValid()" class="btn btn-success" (click)="addLinkifier()">
-                Save
+                Add
                 <span class="fa fa-check"></span>
             </button>
         </div>
+
+        <table class="table table-sm table-striped table-hover">
+            <thead>
+            <tr>
+                <th scope="col" class="w50">Pattern</th>
+                <th scope="col" class="w50">Link</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let linkifier of linkifiers; let i = index">
+                <td> {{ linkifier.pattern }} </td>
+                <td> {{ linkifier.link }} </td>
+                <td>
+                    <button type="button" class="btn btn-outline-danger delete-button-height ml-1"
+                            (click)="remove(i)"
+                            title="{{'global.actions.delete' | translate}}">
+                        <span class="fa fa-times"></span>
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </fieldset>
 </div>
