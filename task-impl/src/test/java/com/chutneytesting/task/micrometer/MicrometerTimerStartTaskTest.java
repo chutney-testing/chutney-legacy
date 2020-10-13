@@ -1,7 +1,6 @@
 package com.chutneytesting.task.micrometer;
 
 import static com.chutneytesting.task.micrometer.MicrometerTimerStartTask.OUTPUT_TIMER_SAMPLE;
-import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Success;
 import static io.micrometer.core.instrument.Metrics.globalRegistry;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -10,27 +9,11 @@ import com.chutneytesting.task.spi.TaskExecutionResult;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-public class MicrometerTimerStartTaskTest {
+public class MicrometerTimerStartTaskTest extends MicrometerTaskTest {
 
     private MicrometerTimerStartTask sut;
-
-    private MeterRegistry meterRegistry;
-
-    @Before
-    public void before() {
-        meterRegistry = new SimpleMeterRegistry();
-        globalRegistry.add(meterRegistry);
-    }
-
-    @After
-    public void after() {
-        globalRegistry.forEachMeter(globalRegistry::remove);
-        globalRegistry.remove(meterRegistry);
-    }
 
     @Test
     public void should_start_a_timing_sample() {
@@ -85,10 +68,6 @@ public class MicrometerTimerStartTaskTest {
     }
 
     private void assertSuccessAndSampleObjectType(TaskExecutionResult result) {
-        assertThat(result.status).isEqualTo(Success);
-        assertThat(result.outputs).containsOnlyKeys(OUTPUT_TIMER_SAMPLE);
-        assertThat(result.outputs)
-            .extractingByKey(OUTPUT_TIMER_SAMPLE)
-            .isInstanceOf(Timer.Sample.class);
+        assertSuccessAndOutputObjectType(result, OUTPUT_TIMER_SAMPLE, Timer.Sample.class);
     }
 }

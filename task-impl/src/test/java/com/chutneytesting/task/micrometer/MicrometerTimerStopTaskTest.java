@@ -1,7 +1,6 @@
 package com.chutneytesting.task.micrometer;
 
 import static com.chutneytesting.task.micrometer.MicrometerTimerStopTask.OUTPUT_TIMER_SAMPLE_DURATION;
-import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Success;
 import static io.micrometer.core.instrument.Metrics.globalRegistry;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -9,31 +8,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.chutneytesting.task.TestLogger;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import io.micrometer.core.instrument.Clock;
-import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import java.time.Duration;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-public class MicrometerTimerStopTaskTest {
+public class MicrometerTimerStopTaskTest extends MicrometerTaskTest {
 
     private MicrometerTimerStopTask sut;
-
-    private MeterRegistry meterRegistry;
-
-    @Before
-    public void before() {
-        meterRegistry = new SimpleMeterRegistry();
-        globalRegistry.add(meterRegistry);
-    }
-
-    @After
-    public void after() {
-        globalRegistry.forEachMeter(globalRegistry::remove);
-        globalRegistry.remove(meterRegistry);
-    }
 
     @Test
     public void timing_sample_is_mandatory() {
@@ -93,10 +75,6 @@ public class MicrometerTimerStopTaskTest {
     }
 
     private void assertSuccessAndDurationObjectType(TaskExecutionResult result) {
-        assertThat(result.status).isEqualTo(Success);
-        assertThat(result.outputs).containsOnlyKeys(OUTPUT_TIMER_SAMPLE_DURATION);
-        assertThat(result.outputs)
-            .extractingByKey(OUTPUT_TIMER_SAMPLE_DURATION)
-            .isInstanceOf(Duration.class);
+        assertSuccessAndOutputObjectType(result, OUTPUT_TIMER_SAMPLE_DURATION, Duration.class);
     }
 }

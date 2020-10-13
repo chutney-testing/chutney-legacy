@@ -20,31 +20,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.StreamSupport;
 import org.apache.groovy.util.Maps;
 import org.assertj.core.util.Lists;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 @SuppressWarnings("unchecked")
-public class MicrometerGaugeTaskTest {
+public class MicrometerGaugeTaskTest extends MicrometerTaskTest {
 
     private MicrometerGaugeTask sut;
-
     private final String GAUGE_NAME = "gaugeName";
-    private MeterRegistry meterRegistry;
-
-    @Before
-    public void before() {
-        meterRegistry = new SimpleMeterRegistry();
-        globalRegistry.add(meterRegistry);
-    }
-
-    @After
-    public void after() {
-        globalRegistry.forEachMeter(globalRegistry::remove);
-        globalRegistry.remove(meterRegistry);
-    }
 
     @Test
     public void gauge_name_is_mandatory() {
@@ -304,18 +289,13 @@ public class MicrometerGaugeTaskTest {
     }
 
     private void assertSuccessAndGaugeObjectType(TaskExecutionResult result, Class clazz) {
-        assertThat(result.status).isEqualTo(Success);
-        assertThat(result.outputs).containsOnlyKeys(OUTPUT_GAUGE);
-        assertThat(result.outputs)
-            .extractingByKey(OUTPUT_GAUGE)
-            .isInstanceOf(clazz);
+        assertSuccessAndOutputObjectType(result, OUTPUT_GAUGE, clazz);
     }
 
     private Measurement getFirstValueFromMeasurements(Iterable<Measurement> measurements) {
-        for (Measurement m : measurements) {
-            return m;
-        }
-        throw new IllegalArgumentException("Measurements should not be empty !!");
+        return StreamSupport.stream(measurements.spliterator(), false)
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("Measurements should not be empty !!"));
     }
 
     public static Number staticFunction() {

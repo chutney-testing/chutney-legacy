@@ -1,7 +1,6 @@
 package com.chutneytesting.task.micrometer;
 
 import static com.chutneytesting.task.micrometer.MicrometerCounterTask.OUTPUT_COUNTER;
-import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Success;
 import static io.micrometer.core.instrument.Metrics.globalRegistry;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -12,28 +11,12 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.assertj.core.util.Lists;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-public class MicrometerCounterTaskTest {
+public class MicrometerCounterTaskTest extends MicrometerTaskTest {
 
     private MicrometerCounterTask sut;
-
     private final String COUNTER_NAME = "counterName";
-    private MeterRegistry meterRegistry;
-
-    @Before
-    public void before() {
-        meterRegistry = new SimpleMeterRegistry();
-        globalRegistry.add(meterRegistry);
-    }
-
-    @After
-    public void after() {
-        globalRegistry.forEachMeter(globalRegistry::remove);
-        globalRegistry.remove(meterRegistry);
-    }
 
     @Test
     public void counter_increment_must_be_number() {
@@ -140,10 +123,6 @@ public class MicrometerCounterTaskTest {
     }
 
     private void assertSuccessAndCounterObjectType(TaskExecutionResult result) {
-        assertThat(result.status).isEqualTo(Success);
-        assertThat(result.outputs).containsOnlyKeys(OUTPUT_COUNTER);
-        assertThat(result.outputs)
-            .extractingByKey(OUTPUT_COUNTER)
-            .isInstanceOf(Counter.class);
+        assertSuccessAndOutputObjectType(result, OUTPUT_COUNTER, Counter.class);
     }
 }

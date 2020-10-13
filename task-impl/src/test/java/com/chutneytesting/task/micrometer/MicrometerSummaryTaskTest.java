@@ -1,7 +1,6 @@
 package com.chutneytesting.task.micrometer;
 
 import static com.chutneytesting.task.micrometer.MicrometerSummaryTask.OUTPUT_SUMMARY;
-import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Success;
 import static io.micrometer.core.instrument.Metrics.globalRegistry;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -12,28 +11,12 @@ import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.assertj.core.util.Lists;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-public class MicrometerSummaryTaskTest {
+public class MicrometerSummaryTaskTest extends MicrometerTaskTest {
 
     private MicrometerSummaryTask sut;
-
     private final String SUMMARY_NAME = "summaryName";
-    private MeterRegistry meterRegistry;
-
-    @Before
-    public void before() {
-        meterRegistry = new SimpleMeterRegistry();
-        globalRegistry.add(meterRegistry);
-    }
-
-    @After
-    public void after() {
-        globalRegistry.forEachMeter(globalRegistry::remove);
-        globalRegistry.remove(meterRegistry);
-    }
 
     @Test
     public void summary_name_is_mandatory_if_no_given_summary() {
@@ -208,10 +191,6 @@ public class MicrometerSummaryTaskTest {
     }
 
     private void assertSuccessAndSummaryObjectType(TaskExecutionResult result) {
-        assertThat(result.status).isEqualTo(Success);
-        assertThat(result.outputs).containsOnlyKeys(OUTPUT_SUMMARY);
-        assertThat(result.outputs)
-            .extractingByKey(OUTPUT_SUMMARY)
-            .isInstanceOf(DistributionSummary.class);
+        assertSuccessAndOutputObjectType(result, OUTPUT_SUMMARY, DistributionSummary.class);
     }
 }

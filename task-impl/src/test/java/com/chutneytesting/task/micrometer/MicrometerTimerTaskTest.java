@@ -1,7 +1,6 @@
 package com.chutneytesting.task.micrometer;
 
 import static com.chutneytesting.task.micrometer.MicrometerTimerTask.OUTPUT_TIMER;
-import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Success;
 import static io.micrometer.core.instrument.Metrics.globalRegistry;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -13,28 +12,12 @@ import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import java.util.concurrent.TimeUnit;
 import org.assertj.core.util.Lists;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-public class MicrometerTimerTaskTest {
+public class MicrometerTimerTaskTest extends MicrometerTaskTest {
 
     private MicrometerTimerTask sut;
-
     private final String TIMER_NAME = "timerName";
-    private MeterRegistry meterRegistry;
-
-    @Before
-    public void before() {
-        meterRegistry = new SimpleMeterRegistry();
-        globalRegistry.add(meterRegistry);
-    }
-
-    @After
-    public void after() {
-        globalRegistry.forEachMeter(globalRegistry::remove);
-        globalRegistry.remove(meterRegistry);
-    }
 
     @Test
     public void timer_name_is_mandatory_if_no_given_timer() {
@@ -201,10 +184,6 @@ public class MicrometerTimerTaskTest {
     }
 
     private void assertSuccessAndTimerObjectType(TaskExecutionResult result) {
-        assertThat(result.status).isEqualTo(Success);
-        assertThat(result.outputs).containsOnlyKeys(OUTPUT_TIMER);
-        assertThat(result.outputs)
-            .extractingByKey(OUTPUT_TIMER)
-            .isInstanceOf(Timer.class);
+        assertSuccessAndOutputObjectType(result, OUTPUT_TIMER, Timer.class);
     }
 }
