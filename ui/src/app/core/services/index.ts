@@ -5,7 +5,7 @@ export * from './database-admin.service';
 export * from './dataset.service';
 export * from './environment-admin.service';
 export * from './home-page.service';
-export * from './linkifier-plugin-configuration.service';
+export * from './linkifier.service';
 export * from './login.service';
 export * from './scenario-execution.service';
 export * from './scenario.service';

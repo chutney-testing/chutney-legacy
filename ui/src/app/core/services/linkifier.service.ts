@@ -23,7 +23,7 @@ export class Linkifier {
 @Injectable({
     providedIn: 'root'
 })
-export class LinkifierPluginConfigurationService {
+export class LinkifierService {
 
     private url = '/api/ui/plugins/linkifier/v1/';
 
@@ -33,7 +33,7 @@ export class LinkifierPluginConfigurationService {
     public get(): Observable<Array<Linkifier>> {
         return this.http.get<Array<Linkifier>>(environment.backend + this.url)
             .pipe(
-                map(x => LinkifierPluginConfigurationService.updateSessionStorage(x))
+                map(x => LinkifierService.updateSessionStorage(x))
             );
     }
 

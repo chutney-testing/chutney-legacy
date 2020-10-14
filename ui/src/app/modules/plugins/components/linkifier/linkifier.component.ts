@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ValidationService } from '../../../../molecules/validation/validation.service';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Linkifier, LinkifierPluginConfigurationService } from '@core/services';
+import { Linkifier, LinkifierService } from '@core/services';
 import { delay } from '@shared/tools';
 
 
@@ -23,7 +23,7 @@ export class LinkifierComponent implements OnInit {
     linkifiers: Array<Linkifier> = [];
 
     constructor(private fb: FormBuilder,
-                private linkifierService: LinkifierPluginConfigurationService,
+                private linkifierService: LinkifierService,
                 private validationService: ValidationService) {
     }
 
