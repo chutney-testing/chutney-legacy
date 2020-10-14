@@ -55,7 +55,7 @@ public class MicrometerSummaryTask implements Task {
                                  @Input("publishPercentilesHistogram") Boolean publishPercentilesHistogram,
                                  @Input("percentiles") String percentiles,
                                  @Input("scale") String scale,
-                                 @Input("bufferLength") String sla,
+                                 @Input("sla") String sla,
                                  @Input("distributionSummary") DistributionSummary distributionSummary,
                                  @Input("registry") MeterRegistry registry,
                                  @Input("record") String record) {

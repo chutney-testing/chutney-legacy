@@ -6,3 +6,4 @@ com.chutneytesting.task.function.StringReplaceFunction
 com.chutneytesting.task.function.GenerateFunction
 com.chutneytesting.task.http.function.WireMockFunction
 com.chutneytesting.task.function.NullableFunction
+com.chutneytesting.task.micrometer.MicrometerFunctions

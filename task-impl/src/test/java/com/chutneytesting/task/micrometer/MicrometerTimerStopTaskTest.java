@@ -20,14 +20,14 @@ public class MicrometerTimerStopTaskTest extends MicrometerTaskTest {
     @Test
     public void timing_sample_is_mandatory() {
         assertThatThrownBy(() ->
-            new MicrometerTimerStopTask(null, null, Timer.builder("timerName").register(new SimpleMeterRegistry())).execute()
+            new MicrometerTimerStopTask(null, null, Timer.builder("timerName").register(new SimpleMeterRegistry()), null).execute()
         ).isExactlyInstanceOf(NullPointerException.class);
     }
 
     @Test
     public void timer_is_mandatory() {
         assertThatThrownBy(() ->
-            new MicrometerTimerStopTask(null, Timer.start(Clock.SYSTEM), null).execute()
+            new MicrometerTimerStopTask(null, Timer.start(Clock.SYSTEM), null, null).execute()
         ).isExactlyInstanceOf(NullPointerException.class);
     }
 
@@ -35,7 +35,7 @@ public class MicrometerTimerStopTaskTest extends MicrometerTaskTest {
     public void should_stop_timing_sample_and_create_given_timer_associated_record() {
         // Given
         Timer timer = Timer.builder("timerName").register(meterRegistry);
-        sut = new MicrometerTimerStopTask(new TestLogger(), Timer.start(Clock.SYSTEM), timer);
+        sut = new MicrometerTimerStopTask(new TestLogger(), Timer.start(Clock.SYSTEM), timer, null);
 
         // When
         TaskExecutionResult result = sut.execute();
@@ -59,10 +59,10 @@ public class MicrometerTimerStopTaskTest extends MicrometerTaskTest {
     }
 
     @Test
-    public void should_log_timing_sample_duration() {
+    public void should_log_timing_sample_duration_and_timer_statistics() {
         // Given
         TestLogger logger = new TestLogger();
-        sut = new MicrometerTimerStopTask(logger, Timer.start(Clock.SYSTEM), Timer.builder("timerName").register(meterRegistry));
+        sut = new MicrometerTimerStopTask(logger, Timer.start(Clock.SYSTEM), Timer.builder("timerName").register(meterRegistry), null);
 
         // When
         TaskExecutionResult result = sut.execute();
@@ -70,8 +70,12 @@ public class MicrometerTimerStopTaskTest extends MicrometerTaskTest {
         // Then
         assertSuccessAndDurationObjectType(result);
 
-        assertThat(logger.info).hasSize(1);
+        assertThat(logger.info).hasSize(5);
         assertThat(logger.info.get(0)).contains("stopped").contains("last for");
+        assertThat(logger.info.get(1)).contains("Timer current total time is");
+        assertThat(logger.info.get(2)).contains("Timer current max time is");
+        assertThat(logger.info.get(3)).contains("Timer current mean time is");
+        assertThat(logger.info.get(4)).isEqualTo("Timer current count is 1");
     }
 
     private void assertSuccessAndDurationObjectType(TaskExecutionResult result) {

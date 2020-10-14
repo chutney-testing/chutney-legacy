@@ -5,6 +5,7 @@ import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkIntOr
 import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkMapOrNull;
 import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkRegistry;
 import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkTimeUnit;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.logTimerState;
 import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.toOutputs;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
@@ -52,7 +53,7 @@ public class MicrometerTimerTask implements Task {
                                @Input("percentilePrecision") String percentilePrecision,
                                @Input("publishPercentilesHistogram") Boolean publishPercentilesHistogram,
                                @Input("percentiles") String percentiles,
-                               @Input("bufferLength") String sla,
+                               @Input("sla") String sla,
                                @Input("timer") Timer timer,
                                @Input("registry") MeterRegistry registry,
                                @Input("timeunit") String timeunit,
@@ -84,10 +85,7 @@ public class MicrometerTimerTask implements Task {
                 timer.record(record);
                 logger.info("Timer updated by " + record);
             }
-            logger.info("Timer current total time is " + timer.totalTime(timeunit) + " " + timeunit);
-            logger.info("Timer current max time is " + timer.max(timeunit) + " " + timeunit);
-            logger.info("Timer current mean time is " + timer.mean(timeunit) + " " + timeunit);
-            logger.info("Timer current count is " + timer.count());
+            logTimerState(logger, timer, timeunit);
             return TaskExecutionResult.ok(toOutputs(OUTPUT_TIMER, timer));
         } catch (Exception e) {
             logger.error(e);

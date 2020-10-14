@@ -21,7 +21,7 @@ import java.util.Map;
 
 public class MicrometerGaugeTask implements Task {
 
-    protected static final String OUTPUT_GAUGE = "micrometerGauge";
+    protected static final String OUTPUT_GAUGE = "micrometerGaugeObject";
 
     private final Logger logger;
     private final String name;

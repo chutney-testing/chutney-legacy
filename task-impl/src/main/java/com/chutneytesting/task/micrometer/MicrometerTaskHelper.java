@@ -4,7 +4,9 @@ import static io.micrometer.core.instrument.Metrics.globalRegistry;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
 
+import com.chutneytesting.task.spi.injectable.Logger;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
@@ -69,6 +71,13 @@ final class MicrometerTaskHelper {
         return splitStringList(sla)
             .mapToLong(Long::parseLong)
             .toArray();
+    }
+
+    static void logTimerState(Logger logger, Timer timer, TimeUnit timeunit) {
+        logger.info("Timer current total time is " + timer.totalTime(timeunit) + " " + timeunit);
+        logger.info("Timer current max time is " + timer.max(timeunit) + " " + timeunit);
+        logger.info("Timer current mean time is " + timer.mean(timeunit) + " " + timeunit);
+        logger.info("Timer current count is " + timer.count());
     }
 
     private static Duration parseDuration(String duration) {
