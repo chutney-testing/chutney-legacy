@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Linkifier, LinkifierService } from '@core/services';
+import { LinkifierService } from '@core/services';
 
 @Component({
   selector: 'chutney-parent',
@@ -9,9 +9,6 @@ import { Linkifier, LinkifierService } from '@core/services';
 export class ParentComponent {
 
   constructor(linkifierService: LinkifierService) {
-      linkifierService.get().subscribe(
-          () => { },
-          (error) => { console.error(error.error); }
-      );
+      linkifierService.loadLinkifiers().subscribe(); // needed to fetch linkifiers into sessionStorage
   }
 }

@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ValidationService } from '../../../../molecules/validation/validation.service';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Linkifier, LinkifierService } from '@core/services';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LinkifierService } from '@core/services';
 import { delay } from '@shared/tools';
+import { Linkifier } from '@model';
 
 
 @Component({
@@ -12,10 +13,7 @@ import { delay } from '@shared/tools';
 })
 export class LinkifierComponent implements OnInit {
 
-    linkifierForm = new FormGroup({
-        pattern: new FormControl(),
-        link: new FormControl()
-    });
+    linkifierForm: FormGroup;
 
     message;
     isErrorNotification: boolean = false;
@@ -37,7 +35,7 @@ export class LinkifierComponent implements OnInit {
     }
 
     private loadLinkifiers() {
-        this.linkifierService.get().subscribe(
+        this.linkifierService.loadLinkifiers().subscribe(
             (linkifiers: Array<Linkifier>) => {
                 this.linkifiers = linkifiers;
             },
@@ -48,13 +46,15 @@ export class LinkifierComponent implements OnInit {
     }
 
     isValid(): boolean {
-        return this.validationService.isValidPattern(this.linkifierForm.value['pattern']) && this.linkifierForm.value['pattern'] !== ''
-            && this.validationService.isValidUrl(this.linkifierForm.value['link']) && this.linkifierForm.value['link'] !== '';
+        return this.validationService.isValidPattern(this.linkifierForm.value['pattern'])
+            && this.validationService.isNotEmpty(this.linkifierForm.value['pattern'])
+            && this.validationService.isValidUrl(this.linkifierForm.value['link'])
+            && this.validationService.isNotEmpty(this.linkifierForm.value['link']);
     }
 
     addLinkifier() {
-        const linkifier = new Linkifier(this.linkifierForm.value['pattern'], this.linkifierForm.value['link'])
-        this.linkifierService.save(linkifier).subscribe(
+        const linkifier = new Linkifier(this.linkifierForm.value['pattern'], this.linkifierForm.value['link']);
+        this.linkifierService.add(linkifier).subscribe(
             (res) => {
                 this.notify('Linkifier added', false);
                 this.loadLinkifiers();
@@ -65,12 +65,11 @@ export class LinkifierComponent implements OnInit {
         );
     }
 
-    remove(i: number) {
-        const linkifier = this.linkifiers[i];
-        this.linkifierService.delete(linkifier).subscribe(
+    remove(linkifier: Linkifier, i: number) {
+        this.linkifiers.splice(i);
+        this.linkifierService.remove(linkifier).subscribe(
             (res) => {
                 this.notify('Linkifier removed', false);
-                this.loadLinkifiers();
             },
             (error) => {
                 this.notify(error.error, true);

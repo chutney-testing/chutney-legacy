@@ -1,8 +1,8 @@
 <div class="row page-header m-4 pl-2">
     <div class="col-md-5">
-        <h4 [innerHTML]="campaign.title | linkify:'uppercase' | safe: 'html'">
+        <h4 [innerHTML]="campaign.title | linkify:'uppercase'">
         </h4>
-        <small class="text-muted" [innerHTML]="campaign.description | linkify | safe: 'html'"></small>
+        <small class="text-muted" [innerHTML]="campaign.description | linkify"></small>
     </div>
     <div class="col-md-2">
         <div class="btn-toolbar">

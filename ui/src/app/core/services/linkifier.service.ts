@@ -3,34 +3,19 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@env/environment';
 import { map } from 'rxjs/operators';
-
-export class Linkifier {
-    constructor(public pattern: string,
-                public link: string,
-                public id?: string) {
-        if (this.id === undefined) {
-            this.id = this.hash(pattern) + this.hash(link);
-        }
-    }
-
-    hash(s: string) {
-        for (var i = 0, h = 0; i < s.length; i++)
-            h = Math.imul(31, h) + s.charCodeAt(i) | 0;
-        return h.toString();
-    }
-}
+import { Linkifier } from '@model';
 
 @Injectable({
     providedIn: 'root'
 })
 export class LinkifierService {
 
-    private url = '/api/ui/plugins/linkifier/v1/';
+    private url = '/api/v1/ui/plugins/linkifier/';
 
     constructor(private http: HttpClient) {
     }
 
-    public get(): Observable<Array<Linkifier>> {
+    public loadLinkifiers(): Observable<Array<Linkifier>> {
         return this.http.get<Array<Linkifier>>(environment.backend + this.url)
             .pipe(
                 map(x => LinkifierService.updateSessionStorage(x))
@@ -42,11 +27,11 @@ export class LinkifierService {
         return linkifiers;
     }
 
-    public save(linkifier: Linkifier): Observable<String> {
+    public add(linkifier: Linkifier): Observable<String> {
         return this.http.post(environment.backend + this.url, linkifier, {responseType: 'text'});
     }
 
-    public delete(linkifier: Linkifier): Observable<String> {
+    public remove(linkifier: Linkifier): Observable<String> {
         return this.http.delete(environment.backend + this.url + linkifier.id, {responseType: 'text'});
     }
 }

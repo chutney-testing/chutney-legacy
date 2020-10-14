@@ -8,6 +8,7 @@ export * from './environment.model';
 export * from './git-repository.model';
 export * from './home-page.model';
 export * from './jira-plugin-configuration.model';
+export * from './linkifier.model';
 export * from './referential-step.model';
 export * from './scenario';
 export * from './sql-result.model';

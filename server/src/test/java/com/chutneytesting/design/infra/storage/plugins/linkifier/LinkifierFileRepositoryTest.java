@@ -87,35 +87,6 @@ public class LinkifierFileRepositoryTest {
     }
 
     @Test
-    public void should_update_a_linkifier() {
-        // Given
-        FileUtils.writeContent(LINKIFIER_FILE,
-            "{\n" +
-            "  \"fake_id\" : {\n" +
-            "    \"pattern\" : \"#pattern\",\n" +
-            "    \"link\" : \"http://link/%s\"\n" +
-            "  }\n" +
-            "}"
-        );
-        Linkifier linkifier = new Linkifier("#pat", "http://azerty/%s", "fake_id");
-        String expected =
-            "{\n" +
-            "  \"fake_id\" : {\n" +
-            "    \"pattern\" : \"#pat\",\n" +
-            "    \"link\" : \"http://azerty/%s\"\n" +
-            "  }\n" +
-            "}";
-
-        // When
-        sut.update("fake_id", linkifier);
-
-        // Then
-        String actualContent = FileUtils.readContent(LINKIFIER_FILE);
-
-        assertThat(actualContent).isEqualToIgnoringNewLines(expected);
-    }
-
-    @Test
     public void should_remove_a_linkifier() {
         // Given
         FileUtils.writeContent(LINKIFIER_FILE,

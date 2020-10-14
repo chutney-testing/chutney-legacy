@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/ui/plugins/linkifier/v1")
+@RequestMapping("/api/v1/ui/plugins/linkifier/")
 @CrossOrigin(origins = "*")
 public class LinkifierController {
 
@@ -36,11 +36,6 @@ public class LinkifierController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public LinkifierDto saveLinkifier(@RequestBody LinkifierDto linkifierDto) {
         return toDto(linkifiers.add(new Linkifier(linkifierDto.pattern(), linkifierDto.link(), linkifierDto.id())));
-    }
-
-    @PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public LinkifierDto updateLinkifier(@PathVariable("id") String id, @RequestBody LinkifierDto linkifierDto) {
-        return toDto(linkifiers.update(id, new Linkifier(linkifierDto.pattern(), linkifierDto.link(), linkifierDto.id())));
     }
 
     @DeleteMapping(path = "/{id}")

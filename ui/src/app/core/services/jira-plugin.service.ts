@@ -50,6 +50,6 @@ export class JiraPluginService {
     }
 
     public removeForCampaign(campaignId: number) {
-        return this.http.delete<HttpResponse<any>>(environment.backend + this.campaignUrl + "/" + campaignId.toString());
+        return this.http.delete<HttpResponse<any>>(environment.backend + this.campaignUrl + '/' + campaignId);
     }
 }

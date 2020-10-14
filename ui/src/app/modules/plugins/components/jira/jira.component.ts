@@ -84,7 +84,8 @@ export class JiraComponent implements OnInit {
     }
 
     isValid(): boolean {
-        return this.validationService.isValidUrl(this.configurationForm.value['url']) && this.configurationForm.value['url'] !== '';
+        return this.validationService.isValidUrl(this.configurationForm.value['url'])
+            && this.validationService.isNotEmpty(this.configurationForm.value['url']);
     }
 
 }
