@@ -46,7 +46,7 @@ public class MicrometerGaugeTaskTest extends MicrometerTaskTest {
     }
 
     @Test
-    public void gauge_fucntion_must_be_fully_qualified_when_gauge_object_null() {
+    public void gauge_function_must_be_fully_qualified_when_gauge_object_null() {
         // Given
         TestLogger logger = new TestLogger();
         sut = new MicrometerGaugeTask(logger, GAUGE_NAME, null, null, null, null, null, "size", null);

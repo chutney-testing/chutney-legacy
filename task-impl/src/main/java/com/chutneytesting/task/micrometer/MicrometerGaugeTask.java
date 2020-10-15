@@ -48,14 +48,14 @@ public class MicrometerGaugeTask implements Task {
         this.unit = unit;
         this.strongReference = ofNullable(strongReference).orElse(Boolean.FALSE);
         this.tags = tags;
-        this.gaugeFunction = gaugeFunction;
-        this.registry = registry;
 
         if (gaugeObject == null && gaugeFunction == null) {
             throw new IllegalArgumentException("gaugeObject and gaugeFunction cannot be both null");
         }
 
         this.gaugeObject = gaugeObject;
+        this.gaugeFunction = gaugeFunction;
+        this.registry = registry;
     }
 
     @Override
@@ -72,8 +72,18 @@ public class MicrometerGaugeTask implements Task {
 
     private Gauge retrieveGauge(MeterRegistry registry) {
         MeterRegistry registryToUse = checkRegistry(registry);
-        Gauge.Builder builder;
+        Gauge.Builder<?> builder = createGaugeBuilder()
+            .description(description)
+            .strongReference(strongReference)
+            .baseUnit(unit);
 
+        ofNullable(tags).ifPresent(t -> builder.tags(t.toArray(new String[0])));
+
+        return builder.register(registryToUse);
+    }
+
+    private Gauge.Builder<?> createGaugeBuilder() {
+        Gauge.Builder<?> builder;
         if (gaugeObject != null && gaugeFunction == null) {
             if (gaugeObject instanceof Number) {
                 builder = Gauge.builder(name, (Number) gaugeObject, Number::doubleValue);
@@ -103,31 +113,22 @@ public class MicrometerGaugeTask implements Task {
                 }
             });
         }
-
-        builder
-            .description(description)
-            .strongReference(strongReference)
-            .baseUnit(unit);
-
-        Gauge.Builder finalBuilder = builder;
-        ofNullable(tags).ifPresent(t -> finalBuilder.tags(t.toArray(new String[0])));
-
-        return finalBuilder.register(registryToUse);
+        return builder;
     }
 
-    private Method retrieveMethod(String methodPath, Class cl) {
-        Class methodClass = cl;
-        String methodName = methodPath;
-        if (methodClass == null) {
-            if (methodPath.contains(".")) {
-                methodClass = Try.unsafe(() -> Class.forName(methodPath.substring(0, methodPath.lastIndexOf("."))));
-                methodName = methodPath.substring(methodPath.lastIndexOf(".") + 1);
-            } else {
-                throw new IllegalArgumentException("Method " + methodName + " cannot be resolved");
-            }
-        } else {
-            methodName = methodPath.substring(methodPath.lastIndexOf(".") + 1);
+    private Method retrieveMethod(final String methodPath, final Class clazz) {
+        if (clazz == null && !methodPath.contains(".")) {
+            throw new IllegalArgumentException("Method " + methodPath + " cannot be resolved");
         }
+
+        Class<?> methodClass = clazz;
+        String methodName = methodPath;
+
+        if (methodClass == null) {
+            methodClass = Try.unsafe(() -> Class.forName(methodPath.substring(0, methodPath.lastIndexOf("."))));
+        }
+
+        methodName = methodPath.substring(methodPath.lastIndexOf(".") + 1);
 
         String finalMethodName = methodName;
         Class finalMethodClass = methodClass;
