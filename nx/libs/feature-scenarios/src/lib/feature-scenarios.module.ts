@@ -5,13 +5,15 @@ import { ScenariosComponent } from './containers/scenarios/scenarios.component';
 import { UiCommonsModule } from '@chutney/ui-commons';
 import { UiMaterialModule } from '@chutney/ui-material';
 import { ScenariosListComponent } from './components/scearios-list/scenarios-list.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   imports: [
     CommonModule,
     UiCommonsModule,
-    RouterModule.forChild([{ path: '', component: ScenariosComponent }]),
+    RouterModule.forChild([{path: '', component: ScenariosComponent}]),
     UiMaterialModule,
+    ReactiveFormsModule,
   ],
   declarations: [ScenariosComponent, ScenariosListComponent],
 })

@@ -14,6 +14,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { CovalentDialogsModule } from '@covalent/core/dialogs';
+import { CovalentSearchModule } from '@covalent/core/search';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 @NgModule({
   imports: [
@@ -32,8 +36,13 @@ import { CovalentDialogsModule } from '@covalent/core/dialogs';
     MatSelectModule,
     MatSnackBarModule,
     MatExpansionModule,
+    MatChipsModule,
+    MatAutocompleteModule,
     /** Covalent Modules */
     CovalentDialogsModule,
+    CovalentSearchModule,
+    /*others*/
+    NgxMatSelectSearchModule,
   ],
   exports: [
     FlexLayoutModule,
@@ -51,8 +60,13 @@ import { CovalentDialogsModule } from '@covalent/core/dialogs';
     MatSelectModule,
     MatSnackBarModule,
     MatExpansionModule,
+    MatChipsModule,
+    MatAutocompleteModule,
     /** Covalent Modules */
     CovalentDialogsModule,
+    CovalentSearchModule,
+    /*others*/
+    NgxMatSelectSearchModule,
   ],
 })
 export class UiMaterialModule {}

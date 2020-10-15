@@ -1,9 +1,49 @@
 <div class="mat-elevation-z8">
-  <mat-toolbar class="mat-elevation-z8">
-    Scenarios
-  </mat-toolbar>
+  <form [formGroup]="searchForm">
+    <mat-toolbar class="mat-elevation-z8">
+      <mat-toolbar-row>
+        <td-search-box [value]="''" #searchBox backIcon="arrow_back"
+                       alwaysVisible="true"
+                       showUnderline="true"
+                       fxFlex
+                       placeholder="Search here"
+                       formControlName="text">
+        </td-search-box>
+        <button mat-icon-button (click)="showFilter()">
+          <mat-icon>filter_list</mat-icon>
+        </button>
+      </mat-toolbar-row>
+      <mat-toolbar-row [style.overflow]="'hidden'" [@tdCollapse]="{ value: triggerState, params: { duration: 500 }}">
+        <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="20px" fxLayoutGap.lt-md="0px" fxFill>
+          <mat-form-field floatLabel="never" fxFlex>
+            <mat-select formControlName="tags" placeholder="Select a tag" [multiple]="true" #multiSelect>
+              <mat-option>
+                <ngx-mat-select-search [placeholderLabel]="'Search'"
+                                       [noEntriesFoundLabel]="'No tags found'"
+                                       [showToggleAllCheckbox]="true"
+                                       (toggleAll)="toggleSelectAll($event)"
+                                       [formControl]="tagFilterCtrl">
+
+                </ngx-mat-select-search>
+              </mat-option>
+              <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
+                {{tag}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field floatLabel="never" fxFlex>
+            <mat-label>Sort by</mat-label>
+            <mat-select formControlName="date">
+              <mat-option value="creationDate">Last created</mat-option>
+              <mat-option value="executionDate">Last executed</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </mat-toolbar-row>
+    </mat-toolbar>
+  </form>
   <chutney-scenarios-list
-    [scenarios]="scenarios$ | async"
+    [scenarios]="filteredScenarios$ | async"
     (edit)="onEdit($event)"
     (delete)="onDelete($event)"
   ></chutney-scenarios-list>

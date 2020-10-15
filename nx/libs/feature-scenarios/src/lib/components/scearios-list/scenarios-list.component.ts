@@ -11,15 +11,14 @@ import { Scenario } from '@chutney/data-access';
 })
 export class ScenariosListComponent implements OnInit {
 
-  @Output() edit = new EventEmitter<number>();
-  @Output() delete = new EventEmitter<number>();
+  @Output() edit = new EventEmitter<string>();
+  @Output() delete = new EventEmitter<string>();
   displayedColumns: string[] = ['id', 'title', 'status', 'action'];
 
-  constructor() {}
+  constructor() {
+  }
 
-  private _scenariosDataSource: MatTableDataSource<
-    Scenario
-  > = new MatTableDataSource<Scenario>();
+  private _scenariosDataSource: MatTableDataSource<Scenario> = new MatTableDataSource<Scenario>();
   private _unsubscribe = new Subject<void>();
 
   @Input() set scenarios(scenarios: Scenario[]) {

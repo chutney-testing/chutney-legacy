@@ -53,6 +53,8 @@ export type Scenario = {
   status: Scalars['String'];
   executions?: Maybe<Array<Maybe<ScenarioExecution>>>;
   tags?: Maybe<Array<Maybe<Scalars['String']>>>;
+  creationDate?: Maybe<Scalars['String']>;
+  executionDate?: Maybe<Scalars['String']>;
 };
 
 export type Query = {
@@ -110,11 +112,13 @@ export type ScenariosQuery = (
   { __typename?: 'Query' }
   & { scenarios?: Maybe<Array<Maybe<(
     { __typename?: 'Scenario' }
-    & Pick<Scenario, 'id' | 'title' | 'tags' | 'status'>
-    & { executions?: Maybe<Array<Maybe<(
+    & Pick<Scenario, 'id' | 'title' | 'tags' | 'creationDate' | 'executionDate' | 'status'>
+    & {
+    executions?: Maybe<Array<Maybe<(
       { __typename: 'ScenarioExecution' }
       & Pick<ScenarioExecution, 'executionId' | 'time' | 'status' | 'duration'>
-    )>>> }
+      )>>>
+  }
   )>>> }
 );
 
@@ -140,7 +144,7 @@ export const DeleteScenarioDocument = gql`
   })
   export class DeleteScenarioGQL extends Apollo.Mutation<DeleteScenarioMutation, DeleteScenarioMutationVariables> {
     document = DeleteScenarioDocument;
-    
+
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
@@ -162,35 +166,37 @@ export const LoginDocument = gql`
   })
   export class LoginGQL extends Apollo.Mutation<LoginMutation, LoginMutationVariables> {
     document = LoginDocument;
-    
+
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
   }
 export const ScenariosDocument = gql`
-    query scenarios {
-  scenarios @rest(type: "Scenario", path: "api/scenario/v2") {
-    id
-    title
-    tags
-    executions {
-      __typename
-      executionId
-      time
-      status
-      duration
+  query scenarios {
+    scenarios @rest(type: "Scenario", path: "api/scenario/v2") {
+      id
+      title
+      tags
+      executions @type(name: "ScenarioExecution") {
+        __typename
+        executionId
+        time
+        status
+        duration
+      }
+      creationDate
+      executionDate
+      status @client
     }
-    status @client
   }
-}
-    `;
+`;
 
   @Injectable({
     providedIn: 'root'
   })
   export class ScenariosGQL extends Apollo.Query<ScenariosQuery, ScenariosQueryVariables> {
     document = ScenariosDocument;
-    
+
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
@@ -212,7 +218,7 @@ export const UserDocument = gql`
   })
   export class UserGQL extends Apollo.Query<UserQuery, UserQueryVariables> {
     document = UserDocument;
-    
+
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
