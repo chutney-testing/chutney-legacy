@@ -49,9 +49,11 @@ const resolvers = {
   },
   Mutation: {},
   Scenario: {
-    status: (data: any, variables: any, { _cache }) =>
+    status: (data: any, variables: any, {_cache}) =>
       sortByKeys<ScenarioExecution>(data.executions || [], '-time')[0]
         ?.status || 'NOT_EXECUTED',
+    executionDate: (data: any, args: any, {_cache}) => sortByKeys<ScenarioExecution>(data.executions, '-time')[0]?.time || '---',
+
   },
 };
 

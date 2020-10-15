@@ -29,6 +29,8 @@ type Scenario {
   status: String!
   executions: [ScenarioExecution]
   tags: [String]
+  creationDate: String
+  executionDate: String
 }
 
 type Query {

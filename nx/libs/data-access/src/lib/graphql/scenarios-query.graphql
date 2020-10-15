@@ -10,6 +10,8 @@ query scenarios {
       status
       duration
     }
+    creationDate
+    executionDate
     status @client
   }
 }
