@@ -66,11 +66,11 @@ export class ScenariosComponent implements OnInit, OnDestroy {
 
     this.scenarios$.pipe(
       map((scenarios: Scenario[]) => {
-        return [...new Set<string>(scenarios.map(s => s.tags).flat())];
+        return [].concat(...scenarios.map(s => s.tags));
       })
     ).subscribe(
       (data) => {
-        this.tags = [...data]
+        this.tags = [...data.filter((v, idx, self) => self.indexOf(v) === idx)];
         this.filteredTags.next(data.slice());
       }
     )
