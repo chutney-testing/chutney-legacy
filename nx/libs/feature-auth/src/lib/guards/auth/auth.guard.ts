@@ -7,7 +7,7 @@ import {
   Router,
 } from '@angular/router';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, pluck } from 'rxjs/operators';
 import { UserGQL } from '@chutney/data-access';
 
 @Injectable({
@@ -34,6 +34,7 @@ export class AuthGuard implements CanActivate {
     return true;*/
 
     return this.userGQL.watch().valueChanges.pipe(
+      pluck('data', 'user'),
       map((user) => {
         if (user) {
           return true;
