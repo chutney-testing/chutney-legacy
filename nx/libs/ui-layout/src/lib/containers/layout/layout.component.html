@@ -3,6 +3,7 @@
     class="mat-elevation-z3"
     [mode]="isSmallScreen ? 'over' : 'side'"
     [(opened)]="siderLeftOpened"
+    *ngIf="!fullscreen"
   >
     <div class="account-panel">
       <mat-icon class="avatar">account_circle</mat-icon>
