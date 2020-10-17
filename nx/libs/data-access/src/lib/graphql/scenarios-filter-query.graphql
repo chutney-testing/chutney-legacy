@@ -1,0 +1,8 @@
+query scenariosFilter {
+  scenariosFilter @client {
+    text
+    date
+    tags
+    advanced
+  }
+}

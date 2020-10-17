@@ -10,15 +10,15 @@ import { Scenario } from '@chutney/data-access';
   styleUrls: ['./scenarios-list.component.scss'],
 })
 export class ScenariosListComponent implements OnInit {
-
   @Output() edit = new EventEmitter<string>();
   @Output() delete = new EventEmitter<string>();
   displayedColumns: string[] = ['id', 'title', 'status', 'action'];
 
-  constructor() {
-  }
+  constructor() {}
 
-  private _scenariosDataSource: MatTableDataSource<Scenario> = new MatTableDataSource<Scenario>();
+  private _scenariosDataSource: MatTableDataSource<
+    Scenario
+  > = new MatTableDataSource<Scenario>();
   private _unsubscribe = new Subject<void>();
 
   @Input() set scenarios(scenarios: Scenario[]) {
@@ -35,10 +35,10 @@ export class ScenariosListComponent implements OnInit {
   }
 
   editScenario(id: any) {
-    this.edit.emit(id)
+    this.edit.emit(id);
   }
 
   deleteScenario(id: any) {
-    this.delete.emit(id)
+    this.delete.emit(id);
   }
 }

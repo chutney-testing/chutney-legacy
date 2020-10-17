@@ -33,9 +33,17 @@ type Scenario {
   executionDate: String
 }
 
+type ScenariosFilter {
+  text: String
+  tags: [String!]
+  date: String
+  advanced: Boolean
+}
+
 type Query {
   user: User
   scenarios: [Scenario]
+  scenariosFilter: ScenariosFilter
 }
 
 type Mutation {
