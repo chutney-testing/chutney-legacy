@@ -1,23 +1,31 @@
-import { InMemoryCache } from '@apollo/client/core';
+import { InMemoryCache, makeVar } from '@apollo/client/core';
 import { NgModule } from '@angular/core';
 
 import { RestLink } from 'apollo-link-rest';
 import { APOLLO_OPTIONS } from 'apollo-angular';
 import { sortByKeys } from '@chutney/utils';
 import { ScenarioExecution } from '@chutney/data-access';
+import { scenariosFilterVar } from '@chutney/feature-scenarios';
 
-const inMemoryCache = new InMemoryCache(
-  {
-    typePolicies: {
-      Scenario: {
-        keyFields: ["id"],
+const inMemoryCache = new InMemoryCache({
+  typePolicies: {
+    Query: {
+      fields: {
+        scenariosFilter: {
+          read() {
+            return scenariosFilterVar();
+          },
+        },
       },
-      ScenarioExecution: {
-        keyFields: ["executionId"],
-      }
     },
-  }
-);
+    Scenario: {
+      keyFields: ['id'],
+    },
+    ScenarioExecution: {
+      keyFields: ['executionId'],
+    },
+  },
+});
 
 const restLink = new RestLink({
   uri: window.location.origin + '/',
@@ -28,8 +36,11 @@ const restLink = new RestLink({
       patchDeeper: RestLink.FunctionalTypePatcher
     ): any => {
       if (data.metadata) {
-        data = {__typename: 'Scenario', ...data.metadata, ...data.metadata};
-        data.executions = data.executions.map(obj=> ({ ...obj, __typename: 'ScenarioExecution' }))
+        data = { __typename: 'Scenario', ...data.metadata, ...data.metadata };
+        data.executions = data.executions.map((obj) => ({
+          ...obj,
+          __typename: 'ScenarioExecution',
+        }));
       }
       return data;
     },
@@ -49,11 +60,11 @@ const resolvers = {
   },
   Mutation: {},
   Scenario: {
-    status: (data: any, variables: any, {_cache}) =>
+    status: (data: any, variables: any, { _cache }) =>
       sortByKeys<ScenarioExecution>(data.executions || [], '-time')[0]
         ?.status || 'NOT_EXECUTED',
-    executionDate: (data: any, args: any, {_cache}) => sortByKeys<ScenarioExecution>(data.executions, '-time')[0]?.time || '---',
-
+    executionDate: (data: any, args: any, { _cache }) =>
+      sortByKeys<ScenarioExecution>(data.executions, '-time')[0]?.time || '---',
   },
 };
 
