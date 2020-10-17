@@ -1,5 +1,3 @@
-import { getGreeting } from '../support/app.po';
-
 describe('chutney', () => {
   beforeEach(() => cy.visit('/'));
 
@@ -8,6 +6,7 @@ describe('chutney', () => {
     cy.login('my-email@something.com', 'myPassword');
 
     // Function helper example, see `../support/app.po.ts` file
-    getGreeting().contains('Welcome to chutney!');
+    cy.get(".scenarios-search-form").should('be.visible');
+    cy.get(".mat-header-row").should('be.visible');
   });
 });
