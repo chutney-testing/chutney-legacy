@@ -5,6 +5,7 @@ import { distinctUntilChanged, filter, map, pluck } from 'rxjs/operators';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { ScrollDispatcher } from '@angular/cdk/overlay';
 import { ActivationStart, Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-layout',
@@ -20,6 +21,7 @@ export class LayoutComponent implements OnInit {
 
   constructor(
     private router: Router,
+    private snackBar: MatSnackBar,
     private breakpointObserver: BreakpointObserver,
     private scrollDispatcher: ScrollDispatcher,
     private changeDetector: ChangeDetectorRef,
@@ -73,5 +75,9 @@ export class LayoutComponent implements OnInit {
     };
   }
 
-  logout() {}
+  logout() {
+    localStorage.removeItem('user');
+    this.snackBar.open('Logged out, Exit successfully');
+    this.router.navigate(['/auth/login']);
+  }
 }
