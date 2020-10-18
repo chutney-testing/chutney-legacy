@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ReplaySubject, Subject } from 'rxjs';
 import { MatSelect } from '@angular/material/select';
 import { Apollo } from 'apollo-angular';
-import { pluck, take, takeUntil } from 'rxjs/operators';
+import { map, pluck, take, takeUntil } from 'rxjs/operators';
 import { ScenariosGQL } from '@chutney/data-access';
 import { tdCollapseAnimation } from '@covalent/core/common';
 import { scenariosFilterVar } from '../../cache';
@@ -53,17 +53,23 @@ export class ScenariosSearchFormComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.scenariosGQL
       .watch()
-      .valueChanges.pipe(pluck('data', 'scenarios'))
+      .valueChanges.pipe(
+      pluck('data', 'scenarios'),
+      map((scenarios: any[]) => [].concat(...scenarios.map((s) => s.tags))))
       .subscribe((data) => {
-        let concat = [].concat(...data.map((s) => s.tags));
         this.tags = [
-          ...concat.filter((v, idx, self) => self.indexOf(v) === idx),
+          ...data.filter((v, idx, self) => self.indexOf(v) === idx),
         ];
-        this.filteredTags.next(concat.slice());
+        this.filteredTags.next(this.tags.slice());
       });
 
+    this.searchForm.patchValue({
+      ...scenariosFilterVar()
+    })
+    this.triggerState = !scenariosFilterVar().advanced
+
     this.searchForm.valueChanges.subscribe((data) =>
-      scenariosFilterVar({ ...data, advanced: !this.triggerState })
+      scenariosFilterVar({...data, advanced: !this.triggerState})
     );
   }
 
