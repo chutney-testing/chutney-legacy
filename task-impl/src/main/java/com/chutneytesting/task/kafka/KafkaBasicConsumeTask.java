@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import com.chutneytesting.task.amqp.utils.JsonPathEvaluator;
 import com.chutneytesting.task.spi.Task;
@@ -24,7 +25,6 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
 import org.springframework.kafka.core.ConsumerFactory;
@@ -45,7 +45,6 @@ public class KafkaBasicConsumeTask implements Task {
     private final CountDownLatch countDownLatch;
     private final List<Map<String, Object>> consumedMessages = new ArrayList<>();
     private final ConcurrentMessageListenerContainer<String, String> messageListenerContainer;
-
 
     public KafkaBasicConsumeTask(Target target,
                                  @Input("topic") String topic,
@@ -72,15 +71,11 @@ public class KafkaBasicConsumeTask implements Task {
             messageListenerContainer.start();
             countDownLatch.await(Duration.parse(timeout).toMilliseconds(), TimeUnit.MILLISECONDS);
             if (consumedMessages.size() != nbMessages) {
-                logger.error("Unable to get the expected number of messages [" + nbMessages + "] during " + timeout + "from topic " + topic + ".");
+                logger.error("Unable to get the expected number of messages [" + nbMessages + "] during " + timeout + " from topic " + topic + ".");
                 return TaskExecutionResult.ko();
             }
             logger.info("Consumed [" + nbMessages + "] Kafka Messages from topic " + topic);
-            Map<String, Object> results = new HashMap<>();
-            results.put("body", consumedMessages);
-            results.put("payloads", consumedMessages.stream().map(e -> e.get("payload")).collect(toList()));
-            results.put("headers", consumedMessages.stream().map(e -> e.get("headers")).collect(toList()));
-            return TaskExecutionResult.ok(results);
+            return TaskExecutionResult.ok(toOutputs());
         } catch (Exception e) {
             logger.error("An exception occurs when consuming a message to Kafka server: " + e.getMessage());
             return TaskExecutionResult.ko();
@@ -95,7 +90,7 @@ public class KafkaBasicConsumeTask implements Task {
                 return;
             }
             final Map<String, Object> message = extractMessageFromRecord(record);
-            if (StringUtils.isBlank(selector)) {
+            if (isBlank(selector)) {
                 addMessageToResultAndCountDown(message);
             } else {
                 try {
@@ -126,7 +121,6 @@ public class KafkaBasicConsumeTask implements Task {
         return payload;
     }
 
-
     private Map<String, Object> extractMessageFromRecord(ConsumerRecord<String, String> record) {
         final Map<String, Object> message = new HashMap<>();
         final Map<String, Object> headerz = extractHeaders(record);
@@ -148,4 +142,11 @@ public class KafkaBasicConsumeTask implements Task {
             containerProperties);
     }
 
+    private Map<String, Object> toOutputs() {
+        Map<String, Object> results = new HashMap<>();
+        results.put("body", consumedMessages);
+        results.put("payloads", consumedMessages.stream().map(e -> e.get("payload")).collect(toList()));
+        results.put("headers", consumedMessages.stream().map(e -> e.get("headers")).collect(toList()));
+        return results;
+    }
 }
