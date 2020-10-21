@@ -1,6 +1,8 @@
 package com.chutneytesting.task.kafka;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.emptyMap;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
@@ -8,20 +10,20 @@ import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import com.chutneytesting.task.amqp.utils.JsonPathEvaluator;
+import com.chutneytesting.task.function.XPathFunction;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.task.spi.time.Duration;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -31,6 +33,8 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.MessageListener;
+import org.springframework.util.MimeType;
+import org.springframework.util.MimeTypeUtils;
 
 public class KafkaBasicConsumeTask implements Task {
 
@@ -39,8 +43,10 @@ public class KafkaBasicConsumeTask implements Task {
     private final String topic;
     private final Logger logger;
     private final Integer nbMessages;
+    private MimeType contentType;
     private final String timeout;
     private final String selector;
+    private final String headerSelector;
     private final ConsumerFactory<String, String> consumerFactory;
     private final CountDownLatch countDownLatch;
     private final List<Map<String, Object>> consumedMessages = new ArrayList<>();
@@ -52,13 +58,17 @@ public class KafkaBasicConsumeTask implements Task {
                                  @Input("properties") Map<String, String> properties,
                                  @Input("nb-messages") Integer nbMessages,
                                  @Input("selector") String selector,
+                                 @Input("header-selector") String headerSelector,
+                                 @Input("content-type") String contentType,
                                  @Input("timeout") String timeout,
                                  Logger logger) {
         this.topic = topic;
         this.nbMessages = defaultIfNull(nbMessages, 1);
         this.selector = selector;
+        this.headerSelector = headerSelector;
+        this.contentType = ofNullable(contentType).map(ct -> defaultIfEmpty(ct, "application/json")).map(MimeTypeUtils::parseMimeType).orElse(MimeTypeUtils.APPLICATION_JSON);
         this.timeout = defaultIfEmpty(timeout, "60 sec");
-        this.consumerFactory = new KafkaConsumerFactoryFactory().create(target, group, defaultIfNull(properties, Collections.emptyMap()));
+        this.consumerFactory = new KafkaConsumerFactoryFactory().create(target, group, defaultIfNull(properties, emptyMap()));
         this.countDownLatch = new CountDownLatch(this.nbMessages);
         this.messageListenerContainer = createMessageListenerContainer(createMessageListener());
         this.logger = logger;
@@ -90,19 +100,51 @@ public class KafkaBasicConsumeTask implements Task {
                 return;
             }
             final Map<String, Object> message = extractMessageFromRecord(record);
-            if (isBlank(selector)) {
+            if (applySelector(message) && applyHeaderSelector(message)) {
                 addMessageToResultAndCountDown(message);
-            } else {
-                try {
-                    String messageAsString = OBJECT_MAPPER.writeValueAsString(message);
-                    if (JsonPathEvaluator.evaluate(messageAsString, selector)) {
-                        addMessageToResultAndCountDown(message);
-                    }
-                } catch (JsonProcessingException e) {
-                    logger.info("Received a message, however cannot read process it as json, Ignoring message selection.");
-                }
             }
         };
+    }
+
+    private boolean applySelector(Map<String, Object> message) {
+        if (isBlank(selector)) {
+            return true;
+        }
+
+        if (contentType.getSubtype().contains("json")) {
+            try {
+                String messageAsString = OBJECT_MAPPER.writeValueAsString(message);
+                return JsonPathEvaluator.evaluate(messageAsString, selector);
+            } catch (Exception e) {
+                logger.info("Received a message, however cannot read process it as json, ignoring payload selection : " + e.getMessage());
+                return true;
+            }
+        } else if (contentType.getSubtype().contains("xml")) {
+            try {
+                Object result = XPathFunction.xpath((String) message.get("payload"), selector);
+                return ofNullable(result).isPresent();
+            } catch (Exception e) {
+                logger.info("Received a message, however cannot read process it as xml, ignoring payload selection : " + e.getMessage());
+                return true;
+            }
+        } else {
+            logger.info("Applying selector as text");
+            return ((String) message.get("payload")).contains(selector);
+        }
+    }
+
+    private boolean applyHeaderSelector(Map<String, Object> message) {
+        if (isBlank(headerSelector)) {
+            return true;
+        }
+
+        try {
+            String messageAsString = OBJECT_MAPPER.writeValueAsString(message.get("headers"));
+            return JsonPathEvaluator.evaluate(messageAsString, headerSelector);
+        } catch (Exception e) {
+            logger.error("\"Received a message, however cannot process headers selection, Ignoring header selection");
+            return true;
+        }
     }
 
     private void addMessageToResultAndCountDown(Map<String, Object> message) {
@@ -111,21 +153,22 @@ public class KafkaBasicConsumeTask implements Task {
     }
 
     private Object extractPayload(ConsumerRecord<String, String> record) {
-        Object payload;
-        try {
-            payload = OBJECT_MAPPER.readValue(record.value(), Map.class);
-        } catch (IOException e) {
-            logger.info("Received a message, however cannot read it as Json fallback as String.");
-            payload = record.value();
+        if (contentType.getSubtype().contains("json")) {
+            try {
+                return OBJECT_MAPPER.readValue(record.value(), Map.class);
+            } catch (IOException e) {
+                logger.info("Received a message, however cannot read it as Json fallback as String.");
+            }
         }
-        return payload;
+        return record.value();
     }
 
     private Map<String, Object> extractMessageFromRecord(ConsumerRecord<String, String> record) {
         final Map<String, Object> message = new HashMap<>();
-        final Map<String, Object> headerz = extractHeaders(record);
+        final Map<String, Object> headers = extractHeaders(record);
+        checkContentTypeHeader(headers);
         Object payload = extractPayload(record);
-        message.put("headers", headerz);
+        message.put("headers", headers);
         message.put("payload", payload);
         return message;
     }
@@ -148,5 +191,19 @@ public class KafkaBasicConsumeTask implements Task {
         results.put("payloads", consumedMessages.stream().map(e -> e.get("payload")).collect(toList()));
         results.put("headers", consumedMessages.stream().map(e -> e.get("headers")).collect(toList()));
         return results;
+    }
+
+    private void checkContentTypeHeader(Map<String, Object> headers) {
+        Optional<MimeType> contentType = headers.entrySet().stream()
+            .filter(e -> e.getKey().replaceAll("[- ]", "").equalsIgnoreCase("contenttype"))
+            .findAny()
+            .map(Map.Entry::getValue)
+            .map(Object::toString)
+            .map(MimeTypeUtils::parseMimeType);
+
+        contentType.ifPresent(ct -> {
+            logger.info("Found content type header " + ct);
+            this.contentType = ct;
+        });
     }
 }
