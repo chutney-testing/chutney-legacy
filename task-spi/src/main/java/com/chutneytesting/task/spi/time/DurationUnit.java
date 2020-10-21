@@ -8,6 +8,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public enum DurationUnit {
+    NANOS(TimeUnit.NANOSECONDS, 0.00001, "ns"),
+    MICROS(TimeUnit.MICROSECONDS, 0.001, "\u00b5s", "\u03bcs"),
     MILLIS(TimeUnit.MILLISECONDS, 1, "ms"),
     SECONDS(TimeUnit.SECONDS, 1000, "s", "sec"),
     MINUTES(TimeUnit.MINUTES, 1000 * 60, "m", "min"),
@@ -15,11 +17,11 @@ public enum DurationUnit {
     DAYS(TimeUnit.DAYS, 1000 * 60 * 60 * 24, "d", "day", "days", "day(s)");
 
     final TimeUnit timeUnit;
-    final long toMilliFactor;
+    final double toMilliFactor;
     final Set<String> labels;
     final String mostRelevantLabel;
 
-    DurationUnit(TimeUnit timeUnit, long toMilliFactor, String... labels) {
+    DurationUnit(TimeUnit timeUnit, double toMilliFactor, String... labels) {
         this.timeUnit = timeUnit;
         this.toMilliFactor = toMilliFactor;
         this.labels = new HashSet<>(Arrays.asList(labels));

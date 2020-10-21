@@ -14,6 +14,9 @@ public class DurationUnitTest {
 
     public static Object[] data() {
         return new Object[][]{
+            {"ns", DurationUnit.NANOS},
+            {"\u00b5s", DurationUnit.MICROS},
+            {"\u03bcs", DurationUnit.MICROS},
             {"   ms  ", DurationUnit.MILLIS},
             {"s", DurationUnit.SECONDS},
             {"SeC ", DurationUnit.SECONDS},
@@ -33,6 +36,6 @@ public class DurationUnitTest {
     public void unknown_unit_should_raise() {
         assertThatExceptionOfType(IllegalArgumentException.class)
             .isThrownBy(() -> DurationUnit.parse("whatever"))
-            .withMessage("Unknown time unit whatever; expected values : (ms|sec|s|min|m|hours|hour|h|hour(s)|day(s)|d|days|day)");
+            .withMessage("Unknown time unit whatever; expected values : (ns|\u03bcs|\u00b5s|ms|sec|s|min|m|hours|hour|h|hour(s)|day(s)|d|days|day)");
     }
 }

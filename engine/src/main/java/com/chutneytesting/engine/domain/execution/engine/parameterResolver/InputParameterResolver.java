@@ -36,14 +36,14 @@ public class InputParameterResolver implements ParameterResolver {
 
         if (isSimpleType(parameter)) {
             // TODO ugly hack n°1
-            if(inputValue == null) {
+            if (inputValue == null) {
                 return null;
             }
             // TODO ugly hack n°2 since it is related to parsing, it should be out of the engine
             Class<?> inputClassType = inputValue.getClass();
-            if(parameter.rawType().equals(inputClassType)){
+            if (parameter.rawType().isAssignableFrom(inputClassType)) {
                 return inputValue;
-            } else if(inputValue instanceof  Map){
+            } else if (inputValue instanceof Map) {
                 return new JSONObject((Map) inputValue).toString();
             } else {
                 throw new IllegalArgumentException(inputName + " type is " + inputClassType + ", should be " + parameter.rawType());
