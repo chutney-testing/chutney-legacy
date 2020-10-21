@@ -5,7 +5,7 @@ import com.chutneytesting.design.domain.campaign.CampaignRepository;
 import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.environment.EnvironmentRepository;
 import com.chutneytesting.design.domain.environment.EnvironmentService;
-import com.chutneytesting.design.domain.jira.JiraRepository;
+import com.chutneytesting.design.domain.plugins.jira.JiraRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.engine.api.execution.TestEngine;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;

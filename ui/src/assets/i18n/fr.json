@@ -5,7 +5,7 @@
             "campaigns": "Campagnes",
             "targets": "Targets",
             "workers": "Agents",
-            "configuration": "Configuration",
+            "plugins": "Plugins",
             "databaseAdmin": "BDD",
             "storesAdmin": "Stores",
             "documentation": "Documentation",

@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Campaign, CampaignExecutionReport } from '@core/model';
 import { CampaignService } from '@core/services';
 import { Subscription, timer } from 'rxjs';
-import { JiraLinkService } from '@core/services/jira-link.service';
+import { JiraPluginService } from '@core/services/jira-plugin.service';
 
 @Component({
     selector: 'chutney-campaigns',
@@ -22,7 +22,7 @@ export class CampaignListComponent implements OnInit, OnDestroy {
     campaignFilter: string;
 
     constructor(private campaignService: CampaignService,
-                private jiraLinkService: JiraLinkService,
+                private jiraLinkService: JiraPluginService,
                 private router: Router,
                 private translate: TranslateService,
     ) {

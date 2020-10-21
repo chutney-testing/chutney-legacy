@@ -16,11 +16,11 @@ import { TranslateModule } from '@ngx-translate/core';
     ],
     imports: [
         CommonModule,
-        OrganismsModule,
-        SharedModule,
-        RouterModule,
         FormsModule,
         HttpClientModule,
+        OrganismsModule,
+        RouterModule,
+        SharedModule,
         TranslateModule
     ],
 

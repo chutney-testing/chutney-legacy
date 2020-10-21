@@ -29,8 +29,6 @@ import com.chutneytesting.design.domain.environment.EnvironmentService;
 import com.chutneytesting.design.domain.environment.InvalidEnvironmentNameException;
 import com.chutneytesting.design.domain.environment.Target;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;

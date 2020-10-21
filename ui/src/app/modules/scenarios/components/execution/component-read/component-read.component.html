@@ -1,7 +1,7 @@
 <div class="ml-3 mb-2 mt-2">
     <span *ngIf="step.implementation" class="mr-2 fa fa-sm eye-color pointer"  [ngClass]="showImplementation ? 'fa-angle-down' : 'fa-angle-right'" (click)="showImplementation = !showImplementation"></span>
     <span class="step-name">{{ step.name }} </span> <small *ngIf="step.implementation"> ({{ step.implementation.identifier }})</small>
-    <span class="small" *ngIf="step.strategy !== null && step.strategy.type === 'Retry'"> 
+    <span class="small" *ngIf="step.strategy !== null && step.strategy.type === 'Retry'">
         <span class="ml-2 fa fa-sm fa-redo " title="{{ step.strategy.parameters | stringify}}"></span>
     </span>
     <div *ngIf="step.implementation" class="ml-2 implementation">

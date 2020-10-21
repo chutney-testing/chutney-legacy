@@ -1,7 +1,7 @@
 <div *ngIf="testCase" class="row edition-header">
         <div class="header-left">
-            <div class="title">{{testCase.title}}</div>
-            <div class="description">{{testCase.description}}</div>
+            <div class="title" [innerHTML]="testCase.title | linkify"></div>
+            <div class="description" [innerHTML]="testCase.description | linkify"></div>
             <div class="btn-group ml-4 header-tag">
                 <span *ngFor="let tag of testCase.tags">
                     <span class="chutney-tag chutney-tag-selected">{{tag}}</span>
