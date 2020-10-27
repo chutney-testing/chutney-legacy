@@ -24,7 +24,7 @@ import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.execution.domain.report.StepExecutionReportCore;
 import com.chutneytesting.execution.domain.report.StepExecutionReportCoreBuilder;
 import com.chutneytesting.execution.domain.state.ExecutionStateRepository;
-import com.chutneytesting.instrument.domain.Metrics;
+import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.reactivex.Observable;
 import io.reactivex.observers.TestObserver;
@@ -47,7 +47,7 @@ public class ScenarioExecutionEngineAsyncTest {
     private ExecutionHistoryRepository executionHistoryRepository = mock(ExecutionHistoryRepository.class);
     private ServerTestEngine executionEngine = mock(ServerTestEngine.class);
     private ExecutionStateRepository executionStateRepository = mock(ExecutionStateRepository.class);
-    private Metrics metrics = mock(Metrics.class);
+    private ChutneyMetrics metrics = mock(ChutneyMetrics.class);
     private TestCasePreProcessors testCasePreProcessors = mock(TestCasePreProcessors.class);
     private DataSetHistoryRepository dataSetHistoryRepository = mock(DataSetHistoryRepository.class);
 
@@ -114,7 +114,7 @@ public class ScenarioExecutionEngineAsyncTest {
         // Wait for background computation
         verify(executionStateRepository, timeout(250)).notifyExecutionStart(scenarioId);
         verify(executionStateRepository, timeout(250)).notifyExecutionEnd(scenarioId);
-        verify(metrics, timeout(250)).onExecutionEnded(testCase.metadata().title(), storedExecution.status(), storedExecution.duration());
+        verify(metrics, timeout(250)).onScenarioExecutionEnded(testCase.metadata().id(), testCase.metadata().tags(), storedExecution.status(), storedExecution.duration());
     }
 
     @Test
@@ -166,7 +166,7 @@ public class ScenarioExecutionEngineAsyncTest {
 
         testObserver.assertTerminated();
         verify(executionStateRepository).notifyExecutionEnd(scenarioId);
-        verify(metrics).onExecutionEnded(any(), any(), anyLong());
+        verify(metrics).onScenarioExecutionEnded(any(), any(), any(), anyLong());
 
         testObserver.dispose();
     }

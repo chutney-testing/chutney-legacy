@@ -19,7 +19,7 @@ import com.chutneytesting.execution.domain.scenario.ServerTestEngine;
 import com.chutneytesting.execution.domain.state.ExecutionStateRepository;
 import com.chutneytesting.execution.infra.execution.ExecutionRequestMapper;
 import com.chutneytesting.execution.infra.execution.ServerTestEngineJavaImpl;
-import com.chutneytesting.instrument.domain.Metrics;
+import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import com.chutneytesting.security.domain.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.InetAddress;
@@ -90,7 +90,7 @@ public class ServerConfiguration {
     ScenarioExecutionEngineAsync scenarioExecutionEngineAsync(ExecutionHistoryRepository executionHistoryRepository,
                                                               ServerTestEngine executionEngine,
                                                               ExecutionStateRepository executionStateRepository,
-                                                              Metrics metrics,
+                                                              ChutneyMetrics metrics,
                                                               TestCasePreProcessors testCasePreProcessors,
                                                               ObjectMapper objectMapper,
                                                               DataSetHistoryRepository dataSetHistoryRepository,
@@ -119,8 +119,9 @@ public class ServerConfiguration {
                                                     ExecutionHistoryRepository executionHistoryRepository,
                                                     TestCaseRepository testCaseRepository,
                                                     DataSetHistoryRepository dataSetHistoryRepository,
-                                                    JiraXrayPlugin jiraXrayPlugin) {
-        return new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository, jiraXrayPlugin);
+                                                    JiraXrayPlugin jiraXrayPlugin,
+                                                    ChutneyMetrics metrics) {
+        return new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository, jiraXrayPlugin, metrics);
     }
 
     @Bean

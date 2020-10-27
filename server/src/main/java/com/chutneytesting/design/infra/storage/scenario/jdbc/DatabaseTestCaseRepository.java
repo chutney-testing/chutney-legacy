@@ -2,13 +2,13 @@ package com.chutneytesting.design.infra.storage.scenario.jdbc;
 
 import static com.chutneytesting.design.domain.scenario.TestCaseRepository.DEFAULT_REPOSITORY_SOURCE;
 
+import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
+import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.design.infra.storage.scenario.DelegateScenarioRepository;
+import com.chutneytesting.tools.Try;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
-import com.chutneytesting.design.infra.storage.scenario.DelegateScenarioRepository;
-import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
-import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
-import com.chutneytesting.instrument.domain.Metrics;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,7 +18,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import com.chutneytesting.tools.Try;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -32,15 +31,12 @@ public class DatabaseTestCaseRepository implements DelegateScenarioRepository {
     private final ScenarioRowMapper scenario_row_mapper;
 
     private final NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate;
-    private final Metrics metrics;
     private final ObjectMapper mapper;
 
     public DatabaseTestCaseRepository(NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate,
-                                      Metrics metrics,
                                       @Qualifier("persistenceObjectMapper") ObjectMapper objectMapper) {
 
         this.uiNamedParameterJdbcTemplate = uiNamedParameterJdbcTemplate;
-        this.metrics = metrics;
         this.mapper = objectMapper;
         this.scenario_row_mapper = new ScenarioRowMapper(mapper);
     }
@@ -88,14 +84,12 @@ public class DatabaseTestCaseRepository implements DelegateScenarioRepository {
         String nextId = uiNamedParameterJdbcTemplate.queryForObject("SELECT nextval('SCENARIO_SEQ')", Collections.emptyMap(), String.class);
         uiNamedParameterJdbcTemplate.update("INSERT INTO SCENARIO(VERSION, ID, TITLE, DESCRIPTION, CONTENT, TAGS, CREATION_DATE, DATASET, ACTIVATED) VALUES (:version, :id, :title, :description, :content, :tags, :creationDate, :dataSet, TRUE)",
             scenarioQueryParameterMap(nextId, scenario));
-        metrics.onNewScenario(scenario.title, scenario.tags);
         return nextId;
     }
 
     private String doUpdate(TestCaseData scenario) {
         uiNamedParameterJdbcTemplate.update("UPDATE SCENARIO SET VERSION = :version, TITLE = :title, DESCRIPTION = :description, CONTENT = :content, TAGS = :tags, CREATION_DATE = :creationDate, DATASET = :dataSet WHERE ID = :id",
             scenarioQueryParameterMap(scenario.id, scenario));
-        metrics.onScenarioChange(scenario.title, scenario.tags);
         return scenario.id;
     }
 

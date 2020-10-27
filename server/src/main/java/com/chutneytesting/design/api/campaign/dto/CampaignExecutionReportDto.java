@@ -4,9 +4,7 @@ import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CampaignExecutionReportDto {
@@ -19,6 +17,7 @@ public class CampaignExecutionReportDto {
     private boolean partialExecution;
     private String executionEnvironment;
     private String userId;
+    private Long duration;
 
     public CampaignExecutionReportDto(@JsonProperty("executionId") Long executionId,
                                       @JsonProperty("scenarioExecutionReports") List<ScenarioExecutionReportOutlineDto> scenarioExecutionReports,
@@ -27,7 +26,8 @@ public class CampaignExecutionReportDto {
                                       @JsonProperty("status") ServerReportStatus status,
                                       @JsonProperty("partialExecution") boolean partialExecution,
                                       @JsonProperty("executionEnvironment") String executionEnvironment,
-                                      @JsonProperty("user") String userId) {
+                                      @JsonProperty("user") String userId,
+                                      @JsonProperty("duration") Long duration) {
         this.executionId = executionId;
         this.scenarioExecutionReports = scenarioExecutionReports;
         this.campaignName = campaignName;
@@ -36,6 +36,7 @@ public class CampaignExecutionReportDto {
         this.partialExecution = partialExecution;
         this.executionEnvironment = executionEnvironment;
         this.userId = userId;
+        this.duration = duration;
     }
 
     public Long getExecutionId() {
@@ -46,22 +47,16 @@ public class CampaignExecutionReportDto {
         return scenarioExecutionReports;
     }
 
-    public long getDuration() {
-        Optional<LocalDateTime> latestExecutionEndDate = scenarioExecutionReports.stream()
-            .map(report -> report.getStartDate().plus(report.getDuration(), ChronoUnit.MILLIS))
-            .max(LocalDateTime::compareTo);
-
-        return latestExecutionEndDate
-            .map(endDate -> ChronoUnit.MILLIS.between(startDate, endDate))
-            .orElse(0L);
-    }
-
     public LocalDateTime getStartDate() {
         return startDate;
     }
 
     public ServerReportStatus getStatus() {
         return status;
+    }
+
+    public Long getDuration() {
+        return duration;
     }
 
     @Override

@@ -23,6 +23,7 @@ import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.execution.domain.scenario.FailedExecutionAttempt;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
+import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -52,6 +53,7 @@ public class CampaignExecutionEngine {
     private final TestCaseRepository testCaseRepository;
     private final DataSetHistoryRepository dataSetHistoryRepository;
     private final JiraXrayPlugin jiraXrayPlugin;
+    private final ChutneyMetrics metrics;
 
     private Map<Long, CampaignExecutionReport> currentCampaignExecutions = new ConcurrentHashMap<>();
     private Map<Long, Boolean> currentCampaignExecutionsStopRequests = new ConcurrentHashMap<>();
@@ -61,13 +63,15 @@ public class CampaignExecutionEngine {
                                    ExecutionHistoryRepository executionHistoryRepository,
                                    TestCaseRepository testCaseRepository,
                                    DataSetHistoryRepository dataSetHistoryRepository,
-                                   JiraXrayPlugin jiraXrayPlugin) {
+                                   JiraXrayPlugin jiraXrayPlugin,
+                                   ChutneyMetrics metrics) {
         this.campaignRepository = campaignRepository;
         this.scenarioExecutionEngine = scenarioExecutionEngine;
         this.executionHistoryRepository = executionHistoryRepository;
         this.testCaseRepository = testCaseRepository;
         this.dataSetHistoryRepository = dataSetHistoryRepository;
         this.jiraXrayPlugin = jiraXrayPlugin;
+        this.metrics = metrics;
     }
 
     public List<CampaignExecutionReport> executeByName(String campaignName, String userId) {
@@ -129,9 +133,16 @@ public class CampaignExecutionEngine {
             campaignExecutionReport.endCampaignExecution();
             LOGGER.info("Save campaign {} execution {} with status {}", campaign.id, campaignExecutionReport.executionId, campaignExecutionReport.status());
             campaignRepository.saveReport(campaign.id, campaignExecutionReport);
+            sendMetrics(campaign, campaignExecutionReport);
             currentCampaignExecutionsStopRequests.remove(executionId);
             currentCampaignExecutions.remove(campaign.id);
         }
+    }
+
+    private void sendMetrics(Campaign campaign, CampaignExecutionReport campaignExecutionReport) {
+        Map<ServerReportStatus, Long> scenarioCountByStatus = campaignExecutionReport.scenarioExecutionReports().stream().collect(Collectors.groupingBy(s -> s.execution.status(), Collectors.counting()));
+
+        metrics.onCampaignExecutionEnded(campaign.id.toString(), campaignExecutionReport.status(), campaignExecutionReport.getDuration(), scenarioCountByStatus);
     }
 
     private CampaignExecutionReport execute(Campaign campaign, CampaignExecutionReport campaignExecutionReport, List<String> scenariosToExecute) {
@@ -162,7 +173,7 @@ public class CampaignExecutionEngine {
                 }
                 // Add scenario report to campaign's one
                 Optional.ofNullable(scenarioExecutionReport)
-                    .ifPresent( serc -> {
+                    .ifPresent(serc -> {
                         campaignExecutionReport.endScenarioExecution(serc);
                         // update xray test
                         ExecutionHistory.Execution execution = executionHistoryRepository.getExecution(serc.scenarioId, serc.execution.executionId());
