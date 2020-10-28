@@ -1,5 +1,10 @@
 package com.chutneytesting.task.kafka;
 
+import static com.chutneytesting.task.kafka.KafkaBasicConsumeTask.OUTPUT_BODY;
+import static com.chutneytesting.task.kafka.KafkaBasicConsumeTask.OUTPUT_BODY_HEADERS_KEY;
+import static com.chutneytesting.task.kafka.KafkaBasicConsumeTask.OUTPUT_BODY_PAYLOAD_KEY;
+import static com.chutneytesting.task.kafka.KafkaBasicConsumeTask.OUTPUT_HEADERS;
+import static com.chutneytesting.task.kafka.KafkaBasicConsumeTask.OUTPUT_PAYLOADS;
 import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Failure;
 import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Success;
 import static java.util.Arrays.stream;
@@ -78,9 +83,9 @@ public class KafkaBasicConsumeTaskTest {
         List<Map<String, Object>> body = assertTaskOutputsSize(taskExecutionResult, 1);
 
         final Map<String, Object> message = body.get(0);
-        final String payload1 = (String) message.get("payload");
+        final String payload1 = (String) message.get(OUTPUT_BODY_PAYLOAD_KEY);
         assertThat(payload1).isEqualTo("test message");
-        final Map<String, Object> headers = (Map<String, Object>) message.get("headers");
+        final Map<String, Object> headers = (Map<String, Object>) message.get(OUTPUT_BODY_HEADERS_KEY);
         assertThat(headers.get("X-Custom-HeaderKey")).isEqualTo("X-Custom-HeaderValue");
         assertThat(headers).containsAllEntriesOf(ImmutableMap.of("X-Custom-HeaderKey", "X-Custom-HeaderValue", "header1", "value1"));
 
@@ -102,7 +107,7 @@ public class KafkaBasicConsumeTaskTest {
         // Then
         assertThat(taskExecutionResult.status).isEqualTo(Success);
 
-        final Map<String, Object> payload = ((List<Map<String, Object>>) taskExecutionResult.outputs.get("payloads")).get(0);
+        final Map<String, Object> payload = ((List<Map<String, Object>>) taskExecutionResult.outputs.get(OUTPUT_PAYLOADS)).get(0);
         assertThat(payload.get("value")).isEqualTo("test message");
         assertThat(payload.get("id")).isEqualTo("1111");
     }
@@ -122,7 +127,7 @@ public class KafkaBasicConsumeTaskTest {
         // Then
         assertThat(taskExecutionResult.status).isEqualTo(Success);
 
-        final String payload = ((List<String>) taskExecutionResult.outputs.get("payloads")).get(0);
+        final String payload = ((List<String>) taskExecutionResult.outputs.get(OUTPUT_PAYLOADS)).get(0);
         assertThat(payload).isEqualTo(xmlPayload);
     }
 
@@ -142,9 +147,9 @@ public class KafkaBasicConsumeTaskTest {
         // Then
         assertThat(taskExecutionResult.status).isEqualTo(Success);
 
-        List<Map<String, Object>> body = (List<Map<String, Object>>) taskExecutionResult.outputs.get("body");
+        List<Map<String, Object>> body = (List<Map<String, Object>>) taskExecutionResult.outputs.get(OUTPUT_BODY);
         assertThat(body).hasSize(1);
-        final Map<String, Object> payload = ((List<Map<String, Object>>) taskExecutionResult.outputs.get("payloads")).get(0);
+        final Map<String, Object> payload = ((List<Map<String, Object>>) taskExecutionResult.outputs.get(OUTPUT_PAYLOADS)).get(0);
         assertThat(payload.get("id")).isEqualTo("1122");
     }
 
@@ -165,9 +170,9 @@ public class KafkaBasicConsumeTaskTest {
         // Then
         assertThat(taskExecutionResult.status).isEqualTo(Success);
 
-        List<Map<String, Object>> body = (List<Map<String, Object>>) taskExecutionResult.outputs.get("body");
+        List<Map<String, Object>> body = (List<Map<String, Object>>) taskExecutionResult.outputs.get(OUTPUT_BODY);
         assertThat(body).hasSize(1);
-        final String payload = ((List<String>) taskExecutionResult.outputs.get("payloads")).get(0);
+        final String payload = ((List<String>) taskExecutionResult.outputs.get(OUTPUT_PAYLOADS)).get(0);
         assertThat(payload).isEqualTo(payloadToSelect);
     }
 
@@ -188,9 +193,9 @@ public class KafkaBasicConsumeTaskTest {
         // Then
         assertThat(taskExecutionResult.status).isEqualTo(Success);
 
-        List<Map<String, Object>> body = (List<Map<String, Object>>) taskExecutionResult.outputs.get("body");
+        List<Map<String, Object>> body = (List<Map<String, Object>>) taskExecutionResult.outputs.get(OUTPUT_BODY);
         assertThat(body).hasSize(1);
-        final String payload = ((List<String>) taskExecutionResult.outputs.get("payloads")).get(0);
+        final String payload = ((List<String>) taskExecutionResult.outputs.get(OUTPUT_PAYLOADS)).get(0);
         assertThat(payload).isEqualTo(payloadToSelect);
     }
 
@@ -221,11 +226,11 @@ public class KafkaBasicConsumeTaskTest {
         assertThat(taskExecutionResult.status).isEqualTo(Success);
         List<Map<String, Object>> body = assertTaskOutputsSize(taskExecutionResult, 3);
 
-        final String payload = (String) body.get(0).get("payload");
+        final String payload = (String) body.get(0).get(OUTPUT_BODY_PAYLOAD_KEY);
         assertThat(payload).isEqualTo(textMessageToSelect);
-        final String xmlPayload = (String) body.get(1).get("payload");
+        final String xmlPayload = (String) body.get(1).get(OUTPUT_BODY_PAYLOAD_KEY);
         assertThat(xmlPayload).isEqualTo(xmlMessageToSelect);
-        final Map jsonPayload = (Map) body.get(2).get("payload");
+        final Map jsonPayload = (Map) body.get(2).get(OUTPUT_BODY_PAYLOAD_KEY);
         assertThat(jsonPayload.get("value")).isEqualTo(jsonMessageToSelect);
     }
 
@@ -251,7 +256,7 @@ public class KafkaBasicConsumeTaskTest {
 
         assertThat(logger.info).contains("Found content type header " + APPLICATION_JSON_VALUE);
 
-        final Map payload = (Map) body.get(0).get("payload");
+        final Map payload = (Map) body.get(0).get(OUTPUT_BODY_PAYLOAD_KEY);
         assertThat(payload)
             .containsEntry("value", "test message")
             .containsEntry("id", "1");
@@ -308,9 +313,9 @@ public class KafkaBasicConsumeTaskTest {
     private List<Map<String, Object>> assertTaskOutputsSize(TaskExecutionResult taskExecutionResult, int size) {
         assertThat(taskExecutionResult.outputs).hasSize(3);
 
-        final List<Map<String, Object>> body = (List<Map<String, Object>>) taskExecutionResult.outputs.get("body");
-        final List<Map<String, Object>> payloads = (List<Map<String, Object>>) taskExecutionResult.outputs.get("payloads");
-        final List<Map<String, Object>> headers = (List<Map<String, Object>>) taskExecutionResult.outputs.get("headers");
+        final List<Map<String, Object>> body = (List<Map<String, Object>>) taskExecutionResult.outputs.get(OUTPUT_BODY);
+        final List<Map<String, Object>> payloads = (List<Map<String, Object>>) taskExecutionResult.outputs.get(OUTPUT_PAYLOADS);
+        final List<Map<String, Object>> headers = (List<Map<String, Object>>) taskExecutionResult.outputs.get(OUTPUT_HEADERS);
         assertThat(body).hasSize(size);
         assertThat(payloads).hasSize(size);
         assertThat(headers).hasSize(size);
@@ -318,8 +323,8 @@ public class KafkaBasicConsumeTaskTest {
         Map<String, Object> bodyTmp;
         for (int i = 0; i < body.size(); i++) {
             bodyTmp = body.get(i);
-            assertThat(bodyTmp.get("payload")).isEqualTo(payloads.get(i));
-            assertThat(bodyTmp.get("headers")).isEqualTo(headers.get(i));
+            assertThat(bodyTmp.get(OUTPUT_BODY_PAYLOAD_KEY)).isEqualTo(payloads.get(i));
+            assertThat(bodyTmp.get(OUTPUT_BODY_HEADERS_KEY)).isEqualTo(headers.get(i));
         }
 
         return body;

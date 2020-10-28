@@ -8,6 +8,9 @@ import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON;
+import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
+import static org.springframework.util.MimeTypeUtils.APPLICATION_XML;
 
 import com.chutneytesting.task.amqp.utils.JsonPathEvaluator;
 import com.chutneytesting.task.function.XPathFunction;
@@ -38,6 +41,12 @@ import org.springframework.util.MimeTypeUtils;
 
 public class KafkaBasicConsumeTask implements Task {
 
+    static final String OUTPUT_BODY = "body";
+    static final String OUTPUT_BODY_HEADERS_KEY = "headers";
+    static final String OUTPUT_BODY_PAYLOAD_KEY = "payload";
+    static final String OUTPUT_HEADERS = "headers";
+    static final String OUTPUT_PAYLOADS = "payloads";
+
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private final String topic;
@@ -66,7 +75,7 @@ public class KafkaBasicConsumeTask implements Task {
         this.nbMessages = defaultIfNull(nbMessages, 1);
         this.selector = selector;
         this.headerSelector = headerSelector;
-        this.contentType = ofNullable(contentType).map(ct -> defaultIfEmpty(ct, "application/json")).map(MimeTypeUtils::parseMimeType).orElse(MimeTypeUtils.APPLICATION_JSON);
+        this.contentType = ofNullable(contentType).map(ct -> defaultIfEmpty(ct, APPLICATION_JSON_VALUE)).map(MimeTypeUtils::parseMimeType).orElse(APPLICATION_JSON);
         this.timeout = defaultIfEmpty(timeout, "60 sec");
         this.consumerFactory = new KafkaConsumerFactoryFactory().create(target, group, defaultIfNull(properties, emptyMap()));
         this.countDownLatch = new CountDownLatch(this.nbMessages);
@@ -111,7 +120,7 @@ public class KafkaBasicConsumeTask implements Task {
             return true;
         }
 
-        if (contentType.getSubtype().contains("json")) {
+        if (contentType.getSubtype().contains(APPLICATION_JSON.getSubtype())) {
             try {
                 String messageAsString = OBJECT_MAPPER.writeValueAsString(message);
                 return JsonPathEvaluator.evaluate(messageAsString, selector);
@@ -119,9 +128,9 @@ public class KafkaBasicConsumeTask implements Task {
                 logger.info("Received a message, however cannot read process it as json, ignoring payload selection : " + e.getMessage());
                 return true;
             }
-        } else if (contentType.getSubtype().contains("xml")) {
+        } else if (contentType.getSubtype().contains(APPLICATION_XML.getSubtype())) {
             try {
-                Object result = XPathFunction.xpath((String) message.get("payload"), selector);
+                Object result = XPathFunction.xpath((String) message.get(OUTPUT_BODY_PAYLOAD_KEY), selector);
                 return ofNullable(result).isPresent();
             } catch (Exception e) {
                 logger.info("Received a message, however cannot read process it as xml, ignoring payload selection : " + e.getMessage());
@@ -129,7 +138,7 @@ public class KafkaBasicConsumeTask implements Task {
             }
         } else {
             logger.info("Applying selector as text");
-            return ((String) message.get("payload")).contains(selector);
+            return ((String) message.get(OUTPUT_BODY_PAYLOAD_KEY)).contains(selector);
         }
     }
 
@@ -139,7 +148,7 @@ public class KafkaBasicConsumeTask implements Task {
         }
 
         try {
-            String messageAsString = OBJECT_MAPPER.writeValueAsString(message.get("headers"));
+            String messageAsString = OBJECT_MAPPER.writeValueAsString(message.get(OUTPUT_BODY_HEADERS_KEY));
             return JsonPathEvaluator.evaluate(messageAsString, headerSelector);
         } catch (Exception e) {
             logger.error("\"Received a message, however cannot process headers selection, Ignoring header selection");
@@ -153,7 +162,7 @@ public class KafkaBasicConsumeTask implements Task {
     }
 
     private Object extractPayload(ConsumerRecord<String, String> record) {
-        if (contentType.getSubtype().contains("json")) {
+        if (contentType.getSubtype().contains(APPLICATION_JSON.getSubtype())) {
             try {
                 return OBJECT_MAPPER.readValue(record.value(), Map.class);
             } catch (IOException e) {
@@ -168,8 +177,8 @@ public class KafkaBasicConsumeTask implements Task {
         final Map<String, Object> headers = extractHeaders(record);
         checkContentTypeHeader(headers);
         Object payload = extractPayload(record);
-        message.put("headers", headers);
-        message.put("payload", payload);
+        message.put(OUTPUT_BODY_HEADERS_KEY, headers);
+        message.put(OUTPUT_BODY_PAYLOAD_KEY, payload);
         return message;
     }
 
@@ -187,9 +196,9 @@ public class KafkaBasicConsumeTask implements Task {
 
     private Map<String, Object> toOutputs() {
         Map<String, Object> results = new HashMap<>();
-        results.put("body", consumedMessages);
-        results.put("payloads", consumedMessages.stream().map(e -> e.get("payload")).collect(toList()));
-        results.put("headers", consumedMessages.stream().map(e -> e.get("headers")).collect(toList()));
+        results.put(OUTPUT_BODY, consumedMessages);
+        results.put(OUTPUT_PAYLOADS, consumedMessages.stream().map(e -> e.get(OUTPUT_BODY_PAYLOAD_KEY)).collect(toList()));
+        results.put(OUTPUT_HEADERS, consumedMessages.stream().map(e -> e.get(OUTPUT_BODY_HEADERS_KEY)).collect(toList()));
         return results;
     }
 
