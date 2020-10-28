@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.2.6](https://github.com/chutney-testing/chutney/tree/1.2.6)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.5...1.2.6)
+
+**Implemented enhancements:**
+
+- Explicitly show GWT steps in a scenario report [\#210](https://github.com/chutney-testing/chutney/issues/210)
+- Scenario steps' Info/Detail are not user friendly nor provide enough value [\#208](https://github.com/chutney-testing/chutney/issues/208)
+- Add export environment [\#166](https://github.com/chutney-testing/chutney/issues/166)
+
+**Closed issues:**
+
+- Task Kafka - Add XML's payload processing [\#246](https://github.com/chutney-testing/chutney/issues/246)
+- component parameters values erased when executed [\#240](https://github.com/chutney-testing/chutney/issues/240)
+- Support navigation patterns [\#239](https://github.com/chutney-testing/chutney/issues/239)
+
+**Merged pull requests:**
+
+- feat: Change micrometer metrics [\#248](https://github.com/chutney-testing/chutney/pull/248) ([nbrouand](https://github.com/nbrouand))
+- Kafka consume task - Add xml payload processing [\#247](https://github.com/chutney-testing/chutney/pull/247) ([boddissattva](https://github.com/boddissattva))
+- Feat/navigation patterns [\#244](https://github.com/chutney-testing/chutney/pull/244) ([bessonm](https://github.com/bessonm))
+- Micrometer tasks [\#241](https://github.com/chutney-testing/chutney/pull/241) ([boddissattva](https://github.com/boddissattva))
+- chore\(ui\): Update node version to v12.18.4 & provide IntelliJ run conf [\#238](https://github.com/chutney-testing/chutney/pull/238) ([bessonm](https://github.com/bessonm))
+
+
+
 ## [1.2.5](https://github.com/chutney-testing/chutney/tree/1.2.5) (2020-09-01)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.4...1.2.5)
