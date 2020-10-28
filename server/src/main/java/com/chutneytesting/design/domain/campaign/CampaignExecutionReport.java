@@ -9,6 +9,7 @@ import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -137,6 +138,16 @@ public class CampaignExecutionReport {
 
     public ServerReportStatus status() {
         return status;
+    }
+
+    public long getDuration() {
+        Optional<LocalDateTime> latestExecutionEndDate = scenarioExecutionReports.stream()
+            .map(report -> report.execution.time().plus(report.execution.duration(), ChronoUnit.MILLIS))
+            .max(LocalDateTime::compareTo);
+
+        return latestExecutionEndDate
+            .map(endDate -> ChronoUnit.MILLIS.between(startDate, endDate))
+            .orElse(0L);
     }
 
     private LocalDateTime findStartDate(List<ScenarioExecutionReportCampaign> scenarioExecutionReports) {

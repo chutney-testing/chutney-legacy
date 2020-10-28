@@ -1,5 +1,6 @@
 package com.chutneytesting.design.domain.campaign;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -12,7 +13,11 @@ import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import java.time.LocalDateTime;
-import java.util.Collections;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.IntStream;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 
@@ -173,6 +178,65 @@ public class CampaignExecutionReportTest {
         // Then
         assertThat(campaignReport.scenarioExecutionReports()).hasSize(2);
         assertThat(campaignReport.status()).isEqualTo(ServerReportStatus.STOPPED);
+    }
+
+    @Test
+    public void should_compute_duration_for_one_scenario_execution() {
+        LocalDateTime now = LocalDateTime.now();
+        long duration = 3;
+
+        List<ScenarioExecutionReportCampaign> executions = stubScenarioExecution(singletonList(now), singletonList(duration));
+        CampaignExecutionReport sut = fakeCampaignReport(executions);
+
+        assertThat(sut.getDuration()).isEqualTo(3);
+    }
+
+    @Test
+    public void should_compute_duration_for_two_scenarios_sequential_executions() {
+        LocalDateTime now = LocalDateTime.now();
+        long duration1 = 3;
+        LocalDateTime scenarioExecutionStartDate2 = now.plus(duration1, ChronoUnit.MILLIS);
+        long duration2 = 6;
+
+        List<ScenarioExecutionReportCampaign> executions =
+            stubScenarioExecution(
+                asList(now, scenarioExecutionStartDate2),
+                asList(duration1, duration2)
+            );
+        CampaignExecutionReport sut = fakeCampaignReport(executions);
+
+        assertThat(sut.getDuration()).isEqualTo(9);
+    }
+
+    @Test
+    public void should_compute_duration_for_two_scenarios_parallel_executions() {
+        LocalDateTime now = LocalDateTime.now();
+        long duration1 = 3;
+        long duration2 = 6;
+
+        List<ScenarioExecutionReportCampaign> executions =
+            stubScenarioExecution(
+                asList(now, now),
+                asList(duration1, duration2)
+            );
+        CampaignExecutionReport sut = fakeCampaignReport(executions);
+
+        assertThat(sut.getDuration()).isEqualTo(6);
+    }
+
+    private List<ScenarioExecutionReportCampaign> stubScenarioExecution(List<LocalDateTime> times, List<Long> durations) {
+        ExecutionHistory.ExecutionSummary execution = mock(ExecutionHistory.ExecutionSummary.class);
+        when(execution.time()).thenReturn(times.get(0), times.subList(1, durations.size()).toArray(new LocalDateTime[0]));
+        when(execution.duration()).thenReturn(durations.get(0), durations.subList(1, durations.size()).toArray(new Long[0]));
+
+        ScenarioExecutionReportCampaign dto = new ScenarioExecutionReportCampaign("0", UUID.randomUUID().toString(), execution);
+        List<ScenarioExecutionReportCampaign> reports = new ArrayList<>();
+        IntStream.range(0, times.size()).forEach(i -> reports.add(dto));
+        return reports;
+    }
+
+    private CampaignExecutionReport fakeCampaignReport(List<ScenarioExecutionReportCampaign> executions) {
+        return new CampaignExecutionReport(1L, 1L, executions, "...", false, "", null, null, "");
     }
 
     private void addScenarioExecutions(CampaignExecutionReport campaignReport, String scenarioId, String scenarioTitle, ServerReportStatus scenarioExecutionStatus) {

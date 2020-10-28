@@ -7,6 +7,7 @@ import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -16,6 +17,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
 import com.chutneytesting.design.domain.campaign.Campaign;
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
@@ -36,6 +38,7 @@ import com.chutneytesting.execution.domain.jira.JiraXrayPlugin;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
+import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -68,10 +71,11 @@ public class CampaignExecutionEngineTest {
     @Mock private TestCaseRepository testCaseRepository;
     @Mock private DataSetHistoryRepository dataSetHistoryRepository;
     @Mock private JiraXrayPlugin jiraXrayPlugin;
+    @Mock private ChutneyMetrics metrics;
 
     @Before
     public void setUp() {
-        sut = new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository, jiraXrayPlugin);
+        sut = new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository, jiraXrayPlugin, metrics);
     }
 
     @Test
@@ -104,6 +108,12 @@ public class CampaignExecutionEngineTest {
         assertThat(campaignExecutionReport.scenarioExecutionReports().get(1).execution.executionId()).isEqualTo(secondScenarioExecutionId);
         assertThat(campaignExecutionReport.partialExecution).isFalse();
         verify(campaignRepository).saveReport(campaign.id, campaignExecutionReport);
+        verify(metrics).onCampaignExecutionEnded(
+            eq(campaign.id.toString()),
+            eq(campaignExecutionReport.status()),
+            anyLong(),
+            (Map<ServerReportStatus, Long>) argThat(hasEntry(ServerReportStatus.SUCCESS, 2L))
+        );
     }
 
 
