@@ -13,6 +13,7 @@
     >
       <mat-form-field color="accent">
         <input
+          autocomplete="off"
           matInput
           placeholder="username"
           type="text"
@@ -29,8 +30,11 @@
         </mat-error>
       </mat-form-field>
       <mat-form-field color="accent">
+        <mat-pass-toggle-visibility #toggle matSuffix></mat-pass-toggle-visibility>
         <input
           matInput
+          [type]="toggle.type"
+          autocomplete="off"
           placeholder="password"
           type="text"
           formControlName="password"

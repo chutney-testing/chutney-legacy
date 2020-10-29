@@ -18,6 +18,7 @@ import { CovalentSearchModule } from '@covalent/core/search';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { MatPasswordModule } from './mat-password/mat-password.module';
 
 @NgModule({
   imports: [
@@ -43,6 +44,8 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
     CovalentSearchModule,
     /*others*/
     NgxMatSelectSearchModule,
+    MatPasswordModule,
+
   ],
   exports: [
     FlexLayoutModule,
@@ -67,6 +70,7 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
     CovalentSearchModule,
     /*others*/
     NgxMatSelectSearchModule,
+    MatPasswordModule,
   ],
 })
 export class UiMaterialModule {}
