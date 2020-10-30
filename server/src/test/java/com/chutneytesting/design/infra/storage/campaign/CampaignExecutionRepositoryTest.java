@@ -153,8 +153,8 @@ public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
 
     private void insertScenario(String scenarioId, String scenarioName) {
         jdbcTemplate.execute("INSERT INTO SCENARIO "
-        + "(ID, TITLE, DESCRIPTION, CONTENT, VERSION) VALUES "
-        +" (" + scenarioId + ", '" + scenarioName + "', 'lol', 'truc', 'v2.1')");
+        + "(ID, TITLE, DESCRIPTION, CONTENT, CONTENT_VERSION, CREATION_DATE, UPDATE_DATE, VERSION) VALUES "
+        +" (" + scenarioId + ", '" + scenarioName + "', 'lol', 'truc', 'v2.1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1)");
     }
 
     private void insertScenarioExec(String scenarioId, String execid, String status) {

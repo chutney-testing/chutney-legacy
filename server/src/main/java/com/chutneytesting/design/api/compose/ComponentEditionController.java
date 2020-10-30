@@ -4,10 +4,14 @@ import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMap
 import static com.chutneytesting.design.api.compose.mapper.ComposableTestCaseMapper.toDto;
 import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
 import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
+import static java.time.Instant.now;
 
 import com.chutneytesting.design.api.compose.dto.ComposableTestCaseDto;
+import com.chutneytesting.design.domain.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.compose.ComposableTestCaseRepository;
+import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
+import com.chutneytesting.security.domain.UserService;
 import java.util.Optional;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -28,15 +32,26 @@ public class ComponentEditionController {
 
     private final ComposableTestCaseRepository composableTestCaseRepository;
     private final TestCaseRepository testCaseRepository;
+    private final UserService userService;
 
-    public ComponentEditionController(ComposableTestCaseRepository composableTestCaseRepository, TestCaseRepository testCaseRepository) {
+    public ComponentEditionController(ComposableTestCaseRepository composableTestCaseRepository, TestCaseRepository testCaseRepository, UserService userService) {
         this.composableTestCaseRepository = composableTestCaseRepository;
         this.testCaseRepository = testCaseRepository;
+        this.userService = userService;
     }
 
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public String saveTestCase(@RequestBody ComposableTestCaseDto composableTestCaseDto) {
-        return toFrontId( composableTestCaseRepository.save(fromDto(composableTestCaseDto)));
+        ComposableTestCase composableTestCase = fromDto(composableTestCaseDto);
+        composableTestCase = new ComposableTestCase(
+            composableTestCase.id,
+            TestCaseMetadataImpl.TestCaseMetadataBuilder.from(composableTestCase.metadata)
+                .withUpdateDate(now())
+                .withAuthor(userService.getCurrentUser().getId())
+                .build(),
+            composableTestCase.composableScenario
+        );
+        return toFrontId(composableTestCaseRepository.save(composableTestCase));
     }
 
     @GetMapping(path = "/{testCaseId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

@@ -10,12 +10,14 @@ import static com.chutneytesting.design.infra.storage.db.orient.OrientUtils.roll
 
 import com.chutneytesting.design.domain.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.compose.ComposableTestCaseRepository;
+import com.chutneytesting.design.domain.scenario.AlreadyExistingScenarioException;
 import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB;
 import com.google.common.collect.Lists;
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
+import com.orientechnologies.orient.core.exception.OConcurrentModificationException;
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.OElement;
 import com.orientechnologies.orient.core.record.OVertex;
@@ -42,14 +44,21 @@ public class OrientComposableTestCaseRepository implements ComposableTestCaseRep
     @Override
     public String save(ComposableTestCase composableTestCase) {
         ODatabaseSession dbSession = null;
+        OVertex savedFStep = null;
         try {
             dbSession = componentDBPool.acquire();
             dbSession.begin();
-            OVertex savedFStep = save(composableTestCase, dbSession);
+            savedFStep = save(composableTestCase, dbSession);
             dbSession.commit();
             LOGGER.debug("Save scenario :" + savedFStep.toString());
-            return savedFStep.getIdentity().toString(null).toString();
+            return savedFStep.getIdentity().toString();
         } catch (ORecordDuplicatedException e) {
+            rollback(dbSession);
+            throw new AlreadyExistingScenarioException(e.getMessage());
+        } catch (OConcurrentModificationException e) {
+            rollback(dbSession);
+            throw new ScenarioNotFoundException(composableTestCase.id, savedFStep.getVersion());
+        } catch (ScenarioNotFoundException e) {
             rollback(dbSession);
             throw e;
         } catch (Exception e) {
@@ -91,8 +100,20 @@ public class OrientComposableTestCaseRepository implements ComposableTestCaseRep
         }
     }
 
+    @Override
+    public Integer lastVersion(String composableTestCaseId) {
+        try (ODatabaseSession dbSession = componentDBPool.acquire()) {
+            OVertex element = (OVertex) load(composableTestCaseId, dbSession)
+                .orElseThrow(() -> new ScenarioNotFoundException(composableTestCaseId));
+            return element.getVersion();
+        }
+    }
+
     private OVertex save(ComposableTestCase composableTestCase, ODatabaseSession dbSession) {
         Optional<OElement> stepRecord = load(composableTestCase.id, dbSession);
+        if (stepRecord.isPresent() && stepRecord.get().getVersion() != composableTestCase.metadata.version()) {
+            throw new ScenarioNotFoundException(composableTestCase.id, composableTestCase.metadata.version());
+        }
         OVertex testCase = (OVertex) stepRecord.orElseGet(() -> dbSession.newVertex(TESTCASE_CLASS));
         testCaseToVertex(composableTestCase, testCase, dbSession);
         return testCase.save();

@@ -7,19 +7,30 @@ import org.springframework.web.client.RestTemplate;
 
 public class RestClient {
     private final RestTemplate restTemplate;
+    private BasicAuthenticationInterceptor currentBasicAuth;
 
     public RestClient(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
     public RestRequestBuilder defaultRequest() {
-        return request().addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE);
+        return defaultRequestAs("user", "user");
     }
 
     public RestRequestBuilder request() {
-        restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor("user", "user"));
-        return new RestRequestBuilder(restTemplate);
+        return requestAs("user", "user");
     }
 
+    public RestRequestBuilder defaultRequestAs(String user, String password) {
+        return requestAs(user, password).addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE);
+    }
 
+    public RestRequestBuilder requestAs(String user, String password) {
+        if (currentBasicAuth != null) {
+            restTemplate.getInterceptors().remove(currentBasicAuth);
+        }
+        currentBasicAuth = new BasicAuthenticationInterceptor(user, password);
+        restTemplate.getInterceptors().add(currentBasicAuth);
+        return new RestRequestBuilder(restTemplate);
+    }
 }

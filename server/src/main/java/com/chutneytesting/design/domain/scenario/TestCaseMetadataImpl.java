@@ -3,6 +3,7 @@ package com.chutneytesting.design.domain.scenario;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 
+import com.chutneytesting.security.domain.User;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
@@ -18,8 +19,11 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
     public final Instant creationDate;
     public final Optional<String> datasetId;
     public final String repositorySource;
+    public final Instant updateDate;
+    public final String author;
+    public final Integer version;
 
-    private TestCaseMetadataImpl(String id, String title, String description, List<String> tags, Instant creationDate, String repositorySource, String datasetId) {
+    private TestCaseMetadataImpl(String id, String title, String description, List<String> tags, Instant creationDate, String repositorySource, String datasetId, Instant updateDate, String author, Integer version) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -27,6 +31,9 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
         this.creationDate = creationDate;
         this.repositorySource = repositorySource;
         this.datasetId = ofNullable(datasetId);
+        this.updateDate = updateDate;
+        this.author = author;
+        this.version = version;
     }
 
 
@@ -66,6 +73,21 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
     }
 
     @Override
+    public String author() {
+        return author;
+    }
+
+    @Override
+    public Instant updateDate() {
+        return updateDate;
+    }
+
+    @Override
+    public Integer version() {
+        return version;
+    }
+
+    @Override
     public String toString() {
         return "GwtTestCaseMetadata{" +
             "id=" + id +
@@ -74,6 +96,9 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
             ", tags=" + tags +
             ", creationDate=" + creationDate +
             ", repositorySource=" + repositorySource +
+            ", author=" + author +
+            ", updateDate=" + updateDate +
+            ", version=" + version +
             '}';
     }
 
@@ -87,12 +112,15 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
             description.equals(that.description) &&
             tags.equals(that.tags) &&
             creationDate.equals(that.creationDate) &&
-            repositorySource.equals(that.repositorySource);
+            repositorySource.equals(that.repositorySource) &&
+            author.equals(that.author) &&
+            updateDate.equals(that.updateDate) &&
+            version.equals(that.version);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, tags, creationDate, repositorySource);
+        return Objects.hash(id, title, description, tags, creationDate, repositorySource, author, updateDate, version);
     }
 
     public static TestCaseMetadataBuilder builder() {
@@ -107,19 +135,26 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
         private Instant creationDate;
         private String repositorySource;
         private String datasetId;
+        private Instant updateDate;
+        private String author;
+        private Integer version;
 
-        private TestCaseMetadataBuilder() {}
+        private TestCaseMetadataBuilder() {
+        }
 
         public TestCaseMetadataImpl build() {
+            Instant creationDate = ofNullable(this.creationDate).orElse(Instant.now());
             return new TestCaseMetadataImpl(
                 ofNullable(id).orElse("-42"),
                 ofNullable(title).orElse(""),
                 ofNullable(description).orElse(""),
                 (ofNullable(tags).orElse(emptyList())).stream().map(String::toUpperCase).map(String::trim).collect(Collectors.toList()),
-                ofNullable(creationDate).orElse(Instant.now()),
+                creationDate,
                 ofNullable(repositorySource).orElse(TestCaseRepository.DEFAULT_REPOSITORY_SOURCE),
-                ofNullable(datasetId).orElse(null)
-            );
+                ofNullable(datasetId).orElse(null),
+                ofNullable(updateDate).orElse(creationDate),
+                ofNullable(author).orElseGet(User.ANONYMOUS_USER::getId),
+                ofNullable(version).orElse(1));
         }
 
         public TestCaseMetadataBuilder withId(String id) {
@@ -157,6 +192,21 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
             return this;
         }
 
+        public TestCaseMetadataBuilder withUpdateDate(Instant updateDate) {
+            this.updateDate = updateDate;
+            return this;
+        }
+
+        public TestCaseMetadataBuilder withAuthor(String author) {
+            this.author = author;
+            return this;
+        }
+
+        public TestCaseMetadataBuilder withVersion(Integer version) {
+            this.version = version;
+            return this;
+        }
+
         public static TestCaseMetadataBuilder from(TestCaseMetadata testCaseMetadata) {
             return new TestCaseMetadataBuilder()
                 .withId(testCaseMetadata.id())
@@ -165,7 +215,10 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
                 .withCreationDate(testCaseMetadata.creationDate())
                 .withTags(testCaseMetadata.tags())
                 .withRepositorySource(testCaseMetadata.repositorySource())
-                .withDatasetId(testCaseMetadata.datasetId().orElse(null));
+                .withDatasetId(testCaseMetadata.datasetId().orElse(null))
+                .withUpdateDate(testCaseMetadata.updateDate())
+                .withAuthor(testCaseMetadata.author())
+                .withVersion(testCaseMetadata.version());
         }
 
     }

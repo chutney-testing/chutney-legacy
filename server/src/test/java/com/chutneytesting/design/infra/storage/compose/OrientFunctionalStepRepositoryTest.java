@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.chutneytesting.design.domain.compose.AlreadyExistingFunctionalStepException;
 import com.chutneytesting.design.domain.compose.FunctionalStep;
 import com.chutneytesting.design.domain.compose.FunctionalStepCyclicDependencyException;
 import com.chutneytesting.design.domain.compose.ParentStepId;
@@ -18,7 +19,6 @@ import com.chutneytesting.tools.ImmutableSortRequestParametersDto;
 import com.chutneytesting.tools.PaginatedDto;
 import com.orientechnologies.common.log.OLogManager;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
-import com.orientechnologies.orient.core.storage.ORecordDuplicatedException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -169,7 +169,7 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
 
         // When
         assertThatThrownBy(() -> sut.save(buildFunctionalStep(name)))
-            .isInstanceOf(ORecordDuplicatedException.class)
+            .isInstanceOf(AlreadyExistingFunctionalStepException.class)
             .hasMessageContaining("found duplicated key");
     }
 

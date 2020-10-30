@@ -3,9 +3,6 @@ package com.chutneytesting.design.infra.storage.compose;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
-import com.orientechnologies.common.log.OLogManager;
-import com.orientechnologies.orient.core.id.ORecordId;
-import com.orientechnologies.orient.core.record.OElement;
 import com.chutneytesting.design.domain.compose.ComposableScenario;
 import com.chutneytesting.design.domain.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.compose.ComposableTestCaseRepository;
@@ -15,6 +12,9 @@ import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB;
 import com.chutneytesting.tests.AbstractOrientDatabaseTest;
+import com.orientechnologies.common.log.OLogManager;
+import com.orientechnologies.orient.core.id.ORecordId;
+import com.orientechnologies.orient.core.record.OElement;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
@@ -49,6 +49,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
         "parent parameter with no overload", "parent initial value",
         "parent parameter with scenario overload", "parent value to be overloaded"
     );
+
     private static void initFunctionalStepsRepository() {
         StepRepository funcStepRepository = new OrientFunctionalStepRepository(orientComponentDB);
 
@@ -92,7 +93,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
     }
 
     @Test
-    public void should_throw_exception_when_saving_testcase_with_not_existing_step() {
+    public void should_throw_exception_when_saving_testcase_with_unknown_step() {
         // Given
         final String UKNOWN_FUNC_STEP_ID = "unknown_id";
         ComposableTestCase composableTestCase =
@@ -101,7 +102,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
                 ComposableScenario.builder()
                     .withFunctionalSteps(
                         Collections.singletonList(
-                        buildFunctionalStep("", "", UKNOWN_FUNC_STEP_ID))
+                            buildFunctionalStep("", "", UKNOWN_FUNC_STEP_ID))
                     )
                     .build()
             );
@@ -116,20 +117,17 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
     }
 
     @Test
-    public void should_create_testCase_with_empty_id_when_save_called() {
-        // Given
+    public void should_create_and_find_new_testCase() {
+        // When
         ComposableTestCase composableTestCase = saveEmptyTestCase("");
 
-        // When
-        String testCaseId = sut.save(composableTestCase);
-
         // Then
-        final OElement element = loadById(testCaseId);
-        assertThat(element).isNotNull();
+        assertThat(composableTestCase).isNotNull();
+        assertThat(composableTestCase.id).isNotBlank();
     }
 
     @Test
-    public void should_create_testCase_with_not_existing_id_when_save_called() {
+    public void should_create_new_testCase_with_valid_unknown_id() {
         // Given
         final String VALID_UNKNOWN_TESTCASE_ID = "#10:2";
         assertThat(ORecordId.isA(VALID_UNKNOWN_TESTCASE_ID)).isTrue();
@@ -145,23 +143,28 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
         // Then
         final OElement element = loadById(testCaseId);
         assertThat(element).isNotNull();
+        assertThat(element.getIdentity().toString()).isNotEqualTo(VALID_UNKNOWN_TESTCASE_ID);
     }
 
     @Test
-    public void should_update_testCase_with_no_id_when_save_called() {
+    public void should_update_testCase() {
         // Given
         ComposableTestCase composableTestCase = saveEmptyTestCase("");
 
         // When
-        String testCaseId = sut.save(composableTestCase);
+        String new_title = "new title";
+        composableTestCase = new ComposableTestCase(composableTestCase.id,
+            TestCaseMetadataImpl.TestCaseMetadataBuilder.from(composableTestCase.metadata).withTitle(new_title).build(),
+            composableTestCase.composableScenario);
+        ComposableTestCase composableTestCaseUpdated = sut.findById(sut.save(composableTestCase));
 
         // Then
-        final OElement element = loadById(testCaseId);
-        assertThat(element).isNotNull();
+        assertThat(composableTestCaseUpdated.id).isEqualTo(composableTestCase.id);
+        assertThat(composableTestCaseUpdated.metadata.title()).isEqualTo(new_title);
     }
 
     @Test
-    public void should_find_existing_testCase_with_default_dataset_when_findById_called() {
+    public void should_find_existing_testCase_with_default_dataset() {
         // Given
         FunctionalStep FuncStepRefScenarioInstance = FunctionalStep.builder()
             .from(FUNC_STEP_REF)
@@ -200,7 +203,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
                     .withFunctionalSteps(Arrays.asList(FuncStepRefScenarioInstance, FuncStepRefParentScenarioInstance))
                     .withParameters(scenarioParameters)
                     .build()
-                );
+            );
         final Map<String, String> expectedDataSet = Maps.of(
             "scenario parameter", "scenario value",
             "child parameter with parent overload", "",
@@ -227,7 +230,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
     }
 
     @Test
-    public void should_find_all_testCases_when_findAll_called() {
+    public void should_find_all_testCases() {
         // Given
         ComposableTestCase composableTestCase1 = saveEmptyTestCase("one");
         ComposableTestCase composableTestCase2 = saveEmptyTestCase("two");
@@ -241,7 +244,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
     }
 
     @Test
-    public void should_delete_testCase_when_removeById_called() {
+    public void should_delete_testCase_by_id() {
         // Given
         ComposableTestCase composableTestCase = saveEmptyTestCase("one");
 

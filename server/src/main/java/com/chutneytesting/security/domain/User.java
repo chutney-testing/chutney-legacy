@@ -10,7 +10,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public class User implements UserDetails {
 
+    public static final User ANONYMOUS_USER;
     private static final String ROLE_PREFIX = "ROLE_";
+
+    static {
+        ANONYMOUS_USER = new User();
+        ANONYMOUS_USER.setId("guest");
+        ANONYMOUS_USER.setName("guest");
+    }
 
     private String id;
     private String name;
@@ -154,5 +161,9 @@ public class User implements UserDetails {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public static boolean isAnonymous(String userId) {
+        return userId == null || ANONYMOUS_USER.getId().equals(userId);
     }
 }

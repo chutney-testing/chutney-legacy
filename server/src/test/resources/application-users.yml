@@ -13,6 +13,24 @@ chutney:
           -
             UTILISATEUR
       -
+        id: robert
+        name: robert
+        firstname: robert
+        lastname: robert
+        mail: robert@robert.com
+        password: robert
+        profiles:
+          - UTILISATEUR
+      -
+        id: paloma
+        name: paloma
+        firstname: paloma
+        lastname: paloma
+        mail: paloma@paloma.com
+        password: paloma
+        profiles:
+          - UTILISATEUR
+      -
         id: admin
         name: admin
         firstname: admin

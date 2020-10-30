@@ -73,6 +73,9 @@ public class ComposableTestCaseMapperTest {
                 )
             )
             .datasetId("66-7")
+            .author("author")
+            .updateDate(Instant.MIN)
+            .version(666)
             .build();
 
     private final ComposableTestCase composableTestCase =
@@ -85,6 +88,9 @@ public class ComposableTestCaseMapperTest {
                 .withTags(Arrays.asList("tag1","tag2"))
                 .withRepositorySource("ComposableTestCase")
                 .withDatasetId("#66:7")
+                .withAuthor("author")
+                .withUpdateDate(Instant.MIN)
+                .withVersion(666)
                 .build(),
             ComposableScenario.builder()
                 .withFunctionalSteps(

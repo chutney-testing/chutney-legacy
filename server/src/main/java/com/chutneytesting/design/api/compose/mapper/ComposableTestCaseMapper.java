@@ -44,6 +44,9 @@ public class ComposableTestCaseMapper {
             )
             .tags(composableTestCase.metadata.tags())
             .datasetId(toFrontId(composableTestCase.metadata.datasetId().orElse("")))
+            .author(composableTestCase.metadata.author())
+            .updateDate(composableTestCase.metadata.updateDate())
+            .version(composableTestCase.metadata.version())
             .build();
     }
 
@@ -55,6 +58,9 @@ public class ComposableTestCaseMapper {
             .withRepositorySource(COMPOSABLE_TESTCASE_REPOSITORY_SOURCE)
             .withTags(composableTestCaseDto.tags())
             .withDatasetId(fromFrontId(composableTestCaseDto.datasetId()))
+            .withAuthor(composableTestCaseDto.author())
+            .withUpdateDate(composableTestCaseDto.updateDate())
+            .withVersion(composableTestCaseDto.version())
             .build();
     }
 

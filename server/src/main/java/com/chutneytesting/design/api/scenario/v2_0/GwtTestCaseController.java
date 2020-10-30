@@ -2,6 +2,7 @@ package com.chutneytesting.design.api.scenario.v2_0;
 
 import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
 import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
+import static java.time.Instant.now;
 
 import com.chutneytesting.design.api.scenario.v2_0.dto.GwtTestCaseDto;
 import com.chutneytesting.design.api.scenario.v2_0.dto.RawTestCaseDto;
@@ -12,8 +13,10 @@ import com.chutneytesting.design.domain.compose.ComposableTestCaseRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
+import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import com.chutneytesting.execution.api.ExecutionSummaryDto;
 import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
+import com.chutneytesting.security.domain.UserService;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,12 +40,14 @@ public class GwtTestCaseController {
 
     private final ExecutionHistoryRepository executionHistoryRepository;
     private final ComposableTestCaseRepository composableTestCaseRepository;
+    private final UserService userService;
 
     public GwtTestCaseController(TestCaseRepository testCaseRepository,
-                                 ExecutionHistoryRepository executionHistoryRepository, ComposableTestCaseRepository composableTestCaseRepository) {
+                                 ExecutionHistoryRepository executionHistoryRepository, ComposableTestCaseRepository composableTestCaseRepository, UserService userService) {
         this.testCaseRepository = testCaseRepository;
         this.executionHistoryRepository = executionHistoryRepository;
         this.composableTestCaseRepository = composableTestCaseRepository;
+        this.userService = userService;
     }
 
     @GetMapping(path = "/{testCaseId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -75,7 +80,8 @@ public class GwtTestCaseController {
     }
 
     private String saveOrUpdate(GwtTestCaseDto testCase) {
-        return testCaseRepository.save(GwtTestCaseMapper.fromDto(testCase));
+        GwtTestCase gwtTestCase = GwtTestCaseMapper.fromDto(testCase);
+        return gwtTestCaseSave(gwtTestCase);
     }
 
     @DeleteMapping(path = "/{testCaseId}")
@@ -98,7 +104,8 @@ public class GwtTestCaseController {
 
     @PostMapping(path = "/raw", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public String saveTestCase(@RequestBody RawTestCaseDto rawTestCaseDto) {
-        return testCaseRepository.save(RawTestCaseMapper.fromDto(rawTestCaseDto));
+        GwtTestCase gwtTestCase = RawTestCaseMapper.fromDto(rawTestCaseDto);
+        return gwtTestCaseSave(gwtTestCase);
     }
 
     @GetMapping(path = "/raw/{testCaseId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -106,4 +113,15 @@ public class GwtTestCaseController {
         return RawTestCaseMapper.toDto(testCaseRepository.findById(testCaseId));
     }
 
+    private String gwtTestCaseSave(GwtTestCase gwtTestCase) {
+        gwtTestCase = GwtTestCase.builder()
+            .withMetadata(TestCaseMetadataImpl.TestCaseMetadataBuilder.from(gwtTestCase.metadata)
+                .withUpdateDate(now())
+                .withAuthor(userService.getCurrentUser().getId())
+                .build())
+            .withScenario(gwtTestCase.scenario)
+            .withDataSet(gwtTestCase.dataSet)
+            .build();
+        return testCaseRepository.save(gwtTestCase);
+    }
 }

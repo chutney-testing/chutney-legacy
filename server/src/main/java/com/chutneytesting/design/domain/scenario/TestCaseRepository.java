@@ -17,4 +17,6 @@ public interface TestCaseRepository {
 
     void removeById(String scenarioId);
 
+    Integer lastVersion(String testCaseId);
+
 }

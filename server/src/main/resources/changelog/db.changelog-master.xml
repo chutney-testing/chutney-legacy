@@ -463,4 +463,57 @@
             <column name="DATASET_VERSION" type="INTEGER"></column>
         </addColumn>
     </changeSet>
+    <changeSet id="20201026_scenario_version_rename" author="ICG">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <columnExists tableName="SCENARIO" columnName="VERSION"/>
+                <not>
+                    <columnExists tableName="SCENARIO" columnName="CONTENT_VERSION"/>
+                </not>
+            </and>
+        </preConditions>
+        <comment>Rename column VERSION to CONTENT_VERSION</comment>
+        <renameColumn tableName="SCENARIO" oldColumnName="VERSION" newColumnName="CONTENT_VERSION"/>
+    </changeSet>
+    <changeSet id="20201026_scenario_edition_info" author="ICG">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="SCENARIO" columnName="USER_ID"/>
+                <columnExists tableName="SCENARIO" columnName="UPDATE_DATE"/>
+                <columnExists tableName="SCENARIO" columnName="VERSION"/>
+            </not>
+        </preConditions>
+        <comment>Create columns USER_ID, UPDATE_DATE and VERSION in SCENARIO</comment>
+        <addColumn tableName="SCENARIO">
+            <column name="USER_ID" type="VARCHAR(64)"></column>
+            <column name="UPDATE_DATE" type="TIMESTAMP(6)"></column>
+            <column name="VERSION" type="INTEGER" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="20201026_scenario_creation_update_date_init" author="ICG">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <columnExists tableName="SCENARIO" columnName="CREATION_DATE"/>
+                <columnExists tableName="SCENARIO" columnName="UPDATE_DATE"/>
+            </and>
+        </preConditions>
+        <comment>Set CREATION_DATE to CURRENT_TIMESTAMP if null and Init column UPDATE_DATE in SCENARIO from
+            CREATION_DATE
+        </comment>
+        <sql>UPDATE SCENARIO SET CREATION_DATE = CURRENT_TIMESTAMP WHERE CREATION_DATE IS NULL</sql>
+        <sql>UPDATE SCENARIO SET UPDATE_DATE = CREATION_DATE</sql>
+    </changeSet>
+    <changeSet id="20201026_scenario_creation_update_dates_not_nullable" author="ICG">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <columnExists tableName="SCENARIO" columnName="CREATION_DATE"/>
+                <columnExists tableName="SCENARIO" columnName="UPDATE_DATE"/>
+            </and>
+        </preConditions>
+        <comment>Add not nullable constraint to column UPDATE_DATE</comment>
+        <addNotNullConstraint tableName="SCENARIO" columnName="CREATION_DATE" columnDataType="TIMESTAMP(6)"/>
+        <addNotNullConstraint tableName="SCENARIO" columnName="UPDATE_DATE" columnDataType="TIMESTAMP(6)"/>
+    </changeSet>
 </databaseChangeLog>

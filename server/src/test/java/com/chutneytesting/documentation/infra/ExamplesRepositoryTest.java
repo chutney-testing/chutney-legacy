@@ -72,4 +72,13 @@ public class ExamplesRepositoryTest {
 
         assertThat(example.isPresent()).isTrue();
     }
+
+    @Test
+    public void should_get_last_version() {
+        ExamplesRepository examplesRepository = new ExamplesRepository(true, examples);
+
+        Optional<Integer> version = examplesRepository.lastVersion(String.valueOf("titre".hashCode()));
+
+        assertThat(version).hasValue(1);
+    }
 }
