@@ -110,7 +110,7 @@
         <activemq.version>5.16.0</activemq.version>
         <rabbitmq-mock.version>1.0.14</rabbitmq-mock.version>
         <wire-mock.version>2.26.3</wire-mock.version>
-        <pitest.version>1.4.9</pitest.version>
+        <pitest.version>1.5.2</pitest.version>
         <pitest-cucumber.version>0.8</pitest-cucumber.version>
         <otj-pg-embedded.version>0.13.1</otj-pg-embedded.version>
         <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
