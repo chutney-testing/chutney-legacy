@@ -21,6 +21,7 @@ export class EditionComponent extends CanDeactivatePage implements OnInit, OnDes
     modificationsSaved = false;
     exampleParams$: BehaviorSubject<any> = new BehaviorSubject<any>({});
     errorMessage: any;
+    saveErrorMessage: any;
 
     collapseParam = true;
     collapseTechnicalSteps = true;
@@ -124,6 +125,9 @@ export class EditionComponent extends CanDeactivatePage implements OnInit, OnDes
             },
             (error) => {
                 console.log(error);
+                if (error.error) {
+                    this.saveErrorMessage = error.error;
+                }
                 this.errorMessage = error._body;
             }
         );

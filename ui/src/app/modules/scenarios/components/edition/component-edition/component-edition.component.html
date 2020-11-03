@@ -23,7 +23,10 @@
             </div>
             <div class="header-right triangle-left col-md-4">
                 <div class="row">
-                    <div class="col text-center">
+                    <div class="col-3">
+                        <chutney-authoring-info [testCase]="scenarioComponent"></chutney-authoring-info>
+                    </div>
+                    <div class="col-9">
                         <button type="button" class="btn btn-success" (click)="save()"
                                 title="{{'global.actions.record' | translate}}">
                             <span class="fa fa-check"></span>
@@ -45,6 +48,9 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div *ngIf="errorMessage" class="text-center btn-danger text-white cursor-default" (click)="this.errorMessage = null">
+            <strong>{{ errorMessage }}</strong>
         </div>
         <div class="row edition-body">
             <div class="component-list border-right col-3">

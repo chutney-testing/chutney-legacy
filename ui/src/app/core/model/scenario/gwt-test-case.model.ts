@@ -12,6 +12,9 @@ export class GwtTestCase implements Equals<GwtTestCase>, Clonable<GwtTestCase> {
         public title: string = 'Title',
         public description: string = 'Description',
         public creationDate?: Date,
+        public updateDate?: Date,
+        public version?: number,
+        public author?: string,
         public repositorySource?: string,
         public executions: Array<Execution> = [],
         public tags?: Array<string>,
@@ -26,6 +29,9 @@ export class GwtTestCase implements Equals<GwtTestCase>, Clonable<GwtTestCase> {
             jsonObject.title || 'Title',
             jsonObject.description || 'Description',
             jsonObject.creationDate,
+            jsonObject.updateDate,
+            jsonObject.version,
+            jsonObject.author,
             jsonObject.repositorySource,
             Execution.deserializeExecutions(jsonObject.executions),
             jsonObject.tags,
@@ -41,6 +47,9 @@ export class GwtTestCase implements Equals<GwtTestCase>, Clonable<GwtTestCase> {
         jsonObject['title'] = this.title;
         jsonObject['description'] = this.description;
         addOptionalParam(jsonObject, 'creationDate', this.creationDate);
+        addOptionalParam(jsonObject, 'updateDate', this.updateDate);
+        addOptionalParam(jsonObject, 'version', this.version);
+        addOptionalParam(jsonObject, 'author', this.author);
         addOptionalParam(jsonObject, 'repositorySource', this.repositorySource);
         jsonObject['executions'] = this.executions;
         addOptionalParam(jsonObject, 'tags', this.tags);
@@ -63,6 +72,9 @@ export class GwtTestCase implements Equals<GwtTestCase>, Clonable<GwtTestCase> {
             null,
             cloneAsPossible(this.title),
             cloneAsPossible(this.description),
+            null,
+            null,
+            null,
             null,
             null,
             null,

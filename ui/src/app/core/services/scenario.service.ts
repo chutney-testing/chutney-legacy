@@ -74,6 +74,9 @@ export class ScenarioService {
                 s.metadata.description,
                 s.metadata.repositorySource,
                 s.metadata.creationDate,
+                s.metadata.updateDate,
+                s.metadata.version,
+                s.metadata.author,
                 s.metadata.tags,
                 s.metadata.executions
             ));

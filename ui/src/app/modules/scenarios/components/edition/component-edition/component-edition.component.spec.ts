@@ -16,6 +16,8 @@ import { ComponentTask, ScenarioComponent, KeyValue } from '@core/model';
 import { ComponentEditionComponent } from './component-edition.component';
 import { ScenarioCampaignsComponent } from '../../sub/scenario-campaigns/scenario-campaigns.component';
 import { ActivatedRouteStub } from 'src/app/testing/activated-route-stub';
+import { AuthoringInfoComponent } from '../authoring-info/authoring-info.component';
+import { EditionInfoComponent } from '../edition-info/edition-info.component';
 
 // ng2-dragula is hard to test.  @angular-skyhook should be a good replacement
 describe('ComponentEditionComponent', () => {
@@ -47,11 +49,13 @@ describe('ComponentEditionComponent', () => {
                 ReactiveFormsModule,
                 MomentModule,
                 DragulaModule,
-                NgbModule,
+                NgbModule.forRoot(),
             ],
             declarations: [
                 ScenarioCampaignsComponent,
                 ComponentEditionComponent,
+                AuthoringInfoComponent,
+                EditionInfoComponent
             ],
             providers: [
                 {provide: ActivatedRoute, useValue: activatedRouteStub},
@@ -75,7 +79,7 @@ describe('ComponentEditionComponent', () => {
     });
 
     it('Update tags should trigger scenario modified', () => {
-        const componentTestCaseMock = new ScenarioComponent('id', 'my title', 'my description', new Date(), [], [], [], ['tag1', 'tag2']);
+        const componentTestCaseMock = new ScenarioComponent('id', 'my title', 'my description', new Date(), new Date(), 1, 'guest', [], [], [], ['tag1', 'tag2']);
         componentService.findComponentTestCase.and.returnValue(of(componentTestCaseMock));
         const fixture = TestBed.createComponent(ComponentEditionComponent);
         fixture.detectChanges();
@@ -92,7 +96,7 @@ describe('ComponentEditionComponent', () => {
 
     it('Update sub steps should trigger scenario modified', () => {
 
-        const componentTestCaseMock = new ScenarioComponent('id', '', '', new Date(), [task1, task2], [], [], []);
+        const componentTestCaseMock = new ScenarioComponent('id', '', '', new Date(), new Date(), 1, 'guest', [task1, task2], [], [], []);
         componentService.findComponentTestCase.and.returnValue(of(componentTestCaseMock));
         const fixture = TestBed.createComponent(ComponentEditionComponent);
         fixture.detectChanges();
@@ -105,7 +109,7 @@ describe('ComponentEditionComponent', () => {
     });
 
     it('Update scenario parameter should trigger scenario modified', () => {
-        const componentTestCaseMock = new ScenarioComponent('id', '', '', new Date(), [], [new KeyValue('key1', 'value1')], [], []);
+        const componentTestCaseMock = new ScenarioComponent('id', '', '', new Date(), new Date(), 1, 'guest', [], [new KeyValue('key1', 'value1')], [], []);
         componentService.findComponentTestCase.and.returnValue(of(componentTestCaseMock));
         const fixture = TestBed.createComponent(ComponentEditionComponent);
         fixture.detectChanges();
@@ -123,7 +127,7 @@ describe('ComponentEditionComponent', () => {
     });
 
     it('Update component parameters should trigger scenario modified', () => {
-        const componentTestCaseMock = new ScenarioComponent('id', '', '', new Date(), [task1, task2],
+        const componentTestCaseMock = new ScenarioComponent('id', '', '', new Date(), new Date(), 1, 'guest', [task1, task2],
             [new KeyValue('param', 'value1')], [new KeyValue('param', 'value1')], []);
         componentService.findComponentTestCase.and.returnValue(of(componentTestCaseMock));
         const fixture = TestBed.createComponent(ComponentEditionComponent);

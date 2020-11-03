@@ -33,6 +33,7 @@ import { HeaderComponent } from './components/sub/header/header.component';
 import { ScenarioCampaignsComponent } from '@modules/scenarios/components/sub/scenario-campaigns/scenario-campaigns.component';
 import { ComponentReadComponent } from './components/execution/component-read/component-read.component';
 import { GwtReadComponent } from './components/execution/gwt-read/gwt-read.component';
+import { AuthoringInfoComponent } from './components/edition/authoring-info/authoring-info.component';
 
 const ROUTES = [
     ...scenarioRoute
@@ -75,7 +76,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
         ExecuteComponent,
         HeaderComponent,
         ComponentReadComponent,
-        GwtReadComponent
+        GwtReadComponent,
+        AuthoringInfoComponent
     ],
     providers: [
         {
