@@ -8,7 +8,7 @@ import com.chutneytesting.design.api.scenario.compose.dto.ComposableTestCaseDto;
 import com.chutneytesting.design.api.scenario.compose.dto.FunctionalStepDto;
 import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableScenarioDto;
 import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableTestCaseDto;
-import com.chutneytesting.design.api.scenario.compose.dto.KeyValue;
+import com.chutneytesting.tools.ui.KeyValue;
 import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;

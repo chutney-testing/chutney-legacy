@@ -7,7 +7,7 @@ import static java.util.stream.Collectors.toList;
 import com.chutneytesting.design.api.scenario.compose.dto.FunctionalStepDto;
 import com.chutneytesting.design.api.scenario.compose.dto.ImmutableFunctionalStepDto;
 import com.chutneytesting.design.api.scenario.compose.dto.ImmutableStrategy;
-import com.chutneytesting.design.api.scenario.compose.dto.KeyValue;
+import com.chutneytesting.tools.ui.KeyValue;
 import com.chutneytesting.design.domain.scenario.compose.FunctionalStep;
 import com.chutneytesting.design.domain.scenario.compose.StepUsage;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;

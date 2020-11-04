@@ -2,7 +2,7 @@ package com.chutneytesting.design.api.scenario.v2_0.mapper;
 
 import static org.hjson.JsonValue.readHjson;
 
-import com.chutneytesting.design.api.scenario.compose.dto.KeyValue;
+import com.chutneytesting.tools.ui.KeyValue;
 import com.chutneytesting.design.api.scenario.v2_0.dto.ImmutableRawTestCaseDto;
 import com.chutneytesting.design.api.scenario.v2_0.dto.RawTestCaseDto;
 import com.chutneytesting.design.domain.scenario.ScenarioNotParsableException;

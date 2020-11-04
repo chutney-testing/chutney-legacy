@@ -1,4 +1,4 @@
-package com.chutneytesting.design.api.scenario.compose.dto;
+package com.chutneytesting.tools.ui;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

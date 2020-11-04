@@ -1,5 +1,6 @@
 package com.chutneytesting.design.api.scenario.compose.dto;
 
+import com.chutneytesting.tools.ui.KeyValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.Collections;

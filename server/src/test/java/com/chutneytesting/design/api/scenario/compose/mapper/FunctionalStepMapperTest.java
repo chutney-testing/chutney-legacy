@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.design.api.scenario.compose.dto.FunctionalStepDto;
 import com.chutneytesting.design.api.scenario.compose.dto.ImmutableFunctionalStepDto;
-import com.chutneytesting.design.api.scenario.compose.dto.KeyValue;
+import com.chutneytesting.tools.ui.KeyValue;
 import com.chutneytesting.design.domain.scenario.compose.FunctionalStep;
 import com.chutneytesting.design.domain.scenario.compose.StepUsage;
 import java.util.Arrays;
