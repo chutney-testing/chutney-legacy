@@ -1,4 +1,3 @@
-
 agent-name: dev-agent
 server:
   port: ${securePort:443}
@@ -40,3 +39,9 @@ orient:
   contextConfiguration:
     "[storage.diskCache.diskFreeSpaceLimit]": 384
     "[storage.diskCache.bufferSize]": 1024
+
+iceberg:
+  editions:
+    ttl:
+      value: 2
+      unit: SECONDS

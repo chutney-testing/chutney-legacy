@@ -9,8 +9,10 @@ import static blackbox.stepdef.TestContext.ContextKey.LAST_VIEWED_SCENARIO;
 import static blackbox.stepdef.TestContext.ContextKey.MOCK_SERVER;
 import static blackbox.stepdef.TestContext.ContextKey.SCENARIO_VARIABLES;
 import static blackbox.stepdef.TestContext.ContextKey.STATUS;
+import static blackbox.stepdef.TestContext.ContextKey.TESTCASE_EDITION;
 import static blackbox.stepdef.TestContext.ContextKey.TRUSTSTORE_PATH;
 
+import com.chutneytesting.design.api.testcase.TestCaseEditionDto;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -96,13 +98,13 @@ public class TestContext {
     }
 
     public String replaceVariables(String content) {
-        if(getTrustStorePath() != null) {
+        if (getTrustStorePath() != null) {
             content = content.replace("%%trustStoreAbsolutePath%%", getTrustStorePath());
         }
         Map<String, String> scenario_vars = getScenarioVariables();
-        if(scenario_vars != null) {
+        if (scenario_vars != null) {
             for (String k : scenario_vars.keySet()) {
-                content = content.replace("##"+k+"##", scenario_vars.get(k));
+                content = content.replace("##" + k + "##", scenario_vars.get(k));
             }
         }
         return content;
@@ -116,6 +118,14 @@ public class TestContext {
         return (String) variables.get(HTTP_RESPONSE_BODY);
     }
 
+    public void putTestCaseEdition(TestCaseEditionDto testCaseEditionDto) {
+        variables.put(TESTCASE_EDITION, testCaseEditionDto);
+    }
+
+    public Object getTestCaseEdition() {
+        return variables.get(TESTCASE_EDITION);
+    }
+
     public enum ContextKey {
         EXECUTION_REPORT,
         CAMPAIGN,
@@ -126,6 +136,7 @@ public class TestContext {
         MOCK_SERVER,
         LAST_VIEWED_SCENARIO,
         SCENARIO_VARIABLES,
-        HTTP_RESPONSE_BODY
+        HTTP_RESPONSE_BODY,
+        TESTCASE_EDITION
     }
 }

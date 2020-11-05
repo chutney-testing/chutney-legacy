@@ -7,6 +7,8 @@ import com.chutneytesting.design.domain.environment.EnvironmentRepository;
 import com.chutneytesting.design.domain.environment.EnvironmentService;
 import com.chutneytesting.design.domain.plugins.jira.JiraRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
+import com.chutneytesting.design.domain.testcase.TestCaseEditions;
+import com.chutneytesting.design.domain.testcase.TestCaseEditionsService;
 import com.chutneytesting.engine.api.execution.TestEngine;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessor;
@@ -134,6 +136,10 @@ public class ServerConfiguration {
         return new UserService();
     }
 
+    @Bean
+    TestCaseEditionsService testCaseEditionsService(TestCaseEditions testCaseEditions, TestCaseRepository testCaseRepository) {
+        return new TestCaseEditionsService(testCaseEditions, testCaseRepository);
+    }
 
     @Bean
     ServerTestEngine javaTestEngine(@Qualifier("embeddedTestEngine") TestEngine testEngine,
