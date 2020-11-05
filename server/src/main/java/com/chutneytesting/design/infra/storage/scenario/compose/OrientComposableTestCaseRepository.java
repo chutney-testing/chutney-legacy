@@ -14,6 +14,8 @@ import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
+import com.chutneytesting.execution.domain.scenario.ComposableExecutableTestCase;
+import com.chutneytesting.execution.domain.scenario.ComposableExecutableTestCaseRepository;
 import com.google.common.collect.Lists;
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
@@ -31,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class OrientComposableTestCaseRepository implements ComposableTestCaseRepository {
+public class OrientComposableTestCaseRepository implements ComposableTestCaseRepository, ComposableExecutableTestCaseRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrientComposableTestCaseRepository.class);
 
@@ -117,5 +119,10 @@ public class OrientComposableTestCaseRepository implements ComposableTestCaseRep
         OVertex testCase = (OVertex) stepRecord.orElseGet(() -> dbSession.newVertex(TESTCASE_CLASS));
         testCaseToVertex(composableTestCase, testCase, dbSession);
         return testCase.save();
+    }
+
+    @Override
+    public ComposableExecutableTestCase findExecutableById(String scenarioId) {
+        return null;
     }
 }

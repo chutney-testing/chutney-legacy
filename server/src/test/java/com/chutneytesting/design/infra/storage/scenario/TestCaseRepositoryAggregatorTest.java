@@ -18,6 +18,7 @@ import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.design.domain.scenario.gwt.GwtScenario;
 import com.chutneytesting.design.domain.scenario.gwt.GwtStep;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
+import com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableTestCaseRepository;
 import com.chutneytesting.design.infra.storage.scenario.git.GitScenarioRepositoryFactory;
 import com.chutneytesting.design.infra.storage.scenario.jdbc.DatabaseTestCaseRepository;
 import com.chutneytesting.documentation.infra.ExamplesRepository;
@@ -32,7 +33,7 @@ public class TestCaseRepositoryAggregatorTest {
 
     private GitScenarioRepositoryFactory gitScenarioRepositoryFactory = mock(GitScenarioRepositoryFactory.class);
     private ExamplesRepository examples = mock(ExamplesRepository.class);
-    private ComposableTestCaseRepository composableTestCaseRepository = mock(ComposableTestCaseRepository.class);
+    private OrientComposableTestCaseRepository composableTestCaseRepository = mock(OrientComposableTestCaseRepository.class);
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();

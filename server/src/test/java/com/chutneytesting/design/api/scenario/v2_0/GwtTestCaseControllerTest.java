@@ -11,7 +11,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.design.domain.scenario.gwt.GwtScenario;
@@ -47,13 +46,12 @@ public class GwtTestCaseControllerTest {
     private MockMvc mockMvc;
     private TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
     private ExecutionHistoryRepository executionHistoryRepository = mock(ExecutionHistoryRepository.class);
-    private ComposableTestCaseRepository composableTestCaseRepository = mock(ComposableTestCaseRepository.class);
     private UserService userService = mock(UserService.class);
 
     @Before
     public void setUp() {
         when(userService.getCurrentUser()).thenReturn(User.ANONYMOUS_USER);
-        GwtTestCaseController testCaseController = new GwtTestCaseController(testCaseRepository, executionHistoryRepository, composableTestCaseRepository, userService);
+        GwtTestCaseController testCaseController = new GwtTestCaseController(testCaseRepository, executionHistoryRepository, userService);
         mockMvc = MockMvcBuilders.standaloneSetup(testCaseController).build();
 
         // Default stubbing

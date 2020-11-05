@@ -1,11 +1,14 @@
 package com.chutneytesting.design.infra.storage.scenario;
 
-import com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
+
 import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
+import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
+import com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableTestCaseRepository;
 import com.chutneytesting.design.infra.storage.scenario.git.GitScenarioRepositoryFactory;
 import com.chutneytesting.design.infra.storage.scenario.jdbc.DatabaseTestCaseRepository;
 import com.chutneytesting.design.infra.storage.scenario.jdbc.TestCaseData;
@@ -28,12 +31,12 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
     private DatabaseTestCaseRepository defaultRepository;
     private GitScenarioRepositoryFactory gitScenarioRepositoryFactory;
     private final ExamplesRepository examples;
-    private final ComposableTestCaseRepository composableTestCaseRepository;
+    private final OrientComposableTestCaseRepository composableTestCaseRepository;
 
     public TestCaseRepositoryAggregator(DatabaseTestCaseRepository defaultRepository,
                                         GitScenarioRepositoryFactory gitScenarioRepositoryFactory,
                                         ExamplesRepository examples,
-                                        ComposableTestCaseRepository composableTestCaseRepository) {
+                                        OrientComposableTestCaseRepository composableTestCaseRepository) {
         this.defaultRepository = defaultRepository;
         this.gitScenarioRepositoryFactory = gitScenarioRepositoryFactory;
         this.examples = examples;
@@ -92,10 +95,12 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
 
     @Override
     public List<TestCaseMetadata> findAll() {
-        return repositories()
+        List<TestCaseMetadata> testCases = repositories()
             .parallel()
             .flatMap(this::findAllRepositoryStream)
             .collect(Collectors.toList());
+        testCases.addAll(findAllComposableTestCase());
+        return testCases;
     }
 
     @Override
@@ -130,4 +135,11 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
         return ORecordId.isA(scenarioId);
     }
 
+    private List<TestCaseMetadata> findAllComposableTestCase() {
+        return composableTestCaseRepository.findAll().stream()
+            .map(testCaseMetadata -> TestCaseMetadataImpl.TestCaseMetadataBuilder.from(testCaseMetadata)
+                .withId(toFrontId(testCaseMetadata.id()))
+                .build())
+            .collect(Collectors.toList());
+    }
 }

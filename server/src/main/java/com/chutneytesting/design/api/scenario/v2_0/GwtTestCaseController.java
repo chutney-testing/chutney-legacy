@@ -1,7 +1,6 @@
 package com.chutneytesting.design.api.scenario.v2_0;
 
 import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
-import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
 import static java.time.Instant.now;
 
 import com.chutneytesting.design.api.scenario.v2_0.dto.GwtTestCaseDto;
@@ -9,7 +8,6 @@ import com.chutneytesting.design.api.scenario.v2_0.dto.RawTestCaseDto;
 import com.chutneytesting.design.api.scenario.v2_0.dto.TestCaseIndexDto;
 import com.chutneytesting.design.api.scenario.v2_0.mapper.GwtTestCaseMapper;
 import com.chutneytesting.design.api.scenario.v2_0.mapper.RawTestCaseMapper;
-import com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
@@ -39,14 +37,13 @@ public class GwtTestCaseController {
     private final TestCaseRepository testCaseRepository;
 
     private final ExecutionHistoryRepository executionHistoryRepository;
-    private final ComposableTestCaseRepository composableTestCaseRepository;
     private final UserService userService;
 
     public GwtTestCaseController(TestCaseRepository testCaseRepository,
-                                 ExecutionHistoryRepository executionHistoryRepository, ComposableTestCaseRepository composableTestCaseRepository, UserService userService) {
+                                 ExecutionHistoryRepository executionHistoryRepository,
+                                 UserService userService) {
         this.testCaseRepository = testCaseRepository;
         this.executionHistoryRepository = executionHistoryRepository;
-        this.composableTestCaseRepository = composableTestCaseRepository;
         this.userService = userService;
     }
 
@@ -58,7 +55,6 @@ public class GwtTestCaseController {
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public List<TestCaseIndexDto> getTestCases() {
         List<TestCaseMetadata> testCases = testCaseRepository.findAll();
-        testCases.addAll(findAllComposableTestCase());
         return testCases.stream()
             .map((tc) -> {
                 List<ExecutionSummaryDto> executions = ExecutionSummaryDto.toDto(
@@ -87,14 +83,6 @@ public class GwtTestCaseController {
     @DeleteMapping(path = "/{testCaseId}")
     public void removeScenarioById(@PathVariable("testCaseId") String testCaseId) {
         testCaseRepository.removeById(testCaseId);
-    }
-
-    private List<TestCaseMetadata> findAllComposableTestCase() {
-        return composableTestCaseRepository.findAll().stream()
-            .map(testCaseMetadata -> TestCaseMetadataImpl.TestCaseMetadataBuilder.from(testCaseMetadata)
-                .withId(toFrontId(testCaseMetadata.id()))
-                .build())
-            .collect(Collectors.toList());
     }
 
     /*
