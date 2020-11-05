@@ -44,16 +44,14 @@ public class ScenarioExecutionUiController {
     private final ScenarioExecutionEngine executionEngine;
     private final ScenarioExecutionEngineAsync executionEngineAsync;
     private final TestCaseRepository testCaseRepository;
-    private final ComposableTestCaseRepository composableTestCaseRepository;
     private final ObjectMapper objectMapper;
     private final StepRepository stepRepository;
     private final UserService userService;
 
-    ScenarioExecutionUiController(ScenarioExecutionEngine executionEngine, ScenarioExecutionEngineAsync executionEngineAsync, TestCaseRepository testCaseRepository, ComposableTestCaseRepository composableTestCaseRepository, ObjectMapper objectMapper, StepRepository stepRepository, UserService userService) {
+    ScenarioExecutionUiController(ScenarioExecutionEngine executionEngine, ScenarioExecutionEngineAsync executionEngineAsync, TestCaseRepository testCaseRepository, ObjectMapper objectMapper, StepRepository stepRepository, UserService userService) {
         this.executionEngine = executionEngine;
         this.executionEngineAsync = executionEngineAsync;
         this.testCaseRepository = testCaseRepository;
-        this.composableTestCaseRepository = composableTestCaseRepository;
         this.objectMapper = objectMapper;
         this.stepRepository = stepRepository;
         this.userService = userService;
@@ -88,12 +86,7 @@ public class ScenarioExecutionUiController {
     @PostMapping(path = "/api/ui/scenario/executionasync/v1/{scenarioId}/{env}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public String executeScenarioAsyncWithDataSet(@PathVariable("scenarioId") String scenarioId, @PathVariable("env") String env, @RequestBody List<KeyValue> dataSet) {
         LOGGER.debug("executeScenarioAsync for scenarioId='{}' with dataset '{}'", scenarioId, dataSet);
-        TestCase testCase;
-        if (isComposableFrontId(scenarioId)) {
-            testCase = composableTestCaseRepository.findById(fromFrontId(Optional.of(scenarioId)));
-        } else {
-            testCase = testCaseRepository.findById(scenarioId);
-        }
+        TestCase testCase = testCaseRepository.findById(fromFrontId(Optional.of(scenarioId)));
         Map<String, String> inlineDataSet = ofNullable(dataSet)
             .map(KeyValue::toMap)
             .orElseGet(HashMap::new);
