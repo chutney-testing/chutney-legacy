@@ -26,10 +26,7 @@ export class LayoutComponent implements OnInit {
     private scrollDispatcher: ScrollDispatcher,
     private changeDetector: ChangeDetectorRef,
     private userGQL: UserGQL
-  ) {}
-
-  ngOnInit() {
-    this.user$ = this.userGQL.watch().valueChanges.pipe(pluck('data', 'user'));
+  ) {
 
     // Listen for route changes
     this.router.events
@@ -41,6 +38,11 @@ export class LayoutComponent implements OnInit {
           this.siderLeftOpened = !this.isSmallScreen;
         }
       });
+
+  }
+
+  ngOnInit() {
+    this.user$ = this.userGQL.watch().valueChanges.pipe(pluck('data', 'user'));
 
     // Monitor device changes
     this.breakpointObserver
