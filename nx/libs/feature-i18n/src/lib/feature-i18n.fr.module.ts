@@ -12,12 +12,10 @@ import { FeatureI18nModule } from './feature-i18n.module';
  * Site module should be imported here
  */
 @NgModule({
-  imports: [
-    FeatureI18nModule,
-  ],
+  imports: [FeatureI18nModule],
   providers: [
     // providing the value of french translation data
-    {provide: TRANSLATION, useValue: fr},
+    { provide: TRANSLATION, useValue: fr },
   ],
 })
 export class FeatureI18nFrModule {}

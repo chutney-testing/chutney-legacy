@@ -14,11 +14,9 @@ describe('AppComponent', () => {
         RouterTestingModule,
         UiLayoutModule,
         BrowserAnimationsModule,
-        ApolloTestingModule
+        ApolloTestingModule,
       ],
-      declarations: [
-        AppComponent
-      ],
+      declarations: [AppComponent],
     }).compileComponents();
   });
 

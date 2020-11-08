@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { User, UserGQL } from '@chutney/data-access';
 import { distinctUntilChanged, filter, map, pluck } from 'rxjs/operators';
@@ -6,40 +6,28 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { ScrollDispatcher } from '@angular/cdk/overlay';
 import { ActivationStart, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TRANSLATION, Translation } from '@chutney/feature-i18n';
 
 @Component({
   selector: 'app-layout',
-  templateUrl: './layout.component.html',
-  styleUrls: ['./layout.component.scss'],
+  templateUrl: './main-layout.component.html',
+  styleUrls: ['./main-layout.component.scss'],
 })
-export class LayoutComponent implements OnInit {
-  fullscreen = true;
+export class MainLayoutComponent implements OnInit {
   siderLeftOpened = true;
   siderRightOpened = false;
   scrolled = false;
   user$: Observable<User>;
 
   constructor(
+    @Inject(TRANSLATION) public readonly lang: Translation,
     private router: Router,
     private snackBar: MatSnackBar,
     private breakpointObserver: BreakpointObserver,
     private scrollDispatcher: ScrollDispatcher,
     private changeDetector: ChangeDetectorRef,
     private userGQL: UserGQL
-  ) {
-
-    // Listen for route changes
-    this.router.events
-      .pipe(filter((event) => event instanceof ActivationStart))
-      .subscribe((route: ActivationStart) => {
-        this.fullscreen = route.snapshot.data.fullscreen === true;
-
-        if (this.isSmallScreen) {
-          this.siderLeftOpened = !this.isSmallScreen;
-        }
-      });
-
-  }
+  ) {}
 
   ngOnInit() {
     this.user$ = this.userGQL.watch().valueChanges.pipe(pluck('data', 'user'));
@@ -80,6 +68,6 @@ export class LayoutComponent implements OnInit {
   logout() {
     localStorage.removeItem('user');
     this.snackBar.open('Logged out, Exit successfully');
-    this.router.navigate(['/auth/login']);
+    this.router.navigate(['/fr/auth/login']);
   }
 }

@@ -42,5 +42,7 @@
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
   <!-- Row shown when there is no matching data. -->
-  <div *matNoDataRow fxLayoutAlign="center center" style="min-height: 48px">No data</div>
+  <div *matNoDataRow fxLayoutAlign="center center" style="min-height: 48px;">
+    No data
+  </div>
 </mat-table>

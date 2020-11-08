@@ -19,6 +19,10 @@ declare namespace Cypress {
 // -- This is a parent command --
 Cypress.Commands.add('login', (email, password) => {
   console.log('Custom command example: Login', email, password);
+  window.localStorage.setItem(
+    'user',
+    '{"__typename":"User","id":"user","name":"user","firstname":"user","lastname":"user","mail":"user@user.com"}'
+  );
 });
 //
 // -- This is a child command --
