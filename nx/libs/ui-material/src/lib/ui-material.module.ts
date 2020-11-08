@@ -45,7 +45,6 @@ import { MatPasswordModule } from './mat-password/mat-password.module';
     /*others*/
     NgxMatSelectSearchModule,
     MatPasswordModule,
-
   ],
   exports: [
     FlexLayoutModule,

@@ -5,7 +5,6 @@ export default {
   title: 'ExecutionBadgeComponent',
 };
 
-
 const values = ['RUNNING', 'PAUSED', 'FAILURE', 'SUCCESS'];
 
 const defaultValue = values[0];

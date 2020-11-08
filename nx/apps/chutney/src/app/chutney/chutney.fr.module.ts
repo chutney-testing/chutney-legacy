@@ -11,13 +11,10 @@ import { TRANSLATION } from '@chutney/feature-i18n';
 import { fr } from '@chutney/feature-i18n';
 
 @NgModule({
-  imports: [
-    ChutneyModule,
-  ],
+  imports: [ChutneyModule],
   providers: [
     // providing the value of english translation data
-    {provide: TRANSLATION, useValue: fr},
+    { provide: TRANSLATION, useValue: fr },
   ],
 })
-export class ChutneyFrModule {
-}
+export class ChutneyFrModule {}

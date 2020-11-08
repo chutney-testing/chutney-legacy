@@ -1,4 +1,3 @@
-
 import { NgModule } from '@angular/core';
 import { en } from './i18n/en.translation';
 import { TRANSLATION } from './i18n/utils';
@@ -13,12 +12,10 @@ import { FeatureI18nModule } from './feature-i18n.module';
  * Site module should be imported here
  */
 @NgModule({
-  imports: [
-    FeatureI18nModule,
-  ],
+  imports: [FeatureI18nModule],
   providers: [
     // providing the value of english translation data
-    {provide: TRANSLATION, useValue: en},
+    { provide: TRANSLATION, useValue: en },
   ],
 })
 export class FeatureI18nEnModule {}

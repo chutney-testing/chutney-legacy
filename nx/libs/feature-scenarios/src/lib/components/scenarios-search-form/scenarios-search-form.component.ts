@@ -54,22 +54,21 @@ export class ScenariosSearchFormComponent implements OnInit, OnDestroy {
     this.scenariosGQL
       .watch()
       .valueChanges.pipe(
-      pluck('data', 'scenarios'),
-      map((scenarios: any[]) => [].concat(...scenarios.map((s) => s.tags))))
+        pluck('data', 'scenarios'),
+        map((scenarios: any[]) => [].concat(...scenarios.map((s) => s.tags)))
+      )
       .subscribe((data) => {
-        this.tags = [
-          ...data.filter((v, idx, self) => self.indexOf(v) === idx),
-        ];
+        this.tags = [...data.filter((v, idx, self) => self.indexOf(v) === idx)];
         this.filteredTags.next(this.tags.slice());
       });
 
     this.searchForm.patchValue({
-      ...scenariosFilterVar()
-    })
-    this.triggerState = !scenariosFilterVar().advanced
+      ...scenariosFilterVar(),
+    });
+    this.triggerState = !scenariosFilterVar().advanced;
 
     this.searchForm.valueChanges.subscribe((data) =>
-      scenariosFilterVar({...data, advanced: !this.triggerState})
+      scenariosFilterVar({ ...data, advanced: !this.triggerState })
     );
   }
 
