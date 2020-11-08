@@ -3,7 +3,6 @@
     class="mat-elevation-z3"
     [mode]="isSmallScreen ? 'over' : 'side'"
     [(opened)]="siderLeftOpened"
-    *ngIf="!fullscreen"
   >
     <div class="account-panel">
       <mat-icon class="avatar">account_circle</mat-icon>
@@ -38,11 +37,11 @@
       <h3 matSubheader>Tests</h3>
       <a mat-list-item routerLink="/scenarios">
         <mat-icon matListIcon>toc</mat-icon>
-        <span matLine>Scenarios</span>
+        <span matLine>{{ lang.scenarios.title }}</span>
       </a>
       <a mat-list-item routerLink="/campaigns">
         <mat-icon matListIcon>playlist_play</mat-icon>
-        <span matLine>Campaigns</span>
+        <span matLine>{{ lang.campaigns.title }}</span>
       </a>
       <mat-divider></mat-divider>
       <h3 matSubheader>Help</h3>
@@ -52,12 +51,7 @@
       </a>
     </mat-nav-list>
   </mat-sidenav>
-  <mat-sidenav
-    *ngIf="!fullscreen"
-    position="end"
-    mode="over"
-    [(opened)]="siderRightOpened"
-  >
+  <mat-sidenav position="end" mode="over" [(opened)]="siderRightOpened">
     <mat-toolbar>
       <span>Setup</span>
     </mat-toolbar>
@@ -73,7 +67,7 @@
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
-    <header *ngIf="!fullscreen">
+    <header>
       <mat-toolbar [ngClass]="toolbarClass">
         <button mat-icon-button (click)="siderLeftOpened = !siderLeftOpened">
           <mat-icon>menu</mat-icon>
@@ -86,6 +80,6 @@
       <section appBanner class="mat-elevation-z3"></section>
     </header>
 
-    <ng-content></ng-content>
+    <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

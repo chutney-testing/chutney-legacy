@@ -9,15 +9,23 @@ import { UiMaterialModule } from '@chutney/ui-material';
 
 export const authRoutes: Route[] = [
   {
-    path: 'login', component: LoginComponent, data: {
+    path: 'login',
+    component: LoginComponent,
+    data: {
       fullscreen: true,
-      auth: false
-    }
-  }
+      auth: false,
+    },
+  },
 ];
 
 @NgModule({
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, HttpClientModule, UiMaterialModule],
-  declarations: [LoginComponent, LoginFormComponent]
+  imports: [
+    CommonModule,
+    RouterModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    UiMaterialModule,
+  ],
+  declarations: [LoginComponent, LoginFormComponent],
 })
 export class FeatureAuthModule {}

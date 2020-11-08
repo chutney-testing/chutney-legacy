@@ -8,9 +8,8 @@ describe('MatPassToggleVisibilityComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MatPassToggleVisibilityComponent ]
-    })
-    .compileComponents();
+      declarations: [MatPassToggleVisibilityComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

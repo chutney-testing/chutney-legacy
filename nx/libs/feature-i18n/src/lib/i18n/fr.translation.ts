@@ -3,8 +3,12 @@ export const fr = {
   scenarios: {
     title: 'Scenarios',
   },
+  campaigns: {
+    title: 'Campagnes',
+  },
 
   // simple function using string literal and interpolation
   // see the cs.translation.ts for another example
-  langsSupported: (n: number) => `Cette application supporte ${n} langage${n === 1 ? '' : 's'}.`,
+  langsSupported: (n: number) =>
+    `Cette application supporte ${n} langage${n === 1 ? '' : 's'}.`,
 };

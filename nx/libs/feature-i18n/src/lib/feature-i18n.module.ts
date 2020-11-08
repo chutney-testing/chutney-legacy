@@ -6,12 +6,8 @@ import { NgModule } from '@angular/core';
  * every internationalized side module as it is imported in them
  */
 @NgModule({
-  imports: [
-    CommonModule,
-  ],
-  exports: [
-    CommonModule,
-  ],
+  imports: [CommonModule],
+  exports: [CommonModule],
   declarations: [],
 })
 export class FeatureI18nModule {}
