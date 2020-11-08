@@ -60,6 +60,9 @@
     "ui-commons-e2e": {
       "tags": [],
       "implicitDependencies": ["ui-commons"]
+    },
+    "feature-i18n": {
+      "tags": []
     }
   }
 }
