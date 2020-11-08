@@ -8,5 +8,6 @@ module.exports = {
     '<rootDir>/libs/feature-scenarios',
     '<rootDir>/libs/utils',
     '<rootDir>/libs/ui-commons',
+    '<rootDir>/libs/feature-i18n',
   ],
 };
