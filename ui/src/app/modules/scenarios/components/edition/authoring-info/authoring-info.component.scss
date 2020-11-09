@@ -11,10 +11,8 @@
         border-radius: 0.5rem;
 
         .arrow {
-            margin-top: -8px !important;
-
             &::after {
-                border-left-color: $bleu1;
+                border-bottom-color: $bleu1;
             }
         }
     }

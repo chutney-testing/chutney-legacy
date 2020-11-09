@@ -14,3 +14,4 @@ export * from './strategy-parameter-definition.model';
 export * from './strategy.model';
 export * from './technical-step.model';
 export * from './test-case.model';
+export * from './testcase-edition.model';

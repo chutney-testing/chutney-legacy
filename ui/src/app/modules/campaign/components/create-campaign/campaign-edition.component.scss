@@ -52,7 +52,7 @@ fieldset legend {
     }
 }
 
-::ng-deep {
+:host ::ng-deep {
 
     .popover {
         max-width: 30vw; /* optional max width */

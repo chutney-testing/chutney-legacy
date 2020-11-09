@@ -52,11 +52,12 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
         ).subscribe(
             results => {
                 this.componentRefTasksArray = results[0];
+                const id = results[1]['id'];
                 const duplicate = this.route.snapshot.queryParamMap.get('duplicate');
                 if (duplicate) {
-                    this.load(results[1]['id'], true);
+                    this.load(id, true);
                 } else {
-                    this.load(results[1]['id'], false);
+                    this.load(id, false);
                 }
             });
     }
