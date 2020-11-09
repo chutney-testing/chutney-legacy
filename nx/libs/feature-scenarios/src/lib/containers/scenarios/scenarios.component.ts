@@ -11,7 +11,7 @@ import { map, pluck, startWith, take, takeUntil } from 'rxjs/operators';
 import { combineLatest, Observable, ReplaySubject, Subject } from 'rxjs';
 import { TdDialogService } from '@covalent/core/dialogs';
 import { tdCollapseAnimation } from '@covalent/core/common';
-import { filter, sortByKeys } from '@chutney/utils';
+import { filter, searchInObj, sortByKeys } from '@chutney/utils';
 
 @Component({
   selector: 'chutney-testing-scenarios',
@@ -114,7 +114,7 @@ export class ScenariosComponent implements OnInit, OnDestroy {
 
     const filteredScenarios = filter(scenarios, [
       (scenario) =>
-        !scenariosFilter.text || scenario.title.includes(scenariosFilter.text),
+        !scenariosFilter.text || searchInObj(scenario, scenariosFilter.text),
       (scenario) =>
         !scenariosFilter.tags ||
         scenariosFilter.tags.length === 0 ||
