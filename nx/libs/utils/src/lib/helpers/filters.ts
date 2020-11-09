@@ -29,4 +29,90 @@ const filter = (
     .sort(comparator);
 };
 
-export { filter };
+/**
+ * Filter array by string
+ *
+ * @param mainArr
+ * @param searchText
+ * @returns {any}
+ */
+const filterArrayByString = (mainArr, searchText): any => {
+  if (searchText === '') {
+    return mainArr;
+  }
+
+  searchText = searchText.toLowerCase();
+
+  return mainArr.filter((itemObj) => {
+    return this.searchInObj(itemObj, searchText);
+  });
+};
+
+/**
+ * Search in object
+ *
+ * @param itemObj
+ * @param searchText
+ * @returns {boolean}
+ */
+const searchInObj = (itemObj, searchText): boolean => {
+  for (const prop in itemObj) {
+    if (!itemObj.hasOwnProperty(prop)) {
+      continue;
+    }
+
+    const value = itemObj[prop];
+
+    if (typeof value === 'string') {
+      if (searchInString(value, searchText)) {
+        return true;
+      }
+    } else if (Array.isArray(value)) {
+      if (searchInArray(value, searchText)) {
+        return true;
+      }
+    }
+
+    if (typeof value === 'object') {
+      if (searchInObj(value, searchText)) {
+        return true;
+      }
+    }
+  }
+};
+
+/**
+ * Search in array
+ *
+ * @param arr
+ * @param searchText
+ * @returns {boolean}
+ */
+const searchInArray = (arr, searchText): boolean => {
+  for (const value of arr) {
+    if (typeof value === 'string') {
+      if (searchInString(value, searchText)) {
+        return true;
+      }
+    }
+
+    if (typeof value === 'object') {
+      if (searchInObj(value, searchText)) {
+        return true;
+      }
+    }
+  }
+};
+
+/**
+ * Search in string
+ *
+ * @param value
+ * @param searchText
+ * @returns {any}
+ */
+const searchInString = (value, searchText): boolean => {
+  return value.toLowerCase().includes(searchText);
+};
+
+export { filter, filterArrayByString, searchInObj };
