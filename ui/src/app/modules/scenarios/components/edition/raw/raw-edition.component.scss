@@ -171,7 +171,7 @@
 }
 
 .plugins {
-    padding-top: calc(120px + 10px);
+    padding-top: calc(105px + 10px);
 }
 
 .campaigns-scenario {
@@ -180,4 +180,11 @@
     right: 0;
     z-index: 100;
     margin: 130px;
+}
+
+:host ::ng-deep chutney-ace-editor .configuration {
+    margin-top: 0;
+    .row {
+        margin-top: 0;
+    }
 }

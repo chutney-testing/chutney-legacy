@@ -45,12 +45,12 @@
     </div>
 </div>
 <div class="plugins">
-    <form [formGroup]="pluginsForm" autocomplete="off">
-        <div class="row">
+    <form [formGroup]="pluginsForm" autocomplete="off" class="mb-0">
+        <div class="row mb-0 small">
             <div class="col-7">
                 <div class="form-inline">
                     <label class="form-control-label font-weight-bold mr-5" for="jiraId">{{'menu.principal.jiraId' | translate}}</label>
-                    <input type="text" class="form-control small-text" id="jiraId"
+                    <input type="text" class="form-control form-control-sm" id="jiraId"
                            formControlName="jiraId"
                            placeholder="ex. LK-42"/>
                 </div>
@@ -64,9 +64,6 @@
     </form>
 </div>
 <div>
-    <div *ngIf="testCase">
-        <chutney-scenario-campaigns [idScenario]="testCase.id"></chutney-scenario-campaigns>
-    </div>
     <chutney-error-panel [errorMessage]="errorMessage"></chutney-error-panel>
 
     <div class="scenario-editor">
