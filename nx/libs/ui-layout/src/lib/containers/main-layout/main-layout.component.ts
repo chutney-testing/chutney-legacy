@@ -1,73 +1,110 @@
-import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { User, UserGQL } from '@chutney/data-access';
-import { distinctUntilChanged, filter, map, pluck } from 'rxjs/operators';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { ScrollDispatcher } from '@angular/cdk/overlay';
-import { ActivationStart, Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { TRANSLATION, Translation } from '@chutney/feature-i18n';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+  ElementRef,
+  Inject,
+  Optional,
+  ViewEncapsulation,
+} from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Router } from '@angular/router';
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { OverlayContainer } from '@angular/cdk/overlay';
+import { MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
+
+
+const MOBILE_MEDIAQUERY = 'screen and (max-width: 599px)';
+const TABLET_MEDIAQUERY = 'screen and (min-width: 600px) and (max-width: 959px)';
+const MONITOR_MEDIAQUERY = 'screen and (min-width: 960px)';
 
 @Component({
   selector: 'app-layout',
   templateUrl: './main-layout.component.html',
   styleUrls: ['./main-layout.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
-export class MainLayoutComponent implements OnInit {
-  siderLeftOpened = true;
-  siderRightOpened = false;
-  scrolled = false;
-  user$: Observable<User>;
+export class MainLayoutComponent implements OnInit, OnDestroy {
+  @ViewChild('sidenav', { static: true }) sidenav: MatSidenav;
+  @ViewChild('content', { static: true }) content: MatSidenavContent;
+  options = {
+    navPos: 'side',
+    dir: 'ltr',
+    theme: 'light',
+    showHeader: true,
+    headerPos: 'fixed',
+    showUserPanel: true,
+    sidenavOpened: true,
+    sidenavCollapsed: false,
+    language: 'en-US',
+  };
 
+  private layoutChangesSubscription: Subscription;
+
+  private isMobileScreen = false;
+  get isOver(): boolean {
+    return this.isMobileScreen;
+  }
+
+  private contentWidthFix = true;
+
+  private collapsedWidthFix = true;
+  private notify$ = new BehaviorSubject<any>({});
   constructor(
-    @Inject(TRANSLATION) public readonly lang: Translation,
     private router: Router,
-    private snackBar: MatSnackBar,
     private breakpointObserver: BreakpointObserver,
-    private scrollDispatcher: ScrollDispatcher,
-    private changeDetector: ChangeDetectorRef,
-    private userGQL: UserGQL
-  ) {}
+    private overlay: OverlayContainer,
+    private element: ElementRef,
+    @Optional() @Inject(DOCUMENT) private document: Document,
+  ) {
+
+    this.layoutChangesSubscription = this.breakpointObserver
+      .observe([MOBILE_MEDIAQUERY, TABLET_MEDIAQUERY, MONITOR_MEDIAQUERY])
+      .subscribe(state => {
+        // SidenavOpened must be reset true when layout changes
+        this.options.sidenavOpened = true;
+
+        this.isMobileScreen = state.breakpoints[MOBILE_MEDIAQUERY];
+        this.options.sidenavCollapsed = state.breakpoints[TABLET_MEDIAQUERY];
+        this.contentWidthFix = state.breakpoints[MONITOR_MEDIAQUERY];
+      });
+
+  }
 
   ngOnInit() {
-    this.user$ = this.userGQL.watch().valueChanges.pipe(pluck('data', 'user'));
-
-    // Monitor device changes
-    this.breakpointObserver
-      .observe([Breakpoints.Handset, Breakpoints.Tablet, Breakpoints.Web])
-      .subscribe(() => (this.siderLeftOpened = !this.isSmallScreen));
-
-    // Listening page scrolling
-    this.scrollDispatcher
-      .scrolled()
-      .pipe(
-        filter((x: any) => x.elementRef),
-        map((x: any) => x.elementRef.nativeElement.scrollTop > 0),
-        distinctUntilChanged()
-      )
-      .subscribe((scrolled) => {
-        this.scrolled = scrolled;
-        this.changeDetector.detectChanges();
-      });
+    setTimeout(() => (this.contentWidthFix = this.collapsedWidthFix = false));
   }
 
-  get isSmallScreen(): boolean {
-    return this.breakpointObserver.isMatched('(max-width: 768px)');
+  ngOnDestroy() {
+    this.layoutChangesSubscription.unsubscribe();
   }
 
-  get toolbarClass() {
-    return {
-      transparent: !this.scrolled,
-      fixed: this.scrolled,
-      'fixed-left':
-        !this.isSmallScreen && this.siderLeftOpened && this.scrolled,
-      'mat-elevation-z3': this.scrolled,
-    };
+  toggleCollapsed() {
+    this.options.sidenavCollapsed = !this.options.sidenavCollapsed;
+    this.setNavState('collapsed', this.options.sidenavCollapsed);
   }
 
-  logout() {
-    localStorage.removeItem('user');
-    this.snackBar.open('Logged out, Exit successfully');
-    this.router.navigate(['/fr/auth/login']);
+  resetCollapsedState(timer = 400) {
+    setTimeout(() => {
+      this.setNavState('collapsed', this.options.sidenavCollapsed);
+    }, timer);
   }
+
+  sidenavCloseStart() {
+    this.contentWidthFix = false;
+  }
+
+  sidenavOpenedChange(isOpened: boolean) {
+    this.options.sidenavOpened = isOpened;
+    this.setNavState('opened', isOpened);
+    this.setNavState('collapsed', this.options.sidenavCollapsed);
+    this.collapsedWidthFix = !this.isOver;
+  }
+
+  setNavState(type: string, value: boolean) {
+    this.notify$.next({ type, value } as any);
+  }
+
 }

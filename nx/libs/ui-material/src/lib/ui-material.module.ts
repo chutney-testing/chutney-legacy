@@ -19,6 +19,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { MatPasswordModule } from './mat-password/mat-password.module';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTreeModule } from '@angular/material/tree';
@@ -45,6 +46,7 @@ import { MatTreeModule } from '@angular/material/tree';
     MatChipsModule,
     MatAutocompleteModule,
     MatTreeModule,
+    MatSlideToggleModule,
     /** Covalent Modules */
     CovalentDialogsModule,
     CovalentSearchModule,
@@ -73,6 +75,7 @@ import { MatTreeModule } from '@angular/material/tree';
     MatChipsModule,
     MatAutocompleteModule,
     MatTreeModule,
+    MatSlideToggleModule,
     /** Covalent Modules */
     CovalentDialogsModule,
     CovalentSearchModule,

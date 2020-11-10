@@ -1,77 +1,155 @@
-mat-sidenav {
-  width: 280px;
+@import '../../style/variables';
+@import '../../style/transitions';
+@import '../../style/breakpoints';
 
-  .account-panel {
-    // background-image: url("../assets/logo_fonds_clairs.svg");
-    background-color: #ebebeb;
-    background-size: 100% 115px;
-    background-repeat: no-repeat;
-    color: white;
+.chutney-container-wrap,
+.chutney-container {
+  height: 100%;
+}
 
-    .avatar {
-      height: 110px;
-      line-height: 110px;
-      font-size: 64px;
-      margin: 0 12px;
+.chutney-content {
+  position: relative;
+  padding: $gutter;
+}
+
+.chutney-sidenav {
+  position: absolute;
+  overflow-x: hidden;
+  transition: swift-ease-out(width); // Only set width property
+
+  @include mat-elevation(2);
+
+  &.mat-drawer-side {
+    border-width: 0;
+  }
+}
+
+// Layout control
+.chutney-header-above {
+  .chutney-container {
+    height: calc(100% - #{$toolbar-height-desktop}) !important;
+  }
+
+  .chutney-sidebar-main {
+    height: 100% !important;
+  }
+}
+
+// Layout control
+.chutney-sidenav-collapsed,
+.chutney-sidenav-collapsed-fix {
+  .chutney-sidenav {
+    width: $sidenav-collapsed-width;
+
+    .menu-name,
+    .menu-label,
+    .menu-badge,
+    .menu-caret,
+    .chutney-user-panel-name,
+    .chutney-user-panel-email,
+    .chutney-user-panel-icons {
+      opacity: 0;
     }
 
-    ::ng-deep mat-expansion-panel {
-      background: none !important;
-      color: rgba(255, 255, 255, 0.85);
-      border: none !important;
-      border-radius: 0 !important;
-      box-shadow: none !important;
+    .chutney-user-panel-avatar {
+      transform: scale(.5);
+    }
 
-      .mat-expansion-panel-header {
-        background: none !important;
+    &:hover {
+      width: $sidenav-width;
 
-        &:hover {
-          background-color: rgba(0, 0, 0, 0.08) !important;
-        }
+      .menu-name,
+      .menu-label,
+      .menu-badge,
+      .menu-caret,
+      .chutney-user-panel-name,
+      .chutney-user-panel-email,
+      .chutney-user-panel-icons {
+        opacity: 1;
       }
 
-      .mat-expansion-indicator::after {
-        color: rgba(255, 255, 255, 0.85);
-      }
-
-      .mat-expansion-panel-body {
-        padding: 0;
+      .chutney-user-panel-avatar {
+        transform: scale(1);
       }
     }
   }
 }
 
-header {
-  [appBanner] {
-    transition-duration: 0.3s;
-    transition-property: background-image;
-    transition-timing-function: ease-in-out;
-    color: white;
-    height: 12rem;
+// Layout control
+.chutney-sidenav-collapsed {
+  .chutney-content-wrap {
+    margin-left: $sidenav-collapsed-width !important;
+
+    [dir='rtl'] & {
+      margin-left: auto !important;
+      margin-right: $sidenav-collapsed-width !important;
+    }
   }
 
-  mat-toolbar {
-    transition-duration: 0.3s;
-    transition-property: background-color, box-shadow;
-    transition-timing-function: ease-in-out;
-    position: absolute;
+  &[dir='rtl'] .chutney-content-wrap {
+    margin-left: auto !important;
+    margin-right: $sidenav-collapsed-width !important;
+  }
+}
+
+// Layout control
+.chutney-navbar-top {
+  .chutney-topmenu {
     top: 0;
-    right: 0;
-    left: 0;
-    z-index: 40;
+  }
 
-    &.transparent {
-      background: none;
-      color: white;
-    }
+  .chutney-branding {
+    margin-left: 16px;
 
-    &.fixed {
-      position: fixed;
+    [dir='rtl'] & {
+      margin-left: auto;
+      margin-right: 16px;
     }
+  }
+}
 
-    &.fixed-left {
-      left: 280px;
-      width: calc(100% - 280px);
+// Layout control
+.chutney-header-fixed {
+  .chutney-header {
+    position: sticky;
+    top: 0;
+  }
+
+  .chutney-topmenu {
+    top: $topmenu-sticky-position-desktop;
+
+    @include bp-lt(small) {
+      & {
+        top: $topmenu-sticky-position-mobile;
+      }
     }
+  }
+
+  &.chutney-navbar-side {
+    .chutney-toolbar {
+      border-bottom: unset;
+
+      @include mat-elevation(2);
+    }
+  }
+}
+
+// Fix the init content width
+.chutney-content-width-fix {
+  .chutney-content-wrap {
+    margin-left: $sidenav-width !important;
+
+    [dir='rtl'] & {
+      margin-left: auto !important;
+      margin-right: $sidenav-width !important;
+    }
+  }
+}
+
+// Colorful
+.chutney-header-white {
+  .chutney-toolbar,
+  .chutney-topmenu {
+    background-color: white;
   }
 }
