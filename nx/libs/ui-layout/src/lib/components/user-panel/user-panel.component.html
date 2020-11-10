@@ -1,0 +1,16 @@
+<div class="chutney-user-panel" fxLayout="column" fxLayoutAlign="center center">
+  <img class="chutney-user-panel-avatar" src="./assets/logo/avatar.jpg" alt="avatar" width="64" />
+  <h4 class="chutney-user-panel-name">{{ (user$ | async)?.name }}</h4>
+  <h5 class="chutney-user-panel-email">{{ (user$ | async)?.mail }}</h5>
+  <div class="chutney-user-panel-icons">
+    <a routerLink="/profile/overview" mat-icon-button>
+      <mat-icon>account_circle</mat-icon>
+    </a>
+    <a routerLink="/profile/settings" mat-icon-button>
+      <mat-icon>settings</mat-icon>
+    </a>
+    <a routerLink="/auth/login" mat-icon-button>
+      <mat-icon>exit_to_app</mat-icon>
+    </a>
+  </div>
+</div>

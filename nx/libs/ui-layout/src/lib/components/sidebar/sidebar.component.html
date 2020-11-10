@@ -1,0 +1,46 @@
+<div class="chutney-sidebar-header" *ngIf="showHeader">
+  <a class="chutney-branding" href="#/">
+    <img src="./assets/logo/logo-circle.png" class="chutney-branding-logo-expanded" alt="logo"/>
+    <span class="chutney-branding-name">CHUTNEY</span>
+  </a>
+  <span fxFlex></span>
+  <mat-slide-toggle (change)="toggleCollapsed.emit()" [checked]="toggleChecked" *ngIf="showToggle"></mat-slide-toggle>
+</div>
+<mat-divider></mat-divider>
+<div class="chutney-sidebar-main scrollbar-none">
+  <chutney-user-panel *ngIf="showUser"></chutney-user-panel>
+  <mat-divider></mat-divider>
+
+  <ul navAccordion class="chutney-sidemenu level-0">
+    <li navAccordionItem class="chutney-sidemenu-item" >
+      <a class="chutney-sidemenu-link">
+        <mat-icon class="menu-icon">subscriptions</mat-icon>
+        <span class="menu-name">Scenarios</span>
+      </a>
+    </li>
+    <li navAccordionItem class="chutney-sidemenu-item">
+      <a class="chutney-sidemenu-link">
+        <mat-icon class="menu-icon">video_library</mat-icon>
+        <span class="menu-name">Campaigns</span>
+      </a>
+    </li>
+    <li navAccordionItem class="chutney-sidemenu-item">
+      <a class="chutney-sidemenu-link">
+        <mat-icon class="menu-icon">video_settings</mat-icon>
+        <span class="menu-name">Composants</span>
+      </a>
+    </li>
+    <li navAccordionItem class="chutney-sidemenu-item">
+      <a class="chutney-sidemenu-link">
+        <mat-icon class="menu-icon">library_add</mat-icon>
+        <span class="menu-name">variable</span>
+      </a>
+    </li>
+    <li navAccordionItem class="chutney-sidemenu-item">
+      <a class="chutney-sidemenu-link">
+        <mat-icon class="menu-icon">ondemand_video</mat-icon>
+        <span class="menu-name">Dataset</span>
+      </a>
+    </li>
+  </ul>
+</div>
