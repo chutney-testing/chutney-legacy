@@ -44,7 +44,7 @@ const filterArrayByString = (mainArr, searchText): any => {
   searchText = searchText.toLowerCase();
 
   return mainArr.filter((itemObj) => {
-    return this.searchInObj(itemObj, searchText);
+    return searchInObj(itemObj, searchText);
   });
 };
 
