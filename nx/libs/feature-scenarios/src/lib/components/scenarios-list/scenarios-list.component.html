@@ -1,10 +1,10 @@
-<mat-table [dataSource]="scenariosDataSource" class="mat-elevation-z8">
+<mat-table [dataSource]="scenariosDataSource" matSort class="mat-elevation-z8">
   <!--- Note that these columns can be defined in any order.
         The actual rendered columns are set as a property on the row definition" -->
 
   <!-- Position Column -->
   <ng-container matColumnDef="id">
-    <mat-header-cell *matHeaderCellDef fxFlex="50px">Id.</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="75px">Id.</mat-header-cell>
     <mat-cell *matCellDef="let element" fxFlex="50px">{{
       element.id
     }}</mat-cell>
@@ -12,13 +12,13 @@
 
   <!-- Name Column -->
   <ng-container matColumnDef="title">
-    <mat-header-cell *matHeaderCellDef>title</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef  mat-sort-header>title</mat-header-cell>
     <mat-cell *matCellDef="let element">{{ element.title }}</mat-cell>
   </ng-container>
 
   <!-- Status Column -->
   <ng-container matColumnDef="status">
-    <mat-header-cell *matHeaderCellDef fxFlex="120px">status</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="120px">status</mat-header-cell>
     <mat-cell *matCellDef="let element" fxFlex="120px">
       <chutney-execution-badge
         [status]="element.status"
@@ -46,3 +46,4 @@
     No data
   </div>
 </mat-table>
+<mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
