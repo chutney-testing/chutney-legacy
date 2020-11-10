@@ -1,8 +1,10 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subject } from 'rxjs';
 import { isNullOrUndefined } from 'util';
 import { Scenario } from '@chutney/data-access';
+import { MatSort } from '@angular/material/sort';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'chutney-scenarios-list',
@@ -13,6 +15,9 @@ export class ScenariosListComponent implements OnInit {
   @Output() edit = new EventEmitter<string>();
   @Output() delete = new EventEmitter<string>();
   displayedColumns: string[] = ['id', 'title', 'status', 'action'];
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild(MatSort, {static: true}) sort: MatSort;
+
 
   constructor() {}
 
@@ -28,7 +33,10 @@ export class ScenariosListComponent implements OnInit {
     }
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this._scenariosDataSource.paginator = this.paginator
+    this._scenariosDataSource.sort = this.sort
+  }
 
   get scenariosDataSource(): MatTableDataSource<Scenario> {
     return this._scenariosDataSource;
