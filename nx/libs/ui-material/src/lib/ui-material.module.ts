@@ -19,6 +19,8 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { MatPasswordModule } from './mat-password/mat-password.module';
+import { MatSortModule } from '@angular/material/sort';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @NgModule({
   imports: [
@@ -34,6 +36,8 @@ import { MatPasswordModule } from './mat-password/mat-password.module';
     MatProgressSpinnerModule,
     MatMenuModule,
     MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
     MatSelectModule,
     MatSnackBarModule,
     MatExpansionModule,
@@ -59,6 +63,8 @@ import { MatPasswordModule } from './mat-password/mat-password.module';
     MatProgressSpinnerModule,
     MatMenuModule,
     MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
     MatSelectModule,
     MatSnackBarModule,
     MatExpansionModule,
