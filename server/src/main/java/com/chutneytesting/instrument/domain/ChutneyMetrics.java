@@ -1,12 +1,13 @@
 package com.chutneytesting.instrument.domain;
 
-import com.chutneytesting.execution.domain.report.ServerReportStatus;
-import java.util.List;
-import java.util.Map;
+import com.chutneytesting.design.domain.campaign.Campaign;
+import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
+import com.chutneytesting.design.domain.scenario.TestCase;
+import com.chutneytesting.execution.domain.history.ExecutionHistory;
 
 public interface ChutneyMetrics {
 
-    void onScenarioExecutionEnded(String scenarioId, List<String> tags, ServerReportStatus status, long duration);
+    void onScenarioExecutionEnded(TestCase testCase, ExecutionHistory.Execution execution);
 
-    void onCampaignExecutionEnded(String campaignId, ServerReportStatus status, Long campaignDuration, Map<ServerReportStatus, Long> scenarioCountByStatus);
+    void onCampaignExecutionEnded(Campaign campaign, CampaignExecutionReport campaignExecutionReport);
 }

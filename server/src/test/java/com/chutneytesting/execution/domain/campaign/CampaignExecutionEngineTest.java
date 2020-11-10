@@ -109,10 +109,8 @@ public class CampaignExecutionEngineTest {
         assertThat(campaignExecutionReport.partialExecution).isFalse();
         verify(campaignRepository).saveReport(campaign.id, campaignExecutionReport);
         verify(metrics).onCampaignExecutionEnded(
-            eq(campaign.id.toString()),
-            eq(campaignExecutionReport.status()),
-            anyLong(),
-            (Map<ServerReportStatus, Long>) argThat(hasEntry(ServerReportStatus.SUCCESS, 2L))
+            eq(campaign),
+            eq(campaignExecutionReport)
         );
     }
 
