@@ -7,12 +7,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
 import com.chutneytesting.WebConfiguration;
-import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
-import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
-import com.chutneytesting.design.domain.scenario.compose.FunctionalStep;
-import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.execution.domain.ExecutionRequest;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedFunctionalStep;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedScenario;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedTestCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,19 +31,19 @@ public class ComposableTestCaseLoopPreProcessorTest {
         Map<String, String> parameter = singletonMap("P", /*no default value*/ "");
         Strategy strategy = new Strategy("Loop", singletonMap("data", "[{\"P\":\"zog_zog\"}]"));
 
-        FunctionalStep step = FunctionalStep.builder()
+        ExecutableComposedFunctionalStep step = ExecutableComposedFunctionalStep.builder()
             .overrideDataSetWith(parameter)
             .withStrategy(strategy)
             .build();
 
-        ComposableScenario composableScenario = ComposableScenario.builder()
+        ExecutableComposedScenario composableScenario = ExecutableComposedScenario.builder()
             .withFunctionalSteps(singletonList(step))
             .build();
 
-        ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+        ExecutableComposedTestCase composableTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
-        ComposableTestCase actual = sut.apply(
+        ExecutableComposedTestCase actual = sut.apply(
             new ExecutionRequest(composableTestCase, "env", "user")
         );
 
@@ -60,19 +60,19 @@ public class ComposableTestCaseLoopPreProcessorTest {
         // Given
         Strategy strategy = new Strategy("Loop", singletonMap("data", "[{\"P\":\"zog_zog\"}]"));
 
-        FunctionalStep step = FunctionalStep.builder()
+        ExecutableComposedFunctionalStep step = ExecutableComposedFunctionalStep.builder()
             .overrideDataSetWith(emptyMap())
             .withStrategy(strategy)
             .build();
 
-        ComposableScenario composableScenario = ComposableScenario.builder()
+        ExecutableComposedScenario composableScenario = ExecutableComposedScenario.builder()
             .withFunctionalSteps(singletonList(step))
             .build();
 
-        ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+        ExecutableComposedTestCase composableTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
-        ComposableTestCase actual = sut.apply(
+        ExecutableComposedTestCase actual = sut.apply(
             new ExecutionRequest(composableTestCase, "env", "user")
         );
 
@@ -90,19 +90,19 @@ public class ComposableTestCaseLoopPreProcessorTest {
         Map<String, String> parameter = singletonMap("P", "default value");
         Strategy strategy = new Strategy("Loop", emptyMap());
 
-        FunctionalStep step = FunctionalStep.builder()
+        ExecutableComposedFunctionalStep step = ExecutableComposedFunctionalStep.builder()
             .overrideDataSetWith(parameter)
             .withStrategy(strategy)
             .build();
 
-        ComposableScenario composableScenario = ComposableScenario.builder()
+        ExecutableComposedScenario composableScenario = ExecutableComposedScenario.builder()
             .withFunctionalSteps(singletonList(step))
             .build();
 
-        ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+        ExecutableComposedTestCase composableTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
-        ComposableTestCase actual = sut.apply(
+        ExecutableComposedTestCase actual = sut.apply(
             new ExecutionRequest(composableTestCase, "env", "user")
         );
 
@@ -120,19 +120,19 @@ public class ComposableTestCaseLoopPreProcessorTest {
         Map<String, String> parameter = singletonMap("P", "default_value");
         Strategy strategy = new Strategy("Loop", singletonMap("data", "[{\"P\":\"zog_zog\"}]"));
 
-        FunctionalStep step = FunctionalStep.builder()
+        ExecutableComposedFunctionalStep step = ExecutableComposedFunctionalStep.builder()
             .overrideDataSetWith(parameter)
             .withStrategy(strategy)
             .build();
 
-        ComposableScenario composableScenario = ComposableScenario.builder()
+        ExecutableComposedScenario composableScenario = ExecutableComposedScenario.builder()
             .withFunctionalSteps(singletonList(step))
             .build();
 
-        ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+        ExecutableComposedTestCase composableTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
-        ComposableTestCase actual = sut.apply(
+        ExecutableComposedTestCase actual = sut.apply(
             new ExecutionRequest(composableTestCase, "env", "user")
         );
 
@@ -150,19 +150,19 @@ public class ComposableTestCaseLoopPreProcessorTest {
         Map<String, String> parameter = singletonMap("P", "default_value");
         Strategy strategy = new Strategy("Loop", singletonMap("data", "[{\"X\":\"zog_zog\"}]"));
 
-        FunctionalStep step = FunctionalStep.builder()
+        ExecutableComposedFunctionalStep step = ExecutableComposedFunctionalStep.builder()
             .overrideDataSetWith(parameter)
             .withStrategy(strategy)
             .build();
 
-        ComposableScenario composableScenario = ComposableScenario.builder()
+        ExecutableComposedScenario composableScenario = ExecutableComposedScenario.builder()
             .withFunctionalSteps(singletonList(step))
             .build();
 
-        ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+        ExecutableComposedTestCase composableTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
-        ComposableTestCase actual = sut.apply(
+        ExecutableComposedTestCase actual = sut.apply(
             new ExecutionRequest(composableTestCase, "env", "user")
         );
 
@@ -180,19 +180,19 @@ public class ComposableTestCaseLoopPreProcessorTest {
         // Given
         Strategy strategy = new Strategy("Loop", singletonMap("data", "[{\"X\":\"zog_zog\"}]"));
 
-        FunctionalStep step = FunctionalStep.builder()
+        ExecutableComposedFunctionalStep step = ExecutableComposedFunctionalStep.builder()
             .overrideDataSetWith(emptyMap())
             .withStrategy(strategy)
             .build();
 
-        ComposableScenario composableScenario = ComposableScenario.builder()
+        ExecutableComposedScenario composableScenario = ExecutableComposedScenario.builder()
             .withFunctionalSteps(singletonList(step))
             .build();
 
-        ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+        ExecutableComposedTestCase composableTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
-        ComposableTestCase actual = sut.apply(
+        ExecutableComposedTestCase actual = sut.apply(
             new ExecutionRequest(composableTestCase, "env", "user")
         );
 
@@ -211,19 +211,19 @@ public class ComposableTestCaseLoopPreProcessorTest {
         Map<String, String> parameter = singletonMap("P", "default_value");
         Strategy strategy = new Strategy("Loop", singletonMap("data", "[{\"P\":\"dabu\"},{\"P\":\"zog_zog\"} ]"));
 
-        FunctionalStep step = FunctionalStep.builder()
+        ExecutableComposedFunctionalStep step = ExecutableComposedFunctionalStep.builder()
             .overrideDataSetWith(parameter)
             .withStrategy(strategy)
             .build();
 
-        ComposableScenario composableScenario = ComposableScenario.builder()
+        ExecutableComposedScenario composableScenario = ExecutableComposedScenario.builder()
             .withFunctionalSteps(singletonList(step))
             .build();
 
-        ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+        ExecutableComposedTestCase composableTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
-        ComposableTestCase actual = sut.apply(
+        ExecutableComposedTestCase actual = sut.apply(
             new ExecutionRequest(composableTestCase, "env", "user")
         );
 
@@ -242,19 +242,19 @@ public class ComposableTestCaseLoopPreProcessorTest {
         Map<String, String> parameter = Maps.of("P_1", "default_value", "P_2", "");
         Strategy strategy = new Strategy("Loop", singletonMap("data", "[ {\"P_1\":\"dabu\",\"P_2\":\"zog_zog\"}, {\"P_2\":\"goz_goz\"} ]"));
 
-        FunctionalStep step = FunctionalStep.builder()
+        ExecutableComposedFunctionalStep step = ExecutableComposedFunctionalStep.builder()
             .overrideDataSetWith(parameter)
             .withStrategy(strategy)
             .build();
 
-        ComposableScenario composableScenario = ComposableScenario.builder()
+        ExecutableComposedScenario composableScenario = ExecutableComposedScenario.builder()
             .withFunctionalSteps(singletonList(step))
             .build();
 
-        ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+        ExecutableComposedTestCase composableTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
-        ComposableTestCase actual = sut.apply(
+        ExecutableComposedTestCase actual = sut.apply(
             new ExecutionRequest(composableTestCase, "env", "user")
         );
 
@@ -273,32 +273,32 @@ public class ComposableTestCaseLoopPreProcessorTest {
         Map<String, String> parameter = singletonMap("P", "");
         Strategy strategy = new Strategy("Loop", singletonMap("data", "[{\"P\":\"zog_zog\"}]"));
 
-        FunctionalStep substep = FunctionalStep.builder()
+        ExecutableComposedFunctionalStep substep = ExecutableComposedFunctionalStep.builder()
             .withName("substep with loop strategy")
             .overrideDataSetWith(parameter)
             .withStrategy(strategy)
             .build();
 
-        FunctionalStep parentStep = FunctionalStep.builder()
+        ExecutableComposedFunctionalStep parentStep = ExecutableComposedFunctionalStep.builder()
             .withName("parent with default strategy")
             .withSteps(singletonList(substep))
             .build();
 
-        ComposableScenario composableScenario = ComposableScenario.builder()
+        ExecutableComposedScenario composableScenario = ExecutableComposedScenario.builder()
             .withFunctionalSteps(singletonList(parentStep))
             .build();
 
-        ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+        ExecutableComposedTestCase composableTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
-        ComposableTestCase actual = sut.apply(
+        ExecutableComposedTestCase actual = sut.apply(
             new ExecutionRequest(composableTestCase, "env", "user")
         );
 
         // Then
 
-        FunctionalStep actualParentStep = actual.composableScenario.functionalSteps.get(0);
-        FunctionalStep actualSubStep = actualParentStep.steps.get(0);
+        ExecutableComposedFunctionalStep actualParentStep = actual.composableScenario.functionalSteps.get(0);
+        ExecutableComposedFunctionalStep actualSubStep = actualParentStep.steps.get(0);
 
         assertThat(actualSubStep.steps).hasSize(1);
         assertThat(actualSubStep.steps.get(0).dataSet).containsEntry("P", "zog_zog");
@@ -313,20 +313,20 @@ public class ComposableTestCaseLoopPreProcessorTest {
         Map<String, String> parameter = Maps.of("P_1", "", "P_2", "");
         Strategy strategy = new Strategy("Loop", singletonMap("data", "[ {}, {} ]"));
 
-        FunctionalStep step = FunctionalStep.builder()
+        ExecutableComposedFunctionalStep step = ExecutableComposedFunctionalStep.builder()
             .withName("fake_name")
             .overrideDataSetWith(parameter)
             .withStrategy(strategy)
             .build();
 
-        ComposableScenario composableScenario = ComposableScenario.builder()
+        ExecutableComposedScenario composableScenario = ExecutableComposedScenario.builder()
             .withFunctionalSteps(singletonList(step))
             .build();
 
-        ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+        ExecutableComposedTestCase composableTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
-        ComposableTestCase actual = sut.apply(
+        ExecutableComposedTestCase actual = sut.apply(
             new ExecutionRequest(composableTestCase, "env", "user")
         );
 
@@ -345,19 +345,19 @@ public class ComposableTestCaseLoopPreProcessorTest {
         Map<String, String> parameter = Maps.of("P", "");
         Strategy strategy = new Strategy("Loop", singletonMap("data", "[ {} ]"));
 
-        FunctionalStep step = FunctionalStep.builder()
+        ExecutableComposedFunctionalStep step = ExecutableComposedFunctionalStep.builder()
             .overrideDataSetWith(parameter)
             .withStrategy(strategy)
             .build();
 
-        ComposableScenario composableScenario = ComposableScenario.builder()
+        ExecutableComposedScenario composableScenario = ExecutableComposedScenario.builder()
             .withFunctionalSteps(singletonList(step))
             .build();
 
-        ComposableTestCase composableTestCase = new ComposableTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+        ExecutableComposedTestCase composableTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
-        ComposableTestCase actual = sut.apply(
+        ExecutableComposedTestCase actual = sut.apply(
             new ExecutionRequest(composableTestCase, "env", "user")
         );
 

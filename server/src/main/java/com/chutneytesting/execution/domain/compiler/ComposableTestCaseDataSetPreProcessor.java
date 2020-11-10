@@ -7,14 +7,14 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
-import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
-import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
-import com.chutneytesting.design.domain.scenario.compose.FunctionalStep;
-import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.design.domain.dataset.DataSet;
 import com.chutneytesting.design.domain.dataset.DataSetRepository;
+import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.engine.domain.execution.strategies.DataSetIterationsStrategy;
 import com.chutneytesting.execution.domain.ExecutionRequest;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedFunctionalStep;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedScenario;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedTestCase;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,7 +24,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcessor<ComposableTestCase> {
+public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcessor<ExecutableComposedTestCase> {
 
     private final DataSetRepository dataSetRepository;
 
@@ -33,12 +33,12 @@ public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcess
     }
 
     @Override
-    public ComposableTestCase apply(ExecutionRequest executionRequest) {
-        ComposableTestCase testCase = (ComposableTestCase) executionRequest.testCase;
+    public ExecutableComposedTestCase apply(ExecutionRequest executionRequest) {
+        ExecutableComposedTestCase testCase = (ExecutableComposedTestCase) executionRequest.testCase;
         return apply(testCase);
     }
 
-    ComposableTestCase apply(ComposableTestCase testCase) {
+    private ExecutableComposedTestCase apply(ExecutableComposedTestCase testCase) {
         Optional<DataSet> oDataSet = testCase.metadata.datasetId().map(dataSetRepository::findById);
         if (!oDataSet.isPresent()) {
             return testCase;
@@ -56,7 +56,7 @@ public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcess
         matchedHeaders.putIfAbsent(Boolean.TRUE, emptyList());
         matchedHeaders.putIfAbsent(Boolean.FALSE, emptyList());
 
-        return new ComposableTestCase(
+        return new ExecutableComposedTestCase(
             testCase.id,
             testCase.metadata,
             applyToScenario(testCase.composableScenario, matchedHeaders, dataSet),
@@ -78,12 +78,12 @@ public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcess
         return parameters;
     }
 
-    private ComposableScenario applyToScenario(ComposableScenario composableScenario, Map<Boolean, List<String>> matchedHeaders, DataSet dataSet) {
+    private ExecutableComposedScenario applyToScenario(ExecutableComposedScenario composableScenario, Map<Boolean, List<String>> matchedHeaders, DataSet dataSet) {
         if (matchedHeaders.isEmpty()) {
             return composableScenario;
         }
 
-        return ComposableScenario.builder()
+        return ExecutableComposedScenario.builder()
             .withFunctionalSteps(
                 composableScenario.functionalSteps.stream()
                     .map(fs -> applyToScenarioSteps(fs, matchedHeaders, dataSet))
@@ -93,7 +93,7 @@ public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcess
             .build();
     }
 
-    private FunctionalStep applyToScenarioSteps(FunctionalStep functionalStep, Map<Boolean, List<String>> matchedHeaders, DataSet dataSet) {
+    private ExecutableComposedFunctionalStep applyToScenarioSteps(ExecutableComposedFunctionalStep functionalStep, Map<Boolean, List<String>> matchedHeaders, DataSet dataSet) {
         Set<String> fsNovaluedEntries = findFunctionalStepNoValuedMatchedEntries(functionalStep.dataSet, matchedHeaders.get(Boolean.TRUE));
         Map<String, Set<String>> fsValuedEntriesWithRef = findFunctionalStepValuedEntriesWithRef(functionalStep.dataSet, matchedHeaders.get(Boolean.TRUE));
 
@@ -108,7 +108,7 @@ public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcess
 
         matchedHeaders.get(Boolean.FALSE).forEach(s -> fsLeftEntries.put(s, ""));
 
-        return FunctionalStep.builder()
+        return ExecutableComposedFunctionalStep.builder()
             .from(functionalStep)
             .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
             .withSteps(buildStepIterations(functionalStep, fsNovaluedEntries, fsValuedEntriesWithRef, dataSet.multipleValues))
@@ -137,7 +137,7 @@ public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcess
             .collect(toSet());
     }
 
-    private List<FunctionalStep> buildStepIterations(FunctionalStep functionalStep, Set<String> fsNovaluedEntries, Map<String, Set<String>> fsValuedEntriesWithRef, List<Map<String, String>> multipleValues) {
+    private List<ExecutableComposedFunctionalStep> buildStepIterations(ExecutableComposedFunctionalStep functionalStep, Set<String> fsNovaluedEntries, Map<String, Set<String>> fsValuedEntriesWithRef, List<Map<String, String>> multipleValues) {
         Set<String> dataSetEntriesReferenced = fsValuedEntriesWithRef.values().stream().flatMap(Collection::stream).collect(toSet());
         List<Map<String, String>> iterationData = multipleValues.stream()
             .map(m ->
@@ -162,7 +162,7 @@ public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcess
                     }
                 });
 
-                return FunctionalStep.builder()
+                return ExecutableComposedFunctionalStep.builder()
                     .from(functionalStep)
                     .withName(functionalStep.name + " - dataset iteration " + index)
                     .overrideDataSetWith(newDataSet)

@@ -2,6 +2,7 @@ package com.chutneytesting.design.infra.storage.scenario.compose;
 
 import static com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository.COMPOSABLE_TESTCASE_REPOSITORY_SOURCE;
 import static com.chutneytesting.design.infra.storage.scenario.compose.OrientFunctionalStepMapper.buildFunctionalStepsChildren;
+import static com.chutneytesting.design.infra.storage.scenario.compose.OrientFunctionalStepMapper.map;
 import static com.chutneytesting.design.infra.storage.scenario.compose.OrientFunctionalStepMapper.setFunctionalStepVertexDenotations;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_AUTHOR;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_CREATIONDATE;
@@ -20,6 +21,8 @@ import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.scenario.compose.FunctionalStep;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedScenario;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedTestCase;
 import com.chutneytesting.security.domain.User;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.metadata.schema.OType;
@@ -68,4 +71,17 @@ class OrientComposableTestCaseMapper {
                 .withParameters(parameters)
                 .build());
     }
+
+    static ExecutableComposedTestCase vertexToExecutableTestCase(OVertex dbTestCase, ODatabaseSession dbSession) {
+        ComposableTestCase composableTestCase = vertexToTestCase(dbTestCase, dbSession);
+
+        return new ExecutableComposedTestCase(
+            composableTestCase.id,
+            composableTestCase.metadata,
+            ExecutableComposedScenario.builder()
+                .withFunctionalSteps(map(composableTestCase.composableScenario.functionalSteps))
+                .withParameters(composableTestCase.composableScenario.parameters)
+                .build());
+    }
+
 }

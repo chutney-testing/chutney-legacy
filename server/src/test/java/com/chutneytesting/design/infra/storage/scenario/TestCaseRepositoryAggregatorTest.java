@@ -10,7 +10,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository;
 import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
@@ -18,7 +17,7 @@ import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.design.domain.scenario.gwt.GwtScenario;
 import com.chutneytesting.design.domain.scenario.gwt.GwtStep;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
-import com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableTestCaseRepository;
+import com.chutneytesting.design.infra.storage.scenario.compose.OrientComposedTestCaseRepository;
 import com.chutneytesting.design.infra.storage.scenario.git.GitScenarioRepositoryFactory;
 import com.chutneytesting.design.infra.storage.scenario.jdbc.DatabaseTestCaseRepository;
 import com.chutneytesting.documentation.infra.ExamplesRepository;
@@ -33,7 +32,7 @@ public class TestCaseRepositoryAggregatorTest {
 
     private GitScenarioRepositoryFactory gitScenarioRepositoryFactory = mock(GitScenarioRepositoryFactory.class);
     private ExamplesRepository examples = mock(ExamplesRepository.class);
-    private OrientComposableTestCaseRepository composableTestCaseRepository = mock(OrientComposableTestCaseRepository.class);
+    private OrientComposedTestCaseRepository composableTestCaseRepository = mock(OrientComposedTestCaseRepository.class);
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();

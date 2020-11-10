@@ -10,18 +10,18 @@ import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
-import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
-import com.chutneytesting.design.domain.scenario.compose.FunctionalStep;
-import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.design.domain.dataset.DataSet;
 import com.chutneytesting.design.domain.dataset.DataSetRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.engine.domain.execution.strategies.DataSetIterationsStrategy;
 import com.chutneytesting.engine.domain.execution.strategies.DefaultStepExecutionStrategy;
 import com.chutneytesting.engine.domain.execution.strategies.RetryWithTimeOutStrategy;
 import com.chutneytesting.engine.domain.execution.strategies.SoftAssertStrategy;
 import com.chutneytesting.execution.domain.ExecutionRequest;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedFunctionalStep;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedScenario;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedTestCase;
 import java.util.List;
 import java.util.Map;
 import junitparams.JUnitParamsRunner;
@@ -66,19 +66,19 @@ public class ComposableTestCaseDataSetPreProcessorTest {
             "testcase key", "testcase value"
         );
 
-        ComposableTestCase testCase = new ComposableTestCase(
+        ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             "1",
             TestCaseMetadataImpl.builder()
                 .withDatasetId(dataSetId)
                 .build(),
-            ComposableScenario.builder()
+            ExecutableComposedScenario.builder()
                 .build(),
             computedParameters
         );
 
         // When
         ComposableTestCaseDataSetPreProcessor sut = new ComposableTestCaseDataSetPreProcessor(dataSetRepository);
-        ComposableTestCase processedTestCase = sut.apply(
+        ExecutableComposedTestCase processedTestCase = sut.apply(
             new ExecutionRequest(testCase, "env", "user")
         );
 
@@ -105,15 +105,15 @@ public class ComposableTestCaseDataSetPreProcessorTest {
             "another param key", "another testcase value"
         );
 
-        ComposableTestCase testCase = new ComposableTestCase(
+        ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             "1",
             TestCaseMetadataImpl.builder()
                 .withDatasetId(dataSetId)
                 .build(),
-            ComposableScenario.builder()
+            ExecutableComposedScenario.builder()
                 .withFunctionalSteps(
                     asList(
-                        FunctionalStep.builder()
+                        ExecutableComposedFunctionalStep.builder()
                             .withName("a step with no valued parameter")
                             .overrideDataSetWith(
                                 Maps.of(
@@ -122,13 +122,13 @@ public class ComposableTestCaseDataSetPreProcessorTest {
                                 )
                             )
                             .build(),
-                        FunctionalStep.builder()
+                        ExecutableComposedFunctionalStep.builder()
                             .withName("a step with no dataset matched parameter")
                             .overrideDataSetWith(
                                 Maps.of("step param", "value 2")
                             )
                             .build(),
-                        FunctionalStep.builder()
+                        ExecutableComposedFunctionalStep.builder()
                             .withName("a step with ref parameter")
                             .overrideDataSetWith(
                                 Maps.of(
@@ -145,7 +145,7 @@ public class ComposableTestCaseDataSetPreProcessorTest {
 
         // When
         ComposableTestCaseDataSetPreProcessor sut = new ComposableTestCaseDataSetPreProcessor(dataSetRepository);
-        ComposableTestCase processedTestCase = sut.apply(
+        ExecutableComposedTestCase processedTestCase = sut.apply(
             new ExecutionRequest(testCase, "env", "user")
         );
 
@@ -156,7 +156,7 @@ public class ComposableTestCaseDataSetPreProcessorTest {
         );
         assertThat(processedTestCase.composableScenario.functionalSteps).hasSize(3);
 
-        FunctionalStep fs = processedTestCase.composableScenario.functionalSteps.get(0);
+        ExecutableComposedFunctionalStep fs = processedTestCase.composableScenario.functionalSteps.get(0);
         assertThat(fs.name).isEqualTo("a step with no valued parameter");
         assertThat(fs.dataSet).containsOnly(
             entry("testcase key no dataset", ""),
@@ -223,13 +223,13 @@ public class ComposableTestCaseDataSetPreProcessorTest {
             "testcase key for dataset", "testcase default value for dataset"
         );
 
-        ComposableTestCase testCase = new ComposableTestCase(
+        ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             "1",
             TestCaseMetadataImpl.builder().withDatasetId(dataSetId).build(),
-            ComposableScenario.builder()
+            ExecutableComposedScenario.builder()
                 .withFunctionalSteps(
                     singletonList(
-                        FunctionalStep.builder()
+                        ExecutableComposedFunctionalStep.builder()
                             .withName("a step with no valued parameter")
                             .overrideDataSetWith(
                                 Maps.of(
@@ -245,7 +245,7 @@ public class ComposableTestCaseDataSetPreProcessorTest {
 
         // When
         ComposableTestCaseDataSetPreProcessor sut = new ComposableTestCaseDataSetPreProcessor(dataSetRepository);
-        ComposableTestCase processedTestCase = sut.apply(
+        ExecutableComposedTestCase processedTestCase = sut.apply(
             new ExecutionRequest(testCase, "env", "user")
         );
 
@@ -269,13 +269,13 @@ public class ComposableTestCaseDataSetPreProcessorTest {
             "testcase key for dataset", "testcase default value for dataset"
         );
 
-        ComposableTestCase testCase = new ComposableTestCase(
+        ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             "1",
             TestCaseMetadataImpl.builder().withDatasetId(dataSetId).build(),
-            ComposableScenario.builder()
+            ExecutableComposedScenario.builder()
                 .withFunctionalSteps(
                     singletonList(
-                        FunctionalStep.builder()
+                        ExecutableComposedFunctionalStep.builder()
                             .withStrategy(strategyDefinition)
                             .withName("a step with no valued parameter")
                             .overrideDataSetWith(
@@ -292,7 +292,7 @@ public class ComposableTestCaseDataSetPreProcessorTest {
 
         // When
         ComposableTestCaseDataSetPreProcessor sut = new ComposableTestCaseDataSetPreProcessor(dataSetRepository);
-        ComposableTestCase processedTestCase = sut.apply(
+        ExecutableComposedTestCase processedTestCase = sut.apply(
             new ExecutionRequest(testCase, "env", "user")
         );
 
@@ -324,15 +324,15 @@ public class ComposableTestCaseDataSetPreProcessorTest {
             "key 1", "testcase value for key 1"
         );
 
-        ComposableTestCase testCase = new ComposableTestCase(
+        ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             "1",
             TestCaseMetadataImpl.builder()
                 .withDatasetId(dataSetId)
                 .build(),
-            ComposableScenario.builder()
+            ExecutableComposedScenario.builder()
                 .withFunctionalSteps(
                     singletonList(
-                        FunctionalStep.builder()
+                        ExecutableComposedFunctionalStep.builder()
                             .withName("a step with key 1 dependency")
                             .overrideDataSetWith(
                                 Maps.of(
@@ -348,14 +348,14 @@ public class ComposableTestCaseDataSetPreProcessorTest {
 
         // When
         ComposableTestCaseDataSetPreProcessor sut = new ComposableTestCaseDataSetPreProcessor(dataSetRepository);
-        ComposableTestCase processedTestCase = sut.apply(
+        ExecutableComposedTestCase processedTestCase = sut.apply(
             new ExecutionRequest(testCase, "env", "user")
         );
 
         // Then
         assertThat(processedTestCase.composableScenario.functionalSteps).hasSize(1);
 
-        FunctionalStep fs = processedTestCase.composableScenario.functionalSteps.get(0);
+        ExecutableComposedFunctionalStep fs = processedTestCase.composableScenario.functionalSteps.get(0);
         assertThat(fs.name).isEqualTo("a step with key 1 dependency");
         assertThat(fs.dataSet).isEmpty();
         assertThat(fs.steps).hasSize(2);

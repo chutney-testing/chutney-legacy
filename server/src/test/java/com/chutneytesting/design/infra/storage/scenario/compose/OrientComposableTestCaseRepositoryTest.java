@@ -33,7 +33,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
     @BeforeClass
     public static void setUp() {
         OrientFunctionalStepRepositoryTest.initComponentDB(DATABASE_NAME);
-        sut = new OrientComposableTestCaseRepository(orientComponentDB);
+        sut = new OrientComposedTestCaseRepository(orientComponentDB);
         OLogManager.instance().setWarnEnabled(false);
         initFunctionalStepsRepository();
     }

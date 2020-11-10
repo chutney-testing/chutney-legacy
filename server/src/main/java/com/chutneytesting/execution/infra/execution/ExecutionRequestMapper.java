@@ -7,8 +7,6 @@ import static java.util.Optional.ofNullable;
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.agent.domain.network.Agent;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
-import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
-import com.chutneytesting.design.domain.scenario.compose.FunctionalStep;
 import com.chutneytesting.design.domain.environment.EnvironmentRepository;
 import com.chutneytesting.design.domain.environment.SecurityInfo;
 import com.chutneytesting.design.domain.environment.Target;
@@ -23,6 +21,8 @@ import com.chutneytesting.engine.api.execution.SecurityInfoDto;
 import com.chutneytesting.engine.api.execution.TargetDto;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.compiler.ScenarioConversionException;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedFunctionalStep;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedTestCase;
 import com.chutneytesting.task.api.EmbeddedTaskEngine;
 import com.chutneytesting.task.api.TaskDto;
 import com.chutneytesting.task.api.TaskDto.InputsDto;
@@ -70,7 +70,7 @@ public class ExecutionRequestMapper {
             return convertGwt(executionRequest);
         }
 
-        if (executionRequest.testCase instanceof ComposableTestCase) {
+        if (executionRequest.testCase instanceof ExecutableComposedTestCase) {
             return convertComposable(executionRequest);
         }
 
@@ -205,7 +205,7 @@ public class ExecutionRequestMapper {
     }
 
     private StepDefinitionRequestDto convertComposable(ExecutionRequest executionRequest) {
-        ComposableTestCase composableTestCase = (ComposableTestCase) executionRequest.testCase;
+        ExecutableComposedTestCase composableTestCase = (ExecutableComposedTestCase) executionRequest.testCase;
         try {
             return new StepDefinitionRequestDto(
                 composableTestCase.metadata.title(),
@@ -222,11 +222,11 @@ public class ExecutionRequestMapper {
         }
     }
 
-    private List<StepDefinitionRequestDto> convertComposableSteps(List<FunctionalStep> functionalSteps, String env) {
+    private List<StepDefinitionRequestDto> convertComposableSteps(List<ExecutableComposedFunctionalStep> functionalSteps, String env) {
         return functionalSteps.stream().map(f -> convert(f, env)).collect(Collectors.toList());
     }
 
-    private StepDefinitionRequestDto convert(FunctionalStep functionalStep, String env) {
+    private StepDefinitionRequestDto convert(ExecutableComposedFunctionalStep functionalStep, String env) {
         Optional<ComposableImplementation> implementation = functionalStep.implementation.map(ComposableImplementation::new);
 
         return new StepDefinitionRequestDto(

@@ -17,6 +17,7 @@ import static java.util.Optional.ofNullable;
 import com.chutneytesting.design.domain.scenario.compose.FunctionalStep;
 import com.chutneytesting.design.domain.scenario.compose.StepUsage;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedFunctionalStep;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.ODirection;
@@ -77,6 +78,28 @@ public class OrientFunctionalStepMapper {
             .filter(entry -> dbDataSet.containsKey(entry.getKey()))
             .filter(entry -> !dbDataSet.get(entry.getKey()).equals(entry.getValue()))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    static ExecutableComposedFunctionalStep vertexToExecutableFunctionalStep(OVertex vertex, ODatabaseSession dbSession) {
+        FunctionalStep functionalStepBuilder = vertexToFunctionalStep(vertex, dbSession).build();
+        return map(functionalStepBuilder);
+    }
+
+    static List<ExecutableComposedFunctionalStep> map(List<FunctionalStep> functionalSteps) {
+        return functionalSteps.stream()
+            .map(OrientFunctionalStepMapper::map)
+            .collect(Collectors.toList());
+    }
+
+    private static ExecutableComposedFunctionalStep map(FunctionalStep fs) {
+        return ExecutableComposedFunctionalStep.builder()
+            .withName(fs.name)
+            .withStrategy(fs.strategy)
+            .withSteps(map(fs.steps))
+            .withImplementation(fs.implementation)
+            .withParameters(fs.parameters)
+            .overrideDataSetWith(fs.dataSet)
+            .build();
     }
 
     public static FunctionalStep.FunctionalStepBuilder vertexToFunctionalStep(final OVertex vertex, final ODatabaseSession dbSession) {

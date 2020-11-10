@@ -1,6 +1,7 @@
 package com.chutneytesting.design.infra.storage.scenario.compose;
 
 import static com.chutneytesting.design.infra.storage.scenario.compose.OrientFunctionalStepMapper.functionalStepToVertex;
+import static com.chutneytesting.design.infra.storage.scenario.compose.OrientFunctionalStepMapper.vertexToExecutableFunctionalStep;
 import static com.chutneytesting.design.infra.storage.scenario.compose.OrientFunctionalStepMapper.vertexToFunctionalStep;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.GE_STEP_CLASS;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.GE_STEP_CLASS_PROPERTY_PARAMETERS;
@@ -23,6 +24,8 @@ import com.chutneytesting.design.domain.scenario.compose.ParentStepId;
 import com.chutneytesting.design.domain.scenario.compose.StepRepository;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedFunctionalStep;
+import com.chutneytesting.execution.domain.scenario.ExecutableStepRepository;
 import com.chutneytesting.tools.ImmutablePaginatedDto;
 import com.chutneytesting.tools.PaginatedDto;
 import com.chutneytesting.tools.PaginationRequestParametersDto;
@@ -50,7 +53,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class OrientFunctionalStepRepository implements StepRepository {
+public class OrientFunctionalStepRepository implements StepRepository, ExecutableStepRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrientFunctionalStepRepository.class);
 
@@ -92,6 +95,15 @@ public class OrientFunctionalStepRepository implements StepRepository {
             OVertex element = (OVertex)load(recordId, dbSession)
                 .orElseThrow(FunctionalStepNotFoundException::new);
             return vertexToFunctionalStep(element, dbSession).build();
+        }
+    }
+
+    @Override
+    public ExecutableComposedFunctionalStep findExecutableById(String recordId) {
+        try (ODatabaseSession dbSession = componentDBPool.acquire()) {
+            OVertex element = (OVertex)load(recordId, dbSession)
+                .orElseThrow(FunctionalStepNotFoundException::new);
+            return vertexToExecutableFunctionalStep(element, dbSession);
         }
     }
 

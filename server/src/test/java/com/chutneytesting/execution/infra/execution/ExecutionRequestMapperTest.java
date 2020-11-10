@@ -9,9 +9,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
-import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
-import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
-import com.chutneytesting.design.domain.scenario.compose.FunctionalStep;
 import com.chutneytesting.design.domain.environment.EnvironmentRepository;
 import com.chutneytesting.design.domain.environment.Target;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
@@ -20,6 +17,9 @@ import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.SecurityInfoDto;
 import com.chutneytesting.engine.api.execution.TargetDto;
 import com.chutneytesting.execution.domain.ExecutionRequest;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedFunctionalStep;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedScenario;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedTestCase;
 import com.chutneytesting.task.api.EmbeddedTaskEngine;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
@@ -101,34 +101,34 @@ public class ExecutionRequestMapperTest {
 
         final String implementationFull = Files.contentOf(new File(Resources.getResource("raw_steps/raw_composable_implementation.json").getPath()), StandardCharsets.UTF_8);
 
-        List<FunctionalStep> steps = new ArrayList<>();
-        steps.add(FunctionalStep.builder()
+        List<ExecutableComposedFunctionalStep> steps = new ArrayList<>();
+        steps.add(ExecutableComposedFunctionalStep.builder()
             .withName("first child step")
             .withImplementation(java.util.Optional.of(implementationFull))
             .build());
-        steps.add(FunctionalStep.builder()
+        steps.add(ExecutableComposedFunctionalStep.builder()
             .withName("second child step - parent")
             .withSteps(
-                Collections.singletonList(FunctionalStep.builder()
+                Collections.singletonList(ExecutableComposedFunctionalStep.builder()
                     .withName("first inner child step")
                     .withImplementation(Optional.of(implementationFull))
                     .build())
             )
             .build());
 
-        ComposableTestCase testCase = new ComposableTestCase(
+        ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             "fake-id",
             TestCaseMetadataImpl.builder()
                 .withTitle("fake title")
                 .build(),
-            ComposableScenario.builder()
+            ExecutableComposedScenario.builder()
                 .withFunctionalSteps(
                     Arrays.asList(
-                        FunctionalStep.builder()
+                        ExecutableComposedFunctionalStep.builder()
                             .withName("first root step")
                             .withImplementation(java.util.Optional.of(implementationFull))
                             .build(),
-                        FunctionalStep.builder()
+                        ExecutableComposedFunctionalStep.builder()
                             .withName("second root step - parent")
                             .withSteps(
                                 steps

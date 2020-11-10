@@ -1,9 +1,6 @@
 package com.chutneytesting.execution.domain.scenario;
 
 import com.chutneytesting.design.api.scenario.v2_0.mapper.GwtScenarioMapper;
-import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
-import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
-import com.chutneytesting.design.domain.scenario.compose.FunctionalStep;
 import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.ScenarioNotParsableException;
 import com.chutneytesting.design.domain.scenario.TestCase;
@@ -64,14 +61,14 @@ public class ScenarioExecutionEngine {
         );
     }
 
-    public ScenarioExecutionReport execute(FunctionalStep functionalStep, String environment, String userId) throws ScenarioNotFoundException, ScenarioNotParsableException {
-        TestCase testCase = new ComposableTestCase(
+    public ScenarioExecutionReport execute(ExecutableComposedFunctionalStep functionalStep, String environment, String userId) throws ScenarioNotFoundException, ScenarioNotParsableException {
+        TestCase testCase = new ExecutableComposedTestCase(
             "no_scenario_id",
             TestCaseMetadataImpl.builder()
                 .withDescription(functionalStep.id + "-" + functionalStep.name)
                 .withTitle(functionalStep.id + "-" + functionalStep.name)
                 .build(),
-            ComposableScenario.builder()
+            ExecutableComposedScenario.builder()
                 .withFunctionalSteps(Collections.singletonList(functionalStep))
                 .build());
 

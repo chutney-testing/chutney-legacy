@@ -1,14 +1,14 @@
 package com.chutneytesting.execution.domain.compiler;
 
-import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.dataset.DataSetRepository;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.execution.domain.ExecutionRequest;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedTestCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ComposableTestCasePreProcessor implements TestCasePreProcessor<ComposableTestCase> {
+public class ComposableTestCasePreProcessor implements TestCasePreProcessor<ExecutableComposedTestCase> {
 
     private final ComposableTestCaseParametersResolutionPreProcessor parametersResolutionPreProcessor;
     private final ComposableTestCaseLoopPreProcessor loopPreProcessor;
@@ -21,12 +21,12 @@ public class ComposableTestCasePreProcessor implements TestCasePreProcessor<Comp
     }
 
     @Override
-    public ComposableTestCase apply(ExecutionRequest executionRequest) {
+    public ExecutableComposedTestCase apply(ExecutionRequest executionRequest) {
         String environment = executionRequest.environment;
         String userId = executionRequest.userId;
 
         // Process scenario default dataset if requested
-        ComposableTestCase testCase = (ComposableTestCase) executionRequest.testCase;
+        ExecutableComposedTestCase testCase = (ExecutableComposedTestCase) executionRequest.testCase;
         if (executionRequest.withScenarioDefaultDataSet) {
             testCase = dataSetPreProcessor.apply(
                 new ExecutionRequest(testCase, environment, userId)
