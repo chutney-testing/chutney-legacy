@@ -1,4 +1,11 @@
-import { Component, Input, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  Output,
+  EventEmitter,
+  ViewChild,
+} from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subject } from 'rxjs';
 import { isNullOrUndefined } from 'util';
@@ -14,10 +21,10 @@ import { MatPaginator } from '@angular/material/paginator';
 export class ScenariosListComponent implements OnInit {
   @Output() edit = new EventEmitter<string>();
   @Output() delete = new EventEmitter<string>();
+  @Output() view = new EventEmitter<string>();
   displayedColumns: string[] = ['id', 'title', 'status', 'action'];
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
-
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   constructor() {}
 
@@ -34,8 +41,8 @@ export class ScenariosListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this._scenariosDataSource.paginator = this.paginator
-    this._scenariosDataSource.sort = this.sort
+    this._scenariosDataSource.paginator = this.paginator;
+    this._scenariosDataSource.sort = this.sort;
   }
 
   get scenariosDataSource(): MatTableDataSource<Scenario> {
@@ -48,5 +55,9 @@ export class ScenariosListComponent implements OnInit {
 
   deleteScenario(id: any) {
     this.delete.emit(id);
+  }
+
+  viewScenario(id: any) {
+    this.view.emit(id);
   }
 }
