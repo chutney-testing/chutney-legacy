@@ -12,6 +12,7 @@ import { combineLatest, Observable, ReplaySubject, Subject } from 'rxjs';
 import { TdDialogService } from '@covalent/core/dialogs';
 import { tdCollapseAnimation } from '@covalent/core/common';
 import { filter, searchInObj, sortByKeys } from '@chutney/utils';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'chutney-testing-scenarios',
@@ -28,6 +29,8 @@ export class ScenariosComponent implements OnInit, OnDestroy {
   protected _onDestroy = new Subject<void>();
 
   constructor(
+    private route: ActivatedRoute,
+    private router: Router,
     private _dialogService: TdDialogService,
     private deleteScenarioGQL: DeleteScenarioGQL,
     private scenariosGQL: ScenariosGQL,
@@ -125,5 +128,9 @@ export class ScenariosComponent implements OnInit, OnDestroy {
       return sortByKeys(filteredScenarios, `-${scenariosFilter.date}`);
     }
     return filteredScenarios;
+  }
+
+  onView(id: string) {
+    this.router.navigate(['text', id, 'view'], { relativeTo: this.route });
   }
 }

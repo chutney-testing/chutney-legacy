@@ -21,6 +21,7 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { MatPasswordModule } from './mat-password/mat-password.module';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatTreeModule } from '@angular/material/tree';
 
 @NgModule({
   imports: [
@@ -43,6 +44,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatExpansionModule,
     MatChipsModule,
     MatAutocompleteModule,
+    MatTreeModule,
     /** Covalent Modules */
     CovalentDialogsModule,
     CovalentSearchModule,
@@ -70,6 +72,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatExpansionModule,
     MatChipsModule,
     MatAutocompleteModule,
+    MatTreeModule,
     /** Covalent Modules */
     CovalentDialogsModule,
     CovalentSearchModule,

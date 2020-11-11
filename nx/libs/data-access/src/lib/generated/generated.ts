@@ -47,11 +47,13 @@ export type Scenario = {
   __typename?: 'Scenario';
   id: Scalars['ID'];
   title: Scalars['String'];
+  description: Scalars['String'];
   status: Scalars['String'];
   executions?: Maybe<Array<Maybe<ScenarioExecution>>>;
   tags?: Maybe<Array<Maybe<Scalars['String']>>>;
   creationDate?: Maybe<Scalars['String']>;
   executionDate?: Maybe<Scalars['String']>;
+  content?: Maybe<Scalars['String']>;
 };
 
 export type ScenariosFilter = {
@@ -67,12 +69,18 @@ export type Query = {
   user?: Maybe<User>;
   scenarios?: Maybe<Array<Maybe<Scenario>>>;
   scenariosFilter?: Maybe<ScenariosFilter>;
+  scenario?: Maybe<Scenario>;
+};
+
+export type QueryScenarioArgs = {
+  scenarioId: Scalars['ID'];
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
   login?: Maybe<User>;
   deleteScenario?: Maybe<Scalars['Boolean']>;
+  runScenario: Scalars['ID'];
 };
 
 export type MutationLoginArgs = {
@@ -81,6 +89,11 @@ export type MutationLoginArgs = {
 
 export type MutationDeleteScenarioArgs = {
   input: Scalars['ID'];
+};
+
+export type MutationRunScenarioArgs = {
+  scenarioId: Scalars['ID'];
+  dataset?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
 export type DeleteScenarioMutationVariables = Exact<{
@@ -102,6 +115,36 @@ export type LoginMutation = { __typename?: 'Mutation' } & {
     { __typename?: 'User' } & Pick<
       User,
       'id' | 'name' | 'firstname' | 'lastname' | 'mail'
+    >
+  >;
+};
+
+export type RunScenarioMutationVariables = Exact<{
+  scenarioId: Scalars['ID'];
+  dataset?: Maybe<Array<Maybe<Scalars['String']>>>;
+}>;
+
+export type RunScenarioMutation = { __typename?: 'Mutation' } & Pick<
+  Mutation,
+  'runScenario'
+>;
+
+export type ScenarioQueryVariables = Exact<{
+  scenarioId: Scalars['ID'];
+}>;
+
+export type ScenarioQuery = { __typename?: 'Query' } & {
+  scenario?: Maybe<
+    { __typename?: 'Scenario' } & Pick<
+      Scenario,
+      | 'id'
+      | 'title'
+      | 'description'
+      | 'tags'
+      | 'status'
+      | 'creationDate'
+      | 'executionDate'
+      | 'content'
     >
   >;
 };
@@ -204,6 +247,60 @@ export class LoginGQL extends Apollo.Mutation<
   LoginMutationVariables
 > {
   document = LoginDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const RunScenarioDocument = gql`
+  mutation runScenario($scenarioId: ID!, $dataset: [String]) {
+    runScenario(scenarioId: $scenarioId, dataset: $dataset)
+      @rest(
+        type: "SceanrioExecution"
+        path: "api/ui/scenario/executionasync/v1/{args.scenarioId}/GLOBAL"
+        method: "POST"
+        bodyKey: "dataset"
+      )
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class RunScenarioGQL extends Apollo.Mutation<
+  RunScenarioMutation,
+  RunScenarioMutationVariables
+> {
+  document = RunScenarioDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const ScenarioDocument = gql`
+  query scenario($scenarioId: ID!) {
+    scenario(scenarioId: $scenarioId)
+      @rest(type: "Scenario", path: "api/scenario/v2/raw/{args.scenarioId}") {
+      id
+      title
+      description
+      tags
+      status
+      creationDate
+      executionDate
+      content
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ScenarioGQL extends Apollo.Query<
+  ScenarioQuery,
+  ScenarioQueryVariables
+> {
+  document = ScenarioDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

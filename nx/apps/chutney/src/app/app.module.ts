@@ -40,6 +40,7 @@ const routes: Routes = [
     BrowserAnimationsModule,
     UiLayoutModule,
     GraphQLModule,
+    //RouterModule.forRoot(routes, { enableTracing: true } ),
     RouterModule.forRoot(routes),
   ],
   providers: [],

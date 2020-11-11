@@ -1,0 +1,12 @@
+query scenario($scenarioId: ID!){
+  scenario(scenarioId: $scenarioId) @rest(type: "Scenario", path: "api/scenario/v2/raw/{args.scenarioId}"){
+    id
+    title
+    description
+    tags
+    status
+    creationDate
+    executionDate
+    content
+  }
+}
