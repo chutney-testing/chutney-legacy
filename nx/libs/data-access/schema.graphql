@@ -26,11 +26,13 @@ type ScenarioExecution {
 type Scenario {
   id: ID!
   title: String!
+  description: String!
   status: String!
   executions: [ScenarioExecution]
   tags: [String]
   creationDate: String
   executionDate: String
+  content: String
 }
 
 type ScenariosFilter {
@@ -44,11 +46,13 @@ type Query {
   user: User
   scenarios: [Scenario]
   scenariosFilter: ScenariosFilter
+  scenario(scenarioId: ID!): Scenario
 }
 
 type Mutation {
   login(input: LoginInput!): User
   deleteScenario(input: ID!): Boolean
+  runScenario(scenarioId: ID!, dataset: [String] ) : ID!
 }
 
 scalar RestFunction

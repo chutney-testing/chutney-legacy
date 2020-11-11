@@ -2,6 +2,7 @@
   <chutney-scenarios-search-form></chutney-scenarios-search-form>
   <chutney-scenarios-list
     [scenarios]="filteredScenarios$ | async"
+    (view)="onView($event)"
     (edit)="onEdit($event)"
     (delete)="onDelete($event)"
   ></chutney-scenarios-list>
