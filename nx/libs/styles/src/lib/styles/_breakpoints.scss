@@ -14,9 +14,7 @@
     @media (min-width: $min) {
       @content;
     }
-  }
-
-  @else {
+  } @else {
     @content;
   }
 }
@@ -29,9 +27,19 @@
     @media (max-width: $max) {
       @content;
     }
+  } @else {
+    @content;
+  }
+}
+
+@mixin scrollbar-none {
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
   }
 
-  @else {
-    @content;
+  & {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }

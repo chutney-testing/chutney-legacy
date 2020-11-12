@@ -1,6 +1,6 @@
-@import '../../style/variables';
-@import '../../style/transitions';
-@import '../../style/breakpoints';
+@import '../../../../../styles/src/lib/styles/variables';
+@import '../../../../../styles/src/lib/styles/transitions';
+@import '../../../../../styles/src/lib/styles/breakpoints';
 
 .chutney-container-wrap,
 .chutney-container {
@@ -52,7 +52,7 @@
     }
 
     .chutney-user-panel-avatar {
-      transform: scale(.5);
+      transform: scale(0.5);
     }
 
     &:hover {

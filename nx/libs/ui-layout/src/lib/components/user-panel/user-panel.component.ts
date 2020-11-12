@@ -6,18 +6,15 @@ import { pluck } from 'rxjs/operators';
 @Component({
   selector: 'chutney-user-panel',
   templateUrl: './user-panel.component.html',
-  styleUrls: ['./user-panel.component.scss']
+  styleUrls: ['./user-panel.component.scss'],
 })
 export class UserPanelComponent implements OnInit {
-
   user$: Observable<User>;
   user: User;
 
-  constructor(private userGQL: UserGQL) {
-  }
+  constructor(private userGQL: UserGQL) {}
 
   ngOnInit(): void {
     this.user$ = this.userGQL.watch().valueChanges.pipe(pluck('data', 'user'));
   }
-
 }
