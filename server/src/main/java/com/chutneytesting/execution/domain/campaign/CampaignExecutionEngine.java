@@ -133,16 +133,10 @@ public class CampaignExecutionEngine {
             campaignExecutionReport.endCampaignExecution();
             LOGGER.info("Save campaign {} execution {} with status {}", campaign.id, campaignExecutionReport.executionId, campaignExecutionReport.status());
             campaignRepository.saveReport(campaign.id, campaignExecutionReport);
-            sendMetrics(campaign, campaignExecutionReport);
+            metrics.onCampaignExecutionEnded(campaign, campaignExecutionReport);
             currentCampaignExecutionsStopRequests.remove(executionId);
             currentCampaignExecutions.remove(campaign.id);
         }
-    }
-
-    private void sendMetrics(Campaign campaign, CampaignExecutionReport campaignExecutionReport) {
-        Map<ServerReportStatus, Long> scenarioCountByStatus = campaignExecutionReport.scenarioExecutionReports().stream().collect(Collectors.groupingBy(s -> s.execution.status(), Collectors.counting()));
-
-        metrics.onCampaignExecutionEnded(campaign.id.toString(), campaignExecutionReport.status(), campaignExecutionReport.getDuration(), scenarioCountByStatus);
     }
 
     private CampaignExecutionReport execute(Campaign campaign, CampaignExecutionReport campaignExecutionReport, List<String> scenariosToExecute) {

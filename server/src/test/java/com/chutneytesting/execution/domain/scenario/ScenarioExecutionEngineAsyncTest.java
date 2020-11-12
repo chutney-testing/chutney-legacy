@@ -114,7 +114,7 @@ public class ScenarioExecutionEngineAsyncTest {
         // Wait for background computation
         verify(executionStateRepository, timeout(250)).notifyExecutionStart(scenarioId);
         verify(executionStateRepository, timeout(250)).notifyExecutionEnd(scenarioId);
-        verify(metrics, timeout(250)).onScenarioExecutionEnded(testCase.metadata().id(), testCase.metadata().tags(), storedExecution.status(), storedExecution.duration());
+        verify(metrics, timeout(250)).onScenarioExecutionEnded(testCase, storedExecution);
     }
 
     @Test
@@ -166,7 +166,7 @@ public class ScenarioExecutionEngineAsyncTest {
 
         testObserver.assertTerminated();
         verify(executionStateRepository).notifyExecutionEnd(scenarioId);
-        verify(metrics).onScenarioExecutionEnded(any(), any(), any(), anyLong());
+        verify(metrics).onScenarioExecutionEnded(any(), any());
 
         testObserver.dispose();
     }

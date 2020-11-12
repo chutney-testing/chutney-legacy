@@ -269,7 +269,7 @@ public class ScenarioExecutionEngineAsync {
         LOGGER.trace("Send metrics for execution {}", executionId);
         try {
             ExecutionHistory.Execution execution = executionHistoryRepository.getExecution(testCase.id(), executionId);
-            metrics.onScenarioExecutionEnded(testCase.metadata().id(), testCase.metadata().tags(), execution.status(), execution.duration());
+            metrics.onScenarioExecutionEnded(testCase,execution);
         } catch (Exception e) {
             LOGGER.error("Send metrics for execution {} failed", executionId, e);
         }
