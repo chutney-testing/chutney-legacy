@@ -1,5 +1,6 @@
-@import '../../style/variables';
-
+@import '../../../../../styles/src/lib/styles/variables';
+@import '../../../../../styles/src/lib/styles/transitions';
+@import '../../../../../styles/src/lib/styles/breakpoints';
 .chutney-sidebar-header {
   position: relative;
   top: 0;
@@ -11,20 +12,56 @@
   padding: 0 10px;
   overflow: hidden;
 
+  @include bp-lt(small) {
+    & {
+      height: $toolbar-height-mobile;
+    }
+  }
+}
+
+.chutney-sidebar-main {
+  height: calc(100% - #{$toolbar-height-desktop});
+  overflow: auto;
+
+  @include bp-lt(small) {
+    & {
+      height: calc(100% - #{$toolbar-height-mobile});
+    }
+  }
+}
+
+.mat-drawer-inner-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scrollbar-none {
+  @include scrollbar-none();
 }
 
 .chutney-sidemenu {
-  width: 240px;
+  width: $sidenav-width;
   margin: 0;
   padding: 0;
   list-style: none;
-
+  overflow: hidden;
   .chutney-sidemenu-item {
     display: block;
     height: auto;
     padding: 0;
-  }
 
+    &.open {
+      > .chutney-sidemenu {
+        max-height: 2000px;
+      }
+
+      > .chutney-sidemenu-toggle > .menu-caret {
+        transform: rotate(-180deg);
+      }
+    }
+  }
   a {
     display: flex;
     flex-direction: row;
@@ -33,6 +70,27 @@
     padding: 0 16px;
     text-decoration: none;
     cursor: pointer;
+  }
+
+  &.chutney-sidemenu-sub {
+    max-height: 0;
+    padding-top: 0;
+    overflow: hidden;
+    transform: translateZ(0) !important;
+    transition: fast-out-slow(max-height);
+
+    .chutney-sidemenu-item {
+      border-left-width: 0;
+    }
+    a {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      height: 35px !important;
+      padding: 0 16px;
+      text-decoration: none;
+      cursor: pointer;
+    }
   }
 
   .mat-icon.menu-icon {
@@ -48,70 +106,38 @@
     }
   }
 
+  .mat-icon.menu-caret {
+    display: block;
+    text-align: center;
+    transition: fast-out-slow(transform);
+  }
+
+  .menu-name,
+  .menu-label,
+  .menu-badge {
+    transition: swift-ease-out(opacity);
+  }
+
   &.level-0 > li > a > .menu-name {
     margin-right: 5px;
-
+    overflow: hidden;
     [dir='rtl'] & {
       margin-left: 5px;
       margin-right: auto;
     }
   }
 
-  li:hover {
-    background-color: ghostwhite;
-  }
-}
+  &.level-1 > li > a {
+    padding-left: 50px;
 
-.chutney-header {
-  position: relative;
-  z-index: 201;
-  display: block;
-
-  .chutney-toolbar {
-    padding: 0 8px;
-  }
-}
-
-.chutney-toolbar {
-  border-bottom: 1px solid rgba(0, 0, 0, .12);
-
-  .badge {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    font-size: 12px;
-    border-radius: 10px;
-  }
-}
-
-// Customize toolbar button
-.chutney-toolbar-button {
-  &.mat-button,
-  &.mat-icon-button {
-    margin: 0 4px;
-  }
-
-  &.mat-button {
-    min-width: unset;
-    line-height: 40px;
-    border-radius: 999px;
-  }
-
-  &.chutney-avatar-button {
-    display: block;
-    padding: 0 4px;
-    font-size: 0;
-
-    .chutney-avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 999px;
+    [dir='rtl'] & {
+      padding-left: 16px;
+      padding-right: 50px;
     }
+  }
 
-    .chutney-username {
-      margin: 0 8px;
-      font-size: 14px;
-    }
+  a:hover {
+    background-color: whitesmoke;
   }
 }
 
