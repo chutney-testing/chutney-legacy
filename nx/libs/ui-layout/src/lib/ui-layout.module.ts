@@ -7,11 +7,12 @@ import { AppBannerDirective } from './directives/appBanner/app-banner.directive'
 import { AuthLayoutComponent } from './containers/auth-layout/auth-layout.component';
 import { HeaderComponent } from './components/header/header.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
-import { SidemenuComponent } from './components/sidemenu/sidemenu.component';
 import { UserPanelComponent } from './components/user-panel/user-panel.component';
 import { AccordionDirective } from './directives/accordion/accordion.directive';
 import { AccordionItemDirective } from './directives/accordion/accordion-item.directive';
 import { AccordionToggleDirective } from './directives/accordion/accordion-toggle.directive';
+import { TranslationComponent } from './components/translation/translation.component';
+import { UserMenuComponent } from './components/user-menu/user-menu.component';
 
 @NgModule({
   imports: [CommonModule, UiMaterialModule, RouterModule],
@@ -21,11 +22,12 @@ import { AccordionToggleDirective } from './directives/accordion/accordion-toggl
     AuthLayoutComponent,
     HeaderComponent,
     SidebarComponent,
-    SidemenuComponent,
     UserPanelComponent,
     AccordionDirective,
     AccordionItemDirective,
     AccordionToggleDirective,
+    TranslationComponent,
+    UserMenuComponent,
   ],
   exports: [MainLayoutComponent, AuthLayoutComponent],
 })
