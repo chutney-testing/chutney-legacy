@@ -1,4 +1,4 @@
-@import '~@angular/material/theming';
+@import '../../../../../node_modules/@angular/material/theming';
 
 // Layout
 $gutter: 16px !default;
@@ -18,9 +18,10 @@ $topmenu-sticky-position-mobile: $toolbar-height-mobile;
 
 // Typography
 $font-size-base: 1rem !default;
-$small-font-size: .875em !default;
+$small-font-size: 0.875em !default;
 
-$font-family-sans-serif: 'Roboto', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif !default;
+$font-family-sans-serif: 'Roboto', 'Helvetica Neue Light', 'Helvetica Neue',
+  Helvetica, Arial, 'Lucida Grande', sans-serif !default;
 $font-family-monospace: 'Roboto Mono', monospace !default;
 $font-family-base: $font-family-sans-serif !default;
 
@@ -30,10 +31,10 @@ $font-family-base: $font-family-sans-serif !default;
 // adapting to different screen sizes, for use in media queries.
 $breakpoints: (
   xsmall: 0,
-  small:  600px,
+  small: 600px,
   medium: 960px,
-  large:  1280px,
-  xlarge: 1920px
+  large: 1280px,
+  xlarge: 1920px,
 ) !default;
 
 // Material colors

@@ -16,7 +16,6 @@ import * as screenfull from 'screenfull';
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class HeaderComponent implements OnInit {
   @Input() showToggle = true;
   @Input() showBranding = false;

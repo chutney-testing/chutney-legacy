@@ -15,9 +15,9 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
 
-
 const MOBILE_MEDIAQUERY = 'screen and (max-width: 599px)';
-const TABLET_MEDIAQUERY = 'screen and (min-width: 600px) and (max-width: 959px)';
+const TABLET_MEDIAQUERY =
+  'screen and (min-width: 600px) and (max-width: 959px)';
 const MONITOR_MEDIAQUERY = 'screen and (min-width: 960px)';
 
 @Component({
@@ -57,12 +57,11 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     private breakpointObserver: BreakpointObserver,
     private overlay: OverlayContainer,
     private element: ElementRef,
-    @Optional() @Inject(DOCUMENT) private document: Document,
+    @Optional() @Inject(DOCUMENT) private document: Document
   ) {
-
     this.layoutChangesSubscription = this.breakpointObserver
       .observe([MOBILE_MEDIAQUERY, TABLET_MEDIAQUERY, MONITOR_MEDIAQUERY])
-      .subscribe(state => {
+      .subscribe((state) => {
         // SidenavOpened must be reset true when layout changes
         this.options.sidenavOpened = true;
 
@@ -70,7 +69,6 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         this.options.sidenavCollapsed = state.breakpoints[TABLET_MEDIAQUERY];
         this.contentWidthFix = state.breakpoints[MONITOR_MEDIAQUERY];
       });
-
   }
 
   ngOnInit() {
@@ -106,5 +104,4 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   setNavState(type: string, value: boolean) {
     this.notify$.next({ type, value } as any);
   }
-
 }

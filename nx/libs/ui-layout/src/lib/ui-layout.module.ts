@@ -9,10 +9,24 @@ import { HeaderComponent } from './components/header/header.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SidemenuComponent } from './components/sidemenu/sidemenu.component';
 import { UserPanelComponent } from './components/user-panel/user-panel.component';
+import { AccordionDirective } from './directives/accordion/accordion.directive';
+import { AccordionItemDirective } from './directives/accordion/accordion-item.directive';
+import { AccordionToggleDirective } from './directives/accordion/accordion-toggle.directive';
 
 @NgModule({
   imports: [CommonModule, UiMaterialModule, RouterModule],
-  declarations: [MainLayoutComponent, AppBannerDirective, AuthLayoutComponent, HeaderComponent, SidebarComponent, SidemenuComponent, UserPanelComponent],
+  declarations: [
+    MainLayoutComponent,
+    AppBannerDirective,
+    AuthLayoutComponent,
+    HeaderComponent,
+    SidebarComponent,
+    SidemenuComponent,
+    UserPanelComponent,
+    AccordionDirective,
+    AccordionItemDirective,
+    AccordionToggleDirective,
+  ],
   exports: [MainLayoutComponent, AuthLayoutComponent],
 })
 export class UiLayoutModule {}

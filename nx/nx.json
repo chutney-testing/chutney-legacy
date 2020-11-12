@@ -63,6 +63,12 @@
     },
     "feature-i18n": {
       "tags": []
+    },
+    "styles": {
+      "tags": []
+    },
+    "assets": {
+      "tags": []
     }
   }
 }
