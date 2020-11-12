@@ -1,10 +1,5 @@
 <div class="chutney-user-panel" fxLayout="column" fxLayoutAlign="center center">
-  <img
-    class="chutney-user-panel-avatar"
-    src="assets/images/default-avatar.jpg"
-    alt="avatar"
-    width="64"
-  />
+  <mat-icon class="chutney-user-panel-avatar">account_circle</mat-icon>
   <h4 class="chutney-user-panel-name">{{ (user$ | async)?.name }}</h4>
   <h5 class="chutney-user-panel-email">{{ (user$ | async)?.mail }}</h5>
   <div class="chutney-user-panel-icons">

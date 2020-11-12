@@ -2,7 +2,7 @@
 @import '../../../../../styles/src/lib/styles/transitions';
 
 .chutney-user-panel {
-  padding: 16px 0;
+  padding: 14px 0;
 }
 
 .chutney-user-panel-avatar {
@@ -10,6 +10,7 @@
   // Set default width and height can avoid flashing before avatar image loaded.
   width: 64px;
   height: 64px;
+  font-size: 64px;
   border-radius: 999px;
   transition: swift-ease-out(transform);
 }
@@ -26,6 +27,9 @@
 .chutney-user-panel-icons {
   opacity: 1;
   transition: swift-ease-out(opacity);
+  mat-icon:hover{
+    color: #1890ff;
+  }
 }
 
 .chutney-user-panel-icons {
@@ -44,3 +48,9 @@
     }
   }
 }
+/*.avatar {
+  height: 110px;
+  line-height: 110px;
+  font-size: 64px;
+  margin: 0 12px;
+}*/
