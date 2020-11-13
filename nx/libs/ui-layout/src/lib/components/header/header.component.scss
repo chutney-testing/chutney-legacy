@@ -8,6 +8,31 @@ header {
   }
 
   mat-toolbar {
-    background-color: white !important;
+    transition-duration: 0.3s;
+    transition-property: background-color, box-shadow;
+    transition-timing-function: ease-in-out;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 40;
+
+    &.transparent {
+      background: none;
+      color: white;
+    }
+
+    &.fixed {
+      position: fixed;
+    }
+
+    &.fixed-left {
+      left: 280px;
+      width: calc(100% - 280px);
+    }
+
+    mat-icon{
+      color: black !important;
+    }
   }
 }
