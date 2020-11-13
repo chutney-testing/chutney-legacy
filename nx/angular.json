@@ -34,6 +34,11 @@
               }
             ],
             "styles": ["libs/styles/src/lib/index.scss"],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "libs/styles/src/lib/styles"
+              ]
+            },
             "scripts": []
           },
           "configurations": {
