@@ -18,7 +18,7 @@
       >{{ scenario.description }}
       <span fxFlex></span>
       <span class="mat-hint" style="padding-right: 10px;">{{
-        100 | duration
+        report.duration | duration
       }}</span>
     </div>
     <mat-tree
@@ -35,10 +35,10 @@
             *ngIf="node.keyword"
             style="color: #2e7d32; text-align: right; width: 45px;"
             >{{ node.keyword }}:&nbsp;</span
-          >{{ node.description }}
+          >{{ node.name }}
           <span fxFlex></span>
           <span class="mat-hint" style="padding-right: 10px;">{{
-            100 | duration
+            node.duration | duration
           }}</span>
         </li>
       </mat-tree-node>
@@ -62,10 +62,10 @@
               style="color: #2e7d32; text-align: right; width: 45px;"
               >{{ node.keyword }}:&nbsp;</span
             >
-            {{ node.description }}
+            {{ node.name }}
             <span fxFlex></span>
             <span class="mat-hint" style="padding-right: 10px;">{{
-              100 | duration
+              node.duration | duration
             }}</span>
           </div>
           <ul [class.example-tree-invisible]="!treeControl.isExpanded(node)">

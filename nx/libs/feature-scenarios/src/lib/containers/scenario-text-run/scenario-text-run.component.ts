@@ -22,8 +22,9 @@ export class ScenarioTextRunComponent implements OnInit {
   private executionId: string;
   private params$: Observable<Params>;
   scenario$: Observable<Scenario>;
-  treeControl = new NestedTreeControl<any>((node) => node.subSteps);
+  treeControl = new NestedTreeControl<any>((node) => node.steps);
   dataSource = new MatTreeNestedDataSource<any>();
+  report: any;
 
   constructor(
     private router: Router,
@@ -35,19 +36,16 @@ export class ScenarioTextRunComponent implements OnInit {
 
   ngOnInit(): void {
     this.scenarioId = this.route.snapshot.paramMap.get('id');
+
     this.scenario$ = this.scenarioGQL
       .watch({ scenarioId: this.scenarioId })
       .valueChanges.pipe(pluck('data', 'scenario'));
-    this.scenario$
-      .pipe(
-        map((value) => {
-          return Hjson.parse(value.content);
-        })
-      )
-      .subscribe(
-        (scenario: any) =>
-          (this.dataSource.data = this.normalizeScenario(scenario))
-      );
+
+    this.scenario$.pipe(
+      map((value) => {
+        return Hjson.parse(value.content);
+      })
+    );
 
     this.params$ = this.route.params;
     this.params$.subscribe((p) => {
@@ -84,7 +82,9 @@ export class ScenarioTextRunComponent implements OnInit {
         };
       }).subscribe(
         (data) => {
-          console.log(JSON.stringify(data));
+          //console.log(JSON.stringify(data));
+          this.report = data.report;
+          this.dataSource.data = data.report.steps; //this.normalizeScenario(scenario)
         },
         (msg) => {
           this.runScenarioHistoryGQL
@@ -94,8 +94,10 @@ export class ScenarioTextRunComponent implements OnInit {
             })
             .pipe(pluck('data', 'runScenarioHistory'))
             .subscribe((data) => {
-              const scenarioExecution = JSON.parse(data.report);
-              console.log(JSON.stringify(scenarioExecution));
+              const runScenarioHistory = JSON.parse(data.report);
+              console.log(JSON.stringify(runScenarioHistory));
+              this.report = runScenarioHistory.report;
+              this.dataSource.data = runScenarioHistory.report.steps;
             });
         },
         () => {
@@ -117,8 +119,7 @@ export class ScenarioTextRunComponent implements OnInit {
     return steps.map((x) => Object.assign({}, x, { keyword: keyword }));
   }
 
-  hasChild = (_: number, node: any) =>
-    !!node.subSteps && node.subSteps.length > 0;
+  hasChild = (_: number, node: any) => !!node.steps && node.steps.length > 0;
 
   runScenario(scenario: Scenario) {
     this.runScenarioGQL
