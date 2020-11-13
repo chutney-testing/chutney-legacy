@@ -70,10 +70,16 @@ export type Query = {
   scenarios?: Maybe<Array<Maybe<Scenario>>>;
   scenariosFilter?: Maybe<ScenariosFilter>;
   scenario?: Maybe<Scenario>;
+  runScenarioHistory: ScenarioExecution;
 };
 
 export type QueryScenarioArgs = {
   scenarioId: Scalars['ID'];
+};
+
+export type QueryRunScenarioHistoryArgs = {
+  scenarioId: Scalars['ID'];
+  executionId: Scalars['ID'];
 };
 
 export type Mutation = {
@@ -116,6 +122,26 @@ export type LoginMutation = { __typename?: 'Mutation' } & {
       User,
       'id' | 'name' | 'firstname' | 'lastname' | 'mail'
     >
+  >;
+};
+
+export type RunScenarioHistoryQueryVariables = Exact<{
+  scenarioId: Scalars['ID'];
+  executionId: Scalars['ID'];
+}>;
+
+export type RunScenarioHistoryQuery = { __typename?: 'Query' } & {
+  runScenarioHistory: { __typename?: 'ScenarioExecution' } & Pick<
+    ScenarioExecution,
+    | 'executionId'
+    | 'time'
+    | 'duration'
+    | 'status'
+    | 'info'
+    | 'error'
+    | 'testCaseTitle'
+    | 'environment'
+    | 'report'
   >;
 };
 
@@ -247,6 +273,39 @@ export class LoginGQL extends Apollo.Mutation<
   LoginMutationVariables
 > {
   document = LoginDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const RunScenarioHistoryDocument = gql`
+  query runScenarioHistory($scenarioId: ID!, $executionId: ID!) {
+    runScenarioHistory(scenarioId: $scenarioId, executionId: $executionId)
+      @rest(
+        type: "ScenarioExecution"
+        path: "api/ui/scenario/{args.scenarioId}/execution/{args.executionId}/v1"
+      ) {
+      executionId
+      time
+      duration
+      status
+      info
+      error
+      testCaseTitle
+      environment
+      report
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class RunScenarioHistoryGQL extends Apollo.Query<
+  RunScenarioHistoryQuery,
+  RunScenarioHistoryQueryVariables
+> {
+  document = RunScenarioHistoryDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
