@@ -7,7 +7,7 @@ import {
   ChangeDetectionStrategy,
   ViewEncapsulation,
   ChangeDetectorRef,
-  Inject
+  Inject,
 } from '@angular/core';
 import { Observable } from 'rxjs';
 import { User, UserGQL } from '@chutney/data-access';
@@ -58,7 +58,6 @@ export class HeaderComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-
     // Monitor device changes
     this.breakpointObserver
       .observe([Breakpoints.Handset, Breakpoints.Tablet, Breakpoints.Web])
