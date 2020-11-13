@@ -6,7 +6,7 @@ import { pluck } from 'rxjs/operators';
 @Component({
   selector: 'chutney-user-menu',
   templateUrl: './user-menu.component.html',
-  styleUrls: ['./user-menu.component.scss']
+  styleUrls: ['./user-menu.component.scss'],
 })
 export class UserMenuComponent implements OnInit {
   user$: Observable<User>;
@@ -17,5 +17,4 @@ export class UserMenuComponent implements OnInit {
   ngOnInit(): void {
     this.user$ = this.userGQL.watch().valueChanges.pipe(pluck('data', 'user'));
   }
-
 }
