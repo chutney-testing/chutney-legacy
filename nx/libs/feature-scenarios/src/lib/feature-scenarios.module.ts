@@ -9,6 +9,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ScenariosSearchFormComponent } from './components/scenarios-search-form/scenarios-search-form.component';
 import { ScenarioTextViewComponent } from './containers/scenario-text-view/scenario-text-view.component';
 import { ScenarioTextRunComponent } from './containers/scenario-text-run/scenario-text-run.component';
+import { DurationPipe } from './pipes/duration/duration.pipe';
 
 @NgModule({
   imports: [
@@ -31,6 +32,7 @@ import { ScenarioTextRunComponent } from './containers/scenario-text-run/scenari
     ScenariosSearchFormComponent,
     ScenarioTextViewComponent,
     ScenarioTextRunComponent,
+    DurationPipe,
   ],
 })
 export class FeatureScenariosModule {}

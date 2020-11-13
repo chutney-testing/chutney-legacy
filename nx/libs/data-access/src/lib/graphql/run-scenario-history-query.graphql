@@ -1,0 +1,13 @@
+query runScenarioHistory($scenarioId: ID!, $executionId: ID!){
+  runScenarioHistory(scenarioId: $scenarioId, executionId: $executionId) @rest(type: "ScenarioExecution", path: "api/ui/scenario/{args.scenarioId}/execution/{args.executionId}/v1"){
+    executionId
+    time
+    duration
+    status
+    info
+    error
+    testCaseTitle
+    environment
+    report
+  }
+}
