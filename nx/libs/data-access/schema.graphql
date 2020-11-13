@@ -47,6 +47,7 @@ type Query {
   scenarios: [Scenario]
   scenariosFilter: ScenariosFilter
   scenario(scenarioId: ID!): Scenario
+  runScenarioHistory(scenarioId: ID!, executionId: ID!): ScenarioExecution!
 }
 
 type Mutation {
