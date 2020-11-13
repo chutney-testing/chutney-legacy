@@ -33,6 +33,8 @@ export class HeaderComponent implements OnInit {
   @Output() toggleSidenav = new EventEmitter<void>();
   @Output() toggleSidenavNotice = new EventEmitter<void>();
 
+  sideMenuDisplayed = true;
+
   private get screenfull(): screenfull.Screenfull {
     return screenfull as screenfull.Screenfull;
   }
@@ -90,4 +92,8 @@ export class HeaderComponent implements OnInit {
     };
   }
 
+  toggleMenu() {
+    this.sideMenuDisplayed = !this.sideMenuDisplayed;
+    this.toggleSidenav.emit();
+  }
 }
