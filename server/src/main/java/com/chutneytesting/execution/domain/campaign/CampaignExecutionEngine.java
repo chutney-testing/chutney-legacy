@@ -1,5 +1,6 @@
 package com.chutneytesting.execution.domain.campaign;
 
+import static java.util.Collections.singleton;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -24,7 +25,9 @@ import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.execution.domain.scenario.FailedExecutionAttempt;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
 import com.chutneytesting.instrument.domain.ChutneyMetrics;
+import com.google.common.collect.Lists;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -32,9 +35,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +53,7 @@ public class CampaignExecutionEngine {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Campaign.class);
 
+    private ExecutorService executor;
     private final CampaignRepository campaignRepository;
     private final ScenarioExecutionEngine scenarioExecutionEngine;
     private final ExecutionHistoryRepository executionHistoryRepository;
@@ -64,7 +71,8 @@ public class CampaignExecutionEngine {
                                    TestCaseRepository testCaseRepository,
                                    DataSetHistoryRepository dataSetHistoryRepository,
                                    JiraXrayPlugin jiraXrayPlugin,
-                                   ChutneyMetrics metrics) {
+                                   ChutneyMetrics metrics,
+                                   Integer threadForCampaigns) {
         this.campaignRepository = campaignRepository;
         this.scenarioExecutionEngine = scenarioExecutionEngine;
         this.executionHistoryRepository = executionHistoryRepository;
@@ -72,6 +80,8 @@ public class CampaignExecutionEngine {
         this.dataSetHistoryRepository = dataSetHistoryRepository;
         this.jiraXrayPlugin = jiraXrayPlugin;
         this.metrics = metrics;
+        this.executor = Executors.newFixedThreadPool(threadForCampaigns);
+        LOGGER.debug("Pool for campaigns created with size {}", threadForCampaigns);
     }
 
     public List<CampaignExecutionReport> executeByName(String campaignName, String userId) {
@@ -105,11 +115,10 @@ public class CampaignExecutionEngine {
         return new ArrayList<>(currentCampaignExecutions.values());
     }
 
-    public boolean stopExecution(Long executionId) {
+    public void stopExecution(Long executionId) {
         LOGGER.trace("Stop requested for " + executionId);
         Optional.ofNullable(currentCampaignExecutionsStopRequests.computeIfPresent(executionId, (aLong, aBoolean) -> Boolean.TRUE))
             .orElseThrow(() -> new CampaignExecutionNotFoundException(executionId));
-        return true;
     }
 
     public CampaignExecutionReport executeScenarioInCampaign(List<String> failedIds, Campaign campaign, String userId) {
@@ -147,14 +156,26 @@ public class CampaignExecutionEngine {
             .collect(Collectors.toList());
 
         campaignExecutionReport.initExecution(testCases, campaign.executionEnvironment(), campaignExecutionReport.userId);
-        Stream<TestCase> scenarioStream;
-        if (campaign.parallelRun) {
-            scenarioStream = testCases.parallelStream();
-        } else {
-            scenarioStream = testCases.stream();
+        try {
+            if (campaign.parallelRun) {
+                Collection<Callable<Object>> toExecute = Lists.newArrayList();
+                for (TestCase t : testCases) {
+                    toExecute.add(Executors.callable(() -> executeScenarioInCampaign(campaign, campaignExecutionReport).accept(t)));
+                }
+                executor.invokeAll(toExecute);
+            } else {
+                for (TestCase t : testCases) {
+                    executor.invokeAll(singleton(Executors.callable(() -> executeScenarioInCampaign(campaign, campaignExecutionReport).accept(t))));
+                }
+            }
+        } catch (InterruptedException e) {
+            LOGGER.error("Error ", e);
         }
+        return campaignExecutionReport;
+    }
 
-        scenarioStream.forEach(testCase -> {
+    private Consumer<TestCase> executeScenarioInCampaign(Campaign campaign, CampaignExecutionReport campaignExecutionReport) {
+        return testCase -> {
             // Is stop requested ?
             if (!currentCampaignExecutionsStopRequests.get(campaignExecutionReport.executionId)) {
                 // Init scenario execution in campaign report
@@ -174,8 +195,7 @@ public class CampaignExecutionEngine {
                         jiraXrayPlugin.updateTestExecution(campaign.id, serc.scenarioId, execution.report());
                     });
             }
-        });
-        return campaignExecutionReport;
+        };
     }
 
     private ScenarioExecutionReportCampaign executeScenario(Campaign campaign, TestCase testCase, String userId) {

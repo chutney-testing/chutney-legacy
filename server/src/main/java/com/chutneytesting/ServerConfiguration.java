@@ -120,8 +120,9 @@ public class ServerConfiguration {
                                                     TestCaseRepository testCaseRepository,
                                                     DataSetHistoryRepository dataSetHistoryRepository,
                                                     JiraXrayPlugin jiraXrayPlugin,
-                                                    ChutneyMetrics metrics) {
-        return new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository, jiraXrayPlugin, metrics);
+                                                    ChutneyMetrics metrics,
+                                                    @Value("${chutney.campaigns.thread:20}") Integer threadForCampaigns) {
+        return new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository, jiraXrayPlugin, metrics, threadForCampaigns);
     }
 
     @Bean
