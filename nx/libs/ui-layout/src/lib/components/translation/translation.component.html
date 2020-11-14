@@ -7,10 +7,9 @@
 </button>
 
 <mat-menu #menu="matMenu">
-  <button mat-menu-item>
-    <span>Frensh</span>
-  </button>
-  <button mat-menu-item>
-    <span>English</span>
-  </button>
+  <ng-container *ngFor="let translation of translations">
+    <button mat-menu-item (click)="switchLanguage(translation[1])">
+      <span>{{ translation[0] }}</span>
+    </button>
+  </ng-container>
 </mat-menu>
