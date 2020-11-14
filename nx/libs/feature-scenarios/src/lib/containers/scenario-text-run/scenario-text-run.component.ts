@@ -6,11 +6,10 @@ import {
   Scenario,
   ScenarioGQL,
 } from '@chutney/data-access';
-import { Observable } from 'rxjs';
-import { map, pluck } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, map, pluck, switchMap } from 'rxjs/operators';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
-import Hjson from 'hjson';
 
 @Component({
   selector: 'chutney-scenario-text-run',
@@ -21,7 +20,7 @@ export class ScenarioTextRunComponent implements OnInit {
   private scenarioId: string;
   private executionId: string;
   private params$: Observable<Params>;
-  scenario$: Observable<Scenario>;
+  scenario$: Observable<any>;
   treeControl = new NestedTreeControl<any>((node) => node.steps);
   dataSource = new MatTreeNestedDataSource<any>();
   report: any;
@@ -35,76 +34,72 @@ export class ScenarioTextRunComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.scenarioId = this.route.snapshot.paramMap.get('id');
-
-    this.scenario$ = this.scenarioGQL
-      .watch({ scenarioId: this.scenarioId })
-      .valueChanges.pipe(pluck('data', 'scenario'));
-
-    this.scenario$.pipe(
-      map((value) => {
-        return Hjson.parse(value.content);
+    this.scenario$ = this.route.params.pipe(
+      switchMap((p) => {
+        return this.scenarioGQL
+          .watch({ scenarioId: p.id })
+          .valueChanges.pipe(pluck('data', 'scenario'));
       })
     );
 
-    this.params$ = this.route.params;
-    this.params$.subscribe((p) => {
-      this.scenarioId = p.id;
-      this.executionId = p.executionId;
-      new Observable<any>((obs) => {
-        let es;
-        try {
-          const url =
-            `/api/ui/scenario/executionasync/v1/${p.id}` +
-            `/execution/${p.executionId}`;
-          es = new EventSource(url);
-          es.addEventListener('partial', (evt: any) => {
-            obs.next(JSON.parse(evt.data));
-          });
-          es.addEventListener('last', (evt: any) => {
-            obs.next(JSON.parse(evt.data));
-            obs.complete();
-          });
-          es.addEventListener('error', (e) => {
-            console.log('An error occurred while attempting to connect.');
-            obs.error(e);
-            // throwError('An error occurred while attempting to connect.');
-          });
-        } catch (error) {
-          obs.error(error);
-          // throw Error('An error occurred while attempting to connect.');
-        }
+    this.route.params
+      .pipe(
+        switchMap((p) => {
+          this.scenarioId = p.id;
+          this.executionId = p.executionId;
+          let observable = new Observable<any>((obs) => {
+            let es;
+            try {
+              const url =
+                `/api/ui/scenario/executionasync/v1/${p.id}` +
+                `/execution/${p.executionId}`;
+              es = new EventSource(url);
+              es.addEventListener('partial', (evt: any) => {
+                obs.next(JSON.parse(evt.data));
+              });
+              es.addEventListener('last', (evt: any) => {
+                obs.next(JSON.parse(evt.data));
+                obs.complete();
+              });
+              es.addEventListener('error', (e) => {
+                console.log('An error occurred while attempting to connect.');
+                obs.error(e);
+                // throwError('An error occurred while attempting to connect.');
+              });
+            } catch (error) {
+              obs.error(error);
+              // throw Error('An error occurred while attempting to connect.');
+            }
 
-        return () => {
-          if (es) {
-            es.close();
-          }
-        };
-      }).subscribe(
-        (data) => {
+            return () => {
+              if (es) {
+                es.close();
+              }
+            };
+          });
+          return observable.pipe(
+            catchError((e) => {
+              return this.runScenarioHistoryGQL
+                .fetch({
+                  scenarioId: this.scenarioId,
+                  executionId: this.executionId,
+                })
+                .pipe(
+                  pluck('data', 'runScenarioHistory'),
+                  map((data) => JSON.parse(data.report))
+                );
+            })
+          );
+        })
+      )
+      .subscribe(
+        (data: any) => {
           //console.log(JSON.stringify(data));
           this.report = data.report;
           this.dataSource.data = data.report.steps; //this.normalizeScenario(scenario)
         },
-        (msg) => {
-          this.runScenarioHistoryGQL
-            .fetch({
-              scenarioId: this.scenarioId,
-              executionId: this.executionId,
-            })
-            .pipe(pluck('data', 'runScenarioHistory'))
-            .subscribe((data) => {
-              const runScenarioHistory = JSON.parse(data.report);
-              console.log(JSON.stringify(runScenarioHistory));
-              this.report = runScenarioHistory.report;
-              this.dataSource.data = runScenarioHistory.report.steps;
-            });
-        },
-        () => {
-          console.log('completed...');
-        }
+        (error) => console.log(error)
       );
-    });
   }
 
   normalizeScenario(scenario: any): any[] {
