@@ -1,15 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params, Router } from '@angular/router';
-import {
-  RunScenarioGQL,
-  RunScenarioHistoryGQL,
-  Scenario,
-  ScenarioGQL,
-} from '@chutney/data-access';
-import { Observable, of } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { RunScenarioGQL, RunScenarioHistoryGQL, Scenario, ScenarioGQL, } from '@chutney/data-access';
+import { combineLatest, Observable } from 'rxjs';
 import { catchError, map, pluck, switchMap } from 'rxjs/operators';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
+import Hjson from 'hjson';
+import { fromEventSource } from '@chutney/utils';
 
 @Component({
   selector: 'chutney-scenario-text-run',
@@ -19,8 +16,8 @@ import { MatTreeNestedDataSource } from '@angular/material/tree';
 export class ScenarioTextRunComponent implements OnInit {
   private scenarioId: string;
   private executionId: string;
-  private params$: Observable<Params>;
   scenario$: Observable<any>;
+  report$: Observable<any>;
   treeControl = new NestedTreeControl<any>((node) => node.steps);
   dataSource = new MatTreeNestedDataSource<any>();
   report: any;
@@ -36,67 +33,55 @@ export class ScenarioTextRunComponent implements OnInit {
   ngOnInit(): void {
     this.scenario$ = this.route.params.pipe(
       switchMap((p) => {
-        return this.scenarioGQL
-          .watch({ scenarioId: p.id })
-          .valueChanges.pipe(pluck('data', 'scenario'));
+        return this.scenarioGQL.watch({ scenarioId: p.id }).valueChanges.pipe(
+          pluck('data', 'scenario'),
+          map((value) => Hjson.parse(value.content))
+        );
       })
     );
 
-    this.route.params
-      .pipe(
-        switchMap((p) => {
-          this.scenarioId = p.id;
-          this.executionId = p.executionId;
-          let observable = new Observable<any>((obs) => {
-            let es;
-            try {
-              const url =
-                `/api/ui/scenario/executionasync/v1/${p.id}` +
-                `/execution/${p.executionId}`;
-              es = new EventSource(url);
-              es.addEventListener('partial', (evt: any) => {
-                obs.next(JSON.parse(evt.data));
-              });
-              es.addEventListener('last', (evt: any) => {
-                obs.next(JSON.parse(evt.data));
-                obs.complete();
-              });
-              es.addEventListener('error', (e) => {
-                console.log('An error occurred while attempting to connect.');
-                obs.error(e);
-                // throwError('An error occurred while attempting to connect.');
-              });
-            } catch (error) {
-              obs.error(error);
-              // throw Error('An error occurred while attempting to connect.');
-            }
+    this.report$ = this.route.params.pipe(
+      switchMap((p) => {
+        this.scenarioId = p.id;
+        this.executionId = p.executionId;
+        return fromEventSource(
+          `/api/ui/scenario/executionasync/v1/${p.id}/execution/${p.executionId}`
+        ).pipe(
+          map((evt: MessageEvent) => JSON.parse(evt.data)),
+          catchError((e) => {
+            return this.runScenarioHistoryGQL
+              .fetch({
+                scenarioId: this.scenarioId,
+                executionId: this.executionId,
+              })
+              .pipe(
+                pluck('data', 'runScenarioHistory'),
+                map((data) => JSON.parse(data.report))
+              );
+          })
+        );
+      })
+    );
 
-            return () => {
-              if (es) {
-                es.close();
-              }
-            };
-          });
-          return observable.pipe(
-            catchError((e) => {
-              return this.runScenarioHistoryGQL
-                .fetch({
-                  scenarioId: this.scenarioId,
-                  executionId: this.executionId,
-                })
-                .pipe(
-                  pluck('data', 'runScenarioHistory'),
-                  map((data) => JSON.parse(data.report))
-                );
-            })
-          );
+    combineLatest(this.scenario$, this.report$)
+      .pipe(
+        map(([s, r]) => {
+          const ns = this.normalizeScenario(s);
+          return {
+            ...r,
+            report: {
+              ...r.report,
+              steps: r.report.steps.map((el, i) =>
+                Object.assign({}, el, {keyword: ns[i].keyword})
+              ),
+            },
+          };
         })
       )
       .subscribe(
         (data: any) => {
-          //console.log(JSON.stringify(data));
           this.report = data.report;
-          this.dataSource.data = data.report.steps; //this.normalizeScenario(scenario)
+          this.dataSource.data = data.report.steps;
         },
         (error) => console.log(error)
       );
