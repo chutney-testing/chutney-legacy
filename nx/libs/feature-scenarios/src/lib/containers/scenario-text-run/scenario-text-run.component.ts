@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RunScenarioGQL, RunScenarioHistoryGQL, Scenario, ScenarioGQL, } from '@chutney/data-access';
+import {
+  RunScenarioGQL,
+  RunScenarioHistoryGQL,
+  Scenario,
+  ScenarioGQL,
+} from '@chutney/data-access';
 import { combineLatest, Observable } from 'rxjs';
 import { catchError, map, pluck, switchMap } from 'rxjs/operators';
 import { NestedTreeControl } from '@angular/cdk/tree';
@@ -68,8 +73,9 @@ export class ScenarioTextRunComponent implements OnInit {
       .pipe(
         map(([s, r]) => {
           const ns = this.normalizeScenario(s);
-          return dotProp.set(r, 'report.steps', list => list.map((el, i) =>
-            dotProp.merge(el, 'keyword', ns[i].keyword)))
+          return dotProp.set(r, 'report.steps', (list) =>
+            list.map((el, i) => dotProp.merge(el, 'keyword', ns[i].keyword))
+          );
         })
       )
       .subscribe(
