@@ -5,8 +5,9 @@ import { combineLatest, Observable } from 'rxjs';
 import { catchError, map, pluck, switchMap } from 'rxjs/operators';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
-import Hjson from 'hjson';
 import { fromEventSource } from '@chutney/utils';
+import * as hjson from 'hjson';
+import * as dotProp from 'dot-prop-immutable';
 
 @Component({
   selector: 'chutney-scenario-text-run',
@@ -35,7 +36,7 @@ export class ScenarioTextRunComponent implements OnInit {
       switchMap((p) => {
         return this.scenarioGQL.watch({ scenarioId: p.id }).valueChanges.pipe(
           pluck('data', 'scenario'),
-          map((value) => Hjson.parse(value.content))
+          map((value) => hjson.parse(value.content))
         );
       })
     );
@@ -67,15 +68,8 @@ export class ScenarioTextRunComponent implements OnInit {
       .pipe(
         map(([s, r]) => {
           const ns = this.normalizeScenario(s);
-          return {
-            ...r,
-            report: {
-              ...r.report,
-              steps: r.report.steps.map((el, i) =>
-                Object.assign({}, el, {keyword: ns[i].keyword})
-              ),
-            },
-          };
+          return dotProp.set(r, 'report.steps', list => list.map((el, i) =>
+            dotProp.merge(el, 'keyword', ns[i].keyword)))
         })
       )
       .subscribe(
