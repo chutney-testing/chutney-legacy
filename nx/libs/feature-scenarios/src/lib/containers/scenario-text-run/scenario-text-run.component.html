@@ -3,6 +3,20 @@
     <mat-toolbar-row>
       {{ scenario.title }}
       <span fxFlex></span>
+      <!--<mat-menu #appMenu="matMenu">
+        <button mat-menu-item>GLOBAL</button>
+        <button mat-menu-item>PERF1</button>
+      </mat-menu>
+      <button mat-stroked-button (click)="runScenario(scenario)"><mat-icon>play_arrow</mat-icon>GLOBAL</button>
+      <button mat-icon-button [matMenuTriggerFor]="appMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>-->
+      <!--<mat-button-toggle-group appearance="legacy">
+        <mat-button-toggle (click)="runScenario(scenario)"><mat-icon>play_arrow</mat-icon><span>GLOBAL</span></mat-button-toggle>
+        <mat-button-toggle [matMenuTriggerFor]="appMenu">
+          <mat-icon>arrow_drop_down</mat-icon>
+        </mat-button-toggle>
+      </mat-button-toggle-group>-->
       <button
         mat-icon-button
         (click)="runScenario(scenario)"
@@ -12,9 +26,12 @@
       </button>
     </mat-toolbar-row>
   </mat-toolbar>
-  <div fxFill style="padding-top: 15px;">
+  <div fxFill style="padding-top: 15px; align-items: center;">
     <div style="padding-left: 15px; min-height: 28px; max-height: 28px;">
-      <span style="color: #2e7d32;">Scenario:&nbsp;</span
+      <chutney-execution-icon
+        [testStatus]="report?.status"
+      ></chutney-execution-icon>
+      <span style="color: #2e7d32; padding-left: 4px;">Scenario:&nbsp;</span
       >{{ scenario.description }}
       <span fxFlex></span>
       <span class="mat-hint" style="padding-right: 10px;">{{
@@ -31,6 +48,9 @@
         <li class="mat-tree-node">
           <!-- use a disabled button to provide padding for tree leaf -->
           <button mat-icon-button disabled></button>
+          <chutney-execution-icon
+            [testStatus]="node.status"
+          ></chutney-execution-icon>
           <span
             *ngIf="node.keyword"
             style="color: #2e7d32; text-align: right; width: 45px;"
@@ -57,6 +77,9 @@
                 }}
               </mat-icon>
             </button>
+            <chutney-execution-icon
+              [testStatus]="node.status"
+            ></chutney-execution-icon>
             <span
               *ngIf="node.keyword"
               style="color: #2e7d32; text-align: right; width: 45px;"

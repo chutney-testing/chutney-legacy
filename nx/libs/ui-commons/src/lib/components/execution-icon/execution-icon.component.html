@@ -1,0 +1,9 @@
+<mat-icon
+  *ngIf="testStatus !== 'RUNNING'"
+  class="icon-18"
+  [ngStyle]="{ color: color }"
+>
+  {{ icon }}
+</mat-icon>
+<mat-icon *ngIf="testStatus === 'RUNNING'" class="icon-18" svgIcon="spinner">
+</mat-icon>

@@ -23,6 +23,11 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTreeModule } from '@angular/material/tree';
+import {
+  MatButtonToggleGroup,
+  MatButtonToggleModule,
+} from '@angular/material/button-toggle';
+import { IconsProviderModule } from './icons-provider.module';
 
 @NgModule({
   imports: [
@@ -47,12 +52,14 @@ import { MatTreeModule } from '@angular/material/tree';
     MatAutocompleteModule,
     MatTreeModule,
     MatSlideToggleModule,
+    MatButtonToggleModule,
     /** Covalent Modules */
     CovalentDialogsModule,
     CovalentSearchModule,
     /*others*/
     NgxMatSelectSearchModule,
     MatPasswordModule,
+    IconsProviderModule,
   ],
   exports: [
     FlexLayoutModule,
@@ -76,12 +83,14 @@ import { MatTreeModule } from '@angular/material/tree';
     MatAutocompleteModule,
     MatTreeModule,
     MatSlideToggleModule,
+    MatButtonToggleModule,
     /** Covalent Modules */
     CovalentDialogsModule,
     CovalentSearchModule,
     /*others*/
     NgxMatSelectSearchModule,
     MatPasswordModule,
+    IconsProviderModule,
   ],
 })
 export class UiMaterialModule {}
