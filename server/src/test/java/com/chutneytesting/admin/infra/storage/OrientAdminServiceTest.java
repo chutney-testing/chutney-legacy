@@ -35,7 +35,7 @@ public class OrientAdminServiceTest extends AbstractOrientDatabaseTest {
     public static void setUp() {
         OrientAdminServiceTest.initComponentDB(DATABASE_NAME);
 
-        orientRepository = new OrientComposableStepRepository(orientComponentDB);
+        orientRepository = new OrientComposableStepRepository(orientComponentDB, stepMapper);
         sut = new OrientAdminService(orientComponentDB);
         OLogManager.instance().setWarnEnabled(false);
     }

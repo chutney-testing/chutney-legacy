@@ -33,7 +33,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
     @BeforeClass
     public static void setUp() {
         OrientComposableStepRepositoryTest.initComponentDB(DATABASE_NAME);
-        sut = new OrientComposableTestCaseRepository(orientComponentDB);
+        sut = new OrientComposableTestCaseRepository(orientComponentDB, testCaseMapper);
         OLogManager.instance().setWarnEnabled(false);
         initComposableStepsRepository();
     }
@@ -51,7 +51,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
     );
 
     private static void initComposableStepsRepository() {
-        ComposableStepRepository funcComposableStepRepository = new OrientComposableStepRepository(orientComponentDB);
+        ComposableStepRepository funcComposableStepRepository = new OrientComposableStepRepository(orientComponentDB, stepMapper);
 
         ComposableStep FUNC_STEP = ComposableStep.builder()
             .withName("func step without children")

@@ -44,7 +44,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
     @BeforeClass
     public static void setUp() {
         OrientComposableStepRepositoryTest.initComponentDB(DATABASE_NAME);
-        sut = new OrientComposableStepRepository(orientComponentDB);
+        sut = new OrientComposableStepRepository(orientComponentDB, stepMapper);
         OLogManager.instance().setWarnEnabled(false);
     }
 

@@ -15,7 +15,7 @@ public class ComposedTestCasePreProcessor implements TestCasePreProcessor<Execut
     private final ComposedTestCaseDataSetPreProcessor dataSetPreProcessor;
 
     public ComposedTestCasePreProcessor(ObjectMapper objectMapper, GlobalvarRepository globalvarRepository, DataSetRepository dataSetRepository) {
-        this.parametersResolutionPreProcessor = new ComposedTestCaseParametersResolutionPreProcessor(globalvarRepository);
+        this.parametersResolutionPreProcessor = new ComposedTestCaseParametersResolutionPreProcessor(globalvarRepository, objectMapper);
         this.loopPreProcessor = new ComposedTestCaseLoopPreProcessor(objectMapper);
         this.dataSetPreProcessor = new ComposedTestCaseDataSetPreProcessor(dataSetRepository);
     }

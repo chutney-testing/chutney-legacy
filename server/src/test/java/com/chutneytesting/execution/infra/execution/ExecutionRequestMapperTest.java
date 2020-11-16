@@ -20,6 +20,7 @@ import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedScenario;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
+import com.chutneytesting.execution.domain.scenario.composed.StepImplementation;
 import com.chutneytesting.task.api.EmbeddedTaskEngine;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
@@ -99,12 +100,17 @@ public class ExecutionRequestMapperTest {
             )
         );
 
-        final String implementationFull = Files.contentOf(new File(Resources.getResource("raw_steps/raw_composable_implementation.json").getPath()), StandardCharsets.UTF_8);
+        final StepImplementation implementationFull = new StepImplementation(
+            "task-id",
+            "target name",
+            emptyMap(),
+            Maps.of("output1", "value1" ,"output2","value2" ,"output3", "value3" ,"output4", "value4")
+        );
 
         List<ExecutableComposedStep> steps = new ArrayList<>();
         steps.add(ExecutableComposedStep.builder()
             .withName("first child step")
-            .withImplementation(java.util.Optional.of(implementationFull))
+            .withImplementation(Optional.of(implementationFull))
             .build());
         steps.add(ExecutableComposedStep.builder()
             .withName("second child step - parent")

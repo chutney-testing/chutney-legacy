@@ -12,18 +12,28 @@ import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedScenario;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
+import com.chutneytesting.execution.domain.scenario.composed.StepImplementation;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.text.StringEscapeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ComposedTestCaseParametersResolutionPreProcessor implements TestCasePreProcessor<ExecutableComposedTestCase> {
 
-    private final GlobalvarRepository globalvarRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComposedTestCaseParametersResolutionPreProcessor.class);
 
-    ComposedTestCaseParametersResolutionPreProcessor(GlobalvarRepository globalvarRepository) {
+    private final GlobalvarRepository globalvarRepository;
+    private final ObjectMapper objectMapper;
+
+    ComposedTestCaseParametersResolutionPreProcessor(GlobalvarRepository globalvarRepository, ObjectMapper objectMapper) {
         this.globalvarRepository = globalvarRepository;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -74,16 +84,27 @@ public class ComposedTestCaseParametersResolutionPreProcessor implements TestCas
 
         // Preprocess substeps - Recurse
         return ExecutableComposedStep.builder()
-            .withName(replaceParams(composedStep.name, globalvarRepository.getFlatMap(), scopedDataset))
+            .withName(replaceParams(composedStep.name, globalVariable, scopedDataset))
             .withSteps(
                 subSteps.stream()
                     .map(f -> applyToComposedStep(f, scopedDataset, globalVariable))
                     .collect(Collectors.toList())
             )
-            .withImplementation(composedStep.stepImplementation.map(v -> replaceParams(v, globalvarRepository.getFlatMap(), scopedDataset, StringEscapeUtils::escapeJson)))
+            .withImplementation(composedStep.stepImplementation.flatMap(si -> applyToImplementation(si, scopedDataset, globalVariable)))
             .withStrategy(composedStep.strategy)
             .overrideDataSetWith(scopedDataset)
             .build();
+    }
+
+    private Optional<StepImplementation> applyToImplementation(StepImplementation stepImplementation, Map<String, String> scopedDataset, Map<String, String> globalVariable) {
+        try {
+            String blob = replaceParams(objectMapper.writeValueAsString(stepImplementation), globalVariable, scopedDataset, StringEscapeUtils::escapeJson);
+            StepImplementation impl = objectMapper.readValue(blob, StepImplementation.class);
+            return Optional.ofNullable(impl);
+        } catch (IOException e) {
+            LOGGER.error("Error reading step implementation", e);
+            return Optional.ofNullable(stepImplementation);
+        }
     }
 
     private Map<String, String> applyOnCurrentStepDataSet(Map<String, String> currentStepDataset, Map<String, String> parentDataset, Map<String, String> globalVariables) {

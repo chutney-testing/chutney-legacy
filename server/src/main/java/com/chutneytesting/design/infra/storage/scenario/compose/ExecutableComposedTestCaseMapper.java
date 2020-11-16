@@ -8,12 +8,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class ExecutableComposedTestCaseMapper {
 
-    public ExecutableComposedTestCase map(ComposableTestCase composableTestCase) {
+    private final ExecutableComposedStepMapper executableComposedStepMapper;
+
+    public ExecutableComposedTestCaseMapper(ExecutableComposedStepMapper executableComposedStepMapper) {
+        this.executableComposedStepMapper = executableComposedStepMapper;
+    }
+
+    public ExecutableComposedTestCase composableToExecutable(ComposableTestCase composableTestCase) {
         return new ExecutableComposedTestCase(
             composableTestCase.id,
             composableTestCase.metadata,
             ExecutableComposedScenario.builder()
-                .withComposedSteps(map(composableTestCase.composableScenario.composableSteps))
+                .withComposedSteps(executableComposedStepMapper.composableToExecutable(composableTestCase.composableScenario.composableSteps))
                 .withParameters(composableTestCase.composableScenario.parameters)
                 .build());
     }

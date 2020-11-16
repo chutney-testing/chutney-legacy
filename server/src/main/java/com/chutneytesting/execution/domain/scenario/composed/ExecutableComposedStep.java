@@ -4,6 +4,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
+import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
@@ -59,7 +60,7 @@ public class ExecutableComposedStep {
                 ofNullable(name).orElse(""),
                 ofNullable(steps).orElse(emptyList()),
                 ofNullable(parameters).orElse(emptyMap()),
-                ofNullable(implementation).orElse(StepImplementation.NONE),
+                ofNullable(implementation).orElse(empty()),
                 ofNullable(strategy).orElse(Strategy.DEFAULT),
                 unmodifiableMap(ofNullable(dataSet).orElse(emptyMap()))
             );

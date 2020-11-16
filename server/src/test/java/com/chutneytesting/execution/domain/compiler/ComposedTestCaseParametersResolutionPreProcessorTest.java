@@ -1,30 +1,35 @@
 package com.chutneytesting.execution.domain.compiler;
 
 import static java.lang.String.format;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
-import static java.util.Optional.ofNullable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.chutneytesting.WebConfiguration;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedScenario;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
+import com.chutneytesting.execution.domain.scenario.composed.StepImplementation;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import org.apache.groovy.util.Maps;
 import org.junit.Before;
 import org.junit.Test;
 
 public class ComposedTestCaseParametersResolutionPreProcessorTest {
 
+    private final ObjectMapper objectMapper = new WebConfiguration().objectMapper();
     private GlobalvarRepository globalvarRepository;
 
     @Before
@@ -40,7 +45,7 @@ public class ComposedTestCaseParametersResolutionPreProcessorTest {
     public void should_replace_composableTestCase_scenario_parameters_with_scoped_data_set_values() {
         // Given
         String actionName = "simple action on target %1$s";
-        String actionImplementation = "{\"identifier\": \"http-get\", \"target\": \"%1$s\", \"inputs\": []}";
+        StepImplementation actionImplementation = new StepImplementation("http-get", "**target**", emptyMap(), emptyMap());
         String stepName = "step with %1$s - %2$s - %3$s";
         String testCaseTitle = "test case testCaseTitle with parameter %1$s";
         String testCaseDescription = "test case description with parameter %1$s - %2$s";
@@ -53,7 +58,7 @@ public class ComposedTestCaseParametersResolutionPreProcessorTest {
             .withName(format(actionName, "**target**"))
             .withStrategy(retryStrategy)
             .withParameters(singletonMap("target", "default target"))
-            .withImplementation(ofNullable(format(actionImplementation, "**target**")))
+            .withImplementation(Optional.of(actionImplementation))
             .build();
 
         ExecutableComposedStep step = ExecutableComposedStep.builder()
@@ -112,7 +117,7 @@ public class ComposedTestCaseParametersResolutionPreProcessorTest {
                 .build(),
             dataSet);
 
-        ComposedTestCaseParametersResolutionPreProcessor sut = new ComposedTestCaseParametersResolutionPreProcessor(globalvarRepository);
+        ComposedTestCaseParametersResolutionPreProcessor sut = new ComposedTestCaseParametersResolutionPreProcessor(globalvarRepository, objectMapper);
         // When
         final ExecutableComposedTestCase composableTestCaseProcessed = sut.apply(
             new ExecutionRequest(composableTestCase, environment, "user")

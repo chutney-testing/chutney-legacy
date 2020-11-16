@@ -103,7 +103,7 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
     @Override
     public ExecutableComposedStep findExecutableById(String recordId) {
         ComposableStep composableStep = findById(recordId);
-        return composedStepMapper.map(composableStep);
+        return composedStepMapper.composableToExecutable(composableStep);
     }
 
     @Override

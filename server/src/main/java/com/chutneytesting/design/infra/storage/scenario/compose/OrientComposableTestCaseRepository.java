@@ -38,11 +38,11 @@ public class OrientComposableTestCaseRepository implements ComposableTestCaseRep
     private static final Logger LOGGER = LoggerFactory.getLogger(OrientComposableTestCaseRepository.class);
 
     private ODatabasePool componentDBPool;
-    private ExecutableComposedTestCaseMapper mapper;
+    private ExecutableComposedTestCaseMapper testCaseMapper;
 
-    public OrientComposableTestCaseRepository(OrientComponentDB orientComponentDB, ExecutableComposedTestCaseMapper mapper) {
+    public OrientComposableTestCaseRepository(OrientComponentDB orientComponentDB, ExecutableComposedTestCaseMapper testCaseMapper) {
         this.componentDBPool = orientComponentDB.dbPool();
-        this.mapper = mapper;
+        this.testCaseMapper = testCaseMapper;
     }
 
     @Override
@@ -85,7 +85,7 @@ public class OrientComposableTestCaseRepository implements ComposableTestCaseRep
     @Override
     public ExecutableComposedTestCase findExecutableById(String composableTestCaseId) {
         ComposableTestCase composableTestCase = findById(composableTestCaseId);
-        return mapper.map(composableTestCase);
+        return testCaseMapper.composableToExecutable(composableTestCase);
     }
 
     private static final String QUERY_SELECT_ALL = "SELECT @rid FROM " + TESTCASE_CLASS + "";
