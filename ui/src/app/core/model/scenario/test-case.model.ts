@@ -1,5 +1,5 @@
 import { areEquals, Equals } from '@shared/equals';
-import { cloneAsPossible, Clonable } from '@shared/clonable';
+import { Clonable, cloneAsPossible } from '@shared/clonable';
 
 import { KeyValue } from '@core/model/component-task.model';
 import { Execution } from '@core/model/scenario/execution.model';

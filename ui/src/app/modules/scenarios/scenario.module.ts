@@ -5,14 +5,14 @@ import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // External libs
 import { MomentModule } from 'angular2-moment';
-import { NgbModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FileSaverModule } from 'ngx-filesaver';
 import { AngularMultiSelectModule } from 'angular2-multiselect-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-    PerfectScrollbarModule,
+    PERFECT_SCROLLBAR_CONFIG,
     PerfectScrollbarConfigInterface,
-    PERFECT_SCROLLBAR_CONFIG
+    PerfectScrollbarModule
 } from 'ngx-perfect-scrollbar';
 // Internal common
 import { SharedModule } from '@shared/shared.module';

@@ -1,4 +1,4 @@
-import { Equals, areEquals } from '@shared/equals';
+import { areEquals, Equals } from '@shared/equals';
 import { Clonable, cloneAsPossible } from '@shared/clonable';
 import { ComponentTask, KeyValue } from '../component-task.model';
 

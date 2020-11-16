@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { TestCase, FunctionalStep, Execution, TechnicalStep, Entry, Table, Row } from '@model';
+import { Entry, Execution, FunctionalStep, Row, Table, TechnicalStep, TestCase } from '@model';
 
 @Component({
     selector: 'chutney-showroom',

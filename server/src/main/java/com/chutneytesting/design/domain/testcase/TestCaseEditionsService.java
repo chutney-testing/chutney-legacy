@@ -37,7 +37,7 @@ public class TestCaseEditionsService {
             return testCaseEdition;
         }
 
-        throw new IllegalStateException("Cannot add edition whithout exception !!");
+        throw new IllegalStateException("Cannot lock scenario edition");
     }
 
     public void endTestCaseEdition(String testCaseId, String user) {

@@ -1,18 +1,18 @@
-import { TestBed, async } from '@angular/core/testing';
+import { async, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ReactiveFormsModule, FormsModule, FormArray } from '@angular/forms';
+import { FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MomentModule } from 'angular2-moment';
 import { TranslateModule } from '@ngx-translate/core';
-import { DragulaService, DragulaModule } from 'ng2-dragula';
+import { DragulaModule, DragulaService } from 'ng2-dragula';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { of } from 'rxjs';
 
 import { SharedModule } from '@shared/shared.module';
 import { MoleculesModule } from '../../../../../molecules/molecules.module';
 import { ComponentService } from '@core/services';
-import { ComponentTask, ScenarioComponent, KeyValue } from '@core/model';
+import { ComponentTask, KeyValue, ScenarioComponent } from '@core/model';
 import { ComponentEditionComponent } from './component-edition.component';
 import { ScenarioCampaignsComponent } from '../../sub/scenario-campaigns/scenario-campaigns.component';
 import { ActivatedRouteStub } from 'src/app/testing/activated-route-stub';
