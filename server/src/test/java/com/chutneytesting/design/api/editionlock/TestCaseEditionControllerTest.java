@@ -1,4 +1,4 @@
-package com.chutneytesting.design.api.testcase;
+package com.chutneytesting.design.api.editionlock;
 
 import static com.chutneytesting.security.domain.User.ANONYMOUS_USER;
 import static java.time.Instant.now;
@@ -16,8 +16,8 @@ import com.chutneytesting.RestExceptionHandler;
 import com.chutneytesting.WebConfiguration;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
-import com.chutneytesting.design.domain.testcase.TestCaseEdition;
-import com.chutneytesting.design.domain.testcase.TestCaseEditionsService;
+import com.chutneytesting.design.domain.editionlock.TestCaseEdition;
+import com.chutneytesting.design.domain.editionlock.TestCaseEditionsService;
 import com.chutneytesting.security.domain.UserService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,4 +1,4 @@
-package com.chutneytesting.design.infra.storage;
+package com.chutneytesting.design.infra.storage.globalvar;
 
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
 

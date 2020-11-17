@@ -11,7 +11,7 @@ import com.chutneytesting.design.api.scenario.v2_0.dto.GwtTestCaseDto;
 import com.chutneytesting.design.api.scenario.v2_0.dto.ImmutableGwtScenarioDto;
 import com.chutneytesting.design.api.scenario.v2_0.dto.ImmutableGwtStepDto;
 import com.chutneytesting.design.api.scenario.v2_0.dto.ImmutableGwtTestCaseDto;
-import com.chutneytesting.design.api.testcase.TestCaseEditionDto;
+import com.chutneytesting.design.api.editionlock.TestCaseEditionDto;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;

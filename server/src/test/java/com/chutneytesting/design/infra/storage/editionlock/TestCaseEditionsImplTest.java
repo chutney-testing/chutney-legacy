@@ -1,11 +1,11 @@
-package com.chutneytesting.design.infra.testcase;
+package com.chutneytesting.design.infra.storage.editionlock;
 
 import static java.time.Instant.now;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
-import com.chutneytesting.design.domain.testcase.TestCaseEdition;
-import com.chutneytesting.design.domain.testcase.TestCaseEditions;
+import com.chutneytesting.design.domain.editionlock.TestCaseEdition;
+import com.chutneytesting.design.domain.editionlock.TestCaseEditions;
 import java.util.concurrent.TimeUnit;
 import org.junit.Before;
 import org.junit.Test;

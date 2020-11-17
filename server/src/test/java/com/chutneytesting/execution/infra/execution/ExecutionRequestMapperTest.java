@@ -17,16 +17,14 @@ import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.SecurityInfoDto;
 import com.chutneytesting.engine.api.execution.TargetDto;
 import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedScenario;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import com.chutneytesting.execution.domain.scenario.composed.StepImplementation;
-import com.chutneytesting.task.api.EmbeddedTaskEngine;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
 import java.io.File;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,7 +41,6 @@ public class ExecutionRequestMapperTest {
     private ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
     private EnvironmentRepository environmentRepository = mock(EnvironmentRepository.class);
     private CurrentNetworkDescription currentNetworkDescription = mock(CurrentNetworkDescription.class);
-    private EmbeddedTaskEngine embeddedTaskEngine = mock(EmbeddedTaskEngine.class);
 
     private ExecutionRequestMapper sut = new ExecutionRequestMapper(objectMapper, environmentRepository, currentNetworkDescription);
 
@@ -66,7 +63,7 @@ public class ExecutionRequestMapperTest {
     }
 
     @Test
-    public void should_map_composable_test_case_to_execution_request() {
+    public void should_map_composed_test_case_to_execution_request() {
         // Given
         String expectedType = "task-id";
         String expectedTargetId = "target name";
@@ -132,7 +129,7 @@ public class ExecutionRequestMapperTest {
                     Arrays.asList(
                         ExecutableComposedStep.builder()
                             .withName("first root step")
-                            .withImplementation(java.util.Optional.of(implementationFull))
+                            .withImplementation(Optional.of(implementationFull))
                             .build(),
                         ExecutableComposedStep.builder()
                             .withName("second root step - parent")

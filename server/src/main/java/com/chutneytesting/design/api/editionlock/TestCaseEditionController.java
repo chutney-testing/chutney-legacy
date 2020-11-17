@@ -1,11 +1,11 @@
-package com.chutneytesting.design.api.testcase;
+package com.chutneytesting.design.api.editionlock;
 
 import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
 import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
 import static java.util.stream.Collectors.toList;
 
-import com.chutneytesting.design.domain.testcase.TestCaseEdition;
-import com.chutneytesting.design.domain.testcase.TestCaseEditionsService;
+import com.chutneytesting.design.domain.editionlock.TestCaseEdition;
+import com.chutneytesting.design.domain.editionlock.TestCaseEditionsService;
 import com.chutneytesting.security.domain.UserService;
 import java.util.List;
 import org.springframework.http.MediaType;

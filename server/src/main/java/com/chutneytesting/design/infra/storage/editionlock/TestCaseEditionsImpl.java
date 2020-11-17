@@ -1,7 +1,7 @@
-package com.chutneytesting.design.infra.testcase;
+package com.chutneytesting.design.infra.storage.editionlock;
 
-import com.chutneytesting.design.domain.testcase.TestCaseEdition;
-import com.chutneytesting.design.domain.testcase.TestCaseEditions;
+import com.chutneytesting.design.domain.editionlock.TestCaseEdition;
+import com.chutneytesting.design.domain.editionlock.TestCaseEditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;

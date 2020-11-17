@@ -1,7 +1,7 @@
-package com.chutneytesting.design.domain.testcase;
+package com.chutneytesting.design.domain.editionlock;
 
-import static com.chutneytesting.design.domain.testcase.TestCaseEdition.byEditor;
-import static com.chutneytesting.design.domain.testcase.TestCaseEdition.byId;
+import static com.chutneytesting.design.domain.editionlock.TestCaseEdition.byEditor;
+import static com.chutneytesting.design.domain.editionlock.TestCaseEdition.byId;
 import static java.time.Instant.now;
 
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;

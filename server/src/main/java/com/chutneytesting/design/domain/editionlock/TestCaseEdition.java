@@ -1,4 +1,4 @@
-package com.chutneytesting.design.domain.testcase;
+package com.chutneytesting.design.domain.editionlock;
 
 import static java.util.Objects.requireNonNull;
 

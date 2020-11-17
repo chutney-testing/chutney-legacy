@@ -2,7 +2,6 @@ package com.chutneytesting.design.infra.storage.scenario.compose;
 
 import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.composableStepToVertex;
 import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.vertexToComposableStep;
-import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.vertexToExecutableComposedStep;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.GE_STEP_CLASS;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.GE_STEP_CLASS_PROPERTY_PARAMETERS;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS;
@@ -16,7 +15,7 @@ import static com.chutneytesting.design.infra.storage.scenario.compose.orient.lu
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.lucene.LuceneUtils.escapeLuceneSearchQuery;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.lucene.LuceneUtils.forceAllRequiredTerm;
 
-import com.chutneytesting.design.domain.compose.AlreadyExistingComposableStepException;
+import com.chutneytesting.design.domain.scenario.compose.AlreadyExistingComposableStepException;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStepCyclicDependencyException;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStepNotFoundException;

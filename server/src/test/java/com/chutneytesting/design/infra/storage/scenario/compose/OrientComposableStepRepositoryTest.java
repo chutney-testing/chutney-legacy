@@ -4,7 +4,7 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.chutneytesting.design.domain.compose.AlreadyExistingComposableStepException;
+import com.chutneytesting.design.domain.scenario.compose.AlreadyExistingComposableStepException;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStepCyclicDependencyException;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStepRepository;

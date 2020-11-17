@@ -2,7 +2,7 @@ package com.chutneytesting;
 
 import com.chutneytesting.admin.domain.BackupNotFoundException;
 import com.chutneytesting.design.domain.campaign.CampaignNotFoundException;
-import com.chutneytesting.design.domain.compose.AlreadyExistingComposableStepException;
+import com.chutneytesting.design.domain.scenario.compose.AlreadyExistingComposableStepException;
 import com.chutneytesting.design.domain.dataset.DataSetNotFoundException;
 import com.chutneytesting.design.domain.environment.AlreadyExistingEnvironmentException;
 import com.chutneytesting.design.domain.environment.AlreadyExistingTargetException;

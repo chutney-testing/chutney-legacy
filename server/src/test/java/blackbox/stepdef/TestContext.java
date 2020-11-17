@@ -12,7 +12,7 @@ import static blackbox.stepdef.TestContext.ContextKey.STATUS;
 import static blackbox.stepdef.TestContext.ContextKey.TESTCASE_EDITION;
 import static blackbox.stepdef.TestContext.ContextKey.TRUSTSTORE_PATH;
 
-import com.chutneytesting.design.api.testcase.TestCaseEditionDto;
+import com.chutneytesting.design.api.editionlock.TestCaseEditionDto;
 import java.util.HashMap;
 import java.util.Map;
 

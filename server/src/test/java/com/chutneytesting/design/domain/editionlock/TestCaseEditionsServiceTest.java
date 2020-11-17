@@ -1,4 +1,4 @@
-package com.chutneytesting.design.domain.testcase;
+package com.chutneytesting.design.domain.editionlock;
 
 import static java.time.Instant.now;
 import static java.util.Collections.emptyList;

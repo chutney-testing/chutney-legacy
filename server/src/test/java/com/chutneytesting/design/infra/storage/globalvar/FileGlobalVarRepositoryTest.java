@@ -1,9 +1,10 @@
-package com.chutneytesting.design.infra.storage;
+package com.chutneytesting.design.infra.storage.globalvar;
 
-import static com.chutneytesting.design.infra.storage.FileGlobalVarRepository.ROOT_DIRECTORY_NAME;
+import static com.chutneytesting.design.infra.storage.globalvar.FileGlobalVarRepository.ROOT_DIRECTORY_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
+import com.chutneytesting.design.infra.storage.globalvar.FileGlobalVarRepository;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;

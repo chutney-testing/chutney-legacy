@@ -273,7 +273,7 @@ public class ComposedTestCasePreProcessorTest {
     }
 
     @Test
-    public void should_generate_ComposableExecutableTestCase_scenario_steps_with_loop_values() {
+    public void should_generate_composed_scenario_steps_with_loop_values() {
         // setup
         Map<String, String> map = new HashMap<>();
         map.put("key.1", "value1");
@@ -328,7 +328,7 @@ public class ComposedTestCasePreProcessorTest {
             "step param", "dataset step param"
         );
 
-        ExecutableComposedTestCase ExecutableComposedTestCase = new ExecutableComposedTestCase(
+        ExecutableComposedTestCase executableComposedTestCase = new ExecutableComposedTestCase(
             "1",
             TestCaseMetadataImpl.builder()
                 .withCreationDate(Instant.now())
@@ -354,11 +354,11 @@ public class ComposedTestCasePreProcessorTest {
             dataSet);
 
         final ExecutableComposedTestCase executableComposedTestCaseProcessed = sut.apply(
-            new ExecutionRequest(ExecutableComposedTestCase, environment, userId)
+            new ExecutionRequest(executableComposedTestCase, environment, userId)
         );
 
         // Then
-        assertThat(executableComposedTestCaseProcessed.id()).isEqualTo(ExecutableComposedTestCase.id());
+        assertThat(executableComposedTestCaseProcessed.id()).isEqualTo(executableComposedTestCase.id());
         assertThat(executableComposedTestCaseProcessed.metadata.title()).isEqualTo(format(testCaseTitle, dataSet.get("testcase title")));
         assertThat(executableComposedTestCaseProcessed.metadata.description()).isEqualTo(testCaseDescription);
 

@@ -1,4 +1,4 @@
-package com.chutneytesting.design.api.testcase;
+package com.chutneytesting.design.api.editionlock;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
