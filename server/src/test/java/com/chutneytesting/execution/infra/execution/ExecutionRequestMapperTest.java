@@ -70,38 +70,23 @@ public class ExecutionRequestMapperTest {
         SecurityInfoDto securityDto = new SecurityInfoDto(null, null, null, null, null, null);
         TargetDto expectedTarget = new TargetDto(expectedTargetId, "", emptyMap(), securityDto, emptyList());
 
-        LinkedHashMap<String, Object> expectedOutputs = new LinkedHashMap<>();
-        expectedOutputs.put("output1", "value1");
-        expectedOutputs.put("output2", "value2");
-        expectedOutputs.put("output3", "value3");
-        expectedOutputs.put("output4", "value4");
+        LinkedHashMap<String, Object> expectedOutputs = new LinkedHashMap<>(Maps.of(
+            "output1", "value1",
+            "output2", "value2"
+        ));
 
-        LinkedHashMap<String, Object> expectedInputs = new LinkedHashMap<>();
-        // Simple inputs
-        expectedInputs.put("input 1 name", "v1 input 1 name");
-        expectedInputs.put("input name empty", null);
-        // List inputs
-        expectedInputs.put("list 1 input name", Arrays.asList("v1 list 1 input", "v2 list 1 input"));
-        expectedInputs.put("list 2 input name empty", emptyList());
-        // Map inputs
-        expectedInputs.put("map 1 input name",
+        LinkedHashMap<String, Object> expectedInputs = new LinkedHashMap<>(
             Maps.of(
-                "k1 map input", "v1 map 1 input",
-                "k2 map input", "v2 map 1 input",
-                "k3 map input", "v3 map 1 input",
-                "k4 map input", "v4 map 1 input"));
-        expectedInputs.put("map 2 input name with empty",
-            Maps.of(
-                "k1 map input", "v1 map 2 input",
-                "k2 map input empty", ""
+                "input 1 name", "v1 input 1 name",
+                "input name empty", null
             )
         );
 
         final StepImplementation implementationFull = new StepImplementation(
             "task-id",
             "target name",
-            emptyMap(),
-            Maps.of("output1", "value1" ,"output2","value2" ,"output3", "value3" ,"output4", "value4")
+            Maps.of( "input 1 name", "v1 input 1 name", "input name empty", null),
+            Maps.of("output1", "value1", "output2", "value2")
         );
 
         List<ExecutableComposedStep> steps = new ArrayList<>();
@@ -197,16 +182,16 @@ public class ExecutionRequestMapperTest {
         assertThat(stepDefinitionRequestDto.name).isEqualTo(name);
         assertThat(stepDefinitionRequestDto.type).isEqualTo(implementationType);
         assertThat(stepDefinitionRequestDto.target).isEqualTo(implementationTarget);
-        stepDefinitionRequestDto.inputs.forEach((k, v) -> {
+        implementationInputs.forEach((k, v) -> {
             if (v instanceof String) {
-                assertThat(implementationInputs).containsEntry(k, v);
+                assertThat(stepDefinitionRequestDto.inputs).containsEntry(k, v);
             } else if (v instanceof List) {
-                assertThat((List) v).containsExactlyElementsOf((List) implementationInputs.get(k));
+                assertThat((List) v).containsExactlyElementsOf((List) stepDefinitionRequestDto.inputs.get(k));
             } else if (v instanceof Map) {
-                assertThat((Map) v).containsExactlyEntriesOf((Map) implementationInputs.get(k));
+                assertThat((Map) v).containsExactlyEntriesOf((Map) stepDefinitionRequestDto.inputs.get(k));
             }
         });
-        assertThat(stepDefinitionRequestDto.outputs).containsExactlyEntriesOf(implementationOuputs);
+        assertThat(implementationOuputs).containsExactlyEntriesOf(stepDefinitionRequestDto.outputs);
         assertThat(stepDefinitionRequestDto.steps).isEmpty();
     }
 }
