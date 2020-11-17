@@ -6,15 +6,15 @@ import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
 import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.chutneytesting.design.api.scenario.compose.dto.ComposableStepDto;
 import com.chutneytesting.design.api.scenario.compose.dto.ComposableTestCaseDto;
-import com.chutneytesting.design.api.scenario.compose.dto.FunctionalStepDto;
 import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableScenarioDto;
 import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableTestCaseDto;
-import com.chutneytesting.design.api.scenario.compose.dto.ImmutableFunctionalStepDto;
+import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableStepDto;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
-import com.chutneytesting.design.domain.scenario.compose.FunctionalStep;
+import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.design.domain.scenario.compose.StepUsage;
 import com.chutneytesting.tools.ui.ImmutableKeyValue;
 import com.chutneytesting.tools.ui.KeyValue;
@@ -40,7 +40,7 @@ public class ComposableTestCaseMapperTest {
             .scenario(
                 ImmutableComposableScenarioDto.builder()
                     .componentSteps(Collections.singletonList(
-                        ImmutableFunctionalStepDto.builder()
+                        ImmutableComposableStepDto.builder()
                             .id("30-10")
                             .name("First default functional ref")
                             .task("{ \"type\": \"default-identifier\" }")
@@ -55,7 +55,7 @@ public class ComposableTestCaseMapperTest {
                                     )
                                 )
                             )
-                            .usage(FunctionalStepDto.StepUsage.STEP)
+                            .usage(ComposableStepDto.StepUsage.STEP)
                             .build()))
                     .parameters(Arrays.asList(
                         ImmutableKeyValue.builder().key("scenario key valued").value("scenario value").build(),
@@ -93,9 +93,9 @@ public class ComposableTestCaseMapperTest {
                 .withVersion(666)
                 .build(),
             ComposableScenario.builder()
-                .withFunctionalSteps(
+                .withComposableSteps(
                     Collections.singletonList(
-                        FunctionalStep.builder()
+                        ComposableStep.builder()
                             .withId("#30:10")
                             .withName("First default functional ref")
                             .withImplementation(Optional.of("{ \"type\": \"default-identifier\" }"))

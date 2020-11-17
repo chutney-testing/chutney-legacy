@@ -16,11 +16,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
-public class FunctionalStep {
+public class ComposableStep {
 
     public final String id;
     public final String name;
-    public final List<FunctionalStep> steps;
+    public final List<ComposableStep> steps;
     public final Map<String, String> parameters;
     public final Optional<String> implementation;
     public final Optional<StepUsage> usage;
@@ -28,7 +28,7 @@ public class FunctionalStep {
     public final Map<String, String> dataSet;
     public final List<String> tags;
 
-    private FunctionalStep(String id, String name, List<FunctionalStep> steps, Map<String, String> parameters, Optional<String> implementation, Optional<StepUsage> usage, Strategy strategy, Map<String, String> dataSet, List<String> tags) {
+    private ComposableStep(String id, String name, List<ComposableStep> steps, Map<String, String> parameters, Optional<String> implementation, Optional<StepUsage> usage, Strategy strategy, Map<String, String> dataSet, List<String> tags) {
         this.id = id;
         this.name = name;
         this.steps = steps;
@@ -47,15 +47,15 @@ public class FunctionalStep {
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    public static FunctionalStepBuilder builder() {
-        return new FunctionalStepBuilder();
+    public static ComposableStepBuilder builder() {
+        return new ComposableStepBuilder();
     }
 
-    public static class FunctionalStepBuilder {
+    public static class ComposableStepBuilder {
 
         private String id;
         private String name;
-        private List<FunctionalStep> steps;
+        private List<ComposableStep> steps;
         private Map<String, String> parameters = new LinkedHashMap<>();
         private Optional<String> implementation;
         private Optional<StepUsage> usage;
@@ -63,11 +63,11 @@ public class FunctionalStep {
         private Map<String, String> dataSet = new LinkedHashMap<>();
         private List<String> tags = new ArrayList<>();
 
-        private FunctionalStepBuilder() {
+        private ComposableStepBuilder() {
         }
 
-        public FunctionalStep build() {
-            return new FunctionalStep(
+        public ComposableStep build() {
+            return new ComposableStep(
                 ofNullable(id).orElse(""),
                 ofNullable(name).orElse(""),
                 ofNullable(steps).orElse(emptyList()),
@@ -80,66 +80,66 @@ public class FunctionalStep {
             );
         }
 
-        public FunctionalStepBuilder withId(String id) {
+        public ComposableStepBuilder withId(String id) {
             this.id = id;
             return this;
         }
 
-        public FunctionalStepBuilder withName(String name) {
+        public ComposableStepBuilder withName(String name) {
             this.name = name;
             return this;
         }
 
-        public FunctionalStepBuilder withSteps(List<FunctionalStep> steps) {
+        public ComposableStepBuilder withSteps(List<ComposableStep> steps) {
             this.steps = unmodifiableList(steps);
-            steps.forEach(functionalStep ->
+            steps.forEach(composableStep ->
                 addDataSet(
-                    functionalStep.dataSetGlobalParameters()
+                    composableStep.dataSetGlobalParameters()
                 ));
             return this;
         }
 
-        public FunctionalStepBuilder withParameters(Map<String, String> parameters) {
+        public ComposableStepBuilder withParameters(Map<String, String> parameters) {
             this.parameters = unmodifiableMap(parameters);
             return this;
         }
 
-        public FunctionalStepBuilder overrideDataSetWith(Map<String, String> dataSet) {
+        public ComposableStepBuilder overrideDataSetWith(Map<String, String> dataSet) {
             this.dataSet = dataSet;
             return this;
         }
 
-        public FunctionalStepBuilder withImplementation(Optional<String> implementation) {
+        public ComposableStepBuilder withImplementation(Optional<String> implementation) {
             this.implementation = implementation;
             return this;
         }
 
-        public FunctionalStepBuilder withUsage(Optional<StepUsage> usage) {
+        public ComposableStepBuilder withUsage(Optional<StepUsage> usage) {
             this.usage = usage;
             return this;
         }
 
-        public FunctionalStepBuilder withStrategy(Strategy strategy) {
+        public ComposableStepBuilder withStrategy(Strategy strategy) {
             this.strategy = strategy;
             return this;
         }
 
-        public FunctionalStepBuilder addParameters(Map<String, String> parameters) {
+        public ComposableStepBuilder addParameters(Map<String, String> parameters) {
             ofNullable(parameters).ifPresent(this.parameters::putAll);
             return this;
         }
 
-        public FunctionalStepBuilder addDataSet(Map<String, String> dataSet) {
+        public ComposableStepBuilder addDataSet(Map<String, String> dataSet) {
             ofNullable(dataSet).ifPresent(this.dataSet::putAll);
             return this;
         }
 
-        public FunctionalStepBuilder withTags(List<String> tags) {
+        public ComposableStepBuilder withTags(List<String> tags) {
             this.tags = tags;
             return this;
         }
 
-        public final FunctionalStepBuilder from(FunctionalStep instance) {
+        public final ComposableStepBuilder from(ComposableStep instance) {
             this.id = instance.id;
             this.name = instance.name;
             this.steps = instance.steps;
@@ -154,7 +154,7 @@ public class FunctionalStep {
 
     @Override
     public String toString() {
-        return "FunctionalStep{" +
+        return "ComposableStep{" +
             "id='" + id + '\'' +
             ", name='" + name + '\'' +
             ", steps=" + steps +
@@ -170,7 +170,7 @@ public class FunctionalStep {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        FunctionalStep that = (FunctionalStep) o;
+        ComposableStep that = (ComposableStep) o;
         return Objects.equals(id, that.id) &&
             Objects.equals(name, that.name) &&
             Objects.equals(steps, that.steps) &&

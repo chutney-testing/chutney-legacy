@@ -10,13 +10,13 @@ import java.util.Optional;
 import org.immutables.value.Value;
 
 @Value.Immutable
-@JsonSerialize(as = ImmutableFunctionalStepDto.class)
-@JsonDeserialize(as = ImmutableFunctionalStepDto.class)
+@JsonSerialize(as = ImmutableComposableStepDto.class)
+@JsonDeserialize(as = ImmutableComposableStepDto.class)
 @Value.Style(jdkOnly = true)
-public interface FunctionalStepDto {
+public interface ComposableStepDto {
 
-    Comparator<FunctionalStepDto> stepDtoComparator = Comparator
-        .comparing(FunctionalStepDto::name, String.CASE_INSENSITIVE_ORDER);
+    Comparator<ComposableStepDto> stepDtoComparator = Comparator
+        .comparing(ComposableStepDto::name, String.CASE_INSENSITIVE_ORDER);
 
     Optional<String> id();
 
@@ -31,7 +31,7 @@ public interface FunctionalStepDto {
     Optional<String> task();
 
     @Value.Default()
-    default List<FunctionalStepDto> steps() { return Collections.emptyList(); }
+    default List<ComposableStepDto> steps() { return Collections.emptyList(); }
 
     @Value.Default()
     default List<KeyValue> parameters() { return Collections.emptyList(); }

@@ -17,7 +17,7 @@ import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.SecurityInfoDto;
 import com.chutneytesting.engine.api.execution.TargetDto;
 import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedFunctionalStep;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedStep;
 import com.chutneytesting.execution.domain.scenario.ExecutableComposedScenario;
 import com.chutneytesting.execution.domain.scenario.ExecutableComposedTestCase;
 import com.chutneytesting.task.api.EmbeddedTaskEngine;
@@ -101,15 +101,15 @@ public class ExecutionRequestMapperTest {
 
         final String implementationFull = Files.contentOf(new File(Resources.getResource("raw_steps/raw_composable_implementation.json").getPath()), StandardCharsets.UTF_8);
 
-        List<ExecutableComposedFunctionalStep> steps = new ArrayList<>();
-        steps.add(ExecutableComposedFunctionalStep.builder()
+        List<ExecutableComposedStep> steps = new ArrayList<>();
+        steps.add(ExecutableComposedStep.builder()
             .withName("first child step")
             .withImplementation(java.util.Optional.of(implementationFull))
             .build());
-        steps.add(ExecutableComposedFunctionalStep.builder()
+        steps.add(ExecutableComposedStep.builder()
             .withName("second child step - parent")
             .withSteps(
-                Collections.singletonList(ExecutableComposedFunctionalStep.builder()
+                Collections.singletonList(ExecutableComposedStep.builder()
                     .withName("first inner child step")
                     .withImplementation(Optional.of(implementationFull))
                     .build())
@@ -122,13 +122,13 @@ public class ExecutionRequestMapperTest {
                 .withTitle("fake title")
                 .build(),
             ExecutableComposedScenario.builder()
-                .withFunctionalSteps(
+                .withComposedSteps(
                     Arrays.asList(
-                        ExecutableComposedFunctionalStep.builder()
+                        ExecutableComposedStep.builder()
                             .withName("first root step")
                             .withImplementation(java.util.Optional.of(implementationFull))
                             .build(),
-                        ExecutableComposedFunctionalStep.builder()
+                        ExecutableComposedStep.builder()
                             .withName("second root step - parent")
                             .withSteps(
                                 steps
@@ -154,21 +154,21 @@ public class ExecutionRequestMapperTest {
         assertThat(rootStep.steps).hasSize(2);
 
         ExecutionRequestDto.StepDefinitionRequestDto step = rootStep.steps.get(0);
-        assertStepDefinitionRequestDtoImplementation(step, testCase.composableScenario.functionalSteps.get(0).name, expectedType, expectedTarget, expectedInputs, expectedOutputs);
+        assertStepDefinitionRequestDtoImplementation(step, testCase.composedScenario.composedSteps.get(0).name, expectedType, expectedTarget, expectedInputs, expectedOutputs);
 
         step = rootStep.steps.get(1);
-        assertRootStepDefinitionRequestDto(step, testCase.composableScenario.functionalSteps.get(1).name);
+        assertRootStepDefinitionRequestDto(step, testCase.composedScenario.composedSteps.get(1).name);
         assertThat(step.steps).hasSize(2);
 
         step = rootStep.steps.get(1).steps.get(0);
-        assertStepDefinitionRequestDtoImplementation(step, testCase.composableScenario.functionalSteps.get(1).steps.get(0).name, expectedType, expectedTarget, expectedInputs, expectedOutputs);
+        assertStepDefinitionRequestDtoImplementation(step, testCase.composedScenario.composedSteps.get(1).steps.get(0).name, expectedType, expectedTarget, expectedInputs, expectedOutputs);
 
         step = rootStep.steps.get(1).steps.get(1);
-        assertRootStepDefinitionRequestDto(step, testCase.composableScenario.functionalSteps.get(1).steps.get(1).name);
+        assertRootStepDefinitionRequestDto(step, testCase.composedScenario.composedSteps.get(1).steps.get(1).name);
         assertThat(step.steps).hasSize(1);
 
         step = rootStep.steps.get(1).steps.get(1).steps.get(0);
-        assertStepDefinitionRequestDtoImplementation(step, testCase.composableScenario.functionalSteps.get(1).steps.get(1).steps.get(0).name, expectedType, expectedTarget, expectedInputs, expectedOutputs);
+        assertStepDefinitionRequestDtoImplementation(step, testCase.composedScenario.composedSteps.get(1).steps.get(1).steps.get(0).name, expectedType, expectedTarget, expectedInputs, expectedOutputs);
     }
 
     private void assertRootStepDefinitionRequestDto(ExecutionRequestDto.StepDefinitionRequestDto stepDefinitionRequestDto, String name) {

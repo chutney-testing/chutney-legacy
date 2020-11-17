@@ -1,15 +1,15 @@
 package com.chutneytesting.design.api.scenario.compose;
 
-import static com.chutneytesting.design.api.scenario.compose.mapper.FunctionalStepMapper.fromDto;
+import static com.chutneytesting.design.api.scenario.compose.mapper.ComposableStepMapper.fromDto;
 import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
 import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
 
-import com.chutneytesting.design.api.scenario.compose.dto.FunctionalStepDto;
+import com.chutneytesting.design.api.scenario.compose.dto.ComposableStepDto;
 import com.chutneytesting.design.api.scenario.compose.dto.ParentsStepDto;
-import com.chutneytesting.design.api.scenario.compose.mapper.FunctionalStepMapper;
+import com.chutneytesting.design.api.scenario.compose.mapper.ComposableStepMapper;
 import com.chutneytesting.design.api.scenario.compose.mapper.ParentStepMapper;
-import com.chutneytesting.design.domain.scenario.compose.FunctionalStep;
-import com.chutneytesting.design.domain.scenario.compose.StepRepository;
+import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
+import com.chutneytesting.design.domain.scenario.compose.ComposableStepRepository;
 import com.chutneytesting.design.domain.scenario.compose.StepUsage;
 import com.chutneytesting.tools.ImmutablePaginatedDto;
 import com.chutneytesting.tools.ImmutablePaginationRequestParametersDto;
@@ -36,34 +36,34 @@ public class StepController {
 
     static final String BASE_URL = "/api/steps/v1";
 
-    private StepRepository stepRepository;
+    private ComposableStepRepository composableStepRepository;
 
-    public StepController(StepRepository stepRepository) {
-        this.stepRepository = stepRepository;
+    public StepController(ComposableStepRepository composableStepRepository) {
+        this.composableStepRepository = composableStepRepository;
     }
 
     @PostMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public String save(@RequestBody FunctionalStepDto step) {
-        return toFrontId(stepRepository.save(fromDto(step)));
+    public String save(@RequestBody ComposableStepDto step) {
+        return toFrontId(composableStepRepository.save(fromDto(step)));
     }
 
     @DeleteMapping(path = "/{stepId}")
     public void deleteById(@PathVariable String stepId) {
-        stepRepository.deleteById(fromFrontId(stepId));
+        composableStepRepository.deleteById(fromFrontId(stepId));
     }
 
     @GetMapping(path = "/all", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public List<FunctionalStepDto> findAll() {
-        return stepRepository.findAll()
+    public List<ComposableStepDto> findAll() {
+        return composableStepRepository.findAll()
             .stream()
-            .map(FunctionalStepMapper::toDto)
-            .sorted(FunctionalStepDto.stepDtoComparator)
+            .map(ComposableStepMapper::toDto)
+            .sorted(ComposableStepDto.stepDtoComparator)
             .collect(Collectors.toList());
     }
 
     @GetMapping(path = "/{stepId}/parents", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ParentsStepDto findParents(@PathVariable String stepId) {
-        return ParentStepMapper.toDto(stepRepository.findParents(fromFrontId(stepId)));
+        return ParentStepMapper.toDto(composableStepRepository.findParents(fromFrontId(stepId)));
     }
 
     static final String FIND_STEPS_NAME_DEFAULT_VALUE = "";
@@ -72,15 +72,15 @@ public class StepController {
     static final String FIND_STEPS_LIMIT_DEFAULT_VALUE = "25";
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public PaginatedDto<FunctionalStepDto> findSteps(@RequestParam(defaultValue = FIND_STEPS_NAME_DEFAULT_VALUE) String name,
+    public PaginatedDto<ComposableStepDto> findSteps(@RequestParam(defaultValue = FIND_STEPS_NAME_DEFAULT_VALUE) String name,
                                                      @RequestParam(defaultValue = FIND_STEPS_USAGE_DEFAULT_VALUE) String usage,
                                                      @RequestParam(defaultValue = FIND_STEPS_START_DEFAULT_VALUE) Long start,
                                                      @RequestParam(defaultValue = FIND_STEPS_LIMIT_DEFAULT_VALUE) Long limit,
                                                      @RequestParam(required = false) String sort,
                                                      @RequestParam(required = false) String desc) {
 
-        PaginatedDto<FunctionalStep> functionalStepsPaginatedDto =
-            stepRepository.find(
+        PaginatedDto<ComposableStep> composableStepsPaginatedDto =
+            composableStepRepository.find(
                 ImmutablePaginationRequestParametersDto.builder()
                     .start(start)
                     .limit(limit)
@@ -89,36 +89,36 @@ public class StepController {
                     .sort(sort)
                     .desc(desc)
                     .build(),
-                FunctionalStep.builder()
+                ComposableStep.builder()
                     .withName(name)
                     .withUsage(StepUsage.fromName(usage))
                     .withSteps(Collections.emptyList())
                     .build()
             );
 
-        return ImmutablePaginatedDto.<FunctionalStepDto>builder()
-            .totalCount(functionalStepsPaginatedDto.totalCount())
+        return ImmutablePaginatedDto.<ComposableStepDto>builder()
+            .totalCount(composableStepsPaginatedDto.totalCount())
             .addAllData(
-                functionalStepsPaginatedDto.data().stream()
-                    .map(FunctionalStepMapper::toDto)
+                composableStepsPaginatedDto.data().stream()
+                    .map(ComposableStepMapper::toDto)
                     .collect(Collectors.toList())
             )
             .build();
     }
 
     @GetMapping(path = "/{stepId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public FunctionalStepDto findById(@PathVariable String stepId) {
-        return FunctionalStepMapper.toDto(
-            stepRepository.findById(fromFrontId(stepId))
+    public ComposableStepDto findById(@PathVariable String stepId) {
+        return ComposableStepMapper.toDto(
+            composableStepRepository.findById(fromFrontId(stepId))
         );
     }
 
     @PostMapping(path = "/search/name", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public List<FunctionalStepDto> findIdenticalStepsByName(@RequestBody String name) {
-        List<FunctionalStep> foundFSteps = stepRepository.queryByName(name);
+    public List<ComposableStepDto> findIdenticalStepsByName(@RequestBody String name) {
+        List<ComposableStep> foundFSteps = composableStepRepository.queryByName(name);
 
         return foundFSteps.stream()
-            .map(FunctionalStepMapper::toDto)
+            .map(ComposableStepMapper::toDto)
             .collect(Collectors.toList());
     }
 

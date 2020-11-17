@@ -4,11 +4,11 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.chutneytesting.design.domain.compose.AlreadyExistingFunctionalStepException;
-import com.chutneytesting.design.domain.scenario.compose.FunctionalStep;
-import com.chutneytesting.design.domain.scenario.compose.FunctionalStepCyclicDependencyException;
+import com.chutneytesting.design.domain.compose.AlreadyExistingComposableStepException;
+import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
+import com.chutneytesting.design.domain.scenario.compose.ComposableStepCyclicDependencyException;
+import com.chutneytesting.design.domain.scenario.compose.ComposableStepRepository;
 import com.chutneytesting.design.domain.scenario.compose.ParentStepId;
-import com.chutneytesting.design.domain.scenario.compose.StepRepository;
 import com.chutneytesting.design.domain.scenario.compose.StepUsage;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
@@ -37,14 +37,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 @SuppressWarnings({"SameParameterValue", "OptionalUsedAsFieldOrParameterType", "OptionalGetWithoutIsPresent"})
-public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTest {
+public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTest {
 
-    private static StepRepository sut;
+    private static ComposableStepRepository sut;
 
     @BeforeClass
     public static void setUp() {
-        OrientFunctionalStepRepositoryTest.initComponentDB(DATABASE_NAME);
-        sut = new OrientFunctionalStepRepository(orientComponentDB);
+        OrientComposableStepRepositoryTest.initComponentDB(DATABASE_NAME);
+        sut = new OrientComposableStepRepository(orientComponentDB);
         OLogManager.instance().setWarnEnabled(false);
     }
 
@@ -56,7 +56,7 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
 
     @AfterClass
     public static void tearDown() {
-        OrientFunctionalStepRepositoryTest.destroyDB(DATABASE_NAME);
+        OrientComposableStepRepositoryTest.destroyDB(DATABASE_NAME);
     }
 
     @Test
@@ -66,15 +66,15 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
         parameters.put("timeOut", "10 s");
         parameters.put("retryDelay", "10 s");
 
-        final FunctionalStep fStep = saveAndReload(
-            buildFunctionalStep(
+        final ComposableStep fStep = saveAndReload(
+            buildComposableStep(
                 "a thing is connected",
                 new Strategy("retry-with-timeout", parameters)
             )
         );
 
         // When
-        FunctionalStep foundFStep = sut.findById(fStep.id);
+        ComposableStep foundFStep = sut.findById(fStep.id);
 
         // Then
         assertThat(foundFStep).isNotNull();
@@ -89,15 +89,15 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
     public void should_find_saved_step_with_tags_when_search_by_id() {
         // Given
         List<String> tags = Stream.of("zug zug", "dabu").collect(toList());
-        final FunctionalStep fStep = saveAndReload(
-            buildFunctionalStep(
+        final ComposableStep fStep = saveAndReload(
+            buildComposableStep(
                 "a thing is connected",
                 tags
             )
         );
 
         // When
-        FunctionalStep foundFStep = sut.findById(fStep.id);
+        ComposableStep foundFStep = sut.findById(fStep.id);
 
         // Then
         assertThat(foundFStep).isNotNull();
@@ -109,15 +109,15 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
     @Test
     public void should_find_saved_step_with_loop_strategy_when_search_by_id() {
         // Given
-        final FunctionalStep fStep = saveAndReload(
-            buildFunctionalStep(
+        final ComposableStep fStep = saveAndReload(
+            buildComposableStep(
                 "a thing is connected",
                 new Strategy("Loop", Collections.singletonMap("data", "someData"))
             )
         );
 
         // When
-        FunctionalStep foundFStep = sut.findById(fStep.id);
+        ComposableStep foundFStep = sut.findById(fStep.id);
 
         // Then
         assertThat(foundFStep).isNotNull();
@@ -130,27 +130,27 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
     @Test
     public void should_find_all_steps_when_findAll_called() {
         should_save_all_func_steps_with_multiple_step_types_when_save_scenario();
-        List<FunctionalStep> all = sut.findAll();
+        List<ComposableStep> all = sut.findAll();
         assertThat(all).hasSize(7);
     }
 
     @Test
     public void should_save_all_func_steps_with_multiple_step_types_when_save_scenario() {
         // Given
-        final FunctionalStep f1 = saveAndReload(
-            buildFunctionalStep("when", StepUsage.WHEN));
-        final FunctionalStep f21 = saveAndReload(
-            buildFunctionalStep("then sub 1", StepUsage.THEN));
-        final FunctionalStep f22 = saveAndReload(
-            buildFunctionalStep("then sub 2 with implementation", StepUsage.THEN, "{\"type\": \"debug\"}"));
-        final FunctionalStep f23 = saveAndReload(
-            buildFunctionalStep("then sub 3 with implementation", StepUsage.THEN, "  \"type\": \"debug\"  "));
-        final FunctionalStep f24 = saveAndReload(
-            buildFunctionalStep("then sub 4", StepUsage.THEN));
-        final FunctionalStep f25 = saveAndReload(
-            buildFunctionalStep("then sub 5 with implementation", StepUsage.THEN, " {\r\"type\": \"debug\"\r} "));
-        final FunctionalStep f2 = buildFunctionalStep("then", StepUsage.THEN, f21, f22, f23, f24, f25);
-        List<FunctionalStep> steps = Arrays.asList(f1, f2);
+        final ComposableStep f1 = saveAndReload(
+            buildComposableStep("when", StepUsage.WHEN));
+        final ComposableStep f21 = saveAndReload(
+            buildComposableStep("then sub 1", StepUsage.THEN));
+        final ComposableStep f22 = saveAndReload(
+            buildComposableStep("then sub 2 with implementation", StepUsage.THEN, "{\"type\": \"debug\"}"));
+        final ComposableStep f23 = saveAndReload(
+            buildComposableStep("then sub 3 with implementation", StepUsage.THEN, "  \"type\": \"debug\"  "));
+        final ComposableStep f24 = saveAndReload(
+            buildComposableStep("then sub 4", StepUsage.THEN));
+        final ComposableStep f25 = saveAndReload(
+            buildComposableStep("then sub 5 with implementation", StepUsage.THEN, " {\r\"type\": \"debug\"\r} "));
+        final ComposableStep f2 = buildComposableStep("then", StepUsage.THEN, f21, f22, f23, f24, f25);
+        List<ComposableStep> steps = Arrays.asList(f1, f2);
 
         // When
         String record1 = sut.save(f1);
@@ -165,36 +165,36 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
     public void should_not_update_func_step_when_name_already_exists() {
         // Given
         String name = "a thing is connected";
-        sut.save(buildFunctionalStep(name));
+        sut.save(buildComposableStep(name));
 
         // When
-        assertThatThrownBy(() -> sut.save(buildFunctionalStep(name)))
-            .isInstanceOf(AlreadyExistingFunctionalStepException.class)
+        assertThatThrownBy(() -> sut.save(buildComposableStep(name)))
+            .isInstanceOf(AlreadyExistingComposableStepException.class)
             .hasMessageContaining("found duplicated key");
     }
 
     @Test
     public void should_update_func_step_when_id_already_exists() {
         // Given
-        final FunctionalStep subWithImplementation = saveAndReload(
-            buildFunctionalStep("sub with implementation", "{\"type\": \"debug\"}"));
+        final ComposableStep subWithImplementation = saveAndReload(
+            buildComposableStep("sub with implementation", "{\"type\": \"debug\"}"));
         String name = "a thing is connected";
         String fStepId = sut.save(
-            buildFunctionalStep(name, subWithImplementation)
+            buildComposableStep(name, subWithImplementation)
         );
 
         // When
         String newName = "another thing is connected";
         String newSubTechnicalContent = "{\"type\": \"success\"}";
-        final FunctionalStep newSub_with_implementation = saveAndReload(
-            buildFunctionalStep("sub with implementation", newSubTechnicalContent, subWithImplementation.id));
-        String updateFStepId = sut.save(FunctionalStep.builder()
+        final ComposableStep newSub_with_implementation = saveAndReload(
+            buildComposableStep("sub with implementation", newSubTechnicalContent, subWithImplementation.id));
+        String updateFStepId = sut.save(ComposableStep.builder()
             .withName(newName)
             .withId(fStepId)
             .withSteps(Collections.singletonList(newSub_with_implementation))
             .build()
         );
-        FunctionalStep updatedFStep = sut.findById(updateFStepId);
+        ComposableStep updatedFStep = sut.findById(updateFStepId);
 
         // Then
         assertThat(fStepId).isEqualTo(updateFStepId);
@@ -205,32 +205,32 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
     @Test
     public void should_find_saved_func_steps_by_page_when_find_called() {
         // Given
-        final FunctionalStep fStep_11 = saveAndReload(
-            buildFunctionalStep("sub something happen 1.1"));
-        final FunctionalStep fStep_12 = saveAndReload(
-            buildFunctionalStep("sub something happen 1.2 with implementation", StepUsage.GIVEN, "{\"type\": \"debug\"}"));
-        final FunctionalStep fStep_13 = saveAndReload(
-            buildFunctionalStep("sub something happen 1.3"));
-        final FunctionalStep fStep_1 = saveAndReload(
-            buildFunctionalStep("sub something happen 1", fStep_11, fStep_12, fStep_13));
-        final FunctionalStep fStep_2 = saveAndReload(
-            buildFunctionalStep("another sub something 2 with implementation", "{\"type\": \"debug\"}"));
-        final FunctionalStep fStep_3 = saveAndReload(
-            buildFunctionalStep("sub something happen 3"));
-        final FunctionalStep fStepRoot = saveAndReload(
-            buildFunctionalStep("something happen", fStep_1, fStep_2, fStep_3));
+        final ComposableStep fStep_11 = saveAndReload(
+            buildComposableStep("sub something happen 1.1"));
+        final ComposableStep fStep_12 = saveAndReload(
+            buildComposableStep("sub something happen 1.2 with implementation", StepUsage.GIVEN, "{\"type\": \"debug\"}"));
+        final ComposableStep fStep_13 = saveAndReload(
+            buildComposableStep("sub something happen 1.3"));
+        final ComposableStep fStep_1 = saveAndReload(
+            buildComposableStep("sub something happen 1", fStep_11, fStep_12, fStep_13));
+        final ComposableStep fStep_2 = saveAndReload(
+            buildComposableStep("another sub something 2 with implementation", "{\"type\": \"debug\"}"));
+        final ComposableStep fStep_3 = saveAndReload(
+            buildComposableStep("sub something happen 3"));
+        final ComposableStep fStepRoot = saveAndReload(
+            buildComposableStep("something happen", fStep_1, fStep_2, fStep_3));
 
-        List<FunctionalStep> fSteps = Arrays.asList(fStepRoot, fStep_11, fStep_12, fStep_13, fStep_1, fStep_2, fStep_3);
+        List<ComposableStep> fSteps = Arrays.asList(fStepRoot, fStep_11, fStep_12, fStep_13, fStep_1, fStep_2, fStep_3);
 
         // When
         long elementPerPage = 2;
-        PaginatedDto<FunctionalStep> foundFStepsPage1 = findWithPagination(1, elementPerPage);
-        PaginatedDto<FunctionalStep> foundFStepsPage2 = findWithPagination(3, elementPerPage);
-        PaginatedDto<FunctionalStep> foundFStepsPage3 = findWithPagination(5, elementPerPage);
-        PaginatedDto<FunctionalStep> foundFStepsPage4 = findWithPagination(7, elementPerPage);
+        PaginatedDto<ComposableStep> foundFStepsPage1 = findWithPagination(1, elementPerPage);
+        PaginatedDto<ComposableStep> foundFStepsPage2 = findWithPagination(3, elementPerPage);
+        PaginatedDto<ComposableStep> foundFStepsPage3 = findWithPagination(5, elementPerPage);
+        PaginatedDto<ComposableStep> foundFStepsPage4 = findWithPagination(7, elementPerPage);
 
         // Then
-        List<FunctionalStep> foundFSteps = new ArrayList<>();
+        List<ComposableStep> foundFSteps = new ArrayList<>();
         foundFSteps.addAll(foundFStepsPage1.data());
         foundFSteps.addAll(foundFStepsPage2.data());
         foundFSteps.addAll(foundFStepsPage3.data());
@@ -249,20 +249,20 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
     @Test
     public void should_find_saved_func_steps_with_filter_when_find_called() {
         // Given
-        final FunctionalStep fStep_1 = saveAndReload(
-            buildFunctionalStep("some thing is set", StepUsage.GIVEN));
-        final FunctionalStep fStep_2 = saveAndReload(
-            buildFunctionalStep("another thing happens", StepUsage.WHEN, "{\"type\": \"debug\"}"));
-        final FunctionalStep fStep_3 = saveAndReload(
-            buildFunctionalStep("the result is beauty", StepUsage.THEN));
-        final FunctionalStep fStepRoot = saveAndReload(
-            buildFunctionalStep("big root thing", fStep_1, fStep_2, fStep_3));
+        final ComposableStep fStep_1 = saveAndReload(
+            buildComposableStep("some thing is set", StepUsage.GIVEN));
+        final ComposableStep fStep_2 = saveAndReload(
+            buildComposableStep("another thing happens", StepUsage.WHEN, "{\"type\": \"debug\"}"));
+        final ComposableStep fStep_3 = saveAndReload(
+            buildComposableStep("the result is beauty", StepUsage.THEN));
+        final ComposableStep fStepRoot = saveAndReload(
+            buildComposableStep("big root thing", fStep_1, fStep_2, fStep_3));
 
         // When
-        PaginatedDto<FunctionalStep> filteredByNameFSteps = findWithFilters("beauty", null, null);
-        PaginatedDto<FunctionalStep> sortedFSteps = findWithFilters("", "name", null);
-        PaginatedDto<FunctionalStep> sortedDescendentFSteps = findWithFilters("", "name", "");
-        PaginatedDto<FunctionalStep> filteredFSteps = findWithFilters("thing", "name", "name");
+        PaginatedDto<ComposableStep> filteredByNameFSteps = findWithFilters("beauty", null, null);
+        PaginatedDto<ComposableStep> sortedFSteps = findWithFilters("", "name", null);
+        PaginatedDto<ComposableStep> sortedDescendentFSteps = findWithFilters("", "name", "");
+        PaginatedDto<ComposableStep> filteredFSteps = findWithFilters("thing", "name", "name");
 
         // Then
         assertThat(filteredByNameFSteps.data()).containsExactly(fStep_3);
@@ -274,20 +274,20 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
     @Test
     public void should_find_most_identical_func_steps_ordered_when_search_by_name() {
         // Given
-        FunctionalStep fStep_1 = saveAndReload(
-            buildFunctionalStep("I am a wonderful sub functional step"));
-        FunctionalStep fStep_2 = saveAndReload(
-            buildFunctionalStep("I'm the best sub functional step ever written"));
-        FunctionalStep fStep_3 = saveAndReload(
-            buildFunctionalStep("Another sub for special *escaping test, best"));
-        FunctionalStep fStepRoot = saveAndReload(
-            buildFunctionalStep("This is a nice root functional step", fStep_1, fStep_2, fStep_3));
+        ComposableStep fStep_1 = saveAndReload(
+            buildComposableStep("I am a wonderful sub functional step"));
+        ComposableStep fStep_2 = saveAndReload(
+            buildComposableStep("I'm the best sub functional step ever written"));
+        ComposableStep fStep_3 = saveAndReload(
+            buildComposableStep("Another sub for special *escaping test, best"));
+        ComposableStep fStepRoot = saveAndReload(
+            buildComposableStep("This is a nice root functional step", fStep_1, fStep_2, fStep_3));
 
         // When
-        List<FunctionalStep> mostIdenticalRootFuncSteps = sut.queryByName("this root");
-        List<FunctionalStep> mostIdenticalSubFuncSteps = sut.queryByName("best sub");
-        List<FunctionalStep> mostIdenticalFuncSteps = sut.queryByName("step functional");
-        List<FunctionalStep> mostIdenticalEscapeSteps = sut.queryByName("*escaping");
+        List<ComposableStep> mostIdenticalRootFuncSteps = sut.queryByName("this root");
+        List<ComposableStep> mostIdenticalSubFuncSteps = sut.queryByName("best sub");
+        List<ComposableStep> mostIdenticalFuncSteps = sut.queryByName("step functional");
+        List<ComposableStep> mostIdenticalEscapeSteps = sut.queryByName("*escaping");
 
         // Then
         assertThat(mostIdenticalRootFuncSteps).extracting("name").containsExactlyInAnyOrder(fStepRoot.name);
@@ -299,14 +299,14 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
     @Test
     public void should_find_at_most_10_most_identical_func_steps__when_search_by_name() {
         // Given
-        List<FunctionalStep> subFSteps = new ArrayList<>();
+        List<ComposableStep> subFSteps = new ArrayList<>();
         IntStream.range(1, 15).forEach(num -> {
-            final FunctionalStep subF = saveAndReload(FunctionalStep.builder()
+            final ComposableStep subF = saveAndReload(ComposableStep.builder()
                 .withName("I am the sub functional step n°" + num)
                 .build());
             subFSteps.add(subF);
         });
-        FunctionalStep fStepRoot = FunctionalStep.builder()
+        ComposableStep fStepRoot = ComposableStep.builder()
             .withName("This is a root functional step")
             .withSteps(subFSteps)
             .build();
@@ -314,7 +314,7 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
         sut.save(fStepRoot);
 
         // When
-        List<FunctionalStep> mostIdenticalFuncSteps = sut.queryByName("functional step");
+        List<ComposableStep> mostIdenticalFuncSteps = sut.queryByName("functional step");
 
         // Then
         assertThat(mostIdenticalFuncSteps.size()).isEqualTo(10);
@@ -323,36 +323,36 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
     @Test
     public void should_not_save_func_step_when_cyclic_dependency_found() {
         // Given
-        FunctionalStep fStep = saveAndReload(buildFunctionalStep("that"));
-        FunctionalStep fStepToUdpate = FunctionalStep.builder().from(fStep).withSteps(Collections.singletonList(fStep)).build();
+        ComposableStep fStep = saveAndReload(buildComposableStep("that"));
+        ComposableStep fStepToUdpate = ComposableStep.builder().from(fStep).withSteps(Collections.singletonList(fStep)).build();
 
         // When
         try {
             sut.save(fStepToUdpate);
         } catch (Exception e) {
             // Then
-            assertThat(e).isInstanceOf(FunctionalStepCyclicDependencyException.class);
+            assertThat(e).isInstanceOf(ComposableStepCyclicDependencyException.class);
             assertThat(e.getMessage()).contains(fStep.name);
             return;
         }
-        Assertions.fail("Should throw FunctionalStepCyclicDependencyException !!");
+        Assertions.fail("Should throw ComposableStepCyclicDependencyException !!");
     }
 
     @Test
     public void should_find_func_step_parents_when_asked_for() {
         // Given
-        FunctionalStep fStep_111 = saveAndReload(
-            buildFunctionalStep("that 1"));
-        FunctionalStep fStep_112 = saveAndReload(
-            buildFunctionalStep("that 2"));
-        FunctionalStep fStep_11 = saveAndReload(
-            buildFunctionalStep("that", fStep_111, fStep_112));
-        FunctionalStep fStep_12 = saveAndReload(
-            buildFunctionalStep("inner that", fStep_11));
-        FunctionalStep fStepRoot_1 = saveAndReload(
-            buildFunctionalStep("a thing", fStep_11, fStep_12, fStep_11));
-        FunctionalStep fStep_21 = saveAndReload(
-            buildFunctionalStep("this", fStep_11));
+        ComposableStep fStep_111 = saveAndReload(
+            buildComposableStep("that 1"));
+        ComposableStep fStep_112 = saveAndReload(
+            buildComposableStep("that 2"));
+        ComposableStep fStep_11 = saveAndReload(
+            buildComposableStep("that", fStep_111, fStep_112));
+        ComposableStep fStep_12 = saveAndReload(
+            buildComposableStep("inner that", fStep_11));
+        ComposableStep fStepRoot_1 = saveAndReload(
+            buildComposableStep("a thing", fStep_11, fStep_12, fStep_11));
+        ComposableStep fStep_21 = saveAndReload(
+            buildComposableStep("this", fStep_11));
 
         // When
         List<ParentStepId> parentsId = sut.findParents(fStep_11.id);
@@ -373,8 +373,8 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
             "action parameter with default value", "default action parameter value",
             "action parameter with no default value", "",
             "another action parameter with default value", "another default action parameter value");
-        final FunctionalStep actionStep = saveAndReload(
-            buildFunctionalStep(
+        final ComposableStep actionStep = saveAndReload(
+            buildComposableStep(
                 "action with parameters",
                 actionParameters
             )
@@ -384,7 +384,7 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
             "action parameter with default value", "first action instance parameter value",
             "action parameter with no default value", "",
             "another action parameter with default value", "another default action parameter value");
-        final FunctionalStep firstActionStepInstance = FunctionalStep.builder()
+        final ComposableStep firstActionStepInstance = ComposableStep.builder()
             .from(actionStep)
             .overrideDataSetWith(firstActionInstanceDataSet)
             .build();
@@ -393,7 +393,7 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
             "action parameter with default value", "default action parameter value",
             "action parameter with no default value", "second action instance not default value value",
             "another action parameter with default value", "");
-        final FunctionalStep secondActionStepInstance = FunctionalStep.builder()
+        final ComposableStep secondActionStepInstance = ComposableStep.builder()
             .from(actionStep)
             .overrideDataSetWith(secondActionInstanceDataSet)
             .build();
@@ -402,8 +402,8 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
             "middle parent parameter with default value", "default middle parent parameter value",
             "middle parent parameter with not default value", "",
             "another middle parent parameter with default value", "another default middle parent parameter value");
-        final FunctionalStep middleParentStep = saveAndReload(
-            buildFunctionalStep(
+        final ComposableStep middleParentStep = saveAndReload(
+            buildComposableStep(
                 "middle parent with parameters",
                 middleParentParameters,
                 firstActionStepInstance, secondActionStepInstance
@@ -424,7 +424,7 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
             "middle parent parameter with not default value", "first middle parent instance not default value value",
             "another middle parent parameter with default value", ""
         );
-        final FunctionalStep firstMiddleParentStepInstance = FunctionalStep.builder()
+        final ComposableStep firstMiddleParentStepInstance = ComposableStep.builder()
             .from(middleParentStep)
             .overrideDataSetWith(firstMiddleParentInstanceDataSet)
             .build();
@@ -436,7 +436,7 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
             "middle parent parameter with not default value", "",
             "another middle parent parameter with default value", "another second middle parent parameter value"
         );
-        final FunctionalStep secondMiddleParentStepInstance = FunctionalStep.builder()
+        final ComposableStep secondMiddleParentStepInstance = ComposableStep.builder()
             .from(middleParentStep)
             .overrideDataSetWith(secondMiddleParentInstanceDataSet)
             .build();
@@ -445,15 +445,15 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
             "action parameter with default value", "third action instance parameter value",
             "action parameter with no default value", "yet another third action instance parameter value",
             "another action parameter with default value", "another third action instance parameter value");
-        final FunctionalStep thirdActionStepInstance = FunctionalStep.builder()
+        final ComposableStep thirdActionStepInstance = ComposableStep.builder()
             .from(actionStep)
             .overrideDataSetWith(thirdActionInstanceDataSet)
             .build();
 
         Map<String, String> parentParameters = Maps.of(
             "parent parameter", "parent parameter default value");
-        final FunctionalStep parentStep = saveAndReload(
-            buildFunctionalStep(
+        final ComposableStep parentStep = saveAndReload(
+            buildComposableStep(
                 "parent with parameters",
                 parentParameters,
                 firstMiddleParentStepInstance, thirdActionStepInstance, secondMiddleParentStepInstance
@@ -467,9 +467,9 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
             );
 
         // When
-        FunctionalStep foundAction = sut.findById(actionStep.id);
-        FunctionalStep foundMiddleParentFStep = sut.findById(middleParentStep.id);
-        FunctionalStep foundParentFStep = sut.findById(parentStep.id);
+        ComposableStep foundAction = sut.findById(actionStep.id);
+        ComposableStep foundMiddleParentFStep = sut.findById(middleParentStep.id);
+        ComposableStep foundParentFStep = sut.findById(parentStep.id);
 
         // Then
         assertThat(foundAction.parameters).containsExactlyEntriesOf(actionParameters);
@@ -502,29 +502,29 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
         Map<String, String> stepParameters = Maps.of(
             deleted_param, "",
             new_value_param, "default value");
-        FunctionalStep step = saveAndReload(
-            buildFunctionalStep("my step with parameters", stepParameters));
+        ComposableStep step = saveAndReload(
+            buildComposableStep("my step with parameters", stepParameters));
 
-        FunctionalStep parentWithNoParametersOverload = saveAndReload(
-            buildFunctionalStep("parent with no parameters values overload", step)
+        ComposableStep parentWithNoParametersOverload = saveAndReload(
+            buildComposableStep("parent with no parameters values overload", step)
         );
 
         Map<String, String> stepInsatnceDataSet = Maps.of(
             deleted_param, "parent value",
             new_value_param, "new parent value");
-        FunctionalStep stepInstance = FunctionalStep.builder()
+        ComposableStep stepInstance = ComposableStep.builder()
             .from(step)
             .overrideDataSetWith(stepInsatnceDataSet)
             .build();
-        FunctionalStep parentWithParametersOverload = saveAndReload(
-            buildFunctionalStep("parent with parameters values overload", stepInstance)
+        ComposableStep parentWithParametersOverload = saveAndReload(
+            buildComposableStep("parent with parameters values overload", stepInstance)
         );
 
         // When
         Map<String, String> newStepParameters = Maps.of(
             new_value_param, "another value",
             new_param, "new value");
-        FunctionalStep stepUpdate = FunctionalStep.builder()
+        ComposableStep stepUpdate = ComposableStep.builder()
             .from(step)
             .withParameters(newStepParameters)
             .build();
@@ -546,26 +546,26 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
     @Test
     public void should_delete_step_and_update_edges_when_deleteById_called() {
         // Given
-        final FunctionalStep step = saveAndReload(
-            buildFunctionalStep("a step", Maps.of("param", "default value")));
+        final ComposableStep step = saveAndReload(
+            buildComposableStep("a step", Maps.of("param", "default value")));
 
-        final FunctionalStep stepInstance = FunctionalStep.builder()
+        final ComposableStep stepInstance = ComposableStep.builder()
             .from(step)
             .overrideDataSetWith(Maps.of("param", ""))
             .build();
 
-        final FunctionalStep stepInstanceB = FunctionalStep.builder()
+        final ComposableStep stepInstanceB = ComposableStep.builder()
             .from(step)
             .overrideDataSetWith(Maps.of("param", "hard value"))
             .build();
 
-        final FunctionalStep parentFStep = saveAndReload(
-            buildFunctionalStep("a parent step", stepInstance, stepInstanceB)
+        final ComposableStep parentFStep = saveAndReload(
+            buildComposableStep("a parent step", stepInstance, stepInstanceB)
         );
 
         // When
         sut.deleteById(step.id);
-        FunctionalStep parentFoundStep = sut.findById(parentFStep.id);
+        ComposableStep parentFoundStep = sut.findById(parentFStep.id);
 
         // Then
         assertThat(loadById(step.id)).isNull();
@@ -576,8 +576,8 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
     @Test
     public void changelog_n5_should_update_selenium_tasks() {
         // G
-        final FunctionalStep step = saveAndReload(
-            buildFunctionalStep("selenium-get", StepUsage.THEN, "{\n" +
+        final ComposableStep step = saveAndReload(
+            buildComposableStep("selenium-get", StepUsage.THEN, "{\n" +
                 "            \"identifier\": \"selenium-get-text\",\n" +
                 "            \"inputs\": [ \n" +
                 "              {\"name\":\"web-driver\",\"value\":\"${#webDriver}\"},\n" +
@@ -589,8 +589,8 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
                 "              {\"name\":\"switchType\",\"value\":\"\"},\n" +
                 "              {\"name\":\"menuItemSelector\",\"value\":\"\"}]\n" +
                 "        }"));
-        final FunctionalStep stepOld = saveAndReload(
-            buildFunctionalStep("selenium-get-old", StepUsage.THEN, "{\n" +
+        final ComposableStep stepOld = saveAndReload(
+            buildComposableStep("selenium-get-old", StepUsage.THEN, "{\n" +
                 "            \"identifier\": \"selenium-get-text\",\n" +
                 "            \"inputs\": {\n" +
                 "                \"web-driver\": \"${#webDriver}\",\n" +
@@ -609,28 +609,28 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
         }
 
         // T
-        FunctionalStep step1 = sut.findById(step.id);
+        ComposableStep step1 = sut.findById(step.id);
         assertThat(step1.implementation.get()).doesNotContain("name\":\"action", "name\":\"value", "name\":\"switchType", "name\":\"menuItemSelector");
-        FunctionalStep stepO = sut.findById(stepOld.id);
+        ComposableStep stepO = sut.findById(stepOld.id);
         assertThat(stepO.implementation.get()).doesNotContain("action", "value", "switchType", "menuItemSelector");
     }
 
-    private FunctionalStep saveAndReload(FunctionalStep functionalStep) {
-        return saveAndReload(sut, functionalStep);
+    private ComposableStep saveAndReload(ComposableStep composableStep) {
+        return saveAndReload(sut, composableStep);
     }
 
-    private void assertScenarioRids(List<FunctionalStep> scenario, List<String> rids) {
+    private void assertScenarioRids(List<ComposableStep> scenario, List<String> rids) {
         IntStream.range(0, rids.size())
             .forEach(idx -> {
                 String rid = rids.get(idx);
-                FunctionalStep fStep = sut.findById(rid);
+                ComposableStep fStep = sut.findById(rid);
                 assertThat(fStep.id).isEqualTo(rid);
-                assertFunctionalStep(scenario.get(idx), fStep);
+                assertComposableStep(scenario.get(idx), fStep);
             });
     }
 
-    private void assertFunctionalStep(FunctionalStep expectedFStep, FunctionalStep step) {
-        assertFunctionalStep(
+    private void assertComposableStep(ComposableStep expectedFStep, ComposableStep step) {
+        assertComposableStep(
             step,
             expectedFStep.name,
             expectedFStep.usage.orElseThrow(() -> new IllegalStateException("Usage should be set")),
@@ -639,14 +639,14 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
 
         IntStream.range(0, expectedFStep.steps.size()).forEach(
             idx -> {
-                FunctionalStep subStep = step.steps.get(idx);
-                assertFunctionalStep(expectedFStep.steps.get(idx), subStep);
+                ComposableStep subStep = step.steps.get(idx);
+                assertComposableStep(expectedFStep.steps.get(idx), subStep);
             }
         );
     }
 
-    private void assertFunctionalStep(FunctionalStep step, String name, StepUsage usage, Optional<String> implementation, int functionalChildStepsSize) {
-        assertThat(step).isInstanceOf(FunctionalStep.class);
+    private void assertComposableStep(ComposableStep step, String name, StepUsage usage, Optional<String> implementation, int functionalChildStepsSize) {
+        assertThat(step).isInstanceOf(ComposableStep.class);
         assertThat(step.name).isEqualTo(name);
 
         if (implementation.isPresent()) {
@@ -659,7 +659,7 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
         assertThat(step.steps.size()).isEqualTo(functionalChildStepsSize);
     }
 
-    private PaginatedDto<FunctionalStep> findWithPagination(long startElementIdx, long limit) {
+    private PaginatedDto<ComposableStep> findWithPagination(long startElementIdx, long limit) {
         return sut.find(
             ImmutablePaginationRequestParametersDto.builder()
                 .start(startElementIdx)
@@ -667,14 +667,14 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
                 .build(),
             ImmutableSortRequestParametersDto.builder()
                 .build(),
-            FunctionalStep.builder()
+            ComposableStep.builder()
                 .withName("")
                 .withSteps(Collections.emptyList())
                 .build()
         );
     }
 
-    private PaginatedDto<FunctionalStep> findWithFilters(String name, String sort, String desc) {
+    private PaginatedDto<ComposableStep> findWithFilters(String name, String sort, String desc) {
         return sut.find(
             ImmutablePaginationRequestParametersDto.builder()
                 .start(1L)
@@ -684,7 +684,7 @@ public class OrientFunctionalStepRepositoryTest extends AbstractOrientDatabaseTe
                 .sort(sort)
                 .desc(desc)
                 .build(),
-            FunctionalStep.builder()
+            ComposableStep.builder()
                 .withName(name)
                 .withSteps(Collections.emptyList())
                 .build()

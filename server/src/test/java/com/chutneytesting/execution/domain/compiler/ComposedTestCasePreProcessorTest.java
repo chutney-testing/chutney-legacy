@@ -12,14 +12,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.chutneytesting.WebConfiguration;
-import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.design.domain.dataset.DataSet;
 import com.chutneytesting.design.domain.dataset.DataSetRepository;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedFunctionalStep;
 import com.chutneytesting.execution.domain.scenario.ExecutableComposedScenario;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedStep;
 import com.chutneytesting.execution.domain.scenario.ExecutableComposedTestCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
@@ -30,7 +30,7 @@ import org.apache.groovy.util.Maps;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ComposableTestCasePreProcessorTest {
+public class ComposedTestCasePreProcessorTest {
 
     private final ObjectMapper objectMapper = new WebConfiguration().objectMapper();
     private final String environment = "exec env";
@@ -39,7 +39,7 @@ public class ComposableTestCasePreProcessorTest {
     private GlobalvarRepository globalvarRepository;
     private DataSetRepository dataSetRepository;
 
-    private ComposableTestCasePreProcessor sut;
+    private ComposedTestCasePreProcessor sut;
 
     @Before
     public void setUp() {
@@ -60,17 +60,17 @@ public class ComposableTestCasePreProcessorTest {
         when(globalvarRepository.getFlatMap())
             .thenReturn(new HashMap<>(Maps.of(GLOBAL_PARAMETER, "[{\"" + VALUE + "\":\"" + FIRST_ITERATION_VALUE + "\"}, {\"value\":\"" + SECOND_ITERATION_VALUE + "\"}]")));
 
-        sut = new ComposableTestCasePreProcessor(objectMapper, globalvarRepository, dataSetRepository);
+        sut = new ComposedTestCasePreProcessor(objectMapper, globalvarRepository, dataSetRepository);
 
         // Given
         Map<String, String> childParameters = singletonMap(VALUE,  /* empty: will be provided by Loop strategy */  "");
-        ExecutableComposedFunctionalStep childStepWithParameters = ExecutableComposedFunctionalStep.builder()
+        ExecutableComposedStep childStepWithParameters = ExecutableComposedStep.builder()
             .withParameters(childParameters)
             .overrideDataSetWith(singletonMap(VALUE,  /* empty: will be provided by Loop strategy */  "**" + VALUE + "**"))
             .build();
 
         Strategy strategy = new Strategy("Loop", singletonMap("data", "**" + PARAM_NAME + "**"));
-        ExecutableComposedFunctionalStep parentStep = ExecutableComposedFunctionalStep.builder()
+        ExecutableComposedStep parentStep = ExecutableComposedStep.builder()
             .withName("Iteration : **" + VALUE + "**")
             .withSteps(singletonList(childStepWithParameters))
             .withStrategy(strategy)
@@ -79,7 +79,7 @@ public class ComposableTestCasePreProcessorTest {
             .build();
 
         ExecutableComposedScenario composableScenario = ExecutableComposedScenario.builder()
-            .withFunctionalSteps(singletonList(parentStep))
+            .withComposedSteps(singletonList(parentStep))
             .build();
 
         ExecutableComposedTestCase composableTestase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
@@ -90,10 +90,10 @@ public class ComposableTestCasePreProcessorTest {
         );
 
         // Then
-        assertThat(actual.composableScenario.functionalSteps.size()).isEqualTo(1);
-        assertThat(actual.composableScenario.functionalSteps.get(0).steps.size()).isEqualTo(2);
-        assertThat(actual.composableScenario.functionalSteps.get(0).steps.get(0).name).isEqualTo("Iteration : " + FIRST_ITERATION_VALUE + " - iteration 1");
-        assertThat(actual.composableScenario.functionalSteps.get(0).steps.get(1).name).isEqualTo("Iteration : " + SECOND_ITERATION_VALUE + " - iteration 2");
+        assertThat(actual.composedScenario.composedSteps.size()).isEqualTo(1);
+        assertThat(actual.composedScenario.composedSteps.get(0).steps.size()).isEqualTo(2);
+        assertThat(actual.composedScenario.composedSteps.get(0).steps.get(0).name).isEqualTo("Iteration : " + FIRST_ITERATION_VALUE + " - iteration 1");
+        assertThat(actual.composedScenario.composedSteps.get(0).steps.get(1).name).isEqualTo("Iteration : " + SECOND_ITERATION_VALUE + " - iteration 2");
     }
 
     @Test
@@ -109,17 +109,17 @@ public class ComposableTestCasePreProcessorTest {
         when(globalvarRepository.getFlatMap())
             .thenReturn(new HashMap<>(Maps.of(GLOBAL_PARAMETER, "[{\"" + VALUE + "\":\"" + FIRST_ITERATION_VALUE + "\"}, {\"value\":\"" + SECOND_ITERATION_VALUE + "\"}]")));
 
-        sut = new ComposableTestCasePreProcessor(objectMapper, globalvarRepository, dataSetRepository);
+        sut = new ComposedTestCasePreProcessor(objectMapper, globalvarRepository, dataSetRepository);
 
         // Given
         Map<String, String> childParameters = singletonMap(VALUE,  /* empty: will be provided by Loop strategy */  "");
-        ExecutableComposedFunctionalStep childStepWithParameters = ExecutableComposedFunctionalStep.builder()
+        ExecutableComposedStep childStepWithParameters = ExecutableComposedStep.builder()
             .withParameters(childParameters)
             .overrideDataSetWith(singletonMap(VALUE,  /* empty: will be provided by Loop strategy */  "**" + VALUE + "**"))
             .build();
 
         Strategy strategy = new Strategy("Loop", singletonMap("data", "**" + PARAM_NAME + "**"));
-        ExecutableComposedFunctionalStep parentStep = ExecutableComposedFunctionalStep.builder()
+        ExecutableComposedStep parentStep = ExecutableComposedStep.builder()
             .withName("Iteration : **" + VALUE + "**")
             .withSteps(singletonList(childStepWithParameters))
             .withStrategy(strategy)
@@ -128,7 +128,7 @@ public class ComposableTestCasePreProcessorTest {
             .build();
 
         ExecutableComposedScenario composableScenario = ExecutableComposedScenario.builder()
-            .withFunctionalSteps(singletonList(parentStep))
+            .withComposedSteps(singletonList(parentStep))
             .build();
 
         Map<String, String> dataset = singletonMap(PARAM_NAME, "**" + GLOBAL_PARAMETER + "**");
@@ -140,10 +140,10 @@ public class ComposableTestCasePreProcessorTest {
         );
 
         // Then
-        assertThat(actual.composableScenario.functionalSteps.size()).isEqualTo(1);
-        assertThat(actual.composableScenario.functionalSteps.get(0).steps.size()).isEqualTo(2);
-        assertThat(actual.composableScenario.functionalSteps.get(0).steps.get(0).name).isEqualTo("Iteration : " + FIRST_ITERATION_VALUE + " - iteration 1");
-        assertThat(actual.composableScenario.functionalSteps.get(0).steps.get(1).name).isEqualTo("Iteration : " + SECOND_ITERATION_VALUE + " - iteration 2");
+        assertThat(actual.composedScenario.composedSteps.size()).isEqualTo(1);
+        assertThat(actual.composedScenario.composedSteps.get(0).steps.size()).isEqualTo(2);
+        assertThat(actual.composedScenario.composedSteps.get(0).steps.get(0).name).isEqualTo("Iteration : " + FIRST_ITERATION_VALUE + " - iteration 1");
+        assertThat(actual.composedScenario.composedSteps.get(0).steps.get(1).name).isEqualTo("Iteration : " + SECOND_ITERATION_VALUE + " - iteration 2");
     }
 
     @Test
@@ -154,7 +154,7 @@ public class ComposableTestCasePreProcessorTest {
         map.put("key.2", "value2");
         when(globalvarRepository.getFlatMap()).thenReturn(map);
 
-        sut = new ComposableTestCasePreProcessor(objectMapper, globalvarRepository, dataSetRepository);
+        sut = new ComposedTestCasePreProcessor(objectMapper, globalvarRepository, dataSetRepository);
 
         // Given
         String actionName = "simple action on target %1$s";
@@ -166,16 +166,14 @@ public class ComposableTestCasePreProcessorTest {
         Strategy retryStrategy =
             new Strategy("retry", Maps.of("timeout", "10 s", "delay", "10 s"));
 
-        ExecutableComposedFunctionalStep action = ExecutableComposedFunctionalStep.builder()
-            .withId("1")
+        ExecutableComposedStep action = ExecutableComposedStep.builder()
             .withName(format(actionName, "**target**"))
             .withStrategy(retryStrategy)
             .withParameters(singletonMap("target", "default target"))
             .withImplementation(ofNullable(format(actionImplementation, "**target**")))
             .build();
 
-        ExecutableComposedFunctionalStep step = ExecutableComposedFunctionalStep.builder()
-            .withId("2")
+        ExecutableComposedStep step = ExecutableComposedStep.builder()
             .withName(format(stepName, "**step param**", "**step target**", "**target**"))
             .withParameters(
                 Maps.of(
@@ -213,7 +211,7 @@ public class ComposableTestCasePreProcessorTest {
                 .withDescription(format(testCaseDescription, "**testcase description**"))
                 .build(),
             ExecutableComposedScenario.builder()
-                .withFunctionalSteps(
+                .withComposedSteps(
                     asList(
                         buildStepFromStepWithDataSet(step, "**testcase param**", "", "hard testcase target"),
                         buildStepFromStepWithDataSet(step, "hard testcase param", "**testcase target**", ""),
@@ -241,35 +239,35 @@ public class ComposableTestCasePreProcessorTest {
         assertThat(executableComposedTestCaseProcessed.metadata.title()).isEqualTo(format(testCaseTitle, dataSet.get("testcase title")));
         assertThat(executableComposedTestCaseProcessed.metadata.description()).isEqualTo(format(testCaseDescription, dataSet.get("testcase description")));
 
-        ExecutableComposedFunctionalStep firstStep = executableComposedTestCaseProcessed.composableScenario.functionalSteps.get(0);
-        assertThat(firstStep.name).isEqualTo(format(stepName, dataSet.get("testcase param"), dataSet.get("step target"), firstStep.dataSet.get("target")));
+        ExecutableComposedStep firstStep = executableComposedTestCaseProcessed.composedScenario.composedSteps.get(0);
+        assertThat(firstStep.name).isEqualTo(format(stepName, dataSet.get("testcase param"), dataSet.get("step target"), firstStep.dataset.get("target")));
         assertThat(firstStep.strategy).isEqualTo(Strategy.DEFAULT);
-        assertThat(firstStep.dataSet).containsOnly(
+        assertThat(firstStep.dataset).containsOnly(
             entry("step param", dataSet.get("testcase param")),
             entry("step target", dataSet.get("step target")),
-            entry("target", ExecutableComposedTestCase.composableScenario.functionalSteps.get(0).dataSet.get("target"))
+            entry("target", ExecutableComposedTestCase.composedScenario.composedSteps.get(0).dataset.get("target"))
         );
-        assertStepActions(actionName, firstStep, step.steps.get(2).dataSet.get("target"), retryStrategy);
+        assertStepActions(actionName, firstStep, step.steps.get(2).dataset.get("target"), retryStrategy);
 
-        ExecutableComposedFunctionalStep secondStep = executableComposedTestCaseProcessed.composableScenario.functionalSteps.get(1);
-        assertThat(secondStep.name).isEqualTo(format(stepName, secondStep.dataSet.get("step param"), dataSet.get("testcase target"), dataSet.get("target")));
+        ExecutableComposedStep secondStep = executableComposedTestCaseProcessed.composedScenario.composedSteps.get(1);
+        assertThat(secondStep.name).isEqualTo(format(stepName, secondStep.dataset.get("step param"), dataSet.get("testcase target"), dataSet.get("target")));
         assertThat(secondStep.strategy).isEqualTo(Strategy.DEFAULT);
-        assertThat(secondStep.dataSet).containsOnly(
-            entry("step param", ExecutableComposedTestCase.composableScenario.functionalSteps.get(1).dataSet.get("step param")),
+        assertThat(secondStep.dataset).containsOnly(
+            entry("step param", ExecutableComposedTestCase.composedScenario.composedSteps.get(1).dataset.get("step param")),
             entry("step target", dataSet.get("testcase target")),
             entry("target", dataSet.get("target"))
         );
-        assertStepActions(actionName, secondStep, step.steps.get(2).dataSet.get("target"), retryStrategy);
+        assertStepActions(actionName, secondStep, step.steps.get(2).dataset.get("target"), retryStrategy);
 
-        ExecutableComposedFunctionalStep thirdStep = executableComposedTestCaseProcessed.composableScenario.functionalSteps.get(2);
-        assertThat(thirdStep.name).isEqualTo(format(stepName, dataSet.get("step param"), thirdStep.dataSet.get("step target"), dataSet.get("testcase target")));
+        ExecutableComposedStep thirdStep = executableComposedTestCaseProcessed.composedScenario.composedSteps.get(2);
+        assertThat(thirdStep.name).isEqualTo(format(stepName, dataSet.get("step param"), thirdStep.dataset.get("step target"), dataSet.get("testcase target")));
         assertThat(thirdStep.strategy).isEqualTo(Strategy.DEFAULT);
-        assertThat(thirdStep.dataSet).containsOnly(
+        assertThat(thirdStep.dataset).containsOnly(
             entry("step param", dataSet.get("step param")),
-            entry("step target", ExecutableComposedTestCase.composableScenario.functionalSteps.get(2).dataSet.get("step target")),
+            entry("step target", ExecutableComposedTestCase.composedScenario.composedSteps.get(2).dataset.get("step target")),
             entry("target", dataSet.get("testcase target"))
         );
-        assertStepActions(actionName, thirdStep, step.steps.get(2).dataSet.get("target"), retryStrategy);
+        assertStepActions(actionName, thirdStep, step.steps.get(2).dataset.get("target"), retryStrategy);
     }
 
     @Test
@@ -280,7 +278,7 @@ public class ComposableTestCasePreProcessorTest {
         map.put("key.2", "value2");
         when(globalvarRepository.getFlatMap()).thenReturn(map);
 
-        sut = new ComposableTestCasePreProcessor(objectMapper, globalvarRepository, dataSetRepository);
+        sut = new ComposedTestCasePreProcessor(objectMapper, globalvarRepository, dataSetRepository);
 
         // Given
         String actionName = "simple action on target %1$s";
@@ -309,8 +307,7 @@ public class ComposableTestCasePreProcessorTest {
             "target", "default target"
         );
 
-        ExecutableComposedFunctionalStep action = ExecutableComposedFunctionalStep.builder()
-            .withId("1")
+        ExecutableComposedStep action = ExecutableComposedStep.builder()
             .withName(format(actionName, "**target**"))
             .withParameters(actionParameters)
             .withImplementation(of(actionImplementation))
@@ -321,8 +318,7 @@ public class ComposableTestCasePreProcessorTest {
             "step target", "default step target"
         );
 
-        ExecutableComposedFunctionalStep step = ExecutableComposedFunctionalStep.builder()
-            .withId("2")
+        ExecutableComposedStep step = ExecutableComposedStep.builder()
             .withName(stepName)
             .withParameters(stepParameters)
             .withSteps(singletonList(buildStepFromActionWithDataSet(action, "**target**")))
@@ -346,7 +342,7 @@ public class ComposableTestCasePreProcessorTest {
                 .withDescription(testCaseDescription)
                 .build(),
             ExecutableComposedScenario.builder()
-                .withFunctionalSteps(
+                .withComposedSteps(
                     asList(
                         buildStepFromStepWithDataSet(step, "**testcase param**", ""),
                         buildStepFromStepWithDataSet(step, "", "hard testcase step target")
@@ -373,57 +369,57 @@ public class ComposableTestCasePreProcessorTest {
         assertThat(executableComposedTestCaseProcessed.metadata.description()).isEqualTo(testCaseDescription);
 
         /* Step 1 */
-        ExecutableComposedFunctionalStep step_1 = executableComposedTestCaseProcessed.composableScenario.functionalSteps.get(0);
+        ExecutableComposedStep step_1 = executableComposedTestCaseProcessed.composedScenario.composedSteps.get(0);
         assertThat(step_1.steps.size()).isEqualTo(2);
         assertThat(step_1.strategy).isEqualTo(Strategy.DEFAULT);
-        assertThat(step_1.dataSet.size()).isEqualTo(3);
+        assertThat(step_1.dataset.size()).isEqualTo(3);
         assertThat(step_1.name).isEqualTo(stepName);
 
         /* Step 1.1 */
-        ExecutableComposedFunctionalStep step_1_1 = step_1.steps.get(0);
+        ExecutableComposedStep step_1_1 = step_1.steps.get(0);
         assertThat(step_1_1.name).isEqualTo(stepName.concat(" - iteration 1"));
         assertThat(step_1_1.strategy).isEqualTo(Strategy.DEFAULT);
         assertThat(step_1_1.steps.size()).isEqualTo(1);
         assertThat(step_1_1.steps.get(0).implementation.get()).contains("\"target\": \"target_it1\",");
         assertThat(step_1_1.steps.get(0).implementation.get()).contains("inputs\": [{\"name\":\"target\",\"value\":\"target_it1\"},{\"name\":\"action param\",\"value\":\"hard action value\"}]");
-        assertThat(step_1_1.steps.get(0).dataSet).containsOnly(entry("target", "target_it1"));
+        assertThat(step_1_1.steps.get(0).dataset).containsOnly(entry("target", "target_it1"));
 
         /* Step 1.2 */
-        ExecutableComposedFunctionalStep step_1_2 = step_1.steps.get(1);
+        ExecutableComposedStep step_1_2 = step_1.steps.get(1);
         assertThat(step_1_2.name).isEqualTo(stepName.concat(" - iteration 2"));
         assertThat(step_1_2.steps.size()).isEqualTo(1);
         assertThat(step_1_2.strategy).isEqualTo(Strategy.DEFAULT);
         assertThat(step_1_2.steps.get(0).implementation.get()).contains("\"target\": \"target_it2\",");
         assertThat(step_1_2.steps.get(0).implementation.get()).contains("inputs\": [{\"name\":\"target\",\"value\":\"target_it2\"},{\"name\":\"action param\",\"value\":\"hard action value\"}]");
         assertThat(step_1_2.steps.get(0).strategy).isEqualTo(Strategy.DEFAULT);
-        assertThat(step_1_2.steps.get(0).dataSet).containsOnly(entry("target", "target_it2"));
+        assertThat(step_1_2.steps.get(0).dataset).containsOnly(entry("target", "target_it2"));
 
         /* Step 2 */
-        ExecutableComposedFunctionalStep step_2 = executableComposedTestCaseProcessed.composableScenario.functionalSteps.get(1);
+        ExecutableComposedStep step_2 = executableComposedTestCaseProcessed.composedScenario.composedSteps.get(1);
         assertThat(step_2.steps.size()).isEqualTo(2);
         assertThat(step_2.strategy).isEqualTo(Strategy.DEFAULT);
-        assertThat(step_2.dataSet.size()).isEqualTo(2);
+        assertThat(step_2.dataset.size()).isEqualTo(2);
         assertThat(step_2.name).isEqualTo(stepName);
 
-        ExecutableComposedFunctionalStep step_2_1 = step_1.steps.get(0);
+        ExecutableComposedStep step_2_1 = step_1.steps.get(0);
         assertThat(step_2_1.name).isEqualTo(stepName.concat(" - iteration 1"));
         assertThat(step_2_1.strategy).isEqualTo(Strategy.DEFAULT);
         assertThat(step_2_1.steps.size()).isEqualTo(1);
         assertThat(step_2_1.steps.get(0).implementation.get()).contains("target_it1");
         assertThat(step_2_1.steps.get(0).implementation.get()).contains("inputs\": [{\"name\":\"target\",\"value\":\"target_it1\"},{\"name\":\"action param\",\"value\":\"hard action value\"}]");
         assertThat(step_2_1.steps.get(0).strategy).isEqualTo(Strategy.DEFAULT);
-        assertThat(step_2_1.steps.get(0).dataSet).containsOnly(
+        assertThat(step_2_1.steps.get(0).dataset).containsOnly(
             entry("target", "target_it1")
         );
 
-        ExecutableComposedFunctionalStep step_2_2 = step_1.steps.get(1);
+        ExecutableComposedStep step_2_2 = step_1.steps.get(1);
         assertThat(step_2_2.name).isEqualTo(stepName.concat(" - iteration 2"));
         assertThat(step_2_2.strategy).isEqualTo(Strategy.DEFAULT);
         assertThat(step_2_2.steps.size()).isEqualTo(1);
         assertThat(step_2_2.steps.get(0).implementation.get()).contains("target_it2");
         assertThat(step_2_2.steps.get(0).implementation.get()).contains("inputs\": [{\"name\":\"target\",\"value\":\"target_it2\"},{\"name\":\"action param\",\"value\":\"hard action value\"}]");
         assertThat(step_2_2.steps.get(0).strategy).isEqualTo(Strategy.DEFAULT);
-        assertThat(step_2_2.steps.get(0).dataSet).containsOnly(
+        assertThat(step_2_2.steps.get(0).dataset).containsOnly(
             entry("target", "target_it2")
         );
     }
@@ -454,7 +450,7 @@ public class ComposableTestCasePreProcessorTest {
         when(dataSetRepository.findById(dataSetId)).thenReturn(
             dataSet
         );
-        sut = new ComposableTestCasePreProcessor(objectMapper, globalvarRepository, dataSetRepository);
+        sut = new ComposedTestCasePreProcessor(objectMapper, globalvarRepository, dataSetRepository);
 
         Map<String, String> computedParameters = Maps.of(
             "testcase title param", "default title value",
@@ -470,14 +466,14 @@ public class ComposableTestCasePreProcessorTest {
                 .withDatasetId(dataSetId)
                 .build(),
             ExecutableComposedScenario.builder()
-                .withFunctionalSteps(
+                .withComposedSteps(
                     asList(
                         // We want here to have only two iterations
-                        ExecutableComposedFunctionalStep.builder()
+                        ExecutableComposedStep.builder()
                             .withName("step with iteration over one dataset's key **first step param**")
                             .withSteps(
                                 singletonList(
-                                    ExecutableComposedFunctionalStep.builder()
+                                    ExecutableComposedStep.builder()
                                         .withName("substep name with **testcase param third**")
                                         .overrideDataSetWith(
                                             Maps.of("testcase param third", "")
@@ -493,7 +489,7 @@ public class ComposableTestCasePreProcessorTest {
                             )
                             .build(),
                         // We want here to not iterate at all
-                        ExecutableComposedFunctionalStep.builder()
+                        ExecutableComposedStep.builder()
                             .withName("step do not iterate over me")
                             .withImplementation(of("{\"identifier\": \"http-get\", \"target\": \"**step 2 param** and **testcase param**\", \"inputs\": []}"))
                             .overrideDataSetWith(
@@ -504,7 +500,7 @@ public class ComposableTestCasePreProcessorTest {
                             )
                             .build(),
                         // We want here to have three iterations
-                        ExecutableComposedFunctionalStep.builder()
+                        ExecutableComposedStep.builder()
                             .withName("step with iteration over two dataset's keys **testcase param**")
                             .withImplementation(of("{\"identifier\": \"http-**global.key**\", \"target\": \"**testcase param second** and **step 3 param**\", \"inputs\": []}"))
                             .overrideDataSetWith(
@@ -530,10 +526,10 @@ public class ComposableTestCasePreProcessorTest {
         assertThat(processedTestCase.metadata.title()).isEqualTo("testcase title for dataset unique value ref default title value");
         assertThat(processedTestCase.metadata.description()).isEqualTo("testcase description for global var ref global var value");
 
-        assertThat(processedTestCase.composableScenario.functionalSteps)
-            .hasSize(testCase.composableScenario.functionalSteps.size());
+        assertThat(processedTestCase.composedScenario.composedSteps)
+            .hasSize(testCase.composedScenario.composedSteps.size());
 
-        ExecutableComposedFunctionalStep firstScenarioStep = processedTestCase.composableScenario.functionalSteps.get(0);
+        ExecutableComposedStep firstScenarioStep = processedTestCase.composedScenario.composedSteps.get(0);
         assertThat(firstScenarioStep.name).isEqualTo("step with iteration over one dataset's key **first step param**");
         assertThat(firstScenarioStep.steps).hasSize(2);
         assertThat(firstScenarioStep.steps.get(0).name).isEqualTo("step with iteration over one dataset's key dataset mv 11 - dataset iteration 1");
@@ -541,12 +537,12 @@ public class ComposableTestCasePreProcessorTest {
         assertThat(firstScenarioStep.steps.get(1).name).isEqualTo("step with iteration over one dataset's key dataset mv 31 - dataset iteration 2");
         assertThat(firstScenarioStep.steps.get(1).steps.get(0).name).isEqualTo("substep name with dataset uv 1");
 
-        ExecutableComposedFunctionalStep secondScenarioStep = processedTestCase.composableScenario.functionalSteps.get(1);
+        ExecutableComposedStep secondScenarioStep = processedTestCase.composedScenario.composedSteps.get(1);
         assertThat(secondScenarioStep.name).isEqualTo("step do not iterate over me");
         assertThat(secondScenarioStep.implementation).isEqualTo(of("{\"identifier\": \"http-get\", \"target\": \"hard value 2 and another hard value 2\", \"inputs\": []}"));
         assertThat(secondScenarioStep.steps).isEmpty();
 
-        ExecutableComposedFunctionalStep thirdScenarioStep = processedTestCase.composableScenario.functionalSteps.get(2);
+        ExecutableComposedStep thirdScenarioStep = processedTestCase.composedScenario.composedSteps.get(2);
         assertThat(thirdScenarioStep.name).isEqualTo("step with iteration over two dataset's keys **testcase param**");
         assertThat(thirdScenarioStep.steps).hasSize(3);
         assertThat(thirdScenarioStep.steps.get(0).name).isEqualTo("step with iteration over two dataset's keys dataset mv 11 - dataset iteration 1");
@@ -557,8 +553,8 @@ public class ComposableTestCasePreProcessorTest {
         assertThat(thirdScenarioStep.steps.get(2).implementation).isEqualTo(of("{\"identifier\": \"http-global var value\", \"target\": \"dataset mv 32 and hard value 3\", \"inputs\": []}"));
     }
 
-    private ExecutableComposedFunctionalStep buildStepFromActionWithDataSet(ExecutableComposedFunctionalStep action, String targetDataSetValue) {
-        return ExecutableComposedFunctionalStep.builder()
+    private ExecutableComposedStep buildStepFromActionWithDataSet(ExecutableComposedStep action, String targetDataSetValue) {
+        return ExecutableComposedStep.builder()
             .from(action)
             .overrideDataSetWith(
                 Maps.of(
@@ -568,8 +564,8 @@ public class ComposableTestCasePreProcessorTest {
             .build();
     }
 
-    private ExecutableComposedFunctionalStep buildStepFromStepWithDataSet(ExecutableComposedFunctionalStep step, String stepParamDataSetValue, String stepTargetDataSetValue, String targetDataSetValue) {
-        return ExecutableComposedFunctionalStep.builder()
+    private ExecutableComposedStep buildStepFromStepWithDataSet(ExecutableComposedStep step, String stepParamDataSetValue, String stepTargetDataSetValue, String targetDataSetValue) {
+        return ExecutableComposedStep.builder()
             .from(step)
             .overrideDataSetWith(
                 Maps.of(
@@ -581,8 +577,8 @@ public class ComposableTestCasePreProcessorTest {
             .build();
     }
 
-    private ExecutableComposedFunctionalStep buildStepFromStepWithDataSet(ExecutableComposedFunctionalStep step, String stepParamDataSetValue, String stepTargetDataSetValue) {
-        return ExecutableComposedFunctionalStep.builder()
+    private ExecutableComposedStep buildStepFromStepWithDataSet(ExecutableComposedStep step, String stepParamDataSetValue, String stepTargetDataSetValue) {
+        return ExecutableComposedStep.builder()
             .from(step)
             .overrideDataSetWith(
                 Maps.of(
@@ -594,26 +590,26 @@ public class ComposableTestCasePreProcessorTest {
     }
 
     private void assertStepActions(String actionName,
-                                   ExecutableComposedFunctionalStep step,
+                                   ExecutableComposedStep step,
                                    String thirdActionTargetValue,
                                    Strategy strategy) {
 
-        ExecutableComposedFunctionalStep thirdStepFirstAction = step.steps.get(0);
-        assertThat(thirdStepFirstAction.name).isEqualTo(format(actionName, step.dataSet.get("step target")));
+        ExecutableComposedStep thirdStepFirstAction = step.steps.get(0);
+        assertThat(thirdStepFirstAction.name).isEqualTo(format(actionName, step.dataset.get("step target")));
         assertThat(thirdStepFirstAction.strategy).isEqualTo(strategy);
-        assertThat(thirdStepFirstAction.dataSet).containsOnly(
-            entry("target", step.dataSet.get("step target"))
+        assertThat(thirdStepFirstAction.dataset).containsOnly(
+            entry("target", step.dataset.get("step target"))
         );
-        ExecutableComposedFunctionalStep thirdStepSecondAction = step.steps.get(1);
-        assertThat(thirdStepSecondAction.name).isEqualTo(format(actionName, thirdStepSecondAction.dataSet.get("target")));
+        ExecutableComposedStep thirdStepSecondAction = step.steps.get(1);
+        assertThat(thirdStepSecondAction.name).isEqualTo(format(actionName, thirdStepSecondAction.dataset.get("target")));
         assertThat(thirdStepSecondAction.strategy).isEqualTo(strategy);
-        assertThat(thirdStepSecondAction.dataSet).containsOnly(
-            entry("target", step.dataSet.get("target"))
+        assertThat(thirdStepSecondAction.dataset).containsOnly(
+            entry("target", step.dataset.get("target"))
         );
-        ExecutableComposedFunctionalStep thirdStepThirdAction = step.steps.get(2);
-        assertThat(thirdStepThirdAction.name).isEqualTo(format(actionName, thirdStepThirdAction.dataSet.get("target")));
+        ExecutableComposedStep thirdStepThirdAction = step.steps.get(2);
+        assertThat(thirdStepThirdAction.name).isEqualTo(format(actionName, thirdStepThirdAction.dataset.get("target")));
         assertThat(thirdStepThirdAction.strategy).isEqualTo(strategy);
-        assertThat(thirdStepThirdAction.dataSet).containsOnly(
+        assertThat(thirdStepThirdAction.dataset).containsOnly(
             entry("target", thirdActionTargetValue)
         );
     }

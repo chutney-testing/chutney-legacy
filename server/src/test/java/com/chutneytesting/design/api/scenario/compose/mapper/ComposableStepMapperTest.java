@@ -1,13 +1,13 @@
 package com.chutneytesting.design.api.scenario.compose.mapper;
 
-import static com.chutneytesting.design.api.scenario.compose.mapper.FunctionalStepMapper.fromDto;
-import static com.chutneytesting.design.api.scenario.compose.mapper.FunctionalStepMapper.toDto;
+import static com.chutneytesting.design.api.scenario.compose.mapper.ComposableStepMapper.fromDto;
+import static com.chutneytesting.design.api.scenario.compose.mapper.ComposableStepMapper.toDto;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.design.api.scenario.compose.dto.FunctionalStepDto;
-import com.chutneytesting.design.api.scenario.compose.dto.ImmutableFunctionalStepDto;
+import com.chutneytesting.design.api.scenario.compose.dto.ComposableStepDto;
+import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableStepDto;
 import com.chutneytesting.tools.ui.KeyValue;
-import com.chutneytesting.design.domain.scenario.compose.FunctionalStep;
+import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.design.domain.scenario.compose.StepUsage;
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,41 +19,41 @@ import org.junit.runner.RunWith;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @RunWith(JUnitParamsRunner.class)
-public class FunctionalStepMapperTest {
+public class ComposableStepMapperTest {
 
     @Test
     public void should_map_func_step_id_and_name_to_dto_when_toDto_called() {
         // Given
         String FSTEPID = "#1:1";
         String FSTEP_NAME = "a functional step";
-        FunctionalStep fStep = FunctionalStep.builder()
+        ComposableStep fStep = ComposableStep.builder()
             .withId(FSTEPID)
             .withName(FSTEP_NAME)
             .build();
 
         // When
-        FunctionalStepDto functionalStepDto = toDto(fStep);
+        ComposableStepDto composableStepDto = toDto(fStep);
 
         // Then
-        assertThat(functionalStepDto.id().get()).isEqualTo("1-1");
-        assertThat(functionalStepDto.name()).isEqualTo(FSTEP_NAME);
+        assertThat(composableStepDto.id().get()).isEqualTo("1-1");
+        assertThat(composableStepDto.name()).isEqualTo(FSTEP_NAME);
     }
 
     @Test
     @Parameters({"GIVEN", "WHEN", "THEN"})
     public void should_map_func_usage_step_to_dto_when_toDto_called(StepUsage stepUsage) {
         // Given
-        FunctionalStep fStep = FunctionalStep.builder()
+        ComposableStep fStep = ComposableStep.builder()
             .withId("#1:1")
             .withName("a functional step")
             .withUsage(java.util.Optional.ofNullable(stepUsage))
             .build();
 
         // When
-        FunctionalStepDto functionalStepDto = toDto(fStep);
+        ComposableStepDto composableStepDto = toDto(fStep);
 
         // Then
-        assertThat(functionalStepDto.usage()).isEqualTo(FunctionalStepDto.StepUsage.valueOf(stepUsage.name()));
+        assertThat(composableStepDto.usage()).isEqualTo(ComposableStepDto.StepUsage.valueOf(stepUsage.name()));
     }
 
     @Test
@@ -61,20 +61,20 @@ public class FunctionalStepMapperTest {
         // Given
         String TECHNICAL_CONTENT = "{\"type\": \"debug\"}";
         String TECHNICAL_CONTENT_B = "{\"type\": \"debug\"}";
-        FunctionalStep fStep = FunctionalStep.builder()
+        ComposableStep fStep = ComposableStep.builder()
             .withId("#1:1")
             .withName("a functional step with sub step with implementation")
             .withSteps(
                 Arrays.asList(
-                    FunctionalStep.builder()
+                    ComposableStep.builder()
                         .withName("a functional sub step with implementation")
                         .withImplementation(java.util.Optional.of(TECHNICAL_CONTENT))
                         .build(),
-                    FunctionalStep.builder()
+                    ComposableStep.builder()
                         .withName("a functional sub step with sub step with implementation")
                         .withSteps(
                             Collections.singletonList(
-                                FunctionalStep.builder()
+                                ComposableStep.builder()
                                     .withName("a functional sub sub step with implementation")
                                     .withImplementation(java.util.Optional.of(TECHNICAL_CONTENT_B))
                                     .build()
@@ -86,11 +86,11 @@ public class FunctionalStepMapperTest {
             .build();
 
         // When
-        FunctionalStepDto functionalStepDto = toDto(fStep);
+        ComposableStepDto composableStepDto = toDto(fStep);
 
         // Then
-        assertThat(functionalStepDto.steps().get(0).task().get()).isEqualTo(TECHNICAL_CONTENT);
-        assertThat(functionalStepDto.steps().get(1).steps().get(0).task().get()).isEqualTo(TECHNICAL_CONTENT_B);
+        assertThat(composableStepDto.steps().get(0).task().get()).isEqualTo(TECHNICAL_CONTENT);
+        assertThat(composableStepDto.steps().get(1).steps().get(0).task().get()).isEqualTo(TECHNICAL_CONTENT_B);
     }
 
     @Test
@@ -98,22 +98,22 @@ public class FunctionalStepMapperTest {
         // Given
         String FSTEP_NAME = "a functional step with functional sub steps";
         String ANOTHER_FSTEP_NAME = "a functional sub step";
-        FunctionalStep fStep = FunctionalStep.builder()
+        ComposableStep fStep = ComposableStep.builder()
             .withId("#1:1")
             .withName(FSTEP_NAME)
             .withSteps(
                 Arrays.asList(
-                    FunctionalStep.builder()
+                    ComposableStep.builder()
                         .withName(FSTEP_NAME)
                         .withSteps(
                             Collections.singletonList(
-                                FunctionalStep.builder()
+                                ComposableStep.builder()
                                     .withName(ANOTHER_FSTEP_NAME)
                                     .build()
                             )
                         )
                         .build(),
-                    FunctionalStep.builder()
+                    ComposableStep.builder()
                         .withName(ANOTHER_FSTEP_NAME)
                         .build()
                 )
@@ -121,18 +121,18 @@ public class FunctionalStepMapperTest {
             .build();
 
         // When
-        FunctionalStepDto functionalStepDto = toDto(fStep);
+        ComposableStepDto composableStepDto = toDto(fStep);
 
         // Then
-        assertThat(functionalStepDto.steps().get(0).name()).isEqualTo(FSTEP_NAME);
-        assertThat(functionalStepDto.steps().get(0).steps().get(0).name()).isEqualTo(ANOTHER_FSTEP_NAME);
-        assertThat(functionalStepDto.steps().get(1).name()).isEqualTo(ANOTHER_FSTEP_NAME);
+        assertThat(composableStepDto.steps().get(0).name()).isEqualTo(FSTEP_NAME);
+        assertThat(composableStepDto.steps().get(0).steps().get(0).name()).isEqualTo(ANOTHER_FSTEP_NAME);
+        assertThat(composableStepDto.steps().get(1).name()).isEqualTo(ANOTHER_FSTEP_NAME);
     }
 
     @Test
     public void should_map_func_step_parameters_and_dataset_to_dto_when_toDto_called() {
         // Given
-        FunctionalStep fStep = FunctionalStep.builder()
+        ComposableStep fStep = ComposableStep.builder()
             .withId("#1:1")
             .withName("a functional step")
             .withParameters(
@@ -152,11 +152,11 @@ public class FunctionalStepMapperTest {
             .build();
 
         // When
-        FunctionalStepDto functionalStepDto = toDto(fStep);
+        ComposableStepDto composableStepDto = toDto(fStep);
 
         // Then
-        assertThat(functionalStepDto.parameters()).containsExactlyElementsOf(KeyValue.fromMap(fStep.parameters));
-        assertThat(functionalStepDto.computedParameters()).containsExactlyElementsOf(KeyValue.fromMap(fStep.dataSet));
+        assertThat(composableStepDto.parameters()).containsExactlyElementsOf(KeyValue.fromMap(fStep.parameters));
+        assertThat(composableStepDto.computedParameters()).containsExactlyElementsOf(KeyValue.fromMap(fStep.dataSet));
     }
 
     @Test
@@ -164,18 +164,18 @@ public class FunctionalStepMapperTest {
         // Given
         String TECHNICAL_CONTENT = "{\"type\": \"debug\"}";
 
-        FunctionalStepDto dto = ImmutableFunctionalStepDto.builder()
+        ComposableStepDto dto = ImmutableComposableStepDto.builder()
             .id("id")
             .name("name")
-            .usage(FunctionalStepDto.StepUsage.GIVEN)
+            .usage(ComposableStepDto.StepUsage.GIVEN)
             .addSteps(
-                ImmutableFunctionalStepDto.builder()
+                ImmutableComposableStepDto.builder()
                     .name("sub step 1")
                     .task(TECHNICAL_CONTENT)
                     .build()
             )
             .addSteps(
-                ImmutableFunctionalStepDto.builder()
+                ImmutableComposableStepDto.builder()
                     .name("sub step 2")
                     .build()
             )
@@ -199,12 +199,12 @@ public class FunctionalStepMapperTest {
             .build();
 
         // When
-        FunctionalStep step = fromDto(dto);
+        ComposableStep step = fromDto(dto);
 
         // Then
         assertThat(step.id).isEqualTo(dto.id().get());
         assertThat(step.name).isEqualTo(dto.name());
-        assertThat(FunctionalStepDto.StepUsage.valueOf(step.usage.get().name())).isEqualTo(dto.usage());
+        assertThat(ComposableStepDto.StepUsage.valueOf(step.usage.get().name())).isEqualTo(dto.usage());
         assertThat(step.steps.get(0).implementation.get()).isEqualTo(TECHNICAL_CONTENT);
         assertThat(step.steps.get(1).name).isEqualTo(dto.steps().get(1).name());
         assertThat(step.parameters).containsAllEntriesOf(KeyValue.toMap(dto.parameters()));

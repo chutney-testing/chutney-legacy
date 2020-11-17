@@ -8,7 +8,7 @@ import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
-import com.chutneytesting.design.infra.storage.scenario.compose.OrientComposedTestCaseRepository;
+import com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableTestCaseRepository;
 import com.chutneytesting.design.infra.storage.scenario.git.GitScenarioRepositoryFactory;
 import com.chutneytesting.design.infra.storage.scenario.jdbc.DatabaseTestCaseRepository;
 import com.chutneytesting.design.infra.storage.scenario.jdbc.TestCaseData;
@@ -31,12 +31,12 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
     private DatabaseTestCaseRepository defaultRepository;
     private GitScenarioRepositoryFactory gitScenarioRepositoryFactory;
     private final ExamplesRepository examples;
-    private final OrientComposedTestCaseRepository composableTestCaseRepository;
+    private final OrientComposableTestCaseRepository composableTestCaseRepository;
 
     public TestCaseRepositoryAggregator(DatabaseTestCaseRepository defaultRepository,
                                         GitScenarioRepositoryFactory gitScenarioRepositoryFactory,
                                         ExamplesRepository examples,
-                                        OrientComposedTestCaseRepository composableTestCaseRepository) {
+                                        OrientComposableTestCaseRepository composableTestCaseRepository) {
         this.defaultRepository = defaultRepository;
         this.gitScenarioRepositoryFactory = gitScenarioRepositoryFactory;
         this.examples = examples;

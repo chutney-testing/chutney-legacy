@@ -4,8 +4,8 @@ import static com.chutneytesting.design.domain.scenario.compose.ComposableTestCa
 import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
 import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
 
+import com.chutneytesting.design.api.scenario.compose.dto.ComposableStepDto;
 import com.chutneytesting.design.api.scenario.compose.dto.ComposableTestCaseDto;
-import com.chutneytesting.design.api.scenario.compose.dto.FunctionalStepDto;
 import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableScenarioDto;
 import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableTestCaseDto;
 import com.chutneytesting.tools.ui.KeyValue;
@@ -25,7 +25,7 @@ public class ComposableTestCaseMapper {
         return new ComposableTestCase(
             fromFrontId(composableTestCaseDto.id()),
             testCaseMetadataFromDto(composableTestCaseDto),
-            composableScenarioFromDto(composableTestCaseDto)
+            fromComposableStepsDto(composableTestCaseDto)
         );
     }
 
@@ -38,7 +38,7 @@ public class ComposableTestCaseMapper {
             .computedParameters(KeyValue.fromMap(composableTestCase.computedParameters))
             .scenario(
                 ImmutableComposableScenarioDto.builder()
-                    .addAllComponentSteps(toComponentSteps(composableTestCase))
+                    .addAllComponentSteps(toComposableStepsDto(composableTestCase))
                     .addAllParameters(KeyValue.fromMap(composableTestCase.composableScenario.parameters))
                     .build()
             )
@@ -64,19 +64,19 @@ public class ComposableTestCaseMapper {
             .build();
     }
 
-    private static ComposableScenario composableScenarioFromDto(ComposableTestCaseDto composableTestCaseDto) {
+    private static ComposableScenario fromComposableStepsDto(ComposableTestCaseDto composableTestCaseDto) {
         return ComposableScenario.builder()
-            .withFunctionalSteps(
+            .withComposableSteps(
                 composableTestCaseDto.scenario().componentSteps().stream()
-                    .map(FunctionalStepMapper::fromDto)
+                    .map(ComposableStepMapper::fromDto)
                     .collect(Collectors.toList()))
             .withParameters(KeyValue.toMap(composableTestCaseDto.scenario().parameters()))
             .build();
     }
 
-    private static List<FunctionalStepDto> toComponentSteps(ComposableTestCase composableTestCase) {
-        return composableTestCase.composableScenario.functionalSteps.stream()
-            .map(FunctionalStepMapper::toDto)
+    private static List<ComposableStepDto> toComposableStepsDto(ComposableTestCase composableTestCase) {
+        return composableTestCase.composableScenario.composableSteps.stream()
+            .map(ComposableStepMapper::toDto)
             .collect(Collectors.toList());
     }
 }

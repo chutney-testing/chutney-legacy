@@ -24,7 +24,7 @@ import org.apache.lucene.util.IOUtils;
  * @see org.apache.lucene.analysis.fr.FrenchAnalyzer
  * @see org.apache.lucene.analysis.en.EnglishAnalyzer
  */
-public class FunctionalStepNameAnalyzer extends StopwordAnalyzerBase {
+public class ComposableStepNameAnalyzer extends StopwordAnalyzerBase {
 
     private int maxTokenLength = StandardAnalyzer.DEFAULT_MAX_TOKEN_LENGTH;
 
@@ -33,7 +33,7 @@ public class FunctionalStepNameAnalyzer extends StopwordAnalyzerBase {
      * @return an unmodifiable instance of the default stop-words set.
      */
     public static CharArraySet getDefaultStopSet() {
-        return FunctionalStepNameAnalyzer.DefaultSetHolder.DEFAULT_STOP_SET;
+        return ComposableStepNameAnalyzer.DefaultSetHolder.DEFAULT_STOP_SET;
     }
 
     private static class DefaultSetHolder {
@@ -46,10 +46,10 @@ public class FunctionalStepNameAnalyzer extends StopwordAnalyzerBase {
                 CharArraySet englishStopWords = WordlistLoader.getSnowballWordSet(IOUtils.getDecodingReader(SnowballFilter.class,
                         "english_stop.txt", StandardCharsets.UTF_8));
 
-                CharArraySet frenchGwtStopWords = WordlistLoader.getSnowballWordSet(IOUtils.getDecodingReader(FunctionalStepNameAnalyzer.class,
+                CharArraySet frenchGwtStopWords = WordlistLoader.getSnowballWordSet(IOUtils.getDecodingReader(ComposableStepNameAnalyzer.class,
                     "french_gwt.txt", StandardCharsets.UTF_8));
 
-                CharArraySet englishGwtStopWords = WordlistLoader.getSnowballWordSet(IOUtils.getDecodingReader(FunctionalStepNameAnalyzer.class,
+                CharArraySet englishGwtStopWords = WordlistLoader.getSnowballWordSet(IOUtils.getDecodingReader(ComposableStepNameAnalyzer.class,
                     "english_gwt.txt", StandardCharsets.UTF_8));
 
                 DEFAULT_STOP_SET = new CharArraySet(frenchStopWords, false);
@@ -68,8 +68,8 @@ public class FunctionalStepNameAnalyzer extends StopwordAnalyzerBase {
     /**
      * Builds an analyzer with the default stop words ({@link #getDefaultStopSet}).
      */
-    public FunctionalStepNameAnalyzer() {
-        this(FunctionalStepNameAnalyzer.DefaultSetHolder.DEFAULT_STOP_SET);
+    public ComposableStepNameAnalyzer() {
+        this(ComposableStepNameAnalyzer.DefaultSetHolder.DEFAULT_STOP_SET);
     }
 
     /**
@@ -78,7 +78,7 @@ public class FunctionalStepNameAnalyzer extends StopwordAnalyzerBase {
      * @param stopwords
      *          a stopword set
      */
-    public FunctionalStepNameAnalyzer(CharArraySet stopwords) {
+    public ComposableStepNameAnalyzer(CharArraySet stopwords) {
         super(stopwords);
     }
 
@@ -96,7 +96,7 @@ public class FunctionalStepNameAnalyzer extends StopwordAnalyzerBase {
             protected void setReader(final Reader reader) {
                 // So that if maxTokenLength was changed, the change takes
                 // effect next time tokenStream is called:
-                src.setMaxTokenLength(FunctionalStepNameAnalyzer.this.maxTokenLength);
+                src.setMaxTokenLength(ComposableStepNameAnalyzer.this.maxTokenLength);
                 super.setReader(reader);
             }
         };

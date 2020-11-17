@@ -8,16 +8,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ComposableTestCasePreProcessor implements TestCasePreProcessor<ExecutableComposedTestCase> {
+public class ComposedTestCasePreProcessor implements TestCasePreProcessor<ExecutableComposedTestCase> {
 
-    private final ComposableTestCaseParametersResolutionPreProcessor parametersResolutionPreProcessor;
-    private final ComposableTestCaseLoopPreProcessor loopPreProcessor;
-    private final ComposableTestCaseDataSetPreProcessor dataSetPreProcessor;
+    private final ComposedTestCaseParametersResolutionPreProcessor parametersResolutionPreProcessor;
+    private final ComposedTestCaseLoopPreProcessor loopPreProcessor;
+    private final ComposedTestCaseDataSetPreProcessor dataSetPreProcessor;
 
-    public ComposableTestCasePreProcessor(ObjectMapper objectMapper, GlobalvarRepository globalvarRepository, DataSetRepository dataSetRepository) {
-        this.parametersResolutionPreProcessor = new ComposableTestCaseParametersResolutionPreProcessor(globalvarRepository);
-        this.loopPreProcessor = new ComposableTestCaseLoopPreProcessor(objectMapper);
-        this.dataSetPreProcessor = new ComposableTestCaseDataSetPreProcessor(dataSetRepository);
+    public ComposedTestCasePreProcessor(ObjectMapper objectMapper, GlobalvarRepository globalvarRepository, DataSetRepository dataSetRepository) {
+        this.parametersResolutionPreProcessor = new ComposedTestCaseParametersResolutionPreProcessor(globalvarRepository);
+        this.loopPreProcessor = new ComposedTestCaseLoopPreProcessor(objectMapper);
+        this.dataSetPreProcessor = new ComposedTestCaseDataSetPreProcessor(dataSetRepository);
     }
 
     @Override

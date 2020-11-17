@@ -61,15 +61,15 @@ public class ScenarioExecutionEngine {
         );
     }
 
-    public ScenarioExecutionReport execute(ExecutableComposedFunctionalStep functionalStep, String environment, String userId) throws ScenarioNotFoundException, ScenarioNotParsableException {
+    public ScenarioExecutionReport execute(ExecutableComposedStep composedStep, String environment, String userId) throws ScenarioNotFoundException, ScenarioNotParsableException {
         TestCase testCase = new ExecutableComposedTestCase(
-            "no_scenario_id",
+            "no_testcase_id",
             TestCaseMetadataImpl.builder()
-                .withDescription(functionalStep.id + "-" + functionalStep.name)
-                .withTitle(functionalStep.id + "-" + functionalStep.name)
+                .withDescription(composedStep.name)
+                .withTitle(composedStep.name)
                 .build(),
             ExecutableComposedScenario.builder()
-                .withFunctionalSteps(Collections.singletonList(functionalStep))
+                .withComposedSteps(Collections.singletonList(composedStep))
                 .build());
 
         return simpleSyncExecution(

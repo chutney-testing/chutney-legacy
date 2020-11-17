@@ -4,11 +4,11 @@ import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
 import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
 import static java.util.stream.Collectors.toList;
 
-import com.chutneytesting.design.api.scenario.compose.dto.FunctionalStepDto;
-import com.chutneytesting.design.api.scenario.compose.dto.ImmutableFunctionalStepDto;
+import com.chutneytesting.design.api.scenario.compose.dto.ComposableStepDto;
+import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableStepDto;
 import com.chutneytesting.design.api.scenario.compose.dto.ImmutableStrategy;
 import com.chutneytesting.tools.ui.KeyValue;
-import com.chutneytesting.design.domain.scenario.compose.FunctionalStep;
+import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.design.domain.scenario.compose.StepUsage;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import java.util.HashMap;
@@ -16,29 +16,29 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FunctionalStepMapper {
+public class ComposableStepMapper {
 
-    public static FunctionalStepDto toDto(FunctionalStep functionalStep) {
-        ImmutableFunctionalStepDto.Builder builder = ImmutableFunctionalStepDto.builder()
-            .id(toFrontId(functionalStep.id))
-            .name(functionalStep.name)
-            .tags(functionalStep.tags);
+    public static ComposableStepDto toDto(ComposableStep composableStep) {
+        ImmutableComposableStepDto.Builder builder = ImmutableComposableStepDto.builder()
+            .id(toFrontId(composableStep.id))
+            .name(composableStep.name)
+            .tags(composableStep.tags);
 
-        functionalStep.usage.ifPresent(
-            stepUsage -> builder.usage(FunctionalStepDto.StepUsage.valueOf(stepUsage.name())));
+        composableStep.usage.ifPresent(
+            stepUsage -> builder.usage(ComposableStepDto.StepUsage.valueOf(stepUsage.name())));
 
-        functionalStep.implementation.ifPresent(
+        composableStep.implementation.ifPresent(
             builder::task
         );
 
-        functionalStep.steps
+        composableStep.steps
             .forEach(step -> builder.addSteps(toDto(step)));
 
-        builder.parameters(KeyValue.fromMap(functionalStep.parameters));
+        builder.parameters(KeyValue.fromMap(composableStep.parameters));
 
-        builder.strategy(toDto(functionalStep.strategy));
+        builder.strategy(toDto(composableStep.strategy));
 
-        builder.addAllComputedParameters(KeyValue.fromMap(functionalStep.dataSet));
+        builder.addAllComputedParameters(KeyValue.fromMap(composableStep.dataSet));
 
         return builder.build();
     }
@@ -66,19 +66,19 @@ public class FunctionalStepMapper {
         return parametersDto;
     }
 
-    public static FunctionalStep fromDto(FunctionalStepDto dto) {
-        FunctionalStep.FunctionalStepBuilder functionalStepBuilder = FunctionalStep.builder()
+    public static ComposableStep fromDto(ComposableStepDto dto) {
+        ComposableStep.ComposableStepBuilder composableStepBuilder = ComposableStep.builder()
             .withId(fromFrontId(dto.id()))
             .withName(dto.name())
             .withUsage(java.util.Optional.of(StepUsage.valueOf(dto.usage().name())))
             .withStrategy(fromDto(dto.strategy()))
             .withImplementation(dto.task())
-            .withSteps(dto.steps().stream().map(FunctionalStepMapper::fromDto).collect(toList()))
+            .withSteps(dto.steps().stream().map(ComposableStepMapper::fromDto).collect(toList()))
             .withParameters(KeyValue.toMap(dto.parameters()))
             .overrideDataSetWith(KeyValue.toMap(dto.computedParameters()))
             .withTags(dto.tags().stream().map(String::trim).filter(t -> !t.isEmpty()).collect(toList()));
 
-        return functionalStepBuilder.build();
+        return composableStepBuilder.build();
     }
 
     private static Strategy fromDto(com.chutneytesting.design.api.scenario.compose.dto.Strategy strategyDto) {

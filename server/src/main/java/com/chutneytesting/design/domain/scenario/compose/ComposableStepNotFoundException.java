@@ -1,7 +1,7 @@
 package com.chutneytesting.design.domain.scenario.compose;
 
-public class FunctionalStepNotFoundException extends RuntimeException {
-    public FunctionalStepNotFoundException() {
+public class ComposableStepNotFoundException extends RuntimeException {
+    public ComposableStepNotFoundException() {
         super("The functional step id could not be found");
     }
 }

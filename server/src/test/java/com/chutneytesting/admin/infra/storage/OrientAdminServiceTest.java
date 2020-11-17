@@ -7,9 +7,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.orientechnologies.common.log.OLogManager;
 import com.chutneytesting.admin.domain.DatabaseAdminService;
 import com.chutneytesting.admin.domain.SqlResult;
-import com.chutneytesting.design.domain.scenario.compose.FunctionalStep;
-import com.chutneytesting.design.domain.scenario.compose.StepRepository;
-import com.chutneytesting.design.infra.storage.scenario.compose.OrientFunctionalStepRepository;
+import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
+import com.chutneytesting.design.domain.scenario.compose.ComposableStepRepository;
+import com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepRepository;
 import com.chutneytesting.tests.AbstractOrientDatabaseTest;
 import com.chutneytesting.tools.ImmutablePaginationRequestWrapperDto;
 import com.chutneytesting.tools.PaginatedDto;
@@ -28,14 +28,14 @@ public class OrientAdminServiceTest extends AbstractOrientDatabaseTest {
 
     private static String DATABASE_NAME = "orient_admin_test";
 
-    private static StepRepository orientRepository;
+    private static ComposableStepRepository orientRepository;
     private static DatabaseAdminService sut;
 
     @BeforeClass
     public static void setUp() {
         OrientAdminServiceTest.initComponentDB(DATABASE_NAME);
 
-        orientRepository = new OrientFunctionalStepRepository(orientComponentDB);
+        orientRepository = new OrientComposableStepRepository(orientComponentDB);
         sut = new OrientAdminService(orientComponentDB);
         OLogManager.instance().setWarnEnabled(false);
     }
@@ -54,10 +54,10 @@ public class OrientAdminServiceTest extends AbstractOrientDatabaseTest {
     @Test
     public void should_limit_result_to_20_records_when_execute_select_query() {
         // Given
-        ArrayList<FunctionalStep> steps = new ArrayList<>();
+        ArrayList<ComposableStep> steps = new ArrayList<>();
         IntStream.range(0, 25).forEach(
             value -> steps.add(
-                FunctionalStep.builder()
+                ComposableStep.builder()
                     .withName("func step " + value)
                     .build()
             ));
@@ -76,10 +76,10 @@ public class OrientAdminServiceTest extends AbstractOrientDatabaseTest {
     @Test
     public void should_not_limit_result_when_execute_already_limited_select_query() {
         // Given
-        ArrayList<FunctionalStep> steps = new ArrayList<>();
+        ArrayList<ComposableStep> steps = new ArrayList<>();
         IntStream.range(0, 10).forEach(
             value -> steps.add(
-                FunctionalStep.builder()
+                ComposableStep.builder()
                     .withName("func step " + value)
                     .build()
             ));
@@ -98,7 +98,7 @@ public class OrientAdminServiceTest extends AbstractOrientDatabaseTest {
     @Test
     public void should_set_update_count_when_execute_update_query() {
         // Given
-        FunctionalStep step = FunctionalStep.builder()
+        ComposableStep step = ComposableStep.builder()
             .withName("func step")
             .build();
 
@@ -130,10 +130,10 @@ public class OrientAdminServiceTest extends AbstractOrientDatabaseTest {
         // Given
         final Long TOTAL_FSTEPS = 25L;
 
-        ArrayList<FunctionalStep> steps = new ArrayList<>();
+        ArrayList<ComposableStep> steps = new ArrayList<>();
         LongStream.range(0, TOTAL_FSTEPS).forEach(
             value -> steps.add(
-                FunctionalStep.builder()
+                ComposableStep.builder()
                     .withName("func step " + value)
                     .build()
             ));
@@ -179,7 +179,7 @@ public class OrientAdminServiceTest extends AbstractOrientDatabaseTest {
     @Test
     public void should_set_update_count_when_paginate_update_query() {
         // Given
-        FunctionalStep step = FunctionalStep.builder()
+        ComposableStep step = ComposableStep.builder()
             .withName("func step")
             .build();
 

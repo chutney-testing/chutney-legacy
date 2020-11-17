@@ -34,13 +34,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class OrientComposedTestCaseRepository implements ComposableTestCaseRepository, ExecutableComposedTestCaseRepository {
+public class OrientComposableTestCaseRepository implements ComposableTestCaseRepository, ExecutableComposedTestCaseRepository {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OrientComposedTestCaseRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrientComposableTestCaseRepository.class);
 
     private ODatabasePool componentDBPool;
 
-    public OrientComposedTestCaseRepository(OrientComponentDB orientComponentDB) {
+    public OrientComposableTestCaseRepository(OrientComponentDB orientComponentDB) {
         this.componentDBPool = orientComponentDB.dbPool();
     }
 

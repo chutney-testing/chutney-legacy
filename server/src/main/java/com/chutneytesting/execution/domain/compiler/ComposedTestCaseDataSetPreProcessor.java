@@ -12,8 +12,8 @@ import com.chutneytesting.design.domain.dataset.DataSetRepository;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.engine.domain.execution.strategies.DataSetIterationsStrategy;
 import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedFunctionalStep;
 import com.chutneytesting.execution.domain.scenario.ExecutableComposedScenario;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedStep;
 import com.chutneytesting.execution.domain.scenario.ExecutableComposedTestCase;
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,11 +24,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcessor<ExecutableComposedTestCase> {
+public class ComposedTestCaseDataSetPreProcessor implements TestCasePreProcessor<ExecutableComposedTestCase> {
 
     private final DataSetRepository dataSetRepository;
 
-    public ComposableTestCaseDataSetPreProcessor(DataSetRepository dataSetRepository) {
+    ComposedTestCaseDataSetPreProcessor(DataSetRepository dataSetRepository) {
         this.dataSetRepository = dataSetRepository;
     }
 
@@ -59,7 +59,7 @@ public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcess
         return new ExecutableComposedTestCase(
             testCase.id,
             testCase.metadata,
-            applyToScenario(testCase.composableScenario, matchedHeaders, dataSet),
+            applyToScenario(testCase.composedScenario, matchedHeaders, dataSet),
             applyToComputedParameters(testCase.computedParameters, matchedHeaders.get(Boolean.TRUE), dataSet));
     }
 
@@ -78,45 +78,45 @@ public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcess
         return parameters;
     }
 
-    private ExecutableComposedScenario applyToScenario(ExecutableComposedScenario composableScenario, Map<Boolean, List<String>> matchedHeaders, DataSet dataSet) {
+    private ExecutableComposedScenario applyToScenario(ExecutableComposedScenario composedScenario, Map<Boolean, List<String>> matchedHeaders, DataSet dataSet) {
         if (matchedHeaders.isEmpty()) {
-            return composableScenario;
+            return composedScenario;
         }
 
         return ExecutableComposedScenario.builder()
-            .withFunctionalSteps(
-                composableScenario.functionalSteps.stream()
+            .withComposedSteps(
+                composedScenario.composedSteps.stream()
                     .map(fs -> applyToScenarioSteps(fs, matchedHeaders, dataSet))
                     .collect(toList())
             )
-            .withParameters(composableScenario.parameters)
+            .withParameters(composedScenario.parameters)
             .build();
     }
 
-    private ExecutableComposedFunctionalStep applyToScenarioSteps(ExecutableComposedFunctionalStep functionalStep, Map<Boolean, List<String>> matchedHeaders, DataSet dataSet) {
-        Set<String> fsNovaluedEntries = findFunctionalStepNoValuedMatchedEntries(functionalStep.dataSet, matchedHeaders.get(Boolean.TRUE));
-        Map<String, Set<String>> fsValuedEntriesWithRef = findFunctionalStepValuedEntriesWithRef(functionalStep.dataSet, matchedHeaders.get(Boolean.TRUE));
+    private ExecutableComposedStep applyToScenarioSteps(ExecutableComposedStep composedStep, Map<Boolean, List<String>> matchedHeaders, DataSet dataset) {
+        Set<String> fsNovaluedEntries = findComposedStepNoValuedMatchedEntries(composedStep.dataset, matchedHeaders.get(Boolean.TRUE));
+        Map<String, Set<String>> fsValuedEntriesWithRef = findComposedStepValuedEntriesWithRef(composedStep.dataset, matchedHeaders.get(Boolean.TRUE));
 
         if (fsNovaluedEntries.isEmpty() && fsValuedEntriesWithRef.isEmpty()) {
-            return functionalStep;
+            return composedStep;
         }
 
-        Map<String, String> fsLeftEntries = functionalStep.dataSet.entrySet().stream()
+        Map<String, String> fsLeftEntries = composedStep.dataset.entrySet().stream()
             .filter(e -> e.getValue().isEmpty())
             .filter(e -> !fsNovaluedEntries.contains(e.getKey()))
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         matchedHeaders.get(Boolean.FALSE).forEach(s -> fsLeftEntries.put(s, ""));
 
-        return ExecutableComposedFunctionalStep.builder()
-            .from(functionalStep)
+        return ExecutableComposedStep.builder()
+            .from(composedStep)
             .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
-            .withSteps(buildStepIterations(functionalStep, fsNovaluedEntries, fsValuedEntriesWithRef, dataSet.multipleValues))
+            .withSteps(buildStepIterations(composedStep, fsNovaluedEntries, fsValuedEntriesWithRef, dataset.multipleValues))
             .overrideDataSetWith(buildDatasetWithAliases(fsLeftEntries))
             .build();
     }
 
-    private Map<String, Set<String>> findFunctionalStepValuedEntriesWithRef(Map<String, String> fsDataSet, List<String> matchedHeaders) {
+    private Map<String, Set<String>> findComposedStepValuedEntriesWithRef(Map<String, String> fsDataSet, List<String> matchedHeaders) {
         HashMap<String, Set<String>> valuedEntriesWithRef = new HashMap<>();
         for (Map.Entry<String, String> fsData : fsDataSet.entrySet()) {
             String value = fsData.getValue();
@@ -130,14 +130,14 @@ public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcess
         return valuedEntriesWithRef;
     }
 
-    private Set<String> findFunctionalStepNoValuedMatchedEntries(Map<String, String> fsDataSet, List<String> matchedHeaders) {
-        return fsDataSet.entrySet().stream()
+    private Set<String> findComposedStepNoValuedMatchedEntries(Map<String, String> fsDataset, List<String> matchedHeaders) {
+        return fsDataset.entrySet().stream()
             .filter(e -> e.getValue().isEmpty() && matchedHeaders.contains(e.getKey()))
             .map(Map.Entry::getKey)
             .collect(toSet());
     }
 
-    private List<ExecutableComposedFunctionalStep> buildStepIterations(ExecutableComposedFunctionalStep functionalStep, Set<String> fsNovaluedEntries, Map<String, Set<String>> fsValuedEntriesWithRef, List<Map<String, String>> multipleValues) {
+    private List<ExecutableComposedStep> buildStepIterations(ExecutableComposedStep composedStep, Set<String> fsNovaluedEntries, Map<String, Set<String>> fsValuedEntriesWithRef, List<Map<String, String>> multipleValues) {
         Set<String> dataSetEntriesReferenced = fsValuedEntriesWithRef.values().stream().flatMap(Collection::stream).collect(toSet());
         List<Map<String, String>> iterationData = multipleValues.stream()
             .map(m ->
@@ -153,8 +153,8 @@ public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcess
             .map(mv -> {
                 index.getAndIncrement();
 
-                Map<String, String> newDataSet = new HashMap<>(functionalStep.dataSet);
-                functionalStep.dataSet.forEach((k, v) -> {
+                Map<String, String> newDataSet = new HashMap<>(composedStep.dataset);
+                composedStep.dataset.forEach((k, v) -> {
                     if (fsNovaluedEntries.contains(k)) {
                         newDataSet.put(k, mv.get(k));
                     } else if (fsValuedEntriesWithRef.containsKey(k)) {
@@ -162,9 +162,9 @@ public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcess
                     }
                 });
 
-                return ExecutableComposedFunctionalStep.builder()
-                    .from(functionalStep)
-                    .withName(functionalStep.name + " - dataset iteration " + index)
+                return ExecutableComposedStep.builder()
+                    .from(composedStep)
+                    .withName(composedStep.name + " - dataset iteration " + index)
                     .overrideDataSetWith(newDataSet)
                     .build();
             })

@@ -85,8 +85,8 @@ public class ComposableTestCase implements TestCase {
     private Map<String, String> buildDataSet() {
         Map<String, String> dataSet = new HashMap<>();
 
-        composableScenario.functionalSteps
-            .forEach(functionalStep -> dataSet.putAll(functionalStep.dataSetGlobalParameters()));
+        composableScenario.composableSteps
+            .forEach(composableStep -> dataSet.putAll(composableStep.dataSetGlobalParameters()));
 
         Optional.ofNullable(composableScenario.parameters)
             .ifPresent(dataSet::putAll);

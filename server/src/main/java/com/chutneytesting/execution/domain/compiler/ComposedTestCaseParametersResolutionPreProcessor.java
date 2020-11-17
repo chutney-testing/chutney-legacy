@@ -4,13 +4,13 @@ import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedFunctionalStep;
 import com.chutneytesting.execution.domain.scenario.ExecutableComposedScenario;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedStep;
 import com.chutneytesting.execution.domain.scenario.ExecutableComposedTestCase;
 import java.util.HashMap;
 import java.util.List;
@@ -18,11 +18,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.text.StringEscapeUtils;
 
-public class ComposableTestCaseParametersResolutionPreProcessor implements TestCasePreProcessor<ExecutableComposedTestCase> {
+public class ComposedTestCaseParametersResolutionPreProcessor implements TestCasePreProcessor<ExecutableComposedTestCase> {
 
     private final GlobalvarRepository globalvarRepository;
 
-    ComposableTestCaseParametersResolutionPreProcessor(GlobalvarRepository globalvarRepository) {
+    ComposedTestCaseParametersResolutionPreProcessor(GlobalvarRepository globalvarRepository) {
         this.globalvarRepository = globalvarRepository;
     }
 
@@ -34,7 +34,7 @@ public class ComposableTestCaseParametersResolutionPreProcessor implements TestC
         return new ExecutableComposedTestCase(
             testCase.id,
             applyToMetadata(testCase.metadata, testCase.computedParameters, globalVariable),
-            applyToScenario(testCase.composableScenario, testCase.computedParameters, globalVariable),
+            applyToScenario(testCase.composedScenario, testCase.computedParameters, globalVariable),
             testCase.computedParameters);
     }
 
@@ -45,7 +45,7 @@ public class ComposableTestCaseParametersResolutionPreProcessor implements TestC
         return new ExecutableComposedTestCase(
             testCase.id,
             testCase.metadata,
-            applyOnStrategy(testCase.composableScenario, testCaseDataSet, globalVariable),
+            applyOnStrategy(testCase.composedScenario, testCaseDataSet, globalVariable),
             testCaseDataSet);
     }
 
@@ -57,31 +57,31 @@ public class ComposableTestCaseParametersResolutionPreProcessor implements TestC
             .build();
     }
 
-    private ExecutableComposedScenario applyToScenario(ExecutableComposedScenario composableScenario, Map<String, String> testCaseDataSet, Map<String, String> globalVariable) {
+    private ExecutableComposedScenario applyToScenario(ExecutableComposedScenario composedScenario, Map<String, String> testCaseDataSet, Map<String, String> globalVariable) {
         return ExecutableComposedScenario.builder()
-            .withFunctionalSteps(
-                composableScenario.functionalSteps.stream()
-                    .map(step -> applyToFunctionalStep(step, testCaseDataSet, globalVariable))
+            .withComposedSteps(
+                composedScenario.composedSteps.stream()
+                    .map(step -> applyToComposedStep(step, testCaseDataSet, globalVariable))
                     .collect(Collectors.toList())
             )
-            .withParameters(composableScenario.parameters)
+            .withParameters(composedScenario.parameters)
             .build();
     }
 
-    private ExecutableComposedFunctionalStep applyToFunctionalStep(ExecutableComposedFunctionalStep functionalStep, Map<String, String> parentDataset, Map<String, String> globalVariable) {
-        Map<String, String> scopedDataset = applyOnCurrentStepDataSet(functionalStep.dataSet, parentDataset, globalVariable);
-        List<ExecutableComposedFunctionalStep> subSteps = functionalStep.steps;
+    private ExecutableComposedStep applyToComposedStep(ExecutableComposedStep composedStep, Map<String, String> parentDataset, Map<String, String> globalVariable) {
+        Map<String, String> scopedDataset = applyOnCurrentStepDataSet(composedStep.dataset, parentDataset, globalVariable);
+        List<ExecutableComposedStep> subSteps = composedStep.steps;
 
         // Preprocess substeps - Recurse
-        return ExecutableComposedFunctionalStep.builder()
-            .withName(replaceParams(functionalStep.name, globalvarRepository.getFlatMap(), scopedDataset))
+        return ExecutableComposedStep.builder()
+            .withName(replaceParams(composedStep.name, globalvarRepository.getFlatMap(), scopedDataset))
             .withSteps(
                 subSteps.stream()
-                    .map(f -> applyToFunctionalStep(f, scopedDataset, globalVariable))
+                    .map(f -> applyToComposedStep(f, scopedDataset, globalVariable))
                     .collect(Collectors.toList())
             )
-            .withImplementation(functionalStep.implementation.map(v -> replaceParams(v, globalvarRepository.getFlatMap(), scopedDataset, StringEscapeUtils::escapeJson)))
-            .withStrategy(functionalStep.strategy)
+            .withImplementation(composedStep.implementation.map(v -> replaceParams(v, globalvarRepository.getFlatMap(), scopedDataset, StringEscapeUtils::escapeJson)))
+            .withStrategy(composedStep.strategy)
             .overrideDataSetWith(scopedDataset)
             .build();
     }
@@ -101,30 +101,30 @@ public class ComposableTestCaseParametersResolutionPreProcessor implements TestC
         return scopedDataset;
     }
 
-    private ExecutableComposedScenario applyOnStrategy(ExecutableComposedScenario composableScenario, Map<String, String> testCaseDataSet, Map<String, String> globalVariable) {
+    private ExecutableComposedScenario applyOnStrategy(ExecutableComposedScenario composedScenario, Map<String, String> testCaseDataSet, Map<String, String> globalVariable) {
         return ExecutableComposedScenario.builder()
-            .withFunctionalSteps(
-                composableScenario.functionalSteps.stream()
+            .withComposedSteps(
+                composedScenario.composedSteps.stream()
                     .map(step -> applyOnStepStrategy(step, testCaseDataSet, globalVariable))
                     .collect(Collectors.toList())
             )
-            .withParameters(composableScenario.parameters)
+            .withParameters(composedScenario.parameters)
             .build();
     }
 
-    private ExecutableComposedFunctionalStep applyOnStepStrategy(ExecutableComposedFunctionalStep functionalStep, Map<String, String> parentDataset, Map<String, String> globalVariable) {
-        Map<String, String> scopedDataset = applyOnCurrentStepDataSet(functionalStep.dataSet, parentDataset, globalVariable);
+    private ExecutableComposedStep applyOnStepStrategy(ExecutableComposedStep composedStep, Map<String, String> parentDataset, Map<String, String> globalVariable) {
+        Map<String, String> scopedDataset = applyOnCurrentStepDataSet(composedStep.dataset, parentDataset, globalVariable);
 
-        return ExecutableComposedFunctionalStep.builder()
-            .withName(functionalStep.name)
+        return ExecutableComposedStep.builder()
+            .withName(composedStep.name)
             .withSteps(
-                functionalStep.steps.stream()
+                composedStep.steps.stream()
                     .map(f -> applyOnStepStrategy(f, scopedDataset, globalVariable))
                     .collect(Collectors.toList())
             )
-            .withImplementation(functionalStep.implementation)
-            .withStrategy(applyToStrategy(functionalStep.strategy, scopedDataset, globalVariable))
-            .overrideDataSetWith(functionalStep.dataSet)
+            .withImplementation(composedStep.implementation)
+            .withStrategy(applyToStrategy(composedStep.strategy, scopedDataset, globalVariable))
+            .overrideDataSetWith(composedStep.dataset)
             .build();
     }
 

@@ -21,7 +21,7 @@ import com.chutneytesting.engine.api.execution.SecurityInfoDto;
 import com.chutneytesting.engine.api.execution.TargetDto;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.compiler.ScenarioConversionException;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedFunctionalStep;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedStep;
 import com.chutneytesting.execution.domain.scenario.ExecutableComposedTestCase;
 import com.chutneytesting.task.api.EmbeddedTaskEngine;
 import com.chutneytesting.task.api.TaskDto;
@@ -71,7 +71,7 @@ public class ExecutionRequestMapper {
         }
 
         if (executionRequest.testCase instanceof ExecutableComposedTestCase) {
-            return convertComposable(executionRequest);
+            return convertComposed(executionRequest);
         }
 
         throw new ScenarioConversionException(executionRequest.testCase.metadata().id(),
@@ -204,38 +204,38 @@ public class ExecutionRequestMapper {
         return target;
     }
 
-    private StepDefinitionRequestDto convertComposable(ExecutionRequest executionRequest) {
-        ExecutableComposedTestCase composableTestCase = (ExecutableComposedTestCase) executionRequest.testCase;
+    private StepDefinitionRequestDto convertComposed(ExecutionRequest executionRequest) {
+        ExecutableComposedTestCase composedTestCase = (ExecutableComposedTestCase) executionRequest.testCase;
         try {
             return new StepDefinitionRequestDto(
-                composableTestCase.metadata.title(),
+                composedTestCase.metadata.title(),
                 toDto(NO_TARGET),
                 null,
                 null,
                 null,
-                convertComposableSteps(composableTestCase.composableScenario.functionalSteps, executionRequest.environment),
+                convertComposableSteps(composedTestCase.composedScenario.composedSteps, executionRequest.environment),
                 null,
                 executionRequest.environment
             );
         } catch (Exception e) {
-            throw new ScenarioConversionException(composableTestCase.metadata().id(), e);
+            throw new ScenarioConversionException(composedTestCase.metadata().id(), e);
         }
     }
 
-    private List<StepDefinitionRequestDto> convertComposableSteps(List<ExecutableComposedFunctionalStep> functionalSteps, String env) {
-        return functionalSteps.stream().map(f -> convert(f, env)).collect(Collectors.toList());
+    private List<StepDefinitionRequestDto> convertComposableSteps(List<ExecutableComposedStep> composedSteps, String env) {
+        return composedSteps.stream().map(f -> convert(f, env)).collect(Collectors.toList());
     }
 
-    private StepDefinitionRequestDto convert(ExecutableComposedFunctionalStep functionalStep, String env) {
-        Optional<ComposableImplementation> implementation = functionalStep.implementation.map(ComposableImplementation::new);
+    private StepDefinitionRequestDto convert(ExecutableComposedStep composedStep, String env) {
+        Optional<ComposableImplementation> implementation = composedStep.implementation.map(ComposableImplementation::new);
 
         return new StepDefinitionRequestDto(
-            functionalStep.name,
+            composedStep.name,
             toDto(findTargetByName(implementation.map(ComposableImplementation::targetName).orElse(""), env)),
-            this.mapStrategy(functionalStep.strategy),
+            this.mapStrategy(composedStep.strategy),
             implementation.map(ComposableImplementation::type).orElse(""),
             implementation.map(ComposableImplementation::inputs).orElse(emptyMap()),
-            functionalStep.steps.stream().map(f -> convert(f, env)).collect(Collectors.toList()),
+            composedStep.steps.stream().map(f -> convert(f, env)).collect(Collectors.toList()),
             implementation.map(ComposableImplementation::outputs).orElse(emptyMap()),
             env
         );

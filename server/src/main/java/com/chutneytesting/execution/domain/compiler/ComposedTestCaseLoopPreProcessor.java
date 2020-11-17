@@ -2,8 +2,8 @@ package com.chutneytesting.execution.domain.compiler;
 
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedFunctionalStep;
 import com.chutneytesting.execution.domain.scenario.ExecutableComposedScenario;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedStep;
 import com.chutneytesting.execution.domain.scenario.ExecutableComposedTestCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -17,13 +17,13 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class ComposableTestCaseLoopPreProcessor implements TestCasePreProcessor<ExecutableComposedTestCase> {
+class ComposedTestCaseLoopPreProcessor implements TestCasePreProcessor<ExecutableComposedTestCase> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ComposableTestCaseLoopPreProcessor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComposedTestCaseLoopPreProcessor.class);
 
     private final ObjectMapper objectMapper;
 
-    ComposableTestCaseLoopPreProcessor(ObjectMapper objectMapper) {
+    ComposedTestCaseLoopPreProcessor(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
@@ -33,70 +33,70 @@ class ComposableTestCaseLoopPreProcessor implements TestCasePreProcessor<Executa
         return new ExecutableComposedTestCase(
             testCase.id,
             testCase.metadata,
-            apply(testCase.composableScenario),
+            apply(testCase.composedScenario),
             testCase.computedParameters);
     }
 
-    private ExecutableComposedScenario apply(ExecutableComposedScenario composableScenario) {
+    private ExecutableComposedScenario apply(ExecutableComposedScenario composedScenario) {
         return ExecutableComposedScenario.builder()
-            .withFunctionalSteps(
-                composableScenario.functionalSteps.stream()
+            .withComposedSteps(
+                composedScenario.composedSteps.stream()
                     .map(this::apply)
                     .collect(Collectors.toList())
             )
-            .withParameters(composableScenario.parameters)
+            .withParameters(composedScenario.parameters)
             .build();
     }
 
-    private ExecutableComposedFunctionalStep apply(ExecutableComposedFunctionalStep functionalStep) {
-        ExecutableComposedFunctionalStep step = applyOnChildren(functionalStep);
+    private ExecutableComposedStep apply(ExecutableComposedStep composedStep) {
+        ExecutableComposedStep step = applyOnChildren(composedStep);
 
-        if ("Loop".equals(functionalStep.strategy.type)) {
+        if ("Loop".equals(composedStep.strategy.type)) {
             return createStepWithIterations(step);
         }
 
         return step;
     }
 
-    private ExecutableComposedFunctionalStep applyOnChildren(ExecutableComposedFunctionalStep functionalStep) {
-        List<ExecutableComposedFunctionalStep> subSteps = functionalStep.steps.stream().map(this::apply).collect(Collectors.toList());
-        return ExecutableComposedFunctionalStep.builder()
-            .from(functionalStep)
+    private ExecutableComposedStep applyOnChildren(ExecutableComposedStep composedStep) {
+        List<ExecutableComposedStep> subSteps = composedStep.steps.stream().map(this::apply).collect(Collectors.toList());
+        return ExecutableComposedStep.builder()
+            .from(composedStep)
             .withSteps(subSteps)
-            .overrideDataSetWith(functionalStep.dataSet)
+            .overrideDataSetWith(composedStep.dataset)
             .build();
     }
 
-    private ExecutableComposedFunctionalStep createStepWithIterations(ExecutableComposedFunctionalStep functionalStep) {
+    private ExecutableComposedStep createStepWithIterations(ExecutableComposedStep composedStep) {
         try {
-            String data = (String) Optional.ofNullable(functionalStep.strategy.parameters.get("data")).orElse("[{}]");
+            String data = (String) Optional.ofNullable(composedStep.strategy.parameters.get("data")).orElse("[{}]");
             List<Map<String, String>> iterationData = objectMapper.readValue(StringEscapeUtils.unescapeJson(data), List.class);
 
-            return ExecutableComposedFunctionalStep.builder()
-                .from(functionalStep)
+            return ExecutableComposedStep.builder()
+                .from(composedStep)
                 .withStrategy(Strategy.DEFAULT)
-                .withSteps(createStepIterations(functionalStep, iterationData))
-                .overrideDataSetWith(buildDatasetWithAliases(functionalStep.dataSet))
+                .withSteps(createStepIterations(composedStep, iterationData))
+                .overrideDataSetWith(buildDatasetWithAliases(composedStep.dataset))
                 .build();
 
         } catch (IOException e) {
             LOGGER.error("Error reading json loop data", e);
-            return functionalStep;
+            return composedStep;
         }
     }
 
-    private List<ExecutableComposedFunctionalStep> createStepIterations(ExecutableComposedFunctionalStep functionalStep, List<Map<String, String>> iterationData) {
+    private List<ExecutableComposedStep> createStepIterations(ExecutableComposedStep composedStep, List<Map<String, String>> iterationData) {
         AtomicInteger index = new AtomicInteger(0);
         return iterationData.stream()
             .map(i -> {
                 index.getAndIncrement();
-                return createIteration(i, functionalStep, index);
+                return createIteration(i, composedStep, index);
             })
             .collect(Collectors.toList());
     }
 
-    private ExecutableComposedFunctionalStep createIteration(Map<String, String> iterationData, ExecutableComposedFunctionalStep step, AtomicInteger index) {
-        Stream<Map<String, String>> combined = Stream.of(iterationData, step.dataSet);
+    private ExecutableComposedStep createIteration(Map<String, String> iterationData, ExecutableComposedStep step, AtomicInteger index) {
+        Stream<Map<String, String>> combined = Stream.of(iterationData, step.dataset);
 
         Map<String, String> params = combined
             .flatMap(map -> map.entrySet().stream())
@@ -105,7 +105,7 @@ class ComposableTestCaseLoopPreProcessor implements TestCasePreProcessor<Executa
                 Map.Entry::getValue,
                 (data, param) -> data));
 
-        return ExecutableComposedFunctionalStep.builder()
+        return ExecutableComposedStep.builder()
             .from(step)
             .withName(step.name + " - iteration " + index)
             .overrideDataSetWith(params)

@@ -70,7 +70,7 @@ public interface ComposableTestCaseDto {
         }
 
         @Value.Default
-        default List<FunctionalStepDto> componentSteps() {
+        default List<ComposableStepDto> componentSteps() {
             return emptyList();
         }
     }

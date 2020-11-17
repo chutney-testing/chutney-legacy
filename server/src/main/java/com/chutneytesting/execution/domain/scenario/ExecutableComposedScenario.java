@@ -10,11 +10,11 @@ import java.util.Objects;
 
 public class ExecutableComposedScenario {
 
-    public final List<ExecutableComposedFunctionalStep> functionalSteps;
+    public final List<ExecutableComposedStep> composedSteps;
     public final Map<String, String> parameters;
 
-    private ExecutableComposedScenario(List<ExecutableComposedFunctionalStep> functionalSteps, Map<String, String> parameters) {
-        this.functionalSteps = functionalSteps;
+    private ExecutableComposedScenario(List<ExecutableComposedStep> composedSteps, Map<String, String> parameters) {
+        this.composedSteps = composedSteps;
         this.parameters = parameters;
     }
 
@@ -23,19 +23,19 @@ public class ExecutableComposedScenario {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ExecutableComposedScenario that = (ExecutableComposedScenario) o;
-        return Objects.equals(functionalSteps, that.functionalSteps) &&
+        return Objects.equals(composedSteps, that.composedSteps) &&
             Objects.equals(parameters, that.parameters);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(functionalSteps, parameters);
+        return Objects.hash(composedSteps, parameters);
     }
 
     @Override
     public String toString() {
         return "ExecutableComposedScenario{" +
-            "ExecutableComposedFunctionalSteps=" + functionalSteps +
+            "ExecutableComposedSteps=" + composedSteps +
             ", parameters=" + parameters +
             '}';
     }
@@ -46,20 +46,20 @@ public class ExecutableComposedScenario {
 
     public static class ExecutableComposedScenarioBuilder {
 
-        private List<ExecutableComposedFunctionalStep> executableComposedFunctionalSteps;
+        private List<ExecutableComposedStep> executableComposedSteps;
         private Map<String, String> parameters;
 
         private ExecutableComposedScenarioBuilder() {}
 
         public ExecutableComposedScenario build() {
             return new ExecutableComposedScenario(
-                ofNullable(executableComposedFunctionalSteps).orElse(emptyList()),
+                ofNullable(executableComposedSteps).orElse(emptyList()),
                 ofNullable(parameters).orElse(emptyMap())
             );
         }
 
-        public ExecutableComposedScenarioBuilder withFunctionalSteps(List<ExecutableComposedFunctionalStep> ExecutableComposedFunctionalSteps) {
-            this.executableComposedFunctionalSteps = ExecutableComposedFunctionalSteps;
+        public ExecutableComposedScenarioBuilder withComposedSteps(List<ExecutableComposedStep> executableComposedSteps) {
+            this.executableComposedSteps = executableComposedSteps;
             return this;
         }
 

@@ -6,10 +6,10 @@ import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
+import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
+import com.chutneytesting.design.domain.scenario.compose.ComposableStepRepository;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository;
-import com.chutneytesting.design.domain.scenario.compose.FunctionalStep;
-import com.chutneytesting.design.domain.scenario.compose.StepRepository;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
 import com.chutneytesting.tests.AbstractOrientDatabaseTest;
 import com.orientechnologies.common.log.OLogManager;
@@ -32,37 +32,37 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
 
     @BeforeClass
     public static void setUp() {
-        OrientFunctionalStepRepositoryTest.initComponentDB(DATABASE_NAME);
-        sut = new OrientComposedTestCaseRepository(orientComponentDB);
+        OrientComposableStepRepositoryTest.initComponentDB(DATABASE_NAME);
+        sut = new OrientComposableTestCaseRepository(orientComponentDB);
         OLogManager.instance().setWarnEnabled(false);
-        initFunctionalStepsRepository();
+        initComposableStepsRepository();
     }
 
-    private static FunctionalStep FUNC_STEP_REF;
+    private static ComposableStep FUNC_STEP_REF;
     private static Map<String, String> FUNC_STEP_REF_PARAMERTERS = Maps.of(
         "child parameter with no overload", "child initial value",
         "child parameter with parent overload", "child value to be overloaded",
         "child parameter with scenario overload", "child value to be overloaded"
     );
-    private static FunctionalStep FUNC_STEP_PARENT_REF;
+    private static ComposableStep FUNC_STEP_PARENT_REF;
     private static Map<String, String> FUNC_STEP_PARENT_REF_PARAMERTERS = Maps.of(
         "parent parameter with no overload", "parent initial value",
         "parent parameter with scenario overload", "parent value to be overloaded"
     );
 
-    private static void initFunctionalStepsRepository() {
-        StepRepository funcStepRepository = new OrientFunctionalStepRepository(orientComponentDB);
+    private static void initComposableStepsRepository() {
+        ComposableStepRepository funcComposableStepRepository = new OrientComposableStepRepository(orientComponentDB);
 
-        FunctionalStep FUNC_STEP = FunctionalStep.builder()
+        ComposableStep FUNC_STEP = ComposableStep.builder()
             .withName("func step without children")
             .withParameters(FUNC_STEP_REF_PARAMERTERS)
             .build();
-        FUNC_STEP_REF = FunctionalStep.builder()
+        FUNC_STEP_REF = ComposableStep.builder()
             .from(FUNC_STEP)
-            .withId(funcStepRepository.save(FUNC_STEP))
+            .withId(funcComposableStepRepository.save(FUNC_STEP))
             .build();
 
-        FunctionalStep funcStepInstance = FunctionalStep.builder()
+        ComposableStep funcStepInstance = ComposableStep.builder()
             .from(FUNC_STEP_REF)
             .overrideDataSetWith(
                 Maps.of(
@@ -71,14 +71,14 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
                     "child parameter with scenario overload", ""
                 ))
             .build();
-        FunctionalStep FUNC_STEP_P = FunctionalStep.builder()
+        ComposableStep FUNC_STEP_P = ComposableStep.builder()
             .withName("func step with child")
             .withSteps(Collections.singletonList(funcStepInstance))
             .withParameters(FUNC_STEP_PARENT_REF_PARAMERTERS)
             .build();
-        FUNC_STEP_PARENT_REF = FunctionalStep.builder()
+        FUNC_STEP_PARENT_REF = ComposableStep.builder()
             .from(FUNC_STEP_P)
-            .withId(funcStepRepository.save(FUNC_STEP_P))
+            .withId(funcComposableStepRepository.save(FUNC_STEP_P))
             .build();
     }
 
@@ -89,7 +89,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
 
     @AfterClass
     public static void tearDown() {
-        OrientFunctionalStepRepositoryTest.destroyDB(DATABASE_NAME);
+        OrientComposableStepRepositoryTest.destroyDB(DATABASE_NAME);
     }
 
     @Test
@@ -100,9 +100,9 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
             new ComposableTestCase("",
                 TestCaseMetadataImpl.builder().build(),
                 ComposableScenario.builder()
-                    .withFunctionalSteps(
+                    .withComposableSteps(
                         Collections.singletonList(
-                            buildFunctionalStep("", "", UKNOWN_FUNC_STEP_ID))
+                            buildComposableStep("", "", UKNOWN_FUNC_STEP_ID))
                     )
                     .build()
             );
@@ -166,7 +166,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
     @Test
     public void should_find_existing_testCase_with_default_dataset() {
         // Given
-        FunctionalStep FuncStepRefScenarioInstance = FunctionalStep.builder()
+        ComposableStep FuncStepRefScenarioInstance = ComposableStep.builder()
             .from(FUNC_STEP_REF)
             .overrideDataSetWith(
                 Maps.of(
@@ -177,7 +177,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
             )
             .build();
 
-        FunctionalStep FuncStepRefParentScenarioInstance = FunctionalStep.builder()
+        ComposableStep FuncStepRefParentScenarioInstance = ComposableStep.builder()
             .from(FUNC_STEP_PARENT_REF)
             .overrideDataSetWith(
                 Maps.of(
@@ -200,7 +200,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
                     .withTags(Arrays.asList("tag1", "tag2"))
                     .build(),
                 ComposableScenario.builder()
-                    .withFunctionalSteps(Arrays.asList(FuncStepRefScenarioInstance, FuncStepRefParentScenarioInstance))
+                    .withComposableSteps(Arrays.asList(FuncStepRefScenarioInstance, FuncStepRefParentScenarioInstance))
                     .withParameters(scenarioParameters)
                     .build()
             );
@@ -223,7 +223,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
         assertThat(composableTestCaseFound.metadata.description()).isEqualTo(composableTestCase.metadata.description());
         assertThat(composableTestCaseFound.metadata.creationDate()).isEqualTo(composableTestCase.metadata.creationDate());
         assertThat(composableTestCaseFound.metadata.tags()).containsExactly("TAG1", "TAG2");
-        assertThat(composableTestCaseFound.composableScenario.functionalSteps)
+        assertThat(composableTestCaseFound.composableScenario.composableSteps)
             .containsExactly(FuncStepRefScenarioInstance, FuncStepRefParentScenarioInstance);
         assertThat(composableTestCaseFound.composableScenario.parameters).containsAllEntriesOf(scenarioParameters);
         assertThat(composableTestCaseFound.computedParameters).containsAllEntriesOf(expectedDataSet);

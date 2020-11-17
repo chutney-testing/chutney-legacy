@@ -329,7 +329,7 @@ public class CampaignControllerTest {
         insertCampaign(campaignToCreate);
 
         when(composableTestCaseRepository.findById("#44:44")).thenReturn(new ComposableTestCase("#44:44", TestCaseMetadataImpl.builder().withId("#44:44").build(), ComposableScenario.builder()
-            .withFunctionalSteps(emptyList())
+            .withComposableSteps(emptyList())
             .withParameters(emptyMap())
             .build()));
         when(testCaseRepository.findMetadataById("55")).thenReturn(TestCaseMetadataImpl.builder().withId("55").build());

@@ -184,8 +184,8 @@ public class OrientChangelog {
     public static void changeLuceneIndexAnalyzer(ODatabaseSession dbSession) {
         String FSTEP_LUCENE_INDEX_QUERY = "CREATE INDEX " + OrientComponentDB.STEP_CLASS_FULLTEXTSEARCH_INDEX_NAME + " ON " + OrientComponentDB.STEP_CLASS + "(" + OrientComponentDB.STEP_CLASS_PROPERTY_NAME + ") " +
             " FULLTEXT ENGINE LUCENE METADATA {" +
-            " \"index\": \"com.chutneytesting.design.infra.storage.scenario.compose.orient.lucene.FunctionalStepNameAnalyzer\"," +
-            " \"query\": \"com.chutneytesting.design.infra.storage.scenario.compose.orient.lucene.FunctionalStepNameAnalyzer\"" +
+            " \"index\": \"com.chutneytesting.design.infra.storage.scenario.compose.orient.lucene.ComposableStepNameAnalyzer\"," +
+            " \"query\": \"com.chutneytesting.design.infra.storage.scenario.compose.orient.lucene.ComposableStepNameAnalyzer\"" +
             "}";
 
         OIndexManager indexManager = dbSession.getMetadata().getIndexManager();

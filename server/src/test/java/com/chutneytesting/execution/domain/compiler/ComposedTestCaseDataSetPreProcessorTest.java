@@ -19,7 +19,7 @@ import com.chutneytesting.engine.domain.execution.strategies.DefaultStepExecutio
 import com.chutneytesting.engine.domain.execution.strategies.RetryWithTimeOutStrategy;
 import com.chutneytesting.engine.domain.execution.strategies.SoftAssertStrategy;
 import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedFunctionalStep;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedStep;
 import com.chutneytesting.execution.domain.scenario.ExecutableComposedScenario;
 import com.chutneytesting.execution.domain.scenario.ExecutableComposedTestCase;
 import java.util.List;
@@ -32,7 +32,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(JUnitParamsRunner.class)
-public class ComposableTestCaseDataSetPreProcessorTest {
+public class ComposedTestCaseDataSetPreProcessorTest {
 
     private DataSetRepository dataSetRepository;
     private String dataSetId;
@@ -77,7 +77,7 @@ public class ComposableTestCaseDataSetPreProcessorTest {
         );
 
         // When
-        ComposableTestCaseDataSetPreProcessor sut = new ComposableTestCaseDataSetPreProcessor(dataSetRepository);
+        ComposedTestCaseDataSetPreProcessor sut = new ComposedTestCaseDataSetPreProcessor(dataSetRepository);
         ExecutableComposedTestCase processedTestCase = sut.apply(
             new ExecutionRequest(testCase, "env", "user")
         );
@@ -111,9 +111,9 @@ public class ComposableTestCaseDataSetPreProcessorTest {
                 .withDatasetId(dataSetId)
                 .build(),
             ExecutableComposedScenario.builder()
-                .withFunctionalSteps(
+                .withComposedSteps(
                     asList(
-                        ExecutableComposedFunctionalStep.builder()
+                        ExecutableComposedStep.builder()
                             .withName("a step with no valued parameter")
                             .overrideDataSetWith(
                                 Maps.of(
@@ -122,13 +122,13 @@ public class ComposableTestCaseDataSetPreProcessorTest {
                                 )
                             )
                             .build(),
-                        ExecutableComposedFunctionalStep.builder()
+                        ExecutableComposedStep.builder()
                             .withName("a step with no dataset matched parameter")
                             .overrideDataSetWith(
                                 Maps.of("step param", "value 2")
                             )
                             .build(),
-                        ExecutableComposedFunctionalStep.builder()
+                        ExecutableComposedStep.builder()
                             .withName("a step with ref parameter")
                             .overrideDataSetWith(
                                 Maps.of(
@@ -144,7 +144,7 @@ public class ComposableTestCaseDataSetPreProcessorTest {
         );
 
         // When
-        ComposableTestCaseDataSetPreProcessor sut = new ComposableTestCaseDataSetPreProcessor(dataSetRepository);
+        ComposedTestCaseDataSetPreProcessor sut = new ComposedTestCaseDataSetPreProcessor(dataSetRepository);
         ExecutableComposedTestCase processedTestCase = sut.apply(
             new ExecutionRequest(testCase, "env", "user")
         );
@@ -154,57 +154,57 @@ public class ComposableTestCaseDataSetPreProcessorTest {
             entry("testcase key no dataset", "testcase value"),
             entry("another param key", "another testcase value")
         );
-        assertThat(processedTestCase.composableScenario.functionalSteps).hasSize(3);
+        assertThat(processedTestCase.composedScenario.composedSteps).hasSize(3);
 
-        ExecutableComposedFunctionalStep fs = processedTestCase.composableScenario.functionalSteps.get(0);
+        ExecutableComposedStep fs = processedTestCase.composedScenario.composedSteps.get(0);
         assertThat(fs.name).isEqualTo("a step with no valued parameter");
-        assertThat(fs.dataSet).containsOnly(
+        assertThat(fs.dataset).containsOnly(
             entry("testcase key no dataset", ""),
             entry("another param key", "")
         );
         assertThat(fs.steps).hasSize(3);
         assertThat(fs.steps.get(0).name).isEqualTo("a step with no valued parameter - dataset iteration 1");
-        assertThat(fs.steps.get(0).dataSet).containsOnly(
+        assertThat(fs.steps.get(0).dataset).containsOnly(
             entry("testcase key for dataset", "dataset first value"),
             entry("step 1 param", "value 1")
         );
         assertThat(fs.steps.get(1).name).isEqualTo("a step with no valued parameter - dataset iteration 2");
-        assertThat(fs.steps.get(1).dataSet).containsOnly(
+        assertThat(fs.steps.get(1).dataset).containsOnly(
             entry("testcase key for dataset", "dataset second value"),
             entry("step 1 param", "value 1")
         );
         assertThat(fs.steps.get(2).name).isEqualTo("a step with no valued parameter - dataset iteration 3");
-        assertThat(fs.steps.get(2).dataSet).containsOnly(
+        assertThat(fs.steps.get(2).dataset).containsOnly(
             entry("testcase key for dataset", "dataset third value"),
             entry("step 1 param", "value 1")
         );
 
-        fs = processedTestCase.composableScenario.functionalSteps.get(1);
+        fs = processedTestCase.composedScenario.composedSteps.get(1);
         assertThat(fs.name).isEqualTo("a step with no dataset matched parameter");
-        assertThat(fs.dataSet).containsOnly(
+        assertThat(fs.dataset).containsOnly(
             entry("step param", "value 2")
         );
         assertThat(fs.steps).hasSize(0);
 
-        fs = processedTestCase.composableScenario.functionalSteps.get(2);
+        fs = processedTestCase.composedScenario.composedSteps.get(2);
         assertThat(fs.name).isEqualTo("a step with ref parameter");
-        assertThat(fs.dataSet).containsOnly(
+        assertThat(fs.dataset).containsOnly(
             entry("another param key", ""),
             entry("testcase key no dataset", "")
         );
         assertThat(fs.steps).hasSize(3);
         assertThat(fs.steps.get(0).name).isEqualTo("a step with ref parameter - dataset iteration 1");
-        assertThat(fs.steps.get(0).dataSet).containsOnly(
+        assertThat(fs.steps.get(0).dataset).containsOnly(
             entry("ref step param", "value with ref dataset first value"),
             entry("step 3 alias", "**another param key**")
         );
         assertThat(fs.steps.get(1).name).isEqualTo("a step with ref parameter - dataset iteration 2");
-        assertThat(fs.steps.get(1).dataSet).containsOnly(
+        assertThat(fs.steps.get(1).dataset).containsOnly(
             entry("ref step param", "value with ref dataset second value"),
             entry("step 3 alias", "**another param key**")
         );
         assertThat(fs.steps.get(2).name).isEqualTo("a step with ref parameter - dataset iteration 3");
-        assertThat(fs.steps.get(2).dataSet).containsOnly(
+        assertThat(fs.steps.get(2).dataset).containsOnly(
             entry("ref step param", "value with ref dataset third value"),
             entry("step 3 alias", "**another param key**")
         );
@@ -227,9 +227,9 @@ public class ComposableTestCaseDataSetPreProcessorTest {
             "1",
             TestCaseMetadataImpl.builder().withDatasetId(dataSetId).build(),
             ExecutableComposedScenario.builder()
-                .withFunctionalSteps(
+                .withComposedSteps(
                     singletonList(
-                        ExecutableComposedFunctionalStep.builder()
+                        ExecutableComposedStep.builder()
                             .withName("a step with no valued parameter")
                             .overrideDataSetWith(
                                 Maps.of(
@@ -244,13 +244,13 @@ public class ComposableTestCaseDataSetPreProcessorTest {
         );
 
         // When
-        ComposableTestCaseDataSetPreProcessor sut = new ComposableTestCaseDataSetPreProcessor(dataSetRepository);
+        ComposedTestCaseDataSetPreProcessor sut = new ComposedTestCaseDataSetPreProcessor(dataSetRepository);
         ExecutableComposedTestCase processedTestCase = sut.apply(
             new ExecutionRequest(testCase, "env", "user")
         );
 
         // Then
-        assertThat(processedTestCase.composableScenario.functionalSteps.get(0).strategy).isEqualTo(
+        assertThat(processedTestCase.composedScenario.composedSteps.get(0).strategy).isEqualTo(
             new Strategy(DataSetIterationsStrategy.TYPE, emptyMap())
         );
     }
@@ -273,9 +273,9 @@ public class ComposableTestCaseDataSetPreProcessorTest {
             "1",
             TestCaseMetadataImpl.builder().withDatasetId(dataSetId).build(),
             ExecutableComposedScenario.builder()
-                .withFunctionalSteps(
+                .withComposedSteps(
                     singletonList(
-                        ExecutableComposedFunctionalStep.builder()
+                        ExecutableComposedStep.builder()
                             .withStrategy(strategyDefinition)
                             .withName("a step with no valued parameter")
                             .overrideDataSetWith(
@@ -291,13 +291,13 @@ public class ComposableTestCaseDataSetPreProcessorTest {
         );
 
         // When
-        ComposableTestCaseDataSetPreProcessor sut = new ComposableTestCaseDataSetPreProcessor(dataSetRepository);
+        ComposedTestCaseDataSetPreProcessor sut = new ComposedTestCaseDataSetPreProcessor(dataSetRepository);
         ExecutableComposedTestCase processedTestCase = sut.apply(
             new ExecutionRequest(testCase, "env", "user")
         );
 
         // Then
-        assertThat(processedTestCase.composableScenario.functionalSteps.get(0).steps.get(0).strategy).isEqualTo(
+        assertThat(processedTestCase.composedScenario.composedSteps.get(0).steps.get(0).strategy).isEqualTo(
             strategyDefinition
         );
     }
@@ -330,9 +330,9 @@ public class ComposableTestCaseDataSetPreProcessorTest {
                 .withDatasetId(dataSetId)
                 .build(),
             ExecutableComposedScenario.builder()
-                .withFunctionalSteps(
+                .withComposedSteps(
                     singletonList(
-                        ExecutableComposedFunctionalStep.builder()
+                        ExecutableComposedStep.builder()
                             .withName("a step with key 1 dependency")
                             .overrideDataSetWith(
                                 Maps.of(
@@ -347,24 +347,24 @@ public class ComposableTestCaseDataSetPreProcessorTest {
         );
 
         // When
-        ComposableTestCaseDataSetPreProcessor sut = new ComposableTestCaseDataSetPreProcessor(dataSetRepository);
+        ComposedTestCaseDataSetPreProcessor sut = new ComposedTestCaseDataSetPreProcessor(dataSetRepository);
         ExecutableComposedTestCase processedTestCase = sut.apply(
             new ExecutionRequest(testCase, "env", "user")
         );
 
         // Then
-        assertThat(processedTestCase.composableScenario.functionalSteps).hasSize(1);
+        assertThat(processedTestCase.composedScenario.composedSteps).hasSize(1);
 
-        ExecutableComposedFunctionalStep fs = processedTestCase.composableScenario.functionalSteps.get(0);
+        ExecutableComposedStep fs = processedTestCase.composedScenario.composedSteps.get(0);
         assertThat(fs.name).isEqualTo("a step with key 1 dependency");
-        assertThat(fs.dataSet).isEmpty();
+        assertThat(fs.dataset).isEmpty();
         assertThat(fs.steps).hasSize(2);
         assertThat(fs.steps.get(0).name).isEqualTo("a step with key 1 dependency - dataset iteration 1");
-        assertThat(fs.steps.get(0).dataSet).containsOnly(
+        assertThat(fs.steps.get(0).dataset).containsOnly(
             entry("key 1", "value 1")
         );
         assertThat(fs.steps.get(1).name).isEqualTo("a step with key 1 dependency - dataset iteration 2");
-        assertThat(fs.steps.get(1).dataSet).containsOnly(
+        assertThat(fs.steps.get(1).dataset).containsOnly(
             entry("key 1", "value 12")
         );
     }

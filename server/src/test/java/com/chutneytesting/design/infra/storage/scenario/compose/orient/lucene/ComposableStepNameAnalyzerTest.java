@@ -12,25 +12,25 @@ import org.apache.lucene.analysis.WordlistLoader;
 import org.apache.lucene.util.IOUtils;
 import org.junit.Test;
 
-public class FunctionalStepNameAnalyzerTest {
+public class ComposableStepNameAnalyzerTest {
 
     @Test
     public void should_not_do_crazy_things() throws IOException {
-        FunctionalStepNameAnalyzer sut = new FunctionalStepNameAnalyzer();
+        ComposableStepNameAnalyzer sut = new ComposableStepNameAnalyzer();
         checkRandomData(new Random(), sut, 5000);
     }
 
     @Test
     public void should_analyze_with_consistency() throws IOException {
-        FunctionalStepNameAnalyzer sut = new FunctionalStepNameAnalyzer();
+        ComposableStepNameAnalyzer sut = new ComposableStepNameAnalyzer();
         checkAnalysisConsistency(new Random(), sut, false, "This is a big functional step to tokenize ...");
     }
 
     @Test
     public void should_not_tokenize_gwt_stop_words() throws IOException {
-        FunctionalStepNameAnalyzer sut = new FunctionalStepNameAnalyzer();
+        ComposableStepNameAnalyzer sut = new ComposableStepNameAnalyzer();
 
-        CharArraySet frenchGwtStopWords = WordlistLoader.getSnowballWordSet(IOUtils.getDecodingReader(FunctionalStepNameAnalyzer.class,
+        CharArraySet frenchGwtStopWords = WordlistLoader.getSnowballWordSet(IOUtils.getDecodingReader(ComposableStepNameAnalyzer.class,
             "french_gwt.txt", StandardCharsets.UTF_8));
         for (Object o : frenchGwtStopWords) {
             assertTokenStreamContents(
@@ -39,7 +39,7 @@ public class FunctionalStepNameAnalyzerTest {
             );
         }
 
-        CharArraySet englishGwtStopWords = WordlistLoader.getSnowballWordSet(IOUtils.getDecodingReader(FunctionalStepNameAnalyzer.class,
+        CharArraySet englishGwtStopWords = WordlistLoader.getSnowballWordSet(IOUtils.getDecodingReader(ComposableStepNameAnalyzer.class,
             "english_gwt.txt", StandardCharsets.UTF_8));
         for (Object o : englishGwtStopWords) {
             assertTokenStreamContents(

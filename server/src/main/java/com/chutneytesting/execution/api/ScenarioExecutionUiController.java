@@ -7,7 +7,7 @@ import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedFunctionalStep;
+import com.chutneytesting.execution.domain.scenario.ExecutableComposedStep;
 import com.chutneytesting.execution.domain.scenario.ExecutableStepRepository;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngineAsync;
@@ -67,9 +67,9 @@ public class ScenarioExecutionUiController {
     @PostMapping(path = "/api/ui/component/execution/v1/{componentId}/{env}")
     public String executeComponent(@PathVariable("componentId") String componentId, @PathVariable("env") String env) throws IOException {
         LOGGER.debug("executeComponent for componentId={{}] on env [{}]", componentId, env);
-        ExecutableComposedFunctionalStep functionalStep = stepRepository.findExecutableById(fromFrontId(Optional.of(componentId)));
+        ExecutableComposedStep composedStep = stepRepository.findExecutableById(fromFrontId(Optional.of(componentId)));
         String userId = userService.getCurrentUser().getId();
-        ScenarioExecutionReport report = executionEngine.execute(functionalStep, env, userId);
+        ScenarioExecutionReport report = executionEngine.execute(composedStep, env, userId);
         return objectMapper.writeValueAsString(report);
     }
 

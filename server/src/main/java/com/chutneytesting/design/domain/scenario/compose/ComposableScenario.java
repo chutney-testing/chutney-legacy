@@ -10,11 +10,11 @@ import java.util.Objects;
 
 public class ComposableScenario {
 
-    public final List<FunctionalStep> functionalSteps;
+    public final List<ComposableStep> composableSteps;
     public final Map<String, String> parameters;
 
-    private ComposableScenario(List<FunctionalStep> functionalSteps, Map<String, String> parameters) {
-        this.functionalSteps = functionalSteps;
+    private ComposableScenario(List<ComposableStep> composableSteps, Map<String, String> parameters) {
+        this.composableSteps = composableSteps;
         this.parameters = parameters;
     }
 
@@ -23,19 +23,19 @@ public class ComposableScenario {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ComposableScenario that = (ComposableScenario) o;
-        return Objects.equals(functionalSteps, that.functionalSteps) &&
+        return Objects.equals(composableSteps, that.composableSteps) &&
             Objects.equals(parameters, that.parameters);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(functionalSteps, parameters);
+        return Objects.hash(composableSteps, parameters);
     }
 
     @Override
     public String toString() {
         return "ComposableScenario{" +
-            "functionalSteps=" + functionalSteps +
+            "composableSteps=" + composableSteps +
             ", parameters=" + parameters +
             '}';
     }
@@ -46,20 +46,20 @@ public class ComposableScenario {
 
     public static class ComposableScenarioBuilder {
 
-        private List<FunctionalStep> functionalSteps;
+        private List<ComposableStep> composableSteps;
         private Map<String, String> parameters;
 
         private ComposableScenarioBuilder() {}
 
         public ComposableScenario build() {
             return new ComposableScenario(
-                ofNullable(functionalSteps).orElse(emptyList()),
+                ofNullable(composableSteps).orElse(emptyList()),
                 ofNullable(parameters).orElse(emptyMap())
             );
         }
 
-        public ComposableScenarioBuilder withFunctionalSteps(List<FunctionalStep> functionalSteps) {
-            this.functionalSteps = functionalSteps;
+        public ComposableScenarioBuilder withComposableSteps(List<ComposableStep> composableSteps) {
+            this.composableSteps = composableSteps;
             return this;
         }
 
