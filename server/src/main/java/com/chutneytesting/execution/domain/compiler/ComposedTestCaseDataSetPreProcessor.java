@@ -38,7 +38,7 @@ public class ComposedTestCaseDataSetPreProcessor implements TestCasePreProcessor
         return apply(testCase);
     }
 
-    private ExecutableComposedTestCase apply(ExecutableComposedTestCase testCase) {
+    ExecutableComposedTestCase apply(ExecutableComposedTestCase testCase) {
         Optional<DataSet> oDataSet = testCase.metadata.datasetId().map(dataSetRepository::findById);
         if (!oDataSet.isPresent()) {
             return testCase;

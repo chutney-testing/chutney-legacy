@@ -160,11 +160,6 @@
 
         <!-- Test dependencies -->
         <dependency>
-            <groupId>com.chutneytesting</groupId>
-            <artifactId>ui</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
