@@ -1,6 +1,6 @@
 package com.chutneytesting.design.infra.storage.scenario;
 
-import com.chutneytesting.design.domain.compose.ComposableTestCaseRepository;
+import com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository;
 import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;

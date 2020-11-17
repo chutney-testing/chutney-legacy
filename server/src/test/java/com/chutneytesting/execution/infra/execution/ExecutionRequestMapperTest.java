@@ -9,9 +9,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
-import com.chutneytesting.design.domain.compose.ComposableScenario;
-import com.chutneytesting.design.domain.compose.ComposableTestCase;
-import com.chutneytesting.design.domain.compose.FunctionalStep;
+import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
+import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
+import com.chutneytesting.design.domain.scenario.compose.FunctionalStep;
 import com.chutneytesting.design.domain.environment.EnvironmentRepository;
 import com.chutneytesting.design.domain.environment.Target;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;

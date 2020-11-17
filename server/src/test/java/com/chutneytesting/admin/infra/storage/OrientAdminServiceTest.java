@@ -1,15 +1,15 @@
 package com.chutneytesting.admin.infra.storage;
 
-import static com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB.GE_STEP_CLASS;
-import static com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB.STEP_CLASS;
+import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.GE_STEP_CLASS;
+import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.orientechnologies.common.log.OLogManager;
 import com.chutneytesting.admin.domain.DatabaseAdminService;
 import com.chutneytesting.admin.domain.SqlResult;
-import com.chutneytesting.design.domain.compose.FunctionalStep;
-import com.chutneytesting.design.domain.compose.StepRepository;
-import com.chutneytesting.design.infra.storage.compose.OrientFunctionalStepRepository;
+import com.chutneytesting.design.domain.scenario.compose.FunctionalStep;
+import com.chutneytesting.design.domain.scenario.compose.StepRepository;
+import com.chutneytesting.design.infra.storage.scenario.compose.OrientFunctionalStepRepository;
 import com.chutneytesting.tests.AbstractOrientDatabaseTest;
 import com.chutneytesting.tools.ImmutablePaginationRequestWrapperDto;
 import com.chutneytesting.tools.PaginatedDto;

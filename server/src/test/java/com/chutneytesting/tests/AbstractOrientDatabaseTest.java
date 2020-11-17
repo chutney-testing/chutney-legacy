@@ -1,18 +1,18 @@
 package com.chutneytesting.tests;
 
-import static com.chutneytesting.design.infra.storage.compose.OrientFunctionalStepMapper.vertexToFunctionalStep;
-import static com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB.STEP_CLASS;
-import static com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB.STEP_CLASS_PROPERTY_NAME;
+import static com.chutneytesting.design.infra.storage.scenario.compose.OrientFunctionalStepMapper.vertexToFunctionalStep;
+import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS;
+import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.design.domain.compose.FunctionalStep;
-import com.chutneytesting.design.domain.compose.StepRepository;
-import com.chutneytesting.design.domain.compose.StepUsage;
-import com.chutneytesting.design.domain.compose.Strategy;
-import com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB;
-import com.chutneytesting.design.infra.storage.db.orient.OrientConfigurationProperties;
-import com.chutneytesting.design.infra.storage.db.orient.OrientDBManager;
-import com.chutneytesting.design.infra.storage.db.orient.changelog.OrientChangelogExecutor;
+import com.chutneytesting.design.domain.scenario.compose.FunctionalStep;
+import com.chutneytesting.design.domain.scenario.compose.StepRepository;
+import com.chutneytesting.design.domain.scenario.compose.StepUsage;
+import com.chutneytesting.design.domain.scenario.compose.Strategy;
+import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
+import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientConfigurationProperties;
+import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientDBManager;
+import com.chutneytesting.design.infra.storage.scenario.compose.orient.changelog.OrientChangelogExecutor;
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.db.ODatabaseType;

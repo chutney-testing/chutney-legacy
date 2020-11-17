@@ -4,10 +4,10 @@ import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
 import static com.chutneytesting.tools.ui.ComposableIdUtils.isComposableFrontId;
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.design.api.compose.dto.KeyValue;
-import com.chutneytesting.design.domain.compose.ComposableTestCaseRepository;
-import com.chutneytesting.design.domain.compose.FunctionalStep;
-import com.chutneytesting.design.domain.compose.StepRepository;
+import com.chutneytesting.design.api.scenario.compose.dto.KeyValue;
+import com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository;
+import com.chutneytesting.design.domain.scenario.compose.FunctionalStep;
+import com.chutneytesting.design.domain.scenario.compose.StepRepository;
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.execution.domain.ExecutionRequest;

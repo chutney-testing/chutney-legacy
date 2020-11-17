@@ -1,9 +1,9 @@
 package com.chutneytesting.execution.domain.scenario;
 
 import com.chutneytesting.design.api.scenario.v2_0.mapper.GwtScenarioMapper;
-import com.chutneytesting.design.domain.compose.ComposableScenario;
-import com.chutneytesting.design.domain.compose.ComposableTestCase;
-import com.chutneytesting.design.domain.compose.FunctionalStep;
+import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
+import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
+import com.chutneytesting.design.domain.scenario.compose.FunctionalStep;
 import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.ScenarioNotParsableException;
 import com.chutneytesting.design.domain.scenario.TestCase;
@@ -23,7 +23,7 @@ public class ScenarioExecutionEngine {
 
     private final ServerTestEngine executionEngine;
     private final TestCasePreProcessors testCasePreProcessors;
-    private ScenarioExecutionEngineAsync executionEngineAsync;
+    private final ScenarioExecutionEngineAsync executionEngineAsync;
     private static final GwtScenarioMarshaller marshaller = new GwtScenarioMapper();
 
     public ScenarioExecutionEngine(ServerTestEngine executionEngine,

@@ -1,6 +1,6 @@
 package com.chutneytesting.execution.domain.compiler;
 
-import com.chutneytesting.design.domain.compose.ComposableTestCase;
+import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.dataset.DataSetRepository;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.execution.domain.ExecutionRequest;

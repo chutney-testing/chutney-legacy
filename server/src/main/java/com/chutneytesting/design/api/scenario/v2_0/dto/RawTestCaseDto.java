@@ -3,7 +3,7 @@ package com.chutneytesting.design.api.scenario.v2_0.dto;
 import static java.time.Instant.now;
 import static java.util.Collections.emptyList;
 
-import com.chutneytesting.design.api.compose.dto.KeyValue;
+import com.chutneytesting.design.api.scenario.compose.dto.KeyValue;
 import com.chutneytesting.security.domain.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

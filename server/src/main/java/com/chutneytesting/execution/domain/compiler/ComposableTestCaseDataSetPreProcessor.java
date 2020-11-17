@@ -7,10 +7,10 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
-import com.chutneytesting.design.domain.compose.ComposableScenario;
-import com.chutneytesting.design.domain.compose.ComposableTestCase;
-import com.chutneytesting.design.domain.compose.FunctionalStep;
-import com.chutneytesting.design.domain.compose.Strategy;
+import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
+import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
+import com.chutneytesting.design.domain.scenario.compose.FunctionalStep;
+import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.design.domain.dataset.DataSet;
 import com.chutneytesting.design.domain.dataset.DataSetRepository;
 import com.chutneytesting.engine.domain.execution.strategies.DataSetIterationsStrategy;
@@ -35,6 +35,10 @@ public class ComposableTestCaseDataSetPreProcessor implements TestCasePreProcess
     @Override
     public ComposableTestCase apply(ExecutionRequest executionRequest) {
         ComposableTestCase testCase = (ComposableTestCase) executionRequest.testCase;
+        return apply(testCase);
+    }
+
+    ComposableTestCase apply(ComposableTestCase testCase) {
         Optional<DataSet> oDataSet = testCase.metadata.datasetId().map(dataSetRepository::findById);
         if (!oDataSet.isPresent()) {
             return testCase;

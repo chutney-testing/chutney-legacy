@@ -8,7 +8,7 @@ import com.chutneytesting.admin.domain.HomePageRepository;
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.design.domain.environment.EnvironmentRepository;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
-import com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB;
+import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
 import com.chutneytesting.tools.ZipUtils;
 import java.io.BufferedOutputStream;
 import java.io.IOException;

@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import com.chutneytesting.design.domain.dataset.DataSet;
 import com.chutneytesting.design.domain.dataset.DataSetNotFoundException;
-import com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB;
+import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
 import com.chutneytesting.tests.AbstractOrientDatabaseTest;
 import com.orientechnologies.common.log.OLogManager;
 import java.time.Instant;

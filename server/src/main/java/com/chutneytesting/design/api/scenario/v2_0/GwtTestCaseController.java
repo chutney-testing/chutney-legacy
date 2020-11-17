@@ -9,7 +9,7 @@ import com.chutneytesting.design.api.scenario.v2_0.dto.RawTestCaseDto;
 import com.chutneytesting.design.api.scenario.v2_0.dto.TestCaseIndexDto;
 import com.chutneytesting.design.api.scenario.v2_0.mapper.GwtTestCaseMapper;
 import com.chutneytesting.design.api.scenario.v2_0.mapper.RawTestCaseMapper;
-import com.chutneytesting.design.domain.compose.ComposableTestCaseRepository;
+import com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
