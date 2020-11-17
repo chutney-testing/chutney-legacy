@@ -1,5 +1,18 @@
 # Changelog
 
+# Changelog
+
+## [1.2.7](https://github.com/chutney-testing/chutney/tree/1.2.7)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.6...1.2.7)
+
+**Merged pull requests:**
+
+- feat\(server\): Make number of parrelel thread fixed to 20 [\#258](https://github.com/chutney-testing/chutney/pull/258) ([nbrouand](https://github.com/nbrouand))
+- feat\(server\): fix gauge update, add status on scenario\_execution\_time… [\#257](https://github.com/chutney-testing/chutney/pull/257) ([nbrouand](https://github.com/nbrouand))
+- Add edition information for concurrency edition check [\#256](https://github.com/chutney-testing/chutney/pull/256) ([boddissattva](https://github.com/boddissattva))
+- chore\(deps-dev\): Bump JUnitParams from 1.1.0 to 1.1.1 [\#251](https://github.com/chutney-testing/chutney/pull/251) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+
 ## [1.2.6](https://github.com/chutney-testing/chutney/tree/1.2.6)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.5...1.2.6)
