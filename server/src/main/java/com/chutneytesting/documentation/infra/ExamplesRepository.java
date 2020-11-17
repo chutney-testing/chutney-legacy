@@ -1,16 +1,16 @@
 package com.chutneytesting.documentation.infra;
 
-import com.chutneytesting.design.infra.storage.scenario.DelegateScenarioRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.design.infra.storage.scenario.DelegateScenarioRepository;
 import com.chutneytesting.design.infra.storage.scenario.jdbc.TestCaseData;
+import com.chutneytesting.tools.Streams;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import com.chutneytesting.tools.Streams;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -66,10 +66,16 @@ public class ExamplesRepository implements DelegateScenarioRepository {
     @Override
     public void removeById(String scenarioId) { /* nothing to do */ }
 
+    @Override
+    public Optional<Integer> lastVersion(String scenarioId) {
+        Optional<TestCaseData> testCaseData = findById(scenarioId);
+        return testCaseData.map(tcd -> tcd.version);
+    }
+
     // TODO - remove duplication & do it only once on startup in DocumentationConfiguration
     private TestCaseData mapToTestCase(Map.Entry<String, String> entry) {
         return  TestCaseData.builder()
-            .withVersion("RAW")
+            .withContentVersion("RAW")
             .withId(resolveExampleID(entry))
             .withTitle(entry.getKey())
             .withCreationDate(START_TIME)
@@ -77,6 +83,7 @@ public class ExamplesRepository implements DelegateScenarioRepository {
             .withTags(Collections.singletonList("documentation"))
             .withDataSet(Collections.emptyMap())
             .withRawScenario(entry.getValue())
+            .withAuthor("system")
             .build();
     }
 
@@ -88,6 +95,7 @@ public class ExamplesRepository implements DelegateScenarioRepository {
             .withCreationDate(START_TIME)
             .withTags(Collections.singletonList("documentation"))
             .withRepositorySource(ORIGIN)
+            .withAuthor("system")
             .build();
     }
 

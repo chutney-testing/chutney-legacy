@@ -1,4 +1,4 @@
-import { Equals, areEquals } from '@shared/equals';
+import { areEquals, Equals } from '@shared/equals';
 import { Clonable, cloneAsPossible } from '@shared/clonable';
 import { ComponentTask, KeyValue } from '../component-task.model';
 
@@ -9,6 +9,9 @@ export class ScenarioComponent implements Equals<ScenarioComponent>, Clonable<Sc
         public title: string = 'Title',
         public description: string = 'Description',
         public creationDate?: Date,
+        public updateDate?: Date,
+        public version?: number,
+        public author?: string,
         public componentSteps: Array<ComponentTask> = [],
         public parameters: Array<KeyValue> = [],
         public computedParameters: Array<KeyValue> = [],
@@ -34,6 +37,9 @@ export class ScenarioComponent implements Equals<ScenarioComponent>, Clonable<Sc
             cloneAsPossible(this.title),
             cloneAsPossible(this.description),
             cloneAsPossible(this.creationDate),
+            cloneAsPossible(this.updateDate),
+            cloneAsPossible(this.version),
+            cloneAsPossible(this.author),
             cloneAsPossible(this.componentSteps),
             cloneAsPossible(this.parameters),
             cloneAsPossible(this.computedParameters),

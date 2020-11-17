@@ -55,4 +55,11 @@ public class RestRequestBuilder {
         restTemplate.delete(url);
     }
 
+    public String patch() {
+        return patch(String.class);
+    }
+
+    public <T> T patch(Class<T> responseClass) {
+        return restTemplate.patchForObject(url, new HttpEntity<>(body, headers), responseClass);
+    }
 }

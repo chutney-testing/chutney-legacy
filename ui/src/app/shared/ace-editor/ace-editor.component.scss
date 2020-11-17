@@ -15,8 +15,7 @@
 .ace-combo {
     width:110px;
     display: inline-block;
-    margin-right: 10px;
-    font-size: 10pt;
+    font-size: 80%;
 }
 
 .ace-label {
@@ -25,8 +24,6 @@
     margin-left: 5px;
 }
 
-.vertical-align {
-    display: flex;
-    align-items: end;
+.configuration {
+    margin-top: 1rem;
 }
-

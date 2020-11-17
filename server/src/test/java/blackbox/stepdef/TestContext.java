@@ -1,5 +1,18 @@
 package blackbox.stepdef;
 
+import static blackbox.stepdef.TestContext.ContextKey.CAMPAIGN;
+import static blackbox.stepdef.TestContext.ContextKey.EXECUTION_REPORT;
+import static blackbox.stepdef.TestContext.ContextKey.HEADERS;
+import static blackbox.stepdef.TestContext.ContextKey.HTTP_RESPONSE_BODY;
+import static blackbox.stepdef.TestContext.ContextKey.LAST_SCENARIO_ID;
+import static blackbox.stepdef.TestContext.ContextKey.LAST_VIEWED_SCENARIO;
+import static blackbox.stepdef.TestContext.ContextKey.MOCK_SERVER;
+import static blackbox.stepdef.TestContext.ContextKey.SCENARIO_VARIABLES;
+import static blackbox.stepdef.TestContext.ContextKey.STATUS;
+import static blackbox.stepdef.TestContext.ContextKey.TESTCASE_EDITION;
+import static blackbox.stepdef.TestContext.ContextKey.TRUSTSTORE_PATH;
+
+import com.chutneytesting.design.api.testcase.TestCaseEditionDto;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,93 +21,109 @@ public class TestContext {
     private final Map<ContextKey, Object> variables = new HashMap<>();
 
     public void putExecutionReport(Object value) {
-        variables.put(ContextKey.EXECUTION_REPORT, value);
+        variables.put(EXECUTION_REPORT, value);
     }
 
     public void putScenarioId(String value) {
-        variables.put(ContextKey.LAST_SCENARIO_ID, value);
+        variables.put(LAST_SCENARIO_ID, value);
     }
 
     public void putViewedScenario(Object value) {
-        variables.put(ContextKey.LAST_VIEWED_SCENARIO, value);
+        variables.put(LAST_VIEWED_SCENARIO, value);
     }
 
     public <T> T getExecutionReport() {
-        return (T) variables.get(ContextKey.EXECUTION_REPORT);
+        return (T) variables.get(EXECUTION_REPORT);
     }
 
     public void putCampaign(Object value) {
-        variables.put(ContextKey.CAMPAIGN, value);
+        variables.put(CAMPAIGN, value);
     }
 
     public void putStatus(Object value) {
-        variables.put(ContextKey.STATUS, value);
+        variables.put(STATUS, value);
     }
 
     public void putHEADERS(Object value) {
-        variables.put(ContextKey.HEADERS, value);
+        variables.put(HEADERS, value);
     }
 
     public <T> T getCampaign() {
-        return (T) variables.get(ContextKey.CAMPAIGN);
+        return (T) variables.get(CAMPAIGN);
     }
 
     public <T> T getStatus() {
-        return (T) variables.get(ContextKey.STATUS);
+        return (T) variables.get(STATUS);
     }
 
     public <T> T getHEADERS() {
-        return (T) variables.get(ContextKey.HEADERS);
+        return (T) variables.get(HEADERS);
     }
 
     public String getLastScenarioId() {
-        return (String) variables.get(ContextKey.LAST_SCENARIO_ID);
+        return (String) variables.get(LAST_SCENARIO_ID);
     }
 
     public <T> T getLastViewedScenario() {
-        return (T) variables.get(ContextKey.LAST_VIEWED_SCENARIO);
+        return (T) variables.get(LAST_VIEWED_SCENARIO);
     }
 
     public <T> T getTrustStorePath() {
-        return (T) variables.get(ContextKey.TRUSTSTORE_PATH);
+        return (T) variables.get(TRUSTSTORE_PATH);
     }
 
     public void putTrustStorePath(Object value) {
-        variables.put(ContextKey.TRUSTSTORE_PATH, value);
+        variables.put(TRUSTSTORE_PATH, value);
     }
 
     public void putMockServer(Object value) {
-        variables.put(ContextKey.MOCK_SERVER, value);
+        variables.put(MOCK_SERVER, value);
     }
 
     public <T> T getMockServer() {
-        return (T) variables.get(ContextKey.MOCK_SERVER);
+        return (T) variables.get(MOCK_SERVER);
     }
 
     public void addScenarioVariables(String key, String value) {
         Map<String, String> scenario_vars = getScenarioVariables();
         if (scenario_vars == null) {
             scenario_vars = new HashMap<>();
-            variables.put(ContextKey.SCENARIO_VARIABLES, scenario_vars);
+            variables.put(SCENARIO_VARIABLES, scenario_vars);
         }
         scenario_vars.put(key, value);
     }
 
     public Map<String, String> getScenarioVariables() {
-        return (Map<String, String>) variables.get(ContextKey.SCENARIO_VARIABLES);
+        return (Map<String, String>) variables.get(SCENARIO_VARIABLES);
     }
 
     public String replaceVariables(String content) {
-        if(getTrustStorePath() != null) {
+        if (getTrustStorePath() != null) {
             content = content.replace("%%trustStoreAbsolutePath%%", getTrustStorePath());
         }
         Map<String, String> scenario_vars = getScenarioVariables();
-        if(scenario_vars != null) {
+        if (scenario_vars != null) {
             for (String k : scenario_vars.keySet()) {
-                content = content.replace("##"+k+"##", scenario_vars.get(k));
+                content = content.replace("##" + k + "##", scenario_vars.get(k));
             }
         }
         return content;
+    }
+
+    public void putResponseBody(String body) {
+        variables.put(HTTP_RESPONSE_BODY, body);
+    }
+
+    public String getResponseBody() {
+        return (String) variables.get(HTTP_RESPONSE_BODY);
+    }
+
+    public void putTestCaseEdition(TestCaseEditionDto testCaseEditionDto) {
+        variables.put(TESTCASE_EDITION, testCaseEditionDto);
+    }
+
+    public Object getTestCaseEdition() {
+        return variables.get(TESTCASE_EDITION);
     }
 
     public enum ContextKey {
@@ -106,6 +135,8 @@ public class TestContext {
         TRUSTSTORE_PATH,
         MOCK_SERVER,
         LAST_VIEWED_SCENARIO,
-        SCENARIO_VARIABLES
+        SCENARIO_VARIABLES,
+        HTTP_RESPONSE_BODY,
+        TESTCASE_EDITION
     }
 }

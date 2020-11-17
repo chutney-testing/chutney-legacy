@@ -22,6 +22,7 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
     errorMessage: any;
     modifiedContent = '';
     pluginsForm: FormGroup;
+    saveErrorMessage: string;
 
     private routeParamsSubscription: Subscription;
 
@@ -72,6 +73,8 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
                         this.previousTestCase.id = null;
                         this.testCase.id = null;
                         this.testCase.creationDate = null;
+                        this.testCase.updateDate = null;
+                        this.testCase.author = null;
                         this.testCase.title = '--COPY-- ' + this.testCase.title;
                         this.previousTestCase.title = '--COPY-- ' + this.previousTestCase.title;
                     }
@@ -117,6 +120,9 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
             },
             (error) => {
                 console.log(error);
+                if (error.error) {
+                    this.saveErrorMessage = error.error;
+                }
                 this.errorMessage = error._body;
             }
         );

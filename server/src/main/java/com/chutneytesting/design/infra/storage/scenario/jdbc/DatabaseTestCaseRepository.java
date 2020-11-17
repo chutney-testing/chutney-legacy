@@ -1,10 +1,14 @@
 package com.chutneytesting.design.infra.storage.scenario.jdbc;
 
 import static com.chutneytesting.design.domain.scenario.TestCaseRepository.DEFAULT_REPOSITORY_SOURCE;
+import static java.util.Collections.emptyMap;
+import static java.util.Optional.empty;
 
+import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.infra.storage.scenario.DelegateScenarioRepository;
+import com.chutneytesting.security.domain.User;
 import com.chutneytesting.tools.Try;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,14 +17,13 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.Instant;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -57,55 +60,68 @@ public class DatabaseTestCaseRepository implements DelegateScenarioRepository {
     @Override
     public Optional<TestCaseData> findById(String scenarioId) {
         try {
-            return Optional.of(uiNamedParameterJdbcTemplate.queryForObject("SELECT * FROM SCENARIO WHERE ID = :id and ACTIVATED = TRUE", ImmutableMap.<String, Object>builder().put("id", scenarioId).build(), scenario_row_mapper));
+            return Optional.of(uiNamedParameterJdbcTemplate.queryForObject("SELECT * FROM SCENARIO WHERE ID = :id and ACTIVATED = TRUE", buildIdParameterMap(scenarioId), scenario_row_mapper));
         } catch (IncorrectResultSizeDataAccessException e) {
-            return Optional.empty();
+            return empty();
         }
     }
 
     @Override
     public List<TestCaseMetadata> findAll() {
-        return uiNamedParameterJdbcTemplate.query("SELECT ID, TITLE, DESCRIPTION, TAGS, CREATION_DATE FROM SCENARIO where ACTIVATED is TRUE", Collections.emptyMap(), SCENARIO_INDEX_ROW_MAPPER);
+        return uiNamedParameterJdbcTemplate.query("SELECT ID, TITLE, DESCRIPTION, TAGS, CREATION_DATE, USER_ID, UPDATE_DATE, VERSION FROM SCENARIO where ACTIVATED is TRUE", emptyMap(), SCENARIO_INDEX_ROW_MAPPER);
     }
 
     @Override
     public void removeById(String scenarioId) {
         // TODO - Refactor - Use CampaignRepository up in callstack
-        uiNamedParameterJdbcTemplate.update("DELETE FROM CAMPAIGN_EXECUTION_HISTORY WHERE SCENARIO_ID = :id", ImmutableMap.<String, Object>builder().put("id", scenarioId).build());
-        uiNamedParameterJdbcTemplate.update("DELETE FROM CAMPAIGN_SCENARIOS WHERE SCENARIO_ID = :id", ImmutableMap.<String, Object>builder().put("id", scenarioId).build());
-        uiNamedParameterJdbcTemplate.update("UPDATE SCENARIO SET ACTIVATED = FALSE WHERE ID = :id", ImmutableMap.<String, Object>builder().put("id", scenarioId).build());
+        uiNamedParameterJdbcTemplate.update("DELETE FROM CAMPAIGN_EXECUTION_HISTORY WHERE SCENARIO_ID = :id", buildIdParameterMap(scenarioId));
+        uiNamedParameterJdbcTemplate.update("DELETE FROM CAMPAIGN_SCENARIOS WHERE SCENARIO_ID = :id", buildIdParameterMap(scenarioId));
+        uiNamedParameterJdbcTemplate.update("UPDATE SCENARIO SET ACTIVATED = FALSE WHERE ID = :id", buildIdParameterMap(scenarioId));
+    }
+
+    @Override
+    public Optional<Integer> lastVersion(String scenarioId) {
+        try {
+            return Optional.of(uiNamedParameterJdbcTemplate.queryForObject("SELECT VERSION FROM SCENARIO WHERE ID = :id", buildIdParameterMap(scenarioId), Integer.class));
+        } catch (IncorrectResultSizeDataAccessException e) {
+            return empty();
+        }
     }
 
     private boolean isNewScenario(TestCaseData scenario) {
-        return scenario.id == null || uiNamedParameterJdbcTemplate.queryForObject("SELECT COUNT(ID) FROM SCENARIO WHERE ID = :id", ImmutableMap.<String, Object>builder().put("id", scenario.id).build(), int.class) == 0;
+        return scenario.id == null || uiNamedParameterJdbcTemplate.queryForObject("SELECT COUNT(ID) FROM SCENARIO WHERE ID = :id", buildIdParameterMap(scenario.id), int.class) == 0;
     }
 
     private String doSave(TestCaseData scenario) {
-        String nextId = uiNamedParameterJdbcTemplate.queryForObject("SELECT nextval('SCENARIO_SEQ')", Collections.emptyMap(), String.class);
-        uiNamedParameterJdbcTemplate.update("INSERT INTO SCENARIO(VERSION, ID, TITLE, DESCRIPTION, CONTENT, TAGS, CREATION_DATE, DATASET, ACTIVATED) VALUES (:version, :id, :title, :description, :content, :tags, :creationDate, :dataSet, TRUE)",
+        String nextId = uiNamedParameterJdbcTemplate.queryForObject("SELECT nextval('SCENARIO_SEQ')", emptyMap(), String.class);
+        uiNamedParameterJdbcTemplate.update("INSERT INTO SCENARIO(CONTENT_VERSION, ID, TITLE, DESCRIPTION, CONTENT, TAGS, CREATION_DATE, DATASET, ACTIVATED, USER_ID, UPDATE_DATE, VERSION) VALUES (:contentVersion, :id, :title, :description, :content, :tags, :creationDate, :dataSet, TRUE, :author, :creationDate, 1)",
             scenarioQueryParameterMap(nextId, scenario));
         return nextId;
     }
 
     private String doUpdate(TestCaseData scenario) {
-        uiNamedParameterJdbcTemplate.update("UPDATE SCENARIO SET VERSION = :version, TITLE = :title, DESCRIPTION = :description, CONTENT = :content, TAGS = :tags, CREATION_DATE = :creationDate, DATASET = :dataSet WHERE ID = :id",
+        int update = uiNamedParameterJdbcTemplate.update("UPDATE SCENARIO SET CONTENT_VERSION = :contentVersion, TITLE = :title, DESCRIPTION = :description, CONTENT = :content, TAGS = :tags, CREATION_DATE = :creationDate, DATASET = :dataSet, USER_ID = :author, UPDATE_DATE = CURRENT_TIMESTAMP, VERSION = VERSION+1 WHERE ID = :id AND VERSION = :version",
             scenarioQueryParameterMap(scenario.id, scenario));
+        if (update == 0) {
+            throw new ScenarioNotFoundException(scenario.id, scenario.version);
+        }
         return scenario.id;
     }
 
-    private ImmutableMap<String, Object> scenarioQueryParameterMap(String nextId, TestCaseData scenario) {
-        return Try.exec(() -> {
-            return ImmutableMap.<String, Object>builder()
-                .put("version", scenario.version)
-                .put("id", nextId)
-                .put("title", scenario.title)
-                .put("description", scenario.description)
-                .put("dataSet", mapper.writeValueAsString(scenario.dataSet))
-                .put("content", scenario.rawScenario)
-                .put("creationDate", Date.from(scenario.creationDate))
-                .put("tags", ScenarioTagListMapper.tagsListToString(scenario.tags))
-                .build();
-            }).runtime();
+    private MapSqlParameterSource scenarioQueryParameterMap(String nextId, TestCaseData scenario) {
+        return Try.exec(() ->
+            new MapSqlParameterSource()
+                .addValue("contentVersion", scenario.contentVersion)
+                .addValue("id", nextId)
+                .addValue("title", scenario.title)
+                .addValue("description", scenario.description)
+                .addValue("dataSet", mapper.writeValueAsString(scenario.dataSet))
+                .addValue("content", scenario.rawScenario)
+                .addValue("creationDate", Date.from(scenario.creationDate))
+                .addValue("tags", ScenarioTagListMapper.tagsListToString(scenario.tags))
+                .addValue("author", User.isAnonymous(scenario.author) ? null : scenario.author)
+                .addValue("version", scenario.version)
+        ).runtime();
     }
 
     private static class ScenarioMetadataRowMapper implements RowMapper<TestCaseMetadata> {
@@ -116,12 +132,18 @@ public class DatabaseTestCaseRepository implements DelegateScenarioRepository {
             String description = rs.getString("DESCRIPTION");
             Timestamp creationDate = rs.getTimestamp("CREATION_DATE");
             List<String> tags = ScenarioTagListMapper.tagsStringToList(rs.getString("TAGS"));
+            String author = rs.getString("USER_ID");
+            Timestamp updateDate = rs.getTimestamp("UPDATE_DATE");
+            Integer version = rs.getInt("VERSION");
             return TestCaseMetadataImpl.builder()
                 .withId(id)
                 .withTitle(title)
                 .withDescription(description)
                 .withTags(tags)
-                .withCreationDate(creationDate != null ? creationDate.toInstant() : Instant.now())
+                .withCreationDate(creationDate.toInstant())
+                .withAuthor(author)
+                .withUpdateDate(updateDate.toInstant())
+                .withVersion(version)
                 .build();
         }
     }
@@ -136,12 +158,14 @@ public class DatabaseTestCaseRepository implements DelegateScenarioRepository {
         @Override
         public TestCaseData mapRow(ResultSet rs, int rowNum) throws SQLException {
             TestCaseData.TestCaseDataBuilder testCaseDataBuilder = TestCaseData.builder()
-                .withVersion(rs.getString("VERSION"))
+                .withContentVersion(rs.getString("CONTENT_VERSION"))
                 .withId(rs.getString("ID"))
                 .withTitle(rs.getString("TITLE"))
                 .withDescription(rs.getString("DESCRIPTION"))
                 .withTags(ScenarioTagListMapper.tagsStringToList(rs.getString("TAGS")))
-                .withRawScenario(rs.getString("CONTENT"));
+                .withRawScenario(rs.getString("CONTENT"))
+                .withAuthor(rs.getString("USER_ID"))
+                .withVersion(rs.getInt("VERSION"));
 
             Try.exec(() ->  {
                 TypeReference<Map<String, String>> typeRef = new TypeReference<Map<String, String>>() {};
@@ -150,9 +174,16 @@ public class DatabaseTestCaseRepository implements DelegateScenarioRepository {
             }).runtime();
 
             Timestamp creationDate = rs.getTimestamp("CREATION_DATE");
-            testCaseDataBuilder.withCreationDate(creationDate != null ? creationDate.toInstant() : Instant.now());
+            testCaseDataBuilder.withCreationDate(creationDate.toInstant());
+
+            Timestamp updateDate = rs.getTimestamp("UPDATE_DATE");
+            testCaseDataBuilder.withUpdateDate(updateDate.toInstant());
+
             return testCaseDataBuilder.build();
         }
     }
 
+    private ImmutableMap<String, Object> buildIdParameterMap(String scenarioId) {
+        return ImmutableMap.<String, Object>builder().put("id", scenarioId).build();
+    }
 }

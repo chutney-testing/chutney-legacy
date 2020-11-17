@@ -30,6 +30,9 @@ public class RawTestCaseMapper {
                 .withTags(testCase.metadata().tags())
                 .withCreationDate(testCase.metadata().creationDate())
                 .withRepositorySource(testCase.metadata().repositorySource())
+                .withAuthor(testCase.metadata.author)
+                .withUpdateDate(testCase.metadata.updateDate)
+                .withVersion(testCase.metadata.version)
                 .build())
             .withScenario(gwtScenario)
             .withDataSet(testCase.computedParameters())
@@ -48,6 +51,9 @@ public class RawTestCaseMapper {
                 .withTags(dto.tags())
                 .withCreationDate(dto.creationDate())
                 .withRepositorySource(null)
+                .withAuthor(dto.author())
+                .withUpdateDate(dto.updateDate())
+                .withVersion(dto.version())
                 .build())
             .withScenario(gwtScenario)
             .withDataSet(KeyValue.toMap(dto.computedParameters()))
@@ -85,6 +91,9 @@ public class RawTestCaseMapper {
             .tags(testCase.metadata().tags())
             .creationDate(testCase.metadata().creationDate())
             .computedParameters(KeyValue.fromMap(testCase.computedParameters()))
+            .author(testCase.metadata.author)
+            .updateDate(testCase.metadata.updateDate)
+            .version(testCase.metadata.version)
             .build();
     }
 
@@ -97,6 +106,9 @@ public class RawTestCaseMapper {
             .tags(testCase.metadata().tags())
             .creationDate(testCase.metadata().creationDate())
             .computedParameters(KeyValue.fromMap(testCase.dataSet))
+            .author(testCase.metadata.author)
+            .updateDate(testCase.metadata.updateDate)
+            .version(testCase.metadata.version)
             .build();
     }
 

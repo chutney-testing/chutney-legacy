@@ -19,6 +19,8 @@ import com.chutneytesting.design.domain.scenario.gwt.GwtStep;
 import com.chutneytesting.design.domain.scenario.gwt.GwtStepImplementation;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
+import com.chutneytesting.security.domain.User;
+import com.chutneytesting.security.domain.UserService;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -46,10 +48,12 @@ public class GwtTestCaseControllerTest {
     private TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
     private ExecutionHistoryRepository executionHistoryRepository = mock(ExecutionHistoryRepository.class);
     private ComposableTestCaseRepository composableTestCaseRepository = mock(ComposableTestCaseRepository.class);
+    private UserService userService = mock(UserService.class);
 
     @Before
     public void setUp() {
-        GwtTestCaseController testCaseController = new GwtTestCaseController(testCaseRepository, executionHistoryRepository, composableTestCaseRepository);
+        when(userService.getCurrentUser()).thenReturn(User.ANONYMOUS_USER);
+        GwtTestCaseController testCaseController = new GwtTestCaseController(testCaseRepository, executionHistoryRepository, composableTestCaseRepository, userService);
         mockMvc = MockMvcBuilders.standaloneSetup(testCaseController).build();
 
         // Default stubbing
@@ -95,8 +99,8 @@ public class GwtTestCaseControllerTest {
             .withScenario(GwtScenario.builder()
                 .withGivens(Arrays.asList(
                     GwtStep.builder().withDescription("given 1").withSubSteps(
-                            GwtStep.builder().withDescription("given sub step 1.1").build(),
-                            GwtStep.builder().withDescription("given sub step 1.2").build()).build()
+                        GwtStep.builder().withDescription("given sub step 1.1").build(),
+                        GwtStep.builder().withDescription("given sub step 1.2").build()).build()
                     ,
                     GwtStep.builder().withDescription("given 2").build(),
                     GwtStep.builder().withDescription("given 3").build()

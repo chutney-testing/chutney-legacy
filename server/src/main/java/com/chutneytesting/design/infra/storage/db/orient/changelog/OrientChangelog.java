@@ -1,5 +1,9 @@
 package com.chutneytesting.design.infra.storage.db.orient.changelog;
 
+import static com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_CREATIONDATE;
+import static com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_UPDATEDATE;
+import static java.util.Optional.ofNullable;
+
 import com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB;
 import com.chutneytesting.design.infra.storage.db.orient.OrientUtils;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -22,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -206,5 +211,24 @@ public class OrientChangelog {
         oDataSetHistoryClass.createIndex(OrientComponentDB.DATASET_HISTORY_CLASS_INDEX_LAST, OClass.INDEX_TYPE.NOTUNIQUE.toString(), null, null, "AUTOSHARDING", new String[]{OrientComponentDB.DATASET_HISTORY_CLASS_PROPERTY_DATASET_ID});
 
         LOGGER.info("DataSet model created");
+    }
+
+    @ChangelogOrder(order = 10, uuid = "20201028-init-testcase-updateDate")
+    public static void initTestCaseUpdateDate(ODatabaseSession dbSession) {
+        try (OResultSet testcases = dbSession.query("SELECT FROM " + OrientComponentDB.TESTCASE_CLASS)) {
+            testcases.stream()
+                .map(OResult::getElement)
+                .forEach(tc -> tc.ifPresent(e -> {
+                    Optional<Object> creationDate = ofNullable(e.getProperty(TESTCASE_CLASS_PROPERTY_CREATIONDATE));
+                    if (creationDate.isPresent()) {
+                        e.setProperty(TESTCASE_CLASS_PROPERTY_UPDATEDATE, creationDate.get(), OType.DATETIME);
+                        e.save();
+                    } else {
+                        LOGGER.warn("TestCase " + e.getIdentity().toString() + " does not have a creation date");
+                    }
+                }));
+        }
+
+        LOGGER.info("TestCase update date initialized");
     }
 }

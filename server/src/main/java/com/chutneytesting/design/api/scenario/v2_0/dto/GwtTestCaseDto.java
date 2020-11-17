@@ -1,8 +1,11 @@
 package com.chutneytesting.design.api.scenario.v2_0.dto;
 
+import static java.time.Instant.now;
+
+import com.chutneytesting.execution.api.ExecutionSummaryDto;
+import com.chutneytesting.security.domain.User;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.chutneytesting.execution.api.ExecutionSummaryDto;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -32,4 +35,19 @@ public interface GwtTestCaseDto {
     GwtScenarioDto scenario();
 
     Map<String, String> computedParameters();
+
+    @Value.Default()
+    default String author() {
+        return User.ANONYMOUS_USER.getId();
+    }
+
+    @Value.Default()
+    default Instant updateDate() {
+        return now();
+    }
+
+    @Value.Default()
+    default Integer version() {
+        return 1;
+    }
 }

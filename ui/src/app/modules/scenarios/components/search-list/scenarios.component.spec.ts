@@ -20,9 +20,9 @@ describe('ScenariosComponent', () => {
     beforeEach(async(() => {
         TestBed.resetTestingModule();
         const scenarioService = jasmine.createSpyObj('ScenarioService', ['findScenarios']);
-        const mockScenarioIndex = [new ScenarioIndex('1', 'title1', 'description', 'source', new Date(), [], []),
-                                   new ScenarioIndex('2', 'title2', 'description', 'source', new Date(), [], []),
-                                   new ScenarioIndex('3', 'another scenario', 'description', 'source', new Date(), [], [])];
+        const mockScenarioIndex = [new ScenarioIndex('1', 'title1', 'description', 'source', new Date(), new Date(), 1, 'guest', [], []),
+                                   new ScenarioIndex('2', 'title2', 'description', 'source', new Date(), new Date(), 1, 'guest', [], []),
+                                   new ScenarioIndex('3', 'another scenario', 'description', 'source', new Date(), new Date(), 1, 'guest', [], [])];
         scenarioService.findScenarios.and.returnValue(of(mockScenarioIndex));
         activatedRouteStub = new ActivatedRouteStub();
         TestBed.configureTestingModule({

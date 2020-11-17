@@ -15,6 +15,7 @@ import static com.chutneytesting.design.infra.storage.db.orient.lucene.LuceneUti
 import static com.chutneytesting.design.infra.storage.db.orient.lucene.LuceneUtils.escapeLuceneSearchQuery;
 import static com.chutneytesting.design.infra.storage.db.orient.lucene.LuceneUtils.forceAllRequiredTerm;
 
+import com.chutneytesting.design.domain.compose.AlreadyExistingFunctionalStepException;
 import com.chutneytesting.design.domain.compose.FunctionalStep;
 import com.chutneytesting.design.domain.compose.FunctionalStepCyclicDependencyException;
 import com.chutneytesting.design.domain.compose.FunctionalStepNotFoundException;
@@ -71,7 +72,10 @@ public class OrientFunctionalStepRepository implements StepRepository {
             dbSession.commit();
             LOGGER.debug("Save step : " + savedFStep.toString());
             return savedFStep.getIdentity().toString(null).toString();
-        } catch (FunctionalStepCyclicDependencyException | ORecordDuplicatedException e) {
+        } catch (ORecordDuplicatedException e) {
+            rollback(dbSession);
+            throw new AlreadyExistingFunctionalStepException(e.getMessage());
+        } catch (FunctionalStepCyclicDependencyException e) {
             rollback(dbSession);
             throw e;
         } catch (Exception e) {

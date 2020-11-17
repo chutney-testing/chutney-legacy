@@ -78,7 +78,7 @@ public class EditionStepDef {
         String scenarioContent = getScenarioContent(scenarioFileName);
 
         TestCaseData testCaseData = TestCaseData.builder()
-            .withVersion(version)
+            .withContentVersion(version)
             .withId("")
             .withTitle("already existing scenario")
             .withCreationDate(Instant.now())
@@ -146,7 +146,7 @@ public class EditionStepDef {
 
         Optional<TestCaseData> tc = infraRepo.findById(context.getLastScenarioId());
         assertThat(tc).isNotEmpty();
-        assertThat(tc.get().version).isEqualToIgnoringCase("v2.1");
+        assertThat(tc.get().contentVersion).isEqualToIgnoringCase("v2.1");
     }
 
     @Then("^it is viewed in the new format$")
@@ -160,7 +160,7 @@ public class EditionStepDef {
     public void stillPersistedInTheOldFormat(String version) {
         Optional<TestCaseData> tc = infraRepo.findById(context.getLastScenarioId());
         assertThat(tc).isNotEmpty();
-        assertThat(tc.get().version).isEqualToIgnoringCase(version);
+        assertThat(tc.get().contentVersion).isEqualToIgnoringCase(version);
     }
 
     @Then("^it is viewed as raw$")

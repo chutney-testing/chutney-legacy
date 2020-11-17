@@ -103,6 +103,19 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
         defaultRepository.removeById(scenarioId);
     }
 
+    @Override
+    public Integer lastVersion(String testCaseId) {
+        if (isComposableScenarioId(testCaseId)) { // TODO - Composable testcase repo should be able to be taken as others testcase repo
+            return composableTestCaseRepository.lastVersion(testCaseId);
+        } else {
+            return repositories()
+                .map(repo -> repo.lastVersion(testCaseId))
+                .filter(Optional::isPresent)
+                .findFirst()
+                .flatMap(tc -> tc)
+                .orElseThrow(() -> new ScenarioNotFoundException(testCaseId));
+        }
+    }
 
     private Stream<? extends TestCaseMetadata> findAllRepositoryStream(DelegateScenarioRepository repository) {
         try {

@@ -104,6 +104,9 @@ export class ComponentService {
             scenarioComponent.title,
             scenarioComponent.description,
             scenarioComponent.creationDate,
+            scenarioComponent.updateDate,
+            scenarioComponent.version,
+            scenarioComponent.author,
             new ScenarioComponentDto(
                 scenarioComponent.componentSteps.map((componentTask: ComponentTask) => this.mapComponentTaskToDto(componentTask)),
                 scenarioComponent.parameters
@@ -112,7 +115,6 @@ export class ComponentService {
             scenarioComponent.tags,
             scenarioComponent.datasetId
         );
-
     }
 
     private mapComponentTaskToDto(componentTask: ComponentTask): ComponentTaskDto {
@@ -133,6 +135,9 @@ export class ComponentService {
             jsonObject.title,
             jsonObject.description,
             jsonObject.creationDate,
+            jsonObject.updateDate,
+            jsonObject.version,
+            jsonObject.author,
             jsonObject.scenario.componentSteps.map((json: any) => this.mapToComponentTask(json)),
             jsonObject.scenario.parameters.map(elt => new KeyValue(elt.key, elt.value)),
             jsonObject.computedParameters.map(elt => new KeyValue(elt.key, elt.value)),
@@ -175,6 +180,9 @@ export class TestCaseComponentDto {
         public title: string = 'Title',
         public description: string = 'Description',
         public creationDate?: Date,
+        public updateDate?: Date,
+        public version?: number,
+        public author?: string,
         public scenario: ScenarioComponentDto = new ScenarioComponentDto(),
         public computedParameters: Array<KeyValue> = [],
         public tags: Array<string> = [],

@@ -17,18 +17,11 @@ public class SecSecurityMemoryConfig extends ChutneySecurityConfig {
         configureBaseHttpSecurity(http);
         http
             .anonymous()
-                .principal(anonymousChutneyUser())
+            .principal(User.ANONYMOUS_USER)
             .and()
             .authorizeRequests()
-                .anyRequest().permitAll()
+            .anyRequest().permitAll()
             .and()
             .httpBasic();
-    }
-
-    private User anonymousChutneyUser() {
-        User user = new User();
-        user.setId("guest");
-        user.setName("guest");
-        return user;
     }
 }

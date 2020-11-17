@@ -181,7 +181,7 @@ public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabas
 
         assertThatExceptionOfType(ReportNotFoundException.class)
             .isThrownBy(() -> executionHistoryRepository.getExecution("12345", executionCreated.executionId()))
-            .withMessage("Unable to find report 1 of scenario 12345");
+            .withMessage("Unable to find report " + executionCreated.executionId() + " of scenario 12345");
     }
 
     @Test

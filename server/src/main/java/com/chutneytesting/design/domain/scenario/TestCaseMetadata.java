@@ -20,4 +20,10 @@ public interface TestCaseMetadata {
 
     String repositorySource(); // TODO - to delete
 
+    String author();
+
+    Instant updateDate();
+
+    Integer version();
+
 }

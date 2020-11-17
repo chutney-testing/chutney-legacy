@@ -90,6 +90,6 @@ public class LdapAttributesMapper implements AttributesMapper<User> {
     }
 
     private enum Profiles {
-        UTILISATEUR, ADMINISTRATEUR
+        USER, ADMIN
     }
 }

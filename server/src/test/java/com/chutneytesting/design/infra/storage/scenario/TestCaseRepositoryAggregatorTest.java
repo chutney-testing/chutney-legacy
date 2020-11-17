@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -26,7 +27,6 @@ import java.util.stream.Stream;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.Mockito;
 
 public class TestCaseRepositoryAggregatorTest {
 
@@ -70,7 +70,7 @@ public class TestCaseRepositoryAggregatorTest {
         service.save(testCase);
 
         // Then
-        verify(repo1).save(Mockito.any());
+        verify(repo1).save(any());
     }
 
     @Test

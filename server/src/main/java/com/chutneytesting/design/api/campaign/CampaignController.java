@@ -3,6 +3,7 @@ package com.chutneytesting.design.api.campaign;
 import static com.chutneytesting.design.api.campaign.dto.CampaignMapper.fromDto;
 import static com.chutneytesting.design.api.campaign.dto.CampaignMapper.toDto;
 import static com.chutneytesting.design.api.campaign.dto.CampaignMapper.toDtoWithoutReport;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
 import static com.chutneytesting.tools.ui.ComposableIdUtils.isComposableDomainId;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -72,7 +73,7 @@ public class CampaignController {
     public CampaignDto getCampaignById(@PathVariable("campaignId") Long campaignId) {
         Campaign campaign = campaignRepository.findById(campaignId);
         List<CampaignExecutionReport> reports = campaignRepository.findExecutionsById(campaignId);
-        if(!isEmpty(reports)) {
+        if (!isEmpty(reports)) {
             reports.sort(CampaignExecutionReport.executionIdComparator().reversed());
         }
         campaignExecutionEngine.currentExecution(campaignId)
@@ -118,13 +119,13 @@ public class CampaignController {
 
     @GetMapping(path = "/scenario/{scenarioId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public List<CampaignDto> getCampaignsByScenarioId(@PathVariable("scenarioId") String scenarioId) {
-        return campaignRepository.findCampaignsByScenarioId(scenarioId).stream()
+        return campaignRepository.findCampaignsByScenarioId(fromFrontId(scenarioId)).stream()
             .map(CampaignMapper::toDtoWithoutReport)
             .collect(Collectors.toList());
     }
 
     private void addCurrentExecution(List<CampaignExecutionReport> currentCampaignExecutionReports, CampaignExecutionReport campaignExecutionReport) {
-        if(currentCampaignExecutionReports == null) {
+        if (currentCampaignExecutionReports == null) {
             currentCampaignExecutionReports = new ArrayList<>();
         }
         currentCampaignExecutionReports.add(0, campaignExecutionReport);

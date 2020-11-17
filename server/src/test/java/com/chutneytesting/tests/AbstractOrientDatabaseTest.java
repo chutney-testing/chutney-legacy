@@ -5,24 +5,25 @@ import static com.chutneytesting.design.infra.storage.db.orient.OrientComponentD
 import static com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB.STEP_CLASS_PROPERTY_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.chutneytesting.design.domain.compose.FunctionalStep;
+import com.chutneytesting.design.domain.compose.StepRepository;
+import com.chutneytesting.design.domain.compose.StepUsage;
+import com.chutneytesting.design.domain.compose.Strategy;
+import com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB;
+import com.chutneytesting.design.infra.storage.db.orient.OrientConfigurationProperties;
+import com.chutneytesting.design.infra.storage.db.orient.OrientDBManager;
+import com.chutneytesting.design.infra.storage.db.orient.changelog.OrientChangelogExecutor;
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.db.ODatabaseType;
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.OElement;
 import com.orientechnologies.orient.core.sql.executor.OResultSet;
-import com.chutneytesting.design.domain.compose.FunctionalStep;
-import com.chutneytesting.design.domain.compose.StepRepository;
-import com.chutneytesting.design.domain.compose.StepUsage;
-import com.chutneytesting.design.domain.compose.Strategy;
-import com.chutneytesting.design.infra.storage.db.orient.OrientConfigurationProperties;
-import com.chutneytesting.design.infra.storage.db.orient.OrientDBManager;
-import com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB;
-import com.chutneytesting.design.infra.storage.db.orient.changelog.OrientChangelogExecutor;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.apache.groovy.util.Maps;
 
 public abstract class AbstractOrientDatabaseTest {
 
@@ -41,6 +42,10 @@ public abstract class AbstractOrientDatabaseTest {
         orientConfigurationProperties.getDBProperties().setDbName(databaseName);
         orientConfigurationProperties.getDBProperties().setDbType(dbType.name());
         orientConfigurationProperties.setPath("./target/.chutney/orient/");
+        orientConfigurationProperties.setContextConfiguration(Maps.of(
+            "storage.diskCache.bufferSize", 128,
+            "storage.useWAL", false
+        ));
 
         changelogExecution = new OrientChangelogExecutor();
         orientDBManager = new OrientDBManager(orientConfigurationProperties);

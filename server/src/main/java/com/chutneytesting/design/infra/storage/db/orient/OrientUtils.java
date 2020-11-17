@@ -10,7 +10,9 @@ import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.OElement;
 import com.orientechnologies.orient.core.sql.executor.OResult;
 import com.orientechnologies.orient.core.sql.executor.OResultSet;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -23,27 +25,27 @@ public final class OrientUtils {
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static void setOrRemoveProperty(OElement element, String name, Optional<?> value, OType type) {
-        if (value.isPresent()) {
-            element.setProperty(name, value.get(), type);
+        setOrRemoveProperty(element, name, value, Optional::isPresent, Optional::get, type);
+    }
+
+    public static <T> void setOrRemoveProperty(OElement element, String name, T value, Function<T, Boolean> setCondition, OType type) {
+        setOrRemoveProperty(element, name, value, setCondition, t -> t, type);
+    }
+
+    public static <T> void setOrRemoveProperty(OElement element, String name, T value, Function<T, Boolean> setCondition, Function<T, Object> extractValueFunction, OType type) {
+        if (setCondition.apply(value)) {
+            element.setProperty(name, extractValueFunction.apply(value), type);
         } else {
             element.removeProperty(name);
         }
     }
 
     public static void setOrRemoveProperty(OElement element, String name, String value, OType type) {
-        if (StringUtils.isNotBlank(value)) {
-            element.setProperty(name, value, type);
-        } else {
-            element.removeProperty(name);
-        }
+        setOrRemoveProperty(element, name, value, StringUtils::isNotBlank, type);
     }
 
     public static void setOrRemoveProperty(OElement element, String name, Object value, OType type) {
-        if (value != null) {
-            element.setProperty(name, value, type);
-        } else {
-            element.removeProperty(name);
-        }
+        setOrRemoveProperty(element, name, value, Objects::nonNull, type);
     }
 
     public static void setOnlyOnceProperty(OElement element, String name, Object value, OType type) {
@@ -134,7 +136,7 @@ public final class OrientUtils {
                 return Optional.ofNullable(dbSession.load(
                     new ORecordId(recordId))
                 );
-            } catch(ORecordNotFoundException e) {
+            } catch (ORecordNotFoundException e) {
                 return empty();
             }
         }
@@ -157,10 +159,12 @@ public final class OrientUtils {
     }
 
     public static void dropdIndex(String indexName, ODatabaseSession dbSession) {
-        try (OResultSet ignored = dbSession.command("DROP INDEX " + indexName + " IF EXISTS")) { }
+        try (OResultSet ignored = dbSession.command("DROP INDEX " + indexName + " IF EXISTS")) {
+        }
     }
 
     private static void dropClass(String className, ODatabaseSession dbSession) {
-        try (OResultSet ignored = dbSession.command("DROP CLASS " + className)) { }
+        try (OResultSet ignored = dbSession.command("DROP CLASS " + className)) {
+        }
     }
 }

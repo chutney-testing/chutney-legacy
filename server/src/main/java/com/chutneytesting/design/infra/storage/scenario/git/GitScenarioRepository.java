@@ -1,13 +1,15 @@
 package com.chutneytesting.design.infra.storage.scenario.git;
 
 import static com.chutneytesting.tools.Try.unsafe;
+import static java.util.Optional.empty;
 
-import com.chutneytesting.design.infra.storage.scenario.DelegateScenarioRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.design.infra.storage.scenario.DelegateScenarioRepository;
 import com.chutneytesting.design.infra.storage.scenario.git.json.versionned.JsonMapper;
 import com.chutneytesting.design.infra.storage.scenario.jdbc.TestCaseData;
 import com.chutneytesting.tools.IoUtils;
+import com.chutneytesting.tools.Streams;
 import com.chutneytesting.tools.ThrowingRunnable;
 import java.io.FileReader;
 import java.io.IOException;
@@ -23,7 +25,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import com.chutneytesting.tools.Streams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,6 +120,11 @@ public class GitScenarioRepository implements DelegateScenarioRepository {
         });
     }
 
+    @Override
+    public Optional<Integer> lastVersion(String scenarioId) {
+        return empty();
+    }
+
     /**
      * @return path found if the filename hashcode equals to the scenarioId
      */
@@ -142,7 +148,7 @@ public class GitScenarioRepository implements DelegateScenarioRepository {
         static TestCaseData mapFile(Path path) {
             try {
                 return TestCaseData.builder()
-                    .withVersion("GIT")
+                    .withContentVersion("GIT")
                     .withId(String.valueOf(path.toFile().getName().hashCode()))
                     .withTitle(path.toFile().getName())
                     .withCreationDate(getCreationDate(path))
@@ -170,7 +176,6 @@ public class GitScenarioRepository implements DelegateScenarioRepository {
                 .withCreationDate(getCreationDate(path))
                 .withRepositorySource(origin)
                 .build();
-
         }
     }
 
