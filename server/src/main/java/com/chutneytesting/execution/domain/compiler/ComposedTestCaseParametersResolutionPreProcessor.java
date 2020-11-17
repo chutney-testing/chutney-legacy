@@ -9,9 +9,9 @@ import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedScenario;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedStep;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedTestCase;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedScenario;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +80,7 @@ public class ComposedTestCaseParametersResolutionPreProcessor implements TestCas
                     .map(f -> applyToComposedStep(f, scopedDataset, globalVariable))
                     .collect(Collectors.toList())
             )
-            .withImplementation(composedStep.implementation.map(v -> replaceParams(v, globalvarRepository.getFlatMap(), scopedDataset, StringEscapeUtils::escapeJson)))
+            .withImplementation(composedStep.stepImplementation.map(v -> replaceParams(v, globalvarRepository.getFlatMap(), scopedDataset, StringEscapeUtils::escapeJson)))
             .withStrategy(composedStep.strategy)
             .overrideDataSetWith(scopedDataset)
             .build();
@@ -122,7 +122,7 @@ public class ComposedTestCaseParametersResolutionPreProcessor implements TestCas
                     .map(f -> applyOnStepStrategy(f, scopedDataset, globalVariable))
                     .collect(Collectors.toList())
             )
-            .withImplementation(composedStep.implementation)
+            .withImplementation(composedStep.stepImplementation)
             .withStrategy(applyToStrategy(composedStep.strategy, scopedDataset, globalVariable))
             .overrideDataSetWith(composedStep.dataset)
             .build();

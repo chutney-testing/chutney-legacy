@@ -2,9 +2,9 @@ package com.chutneytesting.execution.domain.compiler;
 
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedScenario;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedStep;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedTestCase;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedScenario;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.List;

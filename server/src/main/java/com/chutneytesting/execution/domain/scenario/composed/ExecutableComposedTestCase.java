@@ -1,4 +1,4 @@
-package com.chutneytesting.execution.domain.scenario;
+package com.chutneytesting.execution.domain.scenario.composed;
 
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;

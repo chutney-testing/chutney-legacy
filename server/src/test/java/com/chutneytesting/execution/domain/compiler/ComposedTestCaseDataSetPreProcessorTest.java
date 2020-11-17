@@ -19,9 +19,9 @@ import com.chutneytesting.engine.domain.execution.strategies.DefaultStepExecutio
 import com.chutneytesting.engine.domain.execution.strategies.RetryWithTimeOutStrategy;
 import com.chutneytesting.engine.domain.execution.strategies.SoftAssertStrategy;
 import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedStep;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedScenario;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedTestCase;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedScenario;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import java.util.List;
 import java.util.Map;
 import junitparams.JUnitParamsRunner;

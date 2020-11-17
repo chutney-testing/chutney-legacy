@@ -1,4 +1,4 @@
-package com.chutneytesting.execution.domain.scenario;
+package com.chutneytesting.execution.domain.scenario.composed;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;

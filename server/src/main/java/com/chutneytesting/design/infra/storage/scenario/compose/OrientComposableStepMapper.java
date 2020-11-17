@@ -17,7 +17,8 @@ import static java.util.Optional.ofNullable;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.design.domain.scenario.compose.StepUsage;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedStep;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
+import com.chutneytesting.execution.domain.scenario.composed.StepImplementation;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.ODirection;
@@ -78,28 +79,6 @@ public class OrientComposableStepMapper {
             .filter(entry -> dbDataSet.containsKey(entry.getKey()))
             .filter(entry -> !dbDataSet.get(entry.getKey()).equals(entry.getValue()))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
-
-    static ExecutableComposedStep vertexToExecutableComposedStep(OVertex vertex, ODatabaseSession dbSession) {
-        ComposableStep composableStep = vertexToComposableStep(vertex, dbSession).build();
-        return composableToExecutable(composableStep);
-    }
-
-    static List<ExecutableComposedStep> composableToExecutable(List<ComposableStep> composableSteps) {
-        return composableSteps.stream()
-            .map(OrientComposableStepMapper::composableToExecutable)
-            .collect(Collectors.toList());
-    }
-
-    private static ExecutableComposedStep composableToExecutable(ComposableStep fs) {
-        return ExecutableComposedStep.builder()
-            .withName(fs.name)
-            .withStrategy(fs.strategy)
-            .withSteps(composableToExecutable(fs.steps))
-            .withImplementation(fs.implementation)
-            .withParameters(fs.parameters)
-            .overrideDataSetWith(fs.dataSet)
-            .build();
     }
 
     public static ComposableStep.ComposableStepBuilder vertexToComposableStep(final OVertex vertex, final ODatabaseSession dbSession) {

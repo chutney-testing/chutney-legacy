@@ -3,7 +3,7 @@ package com.chutneytesting.execution.domain.compiler;
 import com.chutneytesting.design.domain.dataset.DataSetRepository;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedTestCase;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 

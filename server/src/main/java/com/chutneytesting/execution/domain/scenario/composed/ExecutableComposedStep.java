@@ -1,10 +1,9 @@
-package com.chutneytesting.execution.domain.scenario;
+package com.chutneytesting.execution.domain.scenario.composed;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
-import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
@@ -21,20 +20,19 @@ public class ExecutableComposedStep {
     public final String name;
     public final List<ExecutableComposedStep> steps;
     public final Map<String, String> parameters;
-    public final Optional<String> implementation;
+    public final Optional<StepImplementation> stepImplementation;
     public final Strategy strategy;
     public final Map<String, String> dataset;
 
-    private ExecutableComposedStep(String name, List<ExecutableComposedStep> steps, Map<String, String> parameters, Optional<String> implementation, Strategy strategy, Map<String, String> dataset) {
+    private ExecutableComposedStep(String name, List<ExecutableComposedStep> steps, Map<String, String> parameters, Optional<StepImplementation> implementation, Strategy strategy, Map<String, String> dataset) {
         this.name = name;
         this.steps = steps;
         this.parameters = parameters;
-        this.implementation = implementation;
+        this.stepImplementation = implementation;
         this.strategy = strategy;
         this.dataset = dataset;
     }
 
-    // TODO - refactor dataset
     public Map<String, String> dataSetGlobalParameters() {
         return dataset.entrySet().stream()
             .filter(e -> StringUtils.isBlank(e.getValue()))
@@ -50,7 +48,7 @@ public class ExecutableComposedStep {
         private String name;
         private List<ExecutableComposedStep> steps;
         private Map<String, String> parameters = new LinkedHashMap<>();
-        private Optional<String> implementation;
+        private Optional<StepImplementation> implementation;
         private Strategy strategy;
         private Map<String, String> dataSet = new LinkedHashMap<>();
 
@@ -61,7 +59,7 @@ public class ExecutableComposedStep {
                 ofNullable(name).orElse(""),
                 ofNullable(steps).orElse(emptyList()),
                 ofNullable(parameters).orElse(emptyMap()),
-                ofNullable(implementation).orElse(empty()),
+                ofNullable(implementation).orElse(StepImplementation.NONE),
                 ofNullable(strategy).orElse(Strategy.DEFAULT),
                 unmodifiableMap(ofNullable(dataSet).orElse(emptyMap()))
             );
@@ -91,7 +89,7 @@ public class ExecutableComposedStep {
             return this;
         }
 
-        public ExecutableComposedStepBuilder withImplementation(Optional<String> implementation) {
+        public ExecutableComposedStepBuilder withImplementation(Optional<StepImplementation> implementation) {
             this.implementation = implementation;
             return this;
         }
@@ -115,7 +113,7 @@ public class ExecutableComposedStep {
             this.name = instance.name;
             this.steps = instance.steps;
             this.parameters = instance.parameters;
-            this.implementation = instance.implementation;
+            this.implementation = instance.stepImplementation;
             this.strategy = instance.strategy;
             this.dataSet = new LinkedHashMap<>(instance.dataset);
             return this;
@@ -128,7 +126,7 @@ public class ExecutableComposedStep {
             ", name='" + name + '\'' +
             ", steps=" + steps +
             ", parameters=" + parameters +
-            ", implementation=" + implementation +
+            ", implementation=" + stepImplementation +
             ", strategy=" + strategy.toString() +
             ", dataSet=" + dataset +
             '}';
@@ -142,7 +140,7 @@ public class ExecutableComposedStep {
         return Objects.equals(name, that.name) &&
             Objects.equals(steps, that.steps) &&
             Objects.equals(parameters, that.parameters) &&
-            Objects.equals(implementation, that.implementation) &&
+            Objects.equals(stepImplementation, that.stepImplementation) &&
             Objects.equals(strategy, that.strategy) &&
             Objects.equals(dataset, that.dataset)
             ;
@@ -150,7 +148,7 @@ public class ExecutableComposedStep {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, steps, parameters, implementation, strategy, dataset);
+        return Objects.hash(name, steps, parameters, stepImplementation, strategy, dataset);
     }
 
 }

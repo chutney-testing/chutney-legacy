@@ -18,9 +18,9 @@ import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedScenario;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedStep;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedTestCase;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedScenario;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.util.Collections;
@@ -380,8 +380,8 @@ public class ComposedTestCasePreProcessorTest {
         assertThat(step_1_1.name).isEqualTo(stepName.concat(" - iteration 1"));
         assertThat(step_1_1.strategy).isEqualTo(Strategy.DEFAULT);
         assertThat(step_1_1.steps.size()).isEqualTo(1);
-        assertThat(step_1_1.steps.get(0).implementation.get()).contains("\"target\": \"target_it1\",");
-        assertThat(step_1_1.steps.get(0).implementation.get()).contains("inputs\": [{\"name\":\"target\",\"value\":\"target_it1\"},{\"name\":\"action param\",\"value\":\"hard action value\"}]");
+        assertThat(step_1_1.steps.get(0).stepImplementation.get()).contains("\"target\": \"target_it1\",");
+        assertThat(step_1_1.steps.get(0).stepImplementation.get()).contains("inputs\": [{\"name\":\"target\",\"value\":\"target_it1\"},{\"name\":\"action param\",\"value\":\"hard action value\"}]");
         assertThat(step_1_1.steps.get(0).dataset).containsOnly(entry("target", "target_it1"));
 
         /* Step 1.2 */
@@ -389,8 +389,8 @@ public class ComposedTestCasePreProcessorTest {
         assertThat(step_1_2.name).isEqualTo(stepName.concat(" - iteration 2"));
         assertThat(step_1_2.steps.size()).isEqualTo(1);
         assertThat(step_1_2.strategy).isEqualTo(Strategy.DEFAULT);
-        assertThat(step_1_2.steps.get(0).implementation.get()).contains("\"target\": \"target_it2\",");
-        assertThat(step_1_2.steps.get(0).implementation.get()).contains("inputs\": [{\"name\":\"target\",\"value\":\"target_it2\"},{\"name\":\"action param\",\"value\":\"hard action value\"}]");
+        assertThat(step_1_2.steps.get(0).stepImplementation.get()).contains("\"target\": \"target_it2\",");
+        assertThat(step_1_2.steps.get(0).stepImplementation.get()).contains("inputs\": [{\"name\":\"target\",\"value\":\"target_it2\"},{\"name\":\"action param\",\"value\":\"hard action value\"}]");
         assertThat(step_1_2.steps.get(0).strategy).isEqualTo(Strategy.DEFAULT);
         assertThat(step_1_2.steps.get(0).dataset).containsOnly(entry("target", "target_it2"));
 
@@ -405,8 +405,8 @@ public class ComposedTestCasePreProcessorTest {
         assertThat(step_2_1.name).isEqualTo(stepName.concat(" - iteration 1"));
         assertThat(step_2_1.strategy).isEqualTo(Strategy.DEFAULT);
         assertThat(step_2_1.steps.size()).isEqualTo(1);
-        assertThat(step_2_1.steps.get(0).implementation.get()).contains("target_it1");
-        assertThat(step_2_1.steps.get(0).implementation.get()).contains("inputs\": [{\"name\":\"target\",\"value\":\"target_it1\"},{\"name\":\"action param\",\"value\":\"hard action value\"}]");
+        assertThat(step_2_1.steps.get(0).stepImplementation.get()).contains("target_it1");
+        assertThat(step_2_1.steps.get(0).stepImplementation.get()).contains("inputs\": [{\"name\":\"target\",\"value\":\"target_it1\"},{\"name\":\"action param\",\"value\":\"hard action value\"}]");
         assertThat(step_2_1.steps.get(0).strategy).isEqualTo(Strategy.DEFAULT);
         assertThat(step_2_1.steps.get(0).dataset).containsOnly(
             entry("target", "target_it1")
@@ -416,8 +416,8 @@ public class ComposedTestCasePreProcessorTest {
         assertThat(step_2_2.name).isEqualTo(stepName.concat(" - iteration 2"));
         assertThat(step_2_2.strategy).isEqualTo(Strategy.DEFAULT);
         assertThat(step_2_2.steps.size()).isEqualTo(1);
-        assertThat(step_2_2.steps.get(0).implementation.get()).contains("target_it2");
-        assertThat(step_2_2.steps.get(0).implementation.get()).contains("inputs\": [{\"name\":\"target\",\"value\":\"target_it2\"},{\"name\":\"action param\",\"value\":\"hard action value\"}]");
+        assertThat(step_2_2.steps.get(0).stepImplementation.get()).contains("target_it2");
+        assertThat(step_2_2.steps.get(0).stepImplementation.get()).contains("inputs\": [{\"name\":\"target\",\"value\":\"target_it2\"},{\"name\":\"action param\",\"value\":\"hard action value\"}]");
         assertThat(step_2_2.steps.get(0).strategy).isEqualTo(Strategy.DEFAULT);
         assertThat(step_2_2.steps.get(0).dataset).containsOnly(
             entry("target", "target_it2")
@@ -539,18 +539,18 @@ public class ComposedTestCasePreProcessorTest {
 
         ExecutableComposedStep secondScenarioStep = processedTestCase.composedScenario.composedSteps.get(1);
         assertThat(secondScenarioStep.name).isEqualTo("step do not iterate over me");
-        assertThat(secondScenarioStep.implementation).isEqualTo(of("{\"identifier\": \"http-get\", \"target\": \"hard value 2 and another hard value 2\", \"inputs\": []}"));
+        assertThat(secondScenarioStep.stepImplementation).isEqualTo(of("{\"identifier\": \"http-get\", \"target\": \"hard value 2 and another hard value 2\", \"inputs\": []}"));
         assertThat(secondScenarioStep.steps).isEmpty();
 
         ExecutableComposedStep thirdScenarioStep = processedTestCase.composedScenario.composedSteps.get(2);
         assertThat(thirdScenarioStep.name).isEqualTo("step with iteration over two dataset's keys **testcase param**");
         assertThat(thirdScenarioStep.steps).hasSize(3);
         assertThat(thirdScenarioStep.steps.get(0).name).isEqualTo("step with iteration over two dataset's keys dataset mv 11 - dataset iteration 1");
-        assertThat(thirdScenarioStep.steps.get(0).implementation).isEqualTo(of("{\"identifier\": \"http-global var value\", \"target\": \"dataset mv 12 and hard value 3\", \"inputs\": []}"));
+        assertThat(thirdScenarioStep.steps.get(0).stepImplementation).isEqualTo(of("{\"identifier\": \"http-global var value\", \"target\": \"dataset mv 12 and hard value 3\", \"inputs\": []}"));
         assertThat(thirdScenarioStep.steps.get(1).name).isEqualTo("step with iteration over two dataset's keys dataset mv 11 - dataset iteration 2");
-        assertThat(thirdScenarioStep.steps.get(1).implementation).isEqualTo(of("{\"identifier\": \"http-global var value\", \"target\": \"dataset mv 22 and hard value 3\", \"inputs\": []}"));
+        assertThat(thirdScenarioStep.steps.get(1).stepImplementation).isEqualTo(of("{\"identifier\": \"http-global var value\", \"target\": \"dataset mv 22 and hard value 3\", \"inputs\": []}"));
         assertThat(thirdScenarioStep.steps.get(2).name).isEqualTo("step with iteration over two dataset's keys dataset mv 31 - dataset iteration 3");
-        assertThat(thirdScenarioStep.steps.get(2).implementation).isEqualTo(of("{\"identifier\": \"http-global var value\", \"target\": \"dataset mv 32 and hard value 3\", \"inputs\": []}"));
+        assertThat(thirdScenarioStep.steps.get(2).stepImplementation).isEqualTo(of("{\"identifier\": \"http-global var value\", \"target\": \"dataset mv 32 and hard value 3\", \"inputs\": []}"));
     }
 
     private ExecutableComposedStep buildStepFromActionWithDataSet(ExecutableComposedStep action, String targetDataSetValue) {

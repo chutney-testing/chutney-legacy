@@ -17,9 +17,9 @@ import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.SecurityInfoDto;
 import com.chutneytesting.engine.api.execution.TargetDto;
 import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedStep;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedScenario;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedTestCase;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedScenario;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import com.chutneytesting.task.api.EmbeddedTaskEngine;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
@@ -44,7 +44,7 @@ public class ExecutionRequestMapperTest {
     private CurrentNetworkDescription currentNetworkDescription = mock(CurrentNetworkDescription.class);
     private EmbeddedTaskEngine embeddedTaskEngine = mock(EmbeddedTaskEngine.class);
 
-    private ExecutionRequestMapper sut = new ExecutionRequestMapper(objectMapper, environmentRepository, currentNetworkDescription, embeddedTaskEngine);
+    private ExecutionRequestMapper sut = new ExecutionRequestMapper(objectMapper, environmentRepository, currentNetworkDescription);
 
     @Test
     public void should_map_test_case_to_execution_request() {

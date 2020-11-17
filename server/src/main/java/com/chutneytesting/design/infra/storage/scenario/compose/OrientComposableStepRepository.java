@@ -24,8 +24,8 @@ import com.chutneytesting.design.domain.scenario.compose.ComposableStepRepositor
 import com.chutneytesting.design.domain.scenario.compose.ParentStepId;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedStep;
-import com.chutneytesting.execution.domain.scenario.ExecutableStepRepository;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableStepRepository;
 import com.chutneytesting.tools.ImmutablePaginatedDto;
 import com.chutneytesting.tools.PaginatedDto;
 import com.chutneytesting.tools.PaginationRequestParametersDto;
@@ -58,9 +58,11 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
     private static final Logger LOGGER = LoggerFactory.getLogger(OrientComposableStepRepository.class);
 
     private ODatabasePool componentDBPool;
+    private ExecutableComposedStepMapper composedStepMapper;
 
-    public OrientComposableStepRepository(OrientComponentDB orientComponentDB) {
+    public OrientComposableStepRepository(OrientComponentDB orientComponentDB, ExecutableComposedStepMapper mapper) {
         this.componentDBPool = orientComponentDB.dbPool();
+        this.composedStepMapper = mapper;
     }
 
     @Override
@@ -92,7 +94,7 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
     @Override
     public ComposableStep findById(final String recordId) {
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
-            OVertex element = (OVertex)load(recordId, dbSession)
+            OVertex element = (OVertex) load(recordId, dbSession)
                 .orElseThrow(ComposableStepNotFoundException::new);
             return vertexToComposableStep(element, dbSession).build();
         }
@@ -100,11 +102,8 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
 
     @Override
     public ExecutableComposedStep findExecutableById(String recordId) {
-        try (ODatabaseSession dbSession = componentDBPool.acquire()) {
-            OVertex element = (OVertex)load(recordId, dbSession)
-                .orElseThrow(ComposableStepNotFoundException::new);
-            return vertexToExecutableComposedStep(element, dbSession);
-        }
+        ComposableStep composableStep = findById(recordId);
+        return composedStepMapper.map(composableStep);
     }
 
     @Override
@@ -182,7 +181,7 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
         }
     }
 
-    private static final String FIND_PARENTS_STEP = "select @rid, name, title, @class from (TRAVERSE in("+ GE_STEP_CLASS +") FROM ?) where $depth = 1";
+    private static final String FIND_PARENTS_STEP = "select @rid, name, title, @class from (TRAVERSE in(" + GE_STEP_CLASS + ") FROM ?) where $depth = 1";
 
     @Override
     public List<ParentStepId> findParents(String stepId) {

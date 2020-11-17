@@ -2,7 +2,6 @@ package com.chutneytesting.design.infra.storage.scenario.compose;
 
 import static com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository.COMPOSABLE_TESTCASE_REPOSITORY_SOURCE;
 import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.buildComposableStepsChildren;
-import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.composableToExecutable;
 import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.setComposableStepVertexDenotations;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_AUTHOR;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_CREATIONDATE;
@@ -21,8 +20,6 @@ import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedScenario;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedTestCase;
 import com.chutneytesting.security.domain.User;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.metadata.schema.OType;
@@ -69,18 +66,6 @@ class OrientComposableTestCaseMapper {
             ComposableScenario.builder()
                 .withComposableSteps(composableStepRefs)
                 .withParameters(parameters)
-                .build());
-    }
-
-    static ExecutableComposedTestCase vertexToExecutableTestCase(OVertex dbTestCase, ODatabaseSession dbSession) {
-        ComposableTestCase composableTestCase = vertexToTestCase(dbTestCase, dbSession);
-
-        return new ExecutableComposedTestCase(
-            composableTestCase.id,
-            composableTestCase.metadata,
-            ExecutableComposedScenario.builder()
-                .withComposedSteps(composableToExecutable(composableTestCase.composableScenario.composableSteps))
-                .withParameters(composableTestCase.composableScenario.parameters)
                 .build());
     }
 

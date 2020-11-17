@@ -1,7 +1,6 @@
 package com.chutneytesting.design.infra.storage.scenario.compose;
 
 import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableTestCaseMapper.testCaseToVertex;
-import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableTestCaseMapper.vertexToExecutableTestCase;
 import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableTestCaseMapper.vertexToTestCase;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.close;
@@ -15,8 +14,8 @@ import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedTestCase;
-import com.chutneytesting.execution.domain.scenario.ExecutableComposedTestCaseRepository;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCaseRepository;
 import com.google.common.collect.Lists;
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
@@ -39,9 +38,11 @@ public class OrientComposableTestCaseRepository implements ComposableTestCaseRep
     private static final Logger LOGGER = LoggerFactory.getLogger(OrientComposableTestCaseRepository.class);
 
     private ODatabasePool componentDBPool;
+    private ExecutableComposedTestCaseMapper mapper;
 
-    public OrientComposableTestCaseRepository(OrientComponentDB orientComponentDB) {
+    public OrientComposableTestCaseRepository(OrientComponentDB orientComponentDB, ExecutableComposedTestCaseMapper mapper) {
         this.componentDBPool = orientComponentDB.dbPool();
+        this.mapper = mapper;
     }
 
     @Override
@@ -75,7 +76,7 @@ public class OrientComposableTestCaseRepository implements ComposableTestCaseRep
     @Override
     public ComposableTestCase findById(String composableTestCaseId) {
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
-            OVertex element = (OVertex)load(composableTestCaseId, dbSession)
+            OVertex element = (OVertex) load(composableTestCaseId, dbSession)
                 .orElseThrow(() -> new ScenarioNotFoundException(composableTestCaseId));
             return vertexToTestCase(element, dbSession);
         }
@@ -83,11 +84,8 @@ public class OrientComposableTestCaseRepository implements ComposableTestCaseRep
 
     @Override
     public ExecutableComposedTestCase findExecutableById(String composableTestCaseId) {
-        try (ODatabaseSession dbSession = componentDBPool.acquire()) {
-            OVertex element = (OVertex)load(composableTestCaseId, dbSession)
-                .orElseThrow(() -> new ScenarioNotFoundException(composableTestCaseId));
-            return vertexToExecutableTestCase(element, dbSession);
-        }
+        ComposableTestCase composableTestCase = findById(composableTestCaseId);
+        return mapper.map(composableTestCase);
     }
 
     private static final String QUERY_SELECT_ALL = "SELECT @rid FROM " + TESTCASE_CLASS + "";
@@ -97,7 +95,7 @@ public class OrientComposableTestCaseRepository implements ComposableTestCaseRep
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
             OResultSet allSteps = dbSession.query(QUERY_SELECT_ALL);
             return Lists.newArrayList(allSteps).stream()
-                .map(rs ->  {
+                .map(rs -> {
                     OVertex element = dbSession.load(new ORecordId(rs.getProperty("@rid").toString()));
                     return vertexToTestCase(element, dbSession).metadata;
                 })

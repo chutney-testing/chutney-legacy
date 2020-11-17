@@ -12,6 +12,9 @@ import com.chutneytesting.execution.domain.compiler.GwtScenarioMarshaller;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.report.StepExecutionReportCore;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedScenario;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import java.util.Collections;
 import java.util.Map;
 
