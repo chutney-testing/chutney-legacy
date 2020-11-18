@@ -45,8 +45,16 @@ public class ComposedTestCaseDataSetPreProcessor implements TestCasePreProcessor
         }
 
         DataSet dataSet = oDataSet.get();
-        List<Map<String, String>> multipleValues = dataSet.multipleValues;
+        Map<Boolean, List<String>> matchedHeaders = doSomethingWithHeaders(testCase, dataSet.multipleValues);
 
+        return new ExecutableComposedTestCase(
+            testCase.id,
+            testCase.metadata,
+            applyToScenario(testCase.composedScenario, matchedHeaders, dataSet),
+            applyToComputedParameters(testCase.computedParameters, matchedHeaders.get(Boolean.TRUE), dataSet));
+    }
+
+    private Map<Boolean, List<String>> doSomethingWithHeaders(ExecutableComposedTestCase testCase, List<Map<String, String>> multipleValues) {
         Map<Boolean, List<String>> matchedHeaders = new HashMap<>();
         if (!multipleValues.isEmpty()) {
             Set<String> valuesHeaders = multipleValues.get(0).keySet();
@@ -55,12 +63,7 @@ public class ComposedTestCaseDataSetPreProcessor implements TestCasePreProcessor
         }
         matchedHeaders.putIfAbsent(Boolean.TRUE, emptyList());
         matchedHeaders.putIfAbsent(Boolean.FALSE, emptyList());
-
-        return new ExecutableComposedTestCase(
-            testCase.id,
-            testCase.metadata,
-            applyToScenario(testCase.composedScenario, matchedHeaders, dataSet),
-            applyToComputedParameters(testCase.computedParameters, matchedHeaders.get(Boolean.TRUE), dataSet));
+        return matchedHeaders;
     }
 
     private Map<String, String> applyToComputedParameters(Map<String, String> computedParameters, List<String> matchedHeaders, DataSet dataSet) {
@@ -79,10 +82,6 @@ public class ComposedTestCaseDataSetPreProcessor implements TestCasePreProcessor
     }
 
     private ExecutableComposedScenario applyToScenario(ExecutableComposedScenario composedScenario, Map<Boolean, List<String>> matchedHeaders, DataSet dataSet) {
-        if (matchedHeaders.isEmpty()) {
-            return composedScenario;
-        }
-
         return ExecutableComposedScenario.builder()
             .withComposedSteps(
                 composedScenario.composedSteps.stream()
@@ -116,6 +115,13 @@ public class ComposedTestCaseDataSetPreProcessor implements TestCasePreProcessor
             .build();
     }
 
+    private Set<String> findComposedStepNoValuedMatchedEntries(Map<String, String> csDataset, List<String> matchedHeaders) {
+        return csDataset.entrySet().stream()
+            .filter(e -> e.getValue().isEmpty() && matchedHeaders.contains(e.getKey()))
+            .map(Map.Entry::getKey)
+            .collect(toSet());
+    }
+
     private Map<String, Set<String>> findComposedStepValuedEntriesWithRef(Map<String, String> csDataSet, List<String> matchedHeaders) {
         HashMap<String, Set<String>> valuedEntriesWithRef = new HashMap<>();
         for (Map.Entry<String, String> csData : csDataSet.entrySet()) {
@@ -128,13 +134,6 @@ public class ComposedTestCaseDataSetPreProcessor implements TestCasePreProcessor
             }
         }
         return valuedEntriesWithRef;
-    }
-
-    private Set<String> findComposedStepNoValuedMatchedEntries(Map<String, String> csDataset, List<String> matchedHeaders) {
-        return csDataset.entrySet().stream()
-            .filter(e -> e.getValue().isEmpty() && matchedHeaders.contains(e.getKey()))
-            .map(Map.Entry::getKey)
-            .collect(toSet());
     }
 
     private List<ExecutableComposedStep> buildStepIterations(ExecutableComposedStep composedStep, Set<String> csNovaluedEntries, Map<String, Set<String>> csValuedEntriesWithRef, List<Map<String, String>> multipleValues) {
