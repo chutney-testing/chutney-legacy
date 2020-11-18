@@ -86,7 +86,7 @@ public class ComposedTestCaseDataSetPreProcessor implements TestCasePreProcessor
         return ExecutableComposedScenario.builder()
             .withComposedSteps(
                 composedScenario.composedSteps.stream()
-                    .map(fs -> applyToScenarioSteps(fs, matchedHeaders, dataSet))
+                    .map(cs -> applyToScenarioSteps(cs, matchedHeaders, dataSet))
                     .collect(toList())
             )
             .withParameters(composedScenario.parameters)
@@ -94,55 +94,55 @@ public class ComposedTestCaseDataSetPreProcessor implements TestCasePreProcessor
     }
 
     private ExecutableComposedStep applyToScenarioSteps(ExecutableComposedStep composedStep, Map<Boolean, List<String>> matchedHeaders, DataSet dataset) {
-        Set<String> fsNovaluedEntries = findComposedStepNoValuedMatchedEntries(composedStep.dataset, matchedHeaders.get(Boolean.TRUE));
-        Map<String, Set<String>> fsValuedEntriesWithRef = findComposedStepValuedEntriesWithRef(composedStep.dataset, matchedHeaders.get(Boolean.TRUE));
+        Set<String> csNovaluedEntries = findComposedStepNoValuedMatchedEntries(composedStep.dataset, matchedHeaders.get(Boolean.TRUE));
+        Map<String, Set<String>> csValuedEntriesWithRef = findComposedStepValuedEntriesWithRef(composedStep.dataset, matchedHeaders.get(Boolean.TRUE));
 
-        if (fsNovaluedEntries.isEmpty() && fsValuedEntriesWithRef.isEmpty()) {
+        if (csNovaluedEntries.isEmpty() && csValuedEntriesWithRef.isEmpty()) {
             return composedStep;
         }
 
-        Map<String, String> fsLeftEntries = composedStep.dataset.entrySet().stream()
+        Map<String, String> csLeftEntries = composedStep.dataset.entrySet().stream()
             .filter(e -> e.getValue().isEmpty())
-            .filter(e -> !fsNovaluedEntries.contains(e.getKey()))
+            .filter(e -> !csNovaluedEntries.contains(e.getKey()))
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        matchedHeaders.get(Boolean.FALSE).forEach(s -> fsLeftEntries.put(s, ""));
+        matchedHeaders.get(Boolean.FALSE).forEach(s -> csLeftEntries.put(s, ""));
 
         return ExecutableComposedStep.builder()
             .from(composedStep)
             .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
-            .withSteps(buildStepIterations(composedStep, fsNovaluedEntries, fsValuedEntriesWithRef, dataset.multipleValues))
-            .overrideDataSetWith(buildDatasetWithAliases(fsLeftEntries))
+            .withSteps(buildStepIterations(composedStep, csNovaluedEntries, csValuedEntriesWithRef, dataset.multipleValues))
+            .overrideDataSetWith(buildDatasetWithAliases(csLeftEntries))
             .build();
     }
 
-    private Map<String, Set<String>> findComposedStepValuedEntriesWithRef(Map<String, String> fsDataSet, List<String> matchedHeaders) {
+    private Map<String, Set<String>> findComposedStepValuedEntriesWithRef(Map<String, String> csDataSet, List<String> matchedHeaders) {
         HashMap<String, Set<String>> valuedEntriesWithRef = new HashMap<>();
-        for (Map.Entry<String, String> fsData : fsDataSet.entrySet()) {
-            String value = fsData.getValue();
+        for (Map.Entry<String, String> csData : csDataSet.entrySet()) {
+            String value = csData.getValue();
             for (String matchedHeader : matchedHeaders) {
                 if (value.contains("**" + matchedHeader + "**")) {
-                    valuedEntriesWithRef.putIfAbsent(fsData.getKey(), new HashSet<>());
-                    valuedEntriesWithRef.get(fsData.getKey()).add(matchedHeader);
+                    valuedEntriesWithRef.putIfAbsent(csData.getKey(), new HashSet<>());
+                    valuedEntriesWithRef.get(csData.getKey()).add(matchedHeader);
                 }
             }
         }
         return valuedEntriesWithRef;
     }
 
-    private Set<String> findComposedStepNoValuedMatchedEntries(Map<String, String> fsDataset, List<String> matchedHeaders) {
-        return fsDataset.entrySet().stream()
+    private Set<String> findComposedStepNoValuedMatchedEntries(Map<String, String> csDataset, List<String> matchedHeaders) {
+        return csDataset.entrySet().stream()
             .filter(e -> e.getValue().isEmpty() && matchedHeaders.contains(e.getKey()))
             .map(Map.Entry::getKey)
             .collect(toSet());
     }
 
-    private List<ExecutableComposedStep> buildStepIterations(ExecutableComposedStep composedStep, Set<String> fsNovaluedEntries, Map<String, Set<String>> fsValuedEntriesWithRef, List<Map<String, String>> multipleValues) {
-        Set<String> dataSetEntriesReferenced = fsValuedEntriesWithRef.values().stream().flatMap(Collection::stream).collect(toSet());
+    private List<ExecutableComposedStep> buildStepIterations(ExecutableComposedStep composedStep, Set<String> csNovaluedEntries, Map<String, Set<String>> csValuedEntriesWithRef, List<Map<String, String>> multipleValues) {
+        Set<String> dataSetEntriesReferenced = csValuedEntriesWithRef.values().stream().flatMap(Collection::stream).collect(toSet());
         List<Map<String, String>> iterationData = multipleValues.stream()
             .map(m ->
                 m.entrySet().stream()
-                    .filter(e -> fsNovaluedEntries.contains(e.getKey()) || dataSetEntriesReferenced.contains(e.getKey()))
+                    .filter(e -> csNovaluedEntries.contains(e.getKey()) || dataSetEntriesReferenced.contains(e.getKey()))
                     .collect(toMap(Map.Entry::getKey, Map.Entry::getValue))
             )
             .distinct()
@@ -155,9 +155,9 @@ public class ComposedTestCaseDataSetPreProcessor implements TestCasePreProcessor
 
                 Map<String, String> newDataSet = new HashMap<>(composedStep.dataset);
                 composedStep.dataset.forEach((k, v) -> {
-                    if (fsNovaluedEntries.contains(k)) {
+                    if (csNovaluedEntries.contains(k)) {
                         newDataSet.put(k, mv.get(k));
-                    } else if (fsValuedEntriesWithRef.containsKey(k)) {
+                    } else if (csValuedEntriesWithRef.containsKey(k)) {
                         newDataSet.put(k, replaceParams(v, emptyMap(), mv));
                     }
                 });

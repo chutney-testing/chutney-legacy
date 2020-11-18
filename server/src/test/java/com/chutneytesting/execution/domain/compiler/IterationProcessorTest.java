@@ -48,7 +48,6 @@ public class IterationProcessorTest {
     }
 
     @Test
-    @Ignore
     public void should_create_indexable_iterations_1() {
 
         // Given
