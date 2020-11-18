@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/internal/operators';
+import { Observable, BehaviorSubject, of } from 'rxjs';
+import { tap, finalize } from 'rxjs/internal/operators';
 
 import { environment } from '../../../environments/environment';
 import { User, UserSession } from '@model';
@@ -11,13 +11,13 @@ import { User, UserSession } from '@model';
 })
 export class LoginService {
 
-  public static readonly USER_SESSION_KEY = 'userSession';
+  private user$: BehaviorSubject<User>;
 
   constructor(
     private http: HttpClient
-  ) { }
-
-  private SESSION_MAX_DURATION_IN_HOURS = 24;
+  ) {
+    this.user$ = new BehaviorSubject(null);
+  }
 
   login(username: string, password: string): Observable<User> {
 
@@ -31,38 +31,21 @@ export class LoginService {
 
     return this.http.post<User>(environment.backend + '/api/v1/user/login', body.toString(), options)
       .pipe(
-        tap(user => this.addUser(user))
+        tap(user => this.setUser(user))
       );
   }
 
   logout() {
-    this.removeUser();
-    this.http.post(environment.backend + '/api/v1/user/logout', null).subscribe(() => { }, () => { });
+    this.http.post(environment.backend + '/api/v1/user/logout', null).pipe(
+        finalize(() => this.setUser(null))
+    ).subscribe(() => { }, () => { });
   }
 
-  getUser(): User | null {
-    const userSessionString = localStorage.getItem(LoginService.USER_SESSION_KEY);
-    if (userSessionString != null) {
-      const userSession: UserSession = JSON.parse(userSessionString);
-      if (new Date().getTime() - userSession.startTime > this.SESSION_MAX_DURATION_IN_HOURS * 60 * 60 * 1000) {
-        this.removeUser();
-        return null;
-      } else {
-        return userSession.user;
-      }
-    } else {
-      return null;
-    }
+  getUser(): Observable<User> {
+    return this.user$;
   }
 
-  private removeUser() {
-    localStorage.removeItem(LoginService.USER_SESSION_KEY);
-  }
-
-  private addUser(user: User) {
-    if (user) {
-        localStorage.setItem(LoginService.USER_SESSION_KEY, JSON.stringify(new UserSession(user, new Date().getTime())));
-    }
+  private setUser(user: User) {
+    this.user$.next(user);
   }
 }
-

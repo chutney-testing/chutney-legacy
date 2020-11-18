@@ -2,12 +2,16 @@ package com.chutneytesting.security;
 
 import com.chutneytesting.security.infra.handlers.Http401FailureHandler;
 import com.chutneytesting.security.infra.handlers.HttpEmptyLogoutSuccessHandler;
+import com.chutneytesting.security.infra.handlers.HttpStatusInvalidSessionStrategy;
 import com.chutneytesting.security.infra.ldap.LdapConfiguration;
 import com.chutneytesting.security.infra.memory.InMemoryConfiguration;
 import com.chutneytesting.security.infra.memory.InMemoryUsersProperties;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,6 +29,8 @@ public class ChutneySecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(final HttpSecurity http) throws Exception {
         configureBaseHttpSecurity(http);
         http
+            .anonymous()
+                .disable()
             .authorizeRequests()
                 .antMatchers("/api/v1/user/login").permitAll()
                 .antMatchers("/api/v1/user/logout").permitAll()
@@ -35,7 +41,13 @@ public class ChutneySecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     protected void configureBaseHttpSecurity(final HttpSecurity http) throws Exception {
+        Map<String, String> invalidSessionHeaders = new HashMap<>();
+        invalidSessionHeaders.put(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+
         http
+            .sessionManagement()
+                .invalidSessionStrategy(new HttpStatusInvalidSessionStrategy(HttpStatus.UNAUTHORIZED, invalidSessionHeaders))
+            .and()
             .csrf()
                 .disable()
             .exceptionHandling()

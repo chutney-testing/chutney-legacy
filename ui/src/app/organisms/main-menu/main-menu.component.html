@@ -27,10 +27,11 @@
                 </div>
             </div>
 
-            <div *ngIf="currentUser" class="dropdown">
-                <button class="dropbtn"><span class="fa fa-user"></span>{{currentUser.id}}</button>
+            <div class="dropdown">
+                <button class="dropbtn"><span class="fa fa-user"></span>{{(user$ | async)?.id}}</button>
                 <div class="dropdown-content">
-                    <chutney-menu-item *ngIf="currentUser" [label]="'Logout'" [icon_fa_class]="'fa-sign-out'" [route]="'/login/logout'"></chutney-menu-item>
+                    <chutney-menu-item *ngIf="(user$ | async)?.id" [label]="'Logout'" [icon_fa_class]="'fa-sign-out-alt'" [route]="'/login/logout'"></chutney-menu-item>
+                    <chutney-menu-item *ngIf="(user$ | async) == null" [label]="'Login'" [icon_fa_class]="'fa-sign-in-alt'" [route]="'/login'"></chutney-menu-item>
                 </div>
             </div>
         </ul>
