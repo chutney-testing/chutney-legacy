@@ -129,7 +129,7 @@ public class ComposedTestCaseDataSetPreProcessor implements TestCasePreProcessor
             m.putAll(iterationOutputs.entrySet().stream()
             .filter(previousOutput ->
                 si.inputs.entrySet().stream()
-                    .anyMatch(input -> input.getKey().equals("${#" + previousOutput + "}")
+                    .anyMatch(input -> input.getKey().equals("${#" + previousOutput.getKey() + "}")
                         || usePreviousIterationOutput(previousOutput.getKey(), input.getValue())
                     ))
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue))));
@@ -197,20 +197,19 @@ public class ComposedTestCaseDataSetPreProcessor implements TestCasePreProcessor
             .map(mv -> {
                 index.getAndIncrement();
 
-                Map<String, String> newDataSet = new HashMap<>(composedStep.dataset);
-                composedStep.dataset.forEach((k, v) -> {
-                    if (csNovaluedEntries.contains(k)) {
-                        newDataSet.put(k, mv.get(k));
-                    } else if (csValuedEntriesWithRef.containsKey(k)) {
-                        newDataSet.put(k, replaceParams(v, emptyMap(), mv));
-                    }
-                });
-
                 return ExecutableComposedStep.builder()
                     .from(composedStep)
                     .withImplementation(composedStep.stepImplementation.flatMap(si -> Optional.of(indexIterationIO(si, index, iterationOutputs))))
                     .withName(composedStep.name + " - dataset iteration " + index)
-                    .overrideDataSetWith(newDataSet)
+                    .withSteps(composedStep.steps.stream()
+                        .map(s ->
+                            ExecutableComposedStep.builder()
+                                .from(s)
+                                .withImplementation(s.stepImplementation.flatMap(si -> Optional.of(indexIterationIO(si, index, iterationOutputs))))
+                                .build())
+                        .collect(toList())
+                    )
+                    .overrideDataSetWith(updatedDatasetUsingCurrentValue(composedStep.dataset, csNovaluedEntries, csValuedEntriesWithRef, mv))
                     .build();
             })
             .collect(toList());
@@ -226,10 +225,21 @@ public class ComposedTestCaseDataSetPreProcessor implements TestCasePreProcessor
                 .build());
         }
 
-
         iterations.addAll(iterationsFromUsingPreviousOutput);
         iterationOutputs.replaceAll((k, v) -> v = index.get());
         return iterations;
+    }
+
+    private Map<String, String> updatedDatasetUsingCurrentValue(Map<String, String> dataset, Set<String> csNovaluedEntries, Map<String, Set<String>> csValuedEntriesWithRef, Map<String, String> mv) {
+        Map<String, String> newDataSet = new HashMap<>(dataset);
+        dataset.forEach((k, v) -> {
+            if (csNovaluedEntries.contains(k)) {
+                newDataSet.put(k, mv.get(k));
+            } else if (csValuedEntriesWithRef.containsKey(k)) {
+                newDataSet.put(k, replaceParams(v, emptyMap(), mv));
+            }
+        });
+        return newDataSet;
     }
 
     private StepImplementation indexIterationIO(StepImplementation si, AtomicInteger index, Map<String, Integer> iterationOutputs) {
@@ -237,16 +247,25 @@ public class ComposedTestCaseDataSetPreProcessor implements TestCasePreProcessor
         return new StepImplementation(
             si.type,
             si.target,
-            si.inputs.entrySet().parallelStream().collect(toMap(Map.Entry::getKey, e -> applyIndexedOutput(e.getValue(), index, iterationOutputs))),
-            si.outputs.entrySet().parallelStream().collect(toMap(e -> e.getKey() + "_" + index, Map.Entry::getValue))
+            indexInputs(si.inputs, index, iterationOutputs),
+            indexOutputs(si.outputs, index)
         );
     }
 
-    private Object applyIndexedOutput(Object value, AtomicInteger index, Map<String, Integer> iterationOutputs) {
-        return toto(value, index, iterationOutputs, StringEscapeUtils::escapeJson);
+    private Map<String, Object> indexInputs(Map<String, Object> inputs, AtomicInteger index, Map<String, Integer> iterationOutputs) {
+        Map<String, Object> collect = inputs.entrySet().parallelStream().collect(toMap(e -> (String) applyIndexedOutput(e.getKey(), index, iterationOutputs), e -> applyIndexedOutput(e.getValue(), index, iterationOutputs)));
+        return collect;
     }
 
-    private Object toto(Object value, AtomicInteger index, Map<String, Integer> indexedOutput, Function<String, String> escapeValueFunction) {
+    private Map<String, Object> indexOutputs(Map<String, Object> outputs, AtomicInteger index) {
+        return outputs.entrySet().parallelStream().collect(toMap(e -> e.getKey() + "_" + index, Map.Entry::getValue));
+    }
+
+    private Object applyIndexedOutput(Object value, AtomicInteger index, Map<String, Integer> iterationOutputs) {
+        return applyIndexedOutput(value, index, iterationOutputs, StringEscapeUtils::escapeJson);
+    }
+
+    private Object applyIndexedOutput(Object value, AtomicInteger index, Map<String, Integer> indexedOutput, Function<String, String> escapeValueFunction) {
         if (value instanceof String) {
             String tmp = (String) value;
             for (String output : indexedOutput.keySet()) {

@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Optional;
 import org.apache.groovy.util.Maps;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class IterationProcessorTest {
@@ -50,7 +49,7 @@ public class IterationProcessorTest {
     }
 
     @Test
-    public void should_create_indexable_iterations_1() {
+    public void should_index_iterations_outputs_and_used_them_for_inputs() {
 
         // Given
         List<Map<String, String>> multipleValues = asList(
@@ -67,27 +66,14 @@ public class IterationProcessorTest {
                 .withComposedSteps(asList(
                     ExecutableComposedStep.builder()
                         .withName("Success - should uppercase each char")
-                        .withImplementation(Optional.of(new StepImplementation("success", null, emptyMap(), singletonMap("result", "${new String(\"**letter**\").toUpperCase()"))))
+                        .withImplementation(Optional.of(
+                            new StepImplementation("success", null, emptyMap(), singletonMap("result", "${new String(\"**letter**\").toUpperCase()"))))
                         .overrideDataSetWith(singletonMap("letter", ""))
                         .build(),
                     ExecutableComposedStep.builder()
-                        .withName("Assert index & uppercased char")
-                        .withImplementation(Optional.of(new StepImplementation("assert", null, Maps.of(
-                            "${#result_1}", "A",
-                            "${#result_2}", "B",
-                            "${#result_3}", "C"), emptyMap())))
-                        .build(),
-                    ExecutableComposedStep.builder()
                         .withName("Context put - should create one context entry for each uppercased char")
-                        .withImplementation(Optional.of(new StepImplementation("context-put", null, singletonMap("entries", singletonMap("${#result}", "fake_value")), emptyMap())))
-                        .build(),
-                    ExecutableComposedStep.builder()
-                        .withName("Assert - each context entry contains a value")
-                        .withImplementation(Optional.of(new StepImplementation("assert", null, Maps.of(
-                            "${#result_1}", "fake_value",
-                            "${#result_2}", "fake_value",
-                            "${#result_3}", "fake_value"), emptyMap())
-                        ))
+                        .withImplementation(Optional.of(
+                            new StepImplementation("context-put", null, singletonMap("entries", singletonMap("${#result}", "fake_value")), emptyMap())))
                         .build()
                     )
                 )
@@ -131,14 +117,6 @@ public class IterationProcessorTest {
                         ))
                     .build(),
                 ExecutableComposedStep.builder()
-                    .withName("Assert index & uppercased char")
-                    .withImplementation(Optional.of(
-                        new StepImplementation("assert", null, Maps.of(
-                            "${#result_1}", "A",
-                            "${#result_2}", "B",
-                            "${#result_3}", "C"), emptyMap())))
-                    .build(),
-                ExecutableComposedStep.builder()
                     .withName("Context put - should create one context entry for each uppercased char")
                     .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
                     .withSteps(Arrays.asList(
@@ -160,15 +138,6 @@ public class IterationProcessorTest {
                             ))
                             .build()
                     ))
-                    .build(),
-                ExecutableComposedStep.builder()
-                    .withName("Assert - each context entry contains a value")
-                    .withImplementation(Optional.of(
-                        new StepImplementation("assert", null, Maps.of(
-                            "${#result_1}", "fake_value",
-                            "${#result_2}", "fake_value",
-                            "${#result_3}", "fake_value"), emptyMap())
-                        ))
                     .build()
                 )
             )
@@ -176,14 +145,16 @@ public class IterationProcessorTest {
 
         assertThat(actual.composedScenario.composedSteps.get(0)).isEqualTo(expected.composedSteps.get(0));
         assertThat(actual.composedScenario.composedSteps.get(1)).isEqualTo(expected.composedSteps.get(1));
-        assertThat(actual.composedScenario.composedSteps.get(2)).isEqualTo(expected.composedSteps.get(2));
-        assertThat(actual.composedScenario.composedSteps.get(3)).isEqualTo(expected.composedSteps.get(3));
 
     }
 
+    // TODO //
+    // a test with a step using 2 previous indexed values and which should create 2 other indexed outputs values //
+    // a test with a step using 2 previous indexed values and 3 multivalues in input, how many iteration should we have ? 2, 3, 6 combine ? Fuck ! //
+
+
     @Test
-    @Ignore
-    public void should_create_indexable_iterations_2() {
+    public void should_index_iterations_outputs_when_inside_a_parent_step() {
 
         // Given
         List<Map<String, String>> multipleValues = asList(
@@ -197,10 +168,10 @@ public class IterationProcessorTest {
             "fakeId",
             TestCaseMetadataImpl.builder().withDatasetId("fakeId").build(),
             ExecutableComposedScenario.builder()
-                .withComposedSteps(asList(
+                .withComposedSteps(singletonList(
                     ExecutableComposedStep.builder()
                         .withName("Success - should uppercase & assert each char")
-                        .withSteps(Arrays.asList(
+                        .withSteps(asList(
                             ExecutableComposedStep.builder()
                                 .withName("Success - should uppercase a char")
                                 .withImplementation(Optional.of(
@@ -237,58 +208,57 @@ public class IterationProcessorTest {
                     .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
                     .withSteps(asList(
                         ExecutableComposedStep.builder()
-                            .withName("Success - should uppercase & assert each char - iteration 1")
+                            .withName("Success - should uppercase & assert each char - dataset iteration 1")
                             .withSteps(asList(
                                 ExecutableComposedStep.builder()
                                     .withName("Success - should uppercase a char")
-                                    .withImplementation(Optional.of(new StepImplementation("success", null, emptyMap(), singletonMap("result", "${new String(\"**letter**\").toUpperCase()"))))
-                                    .overrideDataSetWith(singletonMap("letter", "a"))
+                                    .withImplementation(Optional.of(new StepImplementation("success", null, emptyMap(), singletonMap("result_1", "${new String(\"**letter**\").toUpperCase()"))))
+                                    .overrideDataSetWith(singletonMap("letter", ""))
                                     .build(),
                                 ExecutableComposedStep.builder()
                                     .withName("Should assert an uppercased char")
                                     .withImplementation(Optional.of(
-                                        new StepImplementation("assert", null, singletonMap("${#result}", "${new String(\"**letter**\").toUpperCase()"), emptyMap())
+                                        new StepImplementation("assert", null, singletonMap("${#result_1}", "${new String(\"**letter**\").toUpperCase()"), emptyMap())
                                     ))
-                                    .overrideDataSetWith(singletonMap("letter", "a"))
                                     .build()
                             ))
+                            .overrideDataSetWith(singletonMap("letter", "a"))
                             .build(),
                         ExecutableComposedStep.builder()
-                            .withName("Success - should uppercase & assert each char - iteration 2")
+                            .withName("Success - should uppercase & assert each char - dataset iteration 2")
                             .withSteps(asList(
                                 ExecutableComposedStep.builder()
                                     .withName("Success - should uppercase a char")
-                                    .withImplementation(Optional.of(new StepImplementation("success", null, emptyMap(), singletonMap("result", "${new String(\"**letter**\").toUpperCase()"))))
-                                    .overrideDataSetWith(singletonMap("letter", "b"))
+                                    .withImplementation(Optional.of(new StepImplementation("success", null, emptyMap(), singletonMap("result_2", "${new String(\"**letter**\").toUpperCase()"))))
+                                    .overrideDataSetWith(singletonMap("letter", ""))
                                     .build(),
                                 ExecutableComposedStep.builder()
                                     .withName("Should assert an uppercased char")
                                     .withImplementation(Optional.of(
-                                        new StepImplementation("assert", null, singletonMap("${#result}", "${new String(\"**letter**\").toUpperCase()"), emptyMap())
+                                        new StepImplementation("assert", null, singletonMap("${#result_2}", "${new String(\"**letter**\").toUpperCase()"), emptyMap())
                                     ))
-                                    .overrideDataSetWith(singletonMap("letter", "b"))
                                     .build()
                             ))
+                            .overrideDataSetWith(singletonMap("letter", "b"))
                             .build(),
                         ExecutableComposedStep.builder()
-                            .withName("Success - should uppercase & assert each char - iteration 3")
+                            .withName("Success - should uppercase & assert each char - dataset iteration 3")
                             .withSteps(asList(
                                 ExecutableComposedStep.builder()
                                     .withName("Success - should uppercase a char")
-                                    .withImplementation(Optional.of(new StepImplementation("success", null, emptyMap(), singletonMap("result", "${new String(\"**letter**\").toUpperCase()"))))
-                                    .overrideDataSetWith(singletonMap("letter", "c"))
+                                    .withImplementation(Optional.of(new StepImplementation("success", null, emptyMap(), singletonMap("result_3", "${new String(\"**letter**\").toUpperCase()"))))
+                                    .overrideDataSetWith(singletonMap("letter", ""))
                                     .build(),
                                 ExecutableComposedStep.builder()
                                     .withName("Should assert an uppercased char")
                                     .withImplementation(Optional.of(
-                                        new StepImplementation("assert", null, singletonMap("${#result}", "${new String(\"**letter**\").toUpperCase()"), emptyMap())
+                                        new StepImplementation("assert", null, singletonMap("${#result_3}", "${new String(\"**letter**\").toUpperCase()"), emptyMap())
                                     ))
-                                    .overrideDataSetWith(singletonMap("letter", "c"))
                                     .build()
                             ))
+                            .overrideDataSetWith(singletonMap("letter", "c"))
                             .build()
                     ))
-                    .overrideDataSetWith(singletonMap("letter", ""))
                     .build()
                 )
             )
@@ -299,8 +269,7 @@ public class IterationProcessorTest {
     }
 
     @Test
-    @Ignore
-    public void should_create_indexable_iterations_3() {
+    public void should_index_iteration_dataset_using_previous_indexed_outputs() {
 
         // Given
         List<Map<String, String>> multipleValues = asList(
@@ -323,7 +292,7 @@ public class IterationProcessorTest {
                     ExecutableComposedStep.builder()
                         .withName("Context put - should create one context entry for each uppercased char")
                         .withImplementation(Optional.of(
-                            new StepImplementation("context-put", null, singletonMap("${#result}","fake_value"), emptyMap())
+                            new StepImplementation("context-put", null, singletonMap("**myParam**", "fake"), emptyMap())
                         ))
                         .overrideDataSetWith(singletonMap("myParam", "${#result}"))
                         .build()
@@ -343,23 +312,24 @@ public class IterationProcessorTest {
             .withComposedSteps(asList(
                 ExecutableComposedStep.builder()
                     .withName("Success - should uppercase each char")
+                    .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
                     .withSteps(Arrays.asList(
                         ExecutableComposedStep.builder()
-                            .withName("Success - should uppercase each char - iteration 1")
+                            .withName("Success - should uppercase each char - dataset iteration 1")
                             .withImplementation(Optional.of(
                                 new StepImplementation("success", null, emptyMap(), singletonMap("result_1", "${new String(\"**letter**\").toUpperCase()"))
                             ))
                             .overrideDataSetWith(singletonMap("letter", "a"))
                             .build(),
                         ExecutableComposedStep.builder()
-                            .withName("Success - should uppercase each char - iteration 2")
+                            .withName("Success - should uppercase each char - dataset iteration 2")
                             .withImplementation(Optional.of(
                                 new StepImplementation("success", null, emptyMap(), singletonMap("result_2", "${new String(\"**letter**\").toUpperCase()"))
                             ))
                             .overrideDataSetWith(singletonMap("letter", "b"))
                             .build(),
                         ExecutableComposedStep.builder()
-                            .withName("Success - should uppercase each char - iteration 3")
+                            .withName("Success - should uppercase each char - dataset iteration 3")
                             .withImplementation(Optional.of(
                                 new StepImplementation("success", null, emptyMap(), singletonMap("result_3", "${new String(\"**letter**\").toUpperCase()"))
                             ))
@@ -369,23 +339,28 @@ public class IterationProcessorTest {
                     .build(),
                 ExecutableComposedStep.builder()
                     .withName("Context put - should create one context entry for each uppercased char")
+                    .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
                     .withSteps(Arrays.asList(
                         ExecutableComposedStep.builder()
-                            .withName("Context put - should create one context entry for each uppercased char - iteration 1")
+                            .withName("Context put - should create one context entry for each uppercased char - dataset iteration 1")
                             .withImplementation(Optional.of(
-                                new StepImplementation("context-put", null, singletonMap("entries", singletonMap("myParam_1", "${#result_1}")), emptyMap())
+                                new StepImplementation("context-put", null, singletonMap("entries", singletonMap("**myParam**", "fake")), emptyMap())
                             ))
-                            .build(),ExecutableComposedStep.builder()
-                            .withName("Context put - should create one context entry for each uppercased char - iteration 2")
-                            .withImplementation(Optional.of(
-                                new StepImplementation("context-put", null, singletonMap("entries", singletonMap("myParam_2", "${#result_2}")), emptyMap())
-                            ))
-                        .build(),
+                            .overrideDataSetWith(singletonMap("**myParam**", "${#result_1}"))
+                            .build(),
                         ExecutableComposedStep.builder()
-                            .withName("Context put - should create one context entry for each uppercased char - iteration 3")
+                            .withName("Context put - should create one context entry for each uppercased char - dataset iteration 2")
                             .withImplementation(Optional.of(
-                                new StepImplementation("context-put", null, singletonMap("entries", singletonMap("myParam_3", "${#result_3}")), emptyMap())
+                                new StepImplementation("context-put", null, singletonMap("entries", singletonMap("**myParam**", "fake")), emptyMap())
                             ))
+                            .overrideDataSetWith(singletonMap("**myParam**", "${#result_2}"))
+                            .build(),
+                        ExecutableComposedStep.builder()
+                            .withName("Context put - should create one context entry for each uppercased char - dataset iteration 3")
+                            .withImplementation(Optional.of(
+                                new StepImplementation("context-put", null, singletonMap("entries", singletonMap("**myParam**", "fake")), emptyMap())
+                            ))
+                            .overrideDataSetWith(singletonMap("**myParam**", "${#result_3}"))
                             .build()
                     ))
                     .build()
@@ -393,7 +368,8 @@ public class IterationProcessorTest {
             )
             .build();
 
-        assertThat(actual.composedScenario).isEqualTo(expected);
+        assertThat(actual.composedScenario.composedSteps.get(0)).isEqualTo(expected.composedSteps.get(0));
+        assertThat(actual.composedScenario.composedSteps.get(1)).isEqualTo(expected.composedSteps.get(1));
 
     }
 
