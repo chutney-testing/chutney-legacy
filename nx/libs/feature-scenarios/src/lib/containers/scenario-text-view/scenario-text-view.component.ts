@@ -51,7 +51,9 @@ export class ScenarioTextViewComponent implements OnInit {
   }
 
   normalize(steps: any[], keyword: string): any[] {
-    return steps.map((x) => Object.assign({}, x, { keyword: keyword }));
+    return steps.map((x, index) =>
+      Object.assign({}, x, { keyword: index == 0 ? keyword : 'And' })
+    );
   }
 
   runScenario(data: any) {
@@ -66,4 +68,10 @@ export class ScenarioTextViewComponent implements OnInit {
 
   hasChild = (_: number, node: any) =>
     !!node.subSteps && node.subSteps.length > 0;
+
+  editScenario(scenario: Scenario) {
+    this.router.navigate([`../edit`], {
+      relativeTo: this.route,
+    });
+  }
 }

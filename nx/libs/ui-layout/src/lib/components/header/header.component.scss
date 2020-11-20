@@ -1,38 +1,76 @@
-header {
-  [appBanner] {
-    transition-duration: 0.3s;
-    transition-property: background-image;
-    transition-timing-function: ease-in-out;
-    color: white;
-    height: 175px;
-  }
+.chutney-header {
+  position: relative;
+  z-index: 201;
+  display: block;
 
-  mat-toolbar {
-    transition-duration: 0.3s;
-    transition-property: background-color, box-shadow;
-    transition-timing-function: ease-in-out;
+  .chutney-toolbar {
+    padding: 0 8px;
+  }
+}
+
+.chutney-toolbar {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+
+  .badge {
     position: absolute;
     top: 0;
-    right: 0;
-    left: 0;
-    z-index: 40;
+    left: 50%;
+    font-size: 12px;
+    border-radius: 10px;
+  }
+}
 
-    &.transparent {
-      background: none;
-      color: white;
+// Customize toolbar button
+.chutney-toolbar-button {
+  &.mat-button,
+  &.mat-icon-button {
+    margin: 0 4px;
+  }
+
+  &.mat-button {
+    min-width: unset;
+    line-height: 40px;
+    border-radius: 999px;
+  }
+
+  &.chutney-avatar-button {
+    display: block;
+    padding: 0 4px;
+    font-size: 0;
+
+    .chutney-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
     }
 
-    &.fixed {
-      position: fixed;
-    }
-
-    &.fixed-left {
-      left: 280px;
-      width: calc(100% - 280px);
-    }
-
-    mat-icon {
-      color: black !important;
+    .chutney-username {
+      margin: 0 8px;
+      font-size: 14px;
     }
   }
+}
+
+.chutney-branding {
+  display: inline-block;
+  color: inherit;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.chutney-branding-logo-expanded {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  vertical-align: middle;
+
+  [dir='rtl'] & {
+    margin-left: 10px;
+    margin-right: auto;
+  }
+}
+
+.chutney-branding-name {
+  font-weight: normal;
+  vertical-align: middle;
 }

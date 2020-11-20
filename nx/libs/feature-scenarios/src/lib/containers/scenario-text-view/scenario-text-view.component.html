@@ -5,6 +5,13 @@
       <span fxFlex></span>
       <button
         mat-icon-button
+        (click)="editScenario(scenario)"
+        matTooltip="Run scenario"
+      >
+        <mat-icon class="material-icons-outlined">edit</mat-icon>
+      </button>
+      <button
+        mat-icon-button
         (click)="runScenario(scenario)"
         matTooltip="Run scenario"
       >

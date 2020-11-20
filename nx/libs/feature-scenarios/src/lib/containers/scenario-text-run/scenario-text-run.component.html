@@ -3,25 +3,7 @@
     <mat-toolbar-row>
       {{ scenario.title }}
       <span fxFlex></span>
-      <!--<mat-menu #appMenu="matMenu">
-        <button mat-menu-item>GLOBAL</button>
-        <button mat-menu-item>PERF1</button>
-      </mat-menu>
-      <button mat-stroked-button (click)="runScenario(scenario)"><mat-icon>play_arrow</mat-icon>GLOBAL</button>
-      <button mat-icon-button [matMenuTriggerFor]="appMenu">
-        <mat-icon>more_vert</mat-icon>
-      </button>-->
-      <!--<mat-button-toggle-group appearance="legacy">
-        <mat-button-toggle (click)="runScenario(scenario)"><mat-icon>play_arrow</mat-icon><span>GLOBAL</span></mat-button-toggle>
-        <mat-button-toggle [matMenuTriggerFor]="appMenu">
-          <mat-icon>arrow_drop_down</mat-icon>
-        </mat-button-toggle>
-      </mat-button-toggle-group>-->
-      <button
-        mat-icon-button
-        (click)="runScenario(scenario)"
-        matTooltip="Run scenario"
-      >
+      <button mat-icon-button (click)="runScenario()" matTooltip="Run scenario">
         <mat-icon>play_circle</mat-icon>
       </button>
     </mat-toolbar-row>

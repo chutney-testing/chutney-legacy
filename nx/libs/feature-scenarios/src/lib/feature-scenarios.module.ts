@@ -5,11 +5,13 @@ import { ScenariosComponent } from './containers/scenarios/scenarios.component';
 import { UiCommonsModule } from '@chutney/ui-commons';
 import { UiMaterialModule } from '@chutney/ui-material';
 import { ScenariosListComponent } from './components/scenarios-list/scenarios-list.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ScenariosSearchFormComponent } from './components/scenarios-search-form/scenarios-search-form.component';
 import { ScenarioTextViewComponent } from './containers/scenario-text-view/scenario-text-view.component';
 import { ScenarioTextRunComponent } from './containers/scenario-text-run/scenario-text-run.component';
 import { DurationPipe } from './pipes/duration/duration.pipe';
+import { CovalentCodeEditorModule } from '@covalent/code-editor';
+import { ScenarioTextEditComponent } from './containers/scenario-text-edit/scenario-text-edit.component';
 
 @NgModule({
   imports: [
@@ -18,6 +20,7 @@ import { DurationPipe } from './pipes/duration/duration.pipe';
     RouterModule.forChild([
       { path: '', component: ScenariosComponent },
       { path: 'text/:id/view', component: ScenarioTextViewComponent },
+      { path: 'text/:id/edit', component: ScenarioTextEditComponent },
       {
         path: 'text/:id/run/:executionId',
         component: ScenarioTextRunComponent,
@@ -25,6 +28,8 @@ import { DurationPipe } from './pipes/duration/duration.pipe';
     ]),
     UiMaterialModule,
     ReactiveFormsModule,
+    CovalentCodeEditorModule,
+    FormsModule,
   ],
   declarations: [
     ScenariosComponent,
@@ -33,6 +38,7 @@ import { DurationPipe } from './pipes/duration/duration.pipe';
     ScenarioTextViewComponent,
     ScenarioTextRunComponent,
     DurationPipe,
+    ScenarioTextEditComponent,
   ],
 })
 export class FeatureScenariosModule {}
