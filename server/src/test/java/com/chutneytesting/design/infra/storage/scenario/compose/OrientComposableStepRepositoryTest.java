@@ -272,55 +272,6 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
     }
 
     @Test
-    public void should_find_most_identical_func_steps_ordered_when_search_by_name() {
-        // Given
-        ComposableStep fStep_1 = saveAndReload(
-            buildComposableStep("I am a wonderful sub functional step"));
-        ComposableStep fStep_2 = saveAndReload(
-            buildComposableStep("I'm the best sub functional step ever written"));
-        ComposableStep fStep_3 = saveAndReload(
-            buildComposableStep("Another sub for special *escaping test, best"));
-        ComposableStep fStepRoot = saveAndReload(
-            buildComposableStep("This is a nice root functional step", fStep_1, fStep_2, fStep_3));
-
-        // When
-        List<ComposableStep> mostIdenticalRootFuncSteps = sut.queryByName("this root");
-        List<ComposableStep> mostIdenticalSubFuncSteps = sut.queryByName("best sub");
-        List<ComposableStep> mostIdenticalFuncSteps = sut.queryByName("step functional");
-        List<ComposableStep> mostIdenticalEscapeSteps = sut.queryByName("*escaping");
-
-        // Then
-        assertThat(mostIdenticalRootFuncSteps).extracting("name").containsExactlyInAnyOrder(fStepRoot.name);
-        assertThat(mostIdenticalSubFuncSteps).extracting("name").containsExactlyInAnyOrder(fStep_2.name, fStep_3.name);
-        assertThat(mostIdenticalFuncSteps).extracting("name").containsExactlyInAnyOrder(fStep_1.name, fStepRoot.name, fStep_2.name);
-        assertThat(mostIdenticalEscapeSteps).extracting("name").containsExactlyInAnyOrder(fStep_3.name);
-    }
-
-    @Test
-    public void should_find_at_most_10_most_identical_func_steps__when_search_by_name() {
-        // Given
-        List<ComposableStep> subFSteps = new ArrayList<>();
-        IntStream.range(1, 15).forEach(num -> {
-            final ComposableStep subF = saveAndReload(ComposableStep.builder()
-                .withName("I am the sub functional step n°" + num)
-                .build());
-            subFSteps.add(subF);
-        });
-        ComposableStep fStepRoot = ComposableStep.builder()
-            .withName("This is a root functional step")
-            .withSteps(subFSteps)
-            .build();
-
-        sut.save(fStepRoot);
-
-        // When
-        List<ComposableStep> mostIdenticalFuncSteps = sut.queryByName("functional step");
-
-        // Then
-        assertThat(mostIdenticalFuncSteps.size()).isEqualTo(10);
-    }
-
-    @Test
     public void should_not_save_func_step_when_cyclic_dependency_found() {
         // Given
         ComposableStep fStep = saveAndReload(buildComposableStep("that"));

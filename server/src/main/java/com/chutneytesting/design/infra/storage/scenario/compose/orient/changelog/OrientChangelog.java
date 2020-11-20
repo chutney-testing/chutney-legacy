@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.id.ORecordId;
-import com.orientechnologies.orient.core.index.OIndexManager;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OProperty;
 import com.orientechnologies.orient.core.metadata.schema.OType;
@@ -182,22 +181,7 @@ public class OrientChangelog {
 
     @ChangelogOrder(order = 8, uuid = "20200217-change-lucene-index-analyzer")
     public static void changeLuceneIndexAnalyzer(ODatabaseSession dbSession) {
-        String FSTEP_LUCENE_INDEX_QUERY = "CREATE INDEX " + OrientComponentDB.STEP_CLASS_FULLTEXTSEARCH_INDEX_NAME + " ON " + OrientComponentDB.STEP_CLASS + "(" + OrientComponentDB.STEP_CLASS_PROPERTY_NAME + ") " +
-            " FULLTEXT ENGINE LUCENE METADATA {" +
-            " \"index\": \"com.chutneytesting.design.infra.storage.scenario.compose.orient.lucene.ComposableStepNameAnalyzer\"," +
-            " \"query\": \"com.chutneytesting.design.infra.storage.scenario.compose.orient.lucene.ComposableStepNameAnalyzer\"" +
-            "}";
-
-        OIndexManager indexManager = dbSession.getMetadata().getIndexManager();
-        if (!indexManager.existsIndex(OrientComponentDB.STEP_CLASS_FULLTEXTSEARCH_INDEX_NAME)) {
-            try (OResultSet ignored = dbSession.command(FSTEP_LUCENE_INDEX_QUERY)) { }
-        }
-
-        if (indexManager.existsIndex(OrientComponentDB.STEP_CLASS_FULLTEXTSEARCH_INDEX_NAME)) {
-            indexManager.dropIndex(OrientComponentDB.STEP_CLASS_FULLTEXTSEARCH_INDEX_NAME);
-        }
-
-        try (OResultSet ignored = dbSession.command(FSTEP_LUCENE_INDEX_QUERY)) { }
+        /* nothing to see */
     }
 
     @ChangelogOrder(order = 9, uuid = "20200424-init-dataset-model")

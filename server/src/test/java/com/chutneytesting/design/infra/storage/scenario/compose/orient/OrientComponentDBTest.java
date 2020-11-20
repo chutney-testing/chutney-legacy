@@ -98,8 +98,7 @@ public class OrientComponentDBTest extends AbstractOrientDatabaseTest {
             assertThat(
                 fstepClass.getProperty(OrientComponentDB.STEP_CLASS_PROPERTY_NAME).getAllIndexes().stream().map(OIndex::getName)
             ).containsExactlyInAnyOrder(
-                OrientComponentDB.STEP_CLASS_INDEX_NAME,
-                OrientComponentDB.STEP_CLASS_FULLTEXTSEARCH_INDEX_NAME
+                OrientComponentDB.STEP_CLASS_INDEX_NAME
             );
         }
     }

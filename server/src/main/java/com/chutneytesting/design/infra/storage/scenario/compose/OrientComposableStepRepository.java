@@ -11,9 +11,6 @@ import static com.chutneytesting.design.infra.storage.scenario.compose.orient.Or
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.deleteVertex;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.load;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.rollback;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.lucene.LuceneUtils.cleanFirstWildcardsCharacters;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.lucene.LuceneUtils.escapeLuceneSearchQuery;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.lucene.LuceneUtils.forceAllRequiredTerm;
 
 import com.chutneytesting.design.domain.scenario.compose.AlreadyExistingComposableStepException;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
@@ -56,8 +53,8 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrientComposableStepRepository.class);
 
-    private ODatabasePool componentDBPool;
-    private ExecutableComposedStepMapper composedStepMapper;
+    private final ODatabasePool componentDBPool;
+    private final ExecutableComposedStepMapper composedStepMapper;
 
     public OrientComposableStepRepository(OrientComponentDB orientComponentDB, ExecutableComposedStepMapper mapper) {
         this.componentDBPool = orientComponentDB.dbPool();
@@ -134,25 +131,6 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
                     return vertexToComposableStep(element, dbSession).build();
                 })
                 .collect(Collectors.toList());
-        }
-    }
-
-    private static final String QUERY_FSTEPS_NAME_LUCENE_INDEX = "SELECT @rid, name FROM " + STEP_CLASS + " WHERE SEARCH_CLASS(?) = true LIMIT 10";
-
-    @Override
-    public List<ComposableStep> queryByName(String searchQuery) {
-        try (ODatabaseSession dbSession = componentDBPool.acquire()) {
-            try (OResultSet rs = dbSession.query(QUERY_FSTEPS_NAME_LUCENE_INDEX, forceAllRequiredTerm(escapeLuceneSearchQuery(searchQuery)))) {
-                return Lists.newArrayList(rs)
-                    .stream()
-                    .map(result ->
-                        ComposableStep.builder()
-                            .withId(result.getProperty("@rid").toString())
-                            .withName(result.getProperty("name"))
-                            .build()
-                    )
-                    .collect(Collectors.toList());
-            }
         }
     }
 
@@ -255,7 +233,7 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
 
         // Name filter
         if (StringUtils.isNotEmpty(findParameters.name)) {
-            query.append(" AND SEARCH_CLASS('").append(cleanFirstWildcardsCharacters(findParameters.name)).append("')=true");
+            query.append(" AND name CONTAINSTEXT '").append(findParameters.name).append("'");
         }
 
         // Usage filter

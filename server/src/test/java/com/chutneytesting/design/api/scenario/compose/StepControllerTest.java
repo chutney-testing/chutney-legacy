@@ -177,65 +177,6 @@ public class StepControllerTest {
     }
 
     @Test
-    public void should_call_step_repository_when_findIdenticalStepsByName_called() throws Exception {
-        // When
-        mockMvc.perform(post(StepController.BASE_URL + "/search/name")
-            .contentType(APPLICATION_JSON_UTF8_VALUE)
-            .content("a functional step name"))
-            .andExpect(status().isOk());
-
-        // Then
-        verify(composableStepRepository).queryByName("a functional step name");
-    }
-
-    @Test
-    public void should_get_empty_response_when_findIdenticalStepsByName_return_empty_list() throws Exception {
-        // When
-        final AtomicInteger resultContentLength = new AtomicInteger();
-        mockMvc.perform(post(StepController.BASE_URL + "/search/name")
-            .contentType(APPLICATION_JSON_UTF8_VALUE)
-            .content("no_name"))
-            .andDo(result -> resultContentLength.set(result.getResponse().getContentLength()))
-            .andExpect(status().isOk());
-
-        // Then
-        assertThat(resultContentLength.get()).isZero();
-    }
-
-    @Test
-    public void should_not_call_mapping_when_findIdenticalStepsByName_return_empty_list() throws Exception {
-        // When
-        mockMvc.perform(post(StepController.BASE_URL + "/search/name")
-            .contentType(APPLICATION_JSON_UTF8_VALUE)
-            .content("no_name"))
-            .andExpect(status().isOk());
-    }
-
-    @Test
-    public void should_call_mapping_when_findIdenticalStepsByName_return_func_steps() throws Exception {
-        // Given
-        when(composableStepRepository.queryByName("functional step"))
-            .thenReturn(
-                Arrays.asList(
-                    ComposableStep.builder()
-                        .withId("#-1:-1")
-                        .withName("a functional step")
-                        .build(),
-                    ComposableStep.builder()
-                        .withId("#-1:-1")
-                        .withName("another functional step")
-                        .build()
-                )
-            );
-
-        // When
-        mockMvc.perform(post(StepController.BASE_URL + "/search/name")
-            .contentType(APPLICATION_JSON_UTF8_VALUE)
-            .content("functional step"))
-            .andExpect(status().isOk());
-    }
-
-    @Test
     public void should_call_mapping_when_findParents_return_parents_step() throws Exception {
         // Given
         when(composableStepRepository.findParents(any()))

@@ -21,7 +21,6 @@ public class OrientComponentDB implements Backupable {
     public static final String STEP_CLASS_PROPERTY_IMPLEMENTATION = "implementation";
     public static final String STEP_CLASS_PROPERTY_STRATEGY = "strategy";
     public static final String STEP_CLASS_INDEX_NAME = "idx_" + STEP_CLASS + "_" + STEP_CLASS_PROPERTY_NAME;
-    public static final String STEP_CLASS_FULLTEXTSEARCH_INDEX_NAME = "idx_" + STEP_CLASS + "_fulltext_" + STEP_CLASS_PROPERTY_NAME;
 
     public static final String TESTCASE_CLASS = "TestCase";
     public static final String TESTCASE_CLASS_PROPERTY_TITLE = "title";
@@ -51,8 +50,8 @@ public class OrientComponentDB implements Backupable {
     public static final String DATASET_HISTORY_CLASS_INDEX_LAST = "idx_" + DATASET_HISTORY_CLASS + "_" + DATASET_HISTORY_CLASS_PROPERTY_DATASET_ID;
 
 
-    private OrientDBManager orientDBManager;
-    private String componentDBName;
+    private final OrientDBManager orientDBManager;
+    private final String componentDBName;
 
     public OrientComponentDB(OrientDBManager orientDBManager, OrientConfigurationProperties orientConfigurationProperties, OrientChangelogExecutor changelogExecution) {
         this.orientDBManager = orientDBManager;

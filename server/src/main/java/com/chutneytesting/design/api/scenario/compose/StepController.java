@@ -36,7 +36,7 @@ public class StepController {
 
     static final String BASE_URL = "/api/steps/v1";
 
-    private ComposableStepRepository composableStepRepository;
+    private final ComposableStepRepository composableStepRepository;
 
     public StepController(ComposableStepRepository composableStepRepository) {
         this.composableStepRepository = composableStepRepository;
@@ -112,14 +112,4 @@ public class StepController {
             composableStepRepository.findById(fromFrontId(stepId))
         );
     }
-
-    @PostMapping(path = "/search/name", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public List<ComposableStepDto> findIdenticalStepsByName(@RequestBody String name) {
-        List<ComposableStep> foundFSteps = composableStepRepository.queryByName(name);
-
-        return foundFSteps.stream()
-            .map(ComposableStepMapper::toDto)
-            .collect(Collectors.toList());
-    }
-
 }
