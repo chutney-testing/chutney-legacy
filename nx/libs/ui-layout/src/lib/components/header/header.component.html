@@ -1,23 +1,20 @@
-<header>
-  <mat-toolbar [ngClass]="toolbarClass">
-    <button
-      mat-icon-button
-      class="chutney-toolbar-button"
-      *ngIf="showToggle"
-      (click)="toggleMenu()"
-    >
-      <mat-icon *ngIf="sideMenuDisplayed">align_horizontal_left</mat-icon>
-      <mat-icon *ngIf="!sideMenuDisplayed">align_horizontal_right</mat-icon>
-    </button>
-    <span fxFlex></span>
+<mat-toolbar class="chutney-toolbar">
+  <button
+    mat-icon-button
+    class="chutney-toolbar-button"
+    *ngIf="showToggle"
+    (click)="toggleSidenav.emit()"
+  >
+    <mat-icon>menu</mat-icon>
+  </button>
 
-    <chutney-translation></chutney-translation>
+  <span fxFlex></span>
 
-    <chutney-user-menu></chutney-user-menu>
+  <chutney-translation></chutney-translation>
 
-    <button mat-icon-button fxHide.lt-sm (click)="toggleFullscreen()">
-      <mat-icon>fullscreen</mat-icon>
-    </button>
-  </mat-toolbar>
-  <section appBanner class="mat-elevation-z3"></section>
-</header>
+  <chutney-user-menu></chutney-user-menu>
+
+  <button mat-icon-button fxHide.lt-sm (click)="toggleFullscreen()">
+    <mat-icon>fullscreen</mat-icon>
+  </button>
+</mat-toolbar>

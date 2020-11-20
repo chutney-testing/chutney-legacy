@@ -1,0 +1,29 @@
+<div *ngIf="scenario$ | async as scenario" fxFill>
+  <mat-toolbar>
+    <mat-toolbar-row>
+      {{ scenario.title }}
+      <span fxFlex></span>
+      <button
+        mat-icon-button
+        (click)="saveScenario()"
+        matTooltip="Save scenario"
+      >
+        <mat-icon>save</mat-icon>
+      </button>
+    </mat-toolbar-row>
+  </mat-toolbar>
+  <div class="my-code-editor">
+    <td-code-editor
+      class="my-code-editor"
+      #monaco
+      fxFlex="grow"
+      editorStyle="border:0;"
+      theme="vs"
+      language="json"
+      [editorOptions]="{ fontSize: 12, automaticLayout: true }"
+      [value]="hjson(scenario.content)"
+      (editorInitialized)="editorInitialized($event)"
+      (change)="callBackFunc()"
+    ></td-code-editor>
+  </div>
+</div>
