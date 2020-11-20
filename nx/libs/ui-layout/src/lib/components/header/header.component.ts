@@ -20,6 +20,9 @@ import { TRANSLATION, Translation } from '@chutney/feature-i18n';
 import * as screenfull from 'screenfull';
 
 @Component({
+  host: {
+    class: 'chutney-header',
+  },
   selector: 'chutney-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
@@ -48,48 +51,9 @@ export class HeaderComponent implements OnInit {
   siderLeftOpened = true;
   scrolled = false;
 
-  constructor(
-    @Inject(TRANSLATION) public readonly lang: Translation,
-    private router: Router,
-    private snackBar: MatSnackBar,
-    private breakpointObserver: BreakpointObserver,
-    private scrollDispatcher: ScrollDispatcher,
-    private changeDetector: ChangeDetectorRef
-  ) {}
+  constructor(@Inject(TRANSLATION) public readonly lang: Translation) {}
 
-  ngOnInit() {
-    // Monitor device changes
-    this.breakpointObserver
-      .observe([Breakpoints.Handset, Breakpoints.Tablet, Breakpoints.Web])
-      .subscribe(() => (this.siderLeftOpened = !this.isSmallScreen));
-
-    // Listening page scrolling
-    this.scrollDispatcher
-      .scrolled()
-      .pipe(
-        filter((x: any) => x.elementRef),
-        map((x: any) => x.elementRef.nativeElement.scrollTop > 0),
-        distinctUntilChanged()
-      )
-      .subscribe((scrolled) => {
-        this.scrolled = scrolled;
-        this.changeDetector.detectChanges();
-      });
-  }
-
-  get isSmallScreen(): boolean {
-    return this.breakpointObserver.isMatched('(max-width: 768px)');
-  }
-
-  get toolbarClass() {
-    return {
-      transparent: !this.scrolled,
-      fixed: this.scrolled,
-      'fixed-left':
-        !this.isSmallScreen && this.siderLeftOpened && this.scrolled,
-      'mat-elevation-z3': this.scrolled,
-    };
-  }
+  ngOnInit() {}
 
   toggleMenu() {
     this.sideMenuDisplayed = !this.sideMenuDisplayed;

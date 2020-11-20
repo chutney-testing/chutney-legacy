@@ -96,12 +96,17 @@ export class ScenarioTextRunComponent implements OnInit {
   }
 
   normalize(steps: any[], keyword: string): any[] {
-    return steps.map((x) => Object.assign({}, x, { keyword: keyword }));
+    return steps.map((x, index) =>
+      Object.assign({}, x, { keyword: index == 0 ? keyword : 'And' })
+    );
   }
 
   hasChild = (_: number, node: any) => !!node.steps && node.steps.length > 0;
 
-  runScenario(scenario: Scenario) {
+  //readonly trackBy = (_: number, node: any) => node.status + '-' + node.name;
+  model: any = 'select * from hello';
+
+  runScenario() {
     this.runScenarioGQL
       .mutate({ scenarioId: this.scenarioId, dataset: [] })
       .subscribe((result) =>
