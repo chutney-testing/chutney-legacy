@@ -1,5 +1,5 @@
-@import 'variables';
-@import 'transitions';
+@import 'theme/style/variables';
+@import 'theme/style/transitions';
 
 .chutney-user-panel {
   padding: 14px 0;
@@ -48,9 +48,3 @@
     }
   }
 }
-/*.avatar {
-  height: 110px;
-  line-height: 110px;
-  font-size: 64px;
-  margin: 0 12px;
-}*/

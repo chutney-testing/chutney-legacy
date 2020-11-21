@@ -1,10 +1,11 @@
 <button
-  mat-icon-button
-  class="chutney-toolbar-button"
+  class="chutney-toolbar-button chutney-avatar-button"
+  mat-button
   [matMenuTriggerFor]="menu"
+  *ngIf="user$ | async as user"
 >
   <mat-icon class="chutney-toolbar-account-icon">person</mat-icon>
-  <!--<span class="chutney-username" fxHide.lt-sm>{{ (user$ | async)?.name }}</span>-->
+  <span class="chutney-username" fxHide.lt-sm>{{ user?.name }}</span>
 </button>
 
 <mat-menu #menu="matMenu">
