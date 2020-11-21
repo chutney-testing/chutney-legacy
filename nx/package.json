@@ -51,6 +51,7 @@
     "graphql-anywhere": "^4.2.7",
     "hjson": "^3.2.1",
     "monaco-editor": "^0.20.0",
+    "ngx-avatar": "^4.0.0",
     "ngx-mat-select-search": "^3.1.0",
     "os": "^0.1.1",
     "rxjs": "~6.5.5",

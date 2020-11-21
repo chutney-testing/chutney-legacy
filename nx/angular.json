@@ -39,7 +39,7 @@
                 "output": "assets"
               }
             ],
-            "styles": ["libs/styles/src/lib/index.scss"],
+            "styles": ["libs/styles/src/lib/styles.scss"],
             "stylePreprocessorOptions": {
               "includePaths": ["libs/styles/src/lib/styles"]
             },

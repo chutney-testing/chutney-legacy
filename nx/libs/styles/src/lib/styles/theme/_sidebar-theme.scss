@@ -1,0 +1,16 @@
+@import './style/variables';
+
+@mixin chutney-sidebar-theme($theme) {
+  $background: map-get($theme, background);
+  $foreground: map-get($theme, foreground);
+
+  .chutney-sidebar-header {
+    color: mat-color($foreground, text);
+    background: mat-color($background, dialog);
+    border-bottom: 1px solid mat-color($foreground, divider);
+  }
+
+  .chutney-user-panel {
+    border-bottom: 1px solid mat-color($foreground, divider);
+  }
+}

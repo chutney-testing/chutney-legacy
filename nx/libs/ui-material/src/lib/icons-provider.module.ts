@@ -13,9 +13,11 @@ export class IconsProviderModule {
     private matIconRegistry: MatIconRegistry,
     sanitizer: DomSanitizer
   ) {
-    matIconRegistry.addSvgIcon(
-      'spinner',
-      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/spinner.svg')
-    );
+    ['spinner', 'pin', 'pin_off'].forEach((icon) => {
+      matIconRegistry.addSvgIcon(
+        icon,
+        sanitizer.bypassSecurityTrustResourceUrl(`assets/icons/${icon}.svg`)
+      );
+    });
   }
 }
