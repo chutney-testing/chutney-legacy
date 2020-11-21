@@ -13,9 +13,10 @@ import { AccordionItemDirective } from './directives/accordion/accordion-item.di
 import { AccordionToggleDirective } from './directives/accordion/accordion-toggle.directive';
 import { TranslationComponent } from './components/translation/translation.component';
 import { UserMenuComponent } from './components/user-menu/user-menu.component';
+import { AvatarModule } from 'ngx-avatar';
 
 @NgModule({
-  imports: [CommonModule, UiMaterialModule, RouterModule],
+  imports: [CommonModule, UiMaterialModule, RouterModule, AvatarModule],
   declarations: [
     MainLayoutComponent,
     AppBannerDirective,

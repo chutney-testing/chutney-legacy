@@ -10,7 +10,6 @@ import { pluck } from 'rxjs/operators';
 })
 export class UserMenuComponent implements OnInit {
   user$: Observable<User>;
-  user: User;
 
   constructor(private userGQL: UserGQL) {}
 

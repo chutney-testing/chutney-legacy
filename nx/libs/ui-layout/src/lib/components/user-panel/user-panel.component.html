@@ -1,7 +1,17 @@
-<div class="chutney-user-panel" fxLayout="column" fxLayoutAlign="center center">
-  <mat-icon class="chutney-user-panel-avatar">account_circle</mat-icon>
-  <h4 class="chutney-user-panel-name">{{ (user$ | async)?.name }}</h4>
-  <h5 class="chutney-user-panel-email">{{ (user$ | async)?.mail }}</h5>
+<div
+  class="chutney-user-panel"
+  fxLayout="column"
+  fxLayoutAlign="center center"
+  *ngIf="user$ | async as user"
+>
+  <!--<mat-icon class="chutney-user-panel-avatar">account_circle</mat-icon>-->
+  <ngx-avatar
+    size="64"
+    class="chutney-user-panel-avatar"
+    [name]="user?.firstname + ' ' + user?.lastname"
+  ></ngx-avatar>
+  <h4 class="chutney-user-panel-name">{{ user?.name }}</h4>
+  <h5 class="chutney-user-panel-email">{{ user?.mail }}</h5>
   <div class="chutney-user-panel-icons">
     <a routerLink="/profile/overview" mat-icon-button>
       <mat-icon>account_circle</mat-icon>

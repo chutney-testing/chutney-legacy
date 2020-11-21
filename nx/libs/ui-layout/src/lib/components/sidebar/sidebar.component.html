@@ -1,99 +1,97 @@
 <div class="chutney-sidebar-header" *ngIf="showHeader">
   <a class="chutney-branding" href="#/">
     <img
-      src="assets/images/chutney1.svg"
+      src="assets/images/chutney2.svg"
       class="chutney-branding-logo-expanded"
       alt="logo"
     />
     <span class="chutney-branding-name">CHUTNEY</span>
   </a>
   <span fxFlex></span>
-  <mat-slide-toggle
-    (change)="toggleCollapsed.emit()"
-    [checked]="toggleChecked"
-    *ngIf="showToggle"
-  ></mat-slide-toggle>
+
+  <button mat-icon-button *ngIf="showToggle" (click)="toggleCollapsed.emit()">
+    <mat-icon [svgIcon]="!toggleChecked ? 'pin' : 'pin_off'"></mat-icon>
+  </button>
 </div>
-<mat-divider></mat-divider>
 <div class="chutney-sidebar-main scrollbar-none">
   <chutney-user-panel *ngIf="showUser"></chutney-user-panel>
-  <mat-divider></mat-divider>
 
   <ul navAccordion class="chutney-sidemenu level-0">
     <li navAccordionItem class="chutney-sidemenu-item">
-      <a routerLink="/scenarios">
+      <a routerLink="/scenarios" matRipple>
         <mat-icon class="menu-icon">subscriptions</mat-icon>
         <span class="menu-name">Scenarios</span>
       </a>
     </li>
     <li navAccordionItem class="chutney-sidemenu-item">
-      <a>
+      <a matRipple>
         <mat-icon class="menu-icon">video_library</mat-icon>
         <span class="menu-name">Campaigns</span>
       </a>
     </li>
     <li navAccordionItem class="chutney-sidemenu-item">
-      <a>
+      <a matRipple>
         <mat-icon class="menu-icon">video_settings</mat-icon>
         <span class="menu-name">Composants</span>
       </a>
     </li>
     <li navAccordionItem class="chutney-sidemenu-item">
-      <a>
+      <a matRipple>
         <mat-icon class="menu-icon">library_add</mat-icon>
         <span class="menu-name">variable</span>
       </a>
     </li>
     <li navAccordionItem class="chutney-sidemenu-item">
-      <a>
+      <a matRipple>
         <mat-icon class="menu-icon">ondemand_video</mat-icon>
         <span class="menu-name">Dataset</span>
       </a>
     </li>
     <li navAccordionItem class="chutney-sidemenu-item" type="sub">
-      <a navAccordionToggle class="chutney-sidemenu-toggle">
+      <a navAccordionToggle class="chutney-sidemenu-toggle" matRipple>
         <mat-icon class="menu-icon">settings</mat-icon>
         <span class="menu-name">Administration</span>
+        <span fxFlex></span>
         <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
       </a>
       <ul navAccordion class="chutney-sidemenu chutney-sidemenu-sub level-1">
         <li navAccordionItem class="chutney-sidemenu-item">
-          <a>
+          <a matRipple>
             <span class="menu-name">BDD</span>
           </a>
         </li>
         <li navAccordionItem class="chutney-sidemenu-item">
-          <a>
+          <a matRipple>
             <span class="menu-name">Targets</span>
           </a>
         </li>
         <li navAccordionItem class="chutney-sidemenu-item">
-          <a>
+          <a matRipple>
             <span class="menu-name">Agents</span>
           </a>
         </li>
         <li navAccordionItem class="chutney-sidemenu-item">
-          <a>
+          <a matRipple>
             <span class="menu-name">Configuration</span>
           </a>
         </li>
         <li navAccordionItem class="chutney-sidemenu-item">
-          <a>
+          <a matRipple>
             <span class="menu-name">Stores</span>
           </a>
         </li>
         <li navAccordionItem class="chutney-sidemenu-item">
-          <a>
+          <a matRipple>
             <span class="menu-name">Documentation</span>
           </a>
         </li>
         <li navAccordionItem class="chutney-sidemenu-item">
-          <a>
+          <a matRipple>
             <span class="menu-name">Showroom</span>
           </a>
         </li>
         <li navAccordionItem class="chutney-sidemenu-item">
-          <a>
+          <a matRipple>
             <span class="menu-name">Sauvegardes</span>
           </a>
         </li>

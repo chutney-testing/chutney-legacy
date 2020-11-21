@@ -1,0 +1,18 @@
+@import './theme/style/reboot-theme';
+@import './theme/header-theme';
+@import './theme/sidebar-theme';
+@import './theme/sidemenu-theme';
+@import './theme/topmenu-theme';
+
+@import './custom/table-theme';
+
+// Styles for the app that are based on the current theme.
+@mixin chutney-admin-theme($theme) {
+  @include chutney-reboot-theme($theme);
+  @include chutney-header-theme($theme);
+  @include chutney-sidebar-theme($theme);
+  @include chutney-sidemenu-theme($theme);
+  @include chutney-topmenu-theme($theme);
+
+  @include custom-table-theme($theme);
+}
