@@ -9,22 +9,17 @@ import { chutneyAnimations } from '@chutney/utils';
   },
   templateUrl: './page-header.component.html',
   styleUrls: ['./page-header.component.scss'],
-  animations   : chutneyAnimations,
+  animations: chutneyAnimations,
   encapsulation: ViewEncapsulation.None,
 })
 export class PageHeaderComponent implements OnInit {
-
   @Input() title = '';
   @Input() subtitle = '';
   @Input() showBreadCrumb = true;
 
-  constructor(private router: Router) {
-  }
+  constructor(private router: Router) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
-  genBreadcrumb() {
-  }
-
+  genBreadcrumb() {}
 }
