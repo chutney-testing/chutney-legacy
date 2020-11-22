@@ -1,0 +1,8 @@
+<div class="chutney-page-header-inner">
+  <h1 class="chutney-page-title" [@animate]="{value:'*',params:{delay:'100ms', y:'25px'}}">{{title}}
+    <small>{{subtitle}}</small></h1>
+  <td-breadcrumbs *ngIf="showBreadCrumb" [@animate]="{value:'*',params:{delay:'100ms', y:'25px'}}">
+    <a td-breadcrumb [routerLink]="['/']">Home</a>
+    <a td-breadcrumb [routerLink]="['/']">Scenarios</a>
+  </td-breadcrumbs>
+</div>

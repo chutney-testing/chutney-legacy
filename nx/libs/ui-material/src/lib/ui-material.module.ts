@@ -29,6 +29,7 @@ import {
 } from '@angular/material/button-toggle';
 import { IconsProviderModule } from './icons-provider.module';
 import { MatRippleModule } from '@angular/material/core';
+import { CovalentBreadcrumbsModule } from '@covalent/core/breadcrumbs';
 
 @NgModule({
   imports: [
@@ -58,6 +59,7 @@ import { MatRippleModule } from '@angular/material/core';
     /** Covalent Modules */
     CovalentDialogsModule,
     CovalentSearchModule,
+    CovalentBreadcrumbsModule,
     /*others*/
     NgxMatSelectSearchModule,
     MatPasswordModule,
@@ -90,6 +92,7 @@ import { MatRippleModule } from '@angular/material/core';
     /** Covalent Modules */
     CovalentDialogsModule,
     CovalentSearchModule,
+    CovalentBreadcrumbsModule,
     /*others*/
     NgxMatSelectSearchModule,
     MatPasswordModule,
