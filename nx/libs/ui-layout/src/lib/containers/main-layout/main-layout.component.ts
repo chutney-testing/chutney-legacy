@@ -104,4 +104,16 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   setNavState(type: string, value: boolean) {
     this.notify$.next({ type, value } as any);
   }
+
+  toggleDarkTheme(theme: string) {
+    console.log('toggle dark theme ...');
+    this.options.theme = theme;
+    if (theme === 'dark') {
+      this.element.nativeElement.classList.add('theme-dark');
+      this.overlay.getContainerElement().classList.add('theme-dark');
+    } else {
+      this.element.nativeElement.classList.remove('theme-dark');
+      this.overlay.getContainerElement().classList.remove('theme-dark');
+    }
+  }
 }

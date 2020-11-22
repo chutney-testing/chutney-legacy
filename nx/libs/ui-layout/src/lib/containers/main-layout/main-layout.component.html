@@ -15,6 +15,7 @@
   <chutney-header
     *ngIf="options.showHeader && options.headerPos === 'above'"
     (toggleSidenav)="sidenav.toggle()"
+    (toggleTheme)="toggleDarkTheme($event)"
   >
   </chutney-header>
 
@@ -38,15 +39,13 @@
     </mat-sidenav>
 
     <mat-sidenav-content #content class="chutney-content-wrap">
-      <header>
         <chutney-header
           *ngIf="options.showHeader && options.headerPos !== 'above'"
           [showToggle]="!options.sidenavCollapsed && options.navPos !== 'top'"
           (toggleSidenav)="sidenav.toggle()"
+          (toggleTheme)="toggleDarkTheme($event)"
         >
         </chutney-header>
-        <section appBanner class="mat-elevation-z3"></section>
-      </header>
       <div class="chutney-content">
         <router-outlet></router-outlet>
       </div>
