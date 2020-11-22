@@ -14,6 +14,12 @@
     <mat-icon>fullscreen</mat-icon>
   </button>
 
+  <button mat-icon-button (click)="changeTheme()">
+    <mat-icon
+      [textContent]="isDarkTheme ? 'brightness_4' : 'brightness_5'"
+    ></mat-icon>
+  </button>
+
   <chutney-translation></chutney-translation>
 
   <chutney-user-menu></chutney-user-menu>
