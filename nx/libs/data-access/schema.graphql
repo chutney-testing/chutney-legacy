@@ -35,6 +35,14 @@ type Scenario {
   content: String
 }
 
+input ScenarioInput {
+  id: ID
+  title: String!
+  description: String!
+  tags: [String!]
+  content: String
+}
+
 type ScenariosFilter {
   text: String
   tags: [String!]
@@ -52,6 +60,7 @@ type Query {
 
 type Mutation {
   login(input: LoginInput!): User
+  saveScenario(input: ScenarioInput!): Boolean
   deleteScenario(input: ID!): Boolean
   runScenario(scenarioId: ID!, dataset: [String] ) : ID!
 }
