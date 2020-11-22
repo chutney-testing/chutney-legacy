@@ -56,6 +56,14 @@ export type Scenario = {
   content?: Maybe<Scalars['String']>;
 };
 
+export type ScenarioInput = {
+  id?: Maybe<Scalars['ID']>;
+  title: Scalars['String'];
+  description: Scalars['String'];
+  tags?: Maybe<Array<Scalars['String']>>;
+  content?: Maybe<Scalars['String']>;
+};
+
 export type ScenariosFilter = {
   __typename?: 'ScenariosFilter';
   text?: Maybe<Scalars['String']>;
@@ -85,12 +93,17 @@ export type QueryRunScenarioHistoryArgs = {
 export type Mutation = {
   __typename?: 'Mutation';
   login?: Maybe<User>;
+  saveScenario?: Maybe<Scalars['Boolean']>;
   deleteScenario?: Maybe<Scalars['Boolean']>;
   runScenario: Scalars['ID'];
 };
 
 export type MutationLoginArgs = {
   input: LoginInput;
+};
+
+export type MutationSaveScenarioArgs = {
+  input: ScenarioInput;
 };
 
 export type MutationDeleteScenarioArgs = {
@@ -153,6 +166,15 @@ export type RunScenarioMutationVariables = Exact<{
 export type RunScenarioMutation = { __typename?: 'Mutation' } & Pick<
   Mutation,
   'runScenario'
+>;
+
+export type SaveScenarioMutationVariables = Exact<{
+  input: ScenarioInput;
+}>;
+
+export type SaveScenarioMutation = { __typename?: 'Mutation' } & Pick<
+  Mutation,
+  'saveScenario'
 >;
 
 export type ScenarioQueryVariables = Exact<{
@@ -331,6 +353,26 @@ export class RunScenarioGQL extends Apollo.Mutation<
   RunScenarioMutationVariables
 > {
   document = RunScenarioDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const SaveScenarioDocument = gql`
+  mutation saveScenario($input: ScenarioInput!) {
+    saveScenario(input: $input)
+      @rest(type: "Scenario", path: "api/scenario/v2/raw", method: "POST")
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class SaveScenarioGQL extends Apollo.Mutation<
+  SaveScenarioMutation,
+  SaveScenarioMutationVariables
+> {
+  document = SaveScenarioDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

@@ -1,0 +1,3 @@
+mutation saveScenario($input: ScenarioInput!){
+   saveScenario(input: $input) @rest(type: "Scenario", path: "api/scenario/v2/raw", method: "POST")
+}

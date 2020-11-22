@@ -2,10 +2,10 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import * as hjson from 'hjson';
 import { map, pluck, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
-import { ScenarioGQL } from '@chutney/data-access';
-import { editor } from 'monaco-editor';
+import { ActivatedRoute, Router } from '@angular/router';
+import { SaveScenarioGQL, ScenarioGQL } from '@chutney/data-access';
 import { TdCodeEditorComponent } from '@covalent/code-editor';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'chutney-scenario-text-exit',
@@ -18,21 +18,27 @@ export class ScenarioTextEditComponent implements OnInit {
   private _editor: any;
 
   scenario$: Observable<any>;
+  scenario: any;
   height: number = 200;
 
   constructor(
     private route: ActivatedRoute,
-    private scenarioGQL: ScenarioGQL
+    private router: Router,
+    private snackBar: MatSnackBar,
+    private scenarioGQL: ScenarioGQL,
+    private saveScenarioGQL: SaveScenarioGQL
   ) {}
 
   ngOnInit(): void {
-    this.scenario$ = this.route.params.pipe(
-      switchMap((p) => {
-        return this.scenarioGQL
-          .watch({ scenarioId: p.id })
-          .valueChanges.pipe(pluck('data', 'scenario'));
-      })
-    );
+    this.scenario = this.route.params
+      .pipe(
+        switchMap((p) => {
+          return this.scenarioGQL
+            .watch({ scenarioId: p.id })
+            .valueChanges.pipe(pluck('data', 'scenario'));
+        })
+      )
+      .subscribe((scenario) => (this.scenario = scenario));
   }
 
   callBackFunc() {
@@ -52,5 +58,20 @@ export class ScenarioTextEditComponent implements OnInit {
     return JSON.stringify(hjson.parse(content), undefined, 2);
   }
 
-  saveScenario() {}
+  saveScenario() {
+    console.log('scenario saved' + this.monaco.value);
+    const scenario = Object.assign({}, this.scenario, {
+      content: this.monaco.value,
+    });
+    this.saveScenarioGQL.mutate({ input: scenario }).subscribe(
+      (e) => {
+        const matSnackBarRef = this.snackBar.open('Scenario saved!', 'View');
+        matSnackBarRef.onAction().subscribe(() => {
+          console.log('The snack-bar action was triggered!');
+          this.router.navigate([`../view`], { relativeTo: this.route });
+        });
+      },
+      (err) => this.snackBar.open(err.message)
+    );
+  }
 }
