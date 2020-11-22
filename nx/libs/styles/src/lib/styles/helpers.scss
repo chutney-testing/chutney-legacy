@@ -6,7 +6,6 @@
 @import 'helpers/spacing';
 @import 'helpers/icons';
 
-
 // Generate Helpers
 @each $key, $utility in $utilities {
   $values: map-get($utility, values);
@@ -15,9 +14,9 @@
     $properties: map-get($utility, property);
     $property-class-prefix: map-get($utility, class);
     $property-class-prefix-hyphen: if(
-        $property-class-prefix== '',
-        $property-class-prefix,
-        $property-class-prefix + '-'
+      $property-class-prefix== '',
+      $property-class-prefix,
+      $property-class-prefix + '-'
     );
 
     @if type-of($properties) == 'string' {

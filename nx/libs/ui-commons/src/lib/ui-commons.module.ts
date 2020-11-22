@@ -9,7 +9,15 @@ import { RouterModule } from '@angular/router';
 
 @NgModule({
   imports: [CommonModule, MatIconModule, UiMaterialModule, RouterModule],
-  declarations: [ExecutionBadgeComponent, ExecutionIconComponent, PageHeaderComponent],
-  exports: [ExecutionBadgeComponent, ExecutionIconComponent, PageHeaderComponent],
+  declarations: [
+    ExecutionBadgeComponent,
+    ExecutionIconComponent,
+    PageHeaderComponent,
+  ],
+  exports: [
+    ExecutionBadgeComponent,
+    ExecutionIconComponent,
+    PageHeaderComponent,
+  ],
 })
 export class UiCommonsModule {}
