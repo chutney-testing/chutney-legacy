@@ -5,18 +5,18 @@ import static com.chutneytesting.design.infra.storage.dataset.DataSetPatchUtils.
 import static com.chutneytesting.design.infra.storage.dataset.OrientDataSetHistoryMapper.dataSetPatchToElement;
 import static com.chutneytesting.design.infra.storage.dataset.OrientDataSetHistoryMapper.elementToDataSetPatch;
 import static com.chutneytesting.design.infra.storage.dataset.OrientDataSetMapper.elementToDataSetMetaDataBuilder;
-import static com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB.DATASET_HISTORY_CLASS;
-import static com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB.DATASET_HISTORY_CLASS_PROPERTY_DATASET_ID;
-import static com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB.DATASET_HISTORY_CLASS_PROPERTY_VERSION;
-import static com.chutneytesting.design.infra.storage.db.orient.OrientUtils.close;
-import static com.chutneytesting.design.infra.storage.db.orient.OrientUtils.resultSetToCount;
-import static com.chutneytesting.design.infra.storage.db.orient.OrientUtils.rollback;
+import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.DATASET_HISTORY_CLASS;
+import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.DATASET_HISTORY_CLASS_PROPERTY_DATASET_ID;
+import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.DATASET_HISTORY_CLASS_PROPERTY_VERSION;
+import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.close;
+import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.resultSetToCount;
+import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.rollback;
 import static java.util.Optional.empty;
 
 import com.chutneytesting.design.domain.dataset.DataSet;
 import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.dataset.DataSetNotFoundException;
-import com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB;
+import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
 import com.google.common.collect.Lists;
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;

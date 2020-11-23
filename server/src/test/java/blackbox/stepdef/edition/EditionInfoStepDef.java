@@ -6,9 +6,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import blackbox.restclient.RestClient;
 import blackbox.stepdef.TestContext;
-import com.chutneytesting.design.api.compose.dto.ComposableTestCaseDto;
-import com.chutneytesting.design.api.compose.dto.ImmutableComposableScenarioDto;
-import com.chutneytesting.design.api.compose.dto.ImmutableComposableTestCaseDto;
+import com.chutneytesting.design.api.scenario.compose.dto.ComposableTestCaseDto;
+import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableScenarioDto;
+import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableTestCaseDto;
 import com.chutneytesting.design.api.scenario.v2_0.dto.GwtTestCaseDto;
 import com.chutneytesting.design.api.scenario.v2_0.dto.ImmutableGwtScenarioDto;
 import com.chutneytesting.design.api.scenario.v2_0.dto.ImmutableGwtStepDto;

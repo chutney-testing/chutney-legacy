@@ -1,9 +1,6 @@
 package com.chutneytesting.execution.domain.scenario;
 
 import com.chutneytesting.design.api.scenario.v2_0.mapper.GwtScenarioMapper;
-import com.chutneytesting.design.domain.compose.ComposableScenario;
-import com.chutneytesting.design.domain.compose.ComposableTestCase;
-import com.chutneytesting.design.domain.compose.FunctionalStep;
 import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.ScenarioNotParsableException;
 import com.chutneytesting.design.domain.scenario.TestCase;
@@ -15,6 +12,9 @@ import com.chutneytesting.execution.domain.compiler.GwtScenarioMarshaller;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.report.StepExecutionReportCore;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedScenario;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import java.util.Collections;
 import java.util.Map;
 
@@ -23,7 +23,7 @@ public class ScenarioExecutionEngine {
 
     private final ServerTestEngine executionEngine;
     private final TestCasePreProcessors testCasePreProcessors;
-    private ScenarioExecutionEngineAsync executionEngineAsync;
+    private final ScenarioExecutionEngineAsync executionEngineAsync;
     private static final GwtScenarioMarshaller marshaller = new GwtScenarioMapper();
 
     public ScenarioExecutionEngine(ServerTestEngine executionEngine,
@@ -64,15 +64,15 @@ public class ScenarioExecutionEngine {
         );
     }
 
-    public ScenarioExecutionReport execute(FunctionalStep functionalStep, String environment, String userId) throws ScenarioNotFoundException, ScenarioNotParsableException {
-        TestCase testCase = new ComposableTestCase(
-            "no_scenario_id",
+    public ScenarioExecutionReport execute(ExecutableComposedStep composedStep, String environment, String userId) throws ScenarioNotFoundException, ScenarioNotParsableException {
+        TestCase testCase = new ExecutableComposedTestCase(
+            "no_testcase_id",
             TestCaseMetadataImpl.builder()
-                .withDescription(functionalStep.id + "-" + functionalStep.name)
-                .withTitle(functionalStep.id + "-" + functionalStep.name)
+                .withDescription(composedStep.name)
+                .withTitle(composedStep.name)
                 .build(),
-            ComposableScenario.builder()
-                .withFunctionalSteps(Collections.singletonList(functionalStep))
+            ExecutableComposedScenario.builder()
+                .withComposedSteps(Collections.singletonList(composedStep))
                 .build());
 
         return simpleSyncExecution(

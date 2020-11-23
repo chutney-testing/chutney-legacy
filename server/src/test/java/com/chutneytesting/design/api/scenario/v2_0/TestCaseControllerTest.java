@@ -45,7 +45,7 @@ public class TestCaseControllerTest {
     public void setUp() {
         when(userService.getCurrentUser()).thenReturn(User.ANONYMOUS_USER);
 
-        GwtTestCaseController testCaseController = new GwtTestCaseController(testCaseRepository, null, null, userService);
+        GwtTestCaseController testCaseController = new GwtTestCaseController(testCaseRepository, null, userService);
         mockMvc = MockMvcBuilders.standaloneSetup(testCaseController)
             .setControllerAdvice(new RestExceptionHandler())
             .build();

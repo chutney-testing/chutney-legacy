@@ -7,8 +7,6 @@ import static java.util.Optional.ofNullable;
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.agent.domain.network.Agent;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
-import com.chutneytesting.design.domain.compose.ComposableTestCase;
-import com.chutneytesting.design.domain.compose.FunctionalStep;
 import com.chutneytesting.design.domain.environment.EnvironmentRepository;
 import com.chutneytesting.design.domain.environment.SecurityInfo;
 import com.chutneytesting.design.domain.environment.Target;
@@ -23,21 +21,13 @@ import com.chutneytesting.engine.api.execution.SecurityInfoDto;
 import com.chutneytesting.engine.api.execution.TargetDto;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.compiler.ScenarioConversionException;
-import com.chutneytesting.task.api.EmbeddedTaskEngine;
-import com.chutneytesting.task.api.TaskDto;
-import com.chutneytesting.task.api.TaskDto.InputsDto;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.TextNode;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.StringUtils;
 import org.hjson.JsonValue;
 import org.springframework.stereotype.Component;
 
@@ -47,13 +37,11 @@ public class ExecutionRequestMapper {
     private final ObjectMapper objectMapper;
     private final EnvironmentRepository environmentRepository;
     private final CurrentNetworkDescription currentNetworkDescription;
-    private final EmbeddedTaskEngine embeddedTaskEngine;
 
-    public ExecutionRequestMapper(ObjectMapper objectMapper, EnvironmentRepository environmentRepository, CurrentNetworkDescription currentNetworkDescription, EmbeddedTaskEngine embeddedTaskEngine) {
+    public ExecutionRequestMapper(ObjectMapper objectMapper, EnvironmentRepository environmentRepository, CurrentNetworkDescription currentNetworkDescription) {
         this.objectMapper = objectMapper;
         this.environmentRepository = environmentRepository;
         this.currentNetworkDescription = currentNetworkDescription;
-        this.embeddedTaskEngine = embeddedTaskEngine;
     }
 
     public ExecutionRequestDto toDto(ExecutionRequest executionRequest) {
@@ -70,8 +58,8 @@ public class ExecutionRequestMapper {
             return convertGwt(executionRequest);
         }
 
-        if (executionRequest.testCase instanceof ComposableTestCase) {
-            return convertComposable(executionRequest);
+        if (executionRequest.testCase instanceof ExecutableComposedTestCase) {
+            return convertComposed(executionRequest);
         }
 
         throw new ScenarioConversionException(executionRequest.testCase.metadata().id(),
@@ -148,7 +136,7 @@ public class ExecutionRequestMapper {
         );
     }
 
-    private ExecutionRequestDto.StepStrategyDefinitionRequestDto mapStrategy(com.chutneytesting.design.domain.compose.Strategy strategy) {
+    private ExecutionRequestDto.StepStrategyDefinitionRequestDto mapStrategy(com.chutneytesting.design.domain.scenario.compose.Strategy strategy) {
         return new ExecutionRequestDto.StepStrategyDefinitionRequestDto(
             strategy.type,
             strategy.parameters
@@ -204,141 +192,39 @@ public class ExecutionRequestMapper {
         return target;
     }
 
-    private StepDefinitionRequestDto convertComposable(ExecutionRequest executionRequest) {
-        ComposableTestCase composableTestCase = (ComposableTestCase) executionRequest.testCase;
+    private StepDefinitionRequestDto convertComposed(ExecutionRequest executionRequest) {
+        ExecutableComposedTestCase composedTestCase = (ExecutableComposedTestCase) executionRequest.testCase;
         try {
             return new StepDefinitionRequestDto(
-                composableTestCase.metadata.title(),
+                composedTestCase.metadata.title(),
                 toDto(NO_TARGET),
                 null,
                 null,
                 null,
-                convertComposableSteps(composableTestCase.composableScenario.functionalSteps, executionRequest.environment),
+                convertComposableSteps(composedTestCase.composedScenario.composedSteps, executionRequest.environment),
                 null,
                 executionRequest.environment
             );
         } catch (Exception e) {
-            throw new ScenarioConversionException(composableTestCase.metadata().id(), e);
+            throw new ScenarioConversionException(composedTestCase.metadata().id(), e);
         }
     }
 
-    private List<StepDefinitionRequestDto> convertComposableSteps(List<FunctionalStep> functionalSteps, String env) {
-        return functionalSteps.stream().map(f -> convert(f, env)).collect(Collectors.toList());
+    private List<StepDefinitionRequestDto> convertComposableSteps(List<ExecutableComposedStep> composedSteps, String env) {
+        return composedSteps.stream().map(f -> convert(f, env)).collect(Collectors.toList());
     }
 
-    private StepDefinitionRequestDto convert(FunctionalStep functionalStep, String env) {
-        Optional<ComposableImplementation> implementation = functionalStep.implementation.map(ComposableImplementation::new);
-
+    private StepDefinitionRequestDto convert(ExecutableComposedStep composedStep, String env) {
         return new StepDefinitionRequestDto(
-            functionalStep.name,
-            toDto(findTargetByName(implementation.map(ComposableImplementation::targetName).orElse(""), env)),
-            this.mapStrategy(functionalStep.strategy),
-            implementation.map(ComposableImplementation::type).orElse(""),
-            implementation.map(ComposableImplementation::inputs).orElse(emptyMap()),
-            functionalStep.steps.stream().map(f -> convert(f, env)).collect(Collectors.toList()),
-            implementation.map(ComposableImplementation::outputs).orElse(emptyMap()),
+            composedStep.name,
+            toDto(findTargetByName(composedStep.stepImplementation.map(si -> si.target).orElse(""), env)),
+            this.mapStrategy(composedStep.strategy),
+            composedStep.stepImplementation.map(si -> si.type).orElse(""),
+            composedStep.stepImplementation.map(si -> si.inputs).orElse(emptyMap()),
+            composedStep.steps.stream().map(f -> convert(f, env)).collect(Collectors.toList()),
+            composedStep.stepImplementation.map(si -> si.outputs).orElse(emptyMap()),
             env
         );
     }
 
-    private class ComposableImplementation {
-
-        private JsonNode implementation;
-
-        ComposableImplementation(String jsonImplementation) {
-            try {
-                this.implementation = objectMapper.readTree(jsonImplementation);
-            } catch (IOException e) {
-                throw new ScenarioConversionException(e);
-            }
-        }
-
-        String targetName() {
-            return Optional.ofNullable(implementation.get("target")).orElse(TextNode.valueOf("")).textValue();
-        }
-
-        String type() {
-            if (implementation.hasNonNull("identifier")) {
-                return implementation.get("identifier").textValue();
-            }
-            return null;
-        }
-
-        Map<String, Object> outputs() {
-            Map<String, Object> outputs = new LinkedHashMap<>();
-            if (implementation.hasNonNull("outputs")) {
-                final JsonNode outputsNode = implementation.get("outputs");
-                outputsNode.forEach(in -> {
-                    String name = in.get("key").asText();
-                    outputs.put(name, in.get("value").asText());
-                });
-            }
-            return outputs;
-        }
-
-        Map<String, Object> inputs() {
-            Map<String, Object> inputs = new LinkedHashMap<>();
-            // Simple inputs
-            if (implementation.hasNonNull("inputs")) {
-                final JsonNode simpleInputs = implementation.get("inputs");
-                simpleInputs.forEach(in -> {
-                    String inputName = in.get("name").asText();
-                    inputs.put(inputName, transformSimpleInputValue(in, inputName));
-                });
-            }
-            // List inputs
-            if (implementation.hasNonNull("listInputs")) {
-                final JsonNode listInputs = implementation.get("listInputs");
-                listInputs.forEach(in -> {
-                    List<Object> values = new ArrayList<>();
-                    in.get("values").forEach(v -> values.add(transformListInputValue(v)));
-                    inputs.put(in.get("name").asText(), values);
-                });
-            }
-            // Map inputs
-            if (implementation.hasNonNull("mapInputs")) {
-                final JsonNode mapInputs = implementation.get("mapInputs");
-                mapInputs.forEach(in -> {
-                    LinkedHashMap<String, String> values = new LinkedHashMap<>();
-                    for (JsonNode next : in.get("values")) {
-                        values.put(next.get("key").asText(), next.get("value").asText());
-                    }
-                    inputs.put(in.get("name").asText(), values);
-                });
-            }
-            return inputs;
-        }
-
-        private Object transformSimpleInputValue(JsonNode in, String inputRead) {
-            Optional<TaskDto> task = embeddedTaskEngine.getAllTasks().stream().filter(t -> t.getIdentifier().equals(this.type())).findFirst();
-            if (task.isPresent()) {
-                Optional<InputsDto> optionalInput = task.get().getInputs().stream().filter(i -> i.getName().equals(inputRead)).findFirst();
-                if (optionalInput.isPresent()) {
-                    InputsDto input = optionalInput.get();
-                    if (input.getType().getName().equals(Integer.class.getName())) {
-                        return transformIntegerValue(in);
-                    }
-                }
-            }
-
-            String value = in.get("value").asText();
-            return !value.isEmpty() ? value : null;
-        }
-
-        private Object transformListInputValue(JsonNode in) {
-            if (in.isObject()) {
-                try {
-                    return objectMapper.readValue(in.toString(), HashMap.class);
-                } catch (Exception e) {
-                    return in.toString();
-                }
-            }
-            return in.asText();
-        }
-    }
-
-    private Integer transformIntegerValue(JsonNode in) {
-        String value = in.get("value").asText();
-        return StringUtils.isNotBlank(value) ? Integer.valueOf(value) : null;
-    }
 }

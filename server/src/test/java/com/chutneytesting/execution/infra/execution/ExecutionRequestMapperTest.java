@@ -9,9 +9,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
-import com.chutneytesting.design.domain.compose.ComposableScenario;
-import com.chutneytesting.design.domain.compose.ComposableTestCase;
-import com.chutneytesting.design.domain.compose.FunctionalStep;
 import com.chutneytesting.design.domain.environment.EnvironmentRepository;
 import com.chutneytesting.design.domain.environment.Target;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
@@ -20,12 +17,14 @@ import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.SecurityInfoDto;
 import com.chutneytesting.engine.api.execution.TargetDto;
 import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.task.api.EmbeddedTaskEngine;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedScenario;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
+import com.chutneytesting.execution.domain.scenario.composed.StepImplementation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
 import java.io.File;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,9 +41,8 @@ public class ExecutionRequestMapperTest {
     private ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
     private EnvironmentRepository environmentRepository = mock(EnvironmentRepository.class);
     private CurrentNetworkDescription currentNetworkDescription = mock(CurrentNetworkDescription.class);
-    private EmbeddedTaskEngine embeddedTaskEngine = mock(EmbeddedTaskEngine.class);
 
-    private ExecutionRequestMapper sut = new ExecutionRequestMapper(objectMapper, environmentRepository, currentNetworkDescription, embeddedTaskEngine);
+    private ExecutionRequestMapper sut = new ExecutionRequestMapper(objectMapper, environmentRepository, currentNetworkDescription);
 
     @Test
     public void should_map_test_case_to_execution_request() {
@@ -65,70 +63,60 @@ public class ExecutionRequestMapperTest {
     }
 
     @Test
-    public void should_map_composable_test_case_to_execution_request() {
+    public void should_map_composed_test_case_to_execution_request() {
         // Given
         String expectedType = "task-id";
         String expectedTargetId = "target name";
         SecurityInfoDto securityDto = new SecurityInfoDto(null, null, null, null, null, null);
         TargetDto expectedTarget = new TargetDto(expectedTargetId, "", emptyMap(), securityDto, emptyList());
 
-        LinkedHashMap<String, Object> expectedOutputs = new LinkedHashMap<>();
-        expectedOutputs.put("output1", "value1");
-        expectedOutputs.put("output2", "value2");
-        expectedOutputs.put("output3", "value3");
-        expectedOutputs.put("output4", "value4");
+        LinkedHashMap<String, Object> expectedOutputs = new LinkedHashMap<>(Maps.of(
+            "output1", "value1",
+            "output2", "value2"
+        ));
 
-        LinkedHashMap<String, Object> expectedInputs = new LinkedHashMap<>();
-        // Simple inputs
-        expectedInputs.put("input 1 name", "v1 input 1 name");
-        expectedInputs.put("input name empty", null);
-        // List inputs
-        expectedInputs.put("list 1 input name", Arrays.asList("v1 list 1 input", "v2 list 1 input"));
-        expectedInputs.put("list 2 input name empty", emptyList());
-        // Map inputs
-        expectedInputs.put("map 1 input name",
+        LinkedHashMap<String, Object> expectedInputs = new LinkedHashMap<>(
             Maps.of(
-                "k1 map input", "v1 map 1 input",
-                "k2 map input", "v2 map 1 input",
-                "k3 map input", "v3 map 1 input",
-                "k4 map input", "v4 map 1 input"));
-        expectedInputs.put("map 2 input name with empty",
-            Maps.of(
-                "k1 map input", "v1 map 2 input",
-                "k2 map input empty", ""
+                "input 1 name", "v1 input 1 name",
+                "input name empty", null
             )
         );
 
-        final String implementationFull = Files.contentOf(new File(Resources.getResource("raw_steps/raw_composable_implementation.json").getPath()), StandardCharsets.UTF_8);
+        final StepImplementation implementationFull = new StepImplementation(
+            "task-id",
+            "target name",
+            Maps.of( "input 1 name", "v1 input 1 name", "input name empty", null),
+            Maps.of("output1", "value1", "output2", "value2")
+        );
 
-        List<FunctionalStep> steps = new ArrayList<>();
-        steps.add(FunctionalStep.builder()
+        List<ExecutableComposedStep> steps = new ArrayList<>();
+        steps.add(ExecutableComposedStep.builder()
             .withName("first child step")
-            .withImplementation(java.util.Optional.of(implementationFull))
+            .withImplementation(Optional.of(implementationFull))
             .build());
-        steps.add(FunctionalStep.builder()
+        steps.add(ExecutableComposedStep.builder()
             .withName("second child step - parent")
             .withSteps(
-                Collections.singletonList(FunctionalStep.builder()
+                Collections.singletonList(ExecutableComposedStep.builder()
                     .withName("first inner child step")
                     .withImplementation(Optional.of(implementationFull))
                     .build())
             )
             .build());
 
-        ComposableTestCase testCase = new ComposableTestCase(
+        ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             "fake-id",
             TestCaseMetadataImpl.builder()
                 .withTitle("fake title")
                 .build(),
-            ComposableScenario.builder()
-                .withFunctionalSteps(
+            ExecutableComposedScenario.builder()
+                .withComposedSteps(
                     Arrays.asList(
-                        FunctionalStep.builder()
+                        ExecutableComposedStep.builder()
                             .withName("first root step")
-                            .withImplementation(java.util.Optional.of(implementationFull))
+                            .withImplementation(Optional.of(implementationFull))
                             .build(),
-                        FunctionalStep.builder()
+                        ExecutableComposedStep.builder()
                             .withName("second root step - parent")
                             .withSteps(
                                 steps
@@ -154,21 +142,21 @@ public class ExecutionRequestMapperTest {
         assertThat(rootStep.steps).hasSize(2);
 
         ExecutionRequestDto.StepDefinitionRequestDto step = rootStep.steps.get(0);
-        assertStepDefinitionRequestDtoImplementation(step, testCase.composableScenario.functionalSteps.get(0).name, expectedType, expectedTarget, expectedInputs, expectedOutputs);
+        assertStepDefinitionRequestDtoImplementation(step, testCase.composedScenario.composedSteps.get(0).name, expectedType, expectedTarget, expectedInputs, expectedOutputs);
 
         step = rootStep.steps.get(1);
-        assertRootStepDefinitionRequestDto(step, testCase.composableScenario.functionalSteps.get(1).name);
+        assertRootStepDefinitionRequestDto(step, testCase.composedScenario.composedSteps.get(1).name);
         assertThat(step.steps).hasSize(2);
 
         step = rootStep.steps.get(1).steps.get(0);
-        assertStepDefinitionRequestDtoImplementation(step, testCase.composableScenario.functionalSteps.get(1).steps.get(0).name, expectedType, expectedTarget, expectedInputs, expectedOutputs);
+        assertStepDefinitionRequestDtoImplementation(step, testCase.composedScenario.composedSteps.get(1).steps.get(0).name, expectedType, expectedTarget, expectedInputs, expectedOutputs);
 
         step = rootStep.steps.get(1).steps.get(1);
-        assertRootStepDefinitionRequestDto(step, testCase.composableScenario.functionalSteps.get(1).steps.get(1).name);
+        assertRootStepDefinitionRequestDto(step, testCase.composedScenario.composedSteps.get(1).steps.get(1).name);
         assertThat(step.steps).hasSize(1);
 
         step = rootStep.steps.get(1).steps.get(1).steps.get(0);
-        assertStepDefinitionRequestDtoImplementation(step, testCase.composableScenario.functionalSteps.get(1).steps.get(1).steps.get(0).name, expectedType, expectedTarget, expectedInputs, expectedOutputs);
+        assertStepDefinitionRequestDtoImplementation(step, testCase.composedScenario.composedSteps.get(1).steps.get(1).steps.get(0).name, expectedType, expectedTarget, expectedInputs, expectedOutputs);
     }
 
     private void assertRootStepDefinitionRequestDto(ExecutionRequestDto.StepDefinitionRequestDto stepDefinitionRequestDto, String name) {
@@ -194,16 +182,16 @@ public class ExecutionRequestMapperTest {
         assertThat(stepDefinitionRequestDto.name).isEqualTo(name);
         assertThat(stepDefinitionRequestDto.type).isEqualTo(implementationType);
         assertThat(stepDefinitionRequestDto.target).isEqualTo(implementationTarget);
-        stepDefinitionRequestDto.inputs.forEach((k, v) -> {
+        implementationInputs.forEach((k, v) -> {
             if (v instanceof String) {
-                assertThat(implementationInputs).containsEntry(k, v);
+                assertThat(stepDefinitionRequestDto.inputs).containsEntry(k, v);
             } else if (v instanceof List) {
-                assertThat((List) v).containsExactlyElementsOf((List) implementationInputs.get(k));
+                assertThat((List) v).containsExactlyElementsOf((List) stepDefinitionRequestDto.inputs.get(k));
             } else if (v instanceof Map) {
-                assertThat((Map) v).containsExactlyEntriesOf((Map) implementationInputs.get(k));
+                assertThat((Map) v).containsExactlyEntriesOf((Map) stepDefinitionRequestDto.inputs.get(k));
             }
         });
-        assertThat(stepDefinitionRequestDto.outputs).containsExactlyEntriesOf(implementationOuputs);
+        assertThat(implementationOuputs).containsExactlyEntriesOf(stepDefinitionRequestDto.outputs);
         assertThat(stepDefinitionRequestDto.steps).isEmpty();
     }
 }

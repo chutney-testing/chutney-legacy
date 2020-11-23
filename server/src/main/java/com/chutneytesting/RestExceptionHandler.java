@@ -2,9 +2,7 @@ package com.chutneytesting;
 
 import com.chutneytesting.admin.domain.BackupNotFoundException;
 import com.chutneytesting.design.domain.campaign.CampaignNotFoundException;
-import com.chutneytesting.design.domain.compose.AlreadyExistingFunctionalStepException;
-import com.chutneytesting.design.domain.compose.FunctionalStepCyclicDependencyException;
-import com.chutneytesting.design.domain.compose.FunctionalStepNotFoundException;
+import com.chutneytesting.design.domain.scenario.compose.AlreadyExistingComposableStepException;
 import com.chutneytesting.design.domain.dataset.DataSetNotFoundException;
 import com.chutneytesting.design.domain.environment.AlreadyExistingEnvironmentException;
 import com.chutneytesting.design.domain.environment.AlreadyExistingTargetException;
@@ -14,6 +12,8 @@ import com.chutneytesting.design.domain.environment.TargetNotFoundException;
 import com.chutneytesting.design.domain.scenario.AlreadyExistingScenarioException;
 import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.ScenarioNotParsableException;
+import com.chutneytesting.design.domain.scenario.compose.ComposableStepCyclicDependencyException;
+import com.chutneytesting.design.domain.scenario.compose.ComposableStepNotFoundException;
 import com.chutneytesting.execution.domain.campaign.CampaignAlreadyRunningException;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionNotFoundException;
 import com.chutneytesting.execution.domain.compiler.ScenarioConversionException;
@@ -66,7 +66,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         CampaignNotFoundException.class,
         CampaignExecutionNotFoundException.class,
         EnvironmentNotFoundException.class,
-        FunctionalStepNotFoundException.class,
+        ComposableStepNotFoundException.class,
         CurrentUserNotFound.class,
         BackupNotFoundException.class,
         DataSetNotFoundException.class,
@@ -82,8 +82,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         AlreadyExistingEnvironmentException.class,
         CampaignAlreadyRunningException.class,
         AlreadyExistingScenarioException.class,
-        AlreadyExistingFunctionalStepException.class,
-        FunctionalStepCyclicDependencyException.class
+        AlreadyExistingComposableStepException.class,
+        ComposableStepCyclicDependencyException.class
     })
     protected ResponseEntity<Object> conflict(RuntimeException ex, WebRequest request) {
         String bodyOfResponse = ex.getMessage();

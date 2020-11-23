@@ -20,9 +20,9 @@ import com.chutneytesting.design.api.scenario.v2_0.dto.ImmutableTestCaseIndexDto
 import com.chutneytesting.design.api.scenario.v2_0.dto.TestCaseIndexDto;
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
 import com.chutneytesting.design.domain.campaign.ScenarioExecutionReportCampaign;
-import com.chutneytesting.design.domain.compose.ComposableScenario;
-import com.chutneytesting.design.domain.compose.ComposableTestCase;
-import com.chutneytesting.design.domain.compose.ComposableTestCaseRepository;
+import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
+import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
+import com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.design.infra.storage.campaign.FakeCampaignRepository;
@@ -329,7 +329,7 @@ public class CampaignControllerTest {
         insertCampaign(campaignToCreate);
 
         when(composableTestCaseRepository.findById("#44:44")).thenReturn(new ComposableTestCase("#44:44", TestCaseMetadataImpl.builder().withId("#44:44").build(), ComposableScenario.builder()
-            .withFunctionalSteps(emptyList())
+            .withComposableSteps(emptyList())
             .withParameters(emptyMap())
             .build()));
         when(testCaseRepository.findMetadataById("55")).thenReturn(TestCaseMetadataImpl.builder().withId("55").build());

@@ -1,18 +1,23 @@
 package com.chutneytesting.tests;
 
-import static com.chutneytesting.design.infra.storage.compose.OrientFunctionalStepMapper.vertexToFunctionalStep;
-import static com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB.STEP_CLASS;
-import static com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB.STEP_CLASS_PROPERTY_NAME;
+import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.vertexToComposableStep;
+import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS;
+import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.design.domain.compose.FunctionalStep;
-import com.chutneytesting.design.domain.compose.StepRepository;
-import com.chutneytesting.design.domain.compose.StepUsage;
-import com.chutneytesting.design.domain.compose.Strategy;
-import com.chutneytesting.design.infra.storage.db.orient.OrientComponentDB;
-import com.chutneytesting.design.infra.storage.db.orient.OrientConfigurationProperties;
-import com.chutneytesting.design.infra.storage.db.orient.OrientDBManager;
-import com.chutneytesting.design.infra.storage.db.orient.changelog.OrientChangelogExecutor;
+import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
+import com.chutneytesting.design.domain.scenario.compose.ComposableStepRepository;
+import com.chutneytesting.design.domain.scenario.compose.StepUsage;
+import com.chutneytesting.design.domain.scenario.compose.Strategy;
+import com.chutneytesting.design.infra.storage.scenario.compose.ExecutableComposedStepMapper;
+import com.chutneytesting.design.infra.storage.scenario.compose.ExecutableComposedTestCaseMapper;
+import com.chutneytesting.design.infra.storage.scenario.compose.RawImplementationMapper;
+import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
+import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientConfigurationProperties;
+import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientDBManager;
+import com.chutneytesting.design.infra.storage.scenario.compose.orient.changelog.OrientChangelogExecutor;
+import com.chutneytesting.task.api.EmbeddedTaskEngine;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.db.ODatabaseType;
@@ -24,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.apache.groovy.util.Maps;
+import org.mockito.Mockito;
 
 public abstract class AbstractOrientDatabaseTest {
 
@@ -32,6 +38,11 @@ public abstract class AbstractOrientDatabaseTest {
     protected static final String DATABASE_NAME = "orient_repo_test";
     protected static OrientComponentDB orientComponentDB;
     protected static OrientChangelogExecutor changelogExecution;
+
+    protected static EmbeddedTaskEngine mockEngine = Mockito.mock(EmbeddedTaskEngine.class);
+    protected static RawImplementationMapper implementationMapper = new RawImplementationMapper(mockEngine, new ObjectMapper());
+    protected static ExecutableComposedStepMapper stepMapper = new ExecutableComposedStepMapper(implementationMapper);
+    protected static ExecutableComposedTestCaseMapper testCaseMapper = new ExecutableComposedTestCaseMapper(stepMapper);
 
     protected static void initComponentDB(String databaseName) {
         initComponentDB(databaseName, ODatabaseType.MEMORY);
@@ -94,15 +105,15 @@ public abstract class AbstractOrientDatabaseTest {
         return Optional.empty();
     }
 
-    private FunctionalStep build(String id,
+    private ComposableStep build(String id,
                                  String name,
                                  StepUsage usage,
                                  Map<String, String> parameters,
                                  List<String> tags,
                                  String implementation,
                                  Strategy strategy,
-                                 FunctionalStep... subSteps) {
-        FunctionalStep.FunctionalStepBuilder builder = FunctionalStep.builder();
+                                 ComposableStep... subSteps) {
+        ComposableStep.ComposableStepBuilder builder = ComposableStep.builder();
         if (id != null) {
             builder.withId(id);
         }
@@ -130,51 +141,51 @@ public abstract class AbstractOrientDatabaseTest {
         return builder.build();
     }
 
-    protected FunctionalStep buildFunctionalStep(String name, Strategy strategy, FunctionalStep... subSteps) {
+    protected ComposableStep buildComposableStep(String name, Strategy strategy, ComposableStep... subSteps) {
         return build(null, name, null, null, null, null, strategy, subSteps);
     }
 
-    protected FunctionalStep buildFunctionalStep(String name, FunctionalStep... subSteps) {
+    protected ComposableStep buildComposableStep(String name, ComposableStep... subSteps) {
         return build(null, name, null, null, null, null, null, subSteps);
     }
 
-    protected FunctionalStep buildFunctionalStep(String name, Map<String, String> parameters) {
+    protected ComposableStep buildComposableStep(String name, Map<String, String> parameters) {
         return  build(null, name, null, parameters, null, null, null);
     }
 
-    protected FunctionalStep buildFunctionalStep(String name, Map<String, String> parameters, FunctionalStep... subSteps) {
+    protected ComposableStep buildComposableStep(String name, Map<String, String> parameters, ComposableStep... subSteps) {
         return  build(null, name, null, parameters, null, null, null, subSteps);
     }
 
-    protected FunctionalStep buildFunctionalStep(String name, StepUsage usage, FunctionalStep... subSteps) {
+    protected ComposableStep buildComposableStep(String name, StepUsage usage, ComposableStep... subSteps) {
         return build(null, name, usage, null, null, null, null, subSteps);
     }
 
-    protected FunctionalStep buildFunctionalStep(String name, String implementation) {
+    protected ComposableStep buildComposableStep(String name, String implementation) {
         return build(null, name, null, null, null, implementation, null, null);
     }
 
-    protected FunctionalStep buildFunctionalStep(String name, String implementation, String id) {
+    protected ComposableStep buildComposableStep(String name, String implementation, String id) {
         return build(id, name, null, null, null, implementation, null, null);
     }
 
-    protected FunctionalStep buildFunctionalStep(String name, StepUsage usage, String implementation) {
+    protected ComposableStep buildComposableStep(String name, StepUsage usage, String implementation) {
         return build(null, name, usage, null, null, implementation, null, null);
     }
 
-    protected FunctionalStep buildFunctionalStep(String name, List<String> tags) {
+    protected ComposableStep buildComposableStep(String name, List<String> tags) {
         return build(null, name, null, null, tags, null, null, null);
     }
 
-    protected FunctionalStep saveAndReload(StepRepository funcStepRepository, FunctionalStep functionalStep) {
-        funcStepRepository.save(functionalStep);
-        return findByName(functionalStep.name);
+    protected ComposableStep saveAndReload(ComposableStepRepository funcComposableStepRepository, ComposableStep composableStep) {
+        funcComposableStepRepository.save(composableStep);
+        return findByName(composableStep.name);
     }
 
-    protected FunctionalStep findByName(final String name) {
+    protected ComposableStep findByName(final String name) {
         try (ODatabaseSession dbSession = dbPool(DATABASE_NAME).acquire()) {
             return loadByProperty(STEP_CLASS, STEP_CLASS_PROPERTY_NAME, name, dbSession)
-                .map(oElement -> vertexToFunctionalStep(oElement.asVertex().get(), dbSession).build()).orElse(null);
+                .map(oElement -> vertexToComposableStep(oElement.asVertex().get(), dbSession).build()).orElse(null);
         }
     }
 
