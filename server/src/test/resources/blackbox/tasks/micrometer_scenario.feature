@@ -4,7 +4,9 @@
 Feature: Micrometer Tasks test
 
     Background:
-        Given an existing target chutney_local on local server
+        Given an existing target chutney_local on local server with security
+            | username | user |
+            | password | user |
 
     Scenario: Micrometer counter meter
         Given this scenario is saved

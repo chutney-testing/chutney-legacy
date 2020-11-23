@@ -52,7 +52,9 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.urlParams.unsubscribe();
+        if (this.urlParams) {
+            this.urlParams.unsubscribe();
+        }
     }
 
     private async getScenarios() {

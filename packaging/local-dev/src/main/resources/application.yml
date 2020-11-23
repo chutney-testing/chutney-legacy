@@ -17,6 +17,7 @@ server:
     trust-store-password: 'truststore'
   servlet:
     session:
+      timeout: 240m
       cookie:
         http-only: true
         secure: true

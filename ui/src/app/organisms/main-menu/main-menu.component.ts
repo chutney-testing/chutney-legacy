@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { Observable } from 'rxjs';
+
 import { LoginService } from '@core/services';
 import { User } from '@model';
 
@@ -7,7 +9,7 @@ import { User } from '@model';
   templateUrl: './main-menu.component.html',
   styleUrls: ['./main-menu.component.scss']
 })
-export class MainMenuComponent implements OnInit {
+export class MainMenuComponent {
 
   ICON_TESTS = require('../../../assets/icons/tests.png');
   ICON_TESTS_SELECTED = require('../../../assets/icons/tests-selected.png');
@@ -15,16 +17,11 @@ export class MainMenuComponent implements OnInit {
   ICON_REPO = require('../../../assets/icons/repository.png');
   ICON_REPO_SELECTED = require('../../../assets/icons/repository-selected.png');
 
-  currentUser: User = null;
+  user$: Observable<User>;
 
   constructor(
     private loginService: LoginService
-  ) { }
-
-  ngOnInit() {
-    const user = this.loginService.getUser();
-    if (user) {
-      this.currentUser = user;
-    }
+  ) {
+    this.user$ = this.loginService.getUser();
   }
 }

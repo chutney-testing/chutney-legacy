@@ -138,6 +138,12 @@ public class TargetStepDefs {
         an_existing_target_on_local_server(targetName, "http://localhost:" + port);
     }
 
+    @Given("^an existing target (.+) on local server with security$")
+    public void an_existing_target_on_local_server(String targetName, DataTable security) {
+        Integer port = Integer.valueOf(System.getProperty("port"));
+        a_target_with_url_with_security(targetName, "http://localhost:" + port, security);
+    }
+
     @Given("^an existing target (.+) having url in system property (.+)")
     public void an_existing_target_with_url_from_system_property(String targetName, String urlSystemProperty) {
         an_existing_target_on_local_server(targetName, "tcp://" + System.getProperty(urlSystemProperty));
