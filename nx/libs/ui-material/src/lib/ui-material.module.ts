@@ -11,7 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { CovalentDialogsModule } from '@covalent/core/dialogs';
 import { CovalentSearchModule } from '@covalent/core/search';
@@ -98,5 +98,8 @@ import { CovalentBreadcrumbsModule } from '@covalent/core/breadcrumbs';
     MatPasswordModule,
     IconsProviderModule,
   ],
+  providers: [
+    {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 2500}}
+  ]
 })
 export class UiMaterialModule {}
