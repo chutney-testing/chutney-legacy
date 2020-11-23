@@ -1,0 +1,9 @@
+@mixin chutney-page-header-theme($theme) {
+  $background: map-get($theme, background);
+  $foreground: map-get($theme, foreground);
+
+  .chutney-page-header {
+    background-color: mat-color($background, hover);
+    color: mat-color($foreground, text);
+  }
+}
