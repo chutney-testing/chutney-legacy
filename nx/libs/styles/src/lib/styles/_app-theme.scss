@@ -1,5 +1,6 @@
 @import './theme/style/reboot-theme';
 @import './theme/header-theme';
+@import './theme/page-header-theme';
 @import './theme/sidebar-theme';
 @import './theme/sidemenu-theme';
 @import './theme/topmenu-theme';
@@ -10,6 +11,7 @@
 @mixin chutney-admin-theme($theme) {
   @include chutney-reboot-theme($theme);
   @include chutney-header-theme($theme);
+  @include chutney-page-header-theme($theme);
   @include chutney-sidebar-theme($theme);
   @include chutney-sidemenu-theme($theme);
   @include chutney-topmenu-theme($theme);
