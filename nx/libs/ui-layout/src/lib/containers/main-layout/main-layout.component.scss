@@ -153,31 +153,3 @@
     background-color: white;
   }
 }
-
-// appBaner
-header {
-  [appBanner] {
-    transition-duration: 0.3s;
-    transition-property: background-image;
-    transition-timing-function: ease-in-out;
-    color: white;
-    height: 175px;
-  }
-
-  mat-toolbar {
-    //background-color: white !important;
-    transition-duration: 0.3s;
-    transition-property: background-color, box-shadow;
-    transition-timing-function: ease-in-out;
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
-    z-index: 40;
-
-    &.transparent {
-      background: none;
-      color: white;
-    }
-  }
-}
