@@ -100,10 +100,10 @@ public class ComposedTestCaseParametersResolutionPreProcessor implements TestCas
         try {
             String blob = replaceParams(objectMapper.writeValueAsString(stepImplementation), globalVariable, scopedDataset, StringEscapeUtils::escapeJson);
             StepImplementation impl = objectMapper.readValue(blob, StepImplementation.class);
-            return Optional.ofNullable(impl);
+            return ofNullable(impl);
         } catch (IOException e) {
             LOGGER.error("Error reading step implementation", e);
-            return Optional.ofNullable(stepImplementation);
+            return ofNullable(stepImplementation);
         }
     }
 
@@ -112,12 +112,14 @@ public class ComposedTestCaseParametersResolutionPreProcessor implements TestCas
         Map<Boolean, List<Map.Entry<String, String>>> splitDataSet = currentStepDataset.entrySet().stream().collect(Collectors.groupingBy(o -> isBlank(o.getValue())));
 
         ofNullable(splitDataSet.get(true))
-            .ifPresent(l -> l.forEach(e -> scopedDataset.put(e.getKey(), ofNullable(parentDataset.get(e.getKey())).orElse(""))));
+            .ifPresent(l -> l.forEach(e ->
+                scopedDataset.put(e.getKey(), ofNullable(parentDataset.get(e.getKey())).orElse(""))
+            ));
 
         ofNullable(splitDataSet.get(false))
-            .ifPresent(l -> l.forEach(e -> {
-                scopedDataset.put(e.getKey(), replaceParams(e.getValue(), globalVariables, parentDataset));
-            }));
+            .ifPresent(l -> l.forEach(e ->
+                scopedDataset.put(e.getKey(), replaceParams(e.getValue(), globalVariables, parentDataset))
+            ));
 
         return scopedDataset;
     }

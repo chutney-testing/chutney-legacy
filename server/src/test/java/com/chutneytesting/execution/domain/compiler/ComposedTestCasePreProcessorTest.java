@@ -27,7 +27,6 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import org.apache.groovy.util.Maps;
 import org.junit.Before;
 import org.junit.Test;
@@ -172,7 +171,7 @@ public class ComposedTestCasePreProcessorTest {
             .withName(format(actionName, "**target**"))
             .withStrategy(retryStrategy)
             .withParameters(singletonMap("target", "default target"))
-            .withImplementation(Optional.of(actionImplementation))
+            .withImplementation(of(actionImplementation))
             .build();
 
         ExecutableComposedStep step = ExecutableComposedStep.builder()

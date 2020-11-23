@@ -17,8 +17,6 @@ import static java.util.Optional.ofNullable;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.design.domain.scenario.compose.StepUsage;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
-import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
-import com.chutneytesting.execution.domain.scenario.composed.StepImplementation;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.ODirection;
