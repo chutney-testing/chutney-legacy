@@ -75,7 +75,7 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
             return savedFStep.getIdentity().toString(null).toString();
         } catch (ORecordDuplicatedException e) {
             rollback(dbSession);
-            throw new AlreadyExistingComposableStepException(e.getMessage());
+            throw new AlreadyExistingComposableStepException(composableStep);
         } catch (ComposableStepCyclicDependencyException e) {
             rollback(dbSession);
             throw e;
@@ -91,7 +91,7 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
     public ComposableStep findById(final String recordId) {
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
             OVertex element = (OVertex) load(recordId, dbSession)
-                .orElseThrow(ComposableStepNotFoundException::new);
+                .orElseThrow(() -> new ComposableStepNotFoundException(recordId));
             return vertexToComposableStep(element, dbSession).build();
         }
     }
@@ -180,7 +180,7 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
                 return funcStepIds;
             }
         }
-        throw new ComposableStepNotFoundException();
+        throw new ComposableStepNotFoundException(stepId);
     }
 
     private OVertex save(ComposableStep composableStep, final ODatabaseSession dbSession) {
@@ -220,7 +220,7 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
                 childrenIds.add((ORecordId) child.getIdentity());
             }
             if (childrenIds.removeAll(parentsIds)) {
-                throw new ComposableStepCyclicDependencyException("Cyclic dependency found on functional step [" + savedFStep.getProperty(STEP_CLASS_PROPERTY_NAME) + "]");
+                throw new ComposableStepCyclicDependencyException(savedFStep.getProperty(STEP_CLASS_PROPERTY_NAME));
             }
             children.forEach(oElement -> checkCyclicDependency(oElement, new ArrayList<>(parentsIds)));
         }

@@ -76,7 +76,8 @@
     </div>
 
     <div class="edition col-9" [formGroup]="componentForm">
-        <div class="text-center bg-info text-white">
+        <div class="text-center bg-info text-white"
+             [ngClass]="'bg-' + messageType">
             <strong *ngIf="message">{{ message }}</strong>
         </div>
 

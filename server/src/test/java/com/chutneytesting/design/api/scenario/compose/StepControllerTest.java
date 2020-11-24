@@ -140,8 +140,9 @@ public class StepControllerTest {
     @Test
     public void should_get_404_when_findById_find_nothing() throws Exception {
         // Given
-        final String RECORD_ID = encodeRecordId("#2:9");
-        when(composableStepRepository.findById(any())).thenThrow(new ComposableStepNotFoundException());
+        String recordId = "#2:9";
+        final String RECORD_ID = encodeRecordId(recordId);
+        when(composableStepRepository.findById(any())).thenThrow(new ComposableStepNotFoundException(recordId));
         // When
         String[] message = { null };
         mockMvc.perform(get(StepController.BASE_URL + "/" + RECORD_ID))
@@ -149,14 +150,15 @@ public class StepControllerTest {
             .andExpect(status().isNotFound());
 
         // Then
-        assertThat(message[0]).isEqualToIgnoringCase("The functional step id could not be found");
+        assertThat(message[0]).isEqualToIgnoringCase("The composable step id ["+recordId+"] could not be found");
     }
 
     @Test
     public void should_not_call_mapping_when_findById_find_nothing() throws Exception {
         // Given
-        final String RECORD_ID = encodeRecordId("#10:7");
-        when(composableStepRepository.findById(any())).thenThrow(new ComposableStepNotFoundException());
+        String recordId = "#10:7";
+        final String RECORD_ID = encodeRecordId(recordId);
+        when(composableStepRepository.findById(any())).thenThrow(new ComposableStepNotFoundException(recordId));
         // When
         mockMvc.perform(get(StepController.BASE_URL + "/" + RECORD_ID))
             .andExpect(status().isNotFound());

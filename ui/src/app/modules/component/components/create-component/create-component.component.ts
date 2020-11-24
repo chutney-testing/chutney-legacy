@@ -37,6 +37,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     // Message
     message: string;
+    messageType: string;
 
     // const message
     private savedMessage;
@@ -274,7 +275,7 @@ export class CreateComponent implements OnInit, OnDestroy {
                 if (id) {
                     this.router.navigateByUrl(`/component/${id}`).then(() => {
                         this.viewComponent = true;
-                        this.showMessage();
+                        this.showMessage(this.savedMessage);
                     });
                 }
             },
@@ -317,15 +318,17 @@ export class CreateComponent implements OnInit, OnDestroy {
                     }
                     this.refreshComponents(id);
                 },
-                (error) => console.log(error)
+                (err) => this.showMessage(err.error, true)
             );
     }
 
-    showMessage() {
+    showMessage(message: string, error: boolean = false) {
         (async () => {
-            this.message = this.savedMessage;
+            this.messageType = error ? 'danger' : 'info';
+            this.message = message;
             await delay(3000);
             this.message = null;
+            this.messageType = null;
         })();
     }
 
