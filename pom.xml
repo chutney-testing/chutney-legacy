@@ -50,7 +50,7 @@
 
     <ciManagement>
         <system>travis-ci</system>
-        <url>https://travis-ci.org/chutney-testing/chutney</url>
+        <url>https://travis-ci.com/chutney-testing/chutney</url>
     </ciManagement>
 
     <modules>
@@ -93,7 +93,6 @@
         <amqp-client.version>5.8.0</amqp-client.version>
         <mongodb.version>3.8.0</mongodb.version>
         <orientdb.version>3.0.30</orientdb.version>
-        <lucene.version>7.3.0</lucene.version>
         <selenium.version>3.14.0</selenium.version>
         <rxjava.version>2.2.6</rxjava.version>
         <groovy.version>2.5.0</groovy.version>
@@ -355,21 +354,6 @@
                 <version>${orientdb.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.orientechnologies</groupId>
-                <artifactId>orientdb-lucene</artifactId>
-                <version>${orientdb.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.lucene</groupId>
-                <artifactId>lucene-core</artifactId>
-                <version>${lucene.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.lucene</groupId>
-                <artifactId>lucene-analyzers-common</artifactId>
-                <version>${lucene.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-firefox-driver</artifactId>
                 <version>${selenium.version}</version>
@@ -461,12 +445,6 @@
                 <groupId>com.github.tomakehurst</groupId>
                 <artifactId>wiremock-standalone</artifactId>
                 <version>${wire-mock.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.lucene</groupId>
-                <artifactId>lucene-test-framework</artifactId>
-                <version>${lucene.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.opentable.components</groupId>
