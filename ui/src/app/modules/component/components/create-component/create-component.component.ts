@@ -202,6 +202,17 @@ export class CreateComponent implements OnInit, OnDestroy {
         );
     }
 
+    duplicateComponent() {
+        this.editableComponent = Object.assign({}, this.editableComponent);
+        this.editableComponent.id = null;
+        this.componentForm.controls.name.patchValue('--COPY-- ' + this.editableComponent.name);
+        this.router.navigateByUrl(`/component/list`);
+    }
+
+    duplicateAction() {
+        this.router.navigateByUrl(`/component/list`);
+    }
+
     removeStep(index: number) {
         this.componentTasksCreated.splice(index, 1);
     }
