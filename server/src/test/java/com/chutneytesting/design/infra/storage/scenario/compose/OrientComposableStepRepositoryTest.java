@@ -170,7 +170,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
         // When
         assertThatThrownBy(() -> sut.save(buildComposableStep(name)))
             .isInstanceOf(AlreadyExistingComposableStepException.class)
-            .hasMessageContaining("found duplicated key");
+            .hasMessageContaining("already exists");
     }
 
     @Test

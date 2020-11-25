@@ -12,7 +12,6 @@ import { EnvironmentAdminService } from '@core/services';
 })
 export class ToolbarComponent implements OnInit{
 
-
     @Input() editComponent: ComponentTask;
     @Input() parents: any;
 
@@ -21,6 +20,7 @@ export class ToolbarComponent implements OnInit{
     @Output() executeEvent = new EventEmitter();
     @Output() childEvent = new EventEmitter();
     @Output() deleteEvent = new EventEmitter();
+    @Output() duplicateEvent = new EventEmitter();
 
     environments: EnvironmentMetadata[];
 
@@ -54,5 +54,9 @@ export class ToolbarComponent implements OnInit{
 
     delete() {
         this.deleteEvent.emit();
+    }
+
+    duplicate() {
+        this.duplicateEvent.emit();
     }
 }
