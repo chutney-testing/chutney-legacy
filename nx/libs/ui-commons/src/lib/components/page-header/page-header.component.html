@@ -9,7 +9,11 @@
     *ngIf="showBreadCrumb"
     [@animate]="{ value: '*', params: { delay: '100ms', y: '25px' } }"
   >
-    <a td-breadcrumb [routerLink]="['/']">Home</a>
-    <a td-breadcrumb [routerLink]="['/']">Scenarios</a>
+    <a
+      *ngFor="let breadcrumb of breadcrumbs"
+      td-breadcrumb
+      [routerLink]="breadcrumb.link"
+      >{{ breadcrumb.title }}</a
+    >
   </td-breadcrumbs>
 </div>

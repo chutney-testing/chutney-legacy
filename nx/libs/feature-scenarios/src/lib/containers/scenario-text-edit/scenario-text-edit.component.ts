@@ -20,6 +20,11 @@ export class ScenarioTextEditComponent implements OnInit {
   scenario$: Observable<any>;
   scenario: any;
   height: number = 200;
+  breadcrumbs: any = [
+    { title: 'Home', link: ['/'] },
+    { title: 'Scenarios', link: ['/'] },
+    { title: 'View', link: ['../../view'] },
+  ];
 
   constructor(
     private route: ActivatedRoute,

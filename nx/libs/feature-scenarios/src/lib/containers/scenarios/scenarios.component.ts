@@ -24,6 +24,10 @@ export class ScenariosComponent implements OnInit, OnDestroy {
   scenarios$: Observable<any[]>;
   scenariosFilter$: Observable<any>;
   filteredScenarios$: Observable<any[]>;
+  breadcrumbs: any = [
+    { title: 'Home', link: ['/'] },
+    { title: 'Scenarios', link: ['/'] },
+  ];
 
   /** Subject that emits when the component has been destroyed. */
   protected _onDestroy = new Subject<void>();
