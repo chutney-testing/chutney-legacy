@@ -1,7 +1,7 @@
 # <img src="ui/src/assets/logo/logo.svg" width="400"/> 
 ## Spice up your spec , Better `taste` your app !
 
-[![Build Status](https://travis-ci.org/chutney-testing/chutney.svg?branch=master)](https://travis-ci.org/chutney-testing/chutney)
+[![Build Status](https://travis-ci.com/chutney-testing/chutney.svg?branch=master)](https://travis-ci.com/chutney-testing/chutney)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/559893368d134d729b204891e3ce0239)](https://www.codacy.com/gh/chutney-testing/chutney?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=chutney-testing/chutney&amp;utm_campaign=Badge_Grade)
 [![Coverage Status](https://codecov.io/gh/chutney-testing/chutney/branch/master/graph/badge.svg)](https://codecov.io/gh/chutney-testing/chutney/)
 [![FOSSA Status](https://app.fossa.com/api/projects/custom%2B8595%2Fgit%40github.com%3Achutney-testing%2Fchutney.git.svg?type=shield)](https://app.fossa.com/projects/custom%2B8595%2Fgit%40github.com%3Achutney-testing%2Fchutney.git?ref=badge_shield)
