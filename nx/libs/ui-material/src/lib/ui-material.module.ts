@@ -33,6 +33,7 @@ import {
 import { IconsProviderModule } from './icons-provider.module';
 import { MatRippleModule } from '@angular/material/core';
 import { CovalentBreadcrumbsModule } from '@covalent/core/breadcrumbs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   imports: [
@@ -59,6 +60,7 @@ import { CovalentBreadcrumbsModule } from '@covalent/core/breadcrumbs';
     MatSlideToggleModule,
     MatButtonToggleModule,
     MatRippleModule,
+    MatTooltipModule,
     /** Covalent Modules */
     CovalentDialogsModule,
     CovalentSearchModule,
@@ -92,6 +94,7 @@ import { CovalentBreadcrumbsModule } from '@covalent/core/breadcrumbs';
     MatSlideToggleModule,
     MatButtonToggleModule,
     MatRippleModule,
+    MatTooltipModule,
     /** Covalent Modules */
     CovalentDialogsModule,
     CovalentSearchModule,
