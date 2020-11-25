@@ -30,7 +30,7 @@ public class ExecutableComposedStepMapper {
             .withSteps(composableToExecutable(fs.steps))
             .withImplementation(toStepImplementation(fs.implementation))
             .withParameters(fs.parameters)
-            .overrideDataSetWith(fs.dataSet)
+            .withDataset(fs.dataSet)
             .build();
     }
 

@@ -119,7 +119,7 @@ public class ComposedTestCaseDataSetPreProcessor implements TestCasePreProcessor
             .withImplementation(empty())
             .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
             .withSteps(buildStepIterations(composedStep, csNovaluedEntries, csValuedEntriesWithRef, dataset.multipleValues, iterationOutputs))
-            .overrideDataSetWith(buildDatasetWithAliases(csLeftEntries))
+            .withDataset(buildDatasetWithAliases(csLeftEntries))
             .build();
     }
 
@@ -201,6 +201,7 @@ public class ComposedTestCaseDataSetPreProcessor implements TestCasePreProcessor
                     .from(composedStep)
                     .withImplementation(composedStep.stepImplementation.flatMap(si -> Optional.of(indexIterationIO(si, index, iterationOutputs))))
                     .withName(composedStep.name + " - dataset iteration " + index)
+                    .withDataset(updatedDatasetUsingCurrentValue(composedStep.dataset, csNovaluedEntries, csValuedEntriesWithRef, mv))
                     .withSteps(composedStep.steps.stream()
                         .map(s ->
                             ExecutableComposedStep.builder()
@@ -209,7 +210,6 @@ public class ComposedTestCaseDataSetPreProcessor implements TestCasePreProcessor
                                 .build())
                         .collect(toList())
                     )
-                    .overrideDataSetWith(updatedDatasetUsingCurrentValue(composedStep.dataset, csNovaluedEntries, csValuedEntriesWithRef, mv))
                     .build();
             })
             .collect(toList());

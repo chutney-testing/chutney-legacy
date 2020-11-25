@@ -92,7 +92,7 @@ public class ComposedTestCaseParametersResolutionPreProcessor implements TestCas
             )
             .withImplementation(composedStep.stepImplementation.flatMap(si -> applyToImplementation(si, scopedDataset, globalVariable)))
             .withStrategy(composedStep.strategy)
-            .overrideDataSetWith(scopedDataset)
+            .withDataset(scopedDataset)
             .build();
     }
 
@@ -147,7 +147,7 @@ public class ComposedTestCaseParametersResolutionPreProcessor implements TestCas
             )
             .withImplementation(composedStep.stepImplementation)
             .withStrategy(applyToStrategy(composedStep.strategy, scopedDataset, globalVariable))
-            .overrideDataSetWith(composedStep.dataset)
+            .withDataset(composedStep.dataset)
             .build();
     }
 

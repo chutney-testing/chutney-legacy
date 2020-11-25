@@ -115,7 +115,7 @@ public class ComposedTestCaseDataSetPreProcessorTest {
                     asList(
                         ExecutableComposedStep.builder()
                             .withName("a step with no valued parameter")
-                            .overrideDataSetWith(
+                            .withDataset(
                                 Maps.of(
                                     "testcase key for dataset", "",
                                     "step 1 param", "value 1"
@@ -124,13 +124,13 @@ public class ComposedTestCaseDataSetPreProcessorTest {
                             .build(),
                         ExecutableComposedStep.builder()
                             .withName("a step with no dataset matched parameter")
-                            .overrideDataSetWith(
+                            .withDataset(
                                 Maps.of("step param", "value 2")
                             )
                             .build(),
                         ExecutableComposedStep.builder()
                             .withName("a step with ref parameter")
-                            .overrideDataSetWith(
+                            .withDataset(
                                 Maps.of(
                                     "ref step param", "value with ref **testcase key for dataset**",
                                     "step 3 alias", "**another param key**"
@@ -231,7 +231,7 @@ public class ComposedTestCaseDataSetPreProcessorTest {
                     singletonList(
                         ExecutableComposedStep.builder()
                             .withName("a step with no valued parameter")
-                            .overrideDataSetWith(
+                            .withDataset(
                                 Maps.of(
                                     "testcase key for dataset", "",
                                     "step 1 param", "value 1"
@@ -278,7 +278,7 @@ public class ComposedTestCaseDataSetPreProcessorTest {
                         ExecutableComposedStep.builder()
                             .withStrategy(strategyDefinition)
                             .withName("a step with no valued parameter")
-                            .overrideDataSetWith(
+                            .withDataset(
                                 Maps.of(
                                     "testcase key for dataset", "",
                                     "step 1 param", "value 1"
@@ -334,7 +334,7 @@ public class ComposedTestCaseDataSetPreProcessorTest {
                     singletonList(
                         ExecutableComposedStep.builder()
                             .withName("a step with key 1 dependency")
-                            .overrideDataSetWith(
+                            .withDataset(
                                 Maps.of(
                                     "key 1", ""
                                 )

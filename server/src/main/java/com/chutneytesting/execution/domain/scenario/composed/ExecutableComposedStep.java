@@ -6,6 +6,7 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toMap;
 
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import java.util.LinkedHashMap;
@@ -47,11 +48,11 @@ public class ExecutableComposedStep {
     public static class ExecutableComposedStepBuilder {
 
         private String name;
-        private List<ExecutableComposedStep> steps;
-        private Map<String, String> parameters = new LinkedHashMap<>();
+        private List<ExecutableComposedStep> steps = emptyList();
+        private Map<String, String> parameters = emptyMap();
         private Optional<StepImplementation> implementation;
         private Strategy strategy;
-        private Map<String, String> dataSet = new LinkedHashMap<>();
+        private Map<String, String> dataset = emptyMap();
 
         private ExecutableComposedStepBuilder() {}
 
@@ -62,8 +63,19 @@ public class ExecutableComposedStep {
                 ofNullable(parameters).orElse(emptyMap()),
                 ofNullable(implementation).orElse(empty()),
                 ofNullable(strategy).orElse(Strategy.DEFAULT),
-                unmodifiableMap(ofNullable(dataSet).orElse(emptyMap()))
+                unmodifiableMap(buildDataset())
             );
+        }
+
+        private Map<String, String> buildDataset() {
+            if (dataset.isEmpty()) {
+                return steps.stream()
+                    .map(ExecutableComposedStep::dataSetGlobalParameters)
+                    .filter(m -> !m.isEmpty())
+                    .collect(toMap(s -> ofNullable(s.get("key")).orElse(""), s -> ofNullable(s.get("value")).orElse("")));
+            }
+
+            return dataset;
         }
 
         public ExecutableComposedStepBuilder withName(String name) {
@@ -73,10 +85,6 @@ public class ExecutableComposedStep {
 
         public ExecutableComposedStepBuilder withSteps(List<ExecutableComposedStep> steps) {
             this.steps = unmodifiableList(steps);
-            steps.forEach(composedStep ->
-                addDataSet(
-                    composedStep.dataSetGlobalParameters()
-                ));
             return this;
         }
 
@@ -85,8 +93,8 @@ public class ExecutableComposedStep {
             return this;
         }
 
-        public ExecutableComposedStepBuilder overrideDataSetWith(Map<String, String> dataSet) {
-            this.dataSet = dataSet;
+        public ExecutableComposedStepBuilder withDataset(Map<String, String> dataSet) {
+            this.dataset = ofNullable(dataSet).orElse(emptyMap());
             return this;
         }
 
@@ -105,18 +113,13 @@ public class ExecutableComposedStep {
             return this;
         }
 
-        public ExecutableComposedStepBuilder addDataSet(Map<String, String> dataSet) {
-            ofNullable(dataSet).ifPresent(this.dataSet::putAll);
-            return this;
-        }
-
         public final ExecutableComposedStepBuilder from(ExecutableComposedStep instance) {
             this.name = instance.name;
             this.steps = instance.steps;
             this.parameters = instance.parameters;
             this.implementation = instance.stepImplementation;
             this.strategy = instance.strategy;
-            this.dataSet = new LinkedHashMap<>(instance.dataset);
+            this.dataset = new LinkedHashMap<>(instance.dataset);
             return this;
         }
     }

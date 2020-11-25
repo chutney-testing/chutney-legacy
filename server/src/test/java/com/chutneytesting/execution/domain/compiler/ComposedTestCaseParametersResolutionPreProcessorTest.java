@@ -163,7 +163,7 @@ public class ComposedTestCaseParametersResolutionPreProcessorTest {
     private ExecutableComposedStep buildStepFromActionWithDataSet(ExecutableComposedStep action, String targetDataSetValue) {
         return ExecutableComposedStep.builder()
             .from(action)
-            .overrideDataSetWith(
+            .withDataset(
                 Maps.of(
                     "target", targetDataSetValue
                 )
@@ -174,7 +174,7 @@ public class ComposedTestCaseParametersResolutionPreProcessorTest {
     private ExecutableComposedStep buildStepFromStepWithDataSet(ExecutableComposedStep step, String stepParamDataSetValue, String stepTargetDataSetValue, String targetDataSetValue) {
         return ExecutableComposedStep.builder()
             .from(step)
-            .overrideDataSetWith(
+            .withDataset(
                 Maps.of(
                     "step param", stepParamDataSetValue,
                     "step target", stepTargetDataSetValue,

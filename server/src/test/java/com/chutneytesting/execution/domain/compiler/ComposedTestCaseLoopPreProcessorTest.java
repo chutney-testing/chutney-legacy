@@ -10,8 +10,8 @@ import com.chutneytesting.WebConfiguration;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedScenario;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
@@ -32,7 +32,7 @@ public class ComposedTestCaseLoopPreProcessorTest {
         Strategy strategy = new Strategy("Loop", singletonMap("data", "[{\"P\":\"zog_zog\"}]"));
 
         ExecutableComposedStep step = ExecutableComposedStep.builder()
-            .overrideDataSetWith(parameter)
+            .withDataset(parameter)
             .withStrategy(strategy)
             .build();
 
@@ -61,7 +61,7 @@ public class ComposedTestCaseLoopPreProcessorTest {
         Strategy strategy = new Strategy("Loop", singletonMap("data", "[{\"P\":\"zog_zog\"}]"));
 
         ExecutableComposedStep step = ExecutableComposedStep.builder()
-            .overrideDataSetWith(emptyMap())
+            .withDataset(emptyMap())
             .withStrategy(strategy)
             .build();
 
@@ -91,7 +91,7 @@ public class ComposedTestCaseLoopPreProcessorTest {
         Strategy strategy = new Strategy("Loop", emptyMap());
 
         ExecutableComposedStep step = ExecutableComposedStep.builder()
-            .overrideDataSetWith(parameter)
+            .withDataset(parameter)
             .withStrategy(strategy)
             .build();
 
@@ -121,7 +121,7 @@ public class ComposedTestCaseLoopPreProcessorTest {
         Strategy strategy = new Strategy("Loop", singletonMap("data", "[{\"P\":\"zog_zog\"}]"));
 
         ExecutableComposedStep step = ExecutableComposedStep.builder()
-            .overrideDataSetWith(parameter)
+            .withDataset(parameter)
             .withStrategy(strategy)
             .build();
 
@@ -151,7 +151,7 @@ public class ComposedTestCaseLoopPreProcessorTest {
         Strategy strategy = new Strategy("Loop", singletonMap("data", "[{\"X\":\"zog_zog\"}]"));
 
         ExecutableComposedStep step = ExecutableComposedStep.builder()
-            .overrideDataSetWith(parameter)
+            .withDataset(parameter)
             .withStrategy(strategy)
             .build();
 
@@ -181,7 +181,7 @@ public class ComposedTestCaseLoopPreProcessorTest {
         Strategy strategy = new Strategy("Loop", singletonMap("data", "[{\"X\":\"zog_zog\"}]"));
 
         ExecutableComposedStep step = ExecutableComposedStep.builder()
-            .overrideDataSetWith(emptyMap())
+            .withDataset(emptyMap())
             .withStrategy(strategy)
             .build();
 
@@ -212,7 +212,7 @@ public class ComposedTestCaseLoopPreProcessorTest {
         Strategy strategy = new Strategy("Loop", singletonMap("data", "[{\"P\":\"dabu\"},{\"P\":\"zog_zog\"} ]"));
 
         ExecutableComposedStep step = ExecutableComposedStep.builder()
-            .overrideDataSetWith(parameter)
+            .withDataset(parameter)
             .withStrategy(strategy)
             .build();
 
@@ -243,7 +243,7 @@ public class ComposedTestCaseLoopPreProcessorTest {
         Strategy strategy = new Strategy("Loop", singletonMap("data", "[ {\"P_1\":\"dabu\",\"P_2\":\"zog_zog\"}, {\"P_2\":\"goz_goz\"} ]"));
 
         ExecutableComposedStep step = ExecutableComposedStep.builder()
-            .overrideDataSetWith(parameter)
+            .withDataset(parameter)
             .withStrategy(strategy)
             .build();
 
@@ -275,7 +275,7 @@ public class ComposedTestCaseLoopPreProcessorTest {
 
         ExecutableComposedStep substep = ExecutableComposedStep.builder()
             .withName("substep with loop strategy")
-            .overrideDataSetWith(parameter)
+            .withDataset(parameter)
             .withStrategy(strategy)
             .build();
 
@@ -315,7 +315,7 @@ public class ComposedTestCaseLoopPreProcessorTest {
 
         ExecutableComposedStep step = ExecutableComposedStep.builder()
             .withName("fake_name")
-            .overrideDataSetWith(parameter)
+            .withDataset(parameter)
             .withStrategy(strategy)
             .build();
 
@@ -346,7 +346,7 @@ public class ComposedTestCaseLoopPreProcessorTest {
         Strategy strategy = new Strategy("Loop", singletonMap("data", "[ {} ]"));
 
         ExecutableComposedStep step = ExecutableComposedStep.builder()
-            .overrideDataSetWith(parameter)
+            .withDataset(parameter)
             .withStrategy(strategy)
             .build();
 

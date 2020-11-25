@@ -67,7 +67,7 @@ public class ComposedTestCasePreProcessorTest {
         Map<String, String> childParameters = singletonMap(VALUE,  /* empty: will be provided by Loop strategy */  "");
         ExecutableComposedStep childStepWithParameters = ExecutableComposedStep.builder()
             .withParameters(childParameters)
-            .overrideDataSetWith(singletonMap(VALUE,  /* empty: will be provided by Loop strategy */  "**" + VALUE + "**"))
+            .withDataset(singletonMap(VALUE,  /* empty: will be provided by Loop strategy */  "**" + VALUE + "**"))
             .build();
 
         Strategy strategy = new Strategy("Loop", singletonMap("data", "**" + PARAM_NAME + "**"));
@@ -76,7 +76,7 @@ public class ComposedTestCasePreProcessorTest {
             .withSteps(singletonList(childStepWithParameters))
             .withStrategy(strategy)
             .withParameters(singletonMap(PARAM_NAME, ""))
-            .overrideDataSetWith(singletonMap(PARAM_NAME, /* provided by global variable repository */ "**" + GLOBAL_PARAMETER + "**"))
+            .withDataset(singletonMap(PARAM_NAME, /* provided by global variable repository */ "**" + GLOBAL_PARAMETER + "**"))
             .build();
 
         ExecutableComposedScenario composableScenario = ExecutableComposedScenario.builder()
@@ -116,7 +116,7 @@ public class ComposedTestCasePreProcessorTest {
         Map<String, String> childParameters = singletonMap(VALUE,  /* empty: will be provided by Loop strategy */  "");
         ExecutableComposedStep childStepWithParameters = ExecutableComposedStep.builder()
             .withParameters(childParameters)
-            .overrideDataSetWith(singletonMap(VALUE,  /* empty: will be provided by Loop strategy */  "**" + VALUE + "**"))
+            .withDataset(singletonMap(VALUE,  /* empty: will be provided by Loop strategy */  "**" + VALUE + "**"))
             .build();
 
         Strategy strategy = new Strategy("Loop", singletonMap("data", "**" + PARAM_NAME + "**"));
@@ -125,7 +125,7 @@ public class ComposedTestCasePreProcessorTest {
             .withSteps(singletonList(childStepWithParameters))
             .withStrategy(strategy)
             .withParameters(singletonMap(PARAM_NAME, ""))
-            .overrideDataSetWith(singletonMap(PARAM_NAME, ""))
+            .withDataset(singletonMap(PARAM_NAME, ""))
             .build();
 
         ExecutableComposedScenario composableScenario = ExecutableComposedScenario.builder()
@@ -468,13 +468,13 @@ public class ComposedTestCasePreProcessorTest {
                                 singletonList(
                                     ExecutableComposedStep.builder()
                                         .withName("substep name with **testcase param third**")
-                                        .overrideDataSetWith(
+                                        .withDataset(
                                             Maps.of("testcase param third", "")
                                         )
                                         .build()
                                 )
                             )
-                            .overrideDataSetWith(
+                            .withDataset(
                                 Maps.of(
                                     "first step param", "**testcase param**",
                                     "testcase param third", ""
@@ -485,7 +485,7 @@ public class ComposedTestCasePreProcessorTest {
                         ExecutableComposedStep.builder()
                             .withName("step do not iterate over me")
                             .withImplementation(of(new StepImplementation("http-get", "**step 2 param** and **testcase param**", emptyMap(), emptyMap())))
-                            .overrideDataSetWith(
+                            .withDataset(
                                 Maps.of(
                                     "step 2 param", "hard value 2",
                                     "testcase param", "another hard value 2"
@@ -496,7 +496,7 @@ public class ComposedTestCasePreProcessorTest {
                         ExecutableComposedStep.builder()
                             .withName("step with iteration over two dataset's keys **testcase param**")
                             .withImplementation(of(new StepImplementation("http-**global.key**", "**testcase param second** and **step 3 param**", emptyMap(), emptyMap())))
-                            .overrideDataSetWith(
+                            .withDataset(
                                 Maps.of(
                                     "testcase param", "",
                                     "testcase param second", "",
@@ -549,7 +549,7 @@ public class ComposedTestCasePreProcessorTest {
     private ExecutableComposedStep buildStepFromActionWithDataSet(ExecutableComposedStep action, String targetDataSetValue) {
         return ExecutableComposedStep.builder()
             .from(action)
-            .overrideDataSetWith(
+            .withDataset(
                 Maps.of(
                     "target", targetDataSetValue
                 )
@@ -560,7 +560,7 @@ public class ComposedTestCasePreProcessorTest {
     private ExecutableComposedStep buildStepFromStepWithDataSet(ExecutableComposedStep step, String stepParamDataSetValue, String stepTargetDataSetValue, String targetDataSetValue) {
         return ExecutableComposedStep.builder()
             .from(step)
-            .overrideDataSetWith(
+            .withDataset(
                 Maps.of(
                     "step param", stepParamDataSetValue,
                     "step target", stepTargetDataSetValue,
@@ -573,7 +573,7 @@ public class ComposedTestCasePreProcessorTest {
     private ExecutableComposedStep buildStepFromStepWithDataSet(ExecutableComposedStep step, String stepParamDataSetValue, String stepTargetDataSetValue) {
         return ExecutableComposedStep.builder()
             .from(step)
-            .overrideDataSetWith(
+            .withDataset(
                 Maps.of(
                     "step param", stepParamDataSetValue,
                     "step target", stepTargetDataSetValue
