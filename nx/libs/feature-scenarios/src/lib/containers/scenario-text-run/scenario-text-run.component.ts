@@ -27,6 +27,11 @@ export class ScenarioTextRunComponent implements OnInit {
   treeControl = new NestedTreeControl<any>((node) => node.steps);
   dataSource = new MatTreeNestedDataSource<any>();
   report: any;
+  breadcrumbs: any = [
+    { title: 'Home', link: ['/'] },
+    { title: 'Scenarios', link: ['/'] },
+    { title: 'View', link: ['../../view'] },
+  ];
 
   constructor(
     private router: Router,

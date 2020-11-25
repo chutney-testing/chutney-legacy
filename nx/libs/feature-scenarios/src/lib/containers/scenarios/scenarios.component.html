@@ -1,5 +1,6 @@
 <div class="mat-elevation-z8">
-  <chutney-page-header [title]="'Scenarios'"> </chutney-page-header>
+  <chutney-page-header [title]="'Scenarios'" [breadcrumbs]="breadcrumbs">
+  </chutney-page-header>
   <chutney-scenarios-search-form></chutney-scenarios-search-form>
   <chutney-scenarios-list
     [scenarios]="filteredScenarios$ | async"

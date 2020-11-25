@@ -16,10 +16,9 @@ export class PageHeaderComponent implements OnInit {
   @Input() title = '';
   @Input() subtitle = '';
   @Input() showBreadCrumb = true;
+  @Input() breadcrumbs: any;
 
   constructor(private router: Router) {}
 
   ngOnInit() {}
-
-  genBreadcrumb() {}
 }

@@ -17,6 +17,10 @@ export class ScenarioTextViewComponent implements OnInit {
   scenario$: Observable<Scenario>;
   treeControl = new NestedTreeControl<any>((node) => node.subSteps);
   dataSource = new MatTreeNestedDataSource<any>();
+  breadcrumbs: any = [
+    { title: 'Home', link: ['/'] },
+    { title: 'Scenarios', link: ['/'] },
+  ];
 
   constructor(
     private router: Router,

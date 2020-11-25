@@ -1,4 +1,5 @@
-<chutney-page-header [title]="'Scenarios'"> </chutney-page-header>
+<chutney-page-header [title]="'Scenarios'" [breadcrumbs]="breadcrumbs">
+</chutney-page-header>
 <div *ngIf="scenario$ | async as scenario">
   <mat-toolbar>
     <mat-toolbar-row>
