@@ -418,7 +418,7 @@ public class ComposedTestCasePreProcessorTest {
     }
 
     @Test
-    public void should_generate_ComposableExecutableTestCase_scenario_steps_with_dataset_values() {
+    public void should_generate_composed_scenario_steps_with_dataset_values() {
         // Given
         Map<String, String> globalVars = new HashMap<>();
         globalVars.put("global.key", "global var value");
@@ -433,7 +433,7 @@ public class ComposedTestCasePreProcessorTest {
                 )
             )
             .withMultipleValues(
-                asList( // Note that first key has only two distincts values ...
+                asList( // Note that first key has only two distinct values ...
                     Maps.of("testcase param", "dataset mv 11", "testcase param second", "dataset mv 12"),
                     Maps.of("testcase param", "dataset mv 11", "testcase param second", "dataset mv 22"),
                     Maps.of("testcase param", "dataset mv 31", "testcase param second", "dataset mv 32")

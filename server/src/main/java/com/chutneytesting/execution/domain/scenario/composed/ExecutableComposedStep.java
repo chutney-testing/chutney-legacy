@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 public class ExecutableComposedStep {
@@ -38,7 +37,7 @@ public class ExecutableComposedStep {
     public Map<String, String> dataSetGlobalParameters() {
         return dataset.entrySet().stream()
             .filter(e -> StringUtils.isBlank(e.getValue()))
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     public static ExecutableComposedStepBuilder builder() {

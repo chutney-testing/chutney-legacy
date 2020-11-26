@@ -203,7 +203,7 @@ public class CampaignExecutionEngine {
         String scenarioName;
         try {
             LOGGER.trace("Execute scenario {} for campaign {}", testCase.id(), campaign.id);
-            ExecutionRequest executionRequest = buildTestCaseExecutionrequest(campaign, testCase, userId);
+            ExecutionRequest executionRequest = buildExecutionRequest(campaign, testCase, userId);
             ScenarioExecutionReport scenarioExecutionReport = scenarioExecutionEngine.execute(executionRequest);
             executionId = scenarioExecutionReport.executionId;
             scenarioName = scenarioExecutionReport.scenarioName;
@@ -221,7 +221,7 @@ public class CampaignExecutionEngine {
         return new ScenarioExecutionReportCampaign(testCase.id(), scenarioName, execution.summary());
     }
 
-    private ExecutionRequest buildTestCaseExecutionrequest(Campaign campaign, TestCase testCase, String userId) {
+    private ExecutionRequest buildExecutionRequest(Campaign campaign, TestCase testCase, String userId) {
         String campaignDatasetId = campaign.datasetId;
         // Override scenario dataset by campaign's one
         if (isNotBlank(campaignDatasetId) && testCase instanceof ComposableTestCase) {

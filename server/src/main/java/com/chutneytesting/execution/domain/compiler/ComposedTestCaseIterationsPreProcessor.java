@@ -27,13 +27,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.apache.commons.text.StringEscapeUtils;
 
-public class ComposedTestCaseDataSetPreProcessor implements TestCasePreProcessor<ExecutableComposedTestCase> {
+public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProcessor<ExecutableComposedTestCase> {
 
     private final DataSetRepository dataSetRepository;
 
-    ComposedTestCaseDataSetPreProcessor(DataSetRepository dataSetRepository) {
+    ComposedTestCaseIterationsPreProcessor(DataSetRepository dataSetRepository) {
         this.dataSetRepository = dataSetRepository;
     }
 
@@ -50,7 +51,7 @@ public class ComposedTestCaseDataSetPreProcessor implements TestCasePreProcessor
         }
 
         DataSet dataSet = oDataSet.get();
-        Map<Boolean, List<String>> matchedHeaders = doSomethingWithHeaders(testCase, dataSet.multipleValues);
+        Map<Boolean, List<String>> matchedHeaders = findMultipleValuesHeadersMatchingComputedParams(testCase, dataSet.multipleValues);
 
         return new ExecutableComposedTestCase(
             testCase.id,
@@ -59,7 +60,7 @@ public class ComposedTestCaseDataSetPreProcessor implements TestCasePreProcessor
             applyToComputedParameters(testCase.computedParameters, matchedHeaders.get(Boolean.TRUE), dataSet));
     }
 
-    private Map<Boolean, List<String>> doSomethingWithHeaders(ExecutableComposedTestCase testCase, List<Map<String, String>> multipleValues) {
+    private Map<Boolean, List<String>> findMultipleValuesHeadersMatchingComputedParams(ExecutableComposedTestCase testCase, List<Map<String, String>> multipleValues) {
         Map<Boolean, List<String>> matchedHeaders = new HashMap<>();
         if (!multipleValues.isEmpty()) {
             Set<String> valuesHeaders = multipleValues.get(0).keySet();
@@ -102,8 +103,9 @@ public class ComposedTestCaseDataSetPreProcessor implements TestCasePreProcessor
         Set<String> csNovaluedEntries = findComposedStepNoValuedMatchedEntries(composedStep.dataset, matchedHeaders.get(Boolean.TRUE));
         Map<String, Set<String>> csValuedEntriesWithRef = findComposedStepValuedEntriesWithRef(composedStep.dataset, matchedHeaders.get(Boolean.TRUE));
         Map<String, Integer> usedIndexedOutput = findUsageOfPreviousOutput(composedStep, iterationOutputs);
+        Map<String, Integer> usedIndexedOutputInDataset = findUsageOfPreviousOutputInDataset(composedStep, iterationOutputs);
 
-        if (csNovaluedEntries.isEmpty() && csValuedEntriesWithRef.isEmpty() && usedIndexedOutput.isEmpty()) {
+        if (csNovaluedEntries.isEmpty() && csValuedEntriesWithRef.isEmpty() && usedIndexedOutput.isEmpty() && usedIndexedOutputInDataset.isEmpty()) {
             return composedStep;
         }
 
@@ -123,35 +125,48 @@ public class ComposedTestCaseDataSetPreProcessor implements TestCasePreProcessor
             .build();
     }
 
-    private Map<String, Integer> findUsageOfPreviousOutput(ExecutableComposedStep composedStep, Map<String, Integer> iterationOutputs) {
-        Map<String, Integer> m = new HashMap<>();
-        composedStep.stepImplementation.ifPresent( si ->
-            m.putAll(iterationOutputs.entrySet().stream()
+    private Map<String, Integer> findUsageOfPreviousOutputInDataset(ExecutableComposedStep composedStep, Map<String, Integer> iterationOutputs) {
+        return iterationOutputs.entrySet().stream()
             .filter(previousOutput ->
-                si.inputs.entrySet().stream()
+                composedStep.dataset.entrySet().stream()
                     .anyMatch(input -> input.getKey().equals("${#" + previousOutput.getKey() + "}")
                         || usePreviousIterationOutput(previousOutput.getKey(), input.getValue())
-                    ))
-            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue))));
-
-        return m;
+                    )
+            )
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private boolean usePreviousIterationOutput(String s, Object value) {
+    private Map<String, Integer> findUsageOfPreviousOutput(ExecutableComposedStep composedStep, Map<String, Integer> iterationOutputs) {
+        Map<String, Integer> map = new HashMap<>();
+        composedStep.stepImplementation.ifPresent( si ->
+            map.putAll(iterationOutputs.entrySet().stream()
+                .filter(previousOutput ->
+                    si.inputs.entrySet().stream()
+                        .anyMatch(input -> input.getKey().equals("${#" + previousOutput.getKey() + "}")
+                            || usePreviousIterationOutput(previousOutput.getKey(), input.getValue())
+                        ))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue))
+            )
+        );
+
+        return map;
+    }
+
+    private boolean usePreviousIterationOutput(String previousOutput, Object value) {
         if (value instanceof String) {
-            return usePreviousIterationOutput(s, (String) value);
+            return usePreviousIterationOutput(previousOutput, (String) value);
         } else if (value instanceof Map) {
-            return usePreviousIterationOutput(s, (Map<String, String>) value);
+            return usePreviousIterationOutput(previousOutput, (Map<String, String>) value);
         }
         return false;
     }
 
-    private boolean usePreviousIterationOutput(String s, Map<String, String> value) {
-        return value.entrySet().stream().anyMatch(e -> e.getKey().equals("${#" + s + "}") || usePreviousIterationOutput(s, e.getValue()));
+    private boolean usePreviousIterationOutput(String previousOutput, String value) {
+        return value.contains("${#" + previousOutput + "}");
     }
 
-    private boolean usePreviousIterationOutput(String s, String value) {
-        return value.contains("${#" + s + "}");
+    private boolean usePreviousIterationOutput(String previousOutput, Map<String, String> value) {
+        return value.entrySet().stream().anyMatch(e -> e.getKey().equals("${#" + previousOutput + "}") || usePreviousIterationOutput(previousOutput, e.getValue()));
     }
 
     private Set<String> findComposedStepNoValuedMatchedEntries(Map<String, String> csDataset, List<String> matchedHeaders) {
@@ -180,20 +195,26 @@ public class ComposedTestCaseDataSetPreProcessor implements TestCasePreProcessor
                                                              Map<String, Set<String>> csValuedEntriesWithRef,
                                                              List<Map<String, String>> multipleValues,
                                                              Map<String, Integer> iterationOutputs) {
-
-        Set<String> dataSetEntriesReferenced = csValuedEntriesWithRef.values().stream().flatMap(Collection::stream).collect(toSet());
-        List<Map<String, String>> iterationData = multipleValues.stream()
-            .map(mv ->
-                mv.entrySet().stream()
-                    .filter(e -> csNovaluedEntries.contains(e.getKey()) || dataSetEntriesReferenced.contains(e.getKey()))
-                    .collect(toMap(Map.Entry::getKey, Map.Entry::getValue))
-            )
-            .distinct()
-            .filter(mv -> !mv.isEmpty())
-            .collect(toList());
-
+        List<ExecutableComposedStep> iterations;
         AtomicInteger index = new AtomicInteger(0);
-        List<ExecutableComposedStep> iterations = iterationData.stream()
+
+        iterations = generateIterationsForMultipleValues(composedStep, multipleValues, csNovaluedEntries, csValuedEntriesWithRef, iterationOutputs, index);
+
+        if (iterations.isEmpty()) {
+            iterations = generateIterationsForPreviousIterationOutputs(composedStep, iterationOutputs, index);
+        }
+
+        if (iterations.isEmpty()) {
+            iterations = generateIterationsForPreviousIterationOutputsInDataset(composedStep, iterationOutputs, index);
+        }
+
+        rememberIterationsCountForEachOutput(iterationOutputs, index);
+        return iterations;
+    }
+
+    private List<ExecutableComposedStep> generateIterationsForMultipleValues(ExecutableComposedStep composedStep, List<Map<String, String>> multipleValues, Set<String> csNovaluedEntries, Map<String, Set<String>> csValuedEntriesWithRef, Map<String, Integer> iterationOutputs, AtomicInteger index) {
+        List<Map<String, String>> iterationData = findUsageOfDatasetMultipleValues(csNovaluedEntries, csValuedEntriesWithRef, multipleValues);
+        return iterationData.stream()
             .map(mv -> {
                 index.getAndIncrement();
 
@@ -213,21 +234,63 @@ public class ComposedTestCaseDataSetPreProcessor implements TestCasePreProcessor
                     .build();
             })
             .collect(toList());
+    }
 
-        Map<String, Integer> usageOfPreviousOutput = findUsageOfPreviousOutput(composedStep, iterationOutputs);
-        List<ExecutableComposedStep> iterationsFromUsingPreviousOutput = new ArrayList<>();
-        for (int i = 0; i < Optional.ofNullable(usageOfPreviousOutput.get("result")).orElse(0); i++) {
-            index.getAndIncrement();
-            iterationsFromUsingPreviousOutput.add(ExecutableComposedStep.builder()
-                .from(composedStep)
-                .withImplementation(composedStep.stepImplementation.flatMap(si -> Optional.of(indexIterationIO(si, index, iterationOutputs))))
-                .withName(composedStep.name + " - dataset iteration " + index)
-                .build());
-        }
+    private List<Map<String, String>> findUsageOfDatasetMultipleValues(Set<String> csNovaluedEntries, Map<String, Set<String>> csValuedEntriesWithRef, List<Map<String, String>> multipleValues) {
+        Set<String> dataSetEntriesReferenced = csValuedEntriesWithRef.values().stream().flatMap(Collection::stream).collect(toSet());
+        return multipleValues.stream()
+            .map(mv ->
+                mv.entrySet().stream()
+                    .filter(e -> csNovaluedEntries.contains(e.getKey()) || dataSetEntriesReferenced.contains(e.getKey()))
+                    .collect(toMap(Map.Entry::getKey, Map.Entry::getValue))
+            )
+            .distinct()
+            .filter(mv -> !mv.isEmpty())
+            .collect(toList());
+    }
 
-        iterations.addAll(iterationsFromUsingPreviousOutput);
-        iterationOutputs.replaceAll((k, v) -> v = index.get());
-        return iterations;
+    private List<ExecutableComposedStep> generateIterationsForPreviousIterationOutputs(ExecutableComposedStep composedStep, Map<String, Integer> iterationOutputs, AtomicInteger index) {
+        Map<String, Integer> previousOutputs = findUsageOfPreviousOutput(composedStep, iterationOutputs);
+        return previousOutputs.values().stream()
+            .map(integer -> {
+                List<ExecutableComposedStep> tmp = new ArrayList<>();
+                for (int i = 0; i < Optional.ofNullable(integer).orElse(0); i++) {
+                    index.getAndIncrement();
+                    tmp.add(
+                        ExecutableComposedStep.builder()
+                            .from(composedStep)
+                            .withImplementation(composedStep.stepImplementation.flatMap(si -> Optional.of(indexIterationIO(si, index, iterationOutputs))))
+                            .withName(composedStep.name + " - dataset iteration " + index)
+                            .withDataset(composedStep.dataset)
+                            .build()
+                    );
+                }
+                return tmp;
+            })
+            .flatMap(Collection::stream)
+            .collect(toList());
+    }
+
+    private List<ExecutableComposedStep> generateIterationsForPreviousIterationOutputsInDataset(ExecutableComposedStep composedStep, Map<String, Integer> iterationOutputs, AtomicInteger index) {
+        Map<String, Integer> previousOutputs = findUsageOfPreviousOutputInDataset(composedStep, iterationOutputs);
+        return previousOutputs.values().stream()
+            .map(integer -> {
+                List<ExecutableComposedStep> tmp = new ArrayList<>();
+                for (int i = 0; i < Optional.ofNullable(integer).orElse(0); i++) {
+                    index.getAndIncrement();
+                    tmp.add(
+                        ExecutableComposedStep.builder()
+                            .from(composedStep)
+                            .withImplementation(composedStep.stepImplementation.flatMap(si -> Optional.of(indexIterationIO(si, index, iterationOutputs))))
+                            .withName(composedStep.name + " - dataset iteration " + index)
+                            .withDataset(applyIndexedOutputs(composedStep.dataset, index, iterationOutputs, StringEscapeUtils::escapeJson))
+                            .build()
+                    );
+                }
+                return tmp;
+            })
+            .flatMap(Collection::stream)
+            .collect(Collectors.toList());
     }
 
     private Map<String, String> updatedDatasetUsingCurrentValue(Map<String, String> dataset, Set<String> csNovaluedEntries, Map<String, Set<String>> csValuedEntriesWithRef, Map<String, String> mv) {
@@ -252,50 +315,50 @@ public class ComposedTestCaseDataSetPreProcessor implements TestCasePreProcessor
         );
     }
 
-    private Map<String, Object> indexInputs(Map<String, Object> inputs, AtomicInteger index, Map<String, Integer> iterationOutputs) {
-        Map<String, Object> collect = inputs.entrySet().parallelStream().collect(toMap(e -> (String) applyIndexedOutput(e.getKey(), index, iterationOutputs), e -> applyIndexedOutput(e.getValue(), index, iterationOutputs)));
-        return collect;
-    }
-
-    private Map<String, Object> indexOutputs(Map<String, Object> outputs, AtomicInteger index) {
-        return outputs.entrySet().parallelStream().collect(toMap(e -> e.getKey() + "_" + index, Map.Entry::getValue));
-    }
-
-    private Object applyIndexedOutput(Object value, AtomicInteger index, Map<String, Integer> iterationOutputs) {
-        return applyIndexedOutput(value, index, iterationOutputs, StringEscapeUtils::escapeJson);
-    }
-
-    private Object applyIndexedOutput(Object value, AtomicInteger index, Map<String, Integer> indexedOutput, Function<String, String> escapeValueFunction) {
-        if (value instanceof String) {
-            String tmp = (String) value;
-            for (String output : indexedOutput.keySet()) {
-                tmp = tmp.replace("#" + output, escapeValueFunction.apply("#" + output + "_" + index));
-            }
-            return tmp;
-        } else if (value instanceof Map) {
-            Map<String, String> tmp = (Map<String, String>) value;
-            Map<String, String> collect = tmp.entrySet().parallelStream().collect(toMap(
-                e -> {
-                    String s = e.getKey();
-                    for (String output : indexedOutput.keySet()) {
-                        s = s.replace("#" + output, escapeValueFunction.apply("#" + output + "_" + index));
-                    }
-                    return s;
-                },
-                e -> {
-                    String s = e.getValue();
-                    for (String output : indexedOutput.keySet()) {
-                        s = s.replace("#" + output, escapeValueFunction.apply("#" + output + "_" + index));
-                    }
-                    return s;
-                })
-            );
-            return collect;
-        } else return value;
-    }
-
     private void rememberIndexedOutput(Map<String, Integer> iterationOutputs, Map<String, Object> outputs) {
         Map<String, Integer> collect = outputs.entrySet().stream().collect(toMap(Map.Entry::getKey, e -> 0));
         iterationOutputs.putAll(collect);
     }
+
+    private void rememberIterationsCountForEachOutput(Map<String, Integer> iterationOutputs, AtomicInteger index) {
+        iterationOutputs.replaceAll((k, v) -> v = index.get());
+    }
+
+    private Map<String, Object> indexInputs(Map<String, Object> inputs, AtomicInteger index, Map<String, Integer> iterationOutputs) {
+        return inputs.entrySet().parallelStream().collect(toMap(
+            e -> applyIndexedOutputsOnStringValue(e.getKey(), index, iterationOutputs, StringEscapeUtils::escapeJson),
+            e -> applyIndexedOutputs(e.getValue(), index, iterationOutputs, StringEscapeUtils::escapeJson)
+        ));
+    }
+
+    private Map<String, Object> indexOutputs(Map<String, Object> outputs, AtomicInteger index) {
+        return outputs.entrySet().parallelStream().collect(toMap(
+            e -> e.getKey() + "_" + index,
+            Map.Entry::getValue
+        ));
+    }
+
+    private Object applyIndexedOutputs(Object value, AtomicInteger index, Map<String, Integer> indexedOutput, Function<String, String> escapeValueFunction) {
+        if (value instanceof String) {
+            return applyIndexedOutputsOnStringValue((String) value, index, indexedOutput, escapeValueFunction);
+        } else if (value instanceof Map) {
+            return applyIndexedOutputs((Map<String, String>) value, index, indexedOutput, escapeValueFunction);
+        } else return value;
+    }
+
+    private Map<String, String> applyIndexedOutputs(Map<String, String> value, AtomicInteger index, Map<String, Integer> indexedOutput, Function<String, String> escapeValueFunction) {
+        return value.entrySet().parallelStream().collect(toMap(
+            e -> applyIndexedOutputsOnStringValue(e.getKey(), index, indexedOutput, escapeValueFunction),
+            e -> applyIndexedOutputsOnStringValue(e.getValue(), index, indexedOutput, escapeValueFunction)
+        ));
+    }
+
+    private String applyIndexedOutputsOnStringValue(String value, AtomicInteger index, Map<String, Integer> indexedOutput, Function<String, String> escapeValueFunction) {
+        String tmp = value;
+        for (String output : indexedOutput.keySet()) {
+            tmp = tmp.replace("#" + output, escapeValueFunction.apply("#" + output + "_" + index));
+        }
+        return tmp;
+    }
+
 }

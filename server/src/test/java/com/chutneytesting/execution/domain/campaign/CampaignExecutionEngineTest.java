@@ -7,7 +7,6 @@ import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
-import static org.hamcrest.Matchers.hasEntry;
 import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -17,18 +16,17 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
 import com.chutneytesting.design.domain.campaign.Campaign;
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
 import com.chutneytesting.design.domain.campaign.CampaignNotFoundException;
 import com.chutneytesting.design.domain.campaign.CampaignRepository;
-import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
-import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
+import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
+import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
@@ -190,15 +188,15 @@ public class CampaignExecutionEngineTest {
     public void should_retry_failed_scenario() {
         // Given
         TestCase firstTestCase = createGwtTestCase("1");
-        TestCase secondtTestCase = createGwtTestCase("2");
+        TestCase secondTestCase = createGwtTestCase("2");
 
-        Campaign campaign = createCampaign(firstTestCase, secondtTestCase, true);
+        Campaign campaign = createCampaign(firstTestCase, secondTestCase, true);
 
         when(testCaseRepository.findById(firstTestCase.id())).thenReturn(firstTestCase);
-        when(testCaseRepository.findById(secondtTestCase.id())).thenReturn(secondtTestCase);
+        when(testCaseRepository.findById(secondTestCase.id())).thenReturn(secondTestCase);
         when(scenarioExecutionEngine.execute(any(ExecutionRequest.class))).thenReturn(mock(ScenarioExecutionReport.class));
         when(executionHistoryRepository.getExecution(eq(firstTestCase.id()), or(eq(0L), eq(10L)))).thenReturn(failedExecutionWithId(10L));
-        when(executionHistoryRepository.getExecution(eq(secondtTestCase.id()), or(eq(0L), eq(20L)))).thenReturn(failedExecutionWithId(20L));
+        when(executionHistoryRepository.getExecution(eq(secondTestCase.id()), or(eq(0L), eq(20L)))).thenReturn(failedExecutionWithId(20L));
 
         // When
         sut.executeScenarioInCampaign(emptyList(), campaign, "user");
@@ -211,18 +209,18 @@ public class CampaignExecutionEngineTest {
     public void should_execute_scenario_in_parallel() {
         // Given
         TestCase firstTestCase = createGwtTestCase("1");
-        TestCase secondtTestCase = createGwtTestCase("2");
+        TestCase secondTestCase = createGwtTestCase("2");
 
-        Campaign campaign = createCampaign(firstTestCase, secondtTestCase, true, false);
+        Campaign campaign = createCampaign(firstTestCase, secondTestCase, true, false);
 
         when(testCaseRepository.findById(firstTestCase.id())).thenReturn(firstTestCase);
-        when(testCaseRepository.findById(secondtTestCase.id())).thenReturn(secondtTestCase);
+        when(testCaseRepository.findById(secondTestCase.id())).thenReturn(secondTestCase);
         when(scenarioExecutionEngine.execute(any(ExecutionRequest.class))).then((Answer<ScenarioExecutionReport>) invocationOnMock -> {
             TimeUnit.SECONDS.sleep(1);
             return mock(ScenarioExecutionReport.class);
         });
         when(executionHistoryRepository.getExecution(eq(firstTestCase.id()), or(eq(0L), eq(10L)))).thenReturn(failedExecutionWithId(10L));
-        when(executionHistoryRepository.getExecution(eq(secondtTestCase.id()), or(eq(0L), eq(20L)))).thenReturn(failedExecutionWithId(20L));
+        when(executionHistoryRepository.getExecution(eq(secondTestCase.id()), or(eq(0L), eq(20L)))).thenReturn(failedExecutionWithId(20L));
 
         // When
         StopWatch watch = new StopWatch();
