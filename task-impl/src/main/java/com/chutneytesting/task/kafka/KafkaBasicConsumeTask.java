@@ -203,16 +203,21 @@ public class KafkaBasicConsumeTask implements Task {
     }
 
     private void checkContentTypeHeader(Map<String, Object> headers) {
-        Optional<MimeType> contentType = headers.entrySet().stream()
-            .filter(e -> e.getKey().replaceAll("[- ]", "").equalsIgnoreCase("contenttype"))
-            .findAny()
-            .map(Map.Entry::getValue)
-            .map(Object::toString)
-            .map(MimeTypeUtils::parseMimeType);
+        try {
+            Optional<MimeType> contentType = headers.entrySet().stream()
+                .filter(e -> e.getKey().replaceAll("[- ]", "").equalsIgnoreCase("contenttype"))
+                .findAny()
+                .map(Map.Entry::getValue)
+                .map(Object::toString)
+                .map(s -> s.replace("\"", ""))
+                .map(MimeTypeUtils::parseMimeType);
 
-        contentType.ifPresent(ct -> {
-            logger.info("Found content type header " + ct);
-            this.contentType = ct;
-        });
+            contentType.ifPresent(ct -> {
+                logger.info("Found content type header " + ct);
+                this.contentType = ct;
+            });
+        } catch (Exception e) {
+            logger.error("Cannot retrieve content type from message received:  " + e.getMessage());
+        }
     }
 }
