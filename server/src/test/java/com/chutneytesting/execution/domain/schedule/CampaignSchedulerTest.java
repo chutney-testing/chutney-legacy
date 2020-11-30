@@ -13,8 +13,8 @@ import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.google.common.collect.Lists;
 import java.time.Clock;
 import java.time.LocalDateTime;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 public class CampaignSchedulerTest {
@@ -26,7 +26,7 @@ public class CampaignSchedulerTest {
 
     private Clock clock;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         clock = Clock.systemDefaultZone();
         campaignScheduler = new CampaignScheduler(campaignExecutionEngine, schedulerRepository, clock, schedulingCampaignRepository);

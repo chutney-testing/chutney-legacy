@@ -3,20 +3,22 @@ package blackbox.stepdef;
 import static org.springframework.util.SocketUtils.findAvailableTcpPort;
 
 import blackbox.restclient.RestClient;
-import com.chutneytesting.design.domain.environment.SecurityInfo;
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.google.common.io.Resources;
-import cucumber.api.DataTable;
-import cucumber.api.java.After;
-import cucumber.api.java.Before;
-import cucumber.api.java.en.Given;
 import com.chutneytesting.design.api.environment.dto.EnvironmentMetadataDto;
 import com.chutneytesting.design.api.environment.dto.TargetMetadataDto;
 import com.chutneytesting.design.domain.environment.Environment;
+import com.chutneytesting.design.domain.environment.SecurityInfo;
 import com.chutneytesting.design.domain.environment.Target;
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.google.common.io.Resources;
+import io.cucumber.datatable.DataTable;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.en.Given;
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -62,13 +64,13 @@ public class TargetStepDefs {
             });
     }
 
-    @Given("existing truststore (.+)")
+    @Given("^existing truststore (.+)$")
     public void existing_trustore(String trustore) {
         String absolutePath = Resources.getResource(trustore).getPath();
         context.putTrustStorePath(absolutePath);
     }
 
-    @Given("^an existing target (.+) with url (.+)$")
+    @Given("^an existing target (.+) with url (.*)$")
     public void an_existing_target_on_local_server(String targetName, String targetUrl) {
         Target target = Target.builder()
             .withId(Target.TargetId.of(targetName, "GLOBAL"))
@@ -77,12 +79,12 @@ public class TargetStepDefs {
         enrichGlobalEnvironment(target);
     }
 
-    @Given("^a target (.+) with url (.+) with security")
+    @Given("^a target (.+) with url (.+) with security$")
     public void a_target_with_url_with_security(String targetName, String targetUrl, DataTable security) {
-        String username = security.asMap(String.class, String.class).get("username");
-        String pwd = security.asMap(String.class, String.class).get("password");
-        String keyStorePath = security.asMap(String.class, String.class).get("keyStorePath");
-        String keyStorePassword = security.asMap(String.class, String.class).get("keyStorePassword");
+        String username = (String) security.asMap(String.class, String.class).get("username");
+        String pwd = (String) security.asMap(String.class, String.class).get("password");
+        String keyStorePath = (String) security.asMap(String.class, String.class).get("keyStorePath");
+        String keyStorePassword = (String) security.asMap(String.class, String.class).get("keyStorePassword");
 
         String absolutePath = null;
         if (keyStorePath != null) {
@@ -109,7 +111,7 @@ public class TargetStepDefs {
         enrichGlobalEnvironment(target);
     }
 
-    @Given("^a dyanmic target (.+) with url (.+) with security")
+    @Given("^a dyanmic target (.+) with url (.+) with security$")
     public void a_target_with_dynamic_port_with_url_with_security(String targetName, String targetUrl, DataTable security) {
         String targetUrlFull = addDynamicPort(targetName, targetUrl);
         a_target_with_url_with_security(targetName, targetUrlFull, security);
@@ -117,10 +119,17 @@ public class TargetStepDefs {
 
     @Given("^a target (.+) with url (.+) with properties$")
     public void a_target_with_url_with_properties(String targetName, String targetUrl, DataTable properties) {
+        Map<String, String> dt = new HashMap<>(properties.asMap(String.class, String.class));
+        List<String> emptyKey = dt.entrySet().stream()
+            .filter(e -> "<empty>".equals(e.getValue()))
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toList());
+        emptyKey.forEach(k -> dt.put(k, ""));
+
         Target target = Target.builder()
             .withId(Target.TargetId.of(targetName, "GLOBAL"))
             .withUrl(targetUrl)
-            .withProperties(properties.asMap(String.class, String.class))
+            .withProperties(dt)
             .build();
 
         enrichGlobalEnvironment(target);
@@ -144,7 +153,7 @@ public class TargetStepDefs {
         a_target_with_url_with_security(targetName, "http://localhost:" + port, security);
     }
 
-    @Given("^an existing target (.+) having url in system property (.+)")
+    @Given("^an existing target (.+) having url in system property (.+)$")
     public void an_existing_target_with_url_from_system_property(String targetName, String urlSystemProperty) {
         an_existing_target_on_local_server(targetName, "tcp://" + System.getProperty(urlSystemProperty));
     }

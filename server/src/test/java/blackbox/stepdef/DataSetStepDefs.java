@@ -12,10 +12,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import cucumber.api.java.After;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import io.cucumber.datatable.DataTable;
+import io.cucumber.java.After;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +36,8 @@ public class DataSetStepDefs {
     private final RestClient restClient;
     private final ObjectMapper om;
 
-    private List<DataSetDto> savedDataSetDtos = new ArrayList<>();
-    private List<DataSetDto> deletedDataSetDtos = new ArrayList<>();
+    private final List<DataSetDto> savedDataSetDtos = new ArrayList<>();
+    private final List<DataSetDto> deletedDataSetDtos = new ArrayList<>();
     private DataSetDto foundDataSetDto;
 
     public DataSetStepDefs(RestClient restClient) {
@@ -59,37 +60,37 @@ public class DataSetStepDefs {
         deletedDataSetDtos.clear();
     }
 
-    @Given("a dataset is saved")
+    @Given("^a dataset is saved$")
     public void a_dataset_is_saved(String dataSetJson) throws Exception {
         DataSetDto dataSetDto = om.readValue(dataSetJson, DataSetDto.class);
         saveDataSet(dataSetDto);
     }
 
-    @When("search for the dataset")
+    @When("^search for the dataset$")
     public void search_for_the_dataset() {
         DataSetDto dataSetDto = lastSavedDataSetDto();
         findDataSet(dataSetDto.id().get(), null);
     }
 
-    @Then("the dataset is retrieved")
+    @Then("^the dataset is retrieved$")
     public void the_dataset_is_retrieved() {
         DataSetDto dataSetDto = lastSavedDataSetDto();
         assertThat(foundDataSetDto).isEqualTo(dataSetDto);
     }
 
-    @When("delete the dataset")
+    @When("^delete the dataset$")
     public void delete_the_dataset() {
         DataSetDto dataSetDto = lastSavedDataSetDto();
         deleteDataSet(dataSetDto);
     }
 
-    @Then("the dataset cannot be found")
+    @Then("^the dataset cannot be found$")
     public void the_dataset_cannot_be_found() {
         DataSetDto dataSetDto = deletedDataSetDtos.get(deletedDataSetDtos.size() - 1);
         noFindDataSet(dataSetDto.id().get());
     }
 
-    @When("a new version is saved")
+    @When("^a new version is saved$")
     public void a_new_version_is_saved(String dataSetJson) throws IOException {
         DataSetDto dataSetDto = om.readValue(dataSetJson, DataSetDto.class);
         dataSetDto = ImmutableDataSetDto.builder().from(dataSetDto).id(lastSavedDataSetDto().id()).build();
@@ -97,27 +98,28 @@ public class DataSetStepDefs {
         assertThat(lastSavedDataSetDto().id()).isEqualTo(dataSetDto.id());
     }
 
-    @Then("the dataset last version number is (.+)")
+    @Then("^the dataset last version number is (.+)$")
     public void the_dataset_last_version_number_is(Integer version) {
         DataSetDto dataSetDto = lastSavedDataSetDto();
         assertThat(dataSetLastVersionNumber(dataSetDto.id().get())).isEqualTo(version);
     }
 
-    @Then("the list of version numbers is")
-    public void the_list_of_version_numbers_is(List<Integer> versions) {
+    @Then("^the list of version numbers is$")
+    public void the_list_of_version_numbers_is(DataTable dataTable) {
+        List<Integer> versions = dataTable.asLists().get(0).stream().map(Integer::valueOf).collect(toList());
         DataSetDto dataSetDto = lastSavedDataSetDto();
         List<Integer> versionsNumbers = dataSetVersionNumbers(dataSetDto.id().get()).stream().map(DataSetDto::version).collect(toList());
         assertThat(versionsNumbers).containsExactlyElementsOf(versions);
     }
 
-    @Then("the search for the dataset bring the last version")
+    @Then("^the search for the dataset bring the last version$")
     public void the_search_for_the_dataset_bring_the_last_version() {
         DataSetDto dataSetDto = lastSavedDataSetDto();
         findDataSet(dataSetDto.id().get(), null);
         assertThat(foundDataSetDto).isEqualTo(dataSetDto);
     }
 
-    @Then("the dataset version (.*) can be found")
+    @Then("^the dataset version (.*) can be found$")
     public void the_dataset_version_can_be_found(Integer version) {
         DataSetDto dataSetDto = lastSavedDataSetDto();
         findDataSet(dataSetDto.id().get(), version);

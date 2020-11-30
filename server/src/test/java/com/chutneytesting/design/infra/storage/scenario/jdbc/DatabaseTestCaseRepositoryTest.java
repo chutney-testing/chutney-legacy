@@ -19,14 +19,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import java.util.concurrent.TimeUnit;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.jdbc.core.RowMapper;
 
-@RunWith(JUnitParamsRunner.class)
 public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
 
     private static final TestCaseData.TestCaseDataBuilder TEST_CASE_DATA_BUILDER = TestCaseData.builder()
@@ -39,7 +37,7 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
         .withDataSet(Collections.emptyMap())
         .withRawScenario("");
 
-    private DatabaseTestCaseRepository repository = new DatabaseTestCaseRepository(namedParameterJdbcTemplate, new ObjectMapper());
+    private final DatabaseTestCaseRepository repository = new DatabaseTestCaseRepository(namedParameterJdbcTemplate, new ObjectMapper());
 
     @Test
     public void should_generate_id_when_scenario_is_persisted() {
@@ -172,8 +170,8 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
         };
     }
 
-    @Test
-    @Parameters
+    @ParameterizedTest
+    @MethodSource("parametersForShould_update_scenario_fields")
     public void should_update_scenario_fields(String testName, TestCaseData.TestCaseDataBuilder builder) {
         // Given: an existing scenarioTemplate in the repository
         final String scenarioId = repository.save(TEST_CASE_DATA_BUILDER.build());

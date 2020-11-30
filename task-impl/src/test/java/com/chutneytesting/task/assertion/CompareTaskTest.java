@@ -7,11 +7,8 @@ import static org.mockito.Mockito.verify;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Logger;
 import java.time.Instant;
-import junitparams.JUnitParamsRunner;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
-@RunWith(JUnitParamsRunner.class)
 public class CompareTaskTest {
 
     Logger logger = mock(Logger.class);

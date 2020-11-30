@@ -1,42 +1,42 @@
 package com.chutneytesting.engine.domain.delegation;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(JUnitParamsRunner.class)
 public class UrlSlicerTest {
 
-    @Test
-    @Parameters(method = "acceptedURLsWithPorts")
-    public void should_build_with_valid_url(String url) {
+    @ParameterizedTest
+    @MethodSource("acceptedURLs")
+    public void urlWrapper_build_with_valid_url(String url) {
         new UrlSlicer(url);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void should_build_with_invalid_url() {
-        new UrlSlicer("invalid url:12");
+    @Test()
+    public void urlWrapper_build_with_invalid_url() {
+        assertThatThrownBy(() -> new UrlSlicer("invalid url:12"))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @Test
-    @Parameters(method = "acceptedURLsWithPorts")
-    public void should_parse_host(String url) {
+    @ParameterizedTest
+    @MethodSource("acceptedURLs")
+    public void urlWrapper_parse_host(String url) {
         String host = new UrlSlicer(url).host;
         assertThat(host).as("host").isEqualTo("somehost");
     }
 
-    @Test
-    @Parameters(method = "acceptedURLsWithPorts")
-    public void should_parse_explicit_port(String url) {
+    @ParameterizedTest
+    @MethodSource("acceptedURLs")
+    public void urlWrapper_parse_port(String url) {
         int port = new UrlSlicer(url).port;
         assertThat(port).as("port").isEqualTo(12);
     }
 
-    @Test
-    @Parameters(method = "acceptedURLsWithoutPorts")
+    @ParameterizedTest
+    @MethodSource("acceptedURLsWithoutPorts")
     public void should_use_default_port_protocol(String url, Integer defaultPort) {
         int port = new UrlSlicer(url).port;
         assertThat(port).as("port").isEqualTo(defaultPort);

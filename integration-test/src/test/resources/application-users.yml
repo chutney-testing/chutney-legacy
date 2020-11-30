@@ -1,0 +1,50 @@
+
+chutney:
+  security:
+    users:
+      -
+        id: user
+        name: user
+        firstname: user
+        lastname: user
+        mail: user@user.com
+        password: user
+        profiles:
+          - USER
+      -
+        id: robert
+        name: robert
+        firstname: robert
+        lastname: robert
+        mail: robert@robert.com
+        password: robert
+        profiles:
+          - USER
+      -
+        id: paloma
+        name: paloma
+        firstname: paloma
+        lastname: paloma
+        mail: paloma@paloma.com
+        password: paloma
+        profiles:
+          - USER
+      -
+        id: admin
+        name: admin
+        firstname: admin
+        lastname: admin
+        mail: admin@admin.com
+        password: admin
+        profiles:
+          - ADMIN
+      -
+        id: both
+        name: both
+        firstname: both
+        lastname: both
+        mail: both@both.com
+        password: both
+        profiles:
+          - USER
+          - ADMIN

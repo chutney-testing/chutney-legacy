@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="https://www.chutneytesting.com/Gender"
+	xmlns:gedns="https://www.chutneytesting.com/Gender"
+	elementFormDefault="qualified">
+	<simpleType name="Gender">
+		<restriction base="string">
+			<enumeration value="Male" />
+			<enumeration value="Female" />
+		</restriction>
+	</simpleType>
+</schema>
+
+

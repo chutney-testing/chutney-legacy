@@ -1,7 +1,7 @@
 package blackbox.stepdef.tasks;
 
-import cucumber.api.java.After;
-import cucumber.api.java.en.Given;
+import io.cucumber.java.After;
+import io.cucumber.java.en.Given;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;

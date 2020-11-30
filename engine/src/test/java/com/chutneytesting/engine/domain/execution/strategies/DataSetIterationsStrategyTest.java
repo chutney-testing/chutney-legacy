@@ -2,7 +2,7 @@ package com.chutneytesting.engine.domain.execution.strategies;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.ExecutionSpringConfiguration;
+import com.chutneytesting.ExecutionConfiguration;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.TestTaskTemplateLoader;
@@ -27,10 +27,11 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 public class DataSetIterationsStrategyTest {
 
-    private DefaultStepExecutionStrategy defaultStepExecutionStrategy = DefaultStepExecutionStrategy.instance;
-    private StepDataEvaluator dataEvaluator = new StepDataEvaluator(new SpelFunctions());
-    private StepExecutor stepExecutor = new DefaultStepExecutor(new DefaultTaskTemplateRegistry(new TaskTemplateLoaders(Collections.singletonList(new TestTaskTemplateLoader()))));
-    private StepExecutionStrategies strategies = new StepExecutionStrategies(new ExecutionSpringConfiguration().stepExecutionStrategies());
+    private final ExecutionConfiguration executionConfiguration = new ExecutionConfiguration();
+    private final DefaultStepExecutionStrategy defaultStepExecutionStrategy = DefaultStepExecutionStrategy.instance;
+    private final StepDataEvaluator dataEvaluator = new StepDataEvaluator(new SpelFunctions());
+    private final StepExecutor stepExecutor = new DefaultStepExecutor(new DefaultTaskTemplateRegistry(new TaskTemplateLoaders(Collections.singletonList(new TestTaskTemplateLoader()))));
+    private final StepExecutionStrategies strategies = new StepExecutionStrategies(executionConfiguration.stepExecutionStrategies());
 
     @Test
     public void should_not_run_next_step_after_iteration_fail_within_default_strategy() {

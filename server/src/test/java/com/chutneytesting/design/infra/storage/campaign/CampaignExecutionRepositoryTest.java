@@ -23,8 +23,8 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
 
@@ -32,7 +32,7 @@ public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
     private Map<String, Map<Long, ExecutionHistory.ExecutionSummary>> scenarioExecutions;
     private Campaign currentCampaign;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         scenarioExecutions = new HashMap<>();
         TestCaseRepository testCaseRepositoryMock = mock(TestCaseRepository.class);

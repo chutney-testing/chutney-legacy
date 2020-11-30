@@ -4,10 +4,7 @@ import static com.chutneytesting.design.domain.environment.NoTarget.NO_TARGET;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
-import com.chutneytesting.agent.domain.network.Agent;
-import com.chutneytesting.agent.domain.network.NetworkDescription;
-import com.chutneytesting.design.domain.environment.EnvironmentRepository;
+import com.chutneytesting.design.domain.environment.EnvironmentService;
 import com.chutneytesting.design.domain.environment.SecurityInfo;
 import com.chutneytesting.design.domain.environment.Target;
 import com.chutneytesting.design.domain.scenario.gwt.GwtStep;
@@ -23,10 +20,10 @@ import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.compiler.ScenarioConversionException;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
+import com.chutneytesting.task.api.EmbeddedTaskEngine;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.hjson.JsonValue;
 import org.springframework.stereotype.Component;
@@ -35,13 +32,13 @@ import org.springframework.stereotype.Component;
 public class ExecutionRequestMapper {
 
     private final ObjectMapper objectMapper;
-    private final EnvironmentRepository environmentRepository;
-    private final CurrentNetworkDescription currentNetworkDescription;
+    private final EnvironmentService environmentService;
+    private final EmbeddedTaskEngine embeddedTaskEngine;
 
-    public ExecutionRequestMapper(ObjectMapper objectMapper, EnvironmentRepository environmentRepository, CurrentNetworkDescription currentNetworkDescription) {
+    public ExecutionRequestMapper(ObjectMapper objectMapper, EnvironmentService environmentService, EmbeddedTaskEngine embeddedTaskEngine) {
         this.objectMapper = objectMapper;
-        this.environmentRepository = environmentRepository;
-        this.currentNetworkDescription = currentNetworkDescription;
+        this.environmentService = environmentService;
+        this.embeddedTaskEngine = embeddedTaskEngine;
     }
 
     public ExecutionRequestDto toDto(ExecutionRequest executionRequest) {
@@ -87,7 +84,7 @@ public class ExecutionRequestMapper {
 
         return new StepDefinitionRequestDto(
             definition.name,
-            toDto(findTargetByName(definition.target, env)),
+            toDto(environmentService.getTargetForExecution(env, definition.target)),
             retryStrategy,
             definition.type,
             definition.inputs,
@@ -119,7 +116,7 @@ public class ExecutionRequestMapper {
     private StepDefinitionRequestDto convert(GwtStep step, String env) {
         return new StepDefinitionRequestDto(
             step.description,
-            step.implementation.map(i -> toDto(findTargetByName(i.target, env))).orElse(toDto(NO_TARGET)),
+            step.implementation.map(i -> toDto(environmentService.getTargetForExecution(env, i.target))).orElse(toDto(NO_TARGET)),
             step.strategy.map(this::mapStrategy).orElse(null),
             step.implementation.map(i -> i.type).orElse(""),
             step.implementation.map(i -> i.inputs).orElse(emptyMap()),
@@ -172,26 +169,6 @@ public class ExecutionRequestMapper {
         return new CredentialDto(credential.username, credential.password);
     }
 
-    // TODO - see if it might be validated before in the domain
-    private Target findTargetByName(String targetName, String environment) {
-        if (targetName == null || targetName.isEmpty()) {
-            return NO_TARGET;
-        }
-
-        Target target = environmentRepository.getAndValidateServer(targetName, environment);
-
-        Optional<NetworkDescription> networkDescription = currentNetworkDescription.findCurrent();
-        if (networkDescription.isPresent() && networkDescription.get().localAgent().isPresent()) {
-            final Agent localAgent = networkDescription.get().localAgent().get();
-            List<Agent> agents = localAgent.findFellowAgentForReaching(target.id);
-            return Target.builder()
-                .copyOf(target)
-                .withAgents(agents.stream().map(a -> a.agentInfo).collect(Collectors.toList()))
-                .build();
-        }
-        return target;
-    }
-
     private StepDefinitionRequestDto convertComposed(ExecutionRequest executionRequest) {
         ExecutableComposedTestCase composedTestCase = (ExecutableComposedTestCase) executionRequest.testCase;
         try {
@@ -217,7 +194,7 @@ public class ExecutionRequestMapper {
     private StepDefinitionRequestDto convert(ExecutableComposedStep composedStep, String env) {
         return new StepDefinitionRequestDto(
             composedStep.name,
-            toDto(findTargetByName(composedStep.stepImplementation.map(si -> si.target).orElse(""), env)),
+            toDto(environmentService.getTargetForExecution(env, composedStep.stepImplementation.map(si -> si.target).orElse(""))),
             this.mapStrategy(composedStep.strategy),
             composedStep.stepImplementation.map(si -> si.type).orElse(""),
             composedStep.stepImplementation.map(si -> si.inputs).orElse(emptyMap()),

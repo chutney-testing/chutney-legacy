@@ -6,6 +6,7 @@ import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
@@ -26,43 +27,27 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.groovy.util.Maps;
 import org.assertj.core.util.Lists;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.MethodRule;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-@RunWith(JUnitParamsRunner.class)
 public class DataSetControllerTest {
 
-    @Rule
-    public MethodRule mockitoRule = MockitoJUnit.rule();
-
-    @Mock
-    private DataSetRepository dataSetRepository;
-    @Mock
-    private DataSetHistoryRepository dataSetHistoryRepository;
-
-    @InjectMocks
-    private DataSetController sut;
-
+    private final DataSetRepository dataSetRepository = mock(DataSetRepository.class);
+    private final DataSetHistoryRepository dataSetHistoryRepository = mock(DataSetHistoryRepository.class);
     private MockMvc mockMvc;
-
     private final ObjectMapper om = new WebConfiguration().objectMapper();
 
-    @Before
+    @BeforeEach
     public void setUp() {
+        DataSetController sut = new DataSetController(dataSetRepository, dataSetHistoryRepository);
         mockMvc = MockMvcBuilders.standaloneSetup(sut)
             .setControllerAdvice(new RestExceptionHandler())
             .build();
@@ -221,8 +206,8 @@ public class DataSetControllerTest {
             .containsExactlyElementsOf(Lists.list(one.getRight(), two.getRight(), three.getRight()));
     }
 
-    @Test
-    @Parameters({
+    @ParameterizedTest
+    @ValueSource(strings = {
         DataSetController.BASE_URL + "/%s/%s", DataSetController.BASE_URL + "/%s/versions/%s"
     })
     public void should_find_dataset_version(String urlTemplate) throws Exception {

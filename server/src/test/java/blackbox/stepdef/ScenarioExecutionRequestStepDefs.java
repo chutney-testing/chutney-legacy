@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import blackbox.assertion.Assertions;
 import blackbox.restclient.RestClient;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;

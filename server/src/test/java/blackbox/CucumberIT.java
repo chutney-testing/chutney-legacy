@@ -1,7 +1,7 @@
 package blackbox;
 
-import cucumber.api.CucumberOptions;
-import cucumber.api.junit.Cucumber;
+import io.cucumber.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
 import java.io.IOException;
 import java.util.Random;
 import org.junit.AfterClass;
@@ -11,8 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.util.SocketUtils;
 
 @RunWith(Cucumber.class)
-@CucumberOptions(strict = true, plugin = {"pretty", "json:target/cucumber-report.json"},
-    features = {"classpath:blackbox/"}, tags = {"~@Ignore"})
+@CucumberOptions(strict = true, plugin = {"pretty", "json:target/cucumber-report.json"}, tags = {"not @Ignore"})
 public class CucumberIT {
 
     private static TemporaryFolder tmpFolder = new TemporaryFolder();

@@ -13,7 +13,7 @@ import com.chutneytesting.agent.domain.network.ImmutableNetworkDescription;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
 import com.chutneytesting.design.domain.environment.EnvironmentRepository;
 import java.util.Optional;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public class JsonFileCurrentNetworkDescriptionTest {
 
@@ -27,8 +27,8 @@ public class JsonFileCurrentNetworkDescriptionTest {
     NetworkDescription originalNetworkDescription;
     Agent originalLocalAgent = mock(Agent.class);
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() {
         reset(environmentRepository, agentNetworkMapperJsonFileMapper, jsonFileAgentNetworkDao, localServerIdentifier);
 
         originalNetworkDescription = createNetworkDescription();

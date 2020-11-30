@@ -1,6 +1,6 @@
 package com.chutneytesting;
 
-import com.chutneytesting.agent.domain.configure.LocalServerIdentifier;
+import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.design.domain.campaign.CampaignRepository;
 import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditions;
@@ -23,18 +23,17 @@ import com.chutneytesting.execution.infra.execution.ExecutionRequestMapper;
 import com.chutneytesting.execution.infra.execution.ServerTestEngineJavaImpl;
 import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import com.chutneytesting.security.domain.UserService;
+import com.chutneytesting.task.api.EmbeddedTaskEngine;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.Clock;
 import java.util.List;
-import java.util.Optional;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import liquibase.integration.spring.SpringLiquibase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jms.activemq.ActiveMQAutoConfiguration;
@@ -60,23 +59,16 @@ public class ServerConfiguration {
     }
 
     @Bean
+    public ExecutionConfiguration executionConfiguration(@Value("${chutney.engine.reporter.publisher.ttl:5}") Long reporterTTL) {
+        return new ExecutionConfiguration(reporterTTL);
+    }
+
+    @Bean
     public SpringLiquibase liquibase(DataSource dataSource) {
         SpringLiquibase liquibase = new SpringLiquibase();
         liquibase.setChangeLog("classpath:changelog/db.changelog-master.xml");
         liquibase.setDataSource(dataSource);
         return liquibase;
-    }
-
-    @Bean
-    LocalServerIdentifier localServerIdentifier(@Value("${server.port}") int port,
-                                                @Value("${localAgent.defaultName:#{null}}") Optional<String> defaultLocalName,
-                                                @Value("${localAgent.defaultHostName:#{null}}") Optional<String> defaultLocalHostName
-    ) throws UnknownHostException {
-        InetAddress localHost = InetAddress.getLocalHost();
-        return new LocalServerIdentifier(
-            port,
-            defaultLocalName.orElse(localHost.getHostName()),
-            defaultLocalHostName.orElse(localHost.getCanonicalHostName()));
     }
 
     @Bean
@@ -129,8 +121,8 @@ public class ServerConfiguration {
     }
 
     @Bean
-    EnvironmentService environmentService(EnvironmentRepository environmentRepository) {
-        return new EnvironmentService(environmentRepository);
+    EnvironmentService environmentService(EnvironmentRepository environmentRepository, CurrentNetworkDescription currentNetworkDescription) {
+        return new EnvironmentService(environmentRepository, currentNetworkDescription);
     }
 
     @Bean
@@ -144,9 +136,18 @@ public class ServerConfiguration {
     }
 
     @Bean
-    ServerTestEngine javaTestEngine(@Qualifier("embeddedTestEngine") TestEngine testEngine,
-                                    ExecutionRequestMapper executionRequestMapper) {
-        return new ServerTestEngineJavaImpl(testEngine, executionRequestMapper);
+    TestEngine embeddedTestEngine(ExecutionConfiguration executionConfiguration) {
+        return executionConfiguration.embeddedTestEngine();
+    }
+
+    @Bean
+    ServerTestEngine javaTestEngine(TestEngine embeddedTestEngine, ExecutionRequestMapper executionRequestMapper) {
+        return new ServerTestEngineJavaImpl(embeddedTestEngine, executionRequestMapper);
+    }
+
+    @Bean
+    EmbeddedTaskEngine embeddedTaskEngine(ExecutionConfiguration executionConfiguration) {
+        return new EmbeddedTaskEngine(executionConfiguration.taskTemplateRegistry());
     }
 
     @Bean

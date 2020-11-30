@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class XmlAssertTaskTest {
 

@@ -6,7 +6,7 @@ import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.TaskExecutionResult.Status;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.TestLogger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class JsonValidationTaskTest {
 

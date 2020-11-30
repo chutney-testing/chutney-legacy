@@ -6,7 +6,7 @@ Scenario: Sql query success
     Given a target test with url tcp://localhost:12345 with properties
     | jdbcUrl | jdbc:h2:mem:fake-test;DB_CLOSE_DELAY=-1|
     | username | sa |
-    | password | |
+    | password | <empty> |
     And this scenario is saved
 """
     {
@@ -79,9 +79,9 @@ Scenario: Sql query success
 
 Scenario: Sql query wrong table
     Given a target test with url tcp://localhost:12345 with properties
-    | jdbcUrl | jdbc:h2:mem:fake-test;DB_CLOSE_DELAY=-1|
+    | jdbcUrl | jdbc:h2:mem:fake-test;DB_CLOSE_DELAY=-1 |
     | username | sa |
-    | password | |
+    | password | <empty> |
     And this scenario is saved
 """
     {

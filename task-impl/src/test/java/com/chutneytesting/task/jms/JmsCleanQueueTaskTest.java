@@ -16,8 +16,8 @@ import java.util.Optional;
 import java.util.Random;
 import javax.jms.Message;
 import com.chutneytesting.tools.CloseableResource;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.OngoingStubbing;
 
 @SuppressWarnings("unchecked")
@@ -28,7 +28,7 @@ public class JmsCleanQueueTaskTest {
     private Target target = mock(Target.class, RETURNS_DEEP_STUBS);
     private Logger logger = mock(Logger.class);
 
-    @Before
+    @BeforeEach
     public void setUp() {
         mockConsumer = mock(Consumer.class);
 

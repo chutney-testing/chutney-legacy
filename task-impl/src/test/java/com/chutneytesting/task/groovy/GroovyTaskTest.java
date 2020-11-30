@@ -9,7 +9,7 @@ import com.chutneytesting.task.spi.TaskExecutionResult.Status;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class GroovyTaskTest {
 

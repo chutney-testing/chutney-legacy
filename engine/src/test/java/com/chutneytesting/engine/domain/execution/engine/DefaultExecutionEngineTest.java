@@ -26,7 +26,7 @@ import com.chutneytesting.task.spi.FinallyAction;
 import java.util.ArrayList;
 import java.util.List;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Answers;
 
 public class DefaultExecutionEngineTest {

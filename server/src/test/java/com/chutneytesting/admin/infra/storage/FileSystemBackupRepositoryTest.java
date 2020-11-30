@@ -1,7 +1,9 @@
 package com.chutneytesting.admin.infra.storage;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -13,6 +15,7 @@ import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.design.domain.environment.EnvironmentRepository;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
+import com.chutneytesting.tools.Try;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,46 +23,31 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-import com.chutneytesting.tools.Try;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.MethodRule;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.util.FileSystemUtils;
 
-@RunWith(JUnitParamsRunner.class)
 public class FileSystemBackupRepositoryTest {
 
     private BackupRepository sut;
     private Path backupsRootPath;
 
-    @Rule
-    public MethodRule mockitoRule = MockitoJUnit.rule();
+    private OrientComponentDB orientComponentDB = mock(OrientComponentDB.class);
+    private HomePageRepository homePageRepository = mock(HomePageRepository.class);
+    private EnvironmentRepository environmentRepository = mock(EnvironmentRepository.class);
+    private GlobalvarRepository globalvarRepository = mock(GlobalvarRepository.class);
+    private CurrentNetworkDescription currentNetworkDescription = mock(CurrentNetworkDescription.class);
 
-    @Mock
-    private OrientComponentDB orientComponentDB;
-    @Mock
-    private HomePageRepository homePageRepository;
-    @Mock
-    private EnvironmentRepository environmentRepository;
-    @Mock
-    private GlobalvarRepository globalvarRepository;
-    @Mock
-    private CurrentNetworkDescription currentNetworkDescription;
-
-    @Before
+    @BeforeEach
     public void before() {
         backupsRootPath = Try.exec(() -> Files.createTempDirectory(Paths.get("target"), "backups")).runtime();
         sut = new FileSystemBackupRepository(orientComponentDB, homePageRepository, environmentRepository, globalvarRepository, currentNetworkDescription, backupsRootPath.toString());
     }
 
-    @After
+    @AfterEach
     public void after() {
         Try.exec(() -> FileSystemUtils.deleteRecursively(backupsRootPath)).runtime();
     }
@@ -91,8 +79,8 @@ public class FileSystemBackupRepositoryTest {
         assertThat(backups).extracting(Backup::id).containsExactly(backup2Path.getFileName().toString(), backup1Path.getFileName().toString());
     }
 
-    @Test
-    @Parameters(method = "backupObjectsParameters")
+    @ParameterizedTest
+    @MethodSource("backupObjectsParameters")
     public void should_read_a_backup(boolean homePage, boolean agentsNetwork, boolean environments, boolean components, boolean globalVars) throws IOException {
         // Given
         Path backupPath = stubBackup(Backup.backupIdTimeFormatter.format(LocalDateTime.now().minus(2, ChronoUnit.DAYS)), homePage, agentsNetwork, environments, components, globalVars);
@@ -110,18 +98,20 @@ public class FileSystemBackupRepositoryTest {
         assertThat(backupRead.globalVars).isEqualTo(globalVars);
     }
 
-    @Test(expected = BackupNotFoundException.class)
+    @Test()
     public void should_throw_exception_when_read_unknown_backup() {
-        sut.read("unknownBackupId");
+        assertThatThrownBy(() -> sut.read("unknownBackupId"))
+            .isInstanceOf(BackupNotFoundException.class);
     }
 
-    @Test(expected = BackupNotFoundException.class)
+    @Test()
     public void should_throw_exception_when_read_unparsable_backup_id() throws IOException {
         // Given
         Path backupPath = stubBackup("unparsableBackupId");
 
         // When
-        sut.read(backupPath.getFileName().toString());
+        assertThatThrownBy(() -> sut.read(backupPath.getFileName().toString()))
+            .isInstanceOf(BackupNotFoundException.class);
     }
 
     @Test
@@ -133,8 +123,8 @@ public class FileSystemBackupRepositoryTest {
         assertThat(backupsRootPath.resolve(backupStringId).toFile().exists()).isTrue();
     }
 
-    @Test
-    @Parameters(method = "backupObjectsParameters")
+    @ParameterizedTest
+    @MethodSource("backupObjectsParameters")
     public void should_call_right_repository_backup_when_save(boolean homePage, boolean agentsNetwork, boolean environments, boolean components, boolean globalVars) {
         // When
         sut.save(new Backup(homePage, agentsNetwork, environments, components, globalVars));
@@ -159,9 +149,10 @@ public class FileSystemBackupRepositoryTest {
         assertThat(backupPath.toFile().exists()).isFalse();
     }
 
-    @Test(expected = BackupNotFoundException.class)
+    @Test()
     public void should_throw_exception_when_delete_unknown_backup() {
-        sut.delete("unknownBackupId");
+        assertThatThrownBy(() -> sut.delete("unknownBackupId"))
+            .isInstanceOf(BackupNotFoundException.class);
     }
 
     private Path stubBackup(String backupName) throws IOException {
@@ -183,7 +174,7 @@ public class FileSystemBackupRepositoryTest {
     }
 
     @SuppressWarnings("unused")
-    private Object[] backupObjectsParameters(){
+    private static Object[] backupObjectsParameters() {
         return new Object[] {
             new Object[] {true, false, false, false, false},
             new Object[] {false, true, false, false, false},

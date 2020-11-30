@@ -1,11 +1,11 @@
 package blackbox.stepdef.tasks;
 
 import blackbox.restclient.RestClient;
-import com.chutneytesting.design.domain.environment.SecurityInfo;
-import cucumber.api.java.After;
-import cucumber.api.java.en.Given;
 import com.chutneytesting.design.api.environment.dto.TargetMetadataDto;
+import com.chutneytesting.design.domain.environment.SecurityInfo;
 import com.chutneytesting.design.domain.environment.Target;
+import io.cucumber.java.After;
+import io.cucumber.java.en.Given;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -17,6 +17,7 @@ import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.auth.pubkey.AcceptAllPublickeyAuthenticator;
 import org.apache.sshd.server.keyprovider.AbstractGeneratorHostKeyProvider;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
+import org.apache.sshd.server.shell.ProcessShellCommandFactory;
 import org.apache.sshd.server.shell.ProcessShellFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +71,7 @@ public class SshdStepsDef {
         sshd.setPasswordAuthenticator((username, password, session) -> sshUsername.equals(username) && sshPassword.equals(password));
         sshd.setPublickeyAuthenticator(AcceptAllPublickeyAuthenticator.INSTANCE);
         sshd.setShellFactory(new ProcessShellFactory("/bin/sh", "-i", "-l"));
-        sshd.setCommandFactory(command -> new ProcessShellFactory(command.split(" ")).create());
+        sshd.setCommandFactory(ProcessShellCommandFactory.INSTANCE);
         sshd.start();
         LOGGER.info("Starting SSHD server from '{}' on port '{}'", serverHost, serverPort);
     }

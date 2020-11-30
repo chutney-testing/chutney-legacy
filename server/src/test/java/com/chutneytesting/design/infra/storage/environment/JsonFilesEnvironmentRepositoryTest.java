@@ -1,6 +1,7 @@
 package com.chutneytesting.design.infra.storage.environment;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.chutneytesting.design.domain.environment.Environment;
 import com.chutneytesting.design.domain.environment.EnvironmentNotFoundException;
@@ -8,34 +9,34 @@ import com.chutneytesting.design.domain.environment.EnvironmentRepository;
 import com.chutneytesting.design.domain.environment.InvalidEnvironmentNameException;
 import com.chutneytesting.design.domain.environment.SecurityInfo;
 import com.chutneytesting.design.domain.environment.Target;
-import java.io.File;
+import com.chutneytesting.tools.ThrowingConsumer;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 public class JsonFilesEnvironmentRepositoryTest {
 
-    @ClassRule
-    public static final TemporaryFolder TEMPORARY_FOLDER = new TemporaryFolder();
+    private static final Path CONFIGURATION_FOLDER = Paths.get("target", "conf");
 
-    private static EnvironmentRepository sut;
+    private final EnvironmentRepository sut = new JsonFilesEnvironmentRepository(CONFIGURATION_FOLDER.toString());
 
-    @BeforeClass
-    public static void setUp() throws IOException {
-        String tmpConfDir = TEMPORARY_FOLDER.newFolder("conf").getAbsolutePath();
-        System.setProperty("configuration-folder", tmpConfDir);
-        System.setProperty("persistence-repository-folder", tmpConfDir);
-
-        sut = new JsonFilesEnvironmentRepository(tmpConfDir);
+    @AfterEach
+    public void after() {
+        try (Stream<Path> confStream = Files.list(CONFIGURATION_FOLDER)) {
+            confStream.forEach(ThrowingConsumer.toUnchecked(Files::delete));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
@@ -91,37 +92,45 @@ public class JsonFilesEnvironmentRepositoryTest {
         assertThat(sut.listNames()).doesNotContain("TEST");
     }
 
-    @Test(expected = EnvironmentNotFoundException.class)
+    @Test()
     public void delete_missing_environment_throws() {
-        sut.delete("MISSING_ENV");
+        assertThatThrownBy(() -> sut.delete("MISSING_ENV"))
+            .isInstanceOf(EnvironmentNotFoundException.class);
     }
 
-    @Test(expected = EnvironmentNotFoundException.class)
+    @Test()
     public void find_missing_environment_return_default_environment() {
         sut.listNames().forEach(sut::delete);
-        sut.findByName("MISSING_ENV");
+        assertThatThrownBy(() -> sut.findByName("MISSING_ENV"))
+            .isInstanceOf(EnvironmentNotFoundException.class);
     }
 
-    @Test(expected = InvalidEnvironmentNameException.class)
+    @Test()
     public void save_environment_with_illegal_name_throws() {
-        sut.save(Environment.builder().withName("illegal name").withDescription("some description").build());
+        assertThatThrownBy(() -> sut.save(Environment.builder().withName("illegal name").withDescription("some description").build()))
+            .isInstanceOf(InvalidEnvironmentNameException.class);
     }
 
     @Test
     public void should_backup_env_files() throws IOException {
         // Given
-        File env1 = TEMPORARY_FOLDER.newFile("conf/env1-tobackup.json");
-        File env2 = TEMPORARY_FOLDER.newFile("conf/env2-tobackup.json");
-        File envZip = TEMPORARY_FOLDER.newFile("env.zip");
+        Path backup = Paths.get("./target/backup", "env");
+        Files.createDirectories(backup.getParent());
+        Files.deleteIfExists(backup);
 
-        try (OutputStream outputStream = Files.newOutputStream(envZip.toPath())) {
+        Path env1Path = CONFIGURATION_FOLDER.resolve("env1-tobackup.json");
+        Files.createFile(env1Path);
+        Path env2Path = CONFIGURATION_FOLDER.resolve("env2-tobackup.json");
+        Files.createFile(env2Path);
+
+        try (OutputStream outputStream = Files.newOutputStream(Files.createFile(backup))) {
             // When
             sut.backup(outputStream);
         }
 
         // Then
-        ZipFile zipFile = new ZipFile(envZip);
+        ZipFile zipFile = new ZipFile(backup.toString());
         List<String> entriesNames = zipFile.stream().map(ZipEntry::getName).collect(Collectors.toList());
-        assertThat(entriesNames).containsExactlyInAnyOrder(env1.toPath().getFileName().toString(), env2.toPath().getFileName().toString());
+        assertThat(entriesNames).containsExactlyInAnyOrder(env1Path.getFileName().toString(), env2Path.getFileName().toString());
     }
 }

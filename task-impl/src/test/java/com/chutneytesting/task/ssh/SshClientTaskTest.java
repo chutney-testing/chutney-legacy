@@ -10,6 +10,8 @@ import static org.mockito.Mockito.mock;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
+import com.chutneytesting.task.ssh.sshj.Command;
+import com.chutneytesting.task.ssh.sshj.CommandResult;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,18 +20,23 @@ import java.util.List;
 import java.util.Map;
 import org.apache.sshd.common.util.OsUtils;
 import org.apache.sshd.server.SshServer;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class SshClientTaskTest {
 
     private static SshServer fakeSshServer;
 
-    @BeforeClass
+    @BeforeAll
     public static void prepare_ssh_server() throws Exception {
         fakeSshServer = buildLocalServer();
         fakeSshServer.start();
+    }
+
+    @AfterAll
+    public static void stop_ssh_server() throws Exception {
+        fakeSshServer.stop();
     }
 
     @Test
@@ -38,16 +45,16 @@ public class SshClientTaskTest {
         Logger logger = mock(Logger.class);
         Target targetMock = buildInfoWithPasswordFor(fakeSshServer);
         List<CommandResult> expectedResults = new ArrayList<>();
-        expectedResults.add(new CommandResult(new Command("echo Hello"), 0, "Hello\n", ""));
+        expectedResults.add(new CommandResult(new Command("echo Hello" + System.lineSeparator() + "exit" + System.lineSeparator()), 0, "Hello\n", ""));
 
         List<Object> commands = Collections.singletonList("echo Hello");
 
         // When
-        SshClientTask task = new SshClientTask(targetMock, logger, commands);
+        SshClientTask task = new SshClientTask(targetMock, logger, commands, null);
         TaskExecutionResult actualResult = task.execute();
 
         // Then
-        assertThat(actualResult.outputs.get("results")).isEqualToComparingFieldByFieldRecursively(expectedResults);
+        assertThat(actualResult.outputs.get("results")).usingRecursiveComparison().isEqualTo(expectedResults);
     }
 
     @Test
@@ -62,11 +69,11 @@ public class SshClientTaskTest {
         String command = "echo Hello";
 
         // When
-        SshClientTask task = new SshClientTask(target, logger, Collections.singletonList(command));
+        SshClientTask task = new SshClientTask(target, logger, Collections.singletonList(command), null);
         TaskExecutionResult actualResult = task.execute();
 
         // Then
-        assertThat(actualResult.outputs.get("results")).isEqualToComparingFieldByFieldRecursively(expectedResults);
+        assertThat(actualResult.outputs.get("results")).usingRecursiveComparison().isEqualTo(expectedResults);
     }
 
     @Test
@@ -80,7 +87,7 @@ public class SshClientTaskTest {
         command.put("timeout", "1 ms");
 
         // When
-        SshClientTask sshClient = new SshClientTask(target, logger, Collections.singletonList(command));
+        SshClientTask sshClient = new SshClientTask(target, logger, Collections.singletonList(command), null);
         TaskExecutionResult actualResult = sshClient.execute();
 
         // Then
@@ -97,15 +104,10 @@ public class SshClientTaskTest {
         String command = "echo Hello";
 
         // when
-        SshClientTask sshClient = new SshClientTask(target, logger, Collections.singletonList(command));
+        SshClientTask sshClient = new SshClientTask(target, logger, Collections.singletonList(command), null);
         TaskExecutionResult actualResult = sshClient.execute();
 
         // Then
         assertThat(actualResult.status).isEqualTo(Failure);
-    }
-
-    @AfterClass
-    public static void stop_ssh_server() throws Exception {
-        fakeSshServer.stop();
     }
 }

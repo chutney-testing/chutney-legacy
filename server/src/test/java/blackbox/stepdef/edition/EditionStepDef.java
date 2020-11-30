@@ -20,10 +20,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.io.Resources;
-import cucumber.api.java.en.But;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import io.cucumber.java.en.But;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -65,7 +65,7 @@ public class EditionStepDef {
         saveTestCase(RAW_SCENARIO_URL, rawTestCase);
     }
 
-    @Given("global variables defined in (.*)")
+    @Given("^global variables defined in (.*)$")
     public void aGlobalVarWithMultilineValue(String globalVarName) {
         secureRestClient.defaultRequest()
             .withUrl("/api/ui/globalvar/v1/" + globalVarName)
@@ -73,7 +73,7 @@ public class EditionStepDef {
             .post();
     }
 
-    @Given("^an existing (.*) written in format (.*)$")
+    @Given("^an existing (.+) written in format (.*)$")
     public void anExistingScenarioWrittenInFormatVersion(String scenarioFileName, String version) {
         String scenarioContent = getScenarioContent(scenarioFileName);
 
@@ -92,19 +92,19 @@ public class EditionStepDef {
         context.putScenarioId(id);
     }
 
-    @Given("^an existing testcase (.*) written in old format$")
+    @Given("^an existing testcase (.+) written in old format$")
     public void anWholeExistingScenarioWrittenInFormatVersion(String scenarioFileName) throws IOException {
         TestCaseData testCaseData = objectMapper.readValue(getScenarioContent(scenarioFileName), TestCaseData.class);
         String id = infraRepo.save(testCaseData);
         context.putScenarioId(id);
     }
 
-    @Given("^a testcase (.*) written with GWT form$")
+    @Given("^a testcase (.+) written with GWT form$")
     public void savingAWholeTestCaseWithAScenarioWrittenWithGWTForm(String testCaseFileName) {
         saveTestCase(GWT_SCENARIO_URL, getScenarioContent(testCaseFileName));
     }
 
-    @Given("^saving a test case with a (.*) written with GWT form$")
+    @Given("^saving a test case with a (.+) written with GWT form$")
     public void savingATestCaseWithAScenarioWrittenWithGWTForm(String scenarioFileName) throws IOException {
         String serializeScenario = getScenarioContent(scenarioFileName);
         GwtScenarioDto gwtTestCaseDto = objectMapper.readValue(serializeScenario, GwtScenarioDto.class);
@@ -118,7 +118,7 @@ public class EditionStepDef {
         saveTestCase(GWT_SCENARIO_URL, gwtTestCase);
     }
 
-    @When("^saving a test case with a raw (.*) written in an old format$")
+    @When("^saving a test case with a raw (.+) written in an old format$")
     public void savingARawTestCaseWrittenInAnOldFormatScenario(String scenarioFileName) {
         ImmutableRawTestCaseDto rawTestCase = ImmutableRawTestCaseDto.builder()
             .title("Saved scenario")
@@ -170,7 +170,7 @@ public class EditionStepDef {
         assertThat(gwtTestCaseDto).isInstanceOf(RawTestCaseDto.class);
     }
 
-    @Then("^the task implementation is HJSON readable")
+    @Then("^the task implementation is HJSON readable$")
     public void theTaskImplementationIsHjsonReadable() throws IOException {
         String expectedHJSONTask = "{type:fake_typetarget:FAKE_TARGETinputs:{fake_param:fake_value}}";
 

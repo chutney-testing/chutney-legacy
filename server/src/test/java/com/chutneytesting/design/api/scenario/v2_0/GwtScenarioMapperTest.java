@@ -9,7 +9,7 @@ import com.chutneytesting.execution.domain.compiler.GwtScenarioMarshaller;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import org.assertj.core.util.Files;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class GwtScenarioMapperTest {
 

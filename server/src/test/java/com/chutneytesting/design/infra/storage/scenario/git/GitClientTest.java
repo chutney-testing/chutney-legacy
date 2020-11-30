@@ -12,9 +12,9 @@ import java.util.Iterator;
 import java.util.stream.Stream;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class GitClientTest {
 
@@ -22,7 +22,7 @@ public class GitClientTest {
     String repoName = "testGitClient";
     Git git;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         pathTest = new GitClient().getGitDirectory(repoName);
         tearDown();
@@ -33,7 +33,7 @@ public class GitClientTest {
 
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if(pathTest.toFile().exists()) {
             try(Stream<Path> stream = Files.walk(pathTest)) {

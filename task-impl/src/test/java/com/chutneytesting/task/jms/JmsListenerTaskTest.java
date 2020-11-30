@@ -15,7 +15,7 @@ import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.task.jms.consumer.JmsListenerParameters;
 import java.util.Optional;
 import javax.jms.TextMessage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class JmsListenerTaskTest {

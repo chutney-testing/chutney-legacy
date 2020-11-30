@@ -12,15 +12,15 @@ import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class DatabaseSchedulerRepositoryTest extends AbstractLocalDatabaseTest {
 
     private DatabaseSchedulerRepository schedulerRepo;
     private Clock clock;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.clock = Clock.fixed(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.ofHours(1)), ZoneId.systemDefault());
         schedulerRepo = new DatabaseSchedulerRepository(namedParameterJdbcTemplate, clock);

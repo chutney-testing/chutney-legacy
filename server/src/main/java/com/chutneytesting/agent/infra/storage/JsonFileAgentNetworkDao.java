@@ -2,10 +2,11 @@ package com.chutneytesting.agent.infra.storage;
 
 import static java.util.Optional.of;
 
+import com.chutneytesting.tools.ThrowingRunnable;
+import com.chutneytesting.tools.ThrowingSupplier;
+import com.chutneytesting.tools.ZipUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Files;
-import com.chutneytesting.tools.ThrowingRunnable;
-import com.chutneytesting.tools.ZipUtils;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +17,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.zip.ZipOutputStream;
-import com.chutneytesting.tools.ThrowingSupplier;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
@@ -31,7 +31,7 @@ public class JsonFileAgentNetworkDao {
     private final File file;
 
     public JsonFileAgentNetworkDao(
-        @Qualifier("persistenceObjectMapper") ObjectMapper objectMapper,
+        @Qualifier("agentNetworkPersistenceObjectMapper") ObjectMapper objectMapper,
         @Value("${persistence.agentNetwork.file:conf/endpoints.json}") File file) {
         this.objectMapper = objectMapper;
         this.file = file;

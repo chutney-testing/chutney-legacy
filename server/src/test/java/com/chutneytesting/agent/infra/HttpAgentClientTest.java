@@ -14,34 +14,28 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.chutneytesting.WebConfiguration;
 import com.chutneytesting.agent.NodeNetworkSpringConfiguration;
 import com.chutneytesting.agent.api.dto.ExploreResultApiDto;
 import com.chutneytesting.agent.api.dto.ExploreResultApiDto.AgentLinkEntity;
+import com.chutneytesting.agent.domain.AgentClient;
 import com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration;
 import com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration.AgentNetworkConfiguration;
 import com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration.EnvironmentConfiguration;
-import com.chutneytesting.agent.domain.configure.LocalServerIdentifier;
-import com.chutneytesting.agent.domain.AgentClient;
+import com.chutneytesting.agent.domain.configure.NetworkConfiguration;
 import com.chutneytesting.agent.domain.explore.ExploreResult;
+import com.chutneytesting.agent.domain.network.NetworkDescription;
 import com.chutneytesting.engine.domain.delegation.ConnectionChecker;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.chutneytesting.agent.domain.configure.NetworkConfiguration;
-import com.chutneytesting.agent.domain.network.NetworkDescription;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.time.Instant;
 import java.util.Arrays;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.MethodRule;
-import org.mockito.Answers;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -51,27 +45,23 @@ import org.springframework.web.client.RestTemplate;
 
 public class HttpAgentClientTest {
 
-    @Rule public MethodRule mockitoRule = MockitoJUnit.rule();
+    private AgentClient sut;
 
-    AgentClient agentClient;
+    private ConnectionChecker connectionChecker = mock(ConnectionChecker.class);
+    private ObjectMapper objectMapper = new WebConfiguration().objectMapper();
+    private RestTemplate restTemplate = new NodeNetworkSpringConfiguration().restTemplateForHttpNodeNetwork(objectMapper);
+    private MockRestServiceServer server = MockRestServiceServer.bindTo(restTemplate).build();
 
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS) LocalServerIdentifier localServerIdentifier;
-    @Mock ConnectionChecker connectionChecker;
-
-    ObjectMapper objectMapper = new WebConfiguration().objectMapper();
-    RestTemplate restTemplate = new NodeNetworkSpringConfiguration().restTemplateForHttpNodeNetwork(objectMapper);
-    MockRestServiceServer server = MockRestServiceServer.bindTo(restTemplate).build();
-
-    @Before
+    @BeforeEach
     public void setUp() throws UnknownHostException {
-        agentClient = new HttpAgentClient(restTemplate, connectionChecker);
+        sut = new HttpAgentClient(restTemplate, connectionChecker);
     }
 
     @Test
     public void client_returns_empty_links_if_localhost() {
         when(connectionChecker.canConnectTo(any())).thenReturn(false);
 
-        ExploreResult exploreResult = agentClient.explore("", agentInfo("testName", "test", 0), null);
+        ExploreResult exploreResult = sut.explore("", agentInfo("testName", "test", 0), null);
 
         assertThat(exploreResult.agentLinks()).hasSize(0);
     }
@@ -80,7 +70,7 @@ public class HttpAgentClientTest {
     public void client_returns_empty_links_if_unreachable_because_connectionTester_fails() {
         when(connectionChecker.canConnectTo(any())).thenReturn(false);
 
-        ExploreResult exploreResult = agentClient.explore("local", agentInfo("testName", "host", 1), null);
+        ExploreResult exploreResult = sut.explore("local", agentInfo("testName", "host", 1), null);
 
         assertThat(exploreResult.agentLinks()).hasSize(0);
     }
@@ -93,7 +83,7 @@ public class HttpAgentClientTest {
                 throw new IOException("Unreachable");
             });
 
-        ExploreResult exploreResult = agentClient.explore("local", agentInfo("testName", "host", 1), buildNetworkConfiguration());
+        ExploreResult exploreResult = sut.explore("local", agentInfo("testName", "host", 1), buildNetworkConfiguration());
 
         assertThat(exploreResult.agentLinks()).hasSize(0);
     }
@@ -104,7 +94,7 @@ public class HttpAgentClientTest {
         server.expect(manyTimes(), requestTo("https://host:1" + EXPLORE_URL)).andExpect(method(HttpMethod.POST))
             .andRespond(withServerError());
 
-        ExploreResult exploreResult = agentClient.explore("local", agentInfo("testName", "host", 1), buildNetworkConfiguration());
+        ExploreResult exploreResult = sut.explore("local", agentInfo("testName", "host", 1), buildNetworkConfiguration());
 
         assertThat(exploreResult.agentLinks()).hasSize(0);
     }
@@ -134,7 +124,7 @@ public class HttpAgentClientTest {
             agentInfoB,
             agentInfo("C", "host3", 1));
 
-        ExploreResult exploreResult = agentClient.explore("A", agentInfoB, networkConfiguration);
+        ExploreResult exploreResult = sut.explore("A", agentInfoB, networkConfiguration);
 
         assertThat(exploreResult.agentLinks()).hasSize(3).extracting(link -> link.source().name() + "->" + link.destination().name()).containsExactlyInAnyOrder("A->B", "B->A", "B->C");
     }
@@ -147,20 +137,20 @@ public class HttpAgentClientTest {
         server.expect(manyTimes(), requestTo("https://host:1000" + WRAP_UP_URL)).andExpect(method(HttpMethod.POST))
             .andRespond(MockRestResponseCreators.withSuccess());
 
-        agentClient.wrapUp(agentInfo, mock);
+        sut.wrapUp(agentInfo, mock);
     }
 
     @Test
     public void wrapup_does_nothing_if_remote_is_not_joinable() throws Exception {
         restTemplate = mock(RestTemplate.class);
-        agentClient = new HttpAgentClient(restTemplate, connectionChecker);
+        sut = new HttpAgentClient(restTemplate, connectionChecker);
 
         NetworkDescription mock = mock(NetworkDescription.class);
         NamedHostAndPort info = mock(NamedHostAndPort.class);
 
         when(connectionChecker.canConnectTo(any())).thenReturn(false);
 
-        agentClient.wrapUp(info, mock);
+        sut.wrapUp(info, mock);
 
         verifyNoMoreInteractions(restTemplate);
     }
