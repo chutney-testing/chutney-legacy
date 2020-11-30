@@ -3,12 +3,12 @@ package com.chutneytesting;
 import com.chutneytesting.agent.domain.configure.LocalServerIdentifier;
 import com.chutneytesting.design.domain.campaign.CampaignRepository;
 import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
+import com.chutneytesting.design.domain.editionlock.TestCaseEditions;
+import com.chutneytesting.design.domain.editionlock.TestCaseEditionsService;
 import com.chutneytesting.design.domain.environment.EnvironmentRepository;
 import com.chutneytesting.design.domain.environment.EnvironmentService;
 import com.chutneytesting.design.domain.plugins.jira.JiraRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
-import com.chutneytesting.design.domain.editionlock.TestCaseEditions;
-import com.chutneytesting.design.domain.editionlock.TestCaseEditionsService;
 import com.chutneytesting.engine.api.execution.TestEngine;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessor;
@@ -26,6 +26,7 @@ import com.chutneytesting.security.domain.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.Clock;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.PostConstruct;
@@ -151,6 +152,11 @@ public class ServerConfiguration {
     @Bean
     JiraXrayPlugin jiraXrayPlugin(JiraRepository jiraRepository, ObjectMapper objectMapper) {
         return new JiraXrayPlugin(jiraRepository, objectMapper);
+    }
+
+    @Bean
+    Clock clock() {
+        return Clock.systemDefaultZone();
     }
 
 }

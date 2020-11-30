@@ -3,7 +3,12 @@ package com.chutneytesting.execution.infra.schedule;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.tests.AbstractLocalDatabaseTest;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,22 +18,24 @@ import org.junit.Test;
 public class DatabaseSchedulerRepositoryTest extends AbstractLocalDatabaseTest {
 
     private DatabaseSchedulerRepository schedulerRepo;
+    private Clock clock;
 
     @Before
     public void setUp() {
-        schedulerRepo = new DatabaseSchedulerRepository(namedParameterJdbcTemplate);
+        this.clock = Clock.fixed(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.ofHours(1)), ZoneId.systemDefault());
+        schedulerRepo = new DatabaseSchedulerRepository(namedParameterJdbcTemplate, clock);
     }
 
     @Test
     public void should_return_campaign_scheduled_between_last_30_minutes_and_now() {
 
-        final LocalTime now = LocalTime.now();
+        final LocalTime now = LocalTime.now(clock);
         createCampaign(42L, now.minusMinutes(1));
         createCampaign(43L, now.plusMinutes(1));
         createCampaign(44L, now.minusMinutes(31));
         createCampaign(45L, null);
 
-        LocalTime thirtyMinuteAgo = now.minusMinutes(30);
+        LocalDateTime thirtyMinuteAgo = LocalDateTime.now(clock).minusMinutes(30);
         final List<Long> campaignScheduledAfter = schedulerRepo.getCampaignScheduledAfter(thirtyMinuteAgo);
 
         assertThat(campaignScheduledAfter).containsExactly(42L);

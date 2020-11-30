@@ -9,7 +9,8 @@ import static org.mockito.Mockito.when;
 
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.google.common.collect.Lists;
-import java.time.LocalTime;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -19,10 +20,12 @@ public class CampaignSchedulerTest {
     private CampaignScheduler campaignScheduler;
     private SchedulerRepository schedulerRepository = mock(SchedulerRepository.class);
     private CampaignExecutionEngine campaignExecutionEngine = mock(CampaignExecutionEngine.class);
+    private Clock clock;
 
     @Before
     public void setUp() {
-        campaignScheduler = new CampaignScheduler(campaignExecutionEngine, schedulerRepository);
+        clock = Clock.systemDefaultZone();
+        campaignScheduler = new CampaignScheduler(campaignExecutionEngine, schedulerRepository, clock);
     }
 
     @Test
@@ -34,10 +37,10 @@ public class CampaignSchedulerTest {
 
         campaignScheduler.executeScheduledCampaign();
 
-        ArgumentCaptor<LocalTime> scheduledTime = ArgumentCaptor.forClass(LocalTime.class);
+        ArgumentCaptor<LocalDateTime> scheduledTime = ArgumentCaptor.forClass(LocalDateTime.class);
         verify(schedulerRepository).getCampaignScheduledAfter(scheduledTime.capture());
-        assertThat(scheduledTime.getValue()).isBeforeOrEqualTo(LocalTime.now());
-        assertThat(scheduledTime.getValue()).isAfter(LocalTime.now().minusMinutes(1));
+        assertThat(scheduledTime.getValue()).isBeforeOrEqualTo(LocalDateTime.now(clock));
+        assertThat(scheduledTime.getValue()).isAfter(LocalDateTime.now(clock).minusMinutes(1));
 
         verify(campaignExecutionEngine).executeById(1L, "auto");
         verify(campaignExecutionEngine).executeById(2L, "auto");
