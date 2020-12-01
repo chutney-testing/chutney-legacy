@@ -77,7 +77,6 @@ public class GlacioContextPutParser extends GlacioExecutableStepParser {
                 if (tableRow.getCells().size() == 2) {
                     List<String> cells = tableRow.getCells().subList(0, 2);
                     entries.put(cells.get(0), cells.get(1));
-                    cells.clear();
                 }
             });
             return entries;
