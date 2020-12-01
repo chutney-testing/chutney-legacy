@@ -86,7 +86,7 @@ public class ExecutableComposedTestCase implements TestCase {
         Map<String, String> dataSet = new HashMap<>();
 
         composedScenario.composedSteps
-            .forEach(composableStep -> dataSet.putAll(composableStep.dataSetGlobalParameters()));
+            .forEach(composedStep -> dataSet.putAll(composedStep.dataSetGlobalParameters()));
 
         Optional.ofNullable(composedScenario.parameters)
             .ifPresent(dataSet::putAll);
@@ -96,7 +96,7 @@ public class ExecutableComposedTestCase implements TestCase {
 
     @Override
     public String toString() {
-        return "ComposableTestCase{" +
+        return "ExecutableComposedTestCase{" +
             "id='" + id + '\'' +
             ", metadata=" + metadata +
             ", ExecutableComposedScenario=" + composedScenario +

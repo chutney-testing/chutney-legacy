@@ -42,7 +42,7 @@ public class ComposedTestCaseParametersResolutionPreProcessorTest {
     }
 
     @Test
-    public void should_replace_composableTestCase_scenario_parameters_with_scoped_data_set_values() {
+    public void should_replace_composed_scenario_parameters_with_scoped_data_set_values() {
         // Given
         String actionName = "simple action on target %1$s";
         StepImplementation actionImplementation = new StepImplementation("http-get", "**target**", emptyMap(), emptyMap());
@@ -91,7 +91,7 @@ public class ComposedTestCaseParametersResolutionPreProcessorTest {
             "step param", "dataset step param"
         );
 
-        ExecutableComposedTestCase composableTestCase = new ExecutableComposedTestCase(
+        ExecutableComposedTestCase composedTestCase = new ExecutableComposedTestCase(
             "1",
             TestCaseMetadataImpl.builder()
                 .withCreationDate(Instant.now())
@@ -119,41 +119,41 @@ public class ComposedTestCaseParametersResolutionPreProcessorTest {
 
         ComposedTestCaseParametersResolutionPreProcessor sut = new ComposedTestCaseParametersResolutionPreProcessor(globalvarRepository, objectMapper);
         // When
-        final ExecutableComposedTestCase composableTestCaseProcessed = sut.apply(
-            new ExecutionRequest(composableTestCase, environment, "user")
+        final ExecutableComposedTestCase composedTestCaseProcessed = sut.apply(
+            new ExecutionRequest(composedTestCase, environment, "user")
         );
 
         // Then
-        assertThat(composableTestCaseProcessed.id()).isEqualTo(composableTestCase.id());
-        assertThat(composableTestCaseProcessed.metadata.title()).isEqualTo(format(testCaseTitle, dataSet.get("testcase title")));
-        assertThat(composableTestCaseProcessed.metadata.description()).isEqualTo(format(testCaseDescription, dataSet.get("testcase description"), environment));
+        assertThat(composedTestCaseProcessed.id()).isEqualTo(composedTestCase.id());
+        assertThat(composedTestCaseProcessed.metadata.title()).isEqualTo(format(testCaseTitle, dataSet.get("testcase title")));
+        assertThat(composedTestCaseProcessed.metadata.description()).isEqualTo(format(testCaseDescription, dataSet.get("testcase description"), environment));
 
-        ExecutableComposedStep firstStep = composableTestCaseProcessed.composedScenario.composedSteps.get(0);
+        ExecutableComposedStep firstStep = composedTestCaseProcessed.composedScenario.composedSteps.get(0);
         assertThat(firstStep.name).isEqualTo(format(stepName, dataSet.get("testcase param"), dataSet.get("step target"), firstStep.dataset.get("target")));
         assertThat(firstStep.strategy).isEqualTo(Strategy.DEFAULT);
         assertThat(firstStep.dataset).containsOnly(
             entry("step param", dataSet.get("testcase param")),
             entry("step target", dataSet.get("step target")),
-            entry("target", composableTestCase.composedScenario.composedSteps.get(0).dataset.get("target"))
+            entry("target", composedTestCase.composedScenario.composedSteps.get(0).dataset.get("target"))
         );
         assertStepActions(actionName, firstStep, step.steps.get(2).dataset.get("target"), retryStrategy);
 
-        ExecutableComposedStep secondStep = composableTestCaseProcessed.composedScenario.composedSteps.get(1);
+        ExecutableComposedStep secondStep = composedTestCaseProcessed.composedScenario.composedSteps.get(1);
         assertThat(secondStep.name).isEqualTo(format(stepName, secondStep.dataset.get("step param"), dataSet.get("testcase target"), dataSet.get("target")));
         assertThat(secondStep.strategy).isEqualTo(Strategy.DEFAULT);
         assertThat(secondStep.dataset).containsOnly(
-            entry("step param", composableTestCase.composedScenario.composedSteps.get(1).dataset.get("step param")),
+            entry("step param", composedTestCase.composedScenario.composedSteps.get(1).dataset.get("step param")),
             entry("step target", dataSet.get("testcase target")),
             entry("target", dataSet.get("target"))
         );
         assertStepActions(actionName, secondStep, step.steps.get(2).dataset.get("target"), retryStrategy);
 
-        ExecutableComposedStep thirdStep = composableTestCaseProcessed.composedScenario.composedSteps.get(2);
+        ExecutableComposedStep thirdStep = composedTestCaseProcessed.composedScenario.composedSteps.get(2);
         assertThat(thirdStep.name).isEqualTo(format(stepName, dataSet.get("step param"), thirdStep.dataset.get("step target"), dataSet.get("testcase target")));
         assertThat(thirdStep.strategy).isEqualTo(Strategy.DEFAULT);
         assertThat(thirdStep.dataset).containsOnly(
             entry("step param", dataSet.get("step param")),
-            entry("step target", composableTestCase.composedScenario.composedSteps.get(2).dataset.get("step target")),
+            entry("step target", composedTestCase.composedScenario.composedSteps.get(2).dataset.get("step target")),
             entry("target", dataSet.get("testcase target"))
         );
         assertStepActions(actionName, thirdStep, step.steps.get(2).dataset.get("target"), retryStrategy);

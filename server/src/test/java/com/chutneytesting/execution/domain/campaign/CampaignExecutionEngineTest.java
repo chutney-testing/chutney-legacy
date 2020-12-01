@@ -25,8 +25,6 @@ import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
-import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
-import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
@@ -36,6 +34,8 @@ import com.chutneytesting.execution.domain.jira.JiraXrayPlugin;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedScenario;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
@@ -340,17 +340,17 @@ public class CampaignExecutionEngineTest {
         );
         TestCase gwtTestCase = createGwtTestCase("gwt", gwtTestCaseDataSet);
 
-        TestCase composableTestCase = createComposableTestCase("composable", "composableDataSetId");
+        TestCase composedTestCase = createExecutableComposedTestCase("composable", "composableDataSetId");
 
         Map<String, String> campaignDataSet = Maps.of(
             "campaign key", "campaign specific value",
             "key", "campaign value"
         );
-        Campaign campaign = createCampaign(campaignDataSet, "campaignDataSetId", gwtTestCase, composableTestCase);
+        Campaign campaign = createCampaign(campaignDataSet, "campaignDataSetId", gwtTestCase, composedTestCase);
 
         when(campaignRepository.findById(campaign.id)).thenReturn(campaign);
         when(testCaseRepository.findById(gwtTestCase.id())).thenReturn(gwtTestCase);
-        when(testCaseRepository.findById(composableTestCase.id())).thenReturn(composableTestCase);
+        when(testCaseRepository.findById(composedTestCase.id())).thenReturn(composedTestCase);
         when(scenarioExecutionEngine.execute(any(ExecutionRequest.class))).thenReturn(mock(ScenarioExecutionReport.class));
         when(executionHistoryRepository.getExecution(any(), any())).thenReturn(executionWithId(42L));
 
@@ -367,7 +367,7 @@ public class CampaignExecutionEngineTest {
             entry("key", campaignDataSet.get("key")),
             entry("campaign key", "campaign specific value")
         );
-        assertThat(((ComposableTestCase) executionRequests.get(1).testCase).metadata.datasetId())
+        assertThat(((ExecutableComposedTestCase) executionRequests.get(1).testCase).metadata.datasetId())
             .hasValue(campaign.datasetId);
     }
 
@@ -418,13 +418,13 @@ public class CampaignExecutionEngineTest {
             .build();
     }
 
-    private ComposableTestCase createComposableTestCase(String id, String dataSetId) {
-        return new ComposableTestCase(
+    private ExecutableComposedTestCase createExecutableComposedTestCase(String id, String dataSetId) {
+        return new ExecutableComposedTestCase(
             id,
             TestCaseMetadataImpl.builder()
                 .withDatasetId(dataSetId)
                 .build(),
-            ComposableScenario.builder().build()
+            ExecutableComposedScenario.builder().build()
         );
     }
 

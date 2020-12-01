@@ -40,11 +40,11 @@ public class ComposedTestCaseLoopPreProcessorTest {
             .withComposedSteps(singletonList(step))
             .build();
 
-        ExecutableComposedTestCase composableTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+        ExecutableComposedTestCase composedTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
         ExecutableComposedTestCase actual = sut.apply(
-            new ExecutionRequest(composableTestCase, "env", "user")
+            new ExecutionRequest(composedTestCase, "env", "user")
         );
 
         // Then
@@ -69,11 +69,11 @@ public class ComposedTestCaseLoopPreProcessorTest {
             .withComposedSteps(singletonList(step))
             .build();
 
-        ExecutableComposedTestCase composableTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+        ExecutableComposedTestCase composedTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
         ExecutableComposedTestCase actual = sut.apply(
-            new ExecutionRequest(composableTestCase, "env", "user")
+            new ExecutionRequest(composedTestCase, "env", "user")
         );
 
         // Then
@@ -99,11 +99,11 @@ public class ComposedTestCaseLoopPreProcessorTest {
             .withComposedSteps(singletonList(step))
             .build();
 
-        ExecutableComposedTestCase composableTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+        ExecutableComposedTestCase composedTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
         ExecutableComposedTestCase actual = sut.apply(
-            new ExecutionRequest(composableTestCase, "env", "user")
+            new ExecutionRequest(composedTestCase, "env", "user")
         );
 
         // Then
@@ -129,11 +129,11 @@ public class ComposedTestCaseLoopPreProcessorTest {
             .withComposedSteps(singletonList(step))
             .build();
 
-        ExecutableComposedTestCase composableTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+        ExecutableComposedTestCase composedTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
         ExecutableComposedTestCase actual = sut.apply(
-            new ExecutionRequest(composableTestCase, "env", "user")
+            new ExecutionRequest(composedTestCase, "env", "user")
         );
 
         // Then
@@ -159,11 +159,11 @@ public class ComposedTestCaseLoopPreProcessorTest {
             .withComposedSteps(singletonList(step))
             .build();
 
-        ExecutableComposedTestCase composableTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+        ExecutableComposedTestCase composedTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
         ExecutableComposedTestCase actual = sut.apply(
-            new ExecutionRequest(composableTestCase, "env", "user")
+            new ExecutionRequest(composedTestCase, "env", "user")
         );
 
         // Then
@@ -189,11 +189,11 @@ public class ComposedTestCaseLoopPreProcessorTest {
             .withComposedSteps(singletonList(step))
             .build();
 
-        ExecutableComposedTestCase composableTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+        ExecutableComposedTestCase composedTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
         ExecutableComposedTestCase actual = sut.apply(
-            new ExecutionRequest(composableTestCase, "env", "user")
+            new ExecutionRequest(composedTestCase, "env", "user")
         );
 
         // Then
@@ -220,11 +220,11 @@ public class ComposedTestCaseLoopPreProcessorTest {
             .withComposedSteps(singletonList(step))
             .build();
 
-        ExecutableComposedTestCase composableTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+        ExecutableComposedTestCase composedTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
         ExecutableComposedTestCase actual = sut.apply(
-            new ExecutionRequest(composableTestCase, "env", "user")
+            new ExecutionRequest(composedTestCase, "env", "user")
         );
 
         // Then
@@ -251,11 +251,11 @@ public class ComposedTestCaseLoopPreProcessorTest {
             .withComposedSteps(singletonList(step))
             .build();
 
-        ExecutableComposedTestCase composableTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+        ExecutableComposedTestCase composedTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
         ExecutableComposedTestCase actual = sut.apply(
-            new ExecutionRequest(composableTestCase, "env", "user")
+            new ExecutionRequest(composedTestCase, "env", "user")
         );
 
         // Then
@@ -288,11 +288,11 @@ public class ComposedTestCaseLoopPreProcessorTest {
             .withComposedSteps(singletonList(parentStep))
             .build();
 
-        ExecutableComposedTestCase composableTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+        ExecutableComposedTestCase composedTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
         ExecutableComposedTestCase actual = sut.apply(
-            new ExecutionRequest(composableTestCase, "env", "user")
+            new ExecutionRequest(composedTestCase, "env", "user")
         );
 
         // Then
@@ -323,11 +323,11 @@ public class ComposedTestCaseLoopPreProcessorTest {
             .withComposedSteps(singletonList(step))
             .build();
 
-        ExecutableComposedTestCase composableTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+        ExecutableComposedTestCase composedTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
         ExecutableComposedTestCase actual = sut.apply(
-            new ExecutionRequest(composableTestCase, "env", "user")
+            new ExecutionRequest(composedTestCase, "env", "user")
         );
 
         // Then
@@ -354,11 +354,11 @@ public class ComposedTestCaseLoopPreProcessorTest {
             .withComposedSteps(singletonList(step))
             .build();
 
-        ExecutableComposedTestCase composableTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+        ExecutableComposedTestCase composedTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
         ExecutableComposedTestCase actual = sut.apply(
-            new ExecutionRequest(composableTestCase, "env", "user")
+            new ExecutionRequest(composedTestCase, "env", "user")
         );
 
         // Then

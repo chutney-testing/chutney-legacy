@@ -10,7 +10,6 @@ import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
 import com.chutneytesting.design.domain.campaign.CampaignNotFoundException;
 import com.chutneytesting.design.domain.campaign.CampaignRepository;
 import com.chutneytesting.design.domain.campaign.ScenarioExecutionReportCampaign;
-import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.ScenarioNotParsableException;
@@ -24,6 +23,7 @@ import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.execution.domain.scenario.FailedExecutionAttempt;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
@@ -224,8 +224,8 @@ public class CampaignExecutionEngine {
     private ExecutionRequest buildExecutionRequest(Campaign campaign, TestCase testCase, String userId) {
         String campaignDatasetId = campaign.datasetId;
         // Override scenario dataset by campaign's one
-        if (isNotBlank(campaignDatasetId) && testCase instanceof ComposableTestCase) {
-            testCase = ((ComposableTestCase) testCase).withDataSetId(campaignDatasetId);
+        if (isNotBlank(campaignDatasetId) && testCase instanceof ExecutableComposedTestCase) {
+            testCase = ((ExecutableComposedTestCase) testCase).withDataSetId(campaignDatasetId);
             return new ExecutionRequest(testCase, campaign.executionEnvironment(), true, userId);
         } else {
             Map<String, String> ds = new HashMap<>(testCase.computedParameters());
