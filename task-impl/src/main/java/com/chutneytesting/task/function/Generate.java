@@ -12,4 +12,6 @@ public class Generate {
 
     public String randomLong() { return String.valueOf(LONG_GENERATOR.nextLong()); }
 
+    public String randomInt(int bound) { return String.valueOf(LONG_GENERATOR.nextInt(bound)); }
+
 }
