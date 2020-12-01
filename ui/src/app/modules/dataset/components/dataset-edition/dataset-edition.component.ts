@@ -100,7 +100,7 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
         this.dataSetService.save(dataset)
             .subscribe( (res) => {
                 this.setCurrentDataSet(res);
-                this.location.replaceState('#/dataset/' + this.dataset.id + '/edition');
+                this.location.replaceState('/dataset/' + this.dataset.id + '/edition');
                 this.notify(this.savedMessage);
                 this.modificationsSaved = true;
             });
