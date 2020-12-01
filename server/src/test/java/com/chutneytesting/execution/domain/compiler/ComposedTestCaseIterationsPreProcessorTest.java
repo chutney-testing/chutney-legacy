@@ -461,6 +461,91 @@ public class ComposedTestCaseIterationsPreProcessorTest {
     }
 
     @Test
+    public void should_create_iterations_when_using_previous_indexed_outputs_in_task_output() {
+
+        // Given
+        List<Map<String, String>> multipleValues = asList(
+            Maps.of("letter", "a"),
+            Maps.of("letter", "b")
+        );
+        stubDatasetRepository(null, multipleValues);
+
+        ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
+            TestCaseMetadataImpl.builder().withDatasetId("fakeId").build(),
+            ExecutableComposedScenario.builder()
+                .withComposedSteps(asList(
+                    ExecutableComposedStep.builder()
+                        .withName("Should generate iterations and index resulting outputs")
+                        .withImplementation(Optional.of(
+                            new StepImplementation("task", null, emptyMap(), singletonMap("result", "**letter**"))))
+                        .withDataset(singletonMap("letter", ""))
+                        .build(),
+                    ExecutableComposedStep.builder()
+                        .withName("Should generate iterations using previous outputs in their output")
+                        .withImplementation(Optional.of(
+                            new StepImplementation("task", null, emptyMap(), singletonMap("key_to_index", "${#result}"))))
+                        .build()
+                    )
+                )
+                .build(),
+            singletonMap("letter", "")
+        );
+
+        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+
+        // When
+        ExecutableComposedTestCase actual = sut.apply(testCase);
+
+        // Then
+        ExecutableComposedScenario expected = ExecutableComposedScenario.builder()
+            .withComposedSteps(asList(
+                ExecutableComposedStep.builder()
+                    .withName("Should generate iterations and index resulting outputs")
+                    .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
+                    .withSteps(asList(
+                        ExecutableComposedStep.builder()
+                            .withName("Should generate iterations and index resulting outputs - dataset iteration 1")
+                            .withImplementation(Optional.of(
+                                new StepImplementation("success", null, emptyMap(), singletonMap("result_1", "**letter**"))
+                            ))
+                            .withDataset(singletonMap("letter", "a"))
+                            .build(),
+                        ExecutableComposedStep.builder()
+                            .withName("Should generate iterations and index resulting outputs - dataset iteration 2")
+                            .withImplementation(Optional.of(
+                                new StepImplementation("success", null, emptyMap(), singletonMap("result_2", "**letter**"))
+                            ))
+                            .withDataset(singletonMap("letter", "b"))
+                            .build()
+                    ))
+                    .build(),
+                ExecutableComposedStep.builder()
+                    .withName("Should generate iterations using previous outputs in their output")
+                    .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
+                    .withSteps(Arrays.asList(
+                        ExecutableComposedStep.builder()
+                            .withName("Should generate iterations using previous outputs in their output - dataset iteration 1")
+                            .withImplementation(Optional.of(
+                                new StepImplementation("context-put", null, emptyMap(), singletonMap("key_to_index_1", "${#result_1}"))
+                            ))
+                            .build(),ExecutableComposedStep.builder()
+                            .withName("Should generate iterations using previous outputs in their output - dataset iteration 2")
+                            .withImplementation(Optional.of(
+                                new StepImplementation("context-put", null, emptyMap(), singletonMap("key_to_index_2", "${#result_2}"))
+                            ))
+                            .build()
+                    ))
+                    .build()
+                )
+            )
+            .build();
+
+        assertThat(actual.composedScenario.composedSteps.get(0)).isEqualTo(expected.composedSteps.get(0));
+        assertThat(actual.composedScenario.composedSteps.get(1)).isEqualTo(expected.composedSteps.get(1));
+
+    }
+
+    @Test
     public void should_generate_iterations_having_both_previous_indexed_outputs_and_indexing_new_outputs() {
 
         // Given
@@ -729,10 +814,6 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         assertThat(actual.composedScenario.composedSteps.get(1)).isEqualTo(expected.composedSteps.get(1));
 
     }
-
-    // A test with 2 multivalues dataset
-    // a test with a step using 2 previous indexed values and 3 multivalues in input, how many iteration should we have ? 2, 3, 6 combine ? Fuck ! //
-
 
     @Test
     public void should_index_iterations_outputs_when_inside_a_parent_step() {
