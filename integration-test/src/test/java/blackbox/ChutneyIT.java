@@ -102,6 +102,13 @@ public class ChutneyIT {
                 )
                 .build()
         );
+
+        environmentService.addTarget(TEST_ENV_NAME,
+            Target.builder()
+                .withId(Target.TargetId.of("CHUTNEY_LOCAL_NO_USER", TEST_ENV_NAME))
+                .withUrl("https://localhost:" + securePort)
+                .build()
+        );
     }
 
     private void addChutneyDBServer() {
