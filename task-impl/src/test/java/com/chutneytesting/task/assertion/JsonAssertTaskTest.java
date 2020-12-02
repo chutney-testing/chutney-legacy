@@ -43,6 +43,7 @@ public class JsonAssertTaskTest {
         Map<String, Object> expected = new HashMap<>();
         expected.put("$.something.value", "$isNotNull");
         expected.put("$.something.notexist", "$isNull");
+        expected.put("$.something[?(@.notexist=='noop')]", "$isNull");
         expected.put("$.something.valuenull", "$isNull");
         expected.put("$.something.alphabet", "$contains:abcdefg");
         expected.put("$.something.matchregexp", "$matches:\\d{4}-\\d{2}-\\d{2}");
