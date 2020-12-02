@@ -28,6 +28,7 @@ com.chutneytesting.task.http.HttpPostTask
 com.chutneytesting.task.http.HttpPutTask
 com.chutneytesting.task.http.HttpDeleteTask
 com.chutneytesting.task.http.HttpSoapTask
+com.chutneytesting.task.http.HttpPatchTask
 
 com.chutneytesting.task.http.HttpsServerStartTask
 com.chutneytesting.task.http.HttpsListenerTask

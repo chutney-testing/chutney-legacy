@@ -3,6 +3,7 @@ package com.chutneytesting.task.http;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.patch;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
@@ -34,7 +35,7 @@ import org.springframework.http.HttpHeaders;
 
 public class HttpTaskTest {
 
-    private WireMockServer wireMockServer = new WireMockServer(wireMockConfig().dynamicPort().dynamicHttpsPort());
+    private final WireMockServer wireMockServer = new WireMockServer(wireMockConfig().dynamicPort().dynamicHttpsPort());
 
     @BeforeEach
     public void setUp() {
@@ -175,6 +176,30 @@ public class HttpTaskTest {
         headers.put("CustomHeader", "toto");
 
         Task httpPutTask = new HttpPutTask(targetMock, logger, uri, "somebody",headers, "1000 ms");
+        TaskExecutionResult executionResult = httpPutTask.execute();
+
+        // then
+        assertThat(executionResult.status).isEqualTo(TaskExecutionResult.Status.Success);
+        assertThat((Integer) executionResult.outputs.get("status")).isEqualTo(expectedStatus);
+    }
+
+    @Test
+    public void should_patch_succeed() {
+        String uri = "/some/thing";
+        int expectedStatus = 200;
+
+        stubFor(patch(urlEqualTo(uri)).withHeader("CustomHeader", new EqualToPattern("toto"))
+            .willReturn(aResponse().withStatus(expectedStatus))
+        );
+
+        Logger logger = mock(Logger.class);
+        Target targetMock = mockTarget("http://127.0.0.1:" + wireMockServer.port());
+
+        // when
+        Map<String, String> headers = new HashMap<>();
+        headers.put("CustomHeader", "toto");
+
+        Task httpPutTask = new HttpPatchTask(targetMock, logger, uri, "somebody",headers, "1000 ms");
         TaskExecutionResult executionResult = httpPutTask.execute();
 
         // then
