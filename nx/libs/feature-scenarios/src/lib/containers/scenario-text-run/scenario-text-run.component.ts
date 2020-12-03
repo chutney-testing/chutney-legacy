@@ -12,6 +12,7 @@ import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { fromEventSource } from '@chutney/utils';
 import * as hjson from 'hjson';
+import * as jsyaml from 'js-yaml';
 import * as dotProp from 'dot-prop-immutable';
 
 @Component({
@@ -109,7 +110,8 @@ export class ScenarioTextRunComponent implements OnInit {
   hasChild = (_: number, node: any) => !!node.steps && node.steps.length > 0;
 
   //readonly trackBy = (_: number, node: any) => node.status + '-' + node.name;
-  model: any = 'select * from hello';
+  output: any;
+  activeNode: any;
 
   runScenario() {
     this.runScenarioGQL
@@ -119,5 +121,9 @@ export class ScenarioTextRunComponent implements OnInit {
           relativeTo: this.route,
         })
       );
+  }
+
+  toYaml(obj: any) {
+    return jsyaml.dump(obj);
   }
 }
