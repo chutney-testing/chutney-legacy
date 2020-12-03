@@ -34,6 +34,7 @@ import { IconsProviderModule } from './icons-provider.module';
 import { MatRippleModule } from '@angular/material/core';
 import { CovalentBreadcrumbsModule } from '@covalent/core/breadcrumbs';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { AngularSplitModule } from 'angular-split';
 
 @NgModule({
   imports: [
@@ -68,6 +69,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     /*others*/
     NgxMatSelectSearchModule,
     MatPasswordModule,
+    AngularSplitModule,
     IconsProviderModule,
   ],
   exports: [
@@ -102,6 +104,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     /*others*/
     NgxMatSelectSearchModule,
     MatPasswordModule,
+    AngularSplitModule,
     IconsProviderModule,
   ],
   providers: [
