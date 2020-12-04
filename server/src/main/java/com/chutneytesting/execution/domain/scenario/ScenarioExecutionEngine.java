@@ -66,7 +66,6 @@ public class ScenarioExecutionEngine {
 
     public ScenarioExecutionReport execute(ExecutableComposedStep composedStep, String environment, String userId) throws ScenarioNotFoundException, ScenarioNotParsableException {
         TestCase testCase = new ExecutableComposedTestCase(
-            "no_testcase_id",
             TestCaseMetadataImpl.builder()
                 .withDescription(composedStep.name)
                 .withTitle(composedStep.name)

@@ -83,7 +83,7 @@ public class ComposedTestCasePreProcessorTest {
             .withComposedSteps(singletonList(parentStep))
             .build();
 
-        ExecutableComposedTestCase composableTestase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+        ExecutableComposedTestCase composableTestase = new ExecutableComposedTestCase(TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
         ExecutableComposedTestCase actual = sut.apply(
@@ -133,7 +133,7 @@ public class ComposedTestCasePreProcessorTest {
             .build();
 
         Map<String, String> dataset = singletonMap(PARAM_NAME, "**" + GLOBAL_PARAMETER + "**");
-        ExecutableComposedTestCase ExecutableComposedTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario, dataset);
+        ExecutableComposedTestCase ExecutableComposedTestCase = new ExecutableComposedTestCase(TestCaseMetadataImpl.builder().build(), composableScenario, dataset);
 
         // When
         ExecutableComposedTestCase actual = sut.apply(
@@ -205,7 +205,6 @@ public class ComposedTestCasePreProcessorTest {
         );
 
         ExecutableComposedTestCase ExecutableComposedTestCase = new ExecutableComposedTestCase(
-            "1",
             TestCaseMetadataImpl.builder()
                 .withCreationDate(Instant.now())
                 .withTitle(format(testCaseTitle, "**testcase title**"))
@@ -328,7 +327,6 @@ public class ComposedTestCasePreProcessorTest {
         );
 
         ExecutableComposedTestCase executableComposedTestCase = new ExecutableComposedTestCase(
-            "1",
             TestCaseMetadataImpl.builder()
                 .withCreationDate(Instant.now())
                 .withTitle(format(testCaseTitle, "**testcase title**"))
@@ -452,7 +450,6 @@ public class ComposedTestCasePreProcessorTest {
             "testcase param third", ""
         );
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            "testcase id",
             TestCaseMetadataImpl.builder()
                 .withTitle("testcase title for dataset unique value ref **testcase title param**")
                 .withDescription("testcase description for global var ref **global.key**")

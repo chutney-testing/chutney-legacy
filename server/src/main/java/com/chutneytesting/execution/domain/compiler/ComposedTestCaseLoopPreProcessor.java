@@ -31,7 +31,6 @@ class ComposedTestCaseLoopPreProcessor implements TestCasePreProcessor<Executabl
     public ExecutableComposedTestCase apply(ExecutionRequest executionRequest) {
         ExecutableComposedTestCase testCase = (ExecutableComposedTestCase) executionRequest.testCase;
         return new ExecutableComposedTestCase(
-            testCase.id,
             testCase.metadata,
             apply(testCase.composedScenario),
             testCase.computedParameters);

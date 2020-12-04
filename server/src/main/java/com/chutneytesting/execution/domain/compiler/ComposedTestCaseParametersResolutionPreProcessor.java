@@ -42,7 +42,6 @@ public class ComposedTestCaseParametersResolutionPreProcessor implements TestCas
         Map<String, String> globalVariable = globalvarRepository.getFlatMap();
         makeEnvironmentNameAsGlobalVariable(globalVariable, executionRequest.environment);
         return new ExecutableComposedTestCase(
-            testCase.id,
             applyToMetadata(testCase.metadata, testCase.computedParameters, globalVariable),
             applyToScenario(testCase.composedScenario, testCase.computedParameters, globalVariable),
             testCase.computedParameters);
@@ -53,7 +52,6 @@ public class ComposedTestCaseParametersResolutionPreProcessor implements TestCas
         makeEnvironmentNameAsGlobalVariable(globalVariable, environment);
         Map<String, String> testCaseDataSet = applyOnCurrentStepDataSet(testCase.computedParameters, emptyMap(), globalVariable);
         return new ExecutableComposedTestCase(
-            testCase.id,
             testCase.metadata,
             applyOnStrategy(testCase.composedScenario, testCaseDataSet, globalVariable),
             testCaseDataSet);

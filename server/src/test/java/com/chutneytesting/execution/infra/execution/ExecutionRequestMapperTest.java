@@ -105,7 +105,6 @@ public class ExecutionRequestMapperTest {
             .build());
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            "fake-id",
             TestCaseMetadataImpl.builder()
                 .withTitle("fake title")
                 .build(),

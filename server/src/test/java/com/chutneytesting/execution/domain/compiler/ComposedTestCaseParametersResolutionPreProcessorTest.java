@@ -92,7 +92,6 @@ public class ComposedTestCaseParametersResolutionPreProcessorTest {
         );
 
         ExecutableComposedTestCase composedTestCase = new ExecutableComposedTestCase(
-            "1",
             TestCaseMetadataImpl.builder()
                 .withCreationDate(Instant.now())
                 .withTitle(format(testCaseTitle, "**testcase title**"))

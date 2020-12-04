@@ -71,7 +71,6 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            "1",
             TestCaseMetadataImpl.builder().withDatasetId("fakeId").build(),
             ExecutableComposedScenario.builder().build(),
             computedParameters
@@ -107,7 +106,6 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            "1",
             TestCaseMetadataImpl.builder().withDatasetId("fakeId").build(),
             ExecutableComposedScenario.builder()
                 .withComposedSteps(
@@ -223,7 +221,6 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            "1",
             TestCaseMetadataImpl.builder().withDatasetId("fakeId").build(),
             ExecutableComposedScenario.builder()
                 .withComposedSteps(
@@ -269,7 +266,6 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            "1",
             TestCaseMetadataImpl.builder().withDatasetId("fakeId").build(),
             ExecutableComposedScenario.builder()
                 .withComposedSteps(
@@ -324,7 +320,6 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            "1",
             TestCaseMetadataImpl.builder().withDatasetId("fakeId").build(),
             ExecutableComposedScenario.builder()
                 .withComposedSteps(
@@ -378,7 +373,6 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         stubDatasetRepository(null, multipleValues);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            "fakeId",
             TestCaseMetadataImpl.builder().withDatasetId("fakeId").build(),
             ExecutableComposedScenario.builder()
                 .withComposedSteps(asList(
@@ -477,7 +471,6 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         stubDatasetRepository(null, multipleValues);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            "fakeId",
             TestCaseMetadataImpl.builder().withDatasetId("fakeId").build(),
             ExecutableComposedScenario.builder()
                 .withComposedSteps(asList(
@@ -569,7 +562,6 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         stubDatasetRepository(null, multipleValues);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            "fakeId",
             TestCaseMetadataImpl.builder().withDatasetId("fakeId").build(),
             ExecutableComposedScenario.builder()
                 .withComposedSteps(asList(
@@ -661,7 +653,6 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         stubDatasetRepository(null, multipleValues);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            "fakeId",
             TestCaseMetadataImpl.builder().withDatasetId("fakeId").build(),
             ExecutableComposedScenario.builder()
                 .withComposedSteps(asList(
@@ -754,7 +745,6 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         stubDatasetRepository(null, multipleValues);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            "fakeId",
             TestCaseMetadataImpl.builder().withDatasetId("fakeId").build(),
             ExecutableComposedScenario.builder()
                 .withComposedSteps(singletonList(
@@ -851,7 +841,6 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         stubDatasetRepository(null, multipleValues);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            "fakeId",
             TestCaseMetadataImpl.builder().withDatasetId("fakeId").build(),
             ExecutableComposedScenario.builder()
                 .withComposedSteps(asList(

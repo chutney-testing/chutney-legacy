@@ -420,7 +420,6 @@ public class CampaignExecutionEngineTest {
 
     private ExecutableComposedTestCase createExecutableComposedTestCase(String id, String dataSetId) {
         return new ExecutableComposedTestCase(
-            id,
             TestCaseMetadataImpl.builder()
                 .withDatasetId(dataSetId)
                 .build(),

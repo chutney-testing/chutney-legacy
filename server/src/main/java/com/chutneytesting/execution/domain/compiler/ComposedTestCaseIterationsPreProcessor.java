@@ -54,7 +54,6 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
         Map<Boolean, List<String>> matchedHeaders = findMultipleValuesHeadersMatchingComputedParams(testCase, dataset.multipleValues);
 
         return new ExecutableComposedTestCase(
-            testCase.id,
             testCase.metadata,
             applyToScenario(testCase.composedScenario, matchedHeaders, dataset),
             applyToComputedParameters(testCase.computedParameters, matchedHeaders.get(Boolean.TRUE), dataset));

@@ -16,7 +16,6 @@ public class ExecutableComposedTestCaseMapper {
 
     public ExecutableComposedTestCase composableToExecutable(ComposableTestCase composableTestCase) {
         return new ExecutableComposedTestCase(
-            composableTestCase.id,
             composableTestCase.metadata,
             ExecutableComposedScenario.builder()
                 .withComposedSteps(executableComposedStepMapper.composableToExecutable(composableTestCase.composableScenario.composableSteps))

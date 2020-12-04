@@ -10,20 +10,17 @@ import java.util.Optional;
 
 public class ExecutableComposedTestCase implements TestCase {
 
-    public final String id; // TODO - To delete
     public final TestCaseMetadata metadata;
     public final ExecutableComposedScenario composedScenario;
     public final Map<String, String> computedParameters; // TODO - refactor dataset - here it's for execution phase
 
-    public ExecutableComposedTestCase(String id, TestCaseMetadata metadata, ExecutableComposedScenario composedScenario) {
-        this.id = id;
+    public ExecutableComposedTestCase(TestCaseMetadata metadata, ExecutableComposedScenario composedScenario) {
         this.metadata = metadata;
         this.composedScenario = composedScenario;
         this.computedParameters = buildDataSet();
     }
 
-    public ExecutableComposedTestCase(String id, TestCaseMetadata metadata, ExecutableComposedScenario composedScenario, Map<String, String> computedParameters) {
-        this.id = id;
+    public ExecutableComposedTestCase(TestCaseMetadata metadata, ExecutableComposedScenario composedScenario, Map<String, String> computedParameters) {
         this.metadata = metadata;
         this.composedScenario = composedScenario;
         this.computedParameters = computedParameters;
@@ -35,11 +32,6 @@ public class ExecutableComposedTestCase implements TestCase {
     }
 
     @Override
-    public String id() {
-        return id;
-    }
-
-    @Override
     public Map<String, String> computedParameters() {
         return computedParameters;
     }
@@ -47,7 +39,6 @@ public class ExecutableComposedTestCase implements TestCase {
     @Override
     public TestCase withDataSet(final Map<String, String> dataSet) {
         return new ExecutableComposedTestCase(
-            id,
             metadata,
             composedScenario,
             dataSet
@@ -56,7 +47,6 @@ public class ExecutableComposedTestCase implements TestCase {
 
     public TestCase withDataSetId(String dataSetId) {
         return new ExecutableComposedTestCase(
-            id,
             TestCaseMetadataImpl.TestCaseMetadataBuilder.from(metadata)
                 .withDatasetId(dataSetId)
                 .build(),
@@ -70,15 +60,14 @@ public class ExecutableComposedTestCase implements TestCase {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ExecutableComposedTestCase that = (ExecutableComposedTestCase) o;
-        return Objects.equals(id, that.id) &&
-            Objects.equals(metadata, that.metadata) &&
+        return Objects.equals(metadata, that.metadata) &&
             Objects.equals(composedScenario, that.composedScenario) &&
             Objects.equals(computedParameters, that.computedParameters);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, metadata, composedScenario, computedParameters);
+        return Objects.hash(metadata, composedScenario, computedParameters);
     }
 
     // TODO - refactor dataset
@@ -97,7 +86,6 @@ public class ExecutableComposedTestCase implements TestCase {
     @Override
     public String toString() {
         return "ExecutableComposedTestCase{" +
-            "id='" + id + '\'' +
             ", metadata=" + metadata +
             ", ExecutableComposedScenario=" + composedScenario +
             ", dataSet=" + computedParameters +
