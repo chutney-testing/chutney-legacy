@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   RunScenarioGQL,
@@ -7,10 +7,11 @@ import {
   ScenarioGQL,
 } from '@chutney/data-access';
 import { combineLatest, Observable } from 'rxjs';
-import { catchError, map, pluck, switchMap } from 'rxjs/operators';
+import { catchError, filter, map, pluck, switchMap, tap } from 'rxjs/operators';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
-import { fromEventSource } from '@chutney/utils';
+import { MediaChange, MediaObserver } from '@angular/flex-layout';
+import { chutneyAnimations, fromEventSource } from '@chutney/utils';
 import * as hjson from 'hjson';
 import * as jsyaml from 'js-yaml';
 import * as dotProp from 'dot-prop-immutable';
@@ -19,6 +20,7 @@ import * as dotProp from 'dot-prop-immutable';
   selector: 'chutney-scenario-text-run',
   templateUrl: './scenario-text-run.component.html',
   styleUrls: ['./scenario-text-run.component.scss'],
+  animations: [chutneyAnimations]
 })
 export class ScenarioTextRunComponent implements OnInit {
   private scenarioId: string;
@@ -29,14 +31,26 @@ export class ScenarioTextRunComponent implements OnInit {
   dataSource = new MatTreeNestedDataSource<any>();
   report: any;
   breadcrumbs: any = [
-    { title: 'Home', link: ['/'] },
-    { title: 'Scenarios', link: ['/'] },
-    { title: 'View', link: ['../../view'] },
+    {title: 'Home', link: ['/']},
+    {title: 'Scenarios', link: ['/']},
+    {title: 'View', link: ['../../view']},
   ];
+
+  isHandset$: Observable<boolean> = this.mediaObserver.asObservable().pipe(
+    map(
+      () =>
+        this.mediaObserver.isActive('xs') ||
+        this.mediaObserver.isActive('sm') ||
+        this.mediaObserver.isActive('lt-md')
+    ),
+    tap(() => this.changeDetectorRef.detectChanges()))
+
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
+    private mediaObserver: MediaObserver,
+    private changeDetectorRef: ChangeDetectorRef,
     private scenarioGQL: ScenarioGQL,
     private runScenarioGQL: RunScenarioGQL,
     private runScenarioHistoryGQL: RunScenarioHistoryGQL
@@ -45,7 +59,7 @@ export class ScenarioTextRunComponent implements OnInit {
   ngOnInit(): void {
     this.scenario$ = this.route.params.pipe(
       switchMap((p) => {
-        return this.scenarioGQL.watch({ scenarioId: p.id }).valueChanges.pipe(
+        return this.scenarioGQL.watch({scenarioId: p.id}).valueChanges.pipe(
           pluck('data', 'scenario'),
           map((value) => hjson.parse(value.content))
         );
