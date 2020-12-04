@@ -92,7 +92,7 @@ public class ScenarioExecutionEngineAsync {
      */
     public Long execute(ExecutionRequest executionRequest) {
         // Compile testcase for execution
-        ExecutionRequest executionRequestProcessed = new ExecutionRequest(testCasePreProcessors.apply(executionRequest), executionRequest.environment, executionRequest.withScenarioDefaultDataSet, executionRequest.userId);
+        ExecutionRequest executionRequestProcessed = new ExecutionRequest(testCasePreProcessors.apply(executionRequest), executionRequest.environment, executionRequest.withExternalDataset, executionRequest.userId);
         // Initialize execution history
         ExecutionHistory.Execution storedExecution = storeInitialReport(executionRequestProcessed);
         // Start engine execution
@@ -157,7 +157,7 @@ public class ScenarioExecutionEngineAsync {
     }
 
     private ExecutionHistory.Execution storeInitialReport(ExecutionRequest executionRequest) {
-        Optional<Pair<String, Integer>> executionDataSet = findExecutionDataSet(executionRequest);
+        Optional<Pair<String, Integer>> executionDataSet = findExecutionDataset(executionRequest);
         DetachedExecution detachedExecution = ImmutableExecutionHistory.DetachedExecution.builder()
             .time(LocalDateTime.now())
             .duration(0L)
@@ -311,8 +311,8 @@ public class ScenarioExecutionEngineAsync {
         }
     }
 
-    private Optional<Pair<String, Integer>> findExecutionDataSet(ExecutionRequest executionRequest) {
-        if (executionRequest.withScenarioDefaultDataSet) {
+    private Optional<Pair<String, Integer>> findExecutionDataset(ExecutionRequest executionRequest) {
+        if (executionRequest.withExternalDataset) {
             return executionRequest.testCase.metadata().datasetId()
                 .map(datasetId -> Pair.of(datasetId, dataSetHistoryRepository.lastVersion(datasetId)));
         }

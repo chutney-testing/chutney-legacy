@@ -45,19 +45,19 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
     }
 
     ExecutableComposedTestCase apply(ExecutableComposedTestCase testCase) {
-        Optional<DataSet> oDataSet = testCase.metadata.datasetId().map(dataSetRepository::findById);
-        if (!oDataSet.isPresent()) {
+        Optional<DataSet> oDataset = testCase.metadata.datasetId().map(dataSetRepository::findById);
+        if (!oDataset.isPresent()) {
             return testCase;
         }
 
-        DataSet dataSet = oDataSet.get();
-        Map<Boolean, List<String>> matchedHeaders = findMultipleValuesHeadersMatchingComputedParams(testCase, dataSet.multipleValues);
+        DataSet dataset = oDataset.get();
+        Map<Boolean, List<String>> matchedHeaders = findMultipleValuesHeadersMatchingComputedParams(testCase, dataset.multipleValues);
 
         return new ExecutableComposedTestCase(
             testCase.id,
             testCase.metadata,
-            applyToScenario(testCase.composedScenario, matchedHeaders, dataSet),
-            applyToComputedParameters(testCase.computedParameters, matchedHeaders.get(Boolean.TRUE), dataSet));
+            applyToScenario(testCase.composedScenario, matchedHeaders, dataset),
+            applyToComputedParameters(testCase.computedParameters, matchedHeaders.get(Boolean.TRUE), dataset));
     }
 
     private Map<Boolean, List<String>> findMultipleValuesHeadersMatchingComputedParams(ExecutableComposedTestCase testCase, List<Map<String, String>> multipleValues) {

@@ -10,12 +10,12 @@ public class ExecutionRequest {
     public final TestCase testCase;
     public final String environment;
     public final String userId;
-    public final boolean withScenarioDefaultDataSet;
+    public final boolean withExternalDataset;
 
-    public ExecutionRequest(TestCase testCase, String environment, boolean withScenarioDefaultDataSet, String userId) {
+    public ExecutionRequest(TestCase testCase, String environment, boolean withExternalDataset, String userId) {
         this.testCase = testCase;
         this.environment = environment;
-        this.withScenarioDefaultDataSet = withScenarioDefaultDataSet;
+        this.withExternalDataset = withExternalDataset;
         this.userId = userId;
     }
 
