@@ -1,15 +1,14 @@
 package com.chutneytesting;
 
-import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.design.domain.campaign.CampaignRepository;
 import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditions;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditionsService;
-import com.chutneytesting.design.domain.environment.EnvironmentRepository;
-import com.chutneytesting.design.domain.environment.EnvironmentService;
 import com.chutneytesting.design.domain.plugins.jira.JiraRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.engine.api.execution.TestEngine;
+import com.chutneytesting.environment.domain.EnvironmentRepository;
+import com.chutneytesting.environment.domain.EnvironmentService;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessor;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;
@@ -121,8 +120,8 @@ public class ServerConfiguration {
     }
 
     @Bean
-    EnvironmentService environmentService(EnvironmentRepository environmentRepository, CurrentNetworkDescription currentNetworkDescription) {
-        return new EnvironmentService(environmentRepository, currentNetworkDescription);
+    EnvironmentService environmentService(EnvironmentRepository environmentRepository) {
+        return new EnvironmentService(environmentRepository);
     }
 
     @Bean

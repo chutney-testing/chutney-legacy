@@ -9,7 +9,7 @@ import com.chutneytesting.agent.domain.explore.ExploreResult;
 import com.chutneytesting.agent.domain.explore.ImmutableExploreResult;
 import com.chutneytesting.agent.domain.explore.ImmutableExploreResult.Link;
 import com.chutneytesting.agent.domain.explore.ImmutableExploreResult.Links;
-import com.chutneytesting.design.domain.environment.Target;
+import com.chutneytesting.environment.domain.Target;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
@@ -25,7 +25,7 @@ public class AgentGraphTest {
         NetworkConfiguration networkConfiguration = AgentNetworkTestUtils.createNetworkConfiguration("environmentName",
             "A=self:1", "B=reachable1:1", "C=level2:1", "D=reachable2:1",
             "e1|s1=reachable:1", "e1|s2=reachable:1", "e2|s3=level2:1"
-            );
+        );
         ExploreResult exploreResult = ImmutableExploreResult.of(
             Links.of(
                 Arrays.asList(
@@ -63,7 +63,7 @@ public class AgentGraphTest {
 
     @Test()
     public void of_with_agent_links_not_in_conf_should_fail() {
-        NetworkConfiguration networkConfiguration = AgentNetworkTestUtils.createNetworkConfiguration("environmentName","A=self:1", "B=reachable:1", "C=level2:1", "D=reachable2:1");
+        NetworkConfiguration networkConfiguration = AgentNetworkTestUtils.createNetworkConfiguration("environmentName", "A=self:1", "B=reachable:1", "C=level2:1", "D=reachable2:1");
         ExploreResult exploreResult = ImmutableExploreResult.of(
             Links.of(
                 Arrays.asList(
@@ -83,7 +83,7 @@ public class AgentGraphTest {
         NetworkConfiguration networkConfiguration = AgentNetworkTestUtils.createNetworkConfiguration(
             "A=self:1", "B=reachable:1",
             "e1|s1=reachable:1", "e1|s2=unreachable:1"
-            );
+        );
         ExploreResult exploreResult = ImmutableExploreResult.of(
             Links.of(
                 Arrays.asList(

@@ -4,14 +4,6 @@ import static com.chutneytesting.tools.Streams.identity;
 import static java.util.Optional.empty;
 
 import com.chutneytesting.ExecutionConfiguration;
-import com.chutneytesting.agent.domain.configure.LocalServerIdentifier;
-import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
-import com.chutneytesting.agent.infra.storage.AgentNetworkMapperJsonFileMapper;
-import com.chutneytesting.agent.infra.storage.JsonFileAgentNetworkDao;
-import com.chutneytesting.agent.infra.storage.JsonFileCurrentNetworkDescription;
-import com.chutneytesting.design.domain.environment.EnvironmentRepository;
-import com.chutneytesting.design.domain.environment.EnvironmentService;
-import com.chutneytesting.design.infra.storage.environment.JsonFilesEnvironmentRepository;
 import com.chutneytesting.engine.api.glacio.StepFactory.EXECUTABLE_KEYWORD;
 import com.chutneytesting.engine.api.glacio.parse.GlacioBusinessStepParser;
 import com.chutneytesting.engine.api.glacio.parse.IParseExecutableStep;
@@ -20,15 +12,12 @@ import com.chutneytesting.engine.api.glacio.parse.default_.DefaultGlacioParser;
 import com.chutneytesting.engine.api.glacio.parse.default_.StrategyParser;
 import com.chutneytesting.engine.api.glacio.parse.specific.strategy.StrategyRetryParser;
 import com.chutneytesting.engine.api.glacio.parse.specific.strategy.StrategySoftAssertParser;
+import com.chutneytesting.environment.domain.EnvironmentRepository;
+import com.chutneytesting.environment.domain.EnvironmentService;
+import com.chutneytesting.environment.infra.JsonFilesEnvironmentRepository;
 import com.chutneytesting.tools.ThrowingFunction;
 import com.chutneytesting.tools.loader.ExtensionLoaders;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -45,19 +34,18 @@ public class GlacioAdapterConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GlacioAdapterConfiguration.class);
 
-    private ExecutionConfiguration executionConfiguration;
+    private final ExecutionConfiguration executionConfiguration;
 
-    private GlacioAdapter glacioAdapter;
-    private Map<Locale, Map<EXECUTABLE_KEYWORD, Set<String>>> executableStepLanguagesKeywords;
-    private List<IParseExecutableStep> glacioExecutableStepParsers;
-    private Map<Pair<Locale, String>, IParseExecutableStep> glacioExecutableStepParsersLanguages;
+    private final GlacioAdapter glacioAdapter;
+    private final Map<Locale, Map<EXECUTABLE_KEYWORD, Set<String>>> executableStepLanguagesKeywords;
+    private final List<IParseExecutableStep> glacioExecutableStepParsers;
+    private final Map<Pair<Locale, String>, IParseExecutableStep> glacioExecutableStepParsersLanguages;
 
-    private StepFactory stepFactory;
-    private IParseStrategy strategyParser;
+    private final StepFactory stepFactory;
+    private final IParseStrategy strategyParser;
 
-    private EnvironmentRepository environmentRepository;
-    private CurrentNetworkDescription currentNetworkDescription;
-    private EnvironmentService environmentService;
+    private final EnvironmentRepository environmentRepository;
+    private final EnvironmentService environmentService;
 
     public GlacioAdapterConfiguration() throws IOException {
         this(new ExecutionConfiguration(), "conf", "conf/endpoints.json");
@@ -75,7 +63,6 @@ public class GlacioAdapterConfiguration {
         executableStepLanguagesKeywords = createExecutableStepLanguagesKeywords();
 
         environmentRepository = createEnvironmentRepository(environmentFolderPath);
-        currentNetworkDescription = createCurrentNetworkDescription(agentNetworkFilePath);
         environmentService = createEnvironmentService();
 
         strategyParser = createStrategyDefinitionFactory();
@@ -135,32 +122,8 @@ public class GlacioAdapterConfiguration {
         return new JsonFilesEnvironmentRepository(storeFolderPath);
     }
 
-    private CurrentNetworkDescription createCurrentNetworkDescription(String agentNetworkFilePath) throws UnknownHostException {
-        ObjectMapper objectMapper = new ObjectMapper()
-            .findAndRegisterModules()
-            .enable(SerializationFeature.INDENT_OUTPUT);
-
-        objectMapper.setVisibility(
-            objectMapper.getSerializationConfig()
-                .getDefaultVisibilityChecker()
-                .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
-                .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
-                .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
-                .withCreatorVisibility(JsonAutoDetect.Visibility.NONE)
-        );
-
-        InetAddress localHost = InetAddress.getLocalHost();
-
-        return new JsonFileCurrentNetworkDescription(
-            environmentRepository,
-            new AgentNetworkMapperJsonFileMapper(),
-            new JsonFileAgentNetworkDao(objectMapper, new File(agentNetworkFilePath)),
-            new LocalServerIdentifier(0, localHost.getHostName(), localHost.getCanonicalHostName())
-        );
-    }
-
     private EnvironmentService createEnvironmentService() {
-        return new EnvironmentService(environmentRepository, currentNetworkDescription);
+        return new EnvironmentService(environmentRepository);
     }
 
     private IParseStrategy createStrategyDefinitionFactory() {
@@ -172,7 +135,7 @@ public class GlacioAdapterConfiguration {
             executableStepLanguagesKeywords,
             glacioExecutableStepParsersLanguages,
             new DefaultGlacioParser(executionConfiguration.taskTemplateRegistry(),
-                                    environmentService),
+                environmentService),
             new GlacioBusinessStepParser(),
             strategyParser
         );

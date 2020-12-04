@@ -7,8 +7,8 @@ import com.chutneytesting.agent.domain.configure.GetCurrentNetworkDescriptionSer
 import com.chutneytesting.agent.domain.configure.LocalServerIdentifier;
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.agent.domain.explore.ExploreAgentsService;
-import com.chutneytesting.design.domain.environment.EnvironmentRepository;
 import com.chutneytesting.engine.domain.delegation.ConnectionChecker;
+import com.chutneytesting.environment.domain.EnvironmentRepository;
 import com.chutneytesting.tools.ui.MyMixInForIgnoreType;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -29,7 +29,7 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class NodeNetworkSpringConfiguration {
 
-    private static final String NODE_NETWORK_QUALIFIER ="agentnetwork";
+    private static final String NODE_NETWORK_QUALIFIER = "agentnetwork";
 
     @Bean
     public ObjectMapper agentNetworkObjectMapper() {
@@ -94,7 +94,7 @@ public class NodeNetworkSpringConfiguration {
     ConfigureService configureService(ExploreAgentsService exploreAgentsService,
                                       CurrentNetworkDescription currentNetworkDescription,
                                       LocalServerIdentifier localServerIdentifier,
-                                      EnvironmentRepository environmentRepository){
+                                      EnvironmentRepository environmentRepository) {
         return new ConfigureService(exploreAgentsService, currentNetworkDescription, localServerIdentifier, environmentRepository);
     }
 

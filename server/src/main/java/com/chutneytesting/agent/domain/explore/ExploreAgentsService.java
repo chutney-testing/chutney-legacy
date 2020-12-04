@@ -2,7 +2,6 @@ package com.chutneytesting.agent.domain.explore;
 
 import static com.chutneytesting.agent.domain.explore.ImmutableExploreResult.Links.of;
 
-import com.google.common.collect.ImmutableSet;
 import com.chutneytesting.agent.domain.AgentClient;
 import com.chutneytesting.agent.domain.configure.ConfigurationState;
 import com.chutneytesting.agent.domain.configure.Explorations;
@@ -11,10 +10,11 @@ import com.chutneytesting.agent.domain.configure.NetworkConfiguration;
 import com.chutneytesting.agent.domain.explore.ExploreResult.Links;
 import com.chutneytesting.agent.domain.explore.ImmutableExploreResult.Link;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
-import com.chutneytesting.design.domain.environment.Target;
 import com.chutneytesting.engine.domain.delegation.ConnectionChecker;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
 import com.chutneytesting.engine.domain.delegation.UrlSlicer;
+import com.chutneytesting.environment.domain.Target;
+import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;

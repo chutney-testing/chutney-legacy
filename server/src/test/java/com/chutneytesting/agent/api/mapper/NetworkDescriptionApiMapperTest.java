@@ -18,9 +18,9 @@ import com.chutneytesting.agent.domain.explore.ImmutableExploreResult;
 import com.chutneytesting.agent.domain.network.AgentGraph;
 import com.chutneytesting.agent.domain.network.ImmutableNetworkDescription;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
-import com.chutneytesting.design.domain.environment.Environment;
-import com.chutneytesting.design.domain.environment.Target;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
+import com.chutneytesting.environment.domain.Environment;
+import com.chutneytesting.environment.domain.Target;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 
 public class NetworkDescriptionApiMapperTest {
 
-    private NetworkDescriptionApiMapper networkDescriptionApiMapper = new NetworkDescriptionApiMapper(
+    private final NetworkDescriptionApiMapper networkDescriptionApiMapper = new NetworkDescriptionApiMapper(
         new NetworkConfigurationApiMapper(new AgentInfoApiMapper(), new EnvironmentApiMapper()),
         new AgentGraphApiMapper(new AgentInfoApiMapper()));
 

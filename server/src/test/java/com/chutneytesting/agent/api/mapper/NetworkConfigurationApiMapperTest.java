@@ -1,7 +1,6 @@
 package com.chutneytesting.agent.api.mapper;
 
 import static com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration.AgentNetworkConfiguration.builder;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -12,10 +11,10 @@ import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto.TargetsApiDto
 import com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration;
 import com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration.AgentNetworkConfiguration;
 import com.chutneytesting.agent.domain.configure.NetworkConfiguration;
-import com.chutneytesting.design.domain.environment.Environment;
-import com.chutneytesting.design.domain.environment.SecurityInfo;
-import com.chutneytesting.design.domain.environment.Target;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
+import com.chutneytesting.environment.domain.Environment;
+import com.chutneytesting.environment.domain.SecurityInfo;
+import com.chutneytesting.environment.domain.Target;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -113,7 +112,7 @@ public class NetworkConfigurationApiMapperTest {
                 .addAgentInfos(new NamedHostAndPort("name", "host", 1000))
                 .build())
             .environmentConfiguration(ImmutableNetworkConfiguration.EnvironmentConfiguration.builder()
-            .addEnvironments(env).build())
+                .addEnvironments(env).build())
             .build();
 
 
@@ -155,7 +154,6 @@ public class NetworkConfigurationApiMapperTest {
         targets.add(Target.builder()
             .withId(Target.TargetId.of("APP_1", "env_name"))
             .withUrl("https://host_of_app:443/api")
-            .withAgents(emptyList())
             .build());
         Environment newEnv = Environment.builder().withName("env_name").withTargets(targets).build();
         List<Environment> newEnvs = new ArrayList<>();

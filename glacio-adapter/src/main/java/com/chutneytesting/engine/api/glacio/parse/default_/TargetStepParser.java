@@ -3,11 +3,11 @@ package com.chutneytesting.engine.api.glacio.parse.default_;
 import static com.chutneytesting.engine.api.glacio.parse.default_.ParsingTools.arrayToOrPattern;
 import static com.chutneytesting.engine.api.glacio.parse.default_.ParsingTools.removeKeyword;
 
-import com.chutneytesting.design.domain.environment.EnvironmentService;
-import com.chutneytesting.design.domain.environment.SecurityInfo;
 import com.chutneytesting.engine.api.glacio.parse.StepParser;
 import com.chutneytesting.engine.domain.environment.SecurityInfoImpl;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
+import com.chutneytesting.environment.domain.EnvironmentService;
+import com.chutneytesting.environment.domain.SecurityInfo;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.github.fridujo.glacio.model.Step;
 import java.util.function.Predicate;
@@ -42,16 +42,15 @@ public class TargetStepParser implements StepParser<Target> {
     }
 
     private Target parseTargetStep(String environmentName, Step step) {
-        return toTarget(environmentService.getTargetForExecution(environmentName, step.getText().trim()));
+        return toTarget(environmentService.getTarget(environmentName, step.getText().trim()));
     }
 
-    private Target toTarget(com.chutneytesting.design.domain.environment.Target targetForExecution) {
+    private Target toTarget(com.chutneytesting.environment.domain.Target targetForExecution) {
         return TargetImpl.builder()
             .withName(targetForExecution.name)
             .withUrl(targetForExecution.url)
             .withProperties(targetForExecution.properties)
             .withSecurity(toSecurityInfo(targetForExecution.security))
-            .withAgents(targetForExecution.agents)
             .build();
     }
 

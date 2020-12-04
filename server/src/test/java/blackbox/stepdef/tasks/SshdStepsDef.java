@@ -1,9 +1,9 @@
 package blackbox.stepdef.tasks;
 
 import blackbox.restclient.RestClient;
-import com.chutneytesting.design.api.environment.dto.TargetMetadataDto;
-import com.chutneytesting.design.domain.environment.SecurityInfo;
-import com.chutneytesting.design.domain.environment.Target;
+import com.chutneytesting.environment.api.dto.TargetMetadataDto;
+import com.chutneytesting.environment.domain.SecurityInfo;
+import com.chutneytesting.environment.domain.Target;
 import io.cucumber.java.After;
 import io.cucumber.java.en.Given;
 import java.io.File;

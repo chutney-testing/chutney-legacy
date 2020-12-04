@@ -1,9 +1,9 @@
 package com.chutneytesting.agent.domain.network;
 
+import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
+import com.chutneytesting.environment.domain.Target;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.chutneytesting.design.domain.environment.Target.TargetId;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -19,7 +19,7 @@ public class Agent {
 
     public final NamedHostAndPort agentInfo; // TODO any - why NamedHostAndPort does not have an AgentId + why member is agentInfo which sounds like Target which has the right to be a real class ?
     private final Set<Agent> reachableAgents = new LinkedHashSet<>(); // TODO any - why have Agent and not AgentId
-    private final Set<TargetId> reachableTargets = new LinkedHashSet<>(); // TODO any - why have TargetId and not Target
+    private final Set<Target.TargetId> reachableTargets = new LinkedHashSet<>(); // TODO any - why have TargetId and not Target
     // TODO any - all these words, attribute name and classes are not coherent and are mostly confusing
 
     public Agent(NamedHostAndPort agentInfo) {
@@ -35,19 +35,19 @@ public class Agent {
         return new LinkedHashSet<>(reachableAgents);
     }
 
-    public Agent addReachable(TargetId target) {
+    public Agent addReachable(Target.TargetId target) {
         reachableTargets.add(target);
         return this;
     }
 
-    public Set<TargetId> reachableTargets() {
+    public Set<Target.TargetId> reachableTargets() {
         return new LinkedHashSet<>(reachableTargets);
     }
 
-    public List<Agent> findFellowAgentForReaching(TargetId target) {
+    public List<Agent> findFellowAgentForReaching(Target.TargetId target) {
         List<Agent> result = Lists.newArrayList();
         Optional<Agent> resultFound = findNext(this, target, Sets.newHashSet(this), result);
-        if(resultFound.isPresent()) {
+        if (resultFound.isPresent()) {
             Collections.reverse(result);
             return result;
         } else {
@@ -55,7 +55,7 @@ public class Agent {
         }
     }
 
-    private Optional<Agent> findNext(Agent agent, TargetId target, Set<Agent> scannedAgents, List<Agent> accumulator) {
+    private Optional<Agent> findNext(Agent agent, Target.TargetId target, Set<Agent> scannedAgents, List<Agent> accumulator) {
 
         if (agent.reachableTargets().contains(target)) {
             LOGGER.debug("Target reachable by agent " + agent.agentInfo.name());
@@ -69,7 +69,7 @@ public class Agent {
             .filter(nextAgent -> findNext(nextAgent, target, Sets.newHashSet(scannedAgents), accumulator).isPresent())
             .findFirst();
 
-        if(agentFound.isPresent()) {
+        if (agentFound.isPresent()) {
             LOGGER.debug("Next Agent found " + agentFound.get().agentInfo.name());
             accumulator.add(agentFound.get());
         } else {

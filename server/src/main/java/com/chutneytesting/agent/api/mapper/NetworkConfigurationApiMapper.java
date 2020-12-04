@@ -4,7 +4,7 @@ import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto;
 import com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration;
 import com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration.AgentNetworkConfiguration;
 import com.chutneytesting.agent.domain.configure.NetworkConfiguration;
-import com.chutneytesting.design.domain.environment.Environment;
+import com.chutneytesting.environment.domain.Environment;
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;

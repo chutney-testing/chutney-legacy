@@ -24,7 +24,7 @@ import com.chutneytesting.agent.domain.configure.ConfigureService;
 import com.chutneytesting.agent.domain.configure.GetCurrentNetworkDescriptionService;
 import com.chutneytesting.agent.domain.explore.ExploreAgentsService;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
-import com.chutneytesting.design.domain.environment.EnvironmentRepository;
+import com.chutneytesting.environment.domain.EnvironmentRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.util.Arrays;
@@ -43,16 +43,16 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class NodeNetworkControllerTest {
 
-    private ConfigureService configureService = mock(ConfigureService.class);
-    private ExploreAgentsService exploreAgentsService = mock(ExploreAgentsService.class, Answers.RETURNS_DEEP_STUBS);
-    private NetworkDescriptionApiMapper networkDescriptionApiMapper = mock(NetworkDescriptionApiMapper.class);
-    private ExploreResultApiMapper exploreResultApiMapper = mock(ExploreResultApiMapper.class);
-    private NetworkConfigurationApiMapper networkConfigurationApiMapper = mock(NetworkConfigurationApiMapper.class);
+    private final ConfigureService configureService = mock(ConfigureService.class);
+    private final ExploreAgentsService exploreAgentsService = mock(ExploreAgentsService.class, Answers.RETURNS_DEEP_STUBS);
+    private final NetworkDescriptionApiMapper networkDescriptionApiMapper = mock(NetworkDescriptionApiMapper.class);
+    private final ExploreResultApiMapper exploreResultApiMapper = mock(ExploreResultApiMapper.class);
+    private final NetworkConfigurationApiMapper networkConfigurationApiMapper = mock(NetworkConfigurationApiMapper.class);
     //private CurrentNetworkDescription currentNetworkDescription = mock(CurrentNetworkDescription.class);
-    private GetCurrentNetworkDescriptionService getCurrentNetworkDescription = mock(GetCurrentNetworkDescriptionService.class);
-    private EnvironmentRepository environmentRepository = mock(EnvironmentRepository.class);
+    private final GetCurrentNetworkDescriptionService getCurrentNetworkDescription = mock(GetCurrentNetworkDescriptionService.class);
+    private final EnvironmentRepository environmentRepository = mock(EnvironmentRepository.class);
 
-    private ObjectMapper objectMapper = new WebConfiguration().objectMapper();
+    private final ObjectMapper objectMapper = new WebConfiguration().objectMapper();
     private MockMvc mockMvc;
 
     @BeforeEach

@@ -8,19 +8,19 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.design.domain.environment.EnvironmentService;
-import com.chutneytesting.design.domain.environment.Target;
+import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.raw.RawTestCase;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.SecurityInfoDto;
 import com.chutneytesting.engine.api.execution.TargetDto;
+import com.chutneytesting.environment.domain.EnvironmentService;
+import com.chutneytesting.environment.domain.Target;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedScenario;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import com.chutneytesting.execution.domain.scenario.composed.StepImplementation;
-import com.chutneytesting.task.api.EmbeddedTaskEngine;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
 import java.io.File;
@@ -40,9 +40,9 @@ public class ExecutionRequestMapperTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
     private final EnvironmentService environmentService = mock(EnvironmentService.class);
-    private final EmbeddedTaskEngine embeddedTaskEngine = mock(EmbeddedTaskEngine.class);
+    private final CurrentNetworkDescription currentNetworkDescription = mock(CurrentNetworkDescription.class);
 
-    private final ExecutionRequestMapper sut = new ExecutionRequestMapper(objectMapper, environmentService, embeddedTaskEngine);
+    private final ExecutionRequestMapper sut = new ExecutionRequestMapper(objectMapper, environmentService, currentNetworkDescription);
 
     @Test
     public void should_map_test_case_to_execution_request() {
@@ -83,9 +83,9 @@ public class ExecutionRequestMapperTest {
         );
 
         final StepImplementation implementationFull = new StepImplementation(
-            "task-id",
-            "target name",
-            Maps.of( "input 1 name", "v1 input 1 name", "input name empty", null),
+            expectedType,
+            expectedTargetId,
+            Maps.of("input 1 name", "v1 input 1 name", "input name empty", null),
             Maps.of("output1", "value1", "output2", "value2")
         );
 
@@ -125,7 +125,7 @@ public class ExecutionRequestMapperTest {
                 .build()
         );
 
-        when(environmentService.getTargetForExecution(any(), eq(expectedTargetId)))
+        when(environmentService.getTarget(any(), eq(expectedTargetId)))
             .thenReturn(Target.builder()
                 .withId(Target.TargetId.of(expectedTargetId, "envName"))
                 .withUrl("")

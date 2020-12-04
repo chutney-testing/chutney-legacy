@@ -11,7 +11,7 @@ import com.chutneytesting.agent.domain.network.Agent;
 import com.chutneytesting.agent.domain.network.AgentGraph;
 import com.chutneytesting.agent.domain.network.ImmutableNetworkDescription;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
-import com.chutneytesting.design.domain.environment.EnvironmentRepository;
+import com.chutneytesting.environment.domain.EnvironmentRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 

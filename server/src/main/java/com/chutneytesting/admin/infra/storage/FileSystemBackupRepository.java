@@ -6,22 +6,29 @@ import com.chutneytesting.admin.domain.BackupRepository;
 import com.chutneytesting.admin.domain.Backupable;
 import com.chutneytesting.admin.domain.HomePageRepository;
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
-import com.chutneytesting.design.domain.environment.EnvironmentRepository;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
+import com.chutneytesting.environment.domain.Environment;
+import com.chutneytesting.environment.domain.EnvironmentRepository;
+import com.chutneytesting.tools.Try;
 import com.chutneytesting.tools.ZipUtils;
+import com.chutneytesting.tools.file.FileUtils;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import com.chutneytesting.tools.Try;
-import com.chutneytesting.tools.file.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,13 +46,18 @@ public class FileSystemBackupRepository implements BackupRepository {
     static final String GLOBAL_VARS_BACKUP_NAME = "globalvars.zip";
     static final String COMPONENTS_BACKUP_NAME = "orient.zip";
 
-    private Path backupsRootPath;
+    private final Path backupsRootPath;
 
     private final OrientComponentDB orientComponentDB;
     private final HomePageRepository homePageRepository;
     private final EnvironmentRepository environmentRepository;
     private final GlobalvarRepository globalvarRepository;
     private final CurrentNetworkDescription currentNetworkDescription;
+
+    private final ObjectMapper om = new ObjectMapper()
+        .findAndRegisterModules()
+        .enable(SerializationFeature.INDENT_OUTPUT)
+        .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
     public FileSystemBackupRepository(OrientComponentDB orientComponentDB,
                                       HomePageRepository homePageRepository,
@@ -84,7 +96,7 @@ public class FileSystemBackupRepository implements BackupRepository {
         }
 
         if (backup.environments) {
-            backup(environmentRepository, backupPath.resolve(ENVIRONMENTS_BACKUP_NAME), "environments");
+            backup(backupPath.resolve(ENVIRONMENTS_BACKUP_NAME), "environments", this::backupEnvironments);
         }
 
         if (backup.agentsNetwork) {
@@ -152,11 +164,26 @@ public class FileSystemBackupRepository implements BackupRepository {
     }
 
     private void backup(Backupable backupable, Path backupPath, String backupName) {
+        backup(backupPath, backupName, backupable::backup);
+    }
+
+    private void backup(Path backupPath, String backupName, Consumer<OutputStream> backupInStream) {
         try (OutputStream outputStream = Files.newOutputStream(backupPath)) {
-            backupable.backup(outputStream);
-        } catch (IOException e) {
+            backupInStream.accept(outputStream);
+        } catch (Exception e) {
             LOGGER.error("Cannot backup [{}]", backupName, e);
         }
         LOGGER.info("Backup [{}] completed", backupName);
+    }
+
+    private void backupEnvironments(OutputStream outputStream) {
+        try (ZipOutputStream zipOutPut = new ZipOutputStream(new BufferedOutputStream(outputStream, 4096))) {
+            for (Environment env : environmentRepository.getEnvironments()) {
+                zipOutPut.putNextEntry(new ZipEntry(env.name + ".json"));
+                om.writeValue(zipOutPut, env);
+            }
+        } catch (IOException ioe) {
+            throw new UncheckedIOException(ioe);
+        }
     }
 }

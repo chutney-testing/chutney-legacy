@@ -1,14 +1,14 @@
 package com.chutneytesting.junit.engine;
 
 
-import com.chutneytesting.design.domain.environment.Environment;
-import com.chutneytesting.design.domain.environment.Target;
+import com.chutneytesting.environment.domain.Environment;
+import com.chutneytesting.environment.domain.Target;
 
 public class EnvironmentServiceImpl implements EnvironmentService {
 
-    private com.chutneytesting.design.domain.environment.EnvironmentService delegate;
+    private final com.chutneytesting.environment.domain.EnvironmentService delegate;
 
-    public EnvironmentServiceImpl(com.chutneytesting.design.domain.environment.EnvironmentService delegate) {
+    public EnvironmentServiceImpl(com.chutneytesting.environment.domain.EnvironmentService delegate) {
         this.delegate = delegate;
     }
 

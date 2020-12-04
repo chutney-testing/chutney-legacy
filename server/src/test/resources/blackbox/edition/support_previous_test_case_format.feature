@@ -70,8 +70,8 @@ Scenario Outline: Execute existing scenario containing errors
     Then the error status is <status> with message <message>
 
     Examples:
-        | version | scenario                          | status | message                                                                                                |
-        | v0.0    | scenario_unknown_target.v0.hjson  | 500    | com.chutneytesting.design.domain.environment.TargetNotFoundException: Target [UNKNOWN_TARGET] not found in environment [GLOBAL]|
+        | version | scenario                          | status | message                                                                                                                  |
+        | v0.0    | scenario_unknown_target.v0.hjson  | 500    | com.chutneytesting.environment.domain.TargetNotFoundException: Target [UNKNOWN_TARGET] not found in environment [GLOBAL] |
 
 
 # TODO - bug on sql task still relevant ?

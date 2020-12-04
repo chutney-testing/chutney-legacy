@@ -19,6 +19,10 @@
         </dependency>
         <dependency>
             <groupId>com.chutneytesting</groupId>
+            <artifactId>environment</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.chutneytesting</groupId>
             <artifactId>tools</artifactId>
         </dependency>
 

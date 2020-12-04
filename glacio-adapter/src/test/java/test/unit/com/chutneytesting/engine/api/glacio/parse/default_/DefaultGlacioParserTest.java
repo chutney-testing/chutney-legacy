@@ -7,9 +7,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.design.domain.environment.EnvironmentService;
 import com.chutneytesting.engine.api.glacio.parse.default_.DefaultGlacioParser;
 import com.chutneytesting.engine.api.glacio.parse.default_.StrategyParser;
+import com.chutneytesting.environment.domain.EnvironmentService;
 import com.chutneytesting.task.domain.TaskTemplate;
 import com.chutneytesting.task.domain.TaskTemplateRegistry;
 import com.github.fridujo.glacio.model.Step;

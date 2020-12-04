@@ -12,9 +12,9 @@ import com.chutneytesting.admin.domain.BackupNotFoundException;
 import com.chutneytesting.admin.domain.BackupRepository;
 import com.chutneytesting.admin.domain.HomePageRepository;
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
-import com.chutneytesting.design.domain.environment.EnvironmentRepository;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
+import com.chutneytesting.environment.domain.EnvironmentRepository;
 import com.chutneytesting.tools.Try;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -35,11 +35,11 @@ public class FileSystemBackupRepositoryTest {
     private BackupRepository sut;
     private Path backupsRootPath;
 
-    private OrientComponentDB orientComponentDB = mock(OrientComponentDB.class);
-    private HomePageRepository homePageRepository = mock(HomePageRepository.class);
-    private EnvironmentRepository environmentRepository = mock(EnvironmentRepository.class);
-    private GlobalvarRepository globalvarRepository = mock(GlobalvarRepository.class);
-    private CurrentNetworkDescription currentNetworkDescription = mock(CurrentNetworkDescription.class);
+    private final OrientComponentDB orientComponentDB = mock(OrientComponentDB.class);
+    private final HomePageRepository homePageRepository = mock(HomePageRepository.class);
+    private final EnvironmentRepository environmentRepository = mock(EnvironmentRepository.class);
+    private final GlobalvarRepository globalvarRepository = mock(GlobalvarRepository.class);
+    private final CurrentNetworkDescription currentNetworkDescription = mock(CurrentNetworkDescription.class);
 
     @BeforeEach
     public void before() {
@@ -57,7 +57,7 @@ public class FileSystemBackupRepositoryTest {
         // Given
         Files.deleteIfExists(backupsRootPath);
         backupsRootPath = Paths.get("freshNewBackups");
-            // When
+        // When
         sut = new FileSystemBackupRepository(orientComponentDB, homePageRepository, environmentRepository, globalvarRepository, currentNetworkDescription, backupsRootPath.toString());
         // Then
         assertThat(backupsRootPath.toFile().exists()).isTrue();
@@ -132,7 +132,7 @@ public class FileSystemBackupRepositoryTest {
         // Then
         verify(homePageRepository, times(oneIfTrue(homePage))).backup(any());
         verify(currentNetworkDescription, times(oneIfTrue(agentsNetwork))).backup(any());
-        verify(environmentRepository, times(oneIfTrue(environments))).backup(any());
+        verify(environmentRepository, times(oneIfTrue(environments))).getEnvironments();
         verify(orientComponentDB, times(oneIfTrue(components))).backup(any());
         verify(globalvarRepository, times(oneIfTrue(globalVars))).backup(any());
     }
@@ -175,27 +175,27 @@ public class FileSystemBackupRepositoryTest {
 
     @SuppressWarnings("unused")
     private static Object[] backupObjectsParameters() {
-        return new Object[] {
-            new Object[] {true, false, false, false, false},
-            new Object[] {false, true, false, false, false},
-            new Object[] {false, false, true, false, false},
-            new Object[] {false, false, false, true, false},
-            new Object[] {false, false, false, false, true},
-            new Object[] {true, true, false, false, false},
-            new Object[] {false, true, true, false, false},
-            new Object[] {false, false, true, true, false},
-            new Object[] {false, false, false, true, true},
-            new Object[] {true, false, false, false, true},
-            new Object[] {true, true, true, false, false},
-            new Object[] {false, true, true, true, false},
-            new Object[] {false, false, true, true, true},
-            new Object[] {true, false, false, true, true},
-            new Object[] {true, true, false, false, true},
-            new Object[] {true, true, true, true, false},
-            new Object[] {false, true, true, true, true},
-            new Object[] {true, true, false, true, true},
-            new Object[] {true, true, true, false, true},
-            new Object[] {true, true, true, true, true}
+        return new Object[]{
+            new Object[]{true, false, false, false, false},
+            new Object[]{false, true, false, false, false},
+            new Object[]{false, false, true, false, false},
+            new Object[]{false, false, false, true, false},
+            new Object[]{false, false, false, false, true},
+            new Object[]{true, true, false, false, false},
+            new Object[]{false, true, true, false, false},
+            new Object[]{false, false, true, true, false},
+            new Object[]{false, false, false, true, true},
+            new Object[]{true, false, false, false, true},
+            new Object[]{true, true, true, false, false},
+            new Object[]{false, true, true, true, false},
+            new Object[]{false, false, true, true, true},
+            new Object[]{true, false, false, true, true},
+            new Object[]{true, true, false, false, true},
+            new Object[]{true, true, true, true, false},
+            new Object[]{false, true, true, true, true},
+            new Object[]{true, true, false, true, true},
+            new Object[]{true, true, true, false, true},
+            new Object[]{true, true, true, true, true}
         };
     }
 

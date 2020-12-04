@@ -4,7 +4,7 @@ import com.chutneytesting.agent.domain.configure.NetworkConfiguration;
 import com.chutneytesting.agent.domain.explore.AgentId;
 import com.chutneytesting.agent.domain.explore.ExploreResult;
 import com.chutneytesting.agent.domain.explore.ExploreResult.Link;
-import com.chutneytesting.design.domain.environment.Target;
+import com.chutneytesting.environment.domain.Target;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;

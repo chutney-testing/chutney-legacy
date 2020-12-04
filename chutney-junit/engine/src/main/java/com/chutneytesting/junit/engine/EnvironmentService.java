@@ -1,7 +1,7 @@
 package com.chutneytesting.junit.engine;
 
-import com.chutneytesting.design.domain.environment.Environment;
-import com.chutneytesting.design.domain.environment.Target;
+import com.chutneytesting.environment.domain.Environment;
+import com.chutneytesting.environment.domain.Target;
 
 public interface EnvironmentService {
 

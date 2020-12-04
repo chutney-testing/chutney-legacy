@@ -16,8 +16,11 @@
         <!-- Internal -->
         <dependency>
             <groupId>com.chutneytesting</groupId>
-            <artifactId>server</artifactId>
-            <version>${project.version}</version>
+            <artifactId>engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.chutneytesting</groupId>
+            <artifactId>environment</artifactId>
         </dependency>
 
         <!-- External -->

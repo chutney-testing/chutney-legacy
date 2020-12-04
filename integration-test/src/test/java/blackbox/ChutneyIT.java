@@ -1,9 +1,9 @@
 package blackbox;
 
-import com.chutneytesting.design.domain.environment.AlreadyExistingEnvironmentException;
-import com.chutneytesting.design.domain.environment.Environment;
-import com.chutneytesting.design.domain.environment.SecurityInfo;
-import com.chutneytesting.design.domain.environment.Target;
+import com.chutneytesting.environment.domain.AlreadyExistingEnvironmentException;
+import com.chutneytesting.environment.domain.Environment;
+import com.chutneytesting.environment.domain.SecurityInfo;
+import com.chutneytesting.environment.domain.Target;
 import com.chutneytesting.junit.api.AfterAll;
 import com.chutneytesting.junit.api.BeforeAll;
 import com.chutneytesting.junit.api.Chutney;

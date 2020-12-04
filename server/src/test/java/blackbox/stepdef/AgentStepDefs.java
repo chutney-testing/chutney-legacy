@@ -9,7 +9,7 @@ import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto;
 import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto.EnvironmentApiDto;
 import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto.TargetsApiDto;
 import com.chutneytesting.agent.api.dto.NetworkDescriptionApiDto;
-import com.chutneytesting.design.api.environment.dto.EnvironmentMetadataDto;
+import com.chutneytesting.environment.api.dto.EnvironmentMetadataDto;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
@@ -69,7 +69,8 @@ public class AgentStepDefs {
             .withUrl("/api/v2/environment")
             .get(String.class);
 
-        Set<EnvironmentMetadataDto> environments =  objectMapper.readValue(responseDescription.getBody(), new TypeReference<Set<EnvironmentMetadataDto>>() {});
+        Set<EnvironmentMetadataDto> environments = objectMapper.readValue(responseDescription.getBody(), new TypeReference<Set<EnvironmentMetadataDto>>() {
+        });
         assertThat(environments).hasSize(1);
         assertThat(environments.iterator().next().targets).hasSize(1);
         assertThat(environments.iterator().next().targets.get(0).name).isEqualTo(name);

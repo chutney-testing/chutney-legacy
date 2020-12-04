@@ -2,8 +2,8 @@ package com.chutneytesting.engine.api.glacio.parse.default_;
 
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.design.domain.environment.EnvironmentService;
 import com.chutneytesting.engine.api.glacio.parse.GlacioExecutableStepParser;
+import com.chutneytesting.environment.domain.EnvironmentService;
 import com.chutneytesting.task.domain.TaskTemplateRegistry;
 import com.github.fridujo.glacio.model.Step;
 import java.util.Locale;

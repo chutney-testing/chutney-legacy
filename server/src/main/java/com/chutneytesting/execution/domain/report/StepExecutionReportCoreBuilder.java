@@ -2,7 +2,7 @@ package com.chutneytesting.execution.domain.report;
 
 import static java.util.Collections.emptyList;
 
-import com.chutneytesting.design.domain.environment.Target;
+import com.chutneytesting.environment.domain.Target;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;

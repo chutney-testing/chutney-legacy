@@ -3,11 +3,11 @@ package blackbox.stepdef;
 import static org.springframework.util.SocketUtils.findAvailableTcpPort;
 
 import blackbox.restclient.RestClient;
-import com.chutneytesting.design.api.environment.dto.EnvironmentMetadataDto;
-import com.chutneytesting.design.api.environment.dto.TargetMetadataDto;
-import com.chutneytesting.design.domain.environment.Environment;
-import com.chutneytesting.design.domain.environment.SecurityInfo;
-import com.chutneytesting.design.domain.environment.Target;
+import com.chutneytesting.environment.api.dto.EnvironmentMetadataDto;
+import com.chutneytesting.environment.api.dto.TargetMetadataDto;
+import com.chutneytesting.environment.domain.Environment;
+import com.chutneytesting.environment.domain.SecurityInfo;
+import com.chutneytesting.environment.domain.Target;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.google.common.io.Resources;
 import io.cucumber.datatable.DataTable;

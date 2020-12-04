@@ -5,7 +5,7 @@ import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.agent.domain.network.Agent;
 import com.chutneytesting.agent.domain.network.ImmutableNetworkDescription;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
-import com.chutneytesting.design.domain.environment.EnvironmentRepository;
+import com.chutneytesting.environment.domain.EnvironmentRepository;
 import java.io.OutputStream;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
