@@ -5,6 +5,8 @@
 @import './theme/sidemenu-theme';
 @import './theme/topmenu-theme';
 
+@import './custom/tree-theme';
+@import './custom/split-pane-theme';
 @import './custom/table-theme';
 
 // Styles for the app that are based on the current theme.
@@ -16,5 +18,7 @@
   @include chutney-sidemenu-theme($theme);
   @include chutney-topmenu-theme($theme);
 
+  @include custom-split-pane-theme($theme);
+  @include custom-tree-theme($theme);
   @include custom-table-theme($theme);
 }
