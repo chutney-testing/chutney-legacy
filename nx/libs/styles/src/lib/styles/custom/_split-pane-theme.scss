@@ -1,0 +1,10 @@
+// Example for custom theming
+
+@mixin custom-split-pane-theme($theme) {
+  $is-dark-theme: map-get($theme, is-dark);
+  $background: map-get($theme, background);
+  $foreground: map-get($theme, foreground);
+  .as-split-gutter-icon {
+    background-color: if($is-dark-theme, #505050, #eeeeee);
+  }
+}

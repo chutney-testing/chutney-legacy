@@ -1,10 +1,12 @@
-<chutney-page-header
-  [title]="'Scenarios'"
-  [breadcrumbs]="breadcrumbs"
->
+<chutney-page-header [title]="'Scenarios'" [breadcrumbs]="breadcrumbs">
 </chutney-page-header>
-<button mat-fab class="run-scenario-button mat-accent" (click)="runScenario()" aria-label="Run scenario"
-        [@animate]="{value:'*',params:{delay:'300ms',scale:'0.2'}}">
+<button
+  mat-fab
+  class="run-scenario-button mat-accent"
+  (click)="runScenario()"
+  aria-label="Run scenario"
+  [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
+>
   <mat-icon>play_arrow</mat-icon>
 </button>
 <div *ngIf="scenario$ | async as scenario">
@@ -19,9 +21,12 @@
   </mat-toolbar>
 
   <div style="align-items: center; width: 100%; height: 500px; display: block;">
-    <as-split [direction]="(isHandset$|async) ? 'vertical' : 'horizontal'">
+    <as-split [direction]="(isHandset$ | async) ? 'vertical' : 'horizontal'">
       <as-split-area [size]="40" style="padding-top: 15px;">
-        <div style="padding-left: 15px; min-height: 28px; max-height: 28px;">
+        <div
+          style="padding-left: 15px; min-height: 28px; max-height: 28px;"
+          (click)="activeNode = report"
+        >
           <chutney-execution-icon
             [testStatus]="report?.status"
           ></chutney-execution-icon>
@@ -111,7 +116,7 @@
             #monaco
             fxFlex="grow"
             editorStyle="border:0;"
-            theme="vs"
+            [theme]="options.theme === 'light' ? 'vs' : 'vs-dark'"
             language="yaml"
             [value]="toYaml(activeNode)"
             [editorOptions]="{
@@ -120,6 +125,9 @@
               readOnly: true,
               lineNumbers: false
             }"
+            (editorConfigurationChanged)="
+              monacoEditorConfigChanged(monaco.theme)
+            "
           ></td-code-editor>
         </div>
       </as-split-area>
