@@ -20,12 +20,15 @@
       #monaco
       fxFlex="grow"
       editorStyle="border:0;"
-      theme="vs"
       language="json"
       [editorOptions]="{ fontSize: 12, automaticLayout: true }"
       [value]="hjson(scenario.content)"
       (editorInitialized)="editorInitialized($event)"
       (change)="callBackFunc()"
+      [theme]="options.theme === 'light' ? 'vs' : 'vs-dark'"
+      (editorConfigurationChanged)="
+              monacoEditorConfigChanged(monaco.theme)
+            "
     ></td-code-editor>
   </div>
 </div>

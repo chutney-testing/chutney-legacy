@@ -6,7 +6,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SaveScenarioGQL, ScenarioGQL } from '@chutney/data-access';
 import { TdCodeEditorComponent } from '@covalent/code-editor';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
+import { layoutOprionsVar } from '../../../../../ui-layout/src/lib/cache';
+declare const monaco: any;
 @Component({
   selector: 'chutney-scenario-text-exit',
   templateUrl: './scenario-text-edit.component.html',
@@ -25,6 +26,7 @@ export class ScenarioTextEditComponent implements OnInit {
     { title: 'Scenarios', link: ['/'] },
     { title: 'View', link: ['../../view'] },
   ];
+  options: any = layoutOprionsVar();
 
   constructor(
     private route: ActivatedRoute,
@@ -78,5 +80,9 @@ export class ScenarioTextEditComponent implements OnInit {
       },
       (err) => this.snackBar.open(err.message)
     );
+  }
+
+  monacoEditorConfigChanged(theme: string) {
+    monaco.editor.setTheme(theme);
   }
 }
