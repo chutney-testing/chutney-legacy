@@ -14,6 +14,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
+import { layoutOprionsVar } from '../../cache';
 
 const MOBILE_MEDIAQUERY = 'screen and (max-width: 599px)';
 const TABLET_MEDIAQUERY =
@@ -29,17 +30,7 @@ const MONITOR_MEDIAQUERY = 'screen and (min-width: 960px)';
 export class MainLayoutComponent implements OnInit, OnDestroy {
   @ViewChild('sidenav', { static: true }) sidenav: MatSidenav;
   @ViewChild('content', { static: true }) content: MatSidenavContent;
-  options = {
-    navPos: 'side',
-    dir: 'ltr',
-    theme: 'light',
-    showHeader: true,
-    headerPos: 'fixed',
-    showUserPanel: true,
-    sidenavOpened: true,
-    sidenavCollapsed: false,
-    language: 'en-US',
-  };
+  options = layoutOprionsVar();
 
   private layoutChangesSubscription: Subscription;
 

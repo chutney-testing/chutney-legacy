@@ -1,0 +1,13 @@
+@mixin custom-tree-theme($theme) {
+  $is-dark-theme: map-get($theme, is-dark);
+  $row-hover-bg: mat-color($mat-indigo, 50);
+  $row-hover-bg-dark: mat-color($mat-blue-gray, 900);
+
+  .background-highlight {
+    background-color: if(
+      $is-dark-theme,
+      $row-hover-bg-dark,
+      $row-hover-bg
+    ) !important;
+  }
+}

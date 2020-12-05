@@ -15,12 +15,13 @@ import { chutneyAnimations, fromEventSource } from '@chutney/utils';
 import * as hjson from 'hjson';
 import * as jsyaml from 'js-yaml';
 import * as dotProp from 'dot-prop-immutable';
-
+import { layoutOprionsVar } from '../../../../../ui-layout/src/lib/cache';
+declare const monaco: any;
 @Component({
   selector: 'chutney-scenario-text-run',
   templateUrl: './scenario-text-run.component.html',
   styleUrls: ['./scenario-text-run.component.scss'],
-  animations: [chutneyAnimations]
+  animations: [chutneyAnimations],
 })
 export class ScenarioTextRunComponent implements OnInit {
   private scenarioId: string;
@@ -31,9 +32,9 @@ export class ScenarioTextRunComponent implements OnInit {
   dataSource = new MatTreeNestedDataSource<any>();
   report: any;
   breadcrumbs: any = [
-    {title: 'Home', link: ['/']},
-    {title: 'Scenarios', link: ['/']},
-    {title: 'View', link: ['../../view']},
+    { title: 'Home', link: ['/'] },
+    { title: 'Scenarios', link: ['/'] },
+    { title: 'View', link: ['../../view'] },
   ];
 
   isHandset$: Observable<boolean> = this.mediaObserver.asObservable().pipe(
@@ -43,8 +44,8 @@ export class ScenarioTextRunComponent implements OnInit {
         this.mediaObserver.isActive('sm') ||
         this.mediaObserver.isActive('lt-md')
     ),
-    tap(() => this.changeDetectorRef.detectChanges()))
-
+    tap(() => this.changeDetectorRef.detectChanges())
+  );
 
   constructor(
     private router: Router,
@@ -59,7 +60,7 @@ export class ScenarioTextRunComponent implements OnInit {
   ngOnInit(): void {
     this.scenario$ = this.route.params.pipe(
       switchMap((p) => {
-        return this.scenarioGQL.watch({scenarioId: p.id}).valueChanges.pipe(
+        return this.scenarioGQL.watch({ scenarioId: p.id }).valueChanges.pipe(
           pluck('data', 'scenario'),
           map((value) => hjson.parse(value.content))
         );
@@ -127,6 +128,8 @@ export class ScenarioTextRunComponent implements OnInit {
   output: any;
   activeNode: any;
 
+  options: any = layoutOprionsVar();
+
   runScenario() {
     this.runScenarioGQL
       .mutate({ scenarioId: this.scenarioId, dataset: [] })
@@ -139,5 +142,9 @@ export class ScenarioTextRunComponent implements OnInit {
 
   toYaml(obj: any) {
     return jsyaml.dump(obj);
+  }
+
+  monacoEditorConfigChanged(theme: string) {
+    monaco.editor.setTheme(theme);
   }
 }
