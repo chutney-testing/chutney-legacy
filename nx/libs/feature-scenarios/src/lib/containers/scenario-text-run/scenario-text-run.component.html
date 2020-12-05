@@ -116,7 +116,6 @@
             #monaco
             fxFlex="grow"
             editorStyle="border:0;"
-            [theme]="options.theme === 'light' ? 'vs' : 'vs-dark'"
             language="yaml"
             [value]="toYaml(activeNode)"
             [editorOptions]="{
@@ -125,6 +124,7 @@
               readOnly: true,
               lineNumbers: false
             }"
+            [theme]="options.theme === 'light' ? 'vs' : 'vs-dark'"
             (editorConfigurationChanged)="
               monacoEditorConfigChanged(monaco.theme)
             "
