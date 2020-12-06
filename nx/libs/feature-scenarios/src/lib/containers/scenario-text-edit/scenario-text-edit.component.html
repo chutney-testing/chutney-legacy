@@ -1,17 +1,26 @@
 <chutney-page-header [title]="'Scenarios'" [breadcrumbs]="breadcrumbs">
 </chutney-page-header>
+<button
+  mat-fab
+  class="save-scenario-button mat-accent"
+  (click)="saveScenario()"
+  aria-label="Save scenario"
+  [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
+>
+  <mat-icon>save</mat-icon>
+</button>
 <div *ngIf="scenario" fxFill>
   <mat-toolbar>
     <mat-toolbar-row>
       {{ scenario.title }}
       <span fxFlex></span>
-      <button
+      <!--<button
         mat-icon-button
         (click)="saveScenario()"
         matTooltip="Save scenario"
       >
         <mat-icon>save</mat-icon>
-      </button>
+      </button>-->
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="my-code-editor">
@@ -26,9 +35,7 @@
       (editorInitialized)="editorInitialized($event)"
       (change)="callBackFunc()"
       [theme]="options.theme === 'light' ? 'vs' : 'vs-dark'"
-      (editorConfigurationChanged)="
-              monacoEditorConfigChanged(monaco.theme)
-            "
+      (editorConfigurationChanged)="monacoEditorConfigChanged(monaco.theme)"
     ></td-code-editor>
   </div>
 </div>

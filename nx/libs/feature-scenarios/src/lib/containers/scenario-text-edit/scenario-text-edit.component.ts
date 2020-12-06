@@ -1,12 +1,16 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import * as hjson from 'hjson';
-import { map, pluck, switchMap } from 'rxjs/operators';
+import { pluck, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SaveScenarioGQL, ScenarioGQL } from '@chutney/data-access';
 import { TdCodeEditorComponent } from '@covalent/code-editor';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { editor } from 'monaco-editor';
 import { layoutOprionsVar } from '../../../../../ui-layout/src/lib/cache';
+import { chutneySchemaV2 } from '../../../../../data-models/schema.scenario.v2';
+import * as dotProp from 'dot-prop-immutable';
+
 declare const monaco: any;
 @Component({
   selector: 'chutney-scenario-text-exit',
@@ -52,11 +56,26 @@ export class ScenarioTextEditComponent implements OnInit {
     console.log('on Init monaco');
   }
 
-  editorInitialized(editorInstance: any): void {
+  async editorInitialized(editorInstance: any): Promise<void> {
     this._editor = editorInstance;
+    const model = await this.getModel();
+    const schema = dotProp.set(
+      chutneySchemaV2,
+      'definitions.step.properties.implementation.properties.target.enum',
+      //TODO get dynamic targets
+      ['swapi.dev']
+    );
+    monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+      validate: true,
+      schemas: [
+        {
+          uri: 'http://example.com/schema.json',
+          fileMatch: [model.uri.toString()],
+          schema: schema,
+        },
+      ],
+    });
   }
-
-  private registerCustomLanguage() {}
 
   hjson(content: string) {
     if (!content) {
@@ -84,5 +103,13 @@ export class ScenarioTextEditComponent implements OnInit {
 
   monacoEditorConfigChanged(theme: string) {
     monaco.editor.setTheme(theme);
+  }
+
+  async getModel(): Promise<any> {
+    // tslint:disable-next-line:prefer-immediate-return
+    const editorModel: editor.ITextModel = await this._editor.getModel();
+    // do something with editorModel
+
+    return editorModel;
   }
 }
