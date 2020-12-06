@@ -69,6 +69,7 @@ export class ScenariosComponent implements OnInit, OnDestroy {
 
   onEdit(id: string) {
     console.log(`edit scenario with id ${id}`);
+    this.router.navigate(['text', id, 'edit'], { relativeTo: this.route });
   }
 
   onDelete(id: string) {
