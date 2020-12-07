@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ExecutableComposedStepMapper {
 
-    private RawImplementationMapper rawImplementationMapper;
+    private final RawImplementationMapper rawImplementationMapper;
 
     public ExecutableComposedStepMapper(RawImplementationMapper rawImplementationMapper) {
         this.rawImplementationMapper = rawImplementationMapper;
@@ -35,7 +35,7 @@ public class ExecutableComposedStepMapper {
     }
 
     private Optional<StepImplementation> toStepImplementation(Optional<String> rawImplementation) {
-        return rawImplementation.map(ri -> rawImplementationMapper.deserialize(ri));
+        return rawImplementation.map(rawImplementationMapper::deserialize);
     }
 
 }

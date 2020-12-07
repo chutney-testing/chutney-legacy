@@ -2,8 +2,6 @@ package com.chutneytesting.design.infra.storage.scenario.compose;
 
 import com.chutneytesting.execution.domain.compiler.ScenarioConversionException;
 import com.chutneytesting.execution.domain.scenario.composed.StepImplementation;
-import com.chutneytesting.task.api.EmbeddedTaskEngine;
-import com.chutneytesting.task.api.TaskDto;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -14,18 +12,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RawImplementationMapper {
 
-    private final EmbeddedTaskEngine embeddedTaskEngine;
     private final ObjectMapper objectMapper;
     private JsonNode implementation;
 
-    public RawImplementationMapper(EmbeddedTaskEngine embeddedTaskEngine, ObjectMapper objectMapper) {
-        this.embeddedTaskEngine = embeddedTaskEngine;
+    public RawImplementationMapper(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
@@ -75,7 +70,7 @@ public class RawImplementationMapper {
             final JsonNode simpleInputs = implementation.get("inputs");
             simpleInputs.forEach(in -> {
                 String inputName = in.get("name").asText();
-                inputs.put(inputName, transformSimpleInputValue(in, inputName));
+                inputs.put(inputName, transformSimpleInputValue(in));
             });
         }
         // List inputs
@@ -101,18 +96,7 @@ public class RawImplementationMapper {
         return inputs;
     }
 
-    private Object transformSimpleInputValue(JsonNode in, String inputRead) {
-        Optional<TaskDto> task = embeddedTaskEngine.getAllTasks().stream().filter(t -> t.getIdentifier().equals(this.type())).findFirst();
-        if (task.isPresent()) {
-            Optional<TaskDto.InputsDto> optionalInput = task.get().getInputs().stream().filter(i -> i.getName().equals(inputRead)).findFirst();
-            if (optionalInput.isPresent()) {
-                TaskDto.InputsDto input = optionalInput.get();
-                if (input.getType().getName().equals(Integer.class.getName())) {
-                    return transformIntegerValue(in);
-                }
-            }
-        }
-
+    private Object transformSimpleInputValue(JsonNode in) {
         String value = in.get("value").asText();
         return !value.isEmpty() ? value : null;
     }
@@ -127,10 +111,4 @@ public class RawImplementationMapper {
         }
         return in.asText();
     }
-
-    private Integer transformIntegerValue(JsonNode in) {
-        String value = in.get("value").asText();
-        return StringUtils.isNotBlank(value) ? Integer.valueOf(value) : null;
-    }
-
 }

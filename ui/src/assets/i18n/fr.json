@@ -323,7 +323,8 @@
         }
     },
     "login": {
-        "disconnected": "Vous vous êtes bien déconnectés",
+        "disconnected": "Vous êtes déconnecté",
+        "invalid": "Votre session s'est terminée",
         "username": "Nom d'utilisateur",
         "password": "Mot de passe (Sesame)"
     },

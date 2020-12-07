@@ -9,6 +9,7 @@ import com.chutneytesting.security.infra.memory.InMemoryUsersProperties;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
@@ -25,12 +26,15 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 @EnableWebSecurity
 public class ChutneySecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Value("${server.servlet.session.cookie.http-only:true}")
+    private boolean sessionCookieHttpOnly;
+    @Value("${server.servlet.session.cookie.secure:true}")
+    private boolean sessionCookieSecure;
+
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         configureBaseHttpSecurity(http);
         http
-            .anonymous()
-                .disable()
             .authorizeRequests()
                 .antMatchers("/api/v1/user/login").permitAll()
                 .antMatchers("/api/v1/user/logout").permitAll()
@@ -46,7 +50,7 @@ public class ChutneySecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
             .sessionManagement()
-                .invalidSessionStrategy(new HttpStatusInvalidSessionStrategy(HttpStatus.UNAUTHORIZED, invalidSessionHeaders))
+                .invalidSessionStrategy(new HttpStatusInvalidSessionStrategy(HttpStatus.UNAUTHORIZED, invalidSessionHeaders, sessionCookieHttpOnly, sessionCookieSecure))
             .and()
             .csrf()
                 .disable()

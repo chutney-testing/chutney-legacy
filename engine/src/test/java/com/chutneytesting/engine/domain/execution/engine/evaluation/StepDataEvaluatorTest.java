@@ -19,10 +19,10 @@ import org.junit.runner.RunWith;
 @RunWith(JUnitParamsRunner.class)
 public class StepDataEvaluatorTest {
 
-    private StepDataEvaluator evaluator = new StepDataEvaluator(new SpelFunctions());
+    private final StepDataEvaluator sut = new StepDataEvaluator(new SpelFunctions());
 
     @Test
-    public void testInputDataEvaluator() throws Exception {
+    public void testInputDataEvaluator() {
         TestObject testObject = new TestObject("attributeValue");
 
         Map<String, Object> context = new HashMap<>();
@@ -79,7 +79,7 @@ public class StepDataEvaluatorTest {
         inputs.put("list", list);
         inputs.put("set", set);
 
-        Map<String, Object> evaluatedInputs = evaluator.evaluateNamedDataWithContextVariables(inputs, scenarioContext);
+        Map<String, Object> evaluatedInputs = sut.evaluateNamedDataWithContextVariables(inputs, scenarioContext);
 
         assertThat(evaluatedInputs.get("stringRawValue")).isEqualTo("rawValue");
         assertThat(evaluatedInputs.get("objectRawValue")).isEqualTo(testObject);
@@ -143,7 +143,7 @@ public class StepDataEvaluatorTest {
         inputs.put("MaliciousInjection", magicSpel);
 
         // When
-        evaluator.evaluateNamedDataWithContextVariables(inputs, scenarioContext);
+        sut.evaluateNamedDataWithContextVariables(inputs, scenarioContext);
     }
 
     @Test
@@ -157,7 +157,7 @@ public class StepDataEvaluatorTest {
         inputs.put("MaliciousInjection", "${T(java.time.format.DateTimeFormatter).ofPattern(#dateTimeFormat).format(T(java.time.ZonedDateTime).now().plusSeconds(5))}");
 
         // When
-        evaluator.evaluateNamedDataWithContextVariables(inputs, scenarioContext);
+        sut.evaluateNamedDataWithContextVariables(inputs, scenarioContext);
     }
 
     @Test
@@ -187,7 +187,7 @@ public class StepDataEvaluatorTest {
         inputs.put("objectWithSpaceBeforePrefix", "     ${{'k5': 'value5'}}");
 
         // When
-        Map<String, Object> evaluatedInputs = evaluator.evaluateNamedDataWithContextVariables(inputs, scenarioContext);
+        Map<String, Object> evaluatedInputs = sut.evaluateNamedDataWithContextVariables(inputs, scenarioContext);
 
         assertThat(evaluatedInputs.get("singleVariable")).isEqualTo("toto");
         assertThat(evaluatedInputs.get("singleVariableWithTextAfterSpel")).isEqualTo("Text - toto");

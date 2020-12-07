@@ -39,16 +39,16 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     ) {
     }
 
-    async ngOnInit() {
-        try {
-            this.scenarios = await this.getScenarios();
-            this.applyDefaultState();
-            this.applySavedState();
-            this.applyUriState();
-            this.applyFilters();
-        } catch (e) {
-            console.log(e);
-        }
+    ngOnInit() {
+        this.getScenarios()
+            .then(r => {
+                this.scenarios = r || [];
+                this.applyDefaultState();
+                this.applySavedState();
+                this.applyUriState();
+                this.applyFilters();
+            })
+            .catch(err => console.log(err));
     }
 
     ngOnDestroy(): void {

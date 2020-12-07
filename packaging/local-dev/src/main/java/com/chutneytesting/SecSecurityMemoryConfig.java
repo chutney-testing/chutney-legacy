@@ -17,10 +17,10 @@ public class SecSecurityMemoryConfig extends ChutneySecurityConfig {
         configureBaseHttpSecurity(http);
         http
             .anonymous()
-            .principal(User.ANONYMOUS_USER)
+                .principal(User.ANONYMOUS_USER)
             .and()
             .authorizeRequests()
-            .anyRequest().permitAll()
+                .anyRequest().permitAll()
             .and()
             .httpBasic();
     }

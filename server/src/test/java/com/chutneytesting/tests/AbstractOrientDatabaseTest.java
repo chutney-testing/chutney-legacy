@@ -5,6 +5,7 @@ import static com.chutneytesting.design.infra.storage.scenario.compose.orient.Or
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.chutneytesting.WebConfiguration;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStepRepository;
 import com.chutneytesting.design.domain.scenario.compose.StepUsage;
@@ -17,7 +18,6 @@ import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientCon
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientDBManager;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.changelog.OrientChangelogExecutor;
 import com.chutneytesting.task.api.EmbeddedTaskEngine;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.db.ODatabaseType;
@@ -34,13 +34,14 @@ import org.mockito.Mockito;
 public abstract class AbstractOrientDatabaseTest {
 
     private static OrientDBManager orientDBManager;
+    private static final WebConfiguration webConfiguration = new WebConfiguration();
 
     protected static final String DATABASE_NAME = "orient_repo_test";
     protected static OrientComponentDB orientComponentDB;
     protected static OrientChangelogExecutor changelogExecution;
 
     protected static EmbeddedTaskEngine mockEngine = Mockito.mock(EmbeddedTaskEngine.class);
-    protected static RawImplementationMapper implementationMapper = new RawImplementationMapper(mockEngine, new ObjectMapper());
+    protected static RawImplementationMapper implementationMapper = new RawImplementationMapper(webConfiguration.objectMapper());
     protected static ExecutableComposedStepMapper stepMapper = new ExecutableComposedStepMapper(implementationMapper);
     protected static ExecutableComposedTestCaseMapper testCaseMapper = new ExecutableComposedTestCaseMapper(stepMapper);
 

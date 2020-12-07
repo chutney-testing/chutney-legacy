@@ -324,6 +324,7 @@
     },
     "login": {
         "disconnected": "You are disconnected",
+        "invalid": "Your session has ended",
         "username": "Username",
         "password": "Password"
     },
