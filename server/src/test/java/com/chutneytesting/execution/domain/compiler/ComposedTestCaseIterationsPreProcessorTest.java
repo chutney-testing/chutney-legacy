@@ -14,13 +14,13 @@ import static org.mockito.Mockito.when;
 
 import com.chutneytesting.design.domain.dataset.DataSet;
 import com.chutneytesting.design.domain.dataset.DataSetRepository;
+import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.engine.domain.execution.strategies.DataSetIterationsStrategy;
 import com.chutneytesting.engine.domain.execution.strategies.DefaultStepExecutionStrategy;
 import com.chutneytesting.engine.domain.execution.strategies.RetryWithTimeOutStrategy;
 import com.chutneytesting.engine.domain.execution.strategies.SoftAssertStrategy;
-import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedScenario;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
@@ -41,6 +41,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
 
     ComposedTestCaseIterationsPreProcessor sut;
     private DataSetRepository mockDatasetRepository;
+    private TestCaseMetadata metadata = TestCaseMetadataImpl.builder().withDatasetId("fakeId").build();
 
     @Before
     public void setUp() {
@@ -57,80 +58,140 @@ public class ComposedTestCaseIterationsPreProcessorTest {
     }
 
     @Test
-    public void should_add_dataset_unique_values_to_testcase_dataset_when_matched() {
+    public void should_override_keys_matching_external_dataset_unique_values_to_testcase_local_dataset() {
         // Given
         Map<String, String> uniqueValues = Maps.of(
-            "testcase param key", "dataset param value",
-            "dataset key", "dataset value"
+            "aKey", "usedInTestCase",
+            "anotherKey", "notUsedInTestCase"
         );
         stubDatasetRepository(uniqueValues, null);
 
         Map<String, String> computedParameters = Maps.of(
-            "testcase param key", "testcase param value",
-            "testcase key", "testcase value"
+            "aKey", "value will be override",
+            "localKey", "will be kept as is"
         );
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            TestCaseMetadataImpl.builder().withDatasetId("fakeId").build(),
+            metadata,
             ExecutableComposedScenario.builder().build(),
             computedParameters
         );
 
         // When
         ComposedTestCaseIterationsPreProcessor sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
-        ExecutableComposedTestCase processedTestCase = sut.apply(
-            new ExecutionRequest(testCase, "env", "user")
-        );
+        ExecutableComposedTestCase processedTestCase = sut.apply(testCase);
 
         // Then
         assertThat(processedTestCase.computedParameters()).containsOnly(
-            entry("testcase key", "testcase value"),
-            entry("testcase param key", "dataset param value")
+            entry("aKey", "usedInTestCase"),
+            entry("localKey", "will be kept as is")
         );
     }
 
     @Test
-    public void should_create_step_iterations_when_step_has_multiple_values_dataset_matching_a_parameter() {
+    public void should_remove_keys_matching_external_dataset_multivalues_from_testcase_local_dataset() {
         // Given
         List<Map<String, String>> multipleValues = asList(
-            Maps.of("testcase key for dataset", "dataset first value"),
-            Maps.of("testcase key for dataset", "dataset second value"),
-            Maps.of("testcase key for dataset", "dataset third value")
+            Maps.of("aKey", "aValue"),
+            Maps.of("aKey", "anotherValue")
         );
         stubDatasetRepository(null, multipleValues);
 
         Map<String, String> computedParameters = Maps.of(
-            "testcase key for dataset", "testcase default value for dataset",
-            "testcase key no dataset", "testcase value",
-            "another param key", "another testcase value"
+            "aKey", "testcase default value",
+            "anotherKey", "testcase value"
         );
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            TestCaseMetadataImpl.builder().withDatasetId("fakeId").build(),
+            metadata,
+            ExecutableComposedScenario.builder()
+                .withComposedSteps(singletonList(ExecutableComposedStep.builder().build()))
+                .build(),
+            computedParameters
+        );
+
+        // When
+        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        ExecutableComposedTestCase processedTestCase = sut.apply(testCase);
+
+        // Then
+        assertThat(processedTestCase.computedParameters).containsOnly(
+            entry("anotherKey", "testcase value")
+        );
+    }
+
+    @Test
+    public void should_create_iterations_when_step_uses_external_dataset_multivalues() {
+        // Given
+        List<Map<String, String>> multipleValues = asList(
+            Maps.of("aKey", "aValue"),
+            Maps.of("aKey", "anotherValue")
+        );
+        stubDatasetRepository(null, multipleValues);
+
+        ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
+            metadata,
             ExecutableComposedScenario.builder()
                 .withComposedSteps(
-                    asList(
+                    singletonList(
                         ExecutableComposedStep.builder()
-                            .withName("a step with no valued parameter")
+                            .withName("Should create 2 iterations for aKey")
+                            .withDataset(singletonMap("aKey", ""))
+                            .build()
+                    )
+                )
+                .build(),
+            singletonMap("aKey", "")
+        );
+
+        // When
+        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        ExecutableComposedTestCase processedTestCase = sut.apply(testCase);
+
+        // Then
+        ExecutableComposedStep iterableStep = processedTestCase.composedScenario.composedSteps.get(0);
+        assertThat(iterableStep.steps).hasSize(2);
+
+        ExecutableComposedStep firstIteration = iterableStep.steps.get(0);
+        assertThat(firstIteration.name).isEqualTo("Should create 2 iterations for aKey - dataset iteration 1");
+        assertThat(firstIteration.dataset).containsOnly(
+            entry("aKey", "aValue")
+        );
+
+        ExecutableComposedStep secondIteration = iterableStep.steps.get(1);
+        assertThat(secondIteration.name).isEqualTo("Should create 2 iterations for aKey - dataset iteration 2");
+        assertThat(secondIteration.dataset).containsOnly(
+            entry("aKey", "anotherValue")
+        );
+
+    }
+
+    @Test
+    // TODO - what is this rule ? why is that ? TestCase dataset takes precedence over local step values ? But why is it done here ?
+    public void should_override_iterations_parent_step_dataset() {
+        // Given
+        List<Map<String, String>> multipleValues = asList(
+            Maps.of("aKey", "aValue"),
+            Maps.of("aKey", "anotherValue")
+        );
+        stubDatasetRepository(null, multipleValues);
+
+        Map<String, String> computedParameters = Maps.of(
+            "aKey", "",
+            "anotherKey", "testcase value"
+        );
+
+        ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
+            metadata,
+            ExecutableComposedScenario.builder()
+                .withComposedSteps(
+                    singletonList(
+                        ExecutableComposedStep.builder()
+                            .withName("Parent local dataset is override by testcase local dataset ")
                             .withDataset(
                                 Maps.of(
-                                    "testcase key for dataset", "",
-                                    "step 1 param", "value 1"
-                                )
-                            )
-                            .build(),
-                        ExecutableComposedStep.builder()
-                            .withName("a step with no dataset matched parameter")
-                            .withDataset(
-                                Maps.of("step param", "value 2")
-                            )
-                            .build(),
-                        ExecutableComposedStep.builder()
-                            .withName("a step with ref parameter")
-                            .withDataset(
-                                Maps.of(
-                                    "ref step param", "value with ref **testcase key for dataset**",
-                                    "step 3 alias", "**another param key**"
+                                    "aKey", "", // needed for generating iterations
+                                    "anotherKey", "step value" // will be override
                                 )
                             )
                             .build()
@@ -141,69 +202,110 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         // When
-        ComposedTestCaseIterationsPreProcessor sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
-        ExecutableComposedTestCase processedTestCase = sut.apply(
-            new ExecutionRequest(testCase, "env", "user")
-        );
+        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        ExecutableComposedTestCase processedTestCase = sut.apply(testCase);
 
         // Then
-        assertThat(processedTestCase.computedParameters).containsOnly(
-            entry("testcase key no dataset", "testcase value"),
-            entry("another param key", "another testcase value")
-        );
-        assertThat(processedTestCase.composedScenario.composedSteps).hasSize(3);
+        ExecutableComposedStep parentIterableStep = processedTestCase.composedScenario.composedSteps.get(0);
+        assertThat(parentIterableStep.dataset).containsOnly(entry("anotherKey", "")); // TODO - moreover, why is it empty and not using the testcase dataset value ?
 
+    }
+
+    @Test
+    public void should_keep_local_dataset_values_when_creating_iterations() {
+        // Given
+        List<Map<String, String>> multipleValues = asList(
+            Maps.of("aKey", "aValue"),
+            Maps.of("aKey", "anotherValue")
+        );
+        stubDatasetRepository(null, multipleValues);
+
+        ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
+            metadata,
+            ExecutableComposedScenario.builder()
+                .withComposedSteps(
+                    singletonList(
+                        ExecutableComposedStep.builder()
+                            .withName("Should create 2 iterations for aKey")
+                            .withDataset(
+                                Maps.of(
+                                    "aKey", "",
+                                    "aLocalParam", "isKeptForEachIteration"
+                                )
+                            )
+                            .build()
+                    )
+                )
+                .build(),
+            Maps.of("aKey", "")
+        );
+
+        // When
+        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        ExecutableComposedTestCase processedTestCase = sut.apply(testCase);
+
+        // Then
+        ExecutableComposedStep iterableStep = processedTestCase.composedScenario.composedSteps.get(0);
+        assertThat(iterableStep.steps).hasSize(2);
+
+        ExecutableComposedStep firstIteration = iterableStep.steps.get(0);
+        assertThat(firstIteration.name).isEqualTo("Should create 2 iterations for aKey - dataset iteration 1");
+        assertThat(firstIteration.dataset).containsOnly(
+            entry("aKey", "aValue"),
+            entry("aLocalParam", "isKeptForEachIteration")
+        );
+
+        ExecutableComposedStep secondIteration = iterableStep.steps.get(1);
+        assertThat(secondIteration.name).isEqualTo("Should create 2 iterations for aKey - dataset iteration 2");
+        assertThat(secondIteration.dataset).containsOnly(
+            entry("aKey", "anotherValue"),
+            entry("aLocalParam", "isKeptForEachIteration")
+        );
+
+    }
+
+    @Test
+    public void should_replace_iteration_dataset_value_when_referring_to_external_dataset_multivalue() {
+        // Given
+        List<Map<String, String>> multipleValues = asList(
+            Maps.of("aKey", "aValue"),
+            Maps.of("aKey", "anotherValue")
+        );
+
+        stubDatasetRepository(null, multipleValues);
+
+        ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
+            metadata,
+            ExecutableComposedScenario.builder()
+                .withComposedSteps(
+                    singletonList(
+                        ExecutableComposedStep.builder()
+                            .withName("a step with ref parameter")
+                            .withDataset(
+                                singletonMap("aLocalParam", "refers to the external dataset key **aKey**")
+                            )
+                            .build()
+                    )
+                )
+                .build(),
+            singletonMap("aKey", "")
+        );
+
+        // When
+        ComposedTestCaseIterationsPreProcessor sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        ExecutableComposedTestCase processedTestCase = sut.apply(testCase);
+
+        // Then
         ExecutableComposedStep fs = processedTestCase.composedScenario.composedSteps.get(0);
-        assertThat(fs.name).isEqualTo("a step with no valued parameter");
-        assertThat(fs.dataset).containsOnly(
-            entry("testcase key no dataset", ""),
-            entry("another param key", "")
-        );
-        assertThat(fs.steps).hasSize(3);
-        assertThat(fs.steps.get(0).name).isEqualTo("a step with no valued parameter - dataset iteration 1");
-        assertThat(fs.steps.get(0).dataset).containsOnly(
-            entry("testcase key for dataset", "dataset first value"),
-            entry("step 1 param", "value 1")
-        );
-        assertThat(fs.steps.get(1).name).isEqualTo("a step with no valued parameter - dataset iteration 2");
-        assertThat(fs.steps.get(1).dataset).containsOnly(
-            entry("testcase key for dataset", "dataset second value"),
-            entry("step 1 param", "value 1")
-        );
-        assertThat(fs.steps.get(2).name).isEqualTo("a step with no valued parameter - dataset iteration 3");
-        assertThat(fs.steps.get(2).dataset).containsOnly(
-            entry("testcase key for dataset", "dataset third value"),
-            entry("step 1 param", "value 1")
-        );
 
-        fs = processedTestCase.composedScenario.composedSteps.get(1);
-        assertThat(fs.name).isEqualTo("a step with no dataset matched parameter");
-        assertThat(fs.dataset).containsOnly(
-            entry("step param", "value 2")
-        );
-        assertThat(fs.steps).hasSize(0);
-
-        fs = processedTestCase.composedScenario.composedSteps.get(2);
-        assertThat(fs.name).isEqualTo("a step with ref parameter");
-        assertThat(fs.dataset).containsOnly(
-            entry("another param key", ""),
-            entry("testcase key no dataset", "")
-        );
-        assertThat(fs.steps).hasSize(3);
         assertThat(fs.steps.get(0).name).isEqualTo("a step with ref parameter - dataset iteration 1");
         assertThat(fs.steps.get(0).dataset).containsOnly(
-            entry("ref step param", "value with ref dataset first value"),
-            entry("step 3 alias", "**another param key**")
+            entry("aLocalParam", "refers to the external dataset key aValue")
         );
+
         assertThat(fs.steps.get(1).name).isEqualTo("a step with ref parameter - dataset iteration 2");
         assertThat(fs.steps.get(1).dataset).containsOnly(
-            entry("ref step param", "value with ref dataset second value"),
-            entry("step 3 alias", "**another param key**")
-        );
-        assertThat(fs.steps.get(2).name).isEqualTo("a step with ref parameter - dataset iteration 3");
-        assertThat(fs.steps.get(2).dataset).containsOnly(
-            entry("ref step param", "value with ref dataset third value"),
-            entry("step 3 alias", "**another param key**")
+            entry("aLocalParam", "refers to the external dataset key anotherValue")
         );
     }
 
@@ -221,7 +323,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            TestCaseMetadataImpl.builder().withDatasetId("fakeId").build(),
+            metadata,
             ExecutableComposedScenario.builder()
                 .withComposedSteps(
                     singletonList(
@@ -241,9 +343,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
 
         // When
         ComposedTestCaseIterationsPreProcessor sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
-        ExecutableComposedTestCase processedTestCase = sut.apply(
-            new ExecutionRequest(testCase, "env", "user")
-        );
+        ExecutableComposedTestCase processedTestCase = sut.apply(testCase);
 
         // Then
         assertThat(processedTestCase.composedScenario.composedSteps.get(0).strategy).isEqualTo(
@@ -266,7 +366,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            TestCaseMetadataImpl.builder().withDatasetId("fakeId").build(),
+            metadata,
             ExecutableComposedScenario.builder()
                 .withComposedSteps(
                     singletonList(
@@ -287,9 +387,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
 
         // When
         ComposedTestCaseIterationsPreProcessor sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
-        ExecutableComposedTestCase processedTestCase = sut.apply(
-            new ExecutionRequest(testCase, "env", "user")
-        );
+        ExecutableComposedTestCase processedTestCase = sut.apply(testCase);
 
         // Then
         assertThat(processedTestCase.composedScenario.composedSteps.get(0).steps.get(0).strategy).isEqualTo(
@@ -320,7 +418,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            TestCaseMetadataImpl.builder().withDatasetId("fakeId").build(),
+            metadata,
             ExecutableComposedScenario.builder()
                 .withComposedSteps(
                     singletonList(
@@ -340,9 +438,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
 
         // When
         ComposedTestCaseIterationsPreProcessor sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
-        ExecutableComposedTestCase processedTestCase = sut.apply(
-            new ExecutionRequest(testCase, "env", "user")
-        );
+        ExecutableComposedTestCase processedTestCase = sut.apply(testCase);
 
         // Then
         assertThat(processedTestCase.composedScenario.composedSteps).hasSize(1);
@@ -373,7 +469,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         stubDatasetRepository(null, multipleValues);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            TestCaseMetadataImpl.builder().withDatasetId("fakeId").build(),
+            metadata,
             ExecutableComposedScenario.builder()
                 .withComposedSteps(asList(
                     ExecutableComposedStep.builder()
@@ -471,7 +567,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         stubDatasetRepository(null, multipleValues);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            TestCaseMetadataImpl.builder().withDatasetId("fakeId").build(),
+            metadata,
             ExecutableComposedScenario.builder()
                 .withComposedSteps(asList(
                     ExecutableComposedStep.builder()
@@ -556,7 +652,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         stubDatasetRepository(null, multipleValues);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            TestCaseMetadataImpl.builder().withDatasetId("fakeId").build(),
+            metadata,
             ExecutableComposedScenario.builder()
                 .withComposedSteps(asList(
                     ExecutableComposedStep.builder()
@@ -647,7 +743,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         stubDatasetRepository(null, multipleValues);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            TestCaseMetadataImpl.builder().withDatasetId("fakeId").build(),
+            metadata,
             ExecutableComposedScenario.builder()
                 .withComposedSteps(asList(
                     ExecutableComposedStep.builder()
@@ -738,7 +834,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         stubDatasetRepository(null, multipleValues);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            TestCaseMetadataImpl.builder().withDatasetId("fakeId").build(),
+            metadata,
             ExecutableComposedScenario.builder()
                 .withComposedSteps(asList(
                     ExecutableComposedStep.builder()
@@ -826,7 +922,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         stubDatasetRepository(null, multipleValues);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            TestCaseMetadataImpl.builder().withDatasetId("fakeId").build(),
+            metadata,
             ExecutableComposedScenario.builder()
                 .withComposedSteps(singletonList(
                     ExecutableComposedStep.builder()
@@ -922,7 +1018,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         stubDatasetRepository(null, multipleValues);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            TestCaseMetadataImpl.builder().withDatasetId("fakeId").build(),
+            metadata,
             ExecutableComposedScenario.builder()
                 .withComposedSteps(asList(
                     ExecutableComposedStep.builder()
