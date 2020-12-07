@@ -1,7 +1,8 @@
 package com.chutneytesting.execution.domain.schedule;
 
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
-import java.time.LocalTime;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,13 +14,15 @@ public class CampaignScheduler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CampaignScheduler.class);
 
-    private LocalTime lastExecutionTime = LocalTime.now().minusMinutes(10);
+    private LocalDateTime lastExecutionDateTime = LocalDateTime.now().minusMinutes(10);
     private final CampaignExecutionEngine campaignExecutionEngine;
     private final SchedulerRepository schedulerRepository;
+    private final Clock clock;
 
-    public CampaignScheduler(CampaignExecutionEngine campaignExecutionEngine, SchedulerRepository schedulerRepository) {
+    public CampaignScheduler(CampaignExecutionEngine campaignExecutionEngine, SchedulerRepository schedulerRepository, Clock clock) {
         this.campaignExecutionEngine = campaignExecutionEngine;
         this.schedulerRepository = schedulerRepository;
+        this.clock = clock;
     }
 
     @Async
@@ -40,9 +43,9 @@ public class CampaignScheduler {
     }
 
     private List<Long> checkCampaignToExecute() {
-        final LocalTime newLocalTime = LocalTime.now();
-        final List<Long> campaignIdsToExecute = schedulerRepository.getCampaignScheduledAfter(lastExecutionTime);
-        lastExecutionTime = newLocalTime;
+        final LocalDateTime newLocalDateTime = LocalDateTime.now(clock);
+        final List<Long> campaignIdsToExecute = schedulerRepository.getCampaignScheduledAfter(lastExecutionDateTime);
+        lastExecutionDateTime = newLocalDateTime;
         return campaignIdsToExecute;
     }
 }
