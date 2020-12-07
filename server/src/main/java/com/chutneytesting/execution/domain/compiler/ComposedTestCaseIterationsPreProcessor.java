@@ -128,7 +128,7 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
         return iterationOutputs.entrySet().stream()
             .filter(previousOutput ->
                 composedStep.dataset.entrySet().stream()
-                    .anyMatch(input -> input.getKey().equals("${#" + previousOutput.getKey() + "}")
+                    .anyMatch(input -> input.getKey().contains("#" + previousOutput.getKey())
                         || usePreviousIterationOutput(previousOutput.getKey(), input.getValue())
                     )
             )
@@ -141,7 +141,7 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
             map.putAll(iterationOutputs.entrySet().stream()
                 .filter(previousOutput ->
                     si.inputs.entrySet().stream()
-                        .anyMatch(input -> input.getKey().equals("${#" + previousOutput.getKey() + "}")
+                        .anyMatch(input -> input.getKey().contains("#" + previousOutput.getKey())
                             || usePreviousIterationOutput(previousOutput.getKey(), input.getValue())
                         ))
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue))
@@ -161,11 +161,11 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
     }
 
     private boolean usePreviousIterationOutput(String previousOutput, String value) {
-        return value.contains("${#" + previousOutput + "}");
+        return value.contains("#" + previousOutput);
     }
 
     private boolean usePreviousIterationOutput(String previousOutput, Map<String, String> value) {
-        return value.entrySet().stream().anyMatch(e -> e.getKey().equals("${#" + previousOutput + "}") || usePreviousIterationOutput(previousOutput, e.getValue()));
+        return value.entrySet().stream().anyMatch(e -> e.getKey().contains("#" + previousOutput) || usePreviousIterationOutput(previousOutput, e.getValue()));
     }
 
     private Set<String> findComposedStepNoValuedMatchedEntries(Map<String, String> csDataset, List<String> matchedHeaders) {
