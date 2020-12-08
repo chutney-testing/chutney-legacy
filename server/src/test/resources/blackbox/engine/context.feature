@@ -1,126 +1,177 @@
 # language: en
+
 Feature: Execution success task
 
-Scenario: Task instantiation and execution of a success scenario
-    Given this scenario is saved
-"""
-    {
-        "title": "post scenario !",
-        "tags": [],
-        "executions": [],
-        "content":
-        '''
-    {
-        "scenario":
-        {
-            "name": "Success scenario",
-            "steps":
-            [
+    Scenario: Task instantiation and execution of a success scenario
+        Given this scenario is saved
+            Do http-post Post scenario to Chutney instance
+                On CHUTNEY_LOCAL
+                With uri /api/scenario/v2
+                With headers
+                | Content-Type | application/json;charset=UTF-8 |
+                With body
+                """
                 {
-                    "name": "step success",
-                    "type": "success"
-                }
-            ]
-        }
-    }
-    '''
-    }
-"""
-    When last saved scenario is executed
-    Then the report status is SUCCESS
-
-Scenario: Task instantiation and execution of a failed scenario
-    Given this scenario is saved
-"""
-    {
-        "title": "post scenario !",
-        "tags": [],
-        "executions": [],
-        "content":
-        '''
-    {
-        "scenario":
-        {
-            "name": "Failed scenario",
-            "steps":
-            [
-                {
-                    "name": "step fail",
-                    "type": "fail"
-                }
-            ]
-        }
-    }
-    '''
-    }
-"""
-    When last saved scenario is executed
-    Then the report status is FAILURE
-
-Scenario: Task instantiation and execution of a sleep scenario
-    Given this scenario is saved
-"""
-    {
-        "title": "post scenario !",
-        "tags": [],
-        "executions": [],
-        "content":
-        '''
-    {
-        "scenario":
-        {
-            "name": "Sleep scenario",
-            "steps":
-            [
-                {
-                    "name": "step sleep",
-                    "type": "sleep",
-                    "inputs": {
-                        "duration": "20 ms"
+                    "title":"Success scenario",
+                    "scenario":{
+                        "when":{
+                            "sentence":"Success scenario",
+                            "implementation":{
+                                "task":"{\n type: success \n }"
+                            }
+                        },
+                        "thens":[]
                     }
                 }
-            ]
-        }
-    }
-    '''
-    }
-"""
-    When last saved scenario is executed
-    Then the report status is SUCCESS
+                """
+                Take scenarioId ${#body}
+            Do compare Assert HTTP status is 200
+                With actual ${T(Integer).toString(#status)}
+                With expected 200
+                With mode equals
+        When last saved scenario is executed
+            Do http-post Post scenario execution to Chutney instance
+                On CHUTNEY_LOCAL
+                With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
+                Take report ${#body}
+            Do compare Assert HTTP status is 200
+                With actual ${T(Integer).toString(#status)}
+                With expected 200
+                With mode equals
+        Then the report status is SUCCESS
+            Do compare
+                With actual ${#json(#report, "$.report.status")}
+                With expected SUCCESS
+                With mode equals
 
-Scenario: Task instantiation and execution of a debug scenario
-    Given this scenario is saved
-"""
-    {
-        "title": "post scenario !",
-        "tags": [],
-        "executions": [],
-        "content":
-        '''
-    {
-        "scenario":
-        {
-            "name": "Debug scenario",
-            "steps":
-            [
+    Scenario: Task instantiation and execution of a failed scenario
+        Given this scenario is saved
+            Do http-post Post scenario to Chutney instance
+                On CHUTNEY_LOCAL
+                With uri /api/scenario/v2
+                With headers
+                | Content-Type | application/json;charset=UTF-8 |
+                With body
+                """
                 {
-                "name": "Put value in context",
-                "type": "context-put",
-                "inputs": {
-                    "entries": {
-                        "test key" : "valeur"
+                    "title":"Failed scenario",
+                    "scenario":{
+                        "when":{
+                            "sentence":"Step fail",
+                            "implementation":{
+                                "task":"{\n type: fail \n }"
+                            }
+                        },
+                        "thens":[]
                     }
                 }
-            },
+                """
+                Take scenarioId ${#body}
+            Do compare Assert HTTP status is 200
+                With actual ${T(Integer).toString(#status)}
+                With expected 200
+                With mode equals
+        When last saved scenario is executed
+            Do http-post Post scenario execution to Chutney instance
+                On CHUTNEY_LOCAL
+                With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
+                Take report ${#body}
+            Do compare Assert HTTP status is 200
+                With actual ${T(Integer).toString(#status)}
+                With expected 200
+                With mode equals
+        Then the report status is FAILURE
+            Do compare
+                With actual ${#json(#report, "$.report.status")}
+                With expected FAILURE
+                With mode equals
 
+    Scenario: Task instantiation and execution of a sleep scenario
+        Given this scenario is saved
+            Do http-post Post scenario to Chutney instance
+                On CHUTNEY_LOCAL
+                With uri /api/scenario/v2
+                With headers
+                | Content-Type | application/json;charset=UTF-8 |
+                With body
+                """
                 {
-                    "type": "debug"
+                    "title":"Sleep scenario",
+                    "scenario":{
+                        "when":{
+                            "sentence":"Step sleep",
+                            "implementation":{
+                                "task":"{\n type: sleep \n inputs: {\n duration: 20 ms \n} \n}"
+                            }
+                        },
+                        "thens":[]
+                    }
                 }
-            ]
-        }
-    }
-    '''
-    }
-"""
-    When last saved scenario is executed
-    Then the report status is SUCCESS
+                """
+                Take scenarioId ${#body}
+            Do compare Assert HTTP status is 200
+                With actual ${T(Integer).toString(#status)}
+                With expected 200
+                With mode equals
+        When last saved scenario is executed
+            Do http-post Post scenario execution to Chutney instance
+                On CHUTNEY_LOCAL
+                With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
+                Take report ${#body}
+            Do compare Assert HTTP status is 200
+                With actual ${T(Integer).toString(#status)}
+                With expected 200
+                With mode equals
+        Then the report status is SUCCESS
+            Do compare
+                With actual ${#json(#report, "$.report.status")}
+                With expected SUCCESS
+                With mode equals
+
+    Scenario: Task instantiation and execution of a debug scenario
+        Given this scenario is saved
+            Do http-post Post scenario to Chutney instance
+                On CHUTNEY_LOCAL
+                With uri /api/scenario/v2
+                With headers
+                | Content-Type | application/json;charset=UTF-8 |
+                With body
+                """
+                {
+                    "title":"Debug scenario",
+                    "scenario":{
+                        "when":{
+                            "sentence":"Put value in context",
+                            "implementation":{
+                                "task":"{\n type: context-put \n inputs: {\n entries: {\n \"test key\": valeur \n} \n} \n}"
+                            }
+                        },
+                        "thens":[
+                            {
+                                "implementation":{
+                                    "task":"{\n type: debug \n}"
+                                }
+                            }
+                        ]
+                    }
+                }
+                """
+                Take scenarioId ${#body}
+            Do compare Assert HTTP status is 200
+                With actual ${T(Integer).toString(#status)}
+                With expected 200
+                With mode equals
+        When last saved scenario is executed
+            Do http-post Post scenario execution to Chutney instance
+                On CHUTNEY_LOCAL
+                With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
+                Take report ${#body}
+            Do compare Assert HTTP status is 200
+                With actual ${T(Integer).toString(#status)}
+                With expected 200
+                With mode equals
+        Then the report status is SUCCESS
+            Do compare
+                With actual ${#json(#report, "$.report.status")}
+                With expected SUCCESS
+                With mode equals

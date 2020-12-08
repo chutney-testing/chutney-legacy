@@ -7,7 +7,7 @@ import com.chutneytesting.environment.domain.Target;
 import com.chutneytesting.junit.api.AfterAll;
 import com.chutneytesting.junit.api.BeforeAll;
 import com.chutneytesting.junit.api.Chutney;
-import com.chutneytesting.junit.engine.EnvironmentService;
+import com.chutneytesting.junit.api.EnvironmentService;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

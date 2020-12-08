@@ -38,7 +38,7 @@
                 "gwtType": "THEN",
                 "type": "sleep",
                 "inputs": {
-                    "duration": "3 sec"
+                    "duration": "500 ms"
                 }
             }
         ]

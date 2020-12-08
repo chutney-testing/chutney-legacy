@@ -88,8 +88,8 @@ Feature: SQL Task test
                 With mode equals
         And the report contains record results
             Do compare
-                With actual ${#json(#report, "$.report.steps[-1:].information[0]").toString()}
-                With expected ["Output: (recordResult) : ([Records{affectedRows=-1, headers=[ID, NAME, EMAIL], rows=[[1, laitue, laitue@fake.com], [2, carotte, kakarot@fake.db]]}])"]
+                With actual ${#json(#report, "$.report.steps[-1:].stepOutputs.recordResult").toString()}
+                With expected [[{"affectedRows":-1,"headers":["ID","NAME","EMAIL"],"rows":[[1,"laitue","laitue@fake.com"],[2,"carotte","kakarot@fake.db"]]}]]
                 With mode equals
 
     Scenario: Sql query wrong table

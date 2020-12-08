@@ -1,5 +1,7 @@
 
 chutney:
+  db-server:
+    port: 100
   datasource:
     internal:
-      url: jdbc:h2:mem:${random.int[97,123]}
+      url: jdbc:h2:mem:${chutney.db-server.port}

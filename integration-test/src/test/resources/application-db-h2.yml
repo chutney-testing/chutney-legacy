@@ -1,7 +1,0 @@
-
-chutney:
-  db-server:
-    port: 100
-  datasource:
-    internal:
-      url: jdbc:h2:mem:${chutney.db-server.port}

@@ -164,24 +164,17 @@
 
         <!-- Test dependencies -->
         <dependency>
+            <groupId>com.chutneytesting</groupId>
+            <artifactId>chutney-junit-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.chutneytesting</groupId>
+            <artifactId>ui</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-java</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-junit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-spring</artifactId>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -284,9 +277,9 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <dependencies>
                     <dependency>
-                        <groupId>org.junit.vintage</groupId>
-                        <artifactId>junit-vintage-engine</artifactId>
-                        <version>${junit5.version}</version>
+                        <groupId>com.chutneytesting</groupId>
+                        <artifactId>chutney-junit-engine</artifactId>
+                        <version>${chutneyjunit.version}</version>
                     </dependency>
                 </dependencies>
                 <configuration>
@@ -370,13 +363,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                        <dependencies>
-                            <dependency>
-                                <groupId>com.github.alexvictoor</groupId>
-                                <artifactId>pitest-cucumber-plugin</artifactId>
-                                <version>${pitest-cucumber.version}</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                 </plugins>
             </build>

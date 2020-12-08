@@ -1,5 +1,5 @@
 <configuration>
-    <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -18,15 +18,16 @@
     <logger name="org.eclipse" level="WARN"/>
     <logger name="org.hibernate" level="WARN"/>
     <logger name="org.jboss" level="WARN"/>
-    <logger name="org.springframework" level="WARN" />
-    <logger name="org.springframework.test.web.servlet.result" level="WARN" />
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.springframework.test.web.servlet.result" level="WARN"/>
     <logger name="org.xnio" level="WARN"/>
-    <logger name="net.schmizz" level="WARN" />
-    <logger name="wiremock" level="WARN" />
-    <logger name="wiremock.org.eclipse.jetty.util.thread.QueuedThreadPool" level="ERROR" />
-    <logger name="javax.management.mbeanserver" level="WARN" />
+    <logger name="net.schmizz" level="WARN"/>
+    <logger name="wiremock" level="WARN"/>
+    <logger name="wiremock.org.eclipse.jetty.util.thread.QueuedThreadPool" level="ERROR"/>
+    <logger name="javax.management.mbeanserver" level="WARN"/>
+    <logger name="kafka" level="WARN"/>
 
     <root level="INFO">
-        <appender-ref ref="STDOUT" />
+        <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

@@ -1,3 +1,4 @@
+
 agent-name: dev-agent
 server:
   port: ${securePort:443}
@@ -34,7 +35,7 @@ spring:
 orient:
   path: target/orient
   dbproperties:
-    dbName: blackbox_component_db
+    dbName: blackbox_component_db-${random.value}
     dbType: PLOCAL
   contextConfiguration:
     "[storage.diskCache.diskFreeSpaceLimit]": 384
