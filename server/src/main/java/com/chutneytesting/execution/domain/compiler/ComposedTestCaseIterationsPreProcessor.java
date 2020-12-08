@@ -143,7 +143,13 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
                     si.inputs.entrySet().stream()
                         .anyMatch(input -> input.getKey().contains("#" + previousOutput.getKey())
                             || usePreviousIterationOutput(previousOutput.getKey(), input.getValue())
-                        ))
+                        )
+                    ||
+                    si.outputs.entrySet().stream()
+                        .anyMatch(input -> input.getKey().contains("#" + previousOutput.getKey())
+                            || usePreviousIterationOutput(previousOutput.getKey(), input.getValue())
+                        )
+                )
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue))
             )
         );
@@ -310,7 +316,7 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
             si.type,
             si.target,
             indexInputs(si.inputs, index, iterationOutputs),
-            indexOutputs(si.outputs, index)
+            indexOutputs(si.outputs, index, iterationOutputs)
         );
     }
 
@@ -330,10 +336,10 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
         ));
     }
 
-    private Map<String, Object> indexOutputs(Map<String, Object> outputs, AtomicInteger index) {
+    private Map<String, Object> indexOutputs(Map<String, Object> outputs, AtomicInteger index, Map<String, Integer> iterationOutputs) {
         return outputs.entrySet().parallelStream().collect(toMap(
             e -> e.getKey() + "_" + index,
-            Map.Entry::getValue
+            e -> applyIndexedOutputs(e.getValue(), index, iterationOutputs, StringEscapeUtils::escapeJson)
         ));
     }
 
