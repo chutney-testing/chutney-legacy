@@ -191,6 +191,18 @@
         "confirm": {
             "deletion.prefix": "Are you sure you want to delete the campaign ",
             "deletion.suffix": "?"
+        },
+        "scheduling": {
+            "title" : "Schedule a new campaign execution",
+            "schedule": "Schedule",
+            "back": "Back",
+            "campaign" : "Campaign",
+            "schedulingDate": "Scheduling date",
+            "required": {
+                "campaign": "Campaign required",
+                "time": "Time required",
+                "date": "Date required"
+            }
         }
     },
     "dataset": {

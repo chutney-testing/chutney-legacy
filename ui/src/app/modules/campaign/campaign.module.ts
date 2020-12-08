@@ -14,6 +14,8 @@ import { CampaignRoute } from './campaign.routes';
 import { CampaignListComponent } from './components/campaign-list/campaign-list.component';
 import { CampaignExecutionComponent } from './components/execution/execution-campaign.component';
 import { CampaignEditionComponent } from './components/create-campaign/campaign-edition.component';
+import { CampaignSchedulingComponent } from './components/campaign-scheduling/campaign-scheduling.component';
+
 import { DragulaModule } from 'ng2-dragula';
 import { AngularMultiSelectModule } from 'angular2-multiselect-dropdown';
 import { ChartsModule } from 'ng2-charts';
@@ -40,6 +42,7 @@ const ROUTES = [
         CampaignListComponent,
         CampaignEditionComponent,
         CampaignExecutionComponent,
+        CampaignSchedulingComponent
     ],
     entryComponents: [
         CampaignEditionComponent,
