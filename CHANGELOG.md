@@ -1,6 +1,28 @@
 # Changelog
 
-# Changelog
+## [1.2.8](https://github.com/chutney-testing/chutney/tree/1.2.8)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.7...1.2.8)
+
+**Fixed bugs:**
+
+- Session expire too fast \(\<10 min\) [\#249](https://github.com/chutney-testing/chutney/issues/249)
+
+**Closed issues:**
+
+- Scheduled campaigns between 00:00 and 00:10 aren't executed [\#264](https://github.com/chutney-testing/chutney/issues/264)
+- Add error message when component save is ko [\#250](https://github.com/chutney-testing/chutney/issues/250)
+
+**Merged pull requests:**
+
+- Fix/component implementation mapping [\#268](https://github.com/chutney-testing/chutney/pull/268) ([boddissattva](https://github.com/boddissattva))
+- fix scheduled campaigns execution at midnight [\#267](https://github.com/chutney-testing/chutney/pull/267) ([rbenyoussef](https://github.com/rbenyoussef))
+- feat\(task-impl\): Allow bad content type in message received [\#265](https://github.com/chutney-testing/chutney/pull/265) ([nbrouand](https://github.com/nbrouand))
+- Remove Lucene dependecies and point to travis.com [\#263](https://github.com/chutney-testing/chutney/pull/263) ([boddissattva](https://github.com/boddissattva))
+- Add component duplication [\#262](https://github.com/chutney-testing/chutney/pull/262) ([boddissattva](https://github.com/boddissattva))
+- Session management with and without anonymous user [\#260](https://github.com/chutney-testing/chutney/pull/260) ([boddissattva](https://github.com/boddissattva))
+- Refactor/split composable step repo [\#259](https://github.com/chutney-testing/chutney/pull/259) ([bessonm](https://github.com/bessonm))
+
 
 ## [1.2.7](https://github.com/chutney-testing/chutney/tree/1.2.7)
 
