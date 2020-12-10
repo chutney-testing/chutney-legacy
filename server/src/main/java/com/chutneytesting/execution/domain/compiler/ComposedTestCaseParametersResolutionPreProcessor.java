@@ -42,7 +42,6 @@ public class ComposedTestCaseParametersResolutionPreProcessor implements TestCas
         Map<String, String> globalVariable = globalvarRepository.getFlatMap();
         makeEnvironmentNameAsGlobalVariable(globalVariable, executionRequest.environment);
         return new ExecutableComposedTestCase(
-            testCase.id,
             applyToMetadata(testCase.metadata, testCase.computedParameters, globalVariable),
             applyToScenario(testCase.composedScenario, testCase.computedParameters, globalVariable),
             testCase.computedParameters);
@@ -53,7 +52,6 @@ public class ComposedTestCaseParametersResolutionPreProcessor implements TestCas
         makeEnvironmentNameAsGlobalVariable(globalVariable, environment);
         Map<String, String> testCaseDataSet = applyOnCurrentStepDataSet(testCase.computedParameters, emptyMap(), globalVariable);
         return new ExecutableComposedTestCase(
-            testCase.id,
             testCase.metadata,
             applyOnStrategy(testCase.composedScenario, testCaseDataSet, globalVariable),
             testCaseDataSet);
@@ -92,7 +90,7 @@ public class ComposedTestCaseParametersResolutionPreProcessor implements TestCas
             )
             .withImplementation(composedStep.stepImplementation.flatMap(si -> applyToImplementation(si, scopedDataset, globalVariable)))
             .withStrategy(composedStep.strategy)
-            .overrideDataSetWith(scopedDataset)
+            .withDataset(scopedDataset)
             .build();
     }
 
@@ -147,7 +145,7 @@ public class ComposedTestCaseParametersResolutionPreProcessor implements TestCas
             )
             .withImplementation(composedStep.stepImplementation)
             .withStrategy(applyToStrategy(composedStep.strategy, scopedDataset, globalVariable))
-            .overrideDataSetWith(composedStep.dataset)
+            .withDataset(composedStep.dataset)
             .build();
     }
 

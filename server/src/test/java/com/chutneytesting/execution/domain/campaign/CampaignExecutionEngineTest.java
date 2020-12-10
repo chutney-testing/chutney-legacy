@@ -7,7 +7,6 @@ import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
-import static org.hamcrest.Matchers.hasEntry;
 import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -17,14 +16,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
 import com.chutneytesting.design.domain.campaign.Campaign;
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
 import com.chutneytesting.design.domain.campaign.CampaignNotFoundException;
 import com.chutneytesting.design.domain.campaign.CampaignRepository;
-import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
-import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
@@ -38,6 +34,8 @@ import com.chutneytesting.execution.domain.jira.JiraXrayPlugin;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedScenario;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
@@ -190,15 +188,15 @@ public class CampaignExecutionEngineTest {
     public void should_retry_failed_scenario() {
         // Given
         TestCase firstTestCase = createGwtTestCase("1");
-        TestCase secondtTestCase = createGwtTestCase("2");
+        TestCase secondTestCase = createGwtTestCase("2");
 
-        Campaign campaign = createCampaign(firstTestCase, secondtTestCase, true);
+        Campaign campaign = createCampaign(firstTestCase, secondTestCase, true);
 
         when(testCaseRepository.findById(firstTestCase.id())).thenReturn(firstTestCase);
-        when(testCaseRepository.findById(secondtTestCase.id())).thenReturn(secondtTestCase);
+        when(testCaseRepository.findById(secondTestCase.id())).thenReturn(secondTestCase);
         when(scenarioExecutionEngine.execute(any(ExecutionRequest.class))).thenReturn(mock(ScenarioExecutionReport.class));
         when(executionHistoryRepository.getExecution(eq(firstTestCase.id()), or(eq(0L), eq(10L)))).thenReturn(failedExecutionWithId(10L));
-        when(executionHistoryRepository.getExecution(eq(secondtTestCase.id()), or(eq(0L), eq(20L)))).thenReturn(failedExecutionWithId(20L));
+        when(executionHistoryRepository.getExecution(eq(secondTestCase.id()), or(eq(0L), eq(20L)))).thenReturn(failedExecutionWithId(20L));
 
         // When
         sut.executeScenarioInCampaign(emptyList(), campaign, "user");
@@ -211,18 +209,18 @@ public class CampaignExecutionEngineTest {
     public void should_execute_scenario_in_parallel() {
         // Given
         TestCase firstTestCase = createGwtTestCase("1");
-        TestCase secondtTestCase = createGwtTestCase("2");
+        TestCase secondTestCase = createGwtTestCase("2");
 
-        Campaign campaign = createCampaign(firstTestCase, secondtTestCase, true, false);
+        Campaign campaign = createCampaign(firstTestCase, secondTestCase, true, false);
 
         when(testCaseRepository.findById(firstTestCase.id())).thenReturn(firstTestCase);
-        when(testCaseRepository.findById(secondtTestCase.id())).thenReturn(secondtTestCase);
+        when(testCaseRepository.findById(secondTestCase.id())).thenReturn(secondTestCase);
         when(scenarioExecutionEngine.execute(any(ExecutionRequest.class))).then((Answer<ScenarioExecutionReport>) invocationOnMock -> {
             TimeUnit.SECONDS.sleep(1);
             return mock(ScenarioExecutionReport.class);
         });
         when(executionHistoryRepository.getExecution(eq(firstTestCase.id()), or(eq(0L), eq(10L)))).thenReturn(failedExecutionWithId(10L));
-        when(executionHistoryRepository.getExecution(eq(secondtTestCase.id()), or(eq(0L), eq(20L)))).thenReturn(failedExecutionWithId(20L));
+        when(executionHistoryRepository.getExecution(eq(secondTestCase.id()), or(eq(0L), eq(20L)))).thenReturn(failedExecutionWithId(20L));
 
         // When
         StopWatch watch = new StopWatch();
@@ -342,17 +340,17 @@ public class CampaignExecutionEngineTest {
         );
         TestCase gwtTestCase = createGwtTestCase("gwt", gwtTestCaseDataSet);
 
-        TestCase composableTestCase = createComposableTestCase("composable", "composableDataSetId");
+        TestCase composedTestCase = createExecutableComposedTestCase("composable", "composableDataSetId");
 
         Map<String, String> campaignDataSet = Maps.of(
             "campaign key", "campaign specific value",
             "key", "campaign value"
         );
-        Campaign campaign = createCampaign(campaignDataSet, "campaignDataSetId", gwtTestCase, composableTestCase);
+        Campaign campaign = createCampaign(campaignDataSet, "campaignDataSetId", gwtTestCase, composedTestCase);
 
         when(campaignRepository.findById(campaign.id)).thenReturn(campaign);
         when(testCaseRepository.findById(gwtTestCase.id())).thenReturn(gwtTestCase);
-        when(testCaseRepository.findById(composableTestCase.id())).thenReturn(composableTestCase);
+        when(testCaseRepository.findById(composedTestCase.id())).thenReturn(composedTestCase);
         when(scenarioExecutionEngine.execute(any(ExecutionRequest.class))).thenReturn(mock(ScenarioExecutionReport.class));
         when(executionHistoryRepository.getExecution(any(), any())).thenReturn(executionWithId(42L));
 
@@ -369,7 +367,7 @@ public class CampaignExecutionEngineTest {
             entry("key", campaignDataSet.get("key")),
             entry("campaign key", "campaign specific value")
         );
-        assertThat(((ComposableTestCase) executionRequests.get(1).testCase).metadata.datasetId())
+        assertThat(((ExecutableComposedTestCase) executionRequests.get(1).testCase).metadata.datasetId())
             .hasValue(campaign.datasetId);
     }
 
@@ -420,13 +418,12 @@ public class CampaignExecutionEngineTest {
             .build();
     }
 
-    private ComposableTestCase createComposableTestCase(String id, String dataSetId) {
-        return new ComposableTestCase(
-            id,
+    private ExecutableComposedTestCase createExecutableComposedTestCase(String id, String dataSetId) {
+        return new ExecutableComposedTestCase(
             TestCaseMetadataImpl.builder()
                 .withDatasetId(dataSetId)
                 .build(),
-            ComposableScenario.builder().build()
+            ExecutableComposedScenario.builder().build()
         );
     }
 

@@ -67,7 +67,7 @@ public class ComposedTestCasePreProcessorTest {
         Map<String, String> childParameters = singletonMap(VALUE,  /* empty: will be provided by Loop strategy */  "");
         ExecutableComposedStep childStepWithParameters = ExecutableComposedStep.builder()
             .withParameters(childParameters)
-            .overrideDataSetWith(singletonMap(VALUE,  /* empty: will be provided by Loop strategy */  "**" + VALUE + "**"))
+            .withDataset(singletonMap(VALUE,  /* empty: will be provided by Loop strategy */  "**" + VALUE + "**"))
             .build();
 
         Strategy strategy = new Strategy("Loop", singletonMap("data", "**" + PARAM_NAME + "**"));
@@ -76,14 +76,14 @@ public class ComposedTestCasePreProcessorTest {
             .withSteps(singletonList(childStepWithParameters))
             .withStrategy(strategy)
             .withParameters(singletonMap(PARAM_NAME, ""))
-            .overrideDataSetWith(singletonMap(PARAM_NAME, /* provided by global variable repository */ "**" + GLOBAL_PARAMETER + "**"))
+            .withDataset(singletonMap(PARAM_NAME, /* provided by global variable repository */ "**" + GLOBAL_PARAMETER + "**"))
             .build();
 
         ExecutableComposedScenario composableScenario = ExecutableComposedScenario.builder()
             .withComposedSteps(singletonList(parentStep))
             .build();
 
-        ExecutableComposedTestCase composableTestase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario);
+        ExecutableComposedTestCase composableTestase = new ExecutableComposedTestCase(TestCaseMetadataImpl.builder().build(), composableScenario);
 
         // When
         ExecutableComposedTestCase actual = sut.apply(
@@ -116,7 +116,7 @@ public class ComposedTestCasePreProcessorTest {
         Map<String, String> childParameters = singletonMap(VALUE,  /* empty: will be provided by Loop strategy */  "");
         ExecutableComposedStep childStepWithParameters = ExecutableComposedStep.builder()
             .withParameters(childParameters)
-            .overrideDataSetWith(singletonMap(VALUE,  /* empty: will be provided by Loop strategy */  "**" + VALUE + "**"))
+            .withDataset(singletonMap(VALUE,  /* empty: will be provided by Loop strategy */  "**" + VALUE + "**"))
             .build();
 
         Strategy strategy = new Strategy("Loop", singletonMap("data", "**" + PARAM_NAME + "**"));
@@ -125,7 +125,7 @@ public class ComposedTestCasePreProcessorTest {
             .withSteps(singletonList(childStepWithParameters))
             .withStrategy(strategy)
             .withParameters(singletonMap(PARAM_NAME, ""))
-            .overrideDataSetWith(singletonMap(PARAM_NAME, ""))
+            .withDataset(singletonMap(PARAM_NAME, ""))
             .build();
 
         ExecutableComposedScenario composableScenario = ExecutableComposedScenario.builder()
@@ -133,7 +133,7 @@ public class ComposedTestCasePreProcessorTest {
             .build();
 
         Map<String, String> dataset = singletonMap(PARAM_NAME, "**" + GLOBAL_PARAMETER + "**");
-        ExecutableComposedTestCase ExecutableComposedTestCase = new ExecutableComposedTestCase("0", TestCaseMetadataImpl.builder().build(), composableScenario, dataset);
+        ExecutableComposedTestCase ExecutableComposedTestCase = new ExecutableComposedTestCase(TestCaseMetadataImpl.builder().build(), composableScenario, dataset);
 
         // When
         ExecutableComposedTestCase actual = sut.apply(
@@ -205,7 +205,6 @@ public class ComposedTestCasePreProcessorTest {
         );
 
         ExecutableComposedTestCase ExecutableComposedTestCase = new ExecutableComposedTestCase(
-            "1",
             TestCaseMetadataImpl.builder()
                 .withCreationDate(Instant.now())
                 .withTitle(format(testCaseTitle, "**testcase title**"))
@@ -328,7 +327,6 @@ public class ComposedTestCasePreProcessorTest {
         );
 
         ExecutableComposedTestCase executableComposedTestCase = new ExecutableComposedTestCase(
-            "1",
             TestCaseMetadataImpl.builder()
                 .withCreationDate(Instant.now())
                 .withTitle(format(testCaseTitle, "**testcase title**"))
@@ -418,7 +416,7 @@ public class ComposedTestCasePreProcessorTest {
     }
 
     @Test
-    public void should_generate_ComposableExecutableTestCase_scenario_steps_with_dataset_values() {
+    public void should_generate_composed_scenario_steps_with_dataset_values() {
         // Given
         Map<String, String> globalVars = new HashMap<>();
         globalVars.put("global.key", "global var value");
@@ -433,7 +431,7 @@ public class ComposedTestCasePreProcessorTest {
                 )
             )
             .withMultipleValues(
-                asList( // Note that first key has only two distincts values ...
+                asList( // Note that first key has only two distinct values ...
                     Maps.of("testcase param", "dataset mv 11", "testcase param second", "dataset mv 12"),
                     Maps.of("testcase param", "dataset mv 11", "testcase param second", "dataset mv 22"),
                     Maps.of("testcase param", "dataset mv 31", "testcase param second", "dataset mv 32")
@@ -452,7 +450,6 @@ public class ComposedTestCasePreProcessorTest {
             "testcase param third", ""
         );
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
-            "testcase id",
             TestCaseMetadataImpl.builder()
                 .withTitle("testcase title for dataset unique value ref **testcase title param**")
                 .withDescription("testcase description for global var ref **global.key**")
@@ -468,13 +465,13 @@ public class ComposedTestCasePreProcessorTest {
                                 singletonList(
                                     ExecutableComposedStep.builder()
                                         .withName("substep name with **testcase param third**")
-                                        .overrideDataSetWith(
+                                        .withDataset(
                                             Maps.of("testcase param third", "")
                                         )
                                         .build()
                                 )
                             )
-                            .overrideDataSetWith(
+                            .withDataset(
                                 Maps.of(
                                     "first step param", "**testcase param**",
                                     "testcase param third", ""
@@ -485,7 +482,7 @@ public class ComposedTestCasePreProcessorTest {
                         ExecutableComposedStep.builder()
                             .withName("step do not iterate over me")
                             .withImplementation(of(new StepImplementation("http-get", "**step 2 param** and **testcase param**", emptyMap(), emptyMap())))
-                            .overrideDataSetWith(
+                            .withDataset(
                                 Maps.of(
                                     "step 2 param", "hard value 2",
                                     "testcase param", "another hard value 2"
@@ -496,7 +493,7 @@ public class ComposedTestCasePreProcessorTest {
                         ExecutableComposedStep.builder()
                             .withName("step with iteration over two dataset's keys **testcase param**")
                             .withImplementation(of(new StepImplementation("http-**global.key**", "**testcase param second** and **step 3 param**", emptyMap(), emptyMap())))
-                            .overrideDataSetWith(
+                            .withDataset(
                                 Maps.of(
                                     "testcase param", "",
                                     "testcase param second", "",
@@ -549,7 +546,7 @@ public class ComposedTestCasePreProcessorTest {
     private ExecutableComposedStep buildStepFromActionWithDataSet(ExecutableComposedStep action, String targetDataSetValue) {
         return ExecutableComposedStep.builder()
             .from(action)
-            .overrideDataSetWith(
+            .withDataset(
                 Maps.of(
                     "target", targetDataSetValue
                 )
@@ -560,7 +557,7 @@ public class ComposedTestCasePreProcessorTest {
     private ExecutableComposedStep buildStepFromStepWithDataSet(ExecutableComposedStep step, String stepParamDataSetValue, String stepTargetDataSetValue, String targetDataSetValue) {
         return ExecutableComposedStep.builder()
             .from(step)
-            .overrideDataSetWith(
+            .withDataset(
                 Maps.of(
                     "step param", stepParamDataSetValue,
                     "step target", stepTargetDataSetValue,
@@ -573,7 +570,7 @@ public class ComposedTestCasePreProcessorTest {
     private ExecutableComposedStep buildStepFromStepWithDataSet(ExecutableComposedStep step, String stepParamDataSetValue, String stepTargetDataSetValue) {
         return ExecutableComposedStep.builder()
             .from(step)
-            .overrideDataSetWith(
+            .withDataset(
                 Maps.of(
                     "step param", stepParamDataSetValue,
                     "step target", stepTargetDataSetValue

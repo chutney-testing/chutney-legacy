@@ -31,7 +31,6 @@ class ComposedTestCaseLoopPreProcessor implements TestCasePreProcessor<Executabl
     public ExecutableComposedTestCase apply(ExecutionRequest executionRequest) {
         ExecutableComposedTestCase testCase = (ExecutableComposedTestCase) executionRequest.testCase;
         return new ExecutableComposedTestCase(
-            testCase.id,
             testCase.metadata,
             apply(testCase.composedScenario),
             testCase.computedParameters);
@@ -63,7 +62,7 @@ class ComposedTestCaseLoopPreProcessor implements TestCasePreProcessor<Executabl
         return ExecutableComposedStep.builder()
             .from(composedStep)
             .withSteps(subSteps)
-            .overrideDataSetWith(composedStep.dataset)
+            .withDataset(composedStep.dataset)
             .build();
     }
 
@@ -76,7 +75,7 @@ class ComposedTestCaseLoopPreProcessor implements TestCasePreProcessor<Executabl
                 .from(composedStep)
                 .withStrategy(Strategy.DEFAULT)
                 .withSteps(createStepIterations(composedStep, iterationData))
-                .overrideDataSetWith(buildDatasetWithAliases(composedStep.dataset))
+                .withDataset(buildDatasetWithAliases(composedStep.dataset))
                 .build();
 
         } catch (IOException e) {
@@ -108,7 +107,7 @@ class ComposedTestCaseLoopPreProcessor implements TestCasePreProcessor<Executabl
         return ExecutableComposedStep.builder()
             .from(step)
             .withName(step.name + " - iteration " + index)
-            .overrideDataSetWith(params)
+            .withDataset(params)
             .withStrategy(Strategy.DEFAULT)
             .build();
 

@@ -201,7 +201,7 @@ public class ExecutionRequestMapper {
                 null,
                 null,
                 null,
-                convertComposableSteps(composedTestCase.composedScenario.composedSteps, executionRequest.environment),
+                convertComposedSteps(composedTestCase.composedScenario.composedSteps, executionRequest.environment),
                 null,
                 executionRequest.environment
             );
@@ -210,7 +210,7 @@ public class ExecutionRequestMapper {
         }
     }
 
-    private List<StepDefinitionRequestDto> convertComposableSteps(List<ExecutableComposedStep> composedSteps, String env) {
+    private List<StepDefinitionRequestDto> convertComposedSteps(List<ExecutableComposedStep> composedSteps, String env) {
         return composedSteps.stream().map(f -> convert(f, env)).collect(Collectors.toList());
     }
 

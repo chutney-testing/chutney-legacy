@@ -40,4 +40,14 @@ public class StepImplementation {
     public int hashCode() {
         return Objects.hash(type, target, inputs, outputs);
     }
+
+    @Override
+    public String toString() {
+        return "StepImplementation{" +
+            "type='" + type + '\'' +
+            ", target='" + target + '\'' +
+            ", inputs=" + inputs +
+            ", outputs=" + outputs +
+            '}';
+    }
 }
