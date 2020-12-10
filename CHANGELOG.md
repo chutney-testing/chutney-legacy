@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.9](https://github.com/chutney-testing/chutney/tree/1.2.9)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.8...1.2.9)
+
+**Closed issues:**
+
+- dataset iterations output overided by last iteration output  [\#242](https://github.com/chutney-testing/chutney/issues/242)
+
+**Merged pull requests:**
+
+- feat\(server\): Step iteration [\#261](https://github.com/chutney-testing/chutney/pull/261) ([bessonm](https://github.com/bessonm))
+
 ## [1.2.8](https://github.com/chutney-testing/chutney/tree/1.2.8)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.7...1.2.8)
