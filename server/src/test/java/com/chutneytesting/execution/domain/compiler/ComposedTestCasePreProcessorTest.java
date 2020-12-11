@@ -24,7 +24,6 @@ import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedT
 import com.chutneytesting.execution.domain.scenario.composed.StepImplementation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.groovy.util.Maps;
@@ -46,105 +45,6 @@ public class ComposedTestCasePreProcessorTest {
     public void setUp() {
         globalvarRepository = mock(GlobalvarRepository.class);
         dataSetRepository = mock(DataSetRepository.class);
-    }
-
-    @Test
-    public void should_replace_parameters_and_apply_strategy_when_strategy_input_is_a_parameter_coming_from_global_vars() {
-        // setup
-        final String VALUE = "value";
-        final String PARAM_NAME = "param_name";
-        final String GLOBAL_PARAMETER = "global.parameter";
-
-        final String FIRST_ITERATION_VALUE = "iteration_1 ";
-        final String SECOND_ITERATION_VALUE = "iteration_2";
-
-        when(globalvarRepository.getFlatMap())
-            .thenReturn(new HashMap<>(Maps.of(GLOBAL_PARAMETER, "[{\"" + VALUE + "\":\"" + FIRST_ITERATION_VALUE + "\"}, {\"value\":\"" + SECOND_ITERATION_VALUE + "\"}]")));
-
-        sut = new ComposedTestCasePreProcessor(objectMapper, globalvarRepository, dataSetRepository);
-
-        // Given
-        Map<String, String> childParameters = singletonMap(VALUE,  /* empty: will be provided by Loop strategy */  "");
-        ExecutableComposedStep childStepWithParameters = ExecutableComposedStep.builder()
-            .withParameters(childParameters)
-            .withDataset(singletonMap(VALUE,  /* empty: will be provided by Loop strategy */  "**" + VALUE + "**"))
-            .build();
-
-        Strategy strategy = new Strategy("Loop", singletonMap("data", "**" + PARAM_NAME + "**"));
-        ExecutableComposedStep parentStep = ExecutableComposedStep.builder()
-            .withName("Iteration : **" + VALUE + "**")
-            .withSteps(singletonList(childStepWithParameters))
-            .withStrategy(strategy)
-            .withParameters(singletonMap(PARAM_NAME, ""))
-            .withDataset(singletonMap(PARAM_NAME, /* provided by global variable repository */ "**" + GLOBAL_PARAMETER + "**"))
-            .build();
-
-        ExecutableComposedScenario composableScenario = ExecutableComposedScenario.builder()
-            .withComposedSteps(singletonList(parentStep))
-            .build();
-
-        ExecutableComposedTestCase composableTestase = new ExecutableComposedTestCase(TestCaseMetadataImpl.builder().build(), composableScenario);
-
-        // When
-        ExecutableComposedTestCase actual = sut.apply(
-            new ExecutionRequest(composableTestase, environment, userId)
-        );
-
-        // Then
-        assertThat(actual.composedScenario.composedSteps.size()).isEqualTo(1);
-        assertThat(actual.composedScenario.composedSteps.get(0).steps.size()).isEqualTo(2);
-        assertThat(actual.composedScenario.composedSteps.get(0).steps.get(0).name).isEqualTo("Iteration : " + FIRST_ITERATION_VALUE + " - iteration 1");
-        assertThat(actual.composedScenario.composedSteps.get(0).steps.get(1).name).isEqualTo("Iteration : " + SECOND_ITERATION_VALUE + " - iteration 2");
-    }
-
-    @Test
-    public void should_replace_parameters_and_apply_strategy_when_strategy_input_is_a_parameter_provided_by_test_case() {
-        // setup
-        final String VALUE = "value";
-        final String PARAM_NAME = "param_name";
-        final String GLOBAL_PARAMETER = "global.parameter";
-
-        final String FIRST_ITERATION_VALUE = "iteration_1 ";
-        final String SECOND_ITERATION_VALUE = "iteration_2";
-
-        when(globalvarRepository.getFlatMap())
-            .thenReturn(new HashMap<>(Maps.of(GLOBAL_PARAMETER, "[{\"" + VALUE + "\":\"" + FIRST_ITERATION_VALUE + "\"}, {\"value\":\"" + SECOND_ITERATION_VALUE + "\"}]")));
-
-        sut = new ComposedTestCasePreProcessor(objectMapper, globalvarRepository, dataSetRepository);
-
-        // Given
-        Map<String, String> childParameters = singletonMap(VALUE,  /* empty: will be provided by Loop strategy */  "");
-        ExecutableComposedStep childStepWithParameters = ExecutableComposedStep.builder()
-            .withParameters(childParameters)
-            .withDataset(singletonMap(VALUE,  /* empty: will be provided by Loop strategy */  "**" + VALUE + "**"))
-            .build();
-
-        Strategy strategy = new Strategy("Loop", singletonMap("data", "**" + PARAM_NAME + "**"));
-        ExecutableComposedStep parentStep = ExecutableComposedStep.builder()
-            .withName("Iteration : **" + VALUE + "**")
-            .withSteps(singletonList(childStepWithParameters))
-            .withStrategy(strategy)
-            .withParameters(singletonMap(PARAM_NAME, ""))
-            .withDataset(singletonMap(PARAM_NAME, ""))
-            .build();
-
-        ExecutableComposedScenario composableScenario = ExecutableComposedScenario.builder()
-            .withComposedSteps(singletonList(parentStep))
-            .build();
-
-        Map<String, String> dataset = singletonMap(PARAM_NAME, "**" + GLOBAL_PARAMETER + "**");
-        ExecutableComposedTestCase ExecutableComposedTestCase = new ExecutableComposedTestCase(TestCaseMetadataImpl.builder().build(), composableScenario, dataset);
-
-        // When
-        ExecutableComposedTestCase actual = sut.apply(
-            new ExecutionRequest(ExecutableComposedTestCase, environment, userId)
-        );
-
-        // Then
-        assertThat(actual.composedScenario.composedSteps.size()).isEqualTo(1);
-        assertThat(actual.composedScenario.composedSteps.get(0).steps.size()).isEqualTo(2);
-        assertThat(actual.composedScenario.composedSteps.get(0).steps.get(0).name).isEqualTo("Iteration : " + FIRST_ITERATION_VALUE + " - iteration 1");
-        assertThat(actual.composedScenario.composedSteps.get(0).steps.get(1).name).isEqualTo("Iteration : " + SECOND_ITERATION_VALUE + " - iteration 2");
     }
 
     @Test
@@ -268,151 +168,6 @@ public class ComposedTestCasePreProcessorTest {
             entry("target", dataSet.get("testcase target"))
         );
         assertStepActions(actionName, thirdStep, step.steps.get(2).dataset.get("target"), retryStrategy);
-    }
-
-    @Test
-    public void should_generate_composed_scenario_steps_with_loop_values() {
-        // setup
-        Map<String, String> map = new HashMap<>();
-        map.put("key.1", "value1");
-        map.put("key.2", "value2");
-        when(globalvarRepository.getFlatMap()).thenReturn(map);
-
-        sut = new ComposedTestCasePreProcessor(objectMapper, globalvarRepository, dataSetRepository);
-
-        // Given
-        String actionName = "simple action on target %1$s";
-
-        StepImplementation actionImplementation = new StepImplementation("http-get", "**target**", Maps.of("target", "**target**", "action param", "hard action value"), emptyMap());
-
-        String stepName = "step name";
-        String testCaseTitle = "test case testCaseTitle with parameter %1$s";
-        String testCaseDescription = "test case description";
-
-        String loopData =
-            "[" +
-                "{\"target\" : \"target_it1\"}," +
-                "{\"target\" : \"target_it2\", \"action param\" : \"action param value it2\"}" +
-                "]";
-
-        Map<String, String> actionParameters = Maps.of(
-            "target", "default target"
-        );
-
-        ExecutableComposedStep action = ExecutableComposedStep.builder()
-            .withName(format(actionName, "**target**"))
-            .withParameters(actionParameters)
-            .withImplementation(of(actionImplementation))
-            .build();
-
-        Map<String, String> stepParameters = Maps.of(
-            "step param", "default step param",
-            "step target", "default step target"
-        );
-
-        ExecutableComposedStep step = ExecutableComposedStep.builder()
-            .withName(stepName)
-            .withParameters(stepParameters)
-            .withSteps(singletonList(buildStepFromActionWithDataSet(action, "**target**")))
-            .withStrategy(new Strategy("Loop", Collections.singletonMap("data", loopData)))
-            .build();
-
-        Map<String, String> dataSet = Maps.of(
-            "testcase title", "A part of testcase title",
-            "testcase description", "A part of testcase description",
-            "testcase param", "dataset testcase param",
-            "testcase target", "default testcase target",
-            "step target", "dataset step target",
-            "step param", "dataset step param"
-        );
-
-        ExecutableComposedTestCase executableComposedTestCase = new ExecutableComposedTestCase(
-            TestCaseMetadataImpl.builder()
-                .withCreationDate(Instant.now())
-                .withTitle(format(testCaseTitle, "**testcase title**"))
-                .withDescription(testCaseDescription)
-                .build(),
-            ExecutableComposedScenario.builder()
-                .withComposedSteps(
-                    asList(
-                        buildStepFromStepWithDataSet(step, "**testcase param**", ""),
-                        buildStepFromStepWithDataSet(step, "", "hard testcase step target")
-                    )
-                )
-                .withParameters(
-                    Maps.of(
-                        "testcase title", "",
-                        "testcase description", "default testcase description",
-                        "testcase param", "",
-                        "testcase target", "default testcase target"
-                    )
-                )
-                .build(),
-            dataSet);
-
-        final ExecutableComposedTestCase executableComposedTestCaseProcessed = sut.apply(
-            new ExecutionRequest(executableComposedTestCase, environment, userId)
-        );
-
-        // Then
-        assertThat(executableComposedTestCaseProcessed.id()).isEqualTo(executableComposedTestCase.id());
-        assertThat(executableComposedTestCaseProcessed.metadata.title()).isEqualTo(format(testCaseTitle, dataSet.get("testcase title")));
-        assertThat(executableComposedTestCaseProcessed.metadata.description()).isEqualTo(testCaseDescription);
-
-        /* Step 1 */
-        ExecutableComposedStep step_1 = executableComposedTestCaseProcessed.composedScenario.composedSteps.get(0);
-        assertThat(step_1.steps.size()).isEqualTo(2);
-        assertThat(step_1.strategy).isEqualTo(Strategy.DEFAULT);
-        assertThat(step_1.dataset.size()).isEqualTo(3);
-        assertThat(step_1.name).isEqualTo(stepName);
-
-        /* Step 1.1 */
-        ExecutableComposedStep step_1_1 = step_1.steps.get(0);
-        assertThat(step_1_1.name).isEqualTo(stepName.concat(" - iteration 1"));
-        assertThat(step_1_1.strategy).isEqualTo(Strategy.DEFAULT);
-        assertThat(step_1_1.steps.size()).isEqualTo(1);
-        assertThat(step_1_1.steps.get(0).stepImplementation.get().target).isEqualTo("target_it1");
-        assertThat(step_1_1.steps.get(0).stepImplementation.get().inputs).contains(entry("target", "target_it1"), entry("action param", "hard action value"));
-        assertThat(step_1_1.steps.get(0).dataset).containsOnly(entry("target", "target_it1"));
-
-        /* Step 1.2 */
-        ExecutableComposedStep step_1_2 = step_1.steps.get(1);
-        assertThat(step_1_2.name).isEqualTo(stepName.concat(" - iteration 2"));
-        assertThat(step_1_2.steps.size()).isEqualTo(1);
-        assertThat(step_1_2.strategy).isEqualTo(Strategy.DEFAULT);
-        assertThat(step_1_2.steps.get(0).stepImplementation.get().target).isEqualTo("target_it2");
-        assertThat(step_1_2.steps.get(0).stepImplementation.get().inputs).contains(entry("target", "target_it2"), entry("action param", "hard action value"));
-        assertThat(step_1_2.steps.get(0).strategy).isEqualTo(Strategy.DEFAULT);
-        assertThat(step_1_2.steps.get(0).dataset).containsOnly(entry("target", "target_it2"));
-
-        /* Step 2 */
-        ExecutableComposedStep step_2 = executableComposedTestCaseProcessed.composedScenario.composedSteps.get(1);
-        assertThat(step_2.steps.size()).isEqualTo(2);
-        assertThat(step_2.strategy).isEqualTo(Strategy.DEFAULT);
-        assertThat(step_2.dataset.size()).isEqualTo(2);
-        assertThat(step_2.name).isEqualTo(stepName);
-
-        ExecutableComposedStep step_2_1 = step_1.steps.get(0);
-        assertThat(step_2_1.name).isEqualTo(stepName.concat(" - iteration 1"));
-        assertThat(step_2_1.strategy).isEqualTo(Strategy.DEFAULT);
-        assertThat(step_2_1.steps.size()).isEqualTo(1);
-        assertThat(step_2_1.steps.get(0).stepImplementation.get().target).isEqualTo("target_it1");
-        assertThat(step_2_1.steps.get(0).stepImplementation.get().inputs).contains(entry("target", "target_it1"), entry("action param", "hard action value"));
-        assertThat(step_2_1.steps.get(0).strategy).isEqualTo(Strategy.DEFAULT);
-        assertThat(step_2_1.steps.get(0).dataset).containsOnly(
-            entry("target", "target_it1")
-        );
-
-        ExecutableComposedStep step_2_2 = step_1.steps.get(1);
-        assertThat(step_2_2.name).isEqualTo(stepName.concat(" - iteration 2"));
-        assertThat(step_2_2.strategy).isEqualTo(Strategy.DEFAULT);
-        assertThat(step_2_2.steps.size()).isEqualTo(1);
-        assertThat(step_2_2.steps.get(0).stepImplementation.get().target).isEqualTo("target_it2");
-        assertThat(step_2_2.steps.get(0).stepImplementation.get().inputs).contains(entry("target", "target_it2"), entry("action param", "hard action value"));
-        assertThat(step_2_2.steps.get(0).strategy).isEqualTo(Strategy.DEFAULT);
-        assertThat(step_2_2.steps.get(0).dataset).containsOnly(
-            entry("target", "target_it2")
-        );
     }
 
     @Test
@@ -567,18 +322,6 @@ public class ComposedTestCasePreProcessorTest {
             .build();
     }
 
-    private ExecutableComposedStep buildStepFromStepWithDataSet(ExecutableComposedStep step, String stepParamDataSetValue, String stepTargetDataSetValue) {
-        return ExecutableComposedStep.builder()
-            .from(step)
-            .withDataset(
-                Maps.of(
-                    "step param", stepParamDataSetValue,
-                    "step target", stepTargetDataSetValue
-                )
-            )
-            .build();
-    }
-
     private void assertStepActions(String actionName,
                                    ExecutableComposedStep step,
                                    String thirdActionTargetValue,
@@ -603,5 +346,6 @@ public class ComposedTestCasePreProcessorTest {
             entry("target", thirdActionTargetValue)
         );
     }
+
 }
 
