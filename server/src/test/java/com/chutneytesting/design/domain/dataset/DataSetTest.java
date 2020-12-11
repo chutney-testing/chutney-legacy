@@ -20,10 +20,10 @@ public class DataSetTest {
     public void should_get_rid_of_empty_keys_and_lines() {
         // Edge case
         DataSet dataSet = DataSet.builder()
-            .withUniqueValues(
+            .withConstants(
                 Maps.of("", "")
             )
-            .withMultipleValues(asList(
+            .withDatatable(asList(
                 Maps.of("", ""),
                 Maps.of("", "value")
             ))
@@ -35,10 +35,10 @@ public class DataSetTest {
         // Normal case
         Map<String, String> exepectedMap = Maps.of("key1", "value", "key2", "value");
         dataSet = DataSet.builder()
-            .withUniqueValues(
+            .withConstants(
                 Maps.of("key1", "value", "", "value", "key2", "value")
             )
-            .withMultipleValues(asList(
+            .withDatatable(asList(
                 Maps.of("key1", "value", "", "", "key2", "value"),
                 Maps.of("key1", "", "", "", "key2", ""),
                 Maps.of("key1", "value", "", "value", "key2", "value")

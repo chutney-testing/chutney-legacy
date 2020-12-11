@@ -4,6 +4,7 @@ import static java.time.Instant.now;
 
 import com.chutneytesting.execution.api.ExecutionSummaryDto;
 import com.chutneytesting.security.domain.User;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.time.Instant;
@@ -34,7 +35,8 @@ public interface GwtTestCaseDto {
 
     GwtScenarioDto scenario();
 
-    Map<String, String> computedParameters();
+    @JsonProperty("computedParameters")
+    Map<String, String> parameters();
 
     @Value.Default()
     default String author() {

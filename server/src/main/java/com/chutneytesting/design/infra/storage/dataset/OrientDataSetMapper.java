@@ -31,8 +31,8 @@ class OrientDataSetMapper {
         DataSet.DataSetBuilder builder = elementToDataSetMetaDataBuilder(oDataSet);
 
         builder
-            .withUniqueValues(oDataSet.getProperty(DATASET_CLASS_PROPERTY_VALUES_UNIQUE))
-            .withMultipleValues(oDataSet.getProperty(DATASET_CLASS_PROPERTY_VALUES_MULTIPLE));
+            .withConstants(oDataSet.getProperty(DATASET_CLASS_PROPERTY_VALUES_UNIQUE))
+            .withDatatable(oDataSet.getProperty(DATASET_CLASS_PROPERTY_VALUES_MULTIPLE));
 
         return builder.build();
     }

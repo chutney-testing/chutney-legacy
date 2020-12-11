@@ -62,8 +62,8 @@ public class DataSet {
             ", description='" + description + '\'' +
             ", creationDate=" + creationDate +
             ", tags=" + tags +
-            ", uniqueValues=" + constants +
-            ", multipleValues=" + datatable +
+            ", constants=" + constants +
+            ", datatable=" + datatable +
             '}';
     }
 
@@ -126,13 +126,13 @@ public class DataSet {
             return this;
         }
 
-        public DataSetBuilder withUniqueValues(Map<String, String> uniqueValues) {
-            this.constants = uniqueValues;
+        public DataSetBuilder withConstants(Map<String, String> constants) {
+            this.constants = constants;
             return this;
         }
 
-        public DataSetBuilder withMultipleValues(List<Map<String, String>> multipleValues) {
-            this.datatable = multipleValues;
+        public DataSetBuilder withDatatable(List<Map<String, String>> datatable) {
+            this.datatable = datatable;
             return this;
         }
 
@@ -143,20 +143,20 @@ public class DataSet {
                 .withDescription(dataset.description)
                 .withCreationDate(dataset.creationDate)
                 .withTags(dataset.tags)
-                .withUniqueValues(dataset.constants)
-                .withMultipleValues(dataset.datatable);
+                .withConstants(dataset.constants)
+                .withDatatable(dataset.datatable);
         }
 
-        private Map<String, String> cleanConstants(Map<String, String> uniqueValues) {
+        private Map<String, String> cleanConstants(Map<String, String> constants) {
             // Remove empty keys
-            return uniqueValues.entrySet().stream()
+            return constants.entrySet().stream()
                 .filter(e -> isNotBlank(e.getKey()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         }
 
-        private List<Map<String, String>> cleanDatatable(List<Map<String, String>> multipleValues) {
+        private List<Map<String, String>> cleanDatatable(List<Map<String, String>> datatable) {
             // Remove empty keys and empty lines
-            return multipleValues.stream()
+            return datatable.stream()
                 .map(this::cleanConstants)
                 .filter(this::hasValuesNotBlank)
                 .collect(toList());

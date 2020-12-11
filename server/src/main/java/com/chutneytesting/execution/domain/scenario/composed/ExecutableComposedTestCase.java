@@ -12,7 +12,7 @@ public class ExecutableComposedTestCase implements TestCase {
 
     public final TestCaseMetadata metadata;
     public final ExecutableComposedScenario composedScenario;
-    public final Map<String, String> computedParameters; // TODO - refactor dataset - here it's for execution phase
+    public final Map<String, String> computedParameters;
 
     public ExecutableComposedTestCase(TestCaseMetadata metadata, ExecutableComposedScenario composedScenario) {
         this.metadata = metadata;
@@ -32,16 +32,16 @@ public class ExecutableComposedTestCase implements TestCase {
     }
 
     @Override
-    public Map<String, String> computedParameters() {
+    public Map<String, String> parameters() {
         return computedParameters;
     }
 
     @Override
-    public TestCase withDataSet(final Map<String, String> dataSet) {
+    public TestCase withParameters(final Map<String, String> parameters) {
         return new ExecutableComposedTestCase(
             metadata,
             composedScenario,
-            dataSet
+            parameters
         );
     }
 
@@ -70,7 +70,6 @@ public class ExecutableComposedTestCase implements TestCase {
         return Objects.hash(metadata, composedScenario, computedParameters);
     }
 
-    // TODO - refactor dataset
     private Map<String, String> buildDataSet() {
         Map<String, String> dataSet = new HashMap<>();
 

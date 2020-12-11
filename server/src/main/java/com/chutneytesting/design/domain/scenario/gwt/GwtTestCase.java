@@ -14,12 +14,12 @@ public class GwtTestCase implements TestCase {
 
     public final TestCaseMetadataImpl metadata;
     public final GwtScenario scenario;
-    public final Map<String, String> dataSet;
+    public final Map<String, String> parameters;
 
-    private GwtTestCase(TestCaseMetadataImpl metadata, GwtScenario scenario, Map<String, String> dataSet) {
+    private GwtTestCase(TestCaseMetadataImpl metadata, GwtScenario scenario, Map<String, String> parameters) {
         this.metadata = metadata;
         this.scenario = scenario;
-        this.dataSet = dataSet;
+        this.parameters = parameters;
     }
 
     @Override
@@ -28,16 +28,16 @@ public class GwtTestCase implements TestCase {
     }
 
     @Override
-    public Map<String, String> computedParameters() {
-        return dataSet;
+    public Map<String, String> parameters() {
+        return parameters;
     }
 
     @Override
-    public TestCase withDataSet(Map<String, String> dataSet) {
+    public TestCase withParameters(Map<String, String> parameters) {
         return builder()
             .withMetadata(metadata)
             .withScenario(scenario)
-            .withDataSet(dataSet)
+            .withParameters(parameters)
             .build();
     }
 
@@ -46,7 +46,7 @@ public class GwtTestCase implements TestCase {
         return "GwtTestCase{" +
             "metadata=" + metadata +
             ", scenario=" + scenario +
-            ", dataSet=" + dataSet +
+            ", parameters=" + parameters +
             '}';
     }
 
@@ -57,12 +57,12 @@ public class GwtTestCase implements TestCase {
         GwtTestCase that = (GwtTestCase) o;
         return metadata.equals(that.metadata) &&
             scenario.equals(that.scenario) &&
-            dataSet.equals(that.dataSet);
+            parameters.equals(that.parameters);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(metadata, scenario, dataSet);
+        return Objects.hash(metadata, scenario, parameters);
     }
 
     public static GwtTestCaseBuilder builder() {
@@ -73,7 +73,7 @@ public class GwtTestCase implements TestCase {
 
         private TestCaseMetadataImpl metadata;
         private GwtScenario scenario;
-        private Map<String, String> dataSet;
+        private Map<String, String> parameters;
 
         private GwtTestCaseBuilder() {}
 
@@ -81,7 +81,7 @@ public class GwtTestCase implements TestCase {
             return new GwtTestCase(
                 metadata,
                 scenario,
-                ofNullable(dataSet).orElse(emptyMap())
+                ofNullable(parameters).orElse(emptyMap())
             );
         }
 
@@ -95,8 +95,8 @@ public class GwtTestCase implements TestCase {
             return this;
         }
 
-        public GwtTestCaseBuilder withDataSet(Map<String, String> dataSet) {
-            this.dataSet = unmodifiableMap(dataSet);
+        public GwtTestCaseBuilder withParameters(Map<String, String> parameters) {
+            this.parameters = unmodifiableMap(parameters);
             return this;
         }
     }

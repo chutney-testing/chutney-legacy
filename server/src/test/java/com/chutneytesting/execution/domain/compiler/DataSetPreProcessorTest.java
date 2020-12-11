@@ -41,7 +41,7 @@ public class DataSetPreProcessorTest {
         RawDataSetPreProcessor dataSetPreProcessor = new RawDataSetPreProcessor(globalvarRepository);
         RawTestCase fakeTestCase = RawTestCase.builder()
             .withScenario("a blabla step with **aKey** and **anotherKey** and **key.1**")
-            .withDataSet(Maps.of("aKey", "a value", "anotherKey", "another value"))
+            .withParameters(Maps.of("aKey", "a value", "anotherKey", "another value"))
             .build();
 
         // When
@@ -51,7 +51,7 @@ public class DataSetPreProcessorTest {
 
         // Then
         String expectedContent = "a blabla step with a value and another value and value1";
-        assertThat(actual.content).isEqualToIgnoringCase(expectedContent);
+        assertThat(actual.scenario).isEqualToIgnoringCase(expectedContent);
     }
 
     @Test
@@ -73,7 +73,7 @@ public class DataSetPreProcessorTest {
                 .withTitle(expected_title)
                 .withDescription(expected_description)
                 .build())
-            .withDataSet(Maps.of("aKey", "a value", "anotherKey", "another value", "titre", "newTitle", "description", "newDesc", "type", expected_strategy_type))
+            .withParameters(Maps.of("aKey", "a value", "anotherKey", "another value", "titre", "newTitle", "description", "newDesc", "type", expected_strategy_type))
             .withScenario(GwtScenario.builder()
                 .withWhen(
                     GwtStep.builder()
@@ -99,7 +99,7 @@ public class DataSetPreProcessorTest {
                 .withTitle(expected_title)
                 .withDescription(expected_description)
                 .build())
-            .withDataSet(Maps.of("aKey", "a value", "anotherKey", "another value", "titre", "newTitle", "description", "newDesc", "type", expected_strategy_type))
+            .withParameters(Maps.of("aKey", "a value", "anotherKey", "another value", "titre", "newTitle", "description", "newDesc", "type", expected_strategy_type))
             .withScenario(GwtScenario.builder()
                 .withWhen(
                     GwtStep.builder()

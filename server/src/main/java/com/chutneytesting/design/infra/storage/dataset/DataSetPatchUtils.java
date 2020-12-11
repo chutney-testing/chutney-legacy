@@ -30,69 +30,69 @@ public final class DataSetPatchUtils {
     }
 
     public static Pair<Map<String, String>, List<Map<String, String>>> extractValues(String s) {
-        Map<String, String> uniqueValues = new LinkedHashMap<>();
-        List<Map<String, String>> multipleValues = new ArrayList<>();
-        List<String> multipleValuesHeaders = new ArrayList<>();
+        Map<String, String> constants = new LinkedHashMap<>();
+        List<Map<String, String>> datatable = new ArrayList<>();
+        List<String> datatableHeaders = new ArrayList<>();
 
         List<String> lines = stringLines(s);
         for (String line : lines) {
             line = line.trim();
             if (!line.isEmpty()) {
-                if (line.startsWith(SEPARATOR)) { // Multiple values
-                    List<String> lineValues = extractMultipleValuesLine(line);
-                    if (multipleValuesHeaders.isEmpty()) { // headers
-                        multipleValuesHeaders.addAll(lineValues);
+                if (line.startsWith(SEPARATOR)) { // datatable
+                    List<String> lineValues = extractDatatableLine(line);
+                    if (datatableHeaders.isEmpty()) { // headers
+                        datatableHeaders.addAll(lineValues);
                     } else { // values
                         Map<String, String> valuesMap = new LinkedHashMap<>();
-                        Iterator<String> headersIterator = multipleValuesHeaders.iterator();
+                        Iterator<String> headersIterator = datatableHeaders.iterator();
                         Iterator<String> valuesIterator = lineValues.iterator();
                         while (headersIterator.hasNext() && valuesIterator.hasNext()) {
                             valuesMap.put(headersIterator.next(), valuesIterator.next());
                         }
-                        multipleValues.add(valuesMap);
+                        datatable.add(valuesMap);
                     }
-                } else { // Unique values
-                    String[] uniqueValue = line.split(SEPARATOR_REGEX);
-                    if (uniqueValue.length == 2) {
-                        uniqueValues.put(uniqueValue[0].trim(), uniqueValue[1].trim());
-                    } else if (uniqueValue.length == 1) {
-                        uniqueValues.put(uniqueValue[0].trim(), "");
+                } else { // Contant values
+                    String[] constant = line.split(SEPARATOR_REGEX);
+                    if (constant.length == 2) {
+                        constants.put(constant[0].trim(), constant[1].trim());
+                    } else if (constant.length == 1) {
+                        constants.put(constant[0].trim(), "");
                     }
                 }
             }
         }
-        return Pair.of(uniqueValues, multipleValues);
+        return Pair.of(constants, datatable);
     }
 
     public static String dataSetValues(DataSet dataSet, boolean pretty) {
-        Map<String, String> uniqueValues = dataSet.constants;
-        List<Map<String, String>> multipleValues = dataSet.datatable;
+        Map<String, String> constants = dataSet.constants;
+        List<Map<String, String>> datatable = dataSet.datatable;
 
         StringBuilder values = new StringBuilder();
 
-        // Process unique values first
-        if (!uniqueValues.isEmpty()) {
+        // Process constant values first
+        if (!constants.isEmpty()) {
             int maxKeyLength = 0;
             if (pretty) {
-                maxKeyLength = uniqueValues.keySet().stream().mapToInt(String::length).max().getAsInt();
+                maxKeyLength = constants.keySet().stream().mapToInt(String::length).max().getAsInt();
             }
             int finalMaxKeyLength = maxKeyLength;
-            uniqueValues.forEach((k, v) -> addUniqueValueLine(values, k, v, finalMaxKeyLength - k.length()));
-            // Blank line between unique and multiple values
+            constants.forEach((k, v) -> addContantLine(values, k, v, finalMaxKeyLength - k.length()));
+            // Blank line between constants and datatable
             values.append(NEWLINE);
         }
 
-        // Process multiple values
-        if (!multipleValues.isEmpty()) {
-            List<String> headers = new ArrayList<>(multipleValues.get(0).keySet());
+        // Process datatable
+        if (!datatable.isEmpty()) {
+            List<String> headers = new ArrayList<>(datatable.get(0).keySet());
             List<Integer> columnLength = new ArrayList<>();
             if (pretty) {
                 headers.forEach(m ->
-                    columnLength.add(multipleValues.stream().mapToInt(mm -> mm.get(m).length()).max().getAsInt()));
+                    columnLength.add(datatable.stream().mapToInt(mm -> mm.get(m).length()).max().getAsInt()));
 
             }
-            addMultipleValueLine(values, headers, columnLength, emptyMap());
-            multipleValues.forEach(m -> addMultipleValueLine(values, headers, columnLength, m));
+            addDatatableLine(values, headers, columnLength, emptyMap());
+            datatable.forEach(m -> addDatatableLine(values, headers, columnLength, m));
         }
 
         return values.toString();
@@ -131,7 +131,7 @@ public final class DataSetPatchUtils {
         return Arrays.asList(s.split("\\R"));
     }
 
-    private static List<String> extractMultipleValuesLine(String line) {
+    private static List<String> extractDatatableLine(String line) {
         List<String> values = new ArrayList<>();
         String[] lineValues = line.split(SEPARATOR_REGEX);
         for (int i = 1; i < lineValues.length; i++) {
@@ -140,15 +140,15 @@ public final class DataSetPatchUtils {
         return values;
     }
 
-    private static void addUniqueValueLine(StringBuilder uniqueValues, String key, String value, Integer spaces) {
+    private static void addContantLine(StringBuilder constants, String key, String value, Integer spaces) {
         StringBuilder line = new StringBuilder();
         line.append(key);
         addSpaces(line, spaces);
         line.append(SEPARATOR_SPACED).append(value);
-        uniqueValues.append(line.toString().trim()).append(NEWLINE);
+        constants.append(line.toString().trim()).append(NEWLINE);
     }
 
-    private static void addMultipleValueLine(StringBuilder multipleValues, List<String> headers, List<Integer> columnLength, Map<String, String> values) {
+    private static void addDatatableLine(StringBuilder datatable, List<String> headers, List<Integer> columnLength, Map<String, String> values) {
         StringBuilder line = new StringBuilder();
         boolean isLengthSet = !columnLength.isEmpty();
         if (values.isEmpty()) { // Add header values
@@ -169,7 +169,7 @@ public final class DataSetPatchUtils {
             }
         }
         line.append(SEPARATOR_SPACED);
-        multipleValues.append(line.toString().trim()).append(NEWLINE);
+        datatable.append(line.toString().trim()).append(NEWLINE);
     }
 
     private static void addSpaces(StringBuilder line, Integer nb) {

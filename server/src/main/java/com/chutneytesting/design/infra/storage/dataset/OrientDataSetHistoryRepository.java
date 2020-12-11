@@ -149,8 +149,8 @@ public class OrientDataSetHistoryRepository implements DataSetHistoryRepository 
                 }
                 Pair<Map<String, String>, List<Map<String, String>>> values = extractValues(datasetValues);
                 return dataSetBuilder
-                    .withUniqueValues(values.getLeft())
-                    .withMultipleValues(values.getRight())
+                    .withConstants(values.getLeft())
+                    .withDatatable(values.getRight())
                     .build();
             }
         } catch (Exception e) {

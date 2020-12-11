@@ -34,7 +34,7 @@ public class TestCaseControllerTest {
         .title("test")
         .description("description test")
         .creationDate(Instant.now())
-        .content("givens: [], when: {}, thens: []")
+        .scenario("givens: [], when: {}, thens: []")
         .build();
 
     private MockMvc mockMvc;

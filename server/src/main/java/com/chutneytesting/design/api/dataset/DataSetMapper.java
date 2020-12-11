@@ -29,8 +29,8 @@ public class DataSetMapper {
             .withDescription(dto.description())
             .withCreationDate(dto.lastUpdated())
             .withTags(dto.tags())
-            .withUniqueValues(KeyValue.toMap(dto.uniqueValues()))
-            .withMultipleValues(dto.multipleValues().stream().map(KeyValue::toMap).collect(Collectors.toList()))
+            .withConstants(KeyValue.toMap(dto.uniqueValues()))
+            .withDatatable(dto.multipleValues().stream().map(KeyValue::toMap).collect(Collectors.toList()))
             .build();
     }
 }
