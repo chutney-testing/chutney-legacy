@@ -11,7 +11,7 @@ public class RawTestCaseMapperTest {
 
     private ImmutableRawTestCaseDto invalid_dto = ImmutableRawTestCaseDto.builder()
         .title("Test mapping")
-        .content(" I am invalid\n {").build();
+        .scenario(" I am invalid\n {").build();
 
     @Test
     public void should_fail_on_parse_error() {

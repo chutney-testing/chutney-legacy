@@ -74,7 +74,7 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
                 .withAuthor("author")
                 .build())
             .withScenario(GwtScenario.builder().withWhen(GwtStep.NONE).build())
-            .withDataSet(Collections.singletonMap("aKey", "aValue"))
+            .withParameters(Collections.singletonMap("aKey", "aValue"))
             .build()
         );
 

@@ -210,7 +210,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
             "parent parameter with no overload", "",
             "child parameter with scenario overload", ""
         );
-        assertThat(composableTestCase.computedParameters).containsAllEntriesOf(expectedDataSet);
+        assertThat(composableTestCase.parameters).containsAllEntriesOf(expectedDataSet);
 
         String testCaseId = sut.save(composableTestCase);
 
@@ -226,7 +226,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
         assertThat(composableTestCaseFound.composableScenario.composableSteps)
             .containsExactly(FuncStepRefScenarioInstance, FuncStepRefParentScenarioInstance);
         assertThat(composableTestCaseFound.composableScenario.parameters).containsAllEntriesOf(scenarioParameters);
-        assertThat(composableTestCaseFound.computedParameters).containsAllEntriesOf(expectedDataSet);
+        assertThat(composableTestCaseFound.parameters).containsAllEntriesOf(expectedDataSet);
     }
 
     @Test

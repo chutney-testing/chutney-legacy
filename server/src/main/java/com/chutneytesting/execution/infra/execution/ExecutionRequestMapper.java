@@ -71,7 +71,7 @@ public class ExecutionRequestMapper {
     private StepDefinitionRequestDto convertRaw(ExecutionRequest executionRequest) {
         RawTestCase rawTestCase = (RawTestCase) executionRequest.testCase;
         try {
-            ScenarioContent scenarioContent = objectMapper.readValue(JsonValue.readHjson(rawTestCase.content).toString(), ScenarioContent.class);
+            ScenarioContent scenarioContent = objectMapper.readValue(JsonValue.readHjson(rawTestCase.scenario).toString(), ScenarioContent.class);
             return getStepDefinitionRequestFromStepDef(scenarioContent.scenario, executionRequest.environment);
         } catch (IOException e) {
             throw new ScenarioConversionException(rawTestCase.metadata().id(), e);
