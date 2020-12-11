@@ -22,7 +22,7 @@ public class TestCaseDataMapper { // TODO - test me more
             .withCreationDate(testCase.metadata.creationDate)
             .withDescription(testCase.metadata.description)
             .withTags(testCase.metadata.tags)
-            .withDataSet(testCase.dataSet)
+            .withDataSet(testCase.parameters)
             .withRawScenario(marshaller.serialize(testCase.scenario))
             .withAuthor(testCase.metadata.author)
             .withUpdateDate(testCase.metadata.updateDate)
@@ -59,7 +59,7 @@ public class TestCaseDataMapper { // TODO - test me more
                 .withUpdateDate(testCaseData.updateDate)
                 .withVersion(testCaseData.version)
                 .build())
-            .withDataSet(testCaseData.dataSet)
+            .withParameters(testCaseData.dataSet)
             .withScenario(testCaseData.rawScenario)
             .build();
     }
@@ -81,7 +81,7 @@ public class TestCaseDataMapper { // TODO - test me more
                 .withUpdateDate(dto.updateDate)
                 .withVersion(dto.version)
                 .build())
-            .withDataSet(dto.dataSet)
+            .withParameters(dto.dataSet)
             .withScenario(marshaller.deserialize(dto.title, dto.description, dto.rawScenario))
             .build();
     }

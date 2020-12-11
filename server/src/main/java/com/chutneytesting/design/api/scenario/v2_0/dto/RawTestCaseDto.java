@@ -6,6 +6,7 @@ import static java.util.Collections.emptyList;
 import com.chutneytesting.security.domain.User;
 import com.chutneytesting.tools.ui.KeyValue;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.time.Instant;
@@ -20,7 +21,8 @@ import org.immutables.value.Value;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public interface RawTestCaseDto {
 
-    String content();
+    @JsonProperty("content")
+    String scenario();
 
     Optional<String> id();
 
@@ -51,7 +53,8 @@ public interface RawTestCaseDto {
     }
 
     @Value.Default()
-    default List<KeyValue> computedParameters() {
+    @JsonProperty("computedParameters")
+    default List<KeyValue> parameters() {
         return emptyList();
     }
 

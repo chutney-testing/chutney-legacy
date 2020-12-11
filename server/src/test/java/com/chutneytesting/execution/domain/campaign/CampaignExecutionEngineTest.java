@@ -365,7 +365,7 @@ public class CampaignExecutionEngineTest {
         verify(scenarioExecutionEngine, times(2)).execute(argumentCaptor.capture());
         List<ExecutionRequest> executionRequests = argumentCaptor.getAllValues();
         assertThat(executionRequests).hasSize(2);
-        assertThat(((GwtTestCase) executionRequests.get(0).testCase).dataSet).containsOnly(
+        assertThat(((GwtTestCase) executionRequests.get(0).testCase).parameters).containsOnly(
             entry("gwt key", gwtTestCaseDataSet.get("gwt key")),
             entry("key", campaignDataSet.get("key")),
             entry("campaign key", "campaign specific value")
@@ -417,7 +417,7 @@ public class CampaignExecutionEngineTest {
                     .withId(id)
                     .build()
             )
-            .withDataSet(dataSet)
+            .withParameters(dataSet)
             .build();
     }
 

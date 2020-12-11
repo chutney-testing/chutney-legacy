@@ -56,8 +56,8 @@ public class ComposedTestCaseIterationsPreProcessorTest {
     private void stubDatasetRepository(Map<String, String> uniqueValues, List<Map<String, String>> multipleValues) {
         when(mockDatasetRepository.findById(any())).thenReturn(
             DataSet.builder()
-                .withUniqueValues(ofNullable(uniqueValues).orElse(emptyMap()))
-                .withMultipleValues(ofNullable(multipleValues).orElse(emptyList()))
+                .withConstants(ofNullable(uniqueValues).orElse(emptyMap()))
+                .withDatatable(ofNullable(multipleValues).orElse(emptyList()))
                 .build()
         );
     }
@@ -87,7 +87,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         ExecutableComposedTestCase processedTestCase = sut.apply(testCase);
 
         // Then
-        assertThat(processedTestCase.computedParameters()).containsOnly(
+        assertThat(processedTestCase.parameters()).containsOnly(
             entry("aKey", "usedInTestCase"),
             entry("localKey", "will be kept as is")
         );

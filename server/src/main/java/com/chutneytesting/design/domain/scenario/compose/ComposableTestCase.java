@@ -10,23 +10,23 @@ import java.util.Optional;
 
 public class ComposableTestCase implements TestCase {
 
-    public final String id; // TODO - To delete
+    public final String id;
     public final TestCaseMetadata metadata;
     public final ComposableScenario composableScenario;
-    public final Map<String, String> computedParameters; // TODO - refactor dataset - here it's for execution phase
+    public final Map<String, String> parameters;
 
     public ComposableTestCase(String id, TestCaseMetadata metadata, ComposableScenario composableScenario) {
         this.id = id;
         this.metadata = metadata;
         this.composableScenario = composableScenario;
-        this.computedParameters = buildDataSet();
+        this.parameters = findParametersFromSteps();
     }
 
-    public ComposableTestCase(String id, TestCaseMetadata metadata, ComposableScenario composableScenario, Map<String, String> computedParameters) {
+    private ComposableTestCase(String id, TestCaseMetadata metadata, ComposableScenario composableScenario, Map<String, String> parameters) {
         this.id = id;
         this.metadata = metadata;
         this.composableScenario = composableScenario;
-        this.computedParameters = computedParameters;
+        this.parameters = parameters;
     }
 
     @Override
@@ -40,17 +40,17 @@ public class ComposableTestCase implements TestCase {
     }
 
     @Override
-    public Map<String, String> computedParameters() {
-        return computedParameters;
+    public Map<String, String> parameters() {
+        return parameters;
     }
 
     @Override
-    public TestCase withDataSet(final Map<String, String> dataSet) {
+    public TestCase withParameters(final Map<String, String> parameters) {
         return new ComposableTestCase(
             id,
             metadata,
             composableScenario,
-            dataSet
+            parameters
         );
     }
 
@@ -61,7 +61,7 @@ public class ComposableTestCase implements TestCase {
                 .withDatasetId(dataSetId)
                 .build(),
             composableScenario,
-            computedParameters
+            parameters
         );
     }
 
@@ -73,25 +73,24 @@ public class ComposableTestCase implements TestCase {
         return Objects.equals(id, that.id) &&
             Objects.equals(metadata, that.metadata) &&
             Objects.equals(composableScenario, that.composableScenario) &&
-            Objects.equals(computedParameters, that.computedParameters);
+            Objects.equals(parameters, that.parameters);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, metadata, composableScenario, computedParameters);
+        return Objects.hash(id, metadata, composableScenario, parameters);
     }
 
-    // TODO - refactor dataset
-    private Map<String, String> buildDataSet() {
-        Map<String, String> dataSet = new HashMap<>();
+    private Map<String, String> findParametersFromSteps() { // TODO - is it still needed here for edition ?
+        Map<String, String> parameters = new HashMap<>();
 
         composableScenario.composableSteps
-            .forEach(composableStep -> dataSet.putAll(composableStep.dataSetGlobalParameters()));
+            .forEach(composableStep -> parameters.putAll(composableStep.dataSetGlobalParameters()));
 
         Optional.ofNullable(composableScenario.parameters)
-            .ifPresent(dataSet::putAll);
+            .ifPresent(parameters::putAll);
 
-        return dataSet;
+        return parameters;
     }
 
     @Override
@@ -100,7 +99,7 @@ public class ComposableTestCase implements TestCase {
             "id='" + id + '\'' +
             ", metadata=" + metadata +
             ", composableScenario=" + composableScenario +
-            ", dataSet=" + computedParameters +
+            ", parameters=" + parameters +
             '}';
     }
 }
