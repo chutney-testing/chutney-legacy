@@ -16,8 +16,8 @@ class OrientDataSetMapper {
 
     protected static void dataSetToElement(final DataSet dataSet, OElement oDataSet) {
         dataSetMetaDataToElement(dataSet, oDataSet);
-        oDataSet.setProperty(DATASET_CLASS_PROPERTY_VALUES_UNIQUE, dataSet.uniqueValues, OType.EMBEDDEDMAP);
-        oDataSet.setProperty(DATASET_CLASS_PROPERTY_VALUES_MULTIPLE, dataSet.multipleValues, OType.EMBEDDEDLIST);
+        oDataSet.setProperty(DATASET_CLASS_PROPERTY_VALUES_UNIQUE, dataSet.constants, OType.EMBEDDEDMAP);
+        oDataSet.setProperty(DATASET_CLASS_PROPERTY_VALUES_MULTIPLE, dataSet.datatable, OType.EMBEDDEDLIST);
     }
 
     private static void dataSetMetaDataToElement(final DataSet dataSet, OElement oDataSet) {

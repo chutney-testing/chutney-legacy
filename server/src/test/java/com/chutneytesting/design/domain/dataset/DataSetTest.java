@@ -29,8 +29,8 @@ public class DataSetTest {
             ))
             .build();
 
-        assertThat(dataSet.uniqueValues).isEmpty();
-        assertThat(dataSet.multipleValues).isEmpty();
+        assertThat(dataSet.constants).isEmpty();
+        assertThat(dataSet.datatable).isEmpty();
 
         // Normal case
         Map<String, String> exepectedMap = Maps.of("key1", "value", "key2", "value");
@@ -45,7 +45,7 @@ public class DataSetTest {
             ))
             .build();
 
-        assertThat(dataSet.uniqueValues).containsExactlyEntriesOf(exepectedMap);
-        assertThat(dataSet.multipleValues).containsExactly(exepectedMap, exepectedMap);
+        assertThat(dataSet.constants).containsExactlyEntriesOf(exepectedMap);
+        assertThat(dataSet.datatable).containsExactly(exepectedMap, exepectedMap);
     }
 }
