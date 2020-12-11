@@ -17,8 +17,8 @@ public class DataSetMapper {
             .description(dataSet.description)
             .lastUpdated(dataSet.creationDate)
             .tags(dataSet.tags)
-            .uniqueValues(KeyValue.fromMap(dataSet.uniqueValues))
-            .multipleValues(dataSet.multipleValues.stream().map(KeyValue::fromMap).collect(Collectors.toList()))
+            .uniqueValues(KeyValue.fromMap(dataSet.constants))
+            .multipleValues(dataSet.datatable.stream().map(KeyValue::fromMap).collect(Collectors.toList()))
             .build();
     }
 
