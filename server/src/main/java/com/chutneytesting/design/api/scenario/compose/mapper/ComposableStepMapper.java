@@ -108,8 +108,7 @@ public class ComposableStepMapper {
 
         DEFAULT("Default", ""),
         RETRY("Retry", "retry-with-timeout"),
-        SOFT("Soft", "soft-assert"),
-        Loop("Loop", "Loop");
+        SOFT("Soft", "soft-assert");
 
         private static final Logger LOGGER = LoggerFactory.getLogger(ComposableStrategyType.class);
         public final String name;
