@@ -24,8 +24,8 @@ public class GwtDataSetPreProcessor implements TestCasePreProcessor<GwtTestCase>
         GwtTestCase testCase = (GwtTestCase) executionRequest.testCase;
         return GwtTestCase.builder()
             .withMetadata(testCase.metadata)
-            .withDataSet(testCase.dataSet)
-            .withScenario(replaceParams(testCase.scenario, testCase.dataSet))
+            .withParameters(testCase.parameters)
+            .withScenario(replaceParams(testCase.scenario, testCase.parameters))
             .build();
     }
 
