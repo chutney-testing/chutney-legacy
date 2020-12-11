@@ -38,12 +38,6 @@ public interface TestCasePreProcessor<T extends TestCase> {
         return stringReplaced;
     }
 
-    default void makeEnvironmentNameAsGlobalVariable(Map<String, String> globalVariable, String environment) {
-        if (environment != null && !environment.isEmpty()) {
-            globalVariable.put("environment", environment);
-        }
-    }
-
 
     Pattern aliasPattern = Pattern.compile("^\\*\\*(.+)\\*\\*$");
 

@@ -107,27 +107,6 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
     }
 
     @Test
-    public void should_find_saved_step_with_loop_strategy_when_search_by_id() {
-        // Given
-        final ComposableStep fStep = saveAndReload(
-            buildComposableStep(
-                "a thing is connected",
-                new Strategy("Loop", Collections.singletonMap("data", "someData"))
-            )
-        );
-
-        // When
-        ComposableStep foundFStep = sut.findById(fStep.id);
-
-        // Then
-        assertThat(foundFStep).isNotNull();
-        assertThat(foundFStep.id).isEqualTo(fStep.id);
-        assertThat(foundFStep.name).isEqualTo(fStep.name);
-        assertThat(foundFStep.strategy.type).isEqualToIgnoringCase("Loop");
-        assertThat(foundFStep.strategy.parameters.get("data")).isEqualTo("someData");
-    }
-
-    @Test
     public void should_find_all_steps_when_findAll_called() {
         should_save_all_func_steps_with_multiple_step_types_when_save_scenario();
         List<ComposableStep> all = sut.findAll();
