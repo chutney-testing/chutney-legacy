@@ -52,7 +52,7 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
         }
 
         DataSet dataset = oDataset.get();
-        Map<Boolean, List<String>> matchedHeaders = findMultipleValuesHeadersMatchingComputedParams(testCase, dataset.multipleValues);
+        Map<Boolean, List<String>> matchedHeaders = findMultipleValuesHeadersMatchingComputedParams(testCase, dataset.datatable);
 
         return new ExecutableComposedTestCase(
             testCase.metadata,
@@ -75,7 +75,7 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
     private Map<String, String> applyToComputedParameters(Map<String, String> computedParameters, List<String> matchedHeaders, DataSet dataSet) {
         HashMap<String, String> parameters = new HashMap<>(computedParameters);
 
-        Map<String, String> uniqueValues = dataSet.uniqueValues;
+        Map<String, String> uniqueValues = dataSet.constants;
         computedParameters.keySet().stream()
             .filter(uniqueValues::containsKey)
             .forEach(key -> parameters.put(key, uniqueValues.get(key)));
@@ -121,7 +121,7 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
             .from(composedStep)
             .withImplementation(empty())
             .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
-            .withSteps(buildStepIterations(composedStep, csNovaluedEntries, csValuedEntriesWithRef, dataset.multipleValues, iterationOutputs))
+            .withSteps(buildStepIterations(composedStep, csNovaluedEntries, csValuedEntriesWithRef, dataset.datatable, iterationOutputs))
             .withDataset(buildDatasetWithAliases(csLeftEntries))
             .build();
     }
