@@ -10,8 +10,8 @@ public interface TestCase {
         return metadata().id();
     }
 
-    Map<String, String> computedParameters();
+    Map<String, String> parameters();
 
-    TestCase withDataSet(final Map<String, String> dataSet);
+    TestCase withParameters(final Map<String, String> parameters);
 
 }

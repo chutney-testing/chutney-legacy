@@ -63,8 +63,8 @@ public class OrientDataSetHistoryRepositoryTest extends AbstractOrientDatabaseTe
     public void should_not_work() {
         DataSet premier = DataSet.builder()
             .fromDataSet(originalDataSet)
-            .withMultipleValues(Collections.emptyList())
-            .withUniqueValues(Collections.emptyMap())
+            .withDatatable(Collections.emptyList())
+            .withConstants(Collections.emptyMap())
             .build();
 
         Optional<Pair<String, Integer>> versionId = sut.addVersion(premier);
@@ -83,7 +83,7 @@ public class OrientDataSetHistoryRepositoryTest extends AbstractOrientDatabaseTe
     @Test
     public void should_find_all_version() {
         List<DataSet> dataSets = addVersionsAndAssert().stream()
-            .map(ds -> DataSet.builder().fromDataSet(ds).withUniqueValues(null).withMultipleValues(null).build())
+            .map(ds -> DataSet.builder().fromDataSet(ds).withConstants(null).withDatatable(null).build())
             .collect(toList());
 
         // Second version - name change
@@ -131,7 +131,7 @@ public class OrientDataSetHistoryRepositoryTest extends AbstractOrientDatabaseTe
         DataSet uniqueValuesChangedDataSet = DataSet.builder()
             .fromDataSet(nameChangedDataSet)
             .withCreationDate(null)
-            .withUniqueValues(Maps.of("uk1", "uv11", "uk22", "uv2"))
+            .withConstants(Maps.of("uk1", "uv11", "uk22", "uv2"))
             .build();
         versionId = sut.addVersion(uniqueValuesChangedDataSet);
         assertThat(versionId).isNotEmpty();
@@ -153,7 +153,7 @@ public class OrientDataSetHistoryRepositoryTest extends AbstractOrientDatabaseTe
         DataSet multipleValuesChangedDataSet = DataSet.builder()
             .fromDataSet(descriptionChangedDataSet)
             .withCreationDate(null)
-            .withMultipleValues(Lists.list(
+            .withDatatable(Lists.list(
                 Maps.of("mk1", "mv11", "mk2", "mv21", "mk3", "mv31"),
                 Maps.of("mk1", "new12", "mk2", "mv22", "mk3", "mv32"),
                 Maps.of("mk1", "mv13", "mk2", "new23", "mk3", "mv33")
@@ -190,8 +190,8 @@ public class OrientDataSetHistoryRepositoryTest extends AbstractOrientDatabaseTe
             .withName("name")
             .withDescription("description")
             .withTags(Lists.list("tag1", "tag2"))
-            .withUniqueValues(Maps.of("uk1", "uv1", "uk2", "uv2"))
-            .withMultipleValues(Lists.list(
+            .withConstants(Maps.of("uk1", "uv1", "uk2", "uv2"))
+            .withDatatable(Lists.list(
                 Maps.of("mk1", "mv11", "mk2", "mv21"),
                 Maps.of("mk1", "mv12", "mk2", "mv22"),
                 Maps.of("mk1", "mv13", "mk2", "mv23")

@@ -180,12 +180,12 @@ public class ComposedTestCasePreProcessorTest {
         String dataSetId = "666";
         DataSet dataSet = DataSet.builder()
             .withId(dataSetId)
-            .withUniqueValues(
+            .withConstants(
                 Maps.of(
                     "testcase param third", "dataset uv 1"
                 )
             )
-            .withMultipleValues(
+            .withDatatable(
                 asList( // Note that first key has only two distinct values ...
                     Maps.of("testcase param", "dataset mv 11", "testcase param second", "dataset mv 12"),
                     Maps.of("testcase param", "dataset mv 11", "testcase param second", "dataset mv 22"),

@@ -84,11 +84,11 @@ public class DataSetPatchUtilsTest {
         String finalDataset = "a | c\n";
 
         // When
-        String version1 = dataSetValues(DataSet.builder().withUniqueValues(Maps.of("a", "b")).build(), false);
+        String version1 = dataSetValues(DataSet.builder().withConstants(Maps.of("a", "b")).build(), false);
         String patch1 = unifiedDiff(version1, original);
         String revised1Patched = patchString(original, DataSetPatch.builder().withUnifiedDiffValues(patch1).build());
 
-        String version2 = dataSetValues(DataSet.builder().withUniqueValues(Maps.of("a", "c")).build(), false);
+        String version2 = dataSetValues(DataSet.builder().withConstants(Maps.of("a", "c")).build(), false);
         String patch2 = unifiedDiff(version2, revised1Patched);
         String revised2Patched = patchString(revised1Patched, DataSetPatch.builder().withUnifiedDiffValues(patch2).build());
 
@@ -124,8 +124,8 @@ public class DataSetPatchUtilsTest {
     private DataSet testDataSet() {
         return DataSet.builder()
             .withName("n")
-            .withUniqueValues(Maps.of("p1", "value1", "param2", "v2"))
-            .withMultipleValues(
+            .withConstants(Maps.of("p1", "value1", "param2", "v2"))
+            .withDatatable(
                 Arrays.asList(
                     Maps.of("p3", "v31", "param4", "value41"),
                     Maps.of("p3", "value32", "param4", "v42"))

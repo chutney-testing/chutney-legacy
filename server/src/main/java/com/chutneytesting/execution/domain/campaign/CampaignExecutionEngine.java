@@ -230,9 +230,9 @@ public class CampaignExecutionEngine {
             testCase = ((ExecutableComposedTestCase) testCase).withDataSetId(campaignDatasetId);
             return new ExecutionRequest(testCase, campaign.executionEnvironment(), true, userId);
         } else {
-            Map<String, String> ds = new HashMap<>(testCase.computedParameters());
+            Map<String, String> ds = new HashMap<>(testCase.parameters());
             ds.putAll(campaign.dataSet);
-            return new ExecutionRequest(testCase.withDataSet(ds), campaign.executionEnvironment(), userId);
+            return new ExecutionRequest(testCase.withParameters(ds), campaign.executionEnvironment(), userId);
         }
     }
 
