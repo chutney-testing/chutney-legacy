@@ -141,7 +141,7 @@ public class DataSetPatch {
             if (!newDataSet.tags.equals(previousDataSet.tags)) {
                 this.tags = newDataSet.tags;
             }
-            if (!newDataSet.uniqueValues.equals(previousDataSet.uniqueValues) || !newDataSet.multipleValues.equals(previousDataSet.multipleValues)) {
+            if (!newDataSet.constants.equals(previousDataSet.constants) || !newDataSet.datatable.equals(previousDataSet.datatable)) {
                 this.unifiedDiffValues = unifiedDiff(dataSetValues(newDataSet, false), dataSetValues(previousDataSet, false));
             }
             return this;

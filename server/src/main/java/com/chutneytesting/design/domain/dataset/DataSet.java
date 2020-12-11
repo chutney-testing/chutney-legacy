@@ -20,17 +20,17 @@ public class DataSet {
     public final String description;
     public final Instant creationDate;
     public final List<String> tags;
-    public final Map<String, String> uniqueValues;
-    public final List<Map<String, String>> multipleValues;
+    public final Map<String, String> constants;
+    public final List<Map<String, String>> datatable;
 
-    private DataSet(String id, String name, String description, Instant creationDate, List<String> tags, Map<String, String> uniqueValues, List<Map<String, String>> multipleValues) {
+    private DataSet(String id, String name, String description, Instant creationDate, List<String> tags, Map<String, String> constants, List<Map<String, String>> datatable) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.creationDate = creationDate;
         this.tags = tags;
-        this.uniqueValues = uniqueValues;
-        this.multipleValues = multipleValues;
+        this.constants = constants;
+        this.datatable = datatable;
     }
 
     @Override
@@ -45,13 +45,13 @@ public class DataSet {
             Objects.equals(description, dataSet.description) &&
             Objects.equals(creationDate, dataSet.creationDate) &&
             Objects.equals(tags, dataSet.tags) &&
-            Objects.equals(uniqueValues, dataSet.uniqueValues) &&
-            Objects.equals(multipleValues, dataSet.multipleValues);
+            Objects.equals(constants, dataSet.constants) &&
+            Objects.equals(datatable, dataSet.datatable);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, creationDate, tags, uniqueValues, multipleValues);
+        return Objects.hash(id, name, description, creationDate, tags, constants, datatable);
     }
 
     @Override
@@ -62,8 +62,8 @@ public class DataSet {
             ", description='" + description + '\'' +
             ", creationDate=" + creationDate +
             ", tags=" + tags +
-            ", uniqueValues=" + uniqueValues +
-            ", multipleValues=" + multipleValues +
+            ", uniqueValues=" + constants +
+            ", multipleValues=" + datatable +
             '}';
     }
 
@@ -79,8 +79,8 @@ public class DataSet {
         private String description;
         private Instant creationDate;
         private List<String> tags;
-        private Map<String, String> uniqueValues;
-        private List<Map<String, String>> multipleValues;
+        private Map<String, String> constants;
+        private List<Map<String, String>> datatable;
 
         private DataSetBuilder() {
         }
@@ -96,8 +96,8 @@ public class DataSet {
                 ofNullable(description).orElse(""),
                 ofNullable(creationDate).orElseGet(Instant::now),
                 (ofNullable(tags).orElse(emptyList())).stream().map(String::toUpperCase).map(String::trim).collect(toList()),
-                cleanUniqueValues(ofNullable(uniqueValues).orElse(emptyMap())),
-                cleanMultipleValues(ofNullable(multipleValues).orElse(emptyList()))
+                cleanConstants(ofNullable(constants).orElse(emptyMap())),
+                cleanDatatable(ofNullable(datatable).orElse(emptyList()))
             );
         }
 
@@ -127,12 +127,12 @@ public class DataSet {
         }
 
         public DataSetBuilder withUniqueValues(Map<String, String> uniqueValues) {
-            this.uniqueValues = uniqueValues;
+            this.constants = uniqueValues;
             return this;
         }
 
         public DataSetBuilder withMultipleValues(List<Map<String, String>> multipleValues) {
-            this.multipleValues = multipleValues;
+            this.datatable = multipleValues;
             return this;
         }
 
@@ -143,21 +143,21 @@ public class DataSet {
                 .withDescription(dataset.description)
                 .withCreationDate(dataset.creationDate)
                 .withTags(dataset.tags)
-                .withUniqueValues(dataset.uniqueValues)
-                .withMultipleValues(dataset.multipleValues);
+                .withUniqueValues(dataset.constants)
+                .withMultipleValues(dataset.datatable);
         }
 
-        private Map<String, String> cleanUniqueValues(Map<String, String> uniqueValues) {
-            // Get rid of empty keys
+        private Map<String, String> cleanConstants(Map<String, String> uniqueValues) {
+            // Remove empty keys
             return uniqueValues.entrySet().stream()
                 .filter(e -> isNotBlank(e.getKey()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         }
 
-        private List<Map<String, String>> cleanMultipleValues(List<Map<String, String>> multipleValues) {
-            // Get rid of empty keys and empty lines
+        private List<Map<String, String>> cleanDatatable(List<Map<String, String>> multipleValues) {
+            // Remove empty keys and empty lines
             return multipleValues.stream()
-                .map(this::cleanUniqueValues)
+                .map(this::cleanConstants)
                 .filter(this::hasValuesNotBlank)
                 .collect(toList());
         }

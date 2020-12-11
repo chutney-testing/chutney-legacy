@@ -65,8 +65,8 @@ public final class DataSetPatchUtils {
     }
 
     public static String dataSetValues(DataSet dataSet, boolean pretty) {
-        Map<String, String> uniqueValues = dataSet.uniqueValues;
-        List<Map<String, String>> multipleValues = dataSet.multipleValues;
+        Map<String, String> uniqueValues = dataSet.constants;
+        List<Map<String, String>> multipleValues = dataSet.datatable;
 
         StringBuilder values = new StringBuilder();
 
