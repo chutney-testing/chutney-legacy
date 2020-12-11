@@ -61,8 +61,8 @@ public class OrientDataSetRepositoryTest extends AbstractOrientDatabaseTest {
         assertThat(foundDataSet.description).isEqualTo(dataSet.description);
         assertThat(foundDataSet.creationDate).isAfter(beforeCreation);
         assertThat(foundDataSet.tags).isEqualTo(dataSet.tags);
-        assertThat(foundDataSet.uniqueValues).isEqualTo(dataSet.uniqueValues);
-        assertThat(foundDataSet.multipleValues).isEqualTo(dataSet.multipleValues);
+        assertThat(foundDataSet.constants).isEqualTo(dataSet.constants);
+        assertThat(foundDataSet.datatable).isEqualTo(dataSet.datatable);
     }
 
     @Test
@@ -97,8 +97,8 @@ public class OrientDataSetRepositoryTest extends AbstractOrientDatabaseTest {
         assertThat(foundUpdatedDataSet.description).isEqualTo(description);
         assertThat(foundUpdatedDataSet.creationDate).isEqualTo(dataSet.creationDate);
         assertThat(foundUpdatedDataSet.tags).isEqualTo(tags);
-        assertThat(foundUpdatedDataSet.uniqueValues).isEqualTo(dataSet.uniqueValues);
-        assertThat(foundUpdatedDataSet.multipleValues).isEqualTo(multipleValues);
+        assertThat(foundUpdatedDataSet.constants).isEqualTo(dataSet.constants);
+        assertThat(foundUpdatedDataSet.datatable).isEqualTo(multipleValues);
     }
 
     @Test

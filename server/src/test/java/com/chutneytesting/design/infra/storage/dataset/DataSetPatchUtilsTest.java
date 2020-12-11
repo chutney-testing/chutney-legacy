@@ -57,10 +57,10 @@ public class DataSetPatchUtilsTest {
         Pair<Map<String, String>, List<Map<String, String>>> prettyValues = extractValues(pretty);
 
         // Then
-        assertThat(rawValues.getLeft()).containsExactlyEntriesOf(dataSet.uniqueValues);
-        assertThat(prettyValues.getLeft()).containsExactlyEntriesOf(dataSet.uniqueValues);
-        assertThat(rawValues.getRight()).containsExactlyElementsOf(dataSet.multipleValues);
-        assertThat(prettyValues.getRight()).containsExactlyElementsOf(dataSet.multipleValues);
+        assertThat(rawValues.getLeft()).containsExactlyEntriesOf(dataSet.constants);
+        assertThat(prettyValues.getLeft()).containsExactlyEntriesOf(dataSet.constants);
+        assertThat(rawValues.getRight()).containsExactlyElementsOf(dataSet.datatable);
+        assertThat(prettyValues.getRight()).containsExactlyElementsOf(dataSet.datatable);
     }
 
     @Test
