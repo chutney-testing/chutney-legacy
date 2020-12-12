@@ -10,7 +10,10 @@
           "type": "string"
         },
         "subSteps": {
-          "$ref": "#/definitions/step"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/step"
+          }
         },
         "implementation": {
           "type": "object",
