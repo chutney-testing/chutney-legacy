@@ -49,7 +49,7 @@ public class OrientComposableStepMapper {
         strategy.setProperty("parameters", composableStep.strategy.parameters, OType.EMBEDDEDMAP);
 
         setOrRemoveProperty(step, STEP_CLASS_PROPERTY_STRATEGY, strategy, OType.EMBEDDED);
-        step.setProperty(STEP_CLASS_PROPERTY_PARAMETERS, composableStep.parameters, OType.EMBEDDEDMAP);
+        step.setProperty(STEP_CLASS_PROPERTY_PARAMETERS, composableStep.builtInParameters, OType.EMBEDDEDMAP);
         setComposableStepVertexDenotations(step, composableStep.steps, dbSession);
     }
 
@@ -59,9 +59,9 @@ public class OrientComposableStepMapper {
             .forEach(index -> {
                 final ComposableStep subComposableStepRef = edgesToSave.get(index);
                 OVertex dbSubComposableStep = (OVertex) load(subComposableStepRef.id, dbSession)
-                    .orElseThrow(() -> new IllegalArgumentException("Functional step with id [" + subComposableStepRef.id + "] does not exists"));
+                    .orElseThrow(() -> new IllegalArgumentException("Composable step with id [" + subComposableStepRef.id + "] does not exists"));
                 final Map<String, String> subComposableStepDataSet = vertexToDataSet(dbSubComposableStep, dbSession);
-                Map<String, String> parameters = cleanChildOverloadedParametersMap(subComposableStepRef.dataSet, subComposableStepDataSet);
+                Map<String, String> parameters = cleanChildOverloadedParametersMap(subComposableStepRef.enclosedUsageParameters, subComposableStepDataSet);
 
                 OEdge childEdge = vertex.addEdge(dbSubComposableStep, GE_STEP_CLASS);
                 childEdge.setProperty(GE_STEP_CLASS_PROPERTY_RANK, index);
@@ -93,7 +93,7 @@ public class OrientComposableStepMapper {
         builder.withImplementation(ofNullable(vertex.getProperty(STEP_CLASS_PROPERTY_IMPLEMENTATION)));
 
         Map<String, String> parameters = vertex.getProperty(STEP_CLASS_PROPERTY_PARAMETERS);
-        ofNullable(parameters).ifPresent(builder::addParameters);
+        ofNullable(parameters).ifPresent(builder::addBuiltInParameters);
 
         OElement strategy = vertex.getProperty(STEP_CLASS_PROPERTY_STRATEGY);
         Optional.ofNullable(strategy).ifPresent( s ->
@@ -104,7 +104,7 @@ public class OrientComposableStepMapper {
             buildComposableStepsChildren(vertex, dbSession)
         );
 
-        ofNullable(parameters).ifPresent(builder::addDataSet);
+        ofNullable(parameters).ifPresent(builder::addEnclosedUsageParameters);
 
         return builder;
     }
@@ -130,7 +130,7 @@ public class OrientComposableStepMapper {
     private static void overwriteDataSetWithEdgeParameters(OEdge childEdge, ComposableStep.ComposableStepBuilder builder) {
         Optional.<Map<String, String>>ofNullable(
             childEdge.getProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS)
-        ).ifPresent(builder::addDataSet);
+        ).ifPresent(builder::addEnclosedUsageParameters);
     }
 
     private static Map<String, String> vertexToDataSet(final OVertex vertex, final ODatabaseSession dbSession) {

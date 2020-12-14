@@ -29,8 +29,8 @@ public class ExecutableComposedStepMapper {
             .withStrategy(fs.strategy)
             .withSteps(composableToExecutable(fs.steps))
             .withImplementation(toStepImplementation(fs.implementation))
-            .withParameters(fs.parameters)
-            .withDataset(fs.dataSet)
+            .withParameters(fs.builtInParameters)
+            .withDataset(fs.enclosedUsageParameters)
             .build();
     }
 
