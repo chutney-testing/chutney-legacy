@@ -125,7 +125,7 @@ public abstract class AbstractOrientDatabaseTest {
             builder.withUsage(Optional.of(usage));
         }
         if (parameters != null) {
-            builder.withParameters(parameters);
+            builder.withBuiltInParameters(parameters);
         }
         if (subSteps != null) {
             builder.withSteps(Arrays.asList(subSteps));
