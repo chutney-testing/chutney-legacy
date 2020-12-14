@@ -55,7 +55,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
 
         ComposableStep FUNC_STEP = ComposableStep.builder()
             .withName("func step without children")
-            .withParameters(FUNC_STEP_REF_PARAMERTERS)
+            .withBuiltInParameters(FUNC_STEP_REF_PARAMERTERS)
             .build();
         FUNC_STEP_REF = ComposableStep.builder()
             .from(FUNC_STEP)
@@ -64,7 +64,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
 
         ComposableStep funcStepInstance = ComposableStep.builder()
             .from(FUNC_STEP_REF)
-            .overrideDataSetWith(
+            .overrideEnclosedUsageParametersWith(
                 Maps.of(
                     "child parameter with no overload", "child initial value",
                     "child parameter with parent overload", "parent value overload child value",
@@ -74,7 +74,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
         ComposableStep FUNC_STEP_P = ComposableStep.builder()
             .withName("func step with child")
             .withSteps(Collections.singletonList(funcStepInstance))
-            .withParameters(FUNC_STEP_PARENT_REF_PARAMERTERS)
+            .withBuiltInParameters(FUNC_STEP_PARENT_REF_PARAMERTERS)
             .build();
         FUNC_STEP_PARENT_REF = ComposableStep.builder()
             .from(FUNC_STEP_P)
@@ -168,7 +168,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
         // Given
         ComposableStep FuncStepRefScenarioInstance = ComposableStep.builder()
             .from(FUNC_STEP_REF)
-            .overrideDataSetWith(
+            .overrideEnclosedUsageParametersWith(
                 Maps.of(
                     "child parameter with no overload", "child initial value",
                     "child parameter with parent overload", "",
@@ -179,7 +179,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
 
         ComposableStep FuncStepRefParentScenarioInstance = ComposableStep.builder()
             .from(FUNC_STEP_PARENT_REF)
-            .overrideDataSetWith(
+            .overrideEnclosedUsageParametersWith(
                 Maps.of(
                     "parent parameter with no overload", "",
                     "parent parameter with scenario overload", "scenario value overload parent value",

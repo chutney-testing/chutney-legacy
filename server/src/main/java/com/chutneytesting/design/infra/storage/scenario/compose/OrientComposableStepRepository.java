@@ -197,7 +197,7 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
                 Map<String, String> dataSet = parentEdge.getProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS);
                 if (dataSet != null) {
                     Map<String, String> newDataSet = new HashMap<>();
-                    composableStep.parameters.forEach((paramKey, paramValue) ->
+                    composableStep.builtInParameters.forEach((paramKey, paramValue) ->
                         newDataSet.put(paramKey, dataSet.getOrDefault(paramKey, paramValue))
                     );
                     parentEdge.setProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS, newDataSet);
