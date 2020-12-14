@@ -21,28 +21,28 @@ public class ComposableStep {
     public final String id;
     public final String name;
     public final List<ComposableStep> steps;
-    public final Map<String, String> parameters;
+    public final Map<String, String> builtInParameters;
     public final Optional<String> implementation;
     public final Optional<StepUsage> usage;
     public final Strategy strategy;
-    public final Map<String, String> dataSet;
+    public final Map<String, String> enclosedUsageParameters;
     public final List<String> tags;
 
-    private ComposableStep(String id, String name, List<ComposableStep> steps, Map<String, String> parameters, Optional<String> implementation, Optional<StepUsage> usage, Strategy strategy, Map<String, String> dataSet, List<String> tags) {
+    private ComposableStep(String id, String name, List<ComposableStep> steps, Map<String, String> builtInParameters, Optional<String> implementation, Optional<StepUsage> usage, Strategy strategy, Map<String, String> enclosedUsageParameters, List<String> tags) {
         this.id = id;
         this.name = name;
         this.steps = steps;
-        this.parameters = parameters;
+        this.builtInParameters = builtInParameters;
         this.implementation = implementation;
         this.usage = usage;
         this.strategy = strategy;
-        this.dataSet = dataSet;
+        this.enclosedUsageParameters = enclosedUsageParameters;
         this.tags = tags;
     }
 
     // TODO - refactor dataset
     public Map<String, String> dataSetGlobalParameters() {
-        return dataSet.entrySet().stream()
+        return enclosedUsageParameters.entrySet().stream()
             .filter(e -> StringUtils.isBlank(e.getValue()))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
@@ -56,11 +56,11 @@ public class ComposableStep {
         private String id;
         private String name;
         private List<ComposableStep> steps;
-        private Map<String, String> parameters = new LinkedHashMap<>();
+        private Map<String, String> builtInParameters = new LinkedHashMap<>();
         private Optional<String> implementation;
         private Optional<StepUsage> usage;
         private Strategy strategy;
-        private Map<String, String> dataSet = new LinkedHashMap<>();
+        private Map<String, String> enclosedUsageParameters = new LinkedHashMap<>();
         private List<String> tags = new ArrayList<>();
 
         private ComposableStepBuilder() {
@@ -71,11 +71,11 @@ public class ComposableStep {
                 ofNullable(id).orElse(""),
                 ofNullable(name).orElse(""),
                 ofNullable(steps).orElse(emptyList()),
-                ofNullable(parameters).orElse(emptyMap()),
+                ofNullable(builtInParameters).orElse(emptyMap()),
                 ofNullable(implementation).orElse(empty()),
                 ofNullable(usage).orElse(empty()),
                 ofNullable(strategy).orElse(Strategy.DEFAULT),
-                unmodifiableMap(ofNullable(dataSet).orElse(emptyMap())),
+                unmodifiableMap(ofNullable(enclosedUsageParameters).orElse(emptyMap())),
                 unmodifiableList(ofNullable(tags).orElse(emptyList()))
             );
         }
@@ -93,19 +93,19 @@ public class ComposableStep {
         public ComposableStepBuilder withSteps(List<ComposableStep> steps) {
             this.steps = unmodifiableList(steps);
             steps.forEach(composableStep ->
-                addDataSet(
+                addEnclosedUsageParameters(
                     composableStep.dataSetGlobalParameters()
                 ));
             return this;
         }
 
-        public ComposableStepBuilder withParameters(Map<String, String> parameters) {
-            this.parameters = unmodifiableMap(parameters);
+        public ComposableStepBuilder withBuiltInParameters(Map<String, String> builtInParameters) {
+            this.builtInParameters = unmodifiableMap(builtInParameters);
             return this;
         }
 
-        public ComposableStepBuilder overrideDataSetWith(Map<String, String> dataSet) {
-            this.dataSet = dataSet;
+        public ComposableStepBuilder overrideEnclosedUsageParametersWith(Map<String, String> enclosedUsageParameters) {
+            this.enclosedUsageParameters = enclosedUsageParameters;
             return this;
         }
 
@@ -124,13 +124,13 @@ public class ComposableStep {
             return this;
         }
 
-        public ComposableStepBuilder addParameters(Map<String, String> parameters) {
-            ofNullable(parameters).ifPresent(this.parameters::putAll);
+        public ComposableStepBuilder addBuiltInParameters(Map<String, String> builtInParameters) {
+            ofNullable(builtInParameters).ifPresent(this.builtInParameters::putAll);
             return this;
         }
 
-        public ComposableStepBuilder addDataSet(Map<String, String> dataSet) {
-            ofNullable(dataSet).ifPresent(this.dataSet::putAll);
+        public ComposableStepBuilder addEnclosedUsageParameters(Map<String, String> enclosedUsageParameters) {
+            ofNullable(enclosedUsageParameters).ifPresent(this.enclosedUsageParameters::putAll);
             return this;
         }
 
@@ -143,11 +143,11 @@ public class ComposableStep {
             this.id = instance.id;
             this.name = instance.name;
             this.steps = instance.steps;
-            this.parameters = instance.parameters;
+            this.builtInParameters = instance.builtInParameters;
             this.implementation = instance.implementation;
             this.usage = instance.usage;
             this.strategy = instance.strategy;
-            this.dataSet = new LinkedHashMap<>(instance.dataSet);
+            this.enclosedUsageParameters = new LinkedHashMap<>(instance.enclosedUsageParameters);
             return this;
         }
     }
@@ -158,11 +158,11 @@ public class ComposableStep {
             "id='" + id + '\'' +
             ", name='" + name + '\'' +
             ", steps=" + steps +
-            ", parameters=" + parameters +
+            ", parameters=" + builtInParameters +
             ", implementation=" + implementation +
             ", usage=" + usage +
             ", strategy=" + strategy.toString() +
-            ", dataSet=" + dataSet +
+            ", dataSet=" + enclosedUsageParameters +
             '}';
     }
 
@@ -174,17 +174,17 @@ public class ComposableStep {
         return Objects.equals(id, that.id) &&
             Objects.equals(name, that.name) &&
             Objects.equals(steps, that.steps) &&
-            Objects.equals(parameters, that.parameters) &&
+            Objects.equals(builtInParameters, that.builtInParameters) &&
             Objects.equals(implementation, that.implementation) &&
             Objects.equals(usage, that.usage) &&
             Objects.equals(strategy, that.strategy) &&
-            Objects.equals(dataSet, that.dataSet)
+            Objects.equals(enclosedUsageParameters, that.enclosedUsageParameters)
             ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, steps, parameters, implementation, usage, strategy, dataSet);
+        return Objects.hash(id, name, steps, builtInParameters, implementation, usage, strategy, enclosedUsageParameters);
     }
 
 }
