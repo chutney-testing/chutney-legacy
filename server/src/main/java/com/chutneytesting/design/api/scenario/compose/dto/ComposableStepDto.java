@@ -1,6 +1,7 @@
 package com.chutneytesting.design.api.scenario.compose.dto;
 
 import com.chutneytesting.tools.ui.KeyValue;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.Collections;
@@ -34,10 +35,14 @@ public interface ComposableStepDto {
     default List<ComposableStepDto> steps() { return Collections.emptyList(); }
 
     @Value.Default()
-    default List<KeyValue> parameters() { return Collections.emptyList(); }
+    @JsonProperty("parameters")
+    // default parameters defined when editing the component alone
+    default List<KeyValue> builtInParameters() { return Collections.emptyList(); }
 
     @Value.Default()
-    default List<KeyValue> computedParameters() { return Collections.emptyList(); }
+    @JsonProperty("computedParameters")
+    // override built-in parameters values when the component is used inside another component
+    default List<KeyValue> enclosedUsageParameters() { return Collections.emptyList(); }
 
     enum StepUsage { STEP, GIVEN, WHEN, THEN }
 

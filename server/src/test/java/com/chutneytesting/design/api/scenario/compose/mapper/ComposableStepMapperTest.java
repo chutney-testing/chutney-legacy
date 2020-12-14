@@ -133,13 +133,13 @@ public class ComposableStepMapperTest {
         ComposableStep fStep = ComposableStep.builder()
             .withId("#1:1")
             .withName("a functional step")
-            .withParameters(
+            .withBuiltInParameters(
                 Maps.of(
                     "param1", "param1 value",
                     "param2", ""
                 )
             )
-            .overrideDataSetWith(
+            .overrideEnclosedUsageParametersWith(
                 Maps.of(
                     "param1", "param1 value",
                     "param2", "",
@@ -153,8 +153,8 @@ public class ComposableStepMapperTest {
         ComposableStepDto composableStepDto = toDto(fStep);
 
         // Then
-        assertThat(composableStepDto.parameters()).containsExactlyElementsOf(KeyValue.fromMap(fStep.parameters));
-        assertThat(composableStepDto.computedParameters()).containsExactlyElementsOf(KeyValue.fromMap(fStep.dataSet));
+        assertThat(composableStepDto.builtInParameters()).containsExactlyElementsOf(KeyValue.fromMap(fStep.builtInParameters));
+        assertThat(composableStepDto.enclosedUsageParameters()).containsExactlyElementsOf(KeyValue.fromMap(fStep.enclosedUsageParameters));
     }
 
     @Test
@@ -177,14 +177,14 @@ public class ComposableStepMapperTest {
                     .name("sub step 2")
                     .build()
             )
-            .addAllParameters(
+            .addAllBuiltInParameters(
                 KeyValue.fromMap(
                     Maps.of(
                         "param1", "param1 value",
                         "param2", ""
                     )
                 ))
-            .addAllComputedParameters(
+            .addAllEnclosedUsageParameters(
                 KeyValue.fromMap(
                     Maps.of(
                         "param1", "param1 value",
@@ -205,7 +205,7 @@ public class ComposableStepMapperTest {
         assertThat(ComposableStepDto.StepUsage.valueOf(step.usage.get().name())).isEqualTo(dto.usage());
         assertThat(step.steps.get(0).implementation.get()).isEqualTo(TECHNICAL_CONTENT);
         assertThat(step.steps.get(1).name).isEqualTo(dto.steps().get(1).name());
-        assertThat(step.parameters).containsAllEntriesOf(KeyValue.toMap(dto.parameters()));
-        assertThat(step.dataSet).containsAllEntriesOf(KeyValue.toMap(dto.computedParameters()));
+        assertThat(step.builtInParameters).containsAllEntriesOf(KeyValue.toMap(dto.builtInParameters()));
+        assertThat(step.enclosedUsageParameters).containsAllEntriesOf(KeyValue.toMap(dto.enclosedUsageParameters()));
     }
 }
