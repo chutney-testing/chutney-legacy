@@ -9,7 +9,6 @@ import static com.chutneytesting.design.infra.storage.scenario.compose.orient.Or
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_STRATEGY;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_TAGS;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_USAGE;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.load;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.reloadIfDirty;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.setOrRemoveProperty;
 import static java.util.Optional.ofNullable;
@@ -17,6 +16,7 @@ import static java.util.Optional.ofNullable;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.design.domain.scenario.compose.StepUsage;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
+import com.chutneytesting.design.infra.storage.scenario.compose.dto.StepVertex;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.ODirection;
@@ -38,32 +38,33 @@ public class OrientComposableStepMapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrientComposableStepMapper.class);
 
-    static void composableStepToVertex(final ComposableStep composableStep, OVertex step, ODatabaseSession dbSession) {
-        step.setProperty(STEP_CLASS_PROPERTY_NAME, composableStep.name, OType.STRING);
-        setOrRemoveProperty(step, STEP_CLASS_PROPERTY_USAGE, composableStep.usage, OType.STRING);
-        setOrRemoveProperty(step, STEP_CLASS_PROPERTY_IMPLEMENTATION, composableStep.implementation, OType.STRING);
-        setOrRemoveProperty(step, STEP_CLASS_PROPERTY_TAGS, composableStep.tags, OType.EMBEDDEDLIST);
+    // SAVE
+    static void composableStepToVertex(final ComposableStep composableStep, OVertex stepVertex, ODatabaseSession dbSession) {
+        stepVertex.setProperty(STEP_CLASS_PROPERTY_NAME, composableStep.name, OType.STRING);
+        setOrRemoveProperty(stepVertex, STEP_CLASS_PROPERTY_USAGE, composableStep.usage, OType.STRING);
+        setOrRemoveProperty(stepVertex, STEP_CLASS_PROPERTY_IMPLEMENTATION, composableStep.implementation, OType.STRING);
+        setOrRemoveProperty(stepVertex, STEP_CLASS_PROPERTY_TAGS, composableStep.tags, OType.EMBEDDEDLIST);
 
         OElement strategy = dbSession.newElement();
         strategy.setProperty("name", composableStep.strategy.type, OType.STRING);
         strategy.setProperty("parameters", composableStep.strategy.parameters, OType.EMBEDDEDMAP);
 
-        setOrRemoveProperty(step, STEP_CLASS_PROPERTY_STRATEGY, strategy, OType.EMBEDDED);
-        step.setProperty(STEP_CLASS_PROPERTY_PARAMETERS, composableStep.builtInParameters, OType.EMBEDDEDMAP);
-        setComposableStepVertexDenotations(step, composableStep.steps, dbSession);
+        setOrRemoveProperty(stepVertex, STEP_CLASS_PROPERTY_STRATEGY, strategy, OType.EMBEDDED);
+        stepVertex.setProperty(STEP_CLASS_PROPERTY_PARAMETERS, composableStep.builtInParameters, OType.EMBEDDEDMAP);
+        setSubStepReferences(stepVertex, composableStep.steps, dbSession);
     }
 
-    static void setComposableStepVertexDenotations(OVertex vertex, List<ComposableStep> edgesToSave, ODatabaseSession dbSession) {
-        vertex.getEdges(ODirection.OUT, GE_STEP_CLASS).forEach(ORecord::delete);
-        IntStream.range(0, edgesToSave.size())
+    // SAVE
+    static void setSubStepReferences(OVertex stepVertex, List<ComposableStep> subSteps, ODatabaseSession dbSession) {
+        clearAllSubStepReferences(stepVertex);
+        IntStream.range(0, subSteps.size())
             .forEach(index -> {
-                final ComposableStep subComposableStepRef = edgesToSave.get(index);
-                OVertex dbSubComposableStep = (OVertex) load(subComposableStepRef.id, dbSession)
-                    .orElseThrow(() -> new IllegalArgumentException("Composable step with id [" + subComposableStepRef.id + "] does not exists"));
-                final Map<String, String> subComposableStepDataSet = vertexToDataSet(dbSubComposableStep, dbSession);
-                Map<String, String> parameters = cleanChildOverloadedParametersMap(subComposableStepRef.enclosedUsageParameters, subComposableStepDataSet);
+                final ComposableStep subStep = subSteps.get(index);
+                StepVertex subStepVertex = StepVertex.builder().withId(subStep.id).usingSession(dbSession).build();
+                final Map<String, String> subStepDataset = subStepVertex.getDataset();
+                Map<String, String> parameters = cleanChildOverloadedParametersMap(subStep.enclosedUsageParameters, subStepDataset);
 
-                OEdge childEdge = vertex.addEdge(dbSubComposableStep, GE_STEP_CLASS);
+                OEdge childEdge = stepVertex.addEdge(subStepVertex.vertex, GE_STEP_CLASS);
                 childEdge.setProperty(GE_STEP_CLASS_PROPERTY_RANK, index);
                 if (!parameters.isEmpty()) {
                     childEdge.setProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS, parameters, OType.EMBEDDEDMAP);
@@ -72,6 +73,11 @@ public class OrientComposableStepMapper {
             });
     }
 
+    private static void clearAllSubStepReferences(OVertex step) {
+        step.getEdges(ODirection.OUT, GE_STEP_CLASS).forEach(ORecord::delete);
+    }
+
+    // SAVE
     private static Map<String, String> cleanChildOverloadedParametersMap(final Map<String, String> instanceDataSet, final Map<String, String> dbDataSet) {
         return instanceDataSet.entrySet().stream()
             .filter(entry -> dbDataSet.containsKey(entry.getKey()))
@@ -79,6 +85,23 @@ public class OrientComposableStepMapper {
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
+    // SAVE
+    static void updateParentsDataSets(ComposableStep composableStep, OVertex step) {
+        step.getEdges(ODirection.IN, GE_STEP_CLASS)
+            .forEach(parentEdge -> {
+                Map<String, String> dataSet = parentEdge.getProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS);
+                if (dataSet != null) {
+                    Map<String, String> newDataSet = new HashMap<>();
+                    composableStep.builtInParameters.forEach((paramKey, paramValue) ->
+                        newDataSet.put(paramKey, dataSet.getOrDefault(paramKey, paramValue))
+                    );
+                    parentEdge.setProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS, newDataSet);
+                    parentEdge.save();
+                }
+            });
+    }
+
+    // GET
     public static ComposableStep.ComposableStepBuilder vertexToComposableStep(final OVertex vertex, final ODatabaseSession dbSession) {
         reloadIfDirty(vertex);
 
@@ -109,6 +132,7 @@ public class OrientComposableStepMapper {
         return builder;
     }
 
+    // GET
     static List<ComposableStep> buildComposableStepsChildren(OVertex vertex, ODatabaseSession dbSession) {
         return StreamSupport
             .stream(vertex.getEdges(ODirection.OUT, GE_STEP_CLASS).spliterator(), false)
@@ -127,34 +151,11 @@ public class OrientComposableStepMapper {
             .collect(Collectors.toList());
     }
 
+    // GET
     private static void overwriteDataSetWithEdgeParameters(OEdge childEdge, ComposableStep.ComposableStepBuilder builder) {
         Optional.<Map<String, String>>ofNullable(
             childEdge.getProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS)
         ).ifPresent(builder::addEnclosedUsageParameters);
     }
 
-    private static Map<String, String> vertexToDataSet(final OVertex vertex, final ODatabaseSession dbSession) {
-        reloadIfDirty(vertex);
-        Map<String, String> dataSet = mergeComposableStepsChildrenDatasets(vertex, dbSession);
-        Map<String, String> parameters = vertex.getProperty(STEP_CLASS_PROPERTY_PARAMETERS);
-        ofNullable(parameters)
-            .ifPresent(dataSet::putAll);
-        return dataSet;
-    }
-
-    private static Map<String, String> mergeComposableStepsChildrenDatasets(OVertex vertex, ODatabaseSession dbSession) {
-        return StreamSupport
-            .stream(vertex.getEdges(ODirection.OUT, GE_STEP_CLASS).spliterator(), false)
-            .map(childEdge -> {
-                Map<String, String> dataSet = vertexToDataSet(childEdge.getTo(), dbSession);
-                Optional.<Map<String, String>>ofNullable(
-                    childEdge.getProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS)
-                ).ifPresent(dataSet::putAll);
-                return dataSet;
-            })
-            .reduce(new HashMap<>(), (m1, m2) -> {
-                m1.putAll(m2);
-                return m1;
-            });
-    }
 }
