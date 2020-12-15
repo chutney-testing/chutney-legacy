@@ -10,6 +10,8 @@ import static java.util.Optional.ofNullable;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStepNotFoundException;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.record.ODirection;
+import com.orientechnologies.orient.core.record.OEdge;
+import com.orientechnologies.orient.core.record.ORecord;
 import com.orientechnologies.orient.core.record.OVertex;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,6 +55,14 @@ public class StepVertex {
 
     public static StepVertexBuilder builder() {
         return new StepVertexBuilder();
+    }
+
+    public void removeAllSubStepReferences() {
+        vertex.getEdges(ODirection.OUT, GE_STEP_CLASS).forEach(ORecord::delete);
+    }
+
+    public OEdge addSubStep(StepVertex subStep) {
+        return this.vertex.addEdge(subStep.vertex, GE_STEP_CLASS);
     }
 
     public static class StepVertexBuilder {
