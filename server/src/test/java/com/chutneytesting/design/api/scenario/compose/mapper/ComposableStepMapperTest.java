@@ -65,10 +65,12 @@ public class ComposableStepMapperTest {
             .withSteps(
                 Arrays.asList(
                     ComposableStep.builder()
+                        .withId("#1:2")
                         .withName("a functional sub step with implementation")
                         .withImplementation(java.util.Optional.of(TECHNICAL_CONTENT))
                         .build(),
                     ComposableStep.builder()
+                        .withId("#1:3")
                         .withName("a functional sub step with sub step with implementation")
                         .withSteps(
                             Collections.singletonList(
@@ -102,6 +104,7 @@ public class ComposableStepMapperTest {
             .withSteps(
                 Arrays.asList(
                     ComposableStep.builder()
+                        .withId("#1:2")
                         .withName(FSTEP_NAME)
                         .withSteps(
                             Collections.singletonList(
@@ -112,6 +115,7 @@ public class ComposableStepMapperTest {
                         )
                         .build(),
                     ComposableStep.builder()
+                        .withId("#1:3")
                         .withName(ANOTHER_FSTEP_NAME)
                         .build()
                 )

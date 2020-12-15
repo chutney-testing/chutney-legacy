@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.chutneytesting.design.domain.scenario.compose.AlreadyExistingComposableStepException;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
-import com.chutneytesting.design.domain.scenario.compose.ComposableStepCyclicDependencyException;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStepRepository;
 import com.chutneytesting.design.domain.scenario.compose.ParentStepId;
 import com.chutneytesting.design.domain.scenario.compose.StepUsage;
@@ -30,9 +29,8 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import org.apache.groovy.util.Maps;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -251,38 +249,14 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
     }
 
     @Test
-    public void should_not_save_func_step_when_cyclic_dependency_found() {
-        // Given
-        ComposableStep fStep = saveAndReload(buildComposableStep("that"));
-        ComposableStep fStepToUdpate = ComposableStep.builder().from(fStep).withSteps(Collections.singletonList(fStep)).build();
-
-        // When
-        try {
-            sut.save(fStepToUdpate);
-        } catch (Exception e) {
-            // Then
-            assertThat(e).isInstanceOf(ComposableStepCyclicDependencyException.class);
-            assertThat(e.getMessage()).contains(fStep.name);
-            return;
-        }
-        Assertions.fail("Should throw ComposableStepCyclicDependencyException !!");
-    }
-
-    @Test
     public void should_find_func_step_parents_when_asked_for() {
         // Given
-        ComposableStep fStep_111 = saveAndReload(
-            buildComposableStep("that 1"));
-        ComposableStep fStep_112 = saveAndReload(
-            buildComposableStep("that 2"));
-        ComposableStep fStep_11 = saveAndReload(
-            buildComposableStep("that", fStep_111, fStep_112));
-        ComposableStep fStep_12 = saveAndReload(
-            buildComposableStep("inner that", fStep_11));
-        ComposableStep fStepRoot_1 = saveAndReload(
-            buildComposableStep("a thing", fStep_11, fStep_12, fStep_11));
-        ComposableStep fStep_21 = saveAndReload(
-            buildComposableStep("this", fStep_11));
+        ComposableStep fStep_111   = saveAndReload(buildComposableStep("that 1"));
+        ComposableStep fStep_112   = saveAndReload(buildComposableStep("that 2"));
+        ComposableStep fStep_11    = saveAndReload(buildComposableStep("that", fStep_111, fStep_112));
+        ComposableStep fStep_12    = saveAndReload(buildComposableStep("inner that", fStep_11));
+        ComposableStep fStepRoot_1 = saveAndReload(buildComposableStep("a thing", fStep_11, fStep_12, fStep_11));
+        ComposableStep fStep_21    = saveAndReload(buildComposableStep("this", fStep_11));
 
         // When
         List<ParentStepId> parentsId = sut.findParents(fStep_11.id);

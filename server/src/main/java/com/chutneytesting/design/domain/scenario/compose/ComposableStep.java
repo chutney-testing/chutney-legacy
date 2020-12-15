@@ -8,6 +8,7 @@ import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,28 @@ public class ComposableStep {
         this.tags = tags;
     }
 
+    public boolean hasCyclicDependencies() {
+        return checkCyclicDependency(this, new ArrayList<>());
+    }
+
+    private boolean checkCyclicDependency(ComposableStep composableStep, List<String> parentsAcc) {
+        if (composableStep.steps.isEmpty()) {
+            return false;
+        }
+
+        parentsAcc.add(composableStep.id);
+        List<String> childrenIds = composableStep.steps.stream()
+            .map(cs -> cs.id)
+            .collect(Collectors.toList());
+
+        if (!Collections.disjoint(childrenIds, parentsAcc)) {
+            return true;
+        }
+
+        return composableStep.steps.stream()
+            .anyMatch(cs -> checkCyclicDependency(cs, new ArrayList<>(parentsAcc)));
+    }
+
     // TODO - refactor dataset
     public Map<String, String> dataSetGlobalParameters() {
         return enclosedUsageParameters.entrySet().stream()
@@ -67,7 +90,7 @@ public class ComposableStep {
         }
 
         public ComposableStep build() {
-            return new ComposableStep(
+            ComposableStep composableStep = new ComposableStep(
                 ofNullable(id).orElse(""),
                 ofNullable(name).orElse(""),
                 ofNullable(steps).orElse(emptyList()),
@@ -78,6 +101,12 @@ public class ComposableStep {
                 unmodifiableMap(ofNullable(enclosedUsageParameters).orElse(emptyMap())),
                 unmodifiableList(ofNullable(tags).orElse(emptyList()))
             );
+
+            if (composableStep.hasCyclicDependencies()) {
+                throw new ComposableStepCyclicDependencyException(composableStep.id, composableStep.name);
+            }
+
+            return composableStep;
         }
 
         public ComposableStepBuilder withId(String id) {
