@@ -21,7 +21,7 @@ public class ExecutableComposedStep {
 
     public final String name;
     public final List<ExecutableComposedStep> steps;
-    public final Map<String, String> parameters;
+    public final Map<String, String> parameters; // TODO - maybe we dont need it here, everything should be calculated into ONE map for execution
     public final Optional<StepImplementation> stepImplementation;
     public final Strategy strategy;
     public final Map<String, String> dataset;
