@@ -1,7 +1,6 @@
 package com.chutneytesting.design.infra.storage.scenario.compose;
 
 import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.composableStepToVertex;
-import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.updateParentsDataSets;
 import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.vertexToComposableStep;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.GE_STEP_CLASS;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS;
@@ -187,7 +186,6 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
         OVertex oVertex = (OVertex) stepRecord.orElse(dbSession.newVertex(STEP_CLASS));
 
         StepVertex stepVertex = composableStepToVertex(composableStep, oVertex, dbSession);
-        updateParentsDataSets(composableStep, oVertex);
         return stepVertex.save();
     }
 
