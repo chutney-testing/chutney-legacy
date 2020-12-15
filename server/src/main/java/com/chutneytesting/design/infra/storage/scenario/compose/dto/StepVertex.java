@@ -52,7 +52,7 @@ public class StepVertex {
 
     private Map<String, String> mergeComposableStepsChildrenDatasets() {
         return StreamSupport
-            .stream(vertex.getEdges(ODirection.OUT, GE_STEP_CLASS).spliterator(), false)
+            .stream(getChildren().spliterator(), false)
             .map(childEdge -> {
                 StepVertex subStepVertex = StepVertex.builder()
                     .from(childEdge.getTo())
@@ -70,7 +70,7 @@ public class StepVertex {
     }
 
     public void removeAllSubStepReferences() {
-        vertex.getEdges(ODirection.OUT, GE_STEP_CLASS).forEach(ORecord::delete);
+        this.getChildren().forEach(ORecord::delete);
     }
 
     public OEdge addSubStep(StepVertex subStep) {
@@ -112,6 +112,30 @@ public class StepVertex {
         return new StepVertexBuilder();
     }
 
+    public Iterable<OEdge> getParents() {
+        return vertex.getEdges(ODirection.IN, GE_STEP_CLASS);
+    }
+
+    public Iterable<OEdge> getChildren() {
+        return vertex.getEdges(ODirection.OUT, GE_STEP_CLASS);
+    }
+
+    // SAVE
+    public void updateParentsDataSets(Map<String, String> builtInParameters) {
+       this.getParents()
+            .forEach(parentEdge -> {
+                Map<String, String> dataSet = parentEdge.getProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS);
+                if (dataSet != null) {
+                    Map<String, String> newDataSet = new HashMap<>();
+                    builtInParameters.forEach((paramKey, paramValue) ->
+                        newDataSet.put(paramKey, dataSet.getOrDefault(paramKey, paramValue))
+                    );
+                    parentEdge.setProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS, newDataSet);
+                    parentEdge.save();
+                }
+            });
+    }
+
     public static class StepVertexBuilder {
 
         String id;
@@ -150,6 +174,7 @@ public class StepVertex {
 
             StepVertex stepVertex = new StepVertex(vertex);
             ofNullable(steps).ifPresent(s -> stepVertex.setSubStepReferences(s, dbSession));
+            ofNullable(builtInParameters).ifPresent( p -> stepVertex.updateParentsDataSets(builtInParameters));
 
             return stepVertex;
         }

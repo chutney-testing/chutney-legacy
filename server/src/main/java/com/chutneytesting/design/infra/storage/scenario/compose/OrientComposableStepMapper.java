@@ -20,7 +20,6 @@ import com.orientechnologies.orient.core.record.ODirection;
 import com.orientechnologies.orient.core.record.OEdge;
 import com.orientechnologies.orient.core.record.OElement;
 import com.orientechnologies.orient.core.record.OVertex;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -47,22 +46,6 @@ public class OrientComposableStepMapper {
             .withEnclosedUsageParameters(composableStep.enclosedUsageParameters)
             .withSteps(composableStep.steps)
             .build();
-    }
-
-    // SAVE
-    static void updateParentsDataSets(ComposableStep composableStep, OVertex step) {
-        step.getEdges(ODirection.IN, GE_STEP_CLASS)
-            .forEach(parentEdge -> {
-                Map<String, String> dataSet = parentEdge.getProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS);
-                if (dataSet != null) {
-                    Map<String, String> newDataSet = new HashMap<>();
-                    composableStep.builtInParameters.forEach((paramKey, paramValue) ->
-                        newDataSet.put(paramKey, dataSet.getOrDefault(paramKey, paramValue))
-                    );
-                    parentEdge.setProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS, newDataSet);
-                    parentEdge.save();
-                }
-            });
     }
 
     // GET
