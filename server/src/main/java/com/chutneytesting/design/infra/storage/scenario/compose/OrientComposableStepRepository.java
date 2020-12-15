@@ -4,7 +4,6 @@ import static com.chutneytesting.design.infra.storage.scenario.compose.OrientCom
 import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.updateParentsDataSets;
 import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.vertexToComposableStep;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.GE_STEP_CLASS;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.GE_STEP_CLASS_PROPERTY_PARAMETERS;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_NAME;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_USAGE;
@@ -40,9 +39,7 @@ import com.orientechnologies.orient.core.sql.executor.OResult;
 import com.orientechnologies.orient.core.sql.executor.OResultSet;
 import com.orientechnologies.orient.core.storage.ORecordDuplicatedException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
@@ -71,7 +68,7 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
             dbSession = componentDBPool.acquire();
             dbSession.begin();
             OVertex savedFStep = save(composableStep, dbSession);
-            checkComposableStepCyclicDependency(savedFStep);
+            checkComposableStepCyclicDependency(savedFStep); // TODO - should be done inside dto or domain
             dbSession.commit();
             LOGGER.debug("Saved component : " + savedFStep.toString());
             return savedFStep.getIdentity().toString(null).toString();
