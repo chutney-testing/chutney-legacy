@@ -142,7 +142,7 @@ public class StepControllerTest {
             .andExpect(status().isNotFound());
 
         // Then
-        assertThat(message[0]).isEqualToIgnoringCase("The composable step id [" + recordId + "] could not be found");
+        assertThat(message[0]).isEqualToIgnoringCase("Composable step id [" + recordId + "] could not be found");
     }
 
     @Test
