@@ -7,6 +7,7 @@ import static com.chutneytesting.design.infra.storage.scenario.compose.orient.Or
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.reloadIfDirty;
 import static java.util.Optional.ofNullable;
 
+import com.chutneytesting.design.domain.scenario.compose.ComposableStepNotFoundException;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.record.ODirection;
 import com.orientechnologies.orient.core.record.OVertex;
@@ -35,7 +36,9 @@ public class StepVertex {
         return StreamSupport
             .stream(vertex.getEdges(ODirection.OUT, GE_STEP_CLASS).spliterator(), false)
             .map(childEdge -> {
-                StepVertex subStepVertex = StepVertex.builder().from(childEdge.getTo());
+                StepVertex subStepVertex = StepVertex.builder()
+                    .from(childEdge.getTo())
+                    .build();
                 Map<String, String> dataSet = subStepVertex.getDataset();
                 Optional.<Map<String, String>>ofNullable(
                     childEdge.getProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS)
@@ -53,19 +56,25 @@ public class StepVertex {
     }
 
     public static class StepVertexBuilder {
+
         String id;
         ODatabaseSession dbSession;
+
+        OVertex vertex;
 
         private StepVertexBuilder() {};
 
         public StepVertex build() {
-            return new StepVertex(
-                (OVertex) load(id, dbSession).orElseThrow(() -> new IllegalArgumentException("Component with id [" +id + "] does not exists"))
-            );
+            if (this.vertex == null) {
+                this.vertex = (OVertex) load(id, dbSession).orElseThrow(() -> new ComposableStepNotFoundException(id));
+            }
+
+            return new StepVertex(vertex);
         }
 
-        public StepVertex from(OVertex vertex) {
-            return new StepVertex(vertex);
+        public StepVertexBuilder from(OVertex vertex) {
+            this.vertex = vertex;
+            return this;
         }
 
         public StepVertexBuilder withId(String id) {
