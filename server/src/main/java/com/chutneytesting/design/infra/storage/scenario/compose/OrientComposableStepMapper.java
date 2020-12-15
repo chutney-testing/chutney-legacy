@@ -2,7 +2,6 @@ package com.chutneytesting.design.infra.storage.scenario.compose;
 
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.GE_STEP_CLASS;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.GE_STEP_CLASS_PROPERTY_PARAMETERS;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.GE_STEP_CLASS_PROPERTY_RANK;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_IMPLEMENTATION;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_NAME;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_PARAMETERS;
@@ -10,7 +9,6 @@ import static com.chutneytesting.design.infra.storage.scenario.compose.orient.Or
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_TAGS;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_USAGE;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.reloadIfDirty;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.setOrRemoveProperty;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
@@ -18,7 +16,6 @@ import com.chutneytesting.design.domain.scenario.compose.StepUsage;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.design.infra.storage.scenario.compose.dto.StepVertex;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
-import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.ODirection;
 import com.orientechnologies.orient.core.record.OEdge;
 import com.orientechnologies.orient.core.record.OElement;
@@ -28,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +35,7 @@ public class OrientComposableStepMapper {
 
     // SAVE
     static StepVertex composableStepToVertex(final ComposableStep composableStep, OVertex oVertex, ODatabaseSession dbSession) {
-        StepVertex stepVertex = StepVertex.builder()
+        return StepVertex.builder()
             .from(oVertex)
             .usingSession(dbSession)
             .withName(composableStep.name)
@@ -51,37 +47,6 @@ public class OrientComposableStepMapper {
             .withEnclosedUsageParameters(composableStep.enclosedUsageParameters)
             .withSteps(composableStep.steps)
             .build();
-
-        setSubStepReferences(stepVertex, composableStep.steps, dbSession);
-
-        return stepVertex;
-    }
-
-    // SAVE
-    static void setSubStepReferences(StepVertex stepVertex, List<ComposableStep> subSteps, ODatabaseSession dbSession) {
-        stepVertex.removeAllSubStepReferences();
-        IntStream.range(0, subSteps.size())
-            .forEach(index -> {
-                final ComposableStep subStep = subSteps.get(index);
-                StepVertex subStepVertex = StepVertex.builder().withId(subStep.id).usingSession(dbSession).build();
-                final Map<String, String> subStepDataset = subStepVertex.getDataset();
-                Map<String, String> parameters = cleanChildOverloadedParametersMap(subStep.enclosedUsageParameters, subStepDataset);
-
-                OEdge childEdge = stepVertex.addSubStep(subStepVertex);
-                childEdge.setProperty(GE_STEP_CLASS_PROPERTY_RANK, index);
-                if (!parameters.isEmpty()) {
-                    childEdge.setProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS, parameters, OType.EMBEDDEDMAP);
-                }
-                childEdge.save();
-            });
-    }
-
-    // SAVE
-    private static Map<String, String> cleanChildOverloadedParametersMap(final Map<String, String> instanceDataSet, final Map<String, String> dbDataSet) {
-        return instanceDataSet.entrySet().stream()
-            .filter(entry -> dbDataSet.containsKey(entry.getKey()))
-            .filter(entry -> !dbDataSet.get(entry.getKey()).equals(entry.getValue()))
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     // SAVE
