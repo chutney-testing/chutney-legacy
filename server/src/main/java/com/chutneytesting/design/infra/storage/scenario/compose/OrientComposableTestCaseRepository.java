@@ -13,6 +13,7 @@ import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository;
+import com.chutneytesting.design.infra.storage.scenario.compose.dto.TestCaseVertex;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCaseRepository;
@@ -125,7 +126,7 @@ public class OrientComposableTestCaseRepository implements ComposableTestCaseRep
             throw new ScenarioNotFoundException(composableTestCase.id, composableTestCase.metadata.version());
         }
         OVertex testCase = (OVertex) stepRecord.orElseGet(() -> dbSession.newVertex(TESTCASE_CLASS));
-        testCaseToVertex(composableTestCase, testCase, dbSession);
-        return testCase.save();
+        TestCaseVertex testCaseVertex = testCaseToVertex(composableTestCase, testCase, dbSession);
+        return testCaseVertex.save();
     }
 }
