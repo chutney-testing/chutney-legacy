@@ -20,6 +20,7 @@ import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
+import com.chutneytesting.design.infra.storage.scenario.compose.dto.StepVertex;
 import com.chutneytesting.security.domain.User;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.metadata.schema.OType;
@@ -32,6 +33,8 @@ class OrientComposableTestCaseMapper {
 
     // SAVE
     static void testCaseToVertex(final ComposableTestCase composableTestCase, OVertex dbTestCase, ODatabaseSession dbSession) {
+        StepVertex stepVertex = StepVertex.builder().from(dbTestCase).build();
+
         dbTestCase.setProperty(TESTCASE_CLASS_PROPERTY_TITLE, composableTestCase.metadata.title(), OType.STRING);
         setOrRemoveProperty(dbTestCase, TESTCASE_CLASS_PROPERTY_DESCRIPTION, composableTestCase.metadata.description(), OType.STRING);
         setOnlyOnceProperty(dbTestCase, TESTCASE_CLASS_PROPERTY_CREATIONDATE, Date.from(composableTestCase.metadata.creationDate()), OType.DATETIME);
@@ -40,7 +43,8 @@ class OrientComposableTestCaseMapper {
         setOrRemoveProperty(dbTestCase, TESTCASE_CLASS_PROPERTY_DATASET_ID, composableTestCase.metadata.datasetId().orElse(null), OType.STRING);
         dbTestCase.setProperty(TESTCASE_CLASS_PROPERTY_UPDATEDATE, Date.from(now()), OType.DATETIME);
         setOrRemoveProperty(dbTestCase, TESTCASE_CLASS_PROPERTY_AUTHOR, composableTestCase.metadata.author(), a -> !User.isAnonymous(a), OType.STRING);
-        setSubStepReferences(dbTestCase, composableTestCase.composableScenario.composableSteps, dbSession);
+
+        setSubStepReferences(stepVertex, composableTestCase.composableScenario.composableSteps, dbSession);
     }
 
     // GET
