@@ -22,7 +22,6 @@ import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.ODirection;
 import com.orientechnologies.orient.core.record.OEdge;
 import com.orientechnologies.orient.core.record.OElement;
-import com.orientechnologies.orient.core.record.ORecord;
 import com.orientechnologies.orient.core.record.OVertex;
 import java.util.HashMap;
 import java.util.List;
@@ -39,24 +38,28 @@ public class OrientComposableStepMapper {
     private static final Logger LOGGER = LoggerFactory.getLogger(OrientComposableStepMapper.class);
 
     // SAVE
-    static void composableStepToVertex(final ComposableStep composableStep, OVertex stepVertex, ODatabaseSession dbSession) {
-        stepVertex.setProperty(STEP_CLASS_PROPERTY_NAME, composableStep.name, OType.STRING);
-        setOrRemoveProperty(stepVertex, STEP_CLASS_PROPERTY_USAGE, composableStep.usage, OType.STRING);
-        setOrRemoveProperty(stepVertex, STEP_CLASS_PROPERTY_IMPLEMENTATION, composableStep.implementation, OType.STRING);
-        setOrRemoveProperty(stepVertex, STEP_CLASS_PROPERTY_TAGS, composableStep.tags, OType.EMBEDDEDLIST);
+    static StepVertex composableStepToVertex(final ComposableStep composableStep, OVertex oVertex, ODatabaseSession dbSession) {
+        StepVertex stepVertex = StepVertex.builder()
+            .from(oVertex)
+            .usingSession(dbSession)
+            .withName(composableStep.name)
+            .withUsage(composableStep.usage)
+            .withTags(composableStep.tags)
+            .withImplementation(composableStep.implementation)
+            .withStrategy(composableStep.strategy)
+            .withBuiltInParameters(composableStep.builtInParameters)
+            .withEnclosedUsageParameters(composableStep.enclosedUsageParameters)
+            .withSteps(composableStep.steps)
+            .build();
 
-        OElement strategy = dbSession.newElement();
-        strategy.setProperty("name", composableStep.strategy.type, OType.STRING);
-        strategy.setProperty("parameters", composableStep.strategy.parameters, OType.EMBEDDEDMAP);
-
-        setOrRemoveProperty(stepVertex, STEP_CLASS_PROPERTY_STRATEGY, strategy, OType.EMBEDDED);
-        stepVertex.setProperty(STEP_CLASS_PROPERTY_PARAMETERS, composableStep.builtInParameters, OType.EMBEDDEDMAP);
         setSubStepReferences(stepVertex, composableStep.steps, dbSession);
+
+        return stepVertex;
     }
 
     // SAVE
-    static void setSubStepReferences(OVertex stepVertex, List<ComposableStep> subSteps, ODatabaseSession dbSession) {
-        clearAllSubStepReferences(stepVertex);
+    static void setSubStepReferences(StepVertex stepVertex, List<ComposableStep> subSteps, ODatabaseSession dbSession) {
+        stepVertex.removeAllSubStepReferences();
         IntStream.range(0, subSteps.size())
             .forEach(index -> {
                 final ComposableStep subStep = subSteps.get(index);
@@ -64,17 +67,13 @@ public class OrientComposableStepMapper {
                 final Map<String, String> subStepDataset = subStepVertex.getDataset();
                 Map<String, String> parameters = cleanChildOverloadedParametersMap(subStep.enclosedUsageParameters, subStepDataset);
 
-                OEdge childEdge = stepVertex.addEdge(subStepVertex.vertex, GE_STEP_CLASS);
+                OEdge childEdge = stepVertex.addSubStep(subStepVertex);
                 childEdge.setProperty(GE_STEP_CLASS_PROPERTY_RANK, index);
                 if (!parameters.isEmpty()) {
                     childEdge.setProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS, parameters, OType.EMBEDDEDMAP);
                 }
                 childEdge.save();
             });
-    }
-
-    private static void clearAllSubStepReferences(OVertex step) {
-        step.getEdges(ODirection.OUT, GE_STEP_CLASS).forEach(ORecord::delete);
     }
 
     // SAVE

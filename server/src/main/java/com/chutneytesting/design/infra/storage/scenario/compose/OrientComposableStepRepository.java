@@ -19,6 +19,7 @@ import com.chutneytesting.design.domain.scenario.compose.ComposableStepCyclicDep
 import com.chutneytesting.design.domain.scenario.compose.ComposableStepNotFoundException;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStepRepository;
 import com.chutneytesting.design.domain.scenario.compose.ParentStepId;
+import com.chutneytesting.design.infra.storage.scenario.compose.dto.StepVertex;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
@@ -186,25 +187,11 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
 
     private OVertex save(ComposableStep composableStep, final ODatabaseSession dbSession) {
         Optional<OElement> stepRecord = load(composableStep.id, dbSession);
-        OVertex step = (OVertex) stepRecord.orElse(dbSession.newVertex(STEP_CLASS));
-        composableStepToVertex(composableStep, step, dbSession);
-        updateParentsDataSets(composableStep, step);
-        return step.save();
-    }
+        OVertex oVertex = (OVertex) stepRecord.orElse(dbSession.newVertex(STEP_CLASS));
 
-    private void updateParentsDataSets(ComposableStep composableStep, OVertex step) {
-        step.getEdges(ODirection.IN, GE_STEP_CLASS)
-            .forEach(parentEdge -> {
-                Map<String, String> dataSet = parentEdge.getProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS);
-                if (dataSet != null) {
-                    Map<String, String> newDataSet = new HashMap<>();
-                    composableStep.builtInParameters.forEach((paramKey, paramValue) ->
-                        newDataSet.put(paramKey, dataSet.getOrDefault(paramKey, paramValue))
-                    );
-                    parentEdge.setProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS, newDataSet);
-                    parentEdge.save();
-                }
-            });
+        StepVertex stepVertex = composableStepToVertex(composableStep, oVertex, dbSession);
+        updateParentsDataSets(composableStep, oVertex);
+        return stepVertex.save();
     }
 
     private void checkComposableStepCyclicDependency(OVertex savedFStep) {
