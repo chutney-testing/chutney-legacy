@@ -38,24 +38,27 @@ public class OrientComposableStepMapper {
     private static final Logger LOGGER = LoggerFactory.getLogger(OrientComposableStepMapper.class);
 
     // SAVE
-    static void composableStepToVertex(final ComposableStep composableStep, OVertex oVertex, ODatabaseSession dbSession) {
-        oVertex.setProperty(STEP_CLASS_PROPERTY_NAME, composableStep.name, OType.STRING);
-        setOrRemoveProperty(oVertex, STEP_CLASS_PROPERTY_USAGE, composableStep.usage, OType.STRING);
-        setOrRemoveProperty(oVertex, STEP_CLASS_PROPERTY_IMPLEMENTATION, composableStep.implementation, OType.STRING);
-        setOrRemoveProperty(oVertex, STEP_CLASS_PROPERTY_TAGS, composableStep.tags, OType.EMBEDDEDLIST);
+    static StepVertex composableStepToVertex(final ComposableStep composableStep, OVertex oVertex, ODatabaseSession dbSession) {
+        StepVertex stepVertex = StepVertex.builder()
+            .from(oVertex)
+            .usingSession(dbSession)
+            .withName(composableStep.name)
+            .withUsage(composableStep.usage)
+            .withTags(composableStep.tags)
+            .withImplementation(composableStep.implementation)
+            .withStrategy(composableStep.strategy)
+            .withBuiltInParameters(composableStep.builtInParameters)
+            .withEnclosedUsageParameters(composableStep.enclosedUsageParameters)
+            .withSteps(composableStep.steps)
+            .build();
 
-        OElement strategy = dbSession.newElement();
-        strategy.setProperty("name", composableStep.strategy.type, OType.STRING);
-        strategy.setProperty("parameters", composableStep.strategy.parameters, OType.EMBEDDEDMAP);
+        setSubStepReferences(stepVertex, composableStep.steps, dbSession);
 
-        setOrRemoveProperty(oVertex, STEP_CLASS_PROPERTY_STRATEGY, strategy, OType.EMBEDDED);
-        oVertex.setProperty(STEP_CLASS_PROPERTY_PARAMETERS, composableStep.builtInParameters, OType.EMBEDDEDMAP);
-        setSubStepReferences(oVertex, composableStep.steps, dbSession);
+        return stepVertex;
     }
 
     // SAVE
-    static void setSubStepReferences(OVertex oVertex, List<ComposableStep> subSteps, ODatabaseSession dbSession) {
-        StepVertex stepVertex = StepVertex.builder().from(oVertex).build();
+    static void setSubStepReferences(StepVertex stepVertex, List<ComposableStep> subSteps, ODatabaseSession dbSession) {
         stepVertex.removeAllSubStepReferences();
         IntStream.range(0, subSteps.size())
             .forEach(index -> {
