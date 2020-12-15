@@ -18,40 +18,40 @@ import org.springframework.stereotype.Component;
 public class RawImplementationMapper {
 
     private final ObjectMapper objectMapper;
-    private JsonNode implementation;
 
     public RawImplementationMapper(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
     public StepImplementation deserialize(String rawImplementation) {
+        JsonNode implementation;
+
         try {
-            this.implementation = objectMapper.readTree(rawImplementation);
+            implementation = objectMapper.readTree(rawImplementation);
         } catch (IOException e) {
             throw new ScenarioConversionException(e);
         }
 
         return new StepImplementation(
-            type(),
-            target(),
-            inputs(),
-            outputs()
+            type(implementation),
+            target(implementation),
+            inputs(implementation),
+            outputs(implementation)
         );
     }
 
-
-    private String type() {
+    private String type(JsonNode implementation) {
         if (implementation.hasNonNull("identifier")) {
             return implementation.get("identifier").textValue();
         }
         return null;
     }
 
-    private String target() {
+    private String target(JsonNode implementation) {
         return Optional.ofNullable(implementation.get("target")).orElse(TextNode.valueOf("")).textValue();
     }
 
-    private Map<String, Object> outputs() {
+    private Map<String, Object> outputs(JsonNode implementation) {
         Map<String, Object> outputs = new LinkedHashMap<>();
         if (implementation.hasNonNull("outputs")) {
             final JsonNode outputsNode = implementation.get("outputs");
@@ -63,7 +63,7 @@ public class RawImplementationMapper {
         return outputs;
     }
 
-    private Map<String, Object> inputs() {
+    private Map<String, Object> inputs(JsonNode implementation) {
         Map<String, Object> inputs = new LinkedHashMap<>();
         // Simple inputs
         if (implementation.hasNonNull("inputs")) {
