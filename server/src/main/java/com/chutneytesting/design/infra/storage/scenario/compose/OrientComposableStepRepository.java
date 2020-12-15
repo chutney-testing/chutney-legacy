@@ -38,6 +38,7 @@ import com.orientechnologies.orient.core.sql.executor.OResult;
 import com.orientechnologies.orient.core.sql.executor.OResultSet;
 import com.orientechnologies.orient.core.storage.ORecordDuplicatedException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -67,7 +68,7 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
             dbSession = componentDBPool.acquire();
             dbSession.begin();
             OVertex savedFStep = save(composableStep, dbSession);
-            checkComposableStepCyclicDependency(savedFStep); // TODO - should be done inside dto or domain
+            checkComposableStepCyclicDependency(savedFStep); // TODO - should be done in the domain
             dbSession.commit();
             LOGGER.debug("Saved component : " + savedFStep.toString());
             return savedFStep.getIdentity().toString(null).toString();
@@ -189,22 +190,26 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
         return stepVertex.save();
     }
 
+    // TODO - does not need to be done using orient, we have already all the tree and ids needed for checking dependencies !
     private void checkComposableStepCyclicDependency(OVertex savedFStep) {
         checkCyclicDependency(savedFStep, new ArrayList<>());
     }
 
     private void checkCyclicDependency(final OVertex savedFStep, List<ORecordId> parentsIds) {
         parentsIds.add((ORecordId) savedFStep.getIdentity());
+
         List<OVertex> children = new ArrayList<>();
         savedFStep.getEdges(ODirection.OUT, GE_STEP_CLASS).forEach(oEdge -> children.add(oEdge.getTo()));
+
         if (children.size() > 0) {
-            List<ORecordId> childrenIds = new ArrayList<>();
-            for (OElement child : children) {
-                childrenIds.add((ORecordId) child.getIdentity());
-            }
-            if (childrenIds.removeAll(parentsIds)) {
+            List<ORecordId> childrenIds = children.stream()
+                .map( o -> (ORecordId) o.getIdentity())
+                .collect(Collectors.toList());
+
+            if (!Collections.disjoint(childrenIds, parentsIds)) {
                 throw new ComposableStepCyclicDependencyException(savedFStep.getProperty(STEP_CLASS_PROPERTY_NAME));
             }
+
             children.forEach(oElement -> checkCyclicDependency(oElement, new ArrayList<>(parentsIds)));
         }
     }
