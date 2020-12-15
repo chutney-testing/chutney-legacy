@@ -2,7 +2,7 @@ package com.chutneytesting.design.infra.storage.scenario.compose;
 
 import static com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository.COMPOSABLE_TESTCASE_REPOSITORY_SOURCE;
 import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.buildComposableStepsChildren;
-import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.setComposableStepVertexDenotations;
+import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.setSubStepReferences;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_AUTHOR;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_CREATIONDATE;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_DATASET_ID;
@@ -30,6 +30,7 @@ import java.util.Map;
 
 class OrientComposableTestCaseMapper {
 
+    // SAVE
     static void testCaseToVertex(final ComposableTestCase composableTestCase, OVertex dbTestCase, ODatabaseSession dbSession) {
         dbTestCase.setProperty(TESTCASE_CLASS_PROPERTY_TITLE, composableTestCase.metadata.title(), OType.STRING);
         setOrRemoveProperty(dbTestCase, TESTCASE_CLASS_PROPERTY_DESCRIPTION, composableTestCase.metadata.description(), OType.STRING);
@@ -39,9 +40,10 @@ class OrientComposableTestCaseMapper {
         setOrRemoveProperty(dbTestCase, TESTCASE_CLASS_PROPERTY_DATASET_ID, composableTestCase.metadata.datasetId().orElse(null), OType.STRING);
         dbTestCase.setProperty(TESTCASE_CLASS_PROPERTY_UPDATEDATE, Date.from(now()), OType.DATETIME);
         setOrRemoveProperty(dbTestCase, TESTCASE_CLASS_PROPERTY_AUTHOR, composableTestCase.metadata.author(), a -> !User.isAnonymous(a), OType.STRING);
-        setComposableStepVertexDenotations(dbTestCase, composableTestCase.composableScenario.composableSteps, dbSession);
+        setSubStepReferences(dbTestCase, composableTestCase.composableScenario.composableSteps, dbSession);
     }
 
+    // GET
     static ComposableTestCase vertexToTestCase(final OVertex dbTestCase, ODatabaseSession dbSession) {
         TestCaseMetadata metadata = TestCaseMetadataImpl.builder()
             .withId(dbTestCase.getIdentity().toString())

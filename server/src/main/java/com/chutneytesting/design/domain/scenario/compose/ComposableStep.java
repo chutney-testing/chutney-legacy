@@ -25,7 +25,7 @@ public class ComposableStep {
     public final Optional<String> implementation;
     public final Optional<StepUsage> usage;
     public final Strategy strategy;
-    public final Map<String, String> enclosedUsageParameters;
+    public final Map<String, String> enclosedUsageParameters; // TODO - Maybe separate list with blank values
     public final List<String> tags;
 
     private ComposableStep(String id, String name, List<ComposableStep> steps, Map<String, String> builtInParameters, Optional<String> implementation, Optional<StepUsage> usage, Strategy strategy, Map<String, String> enclosedUsageParameters, List<String> tags) {
