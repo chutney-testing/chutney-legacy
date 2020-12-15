@@ -1,6 +1,7 @@
 package com.chutneytesting.design.infra.storage.scenario.compose;
 
 import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.composableStepToVertex;
+import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.updateParentsDataSets;
 import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.vertexToComposableStep;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.GE_STEP_CLASS;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.GE_STEP_CLASS_PROPERTY_PARAMETERS;
@@ -63,7 +64,7 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
 
     @Override
     public String save(final ComposableStep composableStep) {
-        LOGGER.debug("Step save " + composableStep.name);
+        LOGGER.debug("Saving component : " + composableStep.name);
         ODatabaseSession dbSession = null;
         try {
             dbSession = componentDBPool.acquire();
@@ -71,7 +72,7 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
             OVertex savedFStep = save(composableStep, dbSession);
             checkComposableStepCyclicDependency(savedFStep);
             dbSession.commit();
-            LOGGER.debug("Save step : " + savedFStep.toString());
+            LOGGER.debug("Saved component : " + savedFStep.toString());
             return savedFStep.getIdentity().toString(null).toString();
         } catch (ORecordDuplicatedException e) {
             rollback(dbSession);
@@ -110,7 +111,7 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
             dbSession.begin();
             deleteVertex(recordId, dbSession);
             dbSession.commit();
-            LOGGER.debug("Delete step : " + recordId);
+            LOGGER.debug("Removed component : " + recordId);
         } catch (Exception e) {
             rollback(dbSession);
             throw new RuntimeException(e);
