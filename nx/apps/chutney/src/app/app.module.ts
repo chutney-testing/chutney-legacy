@@ -42,7 +42,7 @@ const routes: Routes = [
     GraphQLModule,
     //RouterModule.forRoot(routes, { enableTracing: true } ),
     //RouterModule.forRoot(routes, { enableTracing: true } ),
-RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),
+    RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),
   ],
   providers: [],
   bootstrap: [AppComponent],

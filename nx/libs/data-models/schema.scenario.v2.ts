@@ -13,14 +13,15 @@ export const chutneySchemaV2 = {
           type: 'array',
           items: {
             $ref: '#/definitions/step',
-          }
+          },
         },
         implementation: {
           type: 'object',
           properties: {
             type: {
               type: 'string',
-              enum: ['selenium-scroll-to',
+              enum: [
+                'selenium-scroll-to',
                 'amqp-basic-publish',
                 'json-validation',
                 'selenium-remote-driver-init',
@@ -75,7 +76,8 @@ export const chutneySchemaV2 = {
                 'https-server-start',
                 'https-server-stop',
                 'amqp-delete-queue',
-                'groovy'],
+                'groovy',
+              ],
             },
             target: {
               type: 'string',
