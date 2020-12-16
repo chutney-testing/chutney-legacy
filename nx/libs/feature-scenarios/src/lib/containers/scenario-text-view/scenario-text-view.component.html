@@ -21,9 +21,9 @@
       </button>
     </mat-toolbar-row>
   </mat-toolbar>
-  <div fxFill style="padding-top: 15px;">
-    <div style="padding-left: 15px; min-height: 28px; max-height: 28px;">
-      <span style="color: #2e7d32;">Scenario:&nbsp;</span
+  <div fxFill style="padding-top: 15px">
+    <div style="padding-left: 15px; min-height: 28px; max-height: 28px">
+      <span style="color: #2e7d32">Scenario:&nbsp;</span
       >{{ scenario.description }}
     </div>
     <mat-tree
@@ -38,7 +38,7 @@
           <button mat-icon-button disabled></button>
           <span
             *ngIf="node.keyword"
-            style="color: #2e7d32; text-align: right; width: 45px;"
+            style="color: #2e7d32; text-align: right; width: 45px"
             >{{ node.keyword }}:&nbsp;</span
           >{{ node.description }}
         </li>
@@ -60,7 +60,7 @@
             </button>
             <span
               *ngIf="node.keyword"
-              style="color: #2e7d32; text-align: right; width: 45px;"
+              style="color: #2e7d32; text-align: right; width: 45px"
               >{{ node.keyword }}:&nbsp;</span
             >
             {{ node.description }}

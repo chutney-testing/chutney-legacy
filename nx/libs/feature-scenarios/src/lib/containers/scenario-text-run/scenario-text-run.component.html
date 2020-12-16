@@ -20,20 +20,20 @@
     </mat-toolbar-row>
   </mat-toolbar>
 
-  <div style="align-items: center; width: 100%; height: 500px; display: block;">
+  <div style="align-items: center; width: 100%; height: 500px; display: block">
     <as-split [direction]="(isHandset$ | async) ? 'vertical' : 'horizontal'">
-      <as-split-area [size]="40" style="padding-top: 15px;">
+      <as-split-area [size]="40" style="padding-top: 15px">
         <div
-          style="padding-left: 15px; min-height: 28px; max-height: 28px;"
+          style="padding-left: 15px; min-height: 28px; max-height: 28px"
           (click)="activeNode = report"
         >
           <chutney-execution-icon
             [testStatus]="report?.status"
           ></chutney-execution-icon>
-          <span style="color: #2e7d32; padding-left: 4px;">Scenario:&nbsp;</span
+          <span style="color: #2e7d32; padding-left: 4px">Scenario:&nbsp;</span
           >{{ scenario.description }}
           <span fxFlex></span>
-          <span class="mat-hint" style="padding-right: 10px;">{{
+          <span class="mat-hint" style="padding-right: 10px">{{
             report?.duration | duration
           }}</span>
         </div>
@@ -57,11 +57,11 @@
               ></chutney-execution-icon>
               <span
                 *ngIf="node.keyword"
-                style="color: #2e7d32; text-align: right; width: 45px;"
+                style="color: #2e7d32; text-align: right; width: 45px"
                 >{{ node.keyword }}:&nbsp;</span
               >{{ node.name }}
               <span fxFlex></span>
-              <span class="mat-hint" style="padding-right: 10px;">{{
+              <span class="mat-hint" style="padding-right: 10px">{{
                 node.duration | duration
               }}</span>
             </li>
@@ -91,12 +91,12 @@
                 ></chutney-execution-icon>
                 <span
                   *ngIf="node.keyword"
-                  style="color: #2e7d32; text-align: right; width: 45px;"
+                  style="color: #2e7d32; text-align: right; width: 45px"
                   >{{ node.keyword }}:&nbsp;</span
                 >
                 {{ node.name }}
                 <span fxFlex></span>
-                <span class="mat-hint" style="padding-right: 10px;">{{
+                <span class="mat-hint" style="padding-right: 10px">{{
                   node.duration | duration
                 }}</span>
               </div>
@@ -109,7 +109,7 @@
           </mat-nested-tree-node>
         </mat-tree>
       </as-split-area>
-      <as-split-area [size]="60" style="padding-top: 15px;">
+      <as-split-area [size]="60" style="padding-top: 15px">
         <div class="my-code-editor">
           <td-code-editor
             class="my-code-editor"
