@@ -14,6 +14,7 @@ import { AccordionToggleDirective } from './directives/accordion/accordion-toggl
 import { TranslationComponent } from './components/translation/translation.component';
 import { UserMenuComponent } from './components/user-menu/user-menu.component';
 import { AvatarModule } from 'ngx-avatar';
+import { SidemenuComponent } from './components/sidemenu/sidemenu.component';
 
 @NgModule({
   imports: [CommonModule, UiMaterialModule, RouterModule, AvatarModule],
@@ -29,6 +30,7 @@ import { AvatarModule } from 'ngx-avatar';
     AccordionToggleDirective,
     TranslationComponent,
     UserMenuComponent,
+    SidemenuComponent,
   ],
   exports: [MainLayoutComponent, AuthLayoutComponent],
 })
