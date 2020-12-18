@@ -330,17 +330,19 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
     }
 
     private Map<String, Object> indexInputs(Map<String, Object> inputs, AtomicInteger index, Map<String, Integer> iterationOutputs) {
-        return inputs.entrySet().parallelStream().collect(toMap(
-            e -> applyIndexedOutputsOnStringValue(e.getKey(), index, iterationOutputs, StringEscapeUtils::escapeJson),
-            e -> applyIndexedOutputs(e.getValue(), index, iterationOutputs, StringEscapeUtils::escapeJson)
-        ));
+        return inputs.entrySet().stream().collect(HashMap::new, (m, e) -> m.put(
+            applyIndexedOutputsOnStringValue(e.getKey(), index, iterationOutputs, StringEscapeUtils::escapeJson),
+            applyIndexedOutputs(e.getValue(), index, iterationOutputs, StringEscapeUtils::escapeJson)
+            ), HashMap::putAll
+        );
     }
 
     private Map<String, Object> indexOutputs(Map<String, Object> outputs, AtomicInteger index, Map<String, Integer> iterationOutputs) {
-        return outputs.entrySet().parallelStream().collect(toMap(
-            e -> e.getKey() + "_" + index,
-            e -> applyIndexedOutputs(e.getValue(), index, iterationOutputs, StringEscapeUtils::escapeJson)
-        ));
+        return outputs.entrySet().stream().collect(HashMap::new, (m, e) -> m.put(
+            e.getKey() + "_" + index,
+            applyIndexedOutputs(e.getValue(), index, iterationOutputs, StringEscapeUtils::escapeJson)
+            ), HashMap::putAll
+        );
     }
 
     private Object applyIndexedOutputs(Object value, AtomicInteger index, Map<String, Integer> indexedOutput, Function<String, String> escapeValueFunction) {
