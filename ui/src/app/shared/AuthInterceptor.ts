@@ -24,12 +24,14 @@ export class AuthInterceptor implements HttpInterceptor {
             (err: any) => {
                 if (err instanceof HttpErrorResponse) {
                     if (err.status === 401) {
-                        this.router.navigateByUrl('/login/invalid');
+                        const requestURL = this.router.url;
+                        this.router.navigateByUrl('/login/invalid' + (requestURL != null ? '?url=' + encodeURIComponent(requestURL) : ''));
                         return empty();
                     }
                 }
                 return Observable.throw(err);
             }
-        ));
+        )
+    );
   }
 }
