@@ -170,6 +170,8 @@ public class CampaignExecutionEngine {
             }
         } catch (InterruptedException e) {
             LOGGER.error("Error ", e);
+        } catch (Exception e) {
+            LOGGER.error("Unexpected error ", e);
         }
         return campaignExecutionReport;
     }

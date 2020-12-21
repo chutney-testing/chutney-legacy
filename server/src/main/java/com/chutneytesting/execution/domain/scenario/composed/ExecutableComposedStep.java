@@ -9,6 +9,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toMap;
 
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
+import com.google.common.collect.Maps;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,10 +69,12 @@ public class ExecutableComposedStep {
 
         private Map<String, String> buildDataset() {
             if (dataset.isEmpty()) {
-                return steps.stream()
+                Map<String,String> result = Maps.newHashMap();
+                steps.stream()
                     .map(ExecutableComposedStep::dataSetGlobalParameters)
                     .filter(m -> !m.isEmpty())
-                    .collect(toMap(s -> ofNullable(s.get("key")).orElse(""), s -> ofNullable(s.get("value")).orElse("")));
+                    .forEach(m -> result.putAll(m));
+                return result;
             }
 
             return dataset;
