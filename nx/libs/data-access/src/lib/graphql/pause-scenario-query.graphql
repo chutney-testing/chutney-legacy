@@ -1,0 +1,3 @@
+mutation pauseScenario($scenarioId: ID!, $executionId: ID!, $bodyBuilder: RestFunction!){
+   pauseScenario(scenarioId: $scenarioId, executionId: $executionId) @rest(type: "PauseScenarioExecution", path: "api/ui/scenario/executionasync/v1/{args.scenarioId}/execution/{args.executionId}/pause", method: "POST", bodyBuilder:$bodyBuilder)
+}
