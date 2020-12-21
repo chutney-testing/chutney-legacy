@@ -63,6 +63,9 @@ type Mutation {
   saveScenario(input: ScenarioInput!): Boolean
   deleteScenario(input: ID!): Boolean
   runScenario(scenarioId: ID!, dataset: [String] ) : ID!
+  pauseScenario(scenarioId: ID!, executionId: ID!): Boolean
+  resumeScenario(scenarioId: ID!, executionId: ID!): Boolean
+  stopScenario(scenarioId: ID!, executionId: ID!): Boolean
 }
 
 scalar RestFunction

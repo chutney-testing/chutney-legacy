@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -31,7 +30,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
@@ -101,24 +99,27 @@ public class ScenarioExecutionUiController {
     }
 
     @PostMapping(path = "/api/ui/scenario/executionasync/v1/{scenarioId}/execution/{executionId}/stop")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void stopExecution(@PathVariable("scenarioId") String scenarioId, @PathVariable("executionId") Long executionId) {
+    public Boolean stopExecution(@PathVariable("scenarioId") String scenarioId, @PathVariable("executionId") Long executionId) {
         LOGGER.debug("Stop for scenarioId='{}' and executionID='{}'", scenarioId, executionId);
         executionEngineAsync.stop(scenarioId, executionId);
+        // should return a value boolean or the id
+        return Boolean.TRUE;
     }
 
     @PostMapping(path = "/api/ui/scenario/executionasync/v1/{scenarioId}/execution/{executionId}/pause")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void pauseExecution(@PathVariable("scenarioId") String scenarioId, @PathVariable("executionId") Long executionId) {
+    public Boolean pauseExecution(@PathVariable("scenarioId") String scenarioId, @PathVariable("executionId") Long executionId) {
         LOGGER.debug("Pause for scenarioId='{}' and executionID='{}'", scenarioId, executionId);
         executionEngineAsync.pause(scenarioId, executionId);
+        // should return a value boolean or the id
+        return Boolean.TRUE;
     }
 
     @PostMapping(path = "/api/ui/scenario/executionasync/v1/{scenarioId}/execution/{executionId}/resume")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void resumeExecution(@PathVariable("scenarioId") String scenarioId, @PathVariable("executionId") Long executionId) {
+    public Boolean resumeExecution(@PathVariable("scenarioId") String scenarioId, @PathVariable("executionId") Long executionId) {
         LOGGER.debug("Resume for scenarioId='{}' and executionID='{}'", scenarioId, executionId);
         executionEngineAsync.resume(scenarioId, executionId);
+        // should return a value boolean or the id
+        return Boolean.TRUE;
     }
 
     private Flux<ServerSentEvent<ScenarioExecutionReport>> createScenarioExecutionSSEFlux(Observable<ScenarioExecutionReport> scenarioExecutionReports) {

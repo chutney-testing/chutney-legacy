@@ -10,12 +10,14 @@ import { editor } from 'monaco-editor';
 import { layoutOprionsVar } from '../../../../../ui-layout/src/lib/cache';
 import { chutneySchemaV2 } from '../../../../../data-models/schema.scenario.v2';
 import * as dotProp from 'dot-prop-immutable';
+import { chutneyAnimations } from '@chutney/utils';
 
 declare const monaco: any;
 @Component({
   selector: 'chutney-scenario-text-exit',
   templateUrl: './scenario-text-edit.component.html',
   styleUrls: ['./scenario-text-edit.component.scss'],
+  animations: [chutneyAnimations],
 })
 export class ScenarioTextEditComponent implements OnInit {
   @ViewChild(TdCodeEditorComponent, { static: false })

@@ -1,10 +1,13 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
+  PauseScenarioGQL,
+  ResumeScenarioGQL,
   RunScenarioGQL,
   RunScenarioHistoryGQL,
   Scenario,
   ScenarioGQL,
+  StopScenarioGQL,
 } from '@chutney/data-access';
 import { combineLatest, Observable } from 'rxjs';
 import { catchError, filter, map, pluck, switchMap, tap } from 'rxjs/operators';
@@ -16,7 +19,13 @@ import * as hjson from 'hjson';
 import * as jsyaml from 'js-yaml';
 import * as dotProp from 'dot-prop-immutable';
 import { layoutOprionsVar } from '../../../../../ui-layout/src/lib/cache';
+
+const formSerializer = () => {
+  return {};
+};
+
 declare const monaco: any;
+
 @Component({
   selector: 'chutney-scenario-text-run',
   templateUrl: './scenario-text-run.component.html',
@@ -46,6 +55,7 @@ export class ScenarioTextRunComponent implements OnInit {
     ),
     tap(() => this.changeDetectorRef.detectChanges())
   );
+  running: boolean;
 
   constructor(
     private router: Router,
@@ -54,6 +64,9 @@ export class ScenarioTextRunComponent implements OnInit {
     private changeDetectorRef: ChangeDetectorRef,
     private scenarioGQL: ScenarioGQL,
     private runScenarioGQL: RunScenarioGQL,
+    private stopScenarioGQL: StopScenarioGQL,
+    private pauseScenarioGQL: PauseScenarioGQL,
+    private resumeScenarioGQL: ResumeScenarioGQL,
     private runScenarioHistoryGQL: RunScenarioHistoryGQL
   ) {}
 
@@ -101,10 +114,17 @@ export class ScenarioTextRunComponent implements OnInit {
       )
       .subscribe(
         (data: any) => {
+          this.running = data.report.status === 'RUNNING';
           this.report = data.report;
           this.dataSource.data = data.report.steps;
         },
-        (error) => console.log(error)
+        (error) => {
+          console.log(error);
+          this.running = false;
+        },
+        () => {
+          this.running = false;
+        }
       );
   }
 
@@ -131,13 +151,17 @@ export class ScenarioTextRunComponent implements OnInit {
   options: any = layoutOprionsVar();
 
   runScenario() {
-    this.runScenarioGQL
-      .mutate({ scenarioId: this.scenarioId, dataset: [] })
-      .subscribe((result) =>
-        this.router.navigate([`../${result.data.runScenario}`], {
-          relativeTo: this.route,
-        })
-      );
+    if (this.report.status === 'PAUSED') {
+      this.resumeScenario();
+    } else {
+      this.runScenarioGQL
+        .mutate({ scenarioId: this.scenarioId, dataset: [] })
+        .subscribe((result) =>
+          this.router.navigate([`../${result.data.runScenario}`], {
+            relativeTo: this.route,
+          })
+        );
+    }
   }
 
   toYaml(obj: any) {
@@ -146,5 +170,57 @@ export class ScenarioTextRunComponent implements OnInit {
 
   monacoEditorConfigChanged(theme: string) {
     monaco.editor.setTheme(theme);
+  }
+
+  stopScenario() {
+    this.stopScenarioGQL
+      .mutate({
+        scenarioId: this.scenarioId,
+        executionId: this.executionId,
+        bodyBuilder: formSerializer,
+      })
+      .subscribe(
+        (data) => {
+          this.running = false;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+  }
+
+  resumeScenario() {
+    this.resumeScenarioGQL
+      .mutate({
+        scenarioId: this.scenarioId,
+        executionId: this.executionId,
+        bodyBuilder: formSerializer,
+      })
+      .subscribe(
+        (data) => {
+          this.running = true;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+  }
+
+  pauseScenario() {
+    this.pauseScenarioGQL
+      .mutate({
+        scenarioId: this.scenarioId,
+        executionId: this.executionId,
+        bodyBuilder: formSerializer,
+      })
+      // .valueChanges
+      .subscribe(
+        (data) => {
+          this.running = false;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 }
