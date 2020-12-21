@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.2.10](https://github.com/chutney-testing/chutney/tree/1.2.10)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.9...1.2.10)
+
+**Implemented enhancements:**
+
+- Schedule campagne on a specific day [\#266](https://github.com/chutney-testing/chutney/issues/266)
+
+**Fixed bugs:**
+
+- NPE in ComposedTestCaseIterationsPreProcessor.indexInputs [\#280](https://github.com/chutney-testing/chutney/issues/280)
+- Not redirect to page requested when disconnected [\#278](https://github.com/chutney-testing/chutney/issues/278)
+- Composed testcase : Cannot instantiate context-put task in some campaign executions [\#275](https://github.com/chutney-testing/chutney/issues/275)
+
+**Merged pull requests:**
+
+- bugfix\(server\): NPE in ComposedTestCaseIterationsPreProcessor [\#283](https://github.com/chutney-testing/chutney/pull/283) ([nbrouand](https://github.com/nbrouand))
+- fix\(ui\): Keep asked url when redirecting to login [\#282](https://github.com/chutney-testing/chutney/pull/282) ([boddissattva](https://github.com/boddissattva))
+- feat\(ui+server\): Schedule campaign on a specific time \#266 [\#277](https://github.com/chutney-testing/chutney/pull/277) ([nbrouand](https://github.com/nbrouand))
+- Raw implementation mapper thread safety [\#276](https://github.com/chutney-testing/chutney/pull/276) ([boddissattva](https://github.com/boddissattva))
+
 ## [1.2.9](https://github.com/chutney-testing/chutney/tree/1.2.9)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.8...1.2.9)
