@@ -1,0 +1,3 @@
+mutation stopScenario($scenarioId: ID!, $executionId: ID!, $bodyBuilder: RestFunction!){
+   stopScenario(scenarioId: $scenarioId, executionId: $executionId) @rest(type: "StopScenarioExecution", path: "api/ui/scenario/executionasync/v1/{args.scenarioId}/execution/{args.executionId}/stop", method: "POST", bodyBuilder: $bodyBuilder)
+}

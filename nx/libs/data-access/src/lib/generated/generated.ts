@@ -96,6 +96,9 @@ export type Mutation = {
   saveScenario?: Maybe<Scalars['Boolean']>;
   deleteScenario?: Maybe<Scalars['Boolean']>;
   runScenario: Scalars['ID'];
+  pauseScenario?: Maybe<Scalars['Boolean']>;
+  resumeScenario?: Maybe<Scalars['Boolean']>;
+  stopScenario?: Maybe<Scalars['Boolean']>;
 };
 
 export type MutationLoginArgs = {
@@ -113,6 +116,21 @@ export type MutationDeleteScenarioArgs = {
 export type MutationRunScenarioArgs = {
   scenarioId: Scalars['ID'];
   dataset?: Maybe<Array<Maybe<Scalars['String']>>>;
+};
+
+export type MutationPauseScenarioArgs = {
+  scenarioId: Scalars['ID'];
+  executionId: Scalars['ID'];
+};
+
+export type MutationResumeScenarioArgs = {
+  scenarioId: Scalars['ID'];
+  executionId: Scalars['ID'];
+};
+
+export type MutationStopScenarioArgs = {
+  scenarioId: Scalars['ID'];
+  executionId: Scalars['ID'];
 };
 
 export type DeleteScenarioMutationVariables = Exact<{
@@ -137,6 +155,28 @@ export type LoginMutation = { __typename?: 'Mutation' } & {
     >
   >;
 };
+
+export type PauseScenarioMutationVariables = Exact<{
+  scenarioId: Scalars['ID'];
+  executionId: Scalars['ID'];
+  bodyBuilder: Scalars['RestFunction'];
+}>;
+
+export type PauseScenarioMutation = { __typename?: 'Mutation' } & Pick<
+  Mutation,
+  'pauseScenario'
+>;
+
+export type ResumeScenarioMutationVariables = Exact<{
+  scenarioId: Scalars['ID'];
+  executionId: Scalars['ID'];
+  bodyBuilder: Scalars['RestFunction'];
+}>;
+
+export type ResumeScenarioMutation = { __typename?: 'Mutation' } & Pick<
+  Mutation,
+  'resumeScenario'
+>;
 
 export type RunScenarioHistoryQueryVariables = Exact<{
   scenarioId: Scalars['ID'];
@@ -234,6 +274,17 @@ export type ScenariosQuery = { __typename?: 'Query' } & {
   >;
 };
 
+export type StopScenarioMutationVariables = Exact<{
+  scenarioId: Scalars['ID'];
+  executionId: Scalars['ID'];
+  bodyBuilder: Scalars['RestFunction'];
+}>;
+
+export type StopScenarioMutation = { __typename?: 'Mutation' } & Pick<
+  Mutation,
+  'stopScenario'
+>;
+
 export type UserQueryVariables = Exact<{ [key: string]: never }>;
 
 export type UserQuery = { __typename?: 'Query' } & {
@@ -295,6 +346,64 @@ export class LoginGQL extends Apollo.Mutation<
   LoginMutationVariables
 > {
   document = LoginDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const PauseScenarioDocument = gql`
+  mutation pauseScenario(
+    $scenarioId: ID!
+    $executionId: ID!
+    $bodyBuilder: RestFunction!
+  ) {
+    pauseScenario(scenarioId: $scenarioId, executionId: $executionId)
+      @rest(
+        type: "PauseScenarioExecution"
+        path: "api/ui/scenario/executionasync/v1/{args.scenarioId}/execution/{args.executionId}/pause"
+        method: "POST"
+        bodyBuilder: $bodyBuilder
+      )
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PauseScenarioGQL extends Apollo.Mutation<
+  PauseScenarioMutation,
+  PauseScenarioMutationVariables
+> {
+  document = PauseScenarioDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const ResumeScenarioDocument = gql`
+  mutation resumeScenario(
+    $scenarioId: ID!
+    $executionId: ID!
+    $bodyBuilder: RestFunction!
+  ) {
+    resumeScenario(scenarioId: $scenarioId, executionId: $executionId)
+      @rest(
+        type: "ResumeScenarioExecution"
+        path: "api/ui/scenario/executionasync/v1/{args.scenarioId}/execution/{args.executionId}/resume"
+        method: "POST"
+        bodyBuilder: $bodyBuilder
+      )
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ResumeScenarioGQL extends Apollo.Mutation<
+  ResumeScenarioMutation,
+  ResumeScenarioMutationVariables
+> {
+  document = ResumeScenarioDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
@@ -459,6 +568,35 @@ export class ScenariosGQL extends Apollo.Query<
   ScenariosQueryVariables
 > {
   document = ScenariosDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const StopScenarioDocument = gql`
+  mutation stopScenario(
+    $scenarioId: ID!
+    $executionId: ID!
+    $bodyBuilder: RestFunction!
+  ) {
+    stopScenario(scenarioId: $scenarioId, executionId: $executionId)
+      @rest(
+        type: "StopScenarioExecution"
+        path: "api/ui/scenario/executionasync/v1/{args.scenarioId}/execution/{args.executionId}/stop"
+        method: "POST"
+        bodyBuilder: $bodyBuilder
+      )
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class StopScenarioGQL extends Apollo.Mutation<
+  StopScenarioMutation,
+  StopScenarioMutationVariables
+> {
+  document = StopScenarioDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
