@@ -227,7 +227,7 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
                     .from(composedStep)
                     .withImplementation(composedStep.stepImplementation.flatMap(si -> Optional.of(indexIterationIO(si, index, iterationOutputs))))
                     .withName(composedStep.name + " - dataset iteration " + index)
-                    .withDataset(updatedDatasetUsingCurrentValue(composedStep.dataset, csNovaluedEntries, csValuedEntriesWithRef, mv))
+                    .withDataset(applyIndexedOutputs(updatedDatasetUsingCurrentValue(composedStep.dataset, csNovaluedEntries, csValuedEntriesWithRef, mv), index, iterationOutputs, StringEscapeUtils::escapeJson))
                     .withSteps(composedStep.steps.stream()
                         .map(s ->
                             ExecutableComposedStep.builder()
