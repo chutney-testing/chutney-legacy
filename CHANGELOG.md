@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.2.11](https://github.com/chutney-testing/chutney/tree/1.2.11)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.10...1.2.11)
+
+**Merged pull requests:**
+
+- bugfix\(server\): indexed output combined to external multivalues dataset for step iteration [\#284](https://github.com/chutney-testing/chutney/pull/284) ([rbenyoussef](https://github.com/rbenyoussef))
+
+
 ## [1.2.10](https://github.com/chutney-testing/chutney/tree/1.2.10)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.9...1.2.10)
