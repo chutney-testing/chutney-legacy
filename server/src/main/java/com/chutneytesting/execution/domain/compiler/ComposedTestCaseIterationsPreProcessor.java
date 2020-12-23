@@ -27,7 +27,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.apache.commons.text.StringEscapeUtils;
 
 public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProcessor<ExecutableComposedTestCase> {
@@ -137,18 +136,18 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
 
     private Map<String, Integer> findUsageOfPreviousOutput(ExecutableComposedStep composedStep, Map<String, Integer> iterationOutputs) {
         Map<String, Integer> map = new HashMap<>();
-        composedStep.stepImplementation.ifPresent( si ->
+        composedStep.stepImplementation.ifPresent(si ->
             map.putAll(iterationOutputs.entrySet().stream()
                 .filter(previousOutput ->
                     si.inputs.entrySet().stream()
                         .anyMatch(input -> input.getKey().contains("#" + previousOutput.getKey())
                             || usePreviousIterationOutput(previousOutput.getKey(), input.getValue())
                         )
-                    ||
-                    si.outputs.entrySet().stream()
-                        .anyMatch(input -> input.getKey().contains("#" + previousOutput.getKey())
-                            || usePreviousIterationOutput(previousOutput.getKey(), input.getValue())
-                        )
+                        ||
+                        si.outputs.entrySet().stream()
+                            .anyMatch(input -> input.getKey().contains("#" + previousOutput.getKey())
+                                || usePreviousIterationOutput(previousOutput.getKey(), input.getValue())
+                            )
                 )
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue))
             )
@@ -214,6 +213,7 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
         }
 
         rememberIterationsCountForEachOutput(iterationOutputs, index);
+        updateIndexedOutputsUsingDatasetValues(iterationOutputs, composedStep.dataset);
         return iterations;
     }
 
@@ -256,46 +256,40 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
 
     private List<ExecutableComposedStep> generateIterationsForPreviousIterationOutputs(ExecutableComposedStep composedStep, Map<String, Integer> iterationOutputs, AtomicInteger index) {
         Map<String, Integer> previousOutputs = findUsageOfPreviousOutput(composedStep, iterationOutputs);
-        return previousOutputs.values().stream()
-            .map(integer -> {
-                List<ExecutableComposedStep> tmp = new ArrayList<>();
-                for (int i = 0; i < Optional.ofNullable(integer).orElse(0); i++) {
-                    index.getAndIncrement();
-                    tmp.add(
-                        ExecutableComposedStep.builder()
-                            .from(composedStep)
-                            .withImplementation(composedStep.stepImplementation.flatMap(si -> Optional.of(indexIterationIO(si, index, iterationOutputs))))
-                            .withName(composedStep.name + " - dataset iteration " + index)
-                            .withDataset(composedStep.dataset)
-                            .build()
-                    );
-                }
-                return tmp;
-            })
-            .flatMap(Collection::stream)
-            .collect(toList());
+        int iterationsCount = previousOutputs.values().stream().findFirst().orElse(0);
+
+        List<ExecutableComposedStep> generatedIterations = new ArrayList<>();
+        for (int i = 0; i < iterationsCount; i++) {
+            index.getAndIncrement();
+            generatedIterations.add(
+                ExecutableComposedStep.builder()
+                    .from(composedStep)
+                    .withImplementation(composedStep.stepImplementation.flatMap(si -> Optional.of(indexIterationIO(si, index, iterationOutputs))))
+                    .withName(composedStep.name + " - dataset iteration " + index)
+                    .withDataset(composedStep.dataset)
+                    .build()
+            );
+        }
+        return generatedIterations;
     }
 
     private List<ExecutableComposedStep> generateIterationsForPreviousIterationOutputsInDataset(ExecutableComposedStep composedStep, Map<String, Integer> iterationOutputs, AtomicInteger index) {
         Map<String, Integer> previousOutputs = findUsageOfPreviousOutputInDataset(composedStep, iterationOutputs);
-        return previousOutputs.values().stream()
-            .map(integer -> {
-                List<ExecutableComposedStep> tmp = new ArrayList<>();
-                for (int i = 0; i < Optional.ofNullable(integer).orElse(0); i++) {
-                    index.getAndIncrement();
-                    tmp.add(
-                        ExecutableComposedStep.builder()
-                            .from(composedStep)
-                            .withImplementation(composedStep.stepImplementation.flatMap(si -> Optional.of(indexIterationIO(si, index, iterationOutputs))))
-                            .withName(composedStep.name + " - dataset iteration " + index)
-                            .withDataset(applyIndexedOutputs(composedStep.dataset, index, iterationOutputs, StringEscapeUtils::escapeJson))
-                            .build()
-                    );
-                }
-                return tmp;
-            })
-            .flatMap(Collection::stream)
-            .collect(Collectors.toList());
+        int iterationsCount = previousOutputs.values().stream().findFirst().orElse(0);
+
+        List<ExecutableComposedStep> generatedIterations = new ArrayList<>();
+        for (int i = 0; i < iterationsCount; i++) {
+            index.getAndIncrement();
+            generatedIterations.add(
+                ExecutableComposedStep.builder()
+                    .from(composedStep)
+                    .withImplementation(composedStep.stepImplementation.flatMap(si -> Optional.of(indexIterationIO(si, index, iterationOutputs))))
+                    .withName(composedStep.name + " - dataset iteration " + index)
+                    .withDataset(applyIndexedOutputs(composedStep.dataset, index, iterationOutputs, StringEscapeUtils::escapeJson))
+                    .build()
+            );
+        }
+        return generatedIterations;
     }
 
     private Map<String, String> updatedDatasetUsingCurrentValue(Map<String, String> dataset, Set<String> csNovaluedEntries, Map<String, Set<String>> csValuedEntriesWithRef, Map<String, String> mv) {
@@ -327,6 +321,16 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
 
     private void rememberIterationsCountForEachOutput(Map<String, Integer> iterationOutputs, AtomicInteger index) {
         iterationOutputs.replaceAll((k, v) -> v = index.get());
+    }
+
+    private void updateIndexedOutputsUsingDatasetValues(Map<String, Integer> iterationOutputs, Map<String, String> dataset) {
+        dataset.entrySet().stream()
+            .filter(entry -> iterationOutputs.containsKey("**" + entry.getKey() + "**"))
+            .forEach(entry -> {
+                Integer iterationsCount = iterationOutputs.get("**" + entry.getKey() + "**");
+                iterationOutputs.remove("**" + entry.getKey() + "**");
+                iterationOutputs.put(dataset.get(entry.getKey()), iterationsCount);
+            });
     }
 
     private Map<String, Object> indexInputs(Map<String, Object> inputs, AtomicInteger index, Map<String, Integer> iterationOutputs) {
