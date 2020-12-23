@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.12](https://github.com/chutney-testing/chutney/tree/1.2.12)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.11...1.2.12)
+
+**Merged pull requests:**
+
+- bugfix\(server\): wrong generated iteration [\#285](https://github.com/chutney-testing/chutney/pull/285) ([rbenyoussef](https://github.com/rbenyoussef))
+
 ## [1.2.11](https://github.com/chutney-testing/chutney/tree/1.2.11)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.10...1.2.11)
