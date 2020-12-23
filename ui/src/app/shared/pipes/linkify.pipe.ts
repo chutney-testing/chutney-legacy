@@ -22,8 +22,14 @@ export class LinkifyPipe implements PipeTransform {
     }
 
     private slice(value: string, linkifiers: Array<Linkifier>, counter: number): string[] {
+        if (value == null || value === '') {
+            // @ts-ignore
+            return '';
+        }
+
         if (linkifiers[counter] == null) {
-            return [value];
+            // @ts-ignore
+            return value;
         }
 
         let result;
@@ -33,20 +39,24 @@ export class LinkifyPipe implements PipeTransform {
         const regTmp = new RegExp(linkifiers[counter].pattern);
 
         while ((result = regex.exec(value)) !== null) {
-            chunks.splice(prevIndex, 0, this.slice(value.substr(prevIndex, result.index), linkifiers, counter + 1));
+            const substr = value.substring(prevIndex, result.index);
+            if (substr !== '')  {
+                chunks.splice(prevIndex, 0, this.slice(substr, linkifiers, counter + 1));
+            }
             prevIndex = regex.lastIndex;
-            const match = value.substr(result.index, regex.lastIndex - result.index);
+            const match = value.substring(result.index, regex.lastIndex);
             chunks.push(match.replace(regTmp, '<a target="_blank" href="' + linkifiers[counter].link + '">' + result[0] + '</a>'));
         }
 
-        chunks.push(this.slice(value.substr(prevIndex, value.length), linkifiers, counter + 1));
+        chunks.push(this.slice(value.substring(prevIndex, value.length), linkifiers, counter + 1));
 
         return chunks;
     }
 
     private concat(chunks: string[]): string {
-        if (chunks.length === 1) {
-            return chunks[0];
+        if (typeof chunks === 'string' || chunks instanceof String) {
+            // @ts-ignore
+            return chunks;
         }
 
         let slice = '';
