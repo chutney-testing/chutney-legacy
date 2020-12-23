@@ -1,4 +1,28 @@
 <chutney-page-header [title]="'Scenarios'" [breadcrumbs]="breadcrumbs">
+  <chutney-page-header-extra>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item *ngFor="let item of items" (click)="select(item)">
+        {{ item }}
+      </button>
+    </mat-menu>
+    <button
+      style="padding: 0"
+      mat-button
+      [matMenuTriggerFor]="menu"
+      aria-label="Open basic menu"
+    >
+      {{ environment }} <mat-icon>center_focus_strong</mat-icon>
+    </button>
+    <button
+      [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
+      [disabled]="!running"
+      mat-icon-button
+      (click)="stopScenario()"
+      matTooltip="Stop scenario"
+    >
+      <mat-icon>stop_circle</mat-icon>
+    </button>
+  </chutney-page-header-extra>
 </chutney-page-header>
 
 <button
@@ -25,6 +49,17 @@
 <div *ngIf="scenario$ | async as scenario">
   <mat-toolbar>
     <mat-toolbar-row>
+      <!-- <mat-toolbar-row style="padding-left: 4px">-->
+      <!--<button mat-icon-button disabled *ngIf="!running"></button>
+      <button
+        [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
+        *ngIf="running"
+        mat-icon-button
+        (click)="stopScenario()"
+        matTooltip="Stop scenario"
+      >
+        <mat-icon>stop_circle</mat-icon>
+      </button>-->
       {{ scenario.title }}
       <span fxFlex></span>
       <!--<button mat-icon-button (click)="runScenario()" matTooltip="Run scenario">
@@ -40,6 +75,46 @@
         <mat-icon>stop_circle_filled</mat-icon>
       </button>-->
     </mat-toolbar-row>
+
+    <!--<mat-toolbar-row class="stats">
+      <div class="passed" fxFlex="50px" fxLayoutAlign="space-evenly center">
+        <mat-icon>done</mat-icon>
+        <span class="num">&#45;&#45;</span>
+      </div>
+      <div class="failed" fxFlex="50px" fxLayoutAlign="space-evenly center">
+        <mat-icon>error</mat-icon>
+        <span class="num">&#45;&#45;</span>
+      </div>
+      <div class="pending" fxFlex="50px" fxLayoutAlign="space-evenly center">
+        <mat-icon>adjust</mat-icon>
+        <span class="num">&#45;&#45;</span>
+      </div>
+      &lt;!&ndash;<mat-form-field>
+        <mat-select placeholder="Select">
+          <mat-option value="option">Option</mat-option>
+        </mat-select>
+      </mat-form-field>&ndash;&gt;
+      <span fxFlex></span>
+      &lt;!&ndash;<ul aria-label="Stats" class="stats">
+        <li class="passed"><i aria-hidden="true" class="fas fa-check"></i><span
+          class="visually-hidden">Passed:</span><span class="num">1</span></li>
+        <li class="failed"><i aria-hidden="true" class="fas fa-times"></i><span
+          class="visually-hidden">Failed:</span><span class="num">&#45;&#45;</span></li>
+        <li class="pending"><i aria-hidden="true" class="fas fa-circle-notch"></i><span
+          class="visually-hidden">Pending:</span><span class="num">&#45;&#45;</span></li>
+        <li class="duration"><span class="num">01.74</span></li>
+      </ul>&ndash;&gt;
+
+      <button
+        [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
+        [disabled]="!running"
+        mat-icon-button
+        (click)="stopScenario()"
+        matTooltip="Stop scenario"
+      >
+        <mat-icon>stop_circle</mat-icon>
+      </button>
+    </mat-toolbar-row>-->
   </mat-toolbar>
 
   <div style="align-items: center; width: 100%; height: 500px; display: block">
