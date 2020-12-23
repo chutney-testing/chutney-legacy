@@ -10,10 +10,10 @@ import {
   StopScenarioGQL,
 } from '@chutney/data-access';
 import { combineLatest, Observable } from 'rxjs';
-import { catchError, filter, map, pluck, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, pluck, switchMap, tap } from 'rxjs/operators';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
-import { MediaChange, MediaObserver } from '@angular/flex-layout';
+import { MediaObserver } from '@angular/flex-layout';
 import { chutneyAnimations, fromEventSource } from '@chutney/utils';
 import * as hjson from 'hjson';
 import * as jsyaml from 'js-yaml';
@@ -56,6 +56,7 @@ export class ScenarioTextRunComponent implements OnInit {
     tap(() => this.changeDetectorRef.detectChanges())
   );
   running: boolean;
+  environment: any;
 
   constructor(
     private router: Router,
@@ -103,7 +104,7 @@ export class ScenarioTextRunComponent implements OnInit {
       })
     );
 
-    combineLatest(this.scenario$, this.report$)
+    combineLatest([this.scenario$, this.report$])
       .pipe(
         map(([s, r]) => {
           const ns = this.normalizeScenario(s);
@@ -115,6 +116,7 @@ export class ScenarioTextRunComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.running = data.report.status === 'RUNNING';
+          this.environment = data.environment;
           this.report = data.report;
           this.dataSource.data = data.report.steps;
         },
@@ -149,6 +151,7 @@ export class ScenarioTextRunComponent implements OnInit {
   activeNode: any;
 
   options: any = layoutOprionsVar();
+  items: any = ['GLOBAL', 'PERF'];
 
   runScenario() {
     if (this.report.status === 'PAUSED') {
@@ -222,5 +225,9 @@ export class ScenarioTextRunComponent implements OnInit {
           console.log(error);
         }
       );
+  }
+
+  select(item: any) {
+    this.environment = item;
   }
 }

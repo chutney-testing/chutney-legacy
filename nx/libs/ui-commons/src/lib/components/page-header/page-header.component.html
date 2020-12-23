@@ -1,10 +1,16 @@
 <div class="chutney-page-header-inner">
-  <h1
-    class="chutney-page-title"
-    [@animate]="{ value: '*', params: { delay: '100ms', y: '25px' } }"
-  >
-    {{ title }} <small>{{ subtitle }}</small>
-  </h1>
+  <div>
+    <h1
+      class="chutney-page-title"
+      [@animate]="{ value: '*', params: { delay: '100ms', y: '25px' } }"
+    >
+      {{ title }} <small>{{ subtitle }}</small>
+    </h1>
+    <span fxFlex></span>
+    <ng-content
+      select="chutney-page-header-extra, [chutney-page-header-extra]"
+    ></ng-content>
+  </div>
   <td-breadcrumbs
     *ngIf="showBreadCrumb"
     [@animate]="{ value: '*', params: { delay: '100ms', y: '25px' } }"
