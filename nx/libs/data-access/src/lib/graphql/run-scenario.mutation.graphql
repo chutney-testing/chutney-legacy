@@ -1,3 +1,3 @@
-mutation runScenario($scenarioId: ID!, $dataset: [String]){
-  runScenario(scenarioId: $scenarioId, dataset: $dataset) @rest(type: "SceanrioExecution", path: "api/ui/scenario/executionasync/v1/{args.scenarioId}/GLOBAL", method: "POST", bodyKey: "dataset")
+mutation runScenario($scenarioId: ID!, $environment:String!, $dataset: [String]){
+  runScenario(scenarioId: $scenarioId, environment:$environment, dataset: $dataset) @rest(type: "SceanrioExecution", path: "api/ui/scenario/executionasync/v1/{args.scenarioId}/{args.environment}", method: "POST", bodyKey: "dataset")
 }

@@ -158,7 +158,11 @@ export class ScenarioTextRunComponent implements OnInit {
       this.resumeScenario();
     } else {
       this.runScenarioGQL
-        .mutate({ scenarioId: this.scenarioId, dataset: [] })
+        .mutate({
+          scenarioId: this.scenarioId,
+          environment: this.environment,
+          dataset: [],
+        })
         .subscribe((result) =>
           this.router.navigate([`../${result.data.runScenario}`], {
             relativeTo: this.route,

@@ -62,7 +62,7 @@ type Mutation {
   login(input: LoginInput!): User
   saveScenario(input: ScenarioInput!): Boolean
   deleteScenario(input: ID!): Boolean
-  runScenario(scenarioId: ID!, dataset: [String] ) : ID!
+  runScenario(scenarioId: ID!, environment:String, dataset: [String] ) : ID!
   pauseScenario(scenarioId: ID!, executionId: ID!): Boolean
   resumeScenario(scenarioId: ID!, executionId: ID!): Boolean
   stopScenario(scenarioId: ID!, executionId: ID!): Boolean
