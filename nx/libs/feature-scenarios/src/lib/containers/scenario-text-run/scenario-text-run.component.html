@@ -1,6 +1,6 @@
 <chutney-page-header [title]="'Scenarios'" [breadcrumbs]="breadcrumbs">
   <chutney-page-header-extra>
-    <mat-menu #menu="matMenu">
+    <mat-menu #menu="matMenu" xPosition="before">
       <button mat-menu-item *ngFor="let item of items" (click)="select(item)">
         {{ item }}
       </button>

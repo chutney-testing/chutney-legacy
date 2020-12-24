@@ -13,7 +13,7 @@ import Hjson from 'hjson';
   styleUrls: ['./scenario-text-view.component.scss'],
 })
 export class ScenarioTextViewComponent implements OnInit {
-  private scenarioId: string;
+  scenarioId: string;
   scenario$: Observable<Scenario>;
   treeControl = new NestedTreeControl<any>((node) => node.subSteps);
   dataSource = new MatTreeNestedDataSource<any>();
@@ -21,6 +21,7 @@ export class ScenarioTextViewComponent implements OnInit {
     { title: 'Home', link: ['/'] },
     { title: 'Scenarios', link: ['/'] },
   ];
+  items: any = ['GLOBAL', 'PERF'];
 
   constructor(
     private router: Router,
@@ -60,9 +61,9 @@ export class ScenarioTextViewComponent implements OnInit {
     );
   }
 
-  runScenario(data: any) {
+  runScenario(scenarioId: any, environment: string) {
     this.runScenarioGQL
-      .mutate({ scenarioId: data.id, dataset: [] })
+      .mutate({ scenarioId: scenarioId, environment: environment, dataset: [] })
       .subscribe((result) =>
         this.router.navigate([`../run/${result.data.runScenario}`], {
           relativeTo: this.route,
@@ -73,7 +74,7 @@ export class ScenarioTextViewComponent implements OnInit {
   hasChild = (_: number, node: any) =>
     !!node.subSteps && node.subSteps.length > 0;
 
-  editScenario(scenario: Scenario) {
+  editScenario(scenarioId: string) {
     this.router.navigate([`../edit`], {
       relativeTo: this.route,
     });

@@ -115,6 +115,7 @@ export type MutationDeleteScenarioArgs = {
 
 export type MutationRunScenarioArgs = {
   scenarioId: Scalars['ID'];
+  environment?: Maybe<Scalars['String']>;
   dataset?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
@@ -200,6 +201,7 @@ export type RunScenarioHistoryQuery = { __typename?: 'Query' } & {
 
 export type RunScenarioMutationVariables = Exact<{
   scenarioId: Scalars['ID'];
+  environment: Scalars['String'];
   dataset?: Maybe<Array<Maybe<Scalars['String']>>>;
 }>;
 
@@ -443,11 +445,19 @@ export class RunScenarioHistoryGQL extends Apollo.Query<
   }
 }
 export const RunScenarioDocument = gql`
-  mutation runScenario($scenarioId: ID!, $dataset: [String]) {
-    runScenario(scenarioId: $scenarioId, dataset: $dataset)
+  mutation runScenario(
+    $scenarioId: ID!
+    $environment: String!
+    $dataset: [String]
+  ) {
+    runScenario(
+      scenarioId: $scenarioId
+      environment: $environment
+      dataset: $dataset
+    )
       @rest(
         type: "SceanrioExecution"
-        path: "api/ui/scenario/executionasync/v1/{args.scenarioId}/GLOBAL"
+        path: "api/ui/scenario/executionasync/v1/{args.scenarioId}/{args.environment}"
         method: "POST"
         bodyKey: "dataset"
       )

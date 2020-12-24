@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ExecutionBadgeComponent } from './components/execution-badge/execution-badge.component';
 import { ExecutionIconComponent } from './components/execution-icon/execution-icon.component';
@@ -19,5 +19,6 @@ import { RouterModule } from '@angular/router';
     ExecutionIconComponent,
     PageHeaderComponent,
   ],
+  schemas: [NO_ERRORS_SCHEMA],
 })
 export class UiCommonsModule {}
