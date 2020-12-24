@@ -1,24 +1,52 @@
 <chutney-page-header [title]="'Scenarios'" [breadcrumbs]="breadcrumbs">
+  <chutney-page-header-extra>
+    <mat-menu #menu="matMenu" xPosition="before">
+      <button
+        mat-menu-item
+        *ngFor="let item of items"
+        (click)="runScenario(scenarioId, item)"
+      >
+        {{ item }}
+      </button>
+    </mat-menu>
+    <button
+      style="padding: 0"
+      mat-icon-button
+      [matMenuTriggerFor]="menu"
+      aria-label="Open basic menu"
+    >
+      <mat-icon>play_circle</mat-icon>
+    </button>
+  </chutney-page-header-extra>
 </chutney-page-header>
+<button
+  mat-fab
+  class="edit-scenario-button mat-accent"
+  (click)="editScenario(scenarioId)"
+  aria-label="Edit scenario"
+  [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
+>
+  <mat-icon class="material-icons-outlined">edit</mat-icon>
+</button>
 <div *ngIf="scenario$ | async as scenario">
   <mat-toolbar>
     <mat-toolbar-row>
       <span>{{ scenario.title }}</span>
       <span fxFlex></span>
-      <button
+      <!--<button
         mat-icon-button
         (click)="editScenario(scenario)"
         matTooltip="Edit scenario"
       >
         <mat-icon class="material-icons-outlined">edit</mat-icon>
-      </button>
-      <button
+      </button>-->
+      <!--<button
         mat-icon-button
         (click)="runScenario(scenario)"
         matTooltip="Run scenario"
       >
         <mat-icon>play_circle</mat-icon>
-      </button>
+      </button>-->
     </mat-toolbar-row>
   </mat-toolbar>
   <div fxFill style="padding-top: 15px">
