@@ -1,6 +1,22 @@
-import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  Directive,
+  Input,
+  OnInit,
+  ViewEncapsulation,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { chutneyAnimations } from '@chutney/utils';
+
+/**
+ */
+@Directive({
+  selector: `chutney-page-header-extra, [chutney-page-header-extra], [chutneyPageHeaderExtra]`,
+  host: {
+    class: 'chutney-page-header-extra',
+  },
+})
+export class PageHeaderExtra {}
 
 @Component({
   selector: 'chutney-page-header',

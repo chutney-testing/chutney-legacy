@@ -1,0 +1,10 @@
+<div class="mat-elevation-z8">
+  <chutney-page-header [title]="'Campaigns'" [breadcrumbs]="breadcrumbs">
+  </chutney-page-header>
+  <!--<chutney-campaigns-search-form></chutney-campaigns-search-form>-->
+  <chutney-campaigns-list
+    [campaigns]="campaigns$ | async"
+    (edit)="onEdit($event)"
+    (delete)="onDelete($event)"
+  ></chutney-campaigns-list>
+</div>

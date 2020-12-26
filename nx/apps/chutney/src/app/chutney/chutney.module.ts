@@ -28,6 +28,13 @@ import { MainLayoutComponent } from '@chutney/ui-layout';
                 (module) => module.FeatureScenariosModule
               ),
           },
+          {
+            path: 'campaigns',
+            loadChildren: () =>
+              import('@chutney/feature-campaigns').then(
+                (module) => module.FeatureCampaignsModule
+              ),
+          },
         ],
       },
       {
