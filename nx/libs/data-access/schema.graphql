@@ -50,9 +50,16 @@ type ScenariosFilter {
   advanced: Boolean
 }
 
+type Campaign{
+  id: ID!
+  title: String!
+  description: String!
+}
+
 type Query {
   user: User
   scenarios: [Scenario]
+  campaigns: [Campaign]
   scenariosFilter: ScenariosFilter
   scenario(scenarioId: ID!): Scenario
   runScenarioHistory(scenarioId: ID!, executionId: ID!): ScenarioExecution!
