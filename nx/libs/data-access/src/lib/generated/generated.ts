@@ -5,6 +5,10 @@ export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = {
   [K in keyof T]: T[K];
 };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> &
+  { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> &
+  { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -72,10 +76,18 @@ export type ScenariosFilter = {
   advanced?: Maybe<Scalars['Boolean']>;
 };
 
+export type Campaign = {
+  __typename?: 'Campaign';
+  id: Scalars['ID'];
+  title: Scalars['String'];
+  description: Scalars['String'];
+};
+
 export type Query = {
   __typename?: 'Query';
   user?: Maybe<User>;
   scenarios?: Maybe<Array<Maybe<Scenario>>>;
+  campaigns?: Maybe<Array<Maybe<Campaign>>>;
   scenariosFilter?: Maybe<ScenariosFilter>;
   scenario?: Maybe<Scenario>;
   runScenarioHistory: ScenarioExecution;
@@ -132,6 +144,21 @@ export type MutationResumeScenarioArgs = {
 export type MutationStopScenarioArgs = {
   scenarioId: Scalars['ID'];
   executionId: Scalars['ID'];
+};
+
+export type CampaignsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type CampaignsQuery = { __typename?: 'Query' } & {
+  campaigns?: Maybe<
+    Array<
+      Maybe<
+        { __typename?: 'Campaign' } & Pick<
+          Campaign,
+          'id' | 'title' | 'description'
+        >
+      >
+    >
+  >;
 };
 
 export type DeleteScenarioMutationVariables = Exact<{
@@ -298,6 +325,29 @@ export type UserQuery = { __typename?: 'Query' } & {
   >;
 };
 
+export const CampaignsDocument = gql`
+  query campaigns {
+    campaigns @rest(type: "CampaignsModel", path: "api/ui/campaign/v1") {
+      id
+      title
+      description
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class CampaignsGQL extends Apollo.Query<
+  CampaignsQuery,
+  CampaignsQueryVariables
+> {
+  document = CampaignsDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const DeleteScenarioDocument = gql`
   mutation deleteScenario($input: ID!) {
     deleteScenario(input: $input)
