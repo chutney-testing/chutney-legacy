@@ -9,5 +9,6 @@ module.exports = {
     '<rootDir>/libs/utils',
     '<rootDir>/libs/ui-commons',
     '<rootDir>/libs/feature-i18n',
+    '<rootDir>/libs/feature-campaigns',
   ],
 };

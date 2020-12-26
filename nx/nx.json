@@ -66,6 +66,9 @@
     },
     "assets": {
       "tags": []
+    },
+    "feature-campaigns": {
+      "tags": []
     }
   }
 }

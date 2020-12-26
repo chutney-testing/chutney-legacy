@@ -23,7 +23,8 @@
       "@chutney/feature-scenarios": ["libs/feature-scenarios/src/index.ts"],
       "@chutney/utils": ["libs/utils/src/index.ts"],
       "@chutney/ui-commons": ["libs/ui-commons/src/index.ts"],
-      "@chutney/feature-i18n": ["libs/feature-i18n/src/index.ts"]
+      "@chutney/feature-i18n": ["libs/feature-i18n/src/index.ts"],
+      "@chutney/feature-campaigns": ["libs/feature-campaigns/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
