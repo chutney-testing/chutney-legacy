@@ -517,6 +517,31 @@
           "style": "scss"
         }
       }
+    },
+    "feature-campaigns": {
+      "projectType": "library",
+      "root": "libs/feature-campaigns",
+      "sourceRoot": "libs/feature-campaigns/src",
+      "prefix": "chutney",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/feature-campaigns/src/**/*.ts",
+              "libs/feature-campaigns/src/**/*.html"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/feature-campaigns"],
+          "options": {
+            "jestConfig": "libs/feature-campaigns/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {
