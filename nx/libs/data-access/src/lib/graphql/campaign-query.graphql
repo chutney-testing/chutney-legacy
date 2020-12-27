@@ -1,0 +1,12 @@
+query campaign($campaignId: ID!){
+  campaign(campaignId: $campaignId) @rest(type: "Campaign", path: "api/ui/campaign/v1/{args.campaignId}") {
+    id @export(as: "id")
+    title
+    description
+    scenarios @rest(type: "Scenario", path: "api/ui/campaign/v1/{exportVariables.id}/scenarios"){
+      id
+      title
+      description
+    }
+  }
+}

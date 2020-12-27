@@ -1,0 +1,22 @@
+.example-tree-invisible {
+  display: none;
+}
+
+.example-tree ul,
+.example-tree li {
+  margin-top: 0;
+  margin-bottom: 0;
+  list-style-type: none;
+}
+
+.mat-tree-node {
+  min-height: 28px;
+  max-height: 28px;
+}
+
+.edit-campaign-button {
+  position: absolute;
+  right: 24px;
+  top: 75px;
+  z-index: 10;
+}
