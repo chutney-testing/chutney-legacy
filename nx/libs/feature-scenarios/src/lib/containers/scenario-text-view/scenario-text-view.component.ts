@@ -21,7 +21,7 @@ export class ScenarioTextViewComponent implements OnInit {
     { title: 'Home', link: ['/'] },
     { title: 'Scenarios', link: ['/'] },
   ];
-  items: any = ['GLOBAL', 'PERF'];
+  environments: string[] = ['GLOBAL', 'PERF'];
 
   constructor(
     private router: Router,

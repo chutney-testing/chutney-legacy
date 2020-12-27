@@ -54,12 +54,14 @@ type Campaign{
   id: ID!
   title: String!
   description: String!
+  scenarios: [Scenario]
 }
 
 type Query {
   user: User
   scenarios: [Scenario]
   campaigns: [Campaign]
+  campaign(campaignId: ID!): Campaign
   scenariosFilter: ScenariosFilter
   scenario(scenarioId: ID!): Scenario
   runScenarioHistory(scenarioId: ID!, executionId: ID!): ScenarioExecution!
@@ -134,3 +136,9 @@ directive @type(
   The GraphQL type this will return
   """
   name: String!) on FIELD
+
+directive @export(
+  """
+  Name to create this as a variable to be used down the selection set
+  """
+  as: String!) on FIELD
