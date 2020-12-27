@@ -4,6 +4,7 @@
   <!--<chutney-campaigns-search-form></chutney-campaigns-search-form>-->
   <chutney-campaigns-list
     [campaigns]="campaigns$ | async"
+    (view)="onView($event)"
     (edit)="onEdit($event)"
     (delete)="onDelete($event)"
   ></chutney-campaigns-list>
