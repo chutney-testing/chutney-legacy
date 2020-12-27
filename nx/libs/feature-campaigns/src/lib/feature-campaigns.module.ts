@@ -5,6 +5,7 @@ import { UiMaterialModule } from '@chutney/ui-material';
 import { CampaignsComponent } from './containers/campaigns/campaigns.component';
 import { CampaignsListComponent } from './components/campaigns-list/campaigns-list.component';
 import { UiCommonsModule } from '@chutney/ui-commons';
+import { CampaignViewComponent } from './containers/campaign-view/campaign-view.component';
 
 @NgModule({
   imports: [
@@ -13,9 +14,14 @@ import { UiCommonsModule } from '@chutney/ui-commons';
     RouterModule.forChild([
       { path: '', component: CampaignsComponent },
       { path: 'campaigns', component: CampaignsComponent },
+      { path: ':id/view', component: CampaignViewComponent },
     ]),
     UiMaterialModule,
   ],
-  declarations: [CampaignsComponent, CampaignsListComponent],
+  declarations: [
+    CampaignsComponent,
+    CampaignsListComponent,
+    CampaignViewComponent,
+  ],
 })
 export class FeatureCampaignsModule {}

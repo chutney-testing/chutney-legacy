@@ -5,11 +5,11 @@
   <!-- Position Column -->
   <ng-container matColumnDef="id">
     <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="75px"
-    >Id.</mat-header-cell
+      >Id.</mat-header-cell
     >
     <mat-cell *matCellDef="let element" fxFlex="50px">{{
       element.id
-      }}</mat-cell>
+    }}</mat-cell>
   </ng-container>
 
   <!-- Name Column -->
@@ -34,13 +34,13 @@
   <ng-container matColumnDef="action">
     <mat-header-cell *matHeaderCellDef fxFlex="100px">Action</mat-header-cell>
     <mat-cell *matCellDef="let element" fxFlex="125px">
-      <!--<button (click)="viewScenario(element.id)" mat-icon-button>
+      <button (click)="viewCampaign(element.id)" mat-icon-button>
         <mat-icon class="material-icons-outlined">preview</mat-icon>
-      </button>-->
-      <button (click)="editScenario(element.id)" mat-icon-button>
+      </button>
+      <button (click)="editCampaign(element.id)" mat-icon-button>
         <mat-icon class="material-icons-outlined">edit</mat-icon>
       </button>
-      <button (click)="deleteScenario(element.id)" mat-icon-button>
+      <button (click)="deleteCampaign(element.id)" mat-icon-button>
         <mat-icon class="material-icons-outlined">delete</mat-icon>
       </button>
     </mat-cell>
