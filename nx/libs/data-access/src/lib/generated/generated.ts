@@ -5,10 +5,6 @@ export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = {
   [K in keyof T]: T[K];
 };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> &
-  { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> &
-  { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -81,6 +77,7 @@ export type Campaign = {
   id: Scalars['ID'];
   title: Scalars['String'];
   description: Scalars['String'];
+  scenarios?: Maybe<Array<Maybe<Scenario>>>;
 };
 
 export type Query = {
@@ -88,9 +85,14 @@ export type Query = {
   user?: Maybe<User>;
   scenarios?: Maybe<Array<Maybe<Scenario>>>;
   campaigns?: Maybe<Array<Maybe<Campaign>>>;
+  campaign?: Maybe<Campaign>;
   scenariosFilter?: Maybe<ScenariosFilter>;
   scenario?: Maybe<Scenario>;
   runScenarioHistory: ScenarioExecution;
+};
+
+export type QueryCampaignArgs = {
+  campaignId: Scalars['ID'];
 };
 
 export type QueryScenarioArgs = {
@@ -144,6 +146,30 @@ export type MutationResumeScenarioArgs = {
 export type MutationStopScenarioArgs = {
   scenarioId: Scalars['ID'];
   executionId: Scalars['ID'];
+};
+
+export type CampaignQueryVariables = Exact<{
+  campaignId: Scalars['ID'];
+}>;
+
+export type CampaignQuery = { __typename?: 'Query' } & {
+  campaign?: Maybe<
+    { __typename?: 'Campaign' } & Pick<
+      Campaign,
+      'id' | 'title' | 'description'
+    > & {
+        scenarios?: Maybe<
+          Array<
+            Maybe<
+              { __typename?: 'Scenario' } & Pick<
+                Scenario,
+                'id' | 'title' | 'description'
+              >
+            >
+          >
+        >;
+      }
+  >;
 };
 
 export type CampaignsQueryVariables = Exact<{ [key: string]: never }>;
@@ -325,6 +351,39 @@ export type UserQuery = { __typename?: 'Query' } & {
   >;
 };
 
+export const CampaignDocument = gql`
+  query campaign($campaignId: ID!) {
+    campaign(campaignId: $campaignId)
+      @rest(type: "Campaign", path: "api/ui/campaign/v1/{args.campaignId}") {
+      id @export(as: "id")
+      title
+      description
+      scenarios
+        @rest(
+          type: "Scenario"
+          path: "api/ui/campaign/v1/{exportVariables.id}/scenarios"
+        ) {
+        id
+        title
+        description
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class CampaignGQL extends Apollo.Query<
+  CampaignQuery,
+  CampaignQueryVariables
+> {
+  document = CampaignDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const CampaignsDocument = gql`
   query campaigns {
     campaigns @rest(type: "CampaignsModel", path: "api/ui/campaign/v1") {

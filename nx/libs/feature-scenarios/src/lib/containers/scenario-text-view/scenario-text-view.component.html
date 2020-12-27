@@ -3,10 +3,10 @@
     <mat-menu #menu="matMenu" xPosition="before">
       <button
         mat-menu-item
-        *ngFor="let item of items"
-        (click)="runScenario(scenarioId, item)"
+        *ngFor="let environment of environments"
+        (click)="runScenario(scenarioId, environment)"
       >
-        {{ item }}
+        {{ environment }}
       </button>
     </mat-menu>
     <button
