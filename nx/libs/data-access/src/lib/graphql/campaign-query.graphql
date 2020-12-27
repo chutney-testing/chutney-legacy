@@ -7,6 +7,7 @@ query campaign($campaignId: ID!){
       id
       title
       description
+      status
     }
   }
 }

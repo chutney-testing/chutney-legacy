@@ -6,6 +6,7 @@ import { CampaignsComponent } from './containers/campaigns/campaigns.component';
 import { CampaignsListComponent } from './components/campaigns-list/campaigns-list.component';
 import { UiCommonsModule } from '@chutney/ui-commons';
 import { CampaignViewComponent } from './containers/campaign-view/campaign-view.component';
+import { CampaignRunComponent } from './containers/campaign-run/campaign-run.component';
 
 @NgModule({
   imports: [
@@ -22,6 +23,7 @@ import { CampaignViewComponent } from './containers/campaign-view/campaign-view.
     CampaignsComponent,
     CampaignsListComponent,
     CampaignViewComponent,
+    CampaignRunComponent,
   ],
 })
 export class FeatureCampaignsModule {}
