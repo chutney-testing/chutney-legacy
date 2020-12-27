@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -23,7 +30,7 @@ export class CampaignsListComponent implements OnInit {
 
   private _campaignsDataSource: MatTableDataSource<
     Campaign
-    > = new MatTableDataSource<Campaign>();
+  > = new MatTableDataSource<Campaign>();
   private _unsubscribe = new Subject<void>();
 
   @Input() set campaigns(campaigns: Campaign[]) {
