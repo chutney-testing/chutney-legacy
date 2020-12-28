@@ -9,14 +9,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ScenariosSearchFormComponent } from './components/scenarios-search-form/scenarios-search-form.component';
 import { ScenarioTextViewComponent } from './containers/scenario-text-view/scenario-text-view.component';
 import { ScenarioTextRunComponent } from './containers/scenario-text-run/scenario-text-run.component';
-import { DurationPipe } from './pipes/duration/duration.pipe';
 import { CovalentCodeEditorModule } from '@covalent/code-editor';
 import { ScenarioTextEditComponent } from './containers/scenario-text-edit/scenario-text-edit.component';
+import { UtilsModule } from '@chutney/utils';
 
 @NgModule({
   imports: [
     CommonModule,
     UiCommonsModule,
+    UtilsModule,
     RouterModule.forChild([
       { path: '', component: ScenariosComponent },
       { path: 'text/:id/view', component: ScenarioTextViewComponent },
@@ -37,7 +38,6 @@ import { ScenarioTextEditComponent } from './containers/scenario-text-edit/scena
     ScenariosSearchFormComponent,
     ScenarioTextViewComponent,
     ScenarioTextRunComponent,
-    DurationPipe,
     ScenarioTextEditComponent,
   ],
 })

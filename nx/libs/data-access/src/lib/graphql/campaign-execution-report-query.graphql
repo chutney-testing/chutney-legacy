@@ -1,0 +1,20 @@
+query campaignExecutionReport($campaignId: ID!, $executionId: ID!){
+  campaignExecutionReport(campaignId: $campaignId, executionId: $executionId) @rest(type: "CampaignExecutionReport", path: "api/ui/campaign/v1/{args.campaignId}/execution/{args.executionId}"){
+    campaignName
+    executionEnvironment
+    duration
+    executionId
+    status
+    startDate
+    scenarioExecutionReports{
+      duration
+      error
+      executionId
+      info
+      scenarioId
+      scenarioName
+      startDate
+      status
+    }
+  }
+}

@@ -1,0 +1,8 @@
+mutation runCampaign($campaignId: ID!, $environment:String!){
+   runCampaign(campaignId: $campaignId, environment:$environment) @rest(type: "CampaignExecution", path: "api/ui/campaign/execution/v1/byID/{args.campaignId}/{args.environment}", method: "GET"){
+       campaignName
+       executionId
+       duration
+       status
+   }
+}

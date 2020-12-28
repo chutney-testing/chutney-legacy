@@ -84,6 +84,38 @@ export type Campaign = {
   scenarios?: Maybe<Array<Maybe<Scenario>>>;
 };
 
+export type CampaignExecution = {
+  __typename?: 'CampaignExecution';
+  campaignName: Scalars['String'];
+  executionId: Scalars['ID'];
+  duration: Scalars['Int'];
+  status?: Maybe<Scalars['String']>;
+  executionEnvironment: Scalars['String'];
+};
+
+export type CampaignExecutionReport = {
+  __typename?: 'CampaignExecutionReport';
+  campaignName: Scalars['String'];
+  executionEnvironment: Scalars['String'];
+  duration: Scalars['Int'];
+  executionId: Scalars['ID'];
+  status?: Maybe<Scalars['String']>;
+  startDate?: Maybe<Scalars['String']>;
+  scenarioExecutionReports?: Maybe<Array<Maybe<ScenarioExecutionReport>>>;
+};
+
+export type ScenarioExecutionReport = {
+  __typename?: 'ScenarioExecutionReport';
+  duration: Scalars['Int'];
+  error?: Maybe<Scalars['String']>;
+  executionId: Scalars['Int'];
+  info?: Maybe<Scalars['String']>;
+  scenarioId: Scalars['Int'];
+  scenarioName?: Maybe<Scalars['String']>;
+  startDate?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   user?: Maybe<User>;
@@ -93,6 +125,7 @@ export type Query = {
   scenariosFilter?: Maybe<ScenariosFilter>;
   scenario?: Maybe<Scenario>;
   runScenarioHistory: ScenarioExecution;
+  campaignExecutionReport: CampaignExecutionReport;
 };
 
 
@@ -111,6 +144,12 @@ export type QueryRunScenarioHistoryArgs = {
   executionId: Scalars['ID'];
 };
 
+
+export type QueryCampaignExecutionReportArgs = {
+  campaignId: Scalars['ID'];
+  executionId: Scalars['ID'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   login?: Maybe<User>;
@@ -120,6 +159,7 @@ export type Mutation = {
   pauseScenario?: Maybe<Scalars['Boolean']>;
   resumeScenario?: Maybe<Scalars['Boolean']>;
   stopScenario?: Maybe<Scalars['Boolean']>;
+  runCampaign: CampaignExecution;
 };
 
 
@@ -163,6 +203,30 @@ export type MutationStopScenarioArgs = {
 };
 
 
+export type MutationRunCampaignArgs = {
+  campaignId: Scalars['ID'];
+  environment?: Maybe<Scalars['String']>;
+};
+
+
+
+export type CampaignExecutionReportQueryVariables = Exact<{
+  campaignId: Scalars['ID'];
+  executionId: Scalars['ID'];
+}>;
+
+
+export type CampaignExecutionReportQuery = (
+  { __typename?: 'Query' }
+  & { campaignExecutionReport: (
+    { __typename?: 'CampaignExecutionReport' }
+    & Pick<CampaignExecutionReport, 'campaignName' | 'executionEnvironment' | 'duration' | 'executionId' | 'status' | 'startDate'>
+    & { scenarioExecutionReports?: Maybe<Array<Maybe<(
+      { __typename?: 'ScenarioExecutionReport' }
+      & Pick<ScenarioExecutionReport, 'duration' | 'error' | 'executionId' | 'info' | 'scenarioId' | 'scenarioName' | 'startDate' | 'status'>
+    )>>> }
+  ) }
+);
 
 export type CampaignQueryVariables = Exact<{
   campaignId: Scalars['ID'];
@@ -238,6 +302,20 @@ export type ResumeScenarioMutationVariables = Exact<{
 export type ResumeScenarioMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'resumeScenario'>
+);
+
+export type RunCampaignMutationVariables = Exact<{
+  campaignId: Scalars['ID'];
+  environment: Scalars['String'];
+}>;
+
+
+export type RunCampaignMutation = (
+  { __typename?: 'Mutation' }
+  & { runCampaign: (
+    { __typename?: 'CampaignExecution' }
+    & Pick<CampaignExecution, 'campaignName' | 'executionId' | 'duration' | 'status'>
+  ) }
 );
 
 export type RunScenarioHistoryQueryVariables = Exact<{
@@ -338,6 +416,39 @@ export type UserQuery = (
   )> }
 );
 
+export const CampaignExecutionReportDocument = gql`
+    query campaignExecutionReport($campaignId: ID!, $executionId: ID!) {
+  campaignExecutionReport(campaignId: $campaignId, executionId: $executionId) @rest(type: "CampaignExecutionReport", path: "api/ui/campaign/v1/{args.campaignId}/execution/{args.executionId}") {
+    campaignName
+    executionEnvironment
+    duration
+    executionId
+    status
+    startDate
+    scenarioExecutionReports {
+      duration
+      error
+      executionId
+      info
+      scenarioId
+      scenarioName
+      startDate
+      status
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class CampaignExecutionReportGQL extends Apollo.Query<CampaignExecutionReportQuery, CampaignExecutionReportQueryVariables> {
+    document = CampaignExecutionReportDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
 export const CampaignDocument = gql`
     query campaign($campaignId: ID!) {
   campaign(campaignId: $campaignId) @rest(type: "Campaign", path: "api/ui/campaign/v1/{args.campaignId}") {
@@ -449,6 +560,27 @@ export const ResumeScenarioDocument = gql`
   })
   export class ResumeScenarioGQL extends Apollo.Mutation<ResumeScenarioMutation, ResumeScenarioMutationVariables> {
     document = ResumeScenarioDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const RunCampaignDocument = gql`
+    mutation runCampaign($campaignId: ID!, $environment: String!) {
+  runCampaign(campaignId: $campaignId, environment: $environment) @rest(type: "CampaignExecution", path: "api/ui/campaign/execution/v1/byID/{args.campaignId}/{args.environment}", method: "GET") {
+    campaignName
+    executionId
+    duration
+    status
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class RunCampaignGQL extends Apollo.Mutation<RunCampaignMutation, RunCampaignMutationVariables> {
+    document = RunCampaignDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

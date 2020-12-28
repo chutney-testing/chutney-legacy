@@ -57,6 +57,35 @@ type Campaign{
   scenarios: [Scenario]
 }
 
+type CampaignExecution {
+  campaignName: String!
+  executionId: ID!
+  duration: Int!
+  status: String
+  executionEnvironment: String!
+}
+
+type CampaignExecutionReport {
+  campaignName: String!
+  executionEnvironment: String!
+  duration: Int!
+  executionId: ID!
+  status: String
+  startDate: String
+  scenarioExecutionReports: [ScenarioExecutionReport]
+}
+
+type ScenarioExecutionReport {
+  duration: Int!
+  error: String
+  executionId: Int!
+  info: String
+  scenarioId: Int!
+  scenarioName: String
+  startDate: String
+  status: String
+}
+
 type Query {
   user: User
   scenarios: [Scenario]
@@ -65,6 +94,7 @@ type Query {
   scenariosFilter: ScenariosFilter
   scenario(scenarioId: ID!): Scenario
   runScenarioHistory(scenarioId: ID!, executionId: ID!): ScenarioExecution!
+  campaignExecutionReport(campaignId: ID!, executionId: ID!): CampaignExecutionReport!
 }
 
 type Mutation {
@@ -75,6 +105,7 @@ type Mutation {
   pauseScenario(scenarioId: ID!, executionId: ID!): Boolean
   resumeScenario(scenarioId: ID!, executionId: ID!): Boolean
   stopScenario(scenarioId: ID!, executionId: ID!): Boolean
+  runCampaign(campaignId: ID!, environment:String ) : CampaignExecution!
 }
 
 scalar RestFunction

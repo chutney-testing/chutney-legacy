@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -79,6 +80,21 @@ public class CampaignController {
         campaignExecutionEngine.currentExecution(campaignId)
             .ifPresent(report -> addCurrentExecution(reports, report));
         return toDto(campaign, reports);
+    }
+
+    @GetMapping(path = "/{campaignId}/execution/{executionId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Optional<CampaignExecutionReportDto> getCampaignExecutionReportById(@PathVariable("campaignId") Long campaignId, @PathVariable("executionId") Long executionId) {
+        //Campaign campaign = campaignRepository.findById(campaignId);
+        List<CampaignExecutionReport> reports = campaignRepository.findExecutionsById(campaignId);
+        if (!isEmpty(reports)) {
+            reports.sort(CampaignExecutionReport.executionIdComparator().reversed());
+        }
+        campaignExecutionEngine.currentExecution(campaignId)
+            .ifPresent(report -> addCurrentExecution(reports, report));
+        return reports.stream()
+            .filter((report) -> report.executionId.equals(executionId))
+            .findFirst()
+            .map(CampaignExecutionReportMapper::toDto);
     }
 
     @GetMapping(path = "/{campaignId}/scenarios", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
