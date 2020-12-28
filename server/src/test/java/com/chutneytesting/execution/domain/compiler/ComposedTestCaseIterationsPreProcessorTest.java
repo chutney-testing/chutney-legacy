@@ -1173,4 +1173,107 @@ public class ComposedTestCaseIterationsPreProcessorTest {
 
     }
 
+    @Test
+    public void should_index_iterations_inputs_when_generated_in_same_parent_step() {
+
+        // Given
+        List<Map<String, String>> multipleValues = asList(
+            Maps.of("letter", "A"),
+            Maps.of("letter", "B")
+        );
+        stubDatasetRepository(null, multipleValues);
+
+        ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
+            metadata,
+            ExecutableComposedScenario.builder()
+                .withComposedSteps(singletonList(
+                    ExecutableComposedStep.builder()
+                        .withName("Parent step with 2 substeps")
+                        .withSteps(asList(
+                            ExecutableComposedStep.builder()
+                                .withName("First sub step")
+                                .withImplementation(Optional.of(
+                                    new StepImplementation("task", null, emptyMap(), singletonMap("output", "**letter**"))
+                                ))
+                                .withDataset(singletonMap("letter", ""))
+                                .build(),
+                            ExecutableComposedStep.builder()
+                                .withName("Second sub step")
+                                .withImplementation(Optional.of(
+                                    new StepImplementation("task", null, singletonMap("input", "**data**"), emptyMap())
+                                ))
+                                .withDataset(singletonMap("data","${#output.toString()}"))
+                                .build()
+                        ))
+                        .withDataset(singletonMap("letter", ""))
+                        .build()
+                    )
+                )
+                .build(),
+            singletonMap("letter", "")
+        );
+
+        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+
+        // When
+        ExecutableComposedTestCase actual = sut.apply(testCase);
+
+        // Then
+
+        ExecutableComposedScenario expected = ExecutableComposedScenario.builder()
+            .withComposedSteps(singletonList(
+                ExecutableComposedStep.builder()
+                    .withName("Parent step with 2 substeps")
+                    .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
+                    .withSteps(asList(
+                        ExecutableComposedStep.builder()
+                            .withName("Parent step with 2 substeps - dataset iteration 1")
+                            .withSteps(asList(
+                                ExecutableComposedStep.builder()
+                                    .withName("First sub step")
+                                    .withImplementation(Optional.of(
+                                        new StepImplementation("task", null, emptyMap(), singletonMap("output_1", "**letter**"))
+                                    ))
+                                    .withDataset(singletonMap("letter", ""))
+                                    .build(),
+                                ExecutableComposedStep.builder()
+                                    .withName("Second sub step")
+                                    .withImplementation(Optional.of(
+                                        new StepImplementation("task", null, singletonMap("input", "**data**"), emptyMap())
+                                    ))
+                                    .withDataset(singletonMap("data","${#output_1.toString()}"))
+                                    .build()
+                            ))
+                            .withDataset(singletonMap("letter", "A"))
+                            .build(),
+                        ExecutableComposedStep.builder()
+                            .withName("Parent step with 2 substeps - dataset iteration 2")
+                            .withSteps(asList(
+                                ExecutableComposedStep.builder()
+                                    .withName("First sub step")
+                                    .withImplementation(Optional.of(
+                                        new StepImplementation("task", null, emptyMap(), singletonMap("output_2", "**letter**"))
+                                    ))
+                                    .withDataset(singletonMap("letter", ""))
+                                    .build(),
+                                ExecutableComposedStep.builder()
+                                    .withName("Second sub step")
+                                    .withImplementation(Optional.of(
+                                        new StepImplementation("task", null, singletonMap("input", "**data**"), emptyMap())
+                                    ))
+                                    .withDataset(singletonMap("data","${#output_2.toString()}"))
+                                    .build()
+                            ))
+                            .withDataset(singletonMap("letter", "B"))
+                            .build()
+                    ))
+                    .build()
+                )
+            )
+            .build();
+
+        assertThat(actual.composedScenario).isEqualTo(expected);
+
+    }
+
 }

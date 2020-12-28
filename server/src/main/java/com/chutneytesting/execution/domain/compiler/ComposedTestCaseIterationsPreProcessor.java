@@ -233,6 +233,7 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
                             ExecutableComposedStep.builder()
                                 .from(s)
                                 .withImplementation(s.stepImplementation.flatMap(si -> Optional.of(indexIterationIO(si, index, iterationOutputs))))
+                                .withDataset(applyIndexedOutputs(s.dataset, index, iterationOutputs, StringEscapeUtils::escapeJson))
                                 .build())
                         .collect(toList())
                     )
