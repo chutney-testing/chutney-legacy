@@ -8,9 +8,8 @@ describe('CampaignRunComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CampaignRunComponent ]
-    })
-    .compileComponents();
+      declarations: [CampaignRunComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

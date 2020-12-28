@@ -151,7 +151,7 @@ export class ScenarioTextRunComponent implements OnInit {
   activeNode: any;
 
   options: any = layoutOprionsVar();
-  items: any = ['GLOBAL', 'PERF'];
+  environments: any = ['GLOBAL', 'PERF'];
 
   runScenario() {
     if (this.report.status === 'PAUSED') {

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Campaign, CampaignGQL } from '@chutney/data-access';
+import { Campaign, CampaignGQL, RunCampaignGQL } from '@chutney/data-access';
 import { ActivatedRoute, Router } from '@angular/router';
 import { chutneyAnimations } from '@chutney/utils';
 import { map, pluck } from 'rxjs/operators';
@@ -29,7 +29,8 @@ export class CampaignViewComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private campaignGQL: CampaignGQL
+    private campaignGQL: CampaignGQL,
+    private runCampaignGQL: RunCampaignGQL
   ) {}
 
   ngOnInit(): void {
@@ -42,11 +43,22 @@ export class CampaignViewComponent implements OnInit {
     );
   }
 
-  editCampaign(scenarioId: string) {
+  editCampaign(campaignId: string) {
     this.router.navigate([`../edit`], {
       relativeTo: this.route,
     });
   }
 
-  runCampaign(campaignId: string, environment: string) {}
+  runCampaign(campaignId: string, environment: string) {
+    this.runCampaignGQL
+      .mutate({ campaignId: campaignId, environment: environment, dataset: [] })
+      .subscribe((result) =>
+        this.router.navigate(
+          [`../run/${result.data.runCampaign.executionId}`],
+          {
+            relativeTo: this.route,
+          }
+        )
+      );
+  }
 }
