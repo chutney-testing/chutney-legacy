@@ -1,8 +1,12 @@
 <chutney-page-header [title]="'Scenarios'" [breadcrumbs]="breadcrumbs">
-  <!--<chutney-page-header-extra>
+  <chutney-page-header-extra>
     <mat-menu #menu="matMenu" xPosition="before">
-      <button mat-menu-item *ngFor="let item of items" (click)="select(item)">
-        {{ item }}
+      <button
+        mat-menu-item
+        *ngFor="let environment of environments"
+        (click)="select(environment)"
+      >
+        {{ environment }}
       </button>
     </mat-menu>
     <button
@@ -22,7 +26,7 @@
     >
       <mat-icon>stop_circle</mat-icon>
     </button>
-  </chutney-page-header-extra>-->
+  </chutney-page-header-extra>
 </chutney-page-header>
 
 <button

@@ -7,15 +7,18 @@ import { CampaignsListComponent } from './components/campaigns-list/campaigns-li
 import { UiCommonsModule } from '@chutney/ui-commons';
 import { CampaignViewComponent } from './containers/campaign-view/campaign-view.component';
 import { CampaignRunComponent } from './containers/campaign-run/campaign-run.component';
+import { UtilsModule } from '@chutney/utils';
 
 @NgModule({
   imports: [
     CommonModule,
     UiCommonsModule,
+    UtilsModule,
     RouterModule.forChild([
       { path: '', component: CampaignsComponent },
       { path: 'campaigns', component: CampaignsComponent },
       { path: ':id/view', component: CampaignViewComponent },
+      { path: ':id/run/:executionId', component: CampaignRunComponent },
     ]),
     UiMaterialModule,
   ],
