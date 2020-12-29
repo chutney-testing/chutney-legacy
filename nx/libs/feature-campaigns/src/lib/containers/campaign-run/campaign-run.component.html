@@ -35,7 +35,7 @@
   class="run-campaign-button mat-accent"
   (click)="stopCampaign()"
   aria-label="Stop campaign"
-  *ngIf="this.report?.status === 'RUNNING'"
+  *ngIf="this.report?.status === 'RUNNING' && this.running"
   [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
 >
   <mat-icon>stop</mat-icon>
@@ -77,7 +77,7 @@
           <span fxFlex></span>
           <span class="mat-hint" style="padding-right: 10px">{{
             node.duration | duration
-            }}</span>
+          }}</span>
         </li>
       </mat-tree-node>
       <!-- This is the tree node template for expandable nodes -->
@@ -103,7 +103,7 @@
             <span fxFlex></span>
             <span class="mat-hint" style="padding-right: 10px">{{
               node.duration | duration
-              }}</span>
+            }}</span>
           </div>
           <ul [class.example-tree-invisible]="!treeControl.isExpanded(node)">
             <ng-container matTreeNodeOutlet></ng-container>
