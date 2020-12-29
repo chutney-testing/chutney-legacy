@@ -1,0 +1,3 @@
+mutation stopCampaign($campaignId: ID!, $executionId: ID!, $bodyBuilder: RestFunction!){
+   stopCampaign(campaignId: $campaignId, executionId: $executionId) @rest(type: "StopCampaignExecution", path: "api/ui/campaign/execution/v1/{args.executionId}/stop", method: "POST", bodyBuilder: $bodyBuilder)
+}
