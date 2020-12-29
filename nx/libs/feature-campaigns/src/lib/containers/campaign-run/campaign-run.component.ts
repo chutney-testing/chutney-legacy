@@ -10,7 +10,12 @@ import {
   CampaignExecutionReport,
   CampaignExecutionReportGQL,
   RunCampaignGQL,
+  StopCampaignGQL,
 } from '@chutney/data-access';
+
+const formSerializer = () => {
+  return {};
+};
 
 @Component({
   selector: 'chutney-campaign-run',
@@ -51,6 +56,7 @@ export class CampaignRunComponent implements OnInit {
     private mediaObserver: MediaObserver,
     private changeDetectorRef: ChangeDetectorRef,
     private runCampaignGQL: RunCampaignGQL,
+    private stopCampaignGQL: StopCampaignGQL,
     private campaignExecutionReportGQL: CampaignExecutionReportGQL
   ) {}
 
@@ -70,6 +76,7 @@ export class CampaignRunComponent implements OnInit {
       .pipe(pluck('data', 'campaignExecutionReport'))
       .subscribe((data: CampaignExecutionReport) => {
         this.report = data;
+        this.running = this.report.status === 'RUNNING';
         this.environment = this.report.executionEnvironment;
         this.dataSource.data = this.report.scenarioExecutionReports;
         if (this.report.status != 'RUNNING') {
@@ -78,13 +85,24 @@ export class CampaignRunComponent implements OnInit {
       });
   }
 
-  stopCampaign() {}
+  stopCampaign() {
+    this.stopCampaignGQL
+      .mutate({
+        campaignId: this.campaignId,
+        executionId: this.executionId,
+        bodyBuilder: formSerializer,
+      })
+      .subscribe((result) => {
+        //this.report = {...this.report, status: "STOPPED"}
+        this.running = false;
+      });
+  }
 
   runCampaign() {
     this.runCampaignGQL
       .mutate({
         campaignId: this.campaignId,
-        environment: this.environment
+        environment: this.environment,
       })
       .subscribe((result) =>
         this.router.navigate([`../${result.data.runCampaign.executionId}`], {
