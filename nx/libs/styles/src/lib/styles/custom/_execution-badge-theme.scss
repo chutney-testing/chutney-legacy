@@ -1,0 +1,26 @@
+@mixin custom-execution-badge-theme($theme) {
+  $is-dark-theme: map-get($theme, is-dark);
+  .mat-chip-success.mat-chip {
+    color: if($is-dark-theme, #49aa19, #52c41a) !important;
+    background: if($is-dark-theme, #162312, #f6ffed) !important;
+    border: 1px solid if($is-dark-theme, #274916, #b7eb8f) !important;
+  }
+
+  .mat-chip-processing.mat-chip {
+    color: if($is-dark-theme, #177ddc, #1890ff) !important;
+    background: if($is-dark-theme, #111d2c, #e6f7ff) !important;
+    border: 1px solid if($is-dark-theme, #15395b, #91d5ff) !important;
+  }
+
+  .mat-chip-error.mat-chip {
+    color: if($is-dark-theme, #d32029, #f5222d) !important;
+    background: if($is-dark-theme, #2a1215, #fff1f0) !important;
+    border: 1px solid if($is-dark-theme, #58181c, #ffa39e) !important;
+  }
+
+  .mat-chip-warning.mat-chip {
+    color: if($is-dark-theme, #d87a16, #fa8c16) !important;
+    background: if($is-dark-theme, #2b1d11, #fff7e6) !important;
+    border: 1px solid if($is-dark-theme, #593815, #ffd591) !important;
+  }
+}
