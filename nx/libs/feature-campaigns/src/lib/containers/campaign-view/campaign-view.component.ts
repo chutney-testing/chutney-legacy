@@ -51,7 +51,7 @@ export class CampaignViewComponent implements OnInit {
 
   runCampaign(campaignId: string, environment: string) {
     this.runCampaignGQL
-      .mutate({ campaignId: campaignId, environment: environment, dataset: [] })
+      .mutate({ campaignId: campaignId, environment: environment })
       .subscribe((result) =>
         this.router.navigate(
           [`../run/${result.data.runCampaign.executionId}`],

@@ -4,7 +4,7 @@
 
   <!-- Position Column -->
   <ng-container matColumnDef="id">
-    <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="75px"
+    <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="50px"
       >Id.</mat-header-cell
     >
     <mat-cell *matCellDef="let element" fxFlex="50px">{{
@@ -20,10 +20,18 @@
 
   <!-- Status Column -->
   <ng-container matColumnDef="status">
-    <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="120px"
+    <mat-header-cell
+      *matHeaderCellDef
+      mat-sort-header
+      fxFlex="120px"
+      fxLayoutAlign="center center"
       >status</mat-header-cell
     >
-    <mat-cell *matCellDef="let element" fxFlex="120px">
+    <mat-cell
+      *matCellDef="let element"
+      fxFlex="120px"
+      fxLayoutAlign="center center"
+    >
       <chutney-execution-badge
         [status]="element.status"
       ></chutney-execution-badge>
@@ -32,7 +40,7 @@
 
   <!-- Action Column -->
   <ng-container matColumnDef="action">
-    <mat-header-cell *matHeaderCellDef fxFlex="100px">Action</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef fxFlex="125px">Action</mat-header-cell>
     <mat-cell *matCellDef="let element" fxFlex="125px">
       <button (click)="viewScenario(element.id)" mat-icon-button>
         <mat-icon class="material-icons-outlined">preview</mat-icon>

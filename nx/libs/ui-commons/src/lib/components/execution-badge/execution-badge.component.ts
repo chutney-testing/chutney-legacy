@@ -1,14 +1,32 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
-  HostBinding,
   Input,
   OnChanges,
   OnInit,
-  Renderer2,
+  SimpleChanges,
   ViewEncapsulation,
 } from '@angular/core';
+
+const statusClass = {
+  SUCCESS: 'mat-chip-success',
+  FAILURE: 'mat-chip-error',
+  RUNNING: 'mat-chip-processing',
+  NOT_EXECUTED: 'mat-chip-warning',
+  STOPPED: 'mat-chip-warning',
+  PAUSED: 'mat-chip-warning',
+};
+
+const statusLabel = {
+  SUCCESS: 'Passed',
+  FAILURE: 'Failed',
+  RUNNING: 'In progress',
+  NOT_EXECUTED: 'Not Run',
+  STOPPED: 'Stopped',
+  PAUSED: 'Paused',
+};
+
+//SUCCESS, WARN, FAILURE, NOT_EXECUTED, STOPPED, PAUSED, RUNNING, EXECUTED
 
 @Component({
   selector: 'chutney-execution-badge',
@@ -18,34 +36,23 @@ import {
   encapsulation: ViewEncapsulation.None,
 })
 export class ExecutionBadgeComponent implements OnInit, OnChanges {
-  cacheClassName: string | null = null;
   @Input() status: string;
-  @HostBinding('class.tag') tag = true;
 
-  constructor(private renderer: Renderer2, private elementRef: ElementRef) {}
+  class: string | null;
+  label: string | null;
+
+  constructor() {}
 
   ngOnInit(): void {
     this.updateClassMap();
   }
 
-  private updateClassMap() {
-    if (this.cacheClassName) {
-      this.renderer.removeClass(
-        this.elementRef.nativeElement,
-        this.cacheClassName
-      );
-    }
-    let color = 'default';
-    if (this.status === 'SUCCESS') color = 'success';
-    else if (this.status === 'RUNNING' || this.status === 'PAUSED')
-      color = 'processing';
-    else if (this.status === 'FAILURE') color = 'error';
-    else color = 'default';
-    this.cacheClassName = `tag-${color}`;
-    this.renderer.addClass(this.elementRef.nativeElement, this.cacheClassName);
+  ngOnChanges(changes: SimpleChanges): void {
+    this.updateClassMap();
   }
 
-  ngOnChanges(): void {
-    this.updateClassMap();
+  private updateClassMap() {
+    this.class = statusClass[this.status];
+    this.label = statusLabel[this.status];
   }
 }
