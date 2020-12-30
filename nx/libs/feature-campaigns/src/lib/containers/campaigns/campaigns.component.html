@@ -2,6 +2,15 @@
   <chutney-page-header [title]="'Campaigns'" [breadcrumbs]="breadcrumbs">
   </chutney-page-header>
   <!--<chutney-campaigns-search-form></chutney-campaigns-search-form>-->
+  <button
+    mat-fab
+    class="add-campaign-button mat-accent"
+    (click)="addCampaign()"
+    aria-label="Add campaign"
+    [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
+  >
+    <mat-icon>add</mat-icon>
+  </button>
   <chutney-campaigns-list
     [campaigns]="campaigns$ | async"
     (view)="onView($event)"
