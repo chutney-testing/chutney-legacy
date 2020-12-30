@@ -617,7 +617,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         ExecutableComposedStep stepGenerating2IterationsWithOutputs = ExecutableComposedStep.builder()
             .withName("Should generate 2 iterations for letter A and B")
             .withImplementation(Optional.of(
-                new StepImplementation("task", null, emptyMap(), Maps.of("output", "**letter**", "otherOutput", "**letter**"))))
+                new StepImplementation("task", null, emptyMap(), Maps.of("output", "**letter**", "output2", "**letter**"))))
             .withDataset(singletonMap("letter", ""))
             .build();
 
@@ -630,7 +630,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                         .withName("Should generate 2 iterations using output_1 and output_2 previous outputs")
                         .withImplementation(Optional.of(
                             new StepImplementation("task", null, Maps.of("taskInput", "X + **var** + Y}", "taskOtherInput", "**var2**"), emptyMap())))
-                        .withDataset(Maps.of("var", "${#output}", "var2", "${#otherOutput}"))
+                        .withDataset(Maps.of("var", "${#output.toString()}", "var2", "${ #output2 }"))
                         .build()
                     )
                 )
@@ -652,13 +652,13 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, Maps.of("taskInput", "X + **var** + Y}", "taskOtherInput", "**var2**"), emptyMap())
                     ))
-                    .withDataset(Maps.of("var", "${#output_1}", "var2", "${#otherOutput_1}"))
+                    .withDataset(Maps.of("var", "${#output_1.toString()}", "var2", "${ #output2_1 }"))
                     .build(), ExecutableComposedStep.builder()
                     .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - dataset iteration 2")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, Maps.of("taskInput", "X + **var** + Y}", "taskOtherInput", "**var2**"), emptyMap())
                     ))
-                    .withDataset(Maps.of("var", "${#output_2}", "var2", "${#otherOutput_2}"))
+                    .withDataset(Maps.of("var", "${#output_2.toString()}", "var2", "${ #output2_2 }"))
                     .build()
             ))
             .build();
@@ -679,7 +679,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         ExecutableComposedStep stepGenerating2IterationsWithOutputs = ExecutableComposedStep.builder()
             .withName("Should generate 2 iterations for letter A and B")
             .withImplementation(Optional.of(
-                new StepImplementation("task", null, emptyMap(), Maps.of("output", "**letter**", "otherOutput", "**letter**"))))
+                new StepImplementation("task", null, emptyMap(), Maps.of("output", "**letter**", "output2", "**letter**"))))
             .withDataset(singletonMap("letter", ""))
             .build();
 
@@ -691,7 +691,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                     ExecutableComposedStep.builder() // the step under test
                         .withName("Should generate 2 iterations using output_1 and output_2 previous outputs")
                         .withImplementation(Optional.of(
-                            new StepImplementation("task", null, Maps.of("taskInput", "X + ${#output} + Y}", "taskOtherInput", "${#otherOutput}"), emptyMap())))
+                            new StepImplementation("task", null, Maps.of("taskInput", "X + ${(#output).equals('**letter**')} + Y}", "taskOtherInput", "${func(#output2,'param')}"), emptyMap())))
                         .build()
                     )
                 )
@@ -711,12 +711,12 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                 ExecutableComposedStep.builder()
                     .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - dataset iteration 1")
                     .withImplementation(Optional.of(
-                        new StepImplementation("task", null, Maps.of("taskInput", "X + ${#output_1} + Y}", "taskOtherInput", "${#otherOutput_1}"), emptyMap())
+                        new StepImplementation("task", null, Maps.of("taskInput", "X + ${(#output_1).equals('**letter**')} + Y}", "taskOtherInput", "${func(#output2_1,'param')}"), emptyMap())
                     ))
                     .build(), ExecutableComposedStep.builder()
                     .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - dataset iteration 2")
                     .withImplementation(Optional.of(
-                        new StepImplementation("task", null, Maps.of("taskInput", "X + ${#output_2} + Y}", "taskOtherInput", "${#otherOutput_2}"), emptyMap())
+                        new StepImplementation("task", null, Maps.of("taskInput", "X + ${(#output_2).equals('**letter**')} + Y}", "taskOtherInput", "${func(#output2_2,'param')}"), emptyMap())
                     ))
                     .build()
             ))
@@ -739,7 +739,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withName("Should generate 2 iterations for letter A and B")
             .withImplementation(Optional.of(
                 new StepImplementation("task", null, emptyMap(), Maps.of("**outputVar**", "**letter**"))))
-            .withDataset(Maps.of("outputVar","output","letter", ""))
+            .withDataset(Maps.of("outputVar", "output", "letter", ""))
             .build();
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
@@ -1202,7 +1202,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                                 .withImplementation(Optional.of(
                                     new StepImplementation("task", null, singletonMap("input", "**data**"), emptyMap())
                                 ))
-                                .withDataset(singletonMap("data","${#output.toString()}"))
+                                .withDataset(singletonMap("data", "${#output.toString()}"))
                                 .build()
                         ))
                         .withDataset(singletonMap("letter", ""))
@@ -1241,7 +1241,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                                     .withImplementation(Optional.of(
                                         new StepImplementation("task", null, singletonMap("input", "**data**"), emptyMap())
                                     ))
-                                    .withDataset(singletonMap("data","${#output_1.toString()}"))
+                                    .withDataset(singletonMap("data", "${#output_1.toString()}"))
                                     .build()
                             ))
                             .withDataset(singletonMap("letter", "A"))
@@ -1261,7 +1261,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                                     .withImplementation(Optional.of(
                                         new StepImplementation("task", null, singletonMap("input", "**data**"), emptyMap())
                                     ))
-                                    .withDataset(singletonMap("data","${#output_2.toString()}"))
+                                    .withDataset(singletonMap("data", "${#output_2.toString()}"))
                                     .build()
                             ))
                             .withDataset(singletonMap("letter", "B"))

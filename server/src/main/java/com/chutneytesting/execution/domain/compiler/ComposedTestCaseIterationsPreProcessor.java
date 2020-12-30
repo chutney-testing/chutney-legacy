@@ -27,6 +27,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.text.StringEscapeUtils;
 
 public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProcessor<ExecutableComposedTestCase> {
@@ -368,7 +370,11 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
     private String applyIndexedOutputsOnStringValue(String value, AtomicInteger index, Map<String, Integer> indexedOutput, Function<String, String> escapeValueFunction) {
         String tmp = value;
         for (String output : indexedOutput.keySet()) {
-            tmp = tmp.replace("#" + output, escapeValueFunction.apply("#" + output + "_" + index));
+            Pattern pattern = Pattern.compile("(#)(\\Q" + output + "\\E)([ \\.)},])");
+            Matcher matcher = pattern.matcher(tmp);
+            if (matcher.find()) {
+                tmp = matcher.replaceAll("$1" + escapeValueFunction.apply("$2_" + index) + "$3");
+            }
         }
         return tmp;
     }
