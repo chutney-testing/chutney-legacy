@@ -8,6 +8,7 @@ import { UiCommonsModule } from '@chutney/ui-commons';
 import { CampaignViewComponent } from './containers/campaign-view/campaign-view.component';
 import { CampaignRunComponent } from './containers/campaign-run/campaign-run.component';
 import { UtilsModule } from '@chutney/utils';
+import { CampaignEditComponent } from './containers/campaign-edit/campaign-edit.component';
 
 @NgModule({
   imports: [
@@ -18,6 +19,8 @@ import { UtilsModule } from '@chutney/utils';
       { path: '', component: CampaignsComponent },
       { path: 'campaigns', component: CampaignsComponent },
       { path: ':id/view', component: CampaignViewComponent },
+      { path: ':id/edit', component: CampaignEditComponent },
+      { path: 'new', component: CampaignEditComponent },
       { path: ':id/run/:executionId', component: CampaignRunComponent },
     ]),
     UiMaterialModule,
@@ -27,6 +30,7 @@ import { UtilsModule } from '@chutney/utils';
     CampaignsListComponent,
     CampaignViewComponent,
     CampaignRunComponent,
+    CampaignEditComponent,
   ],
 })
 export class FeatureCampaignsModule {}
