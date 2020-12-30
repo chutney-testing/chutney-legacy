@@ -153,6 +153,7 @@ export type Mutation = {
   stopScenario?: Maybe<Scalars['Boolean']>;
   stopCampaign?: Maybe<Scalars['Boolean']>;
   runCampaign: CampaignExecution;
+  deleteCampaign?: Maybe<Scalars['Boolean']>;
 };
 
 export type MutationLoginArgs = {
@@ -196,6 +197,10 @@ export type MutationStopCampaignArgs = {
 export type MutationRunCampaignArgs = {
   campaignId: Scalars['ID'];
   environment?: Maybe<Scalars['String']>;
+};
+
+export type MutationDeleteCampaignArgs = {
+  input: Scalars['ID'];
 };
 
 export type CampaignExecutionReportQueryVariables = Exact<{
@@ -271,6 +276,15 @@ export type CampaignsQuery = { __typename?: 'Query' } & {
     >
   >;
 };
+
+export type DeleteCampaignMutationVariables = Exact<{
+  input: Scalars['ID'];
+}>;
+
+export type DeleteCampaignMutation = { __typename?: 'Mutation' } & Pick<
+  Mutation,
+  'deleteCampaign'
+>;
 
 export type DeleteScenarioMutationVariables = Exact<{
   input: Scalars['ID'];
@@ -535,7 +549,7 @@ export class CampaignGQL extends Apollo.Query<
 }
 export const CampaignsDocument = gql`
   query campaigns {
-    campaigns @rest(type: "CampaignsModel", path: "api/ui/campaign/v1") {
+    campaigns @rest(type: "Campaign", path: "api/ui/campaign/v1") {
       id
       title
       description
@@ -551,6 +565,30 @@ export class CampaignsGQL extends Apollo.Query<
   CampaignsQueryVariables
 > {
   document = CampaignsDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const DeleteCampaignDocument = gql`
+  mutation deleteCampaign($input: ID!) {
+    deleteCampaign(input: $input)
+      @rest(
+        type: "CampaignDeleted"
+        path: "api/ui/campaign/v1/{args.input}"
+        method: "DELETE"
+      )
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class DeleteCampaignGQL extends Apollo.Mutation<
+  DeleteCampaignMutation,
+  DeleteCampaignMutationVariables
+> {
+  document = DeleteCampaignDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

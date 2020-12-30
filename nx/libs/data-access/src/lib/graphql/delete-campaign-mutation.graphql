@@ -1,0 +1,3 @@
+mutation deleteCampaign($input: ID!){
+   deleteCampaign(input: $input) @rest(type: "CampaignDeleted", path: "api/ui/campaign/v1/{args.input}", method: "DELETE")
+}

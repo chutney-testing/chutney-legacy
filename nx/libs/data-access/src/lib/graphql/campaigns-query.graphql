@@ -1,5 +1,5 @@
 query campaigns {
-   campaigns @rest(type: "CampaignsModel", path: "api/ui/campaign/v1") {
+   campaigns @rest(type: "Campaign", path: "api/ui/campaign/v1") {
        id
        title
        description

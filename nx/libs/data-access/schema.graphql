@@ -107,6 +107,7 @@ type Mutation {
   stopScenario(scenarioId: ID!, executionId: ID!): Boolean
   stopCampaign(campaignId: ID!, executionId: ID!): Boolean
   runCampaign(campaignId: ID!, environment:String ) : CampaignExecution!
+  deleteCampaign(input: ID!): Boolean
 }
 
 scalar RestFunction
