@@ -6,6 +6,7 @@
 @import './theme/topmenu-theme';
 
 @import './custom/tree-theme';
+@import './custom/execution-badge-theme';
 @import './custom/split-pane-theme';
 @import './custom/table-theme';
 
@@ -19,6 +20,7 @@
   @include chutney-topmenu-theme($theme);
 
   @include custom-split-pane-theme($theme);
+  @include custom-execution-badge-theme($theme);
   @include custom-tree-theme($theme);
   @include custom-table-theme($theme);
 }
