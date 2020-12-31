@@ -11,8 +11,16 @@ import { layoutOprionsVar } from '../../../../../ui-layout/src/lib/cache';
 import { chutneySchemaV2 } from '../../../../../data-models/schema.scenario.v2';
 import * as dotProp from 'dot-prop-immutable';
 import { chutneyAnimations } from '@chutney/utils';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { MatChipInputEvent } from '@angular/material/chips';
 
 declare const monaco: any;
+
 @Component({
   selector: 'chutney-scenario-text-exit',
   templateUrl: './scenario-text-edit.component.html',
@@ -23,7 +31,11 @@ export class ScenarioTextEditComponent implements OnInit {
   @ViewChild(TdCodeEditorComponent, { static: false })
   public monaco: TdCodeEditorComponent;
   private _editor: any;
-
+  scenarioForm: FormGroup;
+  id: string;
+  isAddMode: boolean;
+  loading = false;
+  submitted = false;
   scenario$: Observable<any>;
   scenario: any;
   height: number = 200;
@@ -37,21 +49,32 @@ export class ScenarioTextEditComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
     private scenarioGQL: ScenarioGQL,
     private saveScenarioGQL: SaveScenarioGQL
   ) {}
 
   ngOnInit(): void {
-    this.scenario = this.route.params
-      .pipe(
-        switchMap((p) => {
-          return this.scenarioGQL
-            .watch({ scenarioId: p.id })
-            .valueChanges.pipe(pluck('data', 'scenario'));
-        })
-      )
-      .subscribe((scenario) => (this.scenario = scenario));
+    this.id = this.route.snapshot.params['id'];
+    this.isAddMode = !this.id;
+
+    this.scenarioForm = this.formBuilder.group({
+      title: ['', Validators.required],
+      description: ['', Validators.required],
+      content: ['', Validators.required],
+      tags: [[]],
+    });
+
+    if (!this.isAddMode) {
+      this.scenarioGQL
+        .watch({ scenarioId: this.id })
+        .valueChanges.pipe(pluck('data', 'scenario'))
+        .subscribe((x) => {
+          this.scenarioForm.patchValue(x);
+          this.scenario = x;
+        });
+    }
   }
 
   callBackFunc() {
@@ -88,7 +111,7 @@ export class ScenarioTextEditComponent implements OnInit {
 
   saveScenario() {
     console.log('scenario saved' + this.monaco.value);
-    const scenario = Object.assign({}, this.scenario, {
+    const scenario = Object.assign({}, this.scenario, this.scenarioForm.value, {
       content: this.monaco.value,
     });
     this.saveScenarioGQL.mutate({ input: scenario }).subscribe(
@@ -113,5 +136,38 @@ export class ScenarioTextEditComponent implements OnInit {
     // do something with editorModel
 
     return editorModel;
+  }
+
+  // convenience getter for easy access to form fields
+  get f() {
+    return this.scenarioForm.controls;
+  }
+  get tags() {
+    return this.f['tags'];
+  }
+
+  addTag(event: MatChipInputEvent): void {
+    const input = event.input;
+    const value = event.value;
+
+    // Add our tag
+    if ((value || '').trim()) {
+      this.tags.setValue([...this.tags.value, value.trim()]);
+      this.tags.updateValueAndValidity();
+    }
+
+    // Reset the input value
+    if (input) {
+      input.value = '';
+    }
+  }
+
+  removeTag(tag: string): void {
+    const index = this.tags.value.indexOf(tag);
+
+    if (index >= 0) {
+      this.tags.value.splice(index, 1);
+      this.tags.updateValueAndValidity();
+    }
   }
 }

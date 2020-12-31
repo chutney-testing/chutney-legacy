@@ -22,6 +22,7 @@ import { UtilsModule } from '@chutney/utils';
       { path: '', component: ScenariosComponent },
       { path: 'text/:id/view', component: ScenarioTextViewComponent },
       { path: 'text/:id/edit', component: ScenarioTextEditComponent },
+      { path: 'text/add', component: ScenarioTextEditComponent },
       {
         path: 'text/:id/run/:executionId',
         component: ScenarioTextRunComponent,

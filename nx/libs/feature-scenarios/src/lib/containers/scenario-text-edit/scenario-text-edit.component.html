@@ -9,18 +9,107 @@
 >
   <mat-icon>save</mat-icon>
 </button>
-<div *ngIf="scenario" fxFill>
+<div [formGroup]="scenarioForm">
+  <mat-tab-group>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="example-tab-icon">description</mat-icon>
+        Info
+      </ng-template>
+      <div class="tab-content" style="padding: 24px">
+        <mat-form-field
+          appearance="outline"
+          floatLabel="always"
+          class="w-100-p"
+        >
+          <mat-label>Scenario Title</mat-label>
+          <input
+            matInput
+            placeholder="Scenario Title"
+            name="title"
+            formControlName="title"
+            required
+          />
+        </mat-form-field>
+
+        <mat-form-field
+          appearance="outline"
+          floatLabel="always"
+          class="w-100-p"
+        >
+          <mat-label>Scenario Description</mat-label>
+          <textarea
+            matInput
+            placeholder="Scenario Description"
+            name="description"
+            formControlName="description"
+            rows="5"
+          >
+          </textarea>
+        </mat-form-field>
+
+        <mat-form-field
+          appearance="outline"
+          floatLabel="always"
+          class="w-100-p"
+        >
+          <mat-label>Tags</mat-label>
+
+          <mat-chip-list #tagList name="tags" formControlName="tags">
+            <mat-chip
+              *ngFor="let tag of f['tags'].value"
+              [removable]="true"
+              (removed)="removeTag(tag)"
+            >
+              {{ tag }}
+              <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+
+            <input
+              [matChipInputFor]="tagList"
+              [matChipInputAddOnBlur]="true"
+              (matChipInputTokenEnd)="addTag($event)"
+            />
+          </mat-chip-list>
+        </mat-form-field>
+      </div>
+    </mat-tab>
+
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="example-tab-icon">code</mat-icon>
+        Code
+      </ng-template>
+      <div class="my-code-editor">
+        <td-code-editor
+          class="my-code-editor"
+          #monaco
+          fxFlex="grow"
+          editorStyle="border:0;"
+          language="json"
+          [editorOptions]="{ fontSize: 12, automaticLayout: true }"
+          [value]="hjson(f['content'].value)"
+          (editorInitialized)="editorInitialized($event)"
+          (change)="callBackFunc()"
+          [theme]="options.theme === 'light' ? 'vs' : 'vs-dark'"
+          (editorConfigurationChanged)="monacoEditorConfigChanged(monaco.theme)"
+        ></td-code-editor>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>
+<!--<div fxFill>
   <mat-toolbar>
     <mat-toolbar-row>
-      {{ scenario.title }}
+      {{ scenario?.title }}
       <span fxFlex></span>
-      <!--<button
+      &lt;!&ndash;<button
         mat-icon-button
         (click)="saveScenario()"
         matTooltip="Save scenario"
       >
         <mat-icon>save</mat-icon>
-      </button>-->
+      </button>&ndash;&gt;
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="my-code-editor">
@@ -31,11 +120,11 @@
       editorStyle="border:0;"
       language="json"
       [editorOptions]="{ fontSize: 12, automaticLayout: true }"
-      [value]="hjson(scenario.content)"
+      [value]="hjson(scenario?.content)"
       (editorInitialized)="editorInitialized($event)"
       (change)="callBackFunc()"
       [theme]="options.theme === 'light' ? 'vs' : 'vs-dark'"
       (editorConfigurationChanged)="monacoEditorConfigChanged(monaco.theme)"
     ></td-code-editor>
   </div>
-</div>
+</div>-->
