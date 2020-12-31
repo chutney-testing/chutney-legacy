@@ -36,6 +36,7 @@ import { CovalentBreadcrumbsModule } from '@covalent/core/breadcrumbs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AngularSplitModule } from 'angular-split';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @NgModule({
   imports: [
@@ -64,6 +65,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatRippleModule,
     MatTooltipModule,
     MatProgressBarModule,
+    MatTabsModule,
     /** Covalent Modules */
     CovalentDialogsModule,
     CovalentSearchModule,
@@ -100,6 +102,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatRippleModule,
     MatTooltipModule,
     MatProgressBarModule,
+    MatTabsModule,
     /** Covalent Modules */
     CovalentDialogsModule,
     CovalentSearchModule,

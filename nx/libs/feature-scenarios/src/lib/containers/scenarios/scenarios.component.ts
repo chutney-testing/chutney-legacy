@@ -11,14 +11,19 @@ import { map, pluck, startWith, take, takeUntil } from 'rxjs/operators';
 import { combineLatest, Observable, ReplaySubject, Subject } from 'rxjs';
 import { TdDialogService } from '@covalent/core/dialogs';
 import { tdCollapseAnimation } from '@covalent/core/common';
-import { filter, searchInObj, sortByKeys } from '@chutney/utils';
+import {
+  chutneyAnimations,
+  filter,
+  searchInObj,
+  sortByKeys,
+} from '@chutney/utils';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'chutney-testing-scenarios',
   templateUrl: './scenarios.component.html',
   styleUrls: ['./scenarios.component.scss'],
-  animations: [tdCollapseAnimation],
+  animations: [tdCollapseAnimation, chutneyAnimations],
 })
 export class ScenariosComponent implements OnInit, OnDestroy {
   scenarios$: Observable<any[]>;
@@ -137,5 +142,9 @@ export class ScenariosComponent implements OnInit, OnDestroy {
 
   onView(id: string) {
     this.router.navigate(['text', id, 'view'], { relativeTo: this.route });
+  }
+
+  addScenario() {
+    this.router.navigate(['text', 'add'], { relativeTo: this.route });
   }
 }
