@@ -6,11 +6,13 @@ import { RunScenarioGQL, Scenario, ScenarioGQL } from '@chutney/data-access';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import Hjson from 'hjson';
+import { chutneyAnimations } from '@chutney/utils';
 
 @Component({
   selector: 'chutney-scenario-text-view',
   templateUrl: './scenario-text-view.component.html',
   styleUrls: ['./scenario-text-view.component.scss'],
+  animations: [chutneyAnimations],
 })
 export class ScenarioTextViewComponent implements OnInit {
   scenarioId: string;
