@@ -37,6 +37,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { AngularSplitModule } from 'angular-split';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { MatBadgeModule } from '@angular/material/badge';
 
 @NgModule({
   imports: [
@@ -66,6 +69,9 @@ import { MatTabsModule } from '@angular/material/tabs';
     MatTooltipModule,
     MatProgressBarModule,
     MatTabsModule,
+    MatCheckboxModule,
+    DragDropModule,
+    MatBadgeModule,
     /** Covalent Modules */
     CovalentDialogsModule,
     CovalentSearchModule,
@@ -103,6 +109,9 @@ import { MatTabsModule } from '@angular/material/tabs';
     MatTooltipModule,
     MatProgressBarModule,
     MatTabsModule,
+    MatCheckboxModule,
+    DragDropModule,
+    MatBadgeModule,
     /** Covalent Modules */
     CovalentDialogsModule,
     CovalentSearchModule,

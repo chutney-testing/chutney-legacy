@@ -38,7 +38,11 @@
       </chutney-sidebar>
     </mat-sidenav>
 
-    <mat-sidenav-content #content class="chutney-content-wrap">
+    <mat-sidenav-content
+      #content
+      class="chutney-content-wrap"
+      fxLayout="column"
+    >
       <chutney-header
         *ngIf="options.showHeader && options.headerPos !== 'above'"
         [showToggle]="!options.sidenavCollapsed && options.navPos !== 'top'"

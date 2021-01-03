@@ -14,6 +14,7 @@ import { chutneyAnimations } from '@chutney/utils';
 import {
   AbstractControl,
   FormBuilder,
+  FormControl,
   FormGroup,
   Validators,
 } from '@angular/forms';
@@ -63,7 +64,7 @@ export class ScenarioTextEditComponent implements OnInit {
       title: ['', Validators.required],
       description: ['', Validators.required],
       content: ['', Validators.required],
-      tags: [[]],
+      tags: new FormControl([]),
     });
 
     if (!this.isAddMode) {
@@ -72,6 +73,9 @@ export class ScenarioTextEditComponent implements OnInit {
         .valueChanges.pipe(pluck('data', 'scenario'))
         .subscribe((x) => {
           this.scenarioForm.patchValue(x);
+          // a hack to avoid error when removing tag
+          // ERROR TypeError: Cannot delete property '1' of [object Array]
+          this.tags.setValue([...(x.tags || [])]);
           this.scenario = x;
         });
     }
