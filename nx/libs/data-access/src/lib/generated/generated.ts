@@ -64,6 +64,14 @@ export type ScenarioInput = {
   content?: Maybe<Scalars['String']>;
 };
 
+export type CampaignInput = {
+  id?: Maybe<Scalars['ID']>;
+  title: Scalars['String'];
+  description: Scalars['String'];
+  environment?: Maybe<Scalars['String']>;
+  scenarioIds?: Maybe<Array<Scalars['String']>>;
+};
+
 export type ScenariosFilter = {
   __typename?: 'ScenariosFilter';
   text?: Maybe<Scalars['String']>;
@@ -145,6 +153,8 @@ export type QueryCampaignExecutionReportArgs = {
 export type Mutation = {
   __typename?: 'Mutation';
   login?: Maybe<User>;
+  saveCampaign?: Maybe<Campaign>;
+  updateCampaign?: Maybe<Campaign>;
   saveScenario?: Maybe<Scalars['Boolean']>;
   deleteScenario?: Maybe<Scalars['Boolean']>;
   runScenario: Scalars['ID'];
@@ -158,6 +168,14 @@ export type Mutation = {
 
 export type MutationLoginArgs = {
   input: LoginInput;
+};
+
+export type MutationSaveCampaignArgs = {
+  input: CampaignInput;
+};
+
+export type MutationUpdateCampaignArgs = {
+  input: CampaignInput;
 };
 
 export type MutationSaveScenarioArgs = {
@@ -374,6 +392,16 @@ export type RunScenarioMutation = { __typename?: 'Mutation' } & Pick<
   'runScenario'
 >;
 
+export type SaveCampaignMutationVariables = Exact<{
+  input: CampaignInput;
+}>;
+
+export type SaveCampaignMutation = { __typename?: 'Mutation' } & {
+  saveCampaign?: Maybe<
+    { __typename?: 'Campaign' } & Pick<Campaign, 'description' | 'id' | 'title'>
+  >;
+};
+
 export type SaveScenarioMutationVariables = Exact<{
   input: ScenarioInput;
 }>;
@@ -422,7 +450,13 @@ export type ScenariosQuery = { __typename?: 'Query' } & {
       Maybe<
         { __typename?: 'Scenario' } & Pick<
           Scenario,
-          'id' | 'title' | 'tags' | 'creationDate' | 'executionDate' | 'status'
+          | 'id'
+          | 'title'
+          | 'description'
+          | 'tags'
+          | 'creationDate'
+          | 'executionDate'
+          | 'status'
         > & {
             executions?: Maybe<
               Array<
@@ -461,6 +495,16 @@ export type StopScenarioMutation = { __typename?: 'Mutation' } & Pick<
   Mutation,
   'stopScenario'
 >;
+
+export type UpdateCampaignMutationVariables = Exact<{
+  input: CampaignInput;
+}>;
+
+export type UpdateCampaignMutation = { __typename?: 'Mutation' } & {
+  updateCampaign?: Maybe<
+    { __typename?: 'Campaign' } & Pick<Campaign, 'description' | 'id' | 'title'>
+  >;
+};
 
 export type UserQueryVariables = Exact<{ [key: string]: never }>;
 
@@ -802,6 +846,30 @@ export class RunScenarioGQL extends Apollo.Mutation<
     super(apollo);
   }
 }
+export const SaveCampaignDocument = gql`
+  mutation saveCampaign($input: CampaignInput!) {
+    saveCampaign(input: $input)
+      @rest(type: "Campaign", path: "api/ui/campaign/v1", method: "POST") {
+      description
+      id
+      title
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class SaveCampaignGQL extends Apollo.Mutation<
+  SaveCampaignMutation,
+  SaveCampaignMutationVariables
+> {
+  document = SaveCampaignDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const SaveScenarioDocument = gql`
   mutation saveScenario($input: ScenarioInput!) {
     saveScenario(input: $input)
@@ -880,6 +948,7 @@ export const ScenariosDocument = gql`
     scenarios @rest(type: "Scenario", path: "api/scenario/v2") {
       id
       title
+      description
       tags
       executions @type(name: "ScenarioExecution") {
         __typename
@@ -961,6 +1030,30 @@ export class StopScenarioGQL extends Apollo.Mutation<
   StopScenarioMutationVariables
 > {
   document = StopScenarioDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const UpdateCampaignDocument = gql`
+  mutation updateCampaign($input: CampaignInput!) {
+    updateCampaign(input: $input)
+      @rest(type: "Campaign", path: "api/ui/campaign/v1", method: "PUT") {
+      description
+      id
+      title
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UpdateCampaignGQL extends Apollo.Mutation<
+  UpdateCampaignMutation,
+  UpdateCampaignMutationVariables
+> {
+  document = UpdateCampaignDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

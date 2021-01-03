@@ -1,1 +1,202 @@
-<p>campaign-edit works!</p>
+<chutney-page-header [title]="'Campaigns'" [breadcrumbs]="breadcrumbs">
+</chutney-page-header>
+<button
+  mat-fab
+  class="save-campaign-button mat-accent"
+  (click)="saveCampaign()"
+  aria-label="Save campaign"
+  [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
+>
+  <mat-icon>save</mat-icon>
+</button>
+
+<div [formGroup]="campaignForm" id="wrapper">
+  <mat-tab-group id="tab-group" class="border-red">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="example-tab-icon">description</mat-icon>
+        Info
+      </ng-template>
+      <div class="tab-content" style="padding: 24px" fxFill>
+        <mat-form-field
+          appearance="outline"
+          floatLabel="always"
+          class="w-100-p"
+        >
+          <mat-label>Campaign Title</mat-label>
+          <input
+            matInput
+            placeholder="Campaign Title"
+            name="title"
+            formControlName="title"
+            required
+          />
+        </mat-form-field>
+
+        <mat-form-field
+          appearance="outline"
+          floatLabel="always"
+          class="w-100-p"
+        >
+          <mat-label>Campaign Description</mat-label>
+          <textarea
+            matInput
+            placeholder="Campaign Description"
+            name="description"
+            formControlName="description"
+            rows="5"
+          >
+          </textarea>
+        </mat-form-field>
+      </div>
+    </mat-tab>
+
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="example-tab-icon">code</mat-icon>
+        Scenarios&nbsp;<span
+          [matBadge]="scenariosInCampaign.length.toString()"
+          matBadgeOverlap="false"
+          matBadgeColor="accent"
+        ></span>
+      </ng-template>
+      <!--<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+        &lt;!&ndash; Checkbox Column &ndash;&gt;
+        <ng-container matColumnDef="select">
+          <th mat-header-cell *matHeaderCellDef>
+            <mat-checkbox (change)="$event ? masterToggle() : null"
+                          [checked]="selection.hasValue() && isAllSelected()"
+                          [indeterminate]="selection.hasValue() && !isAllSelected()"
+                          [aria-label]="checkboxLabel()">
+            </mat-checkbox>
+          </th>
+          <td mat-cell *matCellDef="let row">
+            <mat-checkbox (click)="$event.stopPropagation()"
+                          (change)="$event ? selection.toggle(row) : null"
+                          [checked]="selection.isSelected(row)"
+                          [aria-label]="checkboxLabel(row)">
+            </mat-checkbox>
+          </td>
+        </ng-container>
+
+        &lt;!&ndash; Position Column &ndash;&gt;
+        <ng-container matColumnDef="position">
+          <th mat-header-cell *matHeaderCellDef> No. </th>
+          <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+        </ng-container>
+
+        &lt;!&ndash; Name Column &ndash;&gt;
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef> Name </th>
+          <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+            (click)="selection.toggle(row)">
+        </tr>
+      </table>-->
+      <!--<div fxLayout="row" style="height: 100%">
+        <div fxFlex="50%">
+          <mat-list dense cdkDropList #scenariosInCampaignList="cdkDropList" [cdkDropListData]="scenariosInCampaign"
+                    [cdkDropListConnectedTo]="availableScenariosList" class="list" (cdkDropListDropped)="drop($event)">
+            <h3 matSubheader>Scenarios In Campaign</h3>
+            <mat-list-item *ngFor="let scenario of scenariosInCampaign" cdkDrag>
+              &lt;!&ndash;<mat-icon matListIcon>delete</mat-icon>&ndash;&gt;
+              <h4 matLine>{{scenario.title}}</h4>
+              <p matLine class="demo-2"> {{scenario.description}} </p>
+              &lt;!&ndash;<h4 *cdkDragPreview matLine>{{scenario.title}}</h4>&ndash;&gt;
+            </mat-list-item>
+          </mat-list>
+        </div>
+        <div fxFlex="50%">
+          <mat-list dense cdkDropList #availableScenariosList="cdkDropList" [cdkDropListData]="availableScenarios"
+                    [cdkDropListConnectedTo]="scenariosInCampaignList" class="list" (cdkDropListDropped)="drop($event)">
+            <h3 matSubheader>Available scenarios</h3>
+            <mat-list-item *ngFor="let scenario of availableScenarios" cdkDrag>
+              &lt;!&ndash;<mat-icon matListIcon>add</mat-icon>&ndash;&gt;
+              <h4 matLine>{{scenario.title}}</h4>
+              <p matLine class="demo-2"> {{scenario.description}} </p>
+              &lt;!&ndash;<h4 *cdkDragPreview matLine>{{scenario.title}}</h4>&ndash;&gt;
+            </mat-list-item>
+          </mat-list>
+        </div>
+      </div>-->
+      <!--<div cdkDropListGroup fxLayout="row" style="height: 100%">
+        <div class="example-container" fxFlex="50%">
+          <h2>To do</h2>
+          <div
+            cdkDropList
+            [cdkDropListData]="scenariosInCampaign"
+            class="example-list"
+            (cdkDropListDropped)="drop($event)">
+            <div class="example-box" *ngFor="let item of scenariosInCampaign" cdkDrag>{{item.title}}</div>
+          </div>
+        </div>
+
+        <div class="example-container" fxFlex="50%">
+          <h2>Done</h2>
+
+          <div
+            cdkDropList
+            [cdkDropListData]="availableScenarios"
+            class="example-list"
+            (cdkDropListDropped)="drop($event)">
+            <div class="example-box" *ngFor="let item of availableScenarios" cdkDrag>{{item.title}}</div>
+          </div>
+        </div>
+      </div>-->
+      <div fxFill>
+        <div
+          cdkDropListGroup
+          class="rck-list-container"
+          fxFlexFill
+          fxLayoutAlign="start stretch"
+          fxLayout="row"
+        >
+          <div class="rck-container" fxFlex="50">
+            <h4 class="rck-title">Available Scenarios</h4>
+
+            <div
+              cdkDropList
+              [cdkDropListData]="availableScenarios"
+              class="rck-list"
+              (cdkDropListDropped)="drop($event)"
+            >
+              <div
+                class="rck-box"
+                *ngFor="let item of availableScenarios"
+                (click)="addScenario(item)"
+                cdkDrag
+              >
+                <mat-icon fxHide.xs mat-list-icon>add</mat-icon>
+                {{ item['title'] }}
+              </div>
+            </div>
+          </div>
+          <div class="rck-container" fxFlex>
+            <h4 class="rck-title">Scenarios In Campaign</h4>
+
+            <div
+              cdkDropList
+              [cdkDropListData]="scenariosInCampaign"
+              class="rck-list"
+              (cdkDropListDropped)="drop($event)"
+            >
+              <div
+                class="rck-box"
+                *ngFor="let item of scenariosInCampaign"
+                (click)="removeScenario(item)"
+                cdkDrag
+              >
+                <mat-icon fxHide.xs mat-list-icon>delete</mat-icon>
+                {{ item['title'] }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

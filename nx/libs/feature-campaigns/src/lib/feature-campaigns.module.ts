@@ -9,6 +9,7 @@ import { CampaignViewComponent } from './containers/campaign-view/campaign-view.
 import { CampaignRunComponent } from './containers/campaign-run/campaign-run.component';
 import { UtilsModule } from '@chutney/utils';
 import { CampaignEditComponent } from './containers/campaign-edit/campaign-edit.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   imports: [
@@ -20,10 +21,12 @@ import { CampaignEditComponent } from './containers/campaign-edit/campaign-edit.
       { path: 'campaigns', component: CampaignsComponent },
       { path: ':id/view', component: CampaignViewComponent },
       { path: ':id/edit', component: CampaignEditComponent },
-      { path: 'new', component: CampaignEditComponent },
+      { path: 'add', component: CampaignEditComponent },
       { path: ':id/run/:executionId', component: CampaignRunComponent },
     ]),
     UiMaterialModule,
+    ReactiveFormsModule,
+    FormsModule,
   ],
   declarations: [
     CampaignsComponent,
