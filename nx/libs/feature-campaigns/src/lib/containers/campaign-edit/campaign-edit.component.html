@@ -11,7 +11,7 @@
 </button>
 
 <div [formGroup]="campaignForm" id="wrapper">
-  <mat-tab-group id="tab-group" class="border-red">
+  <mat-tab-group id="tab-group">
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="example-tab-icon">description</mat-icon>
@@ -54,11 +54,11 @@
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="example-tab-icon">code</mat-icon>
-        Scenarios&nbsp;<span
+        <span
           [matBadge]="scenariosInCampaign.length.toString()"
           matBadgeOverlap="false"
           matBadgeColor="accent"
-        ></span>
+        >Scenarios</span>
       </ng-template>
       <!--<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
@@ -175,7 +175,7 @@
               </div>
             </div>
           </div>
-          <div class="rck-container" fxFlex>
+          <div class="rck-container" fxFlex="50">
             <h4 class="rck-title">Scenarios In Campaign</h4>
 
             <div
