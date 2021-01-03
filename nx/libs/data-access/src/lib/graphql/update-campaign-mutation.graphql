@@ -1,0 +1,7 @@
+mutation updateCampaign($input: CampaignInput!){
+   updateCampaign(input: $input) @rest(type: "Campaign", path: "api/ui/campaign/v1", method: "PUT"){
+      description
+      id
+      title
+   }
+}

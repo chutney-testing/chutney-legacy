@@ -43,6 +43,14 @@ input ScenarioInput {
   content: String
 }
 
+input CampaignInput {
+  id: ID
+  title: String!
+  description: String!
+  environment: String
+  scenarioIds: [String!]
+}
+
 type ScenariosFilter {
   text: String
   tags: [String!]
@@ -99,6 +107,8 @@ type Query {
 
 type Mutation {
   login(input: LoginInput!): User
+  saveCampaign(input: CampaignInput!): Campaign
+  updateCampaign(input: CampaignInput!): Campaign
   saveScenario(input: ScenarioInput!): Boolean
   deleteScenario(input: ID!): Boolean
   runScenario(scenarioId: ID!, environment:String, dataset: [String] ) : ID!

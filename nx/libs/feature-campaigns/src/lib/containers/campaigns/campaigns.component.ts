@@ -11,7 +11,9 @@ import { pluck } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { chutneyAnimations } from '@chutney/utils';
 import { TdDialogService } from '@covalent/core/dialogs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'chutney-campaigns',
   templateUrl: './campaigns.component.html',
@@ -23,7 +25,7 @@ export class CampaignsComponent implements OnInit {
     { title: 'Home', link: ['/'] },
     { title: 'Campaigns', link: ['/'] },
   ];
-  campaigns$: Observable<any>;
+  campaigns$: Observable<Campaign[]>;
 
   constructor(
     private router: Router,
@@ -36,7 +38,7 @@ export class CampaignsComponent implements OnInit {
   ngOnInit(): void {
     this.campaigns$ = this.campaignsGQL
       .watch()
-      .valueChanges.pipe(pluck('data', 'campaigns'));
+      .valueChanges.pipe(pluck('data', 'campaigns'), untilDestroyed(this));
   }
 
   onEdit(id: string) {
@@ -47,14 +49,14 @@ export class CampaignsComponent implements OnInit {
     this._dialogService
       .openConfirm({
         title: 'Confirm',
-        message: 'After deletion, the scenario cannot be restored',
+        message: 'After deletion, the campaign cannot be restored',
         cancelButton: 'Cancel',
         acceptButton: 'Ok',
       })
       .afterClosed()
       .subscribe((accept: boolean) => {
         if (accept) {
-          console.log(`delete scenario with id ${id}`);
+          console.log(`delete campaign with id ${id}`);
           this.deleteCampaignGQL
             .mutate(
               { input: id },
@@ -64,7 +66,7 @@ export class CampaignsComponent implements OnInit {
                     query: CampaignsDocument,
                   });
                   const index = data.campaigns.findIndex(
-                    (scenario) => scenario.id === id
+                    (campaign) => campaign.id === id
                   );
                   const campaigns = [
                     ...data.campaigns.slice(0, index),
@@ -87,6 +89,6 @@ export class CampaignsComponent implements OnInit {
   }
 
   addCampaign() {
-    this.router.navigate(['new'], { relativeTo: this.route });
+    this.router.navigate(['add'], { relativeTo: this.route });
   }
 }
