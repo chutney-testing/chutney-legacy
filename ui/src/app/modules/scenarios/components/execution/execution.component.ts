@@ -64,9 +64,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.eventManager.destroy(this.routeParamsSubscription);
-        if (this.scenarioExecutionAsyncSubscription) {
-            this.scenarioExecutionAsyncSubscription.unsubscribe();
-        }
+        this.unsubscribeScenarioExecutionAsyncSubscription();
     }
 
     loadScenario(action: string = '') {
@@ -109,9 +107,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
             this.currentExecutionId = execution.executionId;
             this.executionError = '';
 
-            if (this.scenarioExecutionAsyncSubscription) {
-                this.scenarioExecutionAsyncSubscription.unsubscribe();
-            }
+            this.unsubscribeScenarioExecutionAsyncSubscription();
 
             if ('RUNNING' === execution.status) {
                 this.observeScenarioExecution(execution.executionId);
@@ -210,6 +206,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     private observeScenarioExecution(executionId: number) {
+        this.unsubscribeScenarioExecutionAsyncSubscription();
         this.scenarioExecutionAsyncSubscription =
             this.subscribeToScenarioExecutionReports(
                 this.scenarioExecutionService.observeScenarioExecution(this.currentScenarioId, executionId));
@@ -233,5 +230,11 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
 
     private updateLocation(executionId: number) {
         this.location.replaceState('#/scenario/' + this.currentScenarioId + '/execution/' + executionId);
+    }
+
+    private unsubscribeScenarioExecutionAsyncSubscription() {
+        if (this.scenarioExecutionAsyncSubscription) {
+            this.scenarioExecutionAsyncSubscription.unsubscribe();
+        }
     }
 }
