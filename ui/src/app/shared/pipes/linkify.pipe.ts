@@ -13,15 +13,59 @@ export class LinkifyPipe implements PipeTransform {
             return value ? value : '';
         }
 
-        let newValue: string = value;
         const linkifiers: Array<Linkifier> = JSON.parse(storedLinkifiers);
 
-        for (const l of linkifiers) {
-            const regExp = new RegExp(l.pattern, 'g');
-            newValue = newValue.replace(regExp, '<a target="_blank" href="' + l.link + '">' + newValue.match(regExp) + '</a>');
-        }
+        const chunks = this.slice(value, linkifiers, 0);
+        const newValue = this.concat(chunks);
 
         return this.linkify(this.applyOption(newValue, option));
+    }
+
+    private slice(value: string, linkifiers: Array<Linkifier>, counter: number): string[] {
+        if (value == null || value === '') {
+            // @ts-ignore
+            return '';
+        }
+
+        if (linkifiers[counter] == null) {
+            // @ts-ignore
+            return value;
+        }
+
+        let result;
+        let prevIndex = 0;
+        const chunks = [];
+        const regex = new RegExp(linkifiers[counter].pattern, 'g');
+        const regTmp = new RegExp(linkifiers[counter].pattern);
+
+        while ((result = regex.exec(value)) !== null) {
+            const substr = value.substring(prevIndex, result.index);
+            if (substr !== '')  {
+                chunks.splice(prevIndex, 0, this.slice(substr, linkifiers, counter + 1));
+            }
+            prevIndex = regex.lastIndex;
+            const match = value.substring(result.index, regex.lastIndex);
+            chunks.push(match.replace(regTmp, '<a target="_blank" href="' + linkifiers[counter].link + '">' + result[0] + '</a>'));
+        }
+
+        chunks.push(this.slice(value.substring(prevIndex, value.length), linkifiers, counter + 1));
+
+        return chunks;
+    }
+
+    private concat(chunks: string[]): string {
+        if (typeof chunks === 'string' || chunks instanceof String) {
+            // @ts-ignore
+            return chunks;
+        }
+
+        let slice = '';
+        for (const chunk of chunks) {
+            // @ts-ignore
+            slice += this.concat(chunk);
+        }
+
+        return slice;
     }
 
     private applyOption(value: string, option: string) {
