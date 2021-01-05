@@ -202,11 +202,6 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.chutneytesting</groupId>
-                <artifactId>glacio-adapter</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
                 <artifactId>glacio-parser</artifactId>
                 <groupId>com.github.fridujo</groupId>
                 <version>${glacio.version}</version>
