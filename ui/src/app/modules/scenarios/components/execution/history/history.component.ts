@@ -76,11 +76,7 @@ export class HistoryComponent implements OnInit, OnDestroy, OnChanges {
                         this.onlastIdExecution.emit(executions[0]);
                     }
                     // Update executions
-                    if (this.executions.length === 0) {
-                        this.executions = executions;
-                    } else {
-                        this.updateExecutions(executions);
-                    }
+                    this.executions = executions;
                     // Check if executions are running in order to auto reload
                     this.checkRunningExecutions();
 
@@ -105,18 +101,6 @@ export class HistoryComponent implements OnInit, OnDestroy, OnChanges {
             );
         } else {
             this.checkRunningExecutionsSubscription();
-        }
-    }
-
-    private updateExecutions(newExecutions: Execution[]) {
-        for (let i = 0; i < this.executions.length; i++) {
-            if (this.executions[i].executionId === newExecutions[i].executionId) {
-                if (this.executions[i].status !== newExecutions[i].status) {
-                    this.executions[i] = newExecutions[i];
-                }
-            } else {
-                this.executions.splice(i, 0, newExecutions[i]);
-            }
         }
     }
 
