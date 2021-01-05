@@ -43,7 +43,7 @@
             <div class="table-scroll-with-tags-filter">
                 <table class="table table-sm table-striped table-hover">
                     <tbody dragula="COPYABLE" id="left"
-                           [dragulaModel]="componentTasks | searchTextPipe: componentFilter:['name']">
+                           [dragulaModel]="componentTasks |  componentSearch : tagData.selected() : tagData.isNoTagSelected() : tagData.isSelectAll() | searchTextPipe  : componentFilter : ['name']">
                     <tr class="pointer d-flex mr-auto"
                         *ngFor="let component of (componentTasks |  componentSearch : tagData.selected() : tagData.isNoTagSelected() : tagData.isSelectAll() | searchTextPipe  : componentFilter : ['name'])"
                         (click)="editComponentTask(component)"
