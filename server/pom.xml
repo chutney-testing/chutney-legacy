@@ -165,7 +165,7 @@
         <!-- Test dependencies -->
         <dependency>
             <groupId>com.chutneytesting</groupId>
-            <artifactId>chutney-junit-api</artifactId>
+            <artifactId>chutney-junit-engine</artifactId>
         </dependency>
         <dependency>
             <groupId>com.chutneytesting</groupId>
@@ -275,13 +275,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.chutneytesting</groupId>
-                        <artifactId>chutney-junit-engine</artifactId>
-                        <version>${chutneyjunit.version}</version>
-                    </dependency>
-                </dependencies>
                 <configuration>
                     <argLine>-Xms1024m -Xmx1024m</argLine>
                 </configuration>
