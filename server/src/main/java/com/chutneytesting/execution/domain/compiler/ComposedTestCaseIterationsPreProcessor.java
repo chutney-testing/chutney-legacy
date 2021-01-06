@@ -368,10 +368,10 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
     private String applyIndexedOutputsOnStringValue(String value, AtomicInteger index, Map<String, Integer> indexedOutput) {
         String tmp = value;
         for (String output : indexedOutput.keySet()) {
-            Pattern pattern = Pattern.compile("(#)(\\Q" + output + "\\E)([ \\.)},])");
+            Pattern pattern = Pattern.compile("#" + Pattern.quote(output) + "\\b");
             Matcher matcher = pattern.matcher(tmp);
             if (matcher.find()) {
-                tmp = matcher.replaceAll("$1" + StringEscapeUtils.escapeJson("$2_" + index) + "$3");
+                tmp = matcher.replaceAll("#" + StringEscapeUtils.escapeJson(output + "_" + index));
             }
         }
         return tmp;
