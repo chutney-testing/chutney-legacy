@@ -141,21 +141,20 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
         composedStep.stepImplementation.ifPresent(si ->
             map.putAll(iterationOutputs.entrySet().stream()
                 .filter(previousOutput ->
-                    si.inputs.entrySet().stream()
-                        .anyMatch(input -> input.getKey().contains("#" + previousOutput.getKey())
-                            || usePreviousIterationOutput(previousOutput.getKey(), input.getValue())
-                        )
-                        ||
-                        si.outputs.entrySet().stream()
-                            .anyMatch(input -> input.getKey().contains("#" + previousOutput.getKey())
-                                || usePreviousIterationOutput(previousOutput.getKey(), input.getValue())
-                            )
+                    contains(previousOutput.getKey(), si.inputs) || contains(previousOutput.getKey(), si.outputs)
                 )
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue))
             )
         );
 
         return map;
+    }
+
+    private boolean contains(String previousOutput, Map<String, Object> map) {
+        return map.entrySet().stream()
+            .anyMatch(entry -> entry.getKey().contains("#" + previousOutput)
+                || usePreviousIterationOutput(previousOutput, entry.getValue())
+            );
     }
 
     private boolean usePreviousIterationOutput(String previousOutput, Object value) {
