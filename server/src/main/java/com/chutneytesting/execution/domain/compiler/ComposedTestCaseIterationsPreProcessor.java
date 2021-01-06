@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.text.StringEscapeUtils;
@@ -228,13 +227,13 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
                     .from(composedStep)
                     .withImplementation(composedStep.stepImplementation.flatMap(si -> Optional.of(indexIterationIO(si, index, iterationOutputs))))
                     .withName(composedStep.name + " - dataset iteration " + index)
-                    .withDataset(applyIndexedOutputs(updatedDatasetUsingCurrentValue(composedStep.dataset, csNovaluedEntries, csValuedEntriesWithRef, mv), index, iterationOutputs, StringEscapeUtils::escapeJson))
+                    .withDataset(applyIndexedOutputs(updatedDatasetUsingCurrentValue(composedStep.dataset, csNovaluedEntries, csValuedEntriesWithRef, mv), index, iterationOutputs))
                     .withSteps(composedStep.steps.stream()
                         .map(s ->
                             ExecutableComposedStep.builder()
                                 .from(s)
                                 .withImplementation(s.stepImplementation.flatMap(si -> Optional.of(indexIterationIO(si, index, iterationOutputs))))
-                                .withDataset(applyIndexedOutputs(s.dataset, index, iterationOutputs, StringEscapeUtils::escapeJson))
+                                .withDataset(applyIndexedOutputs(s.dataset, index, iterationOutputs))
                                 .build())
                         .collect(toList())
                     )
@@ -287,7 +286,7 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
                     .from(composedStep)
                     .withImplementation(composedStep.stepImplementation.flatMap(si -> Optional.of(indexIterationIO(si, index, iterationOutputs))))
                     .withName(composedStep.name + " - dataset iteration " + index)
-                    .withDataset(applyIndexedOutputs(composedStep.dataset, index, iterationOutputs, StringEscapeUtils::escapeJson))
+                    .withDataset(applyIndexedOutputs(composedStep.dataset, index, iterationOutputs))
                     .build()
             );
         }
@@ -337,8 +336,8 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
 
     private Map<String, Object> indexInputs(Map<String, Object> inputs, AtomicInteger index, Map<String, Integer> iterationOutputs) {
         return inputs.entrySet().stream().collect(HashMap::new, (m, e) -> m.put(
-            applyIndexedOutputsOnStringValue(e.getKey(), index, iterationOutputs, StringEscapeUtils::escapeJson),
-            applyIndexedOutputs(e.getValue(), index, iterationOutputs, StringEscapeUtils::escapeJson)
+            applyIndexedOutputsOnStringValue(e.getKey(), index, iterationOutputs),
+            applyIndexedOutputs(e.getValue(), index, iterationOutputs)
             ), HashMap::putAll
         );
     }
@@ -346,33 +345,33 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
     private Map<String, Object> indexOutputs(Map<String, Object> outputs, AtomicInteger index, Map<String, Integer> iterationOutputs) {
         return outputs.entrySet().stream().collect(HashMap::new, (m, e) -> m.put(
             e.getKey() + "_" + index,
-            applyIndexedOutputs(e.getValue(), index, iterationOutputs, StringEscapeUtils::escapeJson)
+            applyIndexedOutputs(e.getValue(), index, iterationOutputs)
             ), HashMap::putAll
         );
     }
 
-    private Object applyIndexedOutputs(Object value, AtomicInteger index, Map<String, Integer> indexedOutput, Function<String, String> escapeValueFunction) {
+    private Object applyIndexedOutputs(Object value, AtomicInteger index, Map<String, Integer> indexedOutput) {
         if (value instanceof String) {
-            return applyIndexedOutputsOnStringValue((String) value, index, indexedOutput, escapeValueFunction);
+            return applyIndexedOutputsOnStringValue((String) value, index, indexedOutput);
         } else if (value instanceof Map) {
-            return applyIndexedOutputs((Map<String, String>) value, index, indexedOutput, escapeValueFunction);
+            return applyIndexedOutputs((Map<String, String>) value, index, indexedOutput);
         } else return value;
     }
 
-    private Map<String, String> applyIndexedOutputs(Map<String, String> value, AtomicInteger index, Map<String, Integer> indexedOutput, Function<String, String> escapeValueFunction) {
+    private Map<String, String> applyIndexedOutputs(Map<String, String> value, AtomicInteger index, Map<String, Integer> indexedOutput) {
         return value.entrySet().parallelStream().collect(toMap(
-            e -> applyIndexedOutputsOnStringValue(e.getKey(), index, indexedOutput, escapeValueFunction),
-            e -> applyIndexedOutputsOnStringValue(e.getValue(), index, indexedOutput, escapeValueFunction)
+            e -> applyIndexedOutputsOnStringValue(e.getKey(), index, indexedOutput),
+            e -> applyIndexedOutputsOnStringValue(e.getValue(), index, indexedOutput)
         ));
     }
 
-    private String applyIndexedOutputsOnStringValue(String value, AtomicInteger index, Map<String, Integer> indexedOutput, Function<String, String> escapeValueFunction) {
+    private String applyIndexedOutputsOnStringValue(String value, AtomicInteger index, Map<String, Integer> indexedOutput) {
         String tmp = value;
         for (String output : indexedOutput.keySet()) {
             Pattern pattern = Pattern.compile("(#)(\\Q" + output + "\\E)([ \\.)},])");
             Matcher matcher = pattern.matcher(tmp);
             if (matcher.find()) {
-                tmp = matcher.replaceAll("$1" + escapeValueFunction.apply("$2_" + index) + "$3");
+                tmp = matcher.replaceAll("$1" + StringEscapeUtils.escapeJson("$2_" + index) + "$3");
             }
         }
         return tmp;
