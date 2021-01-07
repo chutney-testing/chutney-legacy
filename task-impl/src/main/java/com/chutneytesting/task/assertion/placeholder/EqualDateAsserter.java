@@ -20,6 +20,7 @@ public class EqualDateAsserter implements PlaceholderAsserter {
         try {
             ZonedDateTime expectedDate = ZonedDateTime.parse(date, DateTimeFormatter.ISO_DATE_TIME);
             ZonedDateTime actualDate = ZonedDateTime.parse(actual.toString(), DateTimeFormatter.ISO_DATE_TIME);
+            logger.info("Verify " + actualDate + " isEqual " + expectedDate);
             return actualDate.isEqual(expectedDate);
         } catch (DateTimeParseException e) {
             logger.error(e.getMessage());

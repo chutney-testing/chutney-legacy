@@ -1,5 +1,7 @@
 package com.chutneytesting.task.assertion;
 
+import com.chutneytesting.task.assertion.placeholder.PlaceholderAsserter;
+import com.chutneytesting.task.assertion.placeholder.PlaceholderAsserterUtils;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
@@ -8,6 +10,7 @@ import com.chutneytesting.task.assertion.xml.XmlUtils;
 import com.chutneytesting.task.jms.domain.XmlContent;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.jdom2.Attribute;
 import org.jdom2.CDATA;
 import org.jdom2.Content;
@@ -33,7 +36,6 @@ public class XmlAssertTask implements Task {
 
 
     @Override
-    @SuppressWarnings("unchecked")
     public TaskExecutionResult execute() {
         try {
             SAXBuilder saxBuilder = new SAXBuilder();
@@ -60,7 +62,10 @@ public class XmlAssertTask implements Task {
         XPathExpression<Object> xpathExpression = XmlUtils.compileXPath(xpath);
         String actualResult = convertEvaluationResultToString(xpathExpression.evaluateFirst(document));
 
-        if (String.valueOf(expectedResult).equals(actualResult)) {
+        Optional<PlaceholderAsserter> asserts = PlaceholderAsserterUtils.getAsserterMatching(expectedResult);
+        if (asserts.isPresent()) {
+            return asserts.get().assertValue(logger, actualResult, expectedResult);
+        } else if (String.valueOf(expectedResult).equals(actualResult)) {
             logger.info(xpath + " = " + actualResult);
             return true;
         } else {
@@ -85,7 +90,7 @@ public class XmlAssertTask implements Task {
             } else if (cdata.size() == 1) {
                 evaluatedValueAsString = ((CDATA) cdata.get(0)).getText();
             } else if (contents.size() == 0) {
-                return "!!!NOTFOUND!";
+                return null;
             } else {
                 return "!!!MULTIPLE!";
             }
