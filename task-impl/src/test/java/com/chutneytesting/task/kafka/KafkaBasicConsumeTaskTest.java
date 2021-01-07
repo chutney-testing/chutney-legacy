@@ -235,6 +235,32 @@ public class KafkaBasicConsumeTaskTest {
     }
 
     @Test
+    public void should_consume_message_with_duplicated_header_pair_key_value() {
+        // Given
+        ImmutableList<Header> headers = ImmutableList.of(
+            new RecordHeader("header", "666".getBytes()),
+            new RecordHeader("header", "666".getBytes())
+        );
+        Task task = givenKafkaConsumeTask(1, null, "$..[?($.header=='666')]", null, null);
+        String textMessageToSelect = "first text message";
+        givenTaskReceiveMessages(task,
+            buildRecord(FIRST_OFFSET, "KEY1", textMessageToSelect, headers),
+            buildRecord(FIRST_OFFSET + 1, "KEY2", "second text message")
+        );
+
+        // When
+        TaskExecutionResult taskExecutionResult = task.execute();
+
+        // Then
+        assertThat(taskExecutionResult.status).isEqualTo(Success);
+        List<Map<String, Object>> body = assertTaskOutputsSize(taskExecutionResult, 1);
+
+        final String payload = (String) body.get(0).get(OUTPUT_BODY_PAYLOAD_KEY);
+        assertThat(payload).isEqualTo(textMessageToSelect);
+    }
+
+
+    @Test
     @Parameters({"Content-Type", "Contenttype", "content type"})
     public void should_override_given_mime_type_by_message_header(String contentTypeHeaderKey) {
         // Given

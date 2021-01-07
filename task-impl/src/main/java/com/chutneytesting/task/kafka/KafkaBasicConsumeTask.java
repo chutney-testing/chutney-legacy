@@ -183,7 +183,7 @@ public class KafkaBasicConsumeTask implements Task {
     }
 
     private Map<String, Object> extractHeaders(ConsumerRecord<String, String> record) {
-        return Stream.of(record.headers().toArray()).collect(toMap(Header::key, header -> new String(header.value(), UTF_8)));
+        return Stream.of(record.headers().toArray()).distinct().collect(toMap(Header::key, header -> new String(header.value(), UTF_8)));
     }
 
     private ConcurrentMessageListenerContainer<String, String> createMessageListenerContainer(MessageListener<String, String> messageListener) {
