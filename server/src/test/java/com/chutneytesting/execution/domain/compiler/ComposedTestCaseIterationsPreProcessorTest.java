@@ -491,9 +491,85 @@ public class ComposedTestCaseIterationsPreProcessorTest {
 
     }
 
-    /**
-     * Test also input with null value
-     */
+    @Test
+    public void should_still_work_when_there_are_null_values() {
+
+        // Given
+        List<Map<String, String>> multipleValues = asList(
+            Maps.of("letter", "A"),
+            Maps.of("letter", "B")
+        );
+        stubDatasetRepository(null, multipleValues);
+
+        ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
+            metadata,
+            ExecutableComposedScenario.builder()
+                .withComposedSteps(asList(
+                    stepGenerating2Iterations,
+                    ExecutableComposedStep.builder() // the step under test
+                        .withName("Should generate 2 iterations using output_1 and output_2 previous outputs")
+                        .withImplementation(Optional.of(
+                            new StepImplementation("task", null, Maps.of("keyWithNullValue", null, "taskInput", "#output"), emptyMap())))
+                        .build(),
+                    ExecutableComposedStep.builder()
+                        .withName("Should generate 2 iterations using previous outputs in their output")
+                        .withImplementation(Optional.of(
+                            new StepImplementation("task", null, emptyMap(), Maps.of("keyWithNullValue", null, "key_to_index", "#output"))))
+                        .build()
+                    )
+                )
+                .build(),
+            singletonMap("letter", "")
+        );
+
+        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+
+        // When
+        ExecutableComposedTestCase actual = sut.apply(testCase);
+
+        // Then
+        ExecutableComposedStep expected_1 = ExecutableComposedStep.builder()
+            .withName("Should generate 2 iterations using output_1 and output_2 previous outputs")
+            .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
+            .withSteps(Arrays.asList(
+                ExecutableComposedStep.builder()
+                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - dataset iteration 1")
+                    .withImplementation(Optional.of(
+                        new StepImplementation("task", null,  Maps.of("keyWithNullValue", null, "taskInput", "#output_1"), emptyMap())
+                    ))
+                    .build(), ExecutableComposedStep.builder()
+                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - dataset iteration 2")
+                    .withImplementation(Optional.of(
+                        new StepImplementation("task", null,  Maps.of("keyWithNullValue", null, "taskInput", "#output_2"),  emptyMap())
+                    ))
+                    .build()
+            ))
+            .build();
+
+        assertThat(actual.composedScenario.composedSteps.get(1)).isEqualTo(expected_1);
+
+        ExecutableComposedStep expected_2 = ExecutableComposedStep.builder()
+            .withName("Should generate 2 iterations using previous outputs in their output")
+            .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
+            .withSteps(Arrays.asList(
+                ExecutableComposedStep.builder()
+                    .withName("Should generate 2 iterations using previous outputs in their output - dataset iteration 1")
+                    .withImplementation(Optional.of(
+                        new StepImplementation("task", null, emptyMap(), Maps.of("keyWithNullValue_1", null, "key_to_index_1", "#output_1"))
+                    ))
+                    .build(), ExecutableComposedStep.builder()
+                    .withName("Should generate 2 iterations using previous outputs in their output - dataset iteration 2")
+                    .withImplementation(Optional.of(
+                        new StepImplementation("task", null, emptyMap(), Maps.of("keyWithNullValue_2", null, "key_to_index_2", "#output_2"))
+                    ))
+                    .build()
+            ))
+            .build();
+
+        assertThat(actual.composedScenario.composedSteps.get(2)).isEqualTo(expected_2);
+
+    }
+
     @Test
     public void should_iterate_step_when_using_previous_indexed_outputs_in_simple_input() {
 
@@ -504,7 +580,6 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
         stubDatasetRepository(null, multipleValues);
 
-
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             metadata,
             ExecutableComposedScenario.builder()
@@ -513,7 +588,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                     ExecutableComposedStep.builder() // the step under test
                         .withName("Should generate 2 iterations using output_1 and output_2 previous outputs")
                         .withImplementation(Optional.of(
-                            new StepImplementation("task", null, Maps.of("taskInput", "X + ${#output + Y}"), emptyMap())))
+                            new StepImplementation("task", null, singletonMap("taskInput", "X + ${#output + Y}"), emptyMap())))
                         .build()
                     )
                 )
@@ -629,7 +704,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                     ExecutableComposedStep.builder() // the step under test
                         .withName("Should generate 2 iterations using output_1 and output_2 previous outputs")
                         .withImplementation(Optional.of(
-                            new StepImplementation("task", null, Maps.of("taskInput", "X + **var** + Y}", "taskOtherInput", "**var2**"), emptyMap())))
+                            new StepImplementation("task", null, emptyMap(), emptyMap())))
                         .withDataset(Maps.of("var", "${#output}", "var2", "${#otherOutput}"))
                         .build()
                     )
@@ -650,15 +725,73 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                 ExecutableComposedStep.builder()
                     .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - dataset iteration 1")
                     .withImplementation(Optional.of(
-                        new StepImplementation("task", null, Maps.of("taskInput", "X + **var** + Y}", "taskOtherInput", "**var2**"), emptyMap())
+                        new StepImplementation("task", null, emptyMap(), emptyMap())
                     ))
                     .withDataset(Maps.of("var", "${#output_1}", "var2", "${#otherOutput_1}"))
                     .build(), ExecutableComposedStep.builder()
                     .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - dataset iteration 2")
                     .withImplementation(Optional.of(
-                        new StepImplementation("task", null, Maps.of("taskInput", "X + **var** + Y}", "taskOtherInput", "**var2**"), emptyMap())
+                        new StepImplementation("task", null, emptyMap(), emptyMap())
                     ))
                     .withDataset(Maps.of("var", "${#output_2}", "var2", "${#otherOutput_2}"))
+                    .build()
+            ))
+            .build();
+
+        assertThat(actual.composedScenario.composedSteps.get(1)).isEqualTo(expected);
+
+    }
+
+    @Test
+    public void should_not_match_partial_naming() {
+
+        // Given
+        List<Map<String, String>> multipleValues = asList(
+            Maps.of("letter", "A"),
+            Maps.of("letter", "B")
+        );
+        stubDatasetRepository(null, multipleValues);
+        ExecutableComposedStep stepGenerating2IterationsWithOutputs = ExecutableComposedStep.builder()
+            .withName("Should generate 2 iterations for letter A and B")
+            .withImplementation(Optional.of(
+                new StepImplementation("task", null, emptyMap(), Maps.of("SAME", "**letter**", "SAMEagain", "**letter**"))))
+            .withDataset(singletonMap("letter", ""))
+            .build();
+
+        ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
+            metadata,
+            ExecutableComposedScenario.builder()
+                .withComposedSteps(asList(
+                    stepGenerating2IterationsWithOutputs,
+                    ExecutableComposedStep.builder() // the step under test
+                        .withName("Should generate 2 iterations using SAME and SAMEagain without confusion")
+                        .withImplementation(Optional.empty())
+                        .withDataset(Maps.of("var", "X+#SAME+}", "var2", "X+#SAMEagain"))
+                        .build()
+                    )
+                )
+                .build(),
+            singletonMap("letter", "")
+        );
+
+        // When
+        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        ExecutableComposedTestCase actual = sut.apply(testCase);
+
+        // Then
+        ExecutableComposedStep expected = ExecutableComposedStep.builder()
+            .withName("Should generate 2 iterations using SAME and SAMEagain without confusion")
+            .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
+            .withSteps(Arrays.asList(
+                ExecutableComposedStep.builder()
+                    .withName("Should generate 2 iterations using SAME and SAMEagain without confusion - dataset iteration 1")
+                    .withImplementation(Optional.empty())
+                    .withDataset(Maps.of("var", "X+#SAME_1+}", "var2", "X+#SAMEagain_1"))
+                    .build(),
+                ExecutableComposedStep.builder()
+                    .withName("Should generate 2 iterations using SAME and SAMEagain without confusion - dataset iteration 2")
+                    .withImplementation(Optional.empty())
+                    .withDataset(Maps.of("var", "X+#SAME_2+}", "var2", "X+#SAMEagain_2"))
                     .build()
             ))
             .build();
@@ -739,7 +872,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withName("Should generate 2 iterations for letter A and B")
             .withImplementation(Optional.of(
                 new StepImplementation("task", null, emptyMap(), Maps.of("**outputVar**", "**letter**"))))
-            .withDataset(Maps.of("outputVar","output","letter", ""))
+            .withDataset(Maps.of("outputVar", "output", "letter", ""))
             .build();
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
@@ -839,9 +972,6 @@ public class ComposedTestCaseIterationsPreProcessorTest {
 
     }
 
-    /**
-     * Test also output with null value
-     */
     @Test
     public void should_iterate_step_when_using_previous_indexed_outputs_in_task_output() {
 
@@ -860,7 +990,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                     ExecutableComposedStep.builder()
                         .withName("Should generate 2 iterations using previous outputs in their output")
                         .withImplementation(Optional.of(
-                            new StepImplementation("task", null, emptyMap(), Maps.of("key_to_index", "${#output} + X", "keyWithNullValue", null))))
+                            new StepImplementation("task", null, emptyMap(), singletonMap("key_to_index", "${#output} + X"))))
                         .build()
                     )
                 )
@@ -881,12 +1011,12 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                 ExecutableComposedStep.builder()
                     .withName("Should generate 2 iterations using previous outputs in their output - dataset iteration 1")
                     .withImplementation(Optional.of(
-                        new StepImplementation("task", null, emptyMap(), Maps.of("key_to_index_1", "${#output_1} + X", "keyWithNullValue_1", null))
+                        new StepImplementation("task", null, emptyMap(), singletonMap("key_to_index_1", "${#output_1} + X"))
                     ))
                     .build(), ExecutableComposedStep.builder()
                     .withName("Should generate 2 iterations using previous outputs in their output - dataset iteration 2")
                     .withImplementation(Optional.of(
-                        new StepImplementation("task", null, emptyMap(), Maps.of("key_to_index_2", "${#output_2} + X", "keyWithNullValue_2", null))
+                        new StepImplementation("task", null, emptyMap(), singletonMap("key_to_index_2", "${#output_2} + X"))
                     ))
                     .build()
             ))
@@ -1159,6 +1289,109 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                                     .withImplementation(Optional.of(
                                         new StepImplementation("task", null, singletonMap("${#output_2}", "**letter**"), emptyMap())
                                     ))
+                                    .build()
+                            ))
+                            .withDataset(singletonMap("letter", "B"))
+                            .build()
+                    ))
+                    .build()
+                )
+            )
+            .build();
+
+        assertThat(actual.composedScenario).isEqualTo(expected);
+
+    }
+
+    @Test
+    public void should_index_iterations_inputs_when_generated_in_same_parent_step() {
+
+        // Given
+        List<Map<String, String>> multipleValues = asList(
+            Maps.of("letter", "A"),
+            Maps.of("letter", "B")
+        );
+        stubDatasetRepository(null, multipleValues);
+
+        ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
+            metadata,
+            ExecutableComposedScenario.builder()
+                .withComposedSteps(singletonList(
+                    ExecutableComposedStep.builder()
+                        .withName("Parent step with 2 substeps")
+                        .withSteps(asList(
+                            ExecutableComposedStep.builder()
+                                .withName("First sub step")
+                                .withImplementation(Optional.of(
+                                    new StepImplementation("task", null, emptyMap(), singletonMap("output", "**letter**"))
+                                ))
+                                .withDataset(singletonMap("letter", ""))
+                                .build(),
+                            ExecutableComposedStep.builder()
+                                .withName("Second sub step")
+                                .withImplementation(Optional.of(
+                                    new StepImplementation("task", null, singletonMap("input", "**data**"), emptyMap())
+                                ))
+                                .withDataset(singletonMap("data", "${#output}"))
+                                .build()
+                        ))
+                        .withDataset(singletonMap("letter", ""))
+                        .build()
+                    )
+                )
+                .build(),
+            singletonMap("letter", "")
+        );
+
+        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+
+        // When
+        ExecutableComposedTestCase actual = sut.apply(testCase);
+
+        // Then
+
+        ExecutableComposedScenario expected = ExecutableComposedScenario.builder()
+            .withComposedSteps(singletonList(
+                ExecutableComposedStep.builder()
+                    .withName("Parent step with 2 substeps")
+                    .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
+                    .withSteps(asList(
+                        ExecutableComposedStep.builder()
+                            .withName("Parent step with 2 substeps - dataset iteration 1")
+                            .withSteps(asList(
+                                ExecutableComposedStep.builder()
+                                    .withName("First sub step")
+                                    .withImplementation(Optional.of(
+                                        new StepImplementation("task", null, emptyMap(), singletonMap("output_1", "**letter**"))
+                                    ))
+                                    .withDataset(singletonMap("letter", ""))
+                                    .build(),
+                                ExecutableComposedStep.builder()
+                                    .withName("Second sub step")
+                                    .withImplementation(Optional.of(
+                                        new StepImplementation("task", null, singletonMap("input", "**data**"), emptyMap())
+                                    ))
+                                    .withDataset(singletonMap("data", "${#output_1}"))
+                                    .build()
+                            ))
+                            .withDataset(singletonMap("letter", "A"))
+                            .build(),
+                        ExecutableComposedStep.builder()
+                            .withName("Parent step with 2 substeps - dataset iteration 2")
+                            .withSteps(asList(
+                                ExecutableComposedStep.builder()
+                                    .withName("First sub step")
+                                    .withImplementation(Optional.of(
+                                        new StepImplementation("task", null, emptyMap(), singletonMap("output_2", "**letter**"))
+                                    ))
+                                    .withDataset(singletonMap("letter", ""))
+                                    .build(),
+                                ExecutableComposedStep.builder()
+                                    .withName("Second sub step")
+                                    .withImplementation(Optional.of(
+                                        new StepImplementation("task", null, singletonMap("input", "**data**"), emptyMap())
+                                    ))
+                                    .withDataset(singletonMap("data", "${#output_2}"))
                                     .build()
                             ))
                             .withDataset(singletonMap("letter", "B"))
