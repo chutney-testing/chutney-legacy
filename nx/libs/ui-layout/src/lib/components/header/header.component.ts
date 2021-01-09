@@ -8,7 +8,6 @@ import {
   ViewEncapsulation,
   Inject,
 } from '@angular/core';
-import { TRANSLATION, Translation } from '@chutney/feature-i18n';
 import * as screenfull from 'screenfull';
 
 @Component({
@@ -49,7 +48,7 @@ export class HeaderComponent implements OnInit {
   scrolled = false;
   isDarkTheme = false;
 
-  constructor(@Inject(TRANSLATION) public readonly lang: Translation) {}
+  constructor() {}
 
   ngOnInit() {}
 }

@@ -10,6 +10,12 @@ import { CampaignRunComponent } from './containers/campaign-run/campaign-run.com
 import { UtilsModule } from '@chutney/utils';
 import { CampaignEditComponent } from './containers/campaign-edit/campaign-edit.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TranslocoConfigModule } from '@chutney/feature-i18n';
+
+const loader = ['en', 'fr'].reduce((acc: any, lang: string) => {
+  acc[lang] = () => import(`./i18n/${lang}.json`);
+  return acc;
+}, {});
 
 @NgModule({
   imports: [
@@ -27,6 +33,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     UiMaterialModule,
     ReactiveFormsModule,
     FormsModule,
+    TranslocoConfigModule.forChild('campaigns', loader),
   ],
   declarations: [
     CampaignsComponent,
