@@ -34,7 +34,7 @@ declare const monaco: any;
 })
 export class ScenarioTextRunComponent implements OnInit {
   private scenarioId: string;
-  private executionId: string;
+  executionId: string;
   scenario$: Observable<any>;
   report$: Observable<any>;
   treeControl = new NestedTreeControl<any>((node) => node.steps);
