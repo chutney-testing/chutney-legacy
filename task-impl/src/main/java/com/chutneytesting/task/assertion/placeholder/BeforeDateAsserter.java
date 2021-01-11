@@ -20,6 +20,7 @@ public class BeforeDateAsserter implements PlaceholderAsserter {
         try {
             ZonedDateTime expectedDate = ZonedDateTime.parse(date, DateTimeFormatter.ISO_DATE_TIME);
             ZonedDateTime actualDate = ZonedDateTime.parse(actual.toString(), DateTimeFormatter.ISO_DATE_TIME);
+            logger.info("Verify " + actualDate + " isBefore " + expectedDate);
             return actualDate.isBefore(expectedDate);
         } catch (DateTimeParseException e) {
             logger.error(e.getMessage());

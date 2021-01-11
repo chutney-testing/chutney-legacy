@@ -18,6 +18,7 @@ public class MatchesStringAsserter implements PlaceholderAsserter {
         String patternToFound = expected.toString().substring(MATCHES_STRINGS.length());
         Pattern pattern = Pattern.compile(patternToFound);
         Matcher matcher = pattern.matcher(actual.toString());
+        logger.info("Verify " + actual.toString() + " matches " + patternToFound);
         return matcher.matches();
     }
 
