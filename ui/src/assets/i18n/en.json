@@ -84,7 +84,9 @@
                 "execution": "Scenario can't be executed",
                 "parse": "Scenario can't be parsed"
             },
-            "dataset.title": "Dataset"
+            "dataset.title": "Dataset",
+            "inputs": "Inputs",
+            "outputs": "Outputs"
         },
         "edition": {
             "title": {

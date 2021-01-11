@@ -56,9 +56,9 @@ public class ScenarioExecutionRequestStepDefs {
         assertJsonPathEqualValue("$.status", expectedExecutionStatus);
     }
 
-    @Then("^the extracted value is '(.*)'$")
-    public void checkExtractedValueIs(String expectedValue) {
-        assertJsonPathEqualValue("$.report.steps[1].information[1]", expectedValue);
+    @Then("^the extracted value is (.*) => (.*)$")
+    public void checkExtractedValueIs(String key, String expectedValue) {
+        assertJsonPathEqualValue("$.report.steps[1].stepOutputs." + key, expectedValue);
     }
 
     @Then("^the json resulting context is$")
@@ -66,9 +66,14 @@ public class ScenarioExecutionRequestStepDefs {
         assertJsonPathEqualValue("$.report.steps[0].information[0]", expectedResult);
     }
 
+    @Then("^the output resulting context is$")
+    public void the_output_resulting_context_is(String expectedResult) {
+        assertJsonPathEqualValue("$.report.steps[0].stepOutputs.results", expectedResult);
+    }
+
     @Then("^the last record results is (.*)$")
     public void the_record_result(String expectedResult) {
-        assertJsonPathEqualValue("$.report.steps[-1:].information[0]", expectedResult);
+        assertJsonPathEqualValue("$.report.steps[-1:].stepOutputs.recordResult", expectedResult);
     }
 
     @Then("^the report status is (SUCCESS|FAILURE)$")

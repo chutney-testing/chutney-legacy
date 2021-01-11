@@ -84,7 +84,9 @@
                 "execution": "Impossible d'exécuter le scénario",
                 "parse": "Impossible de parser le scénario"
             },
-            "dataset.title": "Paramètres"
+            "dataset.title": "Paramètres",
+            "inputs": "Entrées",
+            "outputs": "Sorties"
         },
         "edition": {
             "title": {

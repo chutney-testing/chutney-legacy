@@ -160,6 +160,7 @@ public class SurefireScenarioExecutionReportBuilderTest {
             "targetName",
             "targetUrl",
             "strategy",
+            Maps.newHashMap(),
             Maps.newHashMap());
     }
 

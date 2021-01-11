@@ -74,6 +74,28 @@ public class StepTest {
     }
 
     @Test
+    public void should_have_output_of_step_store_in_step_result() {
+        // Given
+        StepExecutor stepExecutor = mock(StepExecutor.class);
+
+        Map<String, Object> outputs = new HashMap<>();
+        outputs.put("aValue", "42");
+        outputs.put("anotherValue", "43");
+
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, outputs,environment);
+        Step step = new Step(dataEvaluator, fakeStepDefinition, Optional.empty(), stepExecutor, Lists.emptyList());
+        ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
+
+        // When
+        step.execute(ScenarioExecution.createScenarioExecution(), scenarioContext);
+
+        // Then
+        StepContext context = (StepContext) ReflectionTestUtils.getField(step, "stepContext");
+        assertThat(context.getStepOutputs().get("aValue")).isEqualTo("42");
+        assertThat(context.getStepOutputs().get("anotherValue")).isEqualTo("43");
+    }
+
+    @Test
     public void values_already_set_in_scenario_context_can_be_updated_and_override_by_each_step_execution() {
         // Given
         Map<String, Object> existingResult = new HashMap<>();
@@ -106,6 +128,8 @@ public class StepTest {
         StepContext context = (StepContext) ReflectionTestUtils.getField(step, "stepContext");
         assertThat(context.getScenarioContext().get("aValue")).as("New value").isEqualTo(500);
         assertThat(context.getScenarioContext().get("anotherValue")).as("New value").isEqualTo("{ new value }");
+        assertThat(context.getStepOutputs().get("aValue")).as("New value").isEqualTo(500);
+        assertThat(context.getStepOutputs().get("anotherValue")).as("New value").isEqualTo("{ new value }");
     }
 
     @Test
@@ -145,6 +169,9 @@ public class StepTest {
         StepContext context = (StepContext) ReflectionTestUtils.getField(step, "stepContext");
         assertThat(context.getScenarioContext().get("anAliasForReuse")).as("New value from Remote").isEqualTo(4242);
         assertThat(context.getScenarioContext().get("anotherAliasForReuse")).as("New value from Remote").isEqualTo("{ a value as string }");
+        assertThat(context.getStepOutputs().get("anAliasForReuse")).as("New value from Remote").isEqualTo(4242);
+        assertThat(context.getStepOutputs().get("anotherAliasForReuse")).as("New value from Remote").isEqualTo("{ a value as string }");
+
     }
 
     @Test
