@@ -95,8 +95,8 @@ Feature: Execution with jsonPath function
                 With mode equals
         Then the extracted value is '["value1","value1"]'
             Do compare
-                With actual ${#json(#report, "$.report.steps[1].stepOutputs.extracted")}
-                With expected ["value1","value1"]
+                With actual ${#json(#report, "$.report.steps[1].stepOutputs.extracted[0]")}
+                With expected value1
                 With mode equals
 
     Scenario: Scenario execution with json object value extraction
@@ -144,6 +144,6 @@ Feature: Execution with jsonPath function
                 With mode equals
         Then the extracted value is '{field1=value1}'
             Do compare
-                With actual ${#json(#report, "$.report.steps[1].stepOutputs.extracted")}
-                With expected {field1=value1}
+                With actual ${#json(#report, "$.report.steps[1].stepOutputs.extracted.field1")}
+                With expected value1
                 With mode equals

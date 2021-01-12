@@ -11,6 +11,6 @@ Feature: Success feature
             Execute success substep success
         Then I want to have more multiple substeps
             It's a first substep
-            Do success
+                Do success
             It's a second substep
-            Do: success
+                Do: success
