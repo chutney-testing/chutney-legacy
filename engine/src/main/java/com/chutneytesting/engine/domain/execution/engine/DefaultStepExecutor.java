@@ -66,8 +66,6 @@ public class DefaultStepExecutor implements StepExecutor {
     }
 
     private void updateStepFromTaskResult(Step step, TaskExecutionResult executionResult) {
-        executionResult.outputs.forEach((k, v) -> step.addInformation("Output: (" + k + ") : (" + v + ")"));
-
         if (executionResult.status == TaskExecutionResult.Status.Success) {
             step.success();
         } else {

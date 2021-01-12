@@ -37,11 +37,10 @@ Scenario: Scenario execution with simple ssh task
 """
     When last saved scenario is executed
     Then the report status is SUCCESS
-    And the json resulting context is
-    """
-    Output: (results) : ([CommandResult{command=Command{command=echo test, timeout=5000 ms}, exitCode=0, stdout=test
-    , stderr=}])
-    """
+    And the output resulting context is
+"""
+[{"command":{"command":"echo test","timeout":{"durationValue":5000.0,"durationUnit":"MILLIS"}},"exitCode":0,"stdout":"test\n","stderr":""}]
+"""
 
 Scenario: Scenario execution with multiple ssh task
     Given an SSHD server is started
@@ -84,11 +83,9 @@ Scenario: Scenario execution with multiple ssh task
 """
     When last saved scenario is executed
     Then the report status is SUCCESS
-    And the json resulting context is
+    And the output resulting context is
 """
-Output: (results) : ([CommandResult{command=Command{command=echo test, timeout=500 ms}, exitCode=0, stdout=test
-, stderr=}, CommandResult{command=Command{command=echo test2, timeout=5000 ms}, exitCode=0, stdout=test2
-, stderr=}])
+[{"command":{"command":"echo test","timeout":{"durationValue":500.0,"durationUnit":"MILLIS"}},"exitCode":0,"stdout":"test\n","stderr":""},{"command":{"command":"echo test2","timeout":{"durationValue":5000.0,"durationUnit":"MILLIS"}},"exitCode":0,"stdout":"test2\n","stderr":""}]
 """
 
 Scenario: Scenario execution unable to login, status SUCCESS and command stderr

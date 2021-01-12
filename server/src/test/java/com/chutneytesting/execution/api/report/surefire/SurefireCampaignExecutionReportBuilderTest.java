@@ -147,6 +147,7 @@ public class SurefireCampaignExecutionReportBuilderTest {
             "targetName",
             "targetUrl",
             "strategy",
+            Maps.newHashMap(),
             Maps.newHashMap());
     }
 }

@@ -41,7 +41,7 @@ Scenario: Scenario execution with simple json value extraction
     }
 """
     When last saved scenario is executed
-    Then the extracted value is 'Output: (extracted) : (value1)'
+    Then the extracted value is extracted => value1
 
 Scenario: Scenario execution with multiple json value extraction
     Given this scenario is saved
@@ -83,7 +83,7 @@ Scenario: Scenario execution with multiple json value extraction
     }
 """
     When last saved scenario is executed
-    Then the extracted value is 'Output: (extracted) : (["value1","value1"])'
+    Then the extracted value is extracted => ["value1","value1"]
 
 Scenario: Scenario execution with json object value extraction
     Given this scenario is saved
@@ -125,4 +125,4 @@ Scenario: Scenario execution with json object value extraction
     }
 """
     When last saved scenario is executed
-    Then the extracted value is 'Output: (extracted) : ({field1=value1})'
+    Then the extracted value is extracted => {field1=value1}

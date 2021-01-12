@@ -75,7 +75,7 @@ Scenario: Sql query success
 """
     When last saved scenario is executed
     Then the report status is SUCCESS
-    And the last record results is ["Output: (recordResult) : ([Records{affectedRows=-1, headers=[ID, NAME, EMAIL], rows=[[1, laitue, laitue@fake.com], [2, carotte, kakarot@fake.db]]}])"]
+    And the last record results is [[{"affectedRows":-1,"headers":["ID","NAME","EMAIL"],"rows":[[1,"laitue","laitue@fake.com"],[2,"carotte","kakarot@fake.db"]]}]]
 
 Scenario: Sql query wrong table
     Given a target test with url tcp://localhost:12345 with properties
