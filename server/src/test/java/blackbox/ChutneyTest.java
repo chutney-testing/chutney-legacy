@@ -18,7 +18,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.SocketUtils;
 
 @Chutney
-public class ChutneyIT {
+public class ChutneyTest {
 
     private ConfigurableApplicationContext localChutney;
     private final int port;
@@ -29,7 +29,7 @@ public class ChutneyIT {
     private final EnvironmentService environmentService;
     private static final String TEST_ENV_NAME = "ENV";
 
-    public ChutneyIT(EnvironmentService environmentService) throws IOException {
+    public ChutneyTest(EnvironmentService environmentService) throws IOException {
         this.environmentService = environmentService;
 
         port = findAvailableTcpPort();
@@ -144,7 +144,7 @@ public class ChutneyIT {
                 .build();
         }
 
-        environmentService.addTarget(ChutneyIT.TEST_ENV_NAME, dbTarget);
+        environmentService.addTarget(ChutneyTest.TEST_ENV_NAME, dbTarget);
     }
 
     private void initEnvironment() {
