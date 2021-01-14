@@ -25,12 +25,12 @@ jobs:
       with:
         path: ~/.m2/repository
         key: maven_cache    
-    - name: Cache maven
+    - name: Cache node
       uses: actions/cache@v2.1.3
       with:
         path: ~/ui/node
         key: node_cache  
-    - name: Cache maven
+    - name: Cache node_modules
       uses: actions/cache@v2.1.3
       with:
         path: ~/ui/node_modules
@@ -39,5 +39,3 @@ jobs:
       run: mvn -B -V verify
     - name: Codecov
       uses: codecov/codecov-action@v1.2.1
-      with:
-        file: ./target/site/jacoco/jacoco.xml
