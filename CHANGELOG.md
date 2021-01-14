@@ -1,5 +1,35 @@
 # Changelog
 
+## [1.2.13](https://github.com/chutney-testing/chutney/tree/1.2.13)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.12...1.2.13)
+
+**Fixed bugs:**
+
+- Consume kafka is in error for duplicate header [\#296](https://github.com/chutney-testing/chutney/issues/296)
+- Component edition : Wrong component dropped when tag filter selected [\#294](https://github.com/chutney-testing/chutney/issues/294)
+- When 2 or more linkyfier in same bloc the labels are concatenate [\#279](https://github.com/chutney-testing/chutney/issues/279)
+
+**Closed issues:**
+
+- Add output in execution report [\#300](https://github.com/chutney-testing/chutney/issues/300)
+- Add placeholder on xml assert task [\#299](https://github.com/chutney-testing/chutney/issues/299)
+- fix\(ui\): Scenario execution tile stays running [\#292](https://github.com/chutney-testing/chutney/issues/292)
+
+**Merged pull requests:**
+
+- Bugfix/flaky tests [\#304](https://github.com/chutney-testing/chutney/pull/304) ([bessonm](https://github.com/bessonm))
+- feat\(engine+server+ui\): Add output step result in report [\#301](https://github.com/chutney-testing/chutney/pull/301) ([nbrouand](https://github.com/nbrouand))
+- feat\(task-impl\): Add placeholder on xml assert task [\#298](https://github.com/chutney-testing/chutney/pull/298) ([nbrouand](https://github.com/nbrouand))
+- bugfix\(task-impl\): consume kafka with duplicated header \(\#296\) [\#297](https://github.com/chutney-testing/chutney/pull/297) ([rbenyoussef](https://github.com/rbenyoussef))
+- fix\(ui\): Component edition : Apply tag filter on drag and drop model [\#295](https://github.com/chutney-testing/chutney/pull/295) ([boddissattva](https://github.com/boddissattva))
+- fix\(ui\): Override completely history executions on refresh [\#293](https://github.com/chutney-testing/chutney/pull/293) ([boddissattva](https://github.com/boddissattva))
+- chore\(deps\): Bump maven-failsafe-plugin from 3.0.0-M4 to 3.0.0-M5 [\#291](https://github.com/chutney-testing/chutney/pull/291) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- chore\(deps\): Bump rxjava from 2.2.6 to 2.2.20 [\#290](https://github.com/chutney-testing/chutney/pull/290) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- chore\(deps-dev\): Bump rabbitmq-mock from 1.0.14 to 1.1.1 [\#288](https://github.com/chutney-testing/chutney/pull/288) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Bugfix/dataset iterations [\#286](https://github.com/chutney-testing/chutney/pull/286) ([rbenyoussef](https://github.com/rbenyoussef))
+- bugfix\(ui\): Wrong linkifier label [\#281](https://github.com/chutney-testing/chutney/pull/281) ([bessonm](https://github.com/bessonm))
+
 ## [1.2.12](https://github.com/chutney-testing/chutney/tree/1.2.12)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.11...1.2.12)
