@@ -100,7 +100,7 @@ public class ScenarioExecutionEngineAsyncTest {
         );
 
         // When
-        ExecutionRequest request = new ExecutionRequest(testCase, "Exec env","Exec user");
+        ExecutionRequest request = new ExecutionRequest(testCase, "Exec env", "Exec user");
         sut.execute(request);
 
         // Then
@@ -182,7 +182,9 @@ public class ScenarioExecutionEngineAsyncTest {
         when(testCasePreProcessors.apply(any())).thenReturn(testCase);
 
         stubHistoryExecution(scenarioId, executionId);
-        final List<StepExecutionReportCore> reportsList = stubEngineExecution(executionId, 0).getMiddle();
+        Triple<Pair<Observable<StepExecutionReportCore>, Long>, List<StepExecutionReportCore>, TestScheduler> engineStub = stubEngineExecution(executionId, 100);
+        RxJavaPlugins.setIoSchedulerHandler(scheduler -> engineStub.getRight());
+        final List<StepExecutionReportCore> reportsList = engineStub.getMiddle();
 
         final ScenarioExecutionEngineAsync sut = new ScenarioExecutionEngineAsync(
             executionHistoryRepository,
@@ -192,16 +194,17 @@ public class ScenarioExecutionEngineAsyncTest {
             testCasePreProcessors,
             new ObjectMapper(),
             dataSetHistoryRepository,
-            100,
+            10,
             0
         );
 
         // When
-        ExecutionRequest request = new ExecutionRequest(testCase, "","");
+        ExecutionRequest request = new ExecutionRequest(testCase, "", "");
         Long executionIdFromExecute = sut.execute(request);
         TestObserver<ScenarioExecutionReport> testObserver = sut.followExecution(testCase.id(), executionIdFromExecute).test();
 
         // Then
+        engineStub.getRight().advanceTimeBy(500, TimeUnit.MILLISECONDS);
         testObserver.awaitTerminalEvent();
         assertTestObserverStateAndValues(testObserver, true, executionId, reportsList, 4);
 

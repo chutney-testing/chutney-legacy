@@ -17,14 +17,12 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.core.ProducerFactory;
 
 public class KafkaBasicPublishTask implements Task {
 
 
-    private final KafkaProducerFactoryFactory kafkaProducerFactoryFactory = new KafkaProducerFactoryFactory();
+    private final ChutneyKafkaProducerFactory producerFactory = new ChutneyKafkaProducerFactory();
 
-    private final ProducerFactory<String, String> producerFactory;
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final String topic;
     private final Map<String, String> headers;
@@ -36,8 +34,7 @@ public class KafkaBasicPublishTask implements Task {
                                  @Input("headers") Map<String, String> headers,
                                  @Input("payload") String payload,
                                  Logger logger) {
-        this.producerFactory = kafkaProducerFactoryFactory.create(target);
-        this.kafkaTemplate = new KafkaTemplate<>(producerFactory, true);
+        this.kafkaTemplate = new KafkaTemplate<>(producerFactory.create(target), true);
         this.topic = topic;
         this.headers = headers != null ? headers : Collections.emptyMap();
         this.payload = payload;
@@ -53,7 +50,7 @@ public class KafkaBasicPublishTask implements Task {
                 .collect(Collectors.toList());
 
             logger.info("sending message to topic=" + topic);
-            ProducerRecord<String, String> producerRecord = new ProducerRecord<String,String>(topic, null, null, payload, recordHeaders);
+            ProducerRecord<String, String> producerRecord = new ProducerRecord<String, String>(topic, null, null, payload, recordHeaders);
 
             kafkaTemplate.send(producerRecord).get(5, SECONDS);
             logger.info("Published Kafka Message on topic " + topic);
@@ -61,6 +58,12 @@ public class KafkaBasicPublishTask implements Task {
         } catch (Exception e) {
             logger.error("An exception occurs when sending a message to Kafka server: " + e.getMessage());
             return TaskExecutionResult.ko();
+        } finally {
+            try {
+                producerFactory.destroy();
+            } catch (Exception e) {
+                logger.error(e);
+            }
         }
     }
 

@@ -111,7 +111,7 @@ public class RetryWithTimeOutStrategyTest {
 
     @Test
     public void step_fails_retry_until_success_execute_4_times() {
-        StrategyProperties strategyProperties = properties("0.1 sec", "5 ms");
+        StrategyProperties strategyProperties = properties("1 sec", "5 ms");
         StepStrategyDefinition strategyDefinition = new StepStrategyDefinition("", strategyProperties);
 
         Step step = mockStep(Status.FAILURE, Status.FAILURE, Status.FAILURE, Status.SUCCESS);
@@ -197,7 +197,7 @@ public class RetryWithTimeOutStrategyTest {
     @Test
     @Parameters(method = "retryStepParameters")
     public void should_reset_step_execution_before_each_retry(Status... stepStatus) {
-        StrategyProperties strategyProperties = properties("0.1 sec", "5 ms");
+        StrategyProperties strategyProperties = properties("1 sec", "5 ms");
         StepStrategyDefinition strategyDefinition = new StepStrategyDefinition("", strategyProperties);
         Step step = mockStep(stepStatus);
         when(step.strategy()).thenReturn(Optional.of(strategyDefinition));
@@ -209,8 +209,8 @@ public class RetryWithTimeOutStrategyTest {
 
     @Test
     @Parameters(method = "retryStepParameters")
-    public void should_add_informations_about_strategy_and_try(Status... stepStatus) {
-        StrategyProperties strategyProperties = properties("0.1 sec", "5 ms");
+    public void should_add_information_about_strategy_and_retries(Status... stepStatus) {
+        StrategyProperties strategyProperties = properties("1 sec", "5 ms");
         StepStrategyDefinition strategyDefinition = new StepStrategyDefinition("", strategyProperties);
         Step step = mockStep(stepStatus);
         when(step.strategy()).thenReturn(Optional.of(strategyDefinition));
@@ -236,11 +236,6 @@ public class RetryWithTimeOutStrategyTest {
             stub = stub.thenReturn(st);
         }
 
-        OngoingStubbing<Status> stub2 = when(strategyMock.execute(any(), any(), any(), any()));
-        for (Status st : expectedStatus) {
-            stub2 = stub2.thenReturn(st);
-        }
-
         return strategyMock;
     }
 
@@ -250,11 +245,6 @@ public class RetryWithTimeOutStrategyTest {
 
         for (Status st : expectedStatus) {
             stub = stub.thenReturn(st);
-        }
-
-        OngoingStubbing<Status> stub2 = when(stepMock.execute(any(), any()));
-        for (Status st : expectedStatus) {
-            stub2 = stub2.thenReturn(st);
         }
 
         return stepMock;
