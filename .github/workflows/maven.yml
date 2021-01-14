@@ -28,12 +28,12 @@ jobs:
     - name: Cache node
       uses: actions/cache@v2.1.3
       with:
-        path: ~/ui/node
+        path: '**/node'
         key: node_cache  
     - name: Cache node_modules
       uses: actions/cache@v2.1.3
       with:
-        path: ~/ui/node_modules
+        path: '**/node_modules'
         key: node_module_cache   
     - name: Build with Maven
       run: mvn -B -V verify
