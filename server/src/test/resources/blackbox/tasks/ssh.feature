@@ -64,7 +64,7 @@ Feature: SSH Task test
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
                 With uri /api/ui/scenario/execution/v1/${#scenarioId}/SSH_ENV_KO
-                With timeout 5 s
+                With timeout 10 s
                 Take report ${#body}
             Do compare Assert HTTP status is 200
                 With actual ${T(Integer).toString(#status)}
@@ -200,7 +200,7 @@ Feature: SSH Task test
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
                 With uri /api/ui/scenario/execution/v1/${#scenarioId}/SSH_ENV_OK
-                With timeout 5 s
+                With timeout 10 s
                 Take report ${#body}
             Do compare Assert HTTP status is 200
                 With actual ${T(Integer).toString(#status)}
