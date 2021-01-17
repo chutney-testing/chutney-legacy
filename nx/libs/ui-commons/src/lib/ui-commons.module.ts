@@ -8,6 +8,7 @@ import { ExecutionBadgeComponent } from './components/execution-badge/execution-
 import { ExecutionIconComponent } from './components/execution-icon/execution-icon.component';
 import { MatIconModule } from '@angular/material/icon';
 import {
+  PageHeaderAction,
   PageHeaderComponent,
   PageHeaderExtra,
 } from './components/page-header/page-header.component';
@@ -20,12 +21,14 @@ import { RouterModule } from '@angular/router';
     ExecutionBadgeComponent,
     ExecutionIconComponent,
     PageHeaderComponent,
+    PageHeaderAction,
     PageHeaderExtra,
   ],
   exports: [
     ExecutionBadgeComponent,
     ExecutionIconComponent,
     PageHeaderComponent,
+    PageHeaderAction,
     PageHeaderExtra,
   ],
 })

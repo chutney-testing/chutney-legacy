@@ -9,6 +9,15 @@ import {
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { chutneyAnimations } from '@chutney/utils';
+/**
+ */
+@Directive({
+  selector: `chutney-page-header-action, [chutney-page-header-action], [chutneyPageHeaderAction]`,
+  host: {
+    class: 'chutney-page-header-action',
+  },
+})
+export class PageHeaderAction {}
 
 /**
  */

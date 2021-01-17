@@ -18,28 +18,29 @@
       {{ environment }} <mat-icon>center_focus_strong</mat-icon>
     </button>
   </chutney-page-header-extra>
+  <chutney-page-header-action>
+    <button
+      mat-fab
+      class="mat-accent"
+      (click)="runCampaign()"
+      aria-label="Run scenario"
+      *ngIf="this.report?.status !== 'RUNNING'"
+      [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
+    >
+      <mat-icon>play_arrow</mat-icon>
+    </button>
+    <button
+      mat-fab
+      class="mat-accent"
+      (click)="stopCampaign()"
+      aria-label="Stop campaign"
+      *ngIf="this.report?.status === 'RUNNING' && this.running"
+      [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
+    >
+      <mat-icon>stop</mat-icon>
+    </button>
+  </chutney-page-header-action>
 </chutney-page-header>
-
-<button
-  mat-fab
-  class="run-campaign-button mat-accent"
-  (click)="runCampaign()"
-  aria-label="Run scenario"
-  *ngIf="this.report?.status !== 'RUNNING'"
-  [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
->
-  <mat-icon>play_arrow</mat-icon>
-</button>
-<button
-  mat-fab
-  class="run-campaign-button mat-accent"
-  (click)="stopCampaign()"
-  aria-label="Stop campaign"
-  *ngIf="this.report?.status === 'RUNNING' && this.running"
-  [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
->
-  <mat-icon>stop</mat-icon>
-</button>
 <div *ngIf="report">
   <mat-toolbar>
     <mat-toolbar-row>{{ report.campaignName }}</mat-toolbar-row>
