@@ -18,16 +18,18 @@
       <mat-icon>play_circle</mat-icon>
     </button>
   </chutney-page-header-extra>
+  <chutney-page-header-action>
+    <button
+      mat-fab
+      class="mat-accent"
+      (click)="editCampaign(campaignId)"
+      aria-label="Edit campaign"
+      [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
+    >
+      <mat-icon class="material-icons-outlined">edit</mat-icon>
+    </button>
+  </chutney-page-header-action>
 </chutney-page-header>
-<button
-  mat-fab
-  class="edit-campaign-button mat-accent"
-  (click)="editCampaign(campaignId)"
-  aria-label="Edit campaign"
-  [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
->
-  <mat-icon class="material-icons-outlined">edit</mat-icon>
-</button>
 <div *ngIf="campaign$ | async as campaign">
   <mat-toolbar>
     <mat-toolbar-row>

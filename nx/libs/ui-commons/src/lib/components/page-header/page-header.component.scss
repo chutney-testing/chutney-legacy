@@ -1,5 +1,6 @@
 .chutney-page-header {
   display: block;
+  position: relative;
   padding: 8px;
   margin: -16px 0px 0px;
   background-image: url('/assets/images/header-bg.png');
@@ -10,6 +11,12 @@
     margin-top: 8px;
     margin-bottom: 0;
   }
+}
+
+chutney-page-header-action {
+  position: absolute;
+  bottom: -25px;
+  right: 16px;
 }
 
 .chutney-page-title {
