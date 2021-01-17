@@ -3,8 +3,10 @@ import {
   Directive,
   Input,
   OnInit,
+  Optional,
   ViewEncapsulation,
 } from '@angular/core';
+import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { chutneyAnimations } from '@chutney/utils';
 
@@ -33,8 +35,13 @@ export class PageHeaderComponent implements OnInit {
   @Input() subtitle = '';
   @Input() showBreadCrumb = true;
   @Input() breadcrumbs: any;
+  @Input() showBackIcon = true;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, @Optional() private location: Location) {}
 
   ngOnInit() {}
+
+  onBack() {
+    this.location.back();
+  }
 }
