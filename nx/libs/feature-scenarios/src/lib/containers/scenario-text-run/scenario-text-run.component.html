@@ -27,29 +27,29 @@
       <mat-icon>stop_circle</mat-icon>
     </button>
   </chutney-page-header-extra>
+  <chutney-page-header-action>
+    <button
+      mat-fab
+      class="mat-accent"
+      (click)="runScenario()"
+      aria-label="Run scenario"
+      *ngIf="!running"
+      [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
+    >
+      <mat-icon>play_arrow</mat-icon>
+    </button>
+    <button
+      mat-fab
+      class="mat-accent"
+      (click)="pauseScenario()"
+      aria-label="Pause scenario"
+      *ngIf="running"
+      [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
+    >
+      <mat-icon>pause</mat-icon>
+    </button>
+  </chutney-page-header-action>
 </chutney-page-header>
-
-<button
-  mat-fab
-  class="run-scenario-button mat-accent"
-  (click)="runScenario()"
-  aria-label="Run scenario"
-  *ngIf="!running"
-  [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
->
-  <mat-icon>play_arrow</mat-icon>
-</button>
-<button
-  mat-fab
-  class="run-scenario-button mat-accent"
-  (click)="pauseScenario()"
-  aria-label="Pause scenario"
-  *ngIf="running"
-  [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
->
-  <mat-icon>pause</mat-icon>
-</button>
-
 <div *ngIf="scenario$ | async as scenario">
   <mat-toolbar>
     <mat-toolbar-row>

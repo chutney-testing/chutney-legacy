@@ -1,14 +1,16 @@
 <chutney-page-header [title]="'Scenarios'" [breadcrumbs]="breadcrumbs">
+  <chutney-page-header-action>
+    <button
+      mat-fab
+      class="mat-accent"
+      (click)="saveScenario()"
+      aria-label="Save scenario"
+      [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
+    >
+      <mat-icon>save</mat-icon>
+    </button>
+  </chutney-page-header-action>
 </chutney-page-header>
-<button
-  mat-fab
-  class="save-scenario-button mat-accent"
-  (click)="saveScenario()"
-  aria-label="Save scenario"
-  [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
->
-  <mat-icon>save</mat-icon>
-</button>
 <div [formGroup]="scenarioForm">
   <mat-tab-group>
     <mat-tab>

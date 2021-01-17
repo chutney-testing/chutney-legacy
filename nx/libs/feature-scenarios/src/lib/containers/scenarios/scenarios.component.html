@@ -4,16 +4,19 @@
     [breadcrumbs]="breadcrumbs"
     [showBackIcon]="false"
   >
+    <chutney-page-header-action>
+      <button
+        mat-fab
+        class="mat-accent"
+        (click)="addScenario()"
+        aria-label="Add scenario"
+        [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
+      >
+        <mat-icon>add</mat-icon>
+      </button>
+    </chutney-page-header-action>
   </chutney-page-header>
-  <button
-    mat-fab
-    class="add-scenario-button mat-accent"
-    (click)="addScenario()"
-    aria-label="Add scenario"
-    [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
-  >
-    <mat-icon>add</mat-icon>
-  </button>
+
   <chutney-scenarios-search-form></chutney-scenarios-search-form>
   <chutney-scenarios-list
     [scenarios]="filteredScenarios$ | async"

@@ -1,14 +1,16 @@
 <chutney-page-header [title]="'Campaigns'" [breadcrumbs]="breadcrumbs">
+  <chutney-page-header-action>
+    <button
+      mat-fab
+      class="mat-accent"
+      (click)="saveCampaign()"
+      aria-label="Save campaign"
+      [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
+    >
+      <mat-icon>save</mat-icon>
+    </button>
+  </chutney-page-header-action>
 </chutney-page-header>
-<button
-  mat-fab
-  class="save-campaign-button mat-accent"
-  (click)="saveCampaign()"
-  aria-label="Save campaign"
-  [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
->
-  <mat-icon>save</mat-icon>
-</button>
 
 <div [formGroup]="campaignForm" id="wrapper">
   <mat-tab-group id="tab-group">
