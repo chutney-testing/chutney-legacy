@@ -705,5 +705,31 @@
                 <additionalparam>-Xdoclint:none</additionalparam>
             </properties>
         </profile>
+        <profile>
+            <id>bintray</id>
+            <activation>
+                <property>
+                    <name>env.BUILD_ENV</name>
+                    <value>github-actions</value>
+                </property>
+            </activation>
+            <repositories>
+                <repository>
+                    <id>bintray-repo</id>
+                    <name>bintray-repo</name>
+                    <url>https://jcenter.bintray.com</url>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>bintray-plugins</id>
+                    <name>bintray-plugins</name>
+                    <url>https://jcenter.bintray.com</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
     </profiles>
 </project>
