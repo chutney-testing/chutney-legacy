@@ -186,7 +186,7 @@ public abstract class AbstractOrientDatabaseTest {
     protected ComposableStep findByName(final String name) {
         try (ODatabaseSession dbSession = dbPool(DATABASE_NAME).acquire()) {
             return loadByProperty(STEP_CLASS, STEP_CLASS_PROPERTY_NAME, name, dbSession)
-                .map(oElement -> vertexToComposableStep(oElement.asVertex().get(), dbSession).build()).orElse(null);
+                .map(oElement -> vertexToComposableStep(oElement.asVertex().get()).build()).orElse(null);
         }
     }
 
