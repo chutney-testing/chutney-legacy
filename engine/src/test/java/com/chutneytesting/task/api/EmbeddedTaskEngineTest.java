@@ -10,8 +10,8 @@ import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class EmbeddedTaskEngineTest {
@@ -19,7 +19,7 @@ public class EmbeddedTaskEngineTest {
     private EmbeddedTaskEngine engine ;
     private TaskTemplateParserV2 parser = new TaskTemplateParserV2();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         // G
         TaskTemplateRegistry regitry = Mockito.mock(TaskTemplateRegistry.class);

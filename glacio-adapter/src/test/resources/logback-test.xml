@@ -1,0 +1,30 @@
+<configuration>
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{20} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.intellij" level="ERROR"/>
+    <logger name="com.jayway" level="WARN"/>
+    <logger name="com.zaxxer" level="WARN"/>
+    <logger name="io.undertow" level="ERROR"/>
+    <logger name="liquibase" level="WARN"/>
+    <logger name="LiquibaseSchemaResolver" level="WARN"/>
+    <logger name="org.apache" level="WARN"/>
+    <logger name="org.apache.maven.surefire.booter" level="WARN"/>
+    <logger name="org.eclipse" level="WARN"/>
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.jboss" level="WARN"/>
+    <logger name="org.springframework" level="WARN" />
+    <logger name="org.springframework.test.web.servlet.result" level="DEBUG" />
+    <logger name="org.xnio" level="WARN"/>
+    <logger name="net.schmizz" level="WARN" />
+    <logger name="wiremock" level="WARN" />
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>

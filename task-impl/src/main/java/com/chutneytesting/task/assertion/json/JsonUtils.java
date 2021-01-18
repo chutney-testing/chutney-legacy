@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public final class JsonUtils {
 
+    private static final ObjectMapper om = new ObjectMapper();
+
     /**
      * Serialize given object as JSON string.
      *
@@ -18,7 +20,7 @@ public final class JsonUtils {
             return (String) obj;
         } else {
             try {
-                return new ObjectMapper().writeValueAsString(obj);
+                return om.writeValueAsString(obj);
             } catch (JsonProcessingException e) {
                 throw new IllegalStateException("Can't convert obj as json string: " + obj, e);
             }

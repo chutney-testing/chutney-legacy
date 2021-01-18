@@ -28,8 +28,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.groovy.util.Maps;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ComposedTestCasePreProcessorTest {
 
@@ -42,7 +42,7 @@ public class ComposedTestCasePreProcessorTest {
 
     private ComposedTestCasePreProcessor sut;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         globalvarRepository = mock(GlobalvarRepository.class);
         dataSetRepository = mock(DataSetRepository.class);

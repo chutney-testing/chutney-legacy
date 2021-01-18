@@ -3,24 +3,20 @@ package com.chutneytesting.task.api;
 import static com.chutneytesting.task.api.TaskController.BASE_URL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.google.common.collect.Lists;
 import com.chutneytesting.task.api.TaskDto.InputsDto;
+import com.google.common.collect.Lists;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.MethodRule;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -28,19 +24,15 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class TaskControllerTest {
 
-    @Rule
-    public MethodRule mockitoRule = MockitoJUnit.rule();
+    private EmbeddedTaskEngine embeddedTaskEngine = mock(EmbeddedTaskEngine.class);
 
-    @Mock
-    private EmbeddedTaskEngine embeddedTaskEngine;
-
-    @InjectMocks
     private TaskController sut;
 
     private MockMvc mockMvc;
 
-    @Before
+    @BeforeEach
     public void setUp() {
+        sut = new TaskController(embeddedTaskEngine);
         mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
     }
 

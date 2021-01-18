@@ -23,7 +23,7 @@
 
     <developers>
         <developer>
-            <name>Loic Ledoyen</name>
+            <name>Loïc Ledoyen</name>
         </developer>
         <developer>
             <name>Mael Besson</name>
@@ -59,9 +59,11 @@
         <module>engine</module>
         <module>task-spi</module>
         <module>task-impl</module>
+        <module>environment</module>
         <module>tools</module>
         <module>cli</module>
         <module>packaging</module>
+        <module>glacio-adapter</module>
     </modules>
 
     <properties>
@@ -82,35 +84,36 @@
         <commonslang3.version>3.7</commonslang3.version>
         <commonstext.version>1.8</commonstext.version>
         <commonsio.version>2.6</commonsio.version>
+        <commonscollections.version>3.2.2</commonscollections.version>
         <jgit.version>4.9.1.201712030800-r</jgit.version>
         <jdom2.version>2.0.6</jdom2.version>
         <jsonpath.version>2.4.0</jsonpath.version>
         <org.everit.json.schema.version>1.11.0</org.everit.json.schema.version>
-        <sshj.version>0.27.0</sshj.version>
+        <sshj.version>0.29.0</sshj.version>
+        <sshd.version>2.5.0</sshd.version>
         <hjson.version>3.0.0</hjson.version>
-        <generex.version>1.0.2</generex.version>
         <jms.version>2.0.1</jms.version>
         <amqp-client.version>5.8.0</amqp-client.version>
+        <qpid-broker.version>7.0.6</qpid-broker.version>
         <mongodb.version>3.8.0</mongodb.version>
         <orientdb.version>3.0.30</orientdb.version>
         <selenium.version>3.14.0</selenium.version>
         <rxjava.version>2.2.20</rxjava.version>
         <groovy.version>2.5.0</groovy.version>
+        <glacio.version>0.0.1</glacio.version>
 
         <!-- Test dependencies versions -->
-        <junit.version>4.12</junit.version>
+        <chutneyjunit.version>0.1.1</chutneyjunit.version>
+        <junit5.version>5.6.2</junit5.version>
+        <junit-jupiter.version>${junit5.version}</junit-jupiter.version>
         <assertj.version>3.15.0</assertj.version>
         <mockito.version>2.8.9</mockito.version>
-        <junitparams.version>1.1.1</junitparams.version>
-        <cucumber.version>1.2.5</cucumber.version>
         <mockrunner-jms.version>1.1.2</mockrunner-jms.version>
-        <sshd.version>1.6.0</sshd.version>
         <eddsa.version>0.2.0</eddsa.version>
         <activemq.version>5.16.0</activemq.version>
         <rabbitmq-mock.version>1.1.1</rabbitmq-mock.version>
         <wire-mock.version>2.26.3</wire-mock.version>
-        <pitest.version>1.4.9</pitest.version>
-        <pitest-cucumber.version>0.8</pitest-cucumber.version>
+        <pitest.version>1.5.1</pitest.version>
         <otj-pg-embedded.version>0.13.1</otj-pg-embedded.version>
         <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
         <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
@@ -127,11 +130,16 @@
             <artifactId>slf4j-api</artifactId>
             <version>${sl4j.api.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit5.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit5.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -146,36 +154,15 @@
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>pl.pragmatists</groupId>
-            <artifactId>JUnitParams</artifactId>
-            <version>${junitparams.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-java</artifactId>
-            <version>${cucumber.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-junit</artifactId>
-            <version>${cucumber.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.alexvictoor</groupId>
-            <artifactId>pitest-cucumber-plugin</artifactId>
-            <version>${pitest-cucumber.version}</version>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.chutneytesting</groupId>
+                <artifactId>environment</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.chutneytesting</groupId>
                 <artifactId>ui</artifactId>
@@ -210,6 +197,19 @@
                 <groupId>com.chutneytesting</groupId>
                 <artifactId>tools</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>glacio-parser</artifactId>
+                <groupId>com.github.fridujo</groupId>
+                <version>${glacio.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit5.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
             <!-- APT dependencies -->
@@ -289,6 +289,11 @@
                 <version>${commonsio.version}</version>
             </dependency>
             <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>${commonscollections.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.eclipse.jgit</groupId>
                 <artifactId>org.eclipse.jgit</artifactId>
                 <version>${jgit.version}</version>
@@ -314,14 +319,14 @@
                 <version>${sshj.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.sshd</groupId>
+                <artifactId>sshd-core</artifactId>
+                <version>${sshd.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.hjson</groupId>
                 <artifactId>hjson</artifactId>
                 <version>${hjson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.mifmif</groupId>
-                <artifactId>generex</artifactId>
-                <version>${generex.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.jms</groupId>
@@ -332,6 +337,21 @@
                 <groupId>com.rabbitmq</groupId>
                 <artifactId>amqp-client</artifactId>
                 <version>${amqp-client.version}</version>
+            </dependency>
+            <dependency> <!-- Note that the below is qpid-broker-core and *not* qpid-broker. -->
+                <groupId>org.apache.qpid</groupId>
+                <artifactId>qpid-broker-core</artifactId>
+                <version>${qpid-broker.version}</version>
+            </dependency>
+            <dependency> <!-- AMQP protocol support is modular. Here we show support for 0-8/0-9 and 1.0. Support for 0-10 is excluded. -->
+                <groupId>org.apache.qpid</groupId>
+                <artifactId>qpid-broker-plugins-amqp-0-8-protocol</artifactId>
+                <version>${qpid-broker.version}</version>
+            </dependency>
+            <dependency> <!-- If a different store type is required it needs to be included here -->
+                <groupId>org.apache.qpid</groupId>
+                <artifactId>qpid-broker-plugins-memory-store</artifactId>
+                <version>${qpid-broker.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.mongodb</groupId>
@@ -376,45 +396,21 @@
 
             <!-- Test dependencies -->
             <dependency>
+                <groupId>com.chutneytesting</groupId>
+                <artifactId>chutney-junit-engine</artifactId>
+                <version>${chutneyjunit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-test</artifactId>
                 <version>${springboot.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.apache.sshd</groupId>
-                <artifactId>sshd-core</artifactId>
-                <version>${sshd.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>net.i2p.crypto</groupId>
                 <artifactId>eddsa</artifactId>
                 <version>${eddsa.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>info.cukes</groupId>
-                <artifactId>cucumber-core</artifactId>
-                <version>${cucumber.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>info.cukes</groupId>
-                <artifactId>cucumber-java</artifactId>
-                <version>${cucumber.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>info.cukes</groupId>
-                <artifactId>cucumber-junit</artifactId>
-                <version>${cucumber.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>info.cukes</groupId>
-                <artifactId>cucumber-spring</artifactId>
-                <version>${cucumber.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -467,7 +463,6 @@
                 <version>${pitest.version}</version>
                 <scope>test</scope>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 
@@ -555,7 +550,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.12.4</version>
+                    <version>3.0.0-M4</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -679,7 +674,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <execute />
+                                        <execute/>
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
@@ -700,12 +695,6 @@
         </pluginManagement>
     </build>
 
-    <distributionManagement>
-    </distributionManagement>
-
-    <repositories>
-    </repositories>
-
     <profiles>
         <profile>
             <id>disable-java8-doclint</id>
@@ -715,6 +704,32 @@
             <properties>
                 <additionalparam>-Xdoclint:none</additionalparam>
             </properties>
+        </profile>
+        <profile>
+            <id>bintray</id>
+            <activation>
+                <property>
+                    <name>env.BUILD_ENV</name>
+                    <value>github-actions</value>
+                </property>
+            </activation>
+            <repositories>
+                <repository>
+                    <id>bintray-repo</id>
+                    <name>bintray-repo</name>
+                    <url>https://jcenter.bintray.com</url>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>bintray-plugins</id>
+                    <name>bintray-plugins</name>
+                    <url>https://jcenter.bintray.com</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </pluginRepository>
+            </pluginRepositories>
         </profile>
     </profiles>
 </project>

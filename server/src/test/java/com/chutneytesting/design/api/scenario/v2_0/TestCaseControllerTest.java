@@ -19,8 +19,8 @@ import java.time.Instant;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -41,7 +41,7 @@ public class TestCaseControllerTest {
     private TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
     private UserService userService = mock(UserService.class);
 
-    @Before
+    @BeforeEach
     public void setUp() {
         when(userService.getCurrentUser()).thenReturn(User.ANONYMOUS_USER);
 

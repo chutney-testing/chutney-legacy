@@ -8,5 +8,4 @@ public class StepStrategyDefinition {
         this.type = type;
         this.strategyProperties = strategyProperties;
     }
-
 }

@@ -7,6 +7,7 @@ import com.chutneytesting.task.spi.injectable.Target;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -79,8 +80,11 @@ public class StepDefinition {
         return "StepDefinition{" +
             "name='" + name + '\'' +
             ", type='" + type + '\'' +
+            ", inputs=" + inputs +
+            ", steps=" + steps +
+            ", outputs=" + outputs +
+            ", target=" + target +
+            ", strategy=" + strategy +
             '}';
     }
-
-
 }

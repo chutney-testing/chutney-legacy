@@ -19,6 +19,10 @@
         </dependency>
         <dependency>
             <groupId>com.chutneytesting</groupId>
+            <artifactId>environment</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.chutneytesting</groupId>
             <artifactId>tools</artifactId>
         </dependency>
 
@@ -160,24 +164,17 @@
 
         <!-- Test dependencies -->
         <dependency>
+            <groupId>com.chutneytesting</groupId>
+            <artifactId>chutney-junit-engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.chutneytesting</groupId>
+            <artifactId>ui</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-java</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-junit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-spring</artifactId>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -200,6 +197,7 @@
         <dependency>
             <groupId>org.apache.sshd</groupId>
             <artifactId>sshd-core</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.github.tomakehurst</groupId>
@@ -308,8 +306,6 @@
                         <version>${pitest.version}</version>
                         <configuration>
 
-                            <testPlugin>Cucumber</testPlugin>
-
                             <!-- Targets -->
                             <targetClasses>
                                 <param>com.chutneytesting.*</param>
@@ -359,13 +355,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                        <dependencies>
-                            <dependency>
-                                <groupId>com.github.alexvictoor</groupId>
-                                <artifactId>pitest-cucumber-plugin</artifactId>
-                                <version>${pitest-cucumber.version}</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                 </plugins>
             </build>

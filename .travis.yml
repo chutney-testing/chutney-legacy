@@ -10,6 +10,9 @@ cache:
 
 jdk: openjdk8
 
+before_install:
+  - cp .travis.settings.xml $HOME/.m2/settings.xml
+
 install: skip
 
 before_script:
@@ -23,6 +26,10 @@ script:
 after_success:
   - bash <(curl -s https://codecov.io/bash)
   - ([[ -n "$FOSSA_API_KEY" ]]) && (./fossa analyze)
+
+after_failure:
+  - echo "***** PRINT SUREFIRE REPORTS *****" && find . -type f -wholename "*/target/surefire-reports/*.txt" -exec cat {} \;
+  - echo "***** PRINT FAILSAFE REPORTS *****" && find . -type f -wholename "*/target/failsafe-reports/*.txt" -exec cat {} \;
 
 deploy:
 

@@ -24,18 +24,20 @@ jobs:
       uses: actions/cache@v2.1.3
       with:
         path: ~/.m2/repository
-        key: maven_cache    
+        key: maven_cache
     - name: Cache node
       uses: actions/cache@v2.1.3
       with:
         path: '**/node'
-        key: node_cache  
+        key: node_cache
     - name: Cache node_modules
       uses: actions/cache@v2.1.3
       with:
         path: '**/node_modules'
-        key: node_module_cache   
+        key: node_module_cache
     - name: Build with Maven
+      env:
+        BUILD_ENV: 'github-actions'
       run: mvn -B -V verify
     - name: Codecov
       uses: codecov/codecov-action@v1.2.1

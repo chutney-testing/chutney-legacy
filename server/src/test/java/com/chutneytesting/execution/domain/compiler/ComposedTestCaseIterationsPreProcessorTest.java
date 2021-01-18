@@ -29,28 +29,26 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import org.apache.groovy.util.Maps;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(JUnitParamsRunner.class)
 public class ComposedTestCaseIterationsPreProcessorTest {
 
     ComposedTestCaseIterationsPreProcessor sut;
     private DataSetRepository mockDatasetRepository;
 
-    private TestCaseMetadata metadata = TestCaseMetadataImpl.builder().withDatasetId("fakeId").build();
-    private ExecutableComposedStep stepGenerating2Iterations = ExecutableComposedStep.builder()
+    private final TestCaseMetadata metadata = TestCaseMetadataImpl.builder().withDatasetId("fakeId").build();
+    private final ExecutableComposedStep stepGenerating2Iterations = ExecutableComposedStep.builder()
         .withName("Should generate 2 iterations for letter A and B")
         .withImplementation(Optional.of(
             new StepImplementation("task", null, emptyMap(), singletonMap("output", "**letter**"))))
         .withDataset(singletonMap("letter", ""))
         .build();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         mockDatasetRepository = mock(DataSetRepository.class);
     }
@@ -346,8 +344,8 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
     }
 
-    @Test
-    @Parameters(method = "strategyDefinitions")
+    @ParameterizedTest
+    @MethodSource("strategyDefinitions")
     public void iterations_should_inherit_their_strategy_from_parent_strategy_definition(Strategy strategyDefinition) {
         // Given
         List<Map<String, String>> multipleValues = asList(

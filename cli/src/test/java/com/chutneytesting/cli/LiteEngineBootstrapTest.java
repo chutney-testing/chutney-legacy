@@ -1,6 +1,6 @@
 package com.chutneytesting.cli;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class LiteEngineBootstrapTest {
 

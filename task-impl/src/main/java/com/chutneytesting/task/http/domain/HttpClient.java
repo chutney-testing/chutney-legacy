@@ -25,4 +25,8 @@ public interface HttpClient {
     default ResponseEntity<String> delete(String resource, MultiValueMap<String, String> headers) throws HttpClientErrorException {
         return call(HttpMethod.DELETE, resource, new HttpEntity<>(null, headers));
     }
+
+    default ResponseEntity<String> patch(String resource, Object body, MultiValueMap<String, String> headers) throws HttpClientErrorException {
+        return call(HttpMethod.PATCH, resource, new HttpEntity<>(body, headers));
+    }
 }

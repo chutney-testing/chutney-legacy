@@ -1,22 +1,25 @@
 package com.chutneytesting.admin.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class BackupTest {
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void should_throw_exception_when_instanciate_with_no_backups() {
-        new Backup(false, false, false, false, false);
+        assertThatThrownBy(() -> new Backup(false, false, false, false, false))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void should_throw_exception_when_instanciate_with_unparsable_id() {
-        new Backup("unparsableId", false, false, false, false, false);
+        assertThatThrownBy(() -> new Backup("unparsableId", false, false, false, false, false))
+            .isInstanceOf(RuntimeException.class);
     }
 
     @Test

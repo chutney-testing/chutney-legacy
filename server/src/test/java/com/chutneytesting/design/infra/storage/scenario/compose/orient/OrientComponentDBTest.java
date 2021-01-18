@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class OrientComponentDBTest extends AbstractOrientDatabaseTest {
 
@@ -33,13 +33,13 @@ public class OrientComponentDBTest extends AbstractOrientDatabaseTest {
 
     private static OrientComponentDB sut;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         initComponentDB(DATABASE_NAME, ODatabaseType.PLOCAL);
         sut = orientComponentDB;
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() {
         destroyDB(DATABASE_NAME);
     }

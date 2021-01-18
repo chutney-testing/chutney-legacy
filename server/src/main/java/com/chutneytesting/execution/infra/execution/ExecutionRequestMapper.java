@@ -1,15 +1,15 @@
 package com.chutneytesting.execution.infra.execution;
 
-import static com.chutneytesting.design.domain.environment.NoTarget.NO_TARGET;
+import static com.chutneytesting.environment.domain.NoTarget.NO_TARGET;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.agent.domain.network.Agent;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
-import com.chutneytesting.design.domain.environment.EnvironmentRepository;
-import com.chutneytesting.design.domain.environment.SecurityInfo;
-import com.chutneytesting.design.domain.environment.Target;
 import com.chutneytesting.design.domain.scenario.gwt.GwtStep;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import com.chutneytesting.design.domain.scenario.gwt.Strategy;
@@ -19,6 +19,10 @@ import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
 import com.chutneytesting.engine.api.execution.SecurityInfoDto;
 import com.chutneytesting.engine.api.execution.TargetDto;
+import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
+import com.chutneytesting.environment.domain.EnvironmentService;
+import com.chutneytesting.environment.domain.SecurityInfo;
+import com.chutneytesting.environment.domain.Target;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.compiler.ScenarioConversionException;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
@@ -27,7 +31,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.hjson.JsonValue;
 import org.springframework.stereotype.Component;
 
@@ -35,12 +38,12 @@ import org.springframework.stereotype.Component;
 public class ExecutionRequestMapper {
 
     private final ObjectMapper objectMapper;
-    private final EnvironmentRepository environmentRepository;
+    private final EnvironmentService environmentService;
     private final CurrentNetworkDescription currentNetworkDescription;
 
-    public ExecutionRequestMapper(ObjectMapper objectMapper, EnvironmentRepository environmentRepository, CurrentNetworkDescription currentNetworkDescription) {
+    public ExecutionRequestMapper(ObjectMapper objectMapper, EnvironmentService environmentService, CurrentNetworkDescription currentNetworkDescription) {
         this.objectMapper = objectMapper;
-        this.environmentRepository = environmentRepository;
+        this.environmentService = environmentService;
         this.currentNetworkDescription = currentNetworkDescription;
     }
 
@@ -83,11 +86,11 @@ public class ExecutionRequestMapper {
 
         List<StepDefinitionRequestDto> steps = definition.steps.stream()
             .map(d -> getStepDefinitionRequestFromStepDef(d, env))
-            .collect(Collectors.toList());
+            .collect(toList());
 
         return new StepDefinitionRequestDto(
             definition.name,
-            toDto(findTargetByName(definition.target, env)),
+            toDto(getTargetForExecution(env, definition.target)),
             retryStrategy,
             definition.type,
             definition.inputs,
@@ -113,13 +116,13 @@ public class ExecutionRequestMapper {
     private List<StepDefinitionRequestDto> convert(List<GwtStep> steps, String env) {
         return steps.stream()
             .map(s -> convert(s, env))
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     private StepDefinitionRequestDto convert(GwtStep step, String env) {
         return new StepDefinitionRequestDto(
             step.description,
-            step.implementation.map(i -> toDto(findTargetByName(i.target, env))).orElse(toDto(NO_TARGET)),
+            step.implementation.map(i -> toDto(getTargetForExecution(env, i.target))).orElse(toDto(NO_TARGET)),
             step.strategy.map(this::mapStrategy).orElse(null),
             step.implementation.map(i -> i.type).orElse(""),
             step.implementation.map(i -> i.inputs).orElse(emptyMap()),
@@ -143,17 +146,16 @@ public class ExecutionRequestMapper {
         );
     }
 
-    private static TargetDto toDto(Target target) {
-        if (target == null) {
+    private TargetDto toDto(Target target) {
+        if (target == null || NO_TARGET.equals(target)) {
             target = NO_TARGET;
         }
-
         return new TargetDto(
             target.id.name,
             target.url,
             target.properties,
             toDto(target.security),
-            target.agents
+            getAgents(target.id)
         );
     }
 
@@ -170,26 +172,6 @@ public class ExecutionRequestMapper {
 
     private static CredentialDto toDto(SecurityInfo.Credential credential) {
         return new CredentialDto(credential.username, credential.password);
-    }
-
-    // TODO - see if it might be validated before in the domain
-    private Target findTargetByName(String targetName, String environment) {
-        if (targetName == null || targetName.isEmpty()) {
-            return NO_TARGET;
-        }
-
-        Target target = environmentRepository.getAndValidateServer(targetName, environment);
-
-        Optional<NetworkDescription> networkDescription = currentNetworkDescription.findCurrent();
-        if (networkDescription.isPresent() && networkDescription.get().localAgent().isPresent()) {
-            final Agent localAgent = networkDescription.get().localAgent().get();
-            List<Agent> agents = localAgent.findFellowAgentForReaching(target.id);
-            return Target.builder()
-                .copyOf(target)
-                .withAgents(agents.stream().map(a -> a.agentInfo).collect(Collectors.toList()))
-                .build();
-        }
-        return target;
     }
 
     private StepDefinitionRequestDto convertComposed(ExecutionRequest executionRequest) {
@@ -211,20 +193,37 @@ public class ExecutionRequestMapper {
     }
 
     private List<StepDefinitionRequestDto> convertComposedSteps(List<ExecutableComposedStep> composedSteps, String env) {
-        return composedSteps.stream().map(f -> convert(f, env)).collect(Collectors.toList());
+        return composedSteps.stream().map(f -> convert(f, env)).collect(toList());
     }
 
     private StepDefinitionRequestDto convert(ExecutableComposedStep composedStep, String env) {
         return new StepDefinitionRequestDto(
             composedStep.name,
-            toDto(findTargetByName(composedStep.stepImplementation.map(si -> si.target).orElse(""), env)),
+            toDto(getTargetForExecution(env, composedStep.stepImplementation.map(si -> si.target).orElse(""))),
             this.mapStrategy(composedStep.strategy),
             composedStep.stepImplementation.map(si -> si.type).orElse(""),
             composedStep.stepImplementation.map(si -> si.inputs).orElse(emptyMap()),
-            composedStep.steps.stream().map(f -> convert(f, env)).collect(Collectors.toList()),
+            composedStep.steps.stream().map(f -> convert(f, env)).collect(toList()),
             composedStep.stepImplementation.map(si -> si.outputs).orElse(emptyMap()),
             env
         );
     }
 
+    private Target getTargetForExecution(String environmentName, String targetName) {
+        if (isBlank(targetName)) {
+            return NO_TARGET;
+        }
+        return environmentService.getTarget(environmentName, targetName);
+    }
+
+    private List<NamedHostAndPort> getAgents(Target.TargetId targetId) {
+        List<NamedHostAndPort> nhaps = emptyList();
+        Optional<NetworkDescription> networkDescription = currentNetworkDescription.findCurrent();
+        if (networkDescription.isPresent() && networkDescription.get().localAgent().isPresent()) {
+            final Agent localAgent = networkDescription.get().localAgent().get();
+            List<Agent> agents = localAgent.findFellowAgentForReaching(targetId);
+            nhaps = agents.stream().map(a -> a.agentInfo).collect(toList());
+        }
+        return nhaps;
+    }
 }

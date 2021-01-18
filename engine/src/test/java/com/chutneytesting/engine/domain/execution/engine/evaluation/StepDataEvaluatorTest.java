@@ -1,6 +1,7 @@
 package com.chutneytesting.engine.domain.execution.engine.evaluation;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.chutneytesting.engine.domain.execution.engine.scenario.ScenarioContextImpl;
 import com.chutneytesting.engine.domain.execution.evaluation.SpelFunctions;
@@ -10,13 +11,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 @SuppressWarnings("unchecked")
-@RunWith(JUnitParamsRunner.class)
 public class StepDataEvaluatorTest {
 
     private final StepDataEvaluator sut = new StepDataEvaluator(new SpelFunctions());
@@ -68,6 +67,8 @@ public class StepDataEvaluatorTest {
         set.add("${#object.attribute()}");
 
         Map<String, Object> inputs = new HashMap<>();
+        inputs.put("begin escaped", "\\${noreplace}");
+        inputs.put("end escaped", "${'replace with } in expression'}");
         inputs.put("stringRawValue", "rawValue");
         inputs.put("objectRawValue", testObject);
         inputs.put("destination", "${#destination}");
@@ -83,6 +84,8 @@ public class StepDataEvaluatorTest {
 
         assertThat(evaluatedInputs.get("stringRawValue")).isEqualTo("rawValue");
         assertThat(evaluatedInputs.get("objectRawValue")).isEqualTo(testObject);
+        assertThat(evaluatedInputs.get("begin escaped")).isEqualTo("${noreplace}");
+        assertThat(evaluatedInputs.get("end escaped")).isEqualTo("replace with } in expression");
         assertThat(evaluatedInputs.get("destination")).isEqualTo("stringDestination");
         assertThat(evaluatedInputs.get("jsonKey")).isEqualTo("{\"key\": \"value\"}");
         assertThat(evaluatedInputs.get("objectKey")).isEqualTo(testObject);
@@ -127,8 +130,8 @@ public class StepDataEvaluatorTest {
         assertThat(evaluatedSet).contains("attributeValue");
     }
 
-    @Test(expected = com.chutneytesting.engine.domain.execution.engine.evaluation.EvaluationException.class)
-    @Parameters({
+    @ParameterizedTest()
+    @ValueSource(strings = {
         "${T(java.lang.Runtime).getRuntime().exec(\"echo I_c4n_5cr3w_Y0ur_1if3\")}",
         "${\"\".getClass().forName(\"java.lang.Runtime\").getMethod(\"getRuntime\")}",
         "${T(com.chutneytesting.engine.domain.execution.engine.evaluation.StepDataEvaluator).getClass().forName('java.lang.Runtime').getRuntime()}",
@@ -143,7 +146,10 @@ public class StepDataEvaluatorTest {
         inputs.put("MaliciousInjection", magicSpel);
 
         // When
-        sut.evaluateNamedDataWithContextVariables(inputs, scenarioContext);
+        assertThatThrownBy(() ->
+            sut.evaluateNamedDataWithContextVariables(inputs, scenarioContext)
+        )
+            .isInstanceOf(com.chutneytesting.engine.domain.execution.engine.evaluation.EvaluationException.class);
     }
 
     @Test

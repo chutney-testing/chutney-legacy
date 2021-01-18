@@ -38,8 +38,8 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 public class ScenarioExecutionEngineAsyncTest {
@@ -51,7 +51,7 @@ public class ScenarioExecutionEngineAsyncTest {
     private TestCasePreProcessors testCasePreProcessors = mock(TestCasePreProcessors.class);
     private DataSetHistoryRepository dataSetHistoryRepository = mock(DataSetHistoryRepository.class);
 
-    @After
+    @AfterEach
     public void after() {
         RxJavaPlugins.reset();
     }

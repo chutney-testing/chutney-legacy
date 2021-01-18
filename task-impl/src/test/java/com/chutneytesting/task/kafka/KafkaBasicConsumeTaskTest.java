@@ -25,18 +25,17 @@ import com.chutneytesting.task.spi.injectable.Target;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Map;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-import junitparams.converters.Nullable;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.apache.kafka.common.record.TimestampType;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
@@ -45,7 +44,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import wiremock.com.google.common.collect.ImmutableMap;
 
 @SuppressWarnings("unchecked")
-@RunWith(JUnitParamsRunner.class)
 public class KafkaBasicConsumeTaskTest {
 
     private static final String TOPIC = "topic";
@@ -62,7 +60,7 @@ public class KafkaBasicConsumeTaskTest {
 
     private TestLogger logger;
 
-    @Before
+    @BeforeEach
     public void before() {
         logger = new TestLogger();
     }
@@ -92,9 +90,10 @@ public class KafkaBasicConsumeTaskTest {
         assertThat(logger.errors).isEmpty();
     }
 
-    @Test
-    @Parameters({APPLICATION_JSON_VALUE, "null"})
-    public void should_consume_json_message_as_map(@Nullable String mimeType) {
+    @ParameterizedTest
+    @ValueSource(strings = APPLICATION_JSON_VALUE)
+    @NullSource
+    public void should_consume_json_message_as_map(String mimeType) {
         // Given
         Task task = givenKafkaConsumeTask(null, mimeType, null);
         givenTaskReceiveMessages(task,
@@ -259,9 +258,8 @@ public class KafkaBasicConsumeTaskTest {
         assertThat(payload).isEqualTo(textMessageToSelect);
     }
 
-
-    @Test
-    @Parameters({"Content-Type", "Contenttype", "content type"})
+    @ParameterizedTest
+    @ValueSource(strings = {"Content-Type", "Contenttype", "content type"})
     public void should_override_given_mime_type_by_message_header(String contentTypeHeaderKey) {
         // Given
         ImmutableList<Header> headers = ImmutableList.of(
@@ -300,29 +298,6 @@ public class KafkaBasicConsumeTaskTest {
         // Then
         assertThat(taskExecutionResult.status).isEqualTo(Failure);
         assertThat(logger.errors).isNotEmpty();
-    }
-
-    @Test
-    @Parameters({"bad content type", APPLICATION_JSON_VALUE, "\"" + APPLICATION_JSON_VALUE + "\""})
-    public void should_consume_as_json_with_bad_content_type_in_received_message(String contentType) {
-        ImmutableList<Header> headers = ImmutableList.of(
-            new RecordHeader("Content-type", contentType.getBytes())
-        );
-        // Given
-        Task task = givenKafkaConsumeTask(null, null, null);
-        givenTaskReceiveMessages(task,
-            buildRecord(FIRST_OFFSET, "KEY", "{\"value\": \"test message\", \"id\": \"1111\" }", headers)
-        );
-
-        // When
-        TaskExecutionResult taskExecutionResult = task.execute();
-
-        // Then
-        assertThat(taskExecutionResult.status).isEqualTo(Success);
-
-        final Map<String, Object> payload = ((List<Map<String, Object>>) taskExecutionResult.outputs.get(OUTPUT_PAYLOADS)).get(0);
-        assertThat(payload.get("value")).isEqualTo("test message");
-        assertThat(payload.get("id")).isEqualTo("1111");
     }
 
     private MessageListener<String, String> overrideTaskMessageListenerContainer(Task task) {

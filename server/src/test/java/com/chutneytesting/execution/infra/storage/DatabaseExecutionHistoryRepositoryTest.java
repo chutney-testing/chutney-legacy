@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabaseTest {
 

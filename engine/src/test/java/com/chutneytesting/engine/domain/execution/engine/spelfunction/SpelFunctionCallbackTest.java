@@ -3,10 +3,10 @@ package com.chutneytesting.engine.domain.execution.engine.spelfunction;
 import com.chutneytesting.engine.domain.execution.evaluation.SpelFunctionCallback;
 import com.chutneytesting.engine.domain.execution.evaluation.SpelFunctions;
 import com.chutneytesting.task.spi.SpelFunction;
+import com.chutneytesting.tools.ThrowingConsumer;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;
-import com.chutneytesting.tools.ThrowingConsumer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.util.ReflectionUtils;
 
 public class SpelFunctionCallbackTest {
@@ -104,9 +104,10 @@ public class SpelFunctionCallbackTest {
         }
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void should_throw_exception_if_method_not_static() {
         SpelFunctionCallback callback = new SpelFunctionCallback();
-        ReflectionUtils.doWithMethods(TestNoStaticClass.class, callback);
+        Assertions.assertThatThrownBy(() -> ReflectionUtils.doWithMethods(TestNoStaticClass.class, callback))
+            .isInstanceOf(IllegalStateException.class);
     }
 }

@@ -9,7 +9,7 @@ import com.chutneytesting.agent.domain.explore.ExploreResult;
 import com.chutneytesting.agent.domain.explore.ImmutableExploreResult;
 import com.chutneytesting.agent.domain.explore.ImmutableExploreResult.Link;
 import com.chutneytesting.agent.domain.explore.ImmutableExploreResult.Links;
-import com.chutneytesting.design.domain.environment.Target;
+import com.chutneytesting.environment.domain.Target;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
@@ -20,12 +20,12 @@ public class ExploreResultApiMapper {
         return ImmutableExploreResult.builder()
             .agentLinks(
                 Links.<AgentId, AgentId>builder()
-                .addAllLinks(
-                    linksEntity.agentLinks.stream()
-                        .map(linkEntity -> Link.of(AgentId.of(linkEntity.source), AgentId.of(linkEntity.destination)))
-                        .collect(Collectors.toSet())
-                ).addLinks(Link.of(AgentId.of(linkToExploredAgent.source), AgentId.of(linkToExploredAgent.destination)))
-                .build()
+                    .addAllLinks(
+                        linksEntity.agentLinks.stream()
+                            .map(linkEntity -> Link.of(AgentId.of(linkEntity.source), AgentId.of(linkEntity.destination)))
+                            .collect(Collectors.toSet())
+                    ).addLinks(Link.of(AgentId.of(linkToExploredAgent.source), AgentId.of(linkToExploredAgent.destination)))
+                    .build()
             )
             .targetLinks(
                 Links.of(

@@ -1,7 +1,7 @@
 package com.chutneytesting.agent.domain.explore;
 
 import com.chutneytesting.agent.domain.configure.ConfigurationState;
-import com.chutneytesting.design.domain.environment.Target;
+import com.chutneytesting.environment.domain.Target;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Stream;

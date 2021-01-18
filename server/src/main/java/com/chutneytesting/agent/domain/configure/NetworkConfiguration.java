@@ -1,7 +1,7 @@
 package com.chutneytesting.agent.domain.configure;
 
-import com.chutneytesting.design.domain.environment.Environment;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
+import com.chutneytesting.environment.domain.Environment;
 import java.time.Instant;
 import java.util.Set;
 import java.util.stream.Stream;

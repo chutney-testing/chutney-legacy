@@ -1,6 +1,7 @@
 package com.chutneytesting.task.assertion.placeholder;
 
 import com.chutneytesting.task.spi.injectable.Logger;
+import java.util.Collection;
 
 public class IsNullAsserter implements PlaceholderAsserter {
 
@@ -14,7 +15,14 @@ public class IsNullAsserter implements PlaceholderAsserter {
     @Override
     public boolean assertValue(Logger logger, Object actual, Object expected) {
         logger.info("Verify " + actual + " == null");
-        return actual == null;
-    }
+        if (actual == null) {
+            return true;
+        }
 
+        if (actual instanceof Collection) {
+            return ((Collection<?>) actual).isEmpty();
+        }
+
+        return false;
+    }
 }

@@ -15,8 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class DatabaseCampaignRepositoryTest extends AbstractLocalDatabaseTest {
 
@@ -24,7 +24,7 @@ public class DatabaseCampaignRepositoryTest extends AbstractLocalDatabaseTest {
     private CampaignExecutionRepository mockCampaignExecutionRepository;
     private CampaignParameterRepository campaignParameterRepository;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         mockCampaignExecutionRepository = mock(CampaignExecutionRepository.class);
         campaignParameterRepository = new CampaignParameterRepository(namedParameterJdbcTemplate);

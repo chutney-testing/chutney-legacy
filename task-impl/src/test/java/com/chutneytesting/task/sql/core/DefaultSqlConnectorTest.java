@@ -2,10 +2,8 @@ package com.chutneytesting.task.sql.core;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.task.TestTarget;
-import java.io.FileNotFoundException;
+import com.chutneytesting.task.spi.injectable.Target;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,8 +11,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
@@ -31,8 +29,8 @@ public class DefaultSqlConnectorTest {
     @SuppressWarnings("unused")
     private EmbeddedDatabase db;
 
-    @Before
-    public void setUp() throws FileNotFoundException {
+    @BeforeEach
+    public void setUp() {
 
         db = new EmbeddedDatabaseBuilder()
             .setName(DB_NAME)
@@ -44,7 +42,7 @@ public class DefaultSqlConnectorTest {
     }
 
     @Test
-    public void should_return_headers_and_rows_on_select_query() throws SQLException, ClassNotFoundException {
+    public void should_return_headers_and_rows_on_select_query() throws SQLException {
         List<Object> firstTuple = Arrays.asList(1, "laitue", "laitue@fake.com");
         List<Object> secondTuple = Arrays.asList(2, "carotte", "kakarot@fake.db");
 
@@ -56,7 +54,7 @@ public class DefaultSqlConnectorTest {
     }
 
     @Test
-    public void should_return_affected_rows_on_update_queries() throws SQLException, JsonProcessingException {
+    public void should_return_affected_rows_on_update_queries() throws SQLException {
         SqlClient sqlClient = new DefaultSqlClientFactory().create(sqlTarget);
         Records records = sqlClient.execute("UPDATE USERS SET NAME = 'toto' WHERE ID = 1");
 
@@ -64,7 +62,7 @@ public class DefaultSqlConnectorTest {
     }
 
     @Test
-    public void should_return_count_on_count_queries() throws SQLException, JsonProcessingException {
+    public void should_return_count_on_count_queries() throws SQLException {
 
         List<Object> expectedTuple = Collections.singletonList(2L);
 
@@ -75,7 +73,7 @@ public class DefaultSqlConnectorTest {
     }
 
     @Test
-    public void should_print_records_as_list_of_mapped_values() throws SQLException, JsonProcessingException {
+    public void should_print_records_as_list_of_mapped_values() throws SQLException {
         List<Map<String, Object>> listOfMaps = new ArrayList<>(2);
         Map<String, Object> firstTuple = new LinkedHashMap<>();
         firstTuple.put("ID", 1);
@@ -97,7 +95,7 @@ public class DefaultSqlConnectorTest {
     }
 
     @Test
-    public void should_print_records_as_matrix() throws SQLException, JsonProcessingException {
+    public void should_print_records_as_matrix() throws SQLException {
         Object[][] expectedMatrix = new Object[2][3];
         expectedMatrix[0][0] = 1;
         expectedMatrix[0][1] = "laitue";

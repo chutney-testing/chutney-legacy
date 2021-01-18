@@ -1,8 +1,11 @@
 package com.chutneytesting.task.http.domain;
 
+import static java.util.Optional.ofNullable;
+
 import com.chutneytesting.task.spi.injectable.SecurityInfo;
 import com.chutneytesting.task.spi.injectable.Target;
 import java.io.IOException;
+import java.net.ProxySelector;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
@@ -10,12 +13,14 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.Optional;
 import javax.net.ssl.SSLContext;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.client.ClientHttpRequestFactory;
@@ -57,11 +62,14 @@ public class HttpClientFactory {
 
         SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
 
-        CloseableHttpClient httpClient = HttpClients.custom()
-            .setSSLSocketFactory(socketFactory)
-            .build();
+        HttpClientBuilder httpClient = HttpClients.custom()
+            .setSSLSocketFactory(socketFactory);
 
-        ClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
+        // Proxy
+        Optional<String> proxyHost = ofNullable(System.getProperty("http.proxyHost"));
+        proxyHost.ifPresent(host -> httpClient.setRoutePlanner(new SystemDefaultRoutePlanner(ProxySelector.getDefault())));
+
+        ClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient.build());
         ((HttpComponentsClientHttpRequestFactory) requestFactory).setReadTimeout(timeout);
         ((HttpComponentsClientHttpRequestFactory) requestFactory).setConnectTimeout(timeout);
 

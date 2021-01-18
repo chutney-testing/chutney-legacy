@@ -7,6 +7,7 @@ import static com.chutneytesting.design.api.scenario.compose.StepController.FIND
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
@@ -35,34 +36,25 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.MethodRule;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class StepControllerTest {
 
-    @Rule
-    public MethodRule mockitoRule = MockitoJUnit.rule();
-
-    @Mock private ComposableStepRepository composableStepRepository;
-    @InjectMocks private StepController sut;
+    private final ComposableStepRepository composableStepRepository = mock(ComposableStepRepository.class);
 
     private MockMvc mockMvc;
-
     private final ObjectMapper om = new WebConfiguration().objectMapper();
 
-    @Before
+    @BeforeEach
     public void setUp() {
+        StepController sut = new StepController(composableStepRepository);
         mockMvc = MockMvcBuilders.standaloneSetup(sut)
-                                 .setControllerAdvice(new RestExceptionHandler())
-                                 .build();
+            .setControllerAdvice(new RestExceptionHandler())
+            .build();
 
         when(composableStepRepository.findById(any()))
             .thenReturn(ComposableStep.builder().build());
@@ -112,9 +104,9 @@ public class StepControllerTest {
         final List<ComposableStep> fStepList = Arrays.asList(
             ComposableStep.builder().withName(FSTEP_NAME).build(), ComposableStep.builder().withName(FSTEP_NAME).build());
         when(composableStepRepository.find(
-                buildPaginationRequestParametersDto(1, 100),
-                buildSortRequestParametersDto("name", "name"),
-                buildComposableStep("my name", StepUsage.GIVEN.name())))
+            buildPaginationRequestParametersDto(1, 100),
+            buildSortRequestParametersDto("name", "name"),
+            buildComposableStep("my name", StepUsage.GIVEN.name())))
             .thenReturn(
                 ImmutablePaginatedDto.<ComposableStep>builder()
                     .totalCount(2)
@@ -144,13 +136,13 @@ public class StepControllerTest {
         final String RECORD_ID = encodeRecordId(recordId);
         when(composableStepRepository.findById(any())).thenThrow(new ComposableStepNotFoundException(recordId));
         // When
-        String[] message = { null };
+        String[] message = {null};
         mockMvc.perform(get(StepController.BASE_URL + "/" + RECORD_ID))
             .andDo(result -> message[0] = result.getResponse().getContentAsString())
             .andExpect(status().isNotFound());
 
         // Then
-        assertThat(message[0]).isEqualToIgnoringCase("The composable step id ["+recordId+"] could not be found");
+        assertThat(message[0]).isEqualToIgnoringCase("The composable step id [" + recordId + "] could not be found");
     }
 
     @Test
@@ -184,7 +176,7 @@ public class StepControllerTest {
         when(composableStepRepository.findParents(any()))
             .thenReturn(
                 Arrays.asList(
-                   new ParentStepId("1-1", "Parent scenario", true),
+                    new ParentStepId("1-1", "Parent scenario", true),
                     new ParentStepId("2-2", "Parent step", false)
                 )
             );

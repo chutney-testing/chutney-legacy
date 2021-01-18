@@ -8,7 +8,7 @@ import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.task.spi.FinallyAction;
 import com.chutneytesting.task.spi.injectable.Target;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class FinallyActionMapperTest {
 

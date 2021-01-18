@@ -1,5 +1,7 @@
 package com.chutneytesting.agent.domain.network;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import com.chutneytesting.agent.AgentNetworkTestUtils;
 import com.chutneytesting.agent.domain.configure.NetworkConfiguration;
 import com.chutneytesting.agent.domain.explore.AgentId;
@@ -7,14 +9,14 @@ import com.chutneytesting.agent.domain.explore.ExploreResult;
 import com.chutneytesting.agent.domain.explore.ImmutableExploreResult;
 import com.chutneytesting.agent.domain.explore.ImmutableExploreResult.Link;
 import com.chutneytesting.agent.domain.explore.ImmutableExploreResult.Links;
-import com.chutneytesting.design.domain.environment.Target;
+import com.chutneytesting.environment.domain.Target;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 import java.util.function.Predicate;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Condition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AgentGraphTest {
 
@@ -23,7 +25,7 @@ public class AgentGraphTest {
         NetworkConfiguration networkConfiguration = AgentNetworkTestUtils.createNetworkConfiguration("environmentName",
             "A=self:1", "B=reachable1:1", "C=level2:1", "D=reachable2:1",
             "e1|s1=reachable:1", "e1|s2=reachable:1", "e2|s3=level2:1"
-            );
+        );
         ExploreResult exploreResult = ImmutableExploreResult.of(
             Links.of(
                 Arrays.asList(
@@ -59,9 +61,9 @@ public class AgentGraphTest {
         Assertions.assertThat(agents).haveExactly(1, matchAgent("D", agent -> containsAll(agent.reachableTargets(), hasId("s3")), "agentLinks"));
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void of_with_agent_links_not_in_conf_should_fail() throws Exception {
-        NetworkConfiguration networkConfiguration = AgentNetworkTestUtils.createNetworkConfiguration("environmentName","A=self:1", "B=reachable:1", "C=level2:1", "D=reachable2:1");
+    @Test()
+    public void of_with_agent_links_not_in_conf_should_fail() {
+        NetworkConfiguration networkConfiguration = AgentNetworkTestUtils.createNetworkConfiguration("environmentName", "A=self:1", "B=reachable:1", "C=level2:1", "D=reachable2:1");
         ExploreResult exploreResult = ImmutableExploreResult.of(
             Links.of(
                 Arrays.asList(
@@ -72,15 +74,16 @@ public class AgentGraphTest {
                     Link.of(AgentId.of("B"), AgentId.of("E"))
                 )), ExploreResult.Links.empty());
 
-        AgentGraph.of(exploreResult, networkConfiguration);
+        assertThatThrownBy(() -> AgentGraph.of(exploreResult, networkConfiguration))
+            .isInstanceOf(IllegalStateException.class);
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void of_with_target_links_not_in_conf_should_fail() throws Exception {
+    @Test()
+    public void of_with_target_links_not_in_conf_should_fail() {
         NetworkConfiguration networkConfiguration = AgentNetworkTestUtils.createNetworkConfiguration(
             "A=self:1", "B=reachable:1",
             "e1|s1=reachable:1", "e1|s2=unreachable:1"
-            );
+        );
         ExploreResult exploreResult = ImmutableExploreResult.of(
             Links.of(
                 Arrays.asList(
@@ -92,7 +95,8 @@ public class AgentGraphTest {
                 )
             ));
 
-        AgentGraph.of(exploreResult, networkConfiguration);
+        assertThatThrownBy(() -> AgentGraph.of(exploreResult, networkConfiguration))
+            .isInstanceOf(IllegalStateException.class);
     }
 
     /**

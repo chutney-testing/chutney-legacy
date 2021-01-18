@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.task.function.Generate;
 import com.chutneytesting.task.function.GenerateFunction;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class GenerateFunctionTest {
 

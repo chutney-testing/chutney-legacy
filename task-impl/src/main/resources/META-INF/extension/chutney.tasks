@@ -13,6 +13,8 @@ com.chutneytesting.task.amqp.AmqpBasicPublishTask
 com.chutneytesting.task.amqp.AmqpBasicConsumeTask
 com.chutneytesting.task.amqp.AmqpBasicGetTask
 com.chutneytesting.task.amqp.AmqpCleanQueuesTask
+com.chutneytesting.task.amqp.QpidServerStartTask
+com.chutneytesting.task.amqp.QpidServerStopTask
 
 com.chutneytesting.task.mongo.MongoCountTask
 com.chutneytesting.task.mongo.MongoDeleteTask
@@ -26,16 +28,21 @@ com.chutneytesting.task.http.HttpPostTask
 com.chutneytesting.task.http.HttpPutTask
 com.chutneytesting.task.http.HttpDeleteTask
 com.chutneytesting.task.http.HttpSoapTask
+com.chutneytesting.task.http.HttpPatchTask
 
 com.chutneytesting.task.http.HttpsServerStartTask
 com.chutneytesting.task.http.HttpsListenerTask
 com.chutneytesting.task.http.HttpsServerStopTask
 
 com.chutneytesting.task.ssh.SshClientTask
+com.chutneytesting.task.ssh.SshServerStartTask
+com.chutneytesting.task.ssh.SshServerStopTask
 
 com.chutneytesting.task.jms.JmsCleanQueueTask
 com.chutneytesting.task.jms.JmsListenerTask
 com.chutneytesting.task.jms.JmsSenderTask
+com.chutneytesting.task.jms.JmsBrokerStartTask
+com.chutneytesting.task.jms.JmsBrokerStopTask
 
 com.chutneytesting.task.sql.SqlTask
 
@@ -66,6 +73,8 @@ com.chutneytesting.task.assertion.CompareTask
 
 com.chutneytesting.task.kafka.KafkaBasicPublishTask
 com.chutneytesting.task.kafka.KafkaBasicConsumeTask
+com.chutneytesting.task.kafka.KafkaBrokerStartTask
+com.chutneytesting.task.kafka.KafkaBrokerStopTask
 
 com.chutneytesting.task.micrometer.MicrometerCounterTask
 com.chutneytesting.task.micrometer.MicrometerGaugeTask

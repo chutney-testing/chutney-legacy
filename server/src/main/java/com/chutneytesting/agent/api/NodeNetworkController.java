@@ -12,7 +12,7 @@ import com.chutneytesting.agent.domain.configure.NetworkConfiguration;
 import com.chutneytesting.agent.domain.explore.ExploreAgentsService;
 import com.chutneytesting.agent.domain.explore.ExploreResult;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
-import com.chutneytesting.design.domain.environment.EnvironmentRepository;
+import com.chutneytesting.environment.domain.EnvironmentRepository;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

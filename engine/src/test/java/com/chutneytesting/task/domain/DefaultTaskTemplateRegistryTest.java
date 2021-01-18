@@ -7,7 +7,7 @@ import com.chutneytesting.task.TestTaskTemplateFactory.TestTask1;
 import com.chutneytesting.task.TestTaskTemplateFactory.TestTask2;
 import java.util.Arrays;
 import java.util.Collections;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DefaultTaskTemplateRegistryTest {
 

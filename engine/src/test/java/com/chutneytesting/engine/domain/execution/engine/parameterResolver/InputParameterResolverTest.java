@@ -199,4 +199,19 @@ public class InputParameterResolverTest {
         InputParameterResolver sutE = new InputParameterResolver(Maps.of("inputName", new ComplexType("", "")));
         assertThatThrownBy(() -> sutE.resolve(anotherParameter)).isExactlyInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    void should_resolve_complex_object_witth_direct_inputs() {
+        SimpleObject constructorParameter = new SimpleObject("myStringValue", 666);
+        java.lang.reflect.Parameter complexObjectWhitoutInputConstructorParameter = ComplexObjectConstructor.class.getConstructors()[0].getParameters()[0];
+        Parameter parameter = Parameter.fromJavaParameter(complexObjectWhitoutInputConstructorParameter);
+
+        InputParameterResolver sut = new InputParameterResolver(Maps.of(
+            "simple-object-name", constructorParameter
+        ));
+        Object result = sut.resolve(parameter);
+
+        assertThat(result).isInstanceOf(SimpleObject.class);
+        assertThat((SimpleObject) result).usingRecursiveComparison().isEqualTo(new SimpleObject("myStringValue", 666));
+    }
 }

@@ -20,28 +20,24 @@ import com.chutneytesting.agent.domain.network.NetworkDescription;
 import com.chutneytesting.engine.domain.delegation.ConnectionChecker;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
 import java.util.stream.Stream;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.MethodRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
 
 @SuppressWarnings("WeakerAccess")
 public class ExploreAgentsServiceTest {
 
-    @Rule public MethodRule mockitoRule = MockitoJUnit.rule();
+    private ExploreAgentsService sut;
 
-    @Mock Explorations explorations;
-    @Mock AgentClient agentClient;
-    @Mock LocalServerIdentifier localServerIdentifier;
-    @Mock ConnectionChecker connectionChecker;
+    private Explorations explorations = mock(Explorations.class);
+    private AgentClient agentClient = mock(AgentClient.class);
+    private LocalServerIdentifier localServerIdentifier = mock(LocalServerIdentifier.class);
+    private ConnectionChecker connectionChecker = mock(ConnectionChecker.class);
 
-    ExploreAgentsService exploreAgentsService;
 
-    @Before public void setUp() {
-        exploreAgentsService = new ExploreAgentsService(
+    @BeforeEach
+    public void setUp() {
+        sut = new ExploreAgentsService(
             explorations,
             agentClient,
             connectionChecker,
@@ -52,7 +48,7 @@ public class ExploreAgentsServiceTest {
     public void explore_with_empty_configuration_returns_empty_links() {
         NetworkConfiguration configuration = AgentNetworkTestUtils.createNetworkConfiguration("Env-NAME");
 
-        ExploreResult exploreResult = exploreAgentsService.explore(configuration);
+        ExploreResult exploreResult = sut.explore(configuration);
 
         assertThat(exploreResult.agentLinks()).isEmpty();
     }
@@ -68,7 +64,7 @@ public class ExploreAgentsServiceTest {
 
         NetworkConfiguration configuration = AgentNetworkTestUtils.createNetworkConfiguration("A=self:1", "B=reachable:1", "C=reachable:1");
 
-        ExploreResult links = exploreAgentsService.explore(configuration);
+        ExploreResult links = sut.explore(configuration);
 
         assertThat(links.agentLinks())
             .hasSize(2)
@@ -80,7 +76,7 @@ public class ExploreAgentsServiceTest {
     public void explore_to_agent_in_exploration_phase_returns_empty() {
         when(explorations.changeStateToIfPossible(any(), any())).thenReturn(false);
 
-        ExploreResult links = exploreAgentsService.explore(null);
+        ExploreResult links = sut.explore(null);
 
         assertThat(links.agentLinks()).hasSize(0);
     }
@@ -98,7 +94,7 @@ public class ExploreAgentsServiceTest {
             "e1|s1=reachable:1", "e1|s2=reachable:1"
         );
 
-        ExploreResult links = exploreAgentsService.explore(configuration);
+        ExploreResult links = sut.explore(configuration);
 
         assertThat(links.agentLinks())
             .hasSize(1)
@@ -125,7 +121,7 @@ public class ExploreAgentsServiceTest {
             "e1|s1=reachable:1", "e1|s2=unreachable:1"
         );
 
-        ExploreResult links = exploreAgentsService.explore(configuration);
+        ExploreResult links = sut.explore(configuration);
 
         assertThat(links.agentLinks())
             .hasSize(1)
@@ -150,7 +146,7 @@ public class ExploreAgentsServiceTest {
             .thenReturn(true);
         when(localServerIdentifier.getLocalName(any())).thenReturn("localName");
 
-        exploreAgentsService.wrapUp(networkDescription);
+        sut.wrapUp(networkDescription);
 
         verify(agentClient).wrapUp(same(ani1), same(networkDescription));
         verify(agentClient).wrapUp(same(ani2), same(networkDescription));
@@ -164,7 +160,7 @@ public class ExploreAgentsServiceTest {
         when(explorations.changeStateToIfPossible(networkDescription.configuration(), ConfigurationState.WRAPING_UP))
             .thenReturn(false);
 
-        exploreAgentsService.wrapUp(networkDescription);
+        sut.wrapUp(networkDescription);
 
         verify(agentClient, never()).wrapUp(any(), any());
         verify(explorations, never()).changeStateToIfPossible(networkDescription.configuration(), ConfigurationState.FINISHED);

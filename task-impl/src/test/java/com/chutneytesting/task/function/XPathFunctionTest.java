@@ -5,13 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.util.HashMap;
 import java.util.Map;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-import junitparams.naming.TestCaseName;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(JUnitParamsRunner.class)
 public class XPathFunctionTest {
 
     private static final String STANDARD_XML =
@@ -43,9 +41,8 @@ public class XPathFunctionTest {
         "     </soap12:Body>\n" +
         " </soap12:Envelope>";
 
-    @Test
-    @Parameters
-    @TestCaseName("{0}")
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("parametersForXpath_matching_returns_value")
     public void xpath_matching_returns_value(String title, String xpath, Object expectedValue) throws XmlUtils.InvalidXPathException, XmlUtils.InvalidXmlDocumentException {
         Object result = XPathFunction.xpath(STANDARD_XML, xpath);
         assertThat(result).as("Result of XPath[" + xpath + "] evaluation").isEqualTo(expectedValue);
@@ -62,7 +59,7 @@ public class XPathFunctionTest {
         assertThat(resultB).isEqualTo(false);
     }
 
-    public Object[] parametersForXpath_matching_returns_value() {
+    public static Object[] parametersForXpath_matching_returns_value() {
         return new Object[] {
             new Object[] {"Attribute value", "/node1/node2/@attr1", "val4"},
             new Object[] {"Text value", "/node1/node3/text()", "text12"},
