@@ -58,7 +58,7 @@ class OrientComposableTestCaseMapper {
             .withVersion(dbTestCase.getVersion())
             .build();
 
-        List<ComposableStep> composableStepRefs = buildComposableStepsChildren(dbTestCase, dbSession);
+        List<ComposableStep> composableStepRefs = buildComposableStepsChildren(dbTestCase);
 
         Map<String, String> parameters = dbTestCase.getProperty(TESTCASE_CLASS_PROPERTY_PARAMETERS);
 

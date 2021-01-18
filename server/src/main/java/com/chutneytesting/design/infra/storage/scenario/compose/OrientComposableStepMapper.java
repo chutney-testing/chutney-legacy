@@ -49,7 +49,7 @@ public class OrientComposableStepMapper {
     }
 
     // GET
-    public static ComposableStep.ComposableStepBuilder vertexToComposableStep(final OVertex vertex, final ODatabaseSession dbSession) {
+    public static ComposableStep.ComposableStepBuilder vertexToComposableStep(final OVertex vertex) {
         reloadIfDirty(vertex);
 
         ComposableStep.ComposableStepBuilder builder = ComposableStep.builder()
@@ -71,7 +71,7 @@ public class OrientComposableStepMapper {
         );
 
         builder.withSteps(
-            buildComposableStepsChildren(vertex, dbSession)
+            buildComposableStepsChildren(vertex)
         );
 
         ofNullable(parameters).ifPresent(builder::addEnclosedUsageParameters);
@@ -80,7 +80,7 @@ public class OrientComposableStepMapper {
     }
 
     // GET
-    static List<ComposableStep> buildComposableStepsChildren(OVertex vertex, ODatabaseSession dbSession) {
+    static List<ComposableStep> buildComposableStepsChildren(OVertex vertex) {
         return StreamSupport
             .stream(vertex.getEdges(ODirection.OUT, GE_STEP_CLASS).spliterator(), false)
             .filter(childEdge -> {
@@ -91,7 +91,7 @@ public class OrientComposableStepMapper {
                 return to.isPresent();
             })
             .map(childEdge -> {
-                ComposableStep.ComposableStepBuilder childBuilder = vertexToComposableStep(childEdge.getTo(), dbSession);
+                ComposableStep.ComposableStepBuilder childBuilder = vertexToComposableStep(childEdge.getTo());
                 overwriteDataSetWithEdgeParameters(childEdge, childBuilder);
                 return childBuilder.build();
             })
