@@ -8,7 +8,6 @@ import static com.chutneytesting.design.infra.storage.scenario.compose.orient.Or
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_PARAMETERS;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_STRATEGY;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_TAGS;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_USAGE;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.load;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.reloadIfDirty;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.setOrRemoveProperty;
@@ -17,7 +16,6 @@ import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStepNotFoundException;
-import com.chutneytesting.design.domain.scenario.compose.StepUsage;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.metadata.schema.OType;
@@ -144,7 +142,6 @@ public class StepVertex {
         OVertex vertex;
 
         private String name;
-        private Optional<StepUsage> usage = empty();
         private Strategy strategy;
         private List<String> tags;
         private Optional<String> implementation = empty();
@@ -160,7 +157,6 @@ public class StepVertex {
             }
 
             ofNullable(name).ifPresent(n -> vertex.setProperty(STEP_CLASS_PROPERTY_NAME, n, OType.STRING));
-            usage.ifPresent(u -> setOrRemoveProperty(vertex, STEP_CLASS_PROPERTY_USAGE, u, OType.STRING));
             implementation.ifPresent(i -> setOrRemoveProperty(vertex, STEP_CLASS_PROPERTY_IMPLEMENTATION, i, OType.STRING));
             ofNullable(tags).ifPresent(t -> setOrRemoveProperty(vertex, STEP_CLASS_PROPERTY_TAGS, t, OType.EMBEDDEDLIST));
             ofNullable(builtInParameters).ifPresent( p -> vertex.setProperty(STEP_CLASS_PROPERTY_PARAMETERS, p, OType.EMBEDDEDMAP));
@@ -196,11 +192,6 @@ public class StepVertex {
 
         public StepVertexBuilder withName(String name) {
             this.name = name;
-            return this;
-        }
-
-        public StepVertexBuilder withUsage(Optional<StepUsage> usage) {
-            this.usage = usage;
             return this;
         }
 

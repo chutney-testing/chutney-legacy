@@ -4,8 +4,6 @@ import static com.chutneytesting.design.infra.storage.scenario.compose.OrientCom
 import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.vertexToComposableStep;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.GE_STEP_CLASS;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_NAME;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_USAGE;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.close;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.deleteVertex;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.load;
@@ -13,7 +11,6 @@ import static com.chutneytesting.design.infra.storage.scenario.compose.orient.Or
 
 import com.chutneytesting.design.domain.scenario.compose.AlreadyExistingComposableStepException;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
-import com.chutneytesting.design.domain.scenario.compose.ComposableStepCyclicDependencyException;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStepNotFoundException;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStepRepository;
 import com.chutneytesting.design.domain.scenario.compose.ParentStepId;
@@ -31,14 +28,12 @@ import com.google.common.collect.Lists;
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.id.ORecordId;
-import com.orientechnologies.orient.core.record.ODirection;
 import com.orientechnologies.orient.core.record.OElement;
 import com.orientechnologies.orient.core.record.OVertex;
 import com.orientechnologies.orient.core.sql.executor.OResult;
 import com.orientechnologies.orient.core.sql.executor.OResultSet;
 import com.orientechnologies.orient.core.storage.ORecordDuplicatedException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -195,9 +190,6 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
         if (StringUtils.isNotEmpty(findParameters.name)) {
             query.append(" AND name CONTAINSTEXT '").append(findParameters.name).append("'");
         }
-
-        // Usage filter
-        findParameters.usage.ifPresent(stepUsage -> query.append(" AND ").append(STEP_CLASS_PROPERTY_USAGE).append("='").append(stepUsage.name()).append("'"));
 
         // Sort
         List<String> sortAttributes = sortParameters.sortParameters();
