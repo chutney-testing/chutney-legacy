@@ -24,18 +24,16 @@ public class ComposableStep {
     public final List<ComposableStep> steps;
     public final Map<String, String> builtInParameters;
     public final Optional<String> implementation;
-    public final Optional<StepUsage> usage;
     public final Strategy strategy;
     public final Map<String, String> enclosedUsageParameters; // TODO - Maybe separate list with blank values
     public final List<String> tags;
 
-    private ComposableStep(String id, String name, List<ComposableStep> steps, Map<String, String> builtInParameters, Optional<String> implementation, Optional<StepUsage> usage, Strategy strategy, Map<String, String> enclosedUsageParameters, List<String> tags) {
+    private ComposableStep(String id, String name, List<ComposableStep> steps, Map<String, String> builtInParameters, Optional<String> implementation, Strategy strategy, Map<String, String> enclosedUsageParameters, List<String> tags) {
         this.id = id;
         this.name = name;
         this.steps = steps;
         this.builtInParameters = builtInParameters;
         this.implementation = implementation;
-        this.usage = usage;
         this.strategy = strategy;
         this.enclosedUsageParameters = enclosedUsageParameters;
         this.tags = tags;
@@ -81,7 +79,6 @@ public class ComposableStep {
         private List<ComposableStep> steps;
         private Map<String, String> builtInParameters = new LinkedHashMap<>();
         private Optional<String> implementation;
-        private Optional<StepUsage> usage;
         private Strategy strategy;
         private Map<String, String> enclosedUsageParameters = new LinkedHashMap<>();
         private List<String> tags = new ArrayList<>();
@@ -96,7 +93,6 @@ public class ComposableStep {
                 ofNullable(steps).orElse(emptyList()),
                 ofNullable(builtInParameters).orElse(emptyMap()),
                 ofNullable(implementation).orElse(empty()),
-                ofNullable(usage).orElse(empty()),
                 ofNullable(strategy).orElse(Strategy.DEFAULT),
                 unmodifiableMap(ofNullable(enclosedUsageParameters).orElse(emptyMap())),
                 unmodifiableList(ofNullable(tags).orElse(emptyList()))
@@ -143,11 +139,6 @@ public class ComposableStep {
             return this;
         }
 
-        public ComposableStepBuilder withUsage(Optional<StepUsage> usage) {
-            this.usage = usage;
-            return this;
-        }
-
         public ComposableStepBuilder withStrategy(Strategy strategy) {
             this.strategy = strategy;
             return this;
@@ -174,7 +165,6 @@ public class ComposableStep {
             this.steps = instance.steps;
             this.builtInParameters = instance.builtInParameters;
             this.implementation = instance.implementation;
-            this.usage = instance.usage;
             this.strategy = instance.strategy;
             this.enclosedUsageParameters = new LinkedHashMap<>(instance.enclosedUsageParameters);
             return this;
@@ -189,7 +179,6 @@ public class ComposableStep {
             ", steps=" + steps +
             ", parameters=" + builtInParameters +
             ", implementation=" + implementation +
-            ", usage=" + usage +
             ", strategy=" + strategy.toString() +
             ", dataSet=" + enclosedUsageParameters +
             '}';
@@ -205,7 +194,6 @@ public class ComposableStep {
             Objects.equals(steps, that.steps) &&
             Objects.equals(builtInParameters, that.builtInParameters) &&
             Objects.equals(implementation, that.implementation) &&
-            Objects.equals(usage, that.usage) &&
             Objects.equals(strategy, that.strategy) &&
             Objects.equals(enclosedUsageParameters, that.enclosedUsageParameters)
             ;
@@ -213,7 +201,7 @@ public class ComposableStep {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, steps, builtInParameters, implementation, usage, strategy, enclosedUsageParameters);
+        return Objects.hash(id, name, steps, builtInParameters, implementation, strategy, enclosedUsageParameters);
     }
 
 }

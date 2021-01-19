@@ -8,7 +8,6 @@ import com.chutneytesting.design.domain.scenario.compose.AlreadyExistingComposab
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStepRepository;
 import com.chutneytesting.design.domain.scenario.compose.ParentStepId;
-import com.chutneytesting.design.domain.scenario.compose.StepUsage;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.changelog.OrientChangelog;
@@ -115,18 +114,18 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
     public void should_save_all_func_steps_with_multiple_step_types_when_save_scenario() {
         // Given
         final ComposableStep f1 = saveAndReload(
-            buildComposableStep("when", StepUsage.WHEN));
+            buildComposableStep("when"));
         final ComposableStep f21 = saveAndReload(
-            buildComposableStep("then sub 1", StepUsage.THEN));
+            buildComposableStep("then sub 1"));
         final ComposableStep f22 = saveAndReload(
-            buildComposableStep("then sub 2 with implementation", StepUsage.THEN, "{\"type\": \"debug\"}"));
+            buildComposableStep("then sub 2 with implementation", "{\"type\": \"debug\"}"));
         final ComposableStep f23 = saveAndReload(
-            buildComposableStep("then sub 3 with implementation", StepUsage.THEN, "  \"type\": \"debug\"  "));
+            buildComposableStep("then sub 3 with implementation", "  \"type\": \"debug\"  "));
         final ComposableStep f24 = saveAndReload(
-            buildComposableStep("then sub 4", StepUsage.THEN));
+            buildComposableStep("then sub 4"));
         final ComposableStep f25 = saveAndReload(
-            buildComposableStep("then sub 5 with implementation", StepUsage.THEN, " {\r\"type\": \"debug\"\r} "));
-        final ComposableStep f2 = buildComposableStep("then", StepUsage.THEN, f21, f22, f23, f24, f25);
+            buildComposableStep("then sub 5 with implementation", " {\r\"type\": \"debug\"\r} "));
+        final ComposableStep f2 = buildComposableStep("then", f21, f22, f23, f24, f25);
         List<ComposableStep> steps = Arrays.asList(f1, f2);
 
         // When
@@ -185,7 +184,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
         final ComposableStep fStep_11 = saveAndReload(
             buildComposableStep("sub something happen 1.1"));
         final ComposableStep fStep_12 = saveAndReload(
-            buildComposableStep("sub something happen 1.2 with implementation", StepUsage.GIVEN, "{\"type\": \"debug\"}"));
+            buildComposableStep("sub something happen 1.2 with implementation", "{\"type\": \"debug\"}"));
         final ComposableStep fStep_13 = saveAndReload(
             buildComposableStep("sub something happen 1.3"));
         final ComposableStep fStep_1 = saveAndReload(
@@ -227,11 +226,11 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
     public void should_find_saved_func_steps_with_filter_when_find_called() {
         // Given
         final ComposableStep fStep_1 = saveAndReload(
-            buildComposableStep("some thing is set", StepUsage.GIVEN));
+            buildComposableStep("some thing is set"));
         final ComposableStep fStep_2 = saveAndReload(
-            buildComposableStep("another thing happens", StepUsage.WHEN, "{\"type\": \"debug\"}"));
+            buildComposableStep("another thing happens", "{\"type\": \"debug\"}"));
         final ComposableStep fStep_3 = saveAndReload(
-            buildComposableStep("the result is beauty", StepUsage.THEN));
+            buildComposableStep("the result is beauty"));
         final ComposableStep fStepRoot = saveAndReload(
             buildComposableStep("big root thing", fStep_1, fStep_2, fStep_3));
 
@@ -481,7 +480,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
     public void changelog_n5_should_update_selenium_tasks() {
         // G
         final ComposableStep step = saveAndReload(
-            buildComposableStep("selenium-get", StepUsage.THEN, "{\n" +
+            buildComposableStep("selenium-get", "{\n" +
                 "            \"identifier\": \"selenium-get-text\",\n" +
                 "            \"inputs\": [ \n" +
                 "              {\"name\":\"web-driver\",\"value\":\"${#webDriver}\"},\n" +
@@ -494,7 +493,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
                 "              {\"name\":\"menuItemSelector\",\"value\":\"\"}]\n" +
                 "        }"));
         final ComposableStep stepOld = saveAndReload(
-            buildComposableStep("selenium-get-old", StepUsage.THEN, "{\n" +
+            buildComposableStep("selenium-get-old", "{\n" +
                 "            \"identifier\": \"selenium-get-text\",\n" +
                 "            \"inputs\": {\n" +
                 "                \"web-driver\": \"${#webDriver}\",\n" +
@@ -537,7 +536,6 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
         assertComposableStep(
             step,
             expectedFStep.name,
-            expectedFStep.usage.orElseThrow(() -> new IllegalStateException("Usage should be set")),
             expectedFStep.implementation,
             expectedFStep.steps.size());
 
@@ -549,7 +547,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
         );
     }
 
-    private void assertComposableStep(ComposableStep step, String name, StepUsage usage, Optional<String> implementation, int functionalChildStepsSize) {
+    private void assertComposableStep(ComposableStep step, String name, Optional<String> implementation, int functionalChildStepsSize) {
         assertThat(step).isInstanceOf(ComposableStep.class);
         assertThat(step.name).isEqualTo(name);
 
@@ -559,7 +557,6 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
             assertThat(step.implementation.isPresent()).isFalse();
         }
         assertThat(step.id).isNotEmpty();
-        assertThat(step.usage.get()).isEqualTo(usage);
         assertThat(step.steps.size()).isEqualTo(functionalChildStepsSize);
     }
 

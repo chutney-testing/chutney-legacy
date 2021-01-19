@@ -9,7 +9,6 @@ import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableSte
 import com.chutneytesting.design.api.scenario.compose.dto.ImmutableStrategy;
 import com.chutneytesting.tools.ui.KeyValue;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
-import com.chutneytesting.design.domain.scenario.compose.StepUsage;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,9 +22,6 @@ public class ComposableStepMapper {
             .id(toFrontId(composableStep.id))
             .name(composableStep.name)
             .tags(composableStep.tags);
-
-        composableStep.usage.ifPresent(
-            stepUsage -> builder.usage(ComposableStepDto.StepUsage.valueOf(stepUsage.name())));
 
         composableStep.implementation.ifPresent(
             builder::task
@@ -70,7 +66,6 @@ public class ComposableStepMapper {
         ComposableStep.ComposableStepBuilder composableStepBuilder = ComposableStep.builder()
             .withId(fromFrontId(dto.id()))
             .withName(dto.name())
-            .withUsage(java.util.Optional.of(StepUsage.valueOf(dto.usage().name())))
             .withStrategy(fromDto(dto.strategy()))
             .withImplementation(dto.task())
             .withSteps(dto.steps().stream().map(ComposableStepMapper::fromDto).collect(toList()))

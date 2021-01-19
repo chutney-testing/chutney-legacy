@@ -8,7 +8,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.chutneytesting.WebConfiguration;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStepRepository;
-import com.chutneytesting.design.domain.scenario.compose.StepUsage;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.design.infra.storage.scenario.compose.ExecutableComposedStepMapper;
 import com.chutneytesting.design.infra.storage.scenario.compose.ExecutableComposedTestCaseMapper;
@@ -108,7 +107,6 @@ public abstract class AbstractOrientDatabaseTest {
 
     private ComposableStep build(String id,
                                  String name,
-                                 StepUsage usage,
                                  Map<String, String> parameters,
                                  List<String> tags,
                                  String implementation,
@@ -120,9 +118,6 @@ public abstract class AbstractOrientDatabaseTest {
         }
         if (name != null) {
             builder.withName(name);
-        }
-        if (usage != null) {
-            builder.withUsage(Optional.of(usage));
         }
         if (parameters != null) {
             builder.withBuiltInParameters(parameters);
@@ -143,39 +138,31 @@ public abstract class AbstractOrientDatabaseTest {
     }
 
     protected ComposableStep buildComposableStep(String name, Strategy strategy, ComposableStep... subSteps) {
-        return build(null, name, null, null, null, null, strategy, subSteps);
+        return build(null, name, null, null, null, strategy, subSteps);
     }
 
     protected ComposableStep buildComposableStep(String name, ComposableStep... subSteps) {
-        return build(null, name, null, null, null, null, null, subSteps);
+        return build(null, name, null, null, null, null, subSteps);
     }
 
     protected ComposableStep buildComposableStep(String name, Map<String, String> parameters) {
-        return  build(null, name, null, parameters, null, null, null);
+        return  build(null, name, parameters, null, null, null);
     }
 
     protected ComposableStep buildComposableStep(String name, Map<String, String> parameters, ComposableStep... subSteps) {
-        return  build(null, name, null, parameters, null, null, null, subSteps);
-    }
-
-    protected ComposableStep buildComposableStep(String name, StepUsage usage, ComposableStep... subSteps) {
-        return build(null, name, usage, null, null, null, null, subSteps);
+        return  build(null, name, parameters, null, null, null, subSteps);
     }
 
     protected ComposableStep buildComposableStep(String name, String implementation) {
-        return build(null, name, null, null, null, implementation, null, null);
+        return build(null, name, null, null, implementation, null, null);
     }
 
     protected ComposableStep buildComposableStep(String name, String implementation, String id) {
-        return build(id, name, null, null, null, implementation, null, null);
-    }
-
-    protected ComposableStep buildComposableStep(String name, StepUsage usage, String implementation) {
-        return build(null, name, usage, null, null, implementation, null, null);
+        return build(id, name, null, null, implementation, null, null);
     }
 
     protected ComposableStep buildComposableStep(String name, List<String> tags) {
-        return build(null, name, null, null, tags, null, null, null);
+        return build(null, name, null, tags, null, null, null);
     }
 
     protected ComposableStep saveAndReload(ComposableStepRepository funcComposableStepRepository, ComposableStep composableStep) {
