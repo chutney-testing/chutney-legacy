@@ -6,15 +6,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.design.api.scenario.compose.dto.ComposableStepDto;
 import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableStepDto;
-import com.chutneytesting.tools.ui.KeyValue;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
-import com.chutneytesting.design.domain.scenario.compose.StepUsage;
+import com.chutneytesting.tools.ui.KeyValue;
 import java.util.Arrays;
 import java.util.Collections;
 import org.apache.groovy.util.Maps;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class ComposableStepMapperTest {
@@ -35,23 +32,6 @@ public class ComposableStepMapperTest {
         // Then
         assertThat(composableStepDto.id().get()).isEqualTo("1-1");
         assertThat(composableStepDto.name()).isEqualTo(FSTEP_NAME);
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"GIVEN", "WHEN", "THEN"})
-    public void should_map_func_usage_step_to_dto_when_toDto_called(StepUsage stepUsage) {
-        // Given
-        ComposableStep fStep = ComposableStep.builder()
-            .withId("#1:1")
-            .withName("a functional step")
-            .withUsage(java.util.Optional.ofNullable(stepUsage))
-            .build();
-
-        // When
-        ComposableStepDto composableStepDto = toDto(fStep);
-
-        // Then
-        assertThat(composableStepDto.usage()).isEqualTo(ComposableStepDto.StepUsage.valueOf(stepUsage.name()));
     }
 
     @Test
@@ -206,7 +186,6 @@ public class ComposableStepMapperTest {
         // Then
         assertThat(step.id).isEqualTo(dto.id().get());
         assertThat(step.name).isEqualTo(dto.name());
-        assertThat(ComposableStepDto.StepUsage.valueOf(step.usage.get().name())).isEqualTo(dto.usage());
         assertThat(step.steps.get(0).implementation.get()).isEqualTo(TECHNICAL_CONTENT);
         assertThat(step.steps.get(1).name).isEqualTo(dto.steps().get(1).name());
         assertThat(step.builtInParameters).containsAllEntriesOf(KeyValue.toMap(dto.builtInParameters()));
