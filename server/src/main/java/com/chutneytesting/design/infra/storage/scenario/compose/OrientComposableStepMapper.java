@@ -7,12 +7,10 @@ import static com.chutneytesting.design.infra.storage.scenario.compose.orient.Or
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_PARAMETERS;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_STRATEGY;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_TAGS;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_USAGE;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.reloadIfDirty;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
-import com.chutneytesting.design.domain.scenario.compose.StepUsage;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.design.infra.storage.scenario.compose.dto.StepVertex;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
@@ -38,7 +36,6 @@ public class OrientComposableStepMapper {
             .from(oVertex)
             .usingSession(dbSession)
             .withName(composableStep.name)
-            .withUsage(composableStep.usage)
             .withTags(composableStep.tags)
             .withImplementation(composableStep.implementation)
             .withStrategy(composableStep.strategy)
@@ -56,9 +53,6 @@ public class OrientComposableStepMapper {
             .withId(vertex.getIdentity().toString())
             .withName(vertex.getProperty(STEP_CLASS_PROPERTY_NAME))
             .withTags(vertex.getProperty(STEP_CLASS_PROPERTY_TAGS));
-
-        String usage = vertex.getProperty(STEP_CLASS_PROPERTY_USAGE);
-        ofNullable(usage).ifPresent(u -> builder.withUsage(Optional.of(StepUsage.valueOf(u))));
 
         builder.withImplementation(ofNullable(vertex.getProperty(STEP_CLASS_PROPERTY_IMPLEMENTATION)));
 

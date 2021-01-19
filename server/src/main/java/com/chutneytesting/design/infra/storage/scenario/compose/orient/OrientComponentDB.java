@@ -15,7 +15,6 @@ public class OrientComponentDB implements Backupable {
 
     public static final String STEP_CLASS = "FuncStep";
     public static final String STEP_CLASS_PROPERTY_NAME = "name";
-    public static final String STEP_CLASS_PROPERTY_USAGE = "usage";
     public static final String STEP_CLASS_PROPERTY_PARAMETERS = "parameters";
     public static final String STEP_CLASS_PROPERTY_TAGS = "tags";
     public static final String STEP_CLASS_PROPERTY_IMPLEMENTATION = "implementation";
