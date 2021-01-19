@@ -15,7 +15,6 @@ import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
-import com.chutneytesting.design.domain.scenario.compose.StepUsage;
 import com.chutneytesting.tools.ui.ImmutableKeyValue;
 import com.chutneytesting.tools.ui.KeyValue;
 import java.time.Instant;
@@ -105,7 +104,6 @@ public class ComposableTestCaseMapperTest {
                                     "empty key", ""
                                 )
                             )
-                            .withUsage(Optional.of(StepUsage.STEP))
                             .overrideEnclosedUsageParametersWith(
                                 Maps.of(
                                     "key valued", "value",
