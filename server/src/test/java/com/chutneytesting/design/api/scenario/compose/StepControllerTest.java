@@ -3,7 +3,6 @@ package com.chutneytesting.design.api.scenario.compose;
 import static com.chutneytesting.design.api.scenario.compose.StepController.FIND_STEPS_LIMIT_DEFAULT_VALUE;
 import static com.chutneytesting.design.api.scenario.compose.StepController.FIND_STEPS_NAME_DEFAULT_VALUE;
 import static com.chutneytesting.design.api.scenario.compose.StepController.FIND_STEPS_START_DEFAULT_VALUE;
-import static com.chutneytesting.design.api.scenario.compose.StepController.FIND_STEPS_USAGE_DEFAULT_VALUE;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -23,7 +22,6 @@ import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStepNotFoundException;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStepRepository;
 import com.chutneytesting.design.domain.scenario.compose.ParentStepId;
-import com.chutneytesting.design.domain.scenario.compose.StepUsage;
 import com.chutneytesting.tools.ImmutablePaginatedDto;
 import com.chutneytesting.tools.ImmutablePaginationRequestParametersDto;
 import com.chutneytesting.tools.ImmutableSortRequestParametersDto;
@@ -106,7 +104,7 @@ public class StepControllerTest {
         when(composableStepRepository.find(
             buildPaginationRequestParametersDto(1, 100),
             buildSortRequestParametersDto("name", "name"),
-            buildComposableStep("my name", StepUsage.GIVEN.name())))
+            buildComposableStep("my name")))
             .thenReturn(
                 ImmutablePaginatedDto.<ComposableStep>builder()
                     .totalCount(2)
@@ -222,13 +220,12 @@ public class StepControllerTest {
     }
 
     private ComposableStep buildDefaultComposableStep() {
-        return buildComposableStep(FIND_STEPS_NAME_DEFAULT_VALUE, FIND_STEPS_USAGE_DEFAULT_VALUE);
+        return buildComposableStep(FIND_STEPS_NAME_DEFAULT_VALUE);
     }
 
-    private ComposableStep buildComposableStep(String name, String usage) {
+    private ComposableStep buildComposableStep(String name) {
         return ComposableStep.builder()
             .withName(name)
-            .withUsage(StepUsage.fromName(usage))
             .withSteps(Collections.emptyList())
             .build();
     }

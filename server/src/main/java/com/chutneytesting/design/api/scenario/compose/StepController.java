@@ -10,7 +10,6 @@ import com.chutneytesting.design.api.scenario.compose.mapper.ComposableStepMappe
 import com.chutneytesting.design.api.scenario.compose.mapper.ParentStepMapper;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStepRepository;
-import com.chutneytesting.design.domain.scenario.compose.StepUsage;
 import com.chutneytesting.tools.ImmutablePaginatedDto;
 import com.chutneytesting.tools.ImmutablePaginationRequestParametersDto;
 import com.chutneytesting.tools.ImmutableSortRequestParametersDto;
@@ -91,7 +90,6 @@ public class StepController {
                     .build(),
                 ComposableStep.builder()
                     .withName(name)
-                    .withUsage(StepUsage.fromName(usage))
                     .withSteps(Collections.emptyList())
                     .build()
             );
