@@ -16,13 +16,17 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-
+          server-id: bintray-server-id
+          server-username: BINTRAY_SERVER_USERNAME
+          server-password: BINTRAY_SERVER_PASSWORD
       #- name: Build with Maven
       #  run: mvn -B package --file pom.xml
-
+      # TODO skipTest to remove
       - name: Publish to bintray
-        run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml -DskipTests #TODO skipTest to remove
-
+        run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml -DskipTests
+        env:
+          MAVEN_USERNAME: ${{ secrets.BINTRAY_SERVER_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.BINTRAY_SERVER_PASSWORD }}
   release:
     runs-on: ubuntu-latest
 

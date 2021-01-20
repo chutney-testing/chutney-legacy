@@ -5,7 +5,7 @@
 
     <groupId>com.chutneytesting</groupId>
     <artifactId>chutney-parent</artifactId>
-    <version>1.2.14-SNAPSHOT</version>
+    <version>0.0.1</version>
     <packaging>pom</packaging>
 
     <name>Chutney</name>
@@ -40,7 +40,7 @@
         <url>https://github.com/chutney-testing/chutney.git</url>
         <connection>scm:git:git@github.com:chutney-testing/chutney.git</connection>
         <developerConnection>scm:git:git@github.com:chutney-testing/chutney.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>0.0.1</tag>
     </scm>
 
     <issueManagement>
@@ -49,8 +49,8 @@
     </issueManagement>
 
     <ciManagement>
-        <system>travis-ci</system>
-        <url>https://travis-ci.com/chutney-testing/chutney</url>
+        <system>github-actions-ci</system>
+        <url>https://github.com/chutney-testing/chutney/actions</url>
     </ciManagement>
 
     <modules>
@@ -694,6 +694,14 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>bintray-server-id</id>
+            <name>chutney-testing-maven</name>
+            <url>https://api.bintray.com/maven/chutney-testing/maven/chutney/;publish=0</url>
+        </repository>
+    </distributionManagement>
 
     <profiles>
         <profile>
