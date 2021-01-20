@@ -27,11 +27,7 @@ jobs:
         env:
           BINTRAY_SERVER_USERNAME: ${{ secrets.BINTRAY_SERVER_USERNAME }}
           BINTRAY_SERVER_PASSWORD: ${{ secrets.BINTRAY_SERVER_PASSWORD }}
-  release:
-    runs-on: ubuntu-latest
-
-    name: Create Release
-    steps:
+          BUILD_ENV: 'github-actions'
       - name: Create github release
         id: create_release
         uses: actions/create-release@v1
