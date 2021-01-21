@@ -1,20 +1,12 @@
 package com.chutneytesting.design.infra.storage.scenario.compose;
 
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.GE_STEP_CLASS;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.GE_STEP_CLASS_PROPERTY_PARAMETERS;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_IMPLEMENTATION;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_NAME;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_PARAMETERS;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_STRATEGY;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_TAGS;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.reloadIfDirty;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.design.infra.storage.scenario.compose.dto.StepVertex;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
-import com.orientechnologies.orient.core.record.ODirection;
 import com.orientechnologies.orient.core.record.OEdge;
 import com.orientechnologies.orient.core.record.OElement;
 import com.orientechnologies.orient.core.record.OVertex;
@@ -46,20 +38,20 @@ public class OrientComposableStepMapper {
     }
 
     // GET
-    public static ComposableStep.ComposableStepBuilder vertexToComposableStep(final OVertex vertex) {
-        reloadIfDirty(vertex);
+    public static ComposableStep.ComposableStepBuilder vertexToComposableStep(final StepVertex vertex) {
+        vertex.reloadIfDirty();
 
         ComposableStep.ComposableStepBuilder builder = ComposableStep.builder()
-            .withId(vertex.getIdentity().toString())
-            .withName(vertex.getProperty(STEP_CLASS_PROPERTY_NAME))
-            .withTags(vertex.getProperty(STEP_CLASS_PROPERTY_TAGS));
+            .withId(vertex.id())
+            .withName(vertex.name())
+            .withTags(vertex.tags())
+            .withImplementation(vertex.implementation());
 
-        builder.withImplementation(ofNullable(vertex.getProperty(STEP_CLASS_PROPERTY_IMPLEMENTATION)));
 
-        Map<String, String> parameters = vertex.getProperty(STEP_CLASS_PROPERTY_PARAMETERS);
+        Map<String, String> parameters = vertex.parameters();
         ofNullable(parameters).ifPresent(builder::addBuiltInParameters);
 
-        OElement strategy = vertex.getProperty(STEP_CLASS_PROPERTY_STRATEGY);
+        OElement strategy = vertex.strategy();
         Optional.ofNullable(strategy).ifPresent( s ->
             builder.withStrategy(new Strategy(strategy.getProperty("name"), strategy.getProperty("parameters")))
         );
@@ -74,9 +66,9 @@ public class OrientComposableStepMapper {
     }
 
     // GET
-    static List<ComposableStep> buildComposableStepsChildren(OVertex vertex) {
+    static List<ComposableStep> buildComposableStepsChildren(StepVertex vertex) {
         return StreamSupport
-            .stream(vertex.getEdges(ODirection.OUT, GE_STEP_CLASS).spliterator(), false)
+            .stream(vertex.getChildren().spliterator(), false)
             .filter(childEdge -> {
                 Optional<OVertex> to = ofNullable(childEdge.getTo());
                 if (!to.isPresent()) {
@@ -85,7 +77,7 @@ public class OrientComposableStepMapper {
                 return to.isPresent();
             })
             .map(childEdge -> {
-                ComposableStep.ComposableStepBuilder childBuilder = vertexToComposableStep(childEdge.getTo());
+                ComposableStep.ComposableStepBuilder childBuilder = vertexToComposableStep(StepVertex.builder().from(childEdge.getTo()).build());
                 overwriteDataSetWithEdgeParameters(childEdge, childBuilder);
                 return childBuilder.build();
             })

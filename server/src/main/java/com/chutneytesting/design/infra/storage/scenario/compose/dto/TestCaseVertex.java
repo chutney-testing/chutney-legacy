@@ -8,15 +8,20 @@ import static com.chutneytesting.design.infra.storage.scenario.compose.orient.Or
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_TAGS;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_TITLE;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_UPDATEDATE;
+import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.load;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.setOnlyOnceProperty;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.setOrRemoveProperty;
-import static java.time.Instant.now;
+import static java.util.Optional.empty;
+import static java.util.Optional.ofNullable;
 
+import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.security.domain.User;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.OVertex;
+import java.time.Instant;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -44,17 +49,64 @@ public class TestCaseVertex {
         return testCaseVertex.save();
     }
 
+    public String id() {
+        return testCaseVertex.getIdentity().toString();
+    }
+
+    public String title() {
+        return testCaseVertex.getProperty(TESTCASE_CLASS_PROPERTY_TITLE);
+    }
+
+    public String description() {
+        return testCaseVertex.getProperty(TESTCASE_CLASS_PROPERTY_DESCRIPTION);
+    }
+
+    public Instant creationDate() {
+        return ((Date) testCaseVertex.getProperty(TESTCASE_CLASS_PROPERTY_CREATIONDATE)).toInstant();
+    }
+
+    public List<String> tags() {
+        return testCaseVertex.getProperty(TESTCASE_CLASS_PROPERTY_TAGS);
+    }
+
+    public String datasetId() {
+        return testCaseVertex.getProperty(TESTCASE_CLASS_PROPERTY_DATASET_ID);
+    }
+
+    public Instant updateDate() {
+        return ((Date) testCaseVertex.getProperty(TESTCASE_CLASS_PROPERTY_UPDATEDATE)).toInstant();
+    }
+
+    public String author() {
+        return testCaseVertex.getProperty(TESTCASE_CLASS_PROPERTY_AUTHOR);
+    }
+
+    public Integer version() {
+        return testCaseVertex.getVersion();
+    }
+
+    public StepVertex asRootStep() {
+        return rootStep;
+    }
+
+    public Map<String, String> parameters() {
+        return testCaseVertex.getProperty(TESTCASE_CLASS_PROPERTY_PARAMETERS);
+    }
+
+
     public static class TestCaseVertexBuilder {
 
-        private OVertex vertex;
-        private ODatabaseSession session;
+        String id;
+        ODatabaseSession dbSession;
+
+        OVertex vertex;
 
         private String title;
         private String description;
         private Date creationDate;
         private List<String> tags;
         private Map<String, String> parameters;
-        private Optional<String> datasetId;
+        private Optional<String> datasetId = empty();
         private Date updateDate;
         private String author;
         private List<ComposableStep> steps;
@@ -62,19 +114,28 @@ public class TestCaseVertex {
         private TestCaseVertexBuilder() {}
 
         public TestCaseVertex build() {
+            if (this.vertex == null) {
+                this.vertex = (OVertex) load(id, dbSession).orElseThrow(() -> new ScenarioNotFoundException(id));
+            }
 
-            vertex.setProperty(TESTCASE_CLASS_PROPERTY_TITLE, title, OType.STRING);
-            setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_DESCRIPTION, description, OType.STRING);
-            setOnlyOnceProperty(vertex, TESTCASE_CLASS_PROPERTY_CREATIONDATE, creationDate, OType.DATETIME);
-            vertex.setProperty(TESTCASE_CLASS_PROPERTY_TAGS, tags, OType.EMBEDDEDLIST);
-            setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_PARAMETERS, parameters, OType.EMBEDDEDMAP);
+            ofNullable(title).ifPresent(t -> vertex.setProperty(TESTCASE_CLASS_PROPERTY_TITLE, t, OType.STRING) );
+            ofNullable(description).ifPresent(d -> setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_DESCRIPTION, d, OType.STRING) );
+            ofNullable(creationDate).ifPresent(cd -> setOnlyOnceProperty(vertex, TESTCASE_CLASS_PROPERTY_CREATIONDATE, cd, OType.DATETIME) );
+            ofNullable(tags).ifPresent(t -> vertex.setProperty(TESTCASE_CLASS_PROPERTY_TAGS, t, OType.EMBEDDEDLIST) );
+            ofNullable(parameters).ifPresent(p -> setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_PARAMETERS, p, OType.EMBEDDEDMAP) );
             setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_DATASET_ID, datasetId.orElse(null), OType.STRING);
-            vertex.setProperty(TESTCASE_CLASS_PROPERTY_UPDATEDATE, Date.from(now()), OType.DATETIME);
-            setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_AUTHOR, author, a -> !User.isAnonymous(a), OType.STRING);
+            ofNullable(updateDate).ifPresent(ud -> vertex.setProperty(TESTCASE_CLASS_PROPERTY_UPDATEDATE, ud, OType.DATETIME));
+            ofNullable(author).ifPresent(author -> setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_AUTHOR, author, a -> !User.isAnonymous(a), OType.STRING) );
 
             TestCaseVertex testCaseVertex = new TestCaseVertex(vertex);
-            testCaseVertex.setSubStepReferences(steps, session);
+            ofNullable(steps).ifPresent(s -> testCaseVertex.setSubStepReferences(s, dbSession));
+
             return testCaseVertex;
+        }
+
+        public TestCaseVertexBuilder withId(String id) {
+            this.id = id;
+            return this;
         }
 
         public TestCaseVertexBuilder withTitle(String title) {
@@ -123,7 +184,7 @@ public class TestCaseVertex {
         }
 
         public TestCaseVertexBuilder usingSession(ODatabaseSession dbSession) {
-            this.session = dbSession;
+            this.dbSession = dbSession;
             return this;
         }
 

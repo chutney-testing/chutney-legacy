@@ -2,27 +2,16 @@ package com.chutneytesting.design.infra.storage.scenario.compose;
 
 import static com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository.COMPOSABLE_TESTCASE_REPOSITORY_SOURCE;
 import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.buildComposableStepsChildren;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_AUTHOR;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_CREATIONDATE;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_DATASET_ID;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_DESCRIPTION;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_PARAMETERS;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_TAGS;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_TITLE;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_UPDATEDATE;
 import static java.time.Instant.now;
 
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
-import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.infra.storage.scenario.compose.dto.TestCaseVertex;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.record.OVertex;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 class OrientComposableTestCaseMapper {
 
@@ -30,6 +19,7 @@ class OrientComposableTestCaseMapper {
     static TestCaseVertex testCaseToVertex(final ComposableTestCase composableTestCase, OVertex dbTestCase, ODatabaseSession dbSession) {
         return TestCaseVertex.builder()
             .from(dbTestCase)
+            .withId(composableTestCase.id)
             .usingSession(dbSession)
             .withTitle(composableTestCase.metadata.title())
             .withDescription(composableTestCase.metadata.description())
@@ -44,31 +34,33 @@ class OrientComposableTestCaseMapper {
     }
 
     // GET
-    static ComposableTestCase vertexToTestCase(final OVertex dbTestCase, ODatabaseSession dbSession) {
+    static ComposableTestCase vertexToTestCase(final TestCaseVertex testCaseVertex) {
         TestCaseMetadata metadata = TestCaseMetadataImpl.builder()
-            .withId(dbTestCase.getIdentity().toString())
-            .withTitle(dbTestCase.getProperty(TESTCASE_CLASS_PROPERTY_TITLE))
-            .withDescription(dbTestCase.getProperty(TESTCASE_CLASS_PROPERTY_DESCRIPTION))
-            .withCreationDate(((Date) dbTestCase.getProperty(TESTCASE_CLASS_PROPERTY_CREATIONDATE)).toInstant())
+            .withId(testCaseVertex.id())
+            .withTitle(testCaseVertex.title())
+            .withDescription(testCaseVertex.description())
+            .withCreationDate(testCaseVertex.creationDate())
             .withRepositorySource(COMPOSABLE_TESTCASE_REPOSITORY_SOURCE)
-            .withTags(dbTestCase.getProperty(TESTCASE_CLASS_PROPERTY_TAGS))
-            .withDatasetId(dbTestCase.getProperty(TESTCASE_CLASS_PROPERTY_DATASET_ID))
-            .withUpdateDate(((Date) dbTestCase.getProperty(TESTCASE_CLASS_PROPERTY_UPDATEDATE)).toInstant())
-            .withAuthor(dbTestCase.getProperty(TESTCASE_CLASS_PROPERTY_AUTHOR))
-            .withVersion(dbTestCase.getVersion())
+            .withTags(testCaseVertex.tags())
+            .withDatasetId(testCaseVertex.datasetId())
+            .withUpdateDate(testCaseVertex.updateDate())
+            .withAuthor(testCaseVertex.author())
+            .withVersion(testCaseVertex.version())
             .build();
 
-        List<ComposableStep> composableStepRefs = buildComposableStepsChildren(dbTestCase);
-
-        Map<String, String> parameters = dbTestCase.getProperty(TESTCASE_CLASS_PROPERTY_PARAMETERS);
+        ComposableScenario scenario = ComposableScenario.builder()
+            .withComposableSteps(
+                buildComposableStepsChildren(testCaseVertex.asRootStep())
+            )
+            .withParameters(
+                testCaseVertex.parameters()
+            )
+            .build();
 
         return new ComposableTestCase(
-            dbTestCase.getIdentity().toString(),
+            testCaseVertex.id(),
             metadata,
-            ComposableScenario.builder()
-                .withComposableSteps(composableStepRefs)
-                .withParameters(parameters)
-                .build());
+            scenario);
     }
 
 }
