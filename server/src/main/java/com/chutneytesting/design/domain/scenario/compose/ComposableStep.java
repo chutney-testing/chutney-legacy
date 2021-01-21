@@ -129,8 +129,18 @@ public class ComposableStep {
             return this;
         }
 
+        public ComposableStepBuilder addBuiltInParameters(Map<String, String> builtInParameters) {
+            ofNullable(builtInParameters).ifPresent(this.builtInParameters::putAll);
+            return this;
+        }
+
         public ComposableStepBuilder overrideEnclosedUsageParametersWith(Map<String, String> enclosedUsageParameters) {
             this.enclosedUsageParameters = enclosedUsageParameters;
+            return this;
+        }
+
+        public ComposableStepBuilder addEnclosedUsageParameters(Map<String, String> enclosedUsageParameters) {
+            ofNullable(enclosedUsageParameters).ifPresent(this.enclosedUsageParameters::putAll);
             return this;
         }
 
@@ -141,16 +151,6 @@ public class ComposableStep {
 
         public ComposableStepBuilder withStrategy(Strategy strategy) {
             this.strategy = strategy;
-            return this;
-        }
-
-        public ComposableStepBuilder addBuiltInParameters(Map<String, String> builtInParameters) {
-            ofNullable(builtInParameters).ifPresent(this.builtInParameters::putAll);
-            return this;
-        }
-
-        public ComposableStepBuilder addEnclosedUsageParameters(Map<String, String> enclosedUsageParameters) {
-            ofNullable(enclosedUsageParameters).ifPresent(this.enclosedUsageParameters::putAll);
             return this;
         }
 

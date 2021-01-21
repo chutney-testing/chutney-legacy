@@ -220,11 +220,12 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
         final ComposableTestCase composableTestCaseFound = sut.findById(testCaseId);
 
         // Then
-        assertThat(composableTestCaseFound.id).isEqualTo(testCaseId);
-        assertThat(composableTestCaseFound.metadata.title()).isEqualTo(composableTestCase.metadata.title());
-        assertThat(composableTestCaseFound.metadata.description()).isEqualTo(composableTestCase.metadata.description());
-        assertThat(composableTestCaseFound.metadata.creationDate()).isEqualTo(composableTestCase.metadata.creationDate().truncatedTo(MILLIS));
-        assertThat(composableTestCaseFound.metadata.tags()).containsExactly("TAG1", "TAG2");
+        TestCaseMetadata metadata = composableTestCaseFound.metadata;
+        assertThat(metadata.id()).isEqualTo(testCaseId);
+        assertThat(metadata.title()).isEqualTo(composableTestCase.metadata.title());
+        assertThat(metadata.description()).isEqualTo(composableTestCase.metadata.description());
+        assertThat(metadata.creationDate()).isEqualTo(composableTestCase.metadata.creationDate().truncatedTo(MILLIS));
+        assertThat(metadata.tags()).containsExactly("TAG1", "TAG2");
         assertThat(composableTestCaseFound.composableScenario.composableSteps)
             .containsExactly(FuncStepRefScenarioInstance, FuncStepRefParentScenarioInstance);
         assertThat(composableTestCaseFound.composableScenario.parameters).containsAllEntriesOf(scenarioParameters);

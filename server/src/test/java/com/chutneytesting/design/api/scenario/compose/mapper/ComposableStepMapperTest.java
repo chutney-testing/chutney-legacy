@@ -10,6 +10,7 @@ import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.tools.ui.KeyValue;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 import org.apache.groovy.util.Maps;
 import org.junit.jupiter.api.Test;
 
@@ -47,7 +48,7 @@ public class ComposableStepMapperTest {
                     ComposableStep.builder()
                         .withId("#1:2")
                         .withName("a functional sub step with implementation")
-                        .withImplementation(java.util.Optional.of(TECHNICAL_CONTENT))
+                        .withImplementation(Optional.of(TECHNICAL_CONTENT))
                         .build(),
                     ComposableStep.builder()
                         .withId("#1:3")
@@ -56,7 +57,7 @@ public class ComposableStepMapperTest {
                             Collections.singletonList(
                                 ComposableStep.builder()
                                     .withName("a functional sub sub step with implementation")
-                                    .withImplementation(java.util.Optional.of(TECHNICAL_CONTENT_B))
+                                    .withImplementation(Optional.of(TECHNICAL_CONTENT_B))
                                     .build()
                             )
                         )
