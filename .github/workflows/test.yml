@@ -15,12 +15,19 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - name: Compile
-        run: mvn package -DskipTests
-        env:
-          BUILD_ENV: 'github-actions'
-      - name: List files
-        working-directory: ${{ github.workspace }}
+      # - name: Compile
+      #  run: mvn package -DskipTests
+      #  env:
+      #    BUILD_ENV: 'github-actions'
+      # - name: List files
+      #  working-directory: ${{ github.workspace }}
+      #  run: |
+      #    ls -la 
+      #    ls -la packaging/local-dev/target/
+      - name: test echo
         run: |
-          ls -la 
-          ls -la packaging/local-dev/target/
+          echo ${{ github.event.ref }}
+          echo ::set-output name=SOURCE_NAME::${GITHUB_REF#refs/*/}
+          echo ::set-output name=SOURCE_BRANCH::${GITHUB_REF#refs/heads/}
+          echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
+         
