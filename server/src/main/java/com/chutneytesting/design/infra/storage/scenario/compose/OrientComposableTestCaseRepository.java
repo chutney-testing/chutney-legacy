@@ -77,9 +77,9 @@ public class OrientComposableTestCaseRepository implements ComposableTestCaseRep
     @Override
     public ComposableTestCase findById(String composableTestCaseId) {
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
-            OVertex element = (OVertex) load(composableTestCaseId, dbSession)
-                .orElseThrow(() -> new ScenarioNotFoundException(composableTestCaseId));
-            return vertexToTestCase(element, dbSession);
+/*            OVertex element = (OVertex) load(composableTestCaseId, dbSession)
+                .orElseThrow(() -> new ScenarioNotFoundException(composableTestCaseId));*/
+            return vertexToTestCase(TestCaseVertex.builder().withId(composableTestCaseId).usingSession(dbSession).build());
         }
     }
 
@@ -98,7 +98,7 @@ public class OrientComposableTestCaseRepository implements ComposableTestCaseRep
             return Lists.newArrayList(allSteps).stream()
                 .map(rs -> {
                     OVertex element = dbSession.load(new ORecordId(rs.getProperty("@rid").toString()));
-                    return vertexToTestCase(element, dbSession).metadata;
+                    return vertexToTestCase(TestCaseVertex.builder().from(element).build()).metadata;
                 })
                 .collect(Collectors.toList());
         }
