@@ -9,7 +9,6 @@ import static com.chutneytesting.design.infra.storage.scenario.compose.orient.Or
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_STRATEGY;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_TAGS;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.load;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.reloadIfDirty;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.setOrRemoveProperty;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
@@ -17,6 +16,7 @@ import static java.util.Optional.ofNullable;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStepNotFoundException;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
+import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.ODirection;
@@ -41,7 +41,7 @@ public class StepVertex {
     }
 
     public Map<String, String> getDataset() {
-        reloadIfDirty(vertex);
+        OrientUtils.reloadIfDirty(vertex);
         Map<String, String> dataset = mergeComposableStepsChildrenDatasets();
         Map<String, String> parameters = vertex.getProperty(STEP_CLASS_PROPERTY_PARAMETERS);
         ofNullable(parameters).ifPresent(dataset::putAll);
@@ -132,6 +132,34 @@ public class StepVertex {
                     parentEdge.save();
                 }
             });
+    }
+
+    public String id() {
+        return vertex.getIdentity().toString();
+    }
+
+    public String name() {
+        return vertex.getProperty(STEP_CLASS_PROPERTY_NAME);
+    }
+
+    public List<String> tags() {
+        return vertex.getProperty(STEP_CLASS_PROPERTY_TAGS);
+    }
+
+    public void reloadIfDirty() {
+        OrientUtils.reloadIfDirty(vertex);
+    }
+
+    public Optional<String> implementation() {
+        return ofNullable(vertex.getProperty(STEP_CLASS_PROPERTY_IMPLEMENTATION));
+    }
+
+    public Map<String, String> parameters() {
+        return vertex.getProperty(STEP_CLASS_PROPERTY_PARAMETERS);
+    }
+
+    public OElement strategy() {
+        return vertex.getProperty(STEP_CLASS_PROPERTY_STRATEGY);
     }
 
     public static class StepVertexBuilder {

@@ -12,6 +12,7 @@ import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.design.infra.storage.scenario.compose.ExecutableComposedStepMapper;
 import com.chutneytesting.design.infra.storage.scenario.compose.ExecutableComposedTestCaseMapper;
 import com.chutneytesting.design.infra.storage.scenario.compose.RawImplementationMapper;
+import com.chutneytesting.design.infra.storage.scenario.compose.dto.StepVertex;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientConfigurationProperties;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientDBManager;
@@ -173,7 +174,7 @@ public abstract class AbstractOrientDatabaseTest {
     protected ComposableStep findByName(final String name) {
         try (ODatabaseSession dbSession = dbPool(DATABASE_NAME).acquire()) {
             return loadByProperty(STEP_CLASS, STEP_CLASS_PROPERTY_NAME, name, dbSession)
-                .map(oElement -> vertexToComposableStep(oElement.asVertex().get()).build()).orElse(null);
+                .map(oElement -> vertexToComposableStep(StepVertex.builder().from(oElement.asVertex().get()).build()).build()).orElse(null);
         }
     }
 
