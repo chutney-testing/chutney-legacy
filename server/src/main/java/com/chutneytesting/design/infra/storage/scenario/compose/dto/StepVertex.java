@@ -35,16 +35,22 @@ import java.util.stream.StreamSupport;
 public class StepVertex {
 
     private final OVertex vertex;
+    private final List<ComposableStep> steps;
+    private final Map<String, String> builtInParameters;
 
-    private StepVertex(OVertex vertex) {
+    private StepVertex(OVertex vertex, List<ComposableStep> steps, Map<String, String> builtInParameters) {
         this.vertex = vertex;
+        this.steps = steps;
+        this.builtInParameters = builtInParameters;
     }
 
     public void reloadIfDirty() {
         OrientUtils.reloadIfDirty(vertex);
     }
 
-    public OVertex save() {
+    public OVertex save(ODatabaseSession dbSession) {
+        ofNullable(steps).ifPresent(s -> this.updateSubStepReferences(s, dbSession));
+        ofNullable(builtInParameters).ifPresent( p -> this.updateParentsDataSets(builtInParameters));
         return vertex.save();
     }
 
@@ -65,11 +71,12 @@ public class StepVertex {
             });
     }
 
-    void setSubStepReferences(List<ComposableStep> subSteps, ODatabaseSession dbSession) {
+    void updateSubStepReferences(List<ComposableStep> subSteps, ODatabaseSession dbSession) {
         this.removeAllSubStepReferences();
         IntStream.range(0, subSteps.size())
             .forEach(index -> {
                 final ComposableStep subStep = subSteps.get(index);
+
                 StepVertex subStepVertex = StepVertex.builder().withId(subStep.id).usingSession(dbSession).build();
                 final Map<String, String> subStepDataset = subStepVertex.getDataset();
                 Map<String, String> parameters = cleanChildOverloadedParametersMap(subStep.enclosedUsageParameters, subStepDataset);
@@ -197,11 +204,7 @@ public class StepVertex {
                 setOrRemoveProperty(vertex, STEP_CLASS_PROPERTY_STRATEGY, strategy, OType.EMBEDDED);
             });
 
-            StepVertex stepVertex = new StepVertex(vertex);
-            ofNullable(steps).ifPresent(s -> stepVertex.setSubStepReferences(s, dbSession)); // TODO - do it on save only
-            ofNullable(builtInParameters).ifPresent( p -> stepVertex.updateParentsDataSets(builtInParameters)); // TODO - do it on save only
-
-            return stepVertex;
+           return new StepVertex(vertex, steps, builtInParameters);
         }
 
         public StepVertexBuilder from(OVertex vertex) {
