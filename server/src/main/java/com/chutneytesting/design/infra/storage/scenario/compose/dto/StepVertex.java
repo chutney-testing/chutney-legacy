@@ -40,8 +40,55 @@ public class StepVertex {
         this.vertex = vertex;
     }
 
-    public Map<String, String> getDataset() {
+    public void reloadIfDirty() {
         OrientUtils.reloadIfDirty(vertex);
+    }
+
+    public OVertex save() {
+        return vertex.save();
+    }
+
+    ///// SAVE
+
+    private void updateParentsDataSets(Map<String, String> builtInParameters) {
+        this.getParents()
+            .forEach(parentEdge -> {
+                Map<String, String> dataSet = parentEdge.getProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS);
+                if (dataSet != null) {
+                    Map<String, String> newDataSet = new HashMap<>();
+                    builtInParameters.forEach((paramKey, paramValue) ->
+                        newDataSet.put(paramKey, dataSet.getOrDefault(paramKey, paramValue))
+                    );
+                    parentEdge.setProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS, newDataSet);
+                    parentEdge.save(); // TODO - do it on save only
+                }
+            });
+    }
+
+    void setSubStepReferences(List<ComposableStep> subSteps, ODatabaseSession dbSession) {
+        this.removeAllSubStepReferences();
+        IntStream.range(0, subSteps.size())
+            .forEach(index -> {
+                final ComposableStep subStep = subSteps.get(index);
+                StepVertex subStepVertex = StepVertex.builder().withId(subStep.id).usingSession(dbSession).build();
+                final Map<String, String> subStepDataset = subStepVertex.getDataset();
+                Map<String, String> parameters = cleanChildOverloadedParametersMap(subStep.enclosedUsageParameters, subStepDataset);
+
+                OEdge childEdge = this.addSubStep(subStepVertex);
+                childEdge.setProperty(GE_STEP_CLASS_PROPERTY_RANK, index);
+                if (!parameters.isEmpty()) {
+                    childEdge.setProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS, parameters, OType.EMBEDDEDMAP);
+                }
+                childEdge.save(); // TODO - do it on save only
+            });
+    }
+
+    private void removeAllSubStepReferences() {
+        this.getChildren().forEach(ORecord::delete);
+    }
+
+    private Map<String, String> getDataset() {
+        this.reloadIfDirty();
         Map<String, String> dataset = mergeComposableStepsChildrenDatasets();
         Map<String, String> parameters = vertex.getProperty(STEP_CLASS_PROPERTY_PARAMETERS);
         ofNullable(parameters).ifPresent(dataset::putAll);
@@ -67,38 +114,6 @@ public class StepVertex {
             });
     }
 
-    public void removeAllSubStepReferences() {
-        this.getChildren().forEach(ORecord::delete);
-    }
-
-    public OEdge addSubStep(StepVertex subStep) {
-        return this.vertex.addEdge(subStep.vertex, GE_STEP_CLASS);
-    }
-
-    public OVertex save() {
-        return vertex.save();
-    }
-
-    // SAVE
-    void setSubStepReferences(List<ComposableStep> subSteps, ODatabaseSession dbSession) {
-        this.removeAllSubStepReferences();
-        IntStream.range(0, subSteps.size())
-            .forEach(index -> {
-                final ComposableStep subStep = subSteps.get(index);
-                StepVertex subStepVertex = StepVertex.builder().withId(subStep.id).usingSession(dbSession).build();
-                final Map<String, String> subStepDataset = subStepVertex.getDataset();
-                Map<String, String> parameters = cleanChildOverloadedParametersMap(subStep.enclosedUsageParameters, subStepDataset);
-
-                OEdge childEdge = this.addSubStep(subStepVertex);
-                childEdge.setProperty(GE_STEP_CLASS_PROPERTY_RANK, index);
-                if (!parameters.isEmpty()) {
-                    childEdge.setProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS, parameters, OType.EMBEDDEDMAP);
-                }
-                childEdge.save();
-            });
-    }
-
-    // SAVE
     private Map<String, String> cleanChildOverloadedParametersMap(final Map<String, String> instanceDataSet, final Map<String, String> dbDataSet) {
         return instanceDataSet.entrySet().stream()
             .filter(entry -> dbDataSet.containsKey(entry.getKey()))
@@ -106,9 +121,11 @@ public class StepVertex {
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    public static StepVertexBuilder builder() {
-        return new StepVertexBuilder();
+    private OEdge addSubStep(StepVertex subStep) {
+        return this.vertex.addEdge(subStep.vertex, GE_STEP_CLASS);
     }
+
+    ///// SAVE \\\\\
 
     public Iterable<OEdge> getParents() {
         return vertex.getEdges(ODirection.IN, GE_STEP_CLASS);
@@ -116,22 +133,6 @@ public class StepVertex {
 
     public Iterable<OEdge> getChildren() {
         return vertex.getEdges(ODirection.OUT, GE_STEP_CLASS);
-    }
-
-    // SAVE
-    public void updateParentsDataSets(Map<String, String> builtInParameters) {
-       this.getParents()
-            .forEach(parentEdge -> {
-                Map<String, String> dataSet = parentEdge.getProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS);
-                if (dataSet != null) {
-                    Map<String, String> newDataSet = new HashMap<>();
-                    builtInParameters.forEach((paramKey, paramValue) ->
-                        newDataSet.put(paramKey, dataSet.getOrDefault(paramKey, paramValue))
-                    );
-                    parentEdge.setProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS, newDataSet);
-                    parentEdge.save();
-                }
-            });
     }
 
     public String id() {
@@ -146,10 +147,6 @@ public class StepVertex {
         return vertex.getProperty(STEP_CLASS_PROPERTY_TAGS);
     }
 
-    public void reloadIfDirty() {
-        OrientUtils.reloadIfDirty(vertex);
-    }
-
     public Optional<String> implementation() {
         return ofNullable(vertex.getProperty(STEP_CLASS_PROPERTY_IMPLEMENTATION));
     }
@@ -160,6 +157,10 @@ public class StepVertex {
 
     public OElement strategy() {
         return vertex.getProperty(STEP_CLASS_PROPERTY_STRATEGY);
+    }
+
+    public static StepVertexBuilder builder() {
+        return new StepVertexBuilder();
     }
 
     public static class StepVertexBuilder {
@@ -197,8 +198,8 @@ public class StepVertex {
             });
 
             StepVertex stepVertex = new StepVertex(vertex);
-            ofNullable(steps).ifPresent(s -> stepVertex.setSubStepReferences(s, dbSession));
-            ofNullable(builtInParameters).ifPresent( p -> stepVertex.updateParentsDataSets(builtInParameters));
+            ofNullable(steps).ifPresent(s -> stepVertex.setSubStepReferences(s, dbSession)); // TODO - do it on save only
+            ofNullable(builtInParameters).ifPresent( p -> stepVertex.updateParentsDataSets(builtInParameters)); // TODO - do it on save only
 
             return stepVertex;
         }
@@ -208,13 +209,13 @@ public class StepVertex {
             return this;
         }
 
-        public StepVertexBuilder withId(String id) {
-            this.id = id;
+        public StepVertexBuilder usingSession(ODatabaseSession dbSession) {
+            this.dbSession = dbSession;
             return this;
         }
 
-        public StepVertexBuilder usingSession(ODatabaseSession dbSession) {
-            this.dbSession = dbSession;
+        public StepVertexBuilder withId(String id) {
+            this.id = id;
             return this;
         }
 
