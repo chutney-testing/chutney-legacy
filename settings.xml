@@ -4,31 +4,30 @@
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
     <profiles>
         <profile>
-            <id>jcenter</id>
+            <id>bintray</id>
             <repositories>
                 <repository>
-                    <id>central-jcenter</id>
-                    <name>bintray</name>
-                    <url>https://jcenter.bintray.com</url>
                     <snapshots>
                         <enabled>false</enabled>
                     </snapshots>
+                    <id>central</id>
+                    <name>bintray</name>
+                    <url>http://jcenter.bintray.com</url>
                 </repository>
             </repositories>
             <pluginRepositories>
                 <pluginRepository>
-                    <id>central-jcenter</id>
-                    <name>bintray-plugins</name>
-                    <url>https://jcenter.bintray.com</url>
                     <snapshots>
                         <enabled>false</enabled>
                     </snapshots>
+                    <id>central</id>
+                    <name>bintray-plugins</name>
+                    <url>http://jcenter.bintray.com</url>
                 </pluginRepository>
             </pluginRepositories>
         </profile>
     </profiles>
-
     <activeProfiles>
-        <activeProfile>jcenter</activeProfile>
+        <activeProfile>bintray</activeProfile>
     </activeProfiles>
 </settings>

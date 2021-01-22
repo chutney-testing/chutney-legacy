@@ -49,8 +49,8 @@
     </issueManagement>
 
     <ciManagement>
-        <system>travis-ci</system>
-        <url>https://travis-ci.com/chutney-testing/chutney</url>
+        <system>github-actions-ci</system>
+        <url>https://github.com/chutney-testing/chutney/actions</url>
     </ciManagement>
 
     <modules>
@@ -694,6 +694,14 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>bintray-server-id</id>
+            <name>chutney-testing-maven</name>
+            <url>https://api.bintray.com/maven/chutney-testing/maven/chutney/;publish=1</url>
+        </repository>
+    </distributionManagement>
 
     <profiles>
         <profile>
