@@ -43,6 +43,7 @@ public class TestCaseVertex {
 
     public OVertex save(ODatabaseSession dbSession) {
         ofNullable(subSteps).ifPresent(s -> rootStep.updateSubStepReferences(s, dbSession));
+        rootStep.saveChildrenEdges();
         return testCaseVertex.save();
     }
 
