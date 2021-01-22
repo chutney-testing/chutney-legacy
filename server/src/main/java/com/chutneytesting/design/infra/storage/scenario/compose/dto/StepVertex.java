@@ -49,9 +49,21 @@ public class StepVertex {
     }
 
     public OVertex save(ODatabaseSession dbSession) {
-        ofNullable(steps).ifPresent(s -> this.updateSubStepReferences(s, dbSession));
         ofNullable(builtInParameters).ifPresent( p -> this.updateParentsDataSets(builtInParameters));
+        this.saveParentEdges();
+
+        ofNullable(steps).ifPresent(s -> this.updateSubStepReferences(s, dbSession));
+        this.saveChildrenEdges();
+
         return vertex.save();
+    }
+
+    private void saveParentEdges() {
+        this.getParents().forEach(ORecord::save);
+    }
+
+    void saveChildrenEdges() {
+        this.getChildren().forEach(ORecord::save);
     }
 
     ///// SAVE
@@ -66,7 +78,6 @@ public class StepVertex {
                         newDataSet.put(paramKey, dataSet.getOrDefault(paramKey, paramValue))
                     );
                     parentEdge.setProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS, newDataSet);
-                    parentEdge.save(); // TODO - do it on save only
                 }
             });
     }
@@ -86,7 +97,6 @@ public class StepVertex {
                 if (!parameters.isEmpty()) {
                     childEdge.setProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS, parameters, OType.EMBEDDEDMAP);
                 }
-                childEdge.save(); // TODO - do it on save only
             });
     }
 
