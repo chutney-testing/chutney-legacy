@@ -49,20 +49,19 @@ public class StepVertex {
     }
 
     public OVertex save(ODatabaseSession dbSession) {
-        ofNullable(builtInParameters).ifPresent( p -> this.updateParentsDataSets(builtInParameters));
         this.saveParentEdges();
-
-        ofNullable(steps).ifPresent(s -> this.updateSubStepReferences(s, dbSession));
-        this.saveChildrenEdges();
+        this.saveChildrenEdges(dbSession);
 
         return vertex.save();
     }
 
     private void saveParentEdges() {
+        ofNullable(builtInParameters).ifPresent( p -> this.updateParentsDataSets(builtInParameters));
         this.getParents().forEach(ORecord::save);
     }
 
-    void saveChildrenEdges() {
+    private void saveChildrenEdges(ODatabaseSession dbSession) {
+        ofNullable(steps).ifPresent(s -> this.updateSubStepReferences(s, dbSession));
         this.getChildren().forEach(ORecord::save);
     }
 
@@ -82,7 +81,7 @@ public class StepVertex {
             });
     }
 
-    void updateSubStepReferences(List<ComposableStep> subSteps, ODatabaseSession dbSession) {
+    private void updateSubStepReferences(List<ComposableStep> subSteps, ODatabaseSession dbSession) {
         this.removeAllSubStepReferences();
         IntStream.range(0, subSteps.size())
             .forEach(index -> {
