@@ -21,7 +21,6 @@ import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.OVertex;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -37,12 +36,8 @@ public class TestCaseVertex {
         this.rootStep = StepVertex.builder().from(testCaseVertex).build();
     }
 
-    private void setSubStepReferences(List<ComposableStep> steps, ODatabaseSession session) {
-        rootStep.setSubStepReferences(steps, session);
-    }
-
-    public static TestCaseVertexBuilder builder() {
-        return new TestCaseVertexBuilder();
+    public StepVertex asRootStep() {
+        return rootStep;
     }
 
     public OVertex save() {
@@ -85,14 +80,17 @@ public class TestCaseVertex {
         return testCaseVertex.getVersion();
     }
 
-    public StepVertex asRootStep() {
-        return rootStep;
-    }
-
     public Map<String, String> parameters() {
         return testCaseVertex.getProperty(TESTCASE_CLASS_PROPERTY_PARAMETERS);
     }
 
+    private void setSubStepReferences(List<ComposableStep> steps, ODatabaseSession session) {
+        rootStep.setSubStepReferences(steps, session);
+    }
+
+    public static TestCaseVertexBuilder builder() {
+        return new TestCaseVertexBuilder();
+    }
 
     public static class TestCaseVertexBuilder {
 
@@ -128,9 +126,19 @@ public class TestCaseVertex {
             ofNullable(author).ifPresent(author -> setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_AUTHOR, author, a -> !User.isAnonymous(a), OType.STRING) );
 
             TestCaseVertex testCaseVertex = new TestCaseVertex(vertex);
-            ofNullable(steps).ifPresent(s -> testCaseVertex.setSubStepReferences(s, dbSession));
+            ofNullable(steps).ifPresent(s -> testCaseVertex.setSubStepReferences(s, dbSession)); // TODO - do it on save only
 
             return testCaseVertex;
+        }
+
+        public TestCaseVertexBuilder from(OVertex vertex) {
+            this.vertex = vertex;
+            return this;
+        }
+
+        public TestCaseVertexBuilder usingSession(ODatabaseSession dbSession) {
+            this.dbSession = dbSession;
+            return this;
         }
 
         public TestCaseVertexBuilder withId(String id) {
@@ -175,16 +183,6 @@ public class TestCaseVertex {
 
         public TestCaseVertexBuilder withAuthor(String author) {
             this.author = author;
-            return this;
-        }
-
-        public TestCaseVertexBuilder from(OVertex vertex) {
-            this.vertex = vertex;
-            return this;
-        }
-
-        public TestCaseVertexBuilder usingSession(ODatabaseSession dbSession) {
-            this.dbSession = dbSession;
             return this;
         }
 
