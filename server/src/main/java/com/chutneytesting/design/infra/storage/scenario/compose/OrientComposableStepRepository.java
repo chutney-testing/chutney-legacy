@@ -178,7 +178,7 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
         OVertex oVertex = (OVertex) stepRecord.orElse(dbSession.newVertex(STEP_CLASS));
 
         StepVertex stepVertex = composableStepToVertex(composableStep, oVertex, dbSession);
-        return stepVertex.save();
+        return stepVertex.save(dbSession);
     }
 
     private String buildPaginatedQuery(ComposableStep findParameters, SortRequestParametersDto sortParameters) {
