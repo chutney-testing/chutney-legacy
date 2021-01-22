@@ -29,12 +29,13 @@ public class TestCaseVertex {
 
     private final OVertex testCaseVertex;
     private final StepVertex rootStep; // for convenience, vertex is sometime treated like a step
-    private final List<ComposableStep> subSteps;
 
     private TestCaseVertex(OVertex testCaseVertex, List<ComposableStep> subSteps) {
         this.testCaseVertex = testCaseVertex;
-        this.rootStep = StepVertex.builder().from(testCaseVertex).build();
-        this.subSteps = subSteps;
+        this.rootStep = StepVertex.builder()
+            .from(testCaseVertex)
+            .withSteps(subSteps)
+            .build();
     }
 
     public StepVertex asRootStep() {
@@ -42,8 +43,7 @@ public class TestCaseVertex {
     }
 
     public OVertex save(ODatabaseSession dbSession) {
-        ofNullable(subSteps).ifPresent(s -> rootStep.updateSubStepReferences(s, dbSession));
-        rootStep.saveChildrenEdges();
+        rootStep.save(dbSession);
         return testCaseVertex.save();
     }
 
