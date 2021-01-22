@@ -8,7 +8,6 @@ import static com.chutneytesting.design.infra.storage.scenario.compose.orient.Or
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_TAGS;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_TITLE;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_UPDATEDATE;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.load;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.setOnlyOnceProperty;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.setOrRemoveProperty;
 import static java.util.Optional.empty;
@@ -28,19 +27,22 @@ import java.util.Optional;
 
 public class TestCaseVertex {
 
-    final OVertex testCaseVertex;
-    final StepVertex rootStep; // for convenience, vertex is sometime treated like a step
+    private final OVertex testCaseVertex;
+    private final StepVertex rootStep; // for convenience, vertex is sometime treated like a step
+    private final List<ComposableStep> subSteps;
 
-    private TestCaseVertex(OVertex testCaseVertex) {
+    private TestCaseVertex(OVertex testCaseVertex, List<ComposableStep> subSteps) {
         this.testCaseVertex = testCaseVertex;
         this.rootStep = StepVertex.builder().from(testCaseVertex).build();
+        this.subSteps = subSteps;
     }
 
     public StepVertex asRootStep() {
         return rootStep;
     }
 
-    public OVertex save() {
+    public OVertex save(ODatabaseSession dbSession) {
+        ofNullable(subSteps).ifPresent(s -> rootStep.setSubStepReferences(s, dbSession));
         return testCaseVertex.save();
     }
 
@@ -84,10 +86,6 @@ public class TestCaseVertex {
         return testCaseVertex.getProperty(TESTCASE_CLASS_PROPERTY_PARAMETERS);
     }
 
-    private void setSubStepReferences(List<ComposableStep> steps, ODatabaseSession session) {
-        rootStep.setSubStepReferences(steps, session);
-    }
-
     public static TestCaseVertexBuilder builder() {
         return new TestCaseVertexBuilder();
     }
@@ -95,7 +93,6 @@ public class TestCaseVertex {
     public static class TestCaseVertexBuilder {
 
         String id;
-        ODatabaseSession dbSession;
 
         OVertex vertex;
 
@@ -113,7 +110,7 @@ public class TestCaseVertex {
 
         public TestCaseVertex build() {
             if (this.vertex == null) {
-                this.vertex = (OVertex) load(id, dbSession).orElseThrow(() -> new ScenarioNotFoundException(id));
+                throw new ScenarioNotFoundException(id);
             }
 
             ofNullable(title).ifPresent(t -> vertex.setProperty(TESTCASE_CLASS_PROPERTY_TITLE, t, OType.STRING) );
@@ -125,19 +122,11 @@ public class TestCaseVertex {
             ofNullable(updateDate).ifPresent(ud -> vertex.setProperty(TESTCASE_CLASS_PROPERTY_UPDATEDATE, ud, OType.DATETIME));
             ofNullable(author).ifPresent(author -> setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_AUTHOR, author, a -> !User.isAnonymous(a), OType.STRING) );
 
-            TestCaseVertex testCaseVertex = new TestCaseVertex(vertex);
-            ofNullable(steps).ifPresent(s -> testCaseVertex.setSubStepReferences(s, dbSession)); // TODO - do it on save only
-
-            return testCaseVertex;
+            return new TestCaseVertex(vertex, steps);
         }
 
         public TestCaseVertexBuilder from(OVertex vertex) {
             this.vertex = vertex;
-            return this;
-        }
-
-        public TestCaseVertexBuilder usingSession(ODatabaseSession dbSession) {
-            this.dbSession = dbSession;
             return this;
         }
 
