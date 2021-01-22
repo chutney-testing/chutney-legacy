@@ -9,18 +9,16 @@ import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.infra.storage.scenario.compose.dto.TestCaseVertex;
-import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.record.OVertex;
 import java.util.Date;
 
 class OrientComposableTestCaseMapper {
 
     // SAVE
-    static TestCaseVertex testCaseToVertex(final ComposableTestCase composableTestCase, OVertex dbTestCase, ODatabaseSession dbSession) {
+    static TestCaseVertex testCaseToVertex(final ComposableTestCase composableTestCase, OVertex dbTestCase) {
         return TestCaseVertex.builder()
             .from(dbTestCase)
             .withId(composableTestCase.id)
-            .usingSession(dbSession)
             .withTitle(composableTestCase.metadata.title())
             .withDescription(composableTestCase.metadata.description())
             .withCreationDate(Date.from(composableTestCase.metadata.creationDate()))
