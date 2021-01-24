@@ -1,4 +1,4 @@
-import { InMemoryCache, makeVar } from '@apollo/client/core';
+import { InMemoryCache } from '@apollo/client/core';
 import { NgModule } from '@angular/core';
 
 import { RestLink } from 'apollo-link-rest';

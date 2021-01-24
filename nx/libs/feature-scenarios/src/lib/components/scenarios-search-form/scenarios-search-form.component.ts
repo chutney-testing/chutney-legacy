@@ -15,15 +15,15 @@ import { scenariosFilterVar } from '../../cache';
   animations: [tdCollapseAnimation],
 })
 export class ScenariosSearchFormComponent implements OnInit, OnDestroy {
-  protected tags: String[] = [];
+  protected tags: string[] = [];
 
   /** control for the MatSelect filter keyword multi-selection */
   public tagFilterCtrl: FormControl = new FormControl();
 
   /** list of tags filtered by search keyword */
-  public filteredTags: ReplaySubject<String[]> = new ReplaySubject<String[]>(1);
+  public filteredTags: ReplaySubject<string[]> = new ReplaySubject<string[]>(1);
 
-  triggerState: boolean = true;
+  triggerState = true;
 
   searchForm: FormGroup;
 

@@ -30,6 +30,8 @@ export class CampaignRunComponent implements OnInit {
   treeControl = new NestedTreeControl<any>((node) => node.steps);
   dataSource = new MatTreeNestedDataSource<any>();
   report: CampaignExecutionReport;
+  running: boolean;
+  environment: any;
   breadcrumbs: any = [
     { title: 'Home', link: ['/'] },
     { title: 'Campaigns', link: ['/'] },
@@ -39,17 +41,6 @@ export class CampaignRunComponent implements OnInit {
   hasChild = (_: number, node: any) =>
     !!node.subSteps && node.subSteps.length > 0;
 
-  isHandset$: Observable<boolean> = this.mediaObserver.asObservable().pipe(
-    map(
-      () =>
-        this.mediaObserver.isActive('xs') ||
-        this.mediaObserver.isActive('sm') ||
-        this.mediaObserver.isActive('lt-md')
-    ),
-    tap(() => this.changeDetectorRef.detectChanges())
-  );
-  running: boolean;
-  environment: any;
   constructor(
     private router: Router,
     private route: ActivatedRoute,

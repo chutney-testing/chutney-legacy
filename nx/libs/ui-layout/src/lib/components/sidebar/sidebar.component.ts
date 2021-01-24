@@ -13,15 +13,11 @@ import {
   styleUrls: ['./sidebar.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent {
   @Input() showToggle = true;
   @Input() showUser = true;
   @Input() showHeader = true;
   @Input() toggleChecked = false;
 
   @Output() toggleCollapsed = new EventEmitter<void>();
-
-  constructor() {}
-
-  ngOnInit(): void {}
 }

@@ -20,7 +20,8 @@ export type AvailableLang = string | { id: string; label: string } | undefined;
  *
  * For a complete list of plugins check https://github.com/ngneat/transloco#plugins
  *
- * If translation loading speed needs to be improved check https://netbasal.com/optimize-user-experience-while-your-angular-app-loads-7e982a67ff1a
+ * If translation loading speed needs to be improved
+ * check https://netbasal.com/optimize-user-experience-while-your-angular-app-loads-7e982a67ff1a
  *
  */
 @NgModule({
@@ -41,9 +42,9 @@ export class TranslocoConfigModule {
         {
           provide: TRANSLOCO_CONFIG,
           useValue: {
-            availableLangs: ['fr', 'en'],
+            availableLangs: availableLangs,
             defaultLang: 'fr',
-            fallbackLang: ['fr', 'en'],
+            fallbackLang: availableLangs,
             prodMode: prodMode,
             reRenderOnLangChange: true, // set to true when dynamic language change is in place
             missingHandler: {

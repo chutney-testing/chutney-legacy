@@ -26,10 +26,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTreeModule } from '@angular/material/tree';
-import {
-  MatButtonToggleGroup,
-  MatButtonToggleModule,
-} from '@angular/material/button-toggle';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { IconsProviderModule } from './icons-provider.module';
 import { MatRippleModule } from '@angular/material/core';
 import { CovalentBreadcrumbsModule } from '@covalent/core/breadcrumbs';

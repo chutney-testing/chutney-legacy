@@ -1,6 +1,6 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AvailableLangs, TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@ngneat/transloco';
 
 @Component({
   selector: 'chutney-translation',
@@ -25,7 +25,7 @@ export class TranslationComponent implements OnInit {
     //this.languageList = this.transloco.getAvailableLangs()
   }
 
-  switchLanguage(language: any) {
+  switchLanguage(language: string) {
     this.transloco.setActiveLang(language);
   }
 }
