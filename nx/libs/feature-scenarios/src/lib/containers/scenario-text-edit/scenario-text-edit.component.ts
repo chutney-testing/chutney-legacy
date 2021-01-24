@@ -1,24 +1,23 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import * as hjson from 'hjson';
-import { pluck, switchMap } from 'rxjs/operators';
+import { pluck } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SaveScenarioGQL, ScenarioGQL } from '@chutney/data-access';
 import { TdCodeEditorComponent } from '@covalent/code-editor';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { editor } from 'monaco-editor';
-import { layoutOprionsVar } from '../../../../../ui-layout/src/lib/cache';
-import { chutneySchemaV2 } from '../../../../../data-models/schema.scenario.v2';
 import * as dotProp from 'dot-prop-immutable';
 import { chutneyAnimations } from '@chutney/utils';
 import {
-  AbstractControl,
   FormBuilder,
   FormControl,
   FormGroup,
   Validators,
 } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material/chips';
+import { chutneySchemaV2 } from '../../../../../data-models/schema.scenario.v2';
+import { layoutOprionsVar } from '@chutney/ui-layout';
 
 declare const monaco: any;
 
@@ -39,7 +38,7 @@ export class ScenarioTextEditComponent implements OnInit {
   submitted = false;
   scenario$: Observable<any>;
   scenario: any;
-  height: number = 200;
+  height = 200;
   breadcrumbs: any = [
     { title: 'Home', link: ['/'] },
     { title: 'Scenarios', link: ['/'] },

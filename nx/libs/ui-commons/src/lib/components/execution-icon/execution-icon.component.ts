@@ -6,24 +6,10 @@ import { Component, Input, OnChanges, OnInit } from '@angular/core';
   styleUrls: ['./execution-icon.component.scss'],
 })
 export class ExecutionIconComponent implements OnChanges {
-  @Input() testStatus: String;
+  @Input() testStatus: string;
 
-  color: String;
-  icon: String;
-  constructor() {}
-
-  /*  <!--testPassed-->
-  <mat-icon class="icon-18" [ngStyle]="{'color':'#62B543'}">done</mat-icon>
-      <!--testError-->
-      <mat-icon class="icon-18" [ngStyle]="{'color':'#E05555'}">error</mat-icon>
-      <!--testFailed-->
-      <mat-icon class="icon-18" [ngStyle]="{'color':'#F4AF3D'}">highlight_off</mat-icon>
-      <!--testIgnored-->
-      <mat-icon class="icon-18" [ngStyle]="{'color':'#9AA7B0'}">not_interested</mat-icon>
-      <!--testNotRan-->
-      <mat-icon class="icon-18" [ngStyle]="{'color':'#9AA7B0'}">adjust</mat-icon>
-      <!--testPaused-->
-      <mat-icon class="icon-18" [ngStyle]="{'color':'#9AA7B0'}">pause_circle_filled</mat-icon>*/
+  color: string;
+  icon: string;
 
   ngOnChanges(): void {
     switch (this.testStatus) {

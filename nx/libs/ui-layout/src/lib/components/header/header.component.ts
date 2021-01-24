@@ -1,12 +1,10 @@
 import {
   Component,
-  OnInit,
   Output,
   EventEmitter,
   Input,
   ChangeDetectionStrategy,
   ViewEncapsulation,
-  Inject,
 } from '@angular/core';
 import * as screenfull from 'screenfull';
 
@@ -20,7 +18,7 @@ import * as screenfull from 'screenfull';
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
   @Input() showToggle = true;
   @Input() showBranding = false;
 
@@ -28,6 +26,9 @@ export class HeaderComponent implements OnInit {
   @Output() toggleTheme = new EventEmitter<string>();
 
   sideMenuDisplayed = true;
+  siderLeftOpened = true;
+  scrolled = false;
+  isDarkTheme = false;
 
   private get screenfull(): screenfull.Screenfull {
     return screenfull as screenfull.Screenfull;
@@ -43,12 +44,4 @@ export class HeaderComponent implements OnInit {
     this.isDarkTheme = !this.isDarkTheme;
     this.toggleTheme.emit(this.isDarkTheme ? 'dark' : 'light');
   }
-
-  siderLeftOpened = true;
-  scrolled = false;
-  isDarkTheme = false;
-
-  constructor() {}
-
-  ngOnInit() {}
 }
