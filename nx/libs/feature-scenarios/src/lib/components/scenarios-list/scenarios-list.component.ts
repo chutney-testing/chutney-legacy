@@ -26,8 +26,6 @@ export class ScenariosListComponent implements OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  constructor() {}
-
   private _scenariosDataSource: MatTableDataSource<
     Scenario
   > = new MatTableDataSource<Scenario>();
@@ -49,15 +47,15 @@ export class ScenariosListComponent implements OnInit {
     return this._scenariosDataSource;
   }
 
-  editScenario(id: any) {
+  editScenario(id: string) {
     this.edit.emit(id);
   }
 
-  deleteScenario(id: any) {
+  deleteScenario(id: string) {
     this.delete.emit(id);
   }
 
-  viewScenario(id: any) {
+  viewScenario(id: string) {
     this.view.emit(id);
   }
 }

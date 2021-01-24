@@ -39,7 +39,7 @@ export class PageHeaderExtra {}
   animations: chutneyAnimations,
   encapsulation: ViewEncapsulation.None,
 })
-export class PageHeaderComponent implements OnInit {
+export class PageHeaderComponent {
   @Input() title = '';
   @Input() subtitle = '';
   @Input() showBreadCrumb = true;
@@ -47,8 +47,6 @@ export class PageHeaderComponent implements OnInit {
   @Input() showBackIcon = true;
 
   constructor(private router: Router, @Optional() private location: Location) {}
-
-  ngOnInit() {}
 
   onBack() {
     this.location.back();

@@ -15,7 +15,6 @@ import { TranslationComponent } from './components/translation/translation.compo
 import { UserMenuComponent } from './components/user-menu/user-menu.component';
 import { AvatarModule } from 'ngx-avatar';
 import { SidemenuComponent } from './components/sidemenu/sidemenu.component';
-import { TranslocoConfigModule } from '@chutney/feature-i18n';
 import { TranslocoModule } from '@ngneat/transloco';
 
 const loader = ['en', 'fr'].reduce((acc: any, lang: string) => {

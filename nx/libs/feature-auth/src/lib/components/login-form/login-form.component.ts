@@ -8,8 +8,6 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./login-form.component.scss'],
 })
 export class LoginFormComponent {
-  constructor() {}
-
   @Output() login = new EventEmitter<Authenticate>();
 
   loginForm = new FormGroup({

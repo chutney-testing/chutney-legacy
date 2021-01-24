@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   DeleteScenarioGQL,
   Scenario,
@@ -7,8 +7,8 @@ import {
   ScenariosGQL,
   ScenariosQuery,
 } from '@chutney/data-access';
-import { map, pluck, startWith, take, takeUntil } from 'rxjs/operators';
-import { combineLatest, Observable, ReplaySubject, Subject } from 'rxjs';
+import { map, pluck, startWith } from 'rxjs/operators';
+import { combineLatest, Observable, Subject } from 'rxjs';
 import { TdDialogService } from '@covalent/core/dialogs';
 import { tdCollapseAnimation } from '@covalent/core/common';
 import {

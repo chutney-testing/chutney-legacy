@@ -20,7 +20,7 @@ const formSerializer = (data: any, headers: Headers) => {
   styleUrls: ['./login.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
   qs: { [key: string]: any };
 
   constructor(
@@ -32,8 +32,6 @@ export class LoginComponent implements OnInit {
   ) {
     this.route.params.subscribe((params) => (this.qs = params));
   }
-
-  ngOnInit() {}
 
   login(authenticate: Authenticate): void {
     this.loginGQL

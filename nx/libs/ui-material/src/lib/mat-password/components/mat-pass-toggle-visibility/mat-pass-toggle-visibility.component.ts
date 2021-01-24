@@ -3,6 +3,7 @@ import { Component, Input, ViewEncapsulation } from '@angular/core';
 type Type = 'text' | 'password';
 
 @Component({
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'mat-pass-toggle-visibility',
   templateUrl: './mat-pass-toggle-visibility.component.html',
   styleUrls: ['./mat-pass-toggle-visibility.component.scss'],

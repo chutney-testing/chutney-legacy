@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { Campaign, CampaignGQL, RunCampaignGQL } from '@chutney/data-access';
 import { ActivatedRoute, Router } from '@angular/router';
 import { chutneyAnimations } from '@chutney/utils';
-import { map, pluck } from 'rxjs/operators';
+import { pluck } from 'rxjs/operators';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 

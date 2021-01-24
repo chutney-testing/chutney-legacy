@@ -41,8 +41,6 @@ export class ExecutionBadgeComponent implements OnInit, OnChanges {
   class: string | null;
   label: string | null;
 
-  constructor() {}
-
   ngOnInit(): void {
     this.updateClassMap();
   }

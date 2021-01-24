@@ -3,8 +3,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ApolloTestingModule } from 'apollo-angular/testing';
 
-import { UiLayoutModule } from '../../../../libs/ui-layout/src';
 import { AppComponent } from './app.component';
+import { UiLayoutModule } from '@chutney/ui-layout';
 
 describe('AppComponent', () => {
   beforeEach(async () => {

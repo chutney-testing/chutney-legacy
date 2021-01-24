@@ -26,8 +26,6 @@ export class CampaignsListComponent implements OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  constructor() {}
-
   private _campaignsDataSource: MatTableDataSource<
     Campaign
   > = new MatTableDataSource<Campaign>();
@@ -49,15 +47,15 @@ export class CampaignsListComponent implements OnInit {
     return this._campaignsDataSource;
   }
 
-  editCampaign(id: any) {
+  editCampaign(id: string) {
     this.edit.emit(id);
   }
 
-  deleteCampaign(id: any) {
+  deleteCampaign(id: string) {
     this.delete.emit(id);
   }
 
-  viewCampaign(id: any) {
+  viewCampaign(id: string) {
     this.view.emit(id);
   }
 }
