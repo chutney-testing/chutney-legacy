@@ -1,5 +1,6 @@
 import { text, number, boolean, select } from '@storybook/addon-knobs';
 import { ExecutionBadgeComponent } from './execution-badge.component';
+import { UiMaterialModule } from '@chutney/ui-material';
 
 export default {
   title: 'ExecutionBadgeComponent',
@@ -11,7 +12,7 @@ const defaultValue = values[0];
 
 export const primary = () => ({
   moduleMetadata: {
-    imports: [],
+    imports: [UiMaterialModule],
   },
   component: ExecutionBadgeComponent,
   props: {
