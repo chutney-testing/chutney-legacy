@@ -42,7 +42,7 @@ public class UrlSlicerTest {
         assertThat(port).as("port").isEqualTo(defaultPort);
     }
 
-    private static String[] acceptedURLsWithPorts() {
+    private static String[] acceptedURLs() {
         return new String[]{
             "proto://somehost:12",
             "proto://somehost:12/path",

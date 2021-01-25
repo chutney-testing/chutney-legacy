@@ -17,8 +17,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import org.assertj.core.util.Lists;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestCaseEditionsServiceTest {
 
@@ -27,7 +27,7 @@ public class TestCaseEditionsServiceTest {
     private final TestCaseEditions testCaseEditions = mock(TestCaseEditions.class);
     private final TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
 
-    @Before
+    @BeforeEach
     public void before() {
         when(testCaseEditions.findBy(any())).thenCallRealMethod(); // Default method
         sut = new TestCaseEditionsService(testCaseEditions, testCaseRepository);

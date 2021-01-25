@@ -32,7 +32,7 @@ import java.util.zip.ZipFile;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 
 public class JsonFileAgentNetworkDaoTest {
 
@@ -45,10 +45,8 @@ public class JsonFileAgentNetworkDaoTest {
     private ConcurrentLinkedQueue<String> errors = new ConcurrentLinkedQueue<>();
 
     @BeforeEach
-    public void setUp() throws Exception {
-        TemporaryFolder tempFolder = new TemporaryFolder();
-        tempFolder.create();
-        file = tempFolder.newFile(FILE_NAME.toString());
+    public void setUp(@TempDir Path tempDir) throws Exception {
+        file = Files.createFile(tempDir.resolve(FILE_NAME.toString())).toFile();
         sut = new JsonFileAgentNetworkDao(objectMapper, file);
     }
 

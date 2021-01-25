@@ -14,18 +14,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.chutneytesting.RestExceptionHandler;
 import com.chutneytesting.WebConfiguration;
-import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
-import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.editionlock.TestCaseEdition;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditionsService;
+import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
+import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.security.domain.UserService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.util.List;
 import org.assertj.core.util.Lists;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -37,7 +37,7 @@ public class TestCaseEditionControllerTest {
     private MockMvc mockMvc;
     private final ObjectMapper om = new WebConfiguration().objectMapper();
 
-    @Before
+    @BeforeEach
     public void before() {
         TestCaseEditionController sut = new TestCaseEditionController(testCaseEditionService, userService);
 

@@ -11,7 +11,7 @@ import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.assertj.core.util.Lists;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MicrometerSummaryTaskTest extends MicrometerTaskTest {
 

@@ -224,6 +224,12 @@
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka-test</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- Note that the below is qpid-broker-core and *not* qpid-broker. -->
         <dependency>

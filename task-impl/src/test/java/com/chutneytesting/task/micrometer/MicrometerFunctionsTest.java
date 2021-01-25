@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MicrometerFunctionsTest {
 

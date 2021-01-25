@@ -8,7 +8,7 @@ import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import com.chutneytesting.design.domain.scenario.raw.RawTestCase;
 import com.chutneytesting.execution.domain.compiler.GwtScenarioMarshaller;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import org.apache.commons.lang.NotImplementedException;
 
 public class TestCaseDataMapper { // TODO - test me more
 

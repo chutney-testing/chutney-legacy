@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class DataSetIterationsStrategyTest {

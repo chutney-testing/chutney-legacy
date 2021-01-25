@@ -15,28 +15,28 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.apache.groovy.util.Maps;
 import org.assertj.core.util.Lists;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class OrientDataSetRepositoryTest extends AbstractOrientDatabaseTest {
 
     private static OrientDataSetRepository sut;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         initComponentDB(DATABASE_NAME);
         sut = new OrientDataSetRepository(orientComponentDB);
         OLogManager.instance().setWarnEnabled(false);
     }
 
-    @After
+    @AfterEach
     public void after() {
         truncateCollection(DATABASE_NAME, OrientComponentDB.DATASET_CLASS);
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() {
         destroyDB(DATABASE_NAME);
     }

@@ -7,20 +7,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 abstract class MicrometerTaskTest {
 
     MeterRegistry meterRegistry;
 
-    @Before
+    @BeforeEach
     public void before() {
         meterRegistry = new SimpleMeterRegistry();
         globalRegistry.add(meterRegistry);
     }
 
-    @After
+    @AfterEach
     public void after() {
         globalRegistry.forEachMeter(globalRegistry::remove);
         globalRegistry.remove(meterRegistry);

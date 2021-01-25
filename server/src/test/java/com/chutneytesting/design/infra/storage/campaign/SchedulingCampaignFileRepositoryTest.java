@@ -11,22 +11,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class SchedulingCampaignFileRepositoryTest {
-
-    @ClassRule
-    public static final TemporaryFolder TEMPORARY_FOLDER = new TemporaryFolder();
 
     private static SchedulingCampaignRepository sut;
     private static Path SCHEDULING_CAMPAIGN_FILE;
 
-    @BeforeClass
-    public static void setUp() throws IOException {
-        String tmpConfDir = TEMPORARY_FOLDER.newFolder("conf").getAbsolutePath();
+    @BeforeAll
+    public static void setUp(@TempDir Path temporaryFolder) throws IOException {
+        String tmpConfDir = temporaryFolder.toFile().getAbsolutePath();
         System.setProperty("configuration-folder", tmpConfDir);
         System.setProperty("persistence-repository-folder", tmpConfDir);
 

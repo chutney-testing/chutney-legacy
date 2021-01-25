@@ -8,7 +8,7 @@ import com.chutneytesting.execution.domain.scenario.composed.StepImplementation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.groovy.util.Maps;
 import org.assertj.core.util.Lists;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class RawImplementationMapperTest {
 
