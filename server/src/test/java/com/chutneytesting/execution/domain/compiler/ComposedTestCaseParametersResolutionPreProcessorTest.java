@@ -24,15 +24,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.apache.groovy.util.Maps;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ComposedTestCaseParametersResolutionPreProcessorTest {
 
     private final ObjectMapper objectMapper = new WebConfiguration().objectMapper();
     private GlobalvarRepository globalvarRepository;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         globalvarRepository = mock(GlobalvarRepository.class);
         Map<String, String> map = new HashMap<>();

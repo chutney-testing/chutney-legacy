@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.groovy.util.Maps;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DataSetPatchUtilsTest {
 

@@ -11,7 +11,7 @@ import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import java.time.Duration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MicrometerTimerStopTaskTest extends MicrometerTaskTest {
 

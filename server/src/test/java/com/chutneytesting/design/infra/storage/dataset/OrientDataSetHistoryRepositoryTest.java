@@ -15,10 +15,10 @@ import java.util.Optional;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.groovy.util.Maps;
 import org.assertj.core.util.Lists;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class OrientDataSetHistoryRepositoryTest extends AbstractOrientDatabaseTest {
 
@@ -26,7 +26,7 @@ public class OrientDataSetHistoryRepositoryTest extends AbstractOrientDatabaseTe
 
     private static DataSet originalDataSet;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         initComponentDB(DATABASE_NAME);
         sut = new OrientDataSetHistoryRepository(orientComponentDB);
@@ -36,12 +36,12 @@ public class OrientDataSetHistoryRepositoryTest extends AbstractOrientDatabaseTe
         originalDataSet = orientDataSetRepository.findById(orientDataSetRepository.save(dataSet()));
     }
 
-    @After
+    @AfterEach
     public void after() {
         truncateCollection(DATABASE_NAME, OrientComponentDB.DATASET_HISTORY_CLASS);
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() {
         destroyDB(DATABASE_NAME);
     }

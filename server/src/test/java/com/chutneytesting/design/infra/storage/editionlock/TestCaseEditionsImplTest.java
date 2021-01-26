@@ -7,14 +7,14 @@ import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.editionlock.TestCaseEdition;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditions;
 import java.util.concurrent.TimeUnit;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestCaseEditionsImplTest {
 
     private TestCaseEditions sut;
 
-    @Before
+    @BeforeEach
     public void before() {
         sut = new TestCaseEditionsImpl(1, TimeUnit.SECONDS.name());
     }

@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import org.apache.groovy.util.Maps;
 import org.assertj.core.util.Lists;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class InputParameterResolverTest {
 

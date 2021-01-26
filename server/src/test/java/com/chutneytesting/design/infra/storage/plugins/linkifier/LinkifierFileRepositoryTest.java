@@ -9,22 +9,18 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class LinkifierFileRepositoryTest {
-
-    @ClassRule
-    public static final TemporaryFolder TEMPORARY_FOLDER = new TemporaryFolder();
 
     private static Linkifiers sut;
     private static Path LINKIFIER_FILE;
 
-    @BeforeClass
-    public static void setUp() throws IOException {
-        String tmpConfDir = TEMPORARY_FOLDER.newFolder("conf").getAbsolutePath();
+    @BeforeAll
+    public static void setUp(@TempDir Path temporaryFolder) throws IOException {
+        String tmpConfDir = temporaryFolder.toFile().getAbsolutePath();
         System.setProperty("configuration-folder", tmpConfDir);
         System.setProperty("persistence-repository-folder", tmpConfDir);
 
@@ -38,11 +34,11 @@ public class LinkifierFileRepositoryTest {
         Linkifier linkifier = new Linkifier("#pattern", "http://link/%s", "fake_id");
         String expected =
             "{\n" +
-            "  \"fake_id\" : {\n" +
-            "    \"pattern\" : \"#pattern\",\n" +
-            "    \"link\" : \"http://link/%s\"\n" +
-            "  }\n" +
-            "}";
+                "  \"fake_id\" : {\n" +
+                "    \"pattern\" : \"#pattern\",\n" +
+                "    \"link\" : \"http://link/%s\"\n" +
+                "  }\n" +
+                "}";
 
         // When
         sut.add(linkifier);
@@ -58,24 +54,24 @@ public class LinkifierFileRepositoryTest {
         // Given
         FileUtils.writeContent(LINKIFIER_FILE,
             "{\n" +
-            "  \"fake_id\" : {\n" +
-            "    \"pattern\" : \"#pattern\",\n" +
-            "    \"link\" : \"http://link/%s\"\n" +
-            "  }\n" +
-            "}"
+                "  \"fake_id\" : {\n" +
+                "    \"pattern\" : \"#pattern\",\n" +
+                "    \"link\" : \"http://link/%s\"\n" +
+                "  }\n" +
+                "}"
         );
         Linkifier linkifier = new Linkifier("#2", "link_2", "fake_id_2");
         String expected =
             "{\n" +
-            "  \"fake_id\" : {\n" +
-            "    \"pattern\" : \"#pattern\",\n" +
-            "    \"link\" : \"http://link/%s\"\n" +
-            "  },\n" +
-            "  \"fake_id_2\" : {\n" +
-            "    \"pattern\" : \"#2\",\n" +
-            "    \"link\" : \"link_2\"\n" +
-            "  }\n" +
-            "}";
+                "  \"fake_id\" : {\n" +
+                "    \"pattern\" : \"#pattern\",\n" +
+                "    \"link\" : \"http://link/%s\"\n" +
+                "  },\n" +
+                "  \"fake_id_2\" : {\n" +
+                "    \"pattern\" : \"#2\",\n" +
+                "    \"link\" : \"link_2\"\n" +
+                "  }\n" +
+                "}";
 
         // When
         sut.add(linkifier);
@@ -91,11 +87,11 @@ public class LinkifierFileRepositoryTest {
         // Given
         FileUtils.writeContent(LINKIFIER_FILE,
             "{\n" +
-            "  \"fake_id\" : {\n" +
-            "    \"pattern\" : \"#pattern\",\n" +
-            "    \"link\" : \"http://link/%s\"\n" +
-            "  }\n" +
-            "}"
+                "  \"fake_id\" : {\n" +
+                "    \"pattern\" : \"#pattern\",\n" +
+                "    \"link\" : \"http://link/%s\"\n" +
+                "  }\n" +
+                "}"
         );
 
         // When
