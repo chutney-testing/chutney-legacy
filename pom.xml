@@ -99,7 +99,7 @@
         <orientdb.version>3.0.30</orientdb.version>
         <selenium.version>3.14.0</selenium.version>
         <rxjava.version>2.2.20</rxjava.version>
-        <groovy.version>2.5.0</groovy.version>
+        <groovy.version>2.5.14</groovy.version>
         <glacio.version>0.0.1</glacio.version>
 
         <!-- Test dependencies versions -->
