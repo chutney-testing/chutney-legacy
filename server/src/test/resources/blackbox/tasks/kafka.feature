@@ -56,7 +56,7 @@ Feature: Kafka all Tasks test
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
                 With uri /api/ui/scenario/execution/v1/${#scenarioId}/KAFKA_ENV_KO
-                With timeout 5 s
+                With timeout 15 s
                 Take report ${#body}
             Do compare Assert HTTP status is 200
                 With actual ${T(Integer).toString(#status)}
@@ -139,6 +139,7 @@ Feature: Kafka all Tasks test
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
                 With uri /api/ui/scenario/execution/v1/${#scenarioId}/KAFKA_ENV_OK
+                With timeout 15 s
                 Take report ${#body}
             Do compare Assert HTTP status is 200
                 With actual ${T(Integer).toString(#status)}
