@@ -84,11 +84,11 @@ public class ComposableTestCase implements TestCase {
     private Map<String, String> findParametersFromSteps() { // TODO - is it still needed here for edition ?
         Map<String, String> parameters = new HashMap<>();
 
-        composableScenario.composableSteps
-            .forEach(composableStep -> parameters.putAll(composableStep.dataSetGlobalParameters()));
+        // Bubble up empty params from steps
+        composableScenario.composableSteps.forEach(composableStep -> parameters.putAll(composableStep.emptyParams()));
 
-        Optional.ofNullable(composableScenario.parameters)
-            .ifPresent(parameters::putAll);
+        // Take all params from scenario
+        Optional.ofNullable(composableScenario.parameters).ifPresent(parameters::putAll);
 
         return parameters;
     }
