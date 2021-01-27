@@ -61,8 +61,7 @@ public class ComposableStep {
             .anyMatch(cs -> checkCyclicDependency(cs, new ArrayList<>(parentsAcc)));
     }
 
-    // TODO - refactor dataset
-    public Map<String, String> dataSetGlobalParameters() {
+    public Map<String, String> emptyParams() {
         return enclosedUsageParameters.entrySet().stream()
             .filter(e -> StringUtils.isBlank(e.getValue()))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
@@ -117,11 +116,15 @@ public class ComposableStep {
 
         public ComposableStepBuilder withSteps(List<ComposableStep> steps) {
             this.steps = unmodifiableList(steps);
+            bubbleUpEmptyParams(steps);
+            return this;
+        }
+
+        private void bubbleUpEmptyParams(List<ComposableStep> steps) {
             steps.forEach(composableStep ->
                 addEnclosedUsageParameters(
-                    composableStep.dataSetGlobalParameters()
+                    composableStep.emptyParams()
                 ));
-            return this;
         }
 
         public ComposableStepBuilder withBuiltInParameters(Map<String, String> builtInParameters) {
