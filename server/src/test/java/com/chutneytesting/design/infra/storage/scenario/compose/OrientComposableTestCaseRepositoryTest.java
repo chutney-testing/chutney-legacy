@@ -1,5 +1,6 @@
 package com.chutneytesting.design.infra.storage.scenario.compose;
 
+import static java.time.temporal.ChronoUnit.MILLIS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
@@ -16,6 +17,7 @@ import com.orientechnologies.common.log.OLogManager;
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.OElement;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -221,7 +223,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
         assertThat(composableTestCaseFound.id).isEqualTo(testCaseId);
         assertThat(composableTestCaseFound.metadata.title()).isEqualTo(composableTestCase.metadata.title());
         assertThat(composableTestCaseFound.metadata.description()).isEqualTo(composableTestCase.metadata.description());
-        assertThat(composableTestCaseFound.metadata.creationDate()).isEqualTo(composableTestCase.metadata.creationDate());
+        assertThat(composableTestCaseFound.metadata.creationDate()).isEqualTo(composableTestCase.metadata.creationDate().truncatedTo(MILLIS));
         assertThat(composableTestCaseFound.metadata.tags()).containsExactly("TAG1", "TAG2");
         assertThat(composableTestCaseFound.composableScenario.composableSteps)
             .containsExactly(FuncStepRefScenarioInstance, FuncStepRefParentScenarioInstance);

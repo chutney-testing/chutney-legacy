@@ -6,6 +6,7 @@ import static com.chutneytesting.design.infra.storage.scenario.compose.orient.Or
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.DATASET_CLASS_PROPERTY_TAGS;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.DATASET_CLASS_PROPERTY_VALUES_MULTIPLE;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.DATASET_CLASS_PROPERTY_VALUES_UNIQUE;
+import static java.time.temporal.ChronoUnit.MILLIS;
 
 import com.chutneytesting.design.domain.dataset.DataSet;
 import com.orientechnologies.orient.core.metadata.schema.OType;
@@ -46,7 +47,7 @@ class OrientDataSetMapper {
             .withId(oDataSet.getIdentity().toString())
             .withName(oDataSet.getProperty(DATASET_CLASS_PROPERTY_NAME))
             .withDescription(oDataSet.getProperty(DATASET_CLASS_PROPERTY_DESCRIPTION))
-            .withCreationDate(((java.util.Date) oDataSet.getProperty(DATASET_CLASS_PROPERTY_CREATIONDATE)).toInstant())
+            .withCreationDate(((java.util.Date) oDataSet.getProperty(DATASET_CLASS_PROPERTY_CREATIONDATE)).toInstant().truncatedTo(MILLIS))
             .withTags(oDataSet.getProperty(DATASET_CLASS_PROPERTY_TAGS));
     }
 }

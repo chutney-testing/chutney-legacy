@@ -17,8 +17,8 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
+import org.apache.commons.lang.NotImplementedException;
 import org.assertj.core.util.Lists;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class FakeCampaignRepository implements CampaignRepository {
 

@@ -19,11 +19,11 @@ public class JsonMapperTest {
 
     private final ObjectMapper jacksonMapper = new ObjectMapper();
     @SuppressWarnings("unchecked")
-    VersionnedJsonReader<String> oldmapper = Mockito.mock(VersionnedJsonReader.class, Answers.RETURNS_DEEP_STUBS);
+    VersionnedJsonReader<String> oldmapper = Mockito.mock(VersionnedJsonReader.class);
     @SuppressWarnings("unchecked")
-    CurrentJsonMapper<String> currentMapper = Mockito.mock(CurrentJsonMapper.class, Answers.RETURNS_DEEP_STUBS);
+    CurrentJsonMapper<String> currentMapper = Mockito.mock(CurrentJsonMapper.class);
     @SuppressWarnings("unchecked")
-    VersionnedJsonReader<String> noVersionMapper = Mockito.mock(VersionnedJsonReader.class, Answers.RETURNS_DEEP_STUBS);
+    VersionnedJsonReader<String> noVersionMapper = Mockito.mock(VersionnedJsonReader.class);
 
     JsonMapper<String> mapper;
 

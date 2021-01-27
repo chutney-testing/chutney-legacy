@@ -11,6 +11,7 @@ import static com.chutneytesting.design.infra.storage.scenario.compose.orient.Or
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.close;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.resultSetToCount;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.rollback;
+import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.util.Optional.empty;
 
 import com.chutneytesting.design.domain.dataset.DataSet;
@@ -140,7 +141,7 @@ public class OrientDataSetHistoryRepository implements DataSetHistoryRepository 
                         if (dataSetPatch.description != null) {
                             dataSetBuilder.withDescription(dataSetPatch.description);
                         }
-                        dataSetBuilder.withCreationDate(dataSetPatch.creationDate);
+                        dataSetBuilder.withCreationDate(dataSetPatch.creationDate.truncatedTo(MILLIS));
                         if (dataSetPatch.tags != null) {
                             dataSetBuilder.withTags(dataSetPatch.tags);
                         }
