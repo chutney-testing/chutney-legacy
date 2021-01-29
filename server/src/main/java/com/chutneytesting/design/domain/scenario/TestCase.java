@@ -10,8 +10,8 @@ public interface TestCase {
         return metadata().id();
     }
 
-    Map<String, String> parameters();
+    Map<String, String> executionParameters();
 
-    TestCase withParameters(final Map<String, String> parameters);
+    TestCase usingExecutionParameters(final Map<String, String> parameters);
 
 }

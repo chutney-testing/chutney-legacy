@@ -25,10 +25,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * TestCase OrientDB model merges {@link com.chutneytesting.design.domain.scenario.compose.ComposableTestCase} metadata and
+ * {@link com.chutneytesting.design.domain.scenario.compose.ComposableScenario} steps and parameters.
+ *
+ * For this reason,
+ * the vertex wrapped inside is sometime treated as a {@link com.chutneytesting.design.infra.storage.scenario.compose.dto.StepVertex} "root step",
+ * which is a way to represent the scenario and ease the
+ *
+ * */
 public class TestCaseVertex {
 
     private final OVertex testCaseVertex;
-    private final StepVertex rootStep; // for convenience, vertex is sometime treated like a step
+    private final StepVertex rootStep; // @see class documentation above
 
     private TestCaseVertex(OVertex testCaseVertex, List<ComposableStep> subSteps) {
         this.testCaseVertex = testCaseVertex;

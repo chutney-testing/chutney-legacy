@@ -13,10 +13,10 @@ public class Campaign {
     public final String title;
     public final String description;
     public final List<String> scenarioIds;
-    public final Map<String, String> dataSet;
+    public final Map<String, String> executionParameters;
     public final boolean parallelRun;
     public final boolean retryAuto;
-    public final String datasetId;
+    public final String externalDatasetId;
 
     private final LocalTime scheduleTime;
     private String environment;
@@ -25,22 +25,22 @@ public class Campaign {
                     String title,
                     String description,
                     List<String> scenarioIds,
-                    Map<String, String> dataSet,
+                    Map<String, String> executionParameters,
                     LocalTime scheduleTime,
                     String environment,
                     boolean parallelRun,
                     boolean retryAuto,
-                    String datasetId) {
+                    String externalDatasetId) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.scenarioIds = initListNullOrEmpty(scenarioIds);
-        this.dataSet = Optional.ofNullable(dataSet).orElse(new HashMap<>());
+        this.executionParameters = Optional.ofNullable(executionParameters).orElse(new HashMap<>());
         this.parallelRun = parallelRun;
         this.retryAuto = retryAuto;
         this.scheduleTime = scheduleTime;
         this.environment = environment;
-        this.datasetId = datasetId;
+        this.externalDatasetId = externalDatasetId;
     }
 
     public void addScenario(String scenarioId) {

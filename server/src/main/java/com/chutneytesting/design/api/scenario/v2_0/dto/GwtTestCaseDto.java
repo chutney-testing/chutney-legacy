@@ -36,7 +36,7 @@ public interface GwtTestCaseDto {
     GwtScenarioDto scenario();
 
     @JsonProperty("computedParameters")
-    Map<String, String> parameters();
+    Map<String, String> executionParameters();
 
     @Value.Default()
     default String author() {

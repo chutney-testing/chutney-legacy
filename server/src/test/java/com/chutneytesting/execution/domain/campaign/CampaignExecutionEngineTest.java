@@ -26,8 +26,6 @@ import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
-import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
-import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
@@ -365,13 +363,13 @@ public class CampaignExecutionEngineTest {
         verify(scenarioExecutionEngine, times(2)).execute(argumentCaptor.capture());
         List<ExecutionRequest> executionRequests = argumentCaptor.getAllValues();
         assertThat(executionRequests).hasSize(2);
-        assertThat(((GwtTestCase) executionRequests.get(0).testCase).parameters).containsOnly(
+        assertThat(((GwtTestCase) executionRequests.get(0).testCase).executionParameters).containsOnly(
             entry("gwt key", gwtTestCaseDataSet.get("gwt key")),
             entry("key", campaignDataSet.get("key")),
             entry("campaign key", "campaign specific value")
         );
         assertThat(((ExecutableComposedTestCase) executionRequests.get(1).testCase).metadata.datasetId())
-            .hasValue(campaign.datasetId);
+            .hasValue(campaign.externalDatasetId);
     }
 
     private final static Random campaignIdGenerator = new Random();
@@ -417,7 +415,7 @@ public class CampaignExecutionEngineTest {
                     .withId(id)
                     .build()
             )
-            .withParameters(dataSet)
+            .withExecutionParameters(dataSet)
             .build();
     }
 

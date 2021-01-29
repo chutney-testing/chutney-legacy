@@ -31,8 +31,8 @@ public class OrientComposableStepMapper {
             .withTags(composableStep.tags)
             .withImplementation(composableStep.implementation)
             .withStrategy(composableStep.strategy)
-            .withBuiltInParameters(composableStep.builtInParameters)
-            .withEnclosedUsageParameters(composableStep.enclosedUsageParameters)
+            .withDefaultParameters(composableStep.defaultParameters)
+            .withExecutionParameters(composableStep.executionParameters)
             .withSteps(composableStep.steps)
             .build();
     }
@@ -49,7 +49,7 @@ public class OrientComposableStepMapper {
 
 
         Map<String, String> parameters = vertex.parameters();
-        ofNullable(parameters).ifPresent(builder::addBuiltInParameters);
+        ofNullable(parameters).ifPresent(builder::addDefaultParameters);
 
         OElement strategy = vertex.strategy();
         Optional.ofNullable(strategy).ifPresent( s ->
@@ -60,7 +60,7 @@ public class OrientComposableStepMapper {
             buildComposableStepsChildren(vertex)
         );
 
-        ofNullable(parameters).ifPresent(builder::addEnclosedUsageParameters);
+        ofNullable(parameters).ifPresent(builder::addExecutionParameters);
 
         return builder;
     }
@@ -88,7 +88,7 @@ public class OrientComposableStepMapper {
     private static void overwriteDataSetWithEdgeParameters(OEdge childEdge, ComposableStep.ComposableStepBuilder builder) {
         Optional.<Map<String, String>>ofNullable(
             childEdge.getProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS)
-        ).ifPresent(builder::addEnclosedUsageParameters);
+        ).ifPresent(builder::addExecutionParameters);
     }
 
 }

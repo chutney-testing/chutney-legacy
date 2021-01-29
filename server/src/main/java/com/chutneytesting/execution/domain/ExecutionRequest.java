@@ -24,6 +24,6 @@ public class ExecutionRequest {
     }
 
     public ExecutionRequest(TestCase testCase, String environment, Map<String, String> specificDataSet, String userId) {
-        this(requireNonNull(testCase).withParameters(requireNonNull(specificDataSet)), environment, userId);
+        this(requireNonNull(testCase).usingExecutionParameters(requireNonNull(specificDataSet)), environment, userId);
     }
 }

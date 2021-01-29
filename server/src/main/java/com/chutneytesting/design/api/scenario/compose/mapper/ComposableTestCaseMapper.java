@@ -35,7 +35,7 @@ public class ComposableTestCaseMapper {
             .title(composableTestCase.metadata.title())
             .description(composableTestCase.metadata.description())
             .creationDate(composableTestCase.metadata.creationDate())
-            .computedParameters(KeyValue.fromMap(composableTestCase.parameters))
+            .executionParameters(KeyValue.fromMap(composableTestCase.executionParameters))
             .scenario(
                 ImmutableComposableScenarioDto.builder()
                     .addAllComponentSteps(toComposableStepsDto(composableTestCase))

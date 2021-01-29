@@ -150,12 +150,12 @@ public class TestCaseEditionsServiceTest {
             }
 
             @Override
-            public Map<String, String> parameters() {
+            public Map<String, String> executionParameters() {
                 return null;
             }
 
             @Override
-            public TestCase withParameters(Map<String, String> parameters) {
+            public TestCase usingExecutionParameters(Map<String, String> parameters) {
                 return null;
             }
         };
