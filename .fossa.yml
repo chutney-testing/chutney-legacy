@@ -31,6 +31,12 @@ analyze:
       path: .
       options:
         cmd: mvn dependency:tree -Dscope=compile -pl engine
+    - name: environment
+      type: mvn
+      target: environment/pom.xml
+      path: .
+      options:
+        cmd: mvn dependency:tree -Dscope=compile -pl environment
     - name: server
       type: mvn
       target: server/pom.xml
@@ -55,6 +61,12 @@ analyze:
       path: ui
       options:
         strategy: npm
+    - name: glacio-adapter
+      type: mvn
+      target: glacio-adapter/pom.xml
+      path: .
+      options:
+        cmd: mvn dependency:tree -Dscope=compile -pl glacio-adapter
     - name: local-dev
       type: mvn
       target: local-dev/pom.xml
