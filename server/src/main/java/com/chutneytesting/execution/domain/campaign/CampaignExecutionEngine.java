@@ -61,6 +61,8 @@ public class CampaignExecutionEngine {
     private final DataSetHistoryRepository dataSetHistoryRepository;
     private final JiraXrayPlugin jiraXrayPlugin;
     private final ChutneyMetrics metrics;
+    private ExecutorService asyncExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
 
     private Map<Long, CampaignExecutionReport> currentCampaignExecutions = new ConcurrentHashMap<>();
     private Map<Long, Boolean> currentCampaignExecutionsStopRequests = new ConcurrentHashMap<>();
@@ -129,11 +131,18 @@ public class CampaignExecutionEngine {
         CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(executionId, campaign.title, !failedIds.isEmpty(), campaign.executionEnvironment(), executionDataSet.map(Pair::getLeft).orElse(null), executionDataSet.map(Pair::getRight).orElse(null), userId);
         currentCampaignExecutions.put(campaign.id, campaignExecutionReport);
         currentCampaignExecutionsStopRequests.put(executionId, Boolean.FALSE);
+        asyncExecutor.execute(() -> {
+            executeScenarioInCampaign(failedIds, campaign, executionId, campaignExecutionReport);
+        });
+        return campaignExecutionReport;
+    }
+
+    private void executeScenarioInCampaign(List<String> failedIds, Campaign campaign, Long executionId, CampaignExecutionReport campaignExecutionReport) {
         try {
             if (failedIds.isEmpty()) {
-                return execute(campaign, campaignExecutionReport, campaign.scenarioIds);
+                execute(campaign, campaignExecutionReport, campaign.scenarioIds);
             } else {
-                return execute(campaign, campaignExecutionReport, failedIds);
+                execute(campaign, campaignExecutionReport, failedIds);
             }
         } catch (Exception e) {
             LOGGER.error("Not managed exception occured", e);
