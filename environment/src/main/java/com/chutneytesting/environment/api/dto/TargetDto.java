@@ -1,5 +1,6 @@
 package com.chutneytesting.environment.api.dto;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.environment.domain.SecurityInfo;
@@ -49,7 +50,7 @@ public class TargetDto {
         return Target.builder()
             .withId(Target.TargetId.of(name, environment))
             .withUrl(url)
-            .withProperties(toMap(this.properties))
+            .withProperties(propertiesToMap())
             .withSecurity(securityInfo.build())
             .build();
     }
@@ -67,6 +68,14 @@ public class TargetDto {
         );
     }
 
+    public Map<String, String> propertiesToMap() {
+        return properties.stream().collect(Collectors.toMap(p -> p.key, p -> p.value));
+    }
+
+    public boolean hasCredential() {
+        return !(isNullOrEmpty(username) && isNullOrEmpty(password));
+    }
+
     private String emptyToNull(String s) {
         return "".equals(s) ? null : s;
     }
@@ -79,10 +88,6 @@ public class TargetDto {
         return properties.entrySet().stream()
             .map(e -> new Entry(e.getKey(), e.getValue()))
             .collect(Collectors.toList());
-    }
-
-    private Map<String, String> toMap(List<Entry> properties) {
-        return properties.stream().collect(Collectors.toMap(e -> e.key, e -> e.value));
     }
 
     public static class Entry {

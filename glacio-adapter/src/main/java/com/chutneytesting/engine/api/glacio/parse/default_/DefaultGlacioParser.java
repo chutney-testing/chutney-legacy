@@ -3,7 +3,7 @@ package com.chutneytesting.engine.api.glacio.parse.default_;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.engine.api.glacio.parse.GlacioExecutableStepParser;
-import com.chutneytesting.environment.domain.EnvironmentService;
+import com.chutneytesting.environment.api.EnvironmentEmbeddedApplication;
 import com.chutneytesting.task.domain.TaskTemplateRegistry;
 import com.github.fridujo.glacio.model.Step;
 import java.util.Locale;
@@ -18,8 +18,8 @@ public class DefaultGlacioParser extends GlacioExecutableStepParser {
 
     private final TaskTemplateRegistry taskTemplateRegistry;
 
-    public DefaultGlacioParser(TaskTemplateRegistry taskTemplateRegistry, EnvironmentService environmentService) {
-        super(new TargetStepParser(environmentService, "On"),
+    public DefaultGlacioParser(TaskTemplateRegistry taskTemplateRegistry, EnvironmentEmbeddedApplication environmentApplication) {
+        super(new TargetStepParser(environmentApplication, "On"),
             new FilteredByKeywordsSubStepMapStepParser(new EntryStepParser(), "With"),
             new FilteredByKeywordsSubStepMapStepParser(new EntryStepParser(), "Take", "Keep"));
         this.taskTemplateRegistry = taskTemplateRegistry;

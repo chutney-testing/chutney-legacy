@@ -46,13 +46,15 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class EnvironmentEmbeddedApplicationTest {
+public class EnvironmentControllerApplicationTest {
 
     private final String basePath = "/api/v2/environment";
 
     private final EnvironmentRepository environmentRepository = mock(EnvironmentRepository.class);
     private final EnvironmentService environmentService = new EnvironmentService(environmentRepository);
     private final EnvironmentEmbeddedApplication embeddedApplication = new EnvironmentEmbeddedApplication(environmentService);
+    private final EnvironmentControllerApplication environmentControllerV2 = new EnvironmentControllerApplication(embeddedApplication);
+
     private final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(environmentControllerV2)
         .setControllerAdvice(new EnvironmentRestExceptionHandler())
         .build();

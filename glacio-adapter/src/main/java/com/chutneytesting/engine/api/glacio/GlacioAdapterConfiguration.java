@@ -13,7 +13,6 @@ import com.chutneytesting.engine.api.glacio.parse.default_.StrategyParser;
 import com.chutneytesting.engine.api.glacio.parse.specific.strategy.StrategyRetryParser;
 import com.chutneytesting.engine.api.glacio.parse.specific.strategy.StrategySoftAssertParser;
 import com.chutneytesting.environment.EnvironmentConfiguration;
-import com.chutneytesting.environment.domain.EnvironmentService;
 import com.chutneytesting.tools.ThrowingFunction;
 import com.chutneytesting.tools.loader.ExtensionLoaders;
 import java.io.IOException;
@@ -74,10 +73,6 @@ public class GlacioAdapterConfiguration {
         return glacioAdapter;
     }
 
-    public EnvironmentService environmentService() {
-        return environmentConfiguration.getEnvironmentService();
-    }
-
     public List<IParseExecutableStep> glacioExecutableStepParsers() {
         return glacioExecutableStepParsers;
     }
@@ -122,7 +117,7 @@ public class GlacioAdapterConfiguration {
         return new StepFactory(
             executableStepLanguagesKeywords,
             glacioExecutableStepParsersLanguages,
-            new DefaultGlacioParser(executionConfiguration.taskTemplateRegistry(), environmentConfiguration.getEnvironmentService()),
+            new DefaultGlacioParser(executionConfiguration.taskTemplateRegistry(), environmentConfiguration.getEnvironmentEmbeddedApplication()),
             new GlacioBusinessStepParser(),
             strategyParser
         );

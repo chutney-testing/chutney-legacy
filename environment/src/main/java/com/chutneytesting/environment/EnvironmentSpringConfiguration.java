@@ -1,5 +1,6 @@
 package com.chutneytesting.environment;
 
+import com.chutneytesting.environment.api.EnvironmentEmbeddedApplication;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
 import com.chutneytesting.environment.domain.EnvironmentService;
 import com.chutneytesting.environment.infra.JsonFilesEnvironmentRepository;
@@ -10,7 +11,11 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class EnvironmentSpringConfiguration {
-
+    
+    @Bean
+    EnvironmentEmbeddedApplication environmentEmbeddedApplication(EnvironmentService environmentService) {
+        return new EnvironmentEmbeddedApplication(environmentService);
+    }
 
     @Bean
     EnvironmentService environmentService(EnvironmentRepository environmentRepository) {

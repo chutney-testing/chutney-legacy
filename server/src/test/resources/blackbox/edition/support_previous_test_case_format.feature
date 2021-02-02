@@ -239,7 +239,7 @@ Feature: Support previous test case format
 
         Examples:
             | content_version | scenario                          | message                                                                                                                | env_id |
-            | v0.0            | scenario_unknown_target.v0.hjson  | com.chutneytesting.environment.domain.TargetNotFoundException: Target [UNKNOWN_TARGET] not found in environment | 1      |
+            | v0.0            | scenario_unknown_target.v0.hjson  | com.chutneytesting.environment.domain.exception.TargetNotFoundException: Target [UNKNOWN_TARGET] not found in environment | 1      |
 
     Scenario Outline: Task implementation (<scenario>) is always HJSON readable
         When saving a test case with a <scenario> written with GWT form
