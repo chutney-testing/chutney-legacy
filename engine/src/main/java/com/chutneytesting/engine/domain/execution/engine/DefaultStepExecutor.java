@@ -66,8 +66,6 @@ public class DefaultStepExecutor implements StepExecutor {
     }
 
     private void updateStepFromTaskResult(Step step, TaskExecutionResult executionResult) {
-        executionResult.outputs.forEach((k, v) -> step.addInformation("Output: (" + k + ") : (" + v + ")"));
-
         if (executionResult.status == TaskExecutionResult.Status.Success) {
             step.success();
         } else {
@@ -81,7 +79,7 @@ public class DefaultStepExecutor implements StepExecutor {
         parameterResolvers.add(new TypedValueParameterResolver<>(Target.class, target));
         parameterResolvers.add(new TypedValueParameterResolver<>(Logger.class, new DelegateLogger(step::addInformation, step::failure)));
         parameterResolvers.add(new TypedValueParameterResolver<>(StepDefinition.class, step.definition()));
-        parameterResolvers.add(new TypedValueParameterResolver<>(FinallyActionRegistry.class, finallyAction -> scenarioExecution.registerFinallyAction(finallyAction)));
+        parameterResolvers.add(new TypedValueParameterResolver<>(FinallyActionRegistry.class, scenarioExecution::registerFinallyAction));
         parameterResolvers.add(new ContextParameterResolver(stepContext.getScenarioContext()));
         return parameterResolvers;
     }

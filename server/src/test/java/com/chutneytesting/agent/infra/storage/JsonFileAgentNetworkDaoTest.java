@@ -8,8 +8,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.chutneytesting.tools.ThrowingRunnable;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -29,39 +29,25 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.MethodRule;
-import org.junit.rules.TemporaryFolder;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class JsonFileAgentNetworkDaoTest {
 
     private final static Path FILE_NAME = Paths.get("endpoints.json");
 
-    @Rule
-    public MethodRule mockitorule = MockitoJUnit.rule();
+    private JsonFileAgentNetworkDao sut;
 
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
-
-    @Mock
-    ObjectMapper objectMapper;
-
+    private ObjectMapper objectMapper = mock(ObjectMapper.class);
     private File file;
-
-    private JsonFileAgentNetworkDao jsonFileAgentNetworkDao;
-
     private ConcurrentLinkedQueue<String> errors = new ConcurrentLinkedQueue<>();
 
-    @Before
-    public void setUp() throws Exception {
-        tempFolder.create();
-        file = tempFolder.newFile(FILE_NAME.toString());
-        jsonFileAgentNetworkDao = new JsonFileAgentNetworkDao(objectMapper, file);
+    @BeforeEach
+    public void setUp(@TempDir Path tempDir) throws Exception {
+        file = Files.createFile(tempDir.resolve(FILE_NAME.toString())).toFile();
+        sut = new JsonFileAgentNetworkDao(objectMapper, file);
     }
 
     @Test
@@ -70,7 +56,7 @@ public class JsonFileAgentNetworkDaoTest {
         file.createNewFile();
         AgentNetworkForJsonFile agentNetwork = mock(AgentNetworkForJsonFile.class);
         when(objectMapper.<AgentNetworkForJsonFile>readValue(same(file), any(Class.class))).thenReturn(agentNetwork);
-        Optional<AgentNetworkForJsonFile> result = jsonFileAgentNetworkDao.read();
+        Optional<AgentNetworkForJsonFile> result = sut.read();
         assertThat(result).hasValue(agentNetwork);
     }
 
@@ -78,7 +64,7 @@ public class JsonFileAgentNetworkDaoTest {
     @Test
     public void read_without_existing_file_should_return_empty() throws IOException {
         Files.deleteIfExists(file.toPath());
-        assertThat(jsonFileAgentNetworkDao.read()).isEmpty();
+        assertThat(sut.read()).isEmpty();
     }
 
     @Test
@@ -93,8 +79,8 @@ public class JsonFileAgentNetworkDaoTest {
         });
 
         ExecutorService executor = Executors.newFixedThreadPool(2);
-        executor.submit(() -> jsonFileAgentNetworkDao.read());
-        executor.submit(() -> jsonFileAgentNetworkDao.read());
+        executor.submit(() -> sut.read());
+        executor.submit(() -> sut.read());
         executor.shutdown();
         assertThat(executor.awaitTermination(2, TimeUnit.SECONDS)).isTrue();
 
@@ -104,7 +90,7 @@ public class JsonFileAgentNetworkDaoTest {
     @Test
     public void save_should_update_file() throws Exception {
         AgentNetworkForJsonFile agentNetwork = mock(AgentNetworkForJsonFile.class);
-        jsonFileAgentNetworkDao.save(agentNetwork);
+        sut.save(agentNetwork);
         verify(objectMapper).writeValue(file, agentNetwork);
     }
 
@@ -133,9 +119,9 @@ public class JsonFileAgentNetworkDaoTest {
         });
 
         ExecutorService executor = Executors.newFixedThreadPool(2);
-        executor.submit(() -> jsonFileAgentNetworkDao.save(agentNetwork));
+        executor.submit(() -> sut.save(agentNetwork));
         assertThat(enterWriting.tryAcquire(2, TimeUnit.SECONDS)).isTrue();
-        executor.submit(() -> jsonFileAgentNetworkDao.read());
+        executor.submit(() -> sut.read());
         readSubmitted.release();
         executor.shutdown();
         assertThat(executor.awaitTermination(4, TimeUnit.SECONDS)).isTrue();
@@ -162,9 +148,9 @@ public class JsonFileAgentNetworkDaoTest {
         }).when(objectMapper).writeValue(same(file), same(agentNetwork));
 
         ExecutorService executor = Executors.newFixedThreadPool(2);
-        executor.submit(() -> jsonFileAgentNetworkDao.save(agentNetwork));
+        executor.submit(() -> sut.save(agentNetwork));
         assertThat(enterFirstWrite.tryAcquire(2, TimeUnit.SECONDS)).isTrue();
-        executor.submit(() -> jsonFileAgentNetworkDao.save(agentNetwork));
+        executor.submit(() -> sut.save(agentNetwork));
         secondWriteSubmitted.release();
         executor.shutdown();
         assertThat(executor.awaitTermination(4, TimeUnit.SECONDS)).isTrue();
@@ -173,7 +159,7 @@ public class JsonFileAgentNetworkDaoTest {
     }
 
     @Test
-    @Ignore("instable : depends on machine performance...")
+    @Disabled("instable : depends on machine performance...")
     @SuppressWarnings("unchecked")
     public void write_should_wait_a_read_to_end() throws Exception {
         AtomicBoolean writing = new AtomicBoolean(false);
@@ -193,9 +179,9 @@ public class JsonFileAgentNetworkDaoTest {
         }).when(objectMapper).writeValue(same(file), same(agentNetwork));
 
         ExecutorService executor = Executors.newFixedThreadPool(2);
-        executor.submit(() -> jsonFileAgentNetworkDao.read());
+        executor.submit(() -> sut.read());
         assertThat(reading.tryAcquire(40, TimeUnit.MILLISECONDS)).isTrue();
-        executor.submit(() -> jsonFileAgentNetworkDao.save(agentNetwork));
+        executor.submit(() -> sut.save(agentNetwork));
         executor.shutdown();
         assertThat(executor.awaitTermination(200, TimeUnit.MILLISECONDS)).isTrue();
 
@@ -213,7 +199,7 @@ public class JsonFileAgentNetworkDaoTest {
 
         try (OutputStream outputStream = Files.newOutputStream(Files.createFile(backup))) {
             // When
-            jsonFileAgentNetworkDao.backup(outputStream);
+            sut.backup(outputStream);
         }
 
         // Then

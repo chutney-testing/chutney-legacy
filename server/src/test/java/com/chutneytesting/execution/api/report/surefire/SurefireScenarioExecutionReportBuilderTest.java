@@ -21,7 +21,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SurefireScenarioExecutionReportBuilderTest {
 
@@ -160,6 +160,7 @@ public class SurefireScenarioExecutionReportBuilderTest {
             "targetName",
             "targetUrl",
             "strategy",
+            Maps.newHashMap(),
             Maps.newHashMap());
     }
 

@@ -11,7 +11,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.chutneytesting.design.domain.compose.ComposableTestCaseRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.design.domain.scenario.gwt.GwtScenario;
@@ -19,18 +18,17 @@ import com.chutneytesting.design.domain.scenario.gwt.GwtStep;
 import com.chutneytesting.design.domain.scenario.gwt.GwtStepImplementation;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
+import com.chutneytesting.security.domain.User;
+import com.chutneytesting.security.domain.UserService;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicReference;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.MethodRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.junit.MockitoJUnit;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -39,17 +37,15 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class GwtTestCaseControllerTest {
 
-    @Rule
-    public MethodRule mockitoRule = MockitoJUnit.rule();
-
     private MockMvc mockMvc;
     private TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
     private ExecutionHistoryRepository executionHistoryRepository = mock(ExecutionHistoryRepository.class);
-    private ComposableTestCaseRepository composableTestCaseRepository = mock(ComposableTestCaseRepository.class);
+    private UserService userService = mock(UserService.class);
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        GwtTestCaseController testCaseController = new GwtTestCaseController(testCaseRepository, executionHistoryRepository, composableTestCaseRepository);
+        when(userService.getCurrentUser()).thenReturn(User.ANONYMOUS_USER);
+        GwtTestCaseController testCaseController = new GwtTestCaseController(testCaseRepository, executionHistoryRepository, userService);
         mockMvc = MockMvcBuilders.standaloneSetup(testCaseController).build();
 
         // Default stubbing
@@ -95,8 +91,8 @@ public class GwtTestCaseControllerTest {
             .withScenario(GwtScenario.builder()
                 .withGivens(Arrays.asList(
                     GwtStep.builder().withDescription("given 1").withSubSteps(
-                            GwtStep.builder().withDescription("given sub step 1.1").build(),
-                            GwtStep.builder().withDescription("given sub step 1.2").build()).build()
+                        GwtStep.builder().withDescription("given sub step 1.1").build(),
+                        GwtStep.builder().withDescription("given sub step 1.2").build()).build()
                     ,
                     GwtStep.builder().withDescription("given 2").build(),
                     GwtStep.builder().withDescription("given 3").build()

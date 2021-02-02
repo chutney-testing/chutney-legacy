@@ -12,7 +12,7 @@ import java.util.Optional;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.QueueBrowser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SelectedMessageConsumerTest {
 

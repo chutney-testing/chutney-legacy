@@ -22,9 +22,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class GitTestCaseRepositoryTest {
 
@@ -37,7 +37,7 @@ public class GitTestCaseRepositoryTest {
     String scenario2Id = String.valueOf("testFile2.json".hashCode());
     private JsonMapper<TestCaseData> jsonMapper;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         testPath = Paths.get(System.getProperty("user.home") + "/" + testDirectory);
         file1 = testPath.resolve("testFile1.json");
@@ -59,7 +59,7 @@ public class GitTestCaseRepositoryTest {
         try {
             GitScenarioRepository gitScenarioRepository = createTestGitRepository();
             TestCaseData scenario = TestCaseData.builder()
-                .withVersion("GIT")
+                .withContentVersion("GIT")
                 .withId("0")
                 .withTitle(scenarioName)
                 .withCreationDate(Instant.now())
@@ -78,7 +78,7 @@ public class GitTestCaseRepositoryTest {
             assertThat(shouldCreatedFile).hasContent("pouet");
 
             TestCaseData scenarioToUpdate = TestCaseData.builder()
-                .withVersion("GIT")
+                .withContentVersion("GIT")
                 .withId(idGenerated)
                 .withTitle(scenarioName)
                 .withDescription("")
@@ -104,8 +104,8 @@ public class GitTestCaseRepositoryTest {
     @Test
     public void should_rename_scenario() {
         GitScenarioRepository gitScenarioRepository = createTestGitRepository();
-        TestCaseData.TestCaseDataBuilder scenarioToMoveBuilder =  TestCaseData.builder()
-            .withVersion("GIT")
+        TestCaseData.TestCaseDataBuilder scenarioToMoveBuilder = TestCaseData.builder()
+            .withContentVersion("GIT")
             .withId(scenario2Id)
             .withTitle("other_name.json")
             .withDescription("")
@@ -123,7 +123,7 @@ public class GitTestCaseRepositoryTest {
         assertThat(newId).isEqualTo(String.valueOf("other_name.json".hashCode()));
 
         // move again
-        scenarioToMove = scenarioToMoveBuilder.withVersion("GIT").withId(newId).withTitle("testFile2.json").build();
+        scenarioToMove = scenarioToMoveBuilder.withContentVersion("GIT").withId(newId).withTitle("testFile2.json").build();
         when(jsonMapper.write(same(scenarioToMove))).thenReturn("some content");
         String move2 = gitScenarioRepository.save(scenarioToMove);
 
@@ -134,7 +134,7 @@ public class GitTestCaseRepositoryTest {
     @Test
     public void should_find_scenario_by_id() {
         GitScenarioRepository gitScenarioRepository = createTestGitRepository();
-        when(jsonMapper.read(any(), any())).thenReturn(TestCaseData.builder().withVersion("GIT").withId("0").build());
+        when(jsonMapper.read(any(), any())).thenReturn(TestCaseData.builder().withContentVersion("GIT").withId("0").build());
 
         Optional<TestCaseData> scenario = gitScenarioRepository.findById(scenario1Id);
 
@@ -166,14 +166,14 @@ public class GitTestCaseRepositoryTest {
         Files.createFile(file1);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         cleanTestDirectory();
     }
 
     private void cleanTestDirectory() throws IOException {
         if (testPath.toFile().exists()) {
-            try(Stream<Path> stream = Files.walk(testPath)) {
+            try (Stream<Path> stream = Files.walk(testPath)) {
                 stream.sorted(Comparator.reverseOrder())
                     .map(Path::toFile)
                     .forEach(File::delete);

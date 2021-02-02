@@ -7,7 +7,7 @@ import { DragulaService } from 'ng2-dragula';
 import { ComponentTask, KeyValue, ScenarioComponent } from '@model';
 import { ComponentService } from '@core/services';
 import { CanDeactivatePage } from '@core/guards';
-import { JiraLinkService } from '@core/services/jira-link.service';
+import { JiraPluginService } from '@core/services/jira-plugin.service';
 
 @Component({
     selector: 'chutney-component-edition',
@@ -30,11 +30,12 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
     modificationsSaved = false;
     datasetId: string;
     jiraId: string;
+    errorMessage: string;
 
     constructor(private componentService: ComponentService,
                 private dragulaService: DragulaService,
                 private formBuilder: FormBuilder,
-                private jiraLinkService: JiraLinkService,
+                private jiraLinkService: JiraPluginService,
                 private route: ActivatedRoute,
                 private router: Router
     ) {
@@ -51,11 +52,12 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
         ).subscribe(
             results => {
                 this.componentRefTasksArray = results[0];
+                const id = results[1]['id'];
                 const duplicate = this.route.snapshot.queryParamMap.get('duplicate');
                 if (duplicate) {
-                    this.load(results[1]['id'], true);
+                    this.load(id, true);
                 } else {
-                    this.load(results[1]['id'], false);
+                    this.load(id, false);
                 }
             });
     }
@@ -86,6 +88,9 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
             },
             (error) => {
                 console.log(error);
+                if (error.error) {
+                    this.errorMessage = error.error;
+                }
                 this.scenarioComponent.computedParameters = [];
             }
         );
@@ -151,6 +156,8 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
                     if (duplicate) {
                         this.scenarioComponent.id = null;
                         this.scenarioComponent.creationDate = null;
+                        this.scenarioComponent.updateDate = null;
+                        this.scenarioComponent.author = null;
                         this.scenarioComponent.title = '--COPY-- ' + this.scenarioComponent.title;
                     }
                 },

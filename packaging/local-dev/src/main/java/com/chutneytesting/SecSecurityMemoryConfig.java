@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 @Configuration
 @Profile("dev-auth")
@@ -18,18 +17,11 @@ public class SecSecurityMemoryConfig extends ChutneySecurityConfig {
         configureBaseHttpSecurity(http);
         http
             .anonymous()
-                .principal(anonymousChutneyUser())
+                .principal(User.ANONYMOUS_USER)
             .and()
             .authorizeRequests()
                 .anyRequest().permitAll()
             .and()
             .httpBasic();
-    }
-
-    private User anonymousChutneyUser() {
-        User user = new User();
-        user.setId("guest");
-        user.setName("guest");
-        return user;
     }
 }

@@ -1,0 +1,25 @@
+@import 'colors';
+
+:host ::ng-deep {
+
+    .popover {
+        max-width: 30vw; /* optional max width */
+        width: intrinsic; /* Safari/WebKit uses a non-standard name */
+        width: -moz-max-content; /* Firefox/Gecko */
+        width: -webkit-max-content; /* Chrome */
+        border: 0;
+        border-radius: 0.5rem;
+
+        .arrow {
+            &::after {
+                border-bottom-color: $bleu1;
+            }
+        }
+    }
+
+    .popover-body {
+        background-color: $bleu1;
+        color: $blanc;
+        border-radius: 0.5rem;
+    }
+}

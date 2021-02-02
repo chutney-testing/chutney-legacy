@@ -11,5 +11,7 @@ export class StepExecutionReport {
         public targetUrl: string,
         public evaluatedInputs: Map<string, Object>,
         public steps: Array<StepExecutionReport>,
-        public name?: string) {}
+        public stepOutputs: Map<string, Object>,
+        public name?: string,
+        ) {}
 }

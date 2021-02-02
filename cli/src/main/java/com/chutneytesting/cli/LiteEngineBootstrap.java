@@ -1,31 +1,26 @@
 package com.chutneytesting.cli;
 
+import com.chutneytesting.ExecutionConfiguration;
+import com.chutneytesting.cli.infrastruture.ExecutionRequestMapper;
+import com.chutneytesting.cli.infrastruture.ImmutableEnvironment;
+import com.chutneytesting.cli.infrastruture.ImmutableScenarioContent;
+import com.chutneytesting.cli.infrastruture.ScenarioContent;
+import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
+import com.chutneytesting.engine.api.execution.StepExecutionReportDto;
+import com.chutneytesting.engine.api.execution.TestEngine;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.google.common.base.Strings;
-import com.chutneytesting.cli.infrastruture.ExecutionRequestMapper;
-import com.chutneytesting.cli.infrastruture.ImmutableScenarioContent;
-import com.chutneytesting.cli.infrastruture.ScenarioContent;
-import com.chutneytesting.ExecutionSpringConfiguration;
-import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
-import com.chutneytesting.engine.api.execution.StepExecutionReportDto;
-import com.chutneytesting.engine.api.execution.TestEngine;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
 import org.hjson.JsonValue;
-import com.chutneytesting.cli.infrastruture.ImmutableEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.Banner.Mode;
-import org.springframework.boot.WebApplicationType;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -48,11 +43,10 @@ public class LiteEngineBootstrap implements Runnable {
 
     @Override
     public void run() {
-        final ApplicationContext context = startSpringContext();
+        ExecutionConfiguration executionConfiguration = new ExecutionConfiguration();
 
         ImmutableEnvironment originalEnvironmentObject = getEnvironment(environmentFile);
-
-        final TestEngine testEngine = (TestEngine) context.getBean("embeddedTestEngine");
+        final TestEngine testEngine = executionConfiguration.embeddedTestEngine();
 
         Arrays.asList(scenarios).stream().forEach(filePath -> {
             ScenarioContent scenario = getScenario(filePath);
@@ -103,15 +97,6 @@ public class LiteEngineBootstrap implements Runnable {
             .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
             .withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
         return objectMapper;
-    }
-
-    private ConfigurableApplicationContext startSpringContext() {
-        SpringApplicationBuilder appBuilder = new SpringApplicationBuilder(ExecutionSpringConfiguration.class)
-            .registerShutdownHook(true)
-            .web(WebApplicationType.NONE)
-            .bannerMode(Mode.OFF);
-
-        return appBuilder.build().run();
     }
 
     public static void main(String... args) {

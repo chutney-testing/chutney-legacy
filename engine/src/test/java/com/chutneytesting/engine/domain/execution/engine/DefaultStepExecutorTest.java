@@ -1,5 +1,6 @@
 package com.chutneytesting.engine.domain.execution.engine;
 
+import static com.chutneytesting.engine.domain.execution.ScenarioExecution.createScenarioExecution;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
@@ -18,7 +19,7 @@ import com.chutneytesting.task.spi.TaskExecutionResult;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DefaultStepExecutorTest {
 
@@ -33,7 +34,7 @@ public class DefaultStepExecutorTest {
         StepContext stepContext = mock(StepContext.class);
 
         StepExecutor stepExecutor = new DefaultStepExecutor(taskTemplateRegistry);
-        stepExecutor.execute(null, stepContext, mock(TargetImpl.class), step);
+        stepExecutor.execute(createScenarioExecution(), stepContext, mock(TargetImpl.class), step);
 
         verify(taskTemplate.create(any()), times(1)).execute();
         verify(step, times(0)).failure(any(Exception.class));
@@ -50,7 +51,7 @@ public class DefaultStepExecutorTest {
         StepContext stepContext = mock(StepContext.class);
 
         StepExecutor stepExecutor = new DefaultStepExecutor(taskTemplateRegistry);
-        stepExecutor.execute(null, stepContext, mock(TargetImpl.class), step);
+        stepExecutor.execute(createScenarioExecution(), stepContext, mock(TargetImpl.class), step);
 
         verify(step, times(1)).failure("Task [null] failed: java.lang.RuntimeException");
     }
@@ -72,7 +73,7 @@ public class DefaultStepExecutorTest {
         Step step = mock(Step.class, RETURNS_DEEP_STUBS);
 
         StepExecutor stepExecutor = new DefaultStepExecutor(taskTemplateRegistry);
-        stepExecutor.execute(null, stepContext, mock(TargetImpl.class), step);
+        stepExecutor.execute(createScenarioExecution(), stepContext, mock(TargetImpl.class), step);
 
         verify(step, times(0)).failure(any(Exception.class));
     }

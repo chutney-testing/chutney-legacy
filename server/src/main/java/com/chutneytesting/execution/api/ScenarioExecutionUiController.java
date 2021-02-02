@@ -1,20 +1,18 @@
 package com.chutneytesting.execution.api;
 
 import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
-import static com.chutneytesting.tools.ui.ComposableIdUtils.isComposableFrontId;
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.design.api.compose.dto.KeyValue;
-import com.chutneytesting.design.domain.compose.ComposableTestCaseRepository;
-import com.chutneytesting.design.domain.compose.FunctionalStep;
-import com.chutneytesting.design.domain.compose.StepRepository;
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableStepRepository;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngineAsync;
 import com.chutneytesting.security.domain.UserService;
+import com.chutneytesting.tools.ui.KeyValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Observable;
@@ -42,16 +40,14 @@ public class ScenarioExecutionUiController {
     private final ScenarioExecutionEngine executionEngine;
     private final ScenarioExecutionEngineAsync executionEngineAsync;
     private final TestCaseRepository testCaseRepository;
-    private final ComposableTestCaseRepository composableTestCaseRepository;
     private final ObjectMapper objectMapper;
-    private final StepRepository stepRepository;
+    private final ExecutableStepRepository stepRepository;
     private final UserService userService;
 
-    ScenarioExecutionUiController(ScenarioExecutionEngine executionEngine, ScenarioExecutionEngineAsync executionEngineAsync, TestCaseRepository testCaseRepository, ComposableTestCaseRepository composableTestCaseRepository, ObjectMapper objectMapper, StepRepository stepRepository, UserService userService) {
+    ScenarioExecutionUiController(ScenarioExecutionEngine executionEngine, ScenarioExecutionEngineAsync executionEngineAsync, TestCaseRepository testCaseRepository, ObjectMapper objectMapper, ExecutableStepRepository stepRepository, UserService userService) {
         this.executionEngine = executionEngine;
         this.executionEngineAsync = executionEngineAsync;
         this.testCaseRepository = testCaseRepository;
-        this.composableTestCaseRepository = composableTestCaseRepository;
         this.objectMapper = objectMapper;
         this.stepRepository = stepRepository;
         this.userService = userService;
@@ -69,9 +65,9 @@ public class ScenarioExecutionUiController {
     @PostMapping(path = "/api/ui/component/execution/v1/{componentId}/{env}")
     public String executeComponent(@PathVariable("componentId") String componentId, @PathVariable("env") String env) throws IOException {
         LOGGER.debug("executeComponent for componentId={{}] on env [{}]", componentId, env);
-        FunctionalStep functionalStep = stepRepository.findById(fromFrontId(Optional.of(componentId)));
+        ExecutableComposedStep composedStep = stepRepository.findExecutableById(fromFrontId(Optional.of(componentId)));
         String userId = userService.getCurrentUser().getId();
-        ScenarioExecutionReport report = executionEngine.execute(functionalStep, env, userId);
+        ScenarioExecutionReport report = executionEngine.execute(composedStep, env, userId);
         return objectMapper.writeValueAsString(report);
     }
 
@@ -86,12 +82,7 @@ public class ScenarioExecutionUiController {
     @PostMapping(path = "/api/ui/scenario/executionasync/v1/{scenarioId}/{env}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public String executeScenarioAsyncWithDataSet(@PathVariable("scenarioId") String scenarioId, @PathVariable("env") String env, @RequestBody List<KeyValue> dataSet) {
         LOGGER.debug("executeScenarioAsync for scenarioId='{}' with dataset '{}'", scenarioId, dataSet);
-        TestCase testCase;
-        if (isComposableFrontId(scenarioId)) {
-            testCase = composableTestCaseRepository.findById(fromFrontId(Optional.of(scenarioId)));
-        } else {
-            testCase = testCaseRepository.findById(scenarioId);
-        }
+        TestCase testCase = testCaseRepository.findById(fromFrontId(Optional.of(scenarioId)));
         Map<String, String> inlineDataSet = ofNullable(dataSet)
             .map(KeyValue::toMap)
             .orElseGet(HashMap::new);

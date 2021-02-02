@@ -6,19 +6,21 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.chutneytesting.RestExceptionHandler;
 import com.chutneytesting.design.api.scenario.v2_0.dto.ImmutableRawTestCaseDto;
 import com.chutneytesting.design.api.scenario.v2_0.dto.RawTestCaseDto;
 import com.chutneytesting.design.domain.scenario.ScenarioNotParsableException;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
+import com.chutneytesting.security.domain.User;
+import com.chutneytesting.security.domain.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -37,13 +39,16 @@ public class TestCaseControllerTest {
 
     private MockMvc mockMvc;
     private TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
+    private UserService userService = mock(UserService.class);
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        GwtTestCaseController testCaseController = new GwtTestCaseController(testCaseRepository, null, null);
+        when(userService.getCurrentUser()).thenReturn(User.ANONYMOUS_USER);
+
+        GwtTestCaseController testCaseController = new GwtTestCaseController(testCaseRepository, null, userService);
         mockMvc = MockMvcBuilders.standaloneSetup(testCaseController)
-                                 .setControllerAdvice(new RestExceptionHandler())
-                                 .build();
+            .setControllerAdvice(new RestExceptionHandler())
+            .build();
     }
 
     @Test
@@ -102,7 +107,7 @@ public class TestCaseControllerTest {
         // Given
         when(testCaseRepository.save(any(GwtTestCase.class))).thenThrow(new ScenarioNotParsableException("a title", new RuntimeException()));
         // When
-        String[] message = { null };
+        String[] message = {null};
         mockMvc.perform(
             MockMvcRequestBuilders.post("/api/scenario/v2/raw")
                 .content(om.writeValueAsString(SAMPLE_SCENARIO))

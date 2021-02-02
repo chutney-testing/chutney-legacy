@@ -1,44 +1,50 @@
-<div class="row m-4">
-    <div class="col-md-8 pl-3">
-        <div class="input-group">
-            <input type="text" class="form-control" placeholder="{{ 'campaigns.search.placeholder' | translate }}"
-                [(ngModel)]="campaignFilter">
-        </div>
-    </div>
-    <div class="col-md-4">
-        <button type="button" class="btn btn-outline-primary" (click)="createCampaign()">
+<div class="ml-5 mt-4">
+    <h2>Campagnes
+
+        <button type="button" class="btn btn-sm btn-outline-secondary ml-2" (click)="createCampaign()">
             <span class="fa fa-plus" aria-hidden="true"></span> {{ 'campaigns.list.actions.create' | translate }}
         </button>
-    </div>
+
+        <button type="button" class="btn btn-sm btn-outline-secondary ml-2" [routerLink]="['scheduling']">
+            <span class="fa fa-plus" aria-hidden="true"></span> {{ 'campaigns.scheduling.schedule' | translate }}
+        </button>
+
+    </h2>
 </div>
-<div class="row m-4">
+<div class="row ml-4">
     <div class="col-md-6 pr-2">
-        <h2>Campagnes</h2>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="{{ 'campaigns.search.placeholder' | translate }}"
+                   [(ngModel)]="campaignFilter">
+        </div>
+
         <div class="table-responsive" *ngIf="campaigns.length > 0">
             <table class="table table-sm table-striped table-hover">
                 <tbody>
-                    <tr *ngFor="let campaign of (campaigns | searchTextPipe : campaignFilter:['title','description'])">
-                        <td class="small_text w95">
-                             <a [routerLink]="['/campaign',campaign.id,'execution']" title="{{ 'campaigns.list.item.title.link.title' | translate }} {{campaign.title}}">{{campaign.title}}</a>
-                        </td>
-                        <td class="pl-0 w1">
-                            <button type="button" class="btn btn-link mr-0"
+                <tr *ngFor="let campaign of (campaigns | searchTextPipe : campaignFilter:['title','description'])">
+                    <td class="small_text w95">
+                        <a [routerLink]="['/campaign',campaign.id,'execution']"
+                           title="{{ 'campaigns.list.item.title.link.title' | translate }} {{campaign.title}}">{{campaign.title}}</a>
+                    </td>
+                    <td class="pl-0 w1">
+                        <button type="button" class="btn btn-link mr-0"
                                 ngbPopover="{{campaign.description}}" placement="left"
-                                triggers="mouseenter:mouseleave" container="body">
-                                <span class="fa fa-info-circle" aria-hidden="true"></span>
-                            </button>
-                        </td>
-                        <td class="pl-0 w2">
-                            <button type="button" class="btn btn-outline-danger" (click)="deleteCampaign(campaign.id, campaign.title)">
-                                <span class="fa fa-trash"></span>
-                            </button>
-                        </td>
-                        <td class="pl-0 w2">
-                            <button type="button" class="btn btn-light" (click)="editCampaign(campaign)">
-                                <span class="fa fa-pencil-alt"></span>
-                            </button>
-                        </td>
-                    </tr>
+                                triggers="mouseenter:mouseleave">
+                            <span class="fa fa-info-circle" aria-hidden="true"></span>
+                        </button>
+                    </td>
+                    <td class="pl-0 w2">
+                        <button type="button" class="btn btn-outline-danger"
+                                (click)="deleteCampaign(campaign.id, campaign.title)">
+                            <span class="fa fa-trash"></span>
+                        </button>
+                    </td>
+                    <td class="pl-0 w2">
+                        <button type="button" class="btn btn-light" (click)="editCampaign(campaign)">
+                            <span class="fa fa-pencil-alt"></span>
+                        </button>
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </div>
@@ -47,18 +53,27 @@
         </div>
     </div>
     <div class="col-md-6 pl-2">
+        <h2 *ngIf="scheduledCampaigns.length > 0">Prochaines executions</h2>
+        <div class="table-responsive" *ngIf="scheduledCampaigns.length > 0">
+            <table class="table table-sm table-striped">
+                <tr *ngFor="let scheduledCampaign of scheduledCampaigns">
+                    <td>#{{scheduledCampaign.campaignId}} - {{scheduledCampaign.campaignTitle}}</td>
+                    <td>{{scheduledCampaign.schedulingDate | amLocal | amDateFormat: 'YYYY-MM-DD HH:mm'}}</td>
+                </tr>
+            </table>
+        </div>
         <h2>Dernières executions</h2>
         <div class="table-responsive" *ngIf="campaigns.length > 0">
             <table class="table table-sm table-striped">
                 <tbody>
-                    <tr *ngFor="let report of lastCampaignReports" class="small_text">
-                        <td class="w25">{{ report.startDate | amDateFormat: 'DD MMM. YYYY HH:mm' }}</td>
-                        <td class="pl-0 w60">{{ report.campaignName }}</td>
-                        <td class="pl-0 w5">
-                            <chutney-execution-badge [status]="report.status" [spin]="true"></chutney-execution-badge>
-                        </td>
-                        <td class="text-center pl-0 w10">{{ report.duration | duration:'short'}}</td>
-                    </tr>
+                <tr *ngFor="let report of lastCampaignReports" class="small_text">
+                    <td class="w25">{{ report.startDate | amDateFormat: 'DD MMM. YYYY HH:mm' }}</td>
+                    <td class="pl-0 w60">{{ report.campaignName }}</td>
+                    <td class="pl-0 w5">
+                        <chutney-execution-badge [status]="report.status" [spin]="true"></chutney-execution-badge>
+                    </td>
+                    <td class="text-center pl-0 w10">{{ report.duration | duration:'short'}}</td>
+                </tr>
                 </tbody>
             </table>
         </div>

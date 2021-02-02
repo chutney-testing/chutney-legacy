@@ -1,15 +1,17 @@
 package com.chutneytesting.design.infra.storage.scenario.git.json.versionned;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import com.chutneytesting.design.infra.storage.scenario.jdbc.TestCaseData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.chutneytesting.design.infra.storage.scenario.jdbc.TestCaseData;
 import java.io.Reader;
 import java.io.StringReader;
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Answers;
 import org.mockito.Mockito;
 
@@ -25,7 +27,7 @@ public class JsonMapperTest {
 
     JsonMapper<String> mapper;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Mockito.when(currentMapper.version()).thenReturn("2");
         Mockito.when(oldmapper.version()).thenReturn("1");
@@ -81,9 +83,10 @@ public class JsonMapperTest {
         Assertions.assertThat(result).isEqualTo("result");
     }
 
-    @Test(expected = NoMapperForJsonVersionException.class)
+    @Test
     public void read_version_not_supported() {
-        mapper.read(createReader("3", "data"));
+        assertThatThrownBy(() -> mapper.read(createReader("3", "data")))
+            .isInstanceOf(NoMapperForJsonVersionException.class);
     }
 
     @Test

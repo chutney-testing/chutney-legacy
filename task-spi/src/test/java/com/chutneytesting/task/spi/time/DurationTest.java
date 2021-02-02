@@ -3,20 +3,15 @@ package com.chutneytesting.task.spi.time;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.util.function.Supplier;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-import junitparams.naming.TestCaseName;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(JUnitParamsRunner.class)
 public class DurationTest {
 
-    @Test
-    @Parameters
-    @TestCaseName("{0} is parsed to {1} ms")
-    public void parsing_nominal_cases(String durationAsString, long expectedMilliseconds, String expectedStringRepresentation) {
+    @ParameterizedTest(name = "\"{0} is parsed to {1} ms\"")
+    @MethodSource("parametersForParsing_nominal_cases")
+    public void parsing_nominal_cases(String durationAsString, double expectedMilliseconds, String expectedStringRepresentation) {
         Duration duration = Duration.parse(durationAsString);
         SoftAssertions softly = new SoftAssertions();
         softly.assertThat(Math.abs(duration.toMilliseconds() - expectedMilliseconds)).isLessThan(10 * 60 * 1000); // comparison with +-1.5 sec precision for slow runner
@@ -27,20 +22,21 @@ public class DurationTest {
     public static Object[] parametersForParsing_nominal_cases() {
         Supplier<Long> durationInMsUntil = () -> UntilHourDurationParserTest.millisTo(17, 42);
         return new Object[][]{
+            {"5890 ns", 5890 * 0.00001, "5890 ns"},
+            {"765 \u03bcs", 765 * 0.001, "765 \u03bcs"},
             {"10 m", 10 * 60 * 1000, "10 min"},
             {"until 17:42", durationInMsUntil.get(), null}
         };
     }
 
-    @Test
-    @Parameters
-    @TestCaseName("Parsing {0} fails")
-    public void parsing_error_cases(String duration, String expectedErrorMessage) throws Exception {
+    @ParameterizedTest(name = "Parsing {0} fails")
+    @MethodSource("parametersForParsing_error_cases")
+    public void parsing_error_cases(String duration, String expectedErrorMessage) {
         assertThatExceptionOfType(IllegalArgumentException.class)
             .isThrownBy(() -> Duration.parse(duration))
             .withMessage("Cannot parse duration: " + duration + "\n" +
                 "Available patterns are:\n" +
-            "- Duration with unit: <positive number> (ms|sec|s|min|m|hours|hour|h|hour(s)|day(s)|d|days|day)\n" +
+            "- Duration with unit: <positive number> (ns|\u03bcs|\u00b5s|ms|sec|s|min|m|hours|hour|h|hour(s)|day(s)|d|days|day)\n" +
             "Samples:\n" +
                 "\t 3 min\n" +
                 "\t 4,5 hours\n" +

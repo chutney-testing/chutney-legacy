@@ -5,7 +5,7 @@
             "campaigns": "Campagnes",
             "targets": "Targets",
             "workers": "Agents",
-            "configuration": "Configuration",
+            "plugins": "Plugins",
             "databaseAdmin": "BDD",
             "storesAdmin": "Stores",
             "documentation": "Documentation",
@@ -84,7 +84,9 @@
                 "execution": "Impossible d'exécuter le scénario",
                 "parse": "Impossible de parser le scénario"
             },
-            "dataset.title": "Paramètres"
+            "dataset.title": "Paramètres",
+            "inputs": "Entrées",
+            "outputs": "Sorties"
         },
         "edition": {
             "title": {
@@ -191,6 +193,18 @@
         "confirm": {
             "deletion.prefix": "Etes-vous sûr de vouloir supprimer la campagne ",
             "deletion.suffix": " ?"
+        },
+        "scheduling": {
+            "title" : "Planifier une nouvelle execution de campagne",
+            "schedule": "Planifier",
+            "back": "Retour",
+            "campaign" : "Campagne",
+            "schedulingDate": "Date planifiée",
+            "required": {
+                "campaign": "Sélectionner une campagne",
+                "time": "Saisir un horaire",
+                "date": "Saisir une date"
+            }
         }
     },
     "dataset": {
@@ -323,7 +337,8 @@
         }
     },
     "login": {
-        "disconnected": "Vous vous êtes bien déconnectés",
+        "logout": "Vous êtes déconnecté",
+        "invalid": "Votre session s'est terminée",
         "username": "Nom d'utilisateur",
         "password": "Mot de passe (Sesame)"
     },

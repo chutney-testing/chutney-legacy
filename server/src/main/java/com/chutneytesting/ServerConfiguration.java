@@ -1,13 +1,14 @@
 package com.chutneytesting;
 
-import com.chutneytesting.agent.domain.configure.LocalServerIdentifier;
 import com.chutneytesting.design.domain.campaign.CampaignRepository;
 import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
-import com.chutneytesting.design.domain.environment.EnvironmentRepository;
-import com.chutneytesting.design.domain.environment.EnvironmentService;
-import com.chutneytesting.design.domain.jira.JiraRepository;
+import com.chutneytesting.design.domain.editionlock.TestCaseEditions;
+import com.chutneytesting.design.domain.editionlock.TestCaseEditionsService;
+import com.chutneytesting.design.domain.plugins.jira.JiraRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.engine.api.execution.TestEngine;
+import com.chutneytesting.environment.domain.EnvironmentRepository;
+import com.chutneytesting.environment.domain.EnvironmentService;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessor;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;
@@ -19,19 +20,19 @@ import com.chutneytesting.execution.domain.scenario.ServerTestEngine;
 import com.chutneytesting.execution.domain.state.ExecutionStateRepository;
 import com.chutneytesting.execution.infra.execution.ExecutionRequestMapper;
 import com.chutneytesting.execution.infra.execution.ServerTestEngineJavaImpl;
-import com.chutneytesting.instrument.domain.Metrics;
+import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import com.chutneytesting.security.domain.UserService;
+import com.chutneytesting.task.api.EmbeddedTaskEngine;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.Clock;
 import java.util.List;
-import java.util.Optional;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import liquibase.integration.spring.SpringLiquibase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jms.activemq.ActiveMQAutoConfiguration;
@@ -57,23 +58,16 @@ public class ServerConfiguration {
     }
 
     @Bean
+    public ExecutionConfiguration executionConfiguration(@Value("${chutney.engine.reporter.publisher.ttl:5}") Long reporterTTL) {
+        return new ExecutionConfiguration(reporterTTL);
+    }
+
+    @Bean
     public SpringLiquibase liquibase(DataSource dataSource) {
         SpringLiquibase liquibase = new SpringLiquibase();
         liquibase.setChangeLog("classpath:changelog/db.changelog-master.xml");
         liquibase.setDataSource(dataSource);
         return liquibase;
-    }
-
-    @Bean
-    LocalServerIdentifier localServerIdentifier(@Value("${server.port}") int port,
-                                                @Value("${localAgent.defaultName:#{null}}") Optional<String> defaultLocalName,
-                                                @Value("${localAgent.defaultHostName:#{null}}") Optional<String> defaultLocalHostName
-    ) throws UnknownHostException {
-        InetAddress localHost = InetAddress.getLocalHost();
-        return new LocalServerIdentifier(
-            port,
-            defaultLocalName.orElse(localHost.getHostName()),
-            defaultLocalHostName.orElse(localHost.getCanonicalHostName()));
     }
 
     @Bean
@@ -90,7 +84,7 @@ public class ServerConfiguration {
     ScenarioExecutionEngineAsync scenarioExecutionEngineAsync(ExecutionHistoryRepository executionHistoryRepository,
                                                               ServerTestEngine executionEngine,
                                                               ExecutionStateRepository executionStateRepository,
-                                                              Metrics metrics,
+                                                              ChutneyMetrics metrics,
                                                               TestCasePreProcessors testCasePreProcessors,
                                                               ObjectMapper objectMapper,
                                                               DataSetHistoryRepository dataSetHistoryRepository,
@@ -119,8 +113,10 @@ public class ServerConfiguration {
                                                     ExecutionHistoryRepository executionHistoryRepository,
                                                     TestCaseRepository testCaseRepository,
                                                     DataSetHistoryRepository dataSetHistoryRepository,
-                                                    JiraXrayPlugin jiraXrayPlugin) {
-        return new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository, jiraXrayPlugin);
+                                                    JiraXrayPlugin jiraXrayPlugin,
+                                                    ChutneyMetrics metrics,
+                                                    @Value("${chutney.campaigns.thread:20}") Integer threadForCampaigns) {
+        return new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository, jiraXrayPlugin, metrics, threadForCampaigns);
     }
 
     @Bean
@@ -133,16 +129,34 @@ public class ServerConfiguration {
         return new UserService();
     }
 
+    @Bean
+    TestCaseEditionsService testCaseEditionsService(TestCaseEditions testCaseEditions, TestCaseRepository testCaseRepository) {
+        return new TestCaseEditionsService(testCaseEditions, testCaseRepository);
+    }
 
     @Bean
-    ServerTestEngine javaTestEngine(@Qualifier("embeddedTestEngine") TestEngine testEngine,
-                                    ExecutionRequestMapper executionRequestMapper) {
-        return new ServerTestEngineJavaImpl(testEngine, executionRequestMapper);
+    TestEngine embeddedTestEngine(ExecutionConfiguration executionConfiguration) {
+        return executionConfiguration.embeddedTestEngine();
+    }
+
+    @Bean
+    ServerTestEngine javaTestEngine(TestEngine embeddedTestEngine, ExecutionRequestMapper executionRequestMapper) {
+        return new ServerTestEngineJavaImpl(embeddedTestEngine, executionRequestMapper);
+    }
+
+    @Bean
+    EmbeddedTaskEngine embeddedTaskEngine(ExecutionConfiguration executionConfiguration) {
+        return new EmbeddedTaskEngine(executionConfiguration.taskTemplateRegistry());
     }
 
     @Bean
     JiraXrayPlugin jiraXrayPlugin(JiraRepository jiraRepository, ObjectMapper objectMapper) {
         return new JiraXrayPlugin(jiraRepository, objectMapper);
+    }
+
+    @Bean
+    Clock clock() {
+        return Clock.systemDefaultZone();
     }
 
 }

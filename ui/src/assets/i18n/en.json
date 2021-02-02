@@ -5,7 +5,7 @@
             "campaigns": "Campaigns",
             "targets": "Targets",
             "workers": "Nodes",
-            "configuration": "Configuration",
+            "plugins": "Plugins",
             "databaseAdmin": "DB",
             "storesAdmin": "Stores",
             "documentation": "Documentation",
@@ -84,7 +84,9 @@
                 "execution": "Scenario can't be executed",
                 "parse": "Scenario can't be parsed"
             },
-            "dataset.title": "Dataset"
+            "dataset.title": "Dataset",
+            "inputs": "Inputs",
+            "outputs": "Outputs"
         },
         "edition": {
             "title": {
@@ -191,6 +193,18 @@
         "confirm": {
             "deletion.prefix": "Are you sure you want to delete the campaign ",
             "deletion.suffix": "?"
+        },
+        "scheduling": {
+            "title" : "Schedule a new campaign execution",
+            "schedule": "Schedule",
+            "back": "Back",
+            "campaign" : "Campaign",
+            "schedulingDate": "Scheduling date",
+            "required": {
+                "campaign": "Campaign required",
+                "time": "Time required",
+                "date": "Date required"
+            }
         }
     },
     "dataset": {
@@ -323,7 +337,8 @@
         }
     },
     "login": {
-        "disconnected": "You are disconnected",
+        "logout": "You are disconnected",
+        "invalid": "Your session has ended",
         "username": "Username",
         "password": "Password"
     },

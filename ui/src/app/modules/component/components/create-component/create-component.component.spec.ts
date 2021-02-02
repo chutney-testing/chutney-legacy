@@ -30,7 +30,7 @@ describe('CreateComponent...', () => {
 
         const dragulaService = new DragulaService();
 
-        beforeEach(async(() => {
+        beforeEach(() => {
             TestBed.resetTestingModule();
             TestBed.configureTestingModule({
                 imports: [
@@ -57,7 +57,7 @@ describe('CreateComponent...', () => {
                     {provide: DragulaService, useValue: dragulaService}
                 ]
             }).compileComponents();
-        }));
+        });
 
         beforeEach(() => {
             fixture = TestBed.createComponent(CreateComponent);

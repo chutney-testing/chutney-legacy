@@ -10,8 +10,25 @@ chutney:
         mail: user@user.com
         password: user
         profiles:
-          -
-            UTILISATEUR
+          - USER
+      -
+        id: robert
+        name: robert
+        firstname: robert
+        lastname: robert
+        mail: robert@robert.com
+        password: robert
+        profiles:
+          - USER
+      -
+        id: paloma
+        name: paloma
+        firstname: paloma
+        lastname: paloma
+        mail: paloma@paloma.com
+        password: paloma
+        profiles:
+          - USER
       -
         id: admin
         name: admin
@@ -20,8 +37,7 @@ chutney:
         mail: admin@admin.com
         password: admin
         profiles:
-          -
-            ADMINISTRATEUR
+          - ADMIN
       -
         id: both
         name: both
@@ -30,6 +46,5 @@ chutney:
         mail: both@both.com
         password: both
         profiles:
-          -
-            UTILISATEUR
-            ADMINISTRATEUR
+          - USER
+          - ADMIN

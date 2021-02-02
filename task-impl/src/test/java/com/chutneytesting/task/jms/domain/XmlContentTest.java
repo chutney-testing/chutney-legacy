@@ -8,7 +8,7 @@ import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class XmlContentTest {
 

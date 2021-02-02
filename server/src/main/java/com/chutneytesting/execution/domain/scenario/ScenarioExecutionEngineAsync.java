@@ -16,7 +16,7 @@ import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.execution.domain.report.StepExecutionReportCore;
 import com.chutneytesting.execution.domain.state.ExecutionStateRepository;
-import com.chutneytesting.instrument.domain.Metrics;
+import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Ascii;
@@ -46,7 +46,7 @@ public class ScenarioExecutionEngineAsync {
     private final ExecutionHistoryRepository executionHistoryRepository;
     private final ServerTestEngine executionEngine;
     private final ExecutionStateRepository executionStateRepository;
-    private final Metrics metrics;
+    private final ChutneyMetrics metrics;
     private final TestCasePreProcessors testCasePreProcessors;
     private final DataSetHistoryRepository dataSetHistoryRepository;
 
@@ -57,7 +57,7 @@ public class ScenarioExecutionEngineAsync {
     public ScenarioExecutionEngineAsync(ExecutionHistoryRepository executionHistoryRepository,
                                         ServerTestEngine executionEngine,
                                         ExecutionStateRepository executionStateRepository,
-                                        Metrics metrics,
+                                        ChutneyMetrics metrics,
                                         TestCasePreProcessors testCasePreProcessors,
                                         ObjectMapper objectMapper,
                                         DataSetHistoryRepository dataSetHistoryRepository) {
@@ -67,7 +67,7 @@ public class ScenarioExecutionEngineAsync {
     public ScenarioExecutionEngineAsync(ExecutionHistoryRepository executionHistoryRepository,
                                         ServerTestEngine executionEngine,
                                         ExecutionStateRepository executionStateRepository,
-                                        Metrics metrics,
+                                        ChutneyMetrics metrics,
                                         TestCasePreProcessors testCasePreProcessors,
                                         ObjectMapper objectMapper,
                                         DataSetHistoryRepository dataSetHistoryRepository,
@@ -92,7 +92,7 @@ public class ScenarioExecutionEngineAsync {
      */
     public Long execute(ExecutionRequest executionRequest) {
         // Compile testcase for execution
-        ExecutionRequest executionRequestProcessed = new ExecutionRequest(testCasePreProcessors.apply(executionRequest), executionRequest.environment, executionRequest.withScenarioDefaultDataSet, executionRequest.userId);
+        ExecutionRequest executionRequestProcessed = new ExecutionRequest(testCasePreProcessors.apply(executionRequest), executionRequest.environment, executionRequest.withExternalDataset, executionRequest.userId);
         // Initialize execution history
         ExecutionHistory.Execution storedExecution = storeInitialReport(executionRequestProcessed);
         // Start engine execution
@@ -157,7 +157,7 @@ public class ScenarioExecutionEngineAsync {
     }
 
     private ExecutionHistory.Execution storeInitialReport(ExecutionRequest executionRequest) {
-        Optional<Pair<String, Integer>> executionDataSet = findExecutionDataSet(executionRequest);
+        Optional<Pair<String, Integer>> executionDataSet = findExecutionDataset(executionRequest);
         DetachedExecution detachedExecution = ImmutableExecutionHistory.DetachedExecution.builder()
             .time(LocalDateTime.now())
             .duration(0L)
@@ -269,7 +269,7 @@ public class ScenarioExecutionEngineAsync {
         LOGGER.trace("Send metrics for execution {}", executionId);
         try {
             ExecutionHistory.Execution execution = executionHistoryRepository.getExecution(testCase.id(), executionId);
-            metrics.onExecutionEnded(testCase.metadata().title(), execution.status(), execution.duration());
+            metrics.onScenarioExecutionEnded(testCase,execution);
         } catch (Exception e) {
             LOGGER.error("Send metrics for execution {} failed", executionId, e);
         }
@@ -311,8 +311,8 @@ public class ScenarioExecutionEngineAsync {
         }
     }
 
-    private Optional<Pair<String, Integer>> findExecutionDataSet(ExecutionRequest executionRequest) {
-        if (executionRequest.withScenarioDefaultDataSet) {
+    private Optional<Pair<String, Integer>> findExecutionDataset(ExecutionRequest executionRequest) {
+        if (executionRequest.withExternalDataset) {
             return executionRequest.testCase.metadata().datasetId()
                 .map(datasetId -> Pair.of(datasetId, dataSetHistoryRepository.lastVersion(datasetId)));
         }

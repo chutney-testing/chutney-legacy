@@ -13,6 +13,7 @@ public class NotNullAsserter implements PlaceholderAsserter {
 
     @Override
     public boolean assertValue(Logger logger, Object actual, Object expected) {
+        logger.info("Verify " + actual + " != null");
         return actual != null;
     }
 

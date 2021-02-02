@@ -5,14 +5,14 @@ import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // External libs
 import { MomentModule } from 'angular2-moment';
-import { NgbModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FileSaverModule } from 'ngx-filesaver';
 import { AngularMultiSelectModule } from 'angular2-multiselect-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-    PerfectScrollbarModule,
+    PERFECT_SCROLLBAR_CONFIG,
     PerfectScrollbarConfigInterface,
-    PERFECT_SCROLLBAR_CONFIG
+    PerfectScrollbarModule
 } from 'ngx-perfect-scrollbar';
 // Internal common
 import { SharedModule } from '@shared/shared.module';
@@ -33,6 +33,8 @@ import { HeaderComponent } from './components/sub/header/header.component';
 import { ScenarioCampaignsComponent } from '@modules/scenarios/components/sub/scenario-campaigns/scenario-campaigns.component';
 import { ComponentReadComponent } from './components/execution/component-read/component-read.component';
 import { GwtReadComponent } from './components/execution/gwt-read/gwt-read.component';
+import { AuthoringInfoComponent } from './components/edition/authoring-info/authoring-info.component';
+import { EditionInfoComponent } from './components/edition/edition-info/edition-info.component';
 
 const ROUTES = [
     ...scenarioRoute
@@ -75,7 +77,9 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
         ExecuteComponent,
         HeaderComponent,
         ComponentReadComponent,
-        GwtReadComponent
+        GwtReadComponent,
+        AuthoringInfoComponent,
+        EditionInfoComponent
     ],
     providers: [
         {

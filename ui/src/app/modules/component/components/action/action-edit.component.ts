@@ -17,6 +17,7 @@ export class ActionEditComponent implements OnChanges {
     @Output() createEvent = new EventEmitter();
     @Output() deleteEvent = new EventEmitter();
     @Output() cancelEvent = new EventEmitter();
+    @Output() duplicateEvent = new EventEmitter();
 
     actionForm: FormGroup;
 
@@ -72,6 +73,14 @@ export class ActionEditComponent implements OnChanges {
 
     delete() {
         this.deleteEvent.emit(this.editComponent.id);
+    }
+
+    duplicate() {
+        this.editComponent = Object.assign({}, this.editComponent);
+        this.editComponent.id = null;
+        this.parents = null;
+        this.actionForm.controls.name.patchValue('--COPY-- ' + this.actionForm.value['name']);
+        this.duplicateEvent.emit();
     }
 
     edit() {

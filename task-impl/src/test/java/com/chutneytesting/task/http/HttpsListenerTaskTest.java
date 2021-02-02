@@ -1,32 +1,30 @@
 package com.chutneytesting.task.http;
 
+import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Failure;
+import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Success;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.any;
 import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Failure;
-import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Success;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.verification.LoggedRequest;
+import com.chutneytesting.task.TestLogger;
+import com.chutneytesting.task.http.function.WireMockFunction;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Logger;
-import com.chutneytesting.task.TestLogger;
-import com.chutneytesting.task.http.function.WireMockFunction;
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.verification.LoggedRequest;
 import java.util.List;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.util.SocketUtils;
 import org.springframework.web.client.RestTemplate;
 
-@RunWith(JUnitParamsRunner.class)
 public class HttpsListenerTaskTest {
 
     private int wireMockPort = SocketUtils.findAvailableTcpPort();
@@ -34,7 +32,7 @@ public class HttpsListenerTaskTest {
     private Logger logger = new TestLogger();
     private WireMockServer server = new WireMockServer(wireMockConfig().port(wireMockPort));
 
-    @Before
+    @BeforeEach
     public void setUp() {
         server.start();
 
@@ -43,13 +41,13 @@ public class HttpsListenerTaskTest {
         );
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         server.stop();
     }
 
-    @Test
-    @Parameters({"/test.*", "/.*"})
+    @ParameterizedTest
+    @ValueSource(strings = {"/test.*", "/.*"})
     public void should_success_when_receive_1_expected_message(String listenedUri) {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.postForLocation("http://localhost:" + wireMockPort + "/test?param=toto&param2=toto2", "fake request");

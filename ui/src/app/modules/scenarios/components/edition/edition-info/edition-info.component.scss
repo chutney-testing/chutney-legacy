@@ -1,0 +1,51 @@
+@import 'node_modules/bootstrap/scss/bootstrap';
+@import 'colors';
+@import 'mixins';
+@import 'animations';
+
+:host ::ng-deep {
+
+    .popover {
+        max-width: 30vw; /* optional max width */
+        width: intrinsic; /* Safari/WebKit uses a non-standard name */
+        width: -moz-max-content; /* Firefox/Gecko */
+        width: -webkit-max-content; /* Chrome */
+        border: 0;
+        border-radius: 0.5rem;
+
+        .arrow {
+            &::after {
+                border-bottom-color: $bleu1;
+            }
+        }
+    }
+
+    .popover-body {
+        background-color: $bleu1;
+        color: $blanc;
+        border-radius: 0.5rem;
+    }
+}
+
+@include box-shadow-animation(
+  $animation_name: edition-btn-anim,
+  $fromOffsetX: 4px,
+  $fromOffsetY: 4px,
+  $fromBlur: 8px,
+  $fromSpread: 0,
+  $fromColor: rgba($warning, 30),
+  $toOffsetX: 8px,
+  $toOffsetY: 8px,
+  $toBlur: 16px,
+  $toSpread: 0,
+  $toColor: rgba($danger, 30)
+);
+
+.edition-btn-anim {
+    @include animation(
+        $animation_name: edition-btn-anim,
+        $animation_duration: 1000ms,
+        $animation_timing-function: linear,
+        $animation_iteration-count: infinite,
+        $animation_direction: alternate);
+}

@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 
 import java.util.Map;
 import org.apache.groovy.util.Maps;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DataSetTest {
 

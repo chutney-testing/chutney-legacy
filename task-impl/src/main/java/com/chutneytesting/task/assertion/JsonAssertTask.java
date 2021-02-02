@@ -57,10 +57,10 @@ public class JsonAssertTask implements Task {
                     Object expected = entry.getValue();
                     Object actualValue = document.read(path);
 
-                boolean result;
+                    boolean result;
 
                     Optional<PlaceholderAsserter> asserts = PlaceholderAsserterUtils.getAsserterMatching(expected);
-                    if(asserts.isPresent()) {
+                    if (asserts.isPresent()) {
                         result = asserts.get().assertValue(logger, actualValue, expected);
                     } else if (actualValue == null) {
                         logger.error("Path [" + path + "] not found");

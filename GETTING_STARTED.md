@@ -55,9 +55,7 @@ Main class : com.chutneytesting.ServerBootstrap
 
 ### Running the tests
 
-mvn test to launch to type of test : 
-	- unit test
-	- cucumber test. Features are in [server/src/test/resources/blackbox](server/src/test/resources/blackbox)
-	- [run configuration for Intellij IDEA](https://github.com/chutney-testing/chutney/tree/master/.idea/runConfigurations)
-
-
+- Run Unit Test: `mvn test`
+    - Chutney now eats its own dog food,
+    - [Glacio features](https://github.com/chutney-testing/glacio) in [server/src/test/resources/blackbox](server/src/test/resources/blackbox) are run by JUnit using [chutney-junit](https://github.com/chutney-testing/chutney-junit) and [glacio-adapter](glacio-adapter)
+- [run configuration for Intellij IDEA](.idea/runConfigurations)

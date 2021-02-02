@@ -8,14 +8,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ExamplesRepositoryTest {
 
     private Map<String, String> examples = new HashMap<>();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         examples.put("titre", "{\n" +
             "    scenario : {\n" +
@@ -71,5 +71,14 @@ public class ExamplesRepositoryTest {
         Optional<TestCaseData> example = examplesRepository.findById(String.valueOf("titre".hashCode()));
 
         assertThat(example.isPresent()).isTrue();
+    }
+
+    @Test
+    public void should_get_last_version() {
+        ExamplesRepository examplesRepository = new ExamplesRepository(true, examples);
+
+        Optional<Integer> version = examplesRepository.lastVersion(String.valueOf("titre".hashCode()));
+
+        assertThat(version).hasValue(1);
     }
 }

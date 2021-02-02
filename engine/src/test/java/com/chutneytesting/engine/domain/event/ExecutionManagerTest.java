@@ -8,15 +8,15 @@ import com.chutneytesting.engine.domain.execution.RxBus;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.event.StartScenarioExecutionEvent;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ExecutionManagerTest {
 
     private ExecutionManager em = new ExecutionManager();
     ScenarioExecution execution = ScenarioExecution.createScenarioExecution();
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         Step step = mock(Step.class);
         RxBus.getInstance().post(new StartScenarioExecutionEvent(execution, step));

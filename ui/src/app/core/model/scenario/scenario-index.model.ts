@@ -15,6 +15,9 @@ export class ScenarioIndex {
         public description?: string,
         public repositorySource?: string,
         public creationDate?: Date,
+        public updateDate?: Date,
+        public version?: number,
+        public author?: string,
         public tags: Array<string> = [],
         public executions?: Array<Execution>
     ) {

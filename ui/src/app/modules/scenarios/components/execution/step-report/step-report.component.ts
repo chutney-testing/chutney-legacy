@@ -61,6 +61,16 @@ export class StepReportComponent implements OnInit, OnDestroy {
         return size > 0;
     }
 
+    hasOutputs(): boolean {
+        let size = 0;
+        if (this.step.stepOutputs) {
+            for (const key of Object.getOwnPropertyNames(this.step.stepOutputs)) {
+                size++;
+            }
+        }
+        return size > 0;
+    }
+
     showInformation(event: MouseEvent) {
         this.informationCollapsed = !this.informationCollapsed;
         event.stopPropagation();

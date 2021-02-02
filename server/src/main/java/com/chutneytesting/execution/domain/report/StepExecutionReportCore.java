@@ -23,6 +23,7 @@ public class StepExecutionReportCore implements ServerReportStatus.HavingStatus 
     public final String targetUrl;
     public final String strategy;
     public final Map<String, Object> evaluatedInputs;
+    public final Map<String, Object> stepOutputs;
 
     @JsonCreator
     public StepExecutionReportCore(@JsonProperty("executionId") Long executionId,
@@ -38,7 +39,7 @@ public class StepExecutionReportCore implements ServerReportStatus.HavingStatus 
                                    @JsonProperty("targetUrl") String targetUrl,
                                    @JsonProperty("strategy") String strategy
     ) {
-        this(executionId, name, duration, startDate, status, information, errors, steps, type, targetName, targetUrl, strategy, null);
+        this(executionId, name, duration, startDate, status, information, errors, steps, type, targetName, targetUrl, strategy, null, null);
     }
 
     public StepExecutionReportCore(Long executionId,
@@ -53,7 +54,8 @@ public class StepExecutionReportCore implements ServerReportStatus.HavingStatus 
                                    String targetName,
                                    String targetUrl,
                                    String strategy,
-                                   Map<String, Object> evaluatedInputs
+                                   Map<String, Object> evaluatedInputs,
+                                   Map<String, Object> stepOutputs
     ) {
         this.executionId = executionId;
         this.name = name;
@@ -68,6 +70,7 @@ public class StepExecutionReportCore implements ServerReportStatus.HavingStatus 
         this.targetUrl = targetUrl;
         this.strategy = strategy;
         this.evaluatedInputs = evaluatedInputs;
+        this.stepOutputs = stepOutputs;
     }
 
     @Override

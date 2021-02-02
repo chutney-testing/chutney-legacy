@@ -1,11 +1,14 @@
 package com.chutneytesting.design.api.scenario.v2_0.dto;
 
+import static java.time.Instant.now;
+import static java.util.Collections.emptyList;
+
+import com.chutneytesting.security.domain.User;
+import com.chutneytesting.tools.ui.KeyValue;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.chutneytesting.design.api.compose.dto.KeyValue;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.immutables.value.Value;
@@ -29,10 +32,27 @@ public interface RawTestCaseDto {
 
     @Value.Default()
     default Instant creationDate() {
-        return Instant.now();
+        return now();
     }
 
     @Value.Default()
-    default List<KeyValue> computedParameters() { return Collections.emptyList(); }
+    default String author() {
+        return User.ANONYMOUS_USER.getId();
+    }
+
+    @Value.Default()
+    default Instant updateDate() {
+        return now();
+    }
+
+    @Value.Default()
+    default Integer version() {
+        return 1;
+    }
+
+    @Value.Default()
+    default List<KeyValue> computedParameters() {
+        return emptyList();
+    }
 
 }

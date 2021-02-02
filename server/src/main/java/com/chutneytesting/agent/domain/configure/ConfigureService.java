@@ -6,9 +6,9 @@ import com.chutneytesting.agent.domain.explore.ExploreResult;
 import com.chutneytesting.agent.domain.network.AgentGraph;
 import com.chutneytesting.agent.domain.network.ImmutableNetworkDescription;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
-import com.chutneytesting.design.domain.environment.Environment;
-import com.chutneytesting.design.domain.environment.EnvironmentRepository;
-import java.util.stream.Collectors;
+import com.chutneytesting.environment.domain.Environment;
+import com.chutneytesting.environment.domain.EnvironmentRepository;
+import java.util.HashSet;
 
 public class ConfigureService {
 
@@ -53,7 +53,7 @@ public class ConfigureService {
             Environment environment = Environment.builder()
                 .withName(env.name)
                 .withDescription(env.description)
-                .withTargets(env.targets.stream().collect(Collectors.toSet()))
+                .withTargets(new HashSet<>(env.targets))
                 .build();
             environmentRepository.save(environment);
         });

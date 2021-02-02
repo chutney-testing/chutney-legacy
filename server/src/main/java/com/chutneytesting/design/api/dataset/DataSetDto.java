@@ -3,7 +3,7 @@ package com.chutneytesting.design.api.dataset;
 import static java.time.Instant.now;
 import static java.util.Collections.emptyList;
 
-import com.chutneytesting.design.api.compose.dto.KeyValue;
+import com.chutneytesting.tools.ui.KeyValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.time.Instant;

@@ -13,7 +13,7 @@ export class LoginComponent implements OnInit {
   password: string;
   connectionError: string;
   returnUrl: string;
-  disconnected = false;
+  action: string;
 
   constructor(
     private loginService: LoginService,
@@ -22,10 +22,9 @@ export class LoginComponent implements OnInit {
   ) {
 
     this.route.params.subscribe(params => {
-      const action = params['action'];
-      if (action === 'logout') {
+      this.action = params['action'];
+      if (this.action) {
         this.loginService.logout();
-        this.disconnected = true;
       }
     });
   }

@@ -1,5 +1,146 @@
 # Changelog
 
+## [1.2.13](https://github.com/chutney-testing/chutney/tree/1.2.13)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.12...1.2.13)
+
+**Fixed bugs:**
+
+- Consume kafka is in error for duplicate header [\#296](https://github.com/chutney-testing/chutney/issues/296)
+- Component edition : Wrong component dropped when tag filter selected [\#294](https://github.com/chutney-testing/chutney/issues/294)
+- When 2 or more linkyfier in same bloc the labels are concatenate [\#279](https://github.com/chutney-testing/chutney/issues/279)
+
+**Closed issues:**
+
+- Add output in execution report [\#300](https://github.com/chutney-testing/chutney/issues/300)
+- Add placeholder on xml assert task [\#299](https://github.com/chutney-testing/chutney/issues/299)
+- fix\(ui\): Scenario execution tile stays running [\#292](https://github.com/chutney-testing/chutney/issues/292)
+
+**Merged pull requests:**
+
+- Bugfix/flaky tests [\#304](https://github.com/chutney-testing/chutney/pull/304) ([bessonm](https://github.com/bessonm))
+- feat\(engine+server+ui\): Add output step result in report [\#301](https://github.com/chutney-testing/chutney/pull/301) ([nbrouand](https://github.com/nbrouand))
+- feat\(task-impl\): Add placeholder on xml assert task [\#298](https://github.com/chutney-testing/chutney/pull/298) ([nbrouand](https://github.com/nbrouand))
+- bugfix\(task-impl\): consume kafka with duplicated header \(\#296\) [\#297](https://github.com/chutney-testing/chutney/pull/297) ([rbenyoussef](https://github.com/rbenyoussef))
+- fix\(ui\): Component edition : Apply tag filter on drag and drop model [\#295](https://github.com/chutney-testing/chutney/pull/295) ([boddissattva](https://github.com/boddissattva))
+- fix\(ui\): Override completely history executions on refresh [\#293](https://github.com/chutney-testing/chutney/pull/293) ([boddissattva](https://github.com/boddissattva))
+- chore\(deps\): Bump maven-failsafe-plugin from 3.0.0-M4 to 3.0.0-M5 [\#291](https://github.com/chutney-testing/chutney/pull/291) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- chore\(deps\): Bump rxjava from 2.2.6 to 2.2.20 [\#290](https://github.com/chutney-testing/chutney/pull/290) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- chore\(deps-dev\): Bump rabbitmq-mock from 1.0.14 to 1.1.1 [\#288](https://github.com/chutney-testing/chutney/pull/288) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- Bugfix/dataset iterations [\#286](https://github.com/chutney-testing/chutney/pull/286) ([rbenyoussef](https://github.com/rbenyoussef))
+- bugfix\(ui\): Wrong linkifier label [\#281](https://github.com/chutney-testing/chutney/pull/281) ([bessonm](https://github.com/bessonm))
+
+## [1.2.12](https://github.com/chutney-testing/chutney/tree/1.2.12)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.11...1.2.12)
+
+**Merged pull requests:**
+
+- bugfix\(server\): wrong generated iteration [\#285](https://github.com/chutney-testing/chutney/pull/285) ([rbenyoussef](https://github.com/rbenyoussef))
+
+## [1.2.11](https://github.com/chutney-testing/chutney/tree/1.2.11)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.10...1.2.11)
+
+**Merged pull requests:**
+
+- bugfix\(server\): indexed output combined to external multivalues dataset for step iteration [\#284](https://github.com/chutney-testing/chutney/pull/284) ([rbenyoussef](https://github.com/rbenyoussef))
+
+
+## [1.2.10](https://github.com/chutney-testing/chutney/tree/1.2.10)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.9...1.2.10)
+
+**Implemented enhancements:**
+
+- Schedule campagne on a specific day [\#266](https://github.com/chutney-testing/chutney/issues/266)
+
+**Fixed bugs:**
+
+- NPE in ComposedTestCaseIterationsPreProcessor.indexInputs [\#280](https://github.com/chutney-testing/chutney/issues/280)
+- Not redirect to page requested when disconnected [\#278](https://github.com/chutney-testing/chutney/issues/278)
+- Composed testcase : Cannot instantiate context-put task in some campaign executions [\#275](https://github.com/chutney-testing/chutney/issues/275)
+
+**Merged pull requests:**
+
+- bugfix\(server\): NPE in ComposedTestCaseIterationsPreProcessor [\#283](https://github.com/chutney-testing/chutney/pull/283) ([nbrouand](https://github.com/nbrouand))
+- fix\(ui\): Keep asked url when redirecting to login [\#282](https://github.com/chutney-testing/chutney/pull/282) ([boddissattva](https://github.com/boddissattva))
+- feat\(ui+server\): Schedule campaign on a specific time \#266 [\#277](https://github.com/chutney-testing/chutney/pull/277) ([nbrouand](https://github.com/nbrouand))
+- Raw implementation mapper thread safety [\#276](https://github.com/chutney-testing/chutney/pull/276) ([boddissattva](https://github.com/boddissattva))
+
+## [1.2.9](https://github.com/chutney-testing/chutney/tree/1.2.9)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.8...1.2.9)
+
+**Closed issues:**
+
+- dataset iterations output overided by last iteration output  [\#242](https://github.com/chutney-testing/chutney/issues/242)
+
+**Merged pull requests:**
+
+- feat\(server\): Step iteration [\#261](https://github.com/chutney-testing/chutney/pull/261) ([bessonm](https://github.com/bessonm))
+
+## [1.2.8](https://github.com/chutney-testing/chutney/tree/1.2.8)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.7...1.2.8)
+
+**Fixed bugs:**
+
+- Session expire too fast \(\<10 min\) [\#249](https://github.com/chutney-testing/chutney/issues/249)
+
+**Closed issues:**
+
+- Scheduled campaigns between 00:00 and 00:10 aren't executed [\#264](https://github.com/chutney-testing/chutney/issues/264)
+- Add error message when component save is ko [\#250](https://github.com/chutney-testing/chutney/issues/250)
+
+**Merged pull requests:**
+
+- Fix/component implementation mapping [\#268](https://github.com/chutney-testing/chutney/pull/268) ([boddissattva](https://github.com/boddissattva))
+- fix scheduled campaigns execution at midnight [\#267](https://github.com/chutney-testing/chutney/pull/267) ([rbenyoussef](https://github.com/rbenyoussef))
+- feat\(task-impl\): Allow bad content type in message received [\#265](https://github.com/chutney-testing/chutney/pull/265) ([nbrouand](https://github.com/nbrouand))
+- Remove Lucene dependecies and point to travis.com [\#263](https://github.com/chutney-testing/chutney/pull/263) ([boddissattva](https://github.com/boddissattva))
+- Add component duplication [\#262](https://github.com/chutney-testing/chutney/pull/262) ([boddissattva](https://github.com/boddissattva))
+- Session management with and without anonymous user [\#260](https://github.com/chutney-testing/chutney/pull/260) ([boddissattva](https://github.com/boddissattva))
+- Refactor/split composable step repo [\#259](https://github.com/chutney-testing/chutney/pull/259) ([bessonm](https://github.com/bessonm))
+
+
+## [1.2.7](https://github.com/chutney-testing/chutney/tree/1.2.7)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.6...1.2.7)
+
+**Merged pull requests:**
+
+- feat\(server\): Make number of parrelel thread fixed to 20 [\#258](https://github.com/chutney-testing/chutney/pull/258) ([nbrouand](https://github.com/nbrouand))
+- feat\(server\): fix gauge update, add status on scenario\_execution\_time… [\#257](https://github.com/chutney-testing/chutney/pull/257) ([nbrouand](https://github.com/nbrouand))
+- Add edition information for concurrency edition check [\#256](https://github.com/chutney-testing/chutney/pull/256) ([boddissattva](https://github.com/boddissattva))
+- chore\(deps-dev\): Bump JUnitParams from 1.1.0 to 1.1.1 [\#251](https://github.com/chutney-testing/chutney/pull/251) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+
+## [1.2.6](https://github.com/chutney-testing/chutney/tree/1.2.6)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.5...1.2.6)
+
+**Implemented enhancements:**
+
+- Explicitly show GWT steps in a scenario report [\#210](https://github.com/chutney-testing/chutney/issues/210)
+- Scenario steps' Info/Detail are not user friendly nor provide enough value [\#208](https://github.com/chutney-testing/chutney/issues/208)
+- Add export environment [\#166](https://github.com/chutney-testing/chutney/issues/166)
+
+**Closed issues:**
+
+- Task Kafka - Add XML's payload processing [\#246](https://github.com/chutney-testing/chutney/issues/246)
+- component parameters values erased when executed [\#240](https://github.com/chutney-testing/chutney/issues/240)
+- Support navigation patterns [\#239](https://github.com/chutney-testing/chutney/issues/239)
+
+**Merged pull requests:**
+
+- feat: Change micrometer metrics [\#248](https://github.com/chutney-testing/chutney/pull/248) ([nbrouand](https://github.com/nbrouand))
+- Kafka consume task - Add xml payload processing [\#247](https://github.com/chutney-testing/chutney/pull/247) ([boddissattva](https://github.com/boddissattva))
+- Feat/navigation patterns [\#244](https://github.com/chutney-testing/chutney/pull/244) ([bessonm](https://github.com/bessonm))
+- Micrometer tasks [\#241](https://github.com/chutney-testing/chutney/pull/241) ([boddissattva](https://github.com/boddissattva))
+- chore\(ui\): Update node version to v12.18.4 & provide IntelliJ run conf [\#238](https://github.com/chutney-testing/chutney/pull/238) ([bessonm](https://github.com/bessonm))
+
+
+
 ## [1.2.5](https://github.com/chutney-testing/chutney/tree/1.2.5) (2020-09-01)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.4...1.2.5)

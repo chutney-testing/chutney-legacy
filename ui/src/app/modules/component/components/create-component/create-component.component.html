@@ -43,7 +43,7 @@
             <div class="table-scroll-with-tags-filter">
                 <table class="table table-sm table-striped table-hover">
                     <tbody dragula="COPYABLE" id="left"
-                           [dragulaModel]="componentTasks | searchTextPipe: componentFilter:['name']">
+                           [dragulaModel]="componentTasks |  componentSearch : tagData.selected() : tagData.isNoTagSelected() : tagData.isSelectAll() | searchTextPipe  : componentFilter : ['name']">
                     <tr class="pointer d-flex mr-auto"
                         *ngFor="let component of (componentTasks |  componentSearch : tagData.selected() : tagData.isNoTagSelected() : tagData.isSelectAll() | searchTextPipe  : componentFilter : ['name'])"
                         (click)="editComponentTask(component)"
@@ -76,7 +76,8 @@
     </div>
 
     <div class="edition col-9" [formGroup]="componentForm">
-        <div class="text-center bg-info text-white">
+        <div class="text-center bg-info text-white"
+             [ngClass]="'bg-' + messageType">
             <strong *ngIf="message">{{ message }}</strong>
         </div>
 
@@ -118,6 +119,7 @@
                                                        (executeEvent)="execute($event)"
                                                        (childEvent)="seeChild()"
                                                        (deleteEvent)="deleteComponent(editableComponent.id)"
+                                                       (duplicateEvent)="duplicateComponent()"
                                                        [editComponent]="editableComponent"
                                                        [parents]="parents">
                                 </chutney-toolbar-component>
@@ -181,7 +183,8 @@
             <chutney-action-edit-component [editComponent]="actionToEdit"
                                        (createEvent)="saveComponent($event)"
                                        (deleteEvent)="deleteComponent($event)"
-                                       (cancelEvent)="cancel()"></chutney-action-edit-component>
+                                       (cancelEvent)="cancel()"
+                                        (duplicateEvent)="duplicateAction()"></chutney-action-edit-component>
         </ng-container>
 
         <!-- Actions panel create -->

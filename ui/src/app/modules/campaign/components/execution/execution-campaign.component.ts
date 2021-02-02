@@ -18,7 +18,7 @@ import { CampaignService, EnvironmentAdminService, ScenarioService } from '@core
 import { newInstance, sortByAndOrder } from '@shared/tools';
 import { ChartDataSets, ChartOptions } from 'chart.js';
 import { Color, Label } from 'ng2-charts';
-import { JiraLinkService } from '@core/services/jira-link.service';
+import { JiraPluginService } from '@core/services/jira-plugin.service';
 
 @Component({
     selector: 'chutney-execution-campaign',
@@ -82,7 +82,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
     constructor(private campaignService: CampaignService,
                 private environmentAdminService: EnvironmentAdminService,
                 private fileSaverService: FileSaverService,
-                private jiraLinkService: JiraLinkService,
+                private jiraLinkService: JiraPluginService,
                 private route: ActivatedRoute,
                 private router: Router,
                 private scenarioService: ScenarioService,

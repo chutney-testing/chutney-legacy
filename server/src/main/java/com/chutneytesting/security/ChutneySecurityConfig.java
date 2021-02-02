@@ -2,12 +2,17 @@ package com.chutneytesting.security;
 
 import com.chutneytesting.security.infra.handlers.Http401FailureHandler;
 import com.chutneytesting.security.infra.handlers.HttpEmptyLogoutSuccessHandler;
+import com.chutneytesting.security.infra.handlers.HttpStatusInvalidSessionStrategy;
 import com.chutneytesting.security.infra.ldap.LdapConfiguration;
 import com.chutneytesting.security.infra.memory.InMemoryConfiguration;
 import com.chutneytesting.security.infra.memory.InMemoryUsersProperties;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,6 +25,11 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 @Configuration
 @EnableWebSecurity
 public class ChutneySecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Value("${server.servlet.session.cookie.http-only:true}")
+    private boolean sessionCookieHttpOnly;
+    @Value("${server.servlet.session.cookie.secure:true}")
+    private boolean sessionCookieSecure;
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
@@ -35,7 +45,13 @@ public class ChutneySecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     protected void configureBaseHttpSecurity(final HttpSecurity http) throws Exception {
+        Map<String, String> invalidSessionHeaders = new HashMap<>();
+        invalidSessionHeaders.put(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+
         http
+            .sessionManagement()
+                .invalidSessionStrategy(new HttpStatusInvalidSessionStrategy(HttpStatus.UNAUTHORIZED, invalidSessionHeaders, sessionCookieHttpOnly, sessionCookieSecure))
+            .and()
             .csrf()
                 .disable()
             .exceptionHandling()

@@ -1,8 +1,8 @@
-<div class="row page-header m-4 pl-2">
+<div *ngIf="campaign" class="row page-header m-4 pl-2">
     <div class="col-md-5">
-        <h4>{{campaign && campaign.title | uppercase}}
-            <small class="text-muted"> {{campaign && campaign.description}}</small>
+        <h4 [innerHTML]="campaign.title | linkify:'uppercase'">
         </h4>
+        <small class="text-muted" [innerHTML]="campaign.description | linkify"></small>
     </div>
     <div class="col-md-2">
         <div class="btn-toolbar">

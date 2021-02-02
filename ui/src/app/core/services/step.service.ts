@@ -40,8 +40,4 @@ export class StepService {
   findById(stepId: string): Observable<Object> {
     return this.http.get(environment.backend + this.stepUrl + '/' + encodeURIComponent(stepId));
   }
-
-  findIdenticalStep(nameQuery: string = ''): Observable<Object> {
-    return this.http.post(environment.backend + this.stepUrl + '/search/name', nameQuery);
-  }
 }

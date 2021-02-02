@@ -1,7 +1,7 @@
 package com.chutneytesting.tests;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,11 +12,9 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
-import org.junit.After;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 public abstract class AbstractLocalDatabaseTest {
     private static final String DB_CHANGELOG_DB_CHANGELOG_MASTER_XML = "changelog/db.changelog-master.xml";
@@ -26,25 +24,16 @@ public abstract class AbstractLocalDatabaseTest {
     protected final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     protected AbstractLocalDatabaseTest() {
-        TemporaryFolder temporaryFolder = new TemporaryFolder();
-        String iceberTempFolderPath;
-        try {
-            temporaryFolder.create();
-            iceberTempFolderPath = temporaryFolder.newFolder("temp_db", "ui").getAbsolutePath();
-        } catch (IOException e) {
-            throw new UncheckedIOException("cannot create temp folder for H2 database", e);
-        }
-        localDataSource = new SingleConnectionDataSource(
-            new StringBuilder("jdbc:h2:mem:")
-                .append(iceberTempFolderPath)
-                .append("DB_CLOSE_DELAY=-1")
-                .toString(), true);
+        HikariConfig hikariConfig = new HikariConfig();
+        hikariConfig.setMaximumPoolSize(2);
+        hikariConfig.setJdbcUrl("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+        localDataSource = new HikariDataSource(hikariConfig);
         jdbcTemplate = new JdbcTemplate(localDataSource);
         namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
         initializeLiquibase();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         jdbcTemplate.execute("DELETE FROM CAMPAIGN_EXECUTION_HISTORY");
         jdbcTemplate.execute("DELETE FROM SCENARIO_EXECUTION_HISTORY");

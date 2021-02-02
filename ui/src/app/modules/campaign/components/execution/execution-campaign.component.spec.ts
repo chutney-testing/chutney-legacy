@@ -33,7 +33,7 @@ describe('CampaignExecutionComponent', () => {
   scenarioService.findRawTestCase.and.returnValue(of(new TestCase()));
   environmentAdminService.listEnvironments.and.returnValue(of([]));
 
-  beforeEach(async(() => {
+  beforeEach(() => {
     TestBed.resetTestingModule();
     activatedRouteStub.setParamMap({ id: '1' });
     TestBed.configureTestingModule({
@@ -56,12 +56,11 @@ describe('CampaignExecutionComponent', () => {
         { provide: EnvironmentAdminService, useValue: environmentAdminService },
       ]
     }).compileComponents();
-  }));
+  });
 
   it('should create the component CampaignExecutionComponent', (() => {
     const fixture = TestBed.createComponent(CampaignExecutionComponent);
     fixture.detectChanges();
-
     const app = fixture.debugElement.componentInstance;
     expect(app).toBeTruthy();
   }));
@@ -97,7 +96,6 @@ describe('CampaignExecutionComponent', () => {
 
     const scenarioSummary = html.querySelector('#scenarioSummary');
     expect(scenarioSummary.textContent).toBe(' 3 OK  2 KO ');
-
   }));
 });
 

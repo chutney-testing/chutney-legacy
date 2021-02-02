@@ -8,7 +8,7 @@ import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import com.chutneytesting.design.domain.scenario.raw.RawTestCase;
 import com.chutneytesting.execution.domain.compiler.GwtScenarioMarshaller;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import org.apache.commons.lang.NotImplementedException;
 
 public class TestCaseDataMapper { // TODO - test me more
 
@@ -16,7 +16,7 @@ public class TestCaseDataMapper { // TODO - test me more
 
     public static TestCaseData toDto(GwtTestCase testCase) {
         return TestCaseData.builder()
-            .withVersion("v2.1")
+            .withContentVersion("v2.1")
             .withId(testCase.metadata.id)
             .withTitle(testCase.metadata.title)
             .withCreationDate(testCase.metadata.creationDate)
@@ -24,18 +24,21 @@ public class TestCaseDataMapper { // TODO - test me more
             .withTags(testCase.metadata.tags)
             .withDataSet(testCase.dataSet)
             .withRawScenario(marshaller.serialize(testCase.scenario))
+            .withAuthor(testCase.metadata.author)
+            .withUpdateDate(testCase.metadata.updateDate)
+            .withVersion(testCase.metadata.version)
             .build();
     }
 
     public static TestCase fromDto(TestCaseData testCaseData) {
-        switch (testCaseData.version) {
+        switch (testCaseData.contentVersion) {
             case "v0.0": return fromV0_0(testCaseData);
             case "v1.0": return fromV1_0(testCaseData);
             case "v2.0": return fromV2_0(testCaseData);
             case "v2.1": return fromV2_1(testCaseData);
             case "git" : return fromGit();
             default:
-                throw new RuntimeException("Cannot deserialize test case [" + testCaseData.id + "], unknown version [" + testCaseData.version + "]");
+                throw new RuntimeException("Cannot deserialize test case [" + testCaseData.id + "], unknown version [" + testCaseData.contentVersion + "]");
         }
     }
 
@@ -52,6 +55,9 @@ public class TestCaseDataMapper { // TODO - test me more
                 .withCreationDate(testCaseData.creationDate)
                 .withRepositorySource(DEFAULT_REPOSITORY_SOURCE)
                 .withTags(testCaseData.tags)
+                .withAuthor(testCaseData.author)
+                .withUpdateDate(testCaseData.updateDate)
+                .withVersion(testCaseData.version)
                 .build())
             .withDataSet(testCaseData.dataSet)
             .withScenario(testCaseData.rawScenario)
@@ -71,6 +77,9 @@ public class TestCaseDataMapper { // TODO - test me more
                 .withCreationDate(dto.creationDate)
                 .withRepositorySource(DEFAULT_REPOSITORY_SOURCE)
                 .withTags(dto.tags)
+                .withAuthor(dto.author)
+                .withUpdateDate(dto.updateDate)
+                .withVersion(dto.version)
                 .build())
             .withDataSet(dto.dataSet)
             .withScenario(marshaller.deserialize(dto.title, dto.description, dto.rawScenario))

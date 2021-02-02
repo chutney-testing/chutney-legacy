@@ -1,18 +1,17 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
-import { AuthGuard } from '@core/guards';
 import { LoginComponent } from '@core/components/login/login.component';
 import { ParentComponent } from '@core/components/parent/parent.component';
 
 export const appRoutes: Routes = [
     {
-        path: '', component: ParentComponent, canActivate: [AuthGuard], children: [
+        path: '', component: ParentComponent, children: [
             { path: '', redirectTo: '/login', pathMatch: 'full' },
             { path: 'home-page', loadChildren: './modules/home-page/home-page.module#HomePageModule' },
             { path: 'scenario', loadChildren: './modules/scenarios/scenario.module#ScenarioModule' },
             { path: 'configurationAgent', loadChildren: './modules/agent-network/agent-network.module#AgentNetworkModule' },
-            { path: 'configuration', loadChildren: './modules/configuration/configuration.module#ConfigurationModule' },
+            { path: 'plugins', loadChildren: './modules/plugins/plugin-configuration.module#PluginConfigurationModule' },
             { path: 'campaign', loadChildren: './modules/campaign/campaign.module#CampaignModule' },
             { path: 'databaseAdmin', loadChildren: './modules/database-admin/database-admin.module#DatabaseAdminModule' },
             { path: 'environmentAdmin', loadChildren: './organisms/environment-admin/environment-admin.module#EnvironmentAdminModule' },

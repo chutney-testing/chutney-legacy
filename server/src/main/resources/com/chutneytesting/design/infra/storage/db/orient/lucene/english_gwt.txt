@@ -1,3 +1,0 @@
-given
-when
-then

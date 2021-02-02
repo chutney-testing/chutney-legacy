@@ -24,7 +24,7 @@ import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.execution.domain.report.StepExecutionReportCore;
 import com.chutneytesting.execution.domain.report.StepExecutionReportCoreBuilder;
 import com.chutneytesting.execution.domain.state.ExecutionStateRepository;
-import com.chutneytesting.instrument.domain.Metrics;
+import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.reactivex.Observable;
 import io.reactivex.observers.TestObserver;
@@ -38,8 +38,8 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 public class ScenarioExecutionEngineAsyncTest {
@@ -47,11 +47,11 @@ public class ScenarioExecutionEngineAsyncTest {
     private ExecutionHistoryRepository executionHistoryRepository = mock(ExecutionHistoryRepository.class);
     private ServerTestEngine executionEngine = mock(ServerTestEngine.class);
     private ExecutionStateRepository executionStateRepository = mock(ExecutionStateRepository.class);
-    private Metrics metrics = mock(Metrics.class);
+    private ChutneyMetrics metrics = mock(ChutneyMetrics.class);
     private TestCasePreProcessors testCasePreProcessors = mock(TestCasePreProcessors.class);
     private DataSetHistoryRepository dataSetHistoryRepository = mock(DataSetHistoryRepository.class);
 
-    @After
+    @AfterEach
     public void after() {
         RxJavaPlugins.reset();
     }
@@ -100,7 +100,7 @@ public class ScenarioExecutionEngineAsyncTest {
         );
 
         // When
-        ExecutionRequest request = new ExecutionRequest(testCase, "Exec env","Exec user");
+        ExecutionRequest request = new ExecutionRequest(testCase, "Exec env", "Exec user");
         sut.execute(request);
 
         // Then
@@ -114,7 +114,7 @@ public class ScenarioExecutionEngineAsyncTest {
         // Wait for background computation
         verify(executionStateRepository, timeout(250)).notifyExecutionStart(scenarioId);
         verify(executionStateRepository, timeout(250)).notifyExecutionEnd(scenarioId);
-        verify(metrics, timeout(250)).onExecutionEnded(testCase.metadata().title(), storedExecution.status(), storedExecution.duration());
+        verify(metrics, timeout(250)).onScenarioExecutionEnded(testCase, storedExecution);
     }
 
     @Test
@@ -166,7 +166,7 @@ public class ScenarioExecutionEngineAsyncTest {
 
         testObserver.assertTerminated();
         verify(executionStateRepository).notifyExecutionEnd(scenarioId);
-        verify(metrics).onExecutionEnded(any(), any(), anyLong());
+        verify(metrics).onScenarioExecutionEnded(any(), any());
 
         testObserver.dispose();
     }
@@ -182,7 +182,9 @@ public class ScenarioExecutionEngineAsyncTest {
         when(testCasePreProcessors.apply(any())).thenReturn(testCase);
 
         stubHistoryExecution(scenarioId, executionId);
-        final List<StepExecutionReportCore> reportsList = stubEngineExecution(executionId, 0).getMiddle();
+        Triple<Pair<Observable<StepExecutionReportCore>, Long>, List<StepExecutionReportCore>, TestScheduler> engineStub = stubEngineExecution(executionId, 100);
+        RxJavaPlugins.setIoSchedulerHandler(scheduler -> engineStub.getRight());
+        final List<StepExecutionReportCore> reportsList = engineStub.getMiddle();
 
         final ScenarioExecutionEngineAsync sut = new ScenarioExecutionEngineAsync(
             executionHistoryRepository,
@@ -192,16 +194,17 @@ public class ScenarioExecutionEngineAsyncTest {
             testCasePreProcessors,
             new ObjectMapper(),
             dataSetHistoryRepository,
-            100,
+            10,
             0
         );
 
         // When
-        ExecutionRequest request = new ExecutionRequest(testCase, "","");
+        ExecutionRequest request = new ExecutionRequest(testCase, "", "");
         Long executionIdFromExecute = sut.execute(request);
         TestObserver<ScenarioExecutionReport> testObserver = sut.followExecution(testCase.id(), executionIdFromExecute).test();
 
         // Then
+        engineStub.getRight().advanceTimeBy(500, TimeUnit.MILLISECONDS);
         testObserver.awaitTerminalEvent();
         assertTestObserverStateAndValues(testObserver, true, executionId, reportsList, 4);
 

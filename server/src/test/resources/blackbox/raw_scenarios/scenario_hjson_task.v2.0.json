@@ -1,0 +1,12 @@
+{
+    "givens": [
+        {
+            "sentence": "Step with a task written in HJSON",
+            "implementation": {
+                "task": "target: FAKE_TARGET\ntype: fake_type\ninputs: {\n    fake_param: fake_value\n}"
+            }
+        }
+    ],
+    "when": {},
+    "thens": []
+}

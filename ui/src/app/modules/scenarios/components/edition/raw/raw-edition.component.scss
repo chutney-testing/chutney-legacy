@@ -22,7 +22,15 @@
         background-color: $vert3;
         height: 120px;
         text-align: center;
-        padding: 10px 110px 10px 30px;
+        padding: 10px 60px 10px 30px;
+
+        textarea.no-resize {
+            resize: none;
+        }
+
+        .tag-input {
+            height: 50px;
+        }
     }
 
     .triangle-left:before {
@@ -163,7 +171,7 @@
 }
 
 .plugins {
-    padding-top: calc(120px + 10px);
+    padding-top: calc(105px + 10px);
 }
 
 .campaigns-scenario {
@@ -172,4 +180,11 @@
     right: 0;
     z-index: 100;
     margin: 130px;
+}
+
+:host ::ng-deep chutney-ace-editor .configuration {
+    margin-top: 0;
+    .row {
+        margin-top: 0;
+    }
 }

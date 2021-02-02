@@ -1,91 +1,97 @@
 package com.chutneytesting.instrument.infra;
 
+import static io.micrometer.core.instrument.Tag.of;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singleton;
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
 
-import com.google.common.collect.Sets;
+import com.chutneytesting.design.domain.campaign.Campaign;
+import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
+import com.chutneytesting.design.domain.scenario.TestCase;
+import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
-import com.chutneytesting.instrument.domain.Metrics;
-import com.chutneytesting.instrument.infra.storage.MetricsLoader;
-import io.micrometer.core.instrument.ImmutableTag;
+import com.chutneytesting.instrument.domain.ChutneyMetrics;
+import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-class MicrometerMetrics implements Metrics {
+class MicrometerMetrics implements ChutneyMetrics {
 
     private final MeterRegistry meterRegistry;
+    private final Map<String, Map<ServerReportStatus, AtomicLong>> statusCountCache = new HashMap<>();
 
-    private final AtomicInteger scenarioTotal;
-    private final Timer executionTotalTimer;
-    private final Timer executionOkTimer;
-    private final Timer executionKoTimer;
-    private final MetricsLoader metricsLoader;
-    private final AtomicInteger failedScenarios;
-    private final AtomicInteger successfulScenarios;
-    private Map<String, AtomicInteger> scenarioCountsByTag = new HashMap<>();
-    private Map<String, ServerReportStatus> statusByScenarioTitle = new HashMap<>();
-
-    MicrometerMetrics(MeterRegistry meterRegistry, MetricsLoader metricsLoader) {
+    MicrometerMetrics(MeterRegistry meterRegistry) {
         this.meterRegistry = meterRegistry;
-        this.metricsLoader = metricsLoader;
-
-        scenarioTotal = registerScenarioCountGauge("any", "any");
-        failedScenarios = registerScenarioCountGauge("any", "failure");
-        successfulScenarios = registerScenarioCountGauge("any", "success");
-
-        executionTotalTimer = this.meterRegistry.timer("execution_count", Collections.singleton(new ImmutableTag("status", "all")));
-        executionOkTimer = this.meterRegistry.timer("execution_count", Collections.singleton(new ImmutableTag("status", "success")));
-        executionKoTimer = this.meterRegistry.timer("execution_count", Collections.singleton(new ImmutableTag("status", "failure")));
     }
 
     @Override
-    public void onNewScenario(String scenarioTitle, Collection<String> tags) {
-        scenarioTotal.incrementAndGet();
-        for (String tag : tags) {
-            addCounterIfAbsent(tag);
-            scenarioCountsByTag.get(tag).incrementAndGet();
-        }
+    public void onScenarioExecutionEnded(TestCase testCase, ExecutionHistory.Execution execution) {
+        final String scenarioId = testCase.metadata().id();
+        final List<String> tags = testCase.metadata().tags();
+        final ServerReportStatus status = execution.status();
+        final long duration = execution.duration();
+
+        final String tagsAsString = StringUtils.join(tags, "|");
+        final Counter scenarioExecutionCount = this.meterRegistry.counter("scenario_execution_count", asList(of("scenarioId", scenarioId), of("status", status.name()), of("tags", tagsAsString)));
+        scenarioExecutionCount.increment();
+
+        final Timer scenarioExecutionTimer = this.meterRegistry.timer("scenario_execution_timer", asList(of("scenarioId", scenarioId), of("status", status.name()), of("tags", tagsAsString)));
+        scenarioExecutionTimer.record(duration, TimeUnit.MILLISECONDS);
     }
 
     @Override
-    public void onScenarioChange(String scenarioTitle, Collection<String> tags) {
-        Map<String, Integer> scenarioCountsByTag = metricsLoader.scenarioCountsByTag();
-        scenarioCountsByTag.forEach((tag, count) -> {
-            addCounterIfAbsent(tag);
-            this.scenarioCountsByTag.get(tag).set(count);
+    public void onCampaignExecutionEnded(Campaign campaign, CampaignExecutionReport campaignExecutionReport) {
+        final String campaignId = campaign.id.toString();
+        final Map<ServerReportStatus, Long> scenarioCountByStatus = campaignExecutionReport.scenarioExecutionReports().stream().collect(groupingBy(s -> s.execution.status(), counting()));
+        final ServerReportStatus status = campaignExecutionReport.status();
+        final long campaignDuration = campaignExecutionReport.getDuration();
+
+        final Counter scenarioExecutionCount = this.meterRegistry.counter("campaign_execution_count", asList(of("campaignId", campaignId), of("campaignTitle", campaign.title), of("status", status.name())));
+        scenarioExecutionCount.increment();
+
+        final Timer scenarioExecutionTimer = this.meterRegistry.timer("campaign_execution_timer", singleton(of("campaignId", campaignId)));
+        scenarioExecutionTimer.record(campaignDuration, TimeUnit.MILLISECONDS);
+
+        final Map<ServerReportStatus, AtomicLong> cachedMetrics = getMetricsInCache(campaignId);
+        updateMetrics(scenarioCountByStatus, cachedMetrics);
+    }
+
+    private void updateMetrics(Map<ServerReportStatus, Long> scenarioCountByStatus, Map<ServerReportStatus, AtomicLong> cachedMetrics) {
+        cachedMetrics.entrySet().stream().forEach(e -> {
+            final Long valueInCache = scenarioCountByStatus.get(e.getKey());
+            if (valueInCache != null) {
+                e.getValue().set(valueInCache);
+            } else {
+                e.getValue().set(0L);
+            }
         });
-        Sets.difference(scenarioCountsByTag.keySet(), this.scenarioCountsByTag.keySet()).forEach(key -> this.scenarioCountsByTag.get(key).set(0));
     }
 
-    @Override
-    public void onExecutionEnded(String scenarioTitle, ServerReportStatus status, long duration) {
-        executionTotalTimer.record(duration, TimeUnit.MILLISECONDS);
-        if (ServerReportStatus.SUCCESS == status) {
-            executionOkTimer.record(duration, TimeUnit.MILLISECONDS);
-        } else {
-            executionKoTimer.record(duration, TimeUnit.MILLISECONDS);
+    private Map<ServerReportStatus, AtomicLong> getMetricsInCache(String campaignId) {
+        Map<ServerReportStatus, AtomicLong> cachedMetrics = statusCountCache.get(campaignId);
+        if (cachedMetrics == null) {
+            cachedMetrics = new HashMap<>();
+
+            final Map<ServerReportStatus, AtomicLong> tmp = cachedMetrics;
+            Arrays.asList(ServerReportStatus.values()).stream().forEach(s -> {
+                final AtomicLong initialValue = new AtomicLong(0);
+                this.meterRegistry.gauge("scenario_in_campaign_gauge", asList(of("campaignId", campaignId), of("scenarioStatus", s.name())), initialValue);
+                tmp.put(s, initialValue);
+            });
+
+            cachedMetrics.putAll(tmp);
+            statusCountCache.put(campaignId, cachedMetrics);
         }
-        statusByScenarioTitle.put(scenarioTitle, status);
-        int successfulScenariosCount = Long.valueOf(statusByScenarioTitle.entrySet().stream().filter(e -> ServerReportStatus.SUCCESS == e.getValue()).count()).intValue();
-        successfulScenarios.set(successfulScenariosCount);
-        int failedScenariosCount = statusByScenarioTitle.size() - successfulScenariosCount;
-        failedScenarios.set(failedScenariosCount);
-    }
-
-    private void addCounterIfAbsent(String tag) {
-        if (!scenarioCountsByTag.containsKey(tag)) {
-            scenarioCountsByTag.put(tag, registerScenarioCountGauge(tag, "any"));
-        }
-    }
-
-    private AtomicInteger registerScenarioCountGauge(String tag, String status) {
-        return meterRegistry.gauge("scenario_count", asList(new ImmutableTag("tag", tag), new ImmutableTag("status", status)), new AtomicInteger());
+        return cachedMetrics;
     }
 }

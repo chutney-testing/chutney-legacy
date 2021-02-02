@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { TestCase, GwtTestCase, ScenarioIndex } from '@model';
+import { GwtTestCase, ScenarioIndex, TestCase } from '@model';
 import { environment } from '@env/environment';
 import { HttpClient } from '@angular/common/http';
 
@@ -74,6 +74,9 @@ export class ScenarioService {
                 s.metadata.description,
                 s.metadata.repositorySource,
                 s.metadata.creationDate,
+                s.metadata.updateDate,
+                s.metadata.version,
+                s.metadata.author,
                 s.metadata.tags,
                 s.metadata.executions
             ));

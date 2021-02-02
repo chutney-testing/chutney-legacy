@@ -14,6 +14,7 @@ public class ContainsAsserter implements PlaceholderAsserter {
     @Override
     public boolean assertValue(Logger logger, Object actual, Object expected) {
         String toFind = expected.toString().substring(CONTAINS.length());
+        logger.info("Verify " + actual.toString() + " contains " + toFind);
         return actual.toString().contains(toFind);
     }
 

@@ -3,13 +3,14 @@ package com.chutneytesting.design.infra.storage.scenario;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.design.domain.compose.ComposableTestCaseRepository;
 import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
@@ -17,32 +18,23 @@ import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.design.domain.scenario.gwt.GwtScenario;
 import com.chutneytesting.design.domain.scenario.gwt.GwtStep;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
+import com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableTestCaseRepository;
 import com.chutneytesting.design.infra.storage.scenario.git.GitScenarioRepositoryFactory;
 import com.chutneytesting.design.infra.storage.scenario.jdbc.DatabaseTestCaseRepository;
 import com.chutneytesting.documentation.infra.ExamplesRepository;
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.Stream;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.Test;
 
 public class TestCaseRepositoryAggregatorTest {
 
     private GitScenarioRepositoryFactory gitScenarioRepositoryFactory = mock(GitScenarioRepositoryFactory.class);
     private ExamplesRepository examples = mock(ExamplesRepository.class);
-    private ComposableTestCaseRepository composableTestCaseRepository = mock(ComposableTestCaseRepository.class);
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
+    private OrientComposableTestCaseRepository composableTestCaseRepository = mock(OrientComposableTestCaseRepository.class);
 
     @Test
     public void should_throw_exception_when_try_to_save_to_repo_other_than_default() {
-        // Then
-        expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage("Saving to repository other than default local is not allowed");
-
         // Given
         final String REPO_SOURCE = "REPO_1";
         DatabaseTestCaseRepository repo1 = mock(DatabaseTestCaseRepository.class);
@@ -50,10 +42,12 @@ public class TestCaseRepositoryAggregatorTest {
         when(examples.alias()).thenReturn("examples");
         GwtTestCase testCase = defaultScenarioWithRepoSource(REPO_SOURCE);
 
-        TestCaseRepositoryAggregator service = new TestCaseRepositoryAggregator(repo1, gitScenarioRepositoryFactory, examples, composableTestCaseRepository);
+        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, gitScenarioRepositoryFactory, examples, composableTestCaseRepository);
 
         // When
-        service.save(testCase);
+        assertThatThrownBy(() -> sut.save(testCase))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("Saving to repository other than default local is not allowed");
     }
 
     @Test
@@ -64,13 +58,13 @@ public class TestCaseRepositoryAggregatorTest {
         when(examples.alias()).thenReturn("examples");
         GwtTestCase testCase = defaultScenarioWithRepoSource("UNKNOWN_REPO");
 
-        TestCaseRepositoryAggregator service = new TestCaseRepositoryAggregator(repo1, gitScenarioRepositoryFactory, examples, composableTestCaseRepository);
+        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, gitScenarioRepositoryFactory, examples, composableTestCaseRepository);
 
         // When
-        service.save(testCase);
+        sut.save(testCase);
 
         // Then
-        verify(repo1).save(Mockito.any());
+        verify(repo1).save(any());
     }
 
     @Test
@@ -82,13 +76,13 @@ public class TestCaseRepositoryAggregatorTest {
 
         when(gitScenarioRepositoryFactory.listGitRepo()).thenReturn(Stream.of(repo2, repo3));
 
-        TestCaseRepositoryAggregator service = new TestCaseRepositoryAggregator(repo1, gitScenarioRepositoryFactory, examples, composableTestCaseRepository);
+        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, gitScenarioRepositoryFactory, examples, composableTestCaseRepository);
 
         final String scenarioId = "12345";
 
         // When
         assertThatExceptionOfType(ScenarioNotFoundException.class)
-            .isThrownBy(() -> service.findById(scenarioId));
+            .isThrownBy(() -> sut.findById(scenarioId));
 
         // Then
         verify(repo1).findById(scenarioId);
@@ -106,12 +100,12 @@ public class TestCaseRepositoryAggregatorTest {
 
         when(gitScenarioRepositoryFactory.listGitRepo()).thenReturn(Stream.of(repo2, repo3));
 
-        TestCaseRepositoryAggregator service = new TestCaseRepositoryAggregator(repo1, gitScenarioRepositoryFactory, examples, composableTestCaseRepository);
+        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, gitScenarioRepositoryFactory, examples, composableTestCaseRepository);
 
         final String scenarioId = "12345";
 
         // When
-        service.removeById(scenarioId);
+        sut.removeById(scenarioId);
 
         // Then
         verify(repo1).removeById(scenarioId);
@@ -131,10 +125,10 @@ public class TestCaseRepositoryAggregatorTest {
         when(repo1.findAll()).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
         when(repo2.findAll()).thenReturn(singletonList(mock(TestCaseMetadata.class)));
 
-        TestCaseRepositoryAggregator service = new TestCaseRepositoryAggregator(repo1, gitScenarioRepositoryFactory, examples, composableTestCaseRepository);
+        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, gitScenarioRepositoryFactory, examples, composableTestCaseRepository);
 
         // When
-        final List<TestCaseMetadata> allScenario = service.findAll();
+        final List<TestCaseMetadata> allScenario = sut.findAll();
 
         // Then
         assertThat(allScenario).hasSize(3);
@@ -153,10 +147,10 @@ public class TestCaseRepositoryAggregatorTest {
 
         when(gitScenarioRepositoryFactory.listGitRepo()).thenReturn(Stream.of(repo2, repo3));
 
-        TestCaseRepositoryAggregator service = new TestCaseRepositoryAggregator(repo1, gitScenarioRepositoryFactory, examples, composableTestCaseRepository);
+        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, gitScenarioRepositoryFactory, examples, composableTestCaseRepository);
 
         // When
-        final List<TestCaseMetadata> allScenario = service.findAll();
+        final List<TestCaseMetadata> allScenario = sut.findAll();
 
         // Then
         assertThat(allScenario).hasSize(3);

@@ -1,9 +1,6 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { Component, Input, OnChanges } from '@angular/core';
 
-import { EventManagerService } from '@shared';
-import { CampaignService, ScenarioService } from '@core/services';
+import { CampaignService } from '@core/services';
 import { Campaign } from '@model';
 
 @Component({
@@ -11,45 +8,28 @@ import { Campaign } from '@model';
     templateUrl: './scenario-campaigns.component.html',
     styleUrls: ['./scenario-campaigns.component.scss']
 })
-export class ScenarioCampaignsComponent implements OnInit, OnDestroy {
+export class ScenarioCampaignsComponent implements OnChanges {
 
     @Input() idScenario: string;
-    exampleParams$: BehaviorSubject<any> = new BehaviorSubject<any>({});
-    errorMessage: any;
     campaignsForScenario: Array<Campaign> = [];
 
-    private routeParamsSubscription: Subscription;
-
-    constructor(private scenarioService: ScenarioService,
-                private campaignService: CampaignService,
-                private router: Router,
-                private route: ActivatedRoute,
-                private eventManager: EventManagerService
-    ) {
+    constructor(private campaignService: CampaignService) {
     }
 
-    ngOnInit() {
-        this.routeParamsSubscription = this.route.params.subscribe(() => {
+    ngOnChanges() {
+        if (this.idScenario) {
             this.load(this.idScenario);
-        });
-    }
-
-    ngOnDestroy() {
-        this.exampleParams$.unsubscribe();
-        this.eventManager.destroy(this.routeParamsSubscription);
+        }
     }
 
     load(id) {
-        if (id !== undefined) {
-            this.campaignService.findAllCampaignsForScenario(id).subscribe(
-                (response) => {
-                    this.campaignsForScenario = response;
-                },
-                (error) => {
-                    console.log(error);
-                    this.errorMessage = error._body;
-                }
-            );
-        }
+        this.campaignService.findAllCampaignsForScenario(id).subscribe(
+            (response) => {
+                this.campaignsForScenario = response;
+            },
+            (error) => {
+                console.log(error);
+            }
+        );
     }
 }

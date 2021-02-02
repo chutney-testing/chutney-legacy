@@ -5,13 +5,15 @@ import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Success;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
+import com.chutneytesting.task.TestLogger;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Logger;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class XmlAssertTaskTest {
 
@@ -99,6 +101,42 @@ public class XmlAssertTaskTest {
         // Then
         assertThat(result.status).isEqualTo(Success);
         //verify(stepContext, times(1)).success(eq("/descriptionComplete/test1/test2/number = 5072899"));
+    }
+
+    @Test
+    public void should_execute_successful_assertions_with_placeholder() {
+        Map<String, Object> expected = new HashMap<>();
+        expected.put("/something/value", "$isNotNull");
+        expected.put("/something/notexist", "$isNull");
+        expected.put("/something/valuenull", "$isNull");
+        expected.put("/something/alphabet", "$contains:abcdefg");
+        expected.put("/something/matchregexp", "$matches:\\d{4}-\\d{2}-\\d{2}");
+        expected.put("/something/onedate", "$isBeforeDate:2010-01-01T11:12:13.1230Z");
+        expected.put("/something/seconddate", "$isAfterDate:1998-07-14T02:03:04.456Z");
+        expected.put("/something/thirddate", "$isEqualDate:2000-01-01T10:11:12.123Z");
+        expected.put("/something/anumber", "$isLessThan:42000");
+        expected.put("/something/thenumber", "$isGreaterThan:45");
+
+        // Given
+        String fakeActualResult =
+            "<something>" +
+                "<value>3</value>" +
+                "<alphabet>abcdefg</alphabet>" +
+                "<valuenull></valuenull>" +
+                "<matchregexp>1983-10-26</matchregexp>" +
+                "<onedate>2000-01-01T10:11:12.123Z</onedate>" +
+                "<seconddate>2000-01-01T10:11:12.123Z</seconddate>" +
+                "<thirddate>2000-01-01T10:11:12.123Z</thirddate>" +
+                "<anumber>4 100</anumber>" +
+                "<thenumber>46</thenumber>" +
+            "</something>";
+
+        // When
+        Task jsonAssertTask = new XmlAssertTask(new TestLogger(), fakeActualResult, expected);
+        TaskExecutionResult result = jsonAssertTask.execute();
+
+        // Then
+        assertThat(result.status).isEqualTo(Success);
     }
 
     @SuppressWarnings("resource")

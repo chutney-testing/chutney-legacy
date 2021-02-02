@@ -1,0 +1,12 @@
+{
+    scenario: {
+        name: root step
+        steps: [
+          {
+            name: Target not found exception
+            target: UNKNOWN_TARGET
+            type: debug
+          }
+        ]
+    }
+}

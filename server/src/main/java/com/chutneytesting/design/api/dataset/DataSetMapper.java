@@ -2,7 +2,7 @@ package com.chutneytesting.design.api.dataset;
 
 import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
 
-import com.chutneytesting.design.api.compose.dto.KeyValue;
+import com.chutneytesting.tools.ui.KeyValue;
 import com.chutneytesting.design.domain.dataset.DataSet;
 import com.chutneytesting.tools.ui.ComposableIdUtils;
 import java.util.stream.Collectors;

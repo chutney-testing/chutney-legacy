@@ -6,7 +6,7 @@ import { TestCase } from '@model';
 import { HjsonParserService } from '@shared/hjson-parser/hjson-parser.service';
 import { ScenarioService } from '@core/services';
 import { CanDeactivatePage } from '@core/guards';
-import { JiraLinkService } from '@core/services/jira-link.service';
+import { JiraPluginService } from '@core/services/jira-plugin.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
@@ -22,13 +22,14 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
     errorMessage: any;
     modifiedContent = '';
     pluginsForm: FormGroup;
+    saveErrorMessage: string;
 
     private routeParamsSubscription: Subscription;
 
     constructor(private eventManager: EventManagerService,
                 private formBuilder: FormBuilder,
                 private hjsonParser: HjsonParserService,
-                private jiraLinkService: JiraLinkService,
+                private jiraLinkService: JiraPluginService,
                 private route: ActivatedRoute,
                 private router: Router,
                 private scenarioService: ScenarioService,
@@ -72,6 +73,8 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
                         this.previousTestCase.id = null;
                         this.testCase.id = null;
                         this.testCase.creationDate = null;
+                        this.testCase.updateDate = null;
+                        this.testCase.author = null;
                         this.testCase.title = '--COPY-- ' + this.testCase.title;
                         this.previousTestCase.title = '--COPY-- ' + this.previousTestCase.title;
                     }
@@ -117,6 +120,9 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
             },
             (error) => {
                 console.log(error);
+                if (error.error) {
+                    this.saveErrorMessage = error.error;
+                }
                 this.errorMessage = error._body;
             }
         );

@@ -6,6 +6,7 @@ import static java.util.Collections.unmodifiableMap;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.collections.ListUtils.unmodifiableList;
 
+import com.chutneytesting.security.domain.User;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import java.time.Instant;
@@ -16,19 +17,22 @@ import java.util.Objects;
 @JsonDeserialize(builder = TestCaseData.TestCaseDataBuilder.class)
 public class TestCaseData {
 
-    public final String version;
+    public final String contentVersion;
 
     public final String id;
     public final String title;
     public final String description;
     public final List<String> tags;
     public final Instant creationDate;
+    public final Instant updateDate;
+    public final String author;
+    public final Integer version;
 
     public final Map<String, String> dataSet;
     public final String rawScenario;
 
-    private TestCaseData(String version, String testCaseId, String title, String description, Instant creationDate, List<String> tags, Map<String, String> dataSet, String rawScenario) {
-        this.version = version;
+    private TestCaseData(String contentVersion, String testCaseId, String title, String description, Instant creationDate, List<String> tags, Map<String, String> dataSet, String rawScenario, Instant updateDate, String author, Integer version) {
+        this.contentVersion = contentVersion;
         this.id = testCaseId;
         this.title = title;
         this.description = description;
@@ -36,6 +40,9 @@ public class TestCaseData {
         this.creationDate = creationDate;
         this.dataSet = dataSet;
         this.rawScenario = rawScenario;
+        this.updateDate = updateDate;
+        this.author = author;
+        this.version = version;
     }
 
     @Override
@@ -48,6 +55,10 @@ public class TestCaseData {
             ", creationDate=" + creationDate +
             ", dataSet=" + dataSet +
             ", rawScenario='" + rawScenario + '\'' +
+            ", contentVersion='" + contentVersion + '\'' +
+            ", updateDate='" + updateDate + '\'' +
+            ", author='" + author + '\'' +
+            ", version='" + version + '\'' +
             '}';
     }
 
@@ -73,7 +84,7 @@ public class TestCaseData {
     @JsonPOJOBuilder
     public static class TestCaseDataBuilder {
 
-        private String version;
+        private String contentVersion;
         private String testCaseId;
         private String title;
         private String description;
@@ -81,22 +92,28 @@ public class TestCaseData {
         private List<String> tags;
         private Map<String, String> dataSet;
         private String rawScenario;
+        private Instant updateDate;
+        private String author;
+        private Integer version;
 
         public TestCaseData build() {
             return new TestCaseData(
-                version,
+                contentVersion,
                 ofNullable(testCaseId).orElseThrow(IllegalArgumentException::new),
                 ofNullable(title).orElse(""),
                 ofNullable(description).orElse(""),
                 ofNullable(creationDate).orElse(Instant.now()),
                 unmodifiableList(ofNullable(tags).orElse(emptyList())),
                 unmodifiableMap(ofNullable(dataSet).orElse(emptyMap())),
-                ofNullable(rawScenario).orElse("")
+                ofNullable(rawScenario).orElse(""),
+                ofNullable(updateDate).orElse(creationDate),
+                ofNullable(author).orElseGet(User.ANONYMOUS_USER::getId),
+                ofNullable(version).orElse(1)
             );
         }
 
-        public TestCaseDataBuilder withVersion(String version) {
-            this.version = version;
+        public TestCaseDataBuilder withContentVersion(String contentVersion) {
+            this.contentVersion = contentVersion;
             return this;
         }
 
@@ -133,6 +150,36 @@ public class TestCaseData {
         public TestCaseDataBuilder withRawScenario(String rawScenario) {
             this.rawScenario = rawScenario;
             return this;
+        }
+
+        public TestCaseDataBuilder withUpdateDate(Instant updateDate) {
+            this.updateDate = updateDate;
+            return this;
+        }
+
+        public TestCaseDataBuilder withAuthor(String author) {
+            this.author = author;
+            return this;
+        }
+
+        public TestCaseDataBuilder withVersion(Integer version) {
+            this.version = version;
+            return this;
+        }
+
+        public static TestCaseDataBuilder from(TestCaseData testCaseData) {
+            return builder()
+                .withId(testCaseData.id)
+                .withContentVersion(testCaseData.contentVersion)
+                .withTitle(testCaseData.title)
+                .withDescription(testCaseData.description)
+                .withCreationDate(testCaseData.creationDate)
+                .withRawScenario(testCaseData.rawScenario)
+                .withTags(testCaseData.tags)
+                .withDataSet(testCaseData.dataSet)
+                .withAuthor(testCaseData.author)
+                .withUpdateDate(testCaseData.updateDate)
+                .withVersion(testCaseData.version);
         }
     }
 }

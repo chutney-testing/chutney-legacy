@@ -13,12 +13,12 @@ import com.chutneytesting.task.domain.parameter.Parameter;
 import com.chutneytesting.task.spi.injectable.Target;
 import java.util.Arrays;
 import java.util.HashSet;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TaskTemplateMapperTest {
 
     @Test
-    public void should_map_task_template_with_no_inputs_parameters() throws Exception {
+    public void should_map_task_template_with_no_inputs_parameters() {
         // Given
         final String TASK_ID = "task-id";
         TaskTemplate taskTemplate = mockTaskTemplate(TASK_ID, new HashSet<>(Arrays.asList(mockParameter(String.class), mockParameter(String.class))));
@@ -33,18 +33,20 @@ public class TaskTemplateMapperTest {
     }
 
     @Test
-    public void should_map_task_template_with_inputs_parameters() throws Exception {
+    public void should_map_task_template_with_inputs_parameters() {
         // Given
         final String TASK_ID = "task-id";
         final Class<?> INPUT_TYPE_1 = String.class;
         final String INPUT_NAME_2 = "inputName2";
         final Class<?> INPUT_TYPE_2 = String.class;
+        final String INPUT_NAME_3 = "inputName3";
+        final Class<?> INPUT_TYPE_3 = Object.class;
 
         Parameter targetParameter = mock(Parameter.class, RETURNS_DEEP_STUBS);
         Class targetClass = Target.class;
         when(targetParameter.rawType()).thenReturn(targetClass);
 
-        TaskTemplate taskTemplate = mockTaskTemplate(TASK_ID, new HashSet<>(Arrays.asList(mockParameter(INPUT_TYPE_1), mockParameter(INPUT_TYPE_2, INPUT_NAME_2),targetParameter)));
+        TaskTemplate taskTemplate = mockTaskTemplate(TASK_ID, new HashSet<>(Arrays.asList(mockParameter(INPUT_TYPE_1), mockParameter(INPUT_TYPE_2, INPUT_NAME_2), mockParameter(INPUT_TYPE_3, INPUT_NAME_3), targetParameter)));
 
         // When
         TaskDto taskDto = TaskTemplateMapper.toDto(taskTemplate);
@@ -52,11 +54,11 @@ public class TaskTemplateMapperTest {
         // Then
         assertThat(taskDto.getIdentifier()).isEqualTo(TASK_ID);
         assertThat(taskDto.target()).isTrue();
-        assertThat(taskDto.getInputs()).containsExactly(new InputsDto(INPUT_NAME_2, INPUT_TYPE_2));
+        assertThat(taskDto.getInputs()).containsExactlyInAnyOrder(new InputsDto(INPUT_NAME_2, INPUT_TYPE_2), new InputsDto(INPUT_NAME_3, INPUT_TYPE_3));
     }
 
     @Test
-    public void should_map_task_template_with_complex_inputs_parameters() throws Exception {
+    public void should_map_task_template_with_complex_inputs_parameters() {
         // Given
         final String TASK_ID = "task-id";
         final String INPUT_NAME_1 = "complexParam";
@@ -76,6 +78,6 @@ public class TaskTemplateMapperTest {
                 new InputsDto("first", String.class),
                 new InputsDto("second", Integer.class),
                 new InputsDto("complexParam2", Integer.class)
-                );
+            );
     }
 }

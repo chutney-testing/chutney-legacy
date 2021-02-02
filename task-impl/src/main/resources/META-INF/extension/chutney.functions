@@ -1,4 +1,4 @@
-com.chutneytesting.task.function.JsonPathFunction
+com.chutneytesting.task.function.JsonFunctions
 com.chutneytesting.task.function.XPathFunction
 com.chutneytesting.task.function.XmlFunction
 com.chutneytesting.task.function.DateFunction
@@ -6,3 +6,7 @@ com.chutneytesting.task.function.StringReplaceFunction
 com.chutneytesting.task.function.GenerateFunction
 com.chutneytesting.task.http.function.WireMockFunction
 com.chutneytesting.task.function.NullableFunction
+com.chutneytesting.task.micrometer.MicrometerFunctions
+com.chutneytesting.task.function.SocketFunctions
+com.chutneytesting.task.function.ClasspathFunctions
+com.chutneytesting.task.function.EscapeFunctions

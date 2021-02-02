@@ -8,7 +8,7 @@ import com.chutneytesting.engine.domain.delegation.ConnectionChecker;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.concurrent.TimeUnit;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TcpConnectionCheckerTest {
 

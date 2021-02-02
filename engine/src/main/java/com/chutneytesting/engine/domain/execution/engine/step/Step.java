@@ -231,7 +231,9 @@ public class Step {
     private void copyStepResultsToScenarioContext(StepContextImpl stepContext, ScenarioContext scenarioContext) {
         Map<String, Object> contextAndStepResults = stepContext.allEvaluatedVariables();
         Try.exec(() -> {
-            scenarioContext.putAll(dataEvaluator.evaluateNamedDataWithContextVariables(definition.outputs, contextAndStepResults));
+            Map<String, Object> evaluatedOutputs = dataEvaluator.evaluateNamedDataWithContextVariables(definition.outputs, contextAndStepResults);
+            stepContext.stepOutputs.putAll(evaluatedOutputs);
+            scenarioContext.putAll(evaluatedOutputs);
             return null;
         })
             .ifFailed(e -> failure("Cannot evaluate outputs."

@@ -13,10 +13,22 @@
         </div>
     </div>
     <div class="header-right triangle-left col-md-4">
-        <div class="form-group">
-            <label class="form-control-label" for="tags">{{ 'scenarios.edition.form.tags' | translate }}</label>
-            <textarea type="text" class="form-control" name="tags" id="tags"
+        <div class="row">
+            <div class="col-2">
+                <chutney-authoring-info [testCase]="gwtTestCase"></chutney-authoring-info>
+            </div>
+            <div class="col-2">
+                <chutney-edition-info [testCase]="gwtTestCase"></chutney-edition-info>
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="p-0 align-self-center">
+                <label class="form-control-label font-weight-bold" for="tags">{{ 'scenarios.edition.form.tags' | translate }}</label>
+            </div>
+            <div class="col">
+                <textarea type="text" class="form-control tag-input no-resize" name="tags" id="tags" rows="2"
                       [ngModel]="gwtTestCase.tags" (ngModelChange)="updateTags($event)"></textarea>
+            </div>
         </div>
     </div>
     <div class="action-pane">
@@ -27,11 +39,20 @@
 </div>
 <div class="plugins">
     <form [formGroup]="pluginsForm" autocomplete="off">
-        <div class="form-group col-md-2">
-            <label for="jiraId">{{'menu.principal.jiraId' | translate}}</label>
-            <input type="text" class="form-control small-text" id="jiraId"
-                   formControlName="jiraId"
-                   placeholder="ex. LK-42"/>
+        <div class="row">
+            <div class="col-7 pl-2">
+                <div class="form-inline">
+                    <label class="form-control-label font-weight-bold mr-5" for="jiraId">{{'menu.principal.jiraId' | translate}}</label>
+                    <input type="text" class="form-control small-text" id="jiraId"
+                           formControlName="jiraId"
+                           placeholder="ex. LK-42"/>
+                </div>
+            </div>
+            <div class="col-5">
+                <div *ngIf="saveErrorMessage" class="text-center btn-danger text-white cursor-default" (click)="this.saveErrorMessage = null">
+                    <strong>{{ saveErrorMessage }}</strong>
+                </div>
+            </div>
         </div>
     </form>
 </div>

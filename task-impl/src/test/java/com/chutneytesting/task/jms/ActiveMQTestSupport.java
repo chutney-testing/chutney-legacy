@@ -25,8 +25,8 @@ import org.apache.activemq.broker.TransportConnector;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.transport.TransportFactory;
 import org.apache.activemq.transport.tcp.SslTransportFactory;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 public class ActiveMQTestSupport {
 
@@ -42,7 +42,7 @@ public class ActiveMQTestSupport {
 
     static final AtomicLong expectedTotalConnections = new AtomicLong();
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws Exception {
         // http://java.sun.com/javase/javaseforbusiness/docs/TLSReadme.html
         // work around: javax.net.ssl.SSLHandshakeException: renegotiation is not allowed
@@ -65,7 +65,7 @@ public class ActiveMQTestSupport {
         service.start();
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws Exception {
         connector.getBrokerService().stop();
     }

@@ -11,7 +11,7 @@ import java.net.UnknownHostException;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.stream.Stream;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class LocalServerIdentifierTest {
 

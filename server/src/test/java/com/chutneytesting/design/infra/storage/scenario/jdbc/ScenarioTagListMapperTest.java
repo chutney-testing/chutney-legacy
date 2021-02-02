@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ScenarioTagListMapperTest {
 
@@ -21,7 +21,7 @@ public class ScenarioTagListMapperTest {
     }
 
     @Test
-    public void string_should_be_splitted_on_comma_separator() throws Exception {
+    public void string_should_be_split_on_comma_separator() throws Exception {
         List<String> actual = ScenarioTagListMapper.tagsStringToList("  T1  , T2   ,  T3  ");
         assertThat(actual).containsExactly("T1", "T2", "T3");
     }

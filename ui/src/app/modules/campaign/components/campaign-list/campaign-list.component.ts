@@ -4,7 +4,9 @@ import { Router } from '@angular/router';
 import { Campaign, CampaignExecutionReport } from '@core/model';
 import { CampaignService } from '@core/services';
 import { Subscription, timer } from 'rxjs';
-import { JiraLinkService } from '@core/services/jira-link.service';
+import { JiraPluginService } from '@core/services/jira-plugin.service';
+import { CampaignSchedulingService } from '@core/services/campaign-scheduling.service';
+import { CampaignScheduling } from '@core/model/campaign/campaign-scheduling.model';
 
 @Component({
     selector: 'chutney-campaigns',
@@ -21,10 +23,13 @@ export class CampaignListComponent implements OnInit, OnDestroy {
     lastCampaignReportsSub: Subscription;
     campaignFilter: string;
 
+    scheduledCampaigns: Array<CampaignScheduling> = [];
+
     constructor(private campaignService: CampaignService,
-                private jiraLinkService: JiraLinkService,
+                private jiraLinkService: JiraPluginService,
                 private router: Router,
                 private translate: TranslateService,
+                private campaignSchedulingService: CampaignSchedulingService,
     ) {
         translate.get('campaigns.confirm.deletion.prefix').subscribe((res: string) => {
             this.deletionConfirmationTextPrefix = res;
@@ -49,6 +54,8 @@ export class CampaignListComponent implements OnInit, OnDestroy {
         );
 
         this.findLastCampaignReports();
+
+        this.loadSchedulingCampaign();
     }
 
     createCampaign() {
@@ -98,5 +105,15 @@ export class CampaignListComponent implements OnInit, OnDestroy {
             () => {},
             (error) => console.log(error)
         );
+    }
+
+    private loadSchedulingCampaign() {
+        this.campaignSchedulingService.findAll().subscribe(
+            (res) => {
+                this.scheduledCampaigns = res;
+            },
+            (error) => {
+                console.log(error)
+            });
     }
 }

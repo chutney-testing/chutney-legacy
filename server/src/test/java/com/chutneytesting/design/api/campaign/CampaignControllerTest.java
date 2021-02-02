@@ -20,9 +20,9 @@ import com.chutneytesting.design.api.scenario.v2_0.dto.ImmutableTestCaseIndexDto
 import com.chutneytesting.design.api.scenario.v2_0.dto.TestCaseIndexDto;
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
 import com.chutneytesting.design.domain.campaign.ScenarioExecutionReportCampaign;
-import com.chutneytesting.design.domain.compose.ComposableScenario;
-import com.chutneytesting.design.domain.compose.ComposableTestCase;
-import com.chutneytesting.design.domain.compose.ComposableTestCaseRepository;
+import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
+import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
+import com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.design.infra.storage.campaign.FakeCampaignRepository;
@@ -40,8 +40,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.util.Lists;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -66,7 +66,7 @@ public class CampaignControllerTest {
     private CampaignDto existingCampaign;
     private final ObjectMapper om = new WebConfiguration().objectMapper();
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         resultExtractor = new ResultExtractor();
 
@@ -329,7 +329,7 @@ public class CampaignControllerTest {
         insertCampaign(campaignToCreate);
 
         when(composableTestCaseRepository.findById("#44:44")).thenReturn(new ComposableTestCase("#44:44", TestCaseMetadataImpl.builder().withId("#44:44").build(), ComposableScenario.builder()
-            .withFunctionalSteps(emptyList())
+            .withComposableSteps(emptyList())
             .withParameters(emptyMap())
             .build()));
         when(testCaseRepository.findMetadataById("55")).thenReturn(TestCaseMetadataImpl.builder().withId("55").build());

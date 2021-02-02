@@ -2,15 +2,18 @@ package com.chutneytesting;
 
 import com.chutneytesting.admin.domain.BackupNotFoundException;
 import com.chutneytesting.design.domain.campaign.CampaignNotFoundException;
-import com.chutneytesting.design.domain.compose.FunctionalStepNotFoundException;
 import com.chutneytesting.design.domain.dataset.DataSetNotFoundException;
-import com.chutneytesting.design.domain.environment.AlreadyExistingEnvironmentException;
-import com.chutneytesting.design.domain.environment.AlreadyExistingTargetException;
-import com.chutneytesting.design.domain.environment.EnvironmentNotFoundException;
-import com.chutneytesting.design.domain.environment.InvalidEnvironmentNameException;
-import com.chutneytesting.design.domain.environment.TargetNotFoundException;
+import com.chutneytesting.design.domain.scenario.AlreadyExistingScenarioException;
 import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.ScenarioNotParsableException;
+import com.chutneytesting.design.domain.scenario.compose.AlreadyExistingComposableStepException;
+import com.chutneytesting.design.domain.scenario.compose.ComposableStepCyclicDependencyException;
+import com.chutneytesting.design.domain.scenario.compose.ComposableStepNotFoundException;
+import com.chutneytesting.environment.domain.AlreadyExistingEnvironmentException;
+import com.chutneytesting.environment.domain.AlreadyExistingTargetException;
+import com.chutneytesting.environment.domain.EnvironmentNotFoundException;
+import com.chutneytesting.environment.domain.InvalidEnvironmentNameException;
+import com.chutneytesting.environment.domain.TargetNotFoundException;
 import com.chutneytesting.execution.domain.campaign.CampaignAlreadyRunningException;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionNotFoundException;
 import com.chutneytesting.execution.domain.compiler.ScenarioConversionException;
@@ -63,10 +66,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         CampaignNotFoundException.class,
         CampaignExecutionNotFoundException.class,
         EnvironmentNotFoundException.class,
-        FunctionalStepNotFoundException.class,
+        ComposableStepNotFoundException.class,
         CurrentUserNotFound.class,
         BackupNotFoundException.class,
-        DataSetNotFoundException.class
+        DataSetNotFoundException.class,
+        ScenarioNotRunningException.class
     })
     protected ResponseEntity<Object> notFound(RuntimeException ex, WebRequest request) {
         String bodyOfResponse = ex.getMessage();
@@ -74,19 +78,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({
-        ScenarioNotRunningException.class
-    })
-    protected ResponseEntity<Object> notRunning(RuntimeException ex, WebRequest request) {
-        String bodyOfResponse = ex.getMessage();
-        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
-    }
-
-    @ExceptionHandler({
         AlreadyExistingTargetException.class,
         AlreadyExistingEnvironmentException.class,
-        CampaignAlreadyRunningException.class
+        CampaignAlreadyRunningException.class,
+        AlreadyExistingScenarioException.class,
+        AlreadyExistingComposableStepException.class,
+        ComposableStepCyclicDependencyException.class
     })
-    protected ResponseEntity<Object> alreadyRunning(RuntimeException ex, WebRequest request) {
+    protected ResponseEntity<Object> conflict(RuntimeException ex, WebRequest request) {
         String bodyOfResponse = ex.getMessage();
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
@@ -95,7 +94,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         ScenarioConversionException.class,
         ScenarioNotParsableException.class
     })
-    protected ResponseEntity<Object> scenarioSemanticallyIncorrect(RuntimeException ex, WebRequest request) {
+    protected ResponseEntity<Object> unprocessableEntity(RuntimeException ex, WebRequest request) {
         String bodyOfResponse = ex.getMessage();
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.UNPROCESSABLE_ENTITY, request);
     }
@@ -112,7 +111,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({
         IllegalArgumentException.class
     })
-    protected ResponseEntity<Object> illegalArgument(RuntimeException ex, WebRequest request) {
+    protected ResponseEntity<Object> forbidden(RuntimeException ex, WebRequest request) {
         String bodyOfResponse = ex.getMessage();
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }

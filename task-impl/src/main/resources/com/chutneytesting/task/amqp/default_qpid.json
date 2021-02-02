@@ -1,0 +1,43 @@
+{
+    "name": "Embedded Broker",
+    "modelVersion": "7.0",
+    "authenticationproviders": [
+        {
+            "name": "Hardcoded",
+            "type": "Plain",
+            "secureOnlyMechanisms": [],
+            "users": [
+                {
+                    "name": "guest",
+                    "password": "guest",
+                    "type": "managed"
+                }
+            ]
+        }
+    ],
+    "ports": [
+        {
+            "name": "AMQP",
+            "port": "${qpid.amqp_port}",
+            "protocols": [
+                "AMQP_0_9",
+                "AMQP_0_9_1"
+            ],
+            "authenticationProvider": "Hardcoded",
+            "virtualhostaliases": [
+                {
+                    "name": "defaultAlias",
+                    "type": "defaultAlias"
+                }
+            ]
+        }
+    ],
+    "virtualhostnodes": [
+        {
+            "name": "default",
+            "type": "Memory",
+            "defaultVirtualHostNode": "true",
+            "virtualHostInitialConfiguration": "{\"type\": \"Memory\", \"NodeAutoCreationPolicy\": [{\"patterns\":\".*\",\"createdOnPublish\":\"true\",\"createdOnConsume\":\"true\",\"nodeType\":\"queue\",\"attributes\":{}}] }"
+        }
+    ]
+}

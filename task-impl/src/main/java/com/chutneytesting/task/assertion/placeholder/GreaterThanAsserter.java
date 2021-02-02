@@ -20,6 +20,7 @@ public class GreaterThanAsserter implements PlaceholderAsserter {
         try {
             Number numActual = nb.parse(actual.toString().replaceAll(" ", ""));
             Number numExpected = nb.parse(expect.replaceAll(" ", ""));
+            logger.info("Verify " + numActual.doubleValue() + " > " + numExpected.doubleValue());
             return numActual.doubleValue() > numExpected.doubleValue();
         } catch (ParseException e) {
             logger.error(e.getMessage());

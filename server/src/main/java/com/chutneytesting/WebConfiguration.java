@@ -1,10 +1,10 @@
 package com.chutneytesting;
 
+import com.chutneytesting.tools.ui.MyMixInForIgnoreType;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.chutneytesting.tools.ui.MyMixInForIgnoreType;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -107,7 +107,7 @@ public class WebConfiguration {
         int extractionEndIndex = extractedPath.indexOf("target/");
         if (extractionEndIndex < 0) {
             return "";
-        } else if(extractionEndIndex == 0) {
+        } else if (extractionEndIndex == 0) {
             return "../";
         }
         return rootPath;

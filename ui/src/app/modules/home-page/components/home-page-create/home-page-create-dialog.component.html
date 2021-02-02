@@ -1,7 +1,6 @@
 <form name="editForm"  role="form" novalidate (ngSubmit)="save()" #editForm="ngForm" class="homepage-editor">
     <div class="m-2">
         <h4>{{ 'home.edition.dialog.title' | translate }}</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="clear()">&times;</button>
     </div>
     <div class="m-2">
         <ng-container *ngIf="homePage">

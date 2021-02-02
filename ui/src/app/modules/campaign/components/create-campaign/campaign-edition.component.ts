@@ -7,7 +7,7 @@ import { Campaign, EnvironmentMetadata, KeyValue, ScenarioComponent, ScenarioInd
 import { CampaignService, ComponentService, EnvironmentAdminService, ScenarioService } from '@core/services';
 import { DragulaService } from 'ng2-dragula';
 import { distinct, flatMap, newInstance } from '@shared/tools/array-utils';
-import { JiraLinkService } from '@core/services/jira-link.service';
+import { JiraPluginService } from '@core/services/jira-plugin.service';
 
 @Component({
     selector: 'chutney-campaign-edition',
@@ -46,7 +46,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         private campaignService: CampaignService,
         private scenarioService: ScenarioService,
         private componentService: ComponentService,
-        private jiraLinkService: JiraLinkService,
+        private jiraLinkService: JiraPluginService,
         private formBuilder: FormBuilder,
         private router: Router,
         private route: ActivatedRoute,

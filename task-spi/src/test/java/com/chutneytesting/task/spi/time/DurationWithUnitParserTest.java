@@ -3,21 +3,18 @@ package com.chutneytesting.task.spi.time;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Optional;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-import junitparams.naming.TestCaseName;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(JUnitParamsRunner.class)
 public class DurationWithUnitParserTest {
 
     private DurationParser durationWithUnitParser = new DurationWithUnitParser();
 
-    @Test
-    @Parameters
-    @TestCaseName("{0} is parsed to {1} ms")
+    @ParameterizedTest(name = "{0} is parsed to {1} ms")
+    @MethodSource("parametersForParsing_nominal_cases")
     public void parsing_nominal_cases(String durationAsString, long expectedMilliseconds, String expectedStringRepresentation) throws Exception {
         Optional<Duration> optionalDuration = durationWithUnitParser.parse(durationAsString);
         assertThat(optionalDuration).as("Parsing result").isPresent();
@@ -31,6 +28,10 @@ public class DurationWithUnitParserTest {
 
     public static Object[] parametersForParsing_nominal_cases() {
         return new Object[][]{
+            {"2654 ns", 0, "2654 ns"},
+            {"567898 ns", 6, "567898 ns"},
+            {"198 \u00b5s", 0, "198 \u03bcs"},
+            {"987 \u03bcs", 1, "987 \u03bcs"},
             {"15   ms", 15, "15 ms"},
             {"1.5 s", (long) (1.5 * 1000), "1.5 sec"},
             {"2 sec", 2 * 1000, "2 sec"},
@@ -41,9 +42,8 @@ public class DurationWithUnitParserTest {
         };
     }
 
-    @Test
-    @Parameters
-    @TestCaseName("{0} is not valid")
+    @ParameterizedTest(name = "{0} is not valid")
+    @MethodSource("parametersForUnmatched_parsing")
     public void unmatched_parsing(String literalDuration) {
         Optional<Duration> optionalDuration = durationWithUnitParser.parse(literalDuration);
         assertThat(optionalDuration).as("Parsing result").isEmpty();
@@ -58,7 +58,7 @@ public class DurationWithUnitParserTest {
 
     @Test
     public void description_contains_regex_and_samples() {
-        assertThat(durationWithUnitParser.description()).isEqualTo("Duration with unit: <positive number> (ms|sec|s|min|m|hours|hour|h|hour(s)|day(s)|d|days|day)\n" +
+        assertThat(durationWithUnitParser.description()).isEqualTo("Duration with unit: <positive number> (ns|\u03bcs|\u00b5s|ms|sec|s|min|m|hours|hour|h|hour(s)|day(s)|d|days|day)\n" +
             "Samples:\n" +
             "\t 3 min\n" +
             "\t 4,5 hours");
