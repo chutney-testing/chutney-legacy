@@ -2,6 +2,7 @@ package com.chutneytesting.agent;
 
 import static java.util.Collections.singleton;
 
+import com.chutneytesting.agent.domain.TargetId;
 import com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration;
 import com.chutneytesting.agent.domain.configure.NetworkConfiguration;
 import com.chutneytesting.agent.domain.explore.AgentId;
@@ -71,7 +72,8 @@ public class AgentNetworkTestUtils {
         Matcher matcher = TARGET_INFO_PATTERN.matcher(s);
         if (!matcher.find()) return Optional.empty();
         return Optional.of(Target.builder()
-            .withId(Target.TargetId.of(matcher.group("name"), envName))
+            .withName(matcher.group("name"))
+            .withEnvironment(envName)
             .withUrl("proto://" + matcher.group("host") + ":" + matcher.group("port"))
             .build());
     }
@@ -85,7 +87,7 @@ public class AgentNetworkTestUtils {
 
     public static ExploreResult createExploreResult(String... links) {
         ImmutableExploreResult.Links.Builder<AgentId, AgentId> agentLinksBuilder = ImmutableExploreResult.Links.builder();
-        ImmutableExploreResult.Links.Builder<AgentId, Target.TargetId> targetLinksBuilder = ImmutableExploreResult.Links.builder();
+        ImmutableExploreResult.Links.Builder<AgentId, TargetId> targetLinksBuilder = ImmutableExploreResult.Links.builder();
         Arrays.stream(links).forEach(link -> {
             buildAgentLink(link).ifPresent(agentLinksBuilder::addLinks);
             buildTargetLink(link).ifPresent(targetLinksBuilder::addLinks);
@@ -101,11 +103,11 @@ public class AgentNetworkTestUtils {
         return Optional.of(ImmutableExploreResult.Link.of(from, to));
     }
 
-    private static Optional<ExploreResult.Link<AgentId, Target.TargetId>> buildTargetLink(String linkDescription) {
+    private static Optional<ExploreResult.Link<AgentId, TargetId>> buildTargetLink(String linkDescription) {
         Matcher matcher = TARGET_LINK_PATTERN.matcher(linkDescription);
         if (!matcher.find()) return Optional.empty();
         AgentId from = AgentId.of(matcher.group("from"));
-        Target.TargetId to = Target.TargetId.of(matcher.group("name"), ENV_NAME);
+        TargetId to = TargetId.of(matcher.group("name"), ENV_NAME);
         return Optional.of(ImmutableExploreResult.Link.of(from, to));
     }
 }

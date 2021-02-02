@@ -100,7 +100,8 @@ public class NetworkConfigurationApiMapperTest {
 
         Set<Target> targets = new LinkedHashSet<>();
         targets.add(Target.builder()
-            .withId(Target.TargetId.of("s2", "env"))
+            .withName("s2")
+            .withEnvironment("env")
             .withUrl("pro://host2:45/lol")
             .build());
 
@@ -152,7 +153,8 @@ public class NetworkConfigurationApiMapperTest {
 
         Set<Target> targets = new LinkedHashSet<>();
         targets.add(Target.builder()
-            .withId(Target.TargetId.of("APP_1", "env_name"))
+            .withName("APP_1")
+            .withEnvironment("env_name")
             .withUrl("https://host_of_app:443/api")
             .build());
         Environment newEnv = Environment.builder().withName("env_name").withTargets(targets).build();

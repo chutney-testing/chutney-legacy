@@ -3,6 +3,7 @@ package com.chutneytesting.agent.domain.explore;
 import static com.chutneytesting.agent.domain.explore.ImmutableExploreResult.Links.of;
 
 import com.chutneytesting.agent.domain.AgentClient;
+import com.chutneytesting.agent.domain.TargetId;
 import com.chutneytesting.agent.domain.configure.ConfigurationState;
 import com.chutneytesting.agent.domain.configure.Explorations;
 import com.chutneytesting.agent.domain.configure.LocalServerIdentifier;
@@ -82,17 +83,17 @@ public class ExploreAgentsService {
 
         Set<ExploreResult> exploreResults = exploreToRemoteAgentsAndTargets(localName, networkConfiguration);
         Links<AgentId, AgentId> agentLinks = aggregateLinks(exploreResults, ExploreResult::agentLinks);
-        Links<AgentId, Target.TargetId> targetLinks = aggregateLinks(exploreResults, ExploreResult::targetLinks);
+        Links<AgentId, TargetId> targetLinks = aggregateLinks(exploreResults, ExploreResult::targetLinks);
 
         return ImmutableExploreResult.of(agentLinks, targetLinks);
     }
 
     private ExploreResult detectAvailableTargets(String localName, NetworkConfiguration networkConfiguration) {
 
-        Set<Link<AgentId, Target.TargetId>> targetLinks = networkConfiguration.environmentConfiguration().stream()
+        Set<Link<AgentId, TargetId>> targetLinks = networkConfiguration.environmentConfiguration().stream()
             .flatMap(env -> env.targets.stream()
                 .filter(target -> connectionChecker.canConnectTo(namedHostAndPortFromTarget(target)))
-                .map(t -> t.id)
+                .map(t -> TargetId.of(t.name, t.environment))
                 .map(targetIdentifier -> Link.of(AgentId.of(localName), targetIdentifier))
             ).collect(Collectors.toSet());
         return ImmutableExploreResult.of(Links.empty(), ImmutableExploreResult.Links.of(targetLinks));

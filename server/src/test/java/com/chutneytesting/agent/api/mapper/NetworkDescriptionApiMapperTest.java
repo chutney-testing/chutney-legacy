@@ -74,7 +74,8 @@ public class NetworkDescriptionApiMapperTest {
 
     private Target createTarget(String name, String url) {
         return Target.builder()
-            .withId(Target.TargetId.of(name, "env"))
+            .withName(name)
+            .withEnvironment("env")
             .withUrl(url)
             .build();
     }

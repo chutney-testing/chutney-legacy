@@ -45,7 +45,8 @@ public class JsonFilesEnvironmentRepositoryTest {
             .withTargets(
                 Collections.singleton(
                     Target.builder()
-                        .withId(Target.TargetId.of("target1", "envName"))
+                        .withName("target1")
+                        .withEnvironment("envName")
                         .withUrl(url)
                         .withSecurity(SecurityInfo.builder()
                             .keyStore("not_existing_keystore")

@@ -7,13 +7,11 @@ import com.chutneytesting.environment.infra.JsonFilesEnvironmentRepository;
 
 public class EnvironmentConfiguration {
 
-    private final EnvironmentRepository environmentRepository;
-    private final EnvironmentService environmentService;
     private final EnvironmentEmbeddedApplication environmentEmbeddedApplication;
 
     public EnvironmentConfiguration(String storeFolderPath) {
-        this.environmentRepository = createEnvironmentRepository(storeFolderPath);
-        this.environmentService = createEnvironmentService(this.environmentRepository);
+        EnvironmentRepository environmentRepository = createEnvironmentRepository(storeFolderPath);
+        EnvironmentService environmentService = createEnvironmentService(environmentRepository);
         this.environmentEmbeddedApplication = new EnvironmentEmbeddedApplication(environmentService);
     }
 

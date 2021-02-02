@@ -375,7 +375,8 @@ public class EnvironmentControllerApplicationTest {
 
         Set<Target> targets = stream(targetNames)
             .map(targetName -> Target.builder()
-                .withId(Target.TargetId.of(targetName, envName))
+                .withName(targetName)
+                .withEnvironment(envName)
                 .withUrl("http://" + targetName.replace(' ', '_') + ":43")
                 .build())
             .collect(toCollection(LinkedHashSet::new));

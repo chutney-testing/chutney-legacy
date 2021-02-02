@@ -4,12 +4,12 @@ import com.chutneytesting.agent.api.dto.ExploreResultApiDto;
 import com.chutneytesting.agent.api.dto.ExploreResultApiDto.AgentLinkEntity;
 import com.chutneytesting.agent.api.dto.ExploreResultApiDto.TargetLinkEntity;
 import com.chutneytesting.agent.api.dto.TargetIdEntity;
+import com.chutneytesting.agent.domain.TargetId;
 import com.chutneytesting.agent.domain.explore.AgentId;
 import com.chutneytesting.agent.domain.explore.ExploreResult;
 import com.chutneytesting.agent.domain.explore.ImmutableExploreResult;
 import com.chutneytesting.agent.domain.explore.ImmutableExploreResult.Link;
 import com.chutneytesting.agent.domain.explore.ImmutableExploreResult.Links;
-import com.chutneytesting.environment.domain.Target;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
@@ -37,8 +37,8 @@ public class ExploreResultApiMapper {
             .build();
     }
 
-    private Target.TargetId from(TargetLinkEntity targetLinkEntity) {
-        return Target.TargetId.of(targetLinkEntity.destination.name, targetLinkEntity.destination.environment);
+    private TargetId from(TargetLinkEntity targetLinkEntity) {
+        return TargetId.of(targetLinkEntity.destination.name, targetLinkEntity.destination.environment);
     }
 
     public ExploreResultApiDto from(ExploreResult exploreResult) {
@@ -57,7 +57,7 @@ public class ExploreResultApiMapper {
         return dto;
     }
 
-    private TargetIdEntity from(Target.TargetId destination) {
+    private TargetIdEntity from(TargetId destination) {
         return new TargetIdEntity(destination.name, destination.environment);
     }
 }

@@ -22,7 +22,6 @@ import com.chutneytesting.engine.api.execution.TargetExecutionDto;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
 import com.chutneytesting.environment.api.EnvironmentEmbeddedApplication;
 import com.chutneytesting.environment.api.dto.TargetDto;
-import com.chutneytesting.environment.domain.Target;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.compiler.ScenarioConversionException;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
@@ -225,7 +224,7 @@ public class ExecutionRequestMapper {
         Optional<NetworkDescription> networkDescription = currentNetworkDescription.findCurrent();
         if (networkDescription.isPresent() && networkDescription.get().localAgent().isPresent()) {
             final Agent localAgent = networkDescription.get().localAgent().get();
-            List<Agent> agents = localAgent.findFellowAgentForReaching(new Target.TargetId(targetDto.name, env));
+            List<Agent> agents = localAgent.findFellowAgentForReaching(targetDto.name, env);
             nhaps = agents.stream().map(a -> a.agentInfo).collect(toList());
         }
         return nhaps;

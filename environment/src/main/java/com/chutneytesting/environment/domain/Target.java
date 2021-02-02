@@ -10,14 +10,15 @@ import java.util.Objects;
 
 public class Target {
 
-    public final TargetId id;
+
     public final String url;
     public final Map<String, String> properties;
     public final SecurityInfo security;
     public final String name;
+    public final String environment;
 
-    private Target(TargetId id, String url, Map<String, String> properties, SecurityInfo security, String name) {
-        this.id = id;
+    private Target(String environment, String url, Map<String, String> properties, SecurityInfo security, String name) {
+        this.environment = environment;
         this.url = url;
         this.properties = properties;
         this.security = security;
@@ -29,7 +30,8 @@ public class Target {
     }
 
     public static class TargetBuilder {
-        private TargetId id;
+        private String name;
+        private String environment;
         private String url;
         private Map<String, String> properties;
         private SecurityInfo security;
@@ -39,16 +41,21 @@ public class Target {
 
         public Target build() {
             return new Target(
-                Objects.requireNonNull(id, "id"),
+                Objects.requireNonNull(environment, "environment"),
                 Objects.requireNonNull(url, "url"),
                 unmodifiableMap(ofNullable(properties).orElse(emptyMap())),
                 ofNullable(security).orElse(SecurityInfo.builder().build()),
-                Objects.requireNonNull(id.name, "name")
+                Objects.requireNonNull(name, "name")
             );
         }
 
-        public TargetBuilder withId(TargetId value) {
-            this.id = Objects.requireNonNull(value, "id");
+        public TargetBuilder withName(String value) {
+            this.name = Objects.requireNonNull(value, "name");
+            return this;
+        }
+
+        public TargetBuilder withEnvironment(String value) {
+            this.environment = Objects.requireNonNull(value, "environment");
             return this;
         }
 
@@ -69,7 +76,8 @@ public class Target {
 
         public TargetBuilder copyOf(Target target) {
             Objects.requireNonNull(target, "target");
-            withId(target.id);
+            withName(target.name);
+            withEnvironment(target.environment);
             withUrl(target.url);
             withSecurity(target.security);
             withProperties(target.properties);
@@ -77,40 +85,14 @@ public class Target {
         }
     }
 
-    public static final class TargetId {
-        public final String name;
-        public final String environment;
 
-        public TargetId(String name, String environment) {
-            this.name = Objects.requireNonNull(name, "name");
-            this.environment = Objects.requireNonNull(environment, "environment");
-        }
-
-        public static TargetId of(String name, String env) {
-            return new TargetId(name, env);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            TargetId targetId = (TargetId) o;
-            return name.equals(targetId.name) &&
-                environment.equals(targetId.environment);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(name, environment);
-        }
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Target target = (Target) o;
-        return Objects.equals(id, target.id) &&
+        return Objects.equals(environment, target.environment) &&
             Objects.equals(url, target.url) &&
             Objects.equals(properties, target.properties) &&
             Objects.equals(security, target.security) &&
@@ -119,13 +101,13 @@ public class Target {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, url, properties, security, name);
+        return Objects.hash(environment, url, properties, security, name);
     }
 
     @Override
     public String toString() {
         return "Target{" +
-            "id=" + id +
+            "environment=" + environment +
             ", url='" + url + '\'' +
             ", properties=" + properties +
             ", security=" + security +

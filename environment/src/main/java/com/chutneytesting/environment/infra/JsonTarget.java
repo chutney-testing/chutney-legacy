@@ -50,7 +50,8 @@ public class JsonTarget {
                 .build();
         }
         return Target.builder()
-            .withId(Target.TargetId.of(name, envName))
+            .withName(name)
+            .withEnvironment(envName)
             .withUrl(url)
             .withProperties(properties)
             .withSecurity(securityInfo)

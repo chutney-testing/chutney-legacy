@@ -28,7 +28,8 @@ public class EnvironmentApiMapper {
         Map<String, String> properties = new LinkedHashMap<>(targetsApiDto.properties);
 
         return Target.builder()
-            .withId(Target.TargetId.of(targetsApiDto.name, env))
+            .withName(targetsApiDto.name)
+            .withEnvironment(env)
             .withUrl(targetsApiDto.url)
             .withProperties(properties)
             .withSecurity(fromDto(targetsApiDto.security))

@@ -48,7 +48,8 @@ public class TargetDto {
             securityInfo.credential(SecurityInfo.Credential.of(username, password));
         }
         return Target.builder()
-            .withId(Target.TargetId.of(name, environment))
+            .withName(name)
+            .withEnvironment(environment)
             .withUrl(url)
             .withProperties(propertiesToMap())
             .withSecurity(securityInfo.build())

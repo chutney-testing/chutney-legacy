@@ -1,9 +1,9 @@
 package blackbox;
 
-import com.chutneytesting.environment.domain.exception.AlreadyExistingEnvironmentException;
 import com.chutneytesting.environment.domain.Environment;
 import com.chutneytesting.environment.domain.SecurityInfo;
 import com.chutneytesting.environment.domain.Target;
+import com.chutneytesting.environment.domain.exception.AlreadyExistingEnvironmentException;
 import com.chutneytesting.junit.api.AfterAll;
 import com.chutneytesting.junit.api.BeforeAll;
 import com.chutneytesting.junit.api.Chutney;
@@ -93,7 +93,8 @@ public class ChutneyTest {
     private void addChutneyLocalServer() {
         environmentService.addTarget(TEST_ENV_NAME,
             Target.builder()
-                .withId(Target.TargetId.of("CHUTNEY_LOCAL", TEST_ENV_NAME))
+                .withName("CHUTNEY_LOCAL")
+                .withEnvironment(TEST_ENV_NAME)
                 .withUrl("https://localhost:" + securePort)
                 .withSecurity(
                     SecurityInfo.builder()
@@ -105,7 +106,8 @@ public class ChutneyTest {
 
         environmentService.addTarget(TEST_ENV_NAME,
             Target.builder()
-                .withId(Target.TargetId.of("CHUTNEY_LOCAL_NO_USER", TEST_ENV_NAME))
+                .withName("CHUTNEY_LOCAL_NO_USER")
+                .withEnvironment(TEST_ENV_NAME)
                 .withUrl("https://localhost:" + securePort)
                 .build()
         );
@@ -116,7 +118,8 @@ public class ChutneyTest {
         String spring_profiles_active = System.getenv("SPRING_PROFILES_ACTIVE");
         if (spring_profiles_active != null && spring_profiles_active.contains("db-pg")) { // Check H2 or Postgres
             dbTarget = Target.builder()
-                .withId(Target.TargetId.of("CHUTNEY_DB", TEST_ENV_NAME))
+                .withName("CHUTNEY_DB")
+                .withEnvironment(TEST_ENV_NAME)
                 .withUrl("tcp://localhost:" + dbPort)
                 .withProperties(
                     Maps.of(
@@ -130,7 +133,8 @@ public class ChutneyTest {
                 .build();
         } else { // H2 by default
             dbTarget = Target.builder()
-                .withId(Target.TargetId.of("CHUTNEY_DB", TEST_ENV_NAME))
+                .withName("CHUTNEY_DB")
+                .withEnvironment(TEST_ENV_NAME)
                 .withUrl("tcp://localhost:" + dbPort)
                 .withProperties(
                     Maps.of(

@@ -3,6 +3,7 @@ package com.chutneytesting.agent.api.mapper;
 import com.chutneytesting.agent.api.dto.AgentApiDto;
 import com.chutneytesting.agent.api.dto.AgentsGraphApiDto;
 import com.chutneytesting.agent.api.dto.TargetIdEntity;
+import com.chutneytesting.agent.domain.TargetId;
 import com.chutneytesting.agent.domain.network.Agent;
 import com.chutneytesting.agent.domain.network.AgentGraph;
 import com.chutneytesting.environment.domain.Target;
@@ -59,7 +60,7 @@ public class AgentGraphApiMapper {
         return new AgentGraph(agents.values());
     }
 
-    private Target.TargetId fromDto(TargetIdEntity targetIdEntity) {
-        return Target.TargetId.of(targetIdEntity.name, targetIdEntity.environment);
+    private TargetId fromDto(TargetIdEntity targetIdEntity) {
+        return TargetId.of(targetIdEntity.name, targetIdEntity.environment);
     }
 }

@@ -3,6 +3,7 @@ package com.chutneytesting.agent.infra.storage;
 import static java.util.Optional.ofNullable;
 import static java.util.function.Function.identity;
 
+import com.chutneytesting.agent.domain.TargetId;
 import com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration;
 import com.chutneytesting.agent.domain.network.Agent;
 import com.chutneytesting.agent.domain.network.AgentGraph;
@@ -94,7 +95,7 @@ public class AgentNetworkMapperJsonFileMapper {
 
     private void addTargetLinks(Agent agent, AgentForJsonFile dto) {
         dto.reachableTargetIds.stream()
-            .map(target -> Target.TargetId.of(target.name, target.environment))
+            .map(target -> TargetId.of(target.name, target.environment))
             .forEach(agent::addReachable);
     }
 
