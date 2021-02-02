@@ -87,14 +87,6 @@ public class GwtTestCaseController {
         return Boolean.TRUE;
     }
 
-    private List<TestCaseMetadata> findAllComposableTestCase() {
-        return composableTestCaseRepository.findAll().stream()
-            .map(testCaseMetadata -> TestCaseMetadataImpl.TestCaseMetadataBuilder.from(testCaseMetadata)
-                .withId(toFrontId(testCaseMetadata.id()))
-                .build())
-            .collect(Collectors.toList());
-    }
-
     /*
      * RAW Edition
      *
