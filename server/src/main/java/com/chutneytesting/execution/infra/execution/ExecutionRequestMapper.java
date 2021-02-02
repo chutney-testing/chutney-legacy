@@ -18,7 +18,7 @@ import com.chutneytesting.engine.api.execution.CredentialDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
 import com.chutneytesting.engine.api.execution.SecurityInfoDto;
-import com.chutneytesting.engine.api.execution.TargetDto;
+import com.chutneytesting.engine.api.execution.TargetExecutionDto;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
 import com.chutneytesting.environment.domain.EnvironmentService;
 import com.chutneytesting.environment.domain.SecurityInfo;
@@ -146,11 +146,11 @@ public class ExecutionRequestMapper {
         );
     }
 
-    private TargetDto toDto(Target target) {
+    private TargetExecutionDto toDto(Target target) {
         if (target == null || NO_TARGET.equals(target)) {
             target = NO_TARGET;
         }
-        return new TargetDto(
+        return new TargetExecutionDto(
             target.id.name,
             target.url,
             target.properties,

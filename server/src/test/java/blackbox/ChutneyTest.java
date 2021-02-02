@@ -1,6 +1,6 @@
 package blackbox;
 
-import com.chutneytesting.environment.domain.AlreadyExistingEnvironmentException;
+import com.chutneytesting.environment.domain.exception.AlreadyExistingEnvironmentException;
 import com.chutneytesting.environment.domain.Environment;
 import com.chutneytesting.environment.domain.SecurityInfo;
 import com.chutneytesting.environment.domain.Target;

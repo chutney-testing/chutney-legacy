@@ -13,7 +13,7 @@ import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.raw.RawTestCase;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.SecurityInfoDto;
-import com.chutneytesting.engine.api.execution.TargetDto;
+import com.chutneytesting.engine.api.execution.TargetExecutionDto;
 import com.chutneytesting.environment.domain.EnvironmentService;
 import com.chutneytesting.environment.domain.Target;
 import com.chutneytesting.execution.domain.ExecutionRequest;
@@ -68,7 +68,7 @@ public class ExecutionRequestMapperTest {
         String expectedType = "task-id";
         String expectedTargetId = "target name";
         SecurityInfoDto securityDto = new SecurityInfoDto(null, null, null, null, null, null);
-        TargetDto expectedTarget = new TargetDto(expectedTargetId, "", emptyMap(), securityDto, emptyList());
+        TargetExecutionDto expectedTarget = new TargetExecutionDto(expectedTargetId, "", emptyMap(), securityDto, emptyList());
 
         LinkedHashMap<String, Object> expectedOutputs = new LinkedHashMap<>(Maps.of(
             "output1", "value1",
@@ -165,7 +165,7 @@ public class ExecutionRequestMapperTest {
         assertThat(stepDefinitionRequestDto.name).isEqualTo(name);
         assertThat(stepDefinitionRequestDto.type).isNullOrEmpty();
         assertThat(stepDefinitionRequestDto.target).isEqualTo(
-            new TargetDto("", "", emptyMap(), securityDto, emptyList())
+            new TargetExecutionDto("", "", emptyMap(), securityDto, emptyList())
         );
         assertThat(stepDefinitionRequestDto.inputs).isNullOrEmpty();
         assertThat(stepDefinitionRequestDto.outputs).isNullOrEmpty();
@@ -174,7 +174,7 @@ public class ExecutionRequestMapperTest {
     private void assertStepDefinitionRequestDtoImplementation(ExecutionRequestDto.StepDefinitionRequestDto stepDefinitionRequestDto,
                                                               String name,
                                                               String implementationType,
-                                                              TargetDto implementationTarget,
+                                                              TargetExecutionDto implementationTarget,
                                                               LinkedHashMap<String, Object> implementationInputs,
                                                               LinkedHashMap<String, Object> implementationOuputs) {
         assertThat(stepDefinitionRequestDto).isNotNull();

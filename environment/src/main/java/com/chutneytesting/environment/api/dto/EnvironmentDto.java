@@ -7,17 +7,17 @@ import com.chutneytesting.environment.domain.Environment;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class EnvironmentMetadataDto {
+public class EnvironmentDto {
 
     public String name;
     public String description;
-    public List<TargetMetadataDto> targets;
+    public List<TargetDto> targets;
 
-    public static EnvironmentMetadataDto from(Environment environment) {
-        EnvironmentMetadataDto environmentMetadataDto = new EnvironmentMetadataDto();
+    public static EnvironmentDto from(Environment environment) {
+        EnvironmentDto environmentMetadataDto = new EnvironmentDto();
         environmentMetadataDto.name = environment.name;
         environmentMetadataDto.description = environment.description;
-        environmentMetadataDto.targets = environment.targets.stream().map(t -> TargetMetadataDto.from(t)).collect(Collectors.toList());
+        environmentMetadataDto.targets = environment.targets.stream().map(TargetDto::from).collect(Collectors.toList());
         return environmentMetadataDto;
     }
 

@@ -1,5 +1,11 @@
 package com.chutneytesting.environment.domain;
 
+import com.chutneytesting.environment.domain.exception.AlreadyExistingEnvironmentException;
+import com.chutneytesting.environment.domain.exception.AlreadyExistingTargetException;
+import com.chutneytesting.environment.domain.exception.CannotDeleteEnvironmentException;
+import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
+import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
+import com.chutneytesting.environment.domain.exception.TargetNotFoundException;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;

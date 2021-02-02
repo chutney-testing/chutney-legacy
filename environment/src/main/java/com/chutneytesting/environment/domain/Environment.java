@@ -4,6 +4,8 @@ import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.collections.ListUtils.unmodifiableList;
 
+import com.chutneytesting.environment.domain.exception.AlreadyExistingTargetException;
+import com.chutneytesting.environment.domain.exception.TargetNotFoundException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

@@ -120,11 +120,6 @@ public class ServerConfiguration {
     }
 
     @Bean
-    EnvironmentService environmentService(EnvironmentRepository environmentRepository) {
-        return new EnvironmentService(environmentRepository);
-    }
-
-    @Bean
     UserService userService() {
         return new UserService();
     }

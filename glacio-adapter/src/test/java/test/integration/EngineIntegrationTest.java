@@ -10,6 +10,7 @@ import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
+import com.chutneytesting.environment.EnvironmentConfiguration;
 import com.google.common.io.Resources;
 import java.io.File;
 import java.io.IOException;
@@ -26,15 +27,16 @@ public class EngineIntegrationTest {
 
     private static final String ENVIRONMENT = "ENV";
     private static ExecutionConfiguration executionConfiguration;
+    private static EnvironmentConfiguration environmentConfiguration;
 
     private static GlacioAdapter glacioAdapter;
 
     @BeforeAll
     public static void setUp() throws IOException {
-        String ENV_FOLDER_PATH = "src/test/resources/conf";
-
+        String envFolderPath = "src/test/resources/conf";
+        environmentConfiguration = new EnvironmentConfiguration(envFolderPath);
         executionConfiguration = new ExecutionConfiguration();
-        GlacioAdapterConfiguration glacioAdapterConfiguration = new GlacioAdapterConfiguration(executionConfiguration, ENV_FOLDER_PATH, ENV_FOLDER_PATH + "/endpoints.json");
+        GlacioAdapterConfiguration glacioAdapterConfiguration = new GlacioAdapterConfiguration(executionConfiguration, environmentConfiguration, envFolderPath + "/endpoints.json");
 
         glacioAdapter = glacioAdapterConfiguration.glacioAdapter();
     }

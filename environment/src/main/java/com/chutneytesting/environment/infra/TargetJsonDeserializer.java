@@ -33,36 +33,34 @@ public class TargetJsonDeserializer extends JsonDeserializer<JsonTarget> {
         }
         JsonTarget.JsonSecurityInfo securityInfo = null;
         if (targetNode.hasNonNull("security")) {
-            JsonNode secu = targetNode.get("security");
+            JsonNode security = targetNode.get("security");
             String trustStore = null;
-            if (secu.hasNonNull("trustStore")) {
-                trustStore = secu.get("trustStore").textValue();
+            if (security.hasNonNull("trustStore")) {
+                trustStore = security.get("trustStore").textValue();
             }
             String trustStorePassword = null;
-            if (secu.hasNonNull("trustStorePassword")) {
-                trustStorePassword = secu.get("trustStorePassword").textValue();
+            if (security.hasNonNull("trustStorePassword")) {
+                trustStorePassword = security.get("trustStorePassword").textValue();
             }
             String keyStore = null;
-            if (secu.hasNonNull("keyStore")) {
-                keyStore = secu.get("keyStore").textValue();
+            if (security.hasNonNull("keyStore")) {
+                keyStore = security.get("keyStore").textValue();
             }
             String keyStorePassword = null;
-            if (secu.hasNonNull("keyStorePassword")) {
-                keyStorePassword = secu.get("keyStorePassword").textValue();
+            if (security.hasNonNull("keyStorePassword")) {
+                keyStorePassword = security.get("keyStorePassword").textValue();
             }
             String privateKey = null;
-            if (secu.hasNonNull("privateKey")) {
-                privateKey = secu.get("privateKey").textValue();
+            if (security.hasNonNull("privateKey")) {
+                privateKey = security.get("privateKey").textValue();
             }
             JsonTarget.JsonCredential credential = null;
 
-            if (secu.hasNonNull("credential")) {
-                JsonNode jcredential = secu.get("credential");
-                String username = null;
-                String password = null;
-                if (jcredential.hasNonNull("username")) {
-                    username = jcredential.get("username").textValue();
-                    password = Optional.ofNullable(jcredential.get("password")).map(JsonNode::textValue).orElse("");
+            if (security.hasNonNull("credential")) {
+                JsonNode jsonCredential = security.get("credential");
+                if (jsonCredential.hasNonNull("username")) {
+                    String username = jsonCredential.get("username").textValue();
+                    String password = Optional.ofNullable(jsonCredential.get("password")).map(JsonNode::textValue).orElse("");
                     credential = new JsonTarget.JsonCredential(username, password);
                 }
             }

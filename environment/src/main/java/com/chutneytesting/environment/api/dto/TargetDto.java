@@ -8,30 +8,29 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class TargetMetadataDto {
+public class TargetDto {
     public final String name;
     public final String url;
     public final List<Entry> properties;
-    public final Optional<String> username;
-    public final Optional<String> password;
-    public final Optional<String> keyStore;
-    public final Optional<String> keyStorePassword;
-    public final Optional<String> privateKey;
+    public final String username;
+    public final String password;
+    public final String keyStore;
+    public final String keyStorePassword;
+    public final String privateKey;
 
-    public TargetMetadataDto(@JsonProperty("name") String name,
-                             @JsonProperty("url") String url,
-                             @JsonProperty("properties") List<Entry> properties,
-                             @JsonProperty("username") String username,
-                             @JsonProperty("password") String password,
-                             @JsonProperty("keyStore") String keyStore,
-                             @JsonProperty("keyStorePassword") String keyStorePassword,
-                             @JsonProperty("privateKey") String privateKey) {
+    public TargetDto(@JsonProperty("name") String name,
+                     @JsonProperty("url") String url,
+                     @JsonProperty("properties") List<Entry> properties,
+                     @JsonProperty("username") String username,
+                     @JsonProperty("password") String password,
+                     @JsonProperty("keyStore") String keyStore,
+                     @JsonProperty("keyStorePassword") String keyStorePassword,
+                     @JsonProperty("privateKey") String privateKey) {
         this.name = name.trim();
         this.url = url.trim();
-        this.properties = nulltoEmpty(properties);
+        this.properties = nullToEmpty(properties);
         this.username = emptyToNull(username);
         this.password = emptyToNull(password);
         this.keyStore = emptyToNull(keyStore);
@@ -41,11 +40,11 @@ public class TargetMetadataDto {
 
     public Target toTarget(String environment) {
         SecurityInfo.SecurityInfoBuilder securityInfo = SecurityInfo.builder()
-            .keyStore(keyStore.orElse(null))
-            .keyStorePassword(keyStorePassword.orElse(null))
-            .privateKey(privateKey.orElse(null));
-        if (username.isPresent() || password.isPresent()) {
-            securityInfo.credential(SecurityInfo.Credential.of(username.orElse(""), password.orElse("")));
+            .keyStore(keyStore)
+            .keyStorePassword(keyStorePassword)
+            .privateKey(privateKey);
+        if (username != null || password != null) {
+            securityInfo.credential(SecurityInfo.Credential.of(username, password));
         }
         return Target.builder()
             .withId(Target.TargetId.of(name, environment))
@@ -55,8 +54,8 @@ public class TargetMetadataDto {
             .build();
     }
 
-    public static TargetMetadataDto from(Target target) {
-        return new TargetMetadataDto(
+    public static TargetDto from(Target target) {
+        return new TargetDto(
             target.name,
             target.url,
             toEntryList(target.properties),
@@ -68,11 +67,11 @@ public class TargetMetadataDto {
         );
     }
 
-    private Optional<String> emptyToNull(String s) {
-        return ofNullable("".equals(s) ? null : s);
+    private String emptyToNull(String s) {
+        return "".equals(s) ? null : s;
     }
 
-    private <T> List<T> nulltoEmpty(List<T> list) {
+    private <T> List<T> nullToEmpty(List<T> list) {
         return list == null ? Collections.emptyList() : list;
     }
 

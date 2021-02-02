@@ -22,10 +22,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.chutneytesting.environment.domain.Environment;
-import com.chutneytesting.environment.domain.EnvironmentNotFoundException;
+import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
 import com.chutneytesting.environment.domain.EnvironmentService;
-import com.chutneytesting.environment.domain.InvalidEnvironmentNameException;
+import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
 import com.chutneytesting.environment.domain.Target;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -46,13 +46,13 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class EnvironmentControllerV2Test {
+public class EnvironmentEmbeddedApplicationTest {
 
     private final String basePath = "/api/v2/environment";
 
     private final EnvironmentRepository environmentRepository = mock(EnvironmentRepository.class);
     private final EnvironmentService environmentService = new EnvironmentService(environmentRepository);
-    private final EnvironmentControllerV2 environmentControllerV2 = new EnvironmentControllerV2(environmentService);
+    private final EnvironmentEmbeddedApplication embeddedApplication = new EnvironmentEmbeddedApplication(environmentService);
     private final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(environmentControllerV2)
         .setControllerAdvice(new EnvironmentRestExceptionHandler())
         .build();
@@ -367,7 +367,7 @@ public class EnvironmentControllerV2Test {
         }
     }
 
-    Map<String, Environment> registeredEnvironments = new LinkedHashMap<>();
+    final Map<String, Environment> registeredEnvironments = new LinkedHashMap<>();
 
     private void addAvailableEnvironment(String envName, String... targetNames) {
 

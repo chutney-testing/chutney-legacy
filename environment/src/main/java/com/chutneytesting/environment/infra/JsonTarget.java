@@ -34,13 +34,13 @@ public class JsonTarget {
     }
 
     public Target toTarget(String envName) {
-        SecurityInfo secu = null;
+        SecurityInfo securityInfo = null;
         if (security != null) {
             SecurityInfo.Credential cred = null;
             if (security.credential != null) {
                 cred = SecurityInfo.Credential.of(security.credential.username, security.credential.password);
             }
-            secu = SecurityInfo.builder()
+            securityInfo = SecurityInfo.builder()
                 .credential(cred)
                 .keyStore(security.keyStore)
                 .keyStorePassword(security.keyStorePassword)
@@ -53,7 +53,7 @@ public class JsonTarget {
             .withId(Target.TargetId.of(name, envName))
             .withUrl(url)
             .withProperties(properties)
-            .withSecurity(secu)
+            .withSecurity(securityInfo)
             .build();
     }
 

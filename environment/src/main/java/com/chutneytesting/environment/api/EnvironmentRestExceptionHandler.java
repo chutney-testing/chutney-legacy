@@ -1,10 +1,10 @@
 package com.chutneytesting.environment.api;
 
-import com.chutneytesting.environment.domain.AlreadyExistingEnvironmentException;
-import com.chutneytesting.environment.domain.AlreadyExistingTargetException;
-import com.chutneytesting.environment.domain.EnvironmentNotFoundException;
-import com.chutneytesting.environment.domain.InvalidEnvironmentNameException;
-import com.chutneytesting.environment.domain.TargetNotFoundException;
+import com.chutneytesting.environment.domain.exception.AlreadyExistingEnvironmentException;
+import com.chutneytesting.environment.domain.exception.AlreadyExistingTargetException;
+import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
+import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
+import com.chutneytesting.environment.domain.exception.TargetNotFoundException;
 import java.time.format.DateTimeParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
