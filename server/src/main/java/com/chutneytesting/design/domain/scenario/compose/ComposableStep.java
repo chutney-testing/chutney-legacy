@@ -120,7 +120,7 @@ public class ComposableStep {
             return this;
         }
 
-        private void bubbleUpEmptyParams(List<ComposableStep> steps) {
+        private void bubbleUpEmptyParams(List<ComposableStep> steps) { // TODO - dont do it while adding steps, do it after in build() eventually
             steps.forEach(composableStep ->
                 addExecutionParameters(
                     composableStep.getEmptyExecutionParameters()
@@ -142,7 +142,7 @@ public class ComposableStep {
             return this;
         }
 
-        public ComposableStepBuilder addExecutionParameters(Map<String, String> executionParameters) {
+        public ComposableStepBuilder addExecutionParameters(Map<String, String> executionParameters) { // TODO - only used in orient, try to remove its use there
             ofNullable(executionParameters).ifPresent(this.executionParameters::putAll);
             return this;
         }

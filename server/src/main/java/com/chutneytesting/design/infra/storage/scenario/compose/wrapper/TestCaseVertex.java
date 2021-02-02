@@ -1,4 +1,4 @@
-package com.chutneytesting.design.infra.storage.scenario.compose.dto;
+package com.chutneytesting.design.infra.storage.scenario.compose.wrapper;
 
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_AUTHOR;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_CREATIONDATE;
@@ -30,7 +30,7 @@ import java.util.Optional;
  * {@link com.chutneytesting.design.domain.scenario.compose.ComposableScenario} steps and parameters.
  *
  * For this reason,
- * the vertex wrapped inside is sometime treated as a {@link com.chutneytesting.design.infra.storage.scenario.compose.dto.StepVertex} "root step",
+ * the vertex wrapped inside is sometime treated as a {@link com.chutneytesting.design.infra.storage.scenario.compose.wrapper.StepVertex} "root step",
  * which is a way to represent the scenario and ease the
  *
  * */

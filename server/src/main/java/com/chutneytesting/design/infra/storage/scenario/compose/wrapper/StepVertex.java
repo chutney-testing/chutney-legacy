@@ -1,4 +1,4 @@
-package com.chutneytesting.design.infra.storage.scenario.compose.dto;
+package com.chutneytesting.design.infra.storage.scenario.compose.wrapper;
 
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.GE_STEP_CLASS;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.GE_STEP_CLASS_PROPERTY_PARAMETERS;

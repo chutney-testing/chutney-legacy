@@ -8,7 +8,7 @@ import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
-import com.chutneytesting.design.infra.storage.scenario.compose.dto.TestCaseVertex;
+import com.chutneytesting.design.infra.storage.scenario.compose.wrapper.TestCaseVertex;
 import com.orientechnologies.orient.core.record.OVertex;
 import java.util.Date;
 

@@ -5,7 +5,7 @@ import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
-import com.chutneytesting.design.infra.storage.scenario.compose.dto.StepVertex;
+import com.chutneytesting.design.infra.storage.scenario.compose.wrapper.StepVertex;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.record.OEdge;
 import com.orientechnologies.orient.core.record.OElement;
@@ -60,7 +60,7 @@ public class OrientComposableStepMapper {
             buildComposableStepsChildren(vertex)
         );
 
-        ofNullable(parameters).ifPresent(builder::addExecutionParameters);
+        ofNullable(parameters).ifPresent(builder::addExecutionParameters); // TODO - should no be done here
 
         return builder;
     }
