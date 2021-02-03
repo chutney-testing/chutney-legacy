@@ -14,12 +14,12 @@ public class RawTestCase implements TestCase {
 
     public final TestCaseMetadataImpl metadata;
     public final String scenario; // Blob
-    private Map<String, String> parameters;
+    private final Map<String, String> executionParameters;
 
-    public RawTestCase(TestCaseMetadataImpl metadata, String scenario, Map<String, String> parameters) {
+    public RawTestCase(TestCaseMetadataImpl metadata, String scenario, Map<String, String> executionParameters) {
         this.metadata = metadata;
         this.scenario = scenario;
-        this.parameters = parameters;
+        this.executionParameters = executionParameters;
     }
 
     @Override
@@ -28,16 +28,16 @@ public class RawTestCase implements TestCase {
     }
 
     @Override
-    public Map<String, String> parameters() {
-        return parameters;
+    public Map<String, String> executionParameters() {
+        return executionParameters;
     }
 
     @Override
-    public TestCase withParameters(Map<String, String> parameters) {
+    public TestCase usingExecutionParameters(Map<String, String> parameters) {
         return builder()
             .withMetadata(metadata)
             .withScenario(scenario)
-            .withParameters(parameters)
+            .withExecutionParameters(parameters)
             .build();
     }
 
@@ -46,7 +46,7 @@ public class RawTestCase implements TestCase {
         return "RawTestCase{" +
             "metadata=" + metadata +
             ", scenario=" + scenario +
-            ", parameters=" + parameters +
+            ", executionParameters=" + executionParameters +
             '}';
     }
 
@@ -57,12 +57,12 @@ public class RawTestCase implements TestCase {
         RawTestCase that = (RawTestCase) o;
         return Objects.equals(metadata, that.metadata) &&
             Objects.equals(scenario, that.scenario) &&
-            Objects.equals(parameters, that.parameters);
+            Objects.equals(executionParameters, that.executionParameters);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(metadata, scenario, parameters);
+        return Objects.hash(metadata, scenario, executionParameters);
     }
 
     public static RawTestCaseBuilder builder() {
@@ -73,7 +73,7 @@ public class RawTestCase implements TestCase {
 
         private TestCaseMetadataImpl metadata;
         private String scenario;
-        private Map<String, String> parameters;
+        private Map<String, String> executionParameters;
 
         private RawTestCaseBuilder() {}
 
@@ -81,7 +81,7 @@ public class RawTestCase implements TestCase {
             return new RawTestCase(
                 Optional.ofNullable(metadata).orElseGet(() -> TestCaseMetadataImpl.builder().build()),
                 Optional.ofNullable(scenario).orElse(""),
-                Optional.ofNullable(parameters).orElse(emptyMap())
+                Optional.ofNullable(executionParameters).orElse(emptyMap())
             );
         }
 
@@ -95,8 +95,8 @@ public class RawTestCase implements TestCase {
             return this;
         }
 
-        public RawTestCaseBuilder withParameters(Map<String, String> parameters) {
-            this.parameters = unmodifiableMap(parameters);
+        public RawTestCaseBuilder withExecutionParameters(Map<String, String> parameters) {
+            this.executionParameters = unmodifiableMap(parameters);
             return this;
         }
     }

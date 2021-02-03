@@ -81,7 +81,7 @@ public class ExamplesRepository implements DelegateScenarioRepository {
             .withCreationDate(START_TIME)
             .withDescription("Embedded example for documentation purpose. Cannot be edited.")
             .withTags(Collections.singletonList("documentation"))
-            .withDataSet(Collections.emptyMap())
+            .withExecutionParameters(Collections.emptyMap())
             .withRawScenario(entry.getValue())
             .withAuthor("system")
             .build();

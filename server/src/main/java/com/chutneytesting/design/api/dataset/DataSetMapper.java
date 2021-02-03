@@ -17,8 +17,8 @@ public class DataSetMapper {
             .description(dataSet.description)
             .lastUpdated(dataSet.creationDate)
             .tags(dataSet.tags)
-            .uniqueValues(KeyValue.fromMap(dataSet.constants))
-            .multipleValues(dataSet.datatable.stream().map(KeyValue::fromMap).collect(Collectors.toList()))
+            .constants(KeyValue.fromMap(dataSet.constants))
+            .datatable(dataSet.datatable.stream().map(KeyValue::fromMap).collect(Collectors.toList()))
             .build();
     }
 
@@ -29,8 +29,8 @@ public class DataSetMapper {
             .withDescription(dto.description())
             .withCreationDate(dto.lastUpdated())
             .withTags(dto.tags())
-            .withConstants(KeyValue.toMap(dto.uniqueValues()))
-            .withDatatable(dto.multipleValues().stream().map(KeyValue::toMap).collect(Collectors.toList()))
+            .withConstants(KeyValue.toMap(dto.constants()))
+            .withDatatable(dto.datatable().stream().map(KeyValue::toMap).collect(Collectors.toList()))
             .build();
     }
 }

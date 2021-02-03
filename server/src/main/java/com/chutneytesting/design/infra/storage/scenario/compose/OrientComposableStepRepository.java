@@ -14,7 +14,7 @@ import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStepNotFoundException;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStepRepository;
 import com.chutneytesting.design.domain.scenario.compose.ParentStepId;
-import com.chutneytesting.design.infra.storage.scenario.compose.dto.StepVertex;
+import com.chutneytesting.design.infra.storage.scenario.compose.wrapper.StepVertex;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;

@@ -12,18 +12,18 @@ public class ExecutableComposedTestCase implements TestCase {
 
     public final TestCaseMetadata metadata;
     public final ExecutableComposedScenario composedScenario;
-    public final Map<String, String> computedParameters;
+    public final Map<String, String> executionParameters;
 
     public ExecutableComposedTestCase(TestCaseMetadata metadata, ExecutableComposedScenario composedScenario) {
         this.metadata = metadata;
         this.composedScenario = composedScenario;
-        this.computedParameters = buildDataSet();
+        this.executionParameters = buildDataSet();
     }
 
-    public ExecutableComposedTestCase(TestCaseMetadata metadata, ExecutableComposedScenario composedScenario, Map<String, String> computedParameters) {
+    public ExecutableComposedTestCase(TestCaseMetadata metadata, ExecutableComposedScenario composedScenario, Map<String, String> executionParameters) {
         this.metadata = metadata;
         this.composedScenario = composedScenario;
-        this.computedParameters = computedParameters;
+        this.executionParameters = executionParameters;
     }
 
     @Override
@@ -32,12 +32,12 @@ public class ExecutableComposedTestCase implements TestCase {
     }
 
     @Override
-    public Map<String, String> parameters() {
-        return computedParameters;
+    public Map<String, String> executionParameters() {
+        return executionParameters;
     }
 
     @Override
-    public TestCase withParameters(final Map<String, String> parameters) {
+    public TestCase usingExecutionParameters(final Map<String, String> parameters) {
         return new ExecutableComposedTestCase(
             metadata,
             composedScenario,
@@ -51,7 +51,7 @@ public class ExecutableComposedTestCase implements TestCase {
                 .withDatasetId(dataSetId)
                 .build(),
             composedScenario,
-            computedParameters
+            executionParameters
         );
     }
 
@@ -62,19 +62,19 @@ public class ExecutableComposedTestCase implements TestCase {
         ExecutableComposedTestCase that = (ExecutableComposedTestCase) o;
         return Objects.equals(metadata, that.metadata) &&
             Objects.equals(composedScenario, that.composedScenario) &&
-            Objects.equals(computedParameters, that.computedParameters);
+            Objects.equals(executionParameters, that.executionParameters);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(metadata, composedScenario, computedParameters);
+        return Objects.hash(metadata, composedScenario, executionParameters);
     }
 
     private Map<String, String> buildDataSet() {
         Map<String, String> dataSet = new HashMap<>();
 
         composedScenario.composedSteps
-            .forEach(composedStep -> dataSet.putAll(composedStep.dataSetGlobalParameters()));
+            .forEach(composedStep -> dataSet.putAll(composedStep.getEmptyExecutionParameters()));
 
         Optional.ofNullable(composedScenario.parameters)
             .ifPresent(dataSet::putAll);
@@ -87,7 +87,7 @@ public class ExecutableComposedTestCase implements TestCase {
         return "ExecutableComposedTestCase{" +
             ", metadata=" + metadata +
             ", ExecutableComposedScenario=" + composedScenario +
-            ", dataSet=" + computedParameters +
+            ", dataSet=" + executionParameters +
             '}';
     }
 }

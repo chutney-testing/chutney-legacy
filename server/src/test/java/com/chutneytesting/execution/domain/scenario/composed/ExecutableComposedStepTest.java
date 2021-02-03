@@ -22,14 +22,14 @@ public class ExecutableComposedStepTest {
             .withSteps(newArrayList(step_1, step_2, step_3, step_4, step_5))
             .build();
 
-        assertThat(step.dataset).hasSize(2);
-        assertThat(step.dataset).containsEntry("emptyValue", "");
-        assertThat(step.dataset).containsEntry("", "");
+        assertThat(step.executionParameters).hasSize(2);
+        assertThat(step.executionParameters).containsEntry("emptyValue", "");
+        assertThat(step.executionParameters).containsEntry("", "");
     }
 
     private ExecutableComposedStep getStepWithEntry(String key, String value) {
         return ExecutableComposedStep.builder()
-            .withDataset(singletonMap(key, value))
+            .withExecutionParameters(singletonMap(key, value))
             .build();
     }
 }
