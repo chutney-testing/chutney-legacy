@@ -154,7 +154,7 @@ public class GitScenarioRepository implements DelegateScenarioRepository {
                     .withCreationDate(getCreationDate(path))
                     .withDescription("")
                     .withTags(Collections.emptyList())
-                    .withDataSet(Collections.emptyMap())
+                    .withExecutionParameters(Collections.emptyMap())
                     .withRawScenario(new String(Files.readAllBytes(path)))
                     .build();
             } catch (IOException e) {

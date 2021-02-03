@@ -12,7 +12,7 @@ import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.design.infra.storage.scenario.compose.ExecutableComposedStepMapper;
 import com.chutneytesting.design.infra.storage.scenario.compose.ExecutableComposedTestCaseMapper;
 import com.chutneytesting.design.infra.storage.scenario.compose.RawImplementationMapper;
-import com.chutneytesting.design.infra.storage.scenario.compose.dto.StepVertex;
+import com.chutneytesting.design.infra.storage.scenario.compose.wrapper.StepVertex;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientConfigurationProperties;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientDBManager;
@@ -121,7 +121,7 @@ public abstract class AbstractOrientDatabaseTest {
             builder.withName(name);
         }
         if (parameters != null) {
-            builder.withBuiltInParameters(parameters);
+            builder.withDefaultParameters(parameters);
         }
         if (subSteps != null) {
             builder.withSteps(Arrays.asList(subSteps));

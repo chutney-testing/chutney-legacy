@@ -34,7 +34,7 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
         .withCreationDate(Instant.now())
         .withDescription("")
         .withTags(Collections.emptyList())
-        .withDataSet(Collections.emptyMap())
+        .withExecutionParameters(Collections.emptyMap())
         .withRawScenario("");
 
     private final DatabaseTestCaseRepository repository = new DatabaseTestCaseRepository(namedParameterJdbcTemplate, new ObjectMapper());
@@ -74,7 +74,7 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
                 .withAuthor("author")
                 .build())
             .withScenario(GwtScenario.builder().withWhen(GwtStep.NONE).build())
-            .withParameters(Collections.singletonMap("aKey", "aValue"))
+            .withExecutionParameters(Collections.singletonMap("aKey", "aValue"))
             .build()
         );
 
@@ -93,7 +93,7 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
         assertThat(testCaseData.tags).containsExactly("TAG");
         assertThat(testCaseData.creationDate).isEqualTo(creationTime);
         assertThat(testCaseData.rawScenario).isEqualTo("{\"when\":{}}");
-        assertThat(testCaseData.dataSet).containsOnly(entry("aKey", "aValue"));
+        assertThat(testCaseData.executionParameters).containsOnly(entry("aKey", "aValue"));
         assertThat(testCaseData.author).isEqualTo("author");
         assertThat(testCaseData.updateDate).isEqualTo(creationTime);
         assertThat(testCaseData.version).isEqualTo(1);
@@ -165,7 +165,7 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
             new Object[]{"Modified content", TEST_CASE_DATA_BUILDER.withRawScenario("New content")},
             new Object[]{"Modified description", TEST_CASE_DATA_BUILDER.withDescription("New desc")},
             new Object[]{"Modified tags", TEST_CASE_DATA_BUILDER.withTags(Arrays.asList("Modif T1", "Modif T2"))},
-            new Object[]{"Modified dataSet", TEST_CASE_DATA_BUILDER.withDataSet(Collections.singletonMap("aKey", "aValue"))},
+            new Object[]{"Modified dataSet", TEST_CASE_DATA_BUILDER.withExecutionParameters(Collections.singletonMap("aKey", "aValue"))},
             new Object[]{"Modified dataSet", TEST_CASE_DATA_BUILDER.withAuthor("newAuthor")}
         };
     }
