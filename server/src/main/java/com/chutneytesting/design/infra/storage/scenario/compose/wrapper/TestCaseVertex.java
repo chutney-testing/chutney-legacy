@@ -111,7 +111,7 @@ public class TestCaseVertex {
         private Date creationDate;
         private List<String> tags;
         private Map<String, String> parameters;
-        private Optional<String> datasetId = empty();
+        private String datasetId;
         private Date updateDate;
         private String author;
         private List<ComposableStep> steps;
@@ -128,7 +128,7 @@ public class TestCaseVertex {
             ofNullable(creationDate).ifPresent(cd -> setOnlyOnceProperty(vertex, TESTCASE_CLASS_PROPERTY_CREATIONDATE, cd, OType.DATETIME) );
             ofNullable(tags).ifPresent(t -> vertex.setProperty(TESTCASE_CLASS_PROPERTY_TAGS, t, OType.EMBEDDEDLIST) );
             ofNullable(parameters).ifPresent(p -> setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_PARAMETERS, p, OType.EMBEDDEDMAP) );
-            setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_DATASET_ID, datasetId.orElse(null), OType.STRING);
+            ofNullable(datasetId).ifPresent(d -> setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_DATASET_ID, d, OType.STRING));
             ofNullable(updateDate).ifPresent(ud -> vertex.setProperty(TESTCASE_CLASS_PROPERTY_UPDATEDATE, ud, OType.DATETIME));
             ofNullable(author).ifPresent(author -> setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_AUTHOR, author, a -> !User.isAnonymous(a), OType.STRING) );
 
@@ -170,7 +170,7 @@ public class TestCaseVertex {
             return this;
         }
 
-        public TestCaseVertexBuilder withDatasetId(Optional<String> datasetId) {
+        public TestCaseVertexBuilder withDatasetId(String datasetId) {
             this.datasetId = datasetId;
             return this;
         }

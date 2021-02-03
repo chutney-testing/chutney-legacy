@@ -63,7 +63,7 @@ public class ComposableStepTest {
             .withSteps(singletonList(leaf))
             .build();
 
-        Assertions.assertThat(parent.executionParameters).containsEntry("move_up", "");
+        assertThat(parent.executionParameters).containsEntry("move_up", "");
     }
 
 }

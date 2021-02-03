@@ -42,7 +42,7 @@ public class ComposedTestCaseParametersResolutionPreProcessor implements TestCas
         return this.apply((ExecutableComposedTestCase) executionRequest.testCase, executionRequest.environment);
     }
 
-    public ExecutableComposedTestCase apply(ExecutableComposedTestCase testCase, String environment) {
+    private ExecutableComposedTestCase apply(ExecutableComposedTestCase testCase, String environment) {
         Map<String, String> globalVariable = globalvarRepository.getFlatMap();
 
         if (!StringUtils.isBlank(environment)) {
