@@ -26,7 +26,7 @@ public class GwtTestCaseMapper {
                 .withVersion(dto.version())
                 .build())
             .withScenario(GwtScenarioMapper.fromDto(dto.title(), dto.description().orElse(""), dto.scenario()))
-            .withParameters(dto.parameters())
+            .withExecutionParameters(dto.executionParameters())
             .build();
     }
 
@@ -54,7 +54,7 @@ public class GwtTestCaseMapper {
             .executions(Collections.emptyList())
             .creationDate(testCase.metadata().creationDate())
             .scenario(GwtScenarioMapper.toDto(testCase.scenario))
-            .parameters(testCase.parameters)
+            .executionParameters(testCase.executionParameters)
             .author(testCase.metadata.author)
             .updateDate(testCase.metadata.updateDate)
             .version(testCase.metadata.version)

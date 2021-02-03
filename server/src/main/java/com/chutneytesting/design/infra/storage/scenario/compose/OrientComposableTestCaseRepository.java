@@ -13,7 +13,7 @@ import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository;
-import com.chutneytesting.design.infra.storage.scenario.compose.dto.TestCaseVertex;
+import com.chutneytesting.design.infra.storage.scenario.compose.wrapper.TestCaseVertex;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCaseRepository;

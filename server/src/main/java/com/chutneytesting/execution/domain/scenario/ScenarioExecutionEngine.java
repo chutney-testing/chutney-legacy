@@ -57,7 +57,7 @@ public class ScenarioExecutionEngine {
                 .withTitle("test title for idea")
                 .build())
             .withScenario(gwtScenario)
-            .withParameters(dataSet)
+            .withExecutionParameters(dataSet)
             .build();
         return simpleSyncExecution(
             new ExecutionRequest(testCase, environment, userId)

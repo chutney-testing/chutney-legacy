@@ -4,6 +4,7 @@ import static java.time.Instant.now;
 import static java.util.Collections.emptyList;
 
 import com.chutneytesting.tools.ui.KeyValue;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.time.Instant;
@@ -45,12 +46,14 @@ public interface DataSetDto {
     }
 
     @Value.Default()
-    default List<KeyValue> uniqueValues() {
+    @JsonProperty("uniqueValues")
+    default List<KeyValue> constants() {
         return emptyList();
     }
 
     @Value.Default()
-    default List<List<KeyValue>> multipleValues() {
+    @JsonProperty("multipleValues")
+    default List<List<KeyValue>> datatable() {
         return emptyList();
     }
 }

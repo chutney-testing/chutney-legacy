@@ -28,17 +28,17 @@ public class TestCaseData {
     public final String author;
     public final Integer version;
 
-    public final Map<String, String> dataSet;
+    public final Map<String, String> executionParameters;
     public final String rawScenario;
 
-    private TestCaseData(String contentVersion, String testCaseId, String title, String description, Instant creationDate, List<String> tags, Map<String, String> dataSet, String rawScenario, Instant updateDate, String author, Integer version) {
+    private TestCaseData(String contentVersion, String testCaseId, String title, String description, Instant creationDate, List<String> tags, Map<String, String> executionParameters, String rawScenario, Instant updateDate, String author, Integer version) {
         this.contentVersion = contentVersion;
         this.id = testCaseId;
         this.title = title;
         this.description = description;
         this.tags = tags;
         this.creationDate = creationDate;
-        this.dataSet = dataSet;
+        this.executionParameters = executionParameters;
         this.rawScenario = rawScenario;
         this.updateDate = updateDate;
         this.author = author;
@@ -53,7 +53,7 @@ public class TestCaseData {
             ", description='" + description + '\'' +
             ", tags=" + tags +
             ", creationDate=" + creationDate +
-            ", dataSet=" + dataSet +
+            ", executionParameters=" + executionParameters +
             ", rawScenario='" + rawScenario + '\'' +
             ", contentVersion='" + contentVersion + '\'' +
             ", updateDate='" + updateDate + '\'' +
@@ -90,7 +90,7 @@ public class TestCaseData {
         private String description;
         private Instant creationDate;
         private List<String> tags;
-        private Map<String, String> dataSet;
+        private Map<String, String> executionParameters;
         private String rawScenario;
         private Instant updateDate;
         private String author;
@@ -104,7 +104,7 @@ public class TestCaseData {
                 ofNullable(description).orElse(""),
                 ofNullable(creationDate).orElse(Instant.now()),
                 unmodifiableList(ofNullable(tags).orElse(emptyList())),
-                unmodifiableMap(ofNullable(dataSet).orElse(emptyMap())),
+                unmodifiableMap(ofNullable(executionParameters).orElse(emptyMap())),
                 ofNullable(rawScenario).orElse(""),
                 ofNullable(updateDate).orElse(creationDate),
                 ofNullable(author).orElseGet(User.ANONYMOUS_USER::getId),
@@ -142,8 +142,8 @@ public class TestCaseData {
             return this;
         }
 
-        public TestCaseDataBuilder withDataSet(Map<String, String> dataSet) {
-            this.dataSet = dataSet;
+        public TestCaseDataBuilder withExecutionParameters(Map<String, String> executionParameters) {
+            this.executionParameters = executionParameters;
             return this;
         }
 
@@ -176,7 +176,7 @@ public class TestCaseData {
                 .withCreationDate(testCaseData.creationDate)
                 .withRawScenario(testCaseData.rawScenario)
                 .withTags(testCaseData.tags)
-                .withDataSet(testCaseData.dataSet)
+                .withExecutionParameters(testCaseData.executionParameters)
                 .withAuthor(testCaseData.author)
                 .withUpdateDate(testCaseData.updateDate)
                 .withVersion(testCaseData.version);

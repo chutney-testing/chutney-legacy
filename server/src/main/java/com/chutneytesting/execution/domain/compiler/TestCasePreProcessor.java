@@ -1,15 +1,11 @@
 package com.chutneytesting.execution.domain.compiler;
 
-import static java.util.Collections.unmodifiableMap;
-
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public interface TestCasePreProcessor<T extends TestCase> {
 
@@ -38,21 +34,4 @@ public interface TestCasePreProcessor<T extends TestCase> {
         return stringReplaced;
     }
 
-
-    Pattern aliasPattern = Pattern.compile("^\\*\\*(.+)\\*\\*$");
-
-    default boolean isAlias(String paramValue) {
-        return aliasPattern.matcher(paramValue).matches();
-    }
-
-    // TODO - refactor dataset
-    default Map<String, String> buildDatasetWithAliases(Map<String, String> dataSet) {
-        Map<String, String> aliases = dataSet.entrySet().stream()
-            .filter(o -> isAlias(o.getValue()))
-            .collect(Collectors.toMap(a -> a.getValue().substring(2, a.getValue().length() - 2), o -> ""));
-
-        aliases.putAll(dataSet);
-
-        return unmodifiableMap(aliases);
-    }
 }

@@ -1,4 +1,4 @@
-package com.chutneytesting.design.infra.storage.scenario.compose.dto;
+package com.chutneytesting.design.infra.storage.scenario.compose.wrapper;
 
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.GE_STEP_CLASS;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.GE_STEP_CLASS_PROPERTY_PARAMETERS;
@@ -36,12 +36,12 @@ public class StepVertex {
 
     private final OVertex vertex;
     private final List<ComposableStep> steps;
-    private final Map<String, String> builtInParameters;
+    private final Map<String, String> defaultParameters;
 
-    private StepVertex(OVertex vertex, List<ComposableStep> steps, Map<String, String> builtInParameters) {
+    private StepVertex(OVertex vertex, List<ComposableStep> steps, Map<String, String> defaultParameters) {
         this.vertex = vertex;
         this.steps = steps;
-        this.builtInParameters = builtInParameters;
+        this.defaultParameters = defaultParameters;
     }
 
     public void reloadIfDirty() {
@@ -56,7 +56,7 @@ public class StepVertex {
     }
 
     private void saveParentEdges() {
-        ofNullable(builtInParameters).ifPresent( p -> this.updateParentsDataSets(builtInParameters));
+        ofNullable(defaultParameters).ifPresent(p -> this.updateExecutionParametersWithParents());
         this.getParents().forEach(ORecord::save);
     }
 
@@ -67,16 +67,16 @@ public class StepVertex {
 
     ///// SAVE
 
-    private void updateParentsDataSets(Map<String, String> builtInParameters) {
+    private void updateExecutionParametersWithParents() {
         this.getParents()
             .forEach(parentEdge -> {
-                Map<String, String> dataSet = parentEdge.getProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS);
-                if (dataSet != null) {
-                    Map<String, String> newDataSet = new HashMap<>();
-                    builtInParameters.forEach((paramKey, paramValue) ->
-                        newDataSet.put(paramKey, dataSet.getOrDefault(paramKey, paramValue))
+                Map<String, String> executionParameters = parentEdge.getProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS); // TODO - avoid "forEach" logic and find a proper functional semantic
+                if (executionParameters != null) {
+                    Map<String, String> newExecutionParameters = new HashMap<>();
+                    this.defaultParameters.forEach((paramKey, paramValue) ->
+                        newExecutionParameters.put(paramKey, executionParameters.getOrDefault(paramKey, paramValue))
                     );
-                    parentEdge.setProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS, newDataSet);
+                    parentEdge.setProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS, newExecutionParameters);
                 }
             });
     }
@@ -89,12 +89,12 @@ public class StepVertex {
 
                 StepVertex subStepVertex = StepVertex.builder().withId(subStep.id).usingSession(dbSession).build();
                 final Map<String, String> subStepDataset = subStepVertex.getDataset();
-                Map<String, String> parameters = cleanChildOverloadedParametersMap(subStep.enclosedUsageParameters, subStepDataset);
+                Map<String, String> executionParameters = cleanChildOverloadedParametersMap(subStep.executionParameters, subStepDataset);
 
                 OEdge childEdge = this.addSubStep(subStepVertex);
                 childEdge.setProperty(GE_STEP_CLASS_PROPERTY_RANK, index);
-                if (!parameters.isEmpty()) {
-                    childEdge.setProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS, parameters, OType.EMBEDDEDMAP);
+                if (!executionParameters.isEmpty()) {
+                    childEdge.setProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS, executionParameters, OType.EMBEDDEDMAP);
                 }
             });
     }
@@ -190,8 +190,8 @@ public class StepVertex {
         private Strategy strategy;
         private List<String> tags;
         private Optional<String> implementation = empty();
-        private Map<String, String> builtInParameters;
-        private Map<String, String> enclosedUsageParameters;
+        private Map<String, String> defaultParameters;
+        private Map<String, String> executionParameters;
         private List<ComposableStep> steps;
 
         private StepVertexBuilder() {}
@@ -204,7 +204,7 @@ public class StepVertex {
             ofNullable(name).ifPresent(n -> vertex.setProperty(STEP_CLASS_PROPERTY_NAME, n, OType.STRING));
             implementation.ifPresent(i -> setOrRemoveProperty(vertex, STEP_CLASS_PROPERTY_IMPLEMENTATION, i, OType.STRING));
             ofNullable(tags).ifPresent(t -> setOrRemoveProperty(vertex, STEP_CLASS_PROPERTY_TAGS, t, OType.EMBEDDEDLIST));
-            ofNullable(builtInParameters).ifPresent( p -> vertex.setProperty(STEP_CLASS_PROPERTY_PARAMETERS, p, OType.EMBEDDEDMAP));
+            ofNullable(defaultParameters).ifPresent(p -> vertex.setProperty(STEP_CLASS_PROPERTY_PARAMETERS, p, OType.EMBEDDEDMAP));
 
             ofNullable(strategy).ifPresent( s -> {
                 OElement strategy = dbSession.newElement();
@@ -213,7 +213,7 @@ public class StepVertex {
                 setOrRemoveProperty(vertex, STEP_CLASS_PROPERTY_STRATEGY, strategy, OType.EMBEDDED);
             });
 
-           return new StepVertex(vertex, steps, builtInParameters);
+           return new StepVertex(vertex, steps, defaultParameters);
         }
 
         public StepVertexBuilder from(OVertex vertex) {
@@ -251,13 +251,13 @@ public class StepVertex {
             return this;
         }
 
-        public StepVertexBuilder withBuiltInParameters(Map<String, String> builtInParameters) {
-            this.builtInParameters = builtInParameters;
+        public StepVertexBuilder withDefaultParameters(Map<String, String> defaultParameters) {
+            this.defaultParameters = defaultParameters;
             return this;
         }
 
-        public StepVertexBuilder withEnclosedUsageParameters(Map<String, String> enclosedUsageParameters) {
-            this.enclosedUsageParameters= enclosedUsageParameters;
+        public StepVertexBuilder withExecutionParameters(Map<String, String> executionParameters) {
+            this.executionParameters = executionParameters;
             return this;
         }
 

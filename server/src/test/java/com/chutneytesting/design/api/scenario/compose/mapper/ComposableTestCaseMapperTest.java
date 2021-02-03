@@ -43,10 +43,10 @@ public class ComposableTestCaseMapperTest {
                             .id("30-10")
                             .name("First default functional ref")
                             .task("{ \"type\": \"default-identifier\" }")
-                            .builtInParameters(Arrays.asList(
+                            .defaultParameters(Arrays.asList(
                                 ImmutableKeyValue.builder().key("key valued").value("value").build(),
                                 ImmutableKeyValue.builder().key("empty key").value("").build()))
-                            .enclosedUsageParameters(
+                            .executionParameters(
                                 KeyValue.fromMap(
                                     Maps.of(
                                         "key valued", "value",
@@ -62,7 +62,7 @@ public class ComposableTestCaseMapperTest {
                     ))
                     .build()
             )
-            .computedParameters(
+            .executionParameters(
                 KeyValue.fromMap(
                     Maps.of(
                         "empty key", "",
@@ -98,13 +98,13 @@ public class ComposableTestCaseMapperTest {
                             .withId("#30:10")
                             .withName("First default functional ref")
                             .withImplementation(Optional.of("{ \"type\": \"default-identifier\" }"))
-                            .withBuiltInParameters(
+                            .withDefaultParameters(
                                 Maps.of(
                                     "key valued", "value",
                                     "empty key", ""
                                 )
                             )
-                            .overrideEnclosedUsageParametersWith(
+                            .overrideExecutionParametersWith(
                                 Maps.of(
                                     "key valued", "value",
                                     "empty key", ""
