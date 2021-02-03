@@ -35,9 +35,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class ComposedTestCaseIterationsPreProcessorTest {
+public class ComposedTestCaseDatatableIterationsPreProcessorTest {
 
-    ComposedTestCaseIterationsPreProcessor sut;
+    ComposedTestCaseDatatableIterationsPreProcessor sut;
     private DataSetRepository mockDatasetRepository;
 
     private final TestCaseMetadata metadata = TestCaseMetadataImpl.builder().withDatasetId("fakeId").build();
@@ -45,7 +45,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         .withName("Should generate 2 iterations for letter A and B")
         .withImplementation(Optional.of(
             new StepImplementation("task", null, emptyMap(), singletonMap("output", "**letter**"))))
-        .withDataset(singletonMap("letter", ""))
+        .withExecutionParameters(singletonMap("letter", ""))
         .build();
 
     @BeforeEach
@@ -83,11 +83,11 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         // When
-        ComposedTestCaseIterationsPreProcessor sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        ComposedTestCaseDatatableIterationsPreProcessor sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
         ExecutableComposedTestCase processedTestCase = sut.apply(testCase);
 
         // Then
-        assertThat(processedTestCase.parameters()).containsOnly(
+        assertThat(processedTestCase.executionParameters()).containsOnly(
             entry("aKey", "usedInTestCase"),
             entry("localKey", "will be kept as is")
         );
@@ -116,11 +116,11 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         // When
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
         ExecutableComposedTestCase processedTestCase = sut.apply(testCase);
 
         // Then
-        assertThat(processedTestCase.computedParameters).containsOnly(
+        assertThat(processedTestCase.executionParameters).containsOnly(
             entry("anotherKey", "testcase value")
         );
     }
@@ -141,7 +141,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                     singletonList(
                         ExecutableComposedStep.builder()
                             .withName("Should create 2 iterations for aKey")
-                            .withDataset(singletonMap("aKey", ""))
+                            .withExecutionParameters(singletonMap("aKey", ""))
                             .build()
                     )
                 )
@@ -150,7 +150,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         // When
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
         ExecutableComposedTestCase processedTestCase = sut.apply(testCase);
 
         // Then
@@ -158,14 +158,14 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         assertThat(iterableStep.steps).hasSize(2);
 
         ExecutableComposedStep firstIteration = iterableStep.steps.get(0);
-        assertThat(firstIteration.name).isEqualTo("Should create 2 iterations for aKey - dataset iteration 1");
-        assertThat(firstIteration.dataset).containsOnly(
+        assertThat(firstIteration.name).isEqualTo("Should create 2 iterations for aKey - datatable iteration 1");
+        assertThat(firstIteration.executionParameters).containsOnly(
             entry("aKey", "aValue")
         );
 
         ExecutableComposedStep secondIteration = iterableStep.steps.get(1);
-        assertThat(secondIteration.name).isEqualTo("Should create 2 iterations for aKey - dataset iteration 2");
-        assertThat(secondIteration.dataset).containsOnly(
+        assertThat(secondIteration.name).isEqualTo("Should create 2 iterations for aKey - datatable iteration 2");
+        assertThat(secondIteration.executionParameters).containsOnly(
             entry("aKey", "anotherValue")
         );
 
@@ -193,7 +193,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                     singletonList(
                         ExecutableComposedStep.builder()
                             .withName("Parent local dataset is override by testcase local dataset ")
-                            .withDataset(
+                            .withExecutionParameters(
                                 Maps.of(
                                     "aKey", "", // needed for generating iterations
                                     "anotherKey", "step value" // will be override
@@ -207,12 +207,12 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         // When
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
         ExecutableComposedTestCase processedTestCase = sut.apply(testCase);
 
         // Then
         ExecutableComposedStep parentIterableStep = processedTestCase.composedScenario.composedSteps.get(0);
-        assertThat(parentIterableStep.dataset).containsOnly(entry("anotherKey", "")); // TODO - moreover, why is it empty and not using the testcase dataset value ?
+        assertThat(parentIterableStep.executionParameters).containsOnly(entry("anotherKey", "")); // TODO - moreover, why is it empty and not using the testcase dataset value ?
 
     }
 
@@ -232,7 +232,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                     singletonList(
                         ExecutableComposedStep.builder()
                             .withName("Should create 2 iterations for aKey")
-                            .withDataset(
+                            .withExecutionParameters(
                                 Maps.of(
                                     "aKey", "",
                                     "aLocalParam", "isKeptForEachIteration"
@@ -246,7 +246,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         // When
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
         ExecutableComposedTestCase processedTestCase = sut.apply(testCase);
 
         // Then
@@ -254,13 +254,13 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         assertThat(iterableStep.steps).hasSize(2);
 
         ExecutableComposedStep firstIteration = iterableStep.steps.get(0);
-        assertThat(firstIteration.dataset).containsOnly(
+        assertThat(firstIteration.executionParameters).containsOnly(
             entry("aKey", "aValue"),
             entry("aLocalParam", "isKeptForEachIteration")
         );
 
         ExecutableComposedStep secondIteration = iterableStep.steps.get(1);
-        assertThat(secondIteration.dataset).containsOnly(
+        assertThat(secondIteration.executionParameters).containsOnly(
             entry("aKey", "anotherValue"),
             entry("aLocalParam", "isKeptForEachIteration")
         );
@@ -284,7 +284,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                     singletonList(
                         ExecutableComposedStep.builder()
                             .withName("a step with ref parameter")
-                            .withDataset(
+                            .withExecutionParameters(
                                 singletonMap("aLocalParam", "refers to the external dataset key **aKey**")
                             )
                             .build()
@@ -295,17 +295,17 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         // When
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
         ExecutableComposedTestCase processedTestCase = sut.apply(testCase);
 
         // Then
         ExecutableComposedStep parentIterableStep = processedTestCase.composedScenario.composedSteps.get(0);
 
-        assertThat(parentIterableStep.steps.get(0).dataset).containsOnly(
+        assertThat(parentIterableStep.steps.get(0).executionParameters).containsOnly(
             entry("aLocalParam", "refers to the external dataset key aValue")
         );
 
-        assertThat(parentIterableStep.steps.get(1).dataset).containsOnly(
+        assertThat(parentIterableStep.steps.get(1).executionParameters).containsOnly(
             entry("aLocalParam", "refers to the external dataset key anotherValue")
         );
     }
@@ -326,7 +326,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                     singletonList(
                         ExecutableComposedStep.builder()
                             .withName("a step with no valued parameter")
-                            .withDataset(singletonMap("aKey", ""))
+                            .withExecutionParameters(singletonMap("aKey", ""))
                             .build()
                     )
                 )
@@ -335,7 +335,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         // When
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
         ExecutableComposedTestCase processedTestCase = sut.apply(testCase);
 
         // Then
@@ -362,7 +362,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                         ExecutableComposedStep.builder()
                             .withStrategy(strategyDefinition)
                             .withName("a step with no valued parameter")
-                            .withDataset(singletonMap("aKey", ""))
+                            .withExecutionParameters(singletonMap("aKey", ""))
                             .build()
                     )
                 )
@@ -371,7 +371,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         // When
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
         ExecutableComposedTestCase processedTestCase = sut.apply(testCase);
 
         // Then
@@ -405,7 +405,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                     singletonList(
                         ExecutableComposedStep.builder()
                             .withName("Should generate 2 iterations for values A and B only")
-                            .withDataset(singletonMap("aKey", ""))
+                            .withExecutionParameters(singletonMap("aKey", ""))
                             .build()
                     )
                 )
@@ -414,21 +414,21 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         // When
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
         ExecutableComposedTestCase processedTestCase = sut.apply(testCase);
 
         // Then
 
         ExecutableComposedStep parentIterableStep = processedTestCase.composedScenario.composedSteps.get(0);
         assertThat(parentIterableStep.steps).hasSize(2);
-        assertThat(parentIterableStep.dataset).isEmpty();
+        assertThat(parentIterableStep.executionParameters).isEmpty();
 
         ExecutableComposedStep firstIteration = parentIterableStep.steps.get(0);
-        assertThat(firstIteration.dataset).containsOnly(
+        assertThat(firstIteration.executionParameters).containsOnly(
             entry("aKey", "value A")
         );
         ExecutableComposedStep secondIteration = parentIterableStep.steps.get(1);
-        assertThat(secondIteration.dataset).containsOnly(
+        assertThat(secondIteration.executionParameters).containsOnly(
             entry("aKey", "value B")
         );
     }
@@ -451,7 +451,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                         .withName("Should generate 2 iterations using external multivalues dataset")
                         .withImplementation(Optional.of(
                             new StepImplementation("task", null, emptyMap(), singletonMap("output", "**letter**"))))
-                        .withDataset(singletonMap("letter", ""))
+                        .withExecutionParameters(singletonMap("letter", ""))
                         .build()
                     )
                 )
@@ -460,7 +460,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         // When
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
         ExecutableComposedTestCase actual = sut.apply(testCase);
 
         // Then
@@ -469,18 +469,18 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
             .withSteps(asList(
                 ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using external multivalues dataset - dataset iteration 1")
+                    .withName("Should generate 2 iterations using external multivalues dataset - datatable iteration 1")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, emptyMap(), singletonMap("output_1", "**letter**"))
                     ))
-                    .withDataset(singletonMap("letter", "A"))
+                    .withExecutionParameters(singletonMap("letter", "A"))
                     .build(),
                 ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using external multivalues dataset - dataset iteration 2")
+                    .withName("Should generate 2 iterations using external multivalues dataset - datatable iteration 2")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, emptyMap(), singletonMap("output_2", "**letter**"))
                     ))
-                    .withDataset(singletonMap("letter", "B"))
+                    .withExecutionParameters(singletonMap("letter", "B"))
                     .build()
             ))
             .build();
@@ -520,7 +520,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             singletonMap("letter", "")
         );
 
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
 
         // When
         ExecutableComposedTestCase actual = sut.apply(testCase);
@@ -531,12 +531,12 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
             .withSteps(Arrays.asList(
                 ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - dataset iteration 1")
+                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - datatable iteration 1")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, Maps.of("keyWithNullValue", null, "taskInput", "#output_1"), emptyMap())
                     ))
                     .build(), ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - dataset iteration 2")
+                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - datatable iteration 2")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, Maps.of("keyWithNullValue", null, "taskInput", "#output_2"), emptyMap())
                     ))
@@ -551,12 +551,12 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
             .withSteps(Arrays.asList(
                 ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using previous outputs in their output - dataset iteration 1")
+                    .withName("Should generate 2 iterations using previous outputs in their output - datatable iteration 1")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, emptyMap(), Maps.of("keyWithNullValue_1", null, "key_to_index_1", "#output_1"))
                     ))
                     .build(), ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using previous outputs in their output - dataset iteration 2")
+                    .withName("Should generate 2 iterations using previous outputs in their output - datatable iteration 2")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, emptyMap(), Maps.of("keyWithNullValue_2", null, "key_to_index_2", "#output_2"))
                     ))
@@ -595,7 +595,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         // When
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
         ExecutableComposedTestCase actual = sut.apply(testCase);
 
         // Then
@@ -604,12 +604,12 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
             .withSteps(Arrays.asList(
                 ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - dataset iteration 1")
+                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - datatable iteration 1")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, singletonMap("taskInput", "X + ${#output_1 + Y}"), emptyMap())
                     ))
                     .build(), ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - dataset iteration 2")
+                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - datatable iteration 2")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, singletonMap("taskInput", "X + ${#output_2 + Y}"), emptyMap())
                     ))
@@ -641,7 +641,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                         .withName("Should generate 2 iterations using output_1 and output_2 previous outputs")
                         .withImplementation(Optional.of(
                             new StepImplementation("task", null, Maps.of("taskInput", "X + **var** + Y}"), emptyMap())))
-                        .withDataset(singletonMap("var", "${#output.equals('**letter**')"))
+                        .withExecutionParameters(singletonMap("var", "${#output.equals('**letter**')"))
                         .build()
                     )
                 )
@@ -650,7 +650,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         // When
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
         ExecutableComposedTestCase actual = sut.apply(testCase);
 
         // Then
@@ -659,17 +659,17 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
             .withSteps(Arrays.asList(
                 ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - dataset iteration 1")
+                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - datatable iteration 1")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, singletonMap("taskInput", "X + **var** + Y}"), emptyMap())
                     ))
-                    .withDataset(singletonMap("var", "${#output_1.equals('A')"))
+                    .withExecutionParameters(singletonMap("var", "${#output_1.equals('A')"))
                     .build(), ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - dataset iteration 2")
+                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - datatable iteration 2")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, singletonMap("taskInput", "X + **var** + Y}"), emptyMap())
                     ))
-                    .withDataset(singletonMap("var", "${#output_2.equals('B')"))
+                    .withExecutionParameters(singletonMap("var", "${#output_2.equals('B')"))
                     .build()
             ))
             .build();
@@ -691,7 +691,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withName("Should generate 2 iterations for letter A and B")
             .withImplementation(Optional.of(
                 new StepImplementation("task", null, emptyMap(), Maps.of("output", "**letter**", "otherOutput", "**letter**"))))
-            .withDataset(singletonMap("letter", ""))
+            .withExecutionParameters(singletonMap("letter", ""))
             .build();
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
@@ -703,7 +703,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                         .withName("Should generate 2 iterations using output_1 and output_2 previous outputs")
                         .withImplementation(Optional.of(
                             new StepImplementation("task", null, emptyMap(), emptyMap())))
-                        .withDataset(Maps.of("var", "${#output}", "var2", "${#otherOutput}"))
+                        .withExecutionParameters(Maps.of("var", "${#output}", "var2", "${#otherOutput}"))
                         .build()
                     )
                 )
@@ -712,7 +712,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         // When
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
         ExecutableComposedTestCase actual = sut.apply(testCase);
 
         // Then
@@ -721,17 +721,17 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
             .withSteps(Arrays.asList(
                 ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - dataset iteration 1")
+                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - datatable iteration 1")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, emptyMap(), emptyMap())
                     ))
-                    .withDataset(Maps.of("var", "${#output_1}", "var2", "${#otherOutput_1}"))
+                    .withExecutionParameters(Maps.of("var", "${#output_1}", "var2", "${#otherOutput_1}"))
                     .build(), ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - dataset iteration 2")
+                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - datatable iteration 2")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, emptyMap(), emptyMap())
                     ))
-                    .withDataset(Maps.of("var", "${#output_2}", "var2", "${#otherOutput_2}"))
+                    .withExecutionParameters(Maps.of("var", "${#output_2}", "var2", "${#otherOutput_2}"))
                     .build()
             ))
             .build();
@@ -753,7 +753,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withName("Should generate 2 iterations for letter A and B")
             .withImplementation(Optional.of(
                 new StepImplementation("task", null, emptyMap(), Maps.of("SAME", "**letter**", "SAMEagain", "**letter**"))))
-            .withDataset(singletonMap("letter", ""))
+            .withExecutionParameters(singletonMap("letter", ""))
             .build();
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
@@ -764,7 +764,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                     ExecutableComposedStep.builder() // the step under test
                         .withName("Should generate 2 iterations using SAME and SAMEagain without confusion")
                         .withImplementation(Optional.empty())
-                        .withDataset(Maps.of("var", "X+#SAME+}", "var2", "X+#SAMEagain"))
+                        .withExecutionParameters(Maps.of("var", "X+#SAME+}", "var2", "X+#SAMEagain"))
                         .build()
                     )
                 )
@@ -773,7 +773,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         // When
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
         ExecutableComposedTestCase actual = sut.apply(testCase);
 
         // Then
@@ -782,14 +782,14 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
             .withSteps(Arrays.asList(
                 ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using SAME and SAMEagain without confusion - dataset iteration 1")
+                    .withName("Should generate 2 iterations using SAME and SAMEagain without confusion - datatable iteration 1")
                     .withImplementation(Optional.empty())
-                    .withDataset(Maps.of("var", "X+#SAME_1+}", "var2", "X+#SAMEagain_1"))
+                    .withExecutionParameters(Maps.of("var", "X+#SAME_1+}", "var2", "X+#SAMEagain_1"))
                     .build(),
                 ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using SAME and SAMEagain without confusion - dataset iteration 2")
+                    .withName("Should generate 2 iterations using SAME and SAMEagain without confusion - datatable iteration 2")
                     .withImplementation(Optional.empty())
-                    .withDataset(Maps.of("var", "X+#SAME_2+}", "var2", "X+#SAMEagain_2"))
+                    .withExecutionParameters(Maps.of("var", "X+#SAME_2+}", "var2", "X+#SAMEagain_2"))
                     .build()
             ))
             .build();
@@ -810,7 +810,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withName("Should generate 2 iterations for letter A and B")
             .withImplementation(Optional.of(
                 new StepImplementation("task", null, emptyMap(), Maps.of("output", "**letter**"))))
-            .withDataset(singletonMap("letter", ""))
+            .withExecutionParameters(singletonMap("letter", ""))
             .build();
         ExecutableComposedStep stepSurchargeContextVariable = ExecutableComposedStep.builder()
             .withName("Should surcharge context variable 'output'")
@@ -826,13 +826,13 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                     ExecutableComposedStep.builder()
                         .withName("Should generate 2 iterations using output")
                         .withImplementation(Optional.empty())
-                        .withDataset(Maps.of("var", "${#output}"))
+                        .withExecutionParameters(Maps.of("var", "${#output}"))
                         .build(),
                     stepSurchargeContextVariable,
                     ExecutableComposedStep.builder() // the step under test
                         .withName("Should not generate iterations")
                         .withImplementation(Optional.empty())
-                        .withDataset(Maps.of("var", "${#output}"))
+                        .withExecutionParameters(Maps.of("var", "${#output}"))
                         .build()
                     )
                 )
@@ -841,7 +841,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         // When
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
         ExecutableComposedTestCase actual = sut.apply(testCase);
 
         // Then
@@ -850,14 +850,14 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
             .withSteps(Arrays.asList(
                 ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using output - dataset iteration 1")
+                    .withName("Should generate 2 iterations using output - datatable iteration 1")
                     .withImplementation(Optional.empty())
-                    .withDataset(Maps.of("var", "${#output_1}"))
+                    .withExecutionParameters(Maps.of("var", "${#output_1}"))
                     .build(),
                 ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using output - dataset iteration 2")
+                    .withName("Should generate 2 iterations using output - datatable iteration 2")
                     .withImplementation(Optional.empty())
-                    .withDataset(Maps.of("var", "${#output_2}"))
+                    .withExecutionParameters(Maps.of("var", "${#output_2}"))
                     .build()
             ))
             .build();
@@ -865,7 +865,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         ExecutableComposedStep expected2 = ExecutableComposedStep.builder()
             .withName("Should not generate iterations")
             .withImplementation(Optional.empty())
-            .withDataset(Maps.of("var", "${#output}"))
+            .withExecutionParameters(Maps.of("var", "${#output}"))
             .build();
 
         assertThat(actual.composedScenario.composedSteps.get(1)).isEqualTo(expected1);
@@ -884,7 +884,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withName("Should generate 2 iterations for letter A and B")
             .withImplementation(Optional.of(
                 new StepImplementation("task", null, emptyMap(), Maps.of("output", "**letter**"))))
-            .withDataset(singletonMap("letter", ""))
+            .withExecutionParameters(singletonMap("letter", ""))
             .build();
         ExecutableComposedStep substepSurchargeContextVariable = ExecutableComposedStep.builder()
             .withName("Should surcharge context variable 'output'")
@@ -905,13 +905,13 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                     ExecutableComposedStep.builder()
                         .withName("Should generate 2 iterations using output")
                         .withImplementation(Optional.empty())
-                        .withDataset(Maps.of("var", "${#output}"))
+                        .withExecutionParameters(Maps.of("var", "${#output}"))
                         .build(),
                     stepSurchargeContextVariable,
                     ExecutableComposedStep.builder() // the step under test
                         .withName("Should not generate iterations")
                         .withImplementation(Optional.empty())
-                        .withDataset(Maps.of("var", "${#output}"))
+                        .withExecutionParameters(Maps.of("var", "${#output}"))
                         .build()
                     )
                 )
@@ -920,7 +920,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         // When
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
         ExecutableComposedTestCase actual = sut.apply(testCase);
 
         // Then
@@ -929,14 +929,14 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
             .withSteps(Arrays.asList(
                 ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using output - dataset iteration 1")
+                    .withName("Should generate 2 iterations using output - datatable iteration 1")
                     .withImplementation(Optional.empty())
-                    .withDataset(Maps.of("var", "${#output_1}"))
+                    .withExecutionParameters(Maps.of("var", "${#output_1}"))
                     .build(),
                 ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using output - dataset iteration 2")
+                    .withName("Should generate 2 iterations using output - datatable iteration 2")
                     .withImplementation(Optional.empty())
-                    .withDataset(Maps.of("var", "${#output_2}"))
+                    .withExecutionParameters(Maps.of("var", "${#output_2}"))
                     .build()
             ))
             .build();
@@ -944,7 +944,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         ExecutableComposedStep expected2 = ExecutableComposedStep.builder()
             .withName("Should not generate iterations")
             .withImplementation(Optional.empty())
-            .withDataset(Maps.of("var", "${#output}"))
+            .withExecutionParameters(Maps.of("var", "${#output}"))
             .build();
 
         assertThat(actual.composedScenario.composedSteps.get(1)).isEqualTo(expected1);
@@ -964,7 +964,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withName("Should generate 2 iterations for letter A and B")
             .withImplementation(Optional.of(
                 new StepImplementation("task", null, emptyMap(), Maps.of("output", "**letter**", "otherOutput", "**letter**"))))
-            .withDataset(singletonMap("letter", ""))
+            .withExecutionParameters(singletonMap("letter", ""))
             .build();
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
@@ -984,7 +984,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         // When
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
         ExecutableComposedTestCase actual = sut.apply(testCase);
 
         // Then
@@ -993,12 +993,12 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
             .withSteps(Arrays.asList(
                 ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - dataset iteration 1")
+                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - datatable iteration 1")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, Maps.of("taskInput", "X + ${#output_1} + Y}", "taskOtherInput", "${#otherOutput_1}"), emptyMap())
                     ))
                     .build(), ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - dataset iteration 2")
+                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - datatable iteration 2")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, Maps.of("taskInput", "X + ${#output_2} + Y}", "taskOtherInput", "${#otherOutput_2}"), emptyMap())
                     ))
@@ -1023,7 +1023,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withName("Should generate 2 iterations for letter A and B")
             .withImplementation(Optional.of(
                 new StepImplementation("task", null, emptyMap(), Maps.of("**outputVar**", "**letter**"))))
-            .withDataset(Maps.of("outputVar", "output", "letter", ""))
+            .withExecutionParameters(Maps.of("outputVar", "output", "letter", ""))
             .build();
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
@@ -1043,7 +1043,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         // When
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
         ExecutableComposedTestCase actual = sut.apply(testCase);
 
         // Then
@@ -1052,12 +1052,12 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
             .withSteps(Arrays.asList(
                 ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - dataset iteration 1")
+                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - datatable iteration 1")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, Maps.of("taskInput", "X + ${#output_1} + Y}"), emptyMap())
                     ))
                     .build(), ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - dataset iteration 2")
+                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - datatable iteration 2")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, Maps.of("taskInput", "X + ${#output_2} + Y}"), emptyMap())
                     ))
@@ -1082,18 +1082,18 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withName("Should generate 2 iterations for letter A and B")
             .withImplementation(Optional.of(
                 new StepImplementation("task", null, emptyMap(), Maps.of("**outputKey**", "**outputValue**"))))
-            .withDataset(Maps.of("outputKey", "**letter**", "outputValue", "**letter**"))
+            .withExecutionParameters(Maps.of("outputKey", "**letter**", "outputValue", "**letter**"))
             .build();
         ExecutableComposedStep secondSubstepGenerating2IterationsWithOutputs = ExecutableComposedStep.builder()
             .withName("Should generate 2 iterations for letter A and B")
             .withImplementation(Optional.of(
                 new StepImplementation("task", null, emptyMap(), Maps.of("**outputKey**", "**outputValue**"))))
-            .withDataset(Maps.of("outputKey", "**outputVar**", "outputValue", "**letter**"))
+            .withExecutionParameters(Maps.of("outputKey", "**outputVar**", "outputValue", "**letter**"))
             .build();
 
         ExecutableComposedStep stepGenerating2IterationsWithOutputs = ExecutableComposedStep.builder()
             .withSteps(asList(firstSubstepGenerating2IterationsWithOutputs, secondSubstepGenerating2IterationsWithOutputs))
-            .withDataset(Maps.of("outputVar", "output", "letter", ""))
+            .withExecutionParameters(Maps.of("outputVar", "output", "letter", ""))
             .build();
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
@@ -1105,7 +1105,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                         .withName("Should generate 2 iterations using output_1 and output_2 previous outputs")
                         .withImplementation(Optional.of(
                             new StepImplementation("task", null, Maps.of("taskInput", "**var**"), emptyMap())))
-                        .withDataset(Maps.of("var", "${#output}"))
+                        .withExecutionParameters(Maps.of("var", "${#output}"))
                         .build()
                     )
                 )
@@ -1114,7 +1114,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
         );
 
         // When
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
         ExecutableComposedTestCase actual = sut.apply(testCase);
 
         // Then
@@ -1123,17 +1123,17 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
             .withSteps(Arrays.asList(
                 ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - dataset iteration 1")
+                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - datatable iteration 1")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, Maps.of("taskInput", "**var**"), emptyMap())
                     ))
-                    .withDataset(Maps.of("var", "${#output_1}"))
+                    .withExecutionParameters(Maps.of("var", "${#output_1}"))
                     .build(), ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - dataset iteration 2")
+                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - datatable iteration 2")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, Maps.of("taskInput", "**var**"), emptyMap())
                     ))
-                    .withDataset(Maps.of("var", "${#output_2}"))
+                    .withExecutionParameters(Maps.of("var", "${#output_2}"))
                     .build()
             ))
             .build();
@@ -1166,7 +1166,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             singletonMap("letter", "")
         );
 
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
 
         // When
         ExecutableComposedTestCase actual = sut.apply(testCase);
@@ -1177,12 +1177,12 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
             .withSteps(Arrays.asList(
                 ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - dataset iteration 1")
+                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - datatable iteration 1")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, singletonMap("taskMapInput", singletonMap("${#output_1} + X", "${#output_1} + Y")), emptyMap())
                     ))
                     .build(), ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - dataset iteration 2")
+                    .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - datatable iteration 2")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, singletonMap("taskMapInput", singletonMap("${#output_2} + X", "${#output_2} + Y")), emptyMap())
                     ))
@@ -1220,7 +1220,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             singletonMap("letter", "")
         );
 
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
 
         // When
         ExecutableComposedTestCase actual = sut.apply(testCase);
@@ -1231,12 +1231,12 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
             .withSteps(Arrays.asList(
                 ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using previous outputs in their output - dataset iteration 1")
+                    .withName("Should generate 2 iterations using previous outputs in their output - datatable iteration 1")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, emptyMap(), singletonMap("key_to_index_1", "${#output_1} + X"))
                     ))
                     .build(), ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using previous outputs in their output - dataset iteration 2")
+                    .withName("Should generate 2 iterations using previous outputs in their output - datatable iteration 2")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, emptyMap(), singletonMap("key_to_index_2", "${#output_2} + X"))
                     ))
@@ -1268,7 +1268,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                         .withImplementation(Optional.of(
                             new StepImplementation("task", null, singletonMap("taskInput", "**myParam**"), emptyMap())
                         ))
-                        .withDataset(singletonMap("myParam", "X + ${#output} + Y"))
+                        .withExecutionParameters(singletonMap("myParam", "X + ${#output} + Y"))
                         .build()
                     )
                 )
@@ -1276,7 +1276,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             singletonMap("letter", "")
         );
 
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
 
         // When
         ExecutableComposedTestCase actual = sut.apply(testCase);
@@ -1287,18 +1287,18 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
             .withSteps(asList(
                 ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using previous outputs in their dataset - dataset iteration 1")
+                    .withName("Should generate 2 iterations using previous outputs in their dataset - datatable iteration 1")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, singletonMap("taskInput", "**myParam**"), emptyMap())
                     ))
-                    .withDataset(singletonMap("myParam", "X + ${#output_1} + Y"))
+                    .withExecutionParameters(singletonMap("myParam", "X + ${#output_1} + Y"))
                     .build(),
                 ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations using previous outputs in their dataset - dataset iteration 2")
+                    .withName("Should generate 2 iterations using previous outputs in their dataset - datatable iteration 2")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, singletonMap("taskInput", "**myParam**"), emptyMap())
                     ))
-                    .withDataset(singletonMap("myParam", "X + ${#output_2} + Y"))
+                    .withExecutionParameters(singletonMap("myParam", "X + ${#output_2} + Y"))
                     .build()
             ))
             .build();
@@ -1327,7 +1327,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                         .withImplementation(Optional.of(
                             new StepImplementation("task", null, singletonMap("taskInput", "${#output} + X"), singletonMap("otherOutput", "**letter**"))
                         ))
-                        .withDataset(singletonMap("letter", ""))
+                        .withExecutionParameters(singletonMap("letter", ""))
                         .build()
                     )
                 )
@@ -1335,7 +1335,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             singletonMap("letter", "")
         );
 
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
 
         // When
         ExecutableComposedTestCase actual = sut.apply(testCase);
@@ -1346,18 +1346,18 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
             .withSteps(asList(
                 ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations having previous indexed output and indexing 2 other outputs - dataset iteration 1")
+                    .withName("Should generate 2 iterations having previous indexed output and indexing 2 other outputs - datatable iteration 1")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, singletonMap("taskInput", "${#output_1} + X"), singletonMap("otherOutput_1", "**letter**"))
                     ))
-                    .withDataset(singletonMap("letter", "A"))
+                    .withExecutionParameters(singletonMap("letter", "A"))
                     .build(),
                 ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations having previous indexed output and indexing 2 other outputs - dataset iteration 2")
+                    .withName("Should generate 2 iterations having previous indexed output and indexing 2 other outputs - datatable iteration 2")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, singletonMap("taskInput", "${#output_2} + X"), singletonMap("otherOutput_2", "**letter**"))
                     ))
-                    .withDataset(singletonMap("letter", "B"))
+                    .withExecutionParameters(singletonMap("letter", "B"))
                     .build()
             ))
             .build();
@@ -1386,7 +1386,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                         .withImplementation(Optional.of(
                             new StepImplementation("task", null, singletonMap("taskInput", "${#notFromIteration}"), singletonMap("otherOutput", "**letter**"))
                         ))
-                        .withDataset(singletonMap("letter", ""))
+                        .withExecutionParameters(singletonMap("letter", ""))
                         .build()
                     )
                 )
@@ -1394,7 +1394,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             singletonMap("letter", "")
         );
 
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
 
         // When
         ExecutableComposedTestCase actual = sut.apply(testCase);
@@ -1405,18 +1405,18 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
             .withSteps(asList(
                 ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations indexing otherOutputs only - dataset iteration 1")
+                    .withName("Should generate 2 iterations indexing otherOutputs only - datatable iteration 1")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, singletonMap("taskInput", "${#notFromIteration}"), singletonMap("otherOutput_1", "**letter**"))
                     ))
-                    .withDataset(singletonMap("letter", "A"))
+                    .withExecutionParameters(singletonMap("letter", "A"))
                     .build(),
                 ExecutableComposedStep.builder()
-                    .withName("Should generate 2 iterations indexing otherOutputs only - dataset iteration 2")
+                    .withName("Should generate 2 iterations indexing otherOutputs only - datatable iteration 2")
                     .withImplementation(Optional.of(
                         new StepImplementation("task", null, singletonMap("taskInput", "${#notFromIteration}"), singletonMap("otherOutput_2", "**letter**"))
                     ))
-                    .withDataset(singletonMap("letter", "B"))
+                    .withExecutionParameters(singletonMap("letter", "B"))
                     .build()
             ))
             .build();
@@ -1447,7 +1447,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                                 .withImplementation(Optional.of(
                                     new StepImplementation("task", null, emptyMap(), singletonMap("output", "**letter**"))
                                 ))
-                                .withDataset(singletonMap("letter", ""))
+                                .withExecutionParameters(singletonMap("letter", ""))
                                 .build(),
                             ExecutableComposedStep.builder()
                                 .withName("Second sub step")
@@ -1456,7 +1456,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                                 ))
                                 .build()
                         ))
-                        .withDataset(singletonMap("letter", ""))
+                        .withExecutionParameters(singletonMap("letter", ""))
                         .build()
                     )
                 )
@@ -1464,7 +1464,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             singletonMap("letter", "")
         );
 
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
 
         // When
         ExecutableComposedTestCase actual = sut.apply(testCase);
@@ -1478,14 +1478,14 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                     .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
                     .withSteps(asList(
                         ExecutableComposedStep.builder()
-                            .withName("Parent step with 2 substeps - dataset iteration 1")
+                            .withName("Parent step with 2 substeps - datatable iteration 1")
                             .withSteps(asList(
                                 ExecutableComposedStep.builder()
                                     .withName("First sub step")
                                     .withImplementation(Optional.of(
                                         new StepImplementation("task", null, emptyMap(), singletonMap("output_1", "**letter**"))
                                     ))
-                                    .withDataset(singletonMap("letter", ""))
+                                    .withExecutionParameters(singletonMap("letter", ""))
                                     .build(),
                                 ExecutableComposedStep.builder()
                                     .withName("Second sub step")
@@ -1494,17 +1494,17 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                                     ))
                                     .build()
                             ))
-                            .withDataset(singletonMap("letter", "A"))
+                            .withExecutionParameters(singletonMap("letter", "A"))
                             .build(),
                         ExecutableComposedStep.builder()
-                            .withName("Parent step with 2 substeps - dataset iteration 2")
+                            .withName("Parent step with 2 substeps - datatable iteration 2")
                             .withSteps(asList(
                                 ExecutableComposedStep.builder()
                                     .withName("First sub step")
                                     .withImplementation(Optional.of(
                                         new StepImplementation("task", null, emptyMap(), singletonMap("output_2", "**letter**"))
                                     ))
-                                    .withDataset(singletonMap("letter", ""))
+                                    .withExecutionParameters(singletonMap("letter", ""))
                                     .build(),
                                 ExecutableComposedStep.builder()
                                     .withName("Second sub step")
@@ -1513,7 +1513,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                                     ))
                                     .build()
                             ))
-                            .withDataset(singletonMap("letter", "B"))
+                            .withExecutionParameters(singletonMap("letter", "B"))
                             .build()
                     ))
                     .build()
@@ -1547,17 +1547,17 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                                 .withImplementation(Optional.of(
                                     new StepImplementation("task", null, emptyMap(), singletonMap("output", "**letter**"))
                                 ))
-                                .withDataset(singletonMap("letter", ""))
+                                .withExecutionParameters(singletonMap("letter", ""))
                                 .build(),
                             ExecutableComposedStep.builder()
                                 .withName("Second sub step")
                                 .withImplementation(Optional.of(
                                     new StepImplementation("task", null, singletonMap("input", "**data**"), emptyMap())
                                 ))
-                                .withDataset(singletonMap("data", "${#output}"))
+                                .withExecutionParameters(singletonMap("data", "${#output}"))
                                 .build()
                         ))
-                        .withDataset(singletonMap("letter", ""))
+                        .withExecutionParameters(singletonMap("letter", ""))
                         .build()
                     )
                 )
@@ -1565,7 +1565,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             singletonMap("letter", "")
         );
 
-        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        sut = new ComposedTestCaseDatatableIterationsPreProcessor(mockDatasetRepository);
 
         // When
         ExecutableComposedTestCase actual = sut.apply(testCase);
@@ -1579,44 +1579,44 @@ public class ComposedTestCaseIterationsPreProcessorTest {
                     .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
                     .withSteps(asList(
                         ExecutableComposedStep.builder()
-                            .withName("Parent step with 2 substeps - dataset iteration 1")
+                            .withName("Parent step with 2 substeps - datatable iteration 1")
                             .withSteps(asList(
                                 ExecutableComposedStep.builder()
                                     .withName("First sub step")
                                     .withImplementation(Optional.of(
                                         new StepImplementation("task", null, emptyMap(), singletonMap("output_1", "**letter**"))
                                     ))
-                                    .withDataset(singletonMap("letter", ""))
+                                    .withExecutionParameters(singletonMap("letter", ""))
                                     .build(),
                                 ExecutableComposedStep.builder()
                                     .withName("Second sub step")
                                     .withImplementation(Optional.of(
                                         new StepImplementation("task", null, singletonMap("input", "**data**"), emptyMap())
                                     ))
-                                    .withDataset(singletonMap("data", "${#output_1}"))
+                                    .withExecutionParameters(singletonMap("data", "${#output_1}"))
                                     .build()
                             ))
-                            .withDataset(singletonMap("letter", "A"))
+                            .withExecutionParameters(singletonMap("letter", "A"))
                             .build(),
                         ExecutableComposedStep.builder()
-                            .withName("Parent step with 2 substeps - dataset iteration 2")
+                            .withName("Parent step with 2 substeps - datatable iteration 2")
                             .withSteps(asList(
                                 ExecutableComposedStep.builder()
                                     .withName("First sub step")
                                     .withImplementation(Optional.of(
                                         new StepImplementation("task", null, emptyMap(), singletonMap("output_2", "**letter**"))
                                     ))
-                                    .withDataset(singletonMap("letter", ""))
+                                    .withExecutionParameters(singletonMap("letter", ""))
                                     .build(),
                                 ExecutableComposedStep.builder()
                                     .withName("Second sub step")
                                     .withImplementation(Optional.of(
                                         new StepImplementation("task", null, singletonMap("input", "**data**"), emptyMap())
                                     ))
-                                    .withDataset(singletonMap("data", "${#output_2}"))
+                                    .withExecutionParameters(singletonMap("data", "${#output_2}"))
                                     .build()
                             ))
-                            .withDataset(singletonMap("letter", "B"))
+                            .withExecutionParameters(singletonMap("letter", "B"))
                             .build()
                     ))
                     .build()

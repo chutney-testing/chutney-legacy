@@ -37,12 +37,12 @@ public interface ComposableStepDto {
     @Value.Default()
     @JsonProperty("parameters")
     // default parameters defined when editing the component alone
-    default List<KeyValue> builtInParameters() { return Collections.emptyList(); }
+    default List<KeyValue> defaultParameters() { return Collections.emptyList(); }
 
     @Value.Default()
     @JsonProperty("computedParameters")
-    // override built-in parameters values when the component is used inside another component
-    default List<KeyValue> enclosedUsageParameters() { return Collections.emptyList(); }
+    // override default parameters values when the component is used inside another component
+    default List<KeyValue> executionParameters() { return Collections.emptyList(); }
 
     enum StepUsage { STEP, GIVEN, WHEN, THEN }
 

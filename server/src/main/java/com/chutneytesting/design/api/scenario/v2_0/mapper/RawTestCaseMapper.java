@@ -35,7 +35,7 @@ public class RawTestCaseMapper {
                 .withVersion(testCase.metadata.version)
                 .build())
             .withScenario(gwtScenario)
-            .withParameters(testCase.parameters())
+            .withExecutionParameters(testCase.executionParameters())
             .build();
     }
 
@@ -56,7 +56,7 @@ public class RawTestCaseMapper {
                 .withVersion(dto.version())
                 .build())
             .withScenario(gwtScenario)
-            .withParameters(KeyValue.toMap(dto.parameters()))
+            .withExecutionParameters(KeyValue.toMap(dto.parameters()))
             .build();
     }
 
@@ -90,7 +90,7 @@ public class RawTestCaseMapper {
             .scenario(readHjson(testCase.scenario).toString(Stringify.HJSON))
             .tags(testCase.metadata().tags())
             .creationDate(testCase.metadata().creationDate())
-            .parameters(KeyValue.fromMap(testCase.parameters()))
+            .parameters(KeyValue.fromMap(testCase.executionParameters()))
             .author(testCase.metadata.author)
             .updateDate(testCase.metadata.updateDate)
             .version(testCase.metadata.version)
@@ -105,7 +105,7 @@ public class RawTestCaseMapper {
             .scenario(readHjson(marshaller.serialize(testCase.scenario)).toString(Stringify.HJSON))
             .tags(testCase.metadata().tags())
             .creationDate(testCase.metadata().creationDate())
-            .parameters(KeyValue.fromMap(testCase.parameters))
+            .parameters(KeyValue.fromMap(testCase.executionParameters))
             .author(testCase.metadata.author)
             .updateDate(testCase.metadata.updateDate)
             .version(testCase.metadata.version)

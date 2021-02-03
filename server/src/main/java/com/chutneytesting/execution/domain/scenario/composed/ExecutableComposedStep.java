@@ -21,22 +21,22 @@ public class ExecutableComposedStep {
 
     public final String name;
     public final List<ExecutableComposedStep> steps;
-    public final Map<String, String> parameters; // TODO - maybe we dont need it here, everything should be calculated into ONE map for execution
+    public final Map<String, String> defaultParameters; // TODO - maybe we dont need it here, everything should be calculated into ONE map for execution
     public final Optional<StepImplementation> stepImplementation;
     public final Strategy strategy;
-    public final Map<String, String> dataset;
+    public final Map<String, String> executionParameters;
 
-    private ExecutableComposedStep(String name, List<ExecutableComposedStep> steps, Map<String, String> parameters, Optional<StepImplementation> implementation, Strategy strategy, Map<String, String> dataset) {
+    private ExecutableComposedStep(String name, List<ExecutableComposedStep> steps, Map<String, String> defaultParameters, Optional<StepImplementation> implementation, Strategy strategy, Map<String, String> executionParameters) {
         this.name = name;
         this.steps = steps;
-        this.parameters = parameters;
+        this.defaultParameters = defaultParameters;
         this.stepImplementation = implementation;
         this.strategy = strategy;
-        this.dataset = dataset;
+        this.executionParameters = executionParameters;
     }
 
-    public Map<String, String> dataSetGlobalParameters() {
-        return dataset.entrySet().stream()
+    public Map<String, String> getEmptyExecutionParameters() {
+        return executionParameters.entrySet().stream()
             .filter(e -> StringUtils.isBlank(e.getValue()))
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
@@ -52,7 +52,7 @@ public class ExecutableComposedStep {
         private Map<String, String> parameters = emptyMap();
         private Optional<StepImplementation> implementation;
         private Strategy strategy;
-        private Map<String, String> dataset = emptyMap();
+        private Map<String, String> executionParameters = emptyMap();
 
         private ExecutableComposedStepBuilder() {}
 
@@ -63,21 +63,21 @@ public class ExecutableComposedStep {
                 ofNullable(parameters).orElse(emptyMap()),
                 ofNullable(implementation).orElse(empty()),
                 ofNullable(strategy).orElse(Strategy.DEFAULT),
-                unmodifiableMap(buildDataset())
+                unmodifiableMap(buildExecutionParameters())
             );
         }
 
-        private Map<String, String> buildDataset() {
-            if (dataset.isEmpty()) {
+        private Map<String, String> buildExecutionParameters() {
+            if (executionParameters.isEmpty()) {
                 Map<String,String> result = Maps.newHashMap();
                 steps.stream()
-                    .map(ExecutableComposedStep::dataSetGlobalParameters)
+                    .map(ExecutableComposedStep::getEmptyExecutionParameters)
                     .filter(m -> !m.isEmpty())
                     .forEach(m -> result.putAll(m));
                 return result;
             }
 
-            return dataset;
+            return executionParameters;
         }
 
         public ExecutableComposedStepBuilder withName(String name) {
@@ -95,8 +95,8 @@ public class ExecutableComposedStep {
             return this;
         }
 
-        public ExecutableComposedStepBuilder withDataset(Map<String, String> dataSet) {
-            this.dataset = ofNullable(dataSet).orElse(emptyMap());
+        public ExecutableComposedStepBuilder withExecutionParameters(Map<String, String> executionParameters) {
+            this.executionParameters = ofNullable(executionParameters).orElse(emptyMap());
             return this;
         }
 
@@ -118,10 +118,10 @@ public class ExecutableComposedStep {
         public final ExecutableComposedStepBuilder from(ExecutableComposedStep instance) {
             this.name = instance.name;
             this.steps = instance.steps;
-            this.parameters = instance.parameters;
+            this.parameters = instance.defaultParameters;
             this.implementation = instance.stepImplementation;
             this.strategy = instance.strategy;
-            this.dataset = new LinkedHashMap<>(instance.dataset);
+            this.executionParameters = new LinkedHashMap<>(instance.executionParameters);
             return this;
         }
     }
@@ -131,10 +131,10 @@ public class ExecutableComposedStep {
         return "ExecutableComposedStep{" +
             ", name='" + name + '\'' +
             ", steps=" + steps +
-            ", parameters=" + parameters +
+            ", parameters=" + defaultParameters +
             ", implementation=" + stepImplementation +
             ", strategy=" + strategy.toString() +
-            ", dataSet=" + dataset +
+            ", dataSet=" + executionParameters +
             '}';
     }
 
@@ -145,16 +145,16 @@ public class ExecutableComposedStep {
         ExecutableComposedStep that = (ExecutableComposedStep) o;
         return Objects.equals(name, that.name) &&
             Objects.equals(steps, that.steps) &&
-            Objects.equals(parameters, that.parameters) &&
+            Objects.equals(defaultParameters, that.defaultParameters) &&
             Objects.equals(stepImplementation, that.stepImplementation) &&
             Objects.equals(strategy, that.strategy) &&
-            Objects.equals(dataset, that.dataset)
+            Objects.equals(executionParameters, that.executionParameters)
             ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, steps, parameters, stepImplementation, strategy, dataset);
+        return Objects.hash(name, steps, defaultParameters, stepImplementation, strategy, executionParameters);
     }
 
 }
