@@ -49,7 +49,7 @@ public class OrientComposableStepMapper {
 
 
         Map<String, String> parameters = vertex.parameters();
-        ofNullable(parameters).ifPresent(builder::addDefaultParameters);
+        ofNullable(parameters).ifPresent(builder::withDefaultParameters);
 
         OElement strategy = vertex.strategy();
         Optional.ofNullable(strategy).ifPresent( s ->

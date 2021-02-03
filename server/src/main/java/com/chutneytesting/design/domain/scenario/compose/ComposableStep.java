@@ -132,11 +132,6 @@ public class ComposableStep {
             return this;
         }
 
-        public ComposableStepBuilder addDefaultParameters(Map<String, String> defaultParameters) {
-            ofNullable(defaultParameters).ifPresent(this.defaultParameters::putAll);
-            return this;
-        }
-
         public ComposableStepBuilder overrideExecutionParametersWith(Map<String, String> executionParameters) {
             this.executionParameters = executionParameters;
             return this;
