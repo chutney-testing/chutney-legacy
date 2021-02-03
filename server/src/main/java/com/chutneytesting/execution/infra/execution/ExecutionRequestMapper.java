@@ -20,7 +20,7 @@ import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitio
 import com.chutneytesting.engine.api.execution.SecurityInfoDto;
 import com.chutneytesting.engine.api.execution.TargetExecutionDto;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.chutneytesting.environment.api.EnvironmentEmbeddedApplication;
+import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
 import com.chutneytesting.environment.api.dto.TargetDto;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.compiler.ScenarioConversionException;
@@ -37,10 +37,10 @@ import org.springframework.stereotype.Component;
 public class ExecutionRequestMapper {
 
     private final ObjectMapper objectMapper;
-    private final EnvironmentEmbeddedApplication environmentApplication;
+    private final EmbeddedEnvironmentApi environmentApplication;
     private final CurrentNetworkDescription currentNetworkDescription;
 
-    public ExecutionRequestMapper(ObjectMapper objectMapper, EnvironmentEmbeddedApplication environmentApplication, CurrentNetworkDescription currentNetworkDescription) {
+    public ExecutionRequestMapper(ObjectMapper objectMapper, EmbeddedEnvironmentApi environmentApplication, CurrentNetworkDescription currentNetworkDescription) {
         this.objectMapper = objectMapper;
         this.environmentApplication = environmentApplication;
         this.currentNetworkDescription = currentNetworkDescription;

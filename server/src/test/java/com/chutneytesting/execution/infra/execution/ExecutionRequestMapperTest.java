@@ -14,7 +14,7 @@ import com.chutneytesting.design.domain.scenario.raw.RawTestCase;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.SecurityInfoDto;
 import com.chutneytesting.engine.api.execution.TargetExecutionDto;
-import com.chutneytesting.environment.api.EnvironmentEmbeddedApplication;
+import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
 import com.chutneytesting.environment.api.dto.TargetDto;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedScenario;
@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
 public class ExecutionRequestMapperTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
-    private final EnvironmentEmbeddedApplication environmentApplication = mock(EnvironmentEmbeddedApplication.class);
+    private final EmbeddedEnvironmentApi environmentApplication = mock(EmbeddedEnvironmentApi.class);
     private final CurrentNetworkDescription currentNetworkDescription = mock(CurrentNetworkDescription.class);
 
     private final ExecutionRequestMapper sut = new ExecutionRequestMapper(objectMapper, environmentApplication, currentNetworkDescription);

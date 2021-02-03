@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 
 import com.chutneytesting.engine.api.glacio.parse.default_.TargetStepParser;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
-import com.chutneytesting.environment.api.EnvironmentEmbeddedApplication;
+import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
 import com.chutneytesting.environment.api.dto.TargetDto;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.github.fridujo.glacio.model.Step;
@@ -16,13 +16,13 @@ import org.junit.jupiter.api.Test;
 
 public class TargetStepParserTest {
 
-    private EnvironmentEmbeddedApplication environmentApplication;
+    private EmbeddedEnvironmentApi environmentApplication;
 
     private TargetStepParser sut;
 
     @BeforeEach
     public void setUp() {
-        environmentApplication = mock(EnvironmentEmbeddedApplication.class);
+        environmentApplication = mock(EmbeddedEnvironmentApi.class);
         sut = new TargetStepParser(environmentApplication, "On");
     }
 

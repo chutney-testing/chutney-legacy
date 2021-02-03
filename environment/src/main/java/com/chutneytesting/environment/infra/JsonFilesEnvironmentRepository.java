@@ -18,13 +18,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class JsonFilesEnvironmentRepository implements EnvironmentRepository {
 
-    private static final String NAME_VALIDATION_REGEX = "[a-zA-Z0-9_\\-]{3,20}";
-    private static final Pattern NAME_VALIDATION_PATTERN = Pattern.compile(NAME_VALIDATION_REGEX);
     private static final String JSON_FILE_EXT = ".json";
 
     private final Path storeFolderPath;
@@ -40,9 +37,7 @@ public class JsonFilesEnvironmentRepository implements EnvironmentRepository {
 
     @Override
     public synchronized void save(Environment environment) throws UnsupportedOperationException, InvalidEnvironmentNameException {
-        if (!NAME_VALIDATION_PATTERN.matcher(environment.name).matches()) {
-            throw new InvalidEnvironmentNameException("Environment name must be of 3 to 20 letters, digits, underscore or hyphen");
-        }
+
         doSave(environment);
     }
 

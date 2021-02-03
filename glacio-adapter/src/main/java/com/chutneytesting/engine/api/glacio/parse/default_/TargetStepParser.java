@@ -7,7 +7,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import com.chutneytesting.engine.api.glacio.parse.StepParser;
 import com.chutneytesting.engine.domain.environment.SecurityInfoImpl;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
-import com.chutneytesting.environment.api.EnvironmentEmbeddedApplication;
+import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
 import com.chutneytesting.environment.api.dto.TargetDto;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.github.fridujo.glacio.model.Step;
@@ -17,12 +17,12 @@ import java.util.stream.Collectors;
 
 public class TargetStepParser implements StepParser<Target> {
 
-    private final EnvironmentEmbeddedApplication environmentApplication;
+    private final EmbeddedEnvironmentApi environmentApplication;
 
     private final Pattern startWithPredicate;
     private final Predicate<String> predicate;
 
-    public TargetStepParser(EnvironmentEmbeddedApplication environmentApplication, String... startingWords) {
+    public TargetStepParser(EmbeddedEnvironmentApi environmentApplication, String... startingWords) {
         this.environmentApplication = environmentApplication;
         this.startWithPredicate = Pattern.compile("^(?<keyword>" + arrayToOrPattern(startingWords) + ")(?: .*)$");
         this.predicate = startWithPredicate.asPredicate();

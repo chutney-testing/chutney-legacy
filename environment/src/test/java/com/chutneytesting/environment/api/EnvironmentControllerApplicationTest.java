@@ -52,8 +52,8 @@ public class EnvironmentControllerApplicationTest {
 
     private final EnvironmentRepository environmentRepository = mock(EnvironmentRepository.class);
     private final EnvironmentService environmentService = new EnvironmentService(environmentRepository);
-    private final EnvironmentEmbeddedApplication embeddedApplication = new EnvironmentEmbeddedApplication(environmentService);
-    private final EnvironmentControllerApplication environmentControllerV2 = new EnvironmentControllerApplication(embeddedApplication);
+    private final EmbeddedEnvironmentApi embeddedApplication = new EmbeddedEnvironmentApi(environmentService);
+    private final HttpEnvironmentApi environmentControllerV2 = new HttpEnvironmentApi(embeddedApplication);
 
     private final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(environmentControllerV2)
         .setControllerAdvice(new EnvironmentRestExceptionHandler())

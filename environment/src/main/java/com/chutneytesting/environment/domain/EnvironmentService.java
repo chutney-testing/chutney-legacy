@@ -10,14 +10,17 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EnvironmentService {
 
-    private final Logger logger = LoggerFactory.getLogger(EnvironmentService.class);
+    private static final String NAME_VALIDATION_REGEX = "[a-zA-Z0-9_\\-]{3,20}";
+    private static final Pattern NAME_VALIDATION_PATTERN = Pattern.compile(NAME_VALIDATION_REGEX);
 
+    private final Logger logger = LoggerFactory.getLogger(EnvironmentService.class);
     private final EnvironmentRepository environmentRepository;
 
     public EnvironmentService(EnvironmentRepository environmentRepository) {
@@ -36,13 +39,8 @@ public class EnvironmentService {
         if (envAlreadyExist(environment)) {
             throw new AlreadyExistingEnvironmentException("Environment [" + environment.name + "] already exists");
         }
-        environmentRepository.save(environment);
+        createOrUpdate(environment);
         return environment;
-    }
-
-    private boolean envAlreadyExist(Environment environment) {
-        return environmentRepository.listNames().stream().map(String::toUpperCase)
-            .collect(Collectors.toList()).contains(environment.name.toUpperCase());
     }
 
     public Environment getEnvironment(String environmentName) throws EnvironmentNotFoundException {
@@ -60,7 +58,7 @@ public class EnvironmentService {
             .withName(newVersion.name)
             .withDescription(newVersion.description)
             .build();
-        environmentRepository.save(newEnvironment);
+        createOrUpdate(newEnvironment);
         if (!newEnvironment.name.equals(environmentName)) {
             environmentRepository.delete(environmentName);
         }
@@ -93,19 +91,31 @@ public class EnvironmentService {
     public void addTarget(String environmentName, Target target) throws EnvironmentNotFoundException, AlreadyExistingTargetException {
         Environment environment = environmentRepository.findByName(environmentName);
         Environment newEnvironment = environment.addTarget(target);
-        environmentRepository.save(newEnvironment);
+        createOrUpdate(newEnvironment);
     }
 
     public void deleteTarget(String environmentName, String targetName) throws EnvironmentNotFoundException, TargetNotFoundException {
         Environment environment = environmentRepository.findByName(environmentName);
         Environment newEnvironment = environment.deleteTarget(targetName);
-        environmentRepository.save(newEnvironment);
+        createOrUpdate(newEnvironment);
     }
 
     public void updateTarget(String environmentName, String previousTargetName, Target targetToUpdate) throws EnvironmentNotFoundException, TargetNotFoundException {
         Environment environment = environmentRepository.findByName(environmentName);
         Environment newEnvironment = environment.updateTarget(previousTargetName, targetToUpdate);
-        environmentRepository.save(newEnvironment);
+        createOrUpdate(newEnvironment);
         logger.debug("Updated target " + previousTargetName + " as " + targetToUpdate.name);
+    }
+
+    private void createOrUpdate(Environment environment) {
+        if (!NAME_VALIDATION_PATTERN.matcher(environment.name).matches()) {
+            throw new InvalidEnvironmentNameException("Environment name must be of 3 to 20 letters, digits, underscore or hyphen");
+        }
+        environmentRepository.save(environment);
+    }
+
+    private boolean envAlreadyExist(Environment environment) {
+        return environmentRepository.listNames().stream().map(String::toUpperCase)
+            .collect(Collectors.toList()).contains(environment.name.toUpperCase());
     }
 }

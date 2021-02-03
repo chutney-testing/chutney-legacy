@@ -21,76 +21,77 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/v2/environment")
-public class EnvironmentControllerApplication {
+public class HttpEnvironmentApi implements EnvironmentApi{
 
-    private final EnvironmentEmbeddedApplication embeddedApplication;
+    private final EmbeddedEnvironmentApi embeddedApplication;
 
-    EnvironmentControllerApplication(EnvironmentEmbeddedApplication embeddedApplication) {
+    HttpEnvironmentApi(EmbeddedEnvironmentApi embeddedApplication) {
         this.embeddedApplication = embeddedApplication;
     }
 
-    @CrossOrigin(origins = "*")
+    @Override
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Set<EnvironmentDto> listEnvironments() {
         return embeddedApplication.listEnvironments();
     }
 
-    @CrossOrigin(origins = "*")
+    @Override
     @PostMapping("")
     public EnvironmentDto createEnvironment(@RequestBody EnvironmentDto environmentDto) throws InvalidEnvironmentNameException, AlreadyExistingEnvironmentException {
         return embeddedApplication.createEnvironment(environmentDto);
     }
 
-    @CrossOrigin(origins = "*")
+    @Override
     @DeleteMapping("/{environmentName}")
     public void deleteEnvironment(@PathVariable("environmentName") String environmentName) throws EnvironmentNotFoundException, CannotDeleteEnvironmentException {
         embeddedApplication.deleteEnvironment(environmentName);
     }
 
-    @CrossOrigin(origins = "*")
+    @Override
     @PutMapping("/{environmentName}")
     public void updateEnvironment(@PathVariable("environmentName") String environmentName, @RequestBody EnvironmentDto environmentDto) throws InvalidEnvironmentNameException, EnvironmentNotFoundException {
         embeddedApplication.updateEnvironment(environmentName, environmentDto);
     }
 
-    @CrossOrigin(origins = "*")
+    @Override
     @GetMapping(path = "/{environmentName}/target", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Set<TargetDto> listTargets(@PathVariable("environmentName") String environmentName) throws EnvironmentNotFoundException {
         return embeddedApplication.listTargets(environmentName);
     }
 
-    @CrossOrigin(origins = "*")
+    @Override
     @GetMapping(path = "/target", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Set<TargetDto> listTargets() throws EnvironmentNotFoundException {
         return embeddedApplication.listTargets();
     }
 
-    @CrossOrigin(origins = "*")
+    @Override
     @GetMapping("/{environmentName}")
     public EnvironmentDto getEnvironment(@PathVariable("environmentName") String environmentName) throws EnvironmentNotFoundException {
         return embeddedApplication.getEnvironment(environmentName);
     }
 
-    @CrossOrigin(origins = "*")
+    @Override
     @GetMapping("/{environmentName}/target/{targetName}")
     public TargetDto getTarget(@PathVariable("environmentName") String environmentName, @PathVariable("targetName") String targetName) throws EnvironmentNotFoundException, TargetNotFoundException {
         return embeddedApplication.getTarget(environmentName, targetName);
     }
 
-    @CrossOrigin(origins = "*")
+    @Override
     @PostMapping("/{environmentName}/target")
     public void addTarget(@PathVariable("environmentName") String environmentName, @RequestBody TargetDto targetDto) throws EnvironmentNotFoundException, AlreadyExistingTargetException {
         embeddedApplication.addTarget(environmentName, targetDto);
     }
 
-    @CrossOrigin(origins = "*")
+    @Override
     @DeleteMapping("/{environmentName}/target/{targetName}")
     public void deleteTarget(@PathVariable("environmentName") String environmentName, @PathVariable("targetName") String targetName) throws EnvironmentNotFoundException, TargetNotFoundException {
         embeddedApplication.deleteTarget(environmentName, targetName);
     }
 
-    @CrossOrigin(origins = "*")
+    @Override
     @PutMapping("/{environmentName}/target/{targetName}")
     public void updateTarget(@PathVariable("environmentName") String environmentName, @PathVariable("targetName") String targetName, @RequestBody TargetDto targetDto) throws EnvironmentNotFoundException, TargetNotFoundException {
         embeddedApplication.updateTarget(environmentName, targetName, targetDto);
