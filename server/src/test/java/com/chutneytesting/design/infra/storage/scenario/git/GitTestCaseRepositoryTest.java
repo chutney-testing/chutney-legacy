@@ -65,7 +65,7 @@ public class GitTestCaseRepositoryTest {
                 .withCreationDate(Instant.now())
                 .withDescription("")
                 .withTags(Collections.emptyList())
-                .withDataSet(Collections.emptyMap())
+                .withExecutionParameters(Collections.emptyMap())
                 .withRawScenario("pouet")
                 .build();
 
@@ -83,7 +83,7 @@ public class GitTestCaseRepositoryTest {
                 .withTitle(scenarioName)
                 .withDescription("")
                 .withTags(Collections.emptyList())
-                .withDataSet(Collections.emptyMap())
+                .withExecutionParameters(Collections.emptyMap())
                 .withRawScenario("%#pas_pouet#%")
                 .build();
 
@@ -110,7 +110,7 @@ public class GitTestCaseRepositoryTest {
             .withTitle("other_name.json")
             .withDescription("")
             .withTags(Collections.emptyList())
-            .withDataSet(Collections.emptyMap())
+            .withExecutionParameters(Collections.emptyMap())
             .withRawScenario("12345");
 
         TestCaseData scenarioToMove = scenarioToMoveBuilder.build();

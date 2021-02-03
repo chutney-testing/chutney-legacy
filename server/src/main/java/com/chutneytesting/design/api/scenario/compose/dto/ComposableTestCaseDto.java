@@ -6,6 +6,7 @@ import static java.util.Collections.emptyList;
 import com.chutneytesting.security.domain.User;
 import com.chutneytesting.tools.ui.KeyValue;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.time.Instant;
@@ -53,7 +54,8 @@ public interface ComposableTestCaseDto {
     }
 
     @Value.Default()
-    default List<KeyValue> computedParameters() {
+    @JsonProperty("computedParameters")
+    default List<KeyValue> executionParameters() {
         return emptyList();
     }
 

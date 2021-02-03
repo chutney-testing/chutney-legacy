@@ -30,11 +30,11 @@ public class ComposableStepMapper {
         composableStep.steps
             .forEach(step -> builder.addSteps(toDto(step)));
 
-        builder.builtInParameters(KeyValue.fromMap(composableStep.builtInParameters));
+        builder.defaultParameters(KeyValue.fromMap(composableStep.defaultParameters));
 
         builder.strategy(toDto(composableStep.strategy));
 
-        builder.addAllEnclosedUsageParameters(KeyValue.fromMap(composableStep.enclosedUsageParameters));
+        builder.addAllExecutionParameters(KeyValue.fromMap(composableStep.executionParameters));
 
         return builder.build();
     }
@@ -69,8 +69,8 @@ public class ComposableStepMapper {
             .withStrategy(fromDto(dto.strategy()))
             .withImplementation(dto.task())
             .withSteps(dto.steps().stream().map(ComposableStepMapper::fromDto).collect(toList()))
-            .withBuiltInParameters(KeyValue.toMap(dto.builtInParameters()))
-            .overrideEnclosedUsageParametersWith(KeyValue.toMap(dto.enclosedUsageParameters()))
+            .withDefaultParameters(KeyValue.toMap(dto.defaultParameters()))
+            .overrideExecutionParametersWith(KeyValue.toMap(dto.executionParameters()))
             .withTags(dto.tags().stream().map(String::trim).filter(t -> !t.isEmpty()).collect(toList()));
 
         return composableStepBuilder.build();

@@ -8,7 +8,7 @@ import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
-import com.chutneytesting.design.infra.storage.scenario.compose.dto.TestCaseVertex;
+import com.chutneytesting.design.infra.storage.scenario.compose.wrapper.TestCaseVertex;
 import com.orientechnologies.orient.core.record.OVertex;
 import java.util.Date;
 
@@ -24,7 +24,7 @@ class OrientComposableTestCaseMapper {
             .withCreationDate(Date.from(composableTestCase.metadata.creationDate()))
             .withTags(composableTestCase.metadata.tags())
             .withParameters(composableTestCase.composableScenario.parameters)
-            .withDatasetId(composableTestCase.metadata.datasetId())
+            .withDatasetId(composableTestCase.metadata.datasetId().orElse(null))
             .withUpdateDate(Date.from(now()))
             .withAuthor(composableTestCase.metadata.author())
             .withSteps(composableTestCase.composableScenario.composableSteps)

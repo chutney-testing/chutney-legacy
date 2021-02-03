@@ -97,7 +97,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
         Map<String, String> parameters = campaignParameterRepository.findCampaignParameters(campaign.id).stream()
             .collect(Collectors.toMap(cp -> cp.parameter, cp -> cp.value));
 
-        return new Campaign(campaign.id, campaign.title, campaign.description, campaign.scenarioIds, parameters, campaign.getScheduleTime(), campaign.executionEnvironment(), campaign.parallelRun, campaign.retryAuto, campaign.datasetId);
+        return new Campaign(campaign.id, campaign.title, campaign.description, campaign.scenarioIds, parameters, campaign.getScheduleTime(), campaign.executionEnvironment(), campaign.parallelRun, campaign.retryAuto, campaign.externalDatasetId);
     }
 
     @Override
@@ -161,11 +161,11 @@ public class DatabaseCampaignRepository implements CampaignRepository {
                 , Pair.of("environment", campaign.executionEnvironment())
                 , Pair.of("paralellRun", campaign.parallelRun)
                 , Pair.of("retryAuto", campaign.retryAuto)
-                , Pair.of("datasetId", campaign.datasetId)
+                , Pair.of("datasetId", campaign.externalDatasetId)
             ));
 
         updateScenarioReferences(campaign.id, campaign.scenarioIds);
-        campaignParameterRepository.updateCampaignParameter(campaign.id, campaign.dataSet);
+        campaignParameterRepository.updateCampaignParameter(campaign.id, campaign.executionParameters);
         return campaign.id;
     }
 
@@ -182,11 +182,11 @@ public class DatabaseCampaignRepository implements CampaignRepository {
                 , Pair.of("environment", unsavedCampaign.executionEnvironment())
                 , Pair.of("paralellRun", unsavedCampaign.parallelRun)
                 , Pair.of("retryAuto", unsavedCampaign.retryAuto)
-                , Pair.of("datasetId", unsavedCampaign.datasetId)
+                , Pair.of("datasetId", unsavedCampaign.externalDatasetId)
             ));
 
         updateScenarioReferences(id, unsavedCampaign.scenarioIds);
-        campaignParameterRepository.updateCampaignParameter(id, unsavedCampaign.dataSet);
+        campaignParameterRepository.updateCampaignParameter(id, unsavedCampaign.executionParameters);
         return id;
     }
 

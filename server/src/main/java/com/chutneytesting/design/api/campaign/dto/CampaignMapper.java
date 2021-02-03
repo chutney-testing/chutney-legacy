@@ -22,13 +22,13 @@ public class CampaignMapper {
             campaign.scenarioIds.stream()
                 .map(ComposableIdUtils::toFrontId)
                 .collect(toList()),
-            campaign.dataSet,
+            campaign.executionParameters,
             emptyList(),
             campaign.getStringScheduleTime(),
             campaign.executionEnvironment(),
             campaign.parallelRun,
             campaign.retryAuto,
-            toFrontId(campaign.datasetId));
+            toFrontId(campaign.externalDatasetId));
     }
 
     public static CampaignDto toDto(Campaign campaign, List<CampaignExecutionReport> campaignExecutionReports) {
@@ -39,13 +39,13 @@ public class CampaignMapper {
             campaign.scenarioIds.stream()
                 .map(ComposableIdUtils::toFrontId)
                 .collect(toList()),
-            campaign.dataSet,
+            campaign.executionParameters,
             reportToDto(campaignExecutionReports),
             campaign.getStringScheduleTime(),
             campaign.executionEnvironment(),
             campaign.parallelRun,
             campaign.retryAuto,
-            toFrontId(campaign.datasetId));
+            toFrontId(campaign.externalDatasetId));
     }
 
     public static Campaign fromDto(CampaignDto dto) {
