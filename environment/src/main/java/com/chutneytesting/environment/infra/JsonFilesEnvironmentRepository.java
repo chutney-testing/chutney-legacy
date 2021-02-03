@@ -37,7 +37,6 @@ public class JsonFilesEnvironmentRepository implements EnvironmentRepository {
 
     @Override
     public synchronized void save(Environment environment) throws UnsupportedOperationException, InvalidEnvironmentNameException {
-
         doSave(environment);
     }
 

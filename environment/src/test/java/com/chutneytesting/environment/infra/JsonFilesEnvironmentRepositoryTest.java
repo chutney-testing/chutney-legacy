@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.chutneytesting.environment.domain.Environment;
 import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
-import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
 import com.chutneytesting.environment.domain.SecurityInfo;
 import com.chutneytesting.environment.domain.Target;
 import com.chutneytesting.tools.ThrowingConsumer;
@@ -101,9 +100,4 @@ public class JsonFilesEnvironmentRepositoryTest {
             .isInstanceOf(EnvironmentNotFoundException.class);
     }
 
-    @Test()
-    public void save_environment_with_illegal_name_throws() {
-        assertThatThrownBy(() -> sut.save(Environment.builder().withName("illegal name").withDescription("some description").build()))
-            .isInstanceOf(InvalidEnvironmentNameException.class);
-    }
 }
