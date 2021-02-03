@@ -1,8 +1,6 @@
 package com.chutneytesting.execution.domain.campaign;
 
 import static java.util.Collections.singleton;
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import com.chutneytesting.design.domain.campaign.Campaign;
@@ -41,7 +39,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,10 +120,18 @@ public class CampaignExecutionEngine {
 
     public CampaignExecutionReport executeScenarioInCampaign(List<String> failedIds, Campaign campaign, String userId) {
         verifyNotAlreadyRunning(campaign);
-
         Long executionId = campaignRepository.newCampaignExecution();
-        Optional<Pair<String, Integer>> executionDataSet = findExecutionDataSet(campaign);
-        CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(executionId, campaign.title, !failedIds.isEmpty(), campaign.executionEnvironment(), executionDataSet.map(Pair::getLeft).orElse(null), executionDataSet.map(Pair::getRight).orElse(null), userId);
+
+        CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(
+            executionId,
+            campaign.title,
+            !failedIds.isEmpty(),
+            campaign.executionEnvironment(),
+            isNotBlank(campaign.externalDatasetId) ? campaign.externalDatasetId : null,
+            isNotBlank(campaign.externalDatasetId) ? dataSetHistoryRepository.lastVersion(campaign.externalDatasetId) : null,
+            userId
+        );
+
         currentCampaignExecutions.put(campaign.id, campaignExecutionReport);
         currentCampaignExecutionsStopRequests.put(executionId, Boolean.FALSE);
         try {
@@ -136,7 +141,7 @@ public class CampaignExecutionEngine {
                 return execute(campaign, campaignExecutionReport, failedIds);
             }
         } catch (Exception e) {
-            LOGGER.error("Not managed exception occured", e);
+            LOGGER.error("Not managed exception occurred", e);
             throw new RuntimeException(e);
         } finally {
             campaignExecutionReport.endCampaignExecution();
@@ -224,24 +229,23 @@ public class CampaignExecutionEngine {
     }
 
     private ExecutionRequest buildExecutionRequest(Campaign campaign, TestCase testCase, String userId) {
-        String campaignDatasetId = campaign.datasetId;
-        // Override scenario dataset by campaign's one
-        if (isNotBlank(campaignDatasetId) && testCase instanceof ExecutableComposedTestCase) {
-            testCase = ((ExecutableComposedTestCase) testCase).withDataSetId(campaignDatasetId);
-            return new ExecutionRequest(testCase, campaign.executionEnvironment(), true, userId);
+        // Only composable test cases can use an external dataset, which can be override if set on the campaign
+        if (isNotBlank(campaign.externalDatasetId) && testCase instanceof ExecutableComposedTestCase) {
+            return executionWithDatasetIdOverrideByCampaign(campaign, testCase, userId);
         } else {
-            Map<String, String> ds = new HashMap<>(testCase.parameters());
-            ds.putAll(campaign.dataSet);
-            return new ExecutionRequest(testCase.withParameters(ds), campaign.executionEnvironment(), userId);
+            return executionWithCombinedParametersFromCampaignAndTestCase(campaign, testCase, userId);
         }
     }
 
-    private Optional<Pair<String, Integer>> findExecutionDataSet(Campaign campaign) {
-        String datasetId = campaign.datasetId;
-        if (isNotBlank(datasetId)) {
-            return of(Pair.of(datasetId, dataSetHistoryRepository.lastVersion(datasetId)));
-        }
-        return empty();
+    private ExecutionRequest executionWithDatasetIdOverrideByCampaign(Campaign campaign, TestCase testCase, String userId) {
+        testCase = ((ExecutableComposedTestCase) testCase).withDataSetId(campaign.externalDatasetId);
+        return new ExecutionRequest(testCase, campaign.executionEnvironment(), true, userId);
+    }
+
+    private ExecutionRequest executionWithCombinedParametersFromCampaignAndTestCase(Campaign campaign, TestCase testCase, String userId) {
+        Map<String, String> executionParameters = new HashMap<>(testCase.executionParameters());
+        executionParameters.putAll(campaign.executionParameters);
+        return new ExecutionRequest(testCase.usingExecutionParameters(executionParameters), campaign.executionEnvironment(), userId);
     }
 
     private CampaignExecutionReport executeCampaign(Campaign campaign, String userId) {

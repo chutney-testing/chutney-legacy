@@ -11,11 +11,11 @@ import org.springframework.stereotype.Component;
 public class ComposedTestCasePreProcessor implements TestCasePreProcessor<ExecutableComposedTestCase> {
 
     private final ComposedTestCaseParametersResolutionPreProcessor parametersResolutionPreProcessor;
-    private final ComposedTestCaseIterationsPreProcessor dataSetPreProcessor;
+    private final ComposedTestCaseDatatableIterationsPreProcessor dataSetPreProcessor;
 
     public ComposedTestCasePreProcessor(ObjectMapper objectMapper, GlobalvarRepository globalvarRepository, DataSetRepository dataSetRepository) {
         this.parametersResolutionPreProcessor = new ComposedTestCaseParametersResolutionPreProcessor(globalvarRepository, objectMapper);
-        this.dataSetPreProcessor = new ComposedTestCaseIterationsPreProcessor(dataSetRepository);
+        this.dataSetPreProcessor = new ComposedTestCaseDatatableIterationsPreProcessor(dataSetRepository);
     }
 
     @Override

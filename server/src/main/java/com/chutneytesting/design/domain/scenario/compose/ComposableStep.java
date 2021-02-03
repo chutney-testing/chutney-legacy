@@ -22,20 +22,20 @@ public class ComposableStep {
     public final String id;
     public final String name;
     public final List<ComposableStep> steps;
-    public final Map<String, String> builtInParameters;
+    public final Map<String, String> defaultParameters; // default parameters defined when editing the component alone
     public final Optional<String> implementation;
     public final Strategy strategy;
-    public final Map<String, String> enclosedUsageParameters; // TODO - Maybe separate list with blank values
+    public final Map<String, String> executionParameters; // override default parameters values when the component is used inside another component // TODO - Maybe separate list with blank values
     public final List<String> tags;
 
-    private ComposableStep(String id, String name, List<ComposableStep> steps, Map<String, String> builtInParameters, Optional<String> implementation, Strategy strategy, Map<String, String> enclosedUsageParameters, List<String> tags) {
+    private ComposableStep(String id, String name, List<ComposableStep> steps, Map<String, String> defaultParameters, Optional<String> implementation, Strategy strategy, Map<String, String> executionParameters, List<String> tags) {
         this.id = id;
         this.name = name;
         this.steps = steps;
-        this.builtInParameters = builtInParameters;
+        this.defaultParameters = defaultParameters;
         this.implementation = implementation;
         this.strategy = strategy;
-        this.enclosedUsageParameters = enclosedUsageParameters;
+        this.executionParameters = executionParameters;
         this.tags = tags;
     }
 
@@ -61,8 +61,8 @@ public class ComposableStep {
             .anyMatch(cs -> checkCyclicDependency(cs, new ArrayList<>(parentsAcc)));
     }
 
-    public Map<String, String> emptyParams() {
-        return enclosedUsageParameters.entrySet().stream()
+    public Map<String, String> getEmptyExecutionParameters() {
+        return executionParameters.entrySet().stream()
             .filter(e -> StringUtils.isBlank(e.getValue()))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
@@ -76,10 +76,10 @@ public class ComposableStep {
         private String id;
         private String name;
         private List<ComposableStep> steps;
-        private Map<String, String> builtInParameters = new LinkedHashMap<>();
+        private Map<String, String> defaultParameters = new LinkedHashMap<>();
         private Optional<String> implementation;
         private Strategy strategy;
-        private Map<String, String> enclosedUsageParameters = new LinkedHashMap<>();
+        private Map<String, String> executionParameters = new LinkedHashMap<>();
         private List<String> tags = new ArrayList<>();
 
         private ComposableStepBuilder() {
@@ -90,10 +90,10 @@ public class ComposableStep {
                 ofNullable(id).orElse(""),
                 ofNullable(name).orElse(""),
                 ofNullable(steps).orElse(emptyList()),
-                ofNullable(builtInParameters).orElse(emptyMap()),
+                ofNullable(defaultParameters).orElse(emptyMap()),
                 ofNullable(implementation).orElse(empty()),
                 ofNullable(strategy).orElse(Strategy.DEFAULT),
-                unmodifiableMap(ofNullable(enclosedUsageParameters).orElse(emptyMap())),
+                unmodifiableMap(ofNullable(executionParameters).orElse(emptyMap())),
                 unmodifiableList(ofNullable(tags).orElse(emptyList()))
             );
 
@@ -120,30 +120,30 @@ public class ComposableStep {
             return this;
         }
 
-        private void bubbleUpEmptyParams(List<ComposableStep> steps) {
+        private void bubbleUpEmptyParams(List<ComposableStep> steps) { // TODO - dont do it while adding steps, do it after in build() eventually
             steps.forEach(composableStep ->
-                addEnclosedUsageParameters(
-                    composableStep.emptyParams()
+                addExecutionParameters(
+                    composableStep.getEmptyExecutionParameters()
                 ));
         }
 
-        public ComposableStepBuilder withBuiltInParameters(Map<String, String> builtInParameters) {
-            this.builtInParameters = unmodifiableMap(builtInParameters);
+        public ComposableStepBuilder withDefaultParameters(Map<String, String> defaultParameters) {
+            this.defaultParameters = unmodifiableMap(defaultParameters);
             return this;
         }
 
-        public ComposableStepBuilder addBuiltInParameters(Map<String, String> builtInParameters) {
-            ofNullable(builtInParameters).ifPresent(this.builtInParameters::putAll);
+        public ComposableStepBuilder addDefaultParameters(Map<String, String> defaultParameters) {
+            ofNullable(defaultParameters).ifPresent(this.defaultParameters::putAll);
             return this;
         }
 
-        public ComposableStepBuilder overrideEnclosedUsageParametersWith(Map<String, String> enclosedUsageParameters) {
-            this.enclosedUsageParameters = enclosedUsageParameters;
+        public ComposableStepBuilder overrideExecutionParametersWith(Map<String, String> executionParameters) {
+            this.executionParameters = executionParameters;
             return this;
         }
 
-        public ComposableStepBuilder addEnclosedUsageParameters(Map<String, String> enclosedUsageParameters) {
-            ofNullable(enclosedUsageParameters).ifPresent(this.enclosedUsageParameters::putAll);
+        public ComposableStepBuilder addExecutionParameters(Map<String, String> executionParameters) { // TODO - only used in orient, try to remove its use there
+            ofNullable(executionParameters).ifPresent(this.executionParameters::putAll);
             return this;
         }
 
@@ -166,10 +166,10 @@ public class ComposableStep {
             this.id = instance.id;
             this.name = instance.name;
             this.steps = instance.steps;
-            this.builtInParameters = instance.builtInParameters;
+            this.defaultParameters = instance.defaultParameters;
             this.implementation = instance.implementation;
             this.strategy = instance.strategy;
-            this.enclosedUsageParameters = new LinkedHashMap<>(instance.enclosedUsageParameters);
+            this.executionParameters = new LinkedHashMap<>(instance.executionParameters);
             return this;
         }
     }
@@ -180,10 +180,10 @@ public class ComposableStep {
             "id='" + id + '\'' +
             ", name='" + name + '\'' +
             ", steps=" + steps +
-            ", parameters=" + builtInParameters +
+            ", defaultParameters=" + defaultParameters +
             ", implementation=" + implementation +
             ", strategy=" + strategy.toString() +
-            ", dataSet=" + enclosedUsageParameters +
+            ", executionParameters=" + executionParameters +
             '}';
     }
 
@@ -195,16 +195,16 @@ public class ComposableStep {
         return Objects.equals(id, that.id) &&
             Objects.equals(name, that.name) &&
             Objects.equals(steps, that.steps) &&
-            Objects.equals(builtInParameters, that.builtInParameters) &&
+            Objects.equals(defaultParameters, that.defaultParameters) &&
             Objects.equals(implementation, that.implementation) &&
             Objects.equals(strategy, that.strategy) &&
-            Objects.equals(enclosedUsageParameters, that.enclosedUsageParameters)
+            Objects.equals(executionParameters, that.executionParameters)
             ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, steps, builtInParameters, implementation, strategy, enclosedUsageParameters);
+        return Objects.hash(id, name, steps, defaultParameters, implementation, strategy, executionParameters);
     }
 
 }

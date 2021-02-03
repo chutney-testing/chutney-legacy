@@ -115,7 +115,7 @@ public class DatabaseTestCaseRepository implements DelegateScenarioRepository {
                 .addValue("id", nextId)
                 .addValue("title", scenario.title)
                 .addValue("description", scenario.description)
-                .addValue("dataSet", mapper.writeValueAsString(scenario.dataSet))
+                .addValue("dataSet", mapper.writeValueAsString(scenario.executionParameters))
                 .addValue("content", scenario.rawScenario)
                 .addValue("creationDate", Date.from(scenario.creationDate))
                 .addValue("tags", ScenarioTagListMapper.tagsListToString(scenario.tags))
@@ -169,8 +169,8 @@ public class DatabaseTestCaseRepository implements DelegateScenarioRepository {
 
             Try.exec(() ->  {
                 TypeReference<Map<String, String>> typeRef = new TypeReference<Map<String, String>>() {};
-                String dataSet = rs.getString("DATASET");
-                return testCaseDataBuilder.withDataSet(mapper.readValue(dataSet != null ? dataSet : "{}", typeRef));
+                String executionParameters = rs.getString("DATASET");
+                return testCaseDataBuilder.withExecutionParameters(mapper.readValue(executionParameters != null ? executionParameters : "{}", typeRef));
             }).runtime();
 
             Timestamp creationDate = rs.getTimestamp("CREATION_DATE");

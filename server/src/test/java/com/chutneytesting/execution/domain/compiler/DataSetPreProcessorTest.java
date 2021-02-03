@@ -41,7 +41,7 @@ public class DataSetPreProcessorTest {
         RawDataSetPreProcessor dataSetPreProcessor = new RawDataSetPreProcessor(globalvarRepository);
         RawTestCase fakeTestCase = RawTestCase.builder()
             .withScenario("a blabla step with **aKey** and **anotherKey** and **key.1**")
-            .withParameters(Maps.of("aKey", "a value", "anotherKey", "another value"))
+            .withExecutionParameters(Maps.of("aKey", "a value", "anotherKey", "another value"))
             .build();
 
         // When
@@ -73,7 +73,7 @@ public class DataSetPreProcessorTest {
                 .withTitle(expected_title)
                 .withDescription(expected_description)
                 .build())
-            .withParameters(Maps.of("aKey", "a value", "anotherKey", "another value", "titre", "newTitle", "description", "newDesc", "type", expected_strategy_type))
+            .withExecutionParameters(Maps.of("aKey", "a value", "anotherKey", "another value", "titre", "newTitle", "description", "newDesc", "type", expected_strategy_type))
             .withScenario(GwtScenario.builder()
                 .withWhen(
                     GwtStep.builder()
@@ -99,7 +99,7 @@ public class DataSetPreProcessorTest {
                 .withTitle(expected_title)
                 .withDescription(expected_description)
                 .build())
-            .withParameters(Maps.of("aKey", "a value", "anotherKey", "another value", "titre", "newTitle", "description", "newDesc", "type", expected_strategy_type))
+            .withExecutionParameters(Maps.of("aKey", "a value", "anotherKey", "another value", "titre", "newTitle", "description", "newDesc", "type", expected_strategy_type))
             .withScenario(GwtScenario.builder()
                 .withWhen(
                     GwtStep.builder()

@@ -41,7 +41,7 @@ public class DatabaseCampaignRepositoryTest extends AbstractLocalDatabaseTest {
 
         Campaign selected = sut.findById(campaign.id);
         assertThat(selected.scenarioIds).containsExactly("1", "2");
-        assertThat(selected.dataSet).containsAllEntriesOf(dataSet);
+        assertThat(selected.executionParameters).containsAllEntriesOf(dataSet);
     }
 
     @Test

@@ -42,7 +42,7 @@ public class ComposedTestCaseParametersResolutionPreProcessor implements TestCas
         return this.apply((ExecutableComposedTestCase) executionRequest.testCase, executionRequest.environment);
     }
 
-    public ExecutableComposedTestCase apply(ExecutableComposedTestCase testCase, String environment) {
+    private ExecutableComposedTestCase apply(ExecutableComposedTestCase testCase, String environment) {
         Map<String, String> globalVariable = globalvarRepository.getFlatMap();
 
         if (!StringUtils.isBlank(environment)) {
@@ -52,13 +52,13 @@ public class ComposedTestCaseParametersResolutionPreProcessor implements TestCas
         testCase = this.applyOnStrategy(testCase, globalVariable);
 
         return new ExecutableComposedTestCase(
-            applyToMetadata(testCase.metadata, testCase.computedParameters, globalVariable),
-            applyToScenario(testCase.composedScenario, testCase.computedParameters, globalVariable),
-            testCase.computedParameters);
+            applyToMetadata(testCase.metadata, testCase.executionParameters, globalVariable),
+            applyToScenario(testCase.composedScenario, testCase.executionParameters, globalVariable),
+            testCase.executionParameters);
     }
 
     public ExecutableComposedTestCase applyOnStrategy(ExecutableComposedTestCase testCase, Map<String, String> globalVariable) {
-        Map<String, String> testCaseDataSet = applyOnCurrentStepDataSet(testCase.computedParameters, emptyMap(), globalVariable);
+        Map<String, String> testCaseDataSet = applyOnCurrentStepDataSet(testCase.executionParameters, emptyMap(), globalVariable);
         return new ExecutableComposedTestCase(
             testCase.metadata,
             applyOnStrategy(testCase.composedScenario, testCaseDataSet, globalVariable),
@@ -78,7 +78,7 @@ public class ComposedTestCaseParametersResolutionPreProcessor implements TestCas
     }
 
     private ExecutableComposedStep applyOnStepStrategy(ExecutableComposedStep composedStep, Map<String, String> parentDataset, Map<String, String> globalVariable) {
-        Map<String, String> scopedDataset = applyOnCurrentStepDataSet(composedStep.dataset, parentDataset, globalVariable);
+        Map<String, String> scopedDataset = applyOnCurrentStepDataSet(composedStep.executionParameters, parentDataset, globalVariable);
 
         return ExecutableComposedStep.builder()
             .withName(composedStep.name)
@@ -89,7 +89,7 @@ public class ComposedTestCaseParametersResolutionPreProcessor implements TestCas
             )
             .withImplementation(composedStep.stepImplementation)
             .withStrategy(applyToStrategy(composedStep.strategy, scopedDataset, globalVariable))
-            .withDataset(composedStep.dataset)
+            .withExecutionParameters(composedStep.executionParameters)
             .build();
     }
 
@@ -119,7 +119,7 @@ public class ComposedTestCaseParametersResolutionPreProcessor implements TestCas
     }
 
     private ExecutableComposedStep applyToComposedStep(ExecutableComposedStep composedStep, Map<String, String> parentDataset, Map<String, String> globalVariable) {
-        Map<String, String> scopedDataset = applyOnCurrentStepDataSet(composedStep.dataset, parentDataset, globalVariable);
+        Map<String, String> scopedDataset = applyOnCurrentStepDataSet(composedStep.executionParameters, parentDataset, globalVariable);
         List<ExecutableComposedStep> subSteps = composedStep.steps;
 
         // Preprocess substeps - Recurse
@@ -132,7 +132,7 @@ public class ComposedTestCaseParametersResolutionPreProcessor implements TestCas
             )
             .withImplementation(composedStep.stepImplementation.flatMap(si -> applyToImplementation(si, scopedDataset, globalVariable)))
             .withStrategy(composedStep.strategy)
-            .withDataset(scopedDataset)
+            .withExecutionParameters(scopedDataset)
             .build();
     }
 

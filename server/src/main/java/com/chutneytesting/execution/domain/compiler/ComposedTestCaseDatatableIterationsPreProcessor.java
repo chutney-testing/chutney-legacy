@@ -2,6 +2,7 @@ package com.chutneytesting.execution.domain.compiler;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableMap;
 import static java.util.Optional.empty;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -29,13 +30,14 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.apache.commons.text.StringEscapeUtils;
 
-public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProcessor<ExecutableComposedTestCase> {
+public class ComposedTestCaseDatatableIterationsPreProcessor implements TestCasePreProcessor<ExecutableComposedTestCase> {
 
     private final DataSetRepository dataSetRepository;
 
-    ComposedTestCaseIterationsPreProcessor(DataSetRepository dataSetRepository) {
+    ComposedTestCaseDatatableIterationsPreProcessor(DataSetRepository dataSetRepository) {
         this.dataSetRepository = dataSetRepository;
     }
 
@@ -52,47 +54,47 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
         }
 
         DataSet dataset = oDataset.get();
-        Map<Boolean, List<String>> matchedHeaders = findMultipleValuesHeadersMatchingComputedParams(testCase, dataset.datatable);
+        Map<Boolean, List<String>> matchedHeaders = findDatableHeadersMatchingExecutionParameters(testCase, dataset.datatable);
 
         return new ExecutableComposedTestCase(
             testCase.metadata,
             applyToScenario(testCase.composedScenario, matchedHeaders, dataset),
-            applyToComputedParameters(testCase.computedParameters, matchedHeaders.get(Boolean.TRUE), dataset));
+            applyToExecutionParameters(testCase.executionParameters, matchedHeaders.get(Boolean.TRUE), dataset));
     }
 
-    private Map<Boolean, List<String>> findMultipleValuesHeadersMatchingComputedParams(ExecutableComposedTestCase testCase, List<Map<String, String>> multipleValues) {
+    private Map<Boolean, List<String>> findDatableHeadersMatchingExecutionParameters(ExecutableComposedTestCase testCase, List<Map<String, String>> datatable) {
         Map<Boolean, List<String>> matchedHeaders = new HashMap<>();
-        if (!multipleValues.isEmpty()) {
-            Set<String> valuesHeaders = multipleValues.get(0).keySet();
-            matchedHeaders = testCase.computedParameters.keySet().stream()
-                .collect(groupingBy(valuesHeaders::contains));
+        if (!datatable.isEmpty()) {
+            Set<String> headers = datatable.get(0).keySet();
+            matchedHeaders = testCase.executionParameters.keySet().stream()
+                .collect(groupingBy(headers::contains));
         }
         matchedHeaders.putIfAbsent(Boolean.TRUE, emptyList());
         matchedHeaders.putIfAbsent(Boolean.FALSE, emptyList());
         return matchedHeaders;
     }
 
-    private Map<String, String> applyToComputedParameters(Map<String, String> computedParameters, List<String> matchedHeaders, DataSet dataSet) {
-        HashMap<String, String> parameters = new HashMap<>(computedParameters);
+    private Map<String, String> applyToExecutionParameters(Map<String, String> executionParameters, List<String> matchedHeaders, DataSet dataset) {
+        HashMap<String, String> parameters = new HashMap<>(executionParameters);
 
-        Map<String, String> uniqueValues = dataSet.constants;
-        computedParameters.keySet().stream()
-            .filter(uniqueValues::containsKey)
-            .forEach(key -> parameters.put(key, uniqueValues.get(key)));
+        Map<String, String> constants = dataset.constants;
+        executionParameters.keySet().stream()
+            .filter(constants::containsKey)
+            .forEach(key -> parameters.put(key, constants.get(key)));
 
-        computedParameters.keySet().stream()
+        executionParameters.keySet().stream()
             .filter(matchedHeaders::contains)
             .forEach(parameters::remove);
 
         return parameters;
     }
 
-    private ExecutableComposedScenario applyToScenario(ExecutableComposedScenario composedScenario, Map<Boolean, List<String>> matchedHeaders, DataSet dataSet) {
+    private ExecutableComposedScenario applyToScenario(ExecutableComposedScenario composedScenario, Map<Boolean, List<String>> matchedHeaders, DataSet dataset) {
         Map<String, Integer> iterationOutputs = new HashMap<>();
         return ExecutableComposedScenario.builder()
             .withComposedSteps(
                 composedScenario.composedSteps.stream()
-                    .map(cs -> applyToStep(cs, matchedHeaders, dataSet, iterationOutputs))
+                    .map(cs -> applyToStep(cs, matchedHeaders, dataset, iterationOutputs))
                     .collect(toList())
             )
             .withParameters(composedScenario.parameters)
@@ -100,36 +102,40 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
     }
 
     private ExecutableComposedStep applyToStep(ExecutableComposedStep composedStep, Map<Boolean, List<String>> matchedHeaders, DataSet dataset, Map<String, Integer> iterationOutputs) {
-        Set<String> csNovaluedEntries = findComposedStepNoValuedMatchedEntries(composedStep.dataset, matchedHeaders.get(Boolean.TRUE));
-        Map<String, Set<String>> csValuedEntriesWithRef = findComposedStepValuedEntriesWithRef(composedStep.dataset, matchedHeaders.get(Boolean.TRUE));
-        Map<String, Integer> usedIndexedOutput = findUsageOfPreviousOutput(composedStep, iterationOutputs);
-        Map<String, Integer> usedIndexedOutputInDataset = findUsageOfPreviousOutputInDataset(composedStep, iterationOutputs);
+        // ex. parameter : { "**header**" : "" }
+        Set<String> executionParametersReferencingDatableHeadersInKey = findHeadersReferencesWithinEmptyParametersKey(composedStep.executionParameters, matchedHeaders.get(Boolean.TRUE));
 
-        if (csNovaluedEntries.isEmpty() && csValuedEntriesWithRef.isEmpty() && usedIndexedOutput.isEmpty() && usedIndexedOutputInDataset.isEmpty()) {
+        // ex: parameter : { "paramName" : "**header1** + **header2**" }
+        Map<String, Set<String>> executionParametersReferencingDatableHeadersInValue = findHeadersReferencesWithinParameterValues(composedStep.executionParameters, matchedHeaders.get(Boolean.TRUE));
+        Map<String, Integer> usedIndexedOutput = findUsageOfPreviousOutputInImplementation(composedStep, iterationOutputs);
+        Map<String, Integer> usedIndexedOutputInDataset = findUsageOfPreviousOutputInExecutionParameters(composedStep, iterationOutputs);
+
+        if (executionParametersReferencingDatableHeadersInKey.isEmpty() && executionParametersReferencingDatableHeadersInValue.isEmpty() && usedIndexedOutput.isEmpty() && usedIndexedOutputInDataset.isEmpty()) {
             removeObsoleteIndexedOutputs(iterationOutputs, composedStep);
             return composedStep;
         }
 
-        Map<String, String> csLeftEntries = composedStep.dataset.entrySet().stream()
+        // ex. parameter : { "paramName" : "" }
+        Map<String, String> emptyExecutionParameters = composedStep.executionParameters.entrySet().stream()
             .filter(e -> e.getValue().isEmpty())
-            .filter(e -> !csNovaluedEntries.contains(e.getKey()))
+            .filter(e -> !executionParametersReferencingDatableHeadersInKey.contains(e.getKey()))
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        matchedHeaders.get(Boolean.FALSE).forEach(s -> csLeftEntries.put(s, ""));
+        matchedHeaders.get(Boolean.FALSE).forEach(s -> emptyExecutionParameters.put(s, ""));
 
         return ExecutableComposedStep.builder()
             .from(composedStep)
             .withImplementation(empty())
             .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
-            .withSteps(buildStepIterations(composedStep, csNovaluedEntries, csValuedEntriesWithRef, dataset.datatable, iterationOutputs))
-            .withDataset(buildDatasetWithAliases(csLeftEntries))
+            .withSteps(buildStepIterations(composedStep, dataset.datatable, executionParametersReferencingDatableHeadersInKey, executionParametersReferencingDatableHeadersInValue, iterationOutputs))
+            .withExecutionParameters(buildExecutionParametersWithAliases(emptyExecutionParameters))
             .build();
     }
 
-    private Map<String, Integer> findUsageOfPreviousOutputInDataset(ExecutableComposedStep composedStep, Map<String, Integer> iterationOutputs) {
+    private Map<String, Integer> findUsageOfPreviousOutputInExecutionParameters(ExecutableComposedStep composedStep, Map<String, Integer> iterationOutputs) {
         return iterationOutputs.entrySet().stream()
             .filter(previousOutput ->
-                composedStep.dataset.entrySet().stream()
+                composedStep.executionParameters.entrySet().stream()
                     .anyMatch(input -> input.getKey().contains("#" + previousOutput.getKey())
                         || usePreviousIterationOutput(previousOutput.getKey(), input.getValue())
                     )
@@ -137,7 +143,7 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private Map<String, Integer> findUsageOfPreviousOutput(ExecutableComposedStep composedStep, Map<String, Integer> iterationOutputs) {
+    private Map<String, Integer> findUsageOfPreviousOutputInImplementation(ExecutableComposedStep composedStep, Map<String, Integer> iterationOutputs) {
         Map<String, Integer> map = new HashMap<>();
         composedStep.stepImplementation.ifPresent(si ->
             map.putAll(iterationOutputs.entrySet().stream()
@@ -175,36 +181,38 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
         return value.entrySet().stream().anyMatch(e -> e.getKey().contains("#" + previousOutput) || usePreviousIterationOutput(previousOutput, e.getValue()));
     }
 
-    private Set<String> findComposedStepNoValuedMatchedEntries(Map<String, String> csDataset, List<String> matchedHeaders) {
-        return csDataset.entrySet().stream()
+    private Set<String> findHeadersReferencesWithinEmptyParametersKey(Map<String, String> executionParameters, List<String> matchedHeaders) {
+        return executionParameters.entrySet().stream()
             .filter(e -> e.getValue().isEmpty() && matchedHeaders.contains(e.getKey()))
             .map(Map.Entry::getKey)
             .collect(toSet());
     }
 
-    private Map<String, Set<String>> findComposedStepValuedEntriesWithRef(Map<String, String> csDataSet, List<String> matchedHeaders) {
-        HashMap<String, Set<String>> valuedEntriesWithRef = new HashMap<>();
-        for (Map.Entry<String, String> csData : csDataSet.entrySet()) {
-            String value = csData.getValue();
+    private Map<String, Set<String>> findHeadersReferencesWithinParameterValues(Map<String, String> executionParameters, List<String> matchedHeaders) {
+        // Key is an execution parameter name, value is a set of headers name
+        HashMap<String, Set<String>> executionParametersReferencingDatableHeader = new HashMap<>();
+        // TODO - change double for loop + condition by first listing step parameters matching a header, then only proceed matched ones
+        for (Map.Entry<String, String> parameter : executionParameters.entrySet()) {
+            String value = parameter.getValue();
             for (String matchedHeader : matchedHeaders) {
                 if (value.contains("**" + matchedHeader + "**")) {
-                    valuedEntriesWithRef.putIfAbsent(csData.getKey(), new HashSet<>());
-                    valuedEntriesWithRef.get(csData.getKey()).add(matchedHeader);
+                    executionParametersReferencingDatableHeader.putIfAbsent(parameter.getKey(), new HashSet<>());
+                    executionParametersReferencingDatableHeader.get(parameter.getKey()).add(matchedHeader);
                 }
             }
         }
-        return valuedEntriesWithRef;
+        return executionParametersReferencingDatableHeader;
     }
 
     private List<ExecutableComposedStep> buildStepIterations(ExecutableComposedStep composedStep,
+                                                             List<Map<String, String>> datatable,
                                                              Set<String> csNovaluedEntries,
-                                                             Map<String, Set<String>> csValuedEntriesWithRef,
-                                                             List<Map<String, String>> multipleValues,
+                                                             Map<String, Set<String>> executionParametersReferencingDatableHeader,
                                                              Map<String, Integer> iterationOutputs) {
         List<ExecutableComposedStep> iterations;
         AtomicInteger index = new AtomicInteger(0);
 
-        iterations = generateIterationsForMultipleValues(composedStep, multipleValues, csNovaluedEntries, csValuedEntriesWithRef, iterationOutputs, index);
+        iterations = generateIterationsForDatatable(composedStep, datatable, csNovaluedEntries, executionParametersReferencingDatableHeader, iterationOutputs, index);
 
         if (iterations.isEmpty()) {
             iterations = generateIterationsForPreviousIterationOutputs(composedStep, iterationOutputs, index);
@@ -215,12 +223,12 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
         }
 
         rememberIterationsCountForEachOutput(iterationOutputs, index);
-        updateIndexedOutputsUsingDatasetValues(iterationOutputs, composedStep);
+        updateIndexedOutputsUsingExecutionParameterValues(iterationOutputs, composedStep);
         return iterations;
     }
 
-    private List<ExecutableComposedStep> generateIterationsForMultipleValues(ExecutableComposedStep composedStep, List<Map<String, String>> multipleValues, Set<String> csNovaluedEntries, Map<String, Set<String>> csValuedEntriesWithRef, Map<String, Integer> iterationOutputs, AtomicInteger index) {
-        List<Map<String, String>> iterationData = findUsageOfDatasetMultipleValues(csNovaluedEntries, csValuedEntriesWithRef, multipleValues);
+    private List<ExecutableComposedStep> generateIterationsForDatatable(ExecutableComposedStep composedStep, List<Map<String, String>> datatable, Set<String> csNovaluedEntries, Map<String, Set<String>> executionParametersReferencingDatableHeader, Map<String, Integer> iterationOutputs, AtomicInteger index) {
+        List<Map<String, String>> iterationData = findUsageOfDatasetMultipleValues(csNovaluedEntries, executionParametersReferencingDatableHeader, datatable);
         return iterationData.stream()
             .map(mv -> {
                 index.getAndIncrement();
@@ -228,14 +236,14 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
                 return ExecutableComposedStep.builder()
                     .from(composedStep)
                     .withImplementation(composedStep.stepImplementation.flatMap(si -> Optional.of(indexIterationIO(si, index, iterationOutputs))))
-                    .withName(composedStep.name + " - dataset iteration " + index)
-                    .withDataset(applyIndexedOutputs(updatedDatasetUsingCurrentValue(composedStep.dataset, csNovaluedEntries, csValuedEntriesWithRef, mv), index, iterationOutputs))
+                    .withName(composedStep.name + " - datatable iteration " + index)
+                    .withExecutionParameters(applyIndexedOutputs(updatedExecutionParametersUsingCurrentValue(composedStep.executionParameters, csNovaluedEntries, executionParametersReferencingDatableHeader, mv), index, iterationOutputs))
                     .withSteps(composedStep.steps.stream()
                         .map(s ->
                             ExecutableComposedStep.builder()
                                 .from(s)
                                 .withImplementation(s.stepImplementation.flatMap(si -> Optional.of(indexIterationIO(si, index, iterationOutputs))))
-                                .withDataset(applyIndexedOutputs(s.dataset, index, iterationOutputs))
+                                .withExecutionParameters(applyIndexedOutputs(s.executionParameters, index, iterationOutputs))
                                 .build())
                         .collect(toList())
                     )
@@ -258,7 +266,7 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
     }
 
     private List<ExecutableComposedStep> generateIterationsForPreviousIterationOutputs(ExecutableComposedStep composedStep, Map<String, Integer> iterationOutputs, AtomicInteger index) {
-        Map<String, Integer> previousOutputs = findUsageOfPreviousOutput(composedStep, iterationOutputs);
+        Map<String, Integer> previousOutputs = findUsageOfPreviousOutputInImplementation(composedStep, iterationOutputs);
         int iterationsCount = previousOutputs.values().stream().findFirst().orElse(0);
 
         List<ExecutableComposedStep> generatedIterations = new ArrayList<>();
@@ -268,8 +276,8 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
                 ExecutableComposedStep.builder()
                     .from(composedStep)
                     .withImplementation(composedStep.stepImplementation.flatMap(si -> Optional.of(indexIterationIO(si, index, iterationOutputs))))
-                    .withName(composedStep.name + " - dataset iteration " + index)
-                    .withDataset(composedStep.dataset)
+                    .withName(composedStep.name + " - datatable iteration " + index)
+                    .withExecutionParameters(composedStep.executionParameters)
                     .build()
             );
         }
@@ -277,7 +285,7 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
     }
 
     private List<ExecutableComposedStep> generateIterationsForPreviousIterationOutputsInDataset(ExecutableComposedStep composedStep, Map<String, Integer> iterationOutputs, AtomicInteger index) {
-        Map<String, Integer> previousOutputs = findUsageOfPreviousOutputInDataset(composedStep, iterationOutputs);
+        Map<String, Integer> previousOutputs = findUsageOfPreviousOutputInExecutionParameters(composedStep, iterationOutputs);
         int iterationsCount = previousOutputs.values().stream().findFirst().orElse(0);
 
         List<ExecutableComposedStep> generatedIterations = new ArrayList<>();
@@ -287,24 +295,24 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
                 ExecutableComposedStep.builder()
                     .from(composedStep)
                     .withImplementation(composedStep.stepImplementation.flatMap(si -> Optional.of(indexIterationIO(si, index, iterationOutputs))))
-                    .withName(composedStep.name + " - dataset iteration " + index)
-                    .withDataset(applyIndexedOutputs(composedStep.dataset, index, iterationOutputs))
+                    .withName(composedStep.name + " - datatable iteration " + index)
+                    .withExecutionParameters(applyIndexedOutputs(composedStep.executionParameters, index, iterationOutputs))
                     .build()
             );
         }
         return generatedIterations;
     }
 
-    private Map<String, String> updatedDatasetUsingCurrentValue(Map<String, String> dataset, Set<String> csNovaluedEntries, Map<String, Set<String>> csValuedEntriesWithRef, Map<String, String> mv) {
-        Map<String, String> newDataSet = new HashMap<>(dataset);
-        dataset.forEach((k, v) -> {
+    private Map<String, String> updatedExecutionParametersUsingCurrentValue(Map<String, String> executionParameters, Set<String> csNovaluedEntries, Map<String, Set<String>> executionParametersReferencingDatableHeader, Map<String, String> mv) {
+        Map<String, String> newExecutionParameters = new HashMap<>(executionParameters);
+        executionParameters.forEach((k, v) -> {
             if (csNovaluedEntries.contains(k)) {
-                newDataSet.put(k, mv.get(k));
-            } else if (csValuedEntriesWithRef.containsKey(k)) {
-                newDataSet.put(k, replaceParams(v, emptyMap(), mv));
+                newExecutionParameters.put(k, mv.get(k));
+            } else if (executionParametersReferencingDatableHeader.containsKey(k)) {
+                newExecutionParameters.put(k, replaceParams(v, emptyMap(), mv));
             }
         });
-        return newDataSet;
+        return newExecutionParameters;
     }
 
     private StepImplementation indexIterationIO(StepImplementation si, AtomicInteger index, Map<String, Integer> iterationOutputs) {
@@ -326,19 +334,19 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
         iterationOutputs.replaceAll((k, v) -> v = index.get());
     }
 
-    private void updateIndexedOutputsUsingDatasetValues(Map<String, Integer> iterationOutputs, ExecutableComposedStep composedStep) {
+    private void updateIndexedOutputsUsingExecutionParameterValues(Map<String, Integer> iterationOutputs, ExecutableComposedStep composedStep) {
         List<ExecutableComposedStep> steps = new ArrayList<>(composedStep.steps);
         Collections.reverse(steps);
         steps.forEach(executableComposedStep ->
-            updateIndexedOutputsUsingDatasetValues(iterationOutputs,executableComposedStep)
+            updateIndexedOutputsUsingExecutionParameterValues(iterationOutputs, executableComposedStep)
         );
 
-        composedStep.dataset.entrySet().stream()
+        composedStep.executionParameters.entrySet().stream()
             .filter(entry -> iterationOutputs.containsKey("**" + entry.getKey() + "**"))
             .forEach(entry -> {
                 Integer iterationsCount = iterationOutputs.get("**" + entry.getKey() + "**");
                 iterationOutputs.remove("**" + entry.getKey() + "**");
-                iterationOutputs.put(composedStep.dataset.get(entry.getKey()), iterationsCount);
+                iterationOutputs.put(composedStep.executionParameters.get(entry.getKey()), iterationsCount);
             });
     }
 
@@ -349,15 +357,15 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
             composedStep.steps
                 .forEach(executableComposedStep -> removeObsoleteIndexedOutputs(iterationOutputs, executableComposedStep));
         } else {
-            composedStep.dataset.entrySet().stream()
+            composedStep.executionParameters.entrySet().stream()
                 .filter(entry -> list.contains("**" + entry.getKey() + "**"))
                 .forEach(entry -> {
                     list.remove("**" + entry.getKey() + "**");
                     list.add(entry.getValue());
                 });
             list.stream()
-                .filter(item -> iterationOutputs.containsKey(item))
-                .forEach(item -> iterationOutputs.remove(item));
+                .filter(iterationOutputs::containsKey)
+                .forEach(iterationOutputs::remove);
         }
     }
 
@@ -404,4 +412,18 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
         return tmp;
     }
 
+    private Map<String, String> buildExecutionParametersWithAliases(Map<String, String> executionParameters) {
+        Map<String, String> aliases = executionParameters.entrySet().stream()
+            .filter(e -> isAlias(e.getValue()))
+            .collect(Collectors.toMap(a -> a.getValue().substring(2, a.getValue().length() - 2), o -> ""));
+
+        aliases.putAll(executionParameters); // TODO - need to check why we filter and remove aliases and then add them all again ?
+
+        return unmodifiableMap(aliases);
+    }
+
+    Pattern aliasPattern = Pattern.compile("^\\*\\*(.+)\\*\\*$");
+    private boolean isAlias(String paramValue) {
+        return aliasPattern.matcher(paramValue).matches();
+    }
 }
