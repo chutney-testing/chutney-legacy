@@ -95,6 +95,10 @@ type ScenarioExecutionReport {
   status: String
 }
 
+type GlobalVariableGroupContent {
+  message: String
+}
+
 type Query {
   user: User
   scenarios: [Scenario]
@@ -104,6 +108,8 @@ type Query {
   scenario(scenarioId: ID!): Scenario
   runScenarioHistory(scenarioId: ID!, executionId: ID!): ScenarioExecution!
   campaignExecutionReport(campaignId: ID!, executionId: ID!): CampaignExecutionReport!
+  globalVariableGroupContent(groupName: ID!): GlobalVariableGroupContent
+  globalVariableGroupsNames: [ID]
 }
 
 type Mutation {

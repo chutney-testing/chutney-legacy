@@ -1,1 +1,22 @@
-<p>variables works!</p>
+<chutney-page-header [title]="'Variables'" [breadcrumbs]="breadcrumbs" [showBackIcon]="false">
+</chutney-page-header>
+
+<div>
+  <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)">
+    <mat-tab *ngFor="let groupName of globalVariableGroupsNames$ | async"
+              label="{{ groupName }}">
+    </mat-tab>
+  </mat-tab-group>
+  <div class="my-code-editor">
+    <td-code-editor #monaco
+      fxFlex="grow"
+      editorStyle="border:0;"
+      language="json"
+      [editorOptions]="{ fontSize: 12, automaticLayout: true }"
+      [theme]="options.theme === 'light' ? 'vs' : 'vs-dark'"
+      [value]="''"
+      (editorInitialized)="editorInitialized($event)"
+      (editorConfigurationChanged)="monacoEditorConfigChanged(monaco.theme)"
+    ></td-code-editor>
+  </div>
+</div>

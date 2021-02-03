@@ -1,0 +1,5 @@
+query globalVariableGroupContent($groupName: ID!) {
+  globalVariableGroupContent(groupName: $groupName) @rest(type: "GlobalVariableGroupContent", path: "api/ui/globalvar/v1/{args.groupName}") {
+    message
+  }
+}
