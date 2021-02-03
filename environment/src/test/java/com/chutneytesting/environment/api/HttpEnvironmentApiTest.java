@@ -22,10 +22,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.chutneytesting.environment.domain.Environment;
-import com.chutneytesting.environment.domain.EnvironmentNotFoundException;
+import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
 import com.chutneytesting.environment.domain.EnvironmentService;
-import com.chutneytesting.environment.domain.InvalidEnvironmentNameException;
+import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
 import com.chutneytesting.environment.domain.Target;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -46,13 +46,17 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class EnvironmentControllerV2Test {
+public class HttpEnvironmentApiTest {
 
     private final String basePath = "/api/v2/environment";
 
     private final EnvironmentRepository environmentRepository = mock(EnvironmentRepository.class);
     private final EnvironmentService environmentService = new EnvironmentService(environmentRepository);
-    private final EnvironmentControllerV2 environmentControllerV2 = new EnvironmentControllerV2(environmentService);
+    private final EmbeddedEnvironmentApi embeddedApplication = new EmbeddedEnvironmentApi(environmentService);
+    private final HttpEnvironmentApi environmentControllerV2 = new HttpEnvironmentApi(embeddedApplication);
+
+    final Map<String, Environment> registeredEnvironments = new LinkedHashMap<>();
+
     private final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(environmentControllerV2)
         .setControllerAdvice(new EnvironmentRestExceptionHandler())
         .build();
@@ -89,7 +93,7 @@ public class EnvironmentControllerV2Test {
     public void createEnvironment_adds_it_to_repository() throws Exception {
         mockMvc.perform(
             post(basePath)
-                .content("{\"name\": \"env test\", \"description\": \"test description\"}")
+                .content("{\"name\": \"env_test\", \"description\": \"test description\"}")
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isOk());
@@ -99,7 +103,7 @@ public class EnvironmentControllerV2Test {
 
         Environment savedEnvironment = environmentArgumentCaptor.getValue();
         assertThat(savedEnvironment).isNotNull();
-        assertThat(savedEnvironment.name).isEqualTo("env test");
+        assertThat(savedEnvironment.name).isEqualTo("env_test");
         assertThat(savedEnvironment.description).isEqualTo("test description");
     }
 
@@ -158,11 +162,11 @@ public class EnvironmentControllerV2Test {
 
     @Test
     public void updateEnvironment_saves_it() throws Exception {
-        addAvailableEnvironment("env test");
+        addAvailableEnvironment("env_test");
 
         mockMvc.perform(
-            put(basePath + "/env test")
-                .content("{\"name\": \"env test\", \"description\": \"test description\"}")
+            put(basePath + "/env_test")
+                .content("{\"name\": \"env_test\", \"description\": \"test description\"}")
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isOk());
@@ -173,28 +177,28 @@ public class EnvironmentControllerV2Test {
 
         Environment savedEnvironment = environmentArgumentCaptor.getValue();
         assertThat(savedEnvironment).isNotNull();
-        assertThat(savedEnvironment.name).isEqualTo("env test");
+        assertThat(savedEnvironment.name).isEqualTo("env_test");
         assertThat(savedEnvironment.description).isEqualTo("test description");
     }
 
     @Test
     public void updateEnvironment_with_different_a_name_deletes_previous_one() throws Exception {
-        addAvailableEnvironment("env test");
+        addAvailableEnvironment("env_test");
 
         mockMvc.perform(
-            put(basePath + "/env test")
-                .content("{\"description\": \"test2 description\", \"name\": \"env test 2\"}")
+            put(basePath + "/env_test")
+                .content("{\"description\": \"test2 description\", \"name\": \"env_test_2\"}")
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isOk());
 
         ArgumentCaptor<Environment> environmentArgumentCaptor = ArgumentCaptor.forClass(Environment.class);
         verify(environmentRepository, times(1)).save(environmentArgumentCaptor.capture());
-        verify(environmentRepository, times(1)).delete(eq("env test"));
+        verify(environmentRepository, times(1)).delete(eq("env_test"));
 
         Environment savedEnvironment = environmentArgumentCaptor.getValue();
         assertThat(savedEnvironment).isNotNull();
-        assertThat(savedEnvironment.name).isEqualTo("env test 2");
+        assertThat(savedEnvironment.name).isEqualTo("env_test_2");
         assertThat(savedEnvironment.description).isEqualTo("test2 description");
     }
 
@@ -239,10 +243,10 @@ public class EnvironmentControllerV2Test {
 
     @Test
     public void addTarget_saves_an_environment_with_the_new_target() throws Exception {
-        addAvailableEnvironment("env test", "server 1");
+        addAvailableEnvironment("env_test", "server 1");
 
         mockMvc.perform(
-            post(basePath + "/env test/target")
+            post(basePath + "/env_test/target")
                 .content("{\"name\": \"server 2\", \"url\": \"ssh://somehost:42\"}")
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
             .andDo(MockMvcResultHandlers.log())
@@ -273,20 +277,20 @@ public class EnvironmentControllerV2Test {
 
     @Test
     public void deleteTarget_deletes_it_from_repo() throws Exception {
-        addAvailableEnvironment("env test", "server 1");
+        addAvailableEnvironment("env_test", "server 1");
 
-        mockMvc.perform(delete(basePath + "/env test/target/server 1"))
+        mockMvc.perform(delete(basePath + "/env_test/target/server 1"))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isOk());
 
-        verify(environmentRepository, times(1)).save(eq(Environment.builder().withName("env test").withDescription("env test description").build()));
+        verify(environmentRepository, times(1)).save(eq(Environment.builder().withName("env_test").withDescription("env_test description").build()));
     }
 
     @Test
     public void deleteTarget_returns_404_when_not_found() throws Exception {
-        addAvailableEnvironment("env test", "server 1");
+        addAvailableEnvironment("env_test", "server 1");
 
-        mockMvc.perform(delete(basePath + "/env test/target/server 2"))
+        mockMvc.perform(delete(basePath + "/env_test/target/server 2"))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isNotFound());
     }
@@ -305,10 +309,10 @@ public class EnvironmentControllerV2Test {
 
     @Test
     public void updateTarget_saves_it() throws Exception {
-        addAvailableEnvironment("env test", "server 1");
+        addAvailableEnvironment("env_test", "server 1");
 
         mockMvc.perform(
-            put(basePath + "/env test/target/server 1")
+            put(basePath + "/env_test/target/server 1")
                 .content("{\"name\": \"server 1\", \"url\": \"http://somehost2:42\"}")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
         )
@@ -326,10 +330,10 @@ public class EnvironmentControllerV2Test {
 
     @Test
     public void updateTarget_with_different_a_name_deletes_previous_one() throws Exception {
-        addAvailableEnvironment("env test", "server 1");
+        addAvailableEnvironment("env_test", "server 1");
 
         mockMvc.perform(
-            put(basePath + "/env test/target/server 1")
+            put(basePath + "/env_test/target/server 1")
                 .content("{\"name\": \"server 2\", \"url\": \"http://somehost2:42\"}")
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
             .andDo(MockMvcResultHandlers.log())
@@ -367,13 +371,12 @@ public class EnvironmentControllerV2Test {
         }
     }
 
-    Map<String, Environment> registeredEnvironments = new LinkedHashMap<>();
-
     private void addAvailableEnvironment(String envName, String... targetNames) {
 
         Set<Target> targets = stream(targetNames)
             .map(targetName -> Target.builder()
-                .withId(Target.TargetId.of(targetName, envName))
+                .withName(targetName)
+                .withEnvironment(envName)
                 .withUrl("http://" + targetName.replace(' ', '_') + ":43")
                 .build())
             .collect(toCollection(LinkedHashSet::new));

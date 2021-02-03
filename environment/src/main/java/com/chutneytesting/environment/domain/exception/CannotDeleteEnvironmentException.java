@@ -1,7 +1,8 @@
-package com.chutneytesting.environment.domain;
+package com.chutneytesting.environment.domain.exception;
 
 @SuppressWarnings("serial")
 public class CannotDeleteEnvironmentException extends RuntimeException {
+
     public CannotDeleteEnvironmentException(String message) {
         super(message);
     }

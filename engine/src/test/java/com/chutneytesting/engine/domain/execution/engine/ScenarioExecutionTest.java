@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -67,7 +68,7 @@ public class ScenarioExecutionTest {
     }
 
     @Test
-    public void finally_actions_are_executed_in_reverse_order() {
+    public void finally_actions_are_executed_in_reverse_order() throws InterruptedException {
         ScenarioExecution scenarioExecution = ScenarioExecution.createScenarioExecution();
 
         TaskTemplateRegistry taskTemplateRegistry = TestTaskTemplateLoader.buildRegistry();
@@ -94,6 +95,8 @@ public class ScenarioExecutionTest {
             new DefaultStepExecutor(taskTemplateRegistry),
             Collections.emptyList()
         ));
+
+        TimeUnit.MILLISECONDS.sleep(100);
 
         //Test order is reversed
         Step thirdStep = events.get(0).step;

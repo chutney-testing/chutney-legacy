@@ -1,5 +1,6 @@
 package com.chutneytesting.agent.domain.network;
 
+import com.chutneytesting.agent.domain.TargetId;
 import com.chutneytesting.agent.domain.configure.NetworkConfiguration;
 import com.chutneytesting.agent.domain.explore.AgentId;
 import com.chutneytesting.agent.domain.explore.ExploreResult;
@@ -33,18 +34,18 @@ public class AgentGraph {
             sourceAgent.addReachable(destAgent);
         }
 
-        Map<Target.TargetId, Target> targetById = networkConfiguration.environmentConfiguration().stream()
+        Map<TargetId, Target> targetById = networkConfiguration.environmentConfiguration().stream()
             .flatMap( e -> e.targets.stream())
-            .collect(Collectors.toMap(t -> t.id, Function.identity()));
+            .collect(Collectors.toMap(t -> TargetId.of(t.name, t.environment), Function.identity()));
 
-        for(Link<AgentId, Target.TargetId> targetLink : exploreResult.targetLinks()) {
+        for(Link<AgentId, TargetId> targetLink : exploreResult.targetLinks()) {
             Agent sourceAgent = agentsByName.get(targetLink.source().name());
             Target destTarget = targetById.get(targetLink.destination());
             if (sourceAgent == null)
                 throw new IllegalStateException(String.format("the agent [%s] is declared as source but does not exist in configuration", targetLink.source()));
             if (destTarget == null)
                 throw new IllegalStateException(String.format("the target [%s] is declared as destination but does not exist in configuration", targetLink.destination()));
-            sourceAgent.addReachable(destTarget.id);
+            sourceAgent.addReachable(TargetId.of(destTarget.name, destTarget.environment));
         }
 
         return new AgentGraph(new HashSet<>(agentsByName.values()));

@@ -1,6 +1,6 @@
 package com.chutneytesting.execution.infra.execution;
 
-import static com.chutneytesting.environment.domain.NoTarget.NO_TARGET;
+import static com.chutneytesting.environment.api.dto.NoTargetDto.NO_TARGET_DTO;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
@@ -18,11 +18,10 @@ import com.chutneytesting.engine.api.execution.CredentialDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
 import com.chutneytesting.engine.api.execution.SecurityInfoDto;
-import com.chutneytesting.engine.api.execution.TargetDto;
+import com.chutneytesting.engine.api.execution.TargetExecutionDto;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.chutneytesting.environment.domain.EnvironmentService;
-import com.chutneytesting.environment.domain.SecurityInfo;
-import com.chutneytesting.environment.domain.Target;
+import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
+import com.chutneytesting.environment.api.dto.TargetDto;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.compiler.ScenarioConversionException;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
@@ -38,12 +37,12 @@ import org.springframework.stereotype.Component;
 public class ExecutionRequestMapper {
 
     private final ObjectMapper objectMapper;
-    private final EnvironmentService environmentService;
+    private final EmbeddedEnvironmentApi environmentApplication;
     private final CurrentNetworkDescription currentNetworkDescription;
 
-    public ExecutionRequestMapper(ObjectMapper objectMapper, EnvironmentService environmentService, CurrentNetworkDescription currentNetworkDescription) {
+    public ExecutionRequestMapper(ObjectMapper objectMapper, EmbeddedEnvironmentApi environmentApplication, CurrentNetworkDescription currentNetworkDescription) {
         this.objectMapper = objectMapper;
-        this.environmentService = environmentService;
+        this.environmentApplication = environmentApplication;
         this.currentNetworkDescription = currentNetworkDescription;
     }
 
@@ -90,7 +89,7 @@ public class ExecutionRequestMapper {
 
         return new StepDefinitionRequestDto(
             definition.name,
-            toDto(getTargetForExecution(env, definition.target)),
+            toExecutionTargetDto(getTargetForExecution(env, definition.target), env),
             retryStrategy,
             definition.type,
             definition.inputs,
@@ -122,7 +121,7 @@ public class ExecutionRequestMapper {
     private StepDefinitionRequestDto convert(GwtStep step, String env) {
         return new StepDefinitionRequestDto(
             step.description,
-            step.implementation.map(i -> toDto(getTargetForExecution(env, i.target))).orElse(toDto(NO_TARGET)),
+            step.implementation.map(i -> toExecutionTargetDto(getTargetForExecution(env, i.target), env)).orElse(toExecutionTargetDto(NO_TARGET_DTO, env)),
             step.strategy.map(this::mapStrategy).orElse(null),
             step.implementation.map(i -> i.type).orElse(""),
             step.implementation.map(i -> i.inputs).orElse(emptyMap()),
@@ -146,32 +145,36 @@ public class ExecutionRequestMapper {
         );
     }
 
-    private TargetDto toDto(Target target) {
-        if (target == null || NO_TARGET.equals(target)) {
-            target = NO_TARGET;
+    private TargetExecutionDto toExecutionTargetDto(TargetDto targetDto, String env) {
+        if (targetDto == null || NO_TARGET_DTO.equals(targetDto)) {
+            targetDto = NO_TARGET_DTO;
         }
-        return new TargetDto(
-            target.id.name,
-            target.url,
-            target.properties,
-            toDto(target.security),
-            getAgents(target.id)
+        return new TargetExecutionDto(
+            targetDto.name,
+            targetDto.url,
+            targetDto.propertiesToMap(),
+            toSecurityInfoDto(targetDto),
+            getAgents(targetDto, env)
         );
     }
 
-    private static SecurityInfoDto toDto(SecurityInfo security) {
+    private static SecurityInfoDto toSecurityInfoDto(TargetDto targetDto) {
         return new SecurityInfoDto(
-            ofNullable(security.credential).map(ExecutionRequestMapper::toDto).orElse(null),
-            security.trustStore,
-            security.trustStorePassword,
-            security.keyStore,
-            security.keyStorePassword,
-            security.privateKey
+            toCredentialDto(targetDto),
+            null,
+            null,
+            targetDto.keyStore,
+            targetDto.keyStorePassword,
+            targetDto.privateKey
         );
     }
 
-    private static CredentialDto toDto(SecurityInfo.Credential credential) {
-        return new CredentialDto(credential.username, credential.password);
+    private static CredentialDto toCredentialDto(TargetDto targetDto) {
+        if(targetDto.hasCredential()) {
+            return new CredentialDto(targetDto.username, targetDto.password);
+        } else {
+            return null;
+        }
     }
 
     private StepDefinitionRequestDto convertComposed(ExecutionRequest executionRequest) {
@@ -179,7 +182,7 @@ public class ExecutionRequestMapper {
         try {
             return new StepDefinitionRequestDto(
                 composedTestCase.metadata.title(),
-                toDto(NO_TARGET),
+                toExecutionTargetDto(NO_TARGET_DTO, executionRequest.environment),
                 null,
                 null,
                 null,
@@ -199,7 +202,7 @@ public class ExecutionRequestMapper {
     private StepDefinitionRequestDto convert(ExecutableComposedStep composedStep, String env) {
         return new StepDefinitionRequestDto(
             composedStep.name,
-            toDto(getTargetForExecution(env, composedStep.stepImplementation.map(si -> si.target).orElse(""))),
+            toExecutionTargetDto(getTargetForExecution(env, composedStep.stepImplementation.map(si -> si.target).orElse("")), env),
             this.mapStrategy(composedStep.strategy),
             composedStep.stepImplementation.map(si -> si.type).orElse(""),
             composedStep.stepImplementation.map(si -> si.inputs).orElse(emptyMap()),
@@ -209,19 +212,19 @@ public class ExecutionRequestMapper {
         );
     }
 
-    private Target getTargetForExecution(String environmentName, String targetName) {
+    private TargetDto getTargetForExecution(String environmentName, String targetName) {
         if (isBlank(targetName)) {
-            return NO_TARGET;
+            return NO_TARGET_DTO;
         }
-        return environmentService.getTarget(environmentName, targetName);
+        return environmentApplication.getTarget(environmentName, targetName);
     }
 
-    private List<NamedHostAndPort> getAgents(Target.TargetId targetId) {
+    private List<NamedHostAndPort> getAgents(TargetDto targetDto, String env) {
         List<NamedHostAndPort> nhaps = emptyList();
         Optional<NetworkDescription> networkDescription = currentNetworkDescription.findCurrent();
         if (networkDescription.isPresent() && networkDescription.get().localAgent().isPresent()) {
             final Agent localAgent = networkDescription.get().localAgent().get();
-            List<Agent> agents = localAgent.findFellowAgentForReaching(targetId);
+            List<Agent> agents = localAgent.findFellowAgentForReaching(targetDto.name, env);
             nhaps = agents.stream().map(a -> a.agentInfo).collect(toList());
         }
         return nhaps;

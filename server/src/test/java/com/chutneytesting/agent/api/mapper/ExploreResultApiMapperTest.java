@@ -6,6 +6,7 @@ import com.chutneytesting.agent.api.dto.ExploreResultApiDto;
 import com.chutneytesting.agent.api.dto.ExploreResultApiDto.AgentLinkEntity;
 import com.chutneytesting.agent.api.dto.ExploreResultApiDto.TargetLinkEntity;
 import com.chutneytesting.agent.api.dto.TargetIdEntity;
+import com.chutneytesting.agent.domain.TargetId;
 import com.chutneytesting.agent.domain.explore.AgentId;
 import com.chutneytesting.agent.domain.explore.ExploreResult;
 import com.chutneytesting.agent.domain.explore.ImmutableExploreResult;
@@ -28,8 +29,8 @@ public class ExploreResultApiMapperTest {
                     Link.of(AgentId.of("B"), AgentId.of("A")))
             ), ImmutableExploreResult.Links.of(
                 Arrays.asList(
-                    Link.of(AgentId.of("A"), Target.TargetId.of("s1", "env")),
-                    Link.of(AgentId.of("B"), Target.TargetId.of("s2", "env")))
+                    Link.of(AgentId.of("A"), TargetId.of("s1", "env")),
+                    Link.of(AgentId.of("B"), TargetId.of("s2", "env")))
             )
         );
 

@@ -178,6 +178,7 @@ public class FileSystemBackupRepository implements BackupRepository {
 
     private void backupEnvironments(OutputStream outputStream) {
         try (ZipOutputStream zipOutPut = new ZipOutputStream(new BufferedOutputStream(outputStream, 4096))) {
+            //TODO remove infra dependency to the model
             for (Environment env : environmentRepository.getEnvironments()) {
                 zipOutPut.putNextEntry(new ZipEntry(env.name + ".json"));
                 om.writeValue(zipOutPut, env);

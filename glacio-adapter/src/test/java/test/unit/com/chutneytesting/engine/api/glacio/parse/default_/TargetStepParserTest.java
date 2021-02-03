@@ -7,7 +7,8 @@ import static org.mockito.Mockito.when;
 
 import com.chutneytesting.engine.api.glacio.parse.default_.TargetStepParser;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
-import com.chutneytesting.environment.domain.EnvironmentService;
+import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
+import com.chutneytesting.environment.api.dto.TargetDto;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.github.fridujo.glacio.model.Step;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,27 +16,25 @@ import org.junit.jupiter.api.Test;
 
 public class TargetStepParserTest {
 
-    private EnvironmentService environmentService;
+    private EmbeddedEnvironmentApi environmentApplication;
 
     private TargetStepParser sut;
 
     @BeforeEach
     public void setUp() {
-        environmentService = mock(EnvironmentService.class);
-        sut = new TargetStepParser(environmentService, "On");
+        environmentApplication = mock(EmbeddedEnvironmentApi.class);
+        sut = new TargetStepParser(environmentApplication, "On");
     }
 
     @Test
     public void should_build_target_from_step_by_name() {
-        com.chutneytesting.environment.domain.Target expectedTarget = com.chutneytesting.environment.domain.Target.builder()
-            .withId(com.chutneytesting.environment.domain.Target.TargetId.of("My target name", ""))
-            .withUrl("")
-            .build();
+        TargetDto expectedTarget = new TargetDto("My target name","http://url:8080", null,null,null,null,null,null);
+
         Step stepParent = mock(Step.class);
         Step step = mock(Step.class);
         when(stepParent.getSubsteps()).thenReturn(singletonList(step));
         when(step.getText()).thenReturn("On " + expectedTarget.name);
-        when(environmentService.getTarget("", expectedTarget.name))
+        when(environmentApplication.getTarget("", expectedTarget.name))
             .thenReturn(expectedTarget);
 
         Target targetFound = sut.parseStep(stepParent);

@@ -4,7 +4,7 @@ import com.chutneytesting.engine.api.execution.CredentialDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
 import com.chutneytesting.engine.api.execution.SecurityInfoDto;
-import com.chutneytesting.engine.api.execution.TargetDto;
+import com.chutneytesting.engine.api.execution.TargetExecutionDto;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.task.spi.injectable.SecurityInfo;
 import com.chutneytesting.task.spi.injectable.Target;
@@ -104,8 +104,8 @@ public class ExecutionRequestMapper {
             definition.environment);
     }
 
-    private static TargetDto toDto(Target target) {
-        return new TargetDto(
+    private static TargetExecutionDto toDto(Target target) {
+        return new TargetExecutionDto(
             target.name(),
             target.url(),
             target.properties(),

@@ -2,11 +2,11 @@ package com.chutneytesting.environment.infra;
 
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
 
-import com.chutneytesting.environment.domain.CannotDeleteEnvironmentException;
 import com.chutneytesting.environment.domain.Environment;
-import com.chutneytesting.environment.domain.EnvironmentNotFoundException;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
-import com.chutneytesting.environment.domain.InvalidEnvironmentNameException;
+import com.chutneytesting.environment.domain.exception.CannotDeleteEnvironmentException;
+import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
+import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
 import com.chutneytesting.tools.file.FileUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,16 +18,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Repository;
 
-@Repository
 public class JsonFilesEnvironmentRepository implements EnvironmentRepository {
 
-    private static final String NAME_VALIDATION_REGEX = "[a-zA-Z0-9_\\-]{3,20}";
-    private static final Pattern NAME_VALIDATION_PATTERN = Pattern.compile(NAME_VALIDATION_REGEX);
     private static final String JSON_FILE_EXT = ".json";
 
     private final Path storeFolderPath;
@@ -36,16 +30,13 @@ public class JsonFilesEnvironmentRepository implements EnvironmentRepository {
         .enable(SerializationFeature.INDENT_OUTPUT)
         .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
-    public JsonFilesEnvironmentRepository(@Value("${configuration-folder:conf}") String storeFolderPath) throws UncheckedIOException {
+    public JsonFilesEnvironmentRepository(String storeFolderPath) throws UncheckedIOException {
         this.storeFolderPath = Paths.get(storeFolderPath).toAbsolutePath();
         initFolder(this.storeFolderPath);
     }
 
     @Override
     public synchronized void save(Environment environment) throws UnsupportedOperationException, InvalidEnvironmentNameException {
-        if (!NAME_VALIDATION_PATTERN.matcher(environment.name).matches()) {
-            throw new InvalidEnvironmentNameException("Environment name must be of 3 to 20 letters, digits, underscore or hyphen");
-        }
         doSave(environment);
     }
 

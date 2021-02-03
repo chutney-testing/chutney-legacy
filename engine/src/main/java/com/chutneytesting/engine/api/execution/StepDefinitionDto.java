@@ -18,7 +18,7 @@ public class StepDefinitionDto {
     /**
      * Target on which to execute the current step.
      */
-    private final TargetDto target;
+    private final TargetExecutionDto target;
 
     /**
      * Type of the step, should match an extension.
@@ -42,7 +42,7 @@ public class StepDefinitionDto {
     public final StepStrategyDefinitionDto strategy;
 
     public StepDefinitionDto(String name,
-                             TargetDto target,
+                             TargetExecutionDto target,
                              String type,
                              StepStrategyDefinitionDto strategy,
                              Map<String, Object> inputs,
@@ -59,7 +59,7 @@ public class StepDefinitionDto {
         this.environment = environment;
     }
 
-    public Optional<TargetDto> getTarget() {
+    public Optional<TargetExecutionDto> getTarget() {
         return ofNullable(target);
     }
 

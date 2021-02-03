@@ -3,6 +3,7 @@ package com.chutneytesting.agent.domain.network;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.agent.AgentNetworkTestUtils;
+import com.chutneytesting.agent.domain.TargetId;
 import com.chutneytesting.agent.domain.configure.NetworkConfiguration;
 import com.chutneytesting.agent.domain.explore.AgentId;
 import com.chutneytesting.agent.domain.explore.ExploreResult;
@@ -39,10 +40,9 @@ public class AgentTest {
         AgentGraph agentGraph = AgentGraph.of(exploreResult, networkConfiguration);
 
         Agent sourceAgent = agentGraph.getBy(AgentId.of("A")).get();
-        Target.TargetId targetToReach = Target.TargetId.of("unreachable", "env");
 
         // When + then
-        assertThat(sourceAgent.findFellowAgentForReaching(targetToReach)).isEmpty();
+        assertThat(sourceAgent.findFellowAgentForReaching("unreachable", "env")).isEmpty();
     }
 
     @Test
@@ -63,17 +63,16 @@ public class AgentTest {
             // Agent -> Target links
             ImmutableExploreResult.Links.of(
                 Collections.singletonList(
-                    ImmutableExploreResult.Link.of(AgentId.of("A"), Target.TargetId.of("reachable", "env"))
+                    ImmutableExploreResult.Link.of(AgentId.of("A"), TargetId.of("reachable", "env"))
                 )
             ));
 
         AgentGraph agentGraph = AgentGraph.of(exploreResult, networkConfiguration);
 
         Agent sourceAgent = agentGraph.getBy(AgentId.of("A")).get();
-        Target.TargetId targetToReach = Target.TargetId.of("reachable", "env");
 
         // When
-        List<Agent> actual = sourceAgent.findFellowAgentForReaching(targetToReach);
+        List<Agent> actual = sourceAgent.findFellowAgentForReaching("reachable", "env");
 
         // Then
         assertThat(actual).isEmpty();
@@ -98,17 +97,16 @@ public class AgentTest {
             // Agent -> Target links
             ImmutableExploreResult.Links.of(
                 Collections.singletonList(
-                    ImmutableExploreResult.Link.of(AgentId.of("B"), Target.TargetId.of("reachable", "env"))
+                    ImmutableExploreResult.Link.of(AgentId.of("B"), TargetId.of("reachable", "env"))
                 )
             ));
 
         AgentGraph agentGraph = AgentGraph.of(exploreResult, networkConfiguration);
 
         Agent sourceAgent = agentGraph.getBy(AgentId.of("A")).get();
-        Target.TargetId targetToReach = Target.TargetId.of("reachable", "env");
 
         // When
-        List<Agent> actual = sourceAgent.findFellowAgentForReaching(targetToReach);
+        List<Agent> actual = sourceAgent.findFellowAgentForReaching("reachable", "env");
 
         // Then
         Agent expectedAgent = new Agent(new NamedHostAndPort("B", "agentB", 9350));
@@ -138,18 +136,17 @@ public class AgentTest {
             // Agent -> Target links
             ImmutableExploreResult.Links.of(
                 Arrays.asList(
-                    ImmutableExploreResult.Link.of(AgentId.of("A"), Target.TargetId.of("reachable", "env")),
-                    ImmutableExploreResult.Link.of(AgentId.of("B"), Target.TargetId.of("reachable", "env"))
+                    ImmutableExploreResult.Link.of(AgentId.of("A"), TargetId.of("reachable", "env")),
+                    ImmutableExploreResult.Link.of(AgentId.of("B"), TargetId.of("reachable", "env"))
                 )
             ));
 
         AgentGraph agentGraph = AgentGraph.of(exploreResult, networkConfiguration);
 
         Agent sourceAgent = agentGraph.getBy(AgentId.of("A")).get();
-        Target.TargetId targetToReach = Target.TargetId.of("reachable", "env");
 
         // When
-        List<Agent> actual = sourceAgent.findFellowAgentForReaching(targetToReach);
+        List<Agent> actual = sourceAgent.findFellowAgentForReaching("reachable", "env");
 
         // Then
         assertThat(actual).isEmpty();
@@ -175,17 +172,16 @@ public class AgentTest {
             // Agent -> Target links
             ImmutableExploreResult.Links.of(
                 Collections.singletonList(
-                    ImmutableExploreResult.Link.of(AgentId.of("C"), Target.TargetId.of("reachable", "env"))
+                    ImmutableExploreResult.Link.of(AgentId.of("C"), TargetId.of("reachable", "env"))
                 )
             ));
 
         AgentGraph agentGraph = AgentGraph.of(exploreResult, networkConfiguration);
 
         Agent sourceAgent = agentGraph.getBy(AgentId.of("A")).get();
-        Target.TargetId targetToReach = Target.TargetId.of("reachable", "env");
 
         // When
-        List<Agent> actual = sourceAgent.findFellowAgentForReaching(targetToReach);
+        List<Agent> actual = sourceAgent.findFellowAgentForReaching("reachable", "env");
 
         // Then
         Agent expectedAgent1 = new Agent(new NamedHostAndPort("B", "agentB", 9350));
@@ -221,10 +217,8 @@ public class AgentTest {
 
         Agent sourceAgent = agentGraph.getBy(AgentId.of("A")).get();
 
-        Target.TargetId targetToReach = Target.TargetId.of("unreachable", "env");
-
         // When + then
-        assertThat(sourceAgent.findFellowAgentForReaching(targetToReach)).isEmpty();
+        assertThat(sourceAgent.findFellowAgentForReaching("unreachable", "env")).isEmpty();
     }
 
     @Test
@@ -259,9 +253,7 @@ public class AgentTest {
 
         Agent sourceAgent = agentGraph.getBy(AgentId.of("A")).get();
 
-        Target.TargetId targetToReach = Target.TargetId.of("unreachable", "env");
-
         // When + then
-        assertThat(sourceAgent.findFellowAgentForReaching(targetToReach)).isEmpty();
+        assertThat(sourceAgent.findFellowAgentForReaching("unreachable", "env")).isEmpty();
     }
 }

@@ -3,6 +3,7 @@ package com.chutneytesting.agent.domain.network;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.chutneytesting.agent.AgentNetworkTestUtils;
+import com.chutneytesting.agent.domain.TargetId;
 import com.chutneytesting.agent.domain.configure.NetworkConfiguration;
 import com.chutneytesting.agent.domain.explore.AgentId;
 import com.chutneytesting.agent.domain.explore.ExploreResult;
@@ -36,9 +37,9 @@ public class AgentGraphTest {
                 )
             ), Links.of(
                 Arrays.asList(
-                    Link.of(AgentId.of("A"), Target.TargetId.of("s1", "env")),
-                    Link.of(AgentId.of("A"), Target.TargetId.of("s2", "env")),
-                    Link.of(AgentId.of("D"), Target.TargetId.of("s3", "env"))
+                    Link.of(AgentId.of("A"), TargetId.of("s1", "env")),
+                    Link.of(AgentId.of("A"), TargetId.of("s2", "env")),
+                    Link.of(AgentId.of("D"), TargetId.of("s3", "env"))
                 )
             ));
 
@@ -90,8 +91,8 @@ public class AgentGraphTest {
                     Link.of(AgentId.of("A"), AgentId.of("B"))
                 )), Links.of(
                 Arrays.asList(
-                    Link.of(AgentId.of("A"), Target.TargetId.of("s1", "env")),
-                    Link.of(AgentId.of("A"), Target.TargetId.of("s3", "env"))
+                    Link.of(AgentId.of("A"), TargetId.of("s1", "env")),
+                    Link.of(AgentId.of("A"), TargetId.of("s3", "env"))
                 )
             ));
 
@@ -143,7 +144,7 @@ public class AgentGraphTest {
         return agent -> agent.agentInfo.name().equals(agentName);
     }
 
-    private Predicate<Target.TargetId> hasId(String name) {
+    private Predicate<TargetId> hasId(String name) {
         return targetId -> targetId.name.equals(name);
     }
 

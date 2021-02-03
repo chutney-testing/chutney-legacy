@@ -1,7 +1,7 @@
 package com.chutneytesting.agent.domain.explore;
 
+import com.chutneytesting.agent.domain.TargetId;
 import com.chutneytesting.agent.domain.configure.ConfigurationState;
-import com.chutneytesting.environment.domain.Target;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -19,7 +19,7 @@ public interface ExploreResult {
     Links<AgentId, AgentId> agentLinks();
 
     @Value.Parameter
-    Links<AgentId, Target.TargetId> targetLinks();
+    Links<AgentId, TargetId> targetLinks();
 
     @Value.Immutable
     interface Links<SOURCE, DESTINATION>  extends Iterable<Link<SOURCE, DESTINATION>> {

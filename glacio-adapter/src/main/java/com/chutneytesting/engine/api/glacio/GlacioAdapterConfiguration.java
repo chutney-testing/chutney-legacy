@@ -12,9 +12,7 @@ import com.chutneytesting.engine.api.glacio.parse.default_.DefaultGlacioParser;
 import com.chutneytesting.engine.api.glacio.parse.default_.StrategyParser;
 import com.chutneytesting.engine.api.glacio.parse.specific.strategy.StrategyRetryParser;
 import com.chutneytesting.engine.api.glacio.parse.specific.strategy.StrategySoftAssertParser;
-import com.chutneytesting.environment.domain.EnvironmentRepository;
-import com.chutneytesting.environment.domain.EnvironmentService;
-import com.chutneytesting.environment.infra.JsonFilesEnvironmentRepository;
+import com.chutneytesting.environment.EnvironmentConfiguration;
 import com.chutneytesting.tools.ThrowingFunction;
 import com.chutneytesting.tools.loader.ExtensionLoaders;
 import java.io.IOException;
@@ -35,6 +33,7 @@ public class GlacioAdapterConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(GlacioAdapterConfiguration.class);
 
     private final ExecutionConfiguration executionConfiguration;
+    private final EnvironmentConfiguration environmentConfiguration;
 
     private final GlacioAdapter glacioAdapter;
     private final Map<Locale, Map<EXECUTABLE_KEYWORD, Set<String>>> executableStepLanguagesKeywords;
@@ -44,26 +43,22 @@ public class GlacioAdapterConfiguration {
     private final StepFactory stepFactory;
     private final IParseStrategy strategyParser;
 
-    private final EnvironmentRepository environmentRepository;
-    private final EnvironmentService environmentService;
 
     public GlacioAdapterConfiguration() throws IOException {
-        this(new ExecutionConfiguration(), "conf", "conf/endpoints.json");
+        this(new ExecutionConfiguration(), new EnvironmentConfiguration("conf"), "conf/endpoints.json");
     }
 
     public GlacioAdapterConfiguration(Long engineReporterTTL, String environmentFolderPath, String agentNetworkFilePath) throws IOException {
-        this(new ExecutionConfiguration(engineReporterTTL), environmentFolderPath, agentNetworkFilePath);
+        this(new ExecutionConfiguration(engineReporterTTL), new EnvironmentConfiguration(environmentFolderPath), agentNetworkFilePath);
     }
 
-    public GlacioAdapterConfiguration(ExecutionConfiguration executionConfiguration, String environmentFolderPath, String agentNetworkFilePath) throws IOException {
+    public GlacioAdapterConfiguration(ExecutionConfiguration executionConfiguration, EnvironmentConfiguration environmentConfiguration, String agentNetworkFilePath) throws IOException {
         this.executionConfiguration = executionConfiguration;
+        this.environmentConfiguration = environmentConfiguration;
 
         glacioExecutableStepParsers = createGlacioExecutableStepParsers();
         glacioExecutableStepParsersLanguages = createGlacioExecutableStepParsersLanguages();
         executableStepLanguagesKeywords = createExecutableStepLanguagesKeywords();
-
-        environmentRepository = createEnvironmentRepository(environmentFolderPath);
-        environmentService = createEnvironmentService();
 
         strategyParser = createStrategyDefinitionFactory();
         stepFactory = createExecutableStepFactory();
@@ -76,10 +71,6 @@ public class GlacioAdapterConfiguration {
 
     public GlacioAdapter glacioAdapter() {
         return glacioAdapter;
-    }
-
-    public EnvironmentService environmentService() {
-        return environmentService;
     }
 
     public List<IParseExecutableStep> glacioExecutableStepParsers() {
@@ -118,14 +109,6 @@ public class GlacioAdapterConfiguration {
         return result.orElseGet(HashMap::new);
     }
 
-    private EnvironmentRepository createEnvironmentRepository(String storeFolderPath) {
-        return new JsonFilesEnvironmentRepository(storeFolderPath);
-    }
-
-    private EnvironmentService createEnvironmentService() {
-        return new EnvironmentService(environmentRepository);
-    }
-
     private IParseStrategy createStrategyDefinitionFactory() {
         return new StrategyParser(Arrays.asList(new StrategySoftAssertParser(), new StrategyRetryParser())); // TODO : Load from FILE
     }
@@ -134,8 +117,7 @@ public class GlacioAdapterConfiguration {
         return new StepFactory(
             executableStepLanguagesKeywords,
             glacioExecutableStepParsersLanguages,
-            new DefaultGlacioParser(executionConfiguration.taskTemplateRegistry(),
-                environmentService),
+            new DefaultGlacioParser(executionConfiguration.taskTemplateRegistry(), environmentConfiguration.getEnvironmentEmbeddedApplication()),
             new GlacioBusinessStepParser(),
             strategyParser
         );

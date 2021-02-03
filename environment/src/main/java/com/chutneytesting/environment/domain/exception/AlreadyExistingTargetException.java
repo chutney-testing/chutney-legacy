@@ -1,4 +1,4 @@
-package com.chutneytesting.environment.domain;
+package com.chutneytesting.environment.domain.exception;
 
 @SuppressWarnings("serial")
 public class AlreadyExistingTargetException extends RuntimeException {

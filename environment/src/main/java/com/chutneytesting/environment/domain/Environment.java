@@ -4,6 +4,8 @@ import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.collections.ListUtils.unmodifiableList;
 
+import com.chutneytesting.environment.domain.exception.AlreadyExistingTargetException;
+import com.chutneytesting.environment.domain.exception.TargetNotFoundException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -44,14 +46,14 @@ public class Environment {
 
     Target getTarget(String targetName) {
         return targets.stream()
-            .filter(t -> t.id.name.equals(targetName))
+            .filter(t -> t.name.equals(targetName))
             .findFirst()
             .orElseThrow(() -> new TargetNotFoundException("Target [" + targetName + "] not found in environment [" + name + "]"));
     }
 
     Environment deleteTarget(String targetName) {
         Optional<Target> targetToRemove = targets.stream()
-            .filter(t -> t.id.name.equals(targetName))
+            .filter(t -> t.name.equals(targetName))
             .findFirst();
 
         return targetToRemove
@@ -69,7 +71,7 @@ public class Environment {
 
     Environment updateTarget(String targetName, Target targetToUpdate) {
         Optional<Target> previousTarget = targets.stream()
-            .filter(t -> t.id.name.equals(targetName))
+            .filter(t -> t.name.equals(targetName))
             .findFirst();
 
         return previousTarget

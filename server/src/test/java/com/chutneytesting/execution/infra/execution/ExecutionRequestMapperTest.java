@@ -13,9 +13,9 @@ import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.raw.RawTestCase;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.SecurityInfoDto;
-import com.chutneytesting.engine.api.execution.TargetDto;
-import com.chutneytesting.environment.domain.EnvironmentService;
-import com.chutneytesting.environment.domain.Target;
+import com.chutneytesting.engine.api.execution.TargetExecutionDto;
+import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
+import com.chutneytesting.environment.api.dto.TargetDto;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedScenario;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
@@ -39,10 +39,10 @@ import org.junit.jupiter.api.Test;
 public class ExecutionRequestMapperTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
-    private final EnvironmentService environmentService = mock(EnvironmentService.class);
+    private final EmbeddedEnvironmentApi environmentApplication = mock(EmbeddedEnvironmentApi.class);
     private final CurrentNetworkDescription currentNetworkDescription = mock(CurrentNetworkDescription.class);
 
-    private final ExecutionRequestMapper sut = new ExecutionRequestMapper(objectMapper, environmentService, currentNetworkDescription);
+    private final ExecutionRequestMapper sut = new ExecutionRequestMapper(objectMapper, environmentApplication, currentNetworkDescription);
 
     @Test
     public void should_map_test_case_to_execution_request() {
@@ -68,7 +68,7 @@ public class ExecutionRequestMapperTest {
         String expectedType = "task-id";
         String expectedTargetId = "target name";
         SecurityInfoDto securityDto = new SecurityInfoDto(null, null, null, null, null, null);
-        TargetDto expectedTarget = new TargetDto(expectedTargetId, "", emptyMap(), securityDto, emptyList());
+        TargetExecutionDto expectedTarget = new TargetExecutionDto(expectedTargetId, "", emptyMap(), securityDto, emptyList());
 
         LinkedHashMap<String, Object> expectedOutputs = new LinkedHashMap<>(Maps.of(
             "output1", "value1",
@@ -125,11 +125,8 @@ public class ExecutionRequestMapperTest {
                 .build()
         );
 
-        when(environmentService.getTarget(any(), eq(expectedTargetId)))
-            .thenReturn(Target.builder()
-                .withId(Target.TargetId.of(expectedTargetId, "envName"))
-                .withUrl("")
-                .build());
+        when(environmentApplication.getTarget(any(), eq(expectedTargetId)))
+            .thenReturn(new TargetDto(expectedTargetId, "", null, null, null, null, null, null));
 
         // When
         ExecutionRequest request = new ExecutionRequest(testCase, "", "");
@@ -165,7 +162,7 @@ public class ExecutionRequestMapperTest {
         assertThat(stepDefinitionRequestDto.name).isEqualTo(name);
         assertThat(stepDefinitionRequestDto.type).isNullOrEmpty();
         assertThat(stepDefinitionRequestDto.target).isEqualTo(
-            new TargetDto("", "", emptyMap(), securityDto, emptyList())
+            new TargetExecutionDto("", "", emptyMap(), securityDto, emptyList())
         );
         assertThat(stepDefinitionRequestDto.inputs).isNullOrEmpty();
         assertThat(stepDefinitionRequestDto.outputs).isNullOrEmpty();
@@ -174,7 +171,7 @@ public class ExecutionRequestMapperTest {
     private void assertStepDefinitionRequestDtoImplementation(ExecutionRequestDto.StepDefinitionRequestDto stepDefinitionRequestDto,
                                                               String name,
                                                               String implementationType,
-                                                              TargetDto implementationTarget,
+                                                              TargetExecutionDto implementationTarget,
                                                               LinkedHashMap<String, Object> implementationInputs,
                                                               LinkedHashMap<String, Object> implementationOuputs) {
         assertThat(stepDefinitionRequestDto).isNotNull();

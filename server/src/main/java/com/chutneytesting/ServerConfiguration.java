@@ -7,8 +7,6 @@ import com.chutneytesting.design.domain.editionlock.TestCaseEditionsService;
 import com.chutneytesting.design.domain.plugins.jira.JiraRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.engine.api.execution.TestEngine;
-import com.chutneytesting.environment.domain.EnvironmentRepository;
-import com.chutneytesting.environment.domain.EnvironmentService;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessor;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;
@@ -117,11 +115,6 @@ public class ServerConfiguration {
                                                     ChutneyMetrics metrics,
                                                     @Value("${chutney.campaigns.thread:20}") Integer threadForCampaigns) {
         return new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository, jiraXrayPlugin, metrics, threadForCampaigns);
-    }
-
-    @Bean
-    EnvironmentService environmentService(EnvironmentRepository environmentRepository) {
-        return new EnvironmentService(environmentRepository);
     }
 
     @Bean

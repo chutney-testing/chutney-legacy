@@ -35,7 +35,7 @@ public class ExecutionRequestDto {
         public final StepDefinitionDto definition;
 
         public final String name;
-        public final TargetDto target;
+        public final TargetExecutionDto target;
         public final String type;
         public final Map<String, Object> inputs;
         public final List<StepDefinitionRequestDto> steps;
@@ -44,7 +44,7 @@ public class ExecutionRequestDto {
 
         public StepDefinitionRequestDto(
             @JsonProperty("name") String name,
-            @JsonProperty("target") TargetDto target,
+            @JsonProperty("target") TargetExecutionDto target,
             @JsonProperty("strategy") StepStrategyDefinitionRequestDto strategy,
             @JsonProperty("type") String type,
             @JsonProperty("inputs") Map<String, Object> inputs,

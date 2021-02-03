@@ -4,9 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.chutneytesting.environment.domain.Environment;
-import com.chutneytesting.environment.domain.EnvironmentNotFoundException;
+import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
-import com.chutneytesting.environment.domain.InvalidEnvironmentNameException;
 import com.chutneytesting.environment.domain.SecurityInfo;
 import com.chutneytesting.environment.domain.Target;
 import com.chutneytesting.tools.ThrowingConsumer;
@@ -45,12 +44,13 @@ public class JsonFilesEnvironmentRepositoryTest {
             .withTargets(
                 Collections.singleton(
                     Target.builder()
-                        .withId(Target.TargetId.of("target1", "envName"))
+                        .withName("target1")
+                        .withEnvironment("envName")
                         .withUrl(url)
                         .withSecurity(SecurityInfo.builder()
                             .keyStore("not_existing_keystore")
                             .keyStorePassword("nek")
-                            .trustStore("not_existing_trustsore")
+                            .trustStore("not_existing_truststore")
                             .trustStorePassword("net")
                             .credential(SecurityInfo.Credential.of("username", "password"))
                             .build())
@@ -100,9 +100,4 @@ public class JsonFilesEnvironmentRepositoryTest {
             .isInstanceOf(EnvironmentNotFoundException.class);
     }
 
-    @Test()
-    public void save_environment_with_illegal_name_throws() {
-        assertThatThrownBy(() -> sut.save(Environment.builder().withName("illegal name").withDescription("some description").build()))
-            .isInstanceOf(InvalidEnvironmentNameException.class);
-    }
 }

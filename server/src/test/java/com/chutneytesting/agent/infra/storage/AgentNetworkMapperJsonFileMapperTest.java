@@ -5,6 +5,7 @@ import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.chutneytesting.agent.domain.TargetId;
 import com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration;
 import com.chutneytesting.agent.domain.network.Agent;
 import com.chutneytesting.agent.domain.network.AgentGraph;
@@ -29,11 +30,12 @@ public class AgentNetworkMapperJsonFileMapperTest {
         Agent agent = new Agent(new NamedHostAndPort("name", "host", 42));
         Agent reachableAgent = new Agent(new NamedHostAndPort("reachable", "host2", 42));
         Target target = Target.builder()
-            .withId(Target.TargetId.of("targetName", "env"))
+            .withName("targetName")
+            .withEnvironment("env")
             .withUrl("prot://me:42")
             .build();
         Environment environment = Environment.builder().withName("env").addTarget(target).build();
-        Target.TargetId targetId = Target.TargetId.of("targetName", "env");
+        TargetId targetId = TargetId.of("targetName", "env");
         agent.addReachable(reachableAgent);
         reachableAgent.addReachable(targetId);
 
@@ -82,7 +84,8 @@ public class AgentNetworkMapperJsonFileMapperTest {
         List<Target> targets = new ArrayList<>();
         targets.add(
             Target.builder()
-                .withId(Target.TargetId.of(targetName, "env"))
+                .withName(targetName)
+                .withEnvironment("env")
                 .withUrl("http://s1:90")
                 .build()
         );

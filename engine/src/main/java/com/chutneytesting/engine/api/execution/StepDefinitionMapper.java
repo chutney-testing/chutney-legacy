@@ -41,7 +41,7 @@ class StepDefinitionMapper {
         );
     }
 
-    private static TargetImpl fromDto(TargetDto targetDto) {
+    private static TargetImpl fromDto(TargetExecutionDto targetDto) {
         return TargetImpl.builder()
             .withName(targetDto.id)
             .withUrl(targetDto.url)

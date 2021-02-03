@@ -2,26 +2,28 @@ package com.chutneytesting.engine.api.glacio.parse.default_;
 
 import static com.chutneytesting.engine.api.glacio.parse.default_.ParsingTools.arrayToOrPattern;
 import static com.chutneytesting.engine.api.glacio.parse.default_.ParsingTools.removeKeyword;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 import com.chutneytesting.engine.api.glacio.parse.StepParser;
 import com.chutneytesting.engine.domain.environment.SecurityInfoImpl;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
-import com.chutneytesting.environment.domain.EnvironmentService;
-import com.chutneytesting.environment.domain.SecurityInfo;
+import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
+import com.chutneytesting.environment.api.dto.TargetDto;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.github.fridujo.glacio.model.Step;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class TargetStepParser implements StepParser<Target> {
 
-    private final EnvironmentService environmentService;
+    private final EmbeddedEnvironmentApi environmentApplication;
 
     private final Pattern startWithPredicate;
     private final Predicate<String> predicate;
 
-    public TargetStepParser(EnvironmentService environmentService, String... startingWords) {
-        this.environmentService = environmentService;
+    public TargetStepParser(EmbeddedEnvironmentApi environmentApplication, String... startingWords) {
+        this.environmentApplication = environmentApplication;
         this.startWithPredicate = Pattern.compile("^(?<keyword>" + arrayToOrPattern(startingWords) + ")(?: .*)$");
         this.predicate = startWithPredicate.asPredicate();
     }
@@ -42,34 +44,32 @@ public class TargetStepParser implements StepParser<Target> {
     }
 
     private Target parseTargetStep(String environmentName, Step step) {
-        return toTarget(environmentService.getTarget(environmentName, step.getText().trim()));
+        return toTarget(environmentApplication.getTarget(environmentName, step.getText().trim()));
     }
 
-    private Target toTarget(com.chutneytesting.environment.domain.Target targetForExecution) {
+    private Target toTarget(TargetDto targetForExecution) {
         return TargetImpl.builder()
             .withName(targetForExecution.name)
             .withUrl(targetForExecution.url)
-            .withProperties(targetForExecution.properties)
-            .withSecurity(toSecurityInfo(targetForExecution.security))
+            .withProperties(targetForExecution.properties.stream().collect(Collectors.toMap(p -> p.key, p -> p.value)))
+            .withSecurity(toSecurityInfo(targetForExecution))
             .build();
     }
 
-    private SecurityInfoImpl toSecurityInfo(SecurityInfo securityInfo) {
+    private SecurityInfoImpl toSecurityInfo(TargetDto targetDto) {
         return SecurityInfoImpl.builder()
-            .credential(toCredential(securityInfo.credential))
-            .keyStore(securityInfo.keyStore)
-            .keyStorePassword(securityInfo.keyStorePassword)
-            .trustStore(securityInfo.trustStore)
-            .trustStorePassword(securityInfo.trustStorePassword)
-            .privateKey(securityInfo.privateKey)
+            .credential(toCredential(targetDto))
+            .keyStore(targetDto.keyStore)
+            .keyStorePassword(targetDto.keyStorePassword)
+            .privateKey(targetDto.privateKey)
             .build();
     }
 
-    private SecurityInfoImpl.Credential toCredential(SecurityInfo.Credential credential) {
-        if (credential == null || SecurityInfo.Credential.NONE.equals(credential)) {
+    private SecurityInfoImpl.Credential toCredential(TargetDto targetDto) {
+        if (isNullOrEmpty(targetDto.username ) && isNullOrEmpty(targetDto.password)) {
             return SecurityInfoImpl.Credential.NONE;
         }
-        return SecurityInfoImpl.Credential.of(credential.username, credential.password);
+        return SecurityInfoImpl.Credential.of(targetDto.username, targetDto.password);
     }
 
 }

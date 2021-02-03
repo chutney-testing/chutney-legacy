@@ -23,7 +23,7 @@ public class EnvironmentRepositoryTest {
         final String target = "{\"name\":\"" + TARGET_NAME + "\",\"url\":\"" + TARGET_URL + "\",\"properties\":{},\"security\":{}}";
 
         final String ENV_NAME = "GLOBAL";
-        final String ENV_DESCRIPTION = "Environnement global";
+        final String ENV_DESCRIPTION = "Environment global";
         final String env = "{\"name\":\"" + ENV_NAME + "\",\"description\":\"" + ENV_DESCRIPTION + "\",\"targets\":[{\"name\":\"" + TARGET_NAME + "\",\"url\":\"" + TARGET_URL + "\",\"properties\":{},\"security\":{}}]}";
 
         // WHEN
