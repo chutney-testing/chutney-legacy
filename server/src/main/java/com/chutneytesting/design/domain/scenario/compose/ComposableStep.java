@@ -10,6 +10,7 @@ import static java.util.stream.Collectors.toMap;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -144,8 +145,8 @@ public class ComposableStep {
             return this;
         }
 
-        public ComposableStepBuilder withImplementation(Optional<String> implementation) {
-            this.implementation = implementation;
+        public ComposableStepBuilder withImplementation(String implementation) {
+            this.implementation = ofNullable(implementation);
             return this;
         }
 
@@ -217,13 +218,14 @@ public class ComposableStep {
         private String implementation;
         private Strategy strategy;
         private List<String> tags = new ArrayList<>();
+        private Map<String, String> executionParameters;
 
         private ComposableStepAltBuilder() {
         }
 
         public ComposableStep build() {
-            defaultParameters = ofNullable(defaultParameters).orElse(emptyMap());
-            steps = ofNullable(steps).orElse(emptyList());
+            defaultParameters = unmodifiableMap(ofNullable(defaultParameters).orElse(emptyMap()));
+            steps = unmodifiableList(ofNullable(steps).orElse(emptyList()));
 
             ComposableStep composableStep = new ComposableStep(
                 ofNullable(id).orElse(""),
@@ -244,18 +246,15 @@ public class ComposableStep {
         }
 
         private Map<String, String> resolveExecutionParameters() {
-            Map<String, String> defaultParameters = ofNullable(this.defaultParameters).orElse(emptyMap());
+            Map<String, String> executionParameters = new HashMap<>(this.defaultParameters);
 
-            Map<String, String> emptyParameters = steps.stream()
+            Map<String, String> emptyChildrenParameters = steps.stream()
                 .flatMap(s -> s.executionParameters.entrySet().stream().filter(e -> e.getValue().isEmpty()))
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> ""));
 
-            return Stream.of(defaultParameters, emptyParameters)
-                .flatMap(map -> map.entrySet().stream())
-                .collect(Collectors.toMap(
-                    Map.Entry::getKey,
-                    Map.Entry::getValue,
-                    (v1, v2) -> v2));
+            executionParameters.putAll(emptyChildrenParameters);
+
+            return executionParameters;
         }
 
         public ComposableStepAltBuilder withId(String id) {
@@ -269,17 +268,22 @@ public class ComposableStep {
         }
 
         public ComposableStepAltBuilder withSteps(List<ComposableStep> steps) {
-            this.steps = unmodifiableList(ofNullable(steps).orElse(emptyList()));
+            this.steps = steps;
             return this;
         }
 
         public ComposableStepAltBuilder withDefaultParameters(Map<String, String> defaultParameters) {
-            this.defaultParameters = unmodifiableMap(ofNullable(defaultParameters).orElse(emptyMap()));
+            this.defaultParameters = defaultParameters;
             return this;
         }
 
         public ComposableStepAltBuilder withImplementation(String implementation) {
             this.implementation = implementation;
+            return this;
+        }
+
+        public ComposableStepAltBuilder withImplementation(Optional<String> implementation) {
+            this.implementation = implementation.get();
             return this;
         }
 
@@ -300,6 +304,11 @@ public class ComposableStep {
             this.defaultParameters = instance.defaultParameters;
             this.implementation = instance.implementation.get();
             this.strategy = instance.strategy;
+            return this;
+        }
+
+        public ComposableStepAltBuilder withExecutionParameters(Map<String, String> executionParameters) {
+            this.executionParameters = executionParameters;
             return this;
         }
     }

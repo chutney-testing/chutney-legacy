@@ -48,7 +48,7 @@ public class ComposableStepMapperTest {
                     ComposableStep.builder()
                         .withId("#1:2")
                         .withName("a functional sub step with implementation")
-                        .withImplementation(Optional.of(TECHNICAL_CONTENT))
+                        .withImplementation(TECHNICAL_CONTENT)
                         .build(),
                     ComposableStep.builder()
                         .withId("#1:3")
@@ -57,7 +57,7 @@ public class ComposableStepMapperTest {
                             Collections.singletonList(
                                 ComposableStep.builder()
                                     .withName("a functional sub sub step with implementation")
-                                    .withImplementation(Optional.of(TECHNICAL_CONTENT_B))
+                                    .withImplementation(TECHNICAL_CONTENT_B)
                                     .build()
                             )
                         )

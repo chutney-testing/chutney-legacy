@@ -4,7 +4,6 @@ import static com.chutneytesting.design.infra.storage.scenario.compose.OrientCom
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_NAME;
 import static java.util.Arrays.asList;
-import static java.util.Optional.ofNullable;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.WebConfiguration;
@@ -120,7 +119,7 @@ public abstract class AbstractOrientDatabaseTest {
             .withName(name)
             .withDefaultParameters(parameters)
             .withSteps(subSteps)
-            .withImplementation(ofNullable(implementation))
+            .withImplementation(implementation)
             .withStrategy(strategy)
             .withTags(tags)
             .build();

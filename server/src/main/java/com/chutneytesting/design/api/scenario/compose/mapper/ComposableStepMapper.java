@@ -67,7 +67,7 @@ public class ComposableStepMapper {
             .withId(fromFrontId(dto.id()))
             .withName(dto.name())
             .withStrategy(fromDto(dto.strategy()))
-            .withImplementation(dto.task())
+            .withImplementation(dto.task().orElse(""))
             .withSteps(dto.steps().stream().map(ComposableStepMapper::fromDto).collect(toList()))
             .withDefaultParameters(KeyValue.toMap(dto.defaultParameters()))
             .overrideExecutionParametersWith(KeyValue.toMap(dto.executionParameters()))

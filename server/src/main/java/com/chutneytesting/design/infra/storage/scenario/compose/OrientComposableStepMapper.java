@@ -39,7 +39,10 @@ public class OrientComposableStepMapper {
 
     // GET
     public static ComposableStep vertexToComposableStep(final StepVertex vertex) {
-        return oldVertexToComposableStep(vertex).build();
+        ComposableStep old = oldVertexToComposableStep(vertex).build();
+        ComposableStep alt = altVertexToComposableStep(vertex).build();
+        boolean equals = old.equals(alt);
+        return old;
     }
 
     private static ComposableStep.ComposableStepBuilder oldVertexToComposableStep(final StepVertex vertex) {
@@ -95,4 +98,54 @@ public class OrientComposableStepMapper {
         ).ifPresent(builder::addExecutionParameters);
     }
 
+
+
+    // GET
+    public static ComposableStep.ComposableStepAltBuilder altVertexToComposableStep(final StepVertex vertex) {
+        vertex.reloadIfDirty();
+
+        ComposableStep.ComposableStepAltBuilder builder = ComposableStep.alt_builder()
+            .withId(vertex.id())
+            .withName(vertex.name())
+            .withTags(vertex.tags())
+            .withImplementation(vertex.implementation())
+            .withDefaultParameters(vertex.parameters());
+
+        OElement strategy = vertex.strategy();
+        Optional.ofNullable(strategy).ifPresent( s ->
+            builder.withStrategy(new Strategy(strategy.getProperty("name"), strategy.getProperty("parameters")))
+        );
+
+        builder.withSteps(
+            altBuildComposableStepsChildren(vertex)
+        );
+
+        return builder;
+    }
+
+    // GET
+    private static List<ComposableStep> altBuildComposableStepsChildren(StepVertex vertex) {
+        return StreamSupport
+            .stream(vertex.getChildren().spliterator(), false)
+            .filter(childEdge -> {
+                Optional<OVertex> to = ofNullable(childEdge.getTo());
+                if (!to.isPresent()) {
+                    LOGGER.warn("Ignoring edge {} with no to vertex", childEdge);
+                }
+                return to.isPresent();
+            })
+            .map(childEdge -> {
+                ComposableStep.ComposableStepAltBuilder childBuilder = altVertexToComposableStep(StepVertex.builder().from(childEdge.getTo()).build());
+                overwriteDataSetWithEdgeParameters(childEdge, childBuilder);
+                return childBuilder.build();
+            })
+            .collect(Collectors.toList());
+    }
+
+    // GET
+    private static void overwriteDataSetWithEdgeParameters(OEdge childEdge, ComposableStep.ComposableStepAltBuilder builder) {
+        Optional.<Map<String, String>>ofNullable(
+            childEdge.getProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS)
+        ).ifPresent(builder::withExecutionParameters);
+    }
 }

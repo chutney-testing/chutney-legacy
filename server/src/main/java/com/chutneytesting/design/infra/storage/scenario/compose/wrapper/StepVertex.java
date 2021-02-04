@@ -163,8 +163,8 @@ public class StepVertex {
         return vertex.getProperty(STEP_CLASS_PROPERTY_TAGS);
     }
 
-    public Optional<String> implementation() {
-        return ofNullable(vertex.getProperty(STEP_CLASS_PROPERTY_IMPLEMENTATION));
+    public String implementation() {
+        return vertex.getProperty(STEP_CLASS_PROPERTY_IMPLEMENTATION);
     }
 
     public Map<String, String> parameters() {
@@ -178,6 +178,32 @@ public class StepVertex {
     public static StepVertexBuilder builder() {
         return new StepVertexBuilder();
     }
+
+/*    // GET
+    public List<ComposableStep> altBuildComposableStepsChildren() {
+        return StreamSupport
+            .stream(this.getChildren().spliterator(), false)
+            .filter(childEdge -> {
+                Optional<OVertex> to = ofNullable(childEdge.getTo());
+                if (!to.isPresent()) {
+                    LOGGER.warn("Ignoring edge {} with no to vertex", childEdge);
+                }
+                return to.isPresent();
+            })
+            .map(childEdge -> {
+                ComposableStep.ComposableStepAltBuilder childBuilder = altVertexToComposableStep(StepVertex.builder().from(childEdge.getTo()).build());
+                overwriteDataSetWithEdgeParameters(childEdge, childBuilder);
+                return childBuilder.build();
+            })
+            .collect(Collectors.toList());
+    }
+
+    // GET
+    private void overwriteDataSetWithEdgeParameters(OEdge childEdge, ComposableStep.ComposableStepAltBuilder builder) {
+        Optional.<Map<String, String>>ofNullable(
+            childEdge.getProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS)
+        ).ifPresent(builder::addExecutionParameters);
+    }*/
 
     public static class StepVertexBuilder {
 
