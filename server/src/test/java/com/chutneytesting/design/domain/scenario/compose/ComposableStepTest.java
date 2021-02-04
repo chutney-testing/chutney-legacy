@@ -49,11 +49,10 @@ public class ComposableStepTest {
             .build();
     }
 
-    @Disabled
     @Test
-    void execution_parameters_should_be_all_defined_parameters() {
+    void execution_parameters_should_equals_default_parameters_when_not_override() {
         // When
-        ComposableStep step = ComposableStep.builder().withId("step")
+        ComposableStep step = ComposableStep.alt_builder().withId("step")
             .withDefaultParameters(Maps.of(
                 "dont_move_up", "has_default_value",
                 "leaf_move_up", "")
@@ -67,20 +66,36 @@ public class ComposableStepTest {
         ));
     }
 
+    @Test
+    void empty_parameters_should_be_added_to_parent_execution_parameters() {
+        // Given
+        ComposableStep leaf = ComposableStep.alt_builder().withId("leaf")
+            .withDefaultParameters(Maps.of(
+                "dont_move_up", "has_default_value",
+                "move_up", ""/*because empty*/)
+            )
+            .build();
 
+        // When
+        ComposableStep parent = ComposableStep.alt_builder().withId("parent")
+            .withSteps(singletonList(leaf))
+            .build();
 
-    @Disabled
+        assertThat(parent.defaultParameters).isEmpty();
+        assertThat(parent.executionParameters).containsEntry("move_up", "");
+    }
+
     @Test
     void empty_parameters_should_be_added_to_parent_execution_parameters_2() {
         // Given
-        ComposableStep leaf = ComposableStep.builder().withId("leaf")
+        ComposableStep leaf = ComposableStep.alt_builder().withId("leaf")
             .withDefaultParameters(Maps.of(
                 "dont_move_up", "has_default_value",
                 "leaf_move_up", ""/*because empty*/)
             )
             .build();
 
-        ComposableStep subStep = ComposableStep.builder().withId("subStep")
+        ComposableStep subStep = ComposableStep.alt_builder().withId("subStep")
             .withSteps(singletonList(leaf))
             .withDefaultParameters(Maps.of(
                 "dont_move_up", "has_default_value",
@@ -89,7 +104,7 @@ public class ComposableStepTest {
             .build();
 
         // When
-        ComposableStep parent = ComposableStep.builder().withId("parent")
+        ComposableStep parent = ComposableStep.alt_builder().withId("parent")
             .withDefaultParameters(Maps.of("parent_param", "has_default_value" /*but can be override*/))
             .withSteps(singletonList(subStep))
             .build();
@@ -102,27 +117,7 @@ public class ComposableStepTest {
         ));
     }
 
-    @Disabled
-    @Test
-    void empty_parameters_should_be_added_to_parent_execution_parameters() {
-        // Given
-        ComposableStep leaf = ComposableStep.builder().withId("leaf")
-            .withDefaultParameters(Maps.of(
-                "dont_move_up", "has_default_value",
-                "move_up", ""/*because empty*/)
-            )
-            .build();
-
-        // When
-        ComposableStep parent = ComposableStep.builder().withId("parent")
-            .withSteps(singletonList(leaf))
-            .build();
-
-        assertThat(parent.defaultParameters).isEmpty();
-        assertThat(parent.executionParameters).containsEntry("move_up", "");
-    }
-
-    @Test
+/*    @Test
     void execution_parameters_can_be_override_upon_step_use() {
         // Given
         ComposableStep leaf = ComposableStep.builder().withId("leaf")
@@ -130,24 +125,20 @@ public class ComposableStepTest {
                 "dont_move_up", "has_default_value",
                 "leaf_move_up", "")
             )
-            .overrideExecutionParametersWith(Maps.of(
-                "dont_move_up", "",
-                "leaf_move_up", "has_value_defined_upon_usage")
-            )
             .build();
 
         ComposableStep parent = ComposableStep.builder().withId("subStep")
             .withSteps(singletonList(
-                leaf/*.usingExecutionParameters(Maps.of(
+                leaf.usingExecutionParameters(Maps.of(
                     "dont_move_up", "",
                     "leaf_move_up", "has_value_defined_upon_usage")
-                )*/
+                )
             ))
             .build();
 
         assertThat(parent.executionParameters).isEqualTo(Maps.of(
             "dont_move_up", ""
         ));
-    }
+    }*/
 
 }

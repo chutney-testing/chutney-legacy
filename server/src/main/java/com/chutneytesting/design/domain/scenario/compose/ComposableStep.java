@@ -6,6 +6,7 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toMap;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 
 public class ComposableStep {
@@ -200,6 +202,106 @@ public class ComposableStep {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, steps, defaultParameters, implementation, strategy, executionParameters);
+    }
+
+    public static ComposableStepAltBuilder alt_builder() {
+        return new ComposableStepAltBuilder();
+    }
+
+    public static class ComposableStepAltBuilder {
+
+        private String id;
+        private String name;
+        private List<ComposableStep> steps;
+        private Map<String, String> defaultParameters;
+        private String implementation;
+        private Strategy strategy;
+        private List<String> tags = new ArrayList<>();
+
+        private ComposableStepAltBuilder() {
+        }
+
+        public ComposableStep build() {
+            defaultParameters = ofNullable(defaultParameters).orElse(emptyMap());
+            steps = ofNullable(steps).orElse(emptyList());
+
+            ComposableStep composableStep = new ComposableStep(
+                ofNullable(id).orElse(""),
+                ofNullable(name).orElse(""),
+                steps,
+                defaultParameters,
+                ofNullable(implementation),
+                ofNullable(strategy).orElse(Strategy.DEFAULT),
+                resolveExecutionParameters(),
+                unmodifiableList(ofNullable(tags).orElse(emptyList()))
+            );
+
+            if (composableStep.hasCyclicDependencies()) {
+                throw new ComposableStepCyclicDependencyException(composableStep.id, composableStep.name);
+            }
+
+            return composableStep;
+        }
+
+        private Map<String, String> resolveExecutionParameters() {
+            Map<String, String> defaultParameters = ofNullable(this.defaultParameters).orElse(emptyMap());
+
+            Map<String, String> emptyParameters = steps.stream()
+                .flatMap(s -> s.executionParameters.entrySet().stream().filter(e -> e.getValue().isEmpty()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+            return Stream.of(defaultParameters, emptyParameters)
+                .flatMap(map -> map.entrySet().stream())
+                .collect(Collectors.toMap(
+                    Map.Entry::getKey,
+                    Map.Entry::getValue,
+                    (v1, v2) -> v2));
+        }
+
+        public ComposableStepAltBuilder withId(String id) {
+            this.id = id;
+            return this;
+        }
+
+        public ComposableStepAltBuilder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public ComposableStepAltBuilder withSteps(List<ComposableStep> steps) {
+            this.steps = unmodifiableList(ofNullable(steps).orElse(emptyList()));
+            return this;
+        }
+
+        public ComposableStepAltBuilder withDefaultParameters(Map<String, String> defaultParameters) {
+            this.defaultParameters = unmodifiableMap(ofNullable(defaultParameters).orElse(emptyMap()));
+            return this;
+        }
+
+        public ComposableStepAltBuilder withImplementation(String implementation) {
+            this.implementation = implementation;
+            return this;
+        }
+
+        public ComposableStepAltBuilder withStrategy(Strategy strategy) {
+            this.strategy = strategy;
+            return this;
+        }
+
+        public ComposableStepAltBuilder withTags(List<String> tags) {
+            this.tags = tags;
+            return this;
+        }
+
+        public final ComposableStepAltBuilder from(ComposableStep instance) {
+            this.id = instance.id;
+            this.name = instance.name;
+            this.steps = instance.steps;
+            this.defaultParameters = instance.defaultParameters;
+            this.implementation = instance.implementation.get();
+            this.strategy = instance.strategy;
+            return this;
+        }
     }
 
 }
