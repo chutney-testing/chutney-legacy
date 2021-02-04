@@ -1,2 +1,2 @@
-com.chutneytesting.engine.api.glacio.parse.specific.GlacioSleepParser
-com.chutneytesting.engine.api.glacio.parse.specific.GlacioContextPutParser
+com.chutneytesting.glacio.domain.parser.executable.specific.GlacioSleepParser
+com.chutneytesting.glacio.domain.parser.executable.specific.GlacioContextPutParser

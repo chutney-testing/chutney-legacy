@@ -10,11 +10,11 @@ public class TargetExecutionDto {
     public final String id;
     public final String url;
     public final Map<String, String> properties;
-    public final SecurityInfoDto security;
+    public final SecurityInfoExecutionDto security;
     public final String name;
     public final List<NamedHostAndPort> agents;
 
-    public TargetExecutionDto(String id, String url, Map<String, String> properties, SecurityInfoDto security, List<NamedHostAndPort> agents) {
+    public TargetExecutionDto(String id, String url, Map<String, String> properties, SecurityInfoExecutionDto security, List<NamedHostAndPort> agents) {
         this.id = id;
         this.name = id;
         this.url = url;
