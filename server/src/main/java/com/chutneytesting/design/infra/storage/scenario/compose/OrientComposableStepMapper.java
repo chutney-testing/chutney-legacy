@@ -38,7 +38,11 @@ public class OrientComposableStepMapper {
     }
 
     // GET
-    public static ComposableStep.ComposableStepBuilder vertexToComposableStep(final StepVertex vertex) {
+    public static ComposableStep vertexToComposableStep(final StepVertex vertex) {
+        return oldVertexToComposableStep(vertex).build();
+    }
+
+    private static ComposableStep.ComposableStepBuilder oldVertexToComposableStep(final StepVertex vertex) {
         vertex.reloadIfDirty();
 
         ComposableStep.ComposableStepBuilder builder = ComposableStep.builder()
@@ -77,7 +81,7 @@ public class OrientComposableStepMapper {
                 return to.isPresent();
             })
             .map(childEdge -> {
-                ComposableStep.ComposableStepBuilder childBuilder = vertexToComposableStep(StepVertex.builder().from(childEdge.getTo()).build());
+                ComposableStep.ComposableStepBuilder childBuilder = oldVertexToComposableStep(StepVertex.builder().from(childEdge.getTo()).build());
                 overwriteDataSetWithEdgeParameters(childEdge, childBuilder);
                 return childBuilder.build();
             })

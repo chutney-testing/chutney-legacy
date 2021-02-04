@@ -82,7 +82,7 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
             OVertex element = (OVertex) load(recordId, dbSession)
                 .orElseThrow(() -> new ComposableStepNotFoundException(recordId));
-            return vertexToComposableStep(StepVertex.builder().from(element).build()).build();
+            return vertexToComposableStep(StepVertex.builder().from(element).build());
         }
     }
 
@@ -118,7 +118,7 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
             return Lists.newArrayList(allSteps).stream()
                 .map(rs -> {
                     OVertex element = dbSession.load(new ORecordId(rs.getProperty("@rid").toString()));
-                    return vertexToComposableStep(StepVertex.builder().from(element).build()).build();
+                    return vertexToComposableStep(StepVertex.builder().from(element).build());
                 })
                 .collect(Collectors.toList());
         }
@@ -138,7 +138,7 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
                 List<ComposableStep> fSteps = Lists.newArrayList(rs)
                     .stream()
                     .filter(e -> e.getVertex().isPresent())
-                    .map(element -> vertexToComposableStep(StepVertex.builder().from(element.getVertex().get()).build()).build())
+                    .map(element -> vertexToComposableStep(StepVertex.builder().from(element.getVertex().get()).build()))
                     .collect(Collectors.toList());
                 return ImmutablePaginatedDto.<ComposableStep>builder()
                     .totalCount(totalCount)
