@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class OrientComponentDB implements Backupable {
 
-    public static final String STEP_CLASS = "FuncStep";
+    public static final String STEP_CLASS = "FuncStep"; // ComposableStep
     public static final String STEP_CLASS_PROPERTY_NAME = "name";
     public static final String STEP_CLASS_PROPERTY_PARAMETERS = "parameters";
     public static final String STEP_CLASS_PROPERTY_TAGS = "tags";
@@ -31,9 +31,9 @@ public class OrientComponentDB implements Backupable {
     public static final String TESTCASE_CLASS_PROPERTY_PARAMETERS = "parameters";
     public static final String TESTCASE_CLASS_PROPERTY_DATASET_ID = "datasetId";
 
-    public static final String GE_STEP_CLASS = "Denote";
-    public static final String GE_STEP_CLASS_PROPERTY_RANK = "rank";
-    public static final String GE_STEP_CLASS_PROPERTY_PARAMETERS = "parameters";
+    public static final String GE_STEP_CLASS = "Denote"; // edge link between parent step and sub step
+    public static final String GE_STEP_CLASS_PROPERTY_RANK = "rank"; // substep order
+    public static final String GE_STEP_CLASS_PROPERTY_PARAMETERS = "parameters"; // execution parameters
 
     public static final String DATASET_CLASS = "DataSet";
     public static final String DATASET_HISTORY_CLASS = "DataSetHistory";
@@ -41,8 +41,8 @@ public class OrientComponentDB implements Backupable {
     public static final String DATASET_CLASS_PROPERTY_DESCRIPTION = "description";
     public static final String DATASET_CLASS_PROPERTY_CREATIONDATE = "created";
     public static final String DATASET_CLASS_PROPERTY_TAGS = "tags";
-    public static final String DATASET_CLASS_PROPERTY_VALUES_UNIQUE = "uniqueValues";
-    public static final String DATASET_CLASS_PROPERTY_VALUES_MULTIPLE = "multipleValues";
+    public static final String DATASET_CLASS_PROPERTY_CONSTANTS = "uniqueValues";
+    public static final String DATASET_CLASS_PROPERTY_DATATABLE = "multipleValues";
     public static final String DATASET_HISTORY_CLASS_PROPERTY_VERSION = "version";
     public static final String DATASET_HISTORY_CLASS_PROPERTY_DATASET_ID = "dataSetId";
     public static final String DATASET_HISTORY_CLASS_PROPERTY_PATCH= "patch";

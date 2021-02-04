@@ -63,7 +63,7 @@ public class ComposableStepMapper {
     }
 
     public static ComposableStep fromDto(ComposableStepDto dto) {
-        ComposableStep.ComposableStepBuilder composableStepBuilder = ComposableStep.builder()
+        return ComposableStep.builder()
             .withId(fromFrontId(dto.id()))
             .withName(dto.name())
             .withStrategy(fromDto(dto.strategy()))
@@ -71,9 +71,8 @@ public class ComposableStepMapper {
             .withSteps(dto.steps().stream().map(ComposableStepMapper::fromDto).collect(toList()))
             .withDefaultParameters(KeyValue.toMap(dto.defaultParameters()))
             .overrideExecutionParametersWith(KeyValue.toMap(dto.executionParameters()))
-            .withTags(dto.tags().stream().map(String::trim).filter(t -> !t.isEmpty()).collect(toList()));
-
-        return composableStepBuilder.build();
+            .withTags(dto.tags().stream().map(String::trim).filter(t -> !t.isEmpty()).collect(toList()))
+            .build();
     }
 
     private static Strategy fromDto(com.chutneytesting.design.api.scenario.compose.dto.Strategy strategyDto) {

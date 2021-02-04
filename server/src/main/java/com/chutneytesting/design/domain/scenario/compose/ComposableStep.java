@@ -76,7 +76,7 @@ public class ComposableStep {
         private String id;
         private String name;
         private List<ComposableStep> steps;
-        private Map<String, String> defaultParameters = new LinkedHashMap<>();
+        private Map<String, String> defaultParameters;
         private Optional<String> implementation;
         private Strategy strategy;
         private Map<String, String> executionParameters = new LinkedHashMap<>();
@@ -115,8 +115,8 @@ public class ComposableStep {
         }
 
         public ComposableStepBuilder withSteps(List<ComposableStep> steps) {
-            this.steps = unmodifiableList(steps);
-            bubbleUpEmptyParams(steps);
+            this.steps = unmodifiableList(ofNullable(steps).orElse(emptyList()));
+            bubbleUpEmptyParams(this.steps);
             return this;
         }
 
@@ -128,7 +128,7 @@ public class ComposableStep {
         }
 
         public ComposableStepBuilder withDefaultParameters(Map<String, String> defaultParameters) {
-            this.defaultParameters = unmodifiableMap(defaultParameters);
+            this.defaultParameters = unmodifiableMap(ofNullable(defaultParameters).orElse(emptyMap()));
             return this;
         }
 

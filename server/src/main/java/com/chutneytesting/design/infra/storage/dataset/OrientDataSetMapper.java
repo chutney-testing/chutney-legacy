@@ -4,8 +4,8 @@ import static com.chutneytesting.design.infra.storage.scenario.compose.orient.Or
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.DATASET_CLASS_PROPERTY_DESCRIPTION;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.DATASET_CLASS_PROPERTY_NAME;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.DATASET_CLASS_PROPERTY_TAGS;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.DATASET_CLASS_PROPERTY_VALUES_MULTIPLE;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.DATASET_CLASS_PROPERTY_VALUES_UNIQUE;
+import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.DATASET_CLASS_PROPERTY_DATATABLE;
+import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.DATASET_CLASS_PROPERTY_CONSTANTS;
 
 import com.chutneytesting.design.domain.dataset.DataSet;
 import com.orientechnologies.orient.core.metadata.schema.OType;
@@ -16,8 +16,8 @@ class OrientDataSetMapper {
 
     protected static void dataSetToElement(final DataSet dataSet, OElement oDataSet) {
         dataSetMetaDataToElement(dataSet, oDataSet);
-        oDataSet.setProperty(DATASET_CLASS_PROPERTY_VALUES_UNIQUE, dataSet.constants, OType.EMBEDDEDMAP);
-        oDataSet.setProperty(DATASET_CLASS_PROPERTY_VALUES_MULTIPLE, dataSet.datatable, OType.EMBEDDEDLIST);
+        oDataSet.setProperty(DATASET_CLASS_PROPERTY_CONSTANTS, dataSet.constants, OType.EMBEDDEDMAP);
+        oDataSet.setProperty(DATASET_CLASS_PROPERTY_DATATABLE, dataSet.datatable, OType.EMBEDDEDLIST);
     }
 
     private static void dataSetMetaDataToElement(final DataSet dataSet, OElement oDataSet) {
@@ -31,8 +31,8 @@ class OrientDataSetMapper {
         DataSet.DataSetBuilder builder = elementToDataSetMetaDataBuilder(oDataSet);
 
         builder
-            .withConstants(oDataSet.getProperty(DATASET_CLASS_PROPERTY_VALUES_UNIQUE))
-            .withDatatable(oDataSet.getProperty(DATASET_CLASS_PROPERTY_VALUES_MULTIPLE));
+            .withConstants(oDataSet.getProperty(DATASET_CLASS_PROPERTY_CONSTANTS))
+            .withDatatable(oDataSet.getProperty(DATASET_CLASS_PROPERTY_DATATABLE));
 
         return builder.build();
     }
