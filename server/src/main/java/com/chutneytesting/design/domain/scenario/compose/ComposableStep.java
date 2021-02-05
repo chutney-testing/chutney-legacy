@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 
 public class ComposableStep {
@@ -31,7 +30,14 @@ public class ComposableStep {
     public final Map<String, String> executionParameters; // override default parameters values when the component is used inside another component // TODO - Maybe separate list with blank values
     public final List<String> tags;
 
-    private ComposableStep(String id, String name, List<ComposableStep> steps, Map<String, String> defaultParameters, Optional<String> implementation, Strategy strategy, Map<String, String> executionParameters, List<String> tags) {
+    private ComposableStep(String id,
+                           String name,
+                           List<ComposableStep> steps,
+                           Map<String, String> defaultParameters,
+                           Optional<String> implementation,
+                           Strategy strategy,
+                           Map<String, String> executionParameters,
+                           List<String> tags) {
         this.id = id;
         this.name = name;
         this.steps = steps;
@@ -70,8 +76,18 @@ public class ComposableStep {
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
+    public Map<String, String> getChildrenEmptyParam() {
+        return steps.stream()
+            .flatMap(s -> s.getEmptyExecutionParameters().entrySet().stream())
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> ""));
+    }
+
     public static ComposableStepBuilder builder() {
         return new ComposableStepBuilder();
+    }
+
+    public ComposableStep usingExecutionParameters(Map<String, String> executionParameters) {
+        return alt_builder().from(this).withExecutionParameters(executionParameters).build();
     }
 
     public static class ComposableStepBuilder {
@@ -218,10 +234,9 @@ public class ComposableStep {
         private String implementation;
         private Strategy strategy;
         private List<String> tags = new ArrayList<>();
-        private Map<String, String> executionParameters;
+        private Map<String, String> overrideExecutionParameters;
 
-        private ComposableStepAltBuilder() {
-        }
+        private ComposableStepAltBuilder() {}
 
         public ComposableStep build() {
             defaultParameters = unmodifiableMap(ofNullable(defaultParameters).orElse(emptyMap()));
@@ -246,14 +261,14 @@ public class ComposableStep {
         }
 
         private Map<String, String> resolveExecutionParameters() {
-            Map<String, String> executionParameters = new HashMap<>(this.defaultParameters);
-
             Map<String, String> emptyChildrenParameters = steps.stream()
-                .flatMap(s -> s.executionParameters.entrySet().stream().filter(e -> e.getValue().isEmpty()))
+                .flatMap(s -> s.getEmptyExecutionParameters().entrySet().stream())
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> ""));
 
+            Map<String, String> executionParameters = new HashMap<>();
             executionParameters.putAll(emptyChildrenParameters);
-
+            executionParameters.putAll(defaultParameters);
+            executionParameters.putAll(ofNullable(this.overrideExecutionParameters).orElse(emptyMap()));
             return executionParameters;
         }
 
@@ -274,6 +289,11 @@ public class ComposableStep {
 
         public ComposableStepAltBuilder withDefaultParameters(Map<String, String> defaultParameters) {
             this.defaultParameters = defaultParameters;
+            return this;
+        }
+
+        public ComposableStepAltBuilder withExecutionParameters(Map<String, String> executionParameters) {
+            this.overrideExecutionParameters = executionParameters;
             return this;
         }
 
@@ -302,13 +322,8 @@ public class ComposableStep {
             this.name = instance.name;
             this.steps = instance.steps;
             this.defaultParameters = instance.defaultParameters;
-            this.implementation = instance.implementation.get();
+            this.implementation = instance.implementation.orElse("");
             this.strategy = instance.strategy;
-            return this;
-        }
-
-        public ComposableStepAltBuilder withExecutionParameters(Map<String, String> executionParameters) {
-            this.executionParameters = executionParameters;
             return this;
         }
     }

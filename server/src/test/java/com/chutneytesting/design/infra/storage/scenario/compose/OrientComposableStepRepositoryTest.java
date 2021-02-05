@@ -270,7 +270,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
     }
 
     @Test
-    public void should_find_saved_step_parameters_and_build_correct_dataset_when_search_by_id() {
+    public void should_find_saved_step_parameters_and_build_correct_execution_parameters_when_search_by_id() {
         // Given
         Map<String, String> actionParameters = Maps.of(
             "action parameter with default value", "default action parameter value",
@@ -375,24 +375,24 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
         ComposableStep foundParentFStep = sut.findById(parentStep.id);
 
         // Then
-        assertThat(foundAction.defaultParameters).containsExactlyEntriesOf(actionParameters);
-        assertThat(foundAction.executionParameters).containsExactlyEntriesOf(actionParameters);
+        assertThat(foundAction.defaultParameters).containsExactlyInAnyOrderEntriesOf(actionParameters);
+        assertThat(foundAction.executionParameters).containsExactlyInAnyOrderEntriesOf(actionParameters);
 
-        assertThat(foundMiddleParentFStep.steps.get(0).defaultParameters).containsExactlyEntriesOf(actionParameters);
-        assertThat(foundMiddleParentFStep.steps.get(0).executionParameters).containsExactlyEntriesOf(firstActionInstanceDataSet);
-        assertThat(foundMiddleParentFStep.steps.get(1).defaultParameters).containsExactlyEntriesOf(actionParameters);
-        assertThat(foundMiddleParentFStep.steps.get(1).executionParameters).containsExactlyEntriesOf(secondActionInstanceDataSet);
-        assertThat(foundMiddleParentFStep.defaultParameters).containsExactlyEntriesOf(middleParentParameters);
-        assertThat(foundMiddleParentFStep.executionParameters).containsExactlyEntriesOf(middleParentExpectedDataSet);
+        assertThat(foundMiddleParentFStep.steps.get(0).defaultParameters).containsExactlyInAnyOrderEntriesOf(actionParameters);
+        assertThat(foundMiddleParentFStep.steps.get(0).executionParameters).containsExactlyInAnyOrderEntriesOf(firstActionInstanceDataSet);
+        assertThat(foundMiddleParentFStep.steps.get(1).defaultParameters).containsExactlyInAnyOrderEntriesOf(actionParameters);
+        assertThat(foundMiddleParentFStep.steps.get(1).executionParameters).containsExactlyInAnyOrderEntriesOf(secondActionInstanceDataSet);
+        assertThat(foundMiddleParentFStep.defaultParameters).containsExactlyInAnyOrderEntriesOf(middleParentParameters);
+        assertThat(foundMiddleParentFStep.executionParameters).containsExactlyInAnyOrderEntriesOf(middleParentExpectedDataSet);
 
-        assertThat(foundParentFStep.defaultParameters).containsExactlyEntriesOf(parentParameters);
-        assertThat(foundParentFStep.executionParameters).containsExactlyEntriesOf(parentExpectedDataSet);
-        assertThat(foundParentFStep.steps.get(0).defaultParameters).containsExactlyEntriesOf(middleParentParameters);
-        assertThat(foundParentFStep.steps.get(0).executionParameters).containsExactlyEntriesOf(firstMiddleParentInstanceDataSet);
-        assertThat(foundParentFStep.steps.get(1).defaultParameters).containsExactlyEntriesOf(actionParameters);
-        assertThat(foundParentFStep.steps.get(1).executionParameters).containsExactlyEntriesOf(thirdActionInstanceDataSet);
-        assertThat(foundParentFStep.steps.get(2).defaultParameters).containsExactlyEntriesOf(middleParentParameters);
-        assertThat(foundParentFStep.steps.get(2).executionParameters).containsExactlyEntriesOf(secondMiddleParentInstanceDataSet);
+        assertThat(foundParentFStep.defaultParameters).containsExactlyInAnyOrderEntriesOf(parentParameters);
+        assertThat(foundParentFStep.executionParameters).containsExactlyInAnyOrderEntriesOf(parentExpectedDataSet);
+        assertThat(foundParentFStep.steps.get(0).defaultParameters).containsExactlyInAnyOrderEntriesOf(middleParentParameters);
+        assertThat(foundParentFStep.steps.get(0).executionParameters).containsExactlyInAnyOrderEntriesOf(firstMiddleParentInstanceDataSet);
+        assertThat(foundParentFStep.steps.get(1).defaultParameters).containsExactlyInAnyOrderEntriesOf(actionParameters);
+        assertThat(foundParentFStep.steps.get(1).executionParameters).containsExactlyInAnyOrderEntriesOf(thirdActionInstanceDataSet);
+        assertThat(foundParentFStep.steps.get(2).defaultParameters).containsExactlyInAnyOrderEntriesOf(middleParentParameters);
+        assertThat(foundParentFStep.steps.get(2).executionParameters).containsExactlyInAnyOrderEntriesOf(secondMiddleParentInstanceDataSet);
     }
 
     @Test

@@ -117,7 +117,7 @@ public class ComposableStepTest {
         ));
     }
 
-/*    @Test
+    @Test
     void execution_parameters_can_be_override_upon_step_use() {
         // Given
         ComposableStep leaf = ComposableStep.builder().withId("leaf")
@@ -139,6 +139,6 @@ public class ComposableStepTest {
         assertThat(parent.executionParameters).isEqualTo(Maps.of(
             "dont_move_up", ""
         ));
-    }*/
+    }
 
 }

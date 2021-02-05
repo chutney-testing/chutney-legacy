@@ -63,14 +63,14 @@ public class ComposableStepMapper {
     }
 
     public static ComposableStep fromDto(ComposableStepDto dto) {
-        return ComposableStep.builder()
+        return ComposableStep.alt_builder()
             .withId(fromFrontId(dto.id()))
             .withName(dto.name())
             .withStrategy(fromDto(dto.strategy()))
             .withImplementation(dto.task().orElse(""))
             .withSteps(dto.steps().stream().map(ComposableStepMapper::fromDto).collect(toList()))
             .withDefaultParameters(KeyValue.toMap(dto.defaultParameters()))
-            .overrideExecutionParametersWith(KeyValue.toMap(dto.executionParameters()))
+            .withExecutionParameters(KeyValue.toMap(dto.executionParameters()))
             .withTags(dto.tags().stream().map(String::trim).filter(t -> !t.isEmpty()).collect(toList()))
             .build();
     }
