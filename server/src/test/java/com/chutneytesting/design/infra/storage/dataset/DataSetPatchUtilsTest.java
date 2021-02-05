@@ -64,7 +64,7 @@ public class DataSetPatchUtilsTest {
     }
 
     @Test
-    public void should_map_string_as_dataset_values_for_unvalued_unique_values() {
+    public void should_map_string_as_dataset_values_for_unvalued_constants() { // todo - clarify behavior
         // Given
         String dataset = "key |\n";
 

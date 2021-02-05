@@ -42,7 +42,7 @@ public final class DataSetPatchUtils {
                     List<String> lineValues = extractDatatableLine(line);
                     if (datatableHeaders.isEmpty()) { // headers
                         datatableHeaders.addAll(lineValues);
-                    } else { // values
+                    } else { // datatable
                         Map<String, String> valuesMap = new LinkedHashMap<>();
                         Iterator<String> headersIterator = datatableHeaders.iterator();
                         Iterator<String> valuesIterator = lineValues.iterator();
@@ -51,7 +51,7 @@ public final class DataSetPatchUtils {
                         }
                         datatable.add(valuesMap);
                     }
-                } else { // Contant values
+                } else { // Constant values
                     String[] constant = line.split(SEPARATOR_REGEX);
                     if (constant.length == 2) {
                         constants.put(constant[0].trim(), constant[1].trim());
