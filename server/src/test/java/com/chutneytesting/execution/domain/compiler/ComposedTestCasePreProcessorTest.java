@@ -198,7 +198,7 @@ public class ComposedTestCasePreProcessorTest {
         );
         sut = new ComposedTestCasePreProcessor(objectMapper, globalvarRepository, dataSetRepository);
 
-        Map<String, String> computedParameters = Maps.of(
+        Map<String, String> executionParameters = Maps.of(
             "testcase title param", "default title value",
             "testcase param", "",
             "testcase param second", "with default value",
@@ -206,7 +206,7 @@ public class ComposedTestCasePreProcessorTest {
         );
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             TestCaseMetadataImpl.builder()
-                .withTitle("testcase title for dataset unique value ref **testcase title param**")
+                .withTitle("testcase title for dataset constant ref **testcase title param**")
                 .withDescription("testcase description for global var ref **global.key**")
                 .withDatasetId(dataSetId)
                 .build(),
@@ -259,7 +259,7 @@ public class ComposedTestCasePreProcessorTest {
                     )
                 )
                 .build(),
-            computedParameters
+            executionParameters
         );
 
         // When
@@ -268,7 +268,7 @@ public class ComposedTestCasePreProcessorTest {
         );
 
         // Then
-        assertThat(processedTestCase.metadata.title()).isEqualTo("testcase title for dataset unique value ref default title value");
+        assertThat(processedTestCase.metadata.title()).isEqualTo("testcase title for dataset constant ref default title value");
         assertThat(processedTestCase.metadata.description()).isEqualTo("testcase description for global var ref global var value");
 
         assertThat(processedTestCase.composedScenario.composedSteps)

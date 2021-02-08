@@ -72,7 +72,7 @@ public class OrientDataSetRepositoryTest extends AbstractOrientDatabaseTest {
             fullDataSetBuilder().build()
         );
 
-        List<Map<String, String>> multipleValues = Lists.list(
+        List<Map<String, String>> datatable = Lists.list(
             Maps.of("mk", "mv")
         );
         List<String> tags = Lists.list("T1");
@@ -86,7 +86,7 @@ public class OrientDataSetRepositoryTest extends AbstractOrientDatabaseTest {
                 .withName(name)
                 .withDescription(description)
                 .withTags(tags)
-                .withDatatable(multipleValues)
+                .withDatatable(datatable)
                 .build()
         );
 
@@ -98,7 +98,7 @@ public class OrientDataSetRepositoryTest extends AbstractOrientDatabaseTest {
         assertThat(foundUpdatedDataSet.creationDate).isEqualTo(dataSet.creationDate);
         assertThat(foundUpdatedDataSet.tags).isEqualTo(tags);
         assertThat(foundUpdatedDataSet.constants).isEqualTo(dataSet.constants);
-        assertThat(foundUpdatedDataSet.datatable).isEqualTo(multipleValues);
+        assertThat(foundUpdatedDataSet.datatable).isEqualTo(datatable);
     }
 
     @Test
