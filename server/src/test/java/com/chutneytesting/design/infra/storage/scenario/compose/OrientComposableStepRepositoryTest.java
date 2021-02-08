@@ -289,7 +289,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
             "another action parameter with default value", "another default action parameter value");
         final ComposableStep firstActionStepInstance = ComposableStep.builder()
             .from(actionStep)
-            .overrideExecutionParametersWith(firstActionInstanceDataSet)
+            .withExecutionParameters(firstActionInstanceDataSet)
             .build();
 
         Map<String, String> secondActionInstanceDataSet = Maps.of(
@@ -298,7 +298,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
             "another action parameter with default value", "");
         final ComposableStep secondActionStepInstance = ComposableStep.builder()
             .from(actionStep)
-            .overrideExecutionParametersWith(secondActionInstanceDataSet)
+            .withExecutionParameters(secondActionInstanceDataSet)
             .build();
 
         Map<String, String> middleParentParameters = Maps.of(
@@ -329,7 +329,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
         );
         final ComposableStep firstMiddleParentStepInstance = ComposableStep.builder()
             .from(middleParentStep)
-            .overrideExecutionParametersWith(firstMiddleParentInstanceDataSet)
+            .withExecutionParameters(firstMiddleParentInstanceDataSet)
             .build();
 
         Map<String, String> secondMiddleParentInstanceDataSet = Maps.of(
@@ -341,7 +341,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
         );
         final ComposableStep secondMiddleParentStepInstance = ComposableStep.builder()
             .from(middleParentStep)
-            .overrideExecutionParametersWith(secondMiddleParentInstanceDataSet)
+            .withExecutionParameters(secondMiddleParentInstanceDataSet)
             .build();
 
         Map<String, String> thirdActionInstanceDataSet = Maps.of(
@@ -350,7 +350,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
             "another action parameter with default value", "another third action instance parameter value");
         final ComposableStep thirdActionStepInstance = ComposableStep.builder()
             .from(actionStep)
-            .overrideExecutionParametersWith(thirdActionInstanceDataSet)
+            .withExecutionParameters(thirdActionInstanceDataSet)
             .build();
 
         Map<String, String> parentParameters = Maps.of(
@@ -375,24 +375,24 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
         ComposableStep foundParentFStep = sut.findById(parentStep.id);
 
         // Then
-        assertThat(foundAction.defaultParameters).containsExactlyInAnyOrderEntriesOf(actionParameters);
-        assertThat(foundAction.executionParameters).containsExactlyInAnyOrderEntriesOf(actionParameters);
+        assertThat(foundAction.defaultParameters).containsExactlyEntriesOf(actionParameters);
+        assertThat(foundAction.executionParameters).containsExactlyEntriesOf(actionParameters);
 
-        assertThat(foundMiddleParentFStep.steps.get(0).defaultParameters).containsExactlyInAnyOrderEntriesOf(actionParameters);
-        assertThat(foundMiddleParentFStep.steps.get(0).executionParameters).containsExactlyInAnyOrderEntriesOf(firstActionInstanceDataSet);
-        assertThat(foundMiddleParentFStep.steps.get(1).defaultParameters).containsExactlyInAnyOrderEntriesOf(actionParameters);
-        assertThat(foundMiddleParentFStep.steps.get(1).executionParameters).containsExactlyInAnyOrderEntriesOf(secondActionInstanceDataSet);
-        assertThat(foundMiddleParentFStep.defaultParameters).containsExactlyInAnyOrderEntriesOf(middleParentParameters);
-        assertThat(foundMiddleParentFStep.executionParameters).containsExactlyInAnyOrderEntriesOf(middleParentExpectedDataSet);
+        assertThat(foundMiddleParentFStep.steps.get(0).defaultParameters).containsExactlyEntriesOf(actionParameters);
+        assertThat(foundMiddleParentFStep.steps.get(0).executionParameters).containsExactlyEntriesOf(firstActionInstanceDataSet);
+        assertThat(foundMiddleParentFStep.steps.get(1).defaultParameters).containsExactlyEntriesOf(actionParameters);
+        assertThat(foundMiddleParentFStep.steps.get(1).executionParameters).containsExactlyEntriesOf(secondActionInstanceDataSet);
+        assertThat(foundMiddleParentFStep.defaultParameters).containsExactlyEntriesOf(middleParentParameters);
+        assertThat(foundMiddleParentFStep.executionParameters).containsExactlyEntriesOf(middleParentExpectedDataSet);
 
-        assertThat(foundParentFStep.defaultParameters).containsExactlyInAnyOrderEntriesOf(parentParameters);
-        assertThat(foundParentFStep.executionParameters).containsExactlyInAnyOrderEntriesOf(parentExpectedDataSet);
-        assertThat(foundParentFStep.steps.get(0).defaultParameters).containsExactlyInAnyOrderEntriesOf(middleParentParameters);
-        assertThat(foundParentFStep.steps.get(0).executionParameters).containsExactlyInAnyOrderEntriesOf(firstMiddleParentInstanceDataSet);
-        assertThat(foundParentFStep.steps.get(1).defaultParameters).containsExactlyInAnyOrderEntriesOf(actionParameters);
-        assertThat(foundParentFStep.steps.get(1).executionParameters).containsExactlyInAnyOrderEntriesOf(thirdActionInstanceDataSet);
-        assertThat(foundParentFStep.steps.get(2).defaultParameters).containsExactlyInAnyOrderEntriesOf(middleParentParameters);
-        assertThat(foundParentFStep.steps.get(2).executionParameters).containsExactlyInAnyOrderEntriesOf(secondMiddleParentInstanceDataSet);
+        assertThat(foundParentFStep.defaultParameters).containsExactlyEntriesOf(parentParameters);
+        assertThat(foundParentFStep.executionParameters).containsExactlyEntriesOf(parentExpectedDataSet);
+        assertThat(foundParentFStep.steps.get(0).defaultParameters).containsExactlyEntriesOf(middleParentParameters);
+        assertThat(foundParentFStep.steps.get(0).executionParameters).containsExactlyEntriesOf(firstMiddleParentInstanceDataSet);
+        assertThat(foundParentFStep.steps.get(1).defaultParameters).containsExactlyEntriesOf(actionParameters);
+        assertThat(foundParentFStep.steps.get(1).executionParameters).containsExactlyEntriesOf(thirdActionInstanceDataSet);
+        assertThat(foundParentFStep.steps.get(2).defaultParameters).containsExactlyEntriesOf(middleParentParameters);
+        assertThat(foundParentFStep.steps.get(2).executionParameters).containsExactlyEntriesOf(secondMiddleParentInstanceDataSet);
     }
 
     @Test
@@ -417,7 +417,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
             new_value_param, "new parent value");
         ComposableStep stepInstance = ComposableStep.builder()
             .from(step)
-            .overrideExecutionParametersWith(stepInsatnceDataSet)
+            .withExecutionParameters(stepInsatnceDataSet)
             .build();
         ComposableStep parentWithParametersOverload = saveAndReload(
             buildComposableStep("parent with parameters values overload", stepInstance)
@@ -454,12 +454,12 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
 
         final ComposableStep stepInstance = ComposableStep.builder()
             .from(step)
-            .overrideExecutionParametersWith(Maps.of("param", ""))
+            .withExecutionParameters(Maps.of("param", ""))
             .build();
 
         final ComposableStep stepInstanceB = ComposableStep.builder()
             .from(step)
-            .overrideExecutionParametersWith(Maps.of("param", "hard value"))
+            .withExecutionParameters(Maps.of("param", "hard value"))
             .build();
 
         final ComposableStep parentFStep = saveAndReload(

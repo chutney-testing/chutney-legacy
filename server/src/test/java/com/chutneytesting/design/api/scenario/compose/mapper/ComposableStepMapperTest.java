@@ -10,7 +10,6 @@ import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.tools.ui.KeyValue;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Optional;
 import org.apache.groovy.util.Maps;
 import org.junit.jupiter.api.Test;
 
@@ -124,7 +123,7 @@ public class ComposableStepMapperTest {
                     "param2", ""
                 )
             )
-            .overrideExecutionParametersWith(
+            .withExecutionParameters(
                 Maps.of(
                     "param1", "param1 value",
                     "param2", "",

@@ -63,7 +63,7 @@ public class ComposableStepMapper {
     }
 
     public static ComposableStep fromDto(ComposableStepDto dto) {
-        return ComposableStep.alt_builder()
+        return ComposableStep.builder()
             .withId(fromFrontId(dto.id()))
             .withName(dto.name())
             .withStrategy(fromDto(dto.strategy()))

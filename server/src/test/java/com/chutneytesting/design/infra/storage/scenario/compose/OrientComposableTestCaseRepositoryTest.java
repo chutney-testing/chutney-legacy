@@ -64,7 +64,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
 
         ComposableStep funcStepInstance = ComposableStep.builder()
             .from(FUNC_STEP_REF)
-            .overrideExecutionParametersWith(
+            .withExecutionParameters(
                 Maps.of(
                     "child parameter with no overload", "child initial value",
                     "child parameter with parent overload", "parent value overload child value",
@@ -168,7 +168,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
         // Given
         ComposableStep FuncStepRefScenarioInstance = ComposableStep.builder()
             .from(FUNC_STEP_REF)
-            .overrideExecutionParametersWith(
+            .withExecutionParameters(
                 Maps.of(
                     "child parameter with no overload", "child initial value",
                     "child parameter with parent overload", "",
@@ -179,7 +179,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
 
         ComposableStep FuncStepRefParentScenarioInstance = ComposableStep.builder()
             .from(FUNC_STEP_PARENT_REF)
-            .overrideExecutionParametersWith(
+            .withExecutionParameters(
                 Maps.of(
                     "parent parameter with no overload", "",
                     "parent parameter with scenario overload", "scenario value overload parent value",

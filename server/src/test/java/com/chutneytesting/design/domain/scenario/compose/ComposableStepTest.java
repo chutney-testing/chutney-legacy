@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.groovy.util.Maps;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class ComposableStepTest {
@@ -52,7 +51,7 @@ public class ComposableStepTest {
     @Test
     void execution_parameters_should_equals_default_parameters_when_not_override() {
         // When
-        ComposableStep step = ComposableStep.alt_builder().withId("step")
+        ComposableStep step = ComposableStep.builder().withId("step")
             .withDefaultParameters(Maps.of(
                 "dont_move_up", "has_default_value",
                 "leaf_move_up", "")
@@ -69,7 +68,7 @@ public class ComposableStepTest {
     @Test
     void empty_parameters_should_be_added_to_parent_execution_parameters() {
         // Given
-        ComposableStep leaf = ComposableStep.alt_builder().withId("leaf")
+        ComposableStep leaf = ComposableStep.builder().withId("leaf")
             .withDefaultParameters(Maps.of(
                 "dont_move_up", "has_default_value",
                 "move_up", ""/*because empty*/)
@@ -77,7 +76,7 @@ public class ComposableStepTest {
             .build();
 
         // When
-        ComposableStep parent = ComposableStep.alt_builder().withId("parent")
+        ComposableStep parent = ComposableStep.builder().withId("parent")
             .withSteps(singletonList(leaf))
             .build();
 
@@ -88,14 +87,14 @@ public class ComposableStepTest {
     @Test
     void empty_parameters_should_be_added_to_parent_execution_parameters_2() {
         // Given
-        ComposableStep leaf = ComposableStep.alt_builder().withId("leaf")
+        ComposableStep leaf = ComposableStep.builder().withId("leaf")
             .withDefaultParameters(Maps.of(
                 "dont_move_up", "has_default_value",
                 "leaf_move_up", ""/*because empty*/)
             )
             .build();
 
-        ComposableStep subStep = ComposableStep.alt_builder().withId("subStep")
+        ComposableStep subStep = ComposableStep.builder().withId("subStep")
             .withSteps(singletonList(leaf))
             .withDefaultParameters(Maps.of(
                 "dont_move_up", "has_default_value",
@@ -104,7 +103,7 @@ public class ComposableStepTest {
             .build();
 
         // When
-        ComposableStep parent = ComposableStep.alt_builder().withId("parent")
+        ComposableStep parent = ComposableStep.builder().withId("parent")
             .withDefaultParameters(Maps.of("parent_param", "has_default_value" /*but can be override*/))
             .withSteps(singletonList(subStep))
             .build();

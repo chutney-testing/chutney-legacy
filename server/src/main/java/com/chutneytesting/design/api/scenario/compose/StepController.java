@@ -87,7 +87,7 @@ public class StepController {
                     .sort(sort)
                     .desc(desc)
                     .build(),
-                ComposableStep.alt_builder()
+                ComposableStep.builder()
                     .withName(name)
                     .build()
             );

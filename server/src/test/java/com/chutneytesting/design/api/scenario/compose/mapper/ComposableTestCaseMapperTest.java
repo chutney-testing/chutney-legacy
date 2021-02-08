@@ -104,7 +104,7 @@ public class ComposableTestCaseMapperTest {
                                     "empty key", ""
                                 )
                             )
-                            .overrideExecutionParametersWith(
+                            .withExecutionParameters(
                                 Maps.of(
                                     "key valued", "value",
                                     "empty key", ""
