@@ -125,6 +125,7 @@ type Mutation {
   stopCampaign(campaignId: ID!, executionId: ID!): Boolean
   runCampaign(campaignId: ID!, environment:String ) : CampaignExecution!
   deleteCampaign(input: ID!): Boolean
+  deleteGlobalVariableGroup(groupName: ID!): Boolean
 }
 
 scalar RestFunction

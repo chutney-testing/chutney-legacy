@@ -44,8 +44,9 @@ public class GlobalVarController {
 
     @CrossOrigin(origins = "*")
     @DeleteMapping(path = "/{fileName}")
-    public void delete(@PathVariable("fileName") String fileName) {
+    public Boolean delete(@PathVariable("fileName") String fileName) {
         globalVarRepository.deleteFile(fileName);
+        return true;
     }
 
     @CrossOrigin(origins = "*")

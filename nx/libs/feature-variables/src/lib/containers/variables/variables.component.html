@@ -1,13 +1,32 @@
-<chutney-page-header [title]="'Variables'" [breadcrumbs]="breadcrumbs" [showBackIcon]="false">
-</chutney-page-header>
+<div class="mat-elevation-z8">
+  <chutney-page-header
+    [title]="'Variables'"
+    [breadcrumbs]="breadcrumbs"
+    [showBackIcon]="false">
+      <chutney-page-header-action>
+        <button
+          mat-fab
+          class="mat-accent"
+          (click)="deleteGlobalVariableGroup()"
+          aria-label="Delete group"
+          [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </chutney-page-header-action>
+  </chutney-page-header>
 
-<div>
-  <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)">
+  <mat-tab-group animationDuration="0ms"
+                 (selectedIndex)="activeGroupNameIndex"
+                 (selectedIndexChange)="activeGroupNameIndex = $event"
+                 (selectedTabChange)="onTabChange($event)"
+  >
     <mat-tab *ngFor="let groupName of globalVariableGroupsNames$ | async"
-              label="{{ groupName }}">
-    </mat-tab>
+             label="{{ groupName }}"
+    ></mat-tab>
   </mat-tab-group>
-  <div class="my-code-editor">
+
+  <div *ngIf="activeGroupName$.value" class="my-code-editor">
     <td-code-editor #monaco
       fxFlex="grow"
       editorStyle="border:0;"

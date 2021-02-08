@@ -173,6 +173,7 @@ export type Mutation = {
   stopCampaign?: Maybe<Scalars['Boolean']>;
   runCampaign: CampaignExecution;
   deleteCampaign?: Maybe<Scalars['Boolean']>;
+  deleteGlobalVariableGroup?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -243,6 +244,11 @@ export type MutationDeleteCampaignArgs = {
 };
 
 
+export type MutationDeleteGlobalVariableGroupArgs = {
+  groupName: Scalars['ID'];
+};
+
+
 
 export type CampaignExecutionReportQueryVariables = Exact<{
   campaignId: Scalars['ID'];
@@ -298,6 +304,16 @@ export type DeleteCampaignMutationVariables = Exact<{
 export type DeleteCampaignMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'deleteCampaign'>
+);
+
+export type DeleteGlobalVariableGroupMutationVariables = Exact<{
+  groupName: Scalars['ID'];
+}>;
+
+
+export type DeleteGlobalVariableGroupMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'deleteGlobalVariableGroup'>
 );
 
 export type DeleteScenarioMutationVariables = Exact<{
@@ -588,6 +604,22 @@ export const DeleteCampaignDocument = gql`
   })
   export class DeleteCampaignGQL extends Apollo.Mutation<DeleteCampaignMutation, DeleteCampaignMutationVariables> {
     document = DeleteCampaignDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const DeleteGlobalVariableGroupDocument = gql`
+    mutation deleteGlobalVariableGroup($groupName: ID!) {
+  deleteGlobalVariableGroup(groupName: $groupName) @rest(type: "Boolean", path: "api/ui/globalvar/v1/{args.groupName}", method: "DELETE")
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class DeleteGlobalVariableGroupGQL extends Apollo.Mutation<DeleteGlobalVariableGroupMutation, DeleteGlobalVariableGroupMutationVariables> {
+    document = DeleteGlobalVariableGroupDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
