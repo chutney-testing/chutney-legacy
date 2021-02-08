@@ -53,25 +53,25 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
         mockDatasetRepository = mock(DataSetRepository.class);
     }
 
-    private void stubDatasetRepository(Map<String, String> uniqueValues, List<Map<String, String>> multipleValues) {
+    private void stubDatasetRepository(Map<String, String> constants, List<Map<String, String>> datatable) {
         when(mockDatasetRepository.findById(any())).thenReturn(
             DataSet.builder()
-                .withConstants(ofNullable(uniqueValues).orElse(emptyMap()))
-                .withDatatable(ofNullable(multipleValues).orElse(emptyList()))
+                .withConstants(ofNullable(constants).orElse(emptyMap()))
+                .withDatatable(ofNullable(datatable).orElse(emptyList()))
                 .build()
         );
     }
 
     @Test
-    public void should_override_keys_matching_external_dataset_unique_values_to_testcase_local_dataset() {
+    public void should_override_keys_matching_external_dataset_constants_to_testcase_execution_parameters() {
         // Given
-        Map<String, String> uniqueValues = Maps.of(
+        Map<String, String> constants = Maps.of(
             "aKey", "usedInTestCase",
             "anotherKey", "notUsedInTestCase"
         );
-        stubDatasetRepository(uniqueValues, null);
+        stubDatasetRepository(constants, null);
 
-        Map<String, String> computedParameters = Maps.of(
+        Map<String, String> executionParameters = Maps.of(
             "aKey", "value will be override",
             "localKey", "will be kept as is"
         );
@@ -79,7 +79,7 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             metadata,
             ExecutableComposedScenario.builder().build(),
-            computedParameters
+            executionParameters
         );
 
         // When
@@ -94,15 +94,15 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
     }
 
     @Test
-    public void should_remove_keys_matching_external_dataset_multivalues_from_testcase_local_dataset() {
+    public void should_remove_keys_matching_external_datatable_from_testcase_execution_parameters() {
         // Given
-        List<Map<String, String>> multipleValues = asList(
+        List<Map<String, String>> datatable = asList(
             Maps.of("aKey", "aValue"),
             Maps.of("aKey", "anotherValue")
         );
-        stubDatasetRepository(null, multipleValues);
+        stubDatasetRepository(null, datatable);
 
-        Map<String, String> computedParameters = Maps.of(
+        Map<String, String> executionParameters = Maps.of(
             "aKey", "testcase default value",
             "anotherKey", "testcase value"
         );
@@ -112,7 +112,7 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
             ExecutableComposedScenario.builder()
                 .withComposedSteps(singletonList(ExecutableComposedStep.builder().build()))
                 .build(),
-            computedParameters
+            executionParameters
         );
 
         // When
@@ -128,11 +128,11 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
     @Test
     public void should_create_iterations_when_step_uses_external_dataset_multivalues() {
         // Given
-        List<Map<String, String>> multipleValues = asList(
+        List<Map<String, String>> datatable = asList(
             Maps.of("aKey", "aValue"),
             Maps.of("aKey", "anotherValue")
         );
-        stubDatasetRepository(null, multipleValues);
+        stubDatasetRepository(null, datatable);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             metadata,
@@ -173,15 +173,15 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
 
     @Test
     // TODO - what is this rule ? why is that ? TestCase dataset takes precedence over local step values ? But why is it done here ?
-    public void should_override_iterations_parent_step_dataset() {
+    public void should_override_iterations_parent_step_execution_parameters() {
         // Given
-        List<Map<String, String>> multipleValues = asList(
+        List<Map<String, String>> datatable = asList(
             Maps.of("aKey", "aValue"),
             Maps.of("aKey", "anotherValue")
         );
-        stubDatasetRepository(null, multipleValues);
+        stubDatasetRepository(null, datatable);
 
-        Map<String, String> computedParameters = Maps.of(
+        Map<String, String> executionParameters = Maps.of(
             "aKey", "",
             "anotherKey", "testcase value"
         );
@@ -203,7 +203,7 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
                     )
                 )
                 .build(),
-            computedParameters
+            executionParameters
         );
 
         // When
@@ -219,11 +219,11 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
     @Test
     public void should_keep_local_dataset_values_when_creating_iterations() {
         // Given
-        List<Map<String, String>> multipleValues = asList(
+        List<Map<String, String>> datatable = asList(
             Maps.of("aKey", "aValue"),
             Maps.of("aKey", "anotherValue")
         );
-        stubDatasetRepository(null, multipleValues);
+        stubDatasetRepository(null, datatable);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             metadata,
@@ -270,12 +270,12 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
     @Test
     public void should_replace_iteration_dataset_value_when_referring_to_external_dataset_multivalue() {
         // Given
-        List<Map<String, String>> multipleValues = asList(
+        List<Map<String, String>> datatable = asList(
             Maps.of("aKey", "aValue"),
             Maps.of("aKey", "anotherValue")
         );
 
-        stubDatasetRepository(null, multipleValues);
+        stubDatasetRepository(null, datatable);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             metadata,
@@ -313,11 +313,11 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
     @Test
     public void iterations_parent_step_should_have_specific_strategy() {
         // Given
-        List<Map<String, String>> multipleValues = asList(
+        List<Map<String, String>> datatable = asList(
             Maps.of("aKey", "first value"),
             Maps.of("aKey", "second value")
         );
-        stubDatasetRepository(null, multipleValues);
+        stubDatasetRepository(null, datatable);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             metadata,
@@ -348,11 +348,11 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
     @MethodSource("strategyDefinitions")
     public void iterations_should_inherit_their_strategy_from_parent_strategy_definition(Strategy strategyDefinition) {
         // Given
-        List<Map<String, String>> multipleValues = asList(
+        List<Map<String, String>> datatable = asList(
             Maps.of("aKey", "first value"),
             Maps.of("aKey", "second value")
         );
-        stubDatasetRepository(null, multipleValues);
+        stubDatasetRepository(null, datatable);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             metadata,
@@ -389,14 +389,14 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
     }
 
     @Test
-    public void should_create_iterations_with_distinct_multiple_values_dataset() {
+    public void should_create_iterations_with_distinct_datatable_values() {
         // Given
-        List<Map<String, String>> multipleValues = asList(
+        List<Map<String, String>> datatable = asList(
             Maps.of("aKey", "value A"),
             Maps.of("aKey", "value B"),
             Maps.of("aKey", "value A")
         );
-        stubDatasetRepository(null, multipleValues);
+        stubDatasetRepository(null, datatable);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             metadata,
@@ -437,11 +437,11 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
     public void should_index_iterations_outputs_when_using_external_multivalues_dataset() {
 
         // Given
-        List<Map<String, String>> multipleValues = asList(
+        List<Map<String, String>> datatable = asList(
             Maps.of("letter", "A"),
             Maps.of("letter", "B")
         );
-        stubDatasetRepository(null, multipleValues);
+        stubDatasetRepository(null, datatable);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             metadata,
@@ -493,11 +493,11 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
     public void should_still_work_when_there_are_null_values() {
 
         // Given
-        List<Map<String, String>> multipleValues = asList(
+        List<Map<String, String>> datatable = asList(
             Maps.of("letter", "A"),
             Maps.of("letter", "B")
         );
-        stubDatasetRepository(null, multipleValues);
+        stubDatasetRepository(null, datatable);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             metadata,
@@ -572,11 +572,11 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
     public void should_iterate_step_when_using_previous_indexed_outputs_in_simple_input() {
 
         // Given
-        List<Map<String, String>> multipleValues = asList(
+        List<Map<String, String>> datatable = asList(
             Maps.of("letter", "A"),
             Maps.of("letter", "B")
         );
-        stubDatasetRepository(null, multipleValues);
+        stubDatasetRepository(null, datatable);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             metadata,
@@ -625,11 +625,11 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
     public void should_iterate_step_when_using_previous_indexed_outputs_combined_to_external_multivalues_dataset() {
 
         // Given
-        List<Map<String, String>> multipleValues = asList(
+        List<Map<String, String>> datatable = asList(
             Maps.of("letter", "A"),
             Maps.of("letter", "B")
         );
-        stubDatasetRepository(null, multipleValues);
+        stubDatasetRepository(null, datatable);
 
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
@@ -682,11 +682,11 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
     public void should_iterate_step_when_using_two_previous_indexed_outputs_on_dataset() {
 
         // Given
-        List<Map<String, String>> multipleValues = asList(
+        List<Map<String, String>> datatable = asList(
             Maps.of("letter", "A"),
             Maps.of("letter", "B")
         );
-        stubDatasetRepository(null, multipleValues);
+        stubDatasetRepository(null, datatable);
         ExecutableComposedStep stepGenerating2IterationsWithOutputs = ExecutableComposedStep.builder()
             .withName("Should generate 2 iterations for letter A and B")
             .withImplementation(Optional.of(
@@ -744,11 +744,11 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
     public void should_not_match_partial_naming() {
 
         // Given
-        List<Map<String, String>> multipleValues = asList(
+        List<Map<String, String>> datatable = asList(
             Maps.of("letter", "A"),
             Maps.of("letter", "B")
         );
-        stubDatasetRepository(null, multipleValues);
+        stubDatasetRepository(null, datatable);
         ExecutableComposedStep stepGenerating2IterationsWithOutputs = ExecutableComposedStep.builder()
             .withName("Should generate 2 iterations for letter A and B")
             .withImplementation(Optional.of(
@@ -955,11 +955,11 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
     public void should_iterate_step_when_using_two_previous_indexed_outputs() {
 
         // Given
-        List<Map<String, String>> multipleValues = asList(
+        List<Map<String, String>> datatable = asList(
             Maps.of("letter", "A"),
             Maps.of("letter", "B")
         );
-        stubDatasetRepository(null, multipleValues);
+        stubDatasetRepository(null, datatable);
         ExecutableComposedStep stepGenerating2IterationsWithOutputs = ExecutableComposedStep.builder()
             .withName("Should generate 2 iterations for letter A and B")
             .withImplementation(Optional.of(
@@ -1014,11 +1014,11 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
     public void should_iterate_step_when_using_outputKey_id_defined_as_dataset() {
 
         // Given
-        List<Map<String, String>> multipleValues = asList(
+        List<Map<String, String>> datatable = asList(
             Maps.of("letter", "A"),
             Maps.of("letter", "B")
         );
-        stubDatasetRepository(null, multipleValues);
+        stubDatasetRepository(null, datatable);
         ExecutableComposedStep stepGenerating2IterationsWithOutputs = ExecutableComposedStep.builder()
             .withName("Should generate 2 iterations for letter A and B")
             .withImplementation(Optional.of(
@@ -1144,11 +1144,11 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
     public void should_iterate_step_when_using_previous_indexed_outputs_in_map_input() {
 
         // Given
-        List<Map<String, String>> multipleValues = asList(
+        List<Map<String, String>> datatable = asList(
             Maps.of("letter", "A"),
             Maps.of("letter", "B")
         );
-        stubDatasetRepository(null, multipleValues);
+        stubDatasetRepository(null, datatable);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             metadata,
@@ -1198,11 +1198,11 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
     public void should_iterate_step_when_using_previous_indexed_outputs_in_task_output() {
 
         // Given
-        List<Map<String, String>> multipleValues = asList(
+        List<Map<String, String>> datatable = asList(
             Maps.of("letter", "A"),
             Maps.of("letter", "B")
         );
-        stubDatasetRepository(null, multipleValues);
+        stubDatasetRepository(null, datatable);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             metadata,
@@ -1252,11 +1252,11 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
     public void should_iterate_step_when_using_previous_indexed_outputs_in_dataset() {
 
         // Given
-        List<Map<String, String>> multipleValues = asList(
+        List<Map<String, String>> datatable = asList(
             Maps.of("letter", "A"),
             Maps.of("letter", "B")
         );
-        stubDatasetRepository(null, multipleValues);
+        stubDatasetRepository(null, datatable);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             metadata,
@@ -1311,11 +1311,11 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
     public void should_iterate_step_having_both_previous_indexed_outputs_and_indexing_new_outputs() {
 
         // Given
-        List<Map<String, String>> multipleValues = asList(
+        List<Map<String, String>> datatable = asList(
             Maps.of("letter", "A"),
             Maps.of("letter", "B")
         );
-        stubDatasetRepository(null, multipleValues);
+        stubDatasetRepository(null, datatable);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             metadata,
@@ -1370,11 +1370,11 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
     public void should_generate_iterations_indexing_only_new_outputs() {
 
         // Given
-        List<Map<String, String>> multipleValues = asList(
+        List<Map<String, String>> datatable = asList(
             Maps.of("letter", "A"),
             Maps.of("letter", "B")
         );
-        stubDatasetRepository(null, multipleValues);
+        stubDatasetRepository(null, datatable);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             metadata,
@@ -1429,11 +1429,11 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
     public void should_index_iterations_outputs_when_inside_a_parent_step() {
 
         // Given
-        List<Map<String, String>> multipleValues = asList(
+        List<Map<String, String>> datatable = asList(
             Maps.of("letter", "A"),
             Maps.of("letter", "B")
         );
-        stubDatasetRepository(null, multipleValues);
+        stubDatasetRepository(null, datatable);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             metadata,
@@ -1529,11 +1529,11 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
     public void should_index_iterations_inputs_when_generated_in_same_parent_step() {
 
         // Given
-        List<Map<String, String>> multipleValues = asList(
+        List<Map<String, String>> datatable = asList(
             Maps.of("letter", "A"),
             Maps.of("letter", "B")
         );
-        stubDatasetRepository(null, multipleValues);
+        stubDatasetRepository(null, datatable);
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
             metadata,

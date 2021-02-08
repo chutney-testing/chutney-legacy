@@ -12,7 +12,7 @@ public class CampaignDto {
     private final String title;
     private final String description;
     private final List<String> scenarioIds;
-    private final Map<String, String> computedParameters;
+    private final Map<String, String> executionParameters;
     private final List<CampaignExecutionReportDto> campaignExecutionReports;
 
     private final String scheduleTime;
@@ -25,7 +25,7 @@ public class CampaignDto {
                        @JsonProperty("title") String title,
                        @JsonProperty("description") String description,
                        @JsonProperty("scenarioIds") List<String> scenarioIds,
-                       @JsonProperty("computedParameters") Map<String, String> computedParameters,
+                       @JsonProperty("computedParameters") Map<String, String> executionParameters,
                        @JsonProperty("campaignExecutionReports") List<CampaignExecutionReportDto> campaignExecutionReports,
                        @JsonProperty("scheduleTime") String scheduleTime,
                        @JsonProperty("environment") String environment,
@@ -36,7 +36,7 @@ public class CampaignDto {
         this.title = title;
         this.description = description;
         this.scenarioIds = scenarioIds;
-        this.computedParameters = computedParameters;
+        this.executionParameters = executionParameters;
         this.campaignExecutionReports = Optional.ofNullable(campaignExecutionReports).orElseGet(ArrayList::new);
         this.scheduleTime = scheduleTime;
         this.environment = environment;
@@ -61,8 +61,8 @@ public class CampaignDto {
         return scenarioIds;
     }
 
-    public Map<String, String> getComputedParameters() {
-        return computedParameters;
+    public Map<String, String> getExecutionParameters() {
+        return executionParameters;
     }
 
     public List<CampaignExecutionReportDto> getCampaignExecutionReports() {

@@ -88,11 +88,11 @@ public class OrientDataSetHistoryRepositoryTest extends AbstractOrientDatabaseTe
 
         // Second version - name change
         dataSets.set(1, DataSet.builder().fromDataSet(dataSets.get(1)).withDescription(null).withTags(null).build());
-        // Third version - unique values change
+        // Third version - constants change
         dataSets.set(2, DataSet.builder().fromDataSet(dataSets.get(2)).withName(null).withDescription(null).withTags(null).build());
         // Fourth version - description change
         dataSets.set(3, DataSet.builder().fromDataSet(dataSets.get(3)).withName(null).withTags(null).build());
-        // Fifth version - multiple values change
+        // Fifth version - datatable change
         dataSets.set(4, DataSet.builder().fromDataSet(dataSets.get(4)).withName(null).withDescription(null).withTags(null).build());
         // Sixth version - tags change
         dataSets.set(5, DataSet.builder().fromDataSet(dataSets.get(5)).withName(null).withDescription(null).build());
@@ -117,41 +117,41 @@ public class OrientDataSetHistoryRepositoryTest extends AbstractOrientDatabaseTe
         addFirstVersion();
 
         // Second version - name change
-        DataSet nameChangedDataSet = DataSet.builder()
+        DataSet datasetWithNewName = DataSet.builder()
             .fromDataSet(originalDataSet)
             .withCreationDate(null)
             .withName("new name")
             .build();
-        Optional<Pair<String, Integer>> versionId = sut.addVersion(nameChangedDataSet);
+        Optional<Pair<String, Integer>> versionId = sut.addVersion(datasetWithNewName);
         assertThat(versionId).isNotEmpty();
         assertThat(versionId.get().getRight()).isEqualTo(2);
         assertThat(versionId.get().getLeft()).isNotBlank();
 
-        // Third version - unique values change
-        DataSet uniqueValuesChangedDataSet = DataSet.builder()
-            .fromDataSet(nameChangedDataSet)
+        // Third version - constants change
+        DataSet datasetWithNewConstants = DataSet.builder()
+            .fromDataSet(datasetWithNewName)
             .withCreationDate(null)
             .withConstants(Maps.of("uk1", "uv11", "uk22", "uv2"))
             .build();
-        versionId = sut.addVersion(uniqueValuesChangedDataSet);
+        versionId = sut.addVersion(datasetWithNewConstants);
         assertThat(versionId).isNotEmpty();
         assertThat(versionId.get().getRight()).isEqualTo(3);
         assertThat(versionId.get().getLeft()).isNotBlank();
 
         // Fourth version - description change
-        DataSet descriptionChangedDataSet = DataSet.builder()
-            .fromDataSet(uniqueValuesChangedDataSet)
+        DataSet datasetWithNewDescription = DataSet.builder()
+            .fromDataSet(datasetWithNewConstants)
             .withCreationDate(null)
             .withDescription("new Description")
             .build();
-        versionId = sut.addVersion(descriptionChangedDataSet);
+        versionId = sut.addVersion(datasetWithNewDescription);
         assertThat(versionId).isNotEmpty();
         assertThat(versionId.get().getRight()).isEqualTo(4);
         assertThat(versionId.get().getLeft()).isNotBlank();
 
-        // Fifth version - multiple values change
-        DataSet multipleValuesChangedDataSet = DataSet.builder()
-            .fromDataSet(descriptionChangedDataSet)
+        // Fifth version - datatable change
+        DataSet datasetWithNewDatatable = DataSet.builder()
+            .fromDataSet(datasetWithNewDescription)
             .withCreationDate(null)
             .withDatatable(Lists.list(
                 Maps.of("mk1", "mv11", "mk2", "mv21", "mk3", "mv31"),
@@ -159,23 +159,23 @@ public class OrientDataSetHistoryRepositoryTest extends AbstractOrientDatabaseTe
                 Maps.of("mk1", "mv13", "mk2", "new23", "mk3", "mv33")
             ))
             .build();
-        versionId = sut.addVersion(multipleValuesChangedDataSet);
+        versionId = sut.addVersion(datasetWithNewDatatable);
         assertThat(versionId).isNotEmpty();
         assertThat(versionId.get().getRight()).isEqualTo(5);
         assertThat(versionId.get().getLeft()).isNotBlank();
 
         // Sixth version - tags change
-        DataSet tagsChangedDataSet = DataSet.builder()
-            .fromDataSet(multipleValuesChangedDataSet)
+        DataSet datasetWithNewTags = DataSet.builder()
+            .fromDataSet(datasetWithNewDatatable)
             .withCreationDate(null)
             .withTags(Lists.list("tag1", "tag4"))
             .build();
-        versionId = sut.addVersion(tagsChangedDataSet);
+        versionId = sut.addVersion(datasetWithNewTags);
         assertThat(versionId).isNotEmpty();
         assertThat(versionId.get().getRight()).isEqualTo(6);
         assertThat(versionId.get().getLeft()).isNotBlank();
 
-        return Lists.list(originalDataSet, nameChangedDataSet, uniqueValuesChangedDataSet, descriptionChangedDataSet, multipleValuesChangedDataSet, tagsChangedDataSet);
+        return Lists.list(originalDataSet, datasetWithNewName, datasetWithNewConstants, datasetWithNewDescription, datasetWithNewDatatable, datasetWithNewTags);
     }
 
     private void addFirstVersion() {
