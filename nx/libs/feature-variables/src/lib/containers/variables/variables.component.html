@@ -3,8 +3,18 @@
     [title]="'Variables'"
     [breadcrumbs]="breadcrumbs"
     [showBackIcon]="false">
-      <chutney-page-header-action>
-        <button
+    <chutney-page-header-action>
+      <button
+        mat-fab
+        class="mat-accent"
+        (click)="saveGlobalVariableGroup()"
+        aria-label="Save group"
+        [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
+      >
+        <mat-icon>save</mat-icon>
+      </button>
+
+      <button
           mat-fab
           class="mat-accent"
           (click)="deleteGlobalVariableGroup()"

@@ -125,6 +125,15 @@ export type ScenarioExecutionReport = {
   status?: Maybe<Scalars['String']>;
 };
 
+export type GlobalVariableGroupContent = {
+  __typename?: 'GlobalVariableGroupContent';
+  message?: Maybe<Scalars['String']>;
+};
+
+export type GlobalVariableGroupInput = {
+  message?: Maybe<Scalars['String']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   user?: Maybe<User>;
@@ -135,6 +144,8 @@ export type Query = {
   scenario?: Maybe<Scenario>;
   runScenarioHistory: ScenarioExecution;
   campaignExecutionReport: CampaignExecutionReport;
+  globalVariableGroupContent?: Maybe<GlobalVariableGroupContent>;
+  globalVariableGroupsNames?: Maybe<Array<Maybe<Scalars['ID']>>>;
 };
 
 
@@ -159,6 +170,11 @@ export type QueryCampaignExecutionReportArgs = {
   executionId: Scalars['ID'];
 };
 
+
+export type QueryGlobalVariableGroupContentArgs = {
+  groupName: Scalars['ID'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   login?: Maybe<User>;
@@ -174,6 +190,7 @@ export type Mutation = {
   runCampaign: CampaignExecution;
   deleteCampaign?: Maybe<Scalars['Boolean']>;
   deleteGlobalVariableGroup?: Maybe<Scalars['Boolean']>;
+  saveGlobalVariableGroup?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -246,6 +263,12 @@ export type MutationDeleteCampaignArgs = {
 
 export type MutationDeleteGlobalVariableGroupArgs = {
   groupName: Scalars['ID'];
+};
+
+
+export type MutationSaveGlobalVariableGroupArgs = {
+  groupName: Scalars['ID'];
+  input: GlobalVariableGroupInput;
 };
 
 
@@ -324,6 +347,27 @@ export type DeleteScenarioMutationVariables = Exact<{
 export type DeleteScenarioMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'deleteScenario'>
+);
+
+export type GlobalVariableGroupContentQueryVariables = Exact<{
+  groupName: Scalars['ID'];
+}>;
+
+
+export type GlobalVariableGroupContentQuery = (
+  { __typename?: 'Query' }
+  & { globalVariableGroupContent?: Maybe<(
+    { __typename?: 'GlobalVariableGroupContent' }
+    & Pick<GlobalVariableGroupContent, 'message'>
+  )> }
+);
+
+export type GlobalVariableGroupsNamesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GlobalVariableGroupsNamesQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'globalVariableGroupsNames'>
 );
 
 export type LoginMutationVariables = Exact<{
@@ -415,6 +459,17 @@ export type SaveCampaignMutation = (
     { __typename?: 'Campaign' }
     & Pick<Campaign, 'description' | 'id' | 'title'>
   )> }
+);
+
+export type SaveGlobalVariableGroupMutationVariables = Exact<{
+  groupName: Scalars['ID'];
+  input: GlobalVariableGroupInput;
+}>;
+
+
+export type SaveGlobalVariableGroupMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'saveGlobalVariableGroup'>
 );
 
 export type SaveScenarioMutationVariables = Exact<{
@@ -641,6 +696,40 @@ export const DeleteScenarioDocument = gql`
       super(apollo);
     }
   }
+export const GlobalVariableGroupContentDocument = gql`
+    query globalVariableGroupContent($groupName: ID!) {
+  globalVariableGroupContent(groupName: $groupName) @rest(type: "GlobalVariableGroupContent", path: "api/ui/globalvar/v1/{args.groupName}") {
+    message
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GlobalVariableGroupContentGQL extends Apollo.Query<GlobalVariableGroupContentQuery, GlobalVariableGroupContentQueryVariables> {
+    document = GlobalVariableGroupContentDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GlobalVariableGroupsNamesDocument = gql`
+    query globalVariableGroupsNames {
+  globalVariableGroupsNames @rest(type: "[String]", path: "api/ui/globalvar/v1")
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GlobalVariableGroupsNamesGQL extends Apollo.Query<GlobalVariableGroupsNamesQuery, GlobalVariableGroupsNamesQueryVariables> {
+    document = GlobalVariableGroupsNamesDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
 export const LoginDocument = gql`
     mutation login($input: LoginInput!, $bodySerializer: RestFunctionOrString!) {
   login(input: $input) @rest(type: "User", path: "api/v1/user/login", method: "POST", bodySerializer: $bodySerializer) {
@@ -773,6 +862,22 @@ export const SaveCampaignDocument = gql`
   })
   export class SaveCampaignGQL extends Apollo.Mutation<SaveCampaignMutation, SaveCampaignMutationVariables> {
     document = SaveCampaignDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const SaveGlobalVariableGroupDocument = gql`
+    mutation saveGlobalVariableGroup($groupName: ID!, $input: GlobalVariableGroupInput!) {
+  saveGlobalVariableGroup(groupName: $groupName, input: $input) @rest(type: "Boolean", path: "api/ui/globalvar/v1/{args.groupName}", method: "POST")
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class SaveGlobalVariableGroupGQL extends Apollo.Mutation<SaveGlobalVariableGroupMutation, SaveGlobalVariableGroupMutationVariables> {
+    document = SaveGlobalVariableGroupDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

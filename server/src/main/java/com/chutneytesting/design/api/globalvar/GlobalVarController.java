@@ -34,12 +34,13 @@ public class GlobalVarController {
 
     @CrossOrigin(origins = "*")
     @PostMapping(path = "/{fileName}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void save(@PathVariable("fileName") String fileName, @RequestBody TextDto textContent) {
+    public Boolean save(@PathVariable("fileName") String fileName, @RequestBody TextDto textContent) {
         try {
             globalVarRepository.saveFile(fileName, JsonValue.readHjson(textContent.getMessage()).toString(Stringify.HJSON));
         } catch (Exception e) {
             throw new RuntimeException("Not valid hjson", e);
         }
+        return true;
     }
 
     @CrossOrigin(origins = "*")

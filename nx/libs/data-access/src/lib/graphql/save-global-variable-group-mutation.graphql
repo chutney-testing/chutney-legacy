@@ -1,0 +1,3 @@
+mutation saveGlobalVariableGroup($groupName: ID!, $input: GlobalVariableGroupInput!) {
+   saveGlobalVariableGroup(groupName: $groupName, input: $input) @rest(type: "Boolean", path: "api/ui/globalvar/v1/{args.groupName}", method: "POST")
+}

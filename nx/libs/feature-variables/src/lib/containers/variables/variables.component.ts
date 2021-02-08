@@ -3,12 +3,14 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { pluck } from 'rxjs/operators';
 import { TdCodeEditorComponent } from '@covalent/code-editor';
 import { editor } from 'monaco-editor';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import {
   GlobalVariableGroupsNamesGQL,
   GlobalVariableGroupContentGQL,
   GlobalVariableGroupContent,
   DeleteGlobalVariableGroupGQL,
+  SaveGlobalVariableGroupGQL,
 } from '@chutney/data-access';
 import { layoutOprionsVar } from '@chutney/ui-layout';
 import {
@@ -39,9 +41,11 @@ export class VariablesComponent implements OnInit, OnDestroy {
   options: any = layoutOprionsVar();
 
   constructor(
+    private snackBar: MatSnackBar,
     private globalVariableGroupsNamesGQL: GlobalVariableGroupsNamesGQL,
     private globalVariableGroupContentGQL: GlobalVariableGroupContentGQL,
-    private deleteGlobalVariableGroupGQL: DeleteGlobalVariableGroupGQL
+    private deleteGlobalVariableGroupGQL: DeleteGlobalVariableGroupGQL,
+    private saveGlobalVariableGroupGQL: SaveGlobalVariableGroupGQL
   ) { }
 
   ngOnInit(): void {
@@ -98,6 +102,26 @@ export class VariablesComponent implements OnInit, OnDestroy {
         }
       )
       .subscribe();
+  }
+
+  saveGlobalVariableGroup() {
+    const groupNameToSave = this.activeGroupName$.value;
+    const variableGroup = Object.assign(
+      {},
+      { groupName: groupNameToSave },
+      { input: { message: this.monaco.value } }
+    );
+
+    this.saveGlobalVariableGroupGQL
+      .mutate(variableGroup)
+      .subscribe(
+        (e) => {
+          this.snackBar.open(groupNameToSave + ' variables group has been saved');
+        },
+        (err) => {
+          this.snackBar.open(err.message + ' : ' + err.networkError.result);
+        }
+      );
   }
 
   private fetchVariableGroupContent(groupName: string) {
