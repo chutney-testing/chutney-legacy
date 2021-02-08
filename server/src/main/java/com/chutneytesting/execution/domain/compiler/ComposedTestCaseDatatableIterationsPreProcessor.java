@@ -228,7 +228,7 @@ public class ComposedTestCaseDatatableIterationsPreProcessor implements TestCase
     }
 
     private List<ExecutableComposedStep> generateIterationsForDatatable(ExecutableComposedStep composedStep, List<Map<String, String>> datatable, Set<String> csNovaluedEntries, Map<String, Set<String>> executionParametersReferencingDatableHeader, Map<String, Integer> iterationOutputs, AtomicInteger index) {
-        List<Map<String, String>> iterationData = findUsageOfDatasetMultipleValues(csNovaluedEntries, executionParametersReferencingDatableHeader, datatable);
+        List<Map<String, String>> iterationData = findUsageOfDatasetDatatable(csNovaluedEntries, executionParametersReferencingDatableHeader, datatable);
         return iterationData.stream()
             .map(mv -> {
                 index.getAndIncrement();
@@ -252,9 +252,9 @@ public class ComposedTestCaseDatatableIterationsPreProcessor implements TestCase
             .collect(toList());
     }
 
-    private List<Map<String, String>> findUsageOfDatasetMultipleValues(Set<String> csNovaluedEntries, Map<String, Set<String>> csValuedEntriesWithRef, List<Map<String, String>> multipleValues) {
+    private List<Map<String, String>> findUsageOfDatasetDatatable(Set<String> csNovaluedEntries, Map<String, Set<String>> csValuedEntriesWithRef, List<Map<String, String>> datatable) {
         Set<String> dataSetEntriesReferenced = csValuedEntriesWithRef.values().stream().flatMap(Collection::stream).collect(toSet());
-        return multipleValues.stream()
+        return datatable.stream()
             .map(mv ->
                 mv.entrySet().stream()
                     .filter(e -> csNovaluedEntries.contains(e.getKey()) || dataSetEntriesReferenced.contains(e.getKey()))
