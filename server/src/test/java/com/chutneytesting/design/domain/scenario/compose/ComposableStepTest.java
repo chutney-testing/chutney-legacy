@@ -49,10 +49,27 @@ public class ComposableStepTest {
     }
 
     @Test
-    void should_present_empty_parameters_from_children() {
+    void execution_parameters_should_equals_default_parameters_when_not_override() {
+        // When
+        ComposableStep step = ComposableStep.builder().withId("step")
+            .withDefaultParameters(Maps.of(
+                "dont_move_up", "has_default_value",
+                "leaf_move_up", "")
+            )
+            .build();
+
+        // Then
+        assertThat(step.executionParameters).isEqualTo(Maps.of(
+            "dont_move_up", "has_default_value",
+            "leaf_move_up", ""
+        ));
+    }
+
+    @Test
+    void empty_parameters_should_be_added_to_parent_execution_parameters() {
         // Given
-        ComposableStep leaf   = ComposableStep.builder().withId("leaf 1")
-            .overrideExecutionParametersWith(Maps.of(
+        ComposableStep leaf = ComposableStep.builder().withId("leaf")
+            .withDefaultParameters(Maps.of(
                 "dont_move_up", "has_default_value",
                 "move_up", ""/*because empty*/)
             )
@@ -63,7 +80,64 @@ public class ComposableStepTest {
             .withSteps(singletonList(leaf))
             .build();
 
+        assertThat(parent.defaultParameters).isEmpty();
         assertThat(parent.executionParameters).containsEntry("move_up", "");
+    }
+
+    @Test
+    void empty_parameters_should_be_added_to_parent_execution_parameters_2() {
+        // Given
+        ComposableStep leaf = ComposableStep.builder().withId("leaf")
+            .withDefaultParameters(Maps.of(
+                "dont_move_up", "has_default_value",
+                "leaf_move_up", ""/*because empty*/)
+            )
+            .build();
+
+        ComposableStep subStep = ComposableStep.builder().withId("subStep")
+            .withSteps(singletonList(leaf))
+            .withDefaultParameters(Maps.of(
+                "dont_move_up", "has_default_value",
+                "substep_move_up", ""/*because empty*/)
+            )
+            .build();
+
+        // When
+        ComposableStep parent = ComposableStep.builder().withId("parent")
+            .withDefaultParameters(Maps.of("parent_param", "has_default_value" /*but can be override*/))
+            .withSteps(singletonList(subStep))
+            .build();
+
+
+        assertThat(parent.executionParameters).isEqualTo(Maps.of(
+            "leaf_move_up", "",
+            "substep_move_up", "",
+            "parent_param", "has_default_value"
+        ));
+    }
+
+    @Test
+    void execution_parameters_can_be_override_upon_step_use() {
+        // Given
+        ComposableStep leaf = ComposableStep.builder().withId("leaf")
+            .withDefaultParameters(Maps.of(
+                "dont_move_up", "has_default_value",
+                "leaf_move_up", "")
+            )
+            .build();
+
+        ComposableStep parent = ComposableStep.builder().withId("subStep")
+            .withSteps(singletonList(
+                leaf.usingExecutionParameters(Maps.of(
+                    "dont_move_up", "",
+                    "leaf_move_up", "has_value_defined_upon_usage")
+                )
+            ))
+            .build();
+
+        assertThat(parent.executionParameters).isEqualTo(Maps.of(
+            "dont_move_up", ""
+        ));
     }
 
 }

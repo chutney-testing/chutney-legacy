@@ -97,14 +97,14 @@ public class ComposableTestCaseMapperTest {
                         ComposableStep.builder()
                             .withId("#30:10")
                             .withName("First default functional ref")
-                            .withImplementation(Optional.of("{ \"type\": \"default-identifier\" }"))
+                            .withImplementation("{ \"type\": \"default-identifier\" }")
                             .withDefaultParameters(
                                 Maps.of(
                                     "key valued", "value",
                                     "empty key", ""
                                 )
                             )
-                            .overrideExecutionParametersWith(
+                            .withExecutionParameters(
                                 Maps.of(
                                     "key valued", "value",
                                     "empty key", ""

@@ -163,8 +163,8 @@ public class StepVertex {
         return vertex.getProperty(STEP_CLASS_PROPERTY_TAGS);
     }
 
-    public Optional<String> implementation() {
-        return ofNullable(vertex.getProperty(STEP_CLASS_PROPERTY_IMPLEMENTATION));
+    public String implementation() {
+        return vertex.getProperty(STEP_CLASS_PROPERTY_IMPLEMENTATION);
     }
 
     public Map<String, String> parameters() {
