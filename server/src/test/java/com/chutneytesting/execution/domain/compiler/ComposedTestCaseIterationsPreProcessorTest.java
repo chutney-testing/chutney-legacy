@@ -873,6 +873,85 @@ public class ComposedTestCaseIterationsPreProcessorTest {
     }
 
     @Test
+    public void should_surcharge_indexed_variable_in_substep() {
+        // Given
+        List<Map<String, String>> multipleValues = asList(
+            Maps.of("letter", "A"),
+            Maps.of("letter", "B")
+        );
+        stubDatasetRepository(null, multipleValues);
+        ExecutableComposedStep stepGenerating2IterationsWithOutputs = ExecutableComposedStep.builder()
+            .withName("Should generate 2 iterations for letter A and B")
+            .withImplementation(Optional.of(
+                new StepImplementation("task", null, emptyMap(), Maps.of("output", "**letter**"))))
+            .withDataset(singletonMap("letter", ""))
+            .build();
+        ExecutableComposedStep substepSurchargeContextVariable = ExecutableComposedStep.builder()
+            .withName("Should surcharge context variable 'output'")
+            .withImplementation(Optional.of(
+                new StepImplementation("task", null, emptyMap(), Maps.of("output", "final value"))))
+            .build();
+
+        ExecutableComposedStep stepSurchargeContextVariable = ExecutableComposedStep.builder()
+            .withName("Should surcharge context variable 'output'")
+            .withSteps(asList(substepSurchargeContextVariable))
+            .build();
+
+        ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(
+            metadata,
+            ExecutableComposedScenario.builder()
+                .withComposedSteps(asList(
+                    stepGenerating2IterationsWithOutputs,
+                    ExecutableComposedStep.builder()
+                        .withName("Should generate 2 iterations using output")
+                        .withImplementation(Optional.empty())
+                        .withDataset(Maps.of("var", "${#output}"))
+                        .build(),
+                    stepSurchargeContextVariable,
+                    ExecutableComposedStep.builder() // the step under test
+                        .withName("Should not generate iterations")
+                        .withImplementation(Optional.empty())
+                        .withDataset(Maps.of("var", "${#output}"))
+                        .build()
+                    )
+                )
+                .build(),
+            singletonMap("letter", "")
+        );
+
+        // When
+        sut = new ComposedTestCaseIterationsPreProcessor(mockDatasetRepository);
+        ExecutableComposedTestCase actual = sut.apply(testCase);
+
+        // Then
+        ExecutableComposedStep expected1 = ExecutableComposedStep.builder()
+            .withName("Should generate 2 iterations using output")
+            .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
+            .withSteps(Arrays.asList(
+                ExecutableComposedStep.builder()
+                    .withName("Should generate 2 iterations using output - dataset iteration 1")
+                    .withImplementation(Optional.empty())
+                    .withDataset(Maps.of("var", "${#output_1}"))
+                    .build(),
+                ExecutableComposedStep.builder()
+                    .withName("Should generate 2 iterations using output - dataset iteration 2")
+                    .withImplementation(Optional.empty())
+                    .withDataset(Maps.of("var", "${#output_2}"))
+                    .build()
+            ))
+            .build();
+
+        ExecutableComposedStep expected2 = ExecutableComposedStep.builder()
+            .withName("Should not generate iterations")
+            .withImplementation(Optional.empty())
+            .withDataset(Maps.of("var", "${#output}"))
+            .build();
+
+        assertThat(actual.composedScenario.composedSteps.get(1)).isEqualTo(expected1);
+        assertThat(actual.composedScenario.composedSteps.get(3)).isEqualTo(expected2);
+    }
+
+    @Test
     public void should_iterate_step_when_using_two_previous_indexed_outputs() {
 
         // Given
@@ -999,7 +1078,13 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             Maps.of("letter", "B")
         );
         stubDatasetRepository(null, multipleValues);
-        ExecutableComposedStep substepGenerating2IterationsWithOutputs = ExecutableComposedStep.builder()
+        ExecutableComposedStep firstSubstepGenerating2IterationsWithOutputs = ExecutableComposedStep.builder()
+            .withName("Should generate 2 iterations for letter A and B")
+            .withImplementation(Optional.of(
+                new StepImplementation("task", null, emptyMap(), Maps.of("**outputKey**", "**outputValue**"))))
+            .withDataset(Maps.of("outputKey", "**letter**", "outputValue", "**letter**"))
+            .build();
+        ExecutableComposedStep secondSubstepGenerating2IterationsWithOutputs = ExecutableComposedStep.builder()
             .withName("Should generate 2 iterations for letter A and B")
             .withImplementation(Optional.of(
                 new StepImplementation("task", null, emptyMap(), Maps.of("**outputKey**", "**outputValue**"))))
@@ -1007,7 +1092,7 @@ public class ComposedTestCaseIterationsPreProcessorTest {
             .build();
 
         ExecutableComposedStep stepGenerating2IterationsWithOutputs = ExecutableComposedStep.builder()
-            .withSteps(asList(substepGenerating2IterationsWithOutputs))
+            .withSteps(asList(firstSubstepGenerating2IterationsWithOutputs, secondSubstepGenerating2IterationsWithOutputs))
             .withDataset(Maps.of("outputVar", "output", "letter", ""))
             .build();
 
