@@ -14,7 +14,6 @@ import com.chutneytesting.tools.ImmutablePaginatedDto;
 import com.chutneytesting.tools.ImmutablePaginationRequestParametersDto;
 import com.chutneytesting.tools.ImmutableSortRequestParametersDto;
 import com.chutneytesting.tools.PaginatedDto;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.http.MediaType;
@@ -90,7 +89,6 @@ public class StepController {
                     .build(),
                 ComposableStep.builder()
                     .withName(name)
-                    .withSteps(Collections.emptyList())
                     .build()
             );
 
