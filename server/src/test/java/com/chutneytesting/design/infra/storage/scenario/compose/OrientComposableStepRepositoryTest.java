@@ -270,7 +270,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
     }
 
     @Test
-    public void should_find_saved_step_parameters_and_build_correct_dataset_when_search_by_id() {
+    public void should_find_saved_step_parameters_and_build_correct_execution_parameters_when_search_by_id() {
         // Given
         Map<String, String> actionParameters = Maps.of(
             "action parameter with default value", "default action parameter value",
@@ -289,7 +289,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
             "another action parameter with default value", "another default action parameter value");
         final ComposableStep firstActionStepInstance = ComposableStep.builder()
             .from(actionStep)
-            .overrideExecutionParametersWith(firstActionInstanceDataSet)
+            .withExecutionParameters(firstActionInstanceDataSet)
             .build();
 
         Map<String, String> secondActionInstanceDataSet = Maps.of(
@@ -298,7 +298,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
             "another action parameter with default value", "");
         final ComposableStep secondActionStepInstance = ComposableStep.builder()
             .from(actionStep)
-            .overrideExecutionParametersWith(secondActionInstanceDataSet)
+            .withExecutionParameters(secondActionInstanceDataSet)
             .build();
 
         Map<String, String> middleParentParameters = Maps.of(
@@ -329,7 +329,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
         );
         final ComposableStep firstMiddleParentStepInstance = ComposableStep.builder()
             .from(middleParentStep)
-            .overrideExecutionParametersWith(firstMiddleParentInstanceDataSet)
+            .withExecutionParameters(firstMiddleParentInstanceDataSet)
             .build();
 
         Map<String, String> secondMiddleParentInstanceDataSet = Maps.of(
@@ -341,7 +341,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
         );
         final ComposableStep secondMiddleParentStepInstance = ComposableStep.builder()
             .from(middleParentStep)
-            .overrideExecutionParametersWith(secondMiddleParentInstanceDataSet)
+            .withExecutionParameters(secondMiddleParentInstanceDataSet)
             .build();
 
         Map<String, String> thirdActionInstanceDataSet = Maps.of(
@@ -350,7 +350,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
             "another action parameter with default value", "another third action instance parameter value");
         final ComposableStep thirdActionStepInstance = ComposableStep.builder()
             .from(actionStep)
-            .overrideExecutionParametersWith(thirdActionInstanceDataSet)
+            .withExecutionParameters(thirdActionInstanceDataSet)
             .build();
 
         Map<String, String> parentParameters = Maps.of(
@@ -417,7 +417,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
             new_value_param, "new parent value");
         ComposableStep stepInstance = ComposableStep.builder()
             .from(step)
-            .overrideExecutionParametersWith(stepInsatnceDataSet)
+            .withExecutionParameters(stepInsatnceDataSet)
             .build();
         ComposableStep parentWithParametersOverload = saveAndReload(
             buildComposableStep("parent with parameters values overload", stepInstance)
@@ -454,12 +454,12 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
 
         final ComposableStep stepInstance = ComposableStep.builder()
             .from(step)
-            .overrideExecutionParametersWith(Maps.of("param", ""))
+            .withExecutionParameters(Maps.of("param", ""))
             .build();
 
         final ComposableStep stepInstanceB = ComposableStep.builder()
             .from(step)
-            .overrideExecutionParametersWith(Maps.of("param", "hard value"))
+            .withExecutionParameters(Maps.of("param", "hard value"))
             .build();
 
         final ComposableStep parentFStep = saveAndReload(

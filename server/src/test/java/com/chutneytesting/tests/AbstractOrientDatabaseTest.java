@@ -3,6 +3,7 @@ package com.chutneytesting.tests;
 import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.vertexToComposableStep;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_NAME;
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.WebConfiguration;
@@ -12,11 +13,11 @@ import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.design.infra.storage.scenario.compose.ExecutableComposedStepMapper;
 import com.chutneytesting.design.infra.storage.scenario.compose.ExecutableComposedTestCaseMapper;
 import com.chutneytesting.design.infra.storage.scenario.compose.RawImplementationMapper;
-import com.chutneytesting.design.infra.storage.scenario.compose.wrapper.StepVertex;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientConfigurationProperties;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientDBManager;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.changelog.OrientChangelogExecutor;
+import com.chutneytesting.design.infra.storage.scenario.compose.wrapper.StepVertex;
 import com.chutneytesting.task.api.EmbeddedTaskEngine;
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
@@ -24,7 +25,7 @@ import com.orientechnologies.orient.core.db.ODatabaseType;
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.OElement;
 import com.orientechnologies.orient.core.sql.executor.OResultSet;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -112,46 +113,32 @@ public abstract class AbstractOrientDatabaseTest {
                                  List<String> tags,
                                  String implementation,
                                  Strategy strategy,
-                                 ComposableStep... subSteps) {
-        ComposableStep.ComposableStepBuilder builder = ComposableStep.builder();
-        if (id != null) {
-            builder.withId(id);
-        }
-        if (name != null) {
-            builder.withName(name);
-        }
-        if (parameters != null) {
-            builder.withDefaultParameters(parameters);
-        }
-        if (subSteps != null) {
-            builder.withSteps(Arrays.asList(subSteps));
-        }
-        if (implementation != null) {
-            builder.withImplementation(Optional.of(implementation));
-        }
-        if (strategy != null) {
-            builder.withStrategy(strategy);
-        }
-        if (tags != null) {
-            builder.withTags(tags);
-        }
-        return builder.build();
+                                 List<ComposableStep> subSteps) {
+        return ComposableStep.builder()
+            .withId(id)
+            .withName(name)
+            .withDefaultParameters(parameters)
+            .withSteps(subSteps)
+            .withImplementation(implementation)
+            .withStrategy(strategy)
+            .withTags(tags)
+            .build();
     }
 
     protected ComposableStep buildComposableStep(String name, Strategy strategy, ComposableStep... subSteps) {
-        return build(null, name, null, null, null, strategy, subSteps);
+        return build(null, name, null, null, null, strategy, asList(subSteps));
     }
 
     protected ComposableStep buildComposableStep(String name, ComposableStep... subSteps) {
-        return build(null, name, null, null, null, null, subSteps);
+        return build(null, name, null, null, null, null, asList(subSteps));
     }
 
     protected ComposableStep buildComposableStep(String name, Map<String, String> parameters) {
-        return  build(null, name, parameters, null, null, null);
+        return  build(null, name, parameters, null, null, null, Collections.emptyList());
     }
 
     protected ComposableStep buildComposableStep(String name, Map<String, String> parameters, ComposableStep... subSteps) {
-        return  build(null, name, parameters, null, null, null, subSteps);
+        return  build(null, name, parameters, null, null, null, asList(subSteps));
     }
 
     protected ComposableStep buildComposableStep(String name, String implementation) {
@@ -174,7 +161,7 @@ public abstract class AbstractOrientDatabaseTest {
     protected ComposableStep findByName(final String name) {
         try (ODatabaseSession dbSession = dbPool(DATABASE_NAME).acquire()) {
             return loadByProperty(STEP_CLASS, STEP_CLASS_PROPERTY_NAME, name, dbSession)
-                .map(oElement -> vertexToComposableStep(StepVertex.builder().from(oElement.asVertex().get()).build()).build()).orElse(null);
+                .map(oElement -> vertexToComposableStep(StepVertex.builder().from(oElement.asVertex().get()).build())).orElse(null);
         }
     }
 
