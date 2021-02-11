@@ -1,7 +1,7 @@
 package com.chutneytesting.design.infra.storage.scenario.compose;
 
 import static com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository.COMPOSABLE_TESTCASE_REPOSITORY_SOURCE;
-import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.altBuildComposableStepsChildren;
+import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.anotherBuild;
 import static java.time.Instant.now;
 
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
@@ -48,7 +48,7 @@ class OrientComposableTestCaseMapper {
 
         ComposableScenario scenario = ComposableScenario.builder()
             .withComposableSteps(
-                altBuildComposableStepsChildren(testCaseVertex.asRootStep())
+                anotherBuild(testCaseVertex.asRootStep())
             )
             .withParameters(
                 testCaseVertex.parameters()

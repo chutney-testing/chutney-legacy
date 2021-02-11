@@ -5,6 +5,7 @@ import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
+import com.chutneytesting.design.infra.storage.scenario.compose.wrapper.StepRelation;
 import com.chutneytesting.design.infra.storage.scenario.compose.wrapper.StepVertex;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.record.OEdge;
@@ -51,24 +52,43 @@ public class OrientComposableStepMapper {
             .withName(vertex.name())
             .withTags(vertex.tags())
             .withImplementation(vertex.implementation())
-            .withDefaultParameters(vertex.parameters());
+            .withDefaultParameters(vertex.defaultParameters())
+            .withExecutionParameters(vertex.executionParameters());
 
         OElement strategy = vertex.strategy();
         Optional.ofNullable(strategy).ifPresent( s ->
             builder.withStrategy(new Strategy(strategy.getProperty("name"), strategy.getProperty("parameters")))
         );
 
+        /*List<ComposableStep> composableSteps = altBuildComposableStepsChildren(vertex);
+        List<ComposableStep> composableSteps_2 = newBuild(vertex);*/
+        List<ComposableStep> composableSteps_3 = anotherBuild(vertex);
+
+        /*if (!composableSteps.equals(composableSteps_2)) {
+            throw new IllegalStateException();
+        }
+
+        if (!composableSteps_2.equals(composableSteps_3)) {
+            throw new IllegalStateException();
+        }*/
+
         builder.withSteps(
-            altBuildComposableStepsChildren(vertex)
+            composableSteps_3
         );
 
         return builder;
     }
 
+    static List<ComposableStep> anotherBuild(StepVertex vertex) {
+        return vertex.listChildrenSteps().stream()
+            .map(OrientComposableStepMapper::vertexToComposableStep)
+            .collect(Collectors.toList());
+    }
+/*
     // GET
     static List<ComposableStep> altBuildComposableStepsChildren(StepVertex vertex) {
-        return StreamSupport
-            .stream(vertex.getChildren().spliterator(), false)
+        List<ComposableStep> collect = StreamSupport
+            .stream(vertex.getChildrenEdges().spliterator(), false)
             .filter(childEdge -> {
                 Optional<OVertex> to = ofNullable(childEdge.getTo());
                 if (!to.isPresent()) {
@@ -77,11 +97,14 @@ public class OrientComposableStepMapper {
                 return to.isPresent();
             })
             .map(childEdge -> {
-                ComposableStep.ComposableStepBuilder childBuilder = altVertexToComposableStep(StepVertex.builder().from(childEdge.getTo()).build());
+                StepVertex build = StepVertex.builder().from(childEdge.getTo()).build();
+                ComposableStep.ComposableStepBuilder childBuilder = altVertexToComposableStep(build);
                 overwriteDataSetWithEdgeParameters(childEdge, childBuilder);
                 return childBuilder.build();
             })
             .collect(Collectors.toList());
+
+        return collect;
     }
 
     // GET
@@ -90,4 +113,63 @@ public class OrientComposableStepMapper {
             childEdge.getProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS)
         ).ifPresent(builder::withExecutionParameters);
     }
+
+    static List<ComposableStep> newBuild(StepVertex vertex) {
+        List<StepRelation> stepRelations = vertex.listValidChildrenEdges();
+
+
+        List<ComposableStep> collect = stepRelations.stream()
+            .map(relation -> {
+                StepVertex build = StepVertex.builder()
+                    .from(relation.getChildVertex())
+                    .build();
+
+                StepVertex childStep = relation.getChildStep();
+
+                ComposableStep.ComposableStepBuilder childBuilder = altVertexToComposableStep(build)
+                    .withExecutionParameters(relation.executionParameters());
+                return childBuilder.build();
+            })
+            .collect(Collectors.toList());
+
+        List<ComposableStep> collect_2 = stepRelations.stream()
+            .map(relation -> StepVertex.builder()
+                .from(relation.getChildVertex())
+                .withExecutionParameters(relation.executionParameters())
+                .build()
+            )
+            .map(OrientComposableStepMapper::vertexToComposableStep)
+            .collect(Collectors.toList());
+
+        if (!collect.equals(collect_2)) {
+            //throw new IllegalStateException();
+        }
+
+        return collect;
+    }*/
+
+    // GET
+/*    static List<ComposableStep> altBuildComposableStepsChildren_2(StepVertex vertex) {
+        return vertex.getValidChildrenEdges().stream()
+            .map(childEdge -> {
+                Map<String, String> executionParameters = childEdge.getProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS);
+                StepVertex.builder().from(childEdge.getTo()).build();
+                ComposableStep.ComposableStepBuilder childBuilder = altVertexToComposableStep();
+                //overwriteDataSetWithEdgeParameters(childEdge, childBuilder);
+                return childBuilder.build();
+            })
+            .collect(Collectors.toList());
+    }
+
+    // GET
+    static List<ComposableStep> altBuildComposableStepsChildren_3(StepVertex vertex) {
+
+        List<ComposableStep> collect = vertex.getChildrenVertice()
+            .stream()
+            .map(childVertex -> altVertexToComposableStep(childVertex))
+            //.peek(b -> )
+            .collect(Collectors.toList());
+
+        return collect;
+    }*/
 }
