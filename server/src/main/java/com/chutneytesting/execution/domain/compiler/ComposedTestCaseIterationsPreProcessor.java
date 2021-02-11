@@ -19,6 +19,7 @@ import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedT
 import com.chutneytesting.execution.domain.scenario.composed.StepImplementation;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -105,6 +106,7 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
         Map<String, Integer> usedIndexedOutputInDataset = findUsageOfPreviousOutputInDataset(composedStep, iterationOutputs);
 
         if (csNovaluedEntries.isEmpty() && csValuedEntriesWithRef.isEmpty() && usedIndexedOutput.isEmpty() && usedIndexedOutputInDataset.isEmpty()) {
+            removeObsoleteIndexedOutputs(iterationOutputs, composedStep);
             return composedStep;
         }
 
@@ -213,7 +215,7 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
         }
 
         rememberIterationsCountForEachOutput(iterationOutputs, index);
-        updateIndexedOutputsUsingDatasetValues(iterationOutputs, composedStep.dataset);
+        updateIndexedOutputsUsingDatasetValues(iterationOutputs, composedStep);
         return iterations;
     }
 
@@ -324,14 +326,39 @@ public class ComposedTestCaseIterationsPreProcessor implements TestCasePreProces
         iterationOutputs.replaceAll((k, v) -> v = index.get());
     }
 
-    private void updateIndexedOutputsUsingDatasetValues(Map<String, Integer> iterationOutputs, Map<String, String> dataset) {
-        dataset.entrySet().stream()
+    private void updateIndexedOutputsUsingDatasetValues(Map<String, Integer> iterationOutputs, ExecutableComposedStep composedStep) {
+        List<ExecutableComposedStep> steps = new ArrayList<>(composedStep.steps);
+        Collections.reverse(steps);
+        steps.forEach(executableComposedStep ->
+            updateIndexedOutputsUsingDatasetValues(iterationOutputs,executableComposedStep)
+        );
+
+        composedStep.dataset.entrySet().stream()
             .filter(entry -> iterationOutputs.containsKey("**" + entry.getKey() + "**"))
             .forEach(entry -> {
                 Integer iterationsCount = iterationOutputs.get("**" + entry.getKey() + "**");
                 iterationOutputs.remove("**" + entry.getKey() + "**");
-                iterationOutputs.put(dataset.get(entry.getKey()), iterationsCount);
+                iterationOutputs.put(composedStep.dataset.get(entry.getKey()), iterationsCount);
             });
+    }
+
+    private void removeObsoleteIndexedOutputs(Map<String, Integer> iterationOutputs, ExecutableComposedStep composedStep) {
+        List<String> list = new ArrayList<>();
+        composedStep.stepImplementation.ifPresent(si -> list.addAll(si.outputs.keySet()));
+        if (list.isEmpty()) {
+            composedStep.steps
+                .forEach(executableComposedStep -> removeObsoleteIndexedOutputs(iterationOutputs, executableComposedStep));
+        } else {
+            composedStep.dataset.entrySet().stream()
+                .filter(entry -> list.contains("**" + entry.getKey() + "**"))
+                .forEach(entry -> {
+                    list.remove("**" + entry.getKey() + "**");
+                    list.add(entry.getValue());
+                });
+            list.stream()
+                .filter(item -> iterationOutputs.containsKey(item))
+                .forEach(item -> iterationOutputs.remove(item));
+        }
     }
 
     private Map<String, Object> indexInputs(Map<String, Object> inputs, AtomicInteger index, Map<String, Integer> iterationOutputs) {
