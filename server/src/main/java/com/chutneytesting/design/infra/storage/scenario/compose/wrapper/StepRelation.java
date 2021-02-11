@@ -5,7 +5,8 @@ import static java.util.Optional.ofNullable;
 
 import com.orientechnologies.orient.core.record.OEdge;
 import com.orientechnologies.orient.core.record.OVertex;
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,25 +20,30 @@ public class StepRelation {
         this.relation = relation;
     }
 
-    OVertex getParentVertex() {
+    public OVertex getParentVertex() {
         return relation.getFrom();
     }
 
-    OVertex getChildVertex() {
-        return relation.getTo();
-    }
-
-    StepVertex getParentStep() {
+    public StepVertex getParentStep() {
         return StepVertex.builder()
             .from(getParentVertex())
             .build();
     }
 
-    StepVertex getChildStep() {
+    public OVertex getChildVertex() {
+        return relation.getTo();
+    }
+
+    public StepVertex getChildStep() {
+        Map<String, String> executionParameters = relation.getProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS);
         return StepVertex.builder()
             .from(getChildVertex())
-            .withExecutionParameters(relation.getProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS))
+            .withExecutionParameters(executionParameters)
             .build();
+    }
+
+    public Map<String, String> executionParameters() {
+        return relation.getProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS);
     }
 
     public boolean isValid() {
@@ -46,5 +52,20 @@ public class StepRelation {
             LOGGER.warn("Ignoring edge {} with no child vertex", relation);
         }
         return isValid;
+    }
+
+    public void save() {
+        relation.save();
+    }
+
+    public void updateExecutionParameters(Map<String, String> defaultParameters) {
+        Map<String, String> executionParameters = this.executionParameters();
+        if (executionParameters != null) {
+            Map<String, String> newExecutionParameters = new HashMap<>();
+            defaultParameters.forEach((paramKey, paramValue) ->
+                newExecutionParameters.put(paramKey, executionParameters.getOrDefault(paramKey, paramValue))
+            );
+            relation.setProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS, newExecutionParameters);
+        }
     }
 }

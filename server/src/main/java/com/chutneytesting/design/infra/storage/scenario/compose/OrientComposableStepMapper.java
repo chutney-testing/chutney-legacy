@@ -1,26 +1,16 @@
 package com.chutneytesting.design.infra.storage.scenario.compose;
 
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.GE_STEP_CLASS_PROPERTY_PARAMETERS;
-import static java.util.Optional.ofNullable;
-
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.design.infra.storage.scenario.compose.wrapper.StepVertex;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
-import com.orientechnologies.orient.core.record.OEdge;
 import com.orientechnologies.orient.core.record.OElement;
 import com.orientechnologies.orient.core.record.OVertex;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class OrientComposableStepMapper {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(OrientComposableStepMapper.class);
 
     // SAVE
     static StepVertex composableStepToVertex(final ComposableStep composableStep, OVertex oVertex, ODatabaseSession dbSession) {
@@ -39,11 +29,6 @@ public class OrientComposableStepMapper {
 
     // GET
     public static ComposableStep vertexToComposableStep(final StepVertex vertex) {
-        return altVertexToComposableStep(vertex).build();
-    }
-
-    // GET
-    private static ComposableStep.ComposableStepBuilder altVertexToComposableStep(final StepVertex vertex) {
         vertex.reloadIfDirty();
 
         ComposableStep.ComposableStepBuilder builder = ComposableStep.builder()
@@ -51,7 +36,8 @@ public class OrientComposableStepMapper {
             .withName(vertex.name())
             .withTags(vertex.tags())
             .withImplementation(vertex.implementation())
-            .withDefaultParameters(vertex.parameters());
+            .withDefaultParameters(vertex.defaultParameters())
+            .withExecutionParameters(vertex.executionParameters());
 
         OElement strategy = vertex.strategy();
         Optional.ofNullable(strategy).ifPresent( s ->
@@ -59,35 +45,16 @@ public class OrientComposableStepMapper {
         );
 
         builder.withSteps(
-            altBuildComposableStepsChildren(vertex)
+            vertexToComposableStep(vertex.listChildrenSteps())
         );
 
-        return builder;
+        return builder.build();
     }
 
-    // GET
-    static List<ComposableStep> altBuildComposableStepsChildren(StepVertex vertex) {
-        return StreamSupport
-            .stream(vertex.getChildren().spliterator(), false)
-            .filter(childEdge -> {
-                Optional<OVertex> to = ofNullable(childEdge.getTo());
-                if (!to.isPresent()) {
-                    LOGGER.warn("Ignoring edge {} with no to vertex", childEdge);
-                }
-                return to.isPresent();
-            })
-            .map(childEdge -> {
-                ComposableStep.ComposableStepBuilder childBuilder = altVertexToComposableStep(StepVertex.builder().from(childEdge.getTo()).build());
-                overwriteDataSetWithEdgeParameters(childEdge, childBuilder);
-                return childBuilder.build();
-            })
+    public static List<ComposableStep> vertexToComposableStep(List<StepVertex> subSteps) {
+        return subSteps.stream()
+            .map(OrientComposableStepMapper::vertexToComposableStep)
             .collect(Collectors.toList());
     }
 
-    // GET
-    private static void overwriteDataSetWithEdgeParameters(OEdge childEdge, ComposableStep.ComposableStepBuilder builder) {
-        Optional.<Map<String, String>>ofNullable(
-            childEdge.getProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS)
-        ).ifPresent(builder::withExecutionParameters);
-    }
 }
