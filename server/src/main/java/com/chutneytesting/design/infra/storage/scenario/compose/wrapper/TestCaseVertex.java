@@ -29,24 +29,24 @@ import java.util.Map;
  *
  * For this reason,
  * the vertex wrapped inside is sometime treated as a {@link com.chutneytesting.design.infra.storage.scenario.compose.wrapper.StepVertex} "root step",
- * which is a way to represent the scenario and ease the
+ * which is a way to represent the scenario
  *
  * */
 public class TestCaseVertex {
 
     private final OVertex testCaseVertex;
-    private final StepVertex rootStep; // @see class documentation above
+    private final StepVertex scenario; // @see class documentation above
 
     private TestCaseVertex(OVertex testCaseVertex, List<ComposableStep> subSteps) {
         this.testCaseVertex = testCaseVertex;
-        this.rootStep = StepVertex.builder()
+        this.scenario = StepVertex.builder()
             .from(testCaseVertex)
             .withSteps(subSteps)
             .build();
     }
 
     public OVertex save(ODatabaseSession dbSession) {
-        rootStep.save(dbSession);
+        scenario.save(dbSession);
         return testCaseVertex.save();
     }
 
@@ -86,8 +86,8 @@ public class TestCaseVertex {
         return testCaseVertex.getVersion();
     }
 
-    public List<StepVertex> scenarioSteps() {
-        return this.rootStep.listChildrenSteps();
+    public List<StepVertex> scenario() {
+        return this.scenario.listChildrenSteps();
     }
 
     public Map<String, String> parameters() {

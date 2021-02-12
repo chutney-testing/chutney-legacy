@@ -47,7 +47,7 @@ class OrientComposableTestCaseMapper {
             .build();
 
         ComposableScenario scenario = ComposableScenario.builder()
-            .withComposableSteps(vertexToComposableStep(testCaseVertex.scenarioSteps()))
+            .withComposableSteps(vertexToComposableStep(testCaseVertex.scenario()))
             .withParameters(testCaseVertex.parameters())
             .build();
 
