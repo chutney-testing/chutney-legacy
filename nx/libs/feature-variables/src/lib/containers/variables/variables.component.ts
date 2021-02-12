@@ -34,9 +34,9 @@ export class VariablesComponent implements OnInit, OnDestroy {
     ];
 
   private globalVariableGroupsStoreDataName: string = 'globalVariableGroupsNames';
-  globalVariableGroupsNames$: Observable<String[]>;
+  globalVariableGroupsNames: string[] = [];
   activeGroupName$: BehaviorSubject<string> = new BehaviorSubject(null);
-  activeGroupNameIndex = 0;
+  activeGroupNameIndex: number = -1;
 
   @ViewChild(TdCodeEditorComponent, { static: false })
   public monaco: TdCodeEditorComponent;
@@ -58,9 +58,16 @@ export class VariablesComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.globalVariableGroupsNames$ = this.globalVariableGroupsNamesGQL
+    this.globalVariableGroupsNamesGQL
       .watch({}, { fetchPolicy: 'network-only', nextFetchPolicy: 'cache-only' })
-      .valueChanges.pipe(pluck('data', this.globalVariableGroupsStoreDataName));
+      .valueChanges.pipe(pluck('data', this.globalVariableGroupsStoreDataName))
+      .subscribe(
+        (r: string[]) => {
+          if (r) {
+            this.globalVariableGroupsNames = r;
+          }
+        }
+      );
 
     this.activeGroupName$.subscribe(
       v => this.fetchVariableGroupContent(v)
@@ -68,9 +75,9 @@ export class VariablesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-      this.activeGroupName$.complete();
-      this.resetAddMode();
-    }
+    this.activeGroupName$.complete();
+    this.resetAddMode();
+  }
 
   onTabChange(matTabChangeEvent) {
     let groupName: string = null;
@@ -174,9 +181,9 @@ export class VariablesComponent implements OnInit, OnDestroy {
       if (this.activeGroupNameIndex == 0) {
         this.activeGroupNameIndex--;
       }
-      this.setActiveGroupNameIndexAfterAndDo(1000, 0, () => this.newGroupNameInput().focus());
+      this.setActiveGroupNameIndexAfterAndDo(1000, 0, () => this.focus(this.newGroupNameInput()));
     } else {
-      this.newGroupNameInput().focus();
+      this.focus(this.newGroupNameInput());
     }
   }
 
@@ -187,12 +194,12 @@ export class VariablesComponent implements OnInit, OnDestroy {
       const groupNames = this.groupNamesStored();
       if (groupNameToValidate.length == 0) {
         this.snackBar.open('Group name cannot be empty');
-        groupNameInput.focus();
+        this.focus(groupNameInput);
         return false;
       }
       if (groupNames.indexOf(groupNameToValidate.trim()) > -1) {
         this.snackBar.open('Group name already exists');
-        groupNameInput.focus();
+        this.focus(groupNameInput);
         return false;
       }
     }
@@ -204,9 +211,14 @@ export class VariablesComponent implements OnInit, OnDestroy {
       this.renameMode = true;
       this.groupNameRenameIndex = groupNameToRenameIndex;
       timer(1000).subscribe(x => {
-          this.renameGroupNameInput().focus();
+          this.focus(this.renameGroupNameInput());
       });
     }
+  }
+
+  cancelAction() {
+    this.resetAddMode();
+    this.resetRenameMode();
   }
 
   private groupNameToSave(): string {
@@ -229,8 +241,7 @@ export class VariablesComponent implements OnInit, OnDestroy {
           }
         );
 
-      this.resetAddMode();
-      this.resetRenameMode();
+      this.cancelAction();
     }
   }
 
@@ -240,13 +251,15 @@ export class VariablesComponent implements OnInit, OnDestroy {
       const groupNames = this.groupNamesStored();
       groupNames.splice(0, 1);
       this.storeGroupNames(null, groupNames);
-      this.setActiveGroupNameIndexAfterAndDo(1000, this.activeGroupNameIndex - 1);
+      this.setActiveGroupNameIndexAfterAndDo(1000, 0);
     }
   }
 
   private resetRenameMode() {
-    this.renameMode = false;
-    this.groupNameRenameIndex = -1;
+    if (this.renameMode) {
+      this.renameMode = false;
+      this.groupNameRenameIndex = -1;
+    }
   }
 
   private groupNamesStored(_store = null): Array<string> {
@@ -277,12 +290,19 @@ export class VariablesComponent implements OnInit, OnDestroy {
 
   private setActiveGroupNameIndexAfterAndDo(afterMs: number, newActiveIndex: number, action = null) {
     timer(afterMs).subscribe(x => {
-        this.activeGroupNameIndex = newActiveIndex;
-        action && action.apply();
+      this.activeGroupNameIndex = newActiveIndex;
+      action && action.apply();
+      this.activeGroupName$.next(this.globalVariableGroupsNames[newActiveIndex]);
     });
   }
 
   private renameGroupNameInput(): HTMLInputElement {
     return <HTMLInputElement>document.getElementById('renameGroupNameInput');
+  }
+
+  private focus(element: HTMLInputElement) {
+    if (element) {
+      element.focus();
+    }
   }
 }
