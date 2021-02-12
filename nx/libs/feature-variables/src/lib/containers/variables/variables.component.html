@@ -18,7 +18,7 @@
         mat-fab
         class="mat-accent"
         aria-label="Add group"
-        disabled="{{ addMode }}"
+        disabled="{{ addMode || renameMode }}"
         (click)="addGlobalVariableGroup()"
         [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
       >
@@ -29,7 +29,7 @@
           mat-fab
           class="mat-accent"
           aria-label="Delete group"
-          disabled="{{ addMode }}"
+          disabled="{{ addMode || renameMode }}"
           (click)="deleteGlobalVariableGroup()"
           [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
         >
@@ -43,16 +43,24 @@
                  (selectedIndexChange)="activeGroupNameIndex = $event"
                  (selectedTabChange)="onTabChange($event)"
   >
-    <mat-tab *ngFor="let groupName of globalVariableGroupsNames$ | async"
+    <mat-tab *ngFor="let groupName of globalVariableGroupsNames$ | async; let i=index;"
              label="{{ groupName }}"
-             style="width:80px !important"
     >
       <ng-template *ngIf="groupName.length == 0" mat-tab-label>
-        <mat-form-field appearance="standard"
-        >
+        <mat-form-field appearance="standard">
           <input matInput
                  id="newGroupNameInput"
                  placeholder="new group"
+                 required
+          />
+        </mat-form-field>
+      </ng-template>
+      <ng-template *ngIf="groupName.length != 0" mat-tab-label>
+        <div *ngIf="i != groupNameRenameIndex" (click)="onGroupNameClick(i)">{{ groupName }}</div>
+        <mat-form-field *ngIf="i == groupNameRenameIndex" appearance="standard">
+          <input matInput
+                 id="renameGroupNameInput"
+                 value="{{groupName}}"
                  required
           />
         </mat-form-field>

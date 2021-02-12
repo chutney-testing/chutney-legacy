@@ -45,6 +45,9 @@ export class VariablesComponent implements OnInit, OnDestroy {
 
   addMode: boolean = false;
 
+  renameMode: boolean = false;
+  groupNameRenameIndex: number = -1;
+
   constructor(
     private snackBar: MatSnackBar,
     private apollo: Apollo,
@@ -85,7 +88,7 @@ export class VariablesComponent implements OnInit, OnDestroy {
     monaco.editor.setTheme(theme);
   }
 
-  deleteGlobalVariableGroup() {
+  deleteGlobalVariableGroup(afterRename: boolean = false) {
     if (!this.addMode) {
       const groupNameToDelete = this.activeGroupName$.value;
       const globalVariableGroupsNamesDocument = this.globalVariableGroupsNamesGQL.document;
@@ -94,20 +97,24 @@ export class VariablesComponent implements OnInit, OnDestroy {
           { groupName: groupNameToDelete },
           {
             update: (store, result) => {
-             let groupNamesStored: Array<string> = this.groupNamesStored(store);
-             groupNamesStored.splice(this.activeGroupNameIndex, 1);
-             this.storeGroupNames(store, groupNamesStored);
+              if (!afterRename) {
+                let groupNamesStored: Array<string> = this.groupNamesStored(store);
+                groupNamesStored.splice(this.activeGroupNameIndex, 1);
+                this.storeGroupNames(store, groupNamesStored);
+              }
             }
           }
         )
         .subscribe(
           () => {
-            this.snackBar.open(groupNameToDelete + ' variables group has been deleted');
-            const groupNamesStored: Array<string> = this.groupNamesStored();
-            if (groupNamesStored.length > 0) {
-              this.activeGroupName$.next(groupNamesStored[this.activeGroupNameIndex]);
-            } else {
-              this.monaco.value = '';
+            if (!afterRename) {
+              this.snackBar.open(groupNameToDelete + ' variables group has been deleted');
+              const groupNamesStored: Array<string> = this.groupNamesStored();
+              if (groupNamesStored.length > 0) {
+                this.activeGroupName$.next(groupNamesStored[this.activeGroupNameIndex]);
+              } else {
+                this.monaco.value = '';
+              }
             }
           },
           (err) => {
@@ -118,29 +125,31 @@ export class VariablesComponent implements OnInit, OnDestroy {
   }
 
   saveGlobalVariableGroup() {
-    if (this.addMode && !this.validateNewGroupNameInput()) {
+    if ((this.addMode || this.renameMode) && !this.validateGroupNameInput()) {
       return;
     }
 
-    const groupNameToSave = this.addMode ? this.newGroupNameInput().value : this.activeGroupName$.value;
-    const variableGroup = Object.assign(
-      {},
-      { groupName: groupNameToSave },
-      { input: { message: this.monaco.value } }
-    );
-
+    let groupNameToSave = this.groupNameToSave();
     this.saveGlobalVariableGroupGQL
       .mutate(
-        variableGroup,
+        {
+          groupName: groupNameToSave,
+          input: { message: this.monaco.value }
+        },
         {
           update: (store, result) => {
-            if (this.addMode) {
+            if (this.renameMode) {
+              this.deleteGlobalVariableGroup(true);
+            }
+            if (this.addMode || this.renameMode) {
               let groupNamesStored: Array<string> = this.groupNamesStored(store);
-              groupNamesStored[0] = groupNameToSave;
+              groupNamesStored[this.addMode ? 0 : this.activeGroupNameIndex] = groupNameToSave;
               groupNamesStored.sort();
               const newGroupnameIndex = groupNamesStored.indexOf(groupNameToSave);
               this.storeGroupNames(store, groupNamesStored);
               this.addMode = false;
+              this.renameMode = false;
+              this.groupNameRenameIndex = -1;
               this.setActiveGroupNameIndexAfterAndDo(1000, newGroupnameIndex);
             }
           }
@@ -171,14 +180,42 @@ export class VariablesComponent implements OnInit, OnDestroy {
     }
   }
 
-  validateNewGroupNameInput(): boolean {
-    const newGroupNameInput = this.newGroupNameInput();
-    if (newGroupNameInput.value.length == 0) {
-      this.snackBar.open('New group name cannot be empty');
-      this.newGroupNameInput().focus();
-      return false;
+  validateGroupNameInput(): boolean {
+    const groupNameInput = this.newGroupNameInput() || this.renameGroupNameInput();
+    if (groupNameInput) {
+      const groupNameToValidate = groupNameInput.value;
+      const groupNames = this.groupNamesStored();
+      if (groupNameToValidate.length == 0) {
+        this.snackBar.open('Group name cannot be empty');
+        groupNameInput.focus();
+        return false;
+      }
+      if (groupNames.indexOf(groupNameToValidate.trim()) > -1) {
+        this.snackBar.open('Group name already exists');
+        groupNameInput.focus();
+        return false;
+      }
     }
     return true;
+  }
+
+  onGroupNameClick(groupNameToRenameIndex: number) {
+    if (this.activeGroupNameIndex == groupNameToRenameIndex) {
+      this.renameMode = true;
+      this.groupNameRenameIndex = groupNameToRenameIndex;
+      timer(1000).subscribe(x => {
+          this.renameGroupNameInput().focus();
+      });
+    }
+  }
+
+  private groupNameToSave(): string {
+    if (this.addMode) {
+      return this.newGroupNameInput().value;
+    } else if (this.renameMode) {
+      return this.renameGroupNameInput().value;
+    }
+    return this.activeGroupName$.value;
   }
 
   private fetchVariableGroupContent(groupName: string) {
@@ -193,6 +230,7 @@ export class VariablesComponent implements OnInit, OnDestroy {
         );
 
       this.resetAddMode();
+      this.resetRenameMode();
     }
   }
 
@@ -204,6 +242,11 @@ export class VariablesComponent implements OnInit, OnDestroy {
       this.storeGroupNames(null, groupNames);
       this.setActiveGroupNameIndexAfterAndDo(1000, this.activeGroupNameIndex - 1);
     }
+  }
+
+  private resetRenameMode() {
+    this.renameMode = false;
+    this.groupNameRenameIndex = -1;
   }
 
   private groupNamesStored(_store = null): Array<string> {
@@ -237,5 +280,9 @@ export class VariablesComponent implements OnInit, OnDestroy {
         this.activeGroupNameIndex = newActiveIndex;
         action && action.apply();
     });
+  }
+
+  private renameGroupNameInput(): HTMLInputElement {
+    return <HTMLInputElement>document.getElementById('renameGroupNameInput');
   }
 }
