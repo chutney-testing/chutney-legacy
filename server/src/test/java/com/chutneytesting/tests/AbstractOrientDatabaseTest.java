@@ -153,8 +153,8 @@ public abstract class AbstractOrientDatabaseTest {
         return build(null, name, null, tags, null, null, null);
     }
 
-    protected ComposableStep saveAndReload(ComposableStepRepository funcComposableStepRepository, ComposableStep composableStep) {
-        funcComposableStepRepository.save(composableStep);
+    protected ComposableStep saveAndReload(ComposableStepRepository composableStepRepository, ComposableStep composableStep) {
+        composableStepRepository.save(composableStep);
         return findByName(composableStep.name);
     }
 

@@ -1,5 +1,6 @@
 package com.chutneytesting.design.infra.storage.scenario.compose;
 
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -167,7 +168,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
         String updateFStepId = sut.save(ComposableStep.builder()
             .withName(newName)
             .withId(fStepId)
-            .withSteps(Collections.singletonList(newSub_with_implementation))
+            .withSteps(singletonList(newSub_with_implementation))
             .build()
         );
         ComposableStep updatedFStep = sut.findById(updateFStepId);
@@ -590,5 +591,137 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
                 .withSteps(Collections.emptyList())
                 .build()
         );
+    }
+
+    @Test
+    public void default_case() {
+
+        // Given
+        Map<String, String> leafDefaultParameters = Maps.of(
+            "leaf default param", "leaf default value",
+            "leaf empty param", "",
+            "leaf second param", "leaf second value"
+        );
+
+        final ComposableStep leaf = saveAndReload(
+            ComposableStep.builder()
+                .withName("leaf")
+                .withDefaultParameters(leafDefaultParameters)
+                .build()
+        );
+
+        Map<String, String> subStepDefaultParameters = Maps.of(
+            "substep default param", "substep default value",
+            "substep empty param", "",
+            "substep second param", "substep second value"
+        );
+        final ComposableStep subStep = saveAndReload(
+            ComposableStep.builder()
+                .withName("subStep")
+                .withDefaultParameters(subStepDefaultParameters)
+                .withSteps(singletonList(leaf))
+                .build()
+        );
+
+        Map<String, String> parentDefaultParameters = Maps.of(
+            "parent default param", "parent default value"
+        );
+        final ComposableStep parentStep = saveAndReload(
+            ComposableStep.builder()
+                .withName("parent")
+                .withDefaultParameters(parentDefaultParameters)
+                .withSteps(singletonList(subStep))
+                .build()
+        );
+
+        Map<String, String> parentExpectedDataSet = Maps.of(
+            "leaf empty param", "",
+            "substep empty param", "",
+            "parent default param", "parent default value"
+        );
+
+        // When
+        ComposableStep actualLeaf = sut.findById(leaf.id);
+        ComposableStep actualSubStep = sut.findById(subStep.id);
+        ComposableStep actualParent = sut.findById(parentStep.id);
+
+        // Then
+        assertThat(actualLeaf.defaultParameters).containsExactlyEntriesOf(leafDefaultParameters);
+        assertThat(actualLeaf.executionParameters).containsExactlyEntriesOf(leafDefaultParameters);
+
+        assertThat(actualSubStep.steps.get(0).defaultParameters).containsExactlyEntriesOf(leafDefaultParameters);
+        assertThat(actualSubStep.steps.get(0).executionParameters).containsExactlyEntriesOf(leafDefaultParameters);
+        assertThat(actualSubStep.defaultParameters).containsExactlyEntriesOf(subStepDefaultParameters);
+        assertThat(actualSubStep.executionParameters).containsExactlyEntriesOf(Maps.of(
+            "leaf empty param", "",
+            "substep default param", "substep default value",
+            "substep empty param", "",
+            "substep second param", "substep second value"
+        ));
+
+        assertThat(actualParent.steps.get(0).defaultParameters).containsExactlyEntriesOf(subStepDefaultParameters);
+        assertThat(actualParent.steps.get(0).executionParameters).containsExactlyEntriesOf(Maps.of(
+            "leaf empty param", "",
+            "substep default param", "substep default value",
+            "substep empty param", "",
+            "substep second param", "substep second value"
+        ));
+        assertThat(actualParent.defaultParameters).containsExactlyEntriesOf(parentDefaultParameters);
+        assertThat(actualParent.executionParameters).containsExactlyEntriesOf(parentExpectedDataSet);
+    }
+
+    @Test
+    public void override_case() {
+        // Given
+        Map<String, String> leafDefaultParameters = Maps.of(
+            "leaf default param", "leaf default value",
+            "leaf empty param", "",
+            "leaf second param", "leaf second value"
+        );
+
+        final ComposableStep leaf = saveAndReload(
+            ComposableStep.builder()
+                .withName("leaf")
+                .withDefaultParameters(leafDefaultParameters)
+                .build()
+        );
+
+        Map<String, String> leafExecutionParameters = Maps.of(
+            "leaf default param", "value is override",
+            "leaf empty param", "value is set",
+            "leaf second param", "" /*value is removed*/
+        );
+        ComposableStep leafWithOverride = ComposableStep.builder().from(leaf).withExecutionParameters(leafExecutionParameters).build();
+
+        Map<String, String> parentDefaultParameters = Maps.of(
+            "parent default param", "parent default value",
+            "parent empty param", ""
+        ) ;
+
+        final ComposableStep parent = saveAndReload(
+            ComposableStep.builder()
+                .withName("parent")
+                .withDefaultParameters(parentDefaultParameters)
+                .withSteps(singletonList(leafWithOverride))
+                .build()
+        );
+
+        // When
+        ComposableStep actualLeaf = sut.findById(leaf.id);
+        ComposableStep actualParent = sut.findById(parent.id);
+
+        // Then
+        assertThat(actualLeaf.defaultParameters).containsExactlyEntriesOf(leafDefaultParameters);
+        assertThat(actualLeaf.executionParameters).containsExactlyEntriesOf(leafDefaultParameters); // Because not in use under a parent step
+
+        assertThat(actualParent.steps.get(0).defaultParameters).isEqualTo(leafDefaultParameters);
+        assertThat(actualParent.steps.get(0).executionParameters).isEqualTo(leafExecutionParameters);
+        assertThat(actualParent.defaultParameters).containsExactlyEntriesOf(parentDefaultParameters);
+        assertThat(actualParent.executionParameters).containsExactlyEntriesOf(Maps.of(
+            "leaf second param", "", /*value was removed*/
+            "parent default param", "parent default value",
+            "parent empty param", ""
+        ));
+
     }
 }
