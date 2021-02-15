@@ -10,7 +10,6 @@ import static com.chutneytesting.design.infra.storage.scenario.compose.orient.Or
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_UPDATEDATE;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.setOnlyOnceProperty;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.setOrRemoveProperty;
-import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
@@ -23,7 +22,6 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * TestCase OrientDB model merges {@link com.chutneytesting.design.domain.scenario.compose.ComposableTestCase} metadata and
@@ -45,10 +43,6 @@ public class TestCaseVertex {
             .from(testCaseVertex)
             .withSteps(subSteps)
             .build();
-    }
-
-    public StepVertex asRootStep() {
-        return rootStep;
     }
 
     public OVertex save(ODatabaseSession dbSession) {
@@ -90,6 +84,10 @@ public class TestCaseVertex {
 
     public Integer version() {
         return testCaseVertex.getVersion();
+    }
+
+    public List<StepVertex> scenarioSteps() {
+        return this.rootStep.listChildrenSteps();
     }
 
     public Map<String, String> parameters() {
