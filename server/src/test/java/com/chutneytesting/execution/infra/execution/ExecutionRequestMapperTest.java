@@ -12,7 +12,7 @@ import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.raw.RawTestCase;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
-import com.chutneytesting.engine.api.execution.SecurityInfoDto;
+import com.chutneytesting.engine.api.execution.SecurityInfoExecutionDto;
 import com.chutneytesting.engine.api.execution.TargetExecutionDto;
 import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
 import com.chutneytesting.environment.api.dto.TargetDto;
@@ -67,7 +67,7 @@ public class ExecutionRequestMapperTest {
         // Given
         String expectedType = "task-id";
         String expectedTargetId = "target name";
-        SecurityInfoDto securityDto = new SecurityInfoDto(null, null, null, null, null, null);
+        SecurityInfoExecutionDto securityDto = new SecurityInfoExecutionDto(null, null, null, null, null, null);
         TargetExecutionDto expectedTarget = new TargetExecutionDto(expectedTargetId, "", emptyMap(), securityDto, emptyList());
 
         LinkedHashMap<String, Object> expectedOutputs = new LinkedHashMap<>(Maps.of(
@@ -156,7 +156,7 @@ public class ExecutionRequestMapperTest {
     }
 
     private void assertRootStepDefinitionRequestDto(ExecutionRequestDto.StepDefinitionRequestDto stepDefinitionRequestDto, String name) {
-        SecurityInfoDto securityDto = new SecurityInfoDto(null, null, null, null, null, null);
+        SecurityInfoExecutionDto securityDto = new SecurityInfoExecutionDto(null, null, null, null, null, null);
 
         assertThat(stepDefinitionRequestDto).isNotNull();
         assertThat(stepDefinitionRequestDto.name).isEqualTo(name);

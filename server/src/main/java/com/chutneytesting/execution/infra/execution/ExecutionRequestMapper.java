@@ -14,10 +14,10 @@ import com.chutneytesting.design.domain.scenario.gwt.GwtStep;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import com.chutneytesting.design.domain.scenario.gwt.Strategy;
 import com.chutneytesting.design.domain.scenario.raw.RawTestCase;
-import com.chutneytesting.engine.api.execution.CredentialDto;
+import com.chutneytesting.engine.api.execution.CredentialExecutionDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
-import com.chutneytesting.engine.api.execution.SecurityInfoDto;
+import com.chutneytesting.engine.api.execution.SecurityInfoExecutionDto;
 import com.chutneytesting.engine.api.execution.TargetExecutionDto;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
 import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
@@ -158,8 +158,8 @@ public class ExecutionRequestMapper {
         );
     }
 
-    private static SecurityInfoDto toSecurityInfoDto(TargetDto targetDto) {
-        return new SecurityInfoDto(
+    private static SecurityInfoExecutionDto toSecurityInfoDto(TargetDto targetDto) {
+        return new SecurityInfoExecutionDto(
             toCredentialDto(targetDto),
             null,
             null,
@@ -169,9 +169,9 @@ public class ExecutionRequestMapper {
         );
     }
 
-    private static CredentialDto toCredentialDto(TargetDto targetDto) {
+    private static CredentialExecutionDto toCredentialDto(TargetDto targetDto) {
         if(targetDto.hasCredential()) {
-            return new CredentialDto(targetDto.username, targetDto.password);
+            return new CredentialExecutionDto(targetDto.username, targetDto.password);
         } else {
             return null;
         }

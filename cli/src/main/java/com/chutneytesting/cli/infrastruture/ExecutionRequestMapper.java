@@ -1,9 +1,9 @@
 package com.chutneytesting.cli.infrastruture;
 
-import com.chutneytesting.engine.api.execution.CredentialDto;
+import com.chutneytesting.engine.api.execution.CredentialExecutionDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
-import com.chutneytesting.engine.api.execution.SecurityInfoDto;
+import com.chutneytesting.engine.api.execution.SecurityInfoExecutionDto;
 import com.chutneytesting.engine.api.execution.TargetExecutionDto;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.task.spi.injectable.SecurityInfo;
@@ -114,8 +114,8 @@ public class ExecutionRequestMapper {
         );
     }
 
-    private static SecurityInfoDto toDto(SecurityInfo security) {
-        return new SecurityInfoDto(
+    private static SecurityInfoExecutionDto toDto(SecurityInfo security) {
+        return new SecurityInfoExecutionDto(
             security.credential().map(ExecutionRequestMapper::toDto).orElse(null),
             security.trustStore().orElse(null),
             security.trustStorePassword().orElse(null),
@@ -125,7 +125,7 @@ public class ExecutionRequestMapper {
         );
     }
 
-    private static CredentialDto toDto(SecurityInfo.Credential credential) {
-        return new CredentialDto(credential.username(), credential.password());
+    private static CredentialExecutionDto toDto(SecurityInfo.Credential credential) {
+        return new CredentialExecutionDto(credential.username(), credential.password());
     }
 }

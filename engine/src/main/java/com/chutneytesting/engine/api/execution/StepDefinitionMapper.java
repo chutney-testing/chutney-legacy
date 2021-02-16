@@ -51,7 +51,7 @@ class StepDefinitionMapper {
             .build();
     }
 
-    private static SecurityInfoImpl fromDto(SecurityInfoDto dto) {
+    private static SecurityInfoImpl fromDto(SecurityInfoExecutionDto dto) {
         return SecurityInfoImpl.builder()
             .credential(fromDto(dto.credential))
             .keyStore(dto.keyStore)
@@ -62,7 +62,7 @@ class StepDefinitionMapper {
             .build();
     }
 
-    private static SecurityInfoImpl.Credential fromDto(CredentialDto credential) {
+    private static SecurityInfoImpl.Credential fromDto(CredentialExecutionDto credential) {
         return Optional.ofNullable(credential)
             .map(c -> SecurityInfoImpl.Credential.of(c.username, c.password))
             .orElse(SecurityInfoImpl.Credential.NONE);
