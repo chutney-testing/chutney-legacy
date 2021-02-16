@@ -1,5 +1,32 @@
 # Changelog
 
+## [1.2.14](https://github.com/chutney-testing/chutney/tree/1.2.14)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.13...1.2.14)
+
+**Implemented enhancements:**
+
+- Importing an environment [\#164](https://github.com/chutney-testing/chutney/issues/164)
+- Glacio - Write scenario as feature file [\#144](https://github.com/chutney-testing/chutney/issues/144)
+
+**Fixed bugs:**
+
+- Scenarios executions in campaign report have random order [\#72](https://github.com/chutney-testing/chutney/issues/72)
+
+**Merged pull requests:**
+
+- refacto\(glacio-adapter\): Refacto to expose dto and not domain [\#343](https://github.com/chutney-testing/chutney/pull/343) ([nbrouand](https://github.com/nbrouand))
+- server: fix dataset iterations bug [\#336](https://github.com/chutney-testing/chutney/pull/336) ([rbenyoussef](https://github.com/rbenyoussef))
+- Chore/refacto env [\#325](https://github.com/chutney-testing/chutney/pull/325) ([nbrouand](https://github.com/nbrouand))
+- chore\(deps\): Bump picocli from 4.2.0 to 4.6.1 [\#319](https://github.com/chutney-testing/chutney/pull/319) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- chore\(deps\): Bump groovy from 2.5.0 to 2.5.14 [\#315](https://github.com/chutney-testing/chutney/pull/315) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(\): Update timeout for old slow computers [\#314](https://github.com/chutney-testing/chutney/pull/314) ([nbrouand](https://github.com/nbrouand))
+- chore\(\): remove junit4 [\#312](https://github.com/chutney-testing/chutney/pull/312) ([nbrouand](https://github.com/nbrouand))
+- Chore/release github action [\#311](https://github.com/chutney-testing/chutney/pull/311) ([nbrouand](https://github.com/nbrouand))
+- chore\(\): githubaction build [\#307](https://github.com/chutney-testing/chutney/pull/307) ([nbrouand](https://github.com/nbrouand))
+- feat: Use glacio lang [\#94](https://github.com/chutney-testing/chutney/pull/94) ([bessonm](https://github.com/bessonm))
+
+
 ## [1.2.13](https://github.com/chutney-testing/chutney/tree/1.2.13)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.12...1.2.13)
