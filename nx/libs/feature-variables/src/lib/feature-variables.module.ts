@@ -8,6 +8,7 @@ import { UiMaterialModule } from '@chutney/ui-material';
 import { UtilsModule } from '@chutney/utils';
 
 import { VariablesComponent } from './containers/variables/variables.component';
+import { VariablesEditComponent } from './components/variables-edit/variables-edit.component';
 
 @NgModule({
   imports: [
@@ -20,6 +21,6 @@ import { VariablesComponent } from './containers/variables/variables.component';
     UtilsModule,
     CovalentCodeEditorModule,
   ],
-  declarations: [VariablesComponent],
+  declarations: [VariablesComponent, VariablesEditComponent],
 })
 export class FeatureVariablesModule {}

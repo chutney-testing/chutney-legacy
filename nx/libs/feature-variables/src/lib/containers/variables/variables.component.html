@@ -5,10 +5,10 @@
   <chutney-page-header-action>
     <button
       mat-fab
-      class="mat-accent zi-2"
+      class="mat-accent zi-2 mr-5"
       aria-label="Save group"
-      disabled="{{ globalVariableGroupsNames.length == 0 }}"
-      (click)="saveGlobalVariableGroup()"
+      disabled="{{ editComponent.globalVariableGroupsNames.length == 0 }}"
+      (click)="editComponent.saveGlobalVariableGroup()"
       [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
     >
       <mat-icon>save</mat-icon>
@@ -16,10 +16,10 @@
 
     <button
       mat-fab
-      class="mat-accent zi-2"
+      class="mat-accent zi-2 mr-5"
       aria-label="Add group"
-      disabled="{{ addMode || renameMode }}"
-      (click)="addGlobalVariableGroup()"
+      disabled="{{ editComponent.updateMode() }}"
+      (click)="editComponent.addGlobalVariableGroup()"
       [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
     >
       <mat-icon>add</mat-icon>
@@ -28,56 +28,15 @@
     <button
         mat-fab
         class="mat-accent zi-2"
-        title="{{ (addMode || renameMode) ? 'Cancel action' : 'Delete group' }}"
-        [attr.aria-label]="(addMode || renameMode) ? 'Cancel action' : 'Delete group'"
-        disabled="{{ globalVariableGroupsNames.length == 0 }}"
-        (click)="(addMode || renameMode) ? cancelAction() : deleteGlobalVariableGroup()"
+        title="{{ (editComponent.updateMode()) ? 'Cancel action' : 'Delete group' }}"
+        [attr.aria-label]="(editComponent.updateMode()) ? 'Cancel action' : 'Delete group'"
+        disabled="{{ editComponent.globalVariableGroupsNames.length == 0 }}"
+        (click)="(editComponent.updateMode()) ? editComponent.cancelAction() : editComponent.deleteGlobalVariableGroup()"
         [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
       >
-        <mat-icon>{{ (addMode || renameMode) ? 'cancel' : 'delete' }}</mat-icon>
+        <mat-icon>{{ (editComponent.updateMode()) ? 'cancel' : 'delete' }}</mat-icon>
       </button>
     </chutney-page-header-action>
 </chutney-page-header>
 
-<mat-tab-group animationDuration="0ms"
-             [selectedIndex]="activeGroupNameIndex"
-             (selectedIndexChange)="activeGroupNameIndex = $event"
-             (selectedTabChange)="onTabChange($event)"
->
-<mat-tab *ngFor="let groupName of globalVariableGroupsNames; let i=index;"
-         label="{{ groupName }}"
->
-  <ng-template *ngIf="groupName.length == 0" mat-tab-label>
-    <mat-form-field appearance="standard">
-      <input matInput
-             id="newGroupNameInput"
-             placeholder="new group"
-             required
-      />
-    </mat-form-field>
-  </ng-template>
-  <ng-template *ngIf="groupName.length != 0" mat-tab-label>
-    <div *ngIf="i != groupNameRenameIndex" (click)="onGroupNameClick(i)">{{ groupName }}</div>
-    <mat-form-field *ngIf="i == groupNameRenameIndex" appearance="standard">
-      <input matInput
-             id="renameGroupNameInput"
-             value="{{groupName}}"
-             required
-      />
-    </mat-form-field>
-  </ng-template>
-</mat-tab>
-</mat-tab-group>
-
-<div class="my-code-editor" *ngIf="globalVariableGroupsNames.length > 0">
-  <td-code-editor #monaco
-                  fxFlex="grow"
-                  editorStyle="border:0;"
-                  language="json"
-                  [editorOptions]="{ fontSize: 12, automaticLayout: true }"
-                  [theme]="options.theme === 'light' ? 'vs' : 'vs-dark'"
-                  [value]="''"
-                  (editorInitialized)="editorInitialized($event)"
-                  (editorConfigurationChanged)="monacoEditorConfigChanged(monaco.theme)"
-  ></td-code-editor>
-</div>
+<chutney-variables-edit #editComponent></chutney-variables-edit>
