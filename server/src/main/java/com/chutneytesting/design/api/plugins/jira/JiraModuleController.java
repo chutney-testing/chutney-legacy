@@ -2,6 +2,7 @@ package com.chutneytesting.design.api.plugins.jira;
 
 import com.chutneytesting.design.domain.plugins.jira.JiraRepository;
 import com.chutneytesting.design.domain.plugins.jira.JiraTargetConfiguration;
+import java.util.Map;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,6 +27,16 @@ public class JiraModuleController {
 
     public JiraModuleController(JiraRepository jiraRepository) {
         this.jiraRepository = jiraRepository;
+    }
+
+    @GetMapping(path = BASE_SCENARIO_URL, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Map<String, String> getLinkedScenarios() {
+        return jiraRepository.getAllLinkedScenarios();
+    }
+
+    @GetMapping(path = BASE_CAMPAIGN_URL, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Map<String, String> getLinkedCampaigns() {
+        return jiraRepository.getAllLinkedCampaigns();
     }
 
     @GetMapping(path = BASE_SCENARIO_URL + "/{scenarioId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -79,7 +90,7 @@ public class JiraModuleController {
         jiraRepository.removeForCampaign(campaignId);
     }
 
-    @GetMapping(path = BASE_CONFIGURATION_URL , produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = BASE_CONFIGURATION_URL, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public JiraConfigurationDto getConfiguration() {
         JiraTargetConfiguration jiraTargetConfiguration = jiraRepository.loadServerConfiguration();
         return ImmutableJiraConfigurationDto.builder()
@@ -93,7 +104,7 @@ public class JiraModuleController {
         consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
         produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public void saveConfiguration(@RequestBody JiraConfigurationDto jiraConfigurationDto) {
-        jiraRepository.saveServerConfiguration(new JiraTargetConfiguration(jiraConfigurationDto.url(),jiraConfigurationDto.username(),jiraConfigurationDto.password()));
+        jiraRepository.saveServerConfiguration(new JiraTargetConfiguration(jiraConfigurationDto.url(), jiraConfigurationDto.username(), jiraConfigurationDto.password()));
     }
 
 }

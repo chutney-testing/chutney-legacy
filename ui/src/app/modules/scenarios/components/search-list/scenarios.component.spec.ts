@@ -8,9 +8,12 @@ import { MoleculesModule } from '../../../../molecules/molecules.module';
 
 import { MomentModule } from 'angular2-moment';
 import { NgbModule, NgbPopoverConfig } from '@ng-bootstrap/ng-bootstrap';
-import { of } from 'rxjs';
+import { of, empty } from 'rxjs';
 import { ScenarioIndex } from '@core/model';
 import { ScenarioService } from '@core/services';
+
+import { JiraPluginService } from '@core/services/jira-plugin.service';
+import { JiraPluginConfigurationService } from '@core/services/jira-plugin-configuration.service';
 import { ActivatedRoute } from '@angular/router';
 import { ActivatedRouteStub } from '../../../../testing/activated-route-stub';
 
@@ -20,10 +23,15 @@ describe('ScenariosComponent', () => {
     beforeEach(async(() => {
         TestBed.resetTestingModule();
         const scenarioService = jasmine.createSpyObj('ScenarioService', ['findScenarios']);
+        const jiraPluginService = jasmine.createSpyObj('JiraPluginService', ['findScenarios','findCampaigns']);
+        const jiraPluginConfigurationService = jasmine.createSpyObj('JiraPluginConfigurationService', ['get']);
         const mockScenarioIndex = [new ScenarioIndex('1', 'title1', 'description', 'source', new Date(), new Date(), 1, 'guest', [], []),
                                    new ScenarioIndex('2', 'title2', 'description', 'source', new Date(), new Date(), 1, 'guest', [], []),
                                    new ScenarioIndex('3', 'another scenario', 'description', 'source', new Date(), new Date(), 1, 'guest', [], [])];
         scenarioService.findScenarios.and.returnValue(of(mockScenarioIndex));
+        jiraPluginConfigurationService.get.and.returnValue(empty());
+        jiraPluginService.findScenarios.and.returnValue(empty());
+        jiraPluginService.findCampaigns.and.returnValue(empty());
         activatedRouteStub = new ActivatedRouteStub();
         TestBed.configureTestingModule({
             imports: [
@@ -40,6 +48,8 @@ describe('ScenariosComponent', () => {
             providers: [
                 NgbPopoverConfig,
                 {provide: ScenarioService, useValue: scenarioService},
+                {provide: JiraPluginService, useValue: jiraPluginService},
+                {provide: JiraPluginConfigurationService, useValue: jiraPluginConfigurationService},
                 {provide: ActivatedRoute, useValue: activatedRouteStub}
             ]
         }).compileComponents();
@@ -110,4 +120,9 @@ function titleOf(elt: Element) {
 function sendInput(input: HTMLInputElement, value: string) {
     input.value = value;
     input.dispatchEvent(new Event('input'));
+}
+
+function jiraMock()
+{
+    
 }

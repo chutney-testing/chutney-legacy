@@ -23,6 +23,16 @@ export class JiraPluginService {
     constructor(private http: HttpClient) {
     }
 
+    public findScenarios(): Observable<Map<string,string>> {
+        return this.http.get<any>(environment.backend + this.scenarioUrl )
+        .pipe(map((res: Object) => {return new Map(Object.entries(res));}));
+    }
+
+    public findCampaigns(): Observable<Map<string,string>> {
+        return this.http.get<any>(environment.backend + this.campaignUrl )
+        .pipe(map((res: Object) => {return new Map(Object.entries(res));}));
+    }
+
     public findByScenarioId(scenarioId: string): Observable<string> {
         return this.http.get<JiraDto>(environment.backend + this.scenarioUrl + '/' + scenarioId)
             .pipe(map((jiraDto: JiraDto) => {

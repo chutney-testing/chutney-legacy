@@ -1,8 +1,13 @@
 package com.chutneytesting.design.domain.plugins.jira;
 
 import com.chutneytesting.admin.domain.Backupable;
+import java.util.Map;
 
 public interface JiraRepository extends Backupable {
+
+    Map<String, String> getAllLinkedCampaigns();
+
+    Map<String, String> getAllLinkedScenarios();
 
     String getByScenarioId(String scenarioId);
 
