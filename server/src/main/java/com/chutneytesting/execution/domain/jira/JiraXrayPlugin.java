@@ -6,6 +6,7 @@ import com.chutneytesting.design.domain.plugins.jira.Xray;
 import com.chutneytesting.design.domain.plugins.jira.XrayEvidence;
 import com.chutneytesting.design.domain.plugins.jira.XrayInfo;
 import com.chutneytesting.design.domain.plugins.jira.XrayTest;
+import com.chutneytesting.design.domain.plugins.jira.XrayTestExecTest;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.execution.domain.report.StepExecutionReportCore;
@@ -74,6 +75,32 @@ public class JiraXrayPlugin {
         }
     }
 
+    public List<String> getTestExecutionScenarios(String testExecutionId) {
+        List<String> scenarios = new ArrayList<>();
+        JiraTargetConfiguration jiraTargetConfiguration = jiraRepository.loadServerConfiguration();
+        String uriTemplate = jiraTargetConfiguration.url + "/rest/raven/1.0/api/testexec/%s/test";
+        String uri = String.format(uriTemplate, testExecutionId);
+
+        if (jiraTargetConfiguration.url.isEmpty()) {
+            return scenarios;
+        }
+
+        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration.username, jiraTargetConfiguration.password);
+        try {
+            ResponseEntity<XrayTestExecTest[]> response = restTemplate.getForEntity(uri, XrayTestExecTest[].class);
+            if (response.getStatusCode().equals(HttpStatus.OK)) {
+                scenarios = Arrays.stream(response.getBody())
+                    .map(XrayTestExecTest::getKey)
+                    .collect(Collectors.toList());
+            } else {
+                LOGGER.error(response.toString());
+            }
+        } catch (RestClientException e) {
+            LOGGER.error("Unable to get xray test execution[" + testExecutionId + "] scenarios : " + e);
+        }
+        return scenarios;
+    }
+
     private void updateRequest(Xray xray) {
         JiraTargetConfiguration jiraTargetConfiguration = jiraRepository.loadServerConfiguration();
         String updateUri = jiraTargetConfiguration.url + "/rest/raven/1.0/import/execution";
@@ -83,8 +110,7 @@ public class JiraXrayPlugin {
             return;
         }
 
-        RestTemplate restTemplate = buildRestTemplate();
-        configureBasicAuth(jiraTargetConfiguration.username, jiraTargetConfiguration.password, restTemplate);
+        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration.username, jiraTargetConfiguration.password);
 
         try {
             ResponseEntity response = restTemplate.postForEntity(updateUri, xray, String.class);
@@ -109,7 +135,7 @@ public class JiraXrayPlugin {
         }
     }
 
-    private RestTemplate buildRestTemplate() {
+    private RestTemplate buildRestTemplate(String username, String password) {
         RestTemplate restTemplate;
         SSLContext sslContext = buildSslContext();
         SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
@@ -122,6 +148,7 @@ public class JiraXrayPlugin {
         ((HttpComponentsClientHttpRequestFactory) requestFactory).setConnectTimeout(TIMEOUT);
 
         restTemplate = new RestTemplate(requestFactory);
+        restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor(username, password));
 
         return restTemplate;
     }
@@ -181,7 +208,4 @@ public class JiraXrayPlugin {
             + stepName.trim().replace(" ", "-");
     }
 
-    private void configureBasicAuth(String username, String password, RestTemplate restTemplate) {
-        restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor(username, password));
-    }
 }

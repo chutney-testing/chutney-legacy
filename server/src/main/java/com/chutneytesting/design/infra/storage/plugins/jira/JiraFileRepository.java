@@ -160,7 +160,7 @@ public class JiraFileRepository implements JiraRepository {
                 map.putAll(objectMapper.readValue(bytes, Map.class));
             }
 
-            if(jiraId.isEmpty())
+            if (jiraId.isEmpty())
                 map.remove(chutneyId);
             else
                 map.put(chutneyId, jiraId);

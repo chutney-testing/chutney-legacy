@@ -231,8 +231,7 @@ export class ScenariosComponent implements OnInit, OnDestroy {
                     this.jiraUrl = r.url;
                     this.jiraLinkService.findScenarios()
                     .subscribe(
-                        (result) => { this.jiraMap = result; },
-                        (error) => { console.log(error);}
+                        (result) => { this.jiraMap = result; }
                     );
                 }
         });

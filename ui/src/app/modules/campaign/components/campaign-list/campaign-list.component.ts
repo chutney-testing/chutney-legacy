@@ -93,8 +93,7 @@ export class CampaignListComponent implements OnInit, OnDestroy {
                     this.jiraUrl = r.url;
                     this.jiraLinkService.findCampaigns()
                     .subscribe(
-                        (result) => { this.jiraMap = result; },
-                        (error) => { console.log(error);}
+                        (result) => { this.jiraMap = result; }
                     );
                 }
         });

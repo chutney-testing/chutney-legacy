@@ -8,6 +8,7 @@ import { CampaignService, ComponentService, EnvironmentAdminService, ScenarioSer
 import { DragulaService } from 'ng2-dragula';
 import { distinct, flatMap, newInstance } from '@shared/tools/array-utils';
 import { JiraPluginService } from '@core/services/jira-plugin.service';
+import { JiraPluginConfigurationService } from '@core/services/jira-plugin-configuration.service';
 
 @Component({
     selector: 'chutney-campaign-edition',
@@ -41,12 +42,17 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     selectedTags: string[] = [];
     datasetId: string;
     jiraId: string;
+    jiraMap: Map<string,string> = new Map();
+    jiraUrl: string = '';
+    jiraScenarios: string[] = [];
+    jiraScenariosToExclude: Array<ScenarioIndex> = [];
 
     constructor(
         private campaignService: CampaignService,
         private scenarioService: ScenarioService,
         private componentService: ComponentService,
         private jiraLinkService: JiraPluginService,
+        private jiraPluginConfigurationService: JiraPluginConfigurationService,
         private formBuilder: FormBuilder,
         private router: Router,
         private route: ActivatedRoute,
@@ -62,7 +68,8 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
             parameters: this.formBuilder.array([]),
             parallelRun: false,
             retryAuto: false,
-            jiraId: ''
+            jiraId: '',
+            onlyLinkedScenarios: false
         });
     }
 
@@ -113,7 +120,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
                     this.setCampaignScenarios();
                     this.updateCampaignParameters();
                     this.datasetId = this.campaign.datasetId;
-                    this.loadJiraLink();
+                    this.initJiraPlugin();
                 },
                 (error) => {
                     this.errorMessage = error._body;
@@ -161,12 +168,61 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         this.jiraLinkService.findByCampaignId(this.campaign.id).subscribe(
             (jiraId) => {
                 this.campaignForm.controls['jiraId'].setValue(jiraId);
+                this.refreshJiraScenarios();
             },
             (error) => {
                 this.errorMessage = error.error;
             }
         );
 
+    }
+
+    initJiraPlugin() {
+        this.jiraPluginConfigurationService.get()
+            .subscribe((r) => {
+                if (r && r.url !== '') {
+                    this.jiraUrl = r.url;
+                    this.loadJiraLink();
+                    this.jiraLinkService.findScenarios()
+                        .subscribe(
+                            (result) => { this.jiraMap = result; }
+                        );
+                }
+            });
+    }
+
+    getJiraLink(id: string) {
+        return this.jiraUrl + '/browse/' + this.jiraMap.get(id);
+    }
+
+    hasJiraId() {
+        return this.campaignForm.value['jiraId'] != null && this.campaignForm.value['jiraId'] !== '';
+    }
+
+    refreshJiraScenarios() {
+        if (this.campaignForm.value['jiraId'] !== '') {
+            this.jiraLinkService.findTestExecScenarios(this.campaignForm.value['jiraId'])
+                .subscribe(
+                    (result) => { 
+                        this.jiraScenarios = result; 
+                        this.jiraFilter();
+                    }
+                );
+        } else {
+            this.jiraScenarios = [];
+            this.jiraScenariosToExclude = [];
+            this.campaignForm.controls['onlyLinkedScenarios'].setValue(false);
+        }
+    }
+
+    jiraFilter() {
+        if (this.campaignForm.controls['onlyLinkedScenarios'].value === true) {
+            this.jiraScenariosToExclude = this.scenarios.filter((item) => {
+                return !this.jiraScenarios.includes(item.id);
+            });
+        } else {
+            this.jiraScenariosToExclude = [];
+        }
     }
 
     clear() {

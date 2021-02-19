@@ -19,6 +19,7 @@ export class JiraPluginService {
     private url = '/api/ui/jira/v1/';
     private scenarioUrl = this.url + 'scenario';
     private campaignUrl = this.url + 'campaign';
+    private testExecUrl = this.url + 'testexec';
 
     constructor(private http: HttpClient) {
     }
@@ -31,6 +32,11 @@ export class JiraPluginService {
     public findCampaigns(): Observable<Map<string,string>> {
         return this.http.get<any>(environment.backend + this.campaignUrl )
         .pipe(map((res: Object) => {return new Map(Object.entries(res));}));
+    }
+
+    public findTestExecScenarios(testExecId: string): Observable<string[]> {
+        return this.http.get<any>(environment.backend + this.testExecUrl + '/' + testExecId)
+        .pipe(map((res: string[]) => {return res;}));
     }
 
     public findByScenarioId(scenarioId: string): Observable<string> {
