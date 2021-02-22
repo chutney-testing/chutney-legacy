@@ -1,6 +1,6 @@
 ///<reference path="../../../../../../node_modules/@angular/router/src/router.d.ts"/>
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
+import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, delay } from 'rxjs/internal/operators';
@@ -12,7 +12,6 @@ import { ComponentService, ScenarioExecutionService, ScenarioService } from '@co
 
 @Component({
     selector: 'chutney-execution',
-    providers: [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],
     templateUrl: './execution.component.html',
     styleUrls: ['./execution.component.scss']
 })
