@@ -4,6 +4,7 @@ import com.chutneytesting.task.spi.injectable.Logger;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptException;
@@ -89,13 +90,17 @@ public interface SeleniumFindBehavior {
         ZK("zk") {
             @Override
             public By by(WebDriver webDriver, String byValue) {
-                String zkId = "UNDEFINED";
-                try{
-                    zkId = (String) ((JavascriptExecutor) webDriver).executeScript(String.format("return zk.Widget.$(jq('$%s')).uuid;", byValue));
-                }catch (JavascriptException exception){
-                    return by(webDriver,byValue);
+                String zkId = "undefined";
+                String script = String.format("return zk.Widget.$(jq('$%s'))?.uuid || 'undefined';", byValue);
+                try {
+                    zkId = (String) ((JavascriptExecutor) webDriver).executeScript(script);
+                    if (zkId.equals("undefined")) {
+                        TimeUnit.SECONDS.sleep(1);
+                        zkId = (String) ((JavascriptExecutor) webDriver).executeScript(script);
+                    }
+                } catch (JavascriptException | InterruptedException exception) {
                 }
-                return By.xpath(String.format("//*[@id='%s']", zkId));
+                return By.id(zkId);
             }
         };
 
