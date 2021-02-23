@@ -188,7 +188,8 @@
             },
             "options": "Options",
             "parallelRun": "Parallel run",
-            "retryAuto": "1 auto retry on failed scenario"
+            "retryAuto": "1 auto retry on failed scenario",
+            "jiraLinkedTest": "Test exec scenarios"
         },
         "confirm": {
             "deletion.prefix": "Are you sure you want to delete the campaign ",

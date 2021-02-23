@@ -2,6 +2,11 @@ package com.chutneytesting.design.api.plugins.jira;
 
 import com.chutneytesting.design.domain.plugins.jira.JiraRepository;
 import com.chutneytesting.design.domain.plugins.jira.JiraTargetConfiguration;
+import com.chutneytesting.execution.domain.jira.JiraXrayPlugin;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,12 +25,25 @@ public class JiraModuleController {
     public static final String BASE_URL = "/api/ui/jira/v1/";
     public static final String BASE_SCENARIO_URL = "scenario";
     public static final String BASE_CAMPAIGN_URL = "campaign";
+    public static final String BASE_TEST_EXEC_URL = "testexec";
     public static final String BASE_CONFIGURATION_URL = "configuration";
 
     private final JiraRepository jiraRepository;
+    private final JiraXrayPlugin jiraXrayPlugin;
 
-    public JiraModuleController(JiraRepository jiraRepository) {
+    public JiraModuleController(JiraRepository jiraRepository, JiraXrayPlugin jiraXrayPlugin) {
         this.jiraRepository = jiraRepository;
+        this.jiraXrayPlugin = jiraXrayPlugin;
+    }
+
+    @GetMapping(path = BASE_SCENARIO_URL, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Map<String, String> getLinkedScenarios() {
+        return jiraRepository.getAllLinkedScenarios();
+    }
+
+    @GetMapping(path = BASE_CAMPAIGN_URL, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Map<String, String> getLinkedCampaigns() {
+        return jiraRepository.getAllLinkedCampaigns();
     }
 
     @GetMapping(path = BASE_SCENARIO_URL + "/{scenarioId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -63,6 +81,21 @@ public class JiraModuleController {
             .build();
     }
 
+    @GetMapping(path = BASE_TEST_EXEC_URL + "/{testExecId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public List<String> getScenariosByCampaignIg(@PathVariable String testExecId) {
+        if(testExecId.isEmpty())
+            return new ArrayList<>();
+
+        Map<String, String> allLinkedScenarios = jiraRepository.getAllLinkedScenarios();
+        List<String> testExecScenariosId = jiraXrayPlugin.getTestExecutionScenarios(testExecId);
+
+        return allLinkedScenarios.entrySet()
+            .stream()
+            .filter(entry -> testExecScenariosId.contains(entry.getValue()))
+            .map(entry ->entry.getKey()
+            ).collect(Collectors.toList());
+    }
+
     @PostMapping(path = BASE_CAMPAIGN_URL,
         consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
         produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -79,7 +112,7 @@ public class JiraModuleController {
         jiraRepository.removeForCampaign(campaignId);
     }
 
-    @GetMapping(path = BASE_CONFIGURATION_URL , produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = BASE_CONFIGURATION_URL, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public JiraConfigurationDto getConfiguration() {
         JiraTargetConfiguration jiraTargetConfiguration = jiraRepository.loadServerConfiguration();
         return ImmutableJiraConfigurationDto.builder()
@@ -93,7 +126,7 @@ public class JiraModuleController {
         consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
         produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public void saveConfiguration(@RequestBody JiraConfigurationDto jiraConfigurationDto) {
-        jiraRepository.saveServerConfiguration(new JiraTargetConfiguration(jiraConfigurationDto.url(),jiraConfigurationDto.username(),jiraConfigurationDto.password()));
+        jiraRepository.saveServerConfiguration(new JiraTargetConfiguration(jiraConfigurationDto.url(), jiraConfigurationDto.username(), jiraConfigurationDto.password()));
     }
 
 }

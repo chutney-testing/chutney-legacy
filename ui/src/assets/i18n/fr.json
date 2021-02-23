@@ -188,7 +188,8 @@
             },
             "options": "Options",
             "parallelRun": "Execution parallèle des scénarios",
-            "retryAuto": "1 retry auto sur les scénarios en échec"
+            "retryAuto": "1 retry auto sur les scénarios en échec",
+            "jiraLinkedTest": "Scénarios du test exec"
         },
         "confirm": {
             "deletion.prefix": "Etes-vous sûr de vouloir supprimer la campagne ",

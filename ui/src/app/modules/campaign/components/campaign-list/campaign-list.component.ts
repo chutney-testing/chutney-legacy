@@ -7,6 +7,7 @@ import { Subscription, timer } from 'rxjs';
 import { JiraPluginService } from '@core/services/jira-plugin.service';
 import { CampaignSchedulingService } from '@core/services/campaign-scheduling.service';
 import { CampaignScheduling } from '@core/model/campaign/campaign-scheduling.model';
+import { JiraPluginConfigurationService } from '@core/services/jira-plugin-configuration.service';
 
 @Component({
     selector: 'chutney-campaigns',
@@ -22,11 +23,14 @@ export class CampaignListComponent implements OnInit, OnDestroy {
     lastCampaignReports: Array<CampaignExecutionReport> = [];
     lastCampaignReportsSub: Subscription;
     campaignFilter: string;
+    jiraMap: Map<string,string> = new Map();
+    jiraUrl: string = '';
 
     scheduledCampaigns: Array<CampaignScheduling> = [];
 
     constructor(private campaignService: CampaignService,
                 private jiraLinkService: JiraPluginService,
+                private jiraPluginConfigurationService: JiraPluginConfigurationService,
                 private router: Router,
                 private translate: TranslateService,
                 private campaignSchedulingService: CampaignSchedulingService,
@@ -48,6 +52,7 @@ export class CampaignListComponent implements OnInit, OnDestroy {
     }
 
     loadAll() {
+        this.initJiraPlugin();
         this.campaignService.findAllCampaigns().subscribe(
             (res) => this.campaigns = res,
             (error) => console.log(error)
@@ -77,6 +82,25 @@ export class CampaignListComponent implements OnInit, OnDestroy {
                     this.campaigns = this.campaigns.slice();
                 });
         }
+    }
+
+    // Jira link //
+
+    initJiraPlugin() {  
+        this.jiraPluginConfigurationService.get()
+        .subscribe((r) => {
+                if(r && r.url !== ''){
+                    this.jiraUrl = r.url;
+                    this.jiraLinkService.findCampaigns()
+                    .subscribe(
+                        (result) => { this.jiraMap = result; }
+                    );
+                }
+        });
+    }
+
+    getJiraLink(id : string){
+        return this.jiraUrl + '/browse/' + this.jiraMap.get(id);
     }
 
     private getIndexFromId(id: number): number {

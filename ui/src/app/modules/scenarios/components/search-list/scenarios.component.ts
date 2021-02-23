@@ -6,6 +6,8 @@ import { ScenarioIndex, ScenarioType, SelectableTags } from '@model';
 import { distinct, filterOnTextContent, flatMap, intersection, sortByAndOrder } from '@shared/tools/array-utils';
 import { StateService } from '@shared/state/state.service';
 import { Subscription } from 'rxjs';
+import { JiraPluginService } from '@core/services/jira-plugin.service';
+import { JiraPluginConfigurationService } from '@core/services/jira-plugin-configuration.service';
 
 @Component({
     selector: 'chutney-scenarios',
@@ -27,6 +29,10 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     tagFilter = new SelectableTags<String>();
     scenarioTypeFilter = new SelectableTags<ScenarioType>();
 
+    // Jira
+    jiraMap : Map<string,string> = new Map();
+    jiraUrl : string = '';
+
     // Order
     orderBy = 'title';
     reverseOrder = false;
@@ -34,12 +40,15 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     constructor(
         private router: Router,
         private scenarioService: ScenarioService,
+        private jiraLinkService: JiraPluginService,
+        private jiraPluginConfigurationService: JiraPluginConfigurationService,
         private stateService: StateService,
         private readonly route: ActivatedRoute,
     ) {
     }
 
     ngOnInit() {
+        this.initJiraPlugin();
         this.getScenarios()
             .then(r => {
                 this.scenarios = r || [];
@@ -211,6 +220,25 @@ export class ScenariosComponent implements OnInit, OnDestroy {
         this.viewedScenarios = this.filterOnAttributes();
         this.sortScenarios(this.orderBy, this.reverseOrder);
         this.applyFiltersToRoute();
+    }
+
+    // Jira link //
+
+    initJiraPlugin() {  
+        this.jiraPluginConfigurationService.get()
+        .subscribe((r) => {
+                if(r && r.url !== ''){
+                    this.jiraUrl = r.url;
+                    this.jiraLinkService.findScenarios()
+                    .subscribe(
+                        (result) => { this.jiraMap = result; }
+                    );
+                }
+        });
+    }
+
+    getJiraLink(id : string){
+        return this.jiraUrl + '/browse/' + this.jiraMap.get(id);
     }
 
     private filterOnAttributes() {

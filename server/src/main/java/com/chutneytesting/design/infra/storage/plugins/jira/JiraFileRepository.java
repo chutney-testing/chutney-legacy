@@ -2,6 +2,7 @@ package com.chutneytesting.design.infra.storage.plugins.jira;
 
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
 import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
+import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
 
 import com.chutneytesting.design.domain.plugins.jira.JiraRepository;
 import com.chutneytesting.design.domain.plugins.jira.JiraTargetConfiguration;
@@ -18,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.zip.ZipOutputStream;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -51,6 +53,19 @@ public class JiraFileRepository implements JiraRepository {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    @Override
+    public Map<String, String> getAllLinkedCampaigns() {
+        return getAll(CAMPAIGN_FILE);
+    }
+
+    @Override
+    public Map<String, String> getAllLinkedScenarios() {
+        return getAll(SCENARIO_FILE)
+            .entrySet()
+            .stream()
+            .collect(Collectors.toMap(entry -> toFrontId(entry.getKey()), entry -> entry.getValue()));
     }
 
     @Override
@@ -114,15 +129,19 @@ public class JiraFileRepository implements JiraRepository {
     }
 
     private String getById(String filePath, String id) {
+        return getAll(filePath).getOrDefault(id, "");
+    }
+
+    private Map<String, String> getAll(String filePath) {
         Path resolvedFilePath = storeFolderPath.resolve(filePath);
         if (!Files.exists(resolvedFilePath)) {
-            return "";
+            return new HashMap<>();
         }
         try {
             byte[] bytes = Files.readAllBytes(resolvedFilePath);
             try {
                 Map<String, String> map = objectMapper.readValue(bytes, Map.class);
-                return map.getOrDefault(id, "");
+                return map;
             } catch (IOException e) {
                 throw new UnsupportedOperationException("Cannot deserialize configuration file: " + resolvedFilePath, e);
             }
@@ -141,7 +160,10 @@ public class JiraFileRepository implements JiraRepository {
                 map.putAll(objectMapper.readValue(bytes, Map.class));
             }
 
-            map.put(chutneyId, jiraId);
+            if (jiraId.isEmpty())
+                map.remove(chutneyId);
+            else
+                map.put(chutneyId, jiraId);
             doSave(resolvedFilePath, map);
 
         } catch (IOException e) {

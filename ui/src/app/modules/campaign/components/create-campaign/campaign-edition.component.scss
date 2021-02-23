@@ -77,3 +77,18 @@ fieldset legend {
         border-radius: 0.5rem;
     }
 }
+
+.jira-link {
+    padding-top: 1rem !important;
+    cursor: pointer;
+}
+
+.jira-link > label,
+.jira-link > input {
+    cursor: pointer;
+}
+
+.jira-link span {
+    cursor: pointer;
+    color: var(--blue);
+}
