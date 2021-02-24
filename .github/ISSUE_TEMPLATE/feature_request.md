@@ -1,7 +1,7 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: ''
+title: 'Test title'
 labels: 'Type: Enhancement'
 assignees: ''
 
