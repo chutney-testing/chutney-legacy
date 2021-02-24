@@ -120,7 +120,7 @@ To contribute to this documentation (README, CONTRIBUTING, etc.), we conforms to
 -------------
 ## <a name="support"></a> Support
 
-We’re using [Discussions](https://github.com/chutney-testing/chutney/discussions) as a place to connect with others members of our - slow pace growing - community. We hope that you:
+We’re using [Discussions](https://github.com/chutney-testing/chutney/discussions) as a place to connect with members of our - slow pace growing - community. We hope that you:
   * Ask questions you’re wondering about,
   * Share ideas,
   * Engage with other community members,
