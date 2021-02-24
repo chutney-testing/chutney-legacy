@@ -20,23 +20,25 @@ Those Tasks are extensions and you can easily develop yours, even proprietary or
 
 In addition, Chutney provide SpEL evaluation and extensible [Function](https://github.com/chutney-testing/chutney/blob/master/task-spi/src/main/java/com/chutneytesting/task/spi/SpelFunction.java) in order to ease the use of managing scenario data like JSON path or Date comparison.  
 
-Currently, there are 2 ways of writing scenarios :
-- json file 
+Currently, there are 3 ways of writing scenarios :
+- Write scenarios as raw JSON files
     - [example](#json) 
-    - [documentation (in french only)](ui/src/assets/doc/user_manual.adoc)
-- Creating directly the step with ui. We called that composed scenario. 
+    - [documentation (French)](ui/src/assets/doc/user_manual.adoc)
+- Write scenarios as a composition of reusable steps you can assemble and pile up together (use the web UI to build those composable steps)
     - [example](#component)
+- Write scenarios using a Kotlin DSL tool to generate and manage them easily
+    - [example](https://github.com/chutney-testing/chutney-kotlin-dsl)
 
 ## Summary
 
 * [Why another test tool ?](#why)
 * [What is it not ?](#whatnot)
 * [How to contribute ?](#contrib)
+* [Support](#support)
 * [Team](#team)
     * [Contributors](#contributors)
 * [Roadmap](#road)
     * [Project History](#story)
-    * [En cours](#wip)
     * [Horizons](#horizon)
 * [Example](#example)
     * [Json scenario example](#json)
@@ -100,9 +102,9 @@ is also valuable.
 You don't need to be a developer to contribute, nor do much, you can simply:
 * Enhance documentation,
 * Correct a spelling,
-* [Report a bug](#bug)
-* [Ask a feature](#feat)
-* Give us advices
+* [Report a bug](https://github.com/chutney-testing/chutney/issues/new/choose)
+* [Ask a feature](https://github.com/chutney-testing/chutney/issues/new/choose)
+* [Give us advices or ideas](https://github.com/chutney-testing/chutney/discussions/categories/ideas),
 * etc.
 
 To help you start, we invite you to read:
@@ -116,10 +118,17 @@ To help you start, we invite you to read:
 To contribute to this documentation (README, CONTRIBUTING, etc.), we conforms to the [CommonMark Spec](https://spec.commonmark.org/)
 
 -------------
+## <a name="support"></a> Support
+
+We’re using [Discussions](https://github.com/chutney-testing/chutney/discussions) as a place to connect with others members of our - slow pace growing - community. We hope that you:
+  * Ask questions you’re wondering about,
+  * Share ideas,
+  * Engage with other community members,
+  * Welcome others, be friendly and open-minded !
+
+For a more informal place to chat, if you worry about feeling dumb in the open on Github or feel uncomfortable with English, we can meet on [Zulip](https://chutney-testing.zulipchat.com/) through public or private messages. We will be happy to chat either in English, French, Spanish or Italian as much as we can ! :) https://chutney-testing.zulipchat.com/
 
 ## <a name="team"></a> Team
-
-You can write to us at: https://chutney-testing.zulipchat.com/
 
 Core contributors :
   * [Mael Besson](https://github.com/bessonm)
@@ -131,11 +140,7 @@ Core contributors :
 
 We strive to provide a benevolent environment and support any [contribution](#contrib).
 
-Before going open source, Chutney was inner-sourced and received contribution from 30 persons:
-- [David Dewalle](https://github.com/ddewalle)
-- Abir Hammami
-- [Yue Gao](https://github.com/yueshigao)
-
+Before going open source, Chutney was inner-sourced and received contribution from over 30 persons
 
 -------------
 
@@ -158,12 +163,12 @@ Chutney original vision strive to ease the collaboration of the 3 amigos (busine
 
 Over the past 2 years Chutney has diverge from our initial goals due to contextual reasons, but we learnt a lot on the way.
 
-On the horizon we want to provide a custom and seamless experience to each profile of the 3 amigos.
+On the horizon we want to provide a custom and seamless experience to each profile of the 3 amigos. This is still a **work in progress**
 
 ## <a name="example"></a> Example
 ### <a name="json"></a> Json example
 
-A scenario (withtout technical information) can be :
+A scenario (without technical information) can be :
 
 ```
 Given a user authentified
