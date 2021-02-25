@@ -23,8 +23,8 @@ How someone can test your code?
 Example how to mark a checkbox :-
 - [x] My code follows the code style of this project.
 -->
-- [ ] My code follows the code style of this project.
-- [ ] My change requires a change to the documentation.
-- [ ] I have updated the documentation accordingly.
-- [ ] All new and existing tests passed.
-- [ ] Open Source Program names(OPTIONAL: If you participated in any open-source program then please mention the program name here)
+- [ ] Refer to issue(s) the PR solves
+- [ ] New java code is covered by tests
+- [ ] Add screenshots of the new behavior, if applicable.
+- [ ] All new and existing tests passed
+- [ ] No git conflict
