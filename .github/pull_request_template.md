@@ -26,6 +26,6 @@ How someone can test your code? -->
 
 - [ ] Refer to issue(s) the PR solves
 - [ ] New java code is covered by tests
-- [ ] Add screenshots of the new behavior, if applicable.
-- [ ] All new and existing tests passed
+- [ ] Add screenshots or gifs of the new behavior, if applicable.
+- [ ] All new and existing tests pass
 - [ ] No git conflict
