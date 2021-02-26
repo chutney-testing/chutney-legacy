@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.2.15](https://github.com/chutney-testing/chutney/tree/1.2.15)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.14...1.2.15)
+
+**Implemented enhancements:**
+
+- Add jira feature [\#339](https://github.com/chutney-testing/chutney/issues/339)
+
+**Fixed bugs:**
+
+- Campaign link on scenario history view does not work with Ctrl+click [\#345](https://github.com/chutney-testing/chutney/issues/345)
+
+**Merged pull requests:**
+
+- doc: Update Readme with Kotlin DSL & Discussions [\#353](https://github.com/chutney-testing/chutney/pull/353) ([bessonm](https://github.com/bessonm))
+- bugfix\(task-impl\): infinite loop on Selenium ZK By \(\#340\) [\#351](https://github.com/chutney-testing/chutney/pull/351) ([rbenyoussef](https://github.com/rbenyoussef))
+- Feat/add jira feature [\#349](https://github.com/chutney-testing/chutney/pull/349) ([rbenyoussef](https://github.com/rbenyoussef))
+- bugfix\(ui\): Missing hash in URLs on scenario exec page [\#348](https://github.com/chutney-testing/chutney/pull/348) ([bessonm](https://github.com/bessonm))
+
+
 ## [1.2.14](https://github.com/chutney-testing/chutney/tree/1.2.14)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.13...1.2.14)
