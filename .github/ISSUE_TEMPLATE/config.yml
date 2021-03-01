@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🙋 Ask Questions, Get Help and Share ideas 💡
+    url: https://github.com/chutney-testing/chutney/discussions
+    about: A place to get help, Q&A, new ideas and discussions
+  - name: 💬 Live chat and private messages
+    url: https://chutney-testing.zulipchat.com/
+    about: A more informal place to get in touch if you need it
+  - name: 🌋 Security / Vulnerabilities
+    url: https://chutney-testing.zulipchat.com/
+    about: Please get in touch with us using private messages on our Zulip server
