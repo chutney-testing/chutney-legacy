@@ -138,7 +138,7 @@ public class ComposableStepMapperTest {
 
         // Then
         assertThat(composableStepDto.defaultParameters()).containsExactlyElementsOf(KeyValue.fromMap(fStep.defaultParameters));
-        assertThat(composableStepDto.executionParameters()).containsExactlyElementsOf(KeyValue.fromMap(fStep.executionParameters));
+        assertThat(composableStepDto.executionParameters()).containsExactlyElementsOf(KeyValue.fromMap(fStep.executionParameters()));
     }
 
     @Test
@@ -189,6 +189,6 @@ public class ComposableStepMapperTest {
         assertThat(step.steps.get(0).implementation.get()).isEqualTo(TECHNICAL_CONTENT);
         assertThat(step.steps.get(1).name).isEqualTo(dto.steps().get(1).name());
         assertThat(step.defaultParameters).containsAllEntriesOf(KeyValue.toMap(dto.defaultParameters()));
-        assertThat(step.executionParameters).containsAllEntriesOf(KeyValue.toMap(dto.executionParameters()));
+        assertThat(step.executionParameters()).containsAllEntriesOf(KeyValue.toMap(dto.executionParameters()));
     }
 }

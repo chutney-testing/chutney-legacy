@@ -30,7 +30,7 @@ public class ExecutableComposedStepMapper {
             .withSteps(composableToExecutable(fs.steps))
             .withImplementation(toStepImplementation(fs.implementation))
             .withParameters(fs.defaultParameters)
-            .withExecutionParameters(fs.executionParameters)
+            .withExecutionParameters(fs.executionParameters())
             .build();
     }
 

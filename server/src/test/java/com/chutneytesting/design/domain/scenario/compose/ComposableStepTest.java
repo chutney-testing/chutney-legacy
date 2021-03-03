@@ -59,7 +59,7 @@ public class ComposableStepTest {
             .build();
 
         // Then
-        assertThat(step.executionParameters).isEqualTo(Maps.of(
+        assertThat(step.executionParameters()).isEqualTo(Maps.of(
             "dont_move_up", "has_default_value",
             "leaf_move_up", ""
         ));
@@ -81,7 +81,7 @@ public class ComposableStepTest {
             .build();
 
         assertThat(parent.defaultParameters).isEmpty();
-        assertThat(parent.executionParameters).containsEntry("move_up", "");
+        assertThat(parent.executionParameters()).containsEntry("move_up", "");
     }
 
     @Test
@@ -109,7 +109,7 @@ public class ComposableStepTest {
             .build();
 
 
-        assertThat(parent.executionParameters).isEqualTo(Maps.of(
+        assertThat(parent.executionParameters()).isEqualTo(Maps.of(
             "leaf_move_up", "",
             "substep_move_up", "",
             "parent_param", "has_default_value"
@@ -135,7 +135,7 @@ public class ComposableStepTest {
             ))
             .build();
 
-        assertThat(parent.executionParameters).isEqualTo(Maps.of(
+        assertThat(parent.executionParameters()).isEqualTo(Maps.of(
             "dont_move_up", ""
         ));
     }

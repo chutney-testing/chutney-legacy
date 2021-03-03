@@ -81,10 +81,10 @@ public class ComposableTestCase implements TestCase {
         return Objects.hash(id, metadata, composableScenario, executionParameters);
     }
 
-    private Map<String, String> getExecutionParameters() { // TODO - is it still needed here for edition ?
+    private Map<String, String> getExecutionParameters() {
         Map<String, String> parameters = new HashMap<>();
 
-        // Bubble up empty params from steps
+        // Pull up empty params from steps
         composableScenario.composableSteps.forEach(composableStep -> parameters.putAll(composableStep.getEmptyExecutionParameters()));
 
         // Take all params from scenario

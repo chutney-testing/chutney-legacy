@@ -34,7 +34,7 @@ public class ComposableStepMapper {
 
         builder.strategy(toDto(composableStep.strategy));
 
-        builder.addAllExecutionParameters(KeyValue.fromMap(composableStep.executionParameters));
+        builder.addAllExecutionParameters(KeyValue.fromMap(composableStep.executionParameters()));
 
         return builder.build();
     }
