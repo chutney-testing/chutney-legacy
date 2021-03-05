@@ -1,5 +1,33 @@
 # Changelog
 
+## [1.2.16](https://github.com/chutney-testing/chutney/tree/1.2.16)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.15...1.2.16)
+
+**Implemented enhancements:**
+
+- 🚀 | Task http-soap : add http headers parameter [\#364](https://github.com/chutney-testing/chutney/issues/364)
+
+**Fixed bugs:**
+
+- Campaign link on scenario history view does not work with Ctrl+click [\#345](https://github.com/chutney-testing/chutney/issues/345)
+
+**Closed issues:**
+
+- Add templates for issues and PRs [\#347](https://github.com/chutney-testing/chutney/issues/347)
+
+**Merged pull requests:**
+
+- bugfix\(ui\): remove double dash when selecting an execution [\#366](https://github.com/chutney-testing/chutney/pull/366) ([nbrouand](https://github.com/nbrouand))
+- feat\(task-impl\): allow add headers to http soap task [\#363](https://github.com/chutney-testing/chutney/pull/363) ([rbenyoussef](https://github.com/rbenyoussef))
+- chore\(deps\): Bump maven-surefire-plugin from 3.0.0-M4 to 3.0.0-M5 [\#360](https://github.com/chutney-testing/chutney/pull/360) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- chore\(deps-dev\): Bump activemq.version from 5.16.0 to 5.16.1 [\#359](https://github.com/chutney-testing/chutney/pull/359) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- chore\(deps\): Bump mongodb.version from 3.8.0 to 3.12.8 [\#358](https://github.com/chutney-testing/chutney/pull/358) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- chore\(deps\): Bump build-helper-maven-plugin from 3.0.0 to 3.2.0 [\#357](https://github.com/chutney-testing/chutney/pull/357) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- feat\(ui\): preview scenario error on campaign report [\#356](https://github.com/chutney-testing/chutney/pull/356) ([rbenyoussef](https://github.com/rbenyoussef))
+- Added issue and PR template [\#350](https://github.com/chutney-testing/chutney/pull/350) ([96RadhikaJadhav](https://github.com/96RadhikaJadhav))
+
+
 ## [1.2.15](https://github.com/chutney-testing/chutney/tree/1.2.15)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.14...1.2.15)
