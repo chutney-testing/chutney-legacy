@@ -12,6 +12,7 @@ import { ComponentService, ScenarioExecutionService, ScenarioService } from '@co
 
 @Component({
     selector: 'chutney-execution',
+    providers: [Location],
     templateUrl: './execution.component.html',
     styleUrls: ['./execution.component.scss']
 })
@@ -228,7 +229,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     private updateLocation(executionId: number) {
-        this.location.replaceState('#/scenario/' + this.currentScenarioId + '/execution/' + executionId);
+        this.location.replaceState('/scenario/' + this.currentScenarioId + '/execution/' + executionId);
     }
 
     private unsubscribeScenarioExecutionAsyncSubscription() {
