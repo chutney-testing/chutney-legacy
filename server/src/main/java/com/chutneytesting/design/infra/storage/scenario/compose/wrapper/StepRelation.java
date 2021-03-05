@@ -46,6 +46,10 @@ public class StepRelation {
         return relation.getProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS);
     }
 
+    public void setExecutionParameters(Map<String, String> executionParameters) {
+        relation.setProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS, executionParameters);
+    }
+
     public boolean isValid() {
         boolean isValid = ofNullable(getChildVertex()).isPresent();
         if (!isValid) {

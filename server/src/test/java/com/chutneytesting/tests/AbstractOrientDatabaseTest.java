@@ -133,8 +133,8 @@ public abstract class AbstractOrientDatabaseTest {
         return build(null, name, null, null, null, null, asList(subSteps));
     }
 
-    protected ComposableStep buildComposableStep(String name, Map<String, String> parameters) {
-        return  build(null, name, parameters, null, null, null, Collections.emptyList());
+    protected ComposableStep buildComposableStep(String name, Map<String, String> defaultParameters) {
+        return  build(null, name, defaultParameters, null, null, null, Collections.emptyList());
     }
 
     protected ComposableStep buildComposableStep(String name, Map<String, String> parameters, ComposableStep... subSteps) {

@@ -1,5 +1,6 @@
 package com.chutneytesting.design.infra.storage.scenario.compose;
 
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,7 +19,6 @@ import com.chutneytesting.tools.ImmutableSortRequestParametersDto;
 import com.chutneytesting.tools.PaginatedDto;
 import com.orientechnologies.common.log.OLogManager;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,6 +32,7 @@ import org.apache.groovy.util.Maps;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings({"SameParameterValue", "OptionalUsedAsFieldOrParameterType", "OptionalGetWithoutIsPresent"})
@@ -396,54 +397,87 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
         assertThat(foundParentFStep.steps.get(2).executionParameters).containsExactlyEntriesOf(secondMiddleParentInstanceDataSet);
     }
 
+    @Disabled
     @Test
-    public void should_update_parents_dataset_when_updated_with_parameters_change() {
+    public void should_update_all_parents_relations_when_changing_default_parameters() {
         // Given
-        final String deleted_param = "param with no default value";
-        final String new_value_param = "param with default value";
-        final String new_param = "new param";
-
-        Map<String, String> stepParameters = Maps.of(
-            deleted_param, "",
-            new_value_param, "default value");
-        ComposableStep step = saveAndReload(
-            buildComposableStep("my step with parameters", stepParameters));
-
-        ComposableStep parentWithNoParametersOverload = saveAndReload(
-            buildComposableStep("parent with no parameters values overload", step)
+        ComposableStep leaf = saveAndReload(ComposableStep.builder()
+            .withName("leaf")
+            .withDefaultParameters(Maps.of(
+                "empty param", "",
+                "default param", "default value",
+                "second default param", "second default value")
+            ).build());
+        ComposableStep subStep = saveAndReload(
+            ComposableStep.builder()
+                .withName("subStep")
+                .withSteps(singletonList(ComposableStep.builder()
+                    .from(leaf)
+                    .withExecutionParameters(Maps.of(
+                        "empty param", "value is override",
+                        "default param", "value is changed")
+                    ).build()
+                ))
+                .build()
         );
 
-        Map<String, String> stepInsatnceDataSet = Maps.of(
-            deleted_param, "parent value",
-            new_value_param, "new parent value");
-        ComposableStep stepInstance = ComposableStep.builder()
-            .from(step)
-            .withExecutionParameters(stepInsatnceDataSet)
-            .build();
-        ComposableStep parentWithParametersOverload = saveAndReload(
-            buildComposableStep("parent with parameters values overload", stepInstance)
+        ComposableStep parent = saveAndReload(
+            ComposableStep.builder()
+                .withName("parent")
+                .withSteps(singletonList(subStep))
+                .build()
         );
 
-        // When
-        Map<String, String> newStepParameters = Maps.of(
-            new_value_param, "another value",
-            new_param, "new value");
-        ComposableStep stepUpdate = ComposableStep.builder()
-            .from(step)
-            .withDefaultParameters(newStepParameters)
+        // Verify everything is setup correctly before updating leaf default parameters
+        ComposableStep actualParent = findByName(parent.name);
+        ComposableStep actualSubStep = findByName(subStep.name);
+        assertThat(actualParent.defaultParameters).isEqualTo(emptyMap());
+        assertThat(actualParent.executionParameters).isEqualTo(emptyMap());
+        assertThat(actualSubStep.defaultParameters).isEqualTo(emptyMap());
+        assertThat(actualSubStep.executionParameters).isEqualTo(emptyMap());
+        assertThat(actualSubStep.steps.get(0).defaultParameters).isEqualTo(Maps.of(
+            "empty param", "",
+            "default param", "default value",
+            "second default param", "second default value")
+        );
+        assertThat(actualSubStep.steps.get(0).executionParameters).isEqualTo(Maps.of(
+            "empty param", "value is override",
+            "default param", "value is changed",
+            "second default param", "second default value")
+        );
+
+        // When update leaf parameters
+        ComposableStep updatedLeaf = ComposableStep.builder()
+            .from(leaf)
+            .withDefaultParameters(Maps.of(
+                "empty param", "",
+                "another empty param", "",
+                "toto param", "toto",
+                "default param", "updated default value",
+                "second default param", "updated second default value"))
             .build();
-        sut.save(stepUpdate);
+        sut.save(updatedLeaf);
 
         // Then
-        parentWithNoParametersOverload = findByName(parentWithNoParametersOverload.name);
-        parentWithParametersOverload = findByName(parentWithParametersOverload.name);
-
-        assertThat(parentWithNoParametersOverload.steps.get(0).defaultParameters).isEqualTo(newStepParameters);
-        assertThat(parentWithNoParametersOverload.steps.get(0).executionParameters).isEqualTo(newStepParameters);
-        assertThat(parentWithNoParametersOverload.steps.get(0).defaultParameters).isEqualTo(newStepParameters);
-        assertThat(parentWithParametersOverload.steps.get(0).executionParameters).containsExactly(
-            new AbstractMap.SimpleEntry<>(new_value_param, stepInsatnceDataSet.get(new_value_param)),
-            new AbstractMap.SimpleEntry<>(new_param, newStepParameters.get(new_param))
+        ComposableStep actualParentAfterUpdate = findByName(parent.name);
+        ComposableStep actualSubStepAfterUpdate = findByName(subStep.name);
+        assertThat(actualParentAfterUpdate.defaultParameters).isEqualTo(emptyMap());
+        assertThat(actualParentAfterUpdate.executionParameters).isEqualTo(Maps.of("another empty param", ""));
+        assertThat(actualSubStepAfterUpdate.defaultParameters).isEqualTo(emptyMap());
+        assertThat(actualSubStepAfterUpdate.executionParameters).isEqualTo(Maps.of("another empty param", ""));
+        assertThat(actualSubStepAfterUpdate.steps.get(0).defaultParameters).isEqualTo(Maps.of(
+            "empty param", "",
+            "another empty param", "",
+            "toto param", "toto",
+            "default param", "updated default value",
+            "second default param", "updated second default value")
+        );
+        assertThat(actualSubStepAfterUpdate.steps.get(0).executionParameters).isEqualTo(Maps.of(
+            "empty param", "value is override",
+            "another empty param", "",
+            "toto param", "toto",
+            "default param", "value is changed",
+            "second default param", "updated second default value")
         );
     }
 
@@ -691,12 +725,15 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
             "leaf empty param", "value is set",
             "leaf second param", "" /*value is removed*/
         );
-        ComposableStep leafWithOverride = ComposableStep.builder().from(leaf).withExecutionParameters(leafExecutionParameters).build();
+        ComposableStep leafWithOverride = ComposableStep.builder()
+            .from(leaf)
+            .withExecutionParameters(leafExecutionParameters)
+            .build();
 
         Map<String, String> parentDefaultParameters = Maps.of(
             "parent default param", "parent default value",
             "parent empty param", ""
-        ) ;
+        );
 
         final ComposableStep parent = saveAndReload(
             ComposableStep.builder()
