@@ -1,5 +1,6 @@
 package com.chutneytesting.design.infra.storage.campaign;
 
+import static java.time.temporal.ChronoUnit.MILLIS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -38,7 +39,7 @@ public class CampaignExecutionReportMapperTest {
     private long campaignExecutionId = 3;
     private String scenarioId = "4";
     private long scenarioExecutionId = 5;
-    private LocalDateTime started = LocalDateTime.now();
+    private LocalDateTime started = LocalDateTime.now().truncatedTo(MILLIS);
     private long duration = 6;
     private ServerReportStatus status = ServerReportStatus.SUCCESS;
 

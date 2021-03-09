@@ -1,6 +1,7 @@
 package com.chutneytesting.design.infra.storage.scenario.jdbc;
 
 import static com.chutneytesting.design.domain.scenario.TestCaseRepository.DEFAULT_REPOSITORY_SOURCE;
+import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.empty;
 
@@ -17,6 +18,7 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -140,7 +142,7 @@ public class DatabaseTestCaseRepository implements DelegateScenarioRepository {
                 .withTitle(title)
                 .withDescription(description)
                 .withTags(tags)
-                .withCreationDate(creationDate.toInstant())
+                .withCreationDate(creationDate != null ? creationDate.toInstant() : Instant.now().truncatedTo(MILLIS))
                 .withAuthor(author)
                 .withUpdateDate(updateDate.toInstant())
                 .withVersion(version)
@@ -174,7 +176,7 @@ public class DatabaseTestCaseRepository implements DelegateScenarioRepository {
             }).runtime();
 
             Timestamp creationDate = rs.getTimestamp("CREATION_DATE");
-            testCaseDataBuilder.withCreationDate(creationDate.toInstant());
+            testCaseDataBuilder.withCreationDate(creationDate != null ? creationDate.toInstant() : Instant.now().truncatedTo(MILLIS));
 
             Timestamp updateDate = rs.getTimestamp("UPDATE_DATE");
             testCaseDataBuilder.withUpdateDate(updateDate.toInstant());

@@ -2,6 +2,7 @@ package com.chutneytesting.execution.infra.schedule;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.chutneytesting.design.domain.campaign.Campaign;
 import com.chutneytesting.tests.AbstractLocalDatabaseTest;
 import java.time.Clock;
 import java.time.LocalDate;
@@ -44,7 +45,7 @@ public class DatabaseSchedulerRepositoryTest extends AbstractLocalDatabaseTest {
     private void createCampaign(Long id, LocalTime scheduleTime) {
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("campaignId", id);
-        parameters.put("scheduledTime", scheduleTime != null ? scheduleTime.toString() : null);
+        parameters.put("scheduledTime", scheduleTime != null ? scheduleTime.format(Campaign.formatter) : null);
 
         final String sql = "insert into campaign (id, title, description, schedule_time) values (:campaignId, 'test campaign', 'description', :scheduledTime)";
         namedParameterJdbcTemplate.update(sql, parameters);

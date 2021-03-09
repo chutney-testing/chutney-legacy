@@ -1,5 +1,6 @@
 package com.chutneytesting.design.infra.storage.scenario.jdbc;
 
+import static java.time.temporal.ChronoUnit.MILLIS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
@@ -31,7 +32,7 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
         .withContentVersion("v1.0")
         .withId("0")
         .withTitle("")
-        .withCreationDate(Instant.now())
+        .withCreationDate(Instant.now().truncatedTo(MILLIS))
         .withDescription("")
         .withTags(Collections.emptyList())
         .withDataSet(Collections.emptyMap())
@@ -64,7 +65,7 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
     @Test
     public void should_retrieve_all_data_of_saved_testCase() {
         // Given: a scenarioTemplate in the repository
-        Instant creationTime = Instant.now();
+        Instant creationTime = Instant.now().truncatedTo(MILLIS);
         TestCaseData aTestCase = TestCaseDataMapper.toDto(GwtTestCase.builder()
             .withMetadata(TestCaseMetadataImpl.builder()
                 .withTitle("A Purpose")

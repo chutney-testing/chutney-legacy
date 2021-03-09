@@ -1,5 +1,6 @@
 package com.chutneytesting.design.domain.dataset;
 
+import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
@@ -94,7 +95,7 @@ public class DataSet {
                 ofNullable(id).orElse(DEFAULT_ID),
                 ofNullable(name).orElse(""),
                 ofNullable(description).orElse(""),
-                ofNullable(creationDate).orElseGet(Instant::now),
+                ofNullable(creationDate).orElseGet(() -> Instant.now().truncatedTo(MILLIS)),
                 (ofNullable(tags).orElse(emptyList())).stream().map(String::toUpperCase).map(String::trim).collect(toList()),
                 cleanUniqueValues(ofNullable(uniqueValues).orElse(emptyMap())),
                 cleanMultipleValues(ofNullable(multipleValues).orElse(emptyList()))
