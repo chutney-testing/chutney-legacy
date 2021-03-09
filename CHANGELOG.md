@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.2.17](https://github.com/chutney-testing/chutney/tree/1.2.17) (2021-03-09)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.16...1.2.17)
+
+
+**Merged pull requests:**
+
+- chore\(\): Upgrade to jdk11 [\#316](https://github.com/chutney-testing/chutney/pull/316) ([nbrouand](https://github.com/nbrouand))
+
+
 ## [1.2.16](https://github.com/chutney-testing/chutney/tree/1.2.16)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.15...1.2.16)
@@ -39,6 +49,7 @@
 **Fixed bugs:**
 
 - Campaign link on scenario history view does not work with Ctrl+click [\#345](https://github.com/chutney-testing/chutney/issues/345)
+- Infinite loop on selenium zk By [\#340](https://github.com/chutney-testing/chutney/issues/340)
 
 **Merged pull requests:**
 
