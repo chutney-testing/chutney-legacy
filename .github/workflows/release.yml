@@ -24,9 +24,9 @@ jobs:
       - name: Build with Maven
         env:
           BUILD_ENV: 'github-actions'
-        run: mvn -B -V verify
+        run: mvn clean -B -V verify
       - name: Publish to bintray
-        run: mvn deploy
+        run: mvn clean deploy
         env:
           BINTRAY_SERVER_USERNAME: ${{ secrets.BINTRAY_SERVER_USERNAME }}
           BINTRAY_SERVER_PASSWORD: ${{ secrets.BINTRAY_SERVER_PASSWORD }}
