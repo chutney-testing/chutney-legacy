@@ -8,9 +8,9 @@ import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toMap;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +18,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 
 public class ComposableStep {
 
@@ -28,7 +27,7 @@ public class ComposableStep {
     public final Map<String, String> defaultParameters; // default parameters defined when editing the component alone
     public final Optional<String> implementation;
     public final Strategy strategy;
-    public final Map<String, Pair<String, Boolean>> executionParameters; // override default parameters values when the component is used inside another component
+    public final Map<String, String> executionParameters; // override default parameters values when the component is used inside another component
     public final List<String> tags;
 
     private ComposableStep(String id,
@@ -37,7 +36,7 @@ public class ComposableStep {
                            Map<String, String> defaultParameters,
                            Optional<String> implementation,
                            Strategy strategy,
-                           Map<String, Pair<String, Boolean>> executionParameters,
+                           Map<String, String> executionParameters,
                            List<String> tags) {
         this.id = id;
         this.name = name;
@@ -71,13 +70,8 @@ public class ComposableStep {
             .anyMatch(cs -> checkCyclicDependency(cs, new ArrayList<>(parentsAcc)));
     }
 
-    public Map<String, String> executionParameters() {
-        return executionParameters.entrySet().stream()
-            .collect(toMap(Map.Entry::getKey, e -> e.getValue().getKey(), (v1, v2) -> v1, LinkedHashMap::new));
-    }
-
     public Map<String, String> getEmptyExecutionParameters() {
-        return executionParameters().entrySet().stream()
+        return executionParameters.entrySet().stream()
             .filter(e -> StringUtils.isBlank(e.getValue()))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> "", LinkedHashMap::new));
     }
@@ -101,7 +95,7 @@ public class ComposableStep {
             ", defaultParameters=" + defaultParameters +
             ", implementation=" + implementation +
             ", strategy=" + strategy.toString() +
-            ", executionParameters=" + executionParameters() +
+            ", executionParameters=" + executionParameters +
             '}';
     }
 
@@ -164,7 +158,7 @@ public class ComposableStep {
             return composableStep;
         }
 
-        private Map<String, Pair<String, Boolean>> resolveExecutionParameters() {
+        private Map<String, String> resolveExecutionParameters() {
             Map<String, String> emptyChildrenParameters = steps.stream()
                 .flatMap(s -> s.getEmptyExecutionParameters().entrySet().stream())
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> "", LinkedHashMap::new));
@@ -173,18 +167,7 @@ public class ComposableStep {
             executionParameters.putAll(emptyChildrenParameters);
             executionParameters.putAll(defaultParameters);
             executionParameters.putAll(ofNullable(this.overrideExecutionParameters).orElse(emptyMap()));
-            return flagOverrideParams(executionParameters);
-        }
-
-        private Map<String, Pair<String, Boolean>> flagOverrideParams(Map<String, String> executionParameters) {
-            return executionParameters.entrySet().stream()
-                .map(e -> new AbstractMap.SimpleImmutableEntry<>(e.getKey(), Pair.of(e.getValue(), isOverride(e))))
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> v1, LinkedHashMap::new));
-        }
-
-        private Boolean isOverride(Map.Entry<String, String> param) {
-            return defaultParameters.containsKey(param.getKey())
-                && !defaultParameters.get(param.getKey()).equals(param.getValue());
+            return executionParameters;
         }
 
         public ComposableStepBuilder withId(String id) {

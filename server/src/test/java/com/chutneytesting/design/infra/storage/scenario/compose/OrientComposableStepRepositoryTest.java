@@ -1,6 +1,5 @@
 package com.chutneytesting.design.infra.storage.scenario.compose;
 
-import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,7 +33,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-@SuppressWarnings({"SameParameterValue", "OptionalUsedAsFieldOrParameterType", "OptionalGetWithoutIsPresent"})
 public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTest {
 
     private static ComposableStepRepository sut;
@@ -368,7 +366,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
             "action parameter with no default value", "",
             "middle parent parameter with not default value", "",
             "parent parameter", "parent parameter default value"
-            );
+        );
 
         // When
         ComposableStep foundAction = sut.findById(actionStep.id);
@@ -377,106 +375,23 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
 
         // Then
         assertThat(foundAction.defaultParameters).containsExactlyEntriesOf(actionParameters);
-        assertThat(foundAction.executionParameters()).containsExactlyEntriesOf(actionParameters);
+        assertThat(foundAction.executionParameters).containsExactlyEntriesOf(actionParameters);
 
         assertThat(foundMiddleParentFStep.steps.get(0).defaultParameters).containsExactlyEntriesOf(actionParameters);
-        assertThat(foundMiddleParentFStep.steps.get(0).executionParameters()).containsExactlyEntriesOf(firstActionInstanceDataSet);
+        assertThat(foundMiddleParentFStep.steps.get(0).executionParameters).containsExactlyEntriesOf(firstActionInstanceDataSet);
         assertThat(foundMiddleParentFStep.steps.get(1).defaultParameters).containsExactlyEntriesOf(actionParameters);
-        assertThat(foundMiddleParentFStep.steps.get(1).executionParameters()).containsExactlyEntriesOf(secondActionInstanceDataSet);
+        assertThat(foundMiddleParentFStep.steps.get(1).executionParameters).containsExactlyEntriesOf(secondActionInstanceDataSet);
         assertThat(foundMiddleParentFStep.defaultParameters).containsExactlyEntriesOf(middleParentParameters);
-        assertThat(foundMiddleParentFStep.executionParameters()).containsExactlyEntriesOf(middleParentExpectedDataSet);
+        assertThat(foundMiddleParentFStep.executionParameters).containsExactlyEntriesOf(middleParentExpectedDataSet);
 
         assertThat(foundParentFStep.defaultParameters).containsExactlyEntriesOf(parentParameters);
-        assertThat(foundParentFStep.executionParameters()).containsExactlyEntriesOf(parentExpectedDataSet);
+        assertThat(foundParentFStep.executionParameters).containsExactlyEntriesOf(parentExpectedDataSet);
         assertThat(foundParentFStep.steps.get(0).defaultParameters).containsExactlyEntriesOf(middleParentParameters);
-        assertThat(foundParentFStep.steps.get(0).executionParameters()).containsExactlyEntriesOf(firstMiddleParentInstanceDataSet);
+        assertThat(foundParentFStep.steps.get(0).executionParameters).containsExactlyEntriesOf(firstMiddleParentInstanceDataSet);
         assertThat(foundParentFStep.steps.get(1).defaultParameters).containsExactlyEntriesOf(actionParameters);
-        assertThat(foundParentFStep.steps.get(1).executionParameters()).containsExactlyEntriesOf(thirdActionInstanceDataSet);
+        assertThat(foundParentFStep.steps.get(1).executionParameters).containsExactlyEntriesOf(thirdActionInstanceDataSet);
         assertThat(foundParentFStep.steps.get(2).defaultParameters).containsExactlyEntriesOf(middleParentParameters);
-        assertThat(foundParentFStep.steps.get(2).executionParameters()).containsExactlyEntriesOf(secondMiddleParentInstanceDataSet);
-    }
-
-    @Test
-    public void should_update_all_parents_relations_when_changing_default_parameters() {
-        // Given
-        ComposableStep leaf = saveAndReload(ComposableStep.builder()
-            .withName("leaf")
-            .withDefaultParameters(Maps.of(
-                "empty param", "",
-                "default param", "default value",
-                "second default param", "second default value")
-            ).build());
-        ComposableStep subStep = saveAndReload(
-            ComposableStep.builder()
-                .withName("subStep")
-                .withSteps(singletonList(ComposableStep.builder()
-                    .from(leaf)
-                    .withExecutionParameters(Maps.of(
-                        "empty param", "value is override",
-                        "default param", "value is changed")
-                    ).build()
-                ))
-                .build()
-        );
-
-        ComposableStep parent = saveAndReload(
-            ComposableStep.builder()
-                .withName("parent")
-                .withSteps(singletonList(subStep))
-                .build()
-        );
-
-        // Verify everything is setup correctly before updating leaf default parameters
-        ComposableStep actualParent = findByName(parent.name);
-        ComposableStep actualSubStep = findByName(subStep.name);
-        assertThat(actualParent.defaultParameters).isEqualTo(emptyMap());
-        assertThat(actualParent.executionParameters).isEqualTo(emptyMap());
-        assertThat(actualSubStep.defaultParameters).isEqualTo(emptyMap());
-        assertThat(actualSubStep.executionParameters).isEqualTo(emptyMap());
-        assertThat(actualSubStep.steps.get(0).defaultParameters).isEqualTo(Maps.of(
-            "empty param", "",
-            "default param", "default value",
-            "second default param", "second default value")
-        );
-        assertThat(actualSubStep.steps.get(0).executionParameters()).containsExactlyEntriesOf(Maps.of(
-            "empty param", "value is override",
-            "default param", "value is changed",
-            "second default param", "second default value")
-        );
-
-        // When update leaf parameters
-        ComposableStep updatedLeaf = ComposableStep.builder()
-            .from(leaf)
-            .withDefaultParameters(Maps.of(
-                "empty param", "",
-                "another empty param", "",
-                "toto param", "toto",
-                "default param", "updated default value",
-                "second default param", "updated second default value"))
-            .build();
-        sut.save(updatedLeaf);
-
-        // Then
-        ComposableStep actualParentAfterUpdate = findByName(parent.name);
-        ComposableStep actualSubStepAfterUpdate = findByName(subStep.name);
-        assertThat(actualParentAfterUpdate.defaultParameters).isEqualTo(emptyMap());
-        assertThat(actualParentAfterUpdate.executionParameters()).isEqualTo(Maps.of("another empty param", ""));
-        assertThat(actualSubStepAfterUpdate.defaultParameters).isEqualTo(emptyMap());
-        assertThat(actualSubStepAfterUpdate.executionParameters()).isEqualTo(Maps.of("another empty param", ""));
-        assertThat(actualSubStepAfterUpdate.steps.get(0).defaultParameters).isEqualTo(Maps.of(
-            "empty param", "",
-            "another empty param", "",
-            "toto param", "toto",
-            "default param", "updated default value",
-            "second default param", "updated second default value")
-        );
-        assertThat(actualSubStepAfterUpdate.steps.get(0).executionParameters()).isEqualTo(Maps.of(
-            "empty param", "value is override",
-            "another empty param", "",
-            "toto param", "toto",
-            "default param", "value is changed",
-            "second default param", "updated second default value")
-        );
+        assertThat(foundParentFStep.steps.get(2).executionParameters).containsExactlyEntriesOf(secondMiddleParentInstanceDataSet);
     }
 
     @Test
@@ -673,12 +588,12 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
 
         // Then
         assertThat(actualLeaf.defaultParameters).containsExactlyEntriesOf(leafDefaultParameters);
-        assertThat(actualLeaf.executionParameters()).containsExactlyEntriesOf(leafDefaultParameters);
+        assertThat(actualLeaf.executionParameters).containsExactlyEntriesOf(leafDefaultParameters);
 
         assertThat(actualSubStep.steps.get(0).defaultParameters).containsExactlyEntriesOf(leafDefaultParameters);
-        assertThat(actualSubStep.steps.get(0).executionParameters()).containsExactlyEntriesOf(leafDefaultParameters);
+        assertThat(actualSubStep.steps.get(0).executionParameters).containsExactlyEntriesOf(leafDefaultParameters);
         assertThat(actualSubStep.defaultParameters).containsExactlyEntriesOf(subStepDefaultParameters);
-        assertThat(actualSubStep.executionParameters()).containsExactlyEntriesOf(Maps.of(
+        assertThat(actualSubStep.executionParameters).containsExactlyEntriesOf(Maps.of(
             "leaf empty param", "",
             "substep default param", "substep default value",
             "substep empty param", "",
@@ -686,14 +601,14 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
         ));
 
         assertThat(actualParent.steps.get(0).defaultParameters).containsExactlyEntriesOf(subStepDefaultParameters);
-        assertThat(actualParent.steps.get(0).executionParameters()).containsExactlyEntriesOf(Maps.of(
+        assertThat(actualParent.steps.get(0).executionParameters).containsExactlyEntriesOf(Maps.of(
             "leaf empty param", "",
             "substep default param", "substep default value",
             "substep empty param", "",
             "substep second param", "substep second value"
         ));
         assertThat(actualParent.defaultParameters).containsExactlyEntriesOf(parentDefaultParameters);
-        assertThat(actualParent.executionParameters()).containsExactlyEntriesOf(Maps.of(
+        assertThat(actualParent.executionParameters).containsExactlyEntriesOf(Maps.of(
             "leaf empty param", "",
             "substep empty param", "",
             "parent default param", "parent default value"
@@ -745,12 +660,12 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
 
         // Then
         assertThat(actualLeaf.defaultParameters).containsExactlyEntriesOf(leafDefaultParameters);
-        assertThat(actualLeaf.executionParameters()).containsExactlyEntriesOf(leafDefaultParameters); // Because not in use under a parent step
+        assertThat(actualLeaf.executionParameters).containsExactlyEntriesOf(leafDefaultParameters); // Because not in use under a parent step
 
         assertThat(actualParent.steps.get(0).defaultParameters).isEqualTo(leafDefaultParameters);
-        assertThat(actualParent.steps.get(0).executionParameters()).containsExactlyEntriesOf(leafExecutionParameters);
+        assertThat(actualParent.steps.get(0).executionParameters).containsExactlyEntriesOf(leafExecutionParameters);
         assertThat(actualParent.defaultParameters).containsExactlyEntriesOf(parentDefaultParameters);
-        assertThat(actualParent.executionParameters()).containsExactlyEntriesOf(Maps.of(
+        assertThat(actualParent.executionParameters).containsExactlyEntriesOf(Maps.of(
             "leaf second param", "", /*value was removed*/
             "parent default param", "parent default value",
             "parent empty param", ""

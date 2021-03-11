@@ -9,6 +9,7 @@ import static com.chutneytesting.design.infra.storage.scenario.compose.orient.Or
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_TAGS;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.load;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.setOrRemoveProperty;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
@@ -25,23 +26,19 @@ import com.orientechnologies.orient.core.record.OEdge;
 import com.orientechnologies.orient.core.record.OElement;
 import com.orientechnologies.orient.core.record.ORecord;
 import com.orientechnologies.orient.core.record.OVertex;
-import java.util.AbstractMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import org.apache.commons.lang3.tuple.Pair;
 
 public class StepVertex {
 
     private final OVertex vertex;
     private final List<ComposableStep> steps;
     private final Map<String, String> defaultParameters;
-    public final Map<String, Pair<String, Boolean>> overrideExecutionParameters;
+    private final Map<String, String> overrideExecutionParameters;
 
-    private StepVertex(OVertex vertex, List<ComposableStep> steps, Map<String, String> defaultParameters, Map<String, Pair<String, Boolean>> overrideExecutionParameters) {
+    private StepVertex(OVertex vertex, List<ComposableStep> steps, Map<String, String> defaultParameters, Map<String, String> overrideExecutionParameters) {
         this.vertex = vertex;
         this.steps = steps;
         this.defaultParameters = defaultParameters;
@@ -93,7 +90,7 @@ public class StepVertex {
             .collect(toList());
 
         vertices.stream().forEach(v ->
-            vertex.addEdge(v.vertex, GE_STEP_CLASS).setProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS, v.overrideExecutionParameters)
+            vertex.addEdge(v.vertex, GE_STEP_CLASS).setProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS, v.executionParameters())
         );
     }
 
@@ -182,18 +179,7 @@ public class StepVertex {
     }
 
     public Map<String, String> executionParameters() {
-        return this.overrideExecutionParameters.entrySet().stream()
-            .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), getValue(e)))
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> v1, LinkedHashMap::new));
-    }
-
-    private String getValue(Map.Entry<String, Pair<String, Boolean>> entry) {
-        try {
-            return entry.getValue().getKey();
-        }
-        catch (ClassCastException e) {
-            return String.valueOf(entry.getValue());
-        }
+        return this.overrideExecutionParameters;
     }
 
     public static class StepVertexBuilder {
@@ -208,7 +194,7 @@ public class StepVertex {
         private List<String> tags;
         private Optional<String> implementation = empty();
         private Map<String, String> defaultParameters;
-        private Map<String, Pair<String, Boolean>> executionParameters;
+        private Map<String, String> executionParameters;
         private List<ComposableStep> steps;
 
         private StepVertexBuilder() {}
@@ -230,7 +216,13 @@ public class StepVertex {
                 setOrRemoveProperty(vertex, STEP_CLASS_PROPERTY_STRATEGY, strategy, OType.EMBEDDED);
             });
 
-            return new StepVertex(vertex, steps, vertex.getProperty(STEP_CLASS_PROPERTY_PARAMETERS), ofNullable(executionParameters).orElse(emptyMap()));
+            List<StepRelation> collect = ofNullable(steps).orElse(emptyList()).stream()
+                .map(s ->
+                    new StepRelation(dbSession.newEdge(vertex, (OVertex) load(s.id, dbSession).orElseThrow(() -> new ComposableStepNotFoundException(s.id))))
+                )
+                .collect(toList());
+
+            return new StepVertex(vertex, steps, defaultParameters, ofNullable(executionParameters).orElse(emptyMap()));
         }
 
         public StepVertexBuilder from(OVertex vertex) {
@@ -273,7 +265,7 @@ public class StepVertex {
             return this;
         }
 
-        public StepVertexBuilder withExecutionParameters(Map<String, Pair<String, Boolean>> executionParameters) {
+        public StepVertexBuilder withExecutionParameters(Map<String, String> executionParameters) {
             this.executionParameters = executionParameters;
             return this;
         }
