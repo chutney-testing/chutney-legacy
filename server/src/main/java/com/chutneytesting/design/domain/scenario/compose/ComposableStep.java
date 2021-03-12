@@ -27,7 +27,7 @@ public class ComposableStep {
     public final Map<String, String> defaultParameters; // default parameters defined when editing the component alone
     public final Optional<String> implementation;
     public final Strategy strategy;
-    public final Map<String, String> executionParameters; // override default parameters values when the component is used inside another component // TODO - Maybe separate list with blank values
+    public final Map<String, String> executionParameters; // override default parameters values when the component is used inside another component
     public final List<String> tags;
 
     private ComposableStep(String id,
@@ -73,7 +73,7 @@ public class ComposableStep {
     public Map<String, String> getEmptyExecutionParameters() {
         return executionParameters.entrySet().stream()
             .filter(e -> StringUtils.isBlank(e.getValue()))
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> "", LinkedHashMap::new));
     }
 
     public Map<String, String> getChildrenEmptyParam() {
