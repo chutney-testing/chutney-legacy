@@ -1,23 +1,21 @@
 package com.chutneytesting.execution.api;
 
 import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
-import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
-import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
-import com.chutneytesting.execution.domain.scenario.composed.ExecutableStepRepository;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngineAsync;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableStepRepository;
 import com.chutneytesting.security.domain.UserService;
 import com.chutneytesting.tools.ui.KeyValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Observable;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;

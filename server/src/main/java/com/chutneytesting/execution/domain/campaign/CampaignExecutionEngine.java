@@ -238,8 +238,12 @@ public class CampaignExecutionEngine {
     }
 
     private ExecutionRequest executionWithDatasetIdOverrideByCampaign(Campaign campaign, TestCase testCase, String userId) {
-        testCase = ((ExecutableComposedTestCase) testCase).withDataSetId(campaign.externalDatasetId);
-        return new ExecutionRequest(testCase, campaign.executionEnvironment(), true, userId);
+        return new ExecutionRequest(
+            ((ExecutableComposedTestCase) testCase).withDataSetId(campaign.externalDatasetId),
+            campaign.executionEnvironment(),
+            true,
+            userId
+        );
     }
 
     private ExecutionRequest executionWithCombinedParametersFromCampaignAndTestCase(Campaign campaign, TestCase testCase, String userId) {

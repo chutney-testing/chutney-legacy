@@ -98,10 +98,6 @@ public class StepVertex {
         this.getChildrenEdges().forEach(ORecord::delete);
     }
 
-    private OEdge addSubStep(StepVertex subStep) {
-        return this.vertex.addEdge(subStep.vertex, GE_STEP_CLASS);
-    }
-
     ///// SAVE END \\\\\
 
     public List<OVertex> listParentVertices() {
@@ -201,7 +197,9 @@ public class StepVertex {
 
         public StepVertex build() {
             if (this.vertex == null) {
-                this.vertex = (OVertex) load(id, dbSession).orElseThrow(() -> new ComposableStepNotFoundException(id));
+                this.vertex = (OVertex) load(id, ofNullable(dbSession).orElseThrow(IllegalStateException::new))
+                    .orElseThrow(() -> new ComposableStepNotFoundException(id));
+
             }
 
             ofNullable(name).ifPresent(n -> vertex.setProperty(STEP_CLASS_PROPERTY_NAME, n, OType.STRING));
@@ -209,20 +207,19 @@ public class StepVertex {
             ofNullable(tags).ifPresent(t -> setOrRemoveProperty(vertex, STEP_CLASS_PROPERTY_TAGS, t, OType.EMBEDDEDLIST));
             ofNullable(defaultParameters).ifPresent(p -> vertex.setProperty(STEP_CLASS_PROPERTY_PARAMETERS, p, OType.EMBEDDEDMAP));
 
-            ofNullable(strategy).ifPresent( s -> {
-                OElement strategy = dbSession.newElement();
-                strategy.setProperty("name", s.type, OType.STRING);
-                strategy.setProperty("parameters", s.parameters, OType.EMBEDDEDMAP);
-                setOrRemoveProperty(vertex, STEP_CLASS_PROPERTY_STRATEGY, strategy, OType.EMBEDDED);
-            });
+            ofNullable(strategy).ifPresent( s ->
+                ofNullable(dbSession).ifPresent(session -> {
+                    OElement strategy = dbSession.newElement();
+                    strategy.setProperty("name", s.type, OType.STRING);
+                    strategy.setProperty("parameters", s.parameters, OType.EMBEDDEDMAP);
+                    setOrRemoveProperty(vertex, STEP_CLASS_PROPERTY_STRATEGY, strategy, OType.EMBEDDED);
+            }));
 
-            List<StepRelation> collect = ofNullable(steps).orElse(emptyList()).stream()
-                .map(s ->
-                    new StepRelation(dbSession.newEdge(vertex, (OVertex) load(s.id, dbSession).orElseThrow(() -> new ComposableStepNotFoundException(s.id))))
-                )
-                .collect(toList());
-
-            return new StepVertex(vertex, steps, defaultParameters, ofNullable(executionParameters).orElse(emptyMap()));
+            return new StepVertex(vertex,
+                ofNullable(steps).orElse(emptyList()),
+                ofNullable(defaultParameters).orElse(emptyMap()),
+                ofNullable(executionParameters).orElse(emptyMap())
+            );
         }
 
         public StepVertexBuilder from(OVertex vertex) {

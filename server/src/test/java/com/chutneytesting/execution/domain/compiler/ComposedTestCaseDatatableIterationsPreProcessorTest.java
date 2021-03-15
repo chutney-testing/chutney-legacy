@@ -529,7 +529,7 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
         ExecutableComposedStep expected_1 = ExecutableComposedStep.builder()
             .withName("Should generate 2 iterations using output_1 and output_2 previous outputs")
             .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
-            .withSteps(Arrays.asList(
+            .withSteps(asList(
                 ExecutableComposedStep.builder()
                     .withName("Should generate 2 iterations using output_1 and output_2 previous outputs - datatable iteration 1")
                     .withImplementation(Optional.of(

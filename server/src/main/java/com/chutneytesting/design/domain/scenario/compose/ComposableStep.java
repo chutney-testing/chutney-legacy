@@ -10,7 +10,6 @@ import static java.util.stream.Collectors.toMap;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +72,7 @@ public class ComposableStep {
     public Map<String, String> getEmptyExecutionParameters() {
         return executionParameters.entrySet().stream()
             .filter(e -> StringUtils.isBlank(e.getValue()))
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> "", LinkedHashMap::new));
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> "", LinkedHashMap::new));
     }
 
     public Map<String, String> getChildrenEmptyParam() {

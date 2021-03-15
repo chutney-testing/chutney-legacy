@@ -8,30 +8,33 @@ import java.util.Optional;
 
 public class CampaignDto {
 
-    private final Long id;
-    private final String title;
-    private final String description;
-    private final List<String> scenarioIds;
-    private final Map<String, String> executionParameters;
-    private final List<CampaignExecutionReportDto> campaignExecutionReports;
+    private Long id;
+    private String title;
+    private String description;
+    private List<String> scenarioIds;
+    @JsonProperty("computedParameters")
+    private Map<String, String> executionParameters;
+    private List<CampaignExecutionReportDto> campaignExecutionReports;
+    private String scheduleTime;
+    private String environment;
+    private boolean parallelRun;
+    private boolean retryAuto;
+    private String datasetId;
 
-    private final String scheduleTime;
-    private final String environment;
-    private final boolean parallelRun;
-    private final boolean retryAuto;
-    private final String datasetId;
+    public CampaignDto() {
+    }
 
-    public CampaignDto(@JsonProperty("id") Long id,
-                       @JsonProperty("title") String title,
-                       @JsonProperty("description") String description,
-                       @JsonProperty("scenarioIds") List<String> scenarioIds,
-                       @JsonProperty("computedParameters") Map<String, String> executionParameters,
-                       @JsonProperty("campaignExecutionReports") List<CampaignExecutionReportDto> campaignExecutionReports,
-                       @JsonProperty("scheduleTime") String scheduleTime,
-                       @JsonProperty("environment") String environment,
-                       @JsonProperty("parallelRun") boolean parallelRun,
-                       @JsonProperty("retryAuto") boolean retryAuto,
-                       @JsonProperty("datasetId") String datasetId) {
+    public CampaignDto(Long id,
+                       String title,
+                       String description,
+                       List<String> scenarioIds,
+                       Map<String, String> executionParameters,
+                       List<CampaignExecutionReportDto> campaignExecutionReports,
+                       String scheduleTime,
+                       String environment,
+                       boolean parallelRun,
+                       boolean retryAuto,
+                       String datasetId) {
         this.id = id;
         this.title = title;
         this.description = description;

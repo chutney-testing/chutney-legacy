@@ -30,7 +30,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import org.apache.commons.text.StringEscapeUtils;
 
 public class ComposedTestCaseDatatableIterationsPreProcessor implements TestCasePreProcessor<ExecutableComposedTestCase> {
@@ -415,7 +414,7 @@ public class ComposedTestCaseDatatableIterationsPreProcessor implements TestCase
     private Map<String, String> buildExecutionParametersWithAliases(Map<String, String> executionParameters) {
         Map<String, String> aliases = executionParameters.entrySet().stream()
             .filter(e -> isAlias(e.getValue()))
-            .collect(Collectors.toMap(a -> a.getValue().substring(2, a.getValue().length() - 2), o -> ""));
+            .collect(toMap(a -> a.getValue().substring(2, a.getValue().length() - 2), o -> ""));
 
         aliases.putAll(executionParameters); // TODO - need to check why we filter and remove aliases and then add them all again ?
 

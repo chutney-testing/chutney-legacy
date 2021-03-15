@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,16 +44,16 @@ public class ComposedTestCaseParametersResolutionPreProcessor implements TestCas
     private ExecutableComposedTestCase apply(ExecutableComposedTestCase testCase, String environment) {
         Map<String, String> globalVariable = globalvarRepository.getFlatMap();
 
-        if (!StringUtils.isBlank(environment)) {
+        if (!isBlank(environment)) {
             globalVariable.put("environment", environment);
         }
 
-        testCase = this.applyOnStrategy(testCase, globalVariable);
+        ExecutableComposedTestCase newTestCase = this.applyOnStrategy(testCase, globalVariable);
 
         return new ExecutableComposedTestCase(
-            applyToMetadata(testCase.metadata, testCase.executionParameters, globalVariable),
-            applyToScenario(testCase.composedScenario, testCase.executionParameters, globalVariable),
-            testCase.executionParameters);
+            applyToMetadata(newTestCase.metadata, newTestCase.executionParameters, globalVariable),
+            applyToScenario(newTestCase.composedScenario, newTestCase.executionParameters, globalVariable),
+            newTestCase.executionParameters);
     }
 
     public ExecutableComposedTestCase applyOnStrategy(ExecutableComposedTestCase testCase, Map<String, String> globalVariable) {
