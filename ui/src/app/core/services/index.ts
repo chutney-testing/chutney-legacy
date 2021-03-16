@@ -4,6 +4,7 @@ export * from './component.service';
 export * from './database-admin.service';
 export * from './dataset.service';
 export * from './environment-admin.service';
+export * from './git-backup.service';
 export * from './home-page.service';
 export * from './linkifier.service';
 export * from './login.service';

@@ -1,0 +1,77 @@
+<div>
+    <fieldset class="w99 border p-2">
+        <legend class="w-auto pl-3 pr-3 mb-0">
+            <span>Git backup repository </span>
+        </legend>
+        <div [ngClass]="isErrorNotification ? 'bg-danger' : 'bg-info'" class="notification text-center text-white">
+            <strong *ngIf="message">{{ message }}</strong>
+        </div>
+
+        <div class="row m-1" [formGroup]="remoteConfigForm">
+            <div class="col">
+                <label class="sr-only" for="name">Pattern</label>
+                <input type="text" class="form-control" id="name" formControlName="name"
+                       placeholder="Remote name (ex. origin)"/>
+            </div>
+            <div class="col">
+                <label class="sr-only" for="url">Pattern</label>
+                <input type="text" class="form-control" id="url" formControlName="url"
+                       placeholder="Remote url (ex. git@github.com:chutney-testing/chutney.git)"/>
+            </div>
+            <div class="col">
+                <label class="sr-only" for="branch">Link</label>
+                <input type="text" class="form-control" id="branch" formControlName="branch"
+                       placeholder="Branch name (default to 'backup')"/>
+            </div>
+            <div class="col">
+                <label class="sr-only" for="privateKeyPath">Link</label>
+                <input type="text" class="form-control" id="privateKeyPath" name="username" formControlName="privateKeyPath"
+                       placeholder="/private/key/path"/>
+            </div>
+            <div class="col">
+                <label class="sr-only" for="passphrase">Link</label>
+                <input type="password" class="form-control" id="passphrase" name="password" formControlName="passphrase"
+                       placeholder="Private key passphrase"/>
+            </div>
+        </div>
+
+        <div class="box2">
+            <button type="submit" [disabled]="!isValid()" class="btn btn-success" (click)="saveConfig()">
+                Test & Save
+                <span class="fa fa-check"></span>
+            </button>
+        </div>
+        <table class="table table-sm table-striped table-hover">
+            <thead>
+            <tr>
+                <th scope="col" class="w20">Name</th>
+                <th scope="col" class="w30">URL</th>
+                <th scope="col" class="w20">Branch</th>
+                <th scope="col" class="w30">Private Key Path</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let remote of remotes; let i = index">
+                <td> {{ remote.name }} </td>
+                <td> {{ remote.url }} </td>
+                <td> {{ remote.branch }} </td>
+                <td> {{ remote.privateKeyPath }} </td>
+                <td>
+                    <button type="button" class="btn btn-light ml-1"
+                            (click)="edit(remote)"
+                            title="{{'global.actions.edit' | translate}}">
+                        <span class="fa fa-pencil-alt"></span>
+                    </button>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-outline-danger delete-button-height ml-1"
+                            (click)="remove(remote, i)"
+                            title="{{'global.actions.delete' | translate}}">
+                        <span class="fa fa-trash"></span>
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </fieldset>
+</div>
