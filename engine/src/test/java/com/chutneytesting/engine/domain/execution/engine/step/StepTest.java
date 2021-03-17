@@ -1,5 +1,7 @@
 package com.chutneytesting.engine.domain.execution.engine.step;
-
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
@@ -53,7 +55,7 @@ public class StepTest {
         RxBus.getInstance().post(new StopExecutionAction(execution.executionId));
         Status result = step.execute(execution, new ScenarioContextImpl());
 
-        assertThat(result).isEqualTo(Status.STOPPED);
+        await().atMost(5, SECONDS).untilAsserted(() -> assertThat(result).isEqualTo(Status.STOPPED));;
     }
 
     @Test
@@ -65,12 +67,10 @@ public class StepTest {
 
         RxBus.getInstance().post(new PauseExecutionAction(execution.executionId));
         Schedulers.io().createWorker().schedule(() -> step.execute(execution, new ScenarioContextImpl()));
-        waitMs(1100);
-        verify(stepExecutor, times(0)).execute(any(), any(), any(), any());
+        await().atMost(1100, MILLISECONDS).untilAsserted(() -> verify(stepExecutor, times(0)).execute(any(), any(), any(), any()));
 
         RxBus.getInstance().post(new ResumeExecutionAction(execution.executionId));
-        waitMs(1100);
-        verify(stepExecutor, times(1)).execute(any(), any(), any(), any());
+        await().atMost(1100, MILLISECONDS).untilAsserted(() -> verify(stepExecutor, times(1)).execute(any(), any(), any(), any()));
     }
 
     @Test
