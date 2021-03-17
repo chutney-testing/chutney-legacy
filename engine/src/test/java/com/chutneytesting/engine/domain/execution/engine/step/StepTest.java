@@ -91,7 +91,7 @@ public class StepTest {
         outputs.put("aValue", "42");
         outputs.put("anotherValue", "43");
 
-        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, outputs, environment);
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, outputs, null, environment);
         Step step = new Step(dataEvaluator, fakeStepDefinition, Optional.empty(), stepExecutor, Lists.emptyList());
         ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
 
@@ -102,6 +102,56 @@ public class StepTest {
         StepContext context = (StepContext) ReflectionTestUtils.getField(step, "stepContext");
         assertThat(context.getStepOutputs().get("aValue")).isEqualTo("42");
         assertThat(context.getStepOutputs().get("anotherValue")).isEqualTo("43");
+    }
+
+    @Test
+    public void should_have_success_validations_of_step_store_in_step_result() {
+        // Given
+        StepExecutor stepExecutor = mock(StepExecutor.class);
+
+        Map<String, Object> validations = new HashMap<>();
+        validations.put("first assert", "${true}");
+        validations.put("second assert", "${true}");
+
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, null, validations, environment);
+        Step step = new Step(dataEvaluator, fakeStepDefinition, Optional.empty(), stepExecutor, Lists.emptyList());
+        ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
+
+        // When
+        step.execute(ScenarioExecution.createScenarioExecution(), scenarioContext);
+
+        // Then
+        assertThat(step.status()).isEqualTo(Status.SUCCESS);
+        StepState state = (StepState) ReflectionTestUtils.getField(step, "state");
+        assertThat(state.errors().size()).isEqualTo(0);
+        assertThat(state.informations().size()).isEqualTo(2);
+        assertThat(state.informations().get(0)).isEqualTo("Validation [first assert] : OK");
+        assertThat(state.informations().get(1)).isEqualTo("Validation [second assert] : OK");
+    }
+
+    @Test
+    public void should_have_failed_validations_of_step_store_in_step_result() {
+        // Given
+        StepExecutor stepExecutor = mock(StepExecutor.class);
+
+        Map<String, Object> validations = new HashMap<>();
+        validations.put("first assert", "${true}");
+        validations.put("second assert", "${false}");
+
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, null, validations, environment);
+        Step step = new Step(dataEvaluator, fakeStepDefinition, Optional.empty(), stepExecutor, Lists.emptyList());
+        ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
+
+        // When
+        step.execute(ScenarioExecution.createScenarioExecution(), scenarioContext);
+
+        // Then
+        assertThat(step.status()).isEqualTo(Status.FAILURE);
+        StepState state = (StepState) ReflectionTestUtils.getField(step, "state");
+        assertThat(state.errors().size()).isEqualTo(1);
+        assertThat(state.informations().size()).isEqualTo(1);
+        assertThat(state.informations().get(0)).isEqualTo("Validation [first assert] : OK");
+        assertThat(state.errors().get(0)).isEqualTo("Validation [second assert] : KO (${false})");
     }
 
     @Test
@@ -126,7 +176,7 @@ public class StepTest {
         outputs.put("aValue", "${#aValueToEvaluate}");
         outputs.put("anotherValue", "${#anotherValueToEvaluate}");
 
-        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, outputs, environment);
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, outputs, null, environment);
         Step step = new Step(dataEvaluator, fakeStepDefinition, Optional.empty(), stepExecutor, Lists.emptyList());
         ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
 
@@ -167,7 +217,7 @@ public class StepTest {
         outputs.put("anAliasForReuse", "${#aResultKeySetByATask}");
         outputs.put("anotherAliasForReuse", "${#anotherResultKeySetByATask}");
 
-        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, outputs, environment);
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, outputs, null, environment);
         Step step = new Step(dataEvaluator, fakeStepDefinition, Optional.empty(), fakeRemoteStepExecutor, Lists.emptyList());
         ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
 
@@ -193,7 +243,7 @@ public class StepTest {
         inputs.put("targetName", "${#target.name}");
         inputs.put("currentEnvironment", "${#environment}");
 
-        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", this.fakeTarget, "taskType", null, inputs, null, null, environment);
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", this.fakeTarget, "taskType", null, inputs, null, null, null, environment);
         Step step = new Step(dataEvaluator, fakeStepDefinition, Optional.of(fakeTarget), mock(StepExecutor.class), Lists.emptyList());
 
         // When
@@ -247,7 +297,7 @@ public class StepTest {
 
     @Test
     public void should_not_compute_substeps_status_if_current_status_is_failure() {
-        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, null, environment);
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, null, null, environment);
         Step step = new Step(dataEvaluator, fakeStepDefinition, Optional.empty(), mock(StepExecutor.class), Lists.list(mock(Step.class), mock(Step.class)));
         step.failure("...");
         assertThat(step.status()).isEqualTo(Status.FAILURE);
@@ -280,7 +330,7 @@ public class StepTest {
     }
 
     private Step buildEmptyStep(StepExecutor stepExecutor) {
-        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, null, environment);
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, null, null, environment);
         return new Step(dataEvaluator, fakeStepDefinition, Optional.empty(), stepExecutor, Lists.emptyList());
     }
 }

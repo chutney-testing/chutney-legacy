@@ -25,8 +25,9 @@ class UnmarshalledStepDefinition {
     public final Map<String, Object> inputs;
     public final List<UnmarshalledStepDefinition> steps;
     public final Map<String, Object> outputs;
+    public final Map<String, Object> validations;
 
-    private UnmarshalledStepDefinition(GwtType gwtType, String name, String target, String type, UnmarshalledStepStrategyDefinition strategy, Map<String, Object> inputs, List<UnmarshalledStepDefinition> steps, Map<String, Object> outputs) {
+    private UnmarshalledStepDefinition(GwtType gwtType, String name, String target, String type, UnmarshalledStepStrategyDefinition strategy, Map<String, Object> inputs, List<UnmarshalledStepDefinition> steps, Map<String, Object> outputs, Map<String, Object> validations) {
         this.gwtType = gwtType;
         this.name = name;
         this.target = target;
@@ -35,6 +36,7 @@ class UnmarshalledStepDefinition {
         this.inputs = inputs;
         this.steps = steps;
         this.outputs = outputs;
+        this.validations = validations;
     }
 
     public static UnmarshalledStepDefinitionBuilder builder() {
@@ -52,8 +54,10 @@ class UnmarshalledStepDefinition {
         private Map<String, Object> inputs;
         private List<UnmarshalledStepDefinition> steps;
         private Map<String, Object> outputs;
+        private Map<String, Object> validations;
 
-        private UnmarshalledStepDefinitionBuilder() {}
+        private UnmarshalledStepDefinitionBuilder() {
+        }
 
         public UnmarshalledStepDefinition build() {
             return new UnmarshalledStepDefinition(
@@ -64,7 +68,8 @@ class UnmarshalledStepDefinition {
                 ofNullable(strategy).orElse(UnmarshalledStepStrategyDefinition.NONE),
                 ofNullable(inputs).orElse(emptyMap()),
                 ofNullable(steps).orElse(emptyList()),
-                ofNullable(outputs).orElse(emptyMap())
+                ofNullable(outputs).orElse(emptyMap()),
+                ofNullable(validations).orElse(emptyMap())
             );
         }
 
@@ -105,6 +110,11 @@ class UnmarshalledStepDefinition {
 
         public UnmarshalledStepDefinitionBuilder withOutputs(Map<String, Object> outputs) {
             this.outputs = outputs;
+            return this;
+        }
+
+        public UnmarshalledStepDefinitionBuilder withValidations(Map<String, Object> validations) {
+            this.validations = validations;
             return this;
         }
     }

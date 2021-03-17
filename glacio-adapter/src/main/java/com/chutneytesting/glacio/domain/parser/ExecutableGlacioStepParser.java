@@ -14,13 +14,16 @@ public abstract class ExecutableGlacioStepParser implements IParseExecutableStep
     protected final GlacioStepParser<Target> targetParser;
     protected final GlacioStepParser<Map<String, Object>> inputsParser;
     protected final GlacioStepParser<Map<String, Object>> outputsParser;
+    protected final GlacioStepParser<Map<String, Object>> validationsParser;
 
     public ExecutableGlacioStepParser(GlacioStepParser<Target> targetParser,
                                       GlacioStepParser<Map<String, Object>> inputsParser,
-                                      GlacioStepParser<Map<String, Object>> outputsParser) {
+                                      GlacioStepParser<Map<String, Object>> outputsParser,
+                                      GlacioStepParser<Map<String, Object>> validationsParser) {
         this.targetParser = targetParser;
         this.inputsParser = inputsParser;
         this.outputsParser = outputsParser;
+        this.validationsParser = validationsParser;
     }
 
     public abstract String parseTaskType(Step step);
@@ -35,6 +38,7 @@ public abstract class ExecutableGlacioStepParser implements IParseExecutableStep
             parseTaskInputs(context, step),
             emptyList(),
             parseTaskOutputs(context, step),
+            parseTaskValidations(context, step),
             context.values.get(ENVIRONMENT)
         );
     }
@@ -49,6 +53,10 @@ public abstract class ExecutableGlacioStepParser implements IParseExecutableStep
 
     private Map<String, Object> parseTaskOutputs(ParsingContext context, Step step) {
         return outputsParser.parseGlacioStep(context, step);
+    }
+
+    private Map<String, Object> parseTaskValidations(ParsingContext context, Step step) {
+        return validationsParser.parseGlacioStep(context, step);
     }
 
     private Target parseStepTarget(ParsingContext context, Step step) {

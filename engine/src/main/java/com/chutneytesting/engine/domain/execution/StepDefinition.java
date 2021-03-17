@@ -34,6 +34,8 @@ public class StepDefinition {
 
     public final Map<String, Object> outputs;
 
+    public final Map<String, Object> validations;
+
     public final String environment;
 
     /**
@@ -54,6 +56,7 @@ public class StepDefinition {
                           Map<String, Object> inputs,
                           List<StepDefinition> steps,
                           Map<String, Object> outputs,
+                          Map<String, Object> validations,
                           String environment) {
         this.name = requireNonNull(name, "The argument <name> must not be null");
         this.type = requireNonNull(type, "The argument <type> must not be null");
@@ -64,6 +67,7 @@ public class StepDefinition {
         this.inputs = inputs != null ? Collections.unmodifiableMap(inputs) : Collections.emptyMap();
         this.steps = steps != null ? Collections.unmodifiableList(steps) : Collections.emptyList();
         this.outputs = outputs != null ? Collections.unmodifiableMap(outputs) : Collections.emptyMap();
+        this.validations = validations != null ? Collections.unmodifiableMap(validations) : Collections.emptyMap();
         this.environment = environment;
     }
 
@@ -83,6 +87,7 @@ public class StepDefinition {
             ", inputs=" + inputs +
             ", steps=" + steps +
             ", outputs=" + outputs +
+            ", validations=" + validations +
             ", target=" + target +
             ", strategy=" + strategy +
             '}';

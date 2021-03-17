@@ -141,16 +141,16 @@ public class ReporterTest {
     private Step buildFakeScenario() {
         final String environment = "";
         List<StepDefinition> subSubSteps = new ArrayList<>();
-        StepDefinition subSubStepDef1 = new StepDefinition("fakeStep1", fakeTarget, "taskType", null, null, null, null, environment);
-        StepDefinition subSubStepDef2 = new StepDefinition("fakeStep2", fakeTarget, "taskType", null, null, null, null, environment);
+        StepDefinition subSubStepDef1 = new StepDefinition("fakeStep1", fakeTarget, "taskType", null, null, null, null, null, environment);
+        StepDefinition subSubStepDef2 = new StepDefinition("fakeStep2", fakeTarget, "taskType", null, null, null, null, null, environment);
         subSubSteps.add(subSubStepDef1);
         subSubSteps.add(subSubStepDef2);
-        StepDefinition subStepDef1 = new StepDefinition("fakeParentStep", fakeTarget, "taskType", null, null, subSubSteps, null, environment);
-        StepDefinition subStepDef2 = new StepDefinition("fakeParentEmptyStep", fakeTarget, "taskType", null, null, null, null, environment);
+        StepDefinition subStepDef1 = new StepDefinition("fakeParentStep", fakeTarget, "taskType", null, null, subSubSteps, null, null, environment);
+        StepDefinition subStepDef2 = new StepDefinition("fakeParentEmptyStep", fakeTarget, "taskType", null, null, null, null, null, environment);
         List<StepDefinition> steps = new ArrayList<>();
         steps.add(subStepDef1);
         steps.add(subStepDef2);
-        StepDefinition rootStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, steps, null, environment);
+        StepDefinition rootStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, steps, null, null, environment);
 
         return buildStep(rootStepDefinition);
     }

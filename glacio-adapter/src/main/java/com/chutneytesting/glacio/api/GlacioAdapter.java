@@ -62,7 +62,7 @@ public class GlacioAdapter {
     }
 
     private StepDefinitionDto buildRootStep(List<StepDefinitionDto> subSteps, ParsingContext context, String text) {
-        return new StepDefinitionDto(text, null, "", null, emptyMap(), subSteps, emptyMap(), context.values.get(ENVIRONMENT));
+        return new StepDefinitionDto(text, null, "", null, emptyMap(), subSteps, emptyMap(), emptyMap(), context.values.get(ENVIRONMENT));
     }
 
     private Feature toGlacioModel(String text) {

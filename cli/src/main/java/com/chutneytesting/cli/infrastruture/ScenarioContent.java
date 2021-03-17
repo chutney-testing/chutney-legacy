@@ -33,6 +33,8 @@ public interface ScenarioContent {
 
         Map<String, Object> outputs();
 
+        Map<String, Object> validations();
+
     }
 
     @Value.Immutable

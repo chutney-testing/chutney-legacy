@@ -24,7 +24,8 @@ public class DefaultGlacioParser extends ExecutableGlacioStepParser {
     public DefaultGlacioParser(TaskTemplateRegistry taskTemplateRegistry, EmbeddedEnvironmentApi environmentApplication) {
         super(new TargetStepParser(environmentApplication, "On"),
             new FilteredByKeywordsSubStepMapStepParser(new EntryStepParser(), "With"),
-            new FilteredByKeywordsSubStepMapStepParser(new EntryStepParser(), "Take", "Keep"));
+            new FilteredByKeywordsSubStepMapStepParser(new EntryStepParser(), "Take", "Keep"),
+            new FilteredByKeywordsSubStepMapStepParser(new EntryStepParser(), "Validate"));
         this.taskTemplateRegistry = taskTemplateRegistry;
     }
 

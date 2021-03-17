@@ -11,7 +11,7 @@ import java.util.Set;
 public class SuccessParser extends ExecutableGlacioStepParser {
 
     public SuccessParser() {
-        super(null, null, null);
+        super(null, null, null, null);
     }
 
     @Override

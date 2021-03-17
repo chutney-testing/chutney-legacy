@@ -285,7 +285,9 @@
                 "blocks": {
                     "global": "General",
                     "parameters": "Parameters",
-                    "inputs": "Inputs"
+                    "inputs": "Inputs",
+                    "outputs": "Outputs",
+                    "validations": "Validations"
                 },
                 "fields": {
                     "intention.placeholder" : "Describe your intention",

@@ -42,6 +42,7 @@ class StepDefinitionMapper {
             stepDefinition.inputs,
             steps,
             stepDefinition.outputs,
+            stepDefinition.validations,
             stepDefinition.environment
         );
     }
@@ -70,7 +71,7 @@ class StepDefinitionMapper {
 
     private static CredentialExecutionDto toDto(Optional<Credential> credential) {
         return Optional.ofNullable(credential)
-                .map(c -> c.map(value -> new CredentialExecutionDto(value.username(), value.password()))
+            .map(c -> c.map(value -> new CredentialExecutionDto(value.username(), value.password()))
                 .orElse(null))
             .orElse(null);
     }

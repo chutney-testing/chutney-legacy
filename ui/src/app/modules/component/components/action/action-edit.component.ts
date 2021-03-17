@@ -27,6 +27,7 @@ export class ActionEditComponent implements OnChanges {
     executionResult: any;
 
     collapseOutputs = true;
+    collapseValidations = true;
     collapseInputs = false;
     collapseInputsMap: Array<boolean> = [];
     collapseInputsList: Array<boolean> = [];
@@ -52,6 +53,7 @@ export class ActionEditComponent implements OnChanges {
             tags: [],
             strategy: new FormControl(),
             outputs: this.formBuilder.array([]),
+            validations: this.formBuilder.array([]),
         });
     }
 
@@ -109,8 +111,10 @@ export class ActionEditComponent implements OnChanges {
         const listInputs = this.actionForm.value['inputsList'];
         const simpleInputs = this.actionForm.value['inputs'];
         const outputs = this.actionForm.value['outputs'];
+        const validations = this.actionForm.value['validations'];
 
         const outputsTmp = outputs.map((p) => new KeyValue(p.key, p.value));
+        const validationsTmp = validations.map((p) => new KeyValue(p.key, p.value));
 
         const mapImpl = mapInputs.map(i => {
             const map = new Array<KeyValue>();
@@ -144,7 +148,8 @@ export class ActionEditComponent implements OnChanges {
             mapImpl,
             listImpl,
             simpleImpl,
-            outputsTmp
+            outputsTmp,
+            validationsTmp
         );
     }
 
@@ -187,6 +192,17 @@ export class ActionEditComponent implements OnChanges {
         const outputs = this.actionForm.controls.outputs as FormArray;
         component.implementation.outputs.forEach((keyValue) => {
             outputs.push(
+                this.formBuilder.group({
+                    key: keyValue.key,
+                    value: keyValue.value,
+                })
+            );
+        });
+
+        // Fill validations Map
+        const validations = this.actionForm.controls.validations as FormArray;
+        component.implementation.validations.forEach((keyValue) => {
+            validations.push(
                 this.formBuilder.group({
                     key: keyValue.key,
                     value: keyValue.value,
@@ -277,6 +293,21 @@ export class ActionEditComponent implements OnChanges {
         this.collapseOutputs = (outputs.length === 0);
     }
 
+    addValidation(): void {
+        this.collapseValidations = false;
+        (this.actionForm.controls.validations as FormArray)
+            .push(this.formBuilder.group({
+                key: '',
+                value: ''
+            }));
+    }
+
+    removeValidation(itemIndex: number): void {
+        const validations = this.actionForm.controls['validations'] as FormArray;
+        validations.removeAt(itemIndex);
+        this.collapseValidations = (validations.length === 0);
+    }
+
     hasInputs(): boolean {
         const inputs = this.actionForm.controls.inputs as FormArray;
         const inputsMap = this.actionForm.controls.inputsMap as FormArray;
@@ -290,6 +321,10 @@ export class ActionEditComponent implements OnChanges {
 
     switchCollapseOutputs() {
         this.collapseOutputs = !this.collapseOutputs;
+    }
+
+    switchCollapseValidations() {
+        this.collapseValidations = !this.collapseValidations;
     }
 
     switchCollapseInputsMap(index: number) {

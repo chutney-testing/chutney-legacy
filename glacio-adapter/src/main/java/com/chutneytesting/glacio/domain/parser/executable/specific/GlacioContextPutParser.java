@@ -27,6 +27,7 @@ public class GlacioContextPutParser extends ExecutableGlacioStepParser {
     public GlacioContextPutParser() {
         super(EmptyParser.noTargetParser,
             new ContextPutInputsParser(),
+            EmptyParser.emptyMapParser,
             EmptyParser.emptyMapParser);
     }
 

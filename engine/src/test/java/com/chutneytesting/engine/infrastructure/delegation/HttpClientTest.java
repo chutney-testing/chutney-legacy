@@ -124,6 +124,7 @@ public class HttpClientTest {
             new HashMap<>(),
             Collections.emptyList(),
             new HashMap<>(),
+            new HashMap<>(),
             "ENV");
     }
 

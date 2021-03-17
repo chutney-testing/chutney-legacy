@@ -326,7 +326,7 @@ function buildComponentTask(name: string,
 }
 
 function buildImplementation(identifier: string): Implementation {
-    return new Implementation(identifier, null, false, [], [], [], []);
+    return new Implementation(identifier, null, false, [], [], [], [], []);
 }
 
 function buildParameters(nb: number): Array<KeyValue> {

@@ -320,7 +320,8 @@ public class ComposedTestCaseDatatableIterationsPreProcessor implements TestCase
             si.type,
             si.target,
             indexInputs(si.inputs, index, iterationOutputs),
-            indexOutputs(si.outputs, index, iterationOutputs)
+            indexOutputs(si.outputs, index, iterationOutputs),
+            si.validations
         );
     }
 

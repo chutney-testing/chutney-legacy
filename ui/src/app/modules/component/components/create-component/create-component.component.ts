@@ -254,7 +254,7 @@ export class CreateComponent implements OnInit, OnDestroy {
             return new SimpleInput(i.name, '', i.type);
         });
 
-        const implementation = new Implementation(task.identifier, '', task.target, mapImpl, listImpl, simpleImpl, []);
+        const implementation = new Implementation(task.identifier, '', task.target, mapImpl, listImpl, simpleImpl, [], []);
         this.actionToEdit = new ComponentTask('', implementation, [], [], [], [], null);
     }
 

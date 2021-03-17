@@ -95,6 +95,7 @@ public class ExecutionRequestMapper {
             definition.inputs,
             steps,
             definition.outputs,
+            definition.validations,
             env);
     }
 
@@ -107,6 +108,7 @@ public class ExecutionRequestMapper {
             null,
             emptyMap(),
             convert(gwtTestCase.scenario.steps(), executionRequest.environment),
+            emptyMap(),
             emptyMap(),
             executionRequest.environment
         );
@@ -127,6 +129,7 @@ public class ExecutionRequestMapper {
             step.implementation.map(i -> i.inputs).orElse(emptyMap()),
             convert(step.subSteps, env),
             step.implementation.map(i -> i.outputs).orElse(emptyMap()),
+            step.implementation.map(i -> i.validations).orElse(emptyMap()),
             env
         );
     }
@@ -170,7 +173,7 @@ public class ExecutionRequestMapper {
     }
 
     private static CredentialExecutionDto toCredentialDto(TargetDto targetDto) {
-        if(targetDto.hasCredential()) {
+        if (targetDto.hasCredential()) {
             return new CredentialExecutionDto(targetDto.username, targetDto.password);
         } else {
             return null;
@@ -187,6 +190,7 @@ public class ExecutionRequestMapper {
                 null,
                 null,
                 convertComposedSteps(composedTestCase.composedScenario.composedSteps, executionRequest.environment),
+                null,
                 null,
                 executionRequest.environment
             );
@@ -208,6 +212,7 @@ public class ExecutionRequestMapper {
             composedStep.stepImplementation.map(si -> si.inputs).orElse(emptyMap()),
             composedStep.steps.stream().map(f -> convert(f, env)).collect(toList()),
             composedStep.stepImplementation.map(si -> si.outputs).orElse(emptyMap()),
+            composedStep.stepImplementation.map(si -> si.validations).orElse(emptyMap()),
             env
         );
     }

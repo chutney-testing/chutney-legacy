@@ -37,6 +37,7 @@ class StepDefinitionMapper {
             dto.inputs,
             steps,
             dto.outputs,
+            dto.validations,
             dto.environment
         );
     }

@@ -43,6 +43,8 @@ public class StepDefinitionCore {
 
     public final Map<String, Object> outputs;
 
+    public final Map<String, Object> validations;
+
     public final StepStrategyDefinitionCore strategy;
 
     public StepDefinitionCore(GwtType gwtType,
@@ -53,6 +55,7 @@ public class StepDefinitionCore {
                               Map<String, Object> inputs,
                               List<StepDefinitionCore> steps,
                               Map<String, Object> outputs,
+                              Map<String, Object> validations,
                               String environment) {
         this.gwtType = gwtType;
         this.name = name;
@@ -62,6 +65,7 @@ public class StepDefinitionCore {
         this.inputs = inputs != null ? Collections.unmodifiableMap(inputs) : Collections.emptyMap();
         this.steps = steps != null ? Collections.unmodifiableList(steps) : Collections.emptyList();
         this.outputs = outputs != null ? Collections.unmodifiableMap(outputs) : Collections.emptyMap();
+        this.validations = validations != null ? Collections.unmodifiableMap(validations) : Collections.emptyMap();
         this.environment = environment;
     }
 

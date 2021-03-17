@@ -147,7 +147,7 @@ public class DataSetIterationsStrategyTest {
     }
 
     private StepDefinition buildStepDef(String name, String type, StepExecutionStrategy strategy, StrategyProperties strategyProperties) {
-        return new StepDefinition(name, null, type, new StepStrategyDefinition(strategy.getType(), strategyProperties), null, null, null, "");
+        return new StepDefinition(name, null, type, new StepStrategyDefinition(strategy.getType(), strategyProperties), null, null, null, null, "");
     }
 
     private static void visit(Step step, Consumer<Step> action) {

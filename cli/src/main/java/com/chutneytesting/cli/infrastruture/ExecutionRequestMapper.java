@@ -44,14 +44,15 @@ public class ExecutionRequestMapper {
                 .map(s -> buildStepDefinitionCore(s, originalEnvironmentObject))
                 .collect(Collectors.toList()),
             dto.scenario().outputs(),
+            dto.scenario().validations(),
             originalEnvironmentObject.name());
     }
 
     private static Optional<Target> getTarget(String targetName, Environment originalEnvironmentObject) {
-        if(targetName == null || targetName.isEmpty()){
+        if (targetName == null || targetName.isEmpty()) {
             return Optional.empty();
         }
-        return originalEnvironmentObject.targets().stream().filter( t -> t.name().equals(targetName)).findFirst();
+        return originalEnvironmentObject.targets().stream().filter(t -> t.name().equals(targetName)).findFirst();
     }
 
     private static StepDefinitionCore buildStepDefinitionCore(ScenarioContent.UnmarshalledStepDefinition dto, Environment originalEnvironmentObject) {
@@ -78,6 +79,7 @@ public class ExecutionRequestMapper {
                 .map(s -> buildStepDefinitionCore(s, originalEnvironmentObject))
                 .collect(Collectors.toList()),
             dto.outputs(),
+            dto.validations(),
             originalEnvironmentObject.name());
     }
 
@@ -101,6 +103,7 @@ public class ExecutionRequestMapper {
             definition.inputs,
             steps,
             definition.outputs,
+            definition.validations,
             definition.environment);
     }
 

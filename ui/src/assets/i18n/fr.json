@@ -285,7 +285,9 @@
                 "blocks": {
                     "global": "Générale",
                     "parameters": "Paramètres",
-                    "inputs": "Entrées"
+                    "inputs": "Entrées",
+                    "outputs": "Sorties",
+                    "validations": "Validations"
                 },
                 "fields": {
                     "intention.placeholder": "Ecrivez votre intention",

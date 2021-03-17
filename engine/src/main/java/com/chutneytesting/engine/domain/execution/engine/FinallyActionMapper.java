@@ -16,6 +16,7 @@ class FinallyActionMapper {
             finallyAction.inputs(),
             null,
             null,
+            null,
             null
         );
     }

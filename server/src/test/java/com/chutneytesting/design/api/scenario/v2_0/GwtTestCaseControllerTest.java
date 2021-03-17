@@ -144,23 +144,23 @@ public class GwtTestCaseControllerTest {
                 .withWhen(
                     GwtStep.builder().withDescription("when 3 executable steps").withSubSteps(
                         GwtStep.builder().withDescription("executable step in json")
-                            .withImplementation(new GwtStepImplementation("debug", "", null, null, null)).build(),
+                            .withImplementation(new GwtStepImplementation("debug", "", null, null, null, null)).build(),
                         GwtStep.builder().withDescription("executable step with trailing spaces & without root braces")
-                            .withImplementation(new GwtStepImplementation("debug", "", null, null, null)).build(),
+                            .withImplementation(new GwtStepImplementation("debug", "", null, null, null, null)).build(),
                         GwtStep.builder().withDescription("executable step in hjson with comment & no quotes")
-                            .withImplementation(new GwtStepImplementation("debug", "", null, null, null)).build()).build()
+                            .withImplementation(new GwtStepImplementation("debug", "", null, null, null, null)).build()).build()
                 )
                 .withThens(Arrays.asList(
                     GwtStep.builder().withDescription("then one executable step").withSubSteps(
                         GwtStep.builder().withDescription("executable step with trailing spaces, root braces & \\r")
-                            .withImplementation(new GwtStepImplementation("debug", "", null, null, null)).build()).build(),
+                            .withImplementation(new GwtStepImplementation("debug", "", null, null, null, null)).build()).build(),
 
                     GwtStep.builder().withDescription("then another executable step").withSubSteps(
                         GwtStep.builder().withDescription("executable step with docString ''' ")
                             .withImplementation(new GwtStepImplementation(
                                 "sql",
                                 "COCO",
-                                Collections.singletonMap("statements", Arrays.asList("DELETE FROM COCO WHERE ID = 'MOMO'", "DELETE FROM CUCU WHERE ID = 'MIMI'", "INSERT INTO CECE ('ID') VALUES ('MEME')")), null, null)).build()).build()
+                                Collections.singletonMap("statements", Arrays.asList("DELETE FROM COCO WHERE ID = 'MOMO'", "DELETE FROM CUCU WHERE ID = 'MIMI'", "INSERT INTO CECE ('ID') VALUES ('MEME')")), null, null, null)).build()).build()
                     )
                 ).build())
             .build();
