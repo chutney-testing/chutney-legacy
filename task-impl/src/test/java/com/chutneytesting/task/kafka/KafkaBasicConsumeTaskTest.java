@@ -300,6 +300,29 @@ public class KafkaBasicConsumeTaskTest {
         assertThat(logger.errors).isNotEmpty();
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"bad content type", APPLICATION_JSON_VALUE, "\"" + APPLICATION_JSON_VALUE + "\""})
+    public void should_consume_as_json_with_bad_content_type_in_received_message(String contentType) {
+        ImmutableList<Header> headers = ImmutableList.of(
+            new RecordHeader("Content-type", contentType.getBytes())
+        );
+        // Given
+        Task task = givenKafkaConsumeTask(null, null, null);
+        givenTaskReceiveMessages(task,
+            buildRecord(FIRST_OFFSET, "KEY", "{\"value\": \"test message\", \"id\": \"1111\" }", headers)
+        );
+
+        // When
+        TaskExecutionResult taskExecutionResult = task.execute();
+
+        // Then
+        assertThat(taskExecutionResult.status).isEqualTo(Success);
+
+        final Map<String, Object> payload = ((List<Map<String, Object>>) taskExecutionResult.outputs.get(OUTPUT_PAYLOADS)).get(0);
+        assertThat(payload.get("value")).isEqualTo("test message");
+        assertThat(payload.get("id")).isEqualTo("1111");
+    }
+
     private MessageListener<String, String> overrideTaskMessageListenerContainer(Task task) {
         ConsumerFactory<String, String> cf = mock(ConsumerFactory.class);
         Consumer<String, String> consumer = mock(Consumer.class);
