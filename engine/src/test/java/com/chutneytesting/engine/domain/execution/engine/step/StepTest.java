@@ -1,8 +1,9 @@
 package com.chutneytesting.engine.domain.execution.engine.step;
+
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.awaitility.Awaitility.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
@@ -37,8 +38,6 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class StepTest {
@@ -58,7 +57,8 @@ public class StepTest {
         await().during(100, MILLISECONDS);
         Status result = step.execute(execution, new ScenarioContextImpl());
 
-        await().atMost(5, SECONDS).untilAsserted(() -> assertThat(result).isEqualTo(Status.STOPPED));;
+        await().atMost(5, SECONDS).untilAsserted(() -> assertThat(result).isEqualTo(Status.STOPPED));
+        ;
     }
 
     @Test
@@ -85,7 +85,7 @@ public class StepTest {
         outputs.put("aValue", "42");
         outputs.put("anotherValue", "43");
 
-        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, outputs,environment);
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, outputs, environment);
         Step step = new Step(dataEvaluator, fakeStepDefinition, Optional.empty(), stepExecutor, Lists.emptyList());
         ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
 

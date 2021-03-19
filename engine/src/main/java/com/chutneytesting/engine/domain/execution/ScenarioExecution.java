@@ -97,7 +97,6 @@ public class ScenarioExecution {
     }
 
     private void stop() {
-        LOGGER.info("Stop execution {}", executionId);
         stop = true;
     }
 
