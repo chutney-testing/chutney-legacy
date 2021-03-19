@@ -43,7 +43,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 public class StepTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StepTest.class);
     private StepDataEvaluator dataEvaluator = new StepDataEvaluator(new SpelFunctions());
     private Target fakeTarget = TargetImpl.NONE;
     private String environment = "";
@@ -55,12 +54,9 @@ public class StepTest {
         Step step = buildEmptyStep(stepExecutor);
 
         ScenarioExecution execution = ScenarioExecution.createScenarioExecution();
-        LOGGER.info(" Executionid = {}", execution.executionId);
         RxBus.getInstance().post(new StopExecutionAction(execution.executionId));
-        LOGGER.info("StepTest :  RxBus.getInstance().post(new StopExecutionAction(execution.executionId));");
         await().during(100, MILLISECONDS);
         Status result = step.execute(execution, new ScenarioContextImpl());
-        LOGGER.info("StepTest : step.execute(execution, new ScenarioContextImpl());");
 
         await().atMost(5, SECONDS).untilAsserted(() -> assertThat(result).isEqualTo(Status.STOPPED));;
     }

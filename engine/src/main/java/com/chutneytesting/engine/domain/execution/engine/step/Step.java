@@ -73,7 +73,6 @@ public class Step {
             state.addInformation("Step pause from " + startPauseInstant + " to " + Instant.now());
         }
 
-        LOGGER.info("execute hasToStop(): {}", scenarioExecution.hasToStop());
         if (scenarioExecution.hasToStop()) {
             stopExecution(scenarioExecution);
             return Status.STOPPED;
