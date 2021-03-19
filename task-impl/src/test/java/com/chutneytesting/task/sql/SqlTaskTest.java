@@ -52,6 +52,6 @@ public class SqlTaskTest {
 
         List<Records> recordResult = (List<Records>) result.outputs.get("recordResult");
         assertThat(result.status).isEqualTo(TaskExecutionResult.Status.Success);
-        assertThat(recordResult.get(0).toMatrix()).containsExactly(firstTuple, secondTuple);
+        assertThat(Arrays.stream(recordResult.get(0).toMatrix()).toArray()).containsExactly(firstTuple, secondTuple);
     }
 }
