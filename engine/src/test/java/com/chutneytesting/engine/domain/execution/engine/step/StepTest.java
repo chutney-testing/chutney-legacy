@@ -58,6 +58,7 @@ public class StepTest {
         LOGGER.info(" Executionid = {}", execution.executionId);
         RxBus.getInstance().post(new StopExecutionAction(execution.executionId));
         LOGGER.info("StepTest :  RxBus.getInstance().post(new StopExecutionAction(execution.executionId));");
+        await().during(100, MILLISECONDS);
         Status result = step.execute(execution, new ScenarioContextImpl());
         LOGGER.info("StepTest : step.execute(execution, new ScenarioContextImpl());");
 
