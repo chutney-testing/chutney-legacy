@@ -37,10 +37,13 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class StepTest {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(StepTest.class);
     private StepDataEvaluator dataEvaluator = new StepDataEvaluator(new SpelFunctions());
     private Target fakeTarget = TargetImpl.NONE;
     private String environment = "";
@@ -52,8 +55,11 @@ public class StepTest {
         Step step = buildEmptyStep(stepExecutor);
 
         ScenarioExecution execution = ScenarioExecution.createScenarioExecution();
+        LOGGER.info("StepTest : Executionid = {}", execution.executionId);
         RxBus.getInstance().post(new StopExecutionAction(execution.executionId));
+        LOGGER.info("StepTest :  RxBus.getInstance().post(new StopExecutionAction(execution.executionId));");
         Status result = step.execute(execution, new ScenarioContextImpl());
+        LOGGER.info("StepTest : step.execute(execution, new ScenarioContextImpl());");
 
         await().atMost(5, SECONDS).untilAsserted(() -> assertThat(result).isEqualTo(Status.STOPPED));;
     }
