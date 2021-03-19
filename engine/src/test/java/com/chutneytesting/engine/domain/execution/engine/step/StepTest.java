@@ -55,7 +55,7 @@ public class StepTest {
         Step step = buildEmptyStep(stepExecutor);
 
         ScenarioExecution execution = ScenarioExecution.createScenarioExecution();
-        LOGGER.info("StepTest : Executionid = {}", execution.executionId);
+        LOGGER.info(" Executionid = {}", execution.executionId);
         RxBus.getInstance().post(new StopExecutionAction(execution.executionId));
         LOGGER.info("StepTest :  RxBus.getInstance().post(new StopExecutionAction(execution.executionId));");
         Status result = step.execute(execution, new ScenarioContextImpl());
