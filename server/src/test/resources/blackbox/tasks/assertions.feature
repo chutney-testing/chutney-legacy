@@ -51,7 +51,7 @@ Feature: Assertions Task test
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
                 With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
-                With timeout 15 s
+                With timeout 5 s
                 Take report ${#body}
             Do compare Assert HTTP status is 200
                 With actual ${T(Integer).toString(#status)}
@@ -125,7 +125,7 @@ Feature: Assertions Task test
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
                 With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
-                With timeout 15 s
+                With timeout 5 s
                 Take report ${#body}
             Do compare Assert HTTP status is 200
                 With actual ${T(Integer).toString(#status)}
@@ -168,7 +168,7 @@ Feature: Assertions Task test
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
                 With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
-                With timeout 15 s
+                With timeout 5 s
                 Take report ${#body}
             Do compare Assert HTTP status is 200
                 With actual ${T(Integer).toString(#status)}
