@@ -1,6 +1,26 @@
 # Changelog
 
-## [1.2.17](https://github.com/chutney-testing/chutney/tree/1.2.18) (2021-03-09)
+## [1.2.19](https://github.com/chutney-testing/chutney/tree/1.2.19) (2021-03-22)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.18...1.2.19)
+
+**Implemented enhancements:**
+
+- 🚀 | SSH Task : Add timeout input [\#369](https://github.com/chutney-testing/chutney/issues/369)
+
+**Fixed bugs:**
+
+- 🐛 | Force tls1.1 for old ldap [\#371](https://github.com/chutney-testing/chutney/issues/371)
+
+**Merged pull requests:**
+
+- bugfix\(server\): Add awaitibility for test and Fix Step unit Test [\#375](https://github.com/chutney-testing/chutney/pull/375) ([nbrouand](https://github.com/nbrouand))
+- bugfix\(task-impl\): Redo commit f61bf42733271a67c17c266e00df77cce9be32… [\#374](https://github.com/chutney-testing/chutney/pull/374) ([nbrouand](https://github.com/nbrouand))
+- feat\(server\): Configuration for ldap with only TLS1.1 [\#372](https://github.com/chutney-testing/chutney/pull/372) ([nbrouand](https://github.com/nbrouand))
+- chore: Setup jdk11 config with nix [\#370](https://github.com/chutney-testing/chutney/pull/370) ([bessonm](https://github.com/bessonm))
+
+
+## [1.2.18](https://github.com/chutney-testing/chutney/tree/1.2.18) (2021-03-09)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.16...1.2.18)
 
