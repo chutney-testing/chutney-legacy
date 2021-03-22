@@ -45,7 +45,7 @@ public class SshClientTaskTest {
         Logger logger = mock(Logger.class);
         Target targetMock = buildInfoWithPasswordFor(fakeSshServer);
         List<CommandResult> expectedResults = new ArrayList<>();
-        expectedResults.add(new CommandResult(new Command("echo Hello" + System.lineSeparator() + "exit" + System.lineSeparator()), 0, "Hello\n", ""));
+        expectedResults.add(new CommandResult(new Command("echo Hello"), 0, "Hello\n", ""));
 
         List<Object> commands = Collections.singletonList("echo Hello");
 

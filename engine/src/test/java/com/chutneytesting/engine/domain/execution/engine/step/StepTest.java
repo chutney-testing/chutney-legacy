@@ -1,6 +1,9 @@
 package com.chutneytesting.engine.domain.execution.engine.step;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
@@ -50,10 +53,12 @@ public class StepTest {
         Step step = buildEmptyStep(stepExecutor);
 
         ScenarioExecution execution = ScenarioExecution.createScenarioExecution();
+        await().during(500, MILLISECONDS);
         RxBus.getInstance().post(new StopExecutionAction(execution.executionId));
+        await().during(500, MILLISECONDS);
         Status result = step.execute(execution, new ScenarioContextImpl());
 
-        assertThat(result).isEqualTo(Status.STOPPED);
+        await().atMost(5, SECONDS).untilAsserted(() -> assertThat(result).isEqualTo(Status.STOPPED));
     }
 
     @Test
@@ -65,12 +70,10 @@ public class StepTest {
 
         RxBus.getInstance().post(new PauseExecutionAction(execution.executionId));
         Schedulers.io().createWorker().schedule(() -> step.execute(execution, new ScenarioContextImpl()));
-        waitMs(1100);
-        verify(stepExecutor, times(0)).execute(any(), any(), any(), any());
+        await().atMost(1100, MILLISECONDS).untilAsserted(() -> verify(stepExecutor, times(0)).execute(any(), any(), any(), any()));
 
         RxBus.getInstance().post(new ResumeExecutionAction(execution.executionId));
-        waitMs(1100);
-        verify(stepExecutor, times(1)).execute(any(), any(), any(), any());
+        await().atMost(1100, MILLISECONDS).untilAsserted(() -> verify(stepExecutor, times(1)).execute(any(), any(), any(), any()));
     }
 
     @Test
@@ -82,7 +85,7 @@ public class StepTest {
         outputs.put("aValue", "42");
         outputs.put("anotherValue", "43");
 
-        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, outputs,environment);
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, outputs, environment);
         Step step = new Step(dataEvaluator, fakeStepDefinition, Optional.empty(), stepExecutor, Lists.emptyList());
         ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
 
