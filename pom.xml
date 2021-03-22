@@ -555,30 +555,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <inherited>false</inherited>
-                <configuration>
-                    <outputDirectory>${basedir}/target</outputDirectory>
-                    <resources>
-                        <resource>
-                            <directory>${basedir}</directory>
-                            <include>bintray-deploy-descriptor.json</include>
-                            <filtering>true</filtering>
-                        </resource>
-                    </resources>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>filter-bintray-descriptor</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
