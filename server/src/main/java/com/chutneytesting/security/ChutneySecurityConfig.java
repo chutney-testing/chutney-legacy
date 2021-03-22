@@ -3,7 +3,6 @@ package com.chutneytesting.security;
 import com.chutneytesting.security.infra.handlers.Http401FailureHandler;
 import com.chutneytesting.security.infra.handlers.HttpEmptyLogoutSuccessHandler;
 import com.chutneytesting.security.infra.handlers.HttpStatusInvalidSessionStrategy;
-import com.chutneytesting.security.infra.ldap.LdapConfiguration;
 import com.chutneytesting.security.infra.memory.InMemoryConfiguration;
 import com.chutneytesting.security.infra.memory.InMemoryUsersProperties;
 import java.util.HashMap;
@@ -97,9 +96,6 @@ public class ChutneySecurityConfig extends WebSecurityConfigurerAdapter {
     @Configuration
     @Profile({"ldap-auth", "ldap-auth-tls1-1"})
     public static class SecSecurityLDAPConfig {
-
-        @Autowired
-        LdapConfiguration ldapConfiguration;
 
         @Autowired
         protected void configure(final AuthenticationManagerBuilder auth, final LdapContextSource ldapContextSource, UserDetailsContextMapper userDetailsContextMapper) throws Exception {
