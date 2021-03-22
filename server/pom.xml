@@ -281,7 +281,7 @@
                             <goal>xsdtojava</goal>
                         </goals>
                         <configuration>
-                            <sourceRoot>${basedir}/target/generated-sources</sourceRoot>
+                            <sourceRoot>${basedir}/target/generated-sources/jaxb</sourceRoot>
                             <xsdOptions>
                                 <xsdOption>
                                     <xsd>${basedir}/src/main/resources/surefire-test-report.xsd</xsd>
