@@ -1,12 +1,11 @@
 package com.chutneytesting.engine.domain.execution.engine;
 
 import static com.chutneytesting.engine.domain.execution.RxBus.getInstance;
-import static org.apache.commons.lang3.ArrayUtils.getLength;
+import static com.chutneytesting.tools.WaitUtils.awaitDuring;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
-import com.google.common.collect.Maps;
-import com.chutneytesting.engine.domain.execution.RxBus;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.TestTaskTemplateLoader;
 import com.chutneytesting.engine.domain.execution.action.PauseExecutionAction;
@@ -17,21 +16,17 @@ import com.chutneytesting.engine.domain.execution.engine.scenario.ScenarioContex
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.evaluation.SpelFunctions;
 import com.chutneytesting.engine.domain.execution.event.BeginStepExecutionEvent;
-import com.chutneytesting.engine.domain.execution.event.EndScenarioExecutionEvent;
 import com.chutneytesting.task.domain.TaskTemplateRegistry;
 import com.chutneytesting.task.spi.FinallyAction;
 import com.chutneytesting.task.spi.FinallyAction.Builder;
-import io.reactivex.subjects.PublishSubject;
+import com.google.common.collect.Maps;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class ScenarioExecutionTest {
 
@@ -61,7 +56,7 @@ public class ScenarioExecutionTest {
     }
 
     @Test
-    public void finally_actions_are_executed_in_reverse_order() throws InterruptedException {
+    public void finally_actions_are_executed_in_reverse_order() {
         ScenarioExecution scenarioExecution = ScenarioExecution.createScenarioExecution();
 
         TaskTemplateRegistry taskTemplateRegistry = TestTaskTemplateLoader.buildRegistry();
@@ -89,7 +84,7 @@ public class ScenarioExecutionTest {
             Collections.emptyList()
         ));
 
-        TimeUnit.MILLISECONDS.sleep(100);
+        awaitDuring(100, MILLISECONDS);
 
         //Test order is reversed
         Step thirdStep = events.get(0).step;

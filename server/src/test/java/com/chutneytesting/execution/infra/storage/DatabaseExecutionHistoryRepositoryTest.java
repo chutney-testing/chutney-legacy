@@ -1,7 +1,10 @@
 package com.chutneytesting.execution.infra.storage;
 
+import static com.chutneytesting.tools.WaitUtils.awaitDuring;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.awaitility.Awaitility.await;
 
 import com.chutneytesting.execution.domain.history.ExecutionHistory.DetachedExecution;
 import com.chutneytesting.execution.domain.history.ExecutionHistory.Execution;
@@ -14,7 +17,6 @@ import com.chutneytesting.tests.AbstractLocalDatabaseTest;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 
@@ -46,13 +48,8 @@ public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabas
         IntStream.range(0, 25).forEach(
             i -> {
                 executionHistoryRepository.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec" + i, ""));
-
                 // As order is based on executionTime, if they are stored at the exact same time, check on order may fail
-                try {
-                    TimeUnit.MILLISECONDS.sleep(20L);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                awaitDuring(20, MILLISECONDS);
             }
         );
 

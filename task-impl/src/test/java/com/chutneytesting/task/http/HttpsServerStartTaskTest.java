@@ -1,6 +1,8 @@
 package com.chutneytesting.task.http;
 
 import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Success;
+import static com.chutneytesting.task.tools.WaitUtils.awaitDuring;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.reset;
@@ -13,7 +15,6 @@ import com.chutneytesting.task.spi.injectable.FinallyActionRegistry;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.google.common.io.Resources;
-import java.util.concurrent.TimeUnit;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -22,7 +23,7 @@ import org.springframework.util.SocketUtils;
 
 public class HttpsServerStartTaskTest {
 
-    private static int wireMockPort = SocketUtils.findAvailableTcpPort();
+    private static final int wireMockPort = SocketUtils.findAvailableTcpPort();
     private static final String TRUSTSTORE_JKS = Resources.getResource("security/truststore.jks").getPath();
     private static final String KEYSTORE_JKS = Resources.getResource("security/server.jks").getPath();
     private final static FinallyActionRegistry finallyActionRegistry = Mockito.mock(FinallyActionRegistry.class);
@@ -42,7 +43,7 @@ public class HttpsServerStartTaskTest {
 
     @ParameterizedTest
     @MethodSource("parametersForShould_start_https_server")
-    public void should_start_https_server(Task httpsServerStartTask) throws InterruptedException {
+    public void should_start_https_server(Task httpsServerStartTask) {
         reset(finallyActionRegistry);
         WireMockServer server = null;
         try {
@@ -59,7 +60,7 @@ public class HttpsServerStartTaskTest {
             if (server != null) {
                 server.stop();
                 //Wait graceful stop
-                TimeUnit.MILLISECONDS.sleep(500L);
+                awaitDuring(500, MILLISECONDS);
             }
         }
     }

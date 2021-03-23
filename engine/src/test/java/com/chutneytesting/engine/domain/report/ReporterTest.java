@@ -1,5 +1,7 @@
 package com.chutneytesting.engine.domain.report;
 
+import static com.chutneytesting.tools.WaitUtils.awaitDuring;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -17,7 +19,6 @@ import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
 import com.chutneytesting.task.spi.injectable.Target;
 import io.reactivex.observers.TestObserver;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,9 +27,8 @@ import org.junit.jupiter.api.Test;
 
 public class ReporterTest {
 
-    private Target fakeTarget = TargetImpl.NONE;
-    private String environment = "";
-    private StepDataEvaluator dataEvaluator = new StepDataEvaluator(new SpelFunctions());
+    private final Target fakeTarget = TargetImpl.NONE;
+    private final StepDataEvaluator dataEvaluator = new StepDataEvaluator(new SpelFunctions());
 
     private Reporter sut;
     private Step step;
@@ -111,12 +111,12 @@ public class ReporterTest {
     }
 
     @Test
-    public void should_retain_report_for_late_subscription() throws InterruptedException {
+    public void should_retain_report_for_late_subscription() {
         sut.setRetentionDelaySeconds(1);
         sut.createPublisher(scenarioExecution.executionId, mock(Step.class));
         executeFakeScenarioSuccess();
 
-        Thread.sleep(500);
+        awaitDuring(500, MILLISECONDS);
 
         TestObserver<StepExecutionReport> scenarioExecutionReportObservable =
             sut.subscribeOnExecution(scenarioExecution.executionId).test();
@@ -139,6 +139,7 @@ public class ReporterTest {
     }
 
     private Step buildFakeScenario() {
+        final String environment = "";
         List<StepDefinition> subSubSteps = new ArrayList<>();
         StepDefinition subSubStepDef1 = new StepDefinition("fakeStep1", fakeTarget, "taskType", null, null, null, null, environment);
         StepDefinition subSubStepDef2 = new StepDefinition("fakeStep2", fakeTarget, "taskType", null, null, null, null, environment);
@@ -155,7 +156,7 @@ public class ReporterTest {
     }
 
     private Step buildStep(StepDefinition definition) {
-        final List<Step> steps = Collections.unmodifiableList(definition.steps.stream().map(this::buildStep).collect(Collectors.toList()));
+        final List<Step> steps = definition.steps.stream().map(this::buildStep).collect(Collectors.toUnmodifiableList());
         return new Step(dataEvaluator, definition, Optional.empty(), null, steps);
     }
 
