@@ -19,6 +19,7 @@ export class CampaignSchedulingComponent implements OnInit {
     form: FormGroup;
     errorMessage: string
     submitted: boolean;
+    frequencies: Array<String> = ['daily', 'weekly', 'monthly'];
 
     campaigns: Array<Campaign> = [];
 
@@ -56,6 +57,7 @@ export class CampaignSchedulingComponent implements OnInit {
             campaign: [null, Validators.required],
             date: [null, Validators.required],
             time: [null, Validators.required],
+            frequency: [null]
         });
     }
 
@@ -71,11 +73,12 @@ export class CampaignSchedulingComponent implements OnInit {
         const campaign: Campaign = this.form.get('campaign').value;
         const dateTime = new Date(date.year, date.month - 1, date.day, time.hour, time.minute, 0, 0);
         dateTime.setHours(time.hour - dateTime.getTimezoneOffset() / 60)
+        const frequency: String = formValue['frequency'];
 
         const schedulingCampaign = new CampaignScheduling(
             campaign.id,
             campaign.title,
-            dateTime
+            dateTime, frequency
         )
 
         this.campaignSchedulingService.create(schedulingCampaign).subscribe(() => {

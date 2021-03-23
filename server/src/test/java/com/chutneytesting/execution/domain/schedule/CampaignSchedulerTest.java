@@ -56,8 +56,8 @@ public class CampaignSchedulerTest {
         campaignScheduler.executeScheduledCampaign();
         when(schedulingCampaignRepository.getALl())
             .thenReturn(Lists.newArrayList(
-                new SchedulingCampaign(1L, 3L, "title", LocalDateTime.now().minusMinutes(1)),
-                new SchedulingCampaign(2L, 4L, "title", LocalDateTime.now().plusMinutes(1))
+                new SchedulingCampaign(1L, 3L, "title", LocalDateTime.now().minusMinutes(1), null),
+                new SchedulingCampaign(2L, 4L, "title", LocalDateTime.now().plusMinutes(1), null)
             ));
 
         campaignScheduler.executeScheduledCampaign();

@@ -4,6 +4,8 @@ export class CampaignScheduling {
         public campaignId: number,
         public campaignTitle: string,
         public schedulingDate: Date,
-        public id?: number) {
+        public frequency?: String,
+        public id?: number
+        ) {
     }
 }

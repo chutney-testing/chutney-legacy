@@ -29,14 +29,14 @@ public class ScheduleCampaignController {
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public List<SchedulingCampaignDto> getAll() {
         return schedulingCampaignRepository.getALl().stream()
-            .map(sc -> new SchedulingCampaignDto(sc.id, sc.campaignId, sc.campaignTitle, sc.schedulingDate))
+            .map(sc -> new SchedulingCampaignDto(sc.id, sc.campaignId, sc.campaignTitle, sc.schedulingDate,sc.frequency))
             .sorted(Comparator.comparing(SchedulingCampaignDto::getSchedulingDate))
             .collect(Collectors.toList());
     }
 
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public void add(@RequestBody SchedulingCampaignDto dto) {
-        schedulingCampaignRepository.add(new SchedulingCampaign(null, dto.getCampaignId(), dto.getCampaignTitle(), dto.getSchedulingDate()));
+        schedulingCampaignRepository.add(new SchedulingCampaign(null, dto.getCampaignId(), dto.getCampaignTitle(), dto.getSchedulingDate(),dto.getFrequency()));
     }
 
     @DeleteMapping(path = "/{schedulingCampaignId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

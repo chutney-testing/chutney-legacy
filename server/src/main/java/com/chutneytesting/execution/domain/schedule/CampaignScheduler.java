@@ -32,7 +32,7 @@ public class CampaignScheduler {
 
     /**
      * TODO Do we want to specify a pool size too for parallel execution ?
-     * **/
+     **/
     @Async
     public void executeScheduledCampaign() {
         final List<Long> campaignIds = checkCampaignToExecutePeriodically();
@@ -54,12 +54,28 @@ public class CampaignScheduler {
     private List<Long> checkScheduleCampaign() {
         List<SchedulingCampaign> ids = schedulingCampaignRepository.getALl()
             .stream()
-            .filter(sc -> sc.schedulingDate.isBefore(LocalDateTime.now()))
+            .filter(sc -> sc.schedulingDate.isBefore(LocalDateTime.now()) && sc.frequency == null)
             .collect(Collectors.toList());
 
-        ids.forEach( sc -> schedulingCampaignRepository.removeById(sc.id));
+        ids.addAll(getSchedulingCampaignsPerFrequency("daily"));
+        ids.addAll(getSchedulingCampaignsPerFrequency("weekly"));
+        ids.addAll(getSchedulingCampaignsPerFrequency("monthly"));
+
+        ids.forEach(sc -> schedulingCampaignRepository.removeById(sc.id));
 
         return ids.stream().map(sc -> sc.campaignId).collect(Collectors.toList());
+    }
+
+    private List<SchedulingCampaign> getSchedulingCampaignsPerFrequency(String frequency) {
+        List<SchedulingCampaign> CampaignWithFrequenciesIds = schedulingCampaignRepository.getALl()
+            .stream()
+            .filter(sc -> sc.frequency != null && (sc.frequency.equals(frequency) && sc.schedulingDate.isBefore(LocalDateTime.now())))
+            .collect(Collectors.toList());
+        CampaignWithFrequenciesIds.forEach(sc -> {
+            sc.setSchedulingDate(sc.getSchedulingDatePerFrequency(frequency));
+            schedulingCampaignRepository.add(sc);
+        });
+        return CampaignWithFrequenciesIds;
     }
 
     private List<Long> checkCampaignToExecutePeriodically() {

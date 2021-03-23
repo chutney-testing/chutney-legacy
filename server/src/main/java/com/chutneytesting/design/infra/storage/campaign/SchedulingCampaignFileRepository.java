@@ -14,6 +14,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,7 @@ public class SchedulingCampaignFileRepository implements SchedulingCampaignRepos
         long id = currentMaxId.incrementAndGet();
         schedulingCampaigns.put(String.valueOf(id), toDto(id, schedulingCampaign));
         writeOnDisk(resolvedFilePath, schedulingCampaigns);
+
         return schedulingCampaign;
     }
 
@@ -101,11 +103,11 @@ public class SchedulingCampaignFileRepository implements SchedulingCampaignRepos
 
 
     private SchedulingCampaign fromDto(String id, SchedulingCampaignDto dto) {
-        return new SchedulingCampaign(Long.valueOf(dto.id), dto.campaignId, dto.campaignTitle, dto.schedulingDate);
+        return new SchedulingCampaign(Long.valueOf(dto.id), dto.campaignId, dto.campaignTitle, dto.schedulingDate, dto.frequency);
     }
 
     private SchedulingCampaignDto toDto(long id, SchedulingCampaign schedulingCampaign) {
-        return new SchedulingCampaignDto(String.valueOf(id), schedulingCampaign.campaignId, schedulingCampaign.campaignTitle, schedulingCampaign.schedulingDate);
+        return new SchedulingCampaignDto(String.valueOf(id), schedulingCampaign.campaignId, schedulingCampaign.campaignTitle, schedulingCampaign.schedulingDate, schedulingCampaign.frequency);
     }
 
 

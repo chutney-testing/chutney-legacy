@@ -34,9 +34,9 @@ public class SchedulingCampaignFileRepositoryTest {
     public void should_add_get_and_remove_scheduled_campaign() {
         //// ADD
         // Given
-        SchedulingCampaign sc1 = new SchedulingCampaign(null, 11L, "campaign title 1", LocalDateTime.of(2020, 2, 4, 7, 10));
-        SchedulingCampaign sc2 = new SchedulingCampaign(null, 22L, "campaign title 2", LocalDateTime.of(2021, 3, 5, 8, 11));
-        SchedulingCampaign sc3 = new SchedulingCampaign(null, 33L, "campaign title 3", LocalDateTime.of(2022, 4, 6, 9, 12));
+        SchedulingCampaign sc1 = new SchedulingCampaign(null, 11L, "campaign title 1", LocalDateTime.of(2020, 2, 4, 7, 10),null);
+        SchedulingCampaign sc2 = new SchedulingCampaign(null, 22L, "campaign title 2", LocalDateTime.of(2021, 3, 5, 8, 11),null);
+        SchedulingCampaign sc3 = new SchedulingCampaign(null, 33L, "campaign title 3", LocalDateTime.of(2022, 4, 6, 9, 12),null);
         String expectedAdded =
             "{\n" +
                 "  \"1\" : {\n" +
@@ -99,8 +99,8 @@ public class SchedulingCampaignFileRepositoryTest {
 
         // Then
         assertThat(scheduledCampaigns).hasSize(2);
-        SchedulingCampaign sc1WithId = new SchedulingCampaign(1L, 11L, "campaign title 1", LocalDateTime.of(2020, 2, 4, 7, 10));
-        SchedulingCampaign sc3WithId = new SchedulingCampaign(3L, 33L, "campaign title 3", LocalDateTime.of(2022, 4, 6, 9, 12));
+        SchedulingCampaign sc1WithId = new SchedulingCampaign(1L, 11L, "campaign title 1", LocalDateTime.of(2020, 2, 4, 7, 10),null);
+        SchedulingCampaign sc3WithId = new SchedulingCampaign(3L, 33L, "campaign title 3", LocalDateTime.of(2022, 4, 6, 9, 12),null);
 
         assertThat(scheduledCampaigns).contains(sc1WithId, sc3WithId);
     }
