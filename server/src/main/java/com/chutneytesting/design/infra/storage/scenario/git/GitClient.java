@@ -69,7 +69,7 @@ public class GitClient {
             stageFile.accept(git);
 
             // and then commit the changes.
-            git.commit().setMessage(commitMessage).call();
+            git.commit().setSign(false).setMessage(commitMessage).call();
 
             // push if remote branch
             if (git.branchList().setListMode(ListMode.REMOTE).call().size() > 0) {

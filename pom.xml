@@ -86,7 +86,8 @@
         <commonstext.version>1.8</commonstext.version>
         <commonsio.version>2.6</commonsio.version>
         <commonscollections.version>3.2.2</commonscollections.version>
-        <jgit.version>4.9.1.201712030800-r</jgit.version>
+        <jgit-jsch.version>5.11.0.202103091610-r</jgit-jsch.version>
+        <jsch.version>0.1.55</jsch.version>
         <jdom2.version>2.0.6</jdom2.version>
         <jsonpath.version>2.4.0</jsonpath.version>
         <org.everit.json.schema.version>1.11.0</org.everit.json.schema.version>
@@ -340,8 +341,13 @@
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jgit</groupId>
-                <artifactId>org.eclipse.jgit</artifactId>
-                <version>${jgit.version}</version>
+                <artifactId>org.eclipse.jgit.ssh.jsch</artifactId>
+                <version>${jgit-jsch.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.jcraft</groupId>
+                <artifactId>jsch</artifactId>
+                <version>${jsch.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jdom</groupId>
