@@ -16,8 +16,6 @@ import org.junit.jupiter.api.Test;
 
 public class JsonHomePageRepositoryTest {
 
-    private JsonHomePageRepository sut;
-
     @Test
     public void should_backup_home_page_file_as_zip_file() throws IOException {
         // Given
@@ -28,7 +26,7 @@ public class JsonHomePageRepositoryTest {
 
         Path homePagePath = Paths.get(org.assertj.core.util.Files.temporaryFolderPath(), HOME_PAGE_NAME);
         homePagePath.toFile().createNewFile();
-        sut = new JsonHomePageRepository(homePagePath.getParent().toString());
+        JsonHomePageRepository sut = new JsonHomePageRepository(homePagePath.getParent().toString());
 
         try (OutputStream outputStream = Files.newOutputStream(Files.createFile(backup))) {
             // When

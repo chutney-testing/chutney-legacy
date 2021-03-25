@@ -17,6 +17,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,8 +70,8 @@ public class JiraXrayPlugin {
             );
 
             xrayTest.setEvidences(getEvidences(scenarioExecutionReport.report, ""));
-            XrayInfo info = new XrayInfo(Arrays.asList(scenarioExecutionReport.environment));
-            Xray xray = new Xray(testExecutionKey, Arrays.asList(xrayTest), info);
+            XrayInfo info = new XrayInfo(Collections.singletonList(scenarioExecutionReport.environment));
+            Xray xray = new Xray(testExecutionKey, Collections.singletonList(xrayTest), info);
             updateRequest(xray);
         }
     }

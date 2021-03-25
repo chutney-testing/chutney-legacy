@@ -128,7 +128,7 @@ public class AgentTest {
         ExploreResult exploreResult = ImmutableExploreResult.of(
             // Agent -> Agent links
             ImmutableExploreResult.Links.of(
-                Arrays.asList(
+                Collections.singletonList(
                     ImmutableExploreResult.Link.of(AgentId.of("A"), AgentId.of("B"))
                 )
             ),

@@ -187,7 +187,8 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
 
         assertThat(modifiedScenario)
             .as(testName)
-            .isEqualToIgnoringGivenFields(repositoryScenario, "version", "updateDate");
+            .usingRecursiveComparison().ignoringFields("version", "updateDate")
+            .isEqualTo(repositoryScenario);
     }
 
     @Test

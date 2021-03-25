@@ -894,7 +894,7 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
 
         ExecutableComposedStep stepSurchargeContextVariable = ExecutableComposedStep.builder()
             .withName("Should surcharge context variable 'output'")
-            .withSteps(asList(substepSurchargeContextVariable))
+            .withSteps(singletonList(substepSurchargeContextVariable))
             .build();
 
         ExecutableComposedTestCase testCase = new ExecutableComposedTestCase(

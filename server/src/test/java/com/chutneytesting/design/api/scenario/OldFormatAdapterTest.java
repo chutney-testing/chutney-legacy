@@ -2,33 +2,20 @@ package com.chutneytesting.design.api.scenario;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.google.common.io.Resources;
 import com.chutneytesting.design.domain.scenario.gwt.GwtScenario;
 import com.chutneytesting.design.domain.scenario.gwt.GwtStep;
+import com.google.common.io.Resources;
 import java.io.File;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.assertj.core.util.Files;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class OldFormatAdapterTest {
 
-    private ObjectMapper objectMapper;
-
-    @BeforeEach
-    public void setUp() {
-        objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new Jdk8Module())
-            .registerModule(new JavaTimeModule());
-    }
-
     private String getScenarioContent(String fileName) {
-        return Files.contentOf(new File(Resources.getResource("raw_scenarios/"+ fileName).getPath()), Charset.forName("UTF-8"));
+        return Files.contentOf(new File(Resources.getResource("raw_scenarios/"+ fileName).getPath()), StandardCharsets.UTF_8);
     }
 
     @Test

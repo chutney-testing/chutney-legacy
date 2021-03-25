@@ -65,9 +65,7 @@ public class DocumentationConfiguration {
     }
 
     private Map<String, String> getFromFileSystem() {
-        Map<String, String> examples = Collections.emptyMap();
-
-        return examples;
+        return Collections.emptyMap();
     }
 
     private Map<String, String> getFromFatJar() {
