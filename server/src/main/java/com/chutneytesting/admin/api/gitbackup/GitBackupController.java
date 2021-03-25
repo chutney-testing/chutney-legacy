@@ -47,7 +47,7 @@ public class GitBackupController {
         gitBackupService.backup(fromDto(dto));
     }
 
-    @GetMapping(path = "/backupto/{name}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "/{name}/backup")
     public void backup(@PathVariable("name") String name) {
         gitBackupService.backup(name);
     }

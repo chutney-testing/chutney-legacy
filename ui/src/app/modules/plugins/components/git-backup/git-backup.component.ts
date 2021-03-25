@@ -77,6 +77,26 @@ export class GitBackupComponent implements OnInit {
         );
     }
 
+    edit(remote: GitRemoteConfig) {
+        this.remoteConfigForm.controls.name.patchValue(remote.name);
+        this.remoteConfigForm.controls.url.patchValue(remote.url);
+        this.remoteConfigForm.controls.branch.patchValue(remote.branch);
+        this.remoteConfigForm.controls.privateKeyPath.patchValue(remote.privateKeyPath);
+        this.remoteConfigForm.controls.passphrase.patchValue(remote.privateKeyPassphrase);
+    }
+
+    backupTo(remote: GitRemoteConfig) {
+        this.gitBackupService.backupTo(remote).subscribe(
+            (res) => {
+                this.notify('Chutney has been successfully backed up on ' + remote.name, false);
+                this.loadRemotes();
+            },
+            (error) => {
+                this.notify(error.error, true);
+            }
+        );
+    }
+
     remove(remote: GitRemoteConfig, i: number) {
         this.remotes.splice(i);
         this.gitBackupService.remove(remote).subscribe(
@@ -97,13 +117,5 @@ export class GitBackupComponent implements OnInit {
             await delay(3000);
             this.message = null;
         })();
-    }
-
-    edit(remote: GitRemoteConfig) {
-        this.remoteConfigForm.controls.name.patchValue(remote.name);
-        this.remoteConfigForm.controls.url.patchValue(remote.url);
-        this.remoteConfigForm.controls.branch.patchValue(remote.branch);
-        this.remoteConfigForm.controls.privateKeyPath.patchValue(remote.privateKeyPath);
-        this.remoteConfigForm.controls.passphrase.patchValue(remote.privateKeyPassphrase);
     }
 }

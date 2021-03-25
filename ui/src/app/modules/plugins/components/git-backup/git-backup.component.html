@@ -57,6 +57,12 @@
                 <td> {{ remote.branch }} </td>
                 <td> {{ remote.privateKeyPath }} </td>
                 <td>
+                    <button type="button" class="btn btn-primary"
+                        (click)="backupTo(remote)">
+                        <span class="fa fa-file-code"></span>
+                    </button>
+                </td>
+                <td>
                     <button type="button" class="btn btn-light ml-1"
                             (click)="edit(remote)"
                             title="{{'global.actions.edit' | translate}}">
