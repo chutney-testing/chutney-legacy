@@ -1,7 +1,11 @@
 package com.chutneytesting.admin.domain.gitbackup;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -10,9 +14,12 @@ public class GitBackupService {
     private final Remotes remotes;
     private final GitClient gitClient;
 
-    public GitBackupService(Remotes remotes, GitClient gitClient1) {
+    @Value("${configuration-folder:conf/backups}")
+    private String gitRepositoryFolderPath;
+
+    public GitBackupService(Remotes remotes, GitClient gitClient) {
         this.remotes = remotes;
-        this.gitClient = gitClient1;
+        this.gitClient = gitClient;
     }
 
     public List<RemoteRepository> getAll() {
@@ -34,7 +41,20 @@ public class GitBackupService {
     }
 
     public void backup(RemoteRepository remote) {
-        // WIP
+        Path workingDirectory = Paths.get(gitRepositoryFolderPath).resolve(remote.name);
+        if (Files.notExists(workingDirectory)) {
+            gitClient.clone(remote, workingDirectory);
+        }
+
+        gitClient.update(remote, workingDirectory);
+        // prepare files
+
+        // commit
+        gitClient.addAll(workingDirectory);
+        gitClient.commit(workingDirectory, "TEST");
+
+        // push to remote
+        gitClient.push(remote, workingDirectory);
     }
 
     public void backup(String name) {
