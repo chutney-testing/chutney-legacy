@@ -23,8 +23,9 @@ export class CampaignListComponent implements OnInit, OnDestroy {
     lastCampaignReports: Array<CampaignExecutionReport> = [];
     lastCampaignReportsSub: Subscription;
     campaignFilter: string;
-    jiraMap: Map<string,string> = new Map();
+    jiraMap: Map<string, string> = new Map();
     jiraUrl: string = '';
+    isScheduled: Boolean;
 
     scheduledCampaigns: Array<CampaignScheduling> = [];
 
@@ -86,20 +87,22 @@ export class CampaignListComponent implements OnInit, OnDestroy {
 
     // Jira link //
 
-    initJiraPlugin() {  
+    initJiraPlugin() {
         this.jiraPluginConfigurationService.get()
-        .subscribe((r) => {
-                if(r && r.url !== ''){
+            .subscribe((r) => {
+                if (r && r.url !== '') {
                     this.jiraUrl = r.url;
                     this.jiraLinkService.findCampaigns()
-                    .subscribe(
-                        (result) => { this.jiraMap = result; }
-                    );
+                        .subscribe(
+                            (result) => {
+                                this.jiraMap = result;
+                            }
+                        );
                 }
-        });
+            });
     }
 
-    getJiraLink(id : string){
+    getJiraLink(id: string) {
         return this.jiraUrl + '/browse/' + this.jiraMap.get(id);
     }
 
@@ -126,7 +129,8 @@ export class CampaignListComponent implements OnInit, OnDestroy {
 
     private removeJiraLink(campaignId: number) {
         this.jiraLinkService.removeForCampaign(campaignId).subscribe(
-            () => {},
+            () => {
+            },
             (error) => console.log(error)
         );
     }
@@ -139,5 +143,9 @@ export class CampaignListComponent implements OnInit, OnDestroy {
             (error) => {
                 console.log(error)
             });
+    }
+
+    isFrequencyCampaign(scheduledCampaign: CampaignScheduling) {
+        return scheduledCampaign.frequency !== undefined;
     }
 }

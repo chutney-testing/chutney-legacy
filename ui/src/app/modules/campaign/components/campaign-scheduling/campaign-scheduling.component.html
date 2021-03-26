@@ -67,6 +67,7 @@
             <tr>
                 <th class="w1"> {{ 'campaigns.scheduling.campaign' | translate }}</th>
                 <th class="w1">{{ 'campaigns.scheduling.schedulingDate' | translate }}</th>
+                <th class="w1">frequence</th>
                 <th class="w1"></th>
             </tr>
             </thead>
@@ -75,6 +76,7 @@
                 <td>#{{scheduledCampaign.campaignId}} - {{scheduledCampaign.campaignTitle}}</td>
 
                 <td>{{scheduledCampaign.schedulingDate | amLocal | amDateFormat: 'YYYY-MM-DD HH:mm'}}</td>
+                <td>{{scheduledCampaign.frequency}}</td>
                 <td>
                     <button type="button" class="btn btn-outline-primary btn-sm"
                             (click)="delete(scheduledCampaign.id)">

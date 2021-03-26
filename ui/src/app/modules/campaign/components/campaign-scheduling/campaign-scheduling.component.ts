@@ -19,7 +19,7 @@ export class CampaignSchedulingComponent implements OnInit {
     form: FormGroup;
     errorMessage: string
     submitted: boolean;
-    frequencies: Array<String> = ['daily', 'weekly', 'monthly'];
+    frequencies: Array<String> = ['hourly', 'daily', 'weekly', 'monthly'];
 
     campaigns: Array<Campaign> = [];
 

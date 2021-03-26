@@ -27,10 +27,11 @@
                            title="{{ 'campaigns.list.item.title.link.title' | translate }} {{campaign.title}}">{{campaign.title}}</a>
                     </td>
                     <td class="pl-0 w1">
-                        <a *ngIf="jiraMap.has(campaign.id.toString())" role="button" class="btn btn-sm btn-link mr-0" 
-                            target="_blank" href="{{getJiraLink(campaign.id.toString())}}"
-                            ngbPopover="{{jiraMap.get(campaign.id.toString())}}" placement="left" (click)="$event.stopPropagation()"
-                            triggers="mouseenter:mouseleave">
+                        <a *ngIf="jiraMap.has(campaign.id.toString())" role="button" class="btn btn-sm btn-link mr-0"
+                           target="_blank" href="{{getJiraLink(campaign.id.toString())}}"
+                           ngbPopover="{{jiraMap.get(campaign.id.toString())}}" placement="left"
+                           (click)="$event.stopPropagation()"
+                           triggers="mouseenter:mouseleave">
                             <span class="fab fa-jira" aria-hidden="true">
                             </span>
                         </a>
@@ -66,7 +67,17 @@
         <div class="table-responsive" *ngIf="scheduledCampaigns.length > 0">
             <table class="table table-sm table-striped">
                 <tr *ngFor="let scheduledCampaign of scheduledCampaigns">
-                    <td>#{{scheduledCampaign.campaignId}} - {{scheduledCampaign.campaignTitle}}</td>
+                    <td>#{{scheduledCampaign.campaignId}}
+                        <span data-toggle="tooltip" title="{{scheduledCampaign.frequency}}"
+                              *ngIf="isFrequencyCampaign(scheduledCampaign)"
+                              class="fa fa-spinner fa-spin running"
+                              [ngStyle]="{
+                              'color':scheduledCampaign.frequency==='daily'? 'green':
+                              scheduledCampaign.frequency==='weekly'? 'orange':
+                              scheduledCampaign.frequency==='monthly'? 'red': 'blue'
+                              }"
+                              aria-hidden="true"></span>
+                        - {{scheduledCampaign.campaignTitle}}</td>
                     <td>{{scheduledCampaign.schedulingDate | amLocal | amDateFormat: 'YYYY-MM-DD HH:mm'}}</td>
                 </tr>
             </table>

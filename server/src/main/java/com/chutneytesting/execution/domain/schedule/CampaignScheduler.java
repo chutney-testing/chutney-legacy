@@ -60,6 +60,7 @@ public class CampaignScheduler {
         ids.addAll(getSchedulingCampaignsPerFrequency("daily"));
         ids.addAll(getSchedulingCampaignsPerFrequency("weekly"));
         ids.addAll(getSchedulingCampaignsPerFrequency("monthly"));
+        ids.addAll(getSchedulingCampaignsPerFrequency("hourly"));
 
         ids.forEach(sc -> schedulingCampaignRepository.removeById(sc.id));
 

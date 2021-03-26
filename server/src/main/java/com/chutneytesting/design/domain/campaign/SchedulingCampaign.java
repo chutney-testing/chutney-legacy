@@ -49,9 +49,16 @@ public class SchedulingCampaign {
 
     public LocalDateTime getSchedulingDatePerFrequency(String frequency) {
         ScheduledInterface scheduledInterface = f -> {
-            if (f.equals("daily")) return this.schedulingDate.plusDays(1);
-            else if (f.equals("weekly")) return this.schedulingDate.plusWeeks(1);
-            else return this.schedulingDate.plusMonths(1);
+            switch (f) {
+                case "daily":
+                    return this.schedulingDate.plusDays(1);
+                case "weekly":
+                    return this.schedulingDate.plusWeeks(1);
+                case "hourly":
+                    return this.schedulingDate.plusHours(1);
+                default:
+                    return this.schedulingDate.plusMonths(1);
+            }
         };
         return scheduledInterface.getDateTime(frequency);
     }
