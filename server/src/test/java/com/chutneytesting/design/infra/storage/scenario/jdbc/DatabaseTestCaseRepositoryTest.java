@@ -1,6 +1,8 @@
 package com.chutneytesting.design.infra.storage.scenario.jdbc;
 
+import static com.chutneytesting.tools.WaitUtils.awaitDuring;
 import static java.time.temporal.ChronoUnit.MILLIS;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
@@ -23,7 +25,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import java.util.concurrent.TimeUnit;
 import org.springframework.jdbc.core.RowMapper;
 
 public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
@@ -207,7 +208,7 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
     }
 
     @Test
-    public void should_increment_version_and_update_date_on_each_update() throws InterruptedException {
+    public void should_increment_version_and_update_date_on_each_update() {
         // Given
         final TestCaseData testCase = TEST_CASE_DATA_BUILDER.build();
         Instant creationDate = testCase.creationDate;
@@ -222,7 +223,8 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
         Instant updateDate = repositoryScenario.updateDate;
 
         for (int i = 1; i < 10; i++) {
-            TimeUnit.MILLISECONDS.sleep(100);
+            awaitDuring(100, MILLISECONDS);
+
             // When
             TestCaseData newTestCase = TestCaseData.TestCaseDataBuilder.from(testCase)
                 .withId(scenarioId)

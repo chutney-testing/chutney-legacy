@@ -1,9 +1,12 @@
 package com.chutneytesting.execution.domain.campaign;
 
+import static com.chutneytesting.tools.WaitUtils.awaitDuring;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -26,8 +29,6 @@ import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
-import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
-import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
@@ -47,7 +48,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.groovy.util.Maps;
 import org.assertj.core.util.Lists;
@@ -140,7 +140,7 @@ public class CampaignExecutionEngineTest {
     }
 
     @Test
-    public void should_stop_execution_of_scenarios_when_requested() throws InterruptedException {
+    public void should_stop_execution_of_scenarios_when_requested() {
         // Given
         TestCase firstTestCase = createGwtTestCase("1");
         GwtTestCase secondTestCase = createGwtTestCase("2");
@@ -151,7 +151,7 @@ public class CampaignExecutionEngineTest {
         when(testCaseRepository.findById(secondTestCase.id())).thenReturn(secondTestCase);
 
         when(scenarioExecutionEngine.execute(any(ExecutionRequest.class))).then((Answer<ScenarioExecutionReport>) invocationOnMock -> {
-            TimeUnit.MILLISECONDS.sleep(1000);
+            awaitDuring(1, SECONDS);
             return mock(ScenarioExecutionReport.class);
         });
 
@@ -162,13 +162,11 @@ public class CampaignExecutionEngineTest {
         // When
         AtomicReference<CampaignExecutionReport> campaignExecutionReport = new AtomicReference<>();
 
-        Executors.newFixedThreadPool(1).submit(() -> {
-            campaignExecutionReport.set(sut.executeScenarioInCampaign(emptyList(), campaign, "user"));
-        });
+        Executors.newFixedThreadPool(1).submit(() -> campaignExecutionReport.set(sut.executeScenarioInCampaign(emptyList(), campaign, "user")));
 
-        TimeUnit.MILLISECONDS.sleep(500);
+        awaitDuring(500, MILLISECONDS);
         sut.stopExecution(0L);
-        TimeUnit.MILLISECONDS.sleep(1000);
+        awaitDuring(1, SECONDS);
 
         // Then
         verify(scenarioExecutionEngine).execute(any(ExecutionRequest.class));
@@ -215,7 +213,7 @@ public class CampaignExecutionEngineTest {
         when(testCaseRepository.findById(firstTestCase.id())).thenReturn(firstTestCase);
         when(testCaseRepository.findById(secondTestCase.id())).thenReturn(secondTestCase);
         when(scenarioExecutionEngine.execute(any(ExecutionRequest.class))).then((Answer<ScenarioExecutionReport>) invocationOnMock -> {
-            TimeUnit.SECONDS.sleep(1);
+            awaitDuring(1, SECONDS);
             return mock(ScenarioExecutionReport.class);
         });
         when(executionHistoryRepository.getExecution(eq(firstTestCase.id()), or(eq(0L), eq(10L)))).thenReturn(failedExecutionWithId(10L));
@@ -343,7 +341,7 @@ public class CampaignExecutionEngineTest {
         );
         TestCase gwtTestCase = createGwtTestCase("gwt", gwtTestCaseDataSet);
 
-        TestCase composedTestCase = createExecutableComposedTestCase("composable", "composableDataSetId");
+        TestCase composedTestCase = createExecutableComposedTestCase("composableDataSetId");
 
         Map<String, String> campaignDataSet = Maps.of(
             "campaign key", "campaign specific value",
@@ -421,7 +419,7 @@ public class CampaignExecutionEngineTest {
             .build();
     }
 
-    private ExecutableComposedTestCase createExecutableComposedTestCase(String id, String dataSetId) {
+    private ExecutableComposedTestCase createExecutableComposedTestCase(String dataSetId) {
         return new ExecutableComposedTestCase(
             TestCaseMetadataImpl.builder()
                 .withDatasetId(dataSetId)

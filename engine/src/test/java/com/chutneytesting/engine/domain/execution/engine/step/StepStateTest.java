@@ -1,6 +1,9 @@
 package com.chutneytesting.engine.domain.execution.engine.step;
 
+import static com.chutneytesting.tools.WaitUtils.awaitDuring;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 import com.chutneytesting.engine.domain.execution.report.Status;
 import java.time.Instant;
@@ -47,12 +50,12 @@ public class StepStateTest {
         List<Long> durations = new ArrayList<>();
         IntStream.range(1, 5).forEach(i -> {
             stepState.startWatch();
-            waitMs(100);
+            awaitDuring(100, MILLISECONDS);
             durations.add(stepState.duration().toMillis() * i);
         });
         assertThat(durations).isSorted();
         IntStream.range(0, 3).forEach(i ->
-            assertThat(durations.get(i)).isLessThan(durations.get(i+1))
+            assertThat(durations.get(i)).isLessThan(durations.get(i + 1))
         );
 
         durations.clear();
@@ -98,11 +101,11 @@ public class StepStateTest {
     }
 
     @Test
-    public void should_begin_execution() throws InterruptedException {
+    public void should_begin_execution() {
         StepState stepState = new StepState();
 
         stepState.beginExecution();
-        Thread.sleep(100);
+        awaitDuring(100, MILLISECONDS);
 
         Instant startdate = stepState.startDate();
         assertThat(stepState.status()).isEqualTo(Status.RUNNING);
@@ -110,7 +113,7 @@ public class StepStateTest {
         long elapse = stepState.duration().toMillis();
         assertThat(elapse).isPositive();
 
-        Thread.sleep(100);
+        awaitDuring(100, MILLISECONDS);
 
         // Idempotence
         stepState.beginExecution();
@@ -121,11 +124,11 @@ public class StepStateTest {
     }
 
     @Test
-    public void should_end_execution() throws InterruptedException {
+    public void should_end_execution() {
         StepState stepState = new StepState();
         stepState.startWatch();
         Status initialStatus = stepState.status();
-        Thread.sleep(100);
+        awaitDuring(100, MILLISECONDS);
 
         stepState.endExecution(false);
 
@@ -149,13 +152,5 @@ public class StepStateTest {
         stepState.endExecution(true);
 
         assertThat(stepState.status()).isEqualTo(Status.EXECUTED);
-    }
-
-    private void waitMs(long waitForMs) {
-        try {
-            Thread.sleep(waitForMs);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }

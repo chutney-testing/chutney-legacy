@@ -1,6 +1,9 @@
 package com.chutneytesting;
 
+import static com.chutneytesting.tools.WaitUtils.awaitDuring;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
@@ -18,14 +21,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import org.assertj.core.util.Maps;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class ExecutionConfigurationTest {
 
-    private ExecutionConfiguration sut = new ExecutionConfiguration();
+    private final ExecutionConfiguration sut = new ExecutionConfiguration();
 
     @Test
     public void should_load_configuration_without_error() {
@@ -88,17 +90,16 @@ public class ExecutionConfigurationTest {
         Observable<StepExecutionReportDto> reports = testEngine.receiveNotification(executionId);
         List<StepExecutionReportDto> results = new ArrayList<>();
         reports.subscribeOn(Schedulers.io()).subscribe(results::add);
-
-        sleep(200); // wait initialization and execution of the first step
+        awaitDuring(200, MILLISECONDS); // wait initialization and execution of the first step
 
         testEngine.pauseExecution(executionId);
-        sleep(800); // wait pause of 1 second (@See ScenarioExecution)
+        awaitDuring(800, MILLISECONDS); // wait pause of 1 second (@See ScenarioExecution)
 
         // Resume before next pause
         testEngine.resumeExecution(executionId);
-        sleep(600);
+        awaitDuring(600, MILLISECONDS);
         testEngine.stopExecution(executionId);
-        sleep(600);
+        awaitDuring(600, MILLISECONDS);
 
 
         StepExecutionReportDto finalReport = results.get(results.size() - 1);
@@ -143,15 +144,15 @@ public class ExecutionConfigurationTest {
 
     private StepDefinitionRequestDto createSucessStep() {
         return new StepDefinitionRequestDto(
-                  "scenario name",
-                  null,
+            "scenario name",
             null,
-                  "success",
-                  Collections.emptyMap(),
-                  Collections.emptyList(),
-                  Collections.emptyMap(),
+            null,
+            "success",
+            Collections.emptyMap(),
+            Collections.emptyList(),
+            Collections.emptyMap(),
             ""
-              );
+        );
     }
 
     private StepDefinitionRequestDto createScenarioForPause() {
@@ -183,16 +184,6 @@ public class ExecutionConfigurationTest {
             ""
         );
     }
-
-
-    private void sleep(long time) {
-        try {
-            TimeUnit.MILLISECONDS.sleep(time);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 
     public static class ErrorTask implements Task {
 

@@ -1,7 +1,9 @@
 package com.chutneytesting.agent.api.mapper;
 
 import static com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration.AgentNetworkConfiguration.builder;
+import static com.chutneytesting.tools.WaitUtils.awaitDuring;
 import static java.util.Collections.singleton;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto;
@@ -27,7 +29,7 @@ import org.junit.jupiter.api.Test;
 
 public class NetworkConfigurationApiMapperTest {
 
-    private NetworkConfigurationApiMapper networkConfigurationApiMapper = new NetworkConfigurationApiMapper(new AgentInfoApiMapper(), new EnvironmentApiMapper());
+    private final NetworkConfigurationApiMapper networkConfigurationApiMapper = new NetworkConfigurationApiMapper(new AgentInfoApiMapper(), new EnvironmentApiMapper());
 
     @Test
     public void fromdto() {
@@ -74,7 +76,7 @@ public class NetworkConfigurationApiMapperTest {
     }
 
     @Test
-    public void fromdtoAtNow_use_another_instant() throws InterruptedException {
+    public void fromdtoAtNow_use_another_instant() {
         NetworkConfigurationApiDto dto = new NetworkConfigurationApiDto();
         dto.creationDate = Instant.now();
         NetworkConfigurationApiDto.AgentInfoApiDto agentInfoApiDto = new NetworkConfigurationApiDto.AgentInfoApiDto();
@@ -88,8 +90,7 @@ public class NetworkConfigurationApiMapperTest {
         EnvironmentApiDto envApiDto = new EnvironmentApiDto("envName", singleton(targetsApiDto));
         dto.environmentsConfiguration = new LinkedHashSet(Collections.singletonList(envApiDto));
 
-
-        Thread.sleep(1);
+        awaitDuring(1, MILLISECONDS);
         NetworkConfiguration networkConfiguration = networkConfigurationApiMapper.fromDtoAtNow(dto);
 
         assertThat(networkConfiguration.creationDate()).isNotEqualTo(dto.creationDate);

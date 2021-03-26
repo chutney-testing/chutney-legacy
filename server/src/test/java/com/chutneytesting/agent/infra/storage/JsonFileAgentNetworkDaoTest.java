@@ -1,5 +1,7 @@
 package com.chutneytesting.agent.infra.storage;
 
+import static com.chutneytesting.tools.WaitUtils.awaitDuring;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
@@ -38,11 +40,11 @@ public class JsonFileAgentNetworkDaoTest {
 
     private final static Path FILE_NAME = Paths.get("endpoints.json");
 
-    private JsonFileAgentNetworkDao sut;
+    private final ObjectMapper objectMapper = mock(ObjectMapper.class);
+    private final ConcurrentLinkedQueue<String> errors = new ConcurrentLinkedQueue<>();
 
-    private ObjectMapper objectMapper = mock(ObjectMapper.class);
     private File file;
-    private ConcurrentLinkedQueue<String> errors = new ConcurrentLinkedQueue<>();
+    private JsonFileAgentNetworkDao sut;
 
     @BeforeEach
     public void setUp(@TempDir Path tempDir) throws Exception {
@@ -168,7 +170,7 @@ public class JsonFileAgentNetworkDaoTest {
         AgentNetworkForJsonFile agentNetwork = mock(AgentNetworkForJsonFile.class);
         when(objectMapper.<AgentNetworkForJsonFile>readValue(same(file), any(Class.class))).thenAnswer(stuff -> {
             reading.release();
-            Thread.sleep(20);
+            awaitDuring(20, MILLISECONDS);
             if (writing.get()) errors.add("file has been written while reading");
             return null;
         });

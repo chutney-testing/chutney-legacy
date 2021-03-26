@@ -1,5 +1,6 @@
 package com.chutneytesting.engine.domain.execution.engine.step;
 
+import static com.chutneytesting.tools.WaitUtils.awaitDuring;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,16 +36,15 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class StepTest {
 
-    private StepDataEvaluator dataEvaluator = new StepDataEvaluator(new SpelFunctions());
-    private Target fakeTarget = TargetImpl.NONE;
-    private String environment = "";
+    private final StepDataEvaluator dataEvaluator = new StepDataEvaluator(new SpelFunctions());
+    private final Target fakeTarget = TargetImpl.NONE;
+    private final String environment = "";
 
     @Test
     public void stop_should_not_execute_test() {
@@ -53,12 +53,14 @@ public class StepTest {
         Step step = buildEmptyStep(stepExecutor);
 
         ScenarioExecution execution = ScenarioExecution.createScenarioExecution();
-        await().during(500, MILLISECONDS);
+        awaitDuring(500, MILLISECONDS);
         RxBus.getInstance().post(new StopExecutionAction(execution.executionId));
-        await().during(500, MILLISECONDS);
+        awaitDuring(500, MILLISECONDS);
         Status result = step.execute(execution, new ScenarioContextImpl());
 
-        await().atMost(5, SECONDS).untilAsserted(() -> assertThat(result).isEqualTo(Status.STOPPED));
+        await().atMost(5, SECONDS).untilAsserted(() ->
+            assertThat(result).isEqualTo(Status.STOPPED)
+        );
     }
 
     @Test
@@ -70,10 +72,14 @@ public class StepTest {
 
         RxBus.getInstance().post(new PauseExecutionAction(execution.executionId));
         Schedulers.io().createWorker().schedule(() -> step.execute(execution, new ScenarioContextImpl()));
-        await().atMost(1100, MILLISECONDS).untilAsserted(() -> verify(stepExecutor, times(0)).execute(any(), any(), any(), any()));
+        await().atMost(1100, MILLISECONDS).untilAsserted(() ->
+            verify(stepExecutor, times(0)).execute(any(), any(), any(), any())
+        );
 
         RxBus.getInstance().post(new ResumeExecutionAction(execution.executionId));
-        await().atMost(1100, MILLISECONDS).untilAsserted(() -> verify(stepExecutor, times(1)).execute(any(), any(), any(), any()));
+        await().atMost(1100, MILLISECONDS).untilAsserted(() ->
+            verify(stepExecutor, times(1)).execute(any(), any(), any(), any())
+        );
     }
 
     @Test
@@ -219,22 +225,23 @@ public class StepTest {
         Step step = buildEmptyStep(stepExecutor);
 
         step.startWatch();
-        waitMs(100);
+        awaitDuring(100, MILLISECONDS);
 
         long duration = step.duration().toMillis();
         assertThat(duration).isPositive();
+        awaitDuring(100, MILLISECONDS);
 
-        waitMs(100);
         step.stopWatch();
         long durationAfterStop = step.duration().toMillis();
 
         assertThat(durationAfterStop).isGreaterThan(duration);
+        awaitDuring(100, MILLISECONDS);
 
-        waitMs(100);
         assertThat(step.duration().toMillis()).isEqualTo(durationAfterStop);
 
         step.startWatch();
-        waitMs(100);
+
+        awaitDuring(100, MILLISECONDS);
         assertThat(step.duration().toMillis()).isGreaterThan(durationAfterStop);
     }
 
@@ -275,13 +282,5 @@ public class StepTest {
     private Step buildEmptyStep(StepExecutor stepExecutor) {
         StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, null, environment);
         return new Step(dataEvaluator, fakeStepDefinition, Optional.empty(), stepExecutor, Lists.emptyList());
-    }
-
-    private void waitMs(long msToWaitFor) {
-        try {
-            TimeUnit.MILLISECONDS.sleep(msToWaitFor);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

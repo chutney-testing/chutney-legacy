@@ -1,9 +1,11 @@
 package com.chutneytesting.design.api.campaign;
 
+import static com.chutneytesting.tools.WaitUtils.awaitDuring;
 import static java.lang.Integer.MAX_VALUE;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -20,11 +22,11 @@ import com.chutneytesting.design.api.scenario.v2_0.dto.ImmutableTestCaseIndexDto
 import com.chutneytesting.design.api.scenario.v2_0.dto.TestCaseIndexDto;
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
 import com.chutneytesting.design.domain.campaign.ScenarioExecutionReportCampaign;
+import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository;
-import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
-import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.design.infra.storage.campaign.FakeCampaignRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
@@ -203,7 +205,7 @@ public class CampaignControllerTest {
             .andExpect(MockMvcResultMatchers.status().isOk());
         CampaignDto[] campaigns = resultExtractor.campaigns();
 
-        List<String> campaignNames = Arrays.stream(campaigns).map(c -> c.getTitle()).collect(Collectors.toList());
+        List<String> campaignNames = Arrays.stream(campaigns).map(CampaignDto::getTitle).collect(Collectors.toList());
 
         // Then
         Assertions.assertThat(campaignNames).containsExactly(
@@ -225,7 +227,7 @@ public class CampaignControllerTest {
             .andExpect(MockMvcResultMatchers.status().isOk());
         CampaignDto[] campaigns = resultExtractor.campaigns();
 
-        List<String> campaignNames = Arrays.stream(campaigns).map(c -> c.getTitle()).collect(Collectors.toList());
+        List<String> campaignNames = Arrays.stream(campaigns).map(CampaignDto::getTitle).collect(Collectors.toList());
 
         // Then
         Assertions.assertThat(campaignNames).isEmpty();
@@ -301,7 +303,7 @@ public class CampaignControllerTest {
         repository.saveReport(anotherExistingCampaign.getId(), campaignExecutionReport0);
 
         CampaignExecutionReport campaignExecutionReport1 = new CampaignExecutionReport(10L, 1L, emptyList(), existingCampaign.getTitle(), false, "", null, null, "");
-        Thread.sleep(100); // Avoid reports with same startDate...
+        awaitDuring(100, MILLISECONDS); // Avoid reports with same startDate...
         CampaignExecutionReport campaignExecutionReport2 = new CampaignExecutionReport(5L, 2L, emptyList(), anotherExistingCampaign.getTitle(), false, "", null, null, "");
 
         when(campaignExecutionEngine.currentExecutions())
