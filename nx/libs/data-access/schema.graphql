@@ -33,6 +33,7 @@ type Scenario {
   creationDate: String
   executionDate: String
   content: String
+  version: Int
 }
 
 input ScenarioInput {
