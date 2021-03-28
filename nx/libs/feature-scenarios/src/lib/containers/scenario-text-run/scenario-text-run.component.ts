@@ -18,23 +18,30 @@ import { chutneyAnimations, fromEventSource } from '@chutney/utils';
 import * as hjson from 'hjson';
 import * as jsyaml from 'js-yaml';
 import * as dotProp from 'dot-prop-immutable';
-import { layoutOprionsVar } from '../../../../../ui-layout/src/lib/cache';
+import { layoutOprionsVar } from '@chutney/ui-layout';
+import { SelectionModel } from '@angular/cdk/collections';
 
 const formSerializer = () => {
-  return {};
+    return {};
 };
 
 declare const monaco: any;
 
+class TestNode {
+    id: string;
+    name: string;
+    children: TestNode[]
+}
+
 @Component({
-  selector: 'chutney-scenario-text-run',
-  templateUrl: './scenario-text-run.component.html',
-  styleUrls: ['./scenario-text-run.component.scss'],
-  animations: [chutneyAnimations],
+    selector: 'chutney-scenario-text-run',
+    templateUrl: './scenario-text-run.component.html',
+    styleUrls: ['./scenario-text-run.component.scss'],
+    animations: [chutneyAnimations],
 })
 export class ScenarioTextRunComponent implements OnInit {
-  private scenarioId: string;
-  executionId: string;
+    private scenarioId: string;
+    executionId: string;
   scenario$: Observable<any>;
   report$: Observable<any>;
   treeControl = new NestedTreeControl<any>((node) => node.steps);
@@ -47,26 +54,34 @@ export class ScenarioTextRunComponent implements OnInit {
   ];
 
   isHandset$: Observable<boolean> = this.mediaObserver.asObservable().pipe(
-    map(
-      () =>
-        this.mediaObserver.isActive('xs') ||
-        this.mediaObserver.isActive('sm') ||
-        this.mediaObserver.isActive('lt-md')
-    ),
-    tap(() => this.changeDetectorRef.detectChanges())
+      map(
+          () =>
+              this.mediaObserver.isActive('xs') ||
+              this.mediaObserver.isActive('sm') ||
+              this.mediaObserver.isActive('lt-md')
+      ),
+      tap(() => this.changeDetectorRef.detectChanges())
   );
-  running: boolean;
-  environment: any;
+    running: boolean;
+    environment: any;
+    output: any;
+    activeNode: any;
+    activeNodeId: any;
+    options: any = layoutOprionsVar();
+    environments: any = ['GLOBAL', 'PERF'];
+    expansionModel = new SelectionModel<string>(true);
 
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    private mediaObserver: MediaObserver,
-    private changeDetectorRef: ChangeDetectorRef,
-    private scenarioGQL: ScenarioGQL,
-    private runScenarioGQL: RunScenarioGQL,
-    private stopScenarioGQL: StopScenarioGQL,
-    private pauseScenarioGQL: PauseScenarioGQL,
+    readonly trackBy = (_: number, node: any) => node.status + '-' + node.name + node.duration;
+
+    constructor(
+        private router: Router,
+        private route: ActivatedRoute,
+        private mediaObserver: MediaObserver,
+        private changeDetectorRef: ChangeDetectorRef,
+        private scenarioGQL: ScenarioGQL,
+        private runScenarioGQL: RunScenarioGQL,
+        private stopScenarioGQL: StopScenarioGQL,
+        private pauseScenarioGQL: PauseScenarioGQL,
     private resumeScenarioGQL: ResumeScenarioGQL,
     private runScenarioHistoryGQL: RunScenarioHistoryGQL
   ) {}
@@ -104,21 +119,32 @@ export class ScenarioTextRunComponent implements OnInit {
       })
     );
 
-    combineLatest([this.scenario$, this.report$])
+      combineLatest([this.scenario$, this.report$])
       .pipe(
-        map(([s, r]) => {
-          const ns = this.normalizeScenario(s);
-          return dotProp.set(r, 'report.steps', (list) =>
-            list.map((el, i) => dotProp.merge(el, 'keyword', ns[i].keyword))
-          );
-        })
+          map(([s, r]) => {
+              const ns = this.normalizeScenario(s);
+              return dotProp.set(r, 'report.steps', (list) =>
+                  list.map((el, i) => dotProp.merge(el, 'keyword', ns[i].keyword))
+              );
+          }),
+          map((data) => {
+              const steps = this.buildFileTree(data.report.steps, 0);
+              return dotProp.set(data, 'report.steps', steps)
+          })
       )
       .subscribe(
         (data: any) => {
-          this.running = data.report.status === 'RUNNING';
-          this.environment = data.environment;
-          this.report = data.report;
-          this.dataSource.data = data.report.steps;
+            this.running = data.report.status === 'RUNNING';
+            this.environment = data.environment;
+            this.report = data.report;
+            this.dataSource.data = data.report.steps;
+            this.treeControl.dataNodes = data.report.steps;
+            this.expansionModel.selected.forEach((id) => {
+                const node = this.treeControl.dataNodes.find((n) =>
+                    n.id === id
+                );
+                this.treeControl.expand(node);
+            });
         },
         (error) => {
           console.log(error);
@@ -133,33 +159,49 @@ export class ScenarioTextRunComponent implements OnInit {
   normalizeScenario(scenario: any): any[] {
     return [
       ...this.normalize(scenario.givens, 'Given'),
-      ...this.normalize([scenario.when], 'When'),
-      ...this.normalize(scenario.thens, 'Then'),
+        ...this.normalize([scenario.when], 'When'),
+        ...this.normalize(scenario.thens, 'Then'),
     ];
   }
 
-  normalize(steps: any[], keyword: string): any[] {
-    return steps.map((x, index) =>
-      Object.assign({}, x, { keyword: index == 0 ? keyword : 'And' })
-    );
-  }
+    normalize(steps: any[], keyword: string): any[] {
+        return steps.map((x, index) =>
+            Object.assign({}, x, {keyword: index == 0 ? keyword : 'And'})
+        );
+    }
 
-  hasChild = (_: number, node: any) => !!node.steps && node.steps.length > 0;
+    /**
+     * Build the file structure tree. The `value` is the Json object, or a sub-tree of a Json object.
+     * The return value is the list of `FileNode`.
+     */
+    buildFileTree(obj: any[], level: number, parentId: string = '0'): any[] {
+        return obj.reduce<any[]>((accumulator, key, idx) => {
+            const value = key;
+            /**
+             * Make sure your node has an id so we can properly rearrange the tree during drag'n'drop.
+             * By passing parentId to buildFileTree, it constructs a path of indexes which make
+             * it possible find the exact sub-array that the node was grabbed from when dropped.
+             */
+            value.id = `${parentId}/${idx}`;
 
-  //readonly trackBy = (_: number, node: any) => node.status + '-' + node.name;
-  output: any;
-  activeNode: any;
 
-  options: any = layoutOprionsVar();
-  environments: any = ['GLOBAL', 'PERF'];
+            value.steps = this.buildFileTree(value.steps, level + 1, value.id);
 
-  runScenario() {
-    if (this.report.status === 'PAUSED') {
-      this.resumeScenario();
-    } else {
-      this.runScenarioGQL
-        .mutate({
-          scenarioId: this.scenarioId,
+
+            return accumulator.concat(value);
+        }, []);
+    }
+
+
+    hasChild = (_: number, node: any) => !!node.steps && node.steps.length > 0;
+
+    runScenario() {
+        if (this.report.status === 'PAUSED') {
+            this.resumeScenario();
+        } else {
+            this.runScenarioGQL
+                .mutate({
+                    scenarioId: this.scenarioId,
           environment: this.environment,
           dataset: [],
         })
@@ -225,13 +267,22 @@ export class ScenarioTextRunComponent implements OnInit {
         (data) => {
           this.running = false;
         },
-        (error) => {
-          console.log(error);
-        }
+          (error) => {
+              console.log(error);
+          }
       );
   }
 
-  select(item: any) {
-    this.environment = item;
+    select(item: any) {
+        this.environment = item;
+    }
+
+    toggleNode(node) {
+        this.expansionModel.toggle(node.id)
+    }
+
+  selectNode(node) {
+    this.activeNodeId = node.id
+    this.activeNode = node;
   }
 }
