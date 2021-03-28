@@ -26,9 +26,7 @@ export class CampaignsListComponent implements OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  private _campaignsDataSource: MatTableDataSource<
-    Campaign
-  > = new MatTableDataSource<Campaign>();
+  private _campaignsDataSource: MatTableDataSource<Campaign> = new MatTableDataSource<Campaign>();
   private _unsubscribe = new Subject<void>();
 
   @Input() set campaigns(campaigns: Campaign[]) {

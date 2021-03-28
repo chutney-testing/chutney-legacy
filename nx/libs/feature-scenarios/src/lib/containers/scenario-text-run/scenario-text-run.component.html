@@ -53,72 +53,9 @@
 <div *ngIf="scenario$ | async as scenario">
   <mat-toolbar>
     <mat-toolbar-row>
-      <!-- <mat-toolbar-row style="padding-left: 4px">-->
-      <!--<button mat-icon-button disabled *ngIf="!running"></button>
-      <button
-        [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
-        *ngIf="running"
-        mat-icon-button
-        (click)="stopScenario()"
-        matTooltip="Stop scenario"
-      >
-        <mat-icon>stop_circle</mat-icon>
-      </button>-->
-      #{{ executionId + ' ' + scenario.title }}
+      {{ scenario.title }}&nbsp;<span class="mat-hint">#{{executionId}}</span>
       <span fxFlex></span>
-      <!--<button mat-icon-button (click)="runScenario()" matTooltip="Run scenario">
-        <mat-icon>play_circle</mat-icon>
-      </button>-->
-      <!--<button mat-icon-button (click)="resumeScenario()" matTooltip="Resume scenario">
-        <mat-icon>play_circle</mat-icon>
-      </button>
-      <button mat-icon-button (click)="pauseScenario()" matTooltip="Pause scenario">
-        <mat-icon>pause_circle_filled</mat-icon>
-      </button>
-      <button mat-icon-button (click)="stopScenario()" matTooltip="Stop scenario">
-        <mat-icon>stop_circle_filled</mat-icon>
-      </button>-->
     </mat-toolbar-row>
-
-    <!--<mat-toolbar-row class="stats">
-      <div class="passed" fxFlex="50px" fxLayoutAlign="space-evenly center">
-        <mat-icon>done</mat-icon>
-        <span class="num">&#45;&#45;</span>
-      </div>
-      <div class="failed" fxFlex="50px" fxLayoutAlign="space-evenly center">
-        <mat-icon>error</mat-icon>
-        <span class="num">&#45;&#45;</span>
-      </div>
-      <div class="pending" fxFlex="50px" fxLayoutAlign="space-evenly center">
-        <mat-icon>adjust</mat-icon>
-        <span class="num">&#45;&#45;</span>
-      </div>
-      &lt;!&ndash;<mat-form-field>
-        <mat-select placeholder="Select">
-          <mat-option value="option">Option</mat-option>
-        </mat-select>
-      </mat-form-field>&ndash;&gt;
-      <span fxFlex></span>
-      &lt;!&ndash;<ul aria-label="Stats" class="stats">
-        <li class="passed"><i aria-hidden="true" class="fas fa-check"></i><span
-          class="visually-hidden">Passed:</span><span class="num">1</span></li>
-        <li class="failed"><i aria-hidden="true" class="fas fa-times"></i><span
-          class="visually-hidden">Failed:</span><span class="num">&#45;&#45;</span></li>
-        <li class="pending"><i aria-hidden="true" class="fas fa-circle-notch"></i><span
-          class="visually-hidden">Pending:</span><span class="num">&#45;&#45;</span></li>
-        <li class="duration"><span class="num">01.74</span></li>
-      </ul>&ndash;&gt;
-
-      <button
-        [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
-        [disabled]="!running"
-        mat-icon-button
-        (click)="stopScenario()"
-        matTooltip="Stop scenario"
-      >
-        <mat-icon>stop_circle</mat-icon>
-      </button>
-    </mat-toolbar-row>-->
   </mat-toolbar>
 
   <div style="align-items: center; width: 100%; height: 500px; display: block">
@@ -145,8 +82,8 @@
         >
           <!-- This is the tree node template for leaf nodes -->
           <mat-tree-node
-            (click)="activeNode = node"
-            [ngClass]="{ 'background-highlight': activeNode === node }"
+            (click)="selectNode(node);$event.stopPropagation()"
+            [ngClass]="{ 'background-highlight': activeNodeId === node.id }"
             *matTreeNodeDef="let node"
             matTreeNodeToggle
           >
@@ -170,13 +107,14 @@
           <!-- This is the tree node template for expandable nodes -->
           <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
             <li
-              (click)="activeNode = node"
-              [ngClass]="{ 'background-highlight': activeNode === node }"
+              (click)="selectNode(node);$event.stopPropagation()"
+              [ngClass]="{ 'background-highlight': activeNodeId === node.id }"
             >
               <div class="mat-tree-node">
                 <button
                   mat-icon-button
                   matTreeNodeToggle
+                  (click)="toggleNode(node)"
                   [attr.aria-label]="'Toggle ' + node.description"
                 >
                   <mat-icon class="mat-icon-rtl-mirror">
