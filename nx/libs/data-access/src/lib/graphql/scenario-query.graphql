@@ -8,5 +8,6 @@ query scenario($scenarioId: ID!){
     creationDate
     executionDate
     content
+    version
   }
 }
