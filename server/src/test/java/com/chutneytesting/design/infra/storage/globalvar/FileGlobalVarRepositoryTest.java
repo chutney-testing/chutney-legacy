@@ -4,7 +4,7 @@ import static com.chutneytesting.design.infra.storage.globalvar.FileGlobalVarRep
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
-import com.chutneytesting.design.infra.storage.globalvar.FileGlobalVarRepository;
+import com.chutneytesting.tools.ThrowingConsumer;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -15,14 +15,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import com.chutneytesting.tools.ThrowingConsumer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 public class FileGlobalVarRepositoryTest {
 
     private static final String FILE_NAME = "global_var";
-    private static final String STORE_PATH = org.assertj.core.util.Files.temporaryFolder().toString();
+    private static final String STORE_PATH = org.assertj.core.util.Files.temporaryFolderPath();
     private FileGlobalVarRepository sut;
 
     @AfterEach
@@ -47,7 +46,7 @@ public class FileGlobalVarRepositoryTest {
         sut.saveFile(FILE_NAME, "{\n" +
             "    key1: " + urlValue + "\n" +
             "    key2: {\n" +
-            "        subKey1:\n"+
+            "        subKey1:\n" +
             "          '''\n" +
             String.format(mulitlineValuePattern, "          ", "          ", "          ") + "\n" +
             "          '''\n" +
