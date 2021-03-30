@@ -107,7 +107,7 @@ public class SchedulingCampaignFileRepository implements SchedulingCampaignRepos
     }
 
     private SchedulingCampaignDto toDto(long id, SchedulingCampaign schedulingCampaign) {
-        return new SchedulingCampaignDto(String.valueOf(id), schedulingCampaign.campaignId, schedulingCampaign.campaignTitle, schedulingCampaign.schedulingDate, schedulingCampaign.frequency);
+        return new SchedulingCampaignDto(String.valueOf(id), schedulingCampaign.campaignId, schedulingCampaign.campaignTitle, schedulingCampaign.getSchedulingDate(), schedulingCampaign.frequency);
     }
 
 

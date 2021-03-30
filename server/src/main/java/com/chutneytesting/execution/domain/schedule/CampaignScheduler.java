@@ -1,10 +1,12 @@
 package com.chutneytesting.execution.domain.schedule;
 
+import com.chutneytesting.design.domain.campaign.FREQUENCY;
 import com.chutneytesting.design.domain.campaign.SchedulingCampaign;
 import com.chutneytesting.design.domain.campaign.SchedulingCampaignRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -54,26 +56,22 @@ public class CampaignScheduler {
     private List<Long> checkScheduleCampaign() {
         List<SchedulingCampaign> ids = schedulingCampaignRepository.getALl()
             .stream()
-            .filter(sc -> sc.schedulingDate.isBefore(LocalDateTime.now()) && sc.frequency == null)
+            .filter(sc -> sc.getSchedulingDate().isBefore(LocalDateTime.now()) && sc.frequency == null)
             .collect(Collectors.toList());
-
-        ids.addAll(getSchedulingCampaignsPerFrequency("daily"));
-        ids.addAll(getSchedulingCampaignsPerFrequency("weekly"));
-        ids.addAll(getSchedulingCampaignsPerFrequency("monthly"));
-        ids.addAll(getSchedulingCampaignsPerFrequency("hourly"));
+        Arrays.asList(FREQUENCY.values()).forEach(frequency -> ids.addAll(getSchedulingCampaignsPerFrequency(frequency)));
 
         ids.forEach(sc -> schedulingCampaignRepository.removeById(sc.id));
 
         return ids.stream().map(sc -> sc.campaignId).collect(Collectors.toList());
     }
 
-    private List<SchedulingCampaign> getSchedulingCampaignsPerFrequency(String frequency) {
+    private List<SchedulingCampaign> getSchedulingCampaignsPerFrequency(FREQUENCY frequency) {
         List<SchedulingCampaign> CampaignWithFrequenciesIds = schedulingCampaignRepository.getALl()
             .stream()
-            .filter(sc -> sc.frequency != null && (sc.frequency.equals(frequency) && sc.schedulingDate.isBefore(LocalDateTime.now())))
+            .filter(sc -> sc.frequency != null && (sc.frequency.equals(frequency.toString()) && sc.getSchedulingDate().isBefore(LocalDateTime.now())))
             .collect(Collectors.toList());
         CampaignWithFrequenciesIds.forEach(sc -> {
-            sc.setSchedulingDate(sc.getSchedulingDatePerFrequency(frequency));
+            sc.setSchedulingDate(sc.getNextSchedulingDate());
             schedulingCampaignRepository.add(sc);
         });
         return CampaignWithFrequenciesIds;

@@ -1,5 +1,9 @@
 package com.chutneytesting.design.domain.campaign;
 
+import static com.chutneytesting.design.domain.campaign.FREQUENCY.DAILY;
+import static com.chutneytesting.design.domain.campaign.FREQUENCY.HOURLY;
+import static com.chutneytesting.design.domain.campaign.FREQUENCY.WEEKLY;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -8,8 +12,8 @@ public class SchedulingCampaign {
     public final Long id;
     public final Long campaignId;
     public final String campaignTitle;
-    public LocalDateTime schedulingDate;
-    public final String frequency;
+    private LocalDateTime schedulingDate;
+    public String frequency;
 
     public SchedulingCampaign(Long id, Long campaignId, String campaignTitle, LocalDateTime schedulingDate, String frequency) {
         this.id = id;
@@ -19,17 +23,24 @@ public class SchedulingCampaign {
         this.frequency = frequency;
     }
 
+    public SchedulingCampaign(Long id, Long campaignId, String campaignTitle, LocalDateTime schedulingDate) {
+        this.id = id;
+        this.campaignId = campaignId;
+        this.campaignTitle = campaignTitle;
+        this.schedulingDate = schedulingDate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SchedulingCampaign that = (SchedulingCampaign) o;
-        return Objects.equals(id, that.id);
+        return Objects.equals(id, that.id) && Objects.equals(campaignId, that.campaignId) && Objects.equals(campaignTitle, that.campaignTitle) && Objects.equals(schedulingDate, that.schedulingDate) && Objects.equals(frequency, that.frequency);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(id, campaignId, campaignTitle, schedulingDate, frequency);
     }
 
     public void setSchedulingDate(LocalDateTime schedulingDate) {
@@ -47,24 +58,19 @@ public class SchedulingCampaign {
             '}';
     }
 
-    public LocalDateTime getSchedulingDatePerFrequency(String frequency) {
-        ScheduledInterface scheduledInterface = f -> {
-            switch (f) {
-                case "daily":
-                    return this.schedulingDate.plusDays(1);
-                case "weekly":
-                    return this.schedulingDate.plusWeeks(1);
-                case "hourly":
-                    return this.schedulingDate.plusHours(1);
-                default:
-                    return this.schedulingDate.plusMonths(1);
-            }
-        };
-        return scheduledInterface.getDateTime(frequency);
+    public LocalDateTime getSchedulingDate() {
+        return schedulingDate;
     }
-}
 
-@FunctionalInterface
-interface ScheduledInterface {
-    LocalDateTime getDateTime(String freq);
+    public LocalDateTime getNextSchedulingDate() {
+        if (this.frequency.equals(HOURLY.toString())) {
+            return this.schedulingDate.plusHours(1);
+        } else if (this.frequency.equals(DAILY.toString())) {
+            return this.schedulingDate.plusDays(1);
+        } else if (this.frequency.equals(WEEKLY.toString())) {
+            return this.schedulingDate.plusWeeks(1);
+        } else {
+            return this.schedulingDate.plusMonths(1);
+        }
+    }
 }

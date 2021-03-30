@@ -29,7 +29,7 @@ public class ScheduleCampaignController {
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public List<SchedulingCampaignDto> getAll() {
         return schedulingCampaignRepository.getALl().stream()
-            .map(sc -> new SchedulingCampaignDto(sc.id, sc.campaignId, sc.campaignTitle, sc.schedulingDate,sc.frequency))
+            .map(sc -> new SchedulingCampaignDto(sc.id, sc.campaignId, sc.campaignTitle, sc.getSchedulingDate(),sc.frequency))
             .sorted(Comparator.comparing(SchedulingCampaignDto::getSchedulingDate))
             .collect(Collectors.toList());
     }

@@ -1,5 +1,9 @@
 package com.chutneytesting.execution.domain.schedule;
 
+import static com.chutneytesting.design.domain.campaign.FREQUENCY.DAILY;
+import static com.chutneytesting.design.domain.campaign.FREQUENCY.HOURLY;
+import static com.chutneytesting.design.domain.campaign.FREQUENCY.MONTHLY;
+import static com.chutneytesting.design.domain.campaign.FREQUENCY.WEEKLY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -56,12 +60,76 @@ public class CampaignSchedulerTest {
         campaignScheduler.executeScheduledCampaign();
         when(schedulingCampaignRepository.getALl())
             .thenReturn(Lists.newArrayList(
-                new SchedulingCampaign(1L, 3L, "title", LocalDateTime.now().minusMinutes(1), null),
-                new SchedulingCampaign(2L, 4L, "title", LocalDateTime.now().plusMinutes(1), null)
+                new SchedulingCampaign(1L, 3L, "title", LocalDateTime.now().minusMinutes(1)),
+                new SchedulingCampaign(2L, 4L, "title", LocalDateTime.now().plusMinutes(1))
             ));
 
         campaignScheduler.executeScheduledCampaign();
 
+        verify(schedulingCampaignRepository).removeById(1L);
+        verify(campaignExecutionEngine).executeById(3L, "auto");
+    }
+
+    @Test
+    public void verify_campaign_scheduled_at_date_are_retrieved_and_executed_if_execution_date_is_in_the_past_with_hourly_frequency() {
+        LocalDateTime schedulingDate = LocalDateTime.now().minusMinutes(1);
+        campaignScheduler.executeScheduledCampaign();
+        when(schedulingCampaignRepository.getALl())
+            .thenReturn(Lists.newArrayList(
+                new SchedulingCampaign(1L, 3L, "title", schedulingDate, HOURLY.toString())
+            ));
+
+        campaignScheduler.executeScheduledCampaign();
+
+        verify(schedulingCampaignRepository).add(new SchedulingCampaign(1L, 3L, "title", schedulingDate.plusHours(1), HOURLY.toString()));
+        verify(schedulingCampaignRepository).removeById(1L);
+        verify(campaignExecutionEngine).executeById(3L, "auto");
+    }
+
+    @Test
+    public void verify_campaign_scheduled_at_date_are_retrieved_and_executed_if_execution_date_is_in_the_past_with_daily_frequency() {
+        LocalDateTime schedulingDate = LocalDateTime.now().minusMinutes(1);
+        campaignScheduler.executeScheduledCampaign();
+        when(schedulingCampaignRepository.getALl())
+            .thenReturn(Lists.newArrayList(
+                new SchedulingCampaign(1L, 3L, "title", schedulingDate, DAILY.toString())
+            ));
+
+        campaignScheduler.executeScheduledCampaign();
+
+        verify(schedulingCampaignRepository).add(new SchedulingCampaign(1L, 3L, "title", schedulingDate.plusDays(1), DAILY.toString()));
+        verify(schedulingCampaignRepository).removeById(1L);
+        verify(campaignExecutionEngine).executeById(3L, "auto");
+    }
+
+    @Test
+    public void verify_campaign_scheduled_at_date_are_retrieved_and_executed_if_execution_date_is_in_the_past_with_weekly_frequency() {
+        LocalDateTime schedulingDate = LocalDateTime.now().minusMinutes(1);
+        campaignScheduler.executeScheduledCampaign();
+        when(schedulingCampaignRepository.getALl())
+            .thenReturn(Lists.newArrayList(
+                new SchedulingCampaign(1L, 3L, "title", schedulingDate, WEEKLY.toString())
+            ));
+
+        campaignScheduler.executeScheduledCampaign();
+
+        verify(schedulingCampaignRepository).add(new SchedulingCampaign(1L, 3L, "title", schedulingDate.plusWeeks(1), WEEKLY.toString()));
+        verify(schedulingCampaignRepository).removeById(1L);
+        verify(campaignExecutionEngine).executeById(3L, "auto");
+    }
+
+    @Test
+    public void verify_campaign_scheduled_at_date_are_retrieved_and_executed_if_execution_date_is_in_the_past_with_monthly_frequency() {
+        LocalDateTime schedulingDate = LocalDateTime.now().minusMinutes(1);
+        campaignScheduler.executeScheduledCampaign();
+        when(schedulingCampaignRepository.getALl())
+            .thenReturn(Lists.newArrayList(
+                new SchedulingCampaign(1L, 3L, "title", schedulingDate, MONTHLY.toString())
+            ));
+
+        campaignScheduler.executeScheduledCampaign();
+
+        verify(schedulingCampaignRepository).add(new SchedulingCampaign(1L, 3L, "title", schedulingDate.plusMonths(1), MONTHLY.toString()));
         verify(schedulingCampaignRepository).removeById(1L);
         verify(campaignExecutionEngine).executeById(3L, "auto");
     }
