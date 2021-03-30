@@ -51,7 +51,7 @@ public class GlobalVarController {
     @CrossOrigin(origins = "*")
     @GetMapping(path = "/{fileName}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public TextDto getFile(@PathVariable("fileName") String fileName) {
-        return new TextDto(globalVarRepository.getFile(fileName));
+        return new TextDto(globalVarRepository.getFileContent(fileName));
     }
 
     public static class TextDto {

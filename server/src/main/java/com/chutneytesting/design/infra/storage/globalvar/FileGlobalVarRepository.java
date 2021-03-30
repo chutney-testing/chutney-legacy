@@ -61,9 +61,8 @@ public class FileGlobalVarRepository implements GlobalvarRepository {
     }
 
     @Override
-    public String getFile(String fileName) {
+    public String getFileContent(String fileName) {
         Path filePath = this.storeFolderPath.resolve(fileName + FILE_EXTENSION);
-        this.getFlatMap();
         try {
             return new String(Files.readAllBytes(filePath));
         } catch (IOException e) {
@@ -72,11 +71,11 @@ public class FileGlobalVarRepository implements GlobalvarRepository {
     }
 
     @Override
-    public void saveFile(String fileName, String hjsonFile) {
+    public void saveFile(String fileName, String hjsonContent) {
         Path filePath = this.storeFolderPath.resolve(fileName + FILE_EXTENSION);
         createFile(filePath);
         try {
-            Files.write(filePath, hjsonFile.getBytes());
+            Files.write(filePath, hjsonContent.getBytes());
         } catch (IOException e) {
             throw new UnsupportedOperationException("Cannot save " + filePath.toUri().toString(), e);
         }
