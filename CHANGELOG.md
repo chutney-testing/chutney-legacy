@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.3.0](https://github.com/chutney-testing/chutney/tree/1.3.0)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.20...1.3.0)
+
+**Refactors:**
+
+- refactor(server): Remove parameters logic from Orient repository (#327) <Mael Besson>
+- chore(): chutney junit in main project (#384) <nbrouand>
+- chore(engine+server+task-impl): Use awaitility + tools class instead of thread sleep (#382) <nbrouand>
+- Chore/fix test timeout (#378) <BDA>
+
 ## [1.2.20](https://github.com/chutney-testing/chutney/tree/1.2.20)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.19...1.2.20)

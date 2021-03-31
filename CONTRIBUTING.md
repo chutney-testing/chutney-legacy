@@ -140,8 +140,8 @@ As a general rule, the style and formatting of commit messages should follow the
 
 ## <a name="build"></a> Build Process
 
-We use travis to build and release Chutney.
-[![Build Status](https://travis-ci.com/chutney-testing/chutney.svg?branch=master)](https://travis-ci.com/chutney-testing/chutney)
+We use Github Actions to build and release Chutney.
+[![Build](https://github.com/chutney-testing/chutney/workflows/Build/badge.svg?branch=master)](https://github.com/chutney-testing/chutney/actions)
 
 ## <a name="release"></a> Release Management
 
