@@ -13,6 +13,7 @@ import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository;
+import com.chutneytesting.design.infra.storage.scenario.compose.wrapper.TestCaseVertex;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCaseRepository;
@@ -78,7 +79,7 @@ public class OrientComposableTestCaseRepository implements ComposableTestCaseRep
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
             OVertex element = (OVertex) load(composableTestCaseId, dbSession)
                 .orElseThrow(() -> new ScenarioNotFoundException(composableTestCaseId));
-            return vertexToTestCase(element, dbSession);
+            return vertexToTestCase(TestCaseVertex.builder().from(element).build());
         }
     }
 
@@ -97,7 +98,7 @@ public class OrientComposableTestCaseRepository implements ComposableTestCaseRep
             return Lists.newArrayList(allSteps).stream()
                 .map(rs -> {
                     OVertex element = dbSession.load(new ORecordId(rs.getProperty("@rid").toString()));
-                    return vertexToTestCase(element, dbSession).metadata;
+                    return vertexToTestCase(TestCaseVertex.builder().from(element).build()).metadata;
                 })
                 .collect(Collectors.toList());
         }
@@ -125,7 +126,7 @@ public class OrientComposableTestCaseRepository implements ComposableTestCaseRep
             throw new ScenarioNotFoundException(composableTestCase.id, composableTestCase.metadata.version());
         }
         OVertex testCase = (OVertex) stepRecord.orElseGet(() -> dbSession.newVertex(TESTCASE_CLASS));
-        testCaseToVertex(composableTestCase, testCase, dbSession);
-        return testCase.save();
+        TestCaseVertex testCaseVertex = testCaseToVertex(composableTestCase, testCase);
+        return testCaseVertex.save(dbSession);
     }
 }

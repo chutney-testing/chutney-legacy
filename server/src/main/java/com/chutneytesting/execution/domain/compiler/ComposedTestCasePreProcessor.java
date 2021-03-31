@@ -11,13 +11,11 @@ import org.springframework.stereotype.Component;
 public class ComposedTestCasePreProcessor implements TestCasePreProcessor<ExecutableComposedTestCase> {
 
     private final ComposedTestCaseParametersResolutionPreProcessor parametersResolutionPreProcessor;
-    private final ComposedTestCaseLoopPreProcessor loopPreProcessor;
-    private final ComposedTestCaseIterationsPreProcessor dataSetPreProcessor;
+    private final ComposedTestCaseDatatableIterationsPreProcessor dataSetPreProcessor;
 
     public ComposedTestCasePreProcessor(ObjectMapper objectMapper, GlobalvarRepository globalvarRepository, DataSetRepository dataSetRepository) {
         this.parametersResolutionPreProcessor = new ComposedTestCaseParametersResolutionPreProcessor(globalvarRepository, objectMapper);
-        this.loopPreProcessor = new ComposedTestCaseLoopPreProcessor(objectMapper);
-        this.dataSetPreProcessor = new ComposedTestCaseIterationsPreProcessor(dataSetRepository);
+        this.dataSetPreProcessor = new ComposedTestCaseDatatableIterationsPreProcessor(dataSetRepository);
     }
 
     @Override
@@ -32,14 +30,7 @@ public class ComposedTestCasePreProcessor implements TestCasePreProcessor<Execut
                 new ExecutionRequest(testCase, environment, userId)
             );
         }
-        // Process loop strategy
-        testCase = loopPreProcessor.apply(
-            new ExecutionRequest(
-                parametersResolutionPreProcessor.applyOnStrategy(testCase, environment),
-                environment,
-                userId
-            )
-        );
+
         // Process parameters (value them)
         return parametersResolutionPreProcessor.apply(
             new ExecutionRequest(testCase, environment, userId)

@@ -15,7 +15,6 @@ import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
-import com.chutneytesting.design.domain.scenario.compose.StepUsage;
 import com.chutneytesting.tools.ui.ImmutableKeyValue;
 import com.chutneytesting.tools.ui.KeyValue;
 import java.time.Instant;
@@ -44,10 +43,10 @@ public class ComposableTestCaseMapperTest {
                             .id("30-10")
                             .name("First default functional ref")
                             .task("{ \"type\": \"default-identifier\" }")
-                            .parameters(Arrays.asList(
+                            .defaultParameters(Arrays.asList(
                                 ImmutableKeyValue.builder().key("key valued").value("value").build(),
                                 ImmutableKeyValue.builder().key("empty key").value("").build()))
-                            .computedParameters(
+                            .executionParameters(
                                 KeyValue.fromMap(
                                     Maps.of(
                                         "key valued", "value",
@@ -63,7 +62,7 @@ public class ComposableTestCaseMapperTest {
                     ))
                     .build()
             )
-            .computedParameters(
+            .executionParameters(
                 KeyValue.fromMap(
                     Maps.of(
                         "empty key", "",
@@ -98,15 +97,14 @@ public class ComposableTestCaseMapperTest {
                         ComposableStep.builder()
                             .withId("#30:10")
                             .withName("First default functional ref")
-                            .withImplementation(Optional.of("{ \"type\": \"default-identifier\" }"))
-                            .withParameters(
+                            .withImplementation("{ \"type\": \"default-identifier\" }")
+                            .withDefaultParameters(
                                 Maps.of(
                                     "key valued", "value",
                                     "empty key", ""
                                 )
                             )
-                            .withUsage(Optional.of(StepUsage.STEP))
-                            .overrideDataSetWith(
+                            .withExecutionParameters(
                                 Maps.of(
                                     "key valued", "value",
                                     "empty key", ""

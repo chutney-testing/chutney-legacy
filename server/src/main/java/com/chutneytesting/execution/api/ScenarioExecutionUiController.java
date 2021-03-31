@@ -1,23 +1,21 @@
 package com.chutneytesting.execution.api;
 
 import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
-import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
-import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
-import com.chutneytesting.execution.domain.scenario.composed.ExecutableStepRepository;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngineAsync;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableStepRepository;
 import com.chutneytesting.security.domain.UserService;
 import com.chutneytesting.tools.ui.KeyValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Observable;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -82,14 +80,12 @@ public class ScenarioExecutionUiController {
     }
 
     @PostMapping(path = "/api/ui/scenario/executionasync/v1/{scenarioId}/{env}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public String executeScenarioAsyncWithDataSet(@PathVariable("scenarioId") String scenarioId, @PathVariable("env") String env, @RequestBody List<KeyValue> dataSet) {
-        LOGGER.debug("executeScenarioAsync for scenarioId='{}' with dataset '{}'", scenarioId, dataSet);
+    public String executeScenarioAsyncWithExecutionParameters(@PathVariable("scenarioId") String scenarioId, @PathVariable("env") String env, @RequestBody List<KeyValue> executionParametersKV) {
+        LOGGER.debug("execute async scenario '{}' using parameters '{}'", scenarioId, executionParametersKV);
         TestCase testCase = testCaseRepository.findById(fromFrontId(Optional.of(scenarioId)));
-        Map<String, String> inlineDataSet = ofNullable(dataSet)
-            .map(KeyValue::toMap)
-            .orElseGet(HashMap::new);
+        Map<String, String> executionParameters = KeyValue.toMap(executionParametersKV);
         String userId = userService.getCurrentUser().getId();
-        return executionEngineAsync.execute(new ExecutionRequest(testCase, env, inlineDataSet, userId)).toString();
+        return executionEngineAsync.execute(new ExecutionRequest(testCase, env, executionParameters, userId)).toString();
     }
 
     @GetMapping(path = "/api/ui/scenario/executionasync/v1/{scenarioId}/execution/{executionId}")

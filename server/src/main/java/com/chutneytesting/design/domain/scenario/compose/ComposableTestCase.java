@@ -10,23 +10,23 @@ import java.util.Optional;
 
 public class ComposableTestCase implements TestCase {
 
-    public final String id; // TODO - To delete
+    public final String id;
     public final TestCaseMetadata metadata;
     public final ComposableScenario composableScenario;
-    public final Map<String, String> computedParameters; // TODO - refactor dataset - here it's for execution phase
+    public final Map<String, String> executionParameters;
 
     public ComposableTestCase(String id, TestCaseMetadata metadata, ComposableScenario composableScenario) {
         this.id = id;
         this.metadata = metadata;
         this.composableScenario = composableScenario;
-        this.computedParameters = buildDataSet();
+        this.executionParameters = getExecutionParameters();
     }
 
-    public ComposableTestCase(String id, TestCaseMetadata metadata, ComposableScenario composableScenario, Map<String, String> computedParameters) {
+    private ComposableTestCase(String id, TestCaseMetadata metadata, ComposableScenario composableScenario, Map<String, String> executionParameters) {
         this.id = id;
         this.metadata = metadata;
         this.composableScenario = composableScenario;
-        this.computedParameters = computedParameters;
+        this.executionParameters = executionParameters;
     }
 
     @Override
@@ -40,17 +40,17 @@ public class ComposableTestCase implements TestCase {
     }
 
     @Override
-    public Map<String, String> computedParameters() {
-        return computedParameters;
+    public Map<String, String> executionParameters() {
+        return executionParameters;
     }
 
     @Override
-    public TestCase withDataSet(final Map<String, String> dataSet) {
+    public TestCase usingExecutionParameters(final Map<String, String> parameters) {
         return new ComposableTestCase(
             id,
             metadata,
             composableScenario,
-            dataSet
+            parameters
         );
     }
 
@@ -61,7 +61,7 @@ public class ComposableTestCase implements TestCase {
                 .withDatasetId(dataSetId)
                 .build(),
             composableScenario,
-            computedParameters
+            executionParameters
         );
     }
 
@@ -73,25 +73,24 @@ public class ComposableTestCase implements TestCase {
         return Objects.equals(id, that.id) &&
             Objects.equals(metadata, that.metadata) &&
             Objects.equals(composableScenario, that.composableScenario) &&
-            Objects.equals(computedParameters, that.computedParameters);
+            Objects.equals(executionParameters, that.executionParameters);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, metadata, composableScenario, computedParameters);
+        return Objects.hash(id, metadata, composableScenario, executionParameters);
     }
 
-    // TODO - refactor dataset
-    private Map<String, String> buildDataSet() {
-        Map<String, String> dataSet = new HashMap<>();
+    private Map<String, String> getExecutionParameters() {
+        Map<String, String> parameters = new HashMap<>();
 
-        composableScenario.composableSteps
-            .forEach(composableStep -> dataSet.putAll(composableStep.dataSetGlobalParameters()));
+        // Pull up empty params from steps
+        composableScenario.composableSteps.forEach(composableStep -> parameters.putAll(composableStep.getEmptyExecutionParameters()));
 
-        Optional.ofNullable(composableScenario.parameters)
-            .ifPresent(dataSet::putAll);
+        // Take all params from scenario
+        Optional.ofNullable(composableScenario.parameters).ifPresent(parameters::putAll);
 
-        return dataSet;
+        return parameters;
     }
 
     @Override
@@ -100,7 +99,7 @@ public class ComposableTestCase implements TestCase {
             "id='" + id + '\'' +
             ", metadata=" + metadata +
             ", composableScenario=" + composableScenario +
-            ", dataSet=" + computedParameters +
+            ", parameters=" + executionParameters +
             '}';
     }
 }

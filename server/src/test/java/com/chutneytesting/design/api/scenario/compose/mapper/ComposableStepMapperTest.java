@@ -6,15 +6,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.design.api.scenario.compose.dto.ComposableStepDto;
 import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableStepDto;
-import com.chutneytesting.tools.ui.KeyValue;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
-import com.chutneytesting.design.domain.scenario.compose.StepUsage;
+import com.chutneytesting.tools.ui.KeyValue;
 import java.util.Arrays;
 import java.util.Collections;
 import org.apache.groovy.util.Maps;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class ComposableStepMapperTest {
@@ -37,23 +34,6 @@ public class ComposableStepMapperTest {
         assertThat(composableStepDto.name()).isEqualTo(FSTEP_NAME);
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"GIVEN", "WHEN", "THEN"})
-    public void should_map_func_usage_step_to_dto_when_toDto_called(StepUsage stepUsage) {
-        // Given
-        ComposableStep fStep = ComposableStep.builder()
-            .withId("#1:1")
-            .withName("a functional step")
-            .withUsage(java.util.Optional.ofNullable(stepUsage))
-            .build();
-
-        // When
-        ComposableStepDto composableStepDto = toDto(fStep);
-
-        // Then
-        assertThat(composableStepDto.usage()).isEqualTo(ComposableStepDto.StepUsage.valueOf(stepUsage.name()));
-    }
-
     @Test
     public void should_map_func_step_sub_tech_steps_to_dto_when_toDto_called() {
         // Given
@@ -65,16 +45,18 @@ public class ComposableStepMapperTest {
             .withSteps(
                 Arrays.asList(
                     ComposableStep.builder()
+                        .withId("#1:2")
                         .withName("a functional sub step with implementation")
-                        .withImplementation(java.util.Optional.of(TECHNICAL_CONTENT))
+                        .withImplementation(TECHNICAL_CONTENT)
                         .build(),
                     ComposableStep.builder()
+                        .withId("#1:3")
                         .withName("a functional sub step with sub step with implementation")
                         .withSteps(
                             Collections.singletonList(
                                 ComposableStep.builder()
                                     .withName("a functional sub sub step with implementation")
-                                    .withImplementation(java.util.Optional.of(TECHNICAL_CONTENT_B))
+                                    .withImplementation(TECHNICAL_CONTENT_B)
                                     .build()
                             )
                         )
@@ -102,6 +84,7 @@ public class ComposableStepMapperTest {
             .withSteps(
                 Arrays.asList(
                     ComposableStep.builder()
+                        .withId("#1:2")
                         .withName(FSTEP_NAME)
                         .withSteps(
                             Collections.singletonList(
@@ -112,6 +95,7 @@ public class ComposableStepMapperTest {
                         )
                         .build(),
                     ComposableStep.builder()
+                        .withId("#1:3")
                         .withName(ANOTHER_FSTEP_NAME)
                         .build()
                 )
@@ -133,13 +117,13 @@ public class ComposableStepMapperTest {
         ComposableStep fStep = ComposableStep.builder()
             .withId("#1:1")
             .withName("a functional step")
-            .withParameters(
+            .withDefaultParameters(
                 Maps.of(
                     "param1", "param1 value",
                     "param2", ""
                 )
             )
-            .overrideDataSetWith(
+            .withExecutionParameters(
                 Maps.of(
                     "param1", "param1 value",
                     "param2", "",
@@ -153,8 +137,8 @@ public class ComposableStepMapperTest {
         ComposableStepDto composableStepDto = toDto(fStep);
 
         // Then
-        assertThat(composableStepDto.parameters()).containsExactlyElementsOf(KeyValue.fromMap(fStep.parameters));
-        assertThat(composableStepDto.computedParameters()).containsExactlyElementsOf(KeyValue.fromMap(fStep.dataSet));
+        assertThat(composableStepDto.defaultParameters()).containsExactlyElementsOf(KeyValue.fromMap(fStep.defaultParameters));
+        assertThat(composableStepDto.executionParameters()).containsExactlyElementsOf(KeyValue.fromMap(fStep.executionParameters));
     }
 
     @Test
@@ -177,14 +161,14 @@ public class ComposableStepMapperTest {
                     .name("sub step 2")
                     .build()
             )
-            .addAllParameters(
+            .addAllDefaultParameters(
                 KeyValue.fromMap(
                     Maps.of(
                         "param1", "param1 value",
                         "param2", ""
                     )
                 ))
-            .addAllComputedParameters(
+            .addAllExecutionParameters(
                 KeyValue.fromMap(
                     Maps.of(
                         "param1", "param1 value",
@@ -202,10 +186,9 @@ public class ComposableStepMapperTest {
         // Then
         assertThat(step.id).isEqualTo(dto.id().get());
         assertThat(step.name).isEqualTo(dto.name());
-        assertThat(ComposableStepDto.StepUsage.valueOf(step.usage.get().name())).isEqualTo(dto.usage());
         assertThat(step.steps.get(0).implementation.get()).isEqualTo(TECHNICAL_CONTENT);
         assertThat(step.steps.get(1).name).isEqualTo(dto.steps().get(1).name());
-        assertThat(step.parameters).containsAllEntriesOf(KeyValue.toMap(dto.parameters()));
-        assertThat(step.dataSet).containsAllEntriesOf(KeyValue.toMap(dto.computedParameters()));
+        assertThat(step.defaultParameters).containsAllEntriesOf(KeyValue.toMap(dto.defaultParameters()));
+        assertThat(step.executionParameters).containsAllEntriesOf(KeyValue.toMap(dto.executionParameters()));
     }
 }

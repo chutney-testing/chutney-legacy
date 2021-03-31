@@ -3,10 +3,7 @@ package com.chutneytesting.design.infra.storage.scenario.compose;
 import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.composableStepToVertex;
 import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.vertexToComposableStep;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.GE_STEP_CLASS;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.GE_STEP_CLASS_PROPERTY_PARAMETERS;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_NAME;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_USAGE;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.close;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.deleteVertex;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.load;
@@ -14,10 +11,10 @@ import static com.chutneytesting.design.infra.storage.scenario.compose.orient.Or
 
 import com.chutneytesting.design.domain.scenario.compose.AlreadyExistingComposableStepException;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
-import com.chutneytesting.design.domain.scenario.compose.ComposableStepCyclicDependencyException;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStepNotFoundException;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStepRepository;
 import com.chutneytesting.design.domain.scenario.compose.ParentStepId;
+import com.chutneytesting.design.infra.storage.scenario.compose.wrapper.StepVertex;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
@@ -31,16 +28,13 @@ import com.google.common.collect.Lists;
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.id.ORecordId;
-import com.orientechnologies.orient.core.record.ODirection;
 import com.orientechnologies.orient.core.record.OElement;
 import com.orientechnologies.orient.core.record.OVertex;
 import com.orientechnologies.orient.core.sql.executor.OResult;
 import com.orientechnologies.orient.core.sql.executor.OResultSet;
 import com.orientechnologies.orient.core.storage.ORecordDuplicatedException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
@@ -63,22 +57,18 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
 
     @Override
     public String save(final ComposableStep composableStep) {
-        LOGGER.debug("Step save " + composableStep.name);
+        LOGGER.debug("Saving component : " + composableStep.name);
         ODatabaseSession dbSession = null;
         try {
             dbSession = componentDBPool.acquire();
             dbSession.begin();
             OVertex savedFStep = save(composableStep, dbSession);
-            checkComposableStepCyclicDependency(savedFStep);
             dbSession.commit();
-            LOGGER.debug("Save step : " + savedFStep.toString());
+            LOGGER.debug("Saved component : " + savedFStep.toString());
             return savedFStep.getIdentity().toString(null).toString();
         } catch (ORecordDuplicatedException e) {
             rollback(dbSession);
             throw new AlreadyExistingComposableStepException(composableStep);
-        } catch (ComposableStepCyclicDependencyException e) {
-            rollback(dbSession);
-            throw e;
         } catch (Exception e) {
             rollback(dbSession);
             throw new RuntimeException(e);
@@ -92,7 +82,7 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
             OVertex element = (OVertex) load(recordId, dbSession)
                 .orElseThrow(() -> new ComposableStepNotFoundException(recordId));
-            return vertexToComposableStep(element, dbSession).build();
+            return vertexToComposableStep(StepVertex.builder().from(element).build());
         }
     }
 
@@ -110,7 +100,7 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
             dbSession.begin();
             deleteVertex(recordId, dbSession);
             dbSession.commit();
-            LOGGER.debug("Delete step : " + recordId);
+            LOGGER.debug("Removed component : " + recordId);
         } catch (Exception e) {
             rollback(dbSession);
             throw new RuntimeException(e);
@@ -128,7 +118,7 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
             return Lists.newArrayList(allSteps).stream()
                 .map(rs -> {
                     OVertex element = dbSession.load(new ORecordId(rs.getProperty("@rid").toString()));
-                    return vertexToComposableStep(element, dbSession).build();
+                    return vertexToComposableStep(StepVertex.builder().from(element).build());
                 })
                 .collect(Collectors.toList());
         }
@@ -148,7 +138,7 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
                 List<ComposableStep> fSteps = Lists.newArrayList(rs)
                     .stream()
                     .filter(e -> e.getVertex().isPresent())
-                    .map(element -> vertexToComposableStep(element.getVertex().get(), dbSession).build())
+                    .map(element -> vertexToComposableStep(StepVertex.builder().from(element.getVertex().get()).build()))
                     .collect(Collectors.toList());
                 return ImmutablePaginatedDto.<ComposableStep>builder()
                     .totalCount(totalCount)
@@ -185,45 +175,10 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
 
     private OVertex save(ComposableStep composableStep, final ODatabaseSession dbSession) {
         Optional<OElement> stepRecord = load(composableStep.id, dbSession);
-        OVertex step = (OVertex) stepRecord.orElse(dbSession.newVertex(STEP_CLASS));
-        composableStepToVertex(composableStep, step, dbSession);
-        updateParentsDataSets(composableStep, step);
-        return step.save();
-    }
+        OVertex oVertex = (OVertex) stepRecord.orElse(dbSession.newVertex(STEP_CLASS));
 
-    private void updateParentsDataSets(ComposableStep composableStep, OVertex step) {
-        step.getEdges(ODirection.IN, GE_STEP_CLASS)
-            .forEach(parentEdge -> {
-                Map<String, String> dataSet = parentEdge.getProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS);
-                if (dataSet != null) {
-                    Map<String, String> newDataSet = new HashMap<>();
-                    composableStep.parameters.forEach((paramKey, paramValue) ->
-                        newDataSet.put(paramKey, dataSet.getOrDefault(paramKey, paramValue))
-                    );
-                    parentEdge.setProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS, newDataSet);
-                    parentEdge.save();
-                }
-            });
-    }
-
-    private void checkComposableStepCyclicDependency(OVertex savedFStep) {
-        checkCyclicDependency(savedFStep, new ArrayList<>());
-    }
-
-    private void checkCyclicDependency(final OVertex savedFStep, List<ORecordId> parentsIds) {
-        parentsIds.add((ORecordId) savedFStep.getIdentity());
-        List<OVertex> children = new ArrayList<>();
-        savedFStep.getEdges(ODirection.OUT, GE_STEP_CLASS).forEach(oEdge -> children.add(oEdge.getTo()));
-        if (children.size() > 0) {
-            List<ORecordId> childrenIds = new ArrayList<>();
-            for (OElement child : children) {
-                childrenIds.add((ORecordId) child.getIdentity());
-            }
-            if (childrenIds.removeAll(parentsIds)) {
-                throw new ComposableStepCyclicDependencyException(savedFStep.getProperty(STEP_CLASS_PROPERTY_NAME));
-            }
-            children.forEach(oElement -> checkCyclicDependency(oElement, new ArrayList<>(parentsIds)));
-        }
+        StepVertex stepVertex = composableStepToVertex(composableStep, oVertex, dbSession);
+        return stepVertex.save(dbSession);
     }
 
     private String buildPaginatedQuery(ComposableStep findParameters, SortRequestParametersDto sortParameters) {
@@ -235,9 +190,6 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
         if (StringUtils.isNotEmpty(findParameters.name)) {
             query.append(" AND name CONTAINSTEXT '").append(findParameters.name).append("'");
         }
-
-        // Usage filter
-        findParameters.usage.ifPresent(stepUsage -> query.append(" AND ").append(STEP_CLASS_PROPERTY_USAGE).append("='").append(stepUsage.name()).append("'"));
 
         // Sort
         List<String> sortAttributes = sortParameters.sortParameters();

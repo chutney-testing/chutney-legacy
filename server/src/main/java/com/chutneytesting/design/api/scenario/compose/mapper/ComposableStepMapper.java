@@ -7,10 +7,9 @@ import static java.util.stream.Collectors.toList;
 import com.chutneytesting.design.api.scenario.compose.dto.ComposableStepDto;
 import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableStepDto;
 import com.chutneytesting.design.api.scenario.compose.dto.ImmutableStrategy;
-import com.chutneytesting.tools.ui.KeyValue;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
-import com.chutneytesting.design.domain.scenario.compose.StepUsage;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
+import com.chutneytesting.tools.ui.KeyValue;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -24,9 +23,6 @@ public class ComposableStepMapper {
             .name(composableStep.name)
             .tags(composableStep.tags);
 
-        composableStep.usage.ifPresent(
-            stepUsage -> builder.usage(ComposableStepDto.StepUsage.valueOf(stepUsage.name())));
-
         composableStep.implementation.ifPresent(
             builder::task
         );
@@ -34,11 +30,11 @@ public class ComposableStepMapper {
         composableStep.steps
             .forEach(step -> builder.addSteps(toDto(step)));
 
-        builder.parameters(KeyValue.fromMap(composableStep.parameters));
+        builder.defaultParameters(KeyValue.fromMap(composableStep.defaultParameters));
 
         builder.strategy(toDto(composableStep.strategy));
 
-        builder.addAllComputedParameters(KeyValue.fromMap(composableStep.dataSet));
+        builder.addAllExecutionParameters(KeyValue.fromMap(composableStep.executionParameters));
 
         return builder.build();
     }
@@ -67,18 +63,16 @@ public class ComposableStepMapper {
     }
 
     public static ComposableStep fromDto(ComposableStepDto dto) {
-        ComposableStep.ComposableStepBuilder composableStepBuilder = ComposableStep.builder()
+        return ComposableStep.builder()
             .withId(fromFrontId(dto.id()))
             .withName(dto.name())
-            .withUsage(java.util.Optional.of(StepUsage.valueOf(dto.usage().name())))
             .withStrategy(fromDto(dto.strategy()))
-            .withImplementation(dto.task())
+            .withImplementation(dto.task().orElse(""))
             .withSteps(dto.steps().stream().map(ComposableStepMapper::fromDto).collect(toList()))
-            .withParameters(KeyValue.toMap(dto.parameters()))
-            .overrideDataSetWith(KeyValue.toMap(dto.computedParameters()))
-            .withTags(dto.tags().stream().map(String::trim).filter(t -> !t.isEmpty()).collect(toList()));
-
-        return composableStepBuilder.build();
+            .withDefaultParameters(KeyValue.toMap(dto.defaultParameters()))
+            .withExecutionParameters(KeyValue.toMap(dto.executionParameters()))
+            .withTags(dto.tags().stream().map(String::trim).filter(t -> !t.isEmpty()).collect(toList()))
+            .build();
     }
 
     private static Strategy fromDto(com.chutneytesting.design.api.scenario.compose.dto.Strategy strategyDto) {
@@ -108,8 +102,7 @@ public class ComposableStepMapper {
 
         DEFAULT("Default", ""),
         RETRY("Retry", "retry-with-timeout"),
-        SOFT("Soft", "soft-assert"),
-        Loop("Loop", "Loop");
+        SOFT("Soft", "soft-assert");
 
         private static final Logger LOGGER = LoggerFactory.getLogger(ComposableStrategyType.class);
         public final String name;

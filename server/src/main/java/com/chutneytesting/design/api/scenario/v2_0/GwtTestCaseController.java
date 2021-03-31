@@ -108,7 +108,7 @@ public class GwtTestCaseController {
                 .withAuthor(userService.getCurrentUser().getId())
                 .build())
             .withScenario(gwtTestCase.scenario)
-            .withDataSet(gwtTestCase.dataSet)
+            .withExecutionParameters(gwtTestCase.executionParameters)
             .build();
         return testCaseRepository.save(gwtTestCase);
     }
