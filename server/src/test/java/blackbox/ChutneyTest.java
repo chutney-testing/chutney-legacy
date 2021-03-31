@@ -1,5 +1,7 @@
 package blackbox;
 
+import com.chutneytesting.environment.api.dto.EnvironmentDto;
+import com.chutneytesting.environment.api.dto.TargetDto;
 import com.chutneytesting.environment.domain.Environment;
 import com.chutneytesting.environment.domain.SecurityInfo;
 import com.chutneytesting.environment.domain.Target;
@@ -92,7 +94,7 @@ public class ChutneyTest {
 
     private void addChutneyLocalServer() {
         environmentService.addTarget(TEST_ENV_NAME,
-            Target.builder()
+            TargetDto.from(Target.builder()
                 .withName("CHUTNEY_LOCAL")
                 .withEnvironment(TEST_ENV_NAME)
                 .withUrl("https://localhost:" + securePort)
@@ -101,15 +103,15 @@ public class ChutneyTest {
                         .credential(SecurityInfo.Credential.of("admin", "admin"))
                         .build()
                 )
-                .build()
+                .build())
         );
 
         environmentService.addTarget(TEST_ENV_NAME,
-            Target.builder()
+            TargetDto.from(Target.builder()
                 .withName("CHUTNEY_LOCAL_NO_USER")
                 .withEnvironment(TEST_ENV_NAME)
                 .withUrl("https://localhost:" + securePort)
-                .build()
+                .build())
         );
     }
 
@@ -148,11 +150,11 @@ public class ChutneyTest {
                 .build();
         }
 
-        environmentService.addTarget(ChutneyTest.TEST_ENV_NAME, dbTarget);
+        environmentService.addTarget(ChutneyTest.TEST_ENV_NAME, TargetDto.from(dbTarget));
     }
 
     private void initEnvironment() {
-        environmentService.addEnvironment(Environment.builder().withName(TEST_ENV_NAME).build());
+        environmentService.addEnvironment(EnvironmentDto.from(Environment.builder().withName(TEST_ENV_NAME).build()));
     }
 
     private void cleanEnvironment() {
