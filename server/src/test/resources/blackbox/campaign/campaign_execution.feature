@@ -90,11 +90,25 @@ Feature:  Campaign execution
                 With actual ${T(Integer).toString(#status)}
                 With expected 200
                 With mode equals
-        Then the execution report is returned
+        Then the running execution report is returned
             Do compare Check execution id not empty
                 With actual ${#json(#report, "$.executionId").toString()}
                 With expected 0
                 With mode greater than
+                Take executionId ${#json(#report, "$.executionId").toString()}
+            Do compare Check status is RUNNING
+                With actual ${#json(#report, "$.status")}
+                With expected RUNNING
+                With mode equals
+        And the execution ends with SUCCESS
+            Do http-get
+                On CHUTNEY_LOCAL
+                With uri /api/ui/campaign/v1/${#campaignId}/execution/${#executionId}
+                Take report ${#body}
+            Do compare Assert HTTP status is 200
+                With actual ${T(Integer).toString(#status)}
+                With expected 200
+                With mode equals
             Do compare Check status is SUCCESS
                 With actual ${#json(#report, "$.status")}
                 With expected SUCCESS
@@ -147,11 +161,25 @@ Feature:  Campaign execution
                 With actual ${T(Integer).toString(#status)}
                 With expected 200
                 With mode equals
-        Then the execution reports are returned
+        Then the running execution reports are returned
             Do compare Check execution id not empty
                 With actual ${#json(#report, "$.executionId").toString()}
                 With expected 0
                 With mode greater than
+                Take executionId ${#json(#report, "$.executionId").toString()}
+            Do compare Check status is RUNNING
+                With actual ${#json(#report, "$.status")}
+                With expected RUNNING
+                With mode equals
+        And the execution ends with SUCCESS
+            Do http-get
+                On CHUTNEY_LOCAL
+                With uri /api/ui/campaign/v1/${#campaignId}/execution/${#executionId}
+                Take report ${#body}
+            Do compare Assert HTTP status is 200
+                With actual ${T(Integer).toString(#status)}
+                With expected 200
+                With mode equals
             Do compare Check status is SUCCESS
                 With actual ${#json(#report, "$.status")}
                 With expected SUCCESS

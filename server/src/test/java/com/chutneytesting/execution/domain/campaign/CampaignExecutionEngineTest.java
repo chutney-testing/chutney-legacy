@@ -94,6 +94,7 @@ public class CampaignExecutionEngineTest {
 
         // When
         CampaignExecutionReport campaignExecutionReport = sut.executeScenarioInCampaign(emptyList(), campaign, "user");
+        waitFinalReportStatus(campaign.id, 200L);
 
         // Then
         verify(testCaseRepository, times(2)).findById(anyString());
@@ -111,7 +112,6 @@ public class CampaignExecutionEngineTest {
         );
     }
 
-
     @Test
     public void should_execute_partially_scenarios_requested() {
         // Given
@@ -127,6 +127,7 @@ public class CampaignExecutionEngineTest {
 
         // When
         CampaignExecutionReport campaignExecutionReport = sut.executeScenarioInCampaign(singletonList("2"), campaign, "user");
+        waitFinalReportStatus(campaign.id, 200L);
 
         // Then
         verify(testCaseRepository, times(1)).findById(anyString());
@@ -197,6 +198,7 @@ public class CampaignExecutionEngineTest {
 
         // When
         sut.executeScenarioInCampaign(emptyList(), campaign, "user");
+        waitFinalReportStatus(campaign.id, 200L);
 
         // Then
         verify(scenarioExecutionEngine, times(4)).execute(any(ExecutionRequest.class));
@@ -223,6 +225,7 @@ public class CampaignExecutionEngineTest {
         StopWatch watch = new StopWatch();
         watch.start();
         sut.executeScenarioInCampaign(emptyList(), campaign, "user");
+        waitFinalReportStatus(campaign.id, 200L);
         watch.stop();
 
         // Then
@@ -241,14 +244,12 @@ public class CampaignExecutionEngineTest {
     public void should_throw_when_campaign_already_running() {
         Campaign campaign = createCampaign(1L);
 
-        Field currentCampaignExecutionsField = ReflectionUtils.findField(CampaignExecutionEngine.class, "currentCampaignExecutions");
-        currentCampaignExecutionsField.setAccessible(true);
-        Map<Long, CampaignExecutionReport> field = (Map<Long, CampaignExecutionReport>) ReflectionUtils.getField(currentCampaignExecutionsField, sut);
+        Map<Long, CampaignExecutionReport> field = reflectCurrentCampaignExecutions();
         CampaignExecutionReport mockReport = new CampaignExecutionReport(1L, "", false, "", null, null, "");
         field.put(1L, mockReport);
 
         // When
-        assertThatThrownBy(() -> sut.executeScenarioInCampaign(null, campaign, "user"))
+        assertThatThrownBy(() -> sut.executeScenarioInCampaign(emptyList(), campaign, "user"))
             .isInstanceOf(CampaignAlreadyRunningException.class);
     }
 
@@ -262,7 +263,9 @@ public class CampaignExecutionEngineTest {
 
         // When
         sut.executeById(campaign.id, "");
+        waitFinalReportStatus(campaign.id, 200L);
         sut.executeByName(campaign.title, "");
+        waitFinalReportStatus(campaign.id, 200L);
 
         // Then
         verify(campaignRepository).findById(campaign.id);
@@ -281,6 +284,7 @@ public class CampaignExecutionEngineTest {
         String executionEnv = "executionEnv";
         String executionUser = "executionUser";
         sut.executeById(campaign.id, executionEnv, executionUser);
+        waitFinalReportStatus(campaign.id, 200L);
 
         // Then
         verify(campaignRepository).findById(campaign.id);
@@ -297,6 +301,7 @@ public class CampaignExecutionEngineTest {
         String executionEnv = "executionEnv";
         String executionUser = "executionUser";
         sut.executeByName(campaign.title, executionEnv, executionUser);
+        waitFinalReportStatus(campaign.id, 200L);
 
         // Then
         verify(campaignRepository).findByName(campaign.title);
@@ -305,10 +310,7 @@ public class CampaignExecutionEngineTest {
 
     @Test
     public void should_retrieve_current_campaign_executions() {
-
-        Field currentCampaignExecutionsField = ReflectionUtils.findField(CampaignExecutionEngine.class, "currentCampaignExecutions");
-        currentCampaignExecutionsField.setAccessible(true);
-        Map<Long, CampaignExecutionReport> field = (Map<Long, CampaignExecutionReport>) ReflectionUtils.getField(currentCampaignExecutionsField, sut);
+        Map<Long, CampaignExecutionReport> field = reflectCurrentCampaignExecutions();
         CampaignExecutionReport report = new CampaignExecutionReport(1L, 33L, emptyList(), "", false, "", null, null, "");
         CampaignExecutionReport report2 = new CampaignExecutionReport(2L, 42L, emptyList(), "", false, "", null, null, "");
         field.put(1L, report);
@@ -357,6 +359,7 @@ public class CampaignExecutionEngineTest {
 
         // When
         sut.executeById(campaign.id, "user");
+        waitFinalReportStatus(campaign.id, 200L);
 
         // Then
         ArgumentCaptor<ExecutionRequest> argumentCaptor = ArgumentCaptor.forClass(ExecutionRequest.class);
@@ -450,5 +453,20 @@ public class CampaignExecutionEngineTest {
 
     private Campaign createCampaign(Map<String, String> dataSet, String dataSetId, TestCase... testCases) {
         return new Campaign(generateId(), "...", null, stream(testCases).map(TestCase::id).collect(toList()), dataSet, null, "campaignEnv", false, false, dataSetId);
+    }
+
+    private Map<Long, CampaignExecutionReport> reflectCurrentCampaignExecutions() {
+        Field currentCampaignExecutionsField = ReflectionUtils.findField(CampaignExecutionEngine.class, "currentCampaignExecutions");
+        currentCampaignExecutionsField.setAccessible(true);
+        return (Map<Long, CampaignExecutionReport>) ReflectionUtils.getField(currentCampaignExecutionsField, sut);
+    }
+
+    private void waitFinalReportStatus(Long campaignId, Long timeout) {
+        while (sut.currentExecution(campaignId).isPresent()) {
+            try {
+                MILLISECONDS.sleep(timeout);
+            } catch (InterruptedException e) {
+            }
+        }
     }
 }

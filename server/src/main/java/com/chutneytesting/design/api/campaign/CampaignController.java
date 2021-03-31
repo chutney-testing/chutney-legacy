@@ -82,6 +82,7 @@ public class CampaignController {
         return toDto(campaign, reports);
     }
 
+    // TODO - Move to execution package
     @GetMapping(path = "/{campaignId}/execution/{executionId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Optional<CampaignExecutionReportDto> getCampaignExecutionReportById(@PathVariable("campaignId") Long campaignId, @PathVariable("executionId") Long executionId) {
         //Campaign campaign = campaignRepository.findById(campaignId);
