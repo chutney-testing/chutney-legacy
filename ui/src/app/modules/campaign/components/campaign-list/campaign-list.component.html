@@ -68,13 +68,13 @@
             <table class="table table-sm table-striped">
                 <tr *ngFor="let scheduledCampaign of scheduledCampaigns">
                     <td>#{{scheduledCampaign.campaignId}}
-                        <span data-toggle="tooltip" title="{{scheduledCampaign.frequency}}"
-                              *ngIf="isFrequencyCampaign(scheduledCampaign)"
+                        <span data-toggle="tooltip" *ngIf="isFrequencyCampaign(scheduledCampaign)"
+                              title="{{scheduledCampaign.frequency.toLowerCase()}}"
                               class="fa fa-spinner fa-spin running"
                               [ngStyle]="{
-                              'color':scheduledCampaign.frequency==='daily'? 'green':
-                              scheduledCampaign.frequency==='weekly'? 'orange':
-                              scheduledCampaign.frequency==='monthly'? 'red': 'blue'
+                              'color':scheduledCampaign.frequency=== 'DAILY'? 'green':
+                              scheduledCampaign.frequency==='WEEKLY'? 'orange':
+                              scheduledCampaign.frequency==='MONTHLY'? 'red': 'blue'
                               }"
                               aria-hidden="true"></span>
                         - {{scheduledCampaign.campaignTitle}}</td>

@@ -1,9 +1,5 @@
 package com.chutneytesting.design.domain.campaign;
 
-import static com.chutneytesting.design.domain.campaign.FREQUENCY.DAILY;
-import static com.chutneytesting.design.domain.campaign.FREQUENCY.HOURLY;
-import static com.chutneytesting.design.domain.campaign.FREQUENCY.WEEKLY;
-
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -13,9 +9,9 @@ public class SchedulingCampaign {
     public final Long campaignId;
     public final String campaignTitle;
     private LocalDateTime schedulingDate;
-    public String frequency;
+    public FREQUENCY frequency;
 
-    public SchedulingCampaign(Long id, Long campaignId, String campaignTitle, LocalDateTime schedulingDate, String frequency) {
+    public SchedulingCampaign(Long id, Long campaignId, String campaignTitle, LocalDateTime schedulingDate, FREQUENCY frequency) {
         this.id = id;
         this.campaignId = campaignId;
         this.campaignTitle = campaignTitle;
@@ -24,10 +20,7 @@ public class SchedulingCampaign {
     }
 
     public SchedulingCampaign(Long id, Long campaignId, String campaignTitle, LocalDateTime schedulingDate) {
-        this.id = id;
-        this.campaignId = campaignId;
-        this.campaignTitle = campaignTitle;
-        this.schedulingDate = schedulingDate;
+        this(id, campaignId, campaignTitle, schedulingDate, null);
     }
 
     @Override
@@ -63,14 +56,15 @@ public class SchedulingCampaign {
     }
 
     public LocalDateTime getNextSchedulingDate() {
-        if (this.frequency.equals(HOURLY.toString())) {
-            return this.schedulingDate.plusHours(1);
-        } else if (this.frequency.equals(DAILY.toString())) {
-            return this.schedulingDate.plusDays(1);
-        } else if (this.frequency.equals(WEEKLY.toString())) {
-            return this.schedulingDate.plusWeeks(1);
-        } else {
-            return this.schedulingDate.plusMonths(1);
+        switch (this.frequency) {
+            case HOURLY:
+                return this.schedulingDate.plusHours(1);
+            case DAILY:
+                return this.schedulingDate.plusDays(1);
+            case WEEKLY:
+                return this.schedulingDate.plusWeeks(1);
+            default:
+                return this.schedulingDate.plusMonths(1);
         }
     }
 }

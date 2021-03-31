@@ -1,6 +1,7 @@
 
 package com.chutneytesting.design.api.campaign;
 
+import com.chutneytesting.design.domain.campaign.FREQUENCY;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
@@ -12,7 +13,7 @@ public class SchedulingCampaignDto {
     private Long campaignId;
     private String campaignTitle;
     private LocalDateTime schedulingDate;
-    private String frequency;
+    private FREQUENCY frequency;
 
     public SchedulingCampaignDto() {
     }
@@ -21,7 +22,7 @@ public class SchedulingCampaignDto {
                                  @JsonProperty("campaignId") Long campaignId,
                                  @JsonProperty("campaignTitle") String campaignTitle,
                                  @JsonProperty("schedulingDate") LocalDateTime schedulingDate,
-                                 @JsonProperty("frequency") String frequency
+                                 @JsonProperty("frequency") FREQUENCY frequency
                                  ){
         this.id = id;
         this.campaignId = campaignId;
@@ -46,7 +47,7 @@ public class SchedulingCampaignDto {
         return schedulingDate;
     }
 
-    public String getFrequency() {
+    public FREQUENCY getFrequency() {
         return frequency;
     }
 }

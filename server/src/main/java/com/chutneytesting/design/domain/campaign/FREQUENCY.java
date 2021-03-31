@@ -1,25 +1,19 @@
 package com.chutneytesting.design.domain.campaign;
 
 public enum FREQUENCY {
-    HOURLY {
-        public final String toString() {
-            return "hourly";
-        }
-    },
-    DAILY {
-        public final String toString() {
-            return "daily";
-        }
-    },
-    WEEKLY {
-        public String toString() {
-            return "weekly";
-        }
-    },
-    MONTHLY {
-        public String toString() {
-            return "monthly";
-        }
-    },
+    HOURLY("hourly"),
+    DAILY("daily"),
+    WEEKLY("weekly"),
+    MONTHLY("monthly");
 
+    final String label;
+
+    FREQUENCY(String label) {
+        this.label = label;
+    }
+
+    @Override
+    public String toString() {
+        return label;
+    }
 }

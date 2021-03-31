@@ -76,12 +76,12 @@ public class CampaignSchedulerTest {
         campaignScheduler.executeScheduledCampaign();
         when(schedulingCampaignRepository.getALl())
             .thenReturn(Lists.newArrayList(
-                new SchedulingCampaign(1L, 3L, "title", schedulingDate, HOURLY.toString())
+                new SchedulingCampaign(1L, 3L, "title", schedulingDate, HOURLY)
             ));
 
         campaignScheduler.executeScheduledCampaign();
 
-        verify(schedulingCampaignRepository).add(new SchedulingCampaign(1L, 3L, "title", schedulingDate.plusHours(1), HOURLY.toString()));
+        verify(schedulingCampaignRepository).add(new SchedulingCampaign(1L, 3L, "title", schedulingDate.plusHours(1), HOURLY));
         verify(schedulingCampaignRepository).removeById(1L);
         verify(campaignExecutionEngine).executeById(3L, "auto");
     }
@@ -92,12 +92,12 @@ public class CampaignSchedulerTest {
         campaignScheduler.executeScheduledCampaign();
         when(schedulingCampaignRepository.getALl())
             .thenReturn(Lists.newArrayList(
-                new SchedulingCampaign(1L, 3L, "title", schedulingDate, DAILY.toString())
+                new SchedulingCampaign(1L, 3L, "title", schedulingDate, DAILY)
             ));
 
         campaignScheduler.executeScheduledCampaign();
 
-        verify(schedulingCampaignRepository).add(new SchedulingCampaign(1L, 3L, "title", schedulingDate.plusDays(1), DAILY.toString()));
+        verify(schedulingCampaignRepository).add(new SchedulingCampaign(1L, 3L, "title", schedulingDate.plusDays(1), DAILY));
         verify(schedulingCampaignRepository).removeById(1L);
         verify(campaignExecutionEngine).executeById(3L, "auto");
     }
@@ -108,12 +108,12 @@ public class CampaignSchedulerTest {
         campaignScheduler.executeScheduledCampaign();
         when(schedulingCampaignRepository.getALl())
             .thenReturn(Lists.newArrayList(
-                new SchedulingCampaign(1L, 3L, "title", schedulingDate, WEEKLY.toString())
+                new SchedulingCampaign(1L, 3L, "title", schedulingDate, WEEKLY)
             ));
 
         campaignScheduler.executeScheduledCampaign();
 
-        verify(schedulingCampaignRepository).add(new SchedulingCampaign(1L, 3L, "title", schedulingDate.plusWeeks(1), WEEKLY.toString()));
+        verify(schedulingCampaignRepository).add(new SchedulingCampaign(1L, 3L, "title", schedulingDate.plusWeeks(1), WEEKLY));
         verify(schedulingCampaignRepository).removeById(1L);
         verify(campaignExecutionEngine).executeById(3L, "auto");
     }
@@ -124,12 +124,12 @@ public class CampaignSchedulerTest {
         campaignScheduler.executeScheduledCampaign();
         when(schedulingCampaignRepository.getALl())
             .thenReturn(Lists.newArrayList(
-                new SchedulingCampaign(1L, 3L, "title", schedulingDate, MONTHLY.toString())
+                new SchedulingCampaign(1L, 3L, "title", schedulingDate, MONTHLY)
             ));
 
         campaignScheduler.executeScheduledCampaign();
 
-        verify(schedulingCampaignRepository).add(new SchedulingCampaign(1L, 3L, "title", schedulingDate.plusMonths(1), MONTHLY.toString()));
+        verify(schedulingCampaignRepository).add(new SchedulingCampaign(1L, 3L, "title", schedulingDate.plusMonths(1), MONTHLY));
         verify(schedulingCampaignRepository).removeById(1L);
         verify(campaignExecutionEngine).executeById(3L, "auto");
     }

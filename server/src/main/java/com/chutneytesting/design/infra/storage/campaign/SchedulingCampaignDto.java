@@ -1,5 +1,6 @@
 package com.chutneytesting.design.infra.storage.campaign;
 
+import com.chutneytesting.design.domain.campaign.FREQUENCY;
 import java.time.LocalDateTime;
 
 public class SchedulingCampaignDto {
@@ -7,7 +8,7 @@ public class SchedulingCampaignDto {
     public final Long campaignId;
     public final String campaignTitle;
     public final LocalDateTime schedulingDate;
-    public final String frequency;
+    public final FREQUENCY frequency;
 
     /**
      * for ObjectMapper only
@@ -24,7 +25,7 @@ public class SchedulingCampaignDto {
                                  Long campaignId,
                                  String campaignTitle,
                                  LocalDateTime schedulingDate,
-                                 String frequency) {
+                                 FREQUENCY frequency) {
         this.id = id;
         this.campaignId = campaignId;
         this.campaignTitle = campaignTitle;

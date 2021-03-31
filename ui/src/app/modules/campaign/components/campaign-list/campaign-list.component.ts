@@ -8,6 +8,7 @@ import { JiraPluginService } from '@core/services/jira-plugin.service';
 import { CampaignSchedulingService } from '@core/services/campaign-scheduling.service';
 import { CampaignScheduling } from '@core/model/campaign/campaign-scheduling.model';
 import { JiraPluginConfigurationService } from '@core/services/jira-plugin-configuration.service';
+import { FREQUENCY } from '@core/model/campaign/FREQUENCY';
 
 @Component({
     selector: 'chutney-campaigns',
