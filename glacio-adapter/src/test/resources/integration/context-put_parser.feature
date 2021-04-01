@@ -23,3 +23,4 @@ Feature: Context-put feature
                 With entries
                 | var1 | value1 split |
                 | var 2 | value2 |
+                Validate assertion ${'value1 split'.equals(#var1)}

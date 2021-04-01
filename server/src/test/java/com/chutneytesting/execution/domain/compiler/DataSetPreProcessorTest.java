@@ -83,7 +83,7 @@ public class DataSetPreProcessorTest {
                 .withThens(singletonList(
                     GwtStep.builder().withDescription("then step with **aKey** and **key.2**").withSubSteps(
                         GwtStep.builder().withDescription("then 3.1 step")
-                            .withImplementation(new GwtStepImplementation("**anotherKey**", "", null, null, null)).build()).build())).build()).build();
+                            .withImplementation(new GwtStepImplementation("**anotherKey**", "", null, null, null, null)).build()).build())).build()).build();
 
         GwtDataSetPreProcessor dataSetPreProcessor = new GwtDataSetPreProcessor(new GwtScenarioMapper(), globalvarRepository);
 
@@ -109,7 +109,7 @@ public class DataSetPreProcessorTest {
                 .withThens(singletonList(
                     GwtStep.builder().withDescription(expected_then_step).withSubSteps(
                         GwtStep.builder().withDescription("then 3.1 step")
-                            .withImplementation(new GwtStepImplementation(expected_implementation, "", null, null, null)).build()).build())).build()).build();
+                            .withImplementation(new GwtStepImplementation(expected_implementation, "", null, null, null, null)).build()).build())).build()).build();
 
         // Test case title and description are not evaluated by the DataSetPreProcessor even if data set contains matching keys
         assertThat(actual.metadata.title).isEqualTo(expected_title);

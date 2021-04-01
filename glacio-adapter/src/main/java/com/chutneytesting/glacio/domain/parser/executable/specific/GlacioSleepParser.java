@@ -24,6 +24,7 @@ public class GlacioSleepParser extends ExecutableGlacioStepParser {
     public GlacioSleepParser() {
         super(EmptyParser.noTargetParser,
             new GlacioSleepInputsParser(),
+            EmptyParser.emptyMapParser,
             EmptyParser.emptyMapParser);
     }
 

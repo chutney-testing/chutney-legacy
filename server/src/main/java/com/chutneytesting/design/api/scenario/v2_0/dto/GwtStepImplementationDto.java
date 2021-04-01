@@ -37,4 +37,6 @@ public interface GwtStepImplementationDto {
 
     Map<String, Object> outputs();
 
+    Map<String, Object> validations();
+
 }

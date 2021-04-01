@@ -151,10 +151,42 @@
                     </div>
                 </ng-container>
             </div>
+            <!-- Validations -->
+            <fieldset class="mt-4" [ngClass]="collapseValidations ? 'border-top pl-2' : 'border p-2'">
+                <legend class="pl-3 pr-3 font-weight-bold">
+                    <div class="legend-title" (click)="switchCollapseValidations()">{{'components.shared.edition.blocks.validations' | translate}}</div>
+                    <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
+                            (click)="switchCollapseValidations()"
+                            title="{{(collapseValidations ? 'global.actions.show' : 'global.actions.hide') | translate}}">
+                        <span class="fa" [ngClass]="collapseValidations ? 'fa-eye' : 'fa-eye-slash'"></span>
+                    </button>
+                    <button class="btn btn-sm btn-light btn-outline-dark border-0 ml-sm-1"
+                            (click)="addValidation();"
+                            title="{{'global.actions.add' | translate}}">
+                        <span class="fa fa-plus"></span>
+                    </button>
+                </legend>
+                <ng-container *ngIf="!collapseValidations">
+                    <div class="row" formArrayName="validations"
+                         *ngFor="let parameter of actionForm.get('validations')?.controls; let i=index;">
+                        <ng-container [formGroupName]="i">
+                            <div class="col-2"></div>
+                            <input type="text" class="col-2 form-control mr-2" formControlName="key" placeholder="key"/>
+                            <textarea class="col-6 form-control mr-2" formControlName="value" rows="1"
+                                      placeholder="value"></textarea>
+                            <button type="button" class="btn btn-outline-danger"
+                                    (click)="removeValidation(i)"
+                                    title="{{'global.actions.delete' | translate}}">
+                                <span class="fa fa-trash"></span>
+                            </button>
+                        </ng-container>
+                    </div>
+                </ng-container>
+            </fieldset>
             <!-- Outputs -->
             <fieldset class="mt-4" [ngClass]="collapseOutputs ? 'border-top pl-2' : 'border p-2'">
                 <legend class="pl-3 pr-3 font-weight-bold">
-                    <div class="legend-title" (click)="switchCollapseOutputs()">Sorties</div>
+                    <div class="legend-title" (click)="switchCollapseOutputs()">{{'components.shared.edition.blocks.outputs' | translate}}</div>
                     <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
                             (click)="switchCollapseOutputs()"
                             title="{{(collapseOutputs ? 'global.actions.show' : 'global.actions.hide') | translate}}">

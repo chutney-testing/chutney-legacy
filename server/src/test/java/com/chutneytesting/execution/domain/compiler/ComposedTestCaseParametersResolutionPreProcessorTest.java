@@ -45,7 +45,7 @@ public class ComposedTestCaseParametersResolutionPreProcessorTest {
     public void should_replace_composed_scenario_parameters_with_scoped_execution_parameters_values() {
         // Given
         String actionName = "simple action on target %1$s";
-        StepImplementation actionImplementation = new StepImplementation("http-get", "**target**", emptyMap(), emptyMap());
+        StepImplementation actionImplementation = new StepImplementation("http-get", "**target**", emptyMap(), emptyMap(), emptyMap());
         String stepName = "step with %1$s - %2$s - %3$s";
         String testCaseTitle = "test case testCaseTitle with parameter %1$s";
         String testCaseDescription = "test case description with parameter %1$s - %2$s";

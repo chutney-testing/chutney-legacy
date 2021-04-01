@@ -89,6 +89,7 @@ public class Step {
                 .exec(() -> new StepContextImpl(evaluatedInputs, scenarioContext))
                 .ifSuccess(stepContextExecuted -> {
                     executor.execute(scenarioExecution, stepContextExecuted, target, this);
+                    executeStepValidations(stepContextExecuted);
                     copyStepResultsToScenarioContext(stepContextExecuted, scenarioContext);
                     this.stepContext = (StepContextImpl) stepContextExecuted.copy();
                 })
@@ -237,6 +238,23 @@ public class Step {
             return null;
         })
             .ifFailed(e -> failure("Cannot evaluate outputs."
+                + " - Exception: " + e.getClass() + " with message: \"" + e.getMessage() + "\""));
+    }
+
+    private void executeStepValidations(StepContextImpl stepContext) {
+        Map<String, Object> contextAndStepResults = stepContext.allEvaluatedVariables();
+        Try.exec(() -> {
+            Map<String, Object> evaluatedValidations = dataEvaluator.evaluateNamedDataWithContextVariables(definition.validations, contextAndStepResults);
+            evaluatedValidations.forEach((k, v) -> {
+                if (!(boolean) v) {
+                    failure("Validation [" + k + "] : KO (" + definition.validations.get(k).toString() + ")");
+                } else {
+                    success("Validation [" + k + "] : OK");
+                }
+            });
+            return null;
+        })
+            .ifFailed(e -> failure("Step validation failed."
                 + " - Exception: " + e.getClass() + " with message: \"" + e.getMessage() + "\""));
     }
 

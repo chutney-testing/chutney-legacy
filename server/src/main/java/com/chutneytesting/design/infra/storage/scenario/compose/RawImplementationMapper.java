@@ -36,7 +36,8 @@ public class RawImplementationMapper {
             type(implementation),
             target(implementation),
             inputs(implementation),
-            outputs(implementation)
+            outputs(implementation),
+            validations(implementation)
         );
     }
 
@@ -94,6 +95,18 @@ public class RawImplementationMapper {
             });
         }
         return inputs;
+    }
+
+    private Map<String, Object> validations(JsonNode implementation) {
+        Map<String, Object> validations = new LinkedHashMap<>();
+        if (implementation.hasNonNull("validations")) {
+            final JsonNode validationsNode = implementation.get("validations");
+            validationsNode.forEach(in -> {
+                String name = in.get("key").asText();
+                validations.put(name, in.get("value").asText());
+            });
+        }
+        return validations;
     }
 
     private Object transformSimpleInputValue(JsonNode in) {

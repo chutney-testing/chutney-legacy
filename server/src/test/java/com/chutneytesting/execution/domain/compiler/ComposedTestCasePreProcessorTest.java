@@ -59,7 +59,7 @@ public class ComposedTestCasePreProcessorTest {
 
         // Given
         String actionName = "simple action on target %1$s";
-        StepImplementation actionImplementation = new StepImplementation("http-get", "**target**", emptyMap(), emptyMap());
+        StepImplementation actionImplementation = new StepImplementation("http-get", "**target**", emptyMap(), emptyMap(), emptyMap());
         String stepName = "step with %1$s - %2$s - %3$s";
         String testCaseTitle = "test case testCaseTitle with parameter %1$s";
         String testCaseDescription = "test case description with parameter %1$s";
@@ -236,7 +236,7 @@ public class ComposedTestCasePreProcessorTest {
                         // We want here to not iterate at all
                         ExecutableComposedStep.builder()
                             .withName("step do not iterate over me")
-                            .withImplementation(of(new StepImplementation("http-get", "**step 2 param** and **testcase param**", emptyMap(), emptyMap())))
+                            .withImplementation(of(new StepImplementation("http-get", "**step 2 param** and **testcase param**", emptyMap(), emptyMap(), emptyMap())))
                             .withExecutionParameters(
                                 Maps.of(
                                     "step 2 param", "hard value 2",
@@ -247,7 +247,7 @@ public class ComposedTestCasePreProcessorTest {
                         // We want here to have three iterations
                         ExecutableComposedStep.builder()
                             .withName("step with iteration over two dataset's keys **testcase param**")
-                            .withImplementation(of(new StepImplementation("http-**global.key**", "**testcase param second** and **step 3 param**", emptyMap(), emptyMap())))
+                            .withImplementation(of(new StepImplementation("http-**global.key**", "**testcase param second** and **step 3 param**", emptyMap(), emptyMap(), emptyMap())))
                             .withExecutionParameters(
                                 Maps.of(
                                     "testcase param", "",
@@ -284,18 +284,18 @@ public class ComposedTestCasePreProcessorTest {
 
         ExecutableComposedStep secondScenarioStep = processedTestCase.composedScenario.composedSteps.get(1);
         assertThat(secondScenarioStep.name).isEqualTo("step do not iterate over me");
-        assertThat(secondScenarioStep.stepImplementation).isEqualTo(of(new StepImplementation("http-get", "hard value 2 and another hard value 2", emptyMap(), emptyMap())));
+        assertThat(secondScenarioStep.stepImplementation).isEqualTo(of(new StepImplementation("http-get", "hard value 2 and another hard value 2", emptyMap(), emptyMap(), emptyMap())));
         assertThat(secondScenarioStep.steps).isEmpty();
 
         ExecutableComposedStep thirdScenarioStep = processedTestCase.composedScenario.composedSteps.get(2);
         assertThat(thirdScenarioStep.name).isEqualTo("step with iteration over two dataset's keys **testcase param**");
         assertThat(thirdScenarioStep.steps).hasSize(3);
         assertThat(thirdScenarioStep.steps.get(0).name).isEqualTo("step with iteration over two dataset's keys dataset mv 11 - datatable iteration 1");
-        assertThat(thirdScenarioStep.steps.get(0).stepImplementation).isEqualTo(of(new StepImplementation("http-global var value", "dataset mv 12 and hard value 3", emptyMap(), emptyMap())));
+        assertThat(thirdScenarioStep.steps.get(0).stepImplementation).isEqualTo(of(new StepImplementation("http-global var value", "dataset mv 12 and hard value 3", emptyMap(), emptyMap(), emptyMap())));
         assertThat(thirdScenarioStep.steps.get(1).name).isEqualTo("step with iteration over two dataset's keys dataset mv 11 - datatable iteration 2");
-        assertThat(thirdScenarioStep.steps.get(1).stepImplementation).isEqualTo(of(new StepImplementation("http-global var value", "dataset mv 22 and hard value 3", emptyMap(), emptyMap())));
+        assertThat(thirdScenarioStep.steps.get(1).stepImplementation).isEqualTo(of(new StepImplementation("http-global var value", "dataset mv 22 and hard value 3", emptyMap(), emptyMap(), emptyMap())));
         assertThat(thirdScenarioStep.steps.get(2).name).isEqualTo("step with iteration over two dataset's keys dataset mv 31 - datatable iteration 3");
-        assertThat(thirdScenarioStep.steps.get(2).stepImplementation).isEqualTo(of(new StepImplementation("http-global var value", "dataset mv 32 and hard value 3", emptyMap(), emptyMap())));
+        assertThat(thirdScenarioStep.steps.get(2).stepImplementation).isEqualTo(of(new StepImplementation("http-global var value", "dataset mv 32 and hard value 3", emptyMap(), emptyMap(), emptyMap())));
     }
 
     private ExecutableComposedStep buildStepFromActionWithDataSet(ExecutableComposedStep action, String targetDataSetValue) {

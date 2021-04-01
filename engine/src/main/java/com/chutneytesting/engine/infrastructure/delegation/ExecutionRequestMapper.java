@@ -38,17 +38,18 @@ class ExecutionRequestMapper {
             definition.inputs,
             steps,
             definition.outputs,
+            definition.validations,
             definition.environment);
     }
 
     private static TargetExecutionDto extractTarget(StepDefinition definition) {
         return definition.getTarget().map(t -> (TargetImpl) t).map(t -> new TargetExecutionDto(
-                t.name(),
-                t.url,
-                t.properties,
-                from(t.security),
-                t.agents
-            ))
+            t.name(),
+            t.url,
+            t.properties,
+            from(t.security),
+            t.agents
+        ))
             .orElse(null);
     }
 

@@ -1,21 +1,5 @@
 package test.com.chutneytesting.junit.engine;
 
-import com.chutneytesting.engine.api.execution.StepDefinitionDto;
-import com.chutneytesting.glacio.api.GlacioAdapter;
-import com.chutneytesting.junit.engine.ChutneyEngineDescriptor;
-import com.chutneytesting.junit.engine.DiscoverySelectorResolver;
-import com.chutneytesting.junit.engine.FeatureDescriptor;
-import com.chutneytesting.junit.engine.ScenarioDescriptor;
-import org.junit.jupiter.api.Test;
-import org.junit.platform.engine.EngineDiscoveryRequest;
-import org.junit.platform.engine.TestDescriptor;
-import org.junit.platform.engine.UniqueId;
-import org.junit.platform.engine.discovery.FileSelector;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import static com.chutneytesting.junit.engine.DiscoverySelectorResolver.FEATURE_SEGMENT_TYPE;
 import static com.chutneytesting.junit.engine.DiscoverySelectorResolver.SCENARIO_SEGMENT_TYPE;
 import static java.util.Collections.singletonList;
@@ -24,6 +8,21 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectFile;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import com.chutneytesting.engine.api.execution.StepDefinitionDto;
+import com.chutneytesting.glacio.api.GlacioAdapter;
+import com.chutneytesting.junit.engine.ChutneyEngineDescriptor;
+import com.chutneytesting.junit.engine.DiscoverySelectorResolver;
+import com.chutneytesting.junit.engine.FeatureDescriptor;
+import com.chutneytesting.junit.engine.ScenarioDescriptor;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.engine.EngineDiscoveryRequest;
+import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.discovery.FileSelector;
 
 class DiscoverySelectorResolverTest {
 
@@ -77,6 +76,6 @@ class DiscoverySelectorResolverTest {
     }
 
     private StepDefinitionDto buildStepDefinitionByName(String name) {
-        return new StepDefinitionDto(name, null, "", null, null, null, null, null);
+        return new StepDefinitionDto(name, null, "", null, null, null, null, null, null);
     }
 }

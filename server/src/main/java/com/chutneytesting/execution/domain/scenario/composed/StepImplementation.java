@@ -13,16 +13,18 @@ public class StepImplementation {
     public final String target;
     public final Map<String, Object> inputs;
     public final Map<String, Object> outputs;
+    public final Map<String, Object> validations;
 
     public StepImplementation() {
-        this(null, null, null, null);
+        this(null, null, null, null, null);
     }
 
-    public StepImplementation(String type, String target, Map<String, Object> inputs, Map<String, Object> outputs) {
+    public StepImplementation(String type, String target, Map<String, Object> inputs, Map<String, Object> outputs, Map<String, Object> validations) {
         this.type = ofNullable(type).orElse("");
         this.target = ofNullable(target).orElse("");
         this.inputs = ofNullable(inputs).map(Collections::unmodifiableMap).orElse(emptyMap());
         this.outputs = ofNullable(outputs).map(Collections::unmodifiableMap).orElse(emptyMap());
+        this.validations = ofNullable(validations).map(Collections::unmodifiableMap).orElse(emptyMap());
     }
 
     @Override
@@ -33,12 +35,13 @@ public class StepImplementation {
         return type.equals(that.type) &&
             target.equals(that.target) &&
             inputs.equals(that.inputs) &&
-            outputs.equals(that.outputs);
+            outputs.equals(that.outputs) &&
+            validations.equals(that.validations);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, target, inputs, outputs);
+        return Objects.hash(type, target, inputs, outputs, validations);
     }
 
     @Override
@@ -48,6 +51,7 @@ public class StepImplementation {
             ", target='" + target + '\'' +
             ", inputs=" + inputs +
             ", outputs=" + outputs +
+            ", validations=" + validations +
             '}';
     }
 }

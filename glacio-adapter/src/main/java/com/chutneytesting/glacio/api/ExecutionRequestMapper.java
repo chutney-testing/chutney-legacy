@@ -33,6 +33,7 @@ public class ExecutionRequestMapper {
             definition.inputs,
             steps,
             definition.outputs,
+            definition.validations,
             definition.environment);
     }
 

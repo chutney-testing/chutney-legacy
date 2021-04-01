@@ -61,18 +61,21 @@ public class GwtScenarioMapper implements GwtScenarioMarshaller {
     }
 
     private static class GwtStepBuilderMixin {
-        @JsonProperty("x-$ref") String xRef;
+        @JsonProperty("x-$ref")
+        String xRef;
     }
 
     private static class GwtStepImplementationMixin {
 
-        @JsonProperty("x-$ref") String xRef;
+        @JsonProperty("x-$ref")
+        String xRef;
 
         @JsonCreator
         public GwtStepImplementationMixin(@JsonProperty("type") String type,
                                           @JsonProperty("target") String target,
                                           @JsonInclude(JsonInclude.Include.ALWAYS) @JsonProperty("inputs") Map<String, Object> inputs,
                                           @JsonProperty("outputs") Map<String, Object> outputs,
+                                          @JsonProperty("validations") Map<String, Object> validations,
                                           @JsonProperty("x-$ref") String xRef
         ) {
         }
@@ -112,7 +115,7 @@ public class GwtScenarioMapper implements GwtScenarioMarshaller {
     // DTO -> Implementation
     private static GwtStepImplementation fromDto(GwtStepImplementationDto dto) {
         if (dto.task().isEmpty()) {
-            return new GwtStepImplementation(dto.type(), dto.target(), dto.inputs(), dto.outputs(), dto.xRef());
+            return new GwtStepImplementation(dto.type(), dto.target(), dto.inputs(), dto.outputs(), dto.validations(), dto.xRef());
         } else {
             try {
                 return mapper.readValue(readHjson(dto.task()).toString(), GwtStepImplementation.class);

@@ -17,13 +17,15 @@ public class GwtStepImplementation {
     public final String target;
     public final Map<String, Object> inputs;
     public final Map<String, Object> outputs;
+    public final Map<String, Object> validations;
     public final String xRef;
 
-    public GwtStepImplementation(String type, String target, Map<String, Object> inputs, Map<String, Object> outputs, String xRef) {
+    public GwtStepImplementation(String type, String target, Map<String, Object> inputs, Map<String, Object> outputs, Map<String, Object> validations, String xRef) {
         this.type = ofNullable(type).orElse("");
         this.target = ofNullable(target).orElse("");
         this.inputs = ofNullable(inputs).map(Collections::unmodifiableMap).orElse(emptyMap());
         this.outputs = ofNullable(outputs).map(Collections::unmodifiableMap).orElse(emptyMap());
+        this.validations = ofNullable(validations).map(Collections::unmodifiableMap).orElse(emptyMap());
         this.xRef = ofNullable(xRef).orElse("");
     }
 
@@ -35,6 +37,7 @@ public class GwtStepImplementation {
             ", x-$ref='" + xRef + '\'' +
             ", inputs=" + inputs +
             ", outputs=" + outputs +
+            ", validations=" + validations +
             '}';
     }
 
@@ -46,12 +49,13 @@ public class GwtStepImplementation {
         return type.equals(that.type) &&
             target.equals(that.target) &&
             inputs.equals(that.inputs) &&
-            outputs.equals(that.outputs);
+            outputs.equals(that.outputs) &&
+            validations.equals(that.validations);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, target, inputs, outputs);
+        return Objects.hash(type, target, inputs, outputs, validations);
     }
 
 }

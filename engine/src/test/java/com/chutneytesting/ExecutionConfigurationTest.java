@@ -3,7 +3,6 @@ package com.chutneytesting;
 import static com.chutneytesting.tools.WaitUtils.awaitDuring;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
@@ -130,6 +129,7 @@ public class ExecutionConfigurationTest {
             Collections.emptyMap(),
             Collections.emptyList(),
             Collections.emptyMap(),
+            Collections.emptyMap(),
             ""
         );
         ExecutionRequestDto requestDto = new ExecutionRequestDto(stepDefinition);
@@ -151,6 +151,7 @@ public class ExecutionConfigurationTest {
             Collections.emptyMap(),
             Collections.emptyList(),
             Collections.emptyMap(),
+            Collections.emptyMap(),
             ""
         );
     }
@@ -168,6 +169,7 @@ public class ExecutionConfigurationTest {
             Collections.emptyMap(),
             steps,
             Collections.emptyMap(),
+            Collections.emptyMap(),
             ""
         );
     }
@@ -180,6 +182,7 @@ public class ExecutionConfigurationTest {
             "sleep",
             Maps.newHashMap("duration", "500 ms"),
             null,
+            Collections.emptyMap(),
             Collections.emptyMap(),
             ""
         );

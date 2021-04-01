@@ -40,6 +40,7 @@ public class ExecutionRequestDto {
         public final Map<String, Object> inputs;
         public final List<StepDefinitionRequestDto> steps;
         public final Map<String, Object> outputs;
+        public final Map<String, Object> validations;
         public final String environment;
 
         public StepDefinitionRequestDto(
@@ -50,6 +51,7 @@ public class ExecutionRequestDto {
             @JsonProperty("inputs") Map<String, Object> inputs,
             @JsonProperty("steps") List<StepDefinitionRequestDto> steps,
             @JsonProperty("outputs") Map<String, Object> outputs,
+            @JsonProperty("validations") Map<String, Object> validations,
             @JsonProperty("environment")String environment) {
 
             this.name = name;
@@ -58,6 +60,7 @@ public class ExecutionRequestDto {
             this.inputs = inputs;
             this.steps = steps;
             this.outputs = outputs;
+            this.validations = validations;
             this.environment = environment;
 
             this.definition = new StepDefinitionDto(
@@ -68,6 +71,7 @@ public class ExecutionRequestDto {
                 inputs,
                 steps != null ? steps.stream().map(r -> r.definition).collect(Collectors.toList()) : Collections.emptyList(),
                 outputs,
+                validations,
                 environment
             );
         }

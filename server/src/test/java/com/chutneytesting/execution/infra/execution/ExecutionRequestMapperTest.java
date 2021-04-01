@@ -75,6 +75,11 @@ public class ExecutionRequestMapperTest {
             "output2", "value2"
         ));
 
+        LinkedHashMap<String, Object> expectedValidations = new LinkedHashMap<>(Maps.of(
+            "first assert", "${#output1.equals('value1')}",
+            "second assert", "${#output2.equals('value2')}"
+        ));
+
         LinkedHashMap<String, Object> expectedInputs = new LinkedHashMap<>(
             Maps.of(
                 "input 1 name", "v1 input 1 name",
@@ -86,7 +91,8 @@ public class ExecutionRequestMapperTest {
             expectedType,
             expectedTargetId,
             Maps.of("input 1 name", "v1 input 1 name", "input name empty", null),
-            Maps.of("output1", "value1", "output2", "value2")
+            Maps.of("output1", "value1", "output2", "value2"),
+            Maps.of("first assert", "${#output1.equals('value1')}", "second assert", "${#output2.equals('value2')}")
         );
 
         List<ExecutableComposedStep> steps = new ArrayList<>();
@@ -138,21 +144,21 @@ public class ExecutionRequestMapperTest {
         assertThat(rootStep.steps).hasSize(2);
 
         ExecutionRequestDto.StepDefinitionRequestDto step = rootStep.steps.get(0);
-        assertStepDefinitionRequestDtoImplementation(step, testCase.composedScenario.composedSteps.get(0).name, expectedType, expectedTarget, expectedInputs, expectedOutputs);
+        assertStepDefinitionRequestDtoImplementation(step, testCase.composedScenario.composedSteps.get(0).name, expectedType, expectedTarget, expectedInputs, expectedOutputs, expectedValidations);
 
         step = rootStep.steps.get(1);
         assertRootStepDefinitionRequestDto(step, testCase.composedScenario.composedSteps.get(1).name);
         assertThat(step.steps).hasSize(2);
 
         step = rootStep.steps.get(1).steps.get(0);
-        assertStepDefinitionRequestDtoImplementation(step, testCase.composedScenario.composedSteps.get(1).steps.get(0).name, expectedType, expectedTarget, expectedInputs, expectedOutputs);
+        assertStepDefinitionRequestDtoImplementation(step, testCase.composedScenario.composedSteps.get(1).steps.get(0).name, expectedType, expectedTarget, expectedInputs, expectedOutputs, expectedValidations);
 
         step = rootStep.steps.get(1).steps.get(1);
         assertRootStepDefinitionRequestDto(step, testCase.composedScenario.composedSteps.get(1).steps.get(1).name);
         assertThat(step.steps).hasSize(1);
 
         step = rootStep.steps.get(1).steps.get(1).steps.get(0);
-        assertStepDefinitionRequestDtoImplementation(step, testCase.composedScenario.composedSteps.get(1).steps.get(1).steps.get(0).name, expectedType, expectedTarget, expectedInputs, expectedOutputs);
+        assertStepDefinitionRequestDtoImplementation(step, testCase.composedScenario.composedSteps.get(1).steps.get(1).steps.get(0).name, expectedType, expectedTarget, expectedInputs, expectedOutputs, expectedValidations);
     }
 
     private void assertRootStepDefinitionRequestDto(ExecutionRequestDto.StepDefinitionRequestDto stepDefinitionRequestDto, String name) {
@@ -173,7 +179,8 @@ public class ExecutionRequestMapperTest {
                                                               String implementationType,
                                                               TargetExecutionDto implementationTarget,
                                                               LinkedHashMap<String, Object> implementationInputs,
-                                                              LinkedHashMap<String, Object> implementationOuputs) {
+                                                              LinkedHashMap<String, Object> implementationOuputs,
+                                                              LinkedHashMap<String, Object> implementationValidations) {
         assertThat(stepDefinitionRequestDto).isNotNull();
         assertThat(stepDefinitionRequestDto.name).isEqualTo(name);
         assertThat(stepDefinitionRequestDto.type).isEqualTo(implementationType);
@@ -188,6 +195,7 @@ public class ExecutionRequestMapperTest {
             }
         });
         assertThat(implementationOuputs).containsExactlyEntriesOf(stepDefinitionRequestDto.outputs);
+        assertThat(implementationValidations).containsExactlyEntriesOf(stepDefinitionRequestDto.validations);
         assertThat(stepDefinitionRequestDto.steps).isEmpty();
     }
 }

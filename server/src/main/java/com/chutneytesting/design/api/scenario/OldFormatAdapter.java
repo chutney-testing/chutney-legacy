@@ -73,15 +73,19 @@ public class OldFormatAdapter {
         static class StepV0 {
             static StepV0 NONE = new StepV0();
 
-            @JsonProperty(access = WRITE_ONLY) String name = "";
-            @JsonProperty(access = WRITE_ONLY) List<StepV0> steps = Collections.emptyList();
-            @JsonProperty(access = WRITE_ONLY) StepStrategyV0 strategy = StepStrategyV0.NONE;
+            @JsonProperty(access = WRITE_ONLY)
+            String name = "";
+            @JsonProperty(access = WRITE_ONLY)
+            List<StepV0> steps = emptyList();
+            @JsonProperty(access = WRITE_ONLY)
+            StepStrategyV0 strategy = StepStrategyV0.NONE;
 
             // Task
             public String type;
             public String target;
             public Map<String, Object> inputs;
             public Map<String, Object> outputs;
+            public Map<String, Object> validations;
 
             GwtStep toGwt() {
                 GwtStep.GwtStepBuilder builder = GwtStep.builder()
@@ -91,14 +95,14 @@ public class OldFormatAdapter {
                     );
 
                 if (type != null && !type.isEmpty()) {
-                    builder.withImplementation(new GwtStepImplementation(type, target, inputs, outputs, ""));
+                    builder.withImplementation(new GwtStepImplementation(type, target, inputs, outputs, validations, ""));
                 }
 
                 if (!strategy.equals(StepStrategyV0.NONE)) {
                     builder.withStrategy(new Strategy(strategy.type, strategy.parameters));
                 }
 
-                return  builder.build();
+                return builder.build();
             }
         }
 
@@ -116,7 +120,7 @@ public class OldFormatAdapter {
         StepV1 rootStep = StepV1.NONE;
 
         public GwtScenario toGwt(String title, String description) {
-            StepV1 lastWhen = Streams.findLast(rootStep.steps.stream(), s -> s.gwtType != null  && s.gwtType.equals(WHEN)).orElse(StepV1.NONE);
+            StepV1 lastWhen = Streams.findLast(rootStep.steps.stream(), s -> s.gwtType != null && s.gwtType.equals(WHEN)).orElse(StepV1.NONE);
 
             return GwtScenario.builder()
                 .withTitle(title)
@@ -142,16 +146,21 @@ public class OldFormatAdapter {
 
             static StepV1 NONE = new StepV1();
 
-            @JsonProperty(access = WRITE_ONLY, required = true) GwtType gwtType;
-            @JsonProperty(access = WRITE_ONLY) String name = "";
-            @JsonProperty(access = WRITE_ONLY) List<ScenarioV1.StepV1> steps = Collections.emptyList();
-            @JsonProperty(access = WRITE_ONLY) StepStrategyV1 strategy = StepStrategyV1.NONE;
+            @JsonProperty(access = WRITE_ONLY, required = true)
+            GwtType gwtType;
+            @JsonProperty(access = WRITE_ONLY)
+            String name = "";
+            @JsonProperty(access = WRITE_ONLY)
+            List<ScenarioV1.StepV1> steps = emptyList();
+            @JsonProperty(access = WRITE_ONLY)
+            StepStrategyV1 strategy = StepStrategyV1.NONE;
 
             // Task
             public String type;
             public String target;
             public Map<String, Object> inputs;
             public Map<String, Object> outputs;
+            public Map<String, Object> validations;
 
             GwtStep toGwt() {
                 GwtStep.GwtStepBuilder builder = GwtStep.builder()
@@ -161,7 +170,7 @@ public class OldFormatAdapter {
                     );
 
                 if (type != null && !type.isEmpty()) {
-                    builder.withImplementation(new GwtStepImplementation(type, target, inputs, outputs, ""));
+                    builder.withImplementation(new GwtStepImplementation(type, target, inputs, outputs, validations, ""));
                 }
 
                 if (!strategy.equals(StepStrategyV1.NONE)) {
@@ -181,17 +190,26 @@ public class OldFormatAdapter {
     }
 
     static class ScenarioV2_0 implements Convertible {
-        @JsonProperty(access = WRITE_ONLY) String title = "";
-        @JsonProperty(access = WRITE_ONLY) String description = "";
-        @JsonProperty(access = WRITE_ONLY) List<GwtStep2_0> givens = emptyList();
-        @JsonProperty(access = WRITE_ONLY) GwtStep2_0 when;
-        @JsonProperty(access = WRITE_ONLY) List<GwtStep2_0> thens = emptyList();
+        @JsonProperty(access = WRITE_ONLY)
+        String title = "";
+        @JsonProperty(access = WRITE_ONLY)
+        String description = "";
+        @JsonProperty(access = WRITE_ONLY)
+        List<GwtStep2_0> givens = emptyList();
+        @JsonProperty(access = WRITE_ONLY)
+        GwtStep2_0 when;
+        @JsonProperty(access = WRITE_ONLY)
+        List<GwtStep2_0> thens = emptyList();
 
         static class GwtStep2_0 {
-            @JsonProperty(access = WRITE_ONLY) String description = "";
-            @JsonProperty(access = WRITE_ONLY) List<GwtStep2_0> subSteps = emptyList();
-            @JsonProperty(access = WRITE_ONLY) Optional<GwtStepImplementationV2_0> implementation = empty();
-            @JsonProperty(access = WRITE_ONLY) Optional<Strategy> strategy = empty();
+            @JsonProperty(access = WRITE_ONLY)
+            String description = "";
+            @JsonProperty(access = WRITE_ONLY)
+            List<GwtStep2_0> subSteps = emptyList();
+            @JsonProperty(access = WRITE_ONLY)
+            Optional<GwtStepImplementationV2_0> implementation = empty();
+            @JsonProperty(access = WRITE_ONLY)
+            Optional<Strategy> strategy = empty();
 
             GwtStep toGwt() {
                 GwtStep.GwtStepBuilder builder = GwtStep.builder()
@@ -204,7 +222,8 @@ public class OldFormatAdapter {
         }
 
         static class GwtStepImplementationV2_0 {
-            @JsonProperty(access = WRITE_ONLY) String task = "";
+            @JsonProperty(access = WRITE_ONLY)
+            String task = "";
 
             GwtStepImplementation toGwt() {
                 try {

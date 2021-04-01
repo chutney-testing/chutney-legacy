@@ -39,7 +39,8 @@ export class Implementation implements Clonable<Implementation> {
                 jsonObject.mapInputs ? jsonObject.mapInputs : [],
                 jsonObject.listInputs ? jsonObject.listInputs : [],
                 jsonObject.inputs ? jsonObject.inputs : [],
-                jsonObject.outputs ? jsonObject.outputs : []
+                jsonObject.outputs ? jsonObject.outputs : [],
+                jsonObject.validations ? jsonObject.validations : [],
             );
         }
         return null;
@@ -52,7 +53,8 @@ export class Implementation implements Clonable<Implementation> {
         public mapInputs: Array<MapInput> = [],
         public listInputs: Array<ListInput> = [],
         public inputs: Array<SimpleInput> = [],
-        public outputs: Array<KeyValue>
+        public outputs: Array<KeyValue>,
+        public validations: Array<KeyValue>
     ) {
     }
 
@@ -64,7 +66,8 @@ export class Implementation implements Clonable<Implementation> {
             cloneAsPossible(this.mapInputs),
             cloneAsPossible(this.listInputs),
             cloneAsPossible(this.inputs),
-            cloneAsPossible(this.outputs)
+            cloneAsPossible(this.outputs),
+            cloneAsPossible(this.validations)
         );
     }
 }
