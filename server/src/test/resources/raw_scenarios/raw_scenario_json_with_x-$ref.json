@@ -3,9 +3,9 @@
         {
             "description": "Clean Queue",
             "subSteps": [{
-                "description": "La liste des queues de RABBIT_DEV",
+                "description": "Get Queues",
                 "implementation": {
-                    "target": "ICOEUR_RABBIT_DEV_ADMIN",
+                    "target": "ADMIN",
                     "type": "http-get",
                     "inputs": {
                         "uri": "/api/queues"
@@ -15,9 +15,9 @@
                     }
                 }
             }, {
-                "description": "On purge toutes les queues",
+                "description": "Clean queues",
                 "implementation": {
-                    "target": "ICOEUR_RABBIT_DEV",
+                    "target": "RABBIT",
                     "type": "amqp-clean-queues",
                     "inputs": {
                         "queue-names": "${#queueNames}"

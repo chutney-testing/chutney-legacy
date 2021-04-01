@@ -6,6 +6,12 @@
                 "type": "success",
                 "inputs": {
                     "fake_param": "fake_value"
+                },
+                "outputs": {
+                    "fake_output": "fake_output_value"
+                },
+                "validations": {
+                    "fake_validation": "fake_validation_value"
                 }
             }
         }
