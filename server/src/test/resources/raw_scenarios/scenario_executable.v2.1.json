@@ -11,7 +11,7 @@
                     "fake_output": "fake_output_value"
                 },
                 "validations": {
-                    "fake_validation": "fake_validation_value"
+                    "fake_validation": "${true}"
                 }
             }
         }

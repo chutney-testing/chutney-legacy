@@ -42,7 +42,7 @@ public class GwtScenarioMapperTest {
         assertThat(actualScenario.givens.size()).isEqualTo(1);
         assertThat(actualScenario.givens.get(0).implementation.get().inputs).containsEntry("fake_param", "fake_value");
         assertThat(actualScenario.givens.get(0).implementation.get().outputs).containsEntry("fake_output", "fake_output_value");
-        assertThat(actualScenario.givens.get(0).implementation.get().validations).containsEntry("fake_validation", "fake_validation_value");
+        assertThat(actualScenario.givens.get(0).implementation.get().validations).containsEntry("fake_validation", "${true}");
     }
 
 }
