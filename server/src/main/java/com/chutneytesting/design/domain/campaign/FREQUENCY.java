@@ -4,12 +4,19 @@ public enum FREQUENCY {
     HOURLY("Hourly"),
     DAILY("Daily"),
     WEEKLY("Weekly"),
-    MONTHLY("Monthly");
+    MONTHLY("Monthly"),
+    EMPTY("");
 
-    final String label;
+    public final String label;
 
     FREQUENCY(String label) {
         this.label = label;
+    }
+
+    public static FREQUENCY StringlabelToFrequence(String actualLabel) {
+        for (FREQUENCY frequency : values())
+            if (frequency.label.equals(actualLabel)) return frequency;
+        return EMPTY;
     }
 
     @Override

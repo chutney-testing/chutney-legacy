@@ -56,12 +56,12 @@ public class CampaignScheduler {
     private List<Long> checkScheduleCampaign() {
         List<SchedulingCampaign> ids = schedulingCampaignRepository.getALl()
             .stream()
-            .filter(sc -> sc.getSchedulingDate().isBefore(LocalDateTime.now()) && sc.frequency == null)
+            .filter(sc -> sc.getSchedulingDate().isBefore(LocalDateTime.now()) && sc.frequency.equals(FREQUENCY.EMPTY))
             .collect(Collectors.toList());
         Arrays.asList(FREQUENCY.values()).forEach(frequency -> {
-            List<SchedulingCampaign> schedulingCampaignsPerFrequency = getSchedulingCampaignsPerFrequency(frequency);
-            addNextDateScheduledCampaignPerFrequency(schedulingCampaignsPerFrequency);
-            ids.addAll(schedulingCampaignsPerFrequency);
+                List<SchedulingCampaign> schedulingCampaignsPerFrequency = getSchedulingCampaignsPerFrequency(frequency);
+                addNextDateScheduledCampaignPerFrequency(schedulingCampaignsPerFrequency);
+                ids.addAll(schedulingCampaignsPerFrequency);
             }
         );
 
@@ -73,7 +73,7 @@ public class CampaignScheduler {
     private List<SchedulingCampaign> getSchedulingCampaignsPerFrequency(FREQUENCY frequency) {
         return schedulingCampaignRepository.getALl()
             .stream()
-            .filter(sc -> sc.frequency != null && (sc.frequency.equals(frequency.toString()) && sc.getSchedulingDate().isBefore(LocalDateTime.now())))
+            .filter(sc -> !sc.frequency.equals(FREQUENCY.EMPTY) && (sc.frequency.equals(frequency) && sc.getSchedulingDate().isBefore(LocalDateTime.now())))
             .collect(Collectors.toList());
     }
 

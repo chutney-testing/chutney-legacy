@@ -1,7 +1,5 @@
 package com.chutneytesting.design.domain.campaign;
 
-import static com.chutneytesting.design.domain.campaign.FREQUENCY.HOURLY;
-
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -11,9 +9,9 @@ public class SchedulingCampaign {
     public final Long campaignId;
     public final String campaignTitle;
     private LocalDateTime schedulingDate;
-    public final String frequency;
+    public final FREQUENCY frequency;
 
-    public SchedulingCampaign(Long id, Long campaignId, String campaignTitle, LocalDateTime schedulingDate, String frequency) {
+    public SchedulingCampaign(Long id, Long campaignId, String campaignTitle, LocalDateTime schedulingDate, FREQUENCY frequency) {
         this.id = id;
         this.campaignId = campaignId;
         this.campaignTitle = campaignTitle;
@@ -58,13 +56,17 @@ public class SchedulingCampaign {
     }
 
     public LocalDateTime getNextSchedulingDate() {
-        if (HOURLY.label.equals(this.frequency)) {
-            return this.schedulingDate.plusHours(1);
-        } else if (FREQUENCY.DAILY.label.equals(this.frequency)) {
-            return this.schedulingDate.plusDays(1);
-        } else if (FREQUENCY.WEEKLY.label.equals(this.frequency)) {
-            return this.schedulingDate.plusWeeks(1);
+        switch (this.frequency) {
+            case HOURLY:
+                return this.schedulingDate.plusHours(1);
+            case DAILY:
+                return this.schedulingDate.plusDays(1);
+            case WEEKLY:
+                return this.schedulingDate.plusWeeks(1);
+            case MONTHLY:
+                return this.schedulingDate.plusMonths(1);
+            default:
+                throw new IllegalStateException("Unexpected value: " + this.frequency);
         }
-        return this.schedulingDate.plusMonths(1);
     }
 }

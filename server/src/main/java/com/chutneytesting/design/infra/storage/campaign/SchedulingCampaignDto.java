@@ -1,6 +1,5 @@
 package com.chutneytesting.design.infra.storage.campaign;
 
-import com.chutneytesting.design.domain.campaign.FREQUENCY;
 import java.time.LocalDateTime;
 
 public class SchedulingCampaignDto {
