@@ -20,7 +20,7 @@ public class SchedulingCampaign {
     }
 
     public SchedulingCampaign(Long id, Long campaignId, String campaignTitle, LocalDateTime schedulingDate) {
-        this(id, campaignId, campaignTitle, schedulingDate, null);
+        this(id, campaignId, campaignTitle, schedulingDate, FREQUENCY.EMPTY);
     }
 
     @Override
