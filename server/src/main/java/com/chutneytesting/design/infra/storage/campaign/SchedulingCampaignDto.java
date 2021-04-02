@@ -8,7 +8,7 @@ public class SchedulingCampaignDto {
     public final Long campaignId;
     public final String campaignTitle;
     public final LocalDateTime schedulingDate;
-    public final FREQUENCY frequency;
+    public final String frequency;
 
     /**
      * for ObjectMapper only
@@ -25,7 +25,7 @@ public class SchedulingCampaignDto {
                                  Long campaignId,
                                  String campaignTitle,
                                  LocalDateTime schedulingDate,
-                                 FREQUENCY frequency) {
+                                 String frequency) {
         this.id = id;
         this.campaignId = campaignId;
         this.campaignTitle = campaignTitle;

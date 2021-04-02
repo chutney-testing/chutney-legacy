@@ -20,7 +20,7 @@ export class CampaignSchedulingComponent implements OnInit {
     form: FormGroup;
     errorMessage: string;
     submitted: boolean;
-    frequencies = Object.keys(FREQUENCY);
+    frequencies = Object.values(FREQUENCY);
     campaigns: Array<Campaign> = [];
 
     model: NgbDateStruct;

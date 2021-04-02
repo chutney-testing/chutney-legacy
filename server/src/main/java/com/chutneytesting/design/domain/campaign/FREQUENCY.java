@@ -1,10 +1,10 @@
 package com.chutneytesting.design.domain.campaign;
 
 public enum FREQUENCY {
-    HOURLY("hourly"),
-    DAILY("daily"),
-    WEEKLY("weekly"),
-    MONTHLY("monthly");
+    HOURLY("Hourly"),
+    DAILY("Daily"),
+    WEEKLY("Weekly"),
+    MONTHLY("Monthly");
 
     final String label;
 

@@ -73,7 +73,7 @@ public class CampaignScheduler {
     private List<SchedulingCampaign> getSchedulingCampaignsPerFrequency(FREQUENCY frequency) {
         return schedulingCampaignRepository.getALl()
             .stream()
-            .filter(sc -> sc.frequency != null && (sc.frequency.equals(frequency) && sc.getSchedulingDate().isBefore(LocalDateTime.now())))
+            .filter(sc -> sc.frequency != null && (sc.frequency.equals(frequency.toString()) && sc.getSchedulingDate().isBefore(LocalDateTime.now())))
             .collect(Collectors.toList());
     }
 

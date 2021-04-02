@@ -1,5 +1,7 @@
 package com.chutneytesting.design.domain.campaign;
 
+import static com.chutneytesting.design.domain.campaign.FREQUENCY.HOURLY;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -9,9 +11,9 @@ public class SchedulingCampaign {
     public final Long campaignId;
     public final String campaignTitle;
     private LocalDateTime schedulingDate;
-    public FREQUENCY frequency;
+    public final String frequency;
 
-    public SchedulingCampaign(Long id, Long campaignId, String campaignTitle, LocalDateTime schedulingDate, FREQUENCY frequency) {
+    public SchedulingCampaign(Long id, Long campaignId, String campaignTitle, LocalDateTime schedulingDate, String frequency) {
         this.id = id;
         this.campaignId = campaignId;
         this.campaignTitle = campaignTitle;
@@ -56,15 +58,13 @@ public class SchedulingCampaign {
     }
 
     public LocalDateTime getNextSchedulingDate() {
-        switch (this.frequency) {
-            case HOURLY:
-                return this.schedulingDate.plusHours(1);
-            case DAILY:
-                return this.schedulingDate.plusDays(1);
-            case WEEKLY:
-                return this.schedulingDate.plusWeeks(1);
-            default:
-                return this.schedulingDate.plusMonths(1);
+        if (HOURLY.label.equals(this.frequency)) {
+            return this.schedulingDate.plusHours(1);
+        } else if (FREQUENCY.DAILY.label.equals(this.frequency)) {
+            return this.schedulingDate.plusDays(1);
+        } else if (FREQUENCY.WEEKLY.label.equals(this.frequency)) {
+            return this.schedulingDate.plusWeeks(1);
         }
+        return this.schedulingDate.plusMonths(1);
     }
 }
