@@ -2,7 +2,6 @@ package com.chutneytesting.design.api.campaign;
 
 import static com.chutneytesting.design.domain.campaign.FREQUENCY.*;
 
-import com.chutneytesting.design.domain.campaign.FREQUENCY;
 import com.chutneytesting.design.domain.campaign.SchedulingCampaign;
 import com.chutneytesting.design.domain.campaign.SchedulingCampaignRepository;
 import java.util.Comparator;
@@ -39,7 +38,7 @@ public class ScheduleCampaignController {
 
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public void add(@RequestBody SchedulingCampaignDto dto) {
-        schedulingCampaignRepository.add(new SchedulingCampaign(null, dto.getCampaignId(), dto.getCampaignTitle(), dto.getSchedulingDate(), StringlabelToFrequence(dto.getFrequency())));
+        schedulingCampaignRepository.add(new SchedulingCampaign(null, dto.getCampaignId(), dto.getCampaignTitle(), dto.getSchedulingDate(), ToFrequency(dto.getFrequency())));
     }
 
     @DeleteMapping(path = "/{schedulingCampaignId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
