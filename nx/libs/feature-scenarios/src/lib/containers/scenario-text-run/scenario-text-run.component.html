@@ -4,7 +4,7 @@
       <button
         mat-menu-item
         *ngFor="let environment of environments"
-        (click)="select(environment)"
+        (click)="selectEnvironment(environment)"
       >
         {{ environment }}
       </button>
@@ -36,7 +36,7 @@
       *ngIf="!running"
       [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
     >
-      <mat-icon>play_arrow</mat-icon>
+      <mat-icon class="icon-18" svgIcon="restart"></mat-icon>
     </button>
     <button
       mat-fab

@@ -273,7 +273,7 @@ export class ScenarioTextRunComponent implements OnInit {
       );
   }
 
-    select(item: any) {
+    selectEnvironment(item: any) {
         this.environment = item;
     }
 
