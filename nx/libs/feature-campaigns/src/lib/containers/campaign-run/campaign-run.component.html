@@ -27,7 +27,7 @@
       *ngIf="this.report?.status !== 'RUNNING'"
       [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
     >
-      <mat-icon>play_arrow</mat-icon>
+      <mat-icon class="icon-18" svgIcon="restart"></mat-icon>
     </button>
     <button
       mat-fab

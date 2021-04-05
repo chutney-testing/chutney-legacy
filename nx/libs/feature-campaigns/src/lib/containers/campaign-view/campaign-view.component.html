@@ -4,29 +4,36 @@
       <button
         mat-menu-item
         *ngFor="let environment of environments"
-        (click)="runCampaign(campaignId, environment)"
+        (click)="selectEnvironment(environment)"
       >
         {{ environment }}
       </button>
     </mat-menu>
     <button
       style="padding: 0"
-      mat-icon-button
+      mat-button
       [matMenuTriggerFor]="menu"
       aria-label="Open basic menu"
     >
-      <mat-icon>play_circle</mat-icon>
+      {{ environment }} <mat-icon>center_focus_strong</mat-icon>
+    </button>
+    <button
+      style="padding: 0"
+      mat-icon-button
+      (click)="editCampaign(campaignId)"
+    >
+      <mat-icon>edit</mat-icon>
     </button>
   </chutney-page-header-extra>
   <chutney-page-header-action>
     <button
       mat-fab
       class="mat-accent"
-      (click)="editCampaign(campaignId)"
-      aria-label="Edit campaign"
+      (click)="runCampaign()"
+      aria-label="Run campaign"
       [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
     >
-      <mat-icon class="material-icons-outlined">edit</mat-icon>
+      <mat-icon>play_arrow</mat-icon>
     </button>
   </chutney-page-header-action>
 </chutney-page-header>

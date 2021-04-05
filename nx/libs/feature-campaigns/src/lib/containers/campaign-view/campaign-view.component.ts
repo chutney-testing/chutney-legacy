@@ -25,6 +25,7 @@ export class CampaignViewComponent implements OnInit {
   dataSource = new MatTreeNestedDataSource<any>();
   hasChild = (_: number, node: any) =>
     !!node.subSteps && node.subSteps.length > 0;
+  environment: string;
 
   constructor(
     private router: Router,
@@ -41,6 +42,7 @@ export class CampaignViewComponent implements OnInit {
     this.campaign$.subscribe(
       (campaign: Campaign) => (this.dataSource.data = campaign.scenarios)
     );
+    this.environment = this.environments[0]  || ''
   }
 
   editCampaign(campaignId: string) {
@@ -49,9 +51,9 @@ export class CampaignViewComponent implements OnInit {
     });
   }
 
-  runCampaign(campaignId: string, environment: string) {
+  runCampaign() {
     this.runCampaignGQL
-      .mutate({ campaignId: campaignId, environment: environment })
+      .mutate({ campaignId: this.campaignId, environment: this.environment })
       .subscribe((result) =>
         this.router.navigate(
           [`../run/${result.data.runCampaign.executionId}`],
@@ -60,5 +62,9 @@ export class CampaignViewComponent implements OnInit {
           }
         )
       );
+  }
+
+  selectEnvironment(item: any) {
+    this.environment = item;
   }
 }
