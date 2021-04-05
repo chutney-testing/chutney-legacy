@@ -24,6 +24,7 @@ export class ScenarioTextViewComponent implements OnInit {
     { title: 'Scenarios', link: ['/'] },
   ];
   environments: string[] = ['GLOBAL', 'PERF'];
+  environment: any;
 
   constructor(
     private router: Router,
@@ -47,6 +48,7 @@ export class ScenarioTextViewComponent implements OnInit {
         (scenario: any) =>
           (this.dataSource.data = this.normalizeScenario(scenario))
       );
+    this.environment = this.environments[0]
   }
 
   normalizeScenario(scenario: any): any[] {
@@ -63,9 +65,9 @@ export class ScenarioTextViewComponent implements OnInit {
     );
   }
 
-  runScenario(scenarioId: any, environment: string) {
+  runScenario() {
     this.runScenarioGQL
-      .mutate({ scenarioId: scenarioId, environment: environment, dataset: [] })
+      .mutate({ scenarioId: this.scenarioId, environment: this.environment, dataset: [] })
       .subscribe((result) =>
         this.router.navigate([`../run/${result.data.runScenario}`], {
           relativeTo: this.route,
@@ -80,5 +82,9 @@ export class ScenarioTextViewComponent implements OnInit {
     this.router.navigate([`../edit`], {
       relativeTo: this.route,
     });
+  }
+
+  selectEnvironment(item: any) {
+    this.environment = item;
   }
 }

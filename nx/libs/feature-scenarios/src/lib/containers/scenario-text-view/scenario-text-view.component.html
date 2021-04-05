@@ -4,29 +4,36 @@
       <button
         mat-menu-item
         *ngFor="let environment of environments"
-        (click)="runScenario(scenarioId, environment)"
+        (click)="selectEnvironment(environment)"
       >
         {{ environment }}
       </button>
     </mat-menu>
     <button
       style="padding: 0"
-      mat-icon-button
+      mat-button
       [matMenuTriggerFor]="menu"
       aria-label="Open basic menu"
     >
-      <mat-icon>play_circle</mat-icon>
+      {{ environment }} <mat-icon>center_focus_strong</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      (click)="editScenario(scenarioId)"
+      aria-label="Edit scenario"
+    >
+      <mat-icon class="material-icons-outlined">edit</mat-icon>
     </button>
   </chutney-page-header-extra>
   <chutney-page-header-action>
     <button
       mat-fab
       class="mat-accent"
-      (click)="editScenario(scenarioId)"
-      aria-label="Edit scenario"
+      (click)="runScenario()"
+      aria-label="Run scenario"
       [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
     >
-      <mat-icon class="material-icons-outlined">edit</mat-icon>
+      <mat-icon>play_arrow</mat-icon>
     </button>
   </chutney-page-header-action>
 </chutney-page-header>
@@ -51,11 +58,16 @@
       </button>-->
     </mat-toolbar-row>
   </mat-toolbar>
-  <div fxFill style="padding-top: 15px">
-    <div style="padding-left: 15px; min-height: 28px; max-height: 28px">
-      <span style="color: #2e7d32">Scenario:&nbsp;</span
-      >{{ scenario.description }}
-    </div>
+  <div fxFill>
+    <mat-expansion-panel class="mat-elevation-z0" style="border-radius: 0;">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+        <span style="color: #2e7d32">Scenario:&nbsp;</span
+        >{{ scenario.title }}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <p>{{ scenario.description }}</p>
+    </mat-expansion-panel>
     <mat-tree
       [dataSource]="dataSource"
       [treeControl]="treeControl"
