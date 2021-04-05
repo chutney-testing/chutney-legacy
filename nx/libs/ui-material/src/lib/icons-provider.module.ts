@@ -13,7 +13,7 @@ export class IconsProviderModule {
     private matIconRegistry: MatIconRegistry,
     sanitizer: DomSanitizer
   ) {
-    ['spinner', 'pin', 'pin_off'].forEach((icon) => {
+    ['spinner', 'pin', 'pin_off', 'restart'].forEach((icon) => {
       matIconRegistry.addSvgIcon(
         icon,
         sanitizer.bypassSecurityTrustResourceUrl(`assets/icons/${icon}.svg`)
