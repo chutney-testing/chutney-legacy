@@ -30,4 +30,19 @@ public class GwtScenarioMapperTest {
 
     }
 
+    @Test
+    public void should_deserialize_a_raw_scenario() {
+        // Given raw
+        String rawScenario = Files.contentOf(new File(getResource("raw_scenarios/scenario_executable.v2.1.json").getPath()), StandardCharsets.UTF_8);
+
+        // When
+        GwtScenario actualScenario = marshaller.deserialize("a title", "a description", rawScenario);
+
+        //Then:
+        assertThat(actualScenario.givens.size()).isEqualTo(1);
+        assertThat(actualScenario.givens.get(0).implementation.get().inputs).containsEntry("fake_param", "fake_value");
+        assertThat(actualScenario.givens.get(0).implementation.get().outputs).containsEntry("fake_output", "fake_output_value");
+        assertThat(actualScenario.givens.get(0).implementation.get().validations).containsEntry("fake_validation", "${true}");
+    }
+
 }
