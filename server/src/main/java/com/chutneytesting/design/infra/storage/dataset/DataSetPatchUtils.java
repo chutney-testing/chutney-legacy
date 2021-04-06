@@ -77,7 +77,7 @@ public final class DataSetPatchUtils {
                 maxKeyLength = constants.keySet().stream().mapToInt(String::length).max().getAsInt();
             }
             int finalMaxKeyLength = maxKeyLength;
-            constants.forEach((k, v) -> addContantLine(values, k, v, finalMaxKeyLength - k.length()));
+            constants.forEach((k, v) -> addConstantLine(values, k, v, finalMaxKeyLength - k.length()));
             // Blank line between constants and datatable
             values.append(NEWLINE);
         }
@@ -140,7 +140,7 @@ public final class DataSetPatchUtils {
         return values;
     }
 
-    private static void addContantLine(StringBuilder constants, String key, String value, Integer spaces) {
+    private static void addConstantLine(StringBuilder constants, String key, String value, Integer spaces) {
         StringBuilder line = new StringBuilder();
         line.append(key);
         addSpaces(line, spaces);

@@ -33,7 +33,7 @@ public class DataSetTest {
         assertThat(dataSet.datatable).isEmpty();
 
         // Normal case
-        Map<String, String> exepectedMap = Maps.of("key1", "value", "key2", "value");
+        Map<String, String> expectedMap = Maps.of("key1", "value", "key2", "value");
         dataSet = DataSet.builder()
             .withConstants(
                 Maps.of("key1", "value", "", "value", "key2", "value")
@@ -45,7 +45,25 @@ public class DataSetTest {
             ))
             .build();
 
-        assertThat(dataSet.constants).containsExactlyEntriesOf(exepectedMap);
-        assertThat(dataSet.datatable).containsExactly(exepectedMap, exepectedMap);
+        assertThat(dataSet.constants).containsExactlyEntriesOf(expectedMap);
+        assertThat(dataSet.datatable).containsExactly(expectedMap, expectedMap);
+    }
+
+    @Test
+    public void should_remove_space_in_extremity_of_keys_and_values() {
+        Map<String, String> expectedMap = Maps.of("key1", "value", "key2", "value");
+        DataSet dataSet = DataSet.builder()
+            .withConstants(
+                Maps.of("key1 ", "value ", "", "value", " key2   ", "value")
+            )
+            .withDatatable(asList(
+                Maps.of("key1", " value", "", "", "key2     ", "value"),
+                Maps.of("key1", "", "", "", "key2  ", ""),
+                Maps.of("key1 ", "value", "", " value", "key2", "value")
+            ))
+            .build();
+
+        assertThat(dataSet.constants).containsExactlyEntriesOf(expectedMap);
+        assertThat(dataSet.datatable).containsExactly(expectedMap, expectedMap);
     }
 }

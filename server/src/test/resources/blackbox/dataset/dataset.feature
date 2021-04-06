@@ -48,7 +48,7 @@ Feature: Dataset management
                 With expected my dataset name
                 With mode equals
 
-    Scenario: Delete exisiting dataset
+    Scenario: Delete existing dataset
         When delete the dataset
             Do http-delete
                 On CHUTNEY_LOCAL
@@ -66,7 +66,7 @@ Feature: Dataset management
                 With expected 404
                 With mode equals
 
-    Scenario: Versionning
+    Scenario: Versioning
         When a new version is saved
             Do http-post Post dataset to Chutney instance
                 On CHUTNEY_LOCAL
@@ -85,6 +85,62 @@ Feature: Dataset management
                         { "key": "uk1", "value": "new v1" }, { "key": "K3", "value": "uv3" }
                     ],
                     "multipleValues": [
+                        [ { "key": "mk1", "value": "mv11" }, { "key": " mk2", "value": "mv21 - end with space " }, { "key": "mk3", "value": "mv31" } ],
+                        [ { "key": "mk1", "value": "mv122" }, { "key": "mk2", "value": "mv222" }, { "key": "mk3", "value": "mv322" } ]
+                    ]
+                }
+                """
+                Take datasetVersion ${#jsonPath(#body, "$.version")}
+            Do compare Assert HTTP status is 200
+                With actual ${T(Integer).toString(#status)}
+                With expected 200
+                With mode equals
+        And another version without space
+            Do http-post Post dataset to Chutney instance
+                On CHUTNEY_LOCAL
+                With uri /api/v1/datasets
+                With headers
+                | Content-Type | application/json;charset=UTF-8 |
+                With body
+                """
+                {
+                    "id": "${#datasetId}",
+                    "name": "new name",
+                    "description": "new description",
+                    "lastUpdated": "2020-05-02T10:09:00.134Z",
+                    "tags": [ "NEW_TAG" ],
+                    "uniqueValues": [
+                        { "key": "uk1", "value": "new v1" }, { "key": "K3", "value": "uv3" }
+                    ],
+                    "multipleValues": [
+                        [ { "key": "mk1", "value": "mv11" }, { "key": "mk2", "value": "mv21 - without space" }, { "key": "mk3", "value": "mv31" } ],
+                        [ { "key": "mk1", "value": "mv122" }, { "key": "mk2", "value": "mv222" }, { "key": "mk3", "value": "mv322" } ]
+                    ]
+                }
+                """
+                Take datasetVersion ${#jsonPath(#body, "$.version")}
+            Do compare Assert HTTP status is 200
+                With actual ${T(Integer).toString(#status)}
+                With expected 200
+                With mode equals
+        And another new version
+            Do http-post Post dataset to Chutney instance
+                On CHUTNEY_LOCAL
+                With uri /api/v1/datasets
+                With headers
+                | Content-Type | application/json;charset=UTF-8 |
+                With body
+                """
+                {
+                    "id": "${#datasetId}",
+                    "name": "new name",
+                    "description": "new description",
+                    "lastUpdated": "2020-05-02T11:09:00.134Z",
+                    "tags": [ "NEW_TAG" ],
+                    "uniqueValues": [
+                        { "key": "uk1", "value": "new v1" }, { "key": "K3", "value": "uv3" }
+                    ],
+                    "multipleValues": [
                         [ { "key": "mk1", "value": "mv11" }, { "key": "mk2", "value": "mv21" }, { "key": "mk3", "value": "mv31" } ],
                         [ { "key": "mk1", "value": "mv122" }, { "key": "mk2", "value": "mv222" }, { "key": "mk3", "value": "mv322" } ]
                     ]
@@ -95,12 +151,12 @@ Feature: Dataset management
                 With actual ${T(Integer).toString(#status)}
                 With expected 200
                 With mode equals
-        Then the dataset last version number is 2
+        Then the dataset last version number is 4
             Do compare
                 With actual ${T(Integer).toString(#datasetVersion)}
-                With expected 2
+                With expected 4
                 With mode equals
-        And the list of version numbers is [1,2]
+        And the list of version numbers is [1,2,3,4]
             Do http-get
                 On CHUTNEY_LOCAL
                 With uri /api/v1/datasets/${#datasetId}/versions
@@ -111,7 +167,7 @@ Feature: Dataset management
                 With mode equals
             Do compare Assert version's list
                 With actual ${#jsonPath(#datasetVersionList, "$[*].version").toString()}
-                With expected [1,2]
+                With expected [1,2,3,4]
                 With mode equals
         And the search for the dataset bring the last version
             Do http-get
@@ -123,17 +179,17 @@ Feature: Dataset management
                 With mode equals
             Do compare Assert last version number
                 With actual ${#jsonPath(#body, "$.version").toString()}
-                With expected 2
+                With expected 4
                 With mode equals
-        And the dataset version 1 can be found
+        And the dataset version 2 can be found
             Do http-get
                 On CHUTNEY_LOCAL
-                With uri /api/v1/datasets/${#datasetId}/1
+                With uri /api/v1/datasets/${#datasetId}/2
             Do compare Assert HTTP status is 200
                 With actual ${T(Integer).toString(#status)}
                 With expected 200
                 With mode equals
             Do compare Assert version number
                 With actual ${#jsonPath(#body, "$.version").toString()}
-                With expected 1
+                With expected 2
                 With mode equals
