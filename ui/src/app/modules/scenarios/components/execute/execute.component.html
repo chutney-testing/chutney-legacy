@@ -1,7 +1,7 @@
 <ng-container *ngIf="testCase">
     <div class="row edition-header">
         <div class="header-left">
-            <div class="title" [innerHTML]="testCase.title | linkify:'uppercase'"></div>
+            <div class="title" [innerHTML]="testCase.title | linkify"></div>
             <div class="description" [innerHTML]="testCase.description | linkify"></div>
         </div>
         <div class="header-right triangle-left">

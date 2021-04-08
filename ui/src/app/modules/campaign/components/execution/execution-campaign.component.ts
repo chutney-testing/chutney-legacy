@@ -282,7 +282,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
     }
 
     deleteCampaign(campaignId: number, title: string) {
-        if (confirm(this.deletionConfirmationTextPrefix + title.toUpperCase() + this.deletionConfirmationTextSuffix)) {
+        if (confirm(this.deletionConfirmationTextPrefix + title + this.deletionConfirmationTextSuffix)) {
             this.campaignService.delete(campaignId).subscribe(
                 (response) => {
                     this.removeJiraLink(campaignId);
