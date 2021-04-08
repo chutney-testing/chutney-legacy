@@ -8,19 +8,25 @@ import { UiMaterialModule } from '@chutney/ui-material';
 import { UtilsModule } from '@chutney/utils';
 
 import { VariablesComponent } from './containers/variables/variables.component';
-import { VariablesEditComponent } from './components/variables-edit/variables-edit.component';
+import { VariablesListComponent } from './components/variables-list/variables-list.component';
+import { VariablesTextEditComponent } from './containers/variables-text-edit/variables-text-edit.component';
 
 @NgModule({
   imports: [
     CommonModule,
     RouterModule.forChild([
-      { path: '', component: VariablesComponent }
+      { path: '', component: VariablesComponent },
+      { path: 'text/:groupName/edit', component: VariablesTextEditComponent }
     ]),
     UiCommonsModule,
     UiMaterialModule,
     UtilsModule,
     CovalentCodeEditorModule,
   ],
-  declarations: [VariablesComponent, VariablesEditComponent],
+  declarations: [
+    VariablesComponent,
+    VariablesListComponent,
+    VariablesTextEditComponent
+  ],
 })
 export class FeatureVariablesModule {}

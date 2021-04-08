@@ -191,6 +191,7 @@ export type Mutation = {
   deleteCampaign?: Maybe<Scalars['Boolean']>;
   deleteGlobalVariableGroup?: Maybe<Scalars['Boolean']>;
   saveGlobalVariableGroup?: Maybe<Scalars['Boolean']>;
+  renameGlobalVariableGroup?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -267,6 +268,12 @@ export type MutationDeleteGlobalVariableGroupArgs = {
 
 
 export type MutationSaveGlobalVariableGroupArgs = {
+  groupName: Scalars['ID'];
+  input: GlobalVariableGroupInput;
+};
+
+
+export type MutationRenameGlobalVariableGroupArgs = {
   groupName: Scalars['ID'];
   input: GlobalVariableGroupInput;
 };
@@ -394,6 +401,17 @@ export type PauseScenarioMutationVariables = Exact<{
 export type PauseScenarioMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'pauseScenario'>
+);
+
+export type RenameGlobalVariableGroupMutationVariables = Exact<{
+  groupName: Scalars['ID'];
+  input: GlobalVariableGroupInput;
+}>;
+
+
+export type RenameGlobalVariableGroupMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'renameGlobalVariableGroup'>
 );
 
 export type ResumeScenarioMutationVariables = Exact<{
@@ -763,6 +781,22 @@ export const PauseScenarioDocument = gql`
   })
   export class PauseScenarioGQL extends Apollo.Mutation<PauseScenarioMutation, PauseScenarioMutationVariables> {
     document = PauseScenarioDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const RenameGlobalVariableGroupDocument = gql`
+    mutation renameGlobalVariableGroup($groupName: ID!, $input: GlobalVariableGroupInput!) {
+  renameGlobalVariableGroup(groupName: $groupName, input: $input) @rest(type: "Boolean", path: "api/ui/globalvar/v1/{args.groupName}/rename", method: "POST")
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class RenameGlobalVariableGroupGQL extends Apollo.Mutation<RenameGlobalVariableGroupMutation, RenameGlobalVariableGroupMutationVariables> {
+    document = RenameGlobalVariableGroupDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

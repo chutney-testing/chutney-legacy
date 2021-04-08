@@ -5,38 +5,20 @@
   <chutney-page-header-action>
     <button
       mat-fab
-      class="mat-accent zi-2 mr-5"
-      aria-label="Save group"
-      disabled="{{ editComponent.globalVariableGroupsNames.length == 0 }}"
-      (click)="editComponent.saveGlobalVariableGroup()"
-      [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
-    >
-      <mat-icon>save</mat-icon>
-    </button>
-
-    <button
-      mat-fab
-      class="mat-accent zi-2 mr-5"
+      class="mat-accent zi-2"
       aria-label="Add group"
-      disabled="{{ editComponent.updateMode() }}"
-      (click)="editComponent.addGlobalVariableGroup()"
+      (click)="groupNamesListComponent.initAddGroup()"
       [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
     >
       <mat-icon>add</mat-icon>
     </button>
-
-    <button
-        mat-fab
-        class="mat-accent zi-2"
-        title="{{ (editComponent.updateMode()) ? 'Cancel action' : 'Delete group' }}"
-        [attr.aria-label]="(editComponent.updateMode()) ? 'Cancel action' : 'Delete group'"
-        disabled="{{ editComponent.globalVariableGroupsNames.length == 0 }}"
-        (click)="(editComponent.updateMode()) ? editComponent.cancelAction() : editComponent.deleteGlobalVariableGroup()"
-        [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
-      >
-        <mat-icon>{{ (editComponent.updateMode()) ? 'cancel' : 'delete' }}</mat-icon>
-      </button>
     </chutney-page-header-action>
 </chutney-page-header>
 
-<chutney-variables-edit #editComponent></chutney-variables-edit>
+<chutney-variables-list #groupNamesListComponent
+  [groupNames]="globalVariableGroupsNames"
+  (edit)="editGlobalVariableGroup($event)"
+  (delete)="deleteGlobalVariableGroup($event)"
+  (add)="addGlobalVariableGroup($event)"
+  (rename)="renameGlobalVariableGroup($event)"
+></chutney-variables-list>

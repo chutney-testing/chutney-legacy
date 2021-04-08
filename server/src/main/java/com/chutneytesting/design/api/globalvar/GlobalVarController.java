@@ -56,6 +56,15 @@ public class GlobalVarController {
         return new TextDto(globalVarRepository.getFile(fileName));
     }
 
+    @CrossOrigin(origins = "*")
+    @PostMapping(path = "/{fileName}/rename", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Boolean rename(@PathVariable("fileName") String fileName, @RequestBody TextDto newName) {
+        String content = globalVarRepository.getFile(fileName);
+        globalVarRepository.saveFile(newName.getMessage(), content);
+        globalVarRepository.deleteFile(fileName);
+        return true;
+    }
+
     public static class TextDto {
         private String message;
 

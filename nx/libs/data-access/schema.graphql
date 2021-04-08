@@ -131,6 +131,7 @@ type Mutation {
   deleteCampaign(input: ID!): Boolean
   deleteGlobalVariableGroup(groupName: ID!): Boolean
   saveGlobalVariableGroup(groupName: ID!, input: GlobalVariableGroupInput!): Boolean
+  renameGlobalVariableGroup(groupName: ID!, input: GlobalVariableGroupInput!): Boolean
 }
 
 scalar RestFunction

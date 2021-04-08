@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { VariablesEditComponent } from './variables-edit.component';
+import { VariablesTextEditComponent } from './variables-text-edit.component';
 
-describe('VariablesEditComponent', () => {
-  let component: VariablesEditComponent;
-  let fixture: ComponentFixture<VariablesEditComponent>;
+describe('VariablesTextEditComponent', () => {
+  let component: VariablesTextEditComponent;
+  let fixture: ComponentFixture<VariablesTextEditComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ VariablesEditComponent ]
+      declarations: [ VariablesTextEditComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(VariablesEditComponent);
+    fixture = TestBed.createComponent(VariablesTextEditComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
