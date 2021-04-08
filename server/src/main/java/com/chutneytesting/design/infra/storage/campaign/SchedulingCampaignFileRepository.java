@@ -1,6 +1,6 @@
 package com.chutneytesting.design.infra.storage.campaign;
 
-import static com.chutneytesting.design.domain.campaign.FREQUENCY.ToFrequency;
+import static com.chutneytesting.design.domain.campaign.FREQUENCY.tofrequency;
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
 
 import com.chutneytesting.design.domain.campaign.SchedulingCampaign;
@@ -103,7 +103,7 @@ public class SchedulingCampaignFileRepository implements SchedulingCampaignRepos
 
 
     private SchedulingCampaign fromDto(String id, SchedulingCampaignDto dto) {
-        return new SchedulingCampaign(Long.valueOf(dto.id), dto.campaignId, dto.campaignTitle, dto.schedulingDate, ToFrequency(dto.frequency));
+        return new SchedulingCampaign(Long.valueOf(dto.id), dto.campaignId, dto.campaignTitle, dto.schedulingDate, tofrequency(dto.frequency));
     }
 
     private SchedulingCampaignDto toDto(long id, SchedulingCampaign schedulingCampaign) {

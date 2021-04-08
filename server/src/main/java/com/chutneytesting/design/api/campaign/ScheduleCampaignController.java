@@ -38,7 +38,7 @@ public class ScheduleCampaignController {
 
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public void add(@RequestBody SchedulingCampaignDto dto) {
-        schedulingCampaignRepository.add(new SchedulingCampaign(null, dto.getCampaignId(), dto.getCampaignTitle(), dto.getSchedulingDate(), ToFrequency(dto.getFrequency())));
+        schedulingCampaignRepository.add(new SchedulingCampaign(null, dto.getCampaignId(), dto.getCampaignTitle(), dto.getSchedulingDate(), tofrequency(dto.getFrequency())));
     }
 
     @DeleteMapping(path = "/{schedulingCampaignId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

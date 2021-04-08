@@ -13,7 +13,7 @@ public enum FREQUENCY {
         this.label = label;
     }
 
-    public static FREQUENCY ToFrequency(String actualLabel) {
+    public static FREQUENCY tofrequency(String actualLabel) {
         for (FREQUENCY frequency : values())
             if (frequency.label.equals(actualLabel)) return frequency;
         return EMPTY;
