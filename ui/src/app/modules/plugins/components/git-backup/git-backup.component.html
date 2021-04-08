@@ -9,27 +9,27 @@
 
         <div class="row m-1" [formGroup]="remoteConfigForm">
             <div class="col">
-                <label class="sr-only" for="name">Pattern</label>
+                <label class="sr-only" for="name">Name</label>
                 <input type="text" class="form-control" id="name" formControlName="name"
                        placeholder="Remote name (ex. origin)"/>
             </div>
             <div class="col">
-                <label class="sr-only" for="url">Pattern</label>
+                <label class="sr-only" for="url">URL</label>
                 <input type="text" class="form-control" id="url" formControlName="url"
                        placeholder="Remote url (ex. git@github.com:chutney-testing/chutney.git)"/>
             </div>
             <div class="col">
-                <label class="sr-only" for="branch">Link</label>
+                <label class="sr-only" for="branch">Branch</label>
                 <input type="text" class="form-control" id="branch" formControlName="branch"
                        placeholder="Branch name (default to 'backup')"/>
             </div>
             <div class="col">
-                <label class="sr-only" for="privateKeyPath">Link</label>
+                <label class="sr-only" for="privateKeyPath">PrivateKey path</label>
                 <input type="text" class="form-control" id="privateKeyPath" name="username" formControlName="privateKeyPath"
                        placeholder="/private/key/path"/>
             </div>
             <div class="col">
-                <label class="sr-only" for="passphrase">Link</label>
+                <label class="sr-only" for="passphrase">PrivateKey passphrase</label>
                 <input type="password" class="form-control" id="passphrase" name="password" formControlName="passphrase"
                        placeholder="Private key passphrase"/>
             </div>

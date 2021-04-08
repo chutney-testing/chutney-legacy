@@ -1,9 +1,15 @@
 package com.chutneytesting.tools.file;
 
+import static java.util.Arrays.stream;
+import static java.util.Optional.ofNullable;
+
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -12,25 +18,44 @@ public class FileUtils {
 
     private FileUtils(){}
 
-    public static void initFolder(Path storeFolderPath) throws UncheckedIOException {
+    public static void initFolder(Path folderPath) throws UncheckedIOException {
         try {
-            Files.createDirectories(storeFolderPath);
+            Files.createDirectories(folderPath);
         } catch (IOException e) {
-            throw new IllegalStateException("Cannot create configuration directory: " + storeFolderPath);
+            throw new IllegalStateException("Cannot create configuration directory: " + folderPath);
         }
-        Path testPath = storeFolderPath.resolve("test");
+        Path testPath = folderPath.resolve("test");
         if (!Files.exists(testPath)) {
             try {
-                Files.createFile(storeFolderPath.resolve("test"));
+                Files.createFile(folderPath.resolve("test"));
             } catch (IOException e) {
-                throw new UncheckedIOException("Unable to write in configuration directory: " + storeFolderPath, e);
+                throw new UncheckedIOException("Unable to write in configuration directory: " + folderPath, e);
             }
         }
+
+        deleteFolder(testPath);
+    }
+
+    public static void deleteFolder(Path folderPath) {
         try {
-            Files.delete(testPath);
+            Files.delete(folderPath);
+        } catch (NoSuchFileException e) {
+            // do nothing
+        } catch (DirectoryNotEmptyException e) {
+            cleanFolder(folderPath);
         } catch (IOException e) {
-            throw new UncheckedIOException("Unable to delete in configuration directory: " + storeFolderPath, e);
+            throw new UncheckedIOException("Unable to delete in configuration directory: " + folderPath, e);
         }
+    }
+
+    public static void cleanFolder(Path folderPath) {
+        stream(ofNullable(folderPath.toFile().listFiles()).orElse(new File[0]))
+            .forEach(file -> {
+                if (file.isDirectory()) {
+                    cleanFolder(file.toPath());
+                }
+                file.delete();
+            });
     }
 
     public static String getNameWithoutExtension(Path path) {

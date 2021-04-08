@@ -1,7 +1,5 @@
 package com.chutneytesting.admin.infra.gitbackup;
 
-import static java.util.Collections.singletonList;
-
 import com.chutneytesting.admin.domain.gitbackup.GitClient;
 import com.chutneytesting.admin.domain.gitbackup.RemoteRepository;
 import com.jcraft.jsch.JSch;
@@ -18,13 +16,17 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.LsRemoteCommand;
 import org.eclipse.jgit.api.MergeCommand;
 import org.eclipse.jgit.api.TransportConfigCallback;
+import org.eclipse.jgit.api.errors.EmptyCommitException;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.InvalidRemoteException;
+import org.eclipse.jgit.api.errors.RefNotFoundException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.JschConfigSessionFactory;
 import org.eclipse.jgit.transport.OpenSshConfig;
 import org.eclipse.jgit.transport.SshTransport;
+import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.util.FS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +42,7 @@ public class GitClientImpl implements GitClient {
         try {
             Files.createDirectories(cloningPath);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Cannot clone repository: " + remote.url + ". " + e.getMessage(), e);
         }
 
         Git git = null;
@@ -49,14 +51,13 @@ public class GitClientImpl implements GitClient {
                 .setRemote(remote.name)
                 .setURI(remote.url)
                 .setDirectory(cloningPath.toFile())
-                .setBranchesToClone(singletonList("refs/heads/" + remote.branch))
-                /*.setBranch(remote.branch)*/
+                .setBranch(remote.branch)
                 .setNoCheckout(true)
                 .setNoTags()
                 .setTransportConfigCallback(getTransportConfigCallback(remote))
                 .call();
         } catch (GitAPIException e) {
-            LOGGER.warn("Cannot clone repository: " + remote.url + ". " + e.getMessage());
+            throw new RuntimeException("Cannot clone repository: " + remote.url + ". " + e.getMessage(), e);
         } finally {
             Optional.ofNullable(git)
                 .ifPresent(Git::close);
@@ -65,55 +66,102 @@ public class GitClientImpl implements GitClient {
 
     @Override
     public void update(RemoteRepository remote, Path workingDirectory) {
-        try(Repository repository = FileRepositoryBuilder.create(workingDirectory.resolve(".git").toFile());
-            Git git = Git.wrap(repository)
+        try (Repository repository = FileRepositoryBuilder.create(workingDirectory.resolve(".git").toFile());
+             Git git = Git.wrap(repository)
         ) {
-            git.checkout()
-                .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK)
+            try {
+                git.checkout()
+                    .setName(remote.branch)
+                    .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK)
+                    .call();
+
+                git.pull()
+                    .setRemote(remote.name)
+                    .setFastForward(MergeCommand.FastForwardMode.FF_ONLY)
+                    .setTransportConfigCallback(getTransportConfigCallback(remote))
+                    .call();
+            } catch (InvalidRemoteException e) {
+                updateRemote(remote, workingDirectory);
+                update(remote, workingDirectory);
+            } catch (RefNotFoundException e) {
+                initRepository(remote, workingDirectory);
+                update(remote, workingDirectory);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot update repository " + remote.url + ". " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void updateRemote(RemoteRepository remote, Path workingDirectory) {
+        try (Repository repository = FileRepositoryBuilder.create(workingDirectory.resolve(".git").toFile());
+             Git git = Git.wrap(repository)
+        ) {
+            git.remoteRemove()
+                .setRemoteName(remote.name)
+                .call();
+
+            git.remoteAdd()
+                .setName(remote.name)
+                .setUri(new URIish(remote.url))
+                .call();
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot update remote : " + remote.url + ". " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void initRepository(RemoteRepository remote, Path workingDirectory) {
+        try (Git git = Git.init().setInitialBranch(remote.branch).setDirectory(workingDirectory.toFile()).call()) {
+            git.branchCreate()
                 .setName(remote.branch)
                 .call();
 
-            git.pull()
-                .setRemote(remote.name)
-                .setFastForward(MergeCommand.FastForwardMode.FF_ONLY)
-                .setTransportConfigCallback(getTransportConfigCallback(remote))
-                .call();
-        } catch (IOException | GitAPIException e) {
-
+            updateRemote(remote, workingDirectory);
+        } catch (GitAPIException e) {
+            throw new RuntimeException("Cannot create git repository at path : " + workingDirectory + ". " + e.getMessage(), e);
         }
     }
 
     @Override
     public void addAll(Path workingDirectory) {
-        try(Repository repository = FileRepositoryBuilder.create(workingDirectory.resolve(".git").toFile());
-            Git git = Git.wrap(repository)
+        try (Repository repository = FileRepositoryBuilder.create(workingDirectory.resolve(".git").toFile());
+             Git git = Git.wrap(repository)
         ) {
-            git.add()
-                .addFilepattern(".")
-                .call();
-        } catch (IOException | GitAPIException e) {
-
+            git.add().addFilepattern(".").call(); // stage all modified and untracked files
+            git.add().setUpdate(true).addFilepattern(".").call(); // stage all deleted files
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot stage all files at path : " + workingDirectory + ". " + e.getMessage(), e);
         }
     }
 
     @Override
+    public boolean isGitDir(Path workingDirectory) {
+        return Files.exists(workingDirectory.resolve(".git"));
+    }
+
+    @Override
     public void commit(Path workingDirectory, String message) {
-        try(Repository repository = FileRepositoryBuilder.create(workingDirectory.resolve(".git").toFile());
-            Git git = Git.wrap(repository)
+        try (Repository repository = FileRepositoryBuilder.create(workingDirectory.resolve(".git").toFile());
+             Git git = Git.wrap(repository)
         ) {
             git.commit()
                 .setSign(false)
+                .setAllowEmpty(false)
+                .setAuthor("Chutney", "no-reply@chutney-testing.com")
                 .setMessage(message)
                 .call();
+        } catch (EmptyCommitException e) {
+            // do nothing
         } catch (IOException | GitAPIException e) {
-
+            throw new RuntimeException("Cannot commit files at path : " + workingDirectory + ". " + e.getMessage(), e);
         }
     }
 
     @Override
     public void push(RemoteRepository remote, Path workingDirectory) {
-        try(Repository repository = FileRepositoryBuilder.create(workingDirectory.resolve(".git").toFile());
-            Git git = Git.wrap(repository)
+        try (Repository repository = FileRepositoryBuilder.create(workingDirectory.resolve(".git").toFile());
+             Git git = Git.wrap(repository)
         ) {
             git.push()
                 .setRemote(remote.name)
@@ -122,14 +170,12 @@ public class GitClientImpl implements GitClient {
                 .call();
 
         } catch (IOException | GitAPIException e) {
-
+            throw new RuntimeException("Cannot push to remote : " + remote.url + ". " + e.getMessage(), e);
         }
     }
 
     @Override
     public boolean hasAccess(RemoteRepository remote) {
-        boolean isAccessible = false;
-
         try {
             LsRemoteCommand lsRemoteCommand = Git.lsRemoteRepository()
                 .setRemote(remote.url)
@@ -140,12 +186,16 @@ public class GitClientImpl implements GitClient {
 
             Collection<Ref> remoteRefs = lsRemoteCommand.call();
 
-            isAccessible = remoteRefs.stream().anyMatch(ref -> ref.getName().contains(remote.branch));
-        } catch (Exception e) {
-            LOGGER.warn(e.getMessage());
+            if (remoteRefs.isEmpty() || remoteRefs.stream().noneMatch(ref -> ref.getName().contains(remote.branch))) {
+                LOGGER.warn("No branch " + remote.branch + " found on remote " + remote.url);
+            }
+
+        } catch (GitAPIException e) {
+            LOGGER.warn("Remote " + remote.url + " is not accessible. " + e.getMessage(), e);
+            return false;
         }
 
-        return isAccessible;
+        return true;
     }
 
     private TransportConfigCallback getTransportConfigCallback(RemoteRepository remote) {
@@ -171,4 +221,6 @@ public class GitClientImpl implements GitClient {
             });
         };
     }
+
+
 }

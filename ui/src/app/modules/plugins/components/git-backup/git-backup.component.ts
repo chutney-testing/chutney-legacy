@@ -14,8 +14,8 @@ export class GitBackupComponent implements OnInit {
 
     remoteConfigForm: FormGroup;
 
-    message;
-    isErrorNotification: boolean = false;
+    message: string;
+    isErrorNotification = false;
 
     remotes: Array<GitRemoteConfig> = [];
 
@@ -40,11 +40,13 @@ export class GitBackupComponent implements OnInit {
         this.gitBackupService.loadConfig().subscribe(
             (remotes: Array<GitRemoteConfig>) => {
                 this.remotes = remotes;
-                this.remoteConfigForm.controls.name.patchValue(remotes[0].name);
-                this.remoteConfigForm.controls.url.patchValue(remotes[0].url);
-                this.remoteConfigForm.controls.branch.patchValue(remotes[0].branch);
-                this.remoteConfigForm.controls.privateKeyPath.patchValue(remotes[0].privateKeyPath);
-                this.remoteConfigForm.controls.passphrase.patchValue(remotes[0].privateKeyPassphrase);
+                if (this.remotes.length > 0) {
+                    this.remoteConfigForm.controls.name.patchValue(remotes[0].name);
+                    this.remoteConfigForm.controls.url.patchValue(remotes[0].url);
+                    this.remoteConfigForm.controls.branch.patchValue(remotes[0].branch);
+                    this.remoteConfigForm.controls.privateKeyPath.patchValue(remotes[0].privateKeyPath);
+                    this.remoteConfigForm.controls.passphrase.patchValue(remotes[0].privateKeyPassphrase);
+                }
             },
             (error) => {
                 this.notify(error.error, true);
@@ -114,7 +116,7 @@ export class GitBackupComponent implements OnInit {
         (async () => {
             this.isErrorNotification = isErrorNotification;
             this.message = message;
-            await delay(3000);
+            await delay(6000);
             this.message = null;
         })();
     }

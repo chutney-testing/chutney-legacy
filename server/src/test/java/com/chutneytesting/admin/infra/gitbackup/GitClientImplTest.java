@@ -7,6 +7,7 @@ import com.chutneytesting.admin.domain.gitbackup.RemoteRepository;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -53,6 +54,19 @@ class GitClientImplTest {
         RemoteRepository remote = new RemoteRepository(name, uri, branch, privateKeyPath, privateKeyPassphrase);
         boolean actual = sut.hasAccess(remote);
         assertThat(actual).isTrue();
+    }
+
+    @Test
+    void should_create_folders_when_cloning() {
+        // Given
+        RemoteRepository remote = new RemoteRepository("name", "uri", "branch", "privateKeyPath", "privateKeyPassphrase");
+
+        // When
+        sut.clone(remote, temporaryFolder.resolve("created"));
+
+        // Then
+        assertThat(temporaryFolder.resolve("created").toFile().exists()).isTrue();
+        assertThat(temporaryFolder.resolve("created").toFile().isDirectory()).isTrue();
     }
 
 }

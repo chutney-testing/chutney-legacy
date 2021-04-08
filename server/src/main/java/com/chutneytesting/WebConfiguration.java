@@ -25,7 +25,8 @@ public class WebConfiguration {
     public ObjectMapper objectMapper() {
         return new ObjectMapper()
             .addMixIn(Resource.class, MyMixInForIgnoreType.class)
-            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
+            .enable(SerializationFeature.INDENT_OUTPUT)
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
             .findAndRegisterModules();

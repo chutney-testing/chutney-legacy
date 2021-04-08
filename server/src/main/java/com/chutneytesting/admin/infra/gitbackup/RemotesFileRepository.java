@@ -75,7 +75,7 @@ public class RemotesFileRepository implements Remotes {
                 remotes.putAll(objectMapper.readValue(bytes, new TypeReference<HashMap<String, GitRemoteDto>>() {}));
             }
         } catch (IOException e) {
-            throw new UnsupportedOperationException("Cannot read configuration file: " + resolvedFilePath, e);
+            throw new RuntimeException("Cannot read configuration file: " + resolvedFilePath, e);
         }
 
         return remotes;
@@ -87,10 +87,10 @@ public class RemotesFileRepository implements Remotes {
             try {
                 Files.write(filePath, bytes);
             } catch (IOException e) {
-                throw new UnsupportedOperationException("Cannot write in configuration directory: " + storeFolderPath, e);
+                throw new RuntimeException("Cannot write in configuration directory: " + storeFolderPath, e);
             }
         } catch (IOException e) {
-            throw new IllegalArgumentException("Cannot serialize " + remotes, e);
+            throw new RuntimeException("Cannot serialize " + remotes, e);
         }
     }
 

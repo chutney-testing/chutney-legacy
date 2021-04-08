@@ -14,6 +14,11 @@ public interface GitClient {
 
     void push(RemoteRepository remote, Path workingDirectory);
 
+    void updateRemote(RemoteRepository remote, Path workingDirectory);
+
+    void initRepository(RemoteRepository remote, Path workingDirectory);
+
     void addAll(Path workingDirectory);
 
+    boolean isGitDir(Path workingDirectory);
 }

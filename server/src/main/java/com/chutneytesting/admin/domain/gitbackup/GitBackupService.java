@@ -1,9 +1,13 @@
 package com.chutneytesting.admin.domain.gitbackup;
 
-import java.nio.file.Files;
+import static com.chutneytesting.admin.domain.gitbackup.ChutneyContentFSWriter.cleanWorkingFolder;
+import static com.chutneytesting.admin.domain.gitbackup.ChutneyContentFSWriter.writeChutneyContent;
+
+import com.chutneytesting.tools.file.FileUtils;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -13,13 +17,17 @@ public class GitBackupService {
 
     private final Remotes remotes;
     private final GitClient gitClient;
+    private final Set<ChutneyContentProvider> contentProviders;
+    private final String gitRepositoryFolderPath;
 
-    @Value("${configuration-folder:conf/backups}")
-    private String gitRepositoryFolderPath;
-
-    public GitBackupService(Remotes remotes, GitClient gitClient) {
+    public GitBackupService(Remotes remotes,
+                            GitClient gitClient,
+                            Set<ChutneyContentProvider> contentProviders,
+                            @Value("${configuration-folder:conf/backups}") String gitRepositoryFolderPath) {
         this.remotes = remotes;
         this.gitClient = gitClient;
+        this.contentProviders = contentProviders;
+        this.gitRepositoryFolderPath = gitRepositoryFolderPath;
     }
 
     public List<RemoteRepository> getAll() {
@@ -33,31 +41,35 @@ public class GitBackupService {
             return remotes.add(remoteRepository);
         }
 
-        throw new IllegalArgumentException("Remote cannot be reached. Please check provided information");
+        throw new UnreachableRemoteException("Remote cannot be reached. Please check provided information.");
     }
 
     public void remove(String name) {
         remotes.remove(name);
-    }
-
-    public void backup(RemoteRepository remote) {
-        Path workingDirectory = Paths.get(gitRepositoryFolderPath).resolve(remote.name);
-        if (Files.notExists(workingDirectory)) {
-            gitClient.clone(remote, workingDirectory);
-        }
-
-        gitClient.update(remote, workingDirectory);
-        // prepare files
-
-        // commit
-        gitClient.addAll(workingDirectory);
-        gitClient.commit(workingDirectory, "TEST");
-
-        // push to remote
-        gitClient.push(remote, workingDirectory);
+        FileUtils.deleteFolder(Paths.get(gitRepositoryFolderPath).resolve(name));
     }
 
     public void backup(String name) {
         this.backup(remotes.get(name));
     }
+
+    public void backup(RemoteRepository remote) {
+        Path workingDirectory = Paths.get(gitRepositoryFolderPath).resolve(remote.name);
+        if (!gitClient.isGitDir(workingDirectory)) {
+            gitClient.initRepository(remote, workingDirectory);
+        }
+
+        gitClient.update(remote, workingDirectory);
+
+        cleanWorkingFolder(workingDirectory);
+        writeChutneyContent(workingDirectory, contentProviders);
+
+        // commit
+        gitClient.addAll(workingDirectory);
+        gitClient.commit(workingDirectory, "Update Chutney content");
+
+        // push to remote
+        gitClient.push(remote, workingDirectory);
+    }
+
 }
