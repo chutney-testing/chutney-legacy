@@ -1,10 +1,12 @@
 package com.chutneytesting.execution.domain.schedule;
 
+import com.chutneytesting.design.domain.campaign.FREQUENCY;
 import com.chutneytesting.design.domain.campaign.SchedulingCampaign;
 import com.chutneytesting.design.domain.campaign.SchedulingCampaignRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -32,7 +34,7 @@ public class CampaignScheduler {
 
     /**
      * TODO Do we want to specify a pool size too for parallel execution ?
-     * **/
+     **/
     @Async
     public void executeScheduledCampaign() {
         final List<Long> campaignIds = checkCampaignToExecutePeriodically();
@@ -54,12 +56,32 @@ public class CampaignScheduler {
     private List<Long> checkScheduleCampaign() {
         List<SchedulingCampaign> ids = schedulingCampaignRepository.getALl()
             .stream()
-            .filter(sc -> sc.schedulingDate.isBefore(LocalDateTime.now()))
+            .filter(sc -> sc.getSchedulingDate().isBefore(LocalDateTime.now()) && sc.frequency.equals(FREQUENCY.EMPTY))
             .collect(Collectors.toList());
+        Arrays.asList(FREQUENCY.values()).forEach(frequency -> {
+                List<SchedulingCampaign> schedulingCampaignsPerFrequency = getSchedulingCampaignsPerFrequency(frequency);
+                addNextDateScheduledCampaignPerFrequency(schedulingCampaignsPerFrequency);
+                ids.addAll(schedulingCampaignsPerFrequency);
+            }
+        );
 
-        ids.forEach( sc -> schedulingCampaignRepository.removeById(sc.id));
+        ids.forEach(sc -> schedulingCampaignRepository.removeById(sc.id));
 
         return ids.stream().map(sc -> sc.campaignId).collect(Collectors.toList());
+    }
+
+    private List<SchedulingCampaign> getSchedulingCampaignsPerFrequency(FREQUENCY frequency) {
+        return schedulingCampaignRepository.getALl()
+            .stream()
+            .filter(sc -> (!sc.frequency.equals(FREQUENCY.EMPTY)) && (sc.frequency.equals(frequency) && sc.getSchedulingDate().isBefore(LocalDateTime.now())))
+            .collect(Collectors.toList());
+    }
+
+    private void addNextDateScheduledCampaignPerFrequency(List<SchedulingCampaign> campaignWithFrequenciesIds) {
+        campaignWithFrequenciesIds.forEach(sc -> {
+            sc.setSchedulingDate(sc.getNextSchedulingDate());
+            schedulingCampaignRepository.add(sc);
+        });
     }
 
     private List<Long> checkCampaignToExecutePeriodically() {

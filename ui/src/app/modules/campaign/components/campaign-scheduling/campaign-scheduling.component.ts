@@ -7,6 +7,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbDatepickerConfig, NgbDateStruct, NgbTimepickerConfig } from '@ng-bootstrap/ng-bootstrap';
 import { NgbDate } from '@ng-bootstrap/ng-bootstrap/datepicker/ngb-date';
 import { NgbTime } from '@ng-bootstrap/ng-bootstrap/timepicker/ngb-time';
+import { FREQUENCY } from '@core/model/campaign/FREQUENCY';
 
 @Component({
     selector: 'chutney-campaign-scheduling',
@@ -17,9 +18,9 @@ export class CampaignSchedulingComponent implements OnInit {
 
     scheduledCampaigns: Array<CampaignScheduling> = [];
     form: FormGroup;
-    errorMessage: string
+    errorMessage: string;
     submitted: boolean;
-
+    frequencies = Object.values(FREQUENCY);
     campaigns: Array<Campaign> = [];
 
     model: NgbDateStruct;
@@ -56,6 +57,7 @@ export class CampaignSchedulingComponent implements OnInit {
             campaign: [null, Validators.required],
             date: [null, Validators.required],
             time: [null, Validators.required],
+            frequency: [null]
         });
     }
 
@@ -70,13 +72,13 @@ export class CampaignSchedulingComponent implements OnInit {
         const time: NgbTime = formValue['time'];
         const campaign: Campaign = this.form.get('campaign').value;
         const dateTime = new Date(date.year, date.month - 1, date.day, time.hour, time.minute, 0, 0);
-        dateTime.setHours(time.hour - dateTime.getTimezoneOffset() / 60)
-
+        dateTime.setHours(time.hour - dateTime.getTimezoneOffset() / 60);
+        const frequency: FREQUENCY = formValue['frequency'];
         const schedulingCampaign = new CampaignScheduling(
             campaign.id,
             campaign.title,
-            dateTime
-        )
+            dateTime, frequency
+        );
 
         this.campaignSchedulingService.create(schedulingCampaign).subscribe(() => {
                 this.loadSchedulingCampaign();

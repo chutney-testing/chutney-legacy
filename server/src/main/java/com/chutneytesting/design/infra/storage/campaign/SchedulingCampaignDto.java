@@ -7,6 +7,7 @@ public class SchedulingCampaignDto {
     public final Long campaignId;
     public final String campaignTitle;
     public final LocalDateTime schedulingDate;
+    public final String frequency;
 
     /**
      * for ObjectMapper only
@@ -16,15 +17,18 @@ public class SchedulingCampaignDto {
         campaignId = null;
         schedulingDate = null;
         campaignTitle = null;
+        frequency = null;
     }
 
     public SchedulingCampaignDto(String id,
                                  Long campaignId,
                                  String campaignTitle,
-                                 LocalDateTime schedulingDate) {
+                                 LocalDateTime schedulingDate,
+                                 String frequency) {
         this.id = id;
         this.campaignId = campaignId;
         this.campaignTitle = campaignTitle;
         this.schedulingDate = schedulingDate;
+        this.frequency = frequency;
     }
 }

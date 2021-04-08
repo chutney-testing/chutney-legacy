@@ -1,5 +1,7 @@
 package com.chutneytesting.design.api.campaign;
 
+import static com.chutneytesting.design.domain.campaign.FREQUENCY.*;
+
 import com.chutneytesting.design.domain.campaign.SchedulingCampaign;
 import com.chutneytesting.design.domain.campaign.SchedulingCampaignRepository;
 import java.util.Comparator;
@@ -29,14 +31,14 @@ public class ScheduleCampaignController {
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public List<SchedulingCampaignDto> getAll() {
         return schedulingCampaignRepository.getALl().stream()
-            .map(sc -> new SchedulingCampaignDto(sc.id, sc.campaignId, sc.campaignTitle, sc.schedulingDate))
+            .map(sc -> new SchedulingCampaignDto(sc.id, sc.campaignId, sc.campaignTitle, sc.getSchedulingDate(), sc.frequency.label))
             .sorted(Comparator.comparing(SchedulingCampaignDto::getSchedulingDate))
             .collect(Collectors.toList());
     }
 
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public void add(@RequestBody SchedulingCampaignDto dto) {
-        schedulingCampaignRepository.add(new SchedulingCampaign(null, dto.getCampaignId(), dto.getCampaignTitle(), dto.getSchedulingDate()));
+        schedulingCampaignRepository.add(new SchedulingCampaign(null, dto.getCampaignId(), dto.getCampaignTitle(), dto.getSchedulingDate(), tofrequency(dto.getFrequency())));
     }
 
     @DeleteMapping(path = "/{schedulingCampaignId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

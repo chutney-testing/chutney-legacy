@@ -45,6 +45,15 @@
                 </div>
             </div>
         </div>
+
+        <div class="form-group row">
+            <div class="col-sm-3 m-0 p-0">
+                <select id="frequency" class="form-control col-8" formControlName="frequency">
+                    <option *ngFor="let freq of frequencies" [ngValue]="freq">{{freq}}</option>
+                </select>
+            </div>
+        </div>
+
         <button type="submit" [disabled]="submitted && form.invalid" class="btn btn-success m-2" (click)="create()">
             <span class="fa fa-plus"></span>&nbsp;
             <span>{{ 'global.actions.add' | translate }}</span>
@@ -58,6 +67,7 @@
             <tr>
                 <th class="w1"> {{ 'campaigns.scheduling.campaign' | translate }}</th>
                 <th class="w1">{{ 'campaigns.scheduling.schedulingDate' | translate }}</th>
+                <th class="w1">{{ 'campaigns.scheduling.frequency' | translate }}</th>
                 <th class="w1"></th>
             </tr>
             </thead>
@@ -66,6 +76,9 @@
                 <td>#{{scheduledCampaign.campaignId}} - {{scheduledCampaign.campaignTitle}}</td>
 
                 <td>{{scheduledCampaign.schedulingDate | amLocal | amDateFormat: 'YYYY-MM-DD HH:mm'}}</td>
+                <td><span
+                    *ngIf="scheduledCampaign.frequency !==undefined">{{scheduledCampaign.frequency}}</span>
+                </td>
                 <td>
                     <button type="button" class="btn btn-outline-primary btn-sm"
                             (click)="delete(scheduledCampaign.id)">

@@ -1,5 +1,6 @@
 package com.chutneytesting.design.infra.storage.campaign;
 
+import static com.chutneytesting.design.domain.campaign.FREQUENCY.tofrequency;
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
 
 import com.chutneytesting.design.domain.campaign.SchedulingCampaign;
@@ -54,6 +55,7 @@ public class SchedulingCampaignFileRepository implements SchedulingCampaignRepos
         long id = currentMaxId.incrementAndGet();
         schedulingCampaigns.put(String.valueOf(id), toDto(id, schedulingCampaign));
         writeOnDisk(resolvedFilePath, schedulingCampaigns);
+
         return schedulingCampaign;
     }
 
@@ -101,11 +103,11 @@ public class SchedulingCampaignFileRepository implements SchedulingCampaignRepos
 
 
     private SchedulingCampaign fromDto(String id, SchedulingCampaignDto dto) {
-        return new SchedulingCampaign(Long.valueOf(dto.id), dto.campaignId, dto.campaignTitle, dto.schedulingDate);
+        return new SchedulingCampaign(Long.valueOf(dto.id), dto.campaignId, dto.campaignTitle, dto.schedulingDate, tofrequency(dto.frequency));
     }
 
     private SchedulingCampaignDto toDto(long id, SchedulingCampaign schedulingCampaign) {
-        return new SchedulingCampaignDto(String.valueOf(id), schedulingCampaign.campaignId, schedulingCampaign.campaignTitle, schedulingCampaign.schedulingDate);
+        return new SchedulingCampaignDto(String.valueOf(id), schedulingCampaign.campaignId, schedulingCampaign.campaignTitle, schedulingCampaign.getSchedulingDate(), schedulingCampaign.frequency.label);
     }
 
 
