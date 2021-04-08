@@ -1,6 +1,6 @@
 <div *ngIf="campaign" class="row page-header m-4 pl-2">
     <div class="col-md-5">
-        <h4 [innerHTML]="campaign.title | linkify:'uppercase'">
+        <h4 [innerHTML]="campaign.title | linkify">
         </h4>
         <small class="text-muted" [innerHTML]="campaign.description | linkify"></small>
     </div>
