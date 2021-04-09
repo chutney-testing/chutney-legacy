@@ -152,7 +152,7 @@ public class DataSet {
             // Remove empty keys
             return constants.entrySet().stream()
                 .filter(e -> isNotBlank(e.getKey()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .collect(Collectors.toMap(e -> e.getKey().trim(), e -> e.getValue().trim()));
         }
 
         private List<Map<String, String>> cleanDatatable(List<Map<String, String>> datatable) {
@@ -160,6 +160,7 @@ public class DataSet {
             return datatable.stream()
                 .map(this::cleanConstants)
                 .filter(this::hasValuesNotBlank)
+                .map(m -> m.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().trim(), e -> e.getValue().trim())))
                 .collect(toList());
         }
 
