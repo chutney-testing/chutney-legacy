@@ -2,7 +2,9 @@ package com.chutneytesting.execution.domain.compiler;
 
 import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
+import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.mock;
@@ -24,7 +26,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.apache.groovy.util.Maps;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class ComposedTestCaseParametersResolutionPreProcessorTest {
@@ -32,18 +33,12 @@ public class ComposedTestCaseParametersResolutionPreProcessorTest {
     private final ObjectMapper objectMapper = new WebConfiguration().objectMapper();
     private GlobalvarRepository globalvarRepository;
 
-    @BeforeEach
-    public void setUp() {
-        globalvarRepository = mock(GlobalvarRepository.class);
-        Map<String, String> map = new HashMap<>();
-        map.put("key.1", "value1");
-        map.put("key.2", "value2");
-        when(globalvarRepository.getFlatMap()).thenReturn(map);
-    }
-
     @Test
     public void should_replace_composed_scenario_parameters_with_scoped_execution_parameters_values() {
         // Given
+        globalvarRepository = mock(GlobalvarRepository.class);
+        when(globalvarRepository.getFlatMap()).thenReturn(new HashMap<>());
+
         String actionName = "simple action on target %1$s";
         StepImplementation actionImplementation = new StepImplementation("http-get", "**target**", emptyMap(), emptyMap(), emptyMap());
         String stepName = "step with %1$s - %2$s - %3$s";
@@ -158,7 +153,6 @@ public class ComposedTestCaseParametersResolutionPreProcessorTest {
         assertStepActions(actionName, thirdStep, step.steps.get(2).executionParameters.get("target"), retryStrategy);
     }
 
-
     private ExecutableComposedStep buildStepFromActionWithDataSet(ExecutableComposedStep action, String targetDataSetValue) {
         return ExecutableComposedStep.builder()
             .from(action)
@@ -208,4 +202,81 @@ public class ComposedTestCaseParametersResolutionPreProcessorTest {
         );
     }
 
+    @Test
+    public void should_preprocess_global_variables_referencing_other_global_variables_for_replacement() {
+        // Given
+        globalvarRepository = mock(GlobalvarRepository.class);
+        Map<String, String> map = new HashMap<>();
+        map.put("id", "ABCDEF");
+        map.put("id-name", "ROBERT");
+        map.put("id-lastname", "DUPONT");
+        map.put("id-mail", "robert.dupont@france.fr");
+
+        map.put("DIRECT_REF", "**id-mail** **id** **id-lastname** **id-name**");
+        map.put("DIRECT_REF_REF", "**DIRECT_REF**");
+        map.put("DIRECT_REF_REF_REF", "**DIRECT_REF_REF**");
+
+        map.put("PARENT.DIRECT_REF", "**id-mail** **id** **id-lastname** **id-name**");
+
+        map.put("PARENT.id", map.get("id"));
+        map.put("PARENT.id-name", map.get("id-name"));
+        map.put("PARENT.id-lastname", map.get("id-lastname"));
+        map.put("PARENT.id-mail", map.get("id-mail"));
+        map.put("PARENT.DIRECT_PARENT_REF", "**PARENT.id-mail** **PARENT.id** **PARENT.id-lastname** **PARENT.id-name**");
+
+        when(globalvarRepository.getFlatMap()).thenReturn(map);
+
+        String expectedInputsValue = map.get("id-mail") + " " + map.get("id") + " " + map.get("id-lastname") + " " + map.get("id-name");
+
+        StepImplementation actionImplementation = new StepImplementation(
+            "context-put",
+            null,
+            Maps.of(
+                "direct", "**id-mail** **id** **id-lastname** **id-name**",
+                "directRef", "**DIRECT_REF**",
+                "directRefRef", "**DIRECT_REF_REF**",
+                "directRefRefRef", "**DIRECT_REF_REF_REF**",
+                "parentDirectRef", "**PARENT.DIRECT_REF**",
+                "parentDirectParentRef", "**PARENT.DIRECT_PARENT_REF**"
+            ),
+            emptyMap(),
+            emptyMap()
+        );
+
+        ExecutableComposedStep action = ExecutableComposedStep.builder()
+            .withName("name")
+            .withImplementation(of(actionImplementation))
+            .build();
+
+        ExecutableComposedTestCase composedTestCase = new ExecutableComposedTestCase(
+            TestCaseMetadataImpl.builder()
+                .withCreationDate(Instant.now())
+                .withTitle("title")
+                .build(),
+            ExecutableComposedScenario.builder()
+                .withComposedSteps(
+                    singletonList(
+                        action
+                    )
+                )
+                .build(),
+            emptyMap());
+
+        ComposedTestCaseParametersResolutionPreProcessor sut = new ComposedTestCaseParametersResolutionPreProcessor(globalvarRepository, objectMapper);
+        // When
+        final ExecutableComposedTestCase composedTestCaseProcessed = sut.apply(
+            new ExecutionRequest(composedTestCase, "ENV", "user")
+        );
+
+        // Then
+        Map<String, Object> contextPutStepInputs = composedTestCaseProcessed.composedScenario.composedSteps.get(0).stepImplementation.get().inputs;
+        assertThat(contextPutStepInputs).contains(
+            entry("direct", expectedInputsValue),
+            entry("directRef", expectedInputsValue),
+            entry("directRefRef", expectedInputsValue),
+            entry("directRefRefRef", expectedInputsValue),
+            entry("parentDirectRef", expectedInputsValue),
+            entry("parentDirectParentRef", expectedInputsValue)
+        );
+    }
 }

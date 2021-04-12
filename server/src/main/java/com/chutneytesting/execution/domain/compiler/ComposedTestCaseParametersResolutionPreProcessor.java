@@ -2,6 +2,8 @@ package com.chutneytesting.execution.domain.compiler;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
@@ -42,17 +44,12 @@ public class ComposedTestCaseParametersResolutionPreProcessor implements TestCas
     }
 
     private ExecutableComposedTestCase apply(ExecutableComposedTestCase testCase, String environment) {
-        Map<String, String> globalVariable = globalvarRepository.getFlatMap();
-
-        if (!isBlank(environment)) {
-            globalVariable.put("environment", environment);
-        }
-
-        ExecutableComposedTestCase newTestCase = this.applyOnStrategy(testCase, globalVariable);
-
+        Map<String, String> globalVariables = initGlobalVariables(globalvarRepository);
+        makeEnvironmentNameAsGlobalVariable(globalVariables, environment);
+        ExecutableComposedTestCase newTestCase = this.applyOnStrategy(testCase, globalVariables);
         return new ExecutableComposedTestCase(
-            applyToMetadata(newTestCase.metadata, newTestCase.executionParameters, globalVariable),
-            applyToScenario(newTestCase.composedScenario, newTestCase.executionParameters, globalVariable),
+            applyToMetadata(newTestCase.metadata, newTestCase.executionParameters, globalVariables),
+            applyToScenario(newTestCase.composedScenario, newTestCase.executionParameters, globalVariables),
             newTestCase.executionParameters);
     }
 
@@ -63,39 +60,6 @@ public class ComposedTestCaseParametersResolutionPreProcessor implements TestCas
             applyOnStrategy(testCase.composedScenario, testCaseDataSet, globalVariable),
             testCaseDataSet
         );
-    }
-
-    private ExecutableComposedScenario applyOnStrategy(ExecutableComposedScenario composedScenario, Map<String, String> testCaseDataSet, Map<String, String> globalVariable) {
-        return ExecutableComposedScenario.builder()
-            .withComposedSteps(
-                composedScenario.composedSteps.stream()
-                    .map(step -> applyOnStepStrategy(step, testCaseDataSet, globalVariable))
-                    .collect(Collectors.toList())
-            )
-            .withParameters(composedScenario.parameters)
-            .build();
-    }
-
-    private ExecutableComposedStep applyOnStepStrategy(ExecutableComposedStep composedStep, Map<String, String> parentDataset, Map<String, String> globalVariable) {
-        Map<String, String> scopedDataset = applyOnCurrentStepDataSet(composedStep.executionParameters, parentDataset, globalVariable);
-
-        return ExecutableComposedStep.builder()
-            .withName(composedStep.name)
-            .withSteps(
-                composedStep.steps.stream()
-                    .map(f -> applyOnStepStrategy(f, scopedDataset, globalVariable))
-                    .collect(Collectors.toList())
-            )
-            .withImplementation(composedStep.stepImplementation)
-            .withStrategy(applyToStrategy(composedStep.strategy, scopedDataset, globalVariable))
-            .withExecutionParameters(composedStep.executionParameters)
-            .build();
-    }
-
-    private Strategy applyToStrategy(Strategy strategy, Map<String, String> scopedDataset, Map<String, String> globalVariable) {
-        Map<String, Object> parameters = new HashMap<>();
-        strategy.parameters.forEach((key, value) -> parameters.put(key, replaceParams(value.toString(), scopedDataset, globalVariable)));
-        return new Strategy(strategy.type, parameters);
     }
 
     private TestCaseMetadata applyToMetadata(TestCaseMetadata metadata, Map<String, String> dataSet, Map<String, String> globalVariable) {
@@ -161,6 +125,60 @@ public class ComposedTestCaseParametersResolutionPreProcessor implements TestCas
             ));
 
         return scopedDataset;
+    }
+
+    private ExecutableComposedScenario applyOnStrategy(ExecutableComposedScenario composedScenario, Map<String, String> testCaseDataSet, Map<String, String> globalVariable) {
+        return ExecutableComposedScenario.builder()
+            .withComposedSteps(
+                composedScenario.composedSteps.stream()
+                    .map(step -> applyOnStepStrategy(step, testCaseDataSet, globalVariable))
+                    .collect(Collectors.toList())
+            )
+            .withParameters(composedScenario.parameters)
+            .build();
+    }
+
+    private ExecutableComposedStep applyOnStepStrategy(ExecutableComposedStep composedStep, Map<String, String> parentDataset, Map<String, String> globalVariable) {
+        Map<String, String> scopedDataset = applyOnCurrentStepDataSet(composedStep.executionParameters, parentDataset, globalVariable);
+
+        return ExecutableComposedStep.builder()
+            .withName(composedStep.name)
+            .withSteps(
+                composedStep.steps.stream()
+                    .map(f -> applyOnStepStrategy(f, scopedDataset, globalVariable))
+                    .collect(Collectors.toList())
+            )
+            .withImplementation(composedStep.stepImplementation)
+            .withStrategy(applyToStrategy(composedStep.strategy, scopedDataset, globalVariable))
+            .withExecutionParameters(composedStep.executionParameters)
+            .build();
+    }
+
+    private Strategy applyToStrategy(Strategy strategy, Map<String, String> scopedDataset, Map<String, String> globalVariable) {
+        Map<String, Object> parameters = new HashMap<>();
+        strategy.parameters.forEach((key, value) -> parameters.put(key, replaceParams(value.toString(), scopedDataset, globalVariable)));
+        return new Strategy(strategy.type, parameters);
+    }
+
+    private Map<String, String> initGlobalVariables(GlobalvarRepository globalvarRepository) {
+        Map<String, String> flatMap = globalvarRepository.getFlatMap();
+        Map<String, String> collect = resolveMapValues(flatMap);
+        while (!collect.equals(flatMap)) {
+            flatMap = collect;
+            collect = resolveMapValues(flatMap);
+        }
+        return collect;
+    }
+
+    private Map<String, String> resolveMapValues(Map<String, String> map) {
+        return map.entrySet().stream()
+            .collect(toMap(Map.Entry::getKey, e -> replaceParams(map, e.getValue(), identity())));
+    }
+
+    private void makeEnvironmentNameAsGlobalVariable(Map<String, String> globalVariable, String environment) {
+        if (environment != null && !environment.isEmpty()) {
+            globalVariable.put("environment", environment);
+        }
     }
 
 }
