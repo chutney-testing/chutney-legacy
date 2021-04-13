@@ -1,19 +1,13 @@
 import { Injectable } from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor,
-  HttpErrorResponse
-} from '@angular/common/http';
+import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, empty } from 'rxjs';
+import { EMPTY, Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
   })
-export class AuthInterceptor implements HttpInterceptor {
+export class ErrorInterceptor implements HttpInterceptor {
 
   constructor(private router: Router) {
   }
@@ -26,10 +20,10 @@ export class AuthInterceptor implements HttpInterceptor {
                     if (err.status === 401) {
                         const requestURL = this.router.url;
                         this.router.navigateByUrl('/login/invalid' + (requestURL != null ? '?url=' + encodeURIComponent(requestURL) : ''));
-                        return empty();
+                        return EMPTY;
                     }
                 }
-                return Observable.throw(err);
+                return throwError(err);
             }
         )
     );

@@ -11,7 +11,7 @@ import { ThumbnailPipe } from '@shared/pipes/thumbnail.pipe';
 import { MomentModule } from 'angular2-moment';
 import { AceEditorModule } from 'ng2-ace-editor';
 import { AlertService } from './alert.service';
-import { AuthInterceptor } from './AuthInterceptor';
+import { ErrorInterceptor } from './error-interceptor.service';
 import {
     ComponentCardComponent,
     EnvironmentComboComponent,
@@ -111,7 +111,7 @@ import { StateService } from './state/state.service';
     providers: [
         {
             provide: HTTP_INTERCEPTORS,
-            useClass: AuthInterceptor,
+            useClass: ErrorInterceptor,
             multi: true
         },
         AlertService,
