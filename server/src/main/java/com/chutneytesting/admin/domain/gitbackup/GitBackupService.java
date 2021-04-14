@@ -55,13 +55,8 @@ public class GitBackupService {
 
     public void backup(RemoteRepository remote) {
         Path workingDirectory = Paths.get(gitRepositoryFolderPath).resolve(remote.name);
-        if (!gitClient.isGitDir(workingDirectory)) {
-            gitClient.initRepository(remote, workingDirectory);
-        }
+        gitClient.initRepository(remote, workingDirectory);
 
-        gitClient.update(remote, workingDirectory);
-
-        cleanWorkingFolder(workingDirectory);
         writeChutneyContent(workingDirectory, contentProviders);
 
         // commit

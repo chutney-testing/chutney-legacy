@@ -2,10 +2,12 @@ package com.chutneytesting.admin.infra.gitbackup;
 
 import com.chutneytesting.admin.domain.gitbackup.GitClient;
 import com.chutneytesting.admin.domain.gitbackup.RemoteRepository;
+import com.chutneytesting.tools.file.FileUtils;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,8 +20,6 @@ import org.eclipse.jgit.api.MergeCommand;
 import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.api.errors.EmptyCommitException;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.api.errors.InvalidRemoteException;
-import org.eclipse.jgit.api.errors.RefNotFoundException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
@@ -69,24 +69,17 @@ public class GitClientImpl implements GitClient {
         try (Repository repository = FileRepositoryBuilder.create(workingDirectory.resolve(".git").toFile());
              Git git = Git.wrap(repository)
         ) {
-            try {
-                git.checkout()
-                    .setName(remote.branch)
-                    .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK)
-                    .call();
+            git.checkout()
+                .setName(remote.branch)
+                .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK)
+                .call();
 
-                git.pull()
-                    .setRemote(remote.name)
-                    .setFastForward(MergeCommand.FastForwardMode.FF_ONLY)
-                    .setTransportConfigCallback(getTransportConfigCallback(remote))
-                    .call();
-            } catch (InvalidRemoteException e) {
-                updateRemote(remote, workingDirectory);
-                update(remote, workingDirectory);
-            } catch (RefNotFoundException e) {
-                initRepository(remote, workingDirectory);
-                update(remote, workingDirectory);
-            }
+            git.pull()
+                .setRemote(remote.name)
+                .setFastForward(MergeCommand.FastForwardMode.FF_ONLY)
+                .setTransportConfigCallback(getTransportConfigCallback(remote))
+                .call();
+
         } catch (Exception e) {
             throw new RuntimeException("Cannot update repository " + remote.url + ". " + e.getMessage(), e);
         }
@@ -100,11 +93,6 @@ public class GitClientImpl implements GitClient {
             git.remoteRemove()
                 .setRemoteName(remote.name)
                 .call();
-
-            git.remoteAdd()
-                .setName(remote.name)
-                .setUri(new URIish(remote.url))
-                .call();
         } catch (Exception e) {
             throw new RuntimeException("Cannot update remote : " + remote.url + ". " + e.getMessage(), e);
         }
@@ -112,13 +100,19 @@ public class GitClientImpl implements GitClient {
 
     @Override
     public void initRepository(RemoteRepository remote, Path workingDirectory) {
-        try (Git git = Git.init().setInitialBranch(remote.branch).setDirectory(workingDirectory.toFile()).call()) {
-            git.branchCreate()
-                .setName(remote.branch)
-                .call();
+        try {
+            FileUtils.deleteFolder(workingDirectory);
+            Files.createDirectories(workingDirectory);
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot init repository: " + remote.url + ". " + e.getMessage(), e);
+        }
 
-            updateRemote(remote, workingDirectory);
-        } catch (GitAPIException e) {
+        try (Git git = Git.init().setInitialBranch(remote.branch).setDirectory(workingDirectory.toFile()).call()) {
+            git.remoteAdd()
+                .setName(remote.name)
+                .setUri(new URIish(remote.url))
+                .call();
+        } catch (GitAPIException | URISyntaxException e) {
             throw new RuntimeException("Cannot create git repository at path : " + workingDirectory + ". " + e.getMessage(), e);
         }
     }
