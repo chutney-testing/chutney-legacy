@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CovalentCodeEditorModule } from '@covalent/code-editor';
 
 import { UiCommonsModule } from '@chutney/ui-commons';
@@ -16,12 +17,15 @@ import { VariablesTextEditComponent } from './containers/variables-text-edit/var
     CommonModule,
     RouterModule.forChild([
       { path: '', component: VariablesComponent },
+      { path: 'text/add', component: VariablesTextEditComponent },
       { path: 'text/:groupName/edit', component: VariablesTextEditComponent }
     ]),
     UiCommonsModule,
     UiMaterialModule,
     UtilsModule,
+    ReactiveFormsModule,
     CovalentCodeEditorModule,
+    FormsModule,
   ],
   declarations: [
     VariablesComponent,

@@ -7,7 +7,7 @@
       mat-fab
       class="mat-accent zi-2"
       aria-label="Save group"
-      (click)="saveGroupContent()"
+      (click)="saveGroupVariables()"
       [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
     >
       <mat-icon>save</mat-icon>
@@ -15,15 +15,27 @@
   </chutney-page-header-action>
 </chutney-page-header>
 
-<div class="my-code-editor">
-  <td-code-editor #monaco
-    fxFlex="grow"
-    editorStyle="border:0;"
-    language="json"
-    [editorOptions]="{ fontSize: 12, automaticLayout: true }"
-    [theme]="options.theme === 'light' ? 'vs' : 'vs-dark'"
-    [value]="''"
-    (editorInitialized)="editorInitialized($event)"
-    (editorConfigurationChanged)="monacoEditorConfigChanged(monaco.theme)"
-  ></td-code-editor>
+<div [formGroup]="groupForm" class="p-24 pb-0">
+  <mat-form-field appearance="outline" floatLabel="always" class="w-100">
+    <mat-label>Group Name</mat-label>
+    <input matInput
+      placeholder="Group Name"
+      name="name"
+      formControlName="name"
+      required
+    />
+  </mat-form-field>
+  <fieldset class="my-code-editor">
+    <legend>Group Content *</legend>
+    <td-code-editor #monaco
+      fxFlex="grow"
+      editorStyle="border:0;"
+      language="json"
+      [editorOptions]="{ fontSize: 12, automaticLayout: true }"
+      [theme]="options.theme === 'light' ? 'vs' : 'vs-dark'"
+      formControlName="variables"
+      (editorInitialized)="editorInitialized($event)"
+      (editorConfigurationChanged)="monacoEditorConfigChanged(monaco.theme)"
+    ></td-code-editor>
+  </fieldset>
 </div>

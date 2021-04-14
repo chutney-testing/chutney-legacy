@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TdDialogService } from '@covalent/core/dialogs';
@@ -8,9 +8,7 @@ import { pluck } from 'rxjs/operators';
 import { chutneyAnimations } from '@chutney/utils';
 import {
   GlobalVariableGroupsNamesGQL,
-  DeleteGlobalVariableGroupGQL,
-  SaveGlobalVariableGroupGQL,
-  RenameGlobalVariableGroupGQL,
+  DeleteGlobalVariableGroupGQL
 } from '@chutney/data-access';
 
 @Component({
@@ -36,9 +34,7 @@ export class VariablesComponent {
     private snackBar: MatSnackBar,
     private apollo: Apollo,
     private globalVariableGroupsNamesGQL: GlobalVariableGroupsNamesGQL,
-    private deleteGlobalVariableGroupGQL: DeleteGlobalVariableGroupGQL,
-    private saveGlobalVariableGroupGQL: SaveGlobalVariableGroupGQL,
-    private renameGlobalVariableGroupGQL: RenameGlobalVariableGroupGQL,
+    private deleteGlobalVariableGroupGQL: DeleteGlobalVariableGroupGQL
   ) {}
 
   ngOnInit(): void {
@@ -54,11 +50,15 @@ export class VariablesComponent {
       );
   }
 
-  editGlobalVariableGroup(groupNameToEdit: string) {
+  addGroup() {
+    this.router.navigate(['text', 'add'], { relativeTo: this.route });
+  }
+
+  editGroup(groupNameToEdit: string) {
     this.router.navigate(['text', encodeURIComponent(groupNameToEdit), 'edit'], { relativeTo: this.route });
   }
 
-  deleteGlobalVariableGroup(groupNameIndexToDelete: number) {
+  deleteGroup(groupNameToDelete: string) {
     this.dialogService
       .openConfirm({
         title: 'Confirm',
@@ -69,13 +69,13 @@ export class VariablesComponent {
       .afterClosed()
       .subscribe((accept: boolean) => {
         if (accept) {
-          const groupNameToDelete = this.globalVariableGroupsNames[groupNameIndexToDelete];
           this.deleteGlobalVariableGroupGQL
             .mutate(
               { groupName: groupNameToDelete },
               {
                 update: (store, result) => {
                   let groupNamesStored: Array<string> = this.groupNamesStored(store);
+                  const groupNameIndexToDelete = groupNamesStored.indexOf(groupNameToDelete);
                   groupNamesStored.splice(groupNameIndexToDelete, 1);
                   this.storeGroupNames(store, groupNamesStored);
                 }
@@ -83,7 +83,7 @@ export class VariablesComponent {
             )
             .subscribe(
               () => {
-                this.updateGroupNamesList();
+                this.globalVariableGroupsNames = this.groupNamesStored();
                 this.snackBar.open(`<${groupNameToDelete}> variables group has been deleted`);
               },
               (err) => {
@@ -92,86 +92,6 @@ export class VariablesComponent {
             );
         }
       });
-  }
-
-  addGlobalVariableGroup(groupNameToSave: string) {
-    if (!this.validateGroupNameInput(groupNameToSave)) { return; }
-
-    this.saveGlobalVariableGroupGQL
-      .mutate(
-        {
-          groupName: groupNameToSave,
-          input: { message: '' }
-        },
-        {
-          update: (store, result) => {
-            let groupNamesStored: Array<string> = this.groupNamesStored(store);
-            groupNamesStored.push(groupNameToSave);
-            groupNamesStored.sort();
-            this.storeGroupNames(store, groupNamesStored);
-          }
-        }
-      )
-      .subscribe(
-        () => {
-          this.updateGroupNamesList();
-          this.snackBar.open(`<${groupNameToSave}> variables group has been added`);
-        },
-        (err) => {
-          this.snackBar.open(err.message + ' : ' + err.networkError.result);
-        }
-      );
-  }
-
-  renameGlobalVariableGroup(renameEvent) {
-    const groupName = renameEvent.groupName;
-    const groupNameToSave = renameEvent.newGroupName;
-    if (!this.validateGroupNameInput(groupNameToSave)) { return; }
-
-    this.renameGlobalVariableGroupGQL
-      .mutate(
-        {
-          groupName: groupName,
-          input: { message: groupNameToSave }
-        },
-        {
-          update: (store, result) => {
-            let groupNamesStored: Array<string> = this.groupNamesStored(store);
-            groupNamesStored.splice(groupNamesStored.indexOf(groupName), 1, groupNameToSave);
-            groupNamesStored.sort();
-            this.storeGroupNames(store, groupNamesStored);
-          }
-        }
-      )
-      .subscribe(
-        () => {
-          this.snackBar.open(`<${groupName}> variables group has been renamed to <${groupNameToSave}>`);
-        },
-        (err) => {
-          this.snackBar.open(err.message + ' : ' + err.networkError.result);
-        }
-      );
-  }
-
-  private validateGroupNameInput(groupNameToValidate: string): boolean {
-    const groupNames = this.groupNamesStored();
-    if (groupNameToValidate.length == 0) {
-      this.snackBar.open('Group name cannot be empty');
-      return false;
-    }
-    if (groupNames.findIndex(this.groupNameExistsPredicate(groupNameToValidate)) > -1) {
-      this.snackBar.open('Group name already exists');
-      return false;
-    }
-    return true;
-  }
-
-  private groupNameExistsPredicate(groupNameToTest: string) {
-    return gn => gn.toUpperCase() === groupNameToTest.trim().toUpperCase();
-  }
-
-  private updateGroupNamesList() {
-    this.globalVariableGroupsNames = this.groupNamesStored();
   }
 
   private groupNamesStored(_store = null): Array<string> {

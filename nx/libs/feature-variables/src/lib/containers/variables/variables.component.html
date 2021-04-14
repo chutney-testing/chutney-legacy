@@ -7,7 +7,7 @@
       mat-fab
       class="mat-accent zi-2"
       aria-label="Add group"
-      (click)="groupNamesListComponent.initAddGroup()"
+      (click)="addGroup()"
       [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
     >
       <mat-icon>add</mat-icon>
@@ -15,10 +15,8 @@
     </chutney-page-header-action>
 </chutney-page-header>
 
-<chutney-variables-list #groupNamesListComponent
+<chutney-variables-list
   [groupNames]="globalVariableGroupsNames"
-  (edit)="editGlobalVariableGroup($event)"
-  (delete)="deleteGlobalVariableGroup($event)"
-  (add)="addGlobalVariableGroup($event)"
-  (rename)="renameGlobalVariableGroup($event)"
+  (edit)="editGroup($event)"
+  (delete)="deleteGroup($event)"
 ></chutney-variables-list>

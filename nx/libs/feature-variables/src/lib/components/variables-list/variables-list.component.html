@@ -2,41 +2,20 @@
 
   <ng-container matColumnDef="name">
     <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
-    <mat-cell *matCellDef="let element;let i = index">
-      <div *ngIf="!(element.length == 0 || renameGroupIndex == i)">{{element}}</div>
-      <mat-form-field *ngIf="element.length == 0 || renameGroupIndex == i" appearance="standard">
-        <input matInput
-               id="groupNameInput"
-               placeholder="group name"
-               value="{{ element }}"
-               required
-        />
-      </mat-form-field>
+    <mat-cell *matCellDef="let element" (click)="editGroup(element)">
+      {{element}}
     </mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="action">
-    <mat-header-cell *matHeaderCellDef fxFlex="150px">Action</mat-header-cell>
-    <mat-cell *matCellDef="let element;let i = index" fxFlex="150px">
-      <ng-container *ngIf="!(element.length == 0 || renameGroupIndex == i)">
-        <button (click)="initRenameGroup(i)" mat-icon-button>
-          <mat-icon class="material-icons-outlined">label</mat-icon>
-        </button>
-        <button (click)="editGroup(element)" mat-icon-button>
-          <mat-icon class="material-icons-outlined">edit</mat-icon>
-        </button>
-        <button (click)="deleteGroup(i)" mat-icon-button>
-          <mat-icon class="material-icons-outlined">delete</mat-icon>
-        </button>
-      </ng-container>
-      <ng-container *ngIf="element.length == 0 || renameGroupIndex == i">
-        <button (click)="save()" mat-icon-button>
-          <mat-icon class="material-icons-outlined">save</mat-icon>
-        </button>
-        <button (click)="cancel()" mat-icon-button>
-          <mat-icon class="material-icons-outlined">cancel</mat-icon>
-        </button>
-      </ng-container>
+    <mat-header-cell *matHeaderCellDef fxFlex="150px" class="justify-content-center">Actions</mat-header-cell>
+    <mat-cell *matCellDef="let element" fxFlex="150px" class="justify-content-center">
+      <button (click)="editGroup(element)" mat-icon-button>
+        <mat-icon class="material-icons-outlined">edit</mat-icon>
+      </button>
+      <button (click)="deleteGroup(element)" mat-icon-button>
+        <mat-icon class="material-icons-outlined">delete</mat-icon>
+      </button>
     </mat-cell>
   </ng-container>
 
