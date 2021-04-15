@@ -12,7 +12,7 @@ import static com.chutneytesting.glacio.domain.parser.GlacioParserHelper.loopOve
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
 import com.chutneytesting.glacio.domain.parser.ParsingContext;
 import java.util.Locale;
-import org.apache.groovy.util.Maps;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -56,7 +56,7 @@ public class GlacioContextPutParserTest {
         String dataTableString = "| var1 | val ue1 |\n| var 2 | value2 |";
         assertThat(
             sut.mapToStepDefinition(CONTEXT, buildDataTableStepWithText("add variables", dataTableString), NO_STRATEGY_DEF).inputs)
-            .containsExactly(entry("entries", Maps.of("var1", "val ue1", "var 2", "value2")));
+            .containsExactly(entry("entries", Map.of("var1", "val ue1", "var 2", "value2")));
     }
 
     @Test
@@ -64,7 +64,7 @@ public class GlacioContextPutParserTest {
         String subStepsString = "var1 value1\nvar2 value2";
         assertThat(
             sut.mapToStepDefinition(CONTEXT, buildSubStepsStepWithText("add variables", subStepsString), NO_STRATEGY_DEF).inputs)
-            .containsExactly(entry("entries", Maps.of("var1", "value1", "var2", "value2")));
+            .containsExactly(entry("entries", Map.of("var1", "value1", "var2", "value2")));
     }
 
     @Test
@@ -72,6 +72,6 @@ public class GlacioContextPutParserTest {
         String subStepsString = "var1 val ue1\n\"var 2\" value2";
         assertThat(
             sut.mapToStepDefinition(CONTEXT, buildSubStepsStepWithText("add variables", subStepsString), NO_STRATEGY_DEF).inputs)
-            .containsExactly(entry("entries", Maps.of("var1", "val ue1", "var 2", "value2")));
+            .containsExactly(entry("entries", Map.of("var1", "val ue1", "var 2", "value2")));
     }
 }

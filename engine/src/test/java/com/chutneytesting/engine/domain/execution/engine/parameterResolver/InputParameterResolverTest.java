@@ -8,9 +8,10 @@ import com.chutneytesting.task.domain.parameter.Parameter;
 import com.chutneytesting.task.spi.injectable.Input;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import org.apache.groovy.util.Maps;
+import java.util.Map;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 
@@ -69,7 +70,7 @@ public class InputParameterResolverTest {
     public void should_resolve_complex_input_type_with_avalaible_inputs() {
         java.lang.reflect.Parameter[] taskParameters = ComplexInputTask.class.getDeclaredConstructors()[0].getParameters();
         Parameter complexParameter = Parameter.fromJavaParameter(taskParameters[0]);
-        InputParameterResolver sut = new InputParameterResolver(Maps.of("simpleA", "value for A", "simpleB", "value for B"));
+        InputParameterResolver sut = new InputParameterResolver(Map.of("simpleA", "value for A", "simpleB", "value for B"));
 
         Object resolution = sut.resolve(complexParameter);
 
@@ -83,7 +84,9 @@ public class InputParameterResolverTest {
     public void should_resolve_to_null_when_simple_parameter_and_input_null() {
         java.lang.reflect.Parameter[] taskParameters = CanResolveTask.class.getDeclaredConstructors()[0].getParameters();
         Parameter parameter = Parameter.fromJavaParameter(taskParameters[0]);
-        InputParameterResolver sut = new InputParameterResolver(Maps.of("inputName", null));
+        Map<String, Object> mapWithNull = new HashMap<>();
+        mapWithNull.put("inputName", null);
+        InputParameterResolver sut = new InputParameterResolver(mapWithNull);
 
         assertThat(sut.resolve(parameter)).isNull();
     }
@@ -92,7 +95,7 @@ public class InputParameterResolverTest {
     public void should_resolve_to_input_when_simple_parameter() {
         java.lang.reflect.Parameter[] taskParameters = CanResolveTask.class.getDeclaredConstructors()[0].getParameters();
         Parameter parameter = Parameter.fromJavaParameter(taskParameters[0]);
-        InputParameterResolver sut = new InputParameterResolver(Maps.of("inputName", "input value"));
+        InputParameterResolver sut = new InputParameterResolver(Map.of("inputName", "input value"));
 
         assertThat(sut.resolve(parameter)).isEqualTo("input value");
     }
@@ -110,7 +113,7 @@ public class InputParameterResolverTest {
         List<? extends Object> list = Lists.list("a string", (short) 5, 5, 5L, Boolean.TRUE, 'r', 7.9F, 7.9D, (byte) 42);
 
         for (Object o : list) {
-            InputParameterResolver sut = new InputParameterResolver(Maps.of("inputName", o));
+            InputParameterResolver sut = new InputParameterResolver(Map.of("inputName", o));
             assertThat(sut.resolve(parameter)).isEqualTo(o);
         }
     }
@@ -119,10 +122,10 @@ public class InputParameterResolverTest {
     public void should_resolve_map_to_json_string_when_string_parameter() {
         java.lang.reflect.Parameter[] taskParameters = CanResolveTask.class.getDeclaredConstructors()[0].getParameters();
         Parameter parameter = Parameter.fromJavaParameter(taskParameters[0]);
-        InputParameterResolver sut = new InputParameterResolver(Maps.of("inputName",
-            Maps.of("k1", "v1",
-                "k2", Maps.of("k21", "v21"),
-                "k3", Lists.list("v3", Maps.of("k31", "v31")))
+        InputParameterResolver sut = new InputParameterResolver(Map.of("inputName",
+            Map.of("k1", "v1",
+                "k2", Map.of("k21", "v21"),
+                "k3", Lists.list("v3", Map.of("k31", "v31")))
         ));
 
         assertThat(sut.resolve(parameter)).isEqualTo("{\"k3\":[\"v3\",{\"k31\":\"v31\"}],\"k1\":\"v1\",\"k2\":{\"k21\":\"v21\"}}");
@@ -136,7 +139,7 @@ public class InputParameterResolverTest {
         List<? extends Object> list = Lists.list((short) 5, 5, 5L, Boolean.TRUE, 'r', 7.9F, 7.9D, (byte) 78);
 
         for (Object o : list) {
-            InputParameterResolver sut = new InputParameterResolver(Maps.of("inputName", o));
+            InputParameterResolver sut = new InputParameterResolver(Map.of("inputName", o));
             assertThat(sut.resolve(parameter)).isEqualTo(String.valueOf(o));
         }
     }
@@ -164,7 +167,7 @@ public class InputParameterResolverTest {
             Method valueOfMethod = valueOfLists.get(i);
             Parameter parameter = Parameter.fromJavaParameter(taskParameters[i]);
 
-            InputParameterResolver sut = new InputParameterResolver(Maps.of("inputName", inputValue));
+            InputParameterResolver sut = new InputParameterResolver(Map.of("inputName", inputValue));
             if (valueOfMethod.getDeclaringClass().equals(Character.class)) {
                 assertThat(sut.resolve(parameter)).isEqualTo(valueOfMethod.invoke(null, inputValue.charAt(0)));
             } else {
@@ -178,25 +181,25 @@ public class InputParameterResolverTest {
         java.lang.reflect.Parameter[] taskParameters = CanResolveTask.class.getDeclaredConstructors()[0].getParameters();
         Parameter parameter = Parameter.fromJavaParameter(taskParameters[0]);
 
-        InputParameterResolver sut = new InputParameterResolver(Maps.of("inputName", Lists.list(1, 2, 3)));
+        InputParameterResolver sut = new InputParameterResolver(Map.of("inputName", Lists.list(1, 2, 3)));
         assertThatThrownBy(() -> sut.resolve(parameter)).isExactlyInstanceOf(IllegalArgumentException.class);
 
-        InputParameterResolver sutA = new InputParameterResolver(Maps.of("inputName", new HashSet<>(Lists.list(1, 2, 3))));
+        InputParameterResolver sutA = new InputParameterResolver(Map.of("inputName", new HashSet<>(Lists.list(1, 2, 3))));
         assertThatThrownBy(() -> sutA.resolve(parameter)).isExactlyInstanceOf(IllegalArgumentException.class);
 
-        InputParameterResolver sutB = new InputParameterResolver(Maps.of("inputName", new ComplexType("", "")));
+        InputParameterResolver sutB = new InputParameterResolver(Map.of("inputName", new ComplexType("", "")));
         assertThatThrownBy(() -> sutB.resolve(parameter)).isExactlyInstanceOf(IllegalArgumentException.class);
 
         taskParameters = PrimitivesTask.class.getDeclaredConstructors()[0].getParameters();
         Parameter anotherParameter = Parameter.fromJavaParameter(taskParameters[0]);
 
-        InputParameterResolver sutC = new InputParameterResolver(Maps.of("inputName", Lists.list(1, 2, 3)));
+        InputParameterResolver sutC = new InputParameterResolver(Map.of("inputName", Lists.list(1, 2, 3)));
         assertThatThrownBy(() -> sutC.resolve(anotherParameter)).isExactlyInstanceOf(IllegalArgumentException.class);
 
-        InputParameterResolver sutD = new InputParameterResolver(Maps.of("inputName", new HashSet<>(Lists.list(1, 2, 3))));
+        InputParameterResolver sutD = new InputParameterResolver(Map.of("inputName", new HashSet<>(Lists.list(1, 2, 3))));
         assertThatThrownBy(() -> sutD.resolve(anotherParameter)).isExactlyInstanceOf(IllegalArgumentException.class);
 
-        InputParameterResolver sutE = new InputParameterResolver(Maps.of("inputName", new ComplexType("", "")));
+        InputParameterResolver sutE = new InputParameterResolver(Map.of("inputName", new ComplexType("", "")));
         assertThatThrownBy(() -> sutE.resolve(anotherParameter)).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
@@ -206,7 +209,7 @@ public class InputParameterResolverTest {
         java.lang.reflect.Parameter complexObjectWhitoutInputConstructorParameter = ComplexObjectConstructor.class.getConstructors()[0].getParameters()[0];
         Parameter parameter = Parameter.fromJavaParameter(complexObjectWhitoutInputConstructorParameter);
 
-        InputParameterResolver sut = new InputParameterResolver(Maps.of(
+        InputParameterResolver sut = new InputParameterResolver(Map.of(
             "simple-object-name", constructorParameter
         ));
         Object result = sut.resolve(parameter);

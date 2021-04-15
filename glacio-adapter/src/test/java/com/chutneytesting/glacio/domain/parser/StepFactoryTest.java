@@ -21,7 +21,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.groovy.util.Maps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -44,7 +43,7 @@ public class StepFactoryTest {
         defaultExecutableStepParser = mock(IParseExecutableStep.class);
         glacioExecutableStepParsersLanguages = mock(HashMap.class);
         sut = new StepFactory(
-            Maps.of(ENGLISH, Maps.of(EXECUTABLE_KEYWORD.DO, ENGLISH_EXECUTABLE_STEP_KEYWORD)),
+            Map.of(ENGLISH, Map.of(EXECUTABLE_KEYWORD.DO, ENGLISH_EXECUTABLE_STEP_KEYWORD)),
             glacioExecutableStepParsersLanguages,
             defaultExecutableStepParser);
     }
