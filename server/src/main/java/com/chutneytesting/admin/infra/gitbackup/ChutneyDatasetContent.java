@@ -18,7 +18,7 @@ public class ChutneyDatasetContent implements ChutneyContentProvider {
     private final DataSetRepository repository;
     private final ObjectMapper mapper;
 
-    public ChutneyDatasetContent(DataSetRepository repository, @Qualifier("objectMapper") ObjectMapper mapper) {
+    public ChutneyDatasetContent(DataSetRepository repository, @Qualifier("gitObjectMapper") ObjectMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }

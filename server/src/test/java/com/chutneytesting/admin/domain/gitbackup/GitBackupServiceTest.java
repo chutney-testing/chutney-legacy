@@ -53,7 +53,7 @@ class GitBackupServiceTest {
 
         // When & Then
         assertThatThrownBy(() -> sut.add(remote))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(UnreachableRemoteException.class);
     }
 
     @Test

@@ -62,7 +62,12 @@ class GitClientImplTest {
         RemoteRepository remote = new RemoteRepository("name", "uri", "branch", "privateKeyPath", "privateKeyPassphrase");
 
         // When
-        sut.clone(remote, temporaryFolder.resolve("created"));
+        try {
+            sut.clone(remote, temporaryFolder.resolve("created"));
+        }
+        catch (Exception e) {
+            // do nothing
+        }
 
         // Then
         assertThat(temporaryFolder.resolve("created").toFile().exists()).isTrue();

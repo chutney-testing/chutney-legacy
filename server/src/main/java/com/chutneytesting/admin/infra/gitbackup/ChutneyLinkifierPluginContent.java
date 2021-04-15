@@ -18,7 +18,7 @@ public class ChutneyLinkifierPluginContent implements ChutneyContentProvider {
     private final Linkifiers linkifiers;
     private final ObjectMapper mapper;
 
-    public ChutneyLinkifierPluginContent(Linkifiers linkifiers, @Qualifier("objectMapper") ObjectMapper mapper) {
+    public ChutneyLinkifierPluginContent(Linkifiers linkifiers, @Qualifier("gitObjectMapper") ObjectMapper mapper) {
         this.linkifiers = linkifiers;
         this.mapper = mapper;
     }

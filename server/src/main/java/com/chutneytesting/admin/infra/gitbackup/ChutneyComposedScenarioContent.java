@@ -20,7 +20,7 @@ public class ChutneyComposedScenarioContent implements ChutneyContentProvider {
     private final ObjectMapper mapper;
 
     public ChutneyComposedScenarioContent(ComposableTestCaseRepository repository,
-                                          @Qualifier("objectMapper") ObjectMapper mapper) {
+                                          @Qualifier("gitObjectMapper") ObjectMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }

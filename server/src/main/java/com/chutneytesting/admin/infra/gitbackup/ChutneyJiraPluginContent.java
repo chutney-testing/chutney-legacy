@@ -18,7 +18,7 @@ public class ChutneyJiraPluginContent implements ChutneyContentProvider {
     private final JiraRepository repository;
     private final ObjectMapper mapper;
 
-    public ChutneyJiraPluginContent(JiraRepository repository, @Qualifier("objectMapper") ObjectMapper mapper) {
+    public ChutneyJiraPluginContent(JiraRepository repository, @Qualifier("gitObjectMapper") ObjectMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }

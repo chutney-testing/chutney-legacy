@@ -18,7 +18,7 @@ public class ChutneyEnvironmentContent implements ChutneyContentProvider {
     private final EnvironmentApi environmentApi;
     private final ObjectMapper mapper;
 
-    public ChutneyEnvironmentContent(@Qualifier("environmentEmbeddedApplication") EnvironmentApi environmentApi, @Qualifier("objectMapper") ObjectMapper mapper) {
+    public ChutneyEnvironmentContent(@Qualifier("environmentEmbeddedApplication") EnvironmentApi environmentApi, @Qualifier("gitObjectMapper") ObjectMapper mapper) {
         this.environmentApi = environmentApi;
         this.mapper = mapper;
     }

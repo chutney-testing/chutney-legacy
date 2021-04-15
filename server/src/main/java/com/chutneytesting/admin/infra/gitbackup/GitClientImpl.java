@@ -43,7 +43,7 @@ public class GitClientImpl implements GitClient {
         try {
             Files.createDirectories(cloningPath);
         } catch (IOException e) {
-            throw new RuntimeException("Cannot clone repository: " + remote.url + ". " + e.getMessage(), e);
+            throw new RuntimeException("Cannot create repository for cloning : " + remote.url + ". " + e.getMessage(), e);
         }
 
         Git git = null;
