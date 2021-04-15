@@ -14,6 +14,8 @@ public interface GitClient {
 
     void push(RemoteRepository remote, Path workingDirectory);
 
+    void createBranch(RemoteRepository remote, Path workingDirectory);
+
     void updateRemote(RemoteRepository remote, Path workingDirectory);
 
     void initRepository(RemoteRepository remote, Path workingDirectory);

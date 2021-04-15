@@ -13,13 +13,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Optional;
-import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.LsRemoteCommand;
 import org.eclipse.jgit.api.MergeCommand;
 import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.api.errors.EmptyCommitException;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.RefNotAdvertisedException;
+import org.eclipse.jgit.api.errors.RefNotFoundException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
@@ -69,19 +70,31 @@ public class GitClientImpl implements GitClient {
         try (Repository repository = FileRepositoryBuilder.create(workingDirectory.resolve(".git").toFile());
              Git git = Git.wrap(repository)
         ) {
-            git.checkout()
-                .setName(remote.branch)
-                .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK)
-                .call();
-
             git.pull()
                 .setRemote(remote.name)
                 .setFastForward(MergeCommand.FastForwardMode.FF_ONLY)
                 .setTransportConfigCallback(getTransportConfigCallback(remote))
                 .call();
-
+        } catch (RefNotAdvertisedException e) {
+            createBranch(remote, workingDirectory);
         } catch (Exception e) {
             throw new RuntimeException("Cannot update repository " + remote.url + ". " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void createBranch(RemoteRepository remote, Path workingDirectory) {
+        try (Repository repository = FileRepositoryBuilder.create(workingDirectory.resolve(".git").toFile());
+             Git git = Git.wrap(repository)
+        ) {
+            git.branchCreate()
+                .setName(remote.branch)
+                .call();
+        } catch (RefNotFoundException e) {
+            // falling here might mean that the remote repo is new and empty
+            initRepository(remote, workingDirectory);
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot create branch " + remote.url + ". " + e.getMessage(), e);
         }
     }
 
@@ -159,7 +172,6 @@ public class GitClientImpl implements GitClient {
         ) {
             git.push()
                 .setRemote(remote.name)
-                .setForce(true)
                 .setTransportConfigCallback(getTransportConfigCallback(remote))
                 .call();
 

@@ -1,6 +1,5 @@
 package com.chutneytesting.admin.domain.gitbackup;
 
-import static com.chutneytesting.admin.domain.gitbackup.ChutneyContentFSWriter.cleanWorkingFolder;
 import static com.chutneytesting.admin.domain.gitbackup.ChutneyContentFSWriter.writeChutneyContent;
 
 import com.chutneytesting.tools.file.FileUtils;
@@ -56,14 +55,10 @@ public class GitBackupService {
     public void backup(RemoteRepository remote) {
         Path workingDirectory = Paths.get(gitRepositoryFolderPath).resolve(remote.name);
         gitClient.initRepository(remote, workingDirectory);
-
+        gitClient.update(remote, workingDirectory);
         writeChutneyContent(workingDirectory, contentProviders);
-
-        // commit
         gitClient.addAll(workingDirectory);
         gitClient.commit(workingDirectory, "Update Chutney content");
-
-        // push to remote
         gitClient.push(remote, workingDirectory);
     }
 
