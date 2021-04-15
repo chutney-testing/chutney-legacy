@@ -542,6 +542,32 @@
           }
         }
       }
+    },
+    "feature-variables": {
+      "projectType": "library",
+      "root": "libs/feature-variables",
+      "sourceRoot": "libs/feature-variables/src",
+      "prefix": "chutney",
+      "architect": {
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/feature-variables/tsconfig.lib.json",
+              "libs/feature-variables/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/feature-variables/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/feature-variables"],
+          "options": {
+            "jestConfig": "libs/feature-variables/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

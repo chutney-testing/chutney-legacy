@@ -34,24 +34,35 @@ public class GlobalVarController {
 
     @CrossOrigin(origins = "*")
     @PostMapping(path = "/{fileName}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void save(@PathVariable("fileName") String fileName, @RequestBody TextDto textContent) {
+    public Boolean save(@PathVariable("fileName") String fileName, @RequestBody TextDto textContent) {
         try {
             globalVarRepository.saveFile(fileName, JsonValue.readHjson(textContent.getMessage()).toString(Stringify.HJSON));
         } catch (Exception e) {
             throw new RuntimeException("Not valid hjson", e);
         }
+        return true;
     }
 
     @CrossOrigin(origins = "*")
     @DeleteMapping(path = "/{fileName}")
-    public void delete(@PathVariable("fileName") String fileName) {
+    public Boolean delete(@PathVariable("fileName") String fileName) {
         globalVarRepository.deleteFile(fileName);
+        return true;
     }
 
     @CrossOrigin(origins = "*")
     @GetMapping(path = "/{fileName}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public TextDto getFile(@PathVariable("fileName") String fileName) {
         return new TextDto(globalVarRepository.getFile(fileName));
+    }
+
+    @CrossOrigin(origins = "*")
+    @PostMapping(path = "/{fileName}/rename", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Boolean rename(@PathVariable("fileName") String fileName, @RequestBody TextDto newName) {
+        String content = globalVarRepository.getFile(fileName);
+        globalVarRepository.saveFile(newName.getMessage(), content);
+        globalVarRepository.deleteFile(fileName);
+        return true;
     }
 
     public static class TextDto {

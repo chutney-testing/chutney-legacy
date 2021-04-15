@@ -1,0 +1,22 @@
+<chutney-page-header
+  [title]="'Variables'"
+  [breadcrumbs]="breadcrumbs"
+  [showBackIcon]="false">
+  <chutney-page-header-action>
+    <button
+      mat-fab
+      class="mat-accent zi-2"
+      aria-label="Add group"
+      (click)="addGroup()"
+      [@animate]="{ value: '*', params: { delay: '300ms', scale: '0.2' } }"
+    >
+      <mat-icon>add</mat-icon>
+    </button>
+    </chutney-page-header-action>
+</chutney-page-header>
+
+<chutney-variables-list
+  [groupNames]="globalVariableGroupsNames"
+  (edit)="editGroup($event)"
+  (delete)="deleteGroup($event)"
+></chutney-variables-list>

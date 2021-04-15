@@ -1,0 +1,3 @@
+mutation deleteGlobalVariableGroup($groupName: ID!) {
+   deleteGlobalVariableGroup(groupName: $groupName) @rest(type: "Boolean", path: "api/ui/globalvar/v1/{args.groupName}", method: "DELETE")
+}

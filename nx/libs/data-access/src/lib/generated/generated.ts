@@ -125,6 +125,15 @@ export type ScenarioExecutionReport = {
   status?: Maybe<Scalars['String']>;
 };
 
+export type GlobalVariableGroupContent = {
+  __typename?: 'GlobalVariableGroupContent';
+  message?: Maybe<Scalars['String']>;
+};
+
+export type GlobalVariableGroupInput = {
+  message?: Maybe<Scalars['String']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   user?: Maybe<User>;
@@ -135,6 +144,8 @@ export type Query = {
   scenario?: Maybe<Scenario>;
   runScenarioHistory: ScenarioExecution;
   campaignExecutionReport: CampaignExecutionReport;
+  globalVariableGroupContent?: Maybe<GlobalVariableGroupContent>;
+  globalVariableGroupsNames?: Maybe<Array<Maybe<Scalars['ID']>>>;
 };
 
 
@@ -159,6 +170,11 @@ export type QueryCampaignExecutionReportArgs = {
   executionId: Scalars['ID'];
 };
 
+
+export type QueryGlobalVariableGroupContentArgs = {
+  groupName: Scalars['ID'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   login?: Maybe<User>;
@@ -173,6 +189,9 @@ export type Mutation = {
   stopCampaign?: Maybe<Scalars['Boolean']>;
   runCampaign: CampaignExecution;
   deleteCampaign?: Maybe<Scalars['Boolean']>;
+  deleteGlobalVariableGroup?: Maybe<Scalars['Boolean']>;
+  saveGlobalVariableGroup?: Maybe<Scalars['Boolean']>;
+  renameGlobalVariableGroup?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -243,6 +262,23 @@ export type MutationDeleteCampaignArgs = {
 };
 
 
+export type MutationDeleteGlobalVariableGroupArgs = {
+  groupName: Scalars['ID'];
+};
+
+
+export type MutationSaveGlobalVariableGroupArgs = {
+  groupName: Scalars['ID'];
+  input: GlobalVariableGroupInput;
+};
+
+
+export type MutationRenameGlobalVariableGroupArgs = {
+  groupName: Scalars['ID'];
+  input: GlobalVariableGroupInput;
+};
+
+
 
 export type CampaignExecutionReportQueryVariables = Exact<{
   campaignId: Scalars['ID'];
@@ -300,6 +336,16 @@ export type DeleteCampaignMutation = (
   & Pick<Mutation, 'deleteCampaign'>
 );
 
+export type DeleteGlobalVariableGroupMutationVariables = Exact<{
+  groupName: Scalars['ID'];
+}>;
+
+
+export type DeleteGlobalVariableGroupMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'deleteGlobalVariableGroup'>
+);
+
 export type DeleteScenarioMutationVariables = Exact<{
   input: Scalars['ID'];
 }>;
@@ -308,6 +354,27 @@ export type DeleteScenarioMutationVariables = Exact<{
 export type DeleteScenarioMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'deleteScenario'>
+);
+
+export type GlobalVariableGroupContentQueryVariables = Exact<{
+  groupName: Scalars['ID'];
+}>;
+
+
+export type GlobalVariableGroupContentQuery = (
+  { __typename?: 'Query' }
+  & { globalVariableGroupContent?: Maybe<(
+    { __typename?: 'GlobalVariableGroupContent' }
+    & Pick<GlobalVariableGroupContent, 'message'>
+  )> }
+);
+
+export type GlobalVariableGroupsNamesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GlobalVariableGroupsNamesQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'globalVariableGroupsNames'>
 );
 
 export type LoginMutationVariables = Exact<{
@@ -334,6 +401,17 @@ export type PauseScenarioMutationVariables = Exact<{
 export type PauseScenarioMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'pauseScenario'>
+);
+
+export type RenameGlobalVariableGroupMutationVariables = Exact<{
+  groupName: Scalars['ID'];
+  input: GlobalVariableGroupInput;
+}>;
+
+
+export type RenameGlobalVariableGroupMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'renameGlobalVariableGroup'>
 );
 
 export type ResumeScenarioMutationVariables = Exact<{
@@ -399,6 +477,17 @@ export type SaveCampaignMutation = (
     { __typename?: 'Campaign' }
     & Pick<Campaign, 'description' | 'id' | 'title'>
   )> }
+);
+
+export type SaveGlobalVariableGroupMutationVariables = Exact<{
+  groupName: Scalars['ID'];
+  input: GlobalVariableGroupInput;
+}>;
+
+
+export type SaveGlobalVariableGroupMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'saveGlobalVariableGroup'>
 );
 
 export type SaveScenarioMutationVariables = Exact<{
@@ -593,6 +682,22 @@ export const DeleteCampaignDocument = gql`
       super(apollo);
     }
   }
+export const DeleteGlobalVariableGroupDocument = gql`
+    mutation deleteGlobalVariableGroup($groupName: ID!) {
+  deleteGlobalVariableGroup(groupName: $groupName) @rest(type: "Boolean", path: "api/ui/globalvar/v1/{args.groupName}", method: "DELETE")
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class DeleteGlobalVariableGroupGQL extends Apollo.Mutation<DeleteGlobalVariableGroupMutation, DeleteGlobalVariableGroupMutationVariables> {
+    document = DeleteGlobalVariableGroupDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
 export const DeleteScenarioDocument = gql`
     mutation deleteScenario($input: ID!) {
   deleteScenario(input: $input) @rest(type: "ScenarioDeleted", path: "api/scenario/v2/{args.input}", method: "DELETE")
@@ -604,6 +709,40 @@ export const DeleteScenarioDocument = gql`
   })
   export class DeleteScenarioGQL extends Apollo.Mutation<DeleteScenarioMutation, DeleteScenarioMutationVariables> {
     document = DeleteScenarioDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GlobalVariableGroupContentDocument = gql`
+    query globalVariableGroupContent($groupName: ID!) {
+  globalVariableGroupContent(groupName: $groupName) @rest(type: "GlobalVariableGroupContent", path: "api/ui/globalvar/v1/{args.groupName}") {
+    message
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GlobalVariableGroupContentGQL extends Apollo.Query<GlobalVariableGroupContentQuery, GlobalVariableGroupContentQueryVariables> {
+    document = GlobalVariableGroupContentDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GlobalVariableGroupsNamesDocument = gql`
+    query globalVariableGroupsNames {
+  globalVariableGroupsNames @rest(type: "[String]", path: "api/ui/globalvar/v1")
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GlobalVariableGroupsNamesGQL extends Apollo.Query<GlobalVariableGroupsNamesQuery, GlobalVariableGroupsNamesQueryVariables> {
+    document = GlobalVariableGroupsNamesDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
@@ -642,6 +781,22 @@ export const PauseScenarioDocument = gql`
   })
   export class PauseScenarioGQL extends Apollo.Mutation<PauseScenarioMutation, PauseScenarioMutationVariables> {
     document = PauseScenarioDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const RenameGlobalVariableGroupDocument = gql`
+    mutation renameGlobalVariableGroup($groupName: ID!, $input: GlobalVariableGroupInput!) {
+  renameGlobalVariableGroup(groupName: $groupName, input: $input) @rest(type: "Boolean", path: "api/ui/globalvar/v1/{args.groupName}/rename", method: "POST")
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class RenameGlobalVariableGroupGQL extends Apollo.Mutation<RenameGlobalVariableGroupMutation, RenameGlobalVariableGroupMutationVariables> {
+    document = RenameGlobalVariableGroupDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
@@ -741,6 +896,22 @@ export const SaveCampaignDocument = gql`
   })
   export class SaveCampaignGQL extends Apollo.Mutation<SaveCampaignMutation, SaveCampaignMutationVariables> {
     document = SaveCampaignDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const SaveGlobalVariableGroupDocument = gql`
+    mutation saveGlobalVariableGroup($groupName: ID!, $input: GlobalVariableGroupInput!) {
+  saveGlobalVariableGroup(groupName: $groupName, input: $input) @rest(type: "Boolean", path: "api/ui/globalvar/v1/{args.groupName}", method: "POST")
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class SaveGlobalVariableGroupGQL extends Apollo.Mutation<SaveGlobalVariableGroupMutation, SaveGlobalVariableGroupMutationVariables> {
+    document = SaveGlobalVariableGroupDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

@@ -95,6 +95,14 @@ type ScenarioExecutionReport {
   status: String
 }
 
+type GlobalVariableGroupContent {
+  message: String
+}
+
+input GlobalVariableGroupInput {
+  message: String
+}
+
 type Query {
   user: User
   scenarios: [Scenario]
@@ -104,6 +112,8 @@ type Query {
   scenario(scenarioId: ID!): Scenario
   runScenarioHistory(scenarioId: ID!, executionId: ID!): ScenarioExecution!
   campaignExecutionReport(campaignId: ID!, executionId: ID!): CampaignExecutionReport!
+  globalVariableGroupContent(groupName: ID!): GlobalVariableGroupContent
+  globalVariableGroupsNames: [ID]
 }
 
 type Mutation {
@@ -119,6 +129,9 @@ type Mutation {
   stopCampaign(campaignId: ID!, executionId: ID!): Boolean
   runCampaign(campaignId: ID!, environment:String ) : CampaignExecution!
   deleteCampaign(input: ID!): Boolean
+  deleteGlobalVariableGroup(groupName: ID!): Boolean
+  saveGlobalVariableGroup(groupName: ID!, input: GlobalVariableGroupInput!): Boolean
+  renameGlobalVariableGroup(groupName: ID!, input: GlobalVariableGroupInput!): Boolean
 }
 
 scalar RestFunction

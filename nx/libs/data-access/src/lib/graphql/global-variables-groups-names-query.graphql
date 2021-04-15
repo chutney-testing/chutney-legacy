@@ -1,0 +1,3 @@
+query globalVariableGroupsNames {
+  globalVariableGroupsNames @rest(type: "[String]", path: "api/ui/globalvar/v1")
+}

@@ -1,0 +1,29 @@
+<mat-table [dataSource]="dtSource" matSort class="mat-elevation-z8">
+
+  <ng-container matColumnDef="name">
+    <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+    <mat-cell *matCellDef="let element" (click)="editGroup(element)">
+      {{element}}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="action">
+    <mat-header-cell *matHeaderCellDef fxFlex="150px" class="justify-content-center">Actions</mat-header-cell>
+    <mat-cell *matCellDef="let element" fxFlex="150px" class="justify-content-center">
+      <button (click)="editGroup(element)" mat-icon-button>
+        <mat-icon class="material-icons-outlined">edit</mat-icon>
+      </button>
+      <button (click)="deleteGroup(element)" mat-icon-button>
+        <mat-icon class="material-icons-outlined">delete</mat-icon>
+      </button>
+    </mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="['name', 'action']"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: ['name', 'action']"></mat-row>
+
+  <div *matNoDataRow fxLayoutAlign="center center" style="min-height: 48px">
+    No data
+  </div>
+
+</mat-table>

@@ -1,0 +1,3 @@
+mutation renameGlobalVariableGroup($groupName: ID!, $input: GlobalVariableGroupInput!) {
+   renameGlobalVariableGroup(groupName: $groupName, input: $input) @rest(type: "Boolean", path: "api/ui/globalvar/v1/{args.groupName}/rename", method: "POST")
+}
