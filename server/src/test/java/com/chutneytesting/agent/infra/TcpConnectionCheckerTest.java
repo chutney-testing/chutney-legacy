@@ -8,8 +8,10 @@ import com.chutneytesting.engine.domain.delegation.ConnectionChecker;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled
 public class TcpConnectionCheckerTest {
 
     int connectionTimeout = 300;
