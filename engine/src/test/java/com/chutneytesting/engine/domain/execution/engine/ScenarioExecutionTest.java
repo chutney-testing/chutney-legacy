@@ -2,11 +2,13 @@ package com.chutneytesting.engine.domain.execution.engine;
 
 import static com.chutneytesting.engine.domain.execution.RxBus.getInstance;
 import static com.chutneytesting.tools.WaitUtils.awaitDuring;
+import static com.google.common.collect.Lists.newArrayList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
+import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.TestTaskTemplateLoader;
 import com.chutneytesting.engine.domain.execution.action.PauseExecutionAction;
 import com.chutneytesting.engine.domain.execution.action.ResumeExecutionAction;
@@ -76,7 +78,8 @@ public class ScenarioExecutionTest {
 
         getInstance().register(BeginStepExecutionEvent.class, events::add);
 
-        scenarioExecution.executeFinallyActions(new ScenarioContextImpl(), fa -> new Step(
+        Step rootStep = createRootStep();
+        scenarioExecution.executeFinallyActions(rootStep, new ScenarioContextImpl(), fa -> new Step(
             new StepDataEvaluator(new SpelFunctions()),
             new FinallyActionMapper().toStepDefinition(fa),
             Optional.empty(),
@@ -115,9 +118,11 @@ public class ScenarioExecutionTest {
         List<BeginStepExecutionEvent> events = new ArrayList<>();
         getInstance().register(BeginStepExecutionEvent.class, events::add);
 
+        Step rootStep = createRootStep();
+
         // When
         getInstance().post(new StopExecutionAction(scenarioExecution.executionId));
-        scenarioExecution.executeFinallyActions(new ScenarioContextImpl(), fa -> new Step(
+        scenarioExecution.executeFinallyActions(rootStep, new ScenarioContextImpl(), fa -> new Step(
             new StepDataEvaluator(new SpelFunctions()),
             new FinallyActionMapper().toStepDefinition(fa),
             Optional.empty(),
@@ -128,6 +133,40 @@ public class ScenarioExecutionTest {
         // Then
         Step finalStep = events.get(0).step;
         assertThat(finalStep.type()).isEqualTo("final");
+    }
+
+    @Test
+    public void should_add_finally_actions_to_root_step() {
+        ScenarioExecution scenarioExecution = ScenarioExecution.createScenarioExecution();
+
+        TaskTemplateRegistry taskTemplateRegistry = TestTaskTemplateLoader.buildRegistry();
+
+        FinallyAction finallyAction = Builder.forAction("final").build();
+        scenarioExecution.registerFinallyAction(finallyAction);
+
+        List<BeginStepExecutionEvent> events = new ArrayList<>();
+        getInstance().register(BeginStepExecutionEvent.class, events::add);
+
+        Step rootStep = createRootStep();
+
+        // When
+        getInstance().post(new StopExecutionAction(scenarioExecution.executionId));
+        scenarioExecution.executeFinallyActions(rootStep, new ScenarioContextImpl(), fa -> new Step(
+            new StepDataEvaluator(new SpelFunctions()),
+            new FinallyActionMapper().toStepDefinition(fa),
+            Optional.empty(),
+            new DefaultStepExecutor(taskTemplateRegistry),
+            Collections.emptyList()
+        ));
+
+        // Then
+        assertThat(rootStep.subSteps().size()).isEqualTo(1);
+        assertThat(rootStep.subSteps().get(0).definition().name).isEqualTo("Finally action generated");
+    }
+
+    private Step createRootStep() {
+        StepDefinition stepDefinition = new StepDefinition("rootStep", null, "type", null, null, null, null, null, null);
+        return new Step(null, stepDefinition, Optional.empty(), null, newArrayList());
     }
 
 }

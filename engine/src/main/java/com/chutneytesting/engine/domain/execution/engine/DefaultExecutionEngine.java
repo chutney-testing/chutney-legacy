@@ -15,7 +15,6 @@ import com.chutneytesting.engine.domain.execution.strategies.StepExecutionStrate
 import com.chutneytesting.engine.domain.execution.strategies.StepExecutionStrategy;
 import com.chutneytesting.engine.domain.report.Reporter;
 import com.chutneytesting.task.spi.injectable.Target;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -72,6 +71,7 @@ public class DefaultExecutionEngine implements ExecutionEngine {
 
             try {
                 execution.executeFinallyActions(
+                    rootStep.get(),
                     scenarioContext,
                     finallyAction -> buildStep(new FinallyActionMapper().toStepDefinition(finallyAction))
                 );
@@ -92,7 +92,7 @@ public class DefaultExecutionEngine implements ExecutionEngine {
         LOGGER.debug("Build : " + definition);
         final Optional<Target> target = definition.getTarget();
         final StepExecutor executor = delegationService.findExecutor(target);
-        final List<Step> steps = Collections.unmodifiableList(definition.steps.stream().map(this::buildStep).collect(Collectors.toList()));
+        final List<Step> steps = definition.steps.stream().map(this::buildStep).collect(Collectors.toList());
 
         return new Step(dataEvaluator, definition, target, executor, steps);
     }

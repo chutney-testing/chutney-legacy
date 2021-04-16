@@ -1,5 +1,7 @@
 package com.chutneytesting.engine.domain.report;
 
+import static com.chutneytesting.engine.domain.execution.report.Status.RUNNING;
+import static com.chutneytesting.engine.domain.execution.report.Status.SUCCESS;
 import static com.chutneytesting.tools.WaitUtils.awaitDuring;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -58,9 +60,9 @@ public class ReporterTest {
         subStep1.beginExecution(scenarioExecution);
         subSubStep1.beginExecution(scenarioExecution);
         report = sut.generateReport(step);
-        assertThat(report.status).isEqualTo(Status.RUNNING);
-        assertThat(report.steps.get(0).status).isEqualTo(Status.RUNNING);
-        assertThat(report.steps.get(0).steps.get(0).status).isEqualTo(Status.RUNNING);
+        assertThat(report.status).isEqualTo(RUNNING);
+        assertThat(report.steps.get(0).status).isEqualTo(RUNNING);
+        assertThat(report.steps.get(0).steps.get(0).status).isEqualTo(RUNNING);
         assertThat(report.steps.get(0).steps.get(1).status).isEqualTo(Status.NOT_EXECUTED);
         assertThat(report.steps.get(1).status).isEqualTo(Status.NOT_EXECUTED);
 
@@ -74,27 +76,27 @@ public class ReporterTest {
 
         subSubStep1.success();
         report = sut.generateReport(step);
-        assertThat(report.status).isEqualTo(Status.RUNNING);
-        assertThat(report.steps.get(0).status).isEqualTo(Status.RUNNING);
-        assertThat(report.steps.get(0).steps.get(0).status).isEqualTo(Status.SUCCESS);
+        assertThat(report.status).isEqualTo(RUNNING);
+        assertThat(report.steps.get(0).status).isEqualTo(RUNNING);
+        assertThat(report.steps.get(0).steps.get(0).status).isEqualTo(SUCCESS);
         assertThat(report.steps.get(0).steps.get(1).status).isEqualTo(Status.NOT_EXECUTED);
         assertThat(report.steps.get(1).status).isEqualTo(Status.NOT_EXECUTED);
 
         subSubStep2.beginExecution(scenarioExecution);
         report = sut.generateReport(step);
-        assertThat(report.status).isEqualTo(Status.RUNNING);
-        assertThat(report.steps.get(0).status).isEqualTo(Status.RUNNING);
-        assertThat(report.steps.get(0).steps.get(0).status).isEqualTo(Status.SUCCESS);
-        assertThat(report.steps.get(0).steps.get(1).status).isEqualTo(Status.RUNNING);
+        assertThat(report.status).isEqualTo(RUNNING);
+        assertThat(report.steps.get(0).status).isEqualTo(RUNNING);
+        assertThat(report.steps.get(0).steps.get(0).status).isEqualTo(SUCCESS);
+        assertThat(report.steps.get(0).steps.get(1).status).isEqualTo(RUNNING);
         assertThat(report.steps.get(1).status).isEqualTo(Status.NOT_EXECUTED);
 
         subSubStep2.success();
         subStep1.endExecution(scenarioExecution);
         report = sut.generateReport(step);
-        assertThat(report.status).isEqualTo(Status.RUNNING);
-        assertThat(report.steps.get(0).status).isEqualTo(Status.SUCCESS);
-        assertThat(report.steps.get(0).steps.get(0).status).isEqualTo(Status.SUCCESS);
-        assertThat(report.steps.get(0).steps.get(1).status).isEqualTo(Status.SUCCESS);
+        assertThat(report.status).isEqualTo(RUNNING);
+        assertThat(report.steps.get(0).status).isEqualTo(SUCCESS);
+        assertThat(report.steps.get(0).steps.get(0).status).isEqualTo(SUCCESS);
+        assertThat(report.steps.get(0).steps.get(1).status).isEqualTo(SUCCESS);
         assertThat(report.steps.get(1).status).isEqualTo(Status.NOT_EXECUTED);
     }
 
@@ -136,6 +138,36 @@ public class ReporterTest {
         scenarioExecutionReportObservable.assertValueCount(0);
 
         scenarioExecutionReportObservable.dispose();
+    }
+
+    @Test
+    public void should_calculate_root_step_only_when_scenario_end_else_running() {
+        Step subStep1 = step.subSteps().get(0);
+        Step subStep11 = step.subSteps().get(0).subSteps().get(0);
+        Step subStep12 = step.subSteps().get(0).subSteps().get(1);
+        Step subStep2 = step.subSteps().get(1);
+
+        sut.createPublisher(scenarioExecution.executionId, step);
+        TestObserver<Status> observer = sut.subscribeOnExecution(scenarioExecution.executionId).map(report -> report.status).test();
+        RxBus.getInstance().post(new StartScenarioExecutionEvent(scenarioExecution, step));//1
+
+        step.beginExecution(scenarioExecution);//2
+        subStep1.beginExecution(scenarioExecution);//3
+        subStep11.beginExecution(scenarioExecution);//4
+        subStep11.success();
+        subStep11.endExecution(scenarioExecution);//5
+        subStep12.beginExecution(scenarioExecution);//6
+        subStep12.success();
+        subStep12.endExecution(scenarioExecution);//7
+        subStep1.endExecution(scenarioExecution);//8
+        subStep2.beginExecution(scenarioExecution);//9
+        subStep2.success();
+        subStep2.endExecution(scenarioExecution);//10
+        step.endExecution(scenarioExecution);//11
+
+        RxBus.getInstance().post(new EndScenarioExecutionEvent(scenarioExecution, step));//12
+        observer.assertResult(RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, SUCCESS);
+        assertThat(step.status()).isEqualTo(SUCCESS);
     }
 
     private Step buildFakeScenario() {

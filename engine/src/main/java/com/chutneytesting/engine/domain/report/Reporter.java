@@ -1,6 +1,8 @@
 package com.chutneytesting.engine.domain.report;
 
 
+import static com.chutneytesting.engine.domain.execution.report.Status.RUNNING;
+
 import com.chutneytesting.engine.domain.execution.RxBus;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.event.BeginStepExecutionEvent;
@@ -9,6 +11,7 @@ import com.chutneytesting.engine.domain.execution.event.EndStepExecutionEvent;
 import com.chutneytesting.engine.domain.execution.event.Event;
 import com.chutneytesting.engine.domain.execution.event.PauseStepExecutionEvent;
 import com.chutneytesting.engine.domain.execution.event.StartScenarioExecutionEvent;
+import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReportBuilder;
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
@@ -72,15 +75,42 @@ public class Reporter {
         doIfPublisherExists(event.executionId(), (observer) -> observer.onNext(generateReport(event.executionId())));
     }
 
+    private void publishLastReport(Event event) {
+        LOGGER.trace("Publish report for execution {}", event.executionId());
+        doIfPublisherExists(event.executionId(), (observer) -> observer.onNext(generateLastReport(event.executionId())));
+    }
+
     private void publishReportAndCompletePublisher(Event event) {
         doIfPublisherExists(event.executionId(), (observer) -> {
-                publishReport(event);
+                publishLastReport(event);
                 completePublisher(event.executionId(), observer);
             });
     }
 
     private StepExecutionReport generateReport(long executionId) {
+        return generateRootStepReport(RUNNING, rootSteps.get(executionId));
+    }
+
+    private StepExecutionReport generateLastReport(long executionId) {
         return generateReport(rootSteps.get(executionId));
+    }
+
+    StepExecutionReport generateRootStepReport(Status status, Step step) {
+        Step.StepContextImpl stepContext = step.stepContext();
+        return new StepExecutionReportBuilder().setName(step.definition().name)
+            .setDuration(step.duration().toMillis())
+            .setStartDate(step.startDate())
+            .setStatus(status)
+            .setInformation(step.informations())
+            .setErrors(step.errors())
+            .setSteps(step.subSteps().stream().map(this::generateReport).collect(Collectors.toList()))
+            .setEvaluatedInputs(stepContext.getEvaluatedInputs())
+            .setStepResults(stepContext.getStepOutputs())
+            .setScenarioContext(stepContext.getScenarioContext())
+            .setType(step.type())
+            .setTarget(step.target())
+            .setStrategy(guardNullStrategy(step.strategy()))
+            .createStepExecutionReport();
     }
 
     StepExecutionReport generateReport(Step step) {

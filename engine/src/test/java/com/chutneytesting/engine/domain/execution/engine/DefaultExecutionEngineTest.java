@@ -80,7 +80,7 @@ public class DefaultExecutionEngineTest {
         reporter.subscribeOnExecution(mockScenarioExecution.executionId).blockingLast();
 
         // Then
-        verify(mockScenarioExecution, times(1)).executeFinallyActions(any(), any());
+        verify(mockScenarioExecution, times(1)).executeFinallyActions(any(),any(), any());
     }
 
     @Test
@@ -133,6 +133,6 @@ public class DefaultExecutionEngineTest {
         reporter.subscribeOnExecution(executionId).blockingLast();
 
         // Then
-        verify(mockScenarioExecution, times(1)).executeFinallyActions(any(), any());
+        verify(mockScenarioExecution, times(1)).executeFinallyActions(any(),any(), any());
     }
 }
