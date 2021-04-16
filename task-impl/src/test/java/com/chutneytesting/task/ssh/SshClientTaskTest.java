@@ -22,7 +22,6 @@ import org.apache.sshd.common.util.OsUtils;
 import org.apache.sshd.server.SshServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class SshClientTaskTest {

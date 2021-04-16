@@ -8,7 +8,6 @@ import com.chutneytesting.task.domain.parameter.ParameterResolver;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
-import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
@@ -133,9 +132,6 @@ public abstract class TestTaskTemplateFactory {
 
     public static class SuccessTask implements Task {
 
-        public SuccessTask() {
-        }
-
         @Override
         public TaskExecutionResult execute() {
             return TaskExecutionResult.ok();
@@ -143,9 +139,6 @@ public abstract class TestTaskTemplateFactory {
     }
 
     public static class FailTask implements Task {
-
-        public FailTask() {
-        }
 
         @Override
         public TaskExecutionResult execute() {
