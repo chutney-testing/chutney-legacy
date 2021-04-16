@@ -6,7 +6,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.chutneytesting.admin.infra.gitbackup.ChutneyGlobalVarContent;
-import com.chutneytesting.tools.file.FileUtils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,23 +22,6 @@ class ChutneyContentFSWriterTest {
 
     @TempDir
     static Path temporaryFolder;
-
-    @Test
-    void should_clean_and_delete_all_folders_except_git() {
-        FileUtils.initFolder(temporaryFolder.resolve(".git"));
-        FileUtils.initFolder(temporaryFolder.resolve("to").resolve("delete"));
-        FileUtils.initFolder(temporaryFolder.resolve("or").resolve("not").resolve(".git").resolve("preserve"));
-
-        ChutneyContentFSWriter.cleanWorkingFolder(temporaryFolder);
-
-        assertThat(temporaryFolder.resolve(".git").toFile().exists()).isTrue();
-
-        assertThat(temporaryFolder.resolve("to").toFile().exists()).isFalse();
-        assertThat(temporaryFolder.resolve("to").resolve("delete").toFile().exists()).isFalse();
-
-        assertThat(temporaryFolder.resolve("or").resolve("not").resolve(".git").toFile().exists()).isTrue();
-        assertThat(temporaryFolder.resolve("or").resolve("not").resolve(".git").resolve("preserve").toFile().exists()).isTrue();
-    }
 
     @Test
     void should_write_file_in_category_then_provider_name_folder() throws IOException {

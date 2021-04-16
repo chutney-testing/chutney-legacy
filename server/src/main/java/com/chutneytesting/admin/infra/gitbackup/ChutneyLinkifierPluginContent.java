@@ -35,22 +35,18 @@ public class ChutneyLinkifierPluginContent implements ChutneyContentProvider {
 
     @Override
     public Stream<ChutneyContent> getContent() {
-        String content = linkifiers.getAll().toString();
-
         try {
-            content = mapper.writeValueAsString(linkifiers.getAll());
+            return Stream.of(
+                ChutneyContent.builder()
+                    .withProvider(provider())
+                    .withCategory(category())
+                    .withName("linkifiers")
+                    .withFormat("json")
+                    .withContent(mapper.writeValueAsString(linkifiers.getAll()))
+                    .build()
+            );
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e.getMessage(), e);
         }
-
-        return Stream.of(ChutneyContent.builder()
-            .withProvider(provider())
-            .withCategory(category())
-            .withName("linkifiers")
-            .withFormat("json")
-            .withContent(content)
-            .build()
-        );
-
     }
 }
