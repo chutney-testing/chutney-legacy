@@ -3,15 +3,13 @@ package com.chutneytesting.agent.infra;
 import static com.chutneytesting.agent.infra.HttpAgentClientTest.agentInfo;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.google.common.base.Stopwatch;
 import com.chutneytesting.engine.domain.delegation.ConnectionChecker;
+import com.google.common.base.Stopwatch;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.concurrent.TimeUnit;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@Disabled
 public class TcpConnectionCheckerTest {
 
     int connectionTimeout = 300;
