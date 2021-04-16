@@ -35,6 +35,9 @@ jobs:
       with:
         path: '**/node_modules'
         key: node_module_cache
+    - name: Add the current IP address, long hostname and short hostname record to /etc/hosts file
+      run: |
+       echo -e "$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)\t$(hostname -f) $(hostname -s)" | sudo tee -a /etc/hosts
     - name: Build with Maven
       env:
         BUILD_ENV: 'github-actions'

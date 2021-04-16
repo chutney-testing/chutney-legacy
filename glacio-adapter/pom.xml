@@ -22,6 +22,10 @@
             <groupId>com.chutneytesting</groupId>
             <artifactId>environment</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.chutneytesting</groupId>
+            <artifactId>task-impl</artifactId>
+        </dependency>
 
         <!-- External -->
         <dependency>

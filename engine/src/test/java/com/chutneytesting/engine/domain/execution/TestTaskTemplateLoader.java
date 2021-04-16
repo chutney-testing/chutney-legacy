@@ -1,14 +1,13 @@
 package com.chutneytesting.engine.domain.execution;
 
+import com.chutneytesting.task.TestTaskTemplateFactory.FailTask;
+import com.chutneytesting.task.TestTaskTemplateFactory.SuccessTask;
 import com.chutneytesting.task.domain.DefaultTaskTemplateRegistry;
 import com.chutneytesting.task.domain.TaskTemplate;
 import com.chutneytesting.task.domain.TaskTemplateLoader;
 import com.chutneytesting.task.domain.TaskTemplateLoaders;
 import com.chutneytesting.task.domain.TaskTemplateParserV2;
 import com.chutneytesting.task.domain.TaskTemplateRegistry;
-import com.chutneytesting.task.context.ContextPutTask;
-import com.chutneytesting.task.context.FailTask;
-import com.chutneytesting.task.context.SuccessTask;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,7 +17,6 @@ import java.util.List;
  * <ul>
  * <li>{@link SuccessTask}</li>
  * <li>{@link FailTask}</li>
- * <li>{@link ContextPutTask}</li>
  * </ul>
  */
 public class TestTaskTemplateLoader implements TaskTemplateLoader {
@@ -27,7 +25,7 @@ public class TestTaskTemplateLoader implements TaskTemplateLoader {
 
     public TestTaskTemplateLoader() {
         this.taskTemplates.add(new TaskTemplateParserV2().parse(SuccessTask.class).result());
-        this.taskTemplates.add(new TaskTemplateParserV2().parse(ContextPutTask.class).result());
+        this.taskTemplates.add(new TaskTemplateParserV2().parse(FailTask.class).result());
     }
 
     @Override

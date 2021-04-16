@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.groovy.util.Maps;
+import java.util.Map;
 import org.assertj.core.util.Files;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -90,9 +90,9 @@ public class EngineIntegrationTest {
         assertThat(report.steps).hasSize(3);
         assertThat(report.steps.get(0).steps.get(0).type).isEqualTo("success");
         assertThat(report.steps.get(1).steps.get(0).type).isEqualTo("context-put");
-        assertThat(report.steps.get(1).steps.get(0).context.evaluatedInputs).containsExactly(entry("entries", Maps.of("var1", "value1 split", "var 2", "value2")));
+        assertThat(report.steps.get(1).steps.get(0).context.evaluatedInputs).containsExactly(entry("entries", Map.of("var1", "value1 split", "var 2", "value2")));
         assertThat(report.steps.get(2).steps.get(0).type).isEqualTo("context-put");
-        assertThat(report.steps.get(2).steps.get(0).context.evaluatedInputs).containsExactly(entry("entries", Maps.of("var1", "value1 split", "var 2", "value2")));
+        assertThat(report.steps.get(2).steps.get(0).context.evaluatedInputs).containsExactly(entry("entries", Map.of("var1", "value1 split", "var 2", "value2")));
 
         report = reports.get(1); // Default parser
         assertThat(report.status).isEqualTo(SUCCESS);
@@ -100,7 +100,7 @@ public class EngineIntegrationTest {
         assertThat(report.steps.get(0).steps.get(0).type).isEqualTo("success");
         assertThat(report.steps.get(1).steps.get(0).type).isEqualTo("context-put");
         assertThat(report.steps.get(1).steps.get(0).information.get(2)).isEqualTo("Validation [assertion] : OK");
-        assertThat(report.steps.get(1).steps.get(0).context.evaluatedInputs).containsExactly(entry("entries", Maps.of("var1", "value1 split", "var 2", "value2")));
+        assertThat(report.steps.get(1).steps.get(0).context.evaluatedInputs).containsExactly(entry("entries", Map.of("var1", "value1 split", "var 2", "value2")));
     }
 
     @Test
@@ -119,7 +119,7 @@ public class EngineIntegrationTest {
             .containsOnly(
                 entry("uri", "/orgs/chutney-testing"),
                 entry("timeout", "2000 s"),
-                entry("headers", Maps.of("X-Extra-Header", "An extra header"))
+                entry("headers", Map.of("X-Extra-Header", "An extra header"))
             );
         assertThat(report.steps.get(0).context.stepResults.get("statusOk")).isEqualTo(Boolean.TRUE);
         assertThat(report.steps.get(0).context.stepResults.get("jsonBody")).asString().isNotBlank();

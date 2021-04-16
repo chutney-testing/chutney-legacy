@@ -8,11 +8,13 @@ import com.chutneytesting.task.domain.parameter.ParameterResolver;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
+import com.chutneytesting.task.spi.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public abstract class TestTaskTemplateFactory {
     private TestTaskTemplateFactory() {
@@ -124,6 +126,41 @@ public abstract class TestTaskTemplateFactory {
 
         @Override
         public TaskExecutionResult execute() {
+            return TaskExecutionResult.ok();
+        }
+    }
+
+    public static class SuccessTask implements Task {
+
+        @Override
+        public TaskExecutionResult execute() {
+            return TaskExecutionResult.ok();
+        }
+    }
+
+    public static class FailTask implements Task {
+
+        @Override
+        public TaskExecutionResult execute() {
+            return TaskExecutionResult.ko();
+        }
+    }
+
+    public static class SleepTask implements Task {
+
+        private final Duration duration;
+
+        public SleepTask(@Input("duration") String duration) {
+            this.duration = Duration.parse(duration);
+        }
+
+        @Override
+        public TaskExecutionResult execute() {
+            try {
+                TimeUnit.MILLISECONDS.sleep(duration.toMilliseconds());
+            } catch (InterruptedException e) {
+                return TaskExecutionResult.ko();
+            }
             return TaskExecutionResult.ok();
         }
     }

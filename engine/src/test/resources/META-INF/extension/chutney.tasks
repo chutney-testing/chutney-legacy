@@ -1,0 +1,3 @@
+com.chutneytesting.task.TestTaskTemplateFactory$SuccessTask
+com.chutneytesting.task.TestTaskTemplateFactory$FailTask
+com.chutneytesting.task.TestTaskTemplateFactory$SleepTask

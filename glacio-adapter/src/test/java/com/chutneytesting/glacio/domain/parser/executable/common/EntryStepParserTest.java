@@ -12,8 +12,8 @@ import com.chutneytesting.glacio.domain.parser.ParsingContext;
 import com.github.fridujo.glacio.model.DataTable;
 import com.github.fridujo.glacio.model.DocString;
 import com.github.fridujo.glacio.model.Step;
+import java.util.Map;
 import java.util.Optional;
-import org.apache.groovy.util.Maps;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -55,7 +55,7 @@ public class EntryStepParserTest {
         when(step.getText()).thenReturn(stepText);
         when(step.getArgument()).thenReturn(Optional.of(stepDatatable));
         assertThat(sut.parseGlacioStep(parsingContext, step))
-            .isEqualTo(entry(stepText, Maps.of("a11", "a12", "a21", "a22", "a31", "a32")));
+            .isEqualTo(entry(stepText, Map.of("a11", "a12", "a21", "a22", "a31", "a32")));
     }
 
     @ParameterizedTest
@@ -65,7 +65,7 @@ public class EntryStepParserTest {
         when(step.getText()).thenReturn(stepText);
         when(step.getArgument()).thenReturn(Optional.of(stepDatatable));
         assertThat(sut.parseGlacioStep(parsingContext, step))
-            .isEqualTo(entry(stepText, Maps.of("a11", asList("a12", "a13"), "a21", asList("a22", "a23"), "a31", asList("a32", "a33"))));
+            .isEqualTo(entry(stepText, Map.of("a11", asList("a12", "a13"), "a21", asList("a22", "a23"), "a31", asList("a32", "a33"))));
     }
 
     private static Object[] stepTextParameters() {
