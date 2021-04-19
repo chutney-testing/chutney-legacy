@@ -7,27 +7,31 @@ import java.util.Map;
 import java.util.Optional;
 
 public class FinallyAction {
+    private final String originalTask;
     private final String actionIdentifier;
     private final Optional<Target> target;
     private final Map<String, Object> inputs;
 
-    private FinallyAction(String actionIdentifier, Optional<Target> target, Map<String, Object> inputs) {
+    private FinallyAction(String originalTask, String actionIdentifier, Optional<Target> target, Map<String, Object> inputs) {
+        this.originalTask = originalTask;
         this.actionIdentifier = actionIdentifier;
         this.target = target;
         this.inputs = inputs;
     }
 
     public static class Builder {
+        private final String orginalTask;
         private final String identifier;
         private Optional<Target> target = Optional.empty();
         private final Map<String, Object> inputs = new HashMap<>();
 
-        private Builder(String identifier) {
+        private Builder(String identifier, String orginalTask) {
             this.identifier = identifier;
+            this.orginalTask = orginalTask;
         }
 
-        public static Builder forAction(String identifier) {
-            return new Builder(identifier);
+        public static Builder forAction(String identifier, String name) {
+            return new Builder(identifier, name);
         }
 
         public Builder withTarget(Target target) {
@@ -41,8 +45,12 @@ public class FinallyAction {
         }
 
         public FinallyAction build() {
-            return new FinallyAction(identifier, target, Collections.unmodifiableMap(inputs));
+            return new FinallyAction(orginalTask, identifier, target, Collections.unmodifiableMap(inputs));
         }
+    }
+
+    public String getOriginalTask() {
+        return originalTask;
     }
 
     public String actionIdentifier() {

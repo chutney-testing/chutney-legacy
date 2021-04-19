@@ -67,9 +67,9 @@ public class ScenarioExecutionTest {
         entries1.put("key1", "value1");
         HashMap<Object, Object> entries2 = Maps.newHashMap();
         entries2.put("key2", "value2");
-        FinallyAction first = Builder.forAction("context-put").withInput("entries", entries1).build();
-        FinallyAction second = Builder.forAction("failure").build();
-        FinallyAction third = Builder.forAction("context-put").withInput("entries", entries2).build();
+        FinallyAction first = Builder.forAction("context-put", "first").withInput("entries", entries1).build();
+        FinallyAction second = Builder.forAction("failure", "second").build();
+        FinallyAction third = Builder.forAction("context-put", "third").withInput("entries", entries2).build();
         scenarioExecution.registerFinallyAction(first);
         scenarioExecution.registerFinallyAction(second);
         scenarioExecution.registerFinallyAction(third);
@@ -112,7 +112,7 @@ public class ScenarioExecutionTest {
 
         TaskTemplateRegistry taskTemplateRegistry = TestTaskTemplateLoader.buildRegistry();
 
-        FinallyAction finallyAction = Builder.forAction("final").build();
+        FinallyAction finallyAction = Builder.forAction("final", "name").build();
         scenarioExecution.registerFinallyAction(finallyAction);
 
         List<BeginStepExecutionEvent> events = new ArrayList<>();
@@ -141,7 +141,7 @@ public class ScenarioExecutionTest {
 
         TaskTemplateRegistry taskTemplateRegistry = TestTaskTemplateLoader.buildRegistry();
 
-        FinallyAction finallyAction = Builder.forAction("final").build();
+        FinallyAction finallyAction = Builder.forAction("final", "name").build();
         scenarioExecution.registerFinallyAction(finallyAction);
 
         List<BeginStepExecutionEvent> events = new ArrayList<>();
@@ -161,7 +161,7 @@ public class ScenarioExecutionTest {
 
         // Then
         assertThat(rootStep.subSteps().size()).isEqualTo(1);
-        assertThat(rootStep.subSteps().get(0).definition().name).isEqualTo("Finally action generated");
+        assertThat(rootStep.subSteps().get(0).definition().name).isEqualTo("Finally action generated for name");
     }
 
     private Step createRootStep() {

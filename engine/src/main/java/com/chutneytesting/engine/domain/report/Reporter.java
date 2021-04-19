@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +73,7 @@ public class Reporter {
 
     private void publishReport(Event event) {
         LOGGER.trace("Publish report for execution {}", event.executionId());
-        doIfPublisherExists(event.executionId(), (observer) -> observer.onNext(generateReport(event.executionId())));
+        doIfPublisherExists(event.executionId(), (observer) -> observer.onNext(generateRunningReport(event.executionId())));
     }
 
     private void publishLastReport(Event event) {
@@ -87,41 +88,23 @@ public class Reporter {
             });
     }
 
-    private StepExecutionReport generateReport(long executionId) {
-        return generateRootStepReport(RUNNING, rootSteps.get(executionId));
+    private StepExecutionReport generateRunningReport(long executionId) {
+        return generateReport(rootSteps.get(executionId), s -> RUNNING);
     }
 
     private StepExecutionReport generateLastReport(long executionId) {
-        return generateReport(rootSteps.get(executionId));
+        return generateReport(rootSteps.get(executionId), s -> s.status());
     }
 
-    StepExecutionReport generateRootStepReport(Status status, Step step) {
+    StepExecutionReport generateReport(Step step, Function<Step, Status> statusSupplier) {
         Step.StepContextImpl stepContext = step.stepContext();
         return new StepExecutionReportBuilder().setName(step.definition().name)
             .setDuration(step.duration().toMillis())
             .setStartDate(step.startDate())
-            .setStatus(status)
+            .setStatus(statusSupplier.apply(step))
             .setInformation(step.informations())
             .setErrors(step.errors())
-            .setSteps(step.subSteps().stream().map(this::generateReport).collect(Collectors.toList()))
-            .setEvaluatedInputs(stepContext.getEvaluatedInputs())
-            .setStepResults(stepContext.getStepOutputs())
-            .setScenarioContext(stepContext.getScenarioContext())
-            .setType(step.type())
-            .setTarget(step.target())
-            .setStrategy(guardNullStrategy(step.strategy()))
-            .createStepExecutionReport();
-    }
-
-    StepExecutionReport generateReport(Step step) {
-        Step.StepContextImpl stepContext = step.stepContext();
-        return new StepExecutionReportBuilder().setName(step.definition().name)
-            .setDuration(step.duration().toMillis())
-            .setStartDate(step.startDate())
-            .setStatus(step.status())
-            .setInformation(step.informations())
-            .setErrors(step.errors())
-            .setSteps(step.subSteps().stream().map(this::generateReport).collect(Collectors.toList()))
+            .setSteps(step.subSteps().stream().map(subStep -> generateReport(subStep, s -> s.status())).collect(Collectors.toList()))
             .setEvaluatedInputs(stepContext.getEvaluatedInputs())
             .setStepResults(stepContext.getStepOutputs())
             .setScenarioContext(stepContext.getScenarioContext())

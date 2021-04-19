@@ -68,7 +68,7 @@ public class QpidServerStartTask implements Task {
     private void createQuitFinallyAction(SystemLauncher systemLauncher) {
         finallyActionRegistry.registerFinallyAction(
             FinallyAction.Builder
-                .forAction("qpid-server-stop")
+                .forAction("qpid-server-stop", QpidServerStartTask.class.getSimpleName())
                 .withInput("qpid-launcher", systemLauncher)
                 .build()
         );

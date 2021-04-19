@@ -8,7 +8,7 @@ class FinallyActionMapper {
 
     StepDefinition toStepDefinition(FinallyAction finallyAction) {
         return new StepDefinition(
-            "Finally action generated",
+            "Finally action generated for " + finallyAction.getOriginalTask(),
             finallyAction.target()
                 .orElse(TargetImpl.NONE),
             finallyAction.actionIdentifier(),
