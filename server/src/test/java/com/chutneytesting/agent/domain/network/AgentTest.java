@@ -9,7 +9,6 @@ import com.chutneytesting.agent.domain.explore.AgentId;
 import com.chutneytesting.agent.domain.explore.ExploreResult;
 import com.chutneytesting.agent.domain.explore.ImmutableExploreResult;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.chutneytesting.environment.domain.Target;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -129,7 +128,7 @@ public class AgentTest {
         ExploreResult exploreResult = ImmutableExploreResult.of(
             // Agent -> Agent links
             ImmutableExploreResult.Links.of(
-                Arrays.asList(
+                Collections.singletonList(
                     ImmutableExploreResult.Link.of(AgentId.of("A"), AgentId.of("B"))
                 )
             ),

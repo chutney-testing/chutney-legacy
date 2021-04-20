@@ -70,6 +70,7 @@ export class LinkifierComponent implements OnInit {
         this.linkifierService.remove(linkifier).subscribe(
             (res) => {
                 this.notify('Linkifier removed', false);
+                this.loadLinkifiers();
             },
             (error) => {
                 this.notify(error.error, true);

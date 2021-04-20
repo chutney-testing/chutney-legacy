@@ -25,7 +25,7 @@ class ExecutionSummaryRowMapper implements RowMapper<ExecutionSummary> {
             .testCaseTitle(rs.getString("TEST_CASE_TITLE"))
             .environment((rs.getString("ENVIRONMENT")))
             .datasetId(ofNullable(rs.getString("DATASET_ID")))
-            .datasetVersion(ofNullable(rs.getString("DATASET_VERSION")).map(Integer::new))
+            .datasetVersion(ofNullable(rs.getString("DATASET_VERSION")).map(Integer::valueOf))
             .user((rs.getString("USER_ID")))
             .build();
     }

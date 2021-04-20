@@ -87,7 +87,7 @@ public class SchedulingCampaignFileRepositoryTest {
                 "}";
 
         // When
-        sut.removeById(2l);
+        sut.removeById(2L);
 
         // Then
         actualContent = FileUtils.readContent(SCHEDULING_CAMPAIGN_FILE);

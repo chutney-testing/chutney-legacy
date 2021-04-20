@@ -50,7 +50,7 @@ public class CampaignExecutionReportMapper implements ResultSetExtractor<List<Ca
             String userId = resultset.getString("USER_ID");
             Long campaignId = resultset.getLong("CAMPAIGN_ID");
             String dataSetId = resultset.getString("EXECUTION_DATASET_ID");
-            Integer dataSetVersion = ofNullable(resultset.getString("EXECUTION_DATASET_VERSION")).map(Integer::new).orElse(null);
+            Integer dataSetVersion = ofNullable(resultset.getString("EXECUTION_DATASET_VERSION")).map(Integer::valueOf).orElse(null);
 
             String scenarioName = repository.findById(scenarioId).metadata().title();
             try {
@@ -109,7 +109,7 @@ public class CampaignExecutionReportMapper implements ResultSetExtractor<List<Ca
             .testCaseTitle(scenarioName)
             .environment(rs.getString("ENVIRONMENT"))
             .datasetId(ofNullable(rs.getString("DATASET_ID")))
-            .datasetVersion(ofNullable(rs.getString("DATASET_VERSION")).map(Integer::new))
+            .datasetVersion(ofNullable(rs.getString("DATASET_VERSION")).map(Integer::valueOf))
             .user(rs.getString("USER_ID"))
             .build();
     }

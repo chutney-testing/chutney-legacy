@@ -267,8 +267,8 @@ public class DatabaseCampaignRepository implements CampaignRepository {
             String scheduleTimeAsString = rs.getString("SCHEDULE_TIME");
             String environment = rs.getString("ENVIRONMENT");
             String datasetId = rs.getString("DATASET_ID");
-            Boolean parallelRun = rs.getBoolean("PARALLEL_RUN");
-            Boolean retryAuto = rs.getBoolean("RETRY_AUTO");
+            boolean parallelRun = rs.getBoolean("PARALLEL_RUN");
+            boolean retryAuto = rs.getBoolean("RETRY_AUTO");
             LocalTime localTime = scheduleTimeAsString != null ? LocalTime.parse(scheduleTimeAsString, Campaign.formatter) : null;
             return new Campaign(id, title, description, null, null, localTime, environment, parallelRun, retryAuto, datasetId);
         }

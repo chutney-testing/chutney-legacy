@@ -10,9 +10,9 @@ import com.chutneytesting.agent.domain.explore.ExploreResult;
 import com.chutneytesting.agent.domain.explore.ImmutableExploreResult;
 import com.chutneytesting.agent.domain.explore.ImmutableExploreResult.Link;
 import com.chutneytesting.agent.domain.explore.ImmutableExploreResult.Links;
-import com.chutneytesting.environment.domain.Target;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 import java.util.function.Predicate;
 import org.assertj.core.api.Assertions;
@@ -87,7 +87,7 @@ public class AgentGraphTest {
         );
         ExploreResult exploreResult = ImmutableExploreResult.of(
             Links.of(
-                Arrays.asList(
+                Collections.singletonList(
                     Link.of(AgentId.of("A"), AgentId.of("B"))
                 )), Links.of(
                 Arrays.asList(
@@ -133,7 +133,7 @@ public class AgentGraphTest {
     }
 
     @SafeVarargs
-    private final <T> boolean containsAll(Collection<T> items, Predicate<T>... tests) {
+    private <T> boolean containsAll(Collection<T> items, Predicate<T>... tests) {
         for (Predicate<T> test : tests)
             if (items.stream().noneMatch(test))
                 return false;

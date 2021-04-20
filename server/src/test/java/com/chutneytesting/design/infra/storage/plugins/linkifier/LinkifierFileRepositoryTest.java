@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.chutneytesting.design.domain.plugins.linkifier.Linkifier;
 import com.chutneytesting.design.domain.plugins.linkifier.Linkifiers;
 import com.chutneytesting.tools.file.FileUtils;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -19,7 +18,7 @@ public class LinkifierFileRepositoryTest {
     private static Path LINKIFIER_FILE;
 
     @BeforeAll
-    public static void setUp(@TempDir Path temporaryFolder) throws IOException {
+    public static void setUp(@TempDir Path temporaryFolder) {
         String tmpConfDir = temporaryFolder.toFile().getAbsolutePath();
         System.setProperty("configuration-folder", tmpConfDir);
         System.setProperty("persistence-repository-folder", tmpConfDir);

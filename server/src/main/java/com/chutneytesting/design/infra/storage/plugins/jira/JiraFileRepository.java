@@ -140,8 +140,7 @@ public class JiraFileRepository implements JiraRepository {
         try {
             byte[] bytes = Files.readAllBytes(resolvedFilePath);
             try {
-                Map<String, String> map = objectMapper.readValue(bytes, Map.class);
-                return map;
+                return objectMapper.readValue(bytes, Map.class);
             } catch (IOException e) {
                 throw new UnsupportedOperationException("Cannot deserialize configuration file: " + resolvedFilePath, e);
             }

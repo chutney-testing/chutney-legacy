@@ -65,7 +65,6 @@ public class LiteEngineBootstrapRx implements Runnable {
             String jsonContent = JsonValue.readHjson(new String(bytes)).toString();
             return objectMapper.readValue(jsonContent, ImmutableScenarioContent.class);
         } catch (IOException e) {
-            e.printStackTrace();
             throw new CommandLine.ParameterException(new CommandLine(this), "Cannot read file at path [" + filePath.toPath() + "]");
         }
     }

@@ -62,9 +62,7 @@ public class AgentNetworkMapperJsonFileMapperTest {
         assertThat(secondAgent.host).isEqualTo("host2");
         assertThat(secondAgent.port).isEqualTo(42);
         assertThat(secondAgent.reachableAgentNames).isEmpty();
-        assertThat(secondAgent.reachableTargetIds).hasOnlyOneElementSatisfying(target1 ->
-            assertThat(target1.name).isEqualTo("targetName")
-        );
+        assertThat(secondAgent.reachableTargetIds).singleElement().hasFieldOrPropertyWithValue("name", "targetName");
     }
 
     @Test

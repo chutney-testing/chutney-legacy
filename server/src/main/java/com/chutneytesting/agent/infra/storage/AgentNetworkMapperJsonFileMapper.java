@@ -11,7 +11,6 @@ import com.chutneytesting.agent.domain.network.ImmutableNetworkDescription;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
 import com.chutneytesting.environment.domain.Environment;
-import com.chutneytesting.environment.domain.Target;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

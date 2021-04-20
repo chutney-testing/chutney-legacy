@@ -14,12 +14,12 @@ public interface GlobalvarRepository extends Backupable {
     /**
      * @return Retrieve raw json
      */
-    String getFile(String fileName);
+    String getFileContent(String fileName);
 
     /**
-     * @param json to persist
+     * @param content to persist
      */
-    void saveFile(String fileName, String json);
+    void saveFile(String fileName, String content);
 
     void deleteFile(String fileName);
 

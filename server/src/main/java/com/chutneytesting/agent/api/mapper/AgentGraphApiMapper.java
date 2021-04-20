@@ -6,7 +6,6 @@ import com.chutneytesting.agent.api.dto.TargetIdEntity;
 import com.chutneytesting.agent.domain.TargetId;
 import com.chutneytesting.agent.domain.network.Agent;
 import com.chutneytesting.agent.domain.network.AgentGraph;
-import com.chutneytesting.environment.domain.Target;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;

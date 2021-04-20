@@ -88,7 +88,7 @@ public class CampaignControllerTest {
         CampaignDto actual = insertCampaign(SAMPLE_CAMPAIGN);
 
         // Then
-        assertThat(actual).isEqualToIgnoringGivenFields(SAMPLE_CAMPAIGN, "id");
+        assertThat(actual).usingRecursiveComparison().ignoringFields("id").isEqualTo(SAMPLE_CAMPAIGN);
         assertThat(actual.getId()).isNotNull();
     }
 
@@ -103,7 +103,7 @@ public class CampaignControllerTest {
         execute(MockMvcRequestBuilders.get(urlTemplate + existingCampaign.getId()))
             .andExpect(MockMvcResultMatchers.status().isOk());
         CampaignDto receivedCampaign = resultExtractor.campaign();
-        assertThat(receivedCampaign).isEqualToComparingFieldByField(existingCampaign);
+        assertThat(receivedCampaign).usingRecursiveComparison().isEqualTo(existingCampaign);
     }
 
     @Test
@@ -126,7 +126,7 @@ public class CampaignControllerTest {
         // Then
         assertThat(receivedCampaign.getTitle()).isEqualTo(updatedTitle);
         assertThat(receivedCampaign.getDatasetId()).isEmpty();
-        assertThat(receivedCampaign).isEqualToIgnoringGivenFields(existingCampaign, "title", "datasetId");
+        assertThat(receivedCampaign).usingRecursiveComparison().ignoringFields("title", "datasetId").isEqualTo(existingCampaign);
     }
 
     @Test
@@ -148,7 +148,7 @@ public class CampaignControllerTest {
         // Then
         assertThat(receivedCampaign.getScenarioIds()).isEqualTo(updatedScenarioIds);
         assertThat(receivedCampaign.getDatasetId()).isEmpty();
-        assertThat(receivedCampaign).isEqualToIgnoringGivenFields(existingCampaign, "scenarioIds", "datasetId");
+        assertThat(receivedCampaign).usingRecursiveComparison().ignoringFields("scenarioIds", "datasetId").isEqualTo(existingCampaign);
     }
 
     @Test

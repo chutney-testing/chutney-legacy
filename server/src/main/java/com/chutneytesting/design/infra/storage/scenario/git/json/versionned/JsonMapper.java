@@ -43,7 +43,6 @@ public class JsonMapper<T> {
         return read(reader, null);
     }
 
-    @SuppressWarnings("resource")
     public T read(Reader reader, Function<String, T> recoveringReader) {
         try (Scanner sc = new Scanner(reader)) {
             String content = sc.useDelimiter("\\Z").next();
