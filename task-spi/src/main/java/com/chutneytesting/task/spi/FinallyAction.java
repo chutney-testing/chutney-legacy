@@ -12,6 +12,14 @@ public class FinallyAction {
     private final Optional<Target> target;
     private final Map<String, Object> inputs;
 
+    @Deprecated
+    private FinallyAction(String actionIdentifier, Optional<Target> target, Map<String, Object> inputs) {
+        this.originalTask = "";
+        this.actionIdentifier = actionIdentifier;
+        this.target = target;
+        this.inputs = inputs;
+    }
+
     private FinallyAction(String originalTask, String actionIdentifier, Optional<Target> target, Map<String, Object> inputs) {
         this.originalTask = originalTask;
         this.actionIdentifier = actionIdentifier;
@@ -24,6 +32,12 @@ public class FinallyAction {
         private final String identifier;
         private Optional<Target> target = Optional.empty();
         private final Map<String, Object> inputs = new HashMap<>();
+
+        @Deprecated
+        private Builder(String identifier) {
+            this.identifier = identifier;
+            this.orginalTask = "";
+        }
 
         private Builder(String identifier, String orginalTask) {
             this.identifier = identifier;
