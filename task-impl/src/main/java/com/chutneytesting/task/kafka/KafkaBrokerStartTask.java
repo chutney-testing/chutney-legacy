@@ -68,7 +68,7 @@ public class KafkaBrokerStartTask implements Task {
     private void createQuitFinallyAction(EmbeddedKafkaBroker broker) {
         finallyActionRegistry.registerFinallyAction(
             FinallyAction.Builder
-                .forAction("kafka-broker-stop")
+                .forAction("kafka-broker-stop", KafkaBrokerStartTask.class.getSimpleName())
                 .withInput("broker", broker)
                 .build()
         );

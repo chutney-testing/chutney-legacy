@@ -69,7 +69,7 @@ public class SeleniumRemoteDriverInitTask implements Task {
     private void createQuitFinallyAction(WebDriver webDriver) {
         finallyActionRegistry.registerFinallyAction(
             FinallyAction.Builder
-                .forAction("selenium-quit")
+                .forAction("selenium-quit", SeleniumRemoteDriverInitTask.class.getSimpleName())
                 .withInput("web-driver", webDriver)
                 .build()
         );

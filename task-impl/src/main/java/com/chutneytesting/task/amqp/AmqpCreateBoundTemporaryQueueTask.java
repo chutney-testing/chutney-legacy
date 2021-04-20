@@ -1,8 +1,5 @@
 package com.chutneytesting.task.amqp;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
 import com.chutneytesting.task.spi.FinallyAction;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
@@ -10,6 +7,9 @@ import com.chutneytesting.task.spi.injectable.FinallyActionRegistry;
 import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Optional;
@@ -61,7 +61,7 @@ public class AmqpCreateBoundTemporaryQueueTask implements Task {
         logger.info("Created AMQP binding " + exchangeName + " (with " + this.routingKey + ") -> " + queueName);
 
         finallyActionRegistry.registerFinallyAction(FinallyAction.Builder
-            .forAction("amqp-unbind-queue")
+            .forAction("amqp-unbind-queue", AmqpCreateBoundTemporaryQueueTask.class.getSimpleName())
             .withTarget(target)
             .withInput("queue-name", queueName)
             .withInput("exchange-name", exchangeName)
@@ -74,7 +74,7 @@ public class AmqpCreateBoundTemporaryQueueTask implements Task {
         channel.queueDeclare(queueName, true, false, false, null);
         logger.info("Created AMQP Queue with name: " + queueName);
         finallyActionRegistry.registerFinallyAction(FinallyAction.Builder
-            .forAction("amqp-delete-queue")
+            .forAction("amqp-delete-queue", AmqpCreateBoundTemporaryQueueTask.class.getSimpleName())
             .withTarget(target)
             .withInput("queue-name", queueName)
             .build());

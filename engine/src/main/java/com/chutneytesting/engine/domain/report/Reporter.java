@@ -1,6 +1,8 @@
 package com.chutneytesting.engine.domain.report;
 
 
+import static com.chutneytesting.engine.domain.execution.report.Status.RUNNING;
+
 import com.chutneytesting.engine.domain.execution.RxBus;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.event.BeginStepExecutionEvent;
@@ -9,6 +11,7 @@ import com.chutneytesting.engine.domain.execution.event.EndStepExecutionEvent;
 import com.chutneytesting.engine.domain.execution.event.Event;
 import com.chutneytesting.engine.domain.execution.event.PauseStepExecutionEvent;
 import com.chutneytesting.engine.domain.execution.event.StartScenarioExecutionEvent;
+import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReportBuilder;
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
@@ -22,6 +25,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,29 +73,38 @@ public class Reporter {
 
     private void publishReport(Event event) {
         LOGGER.trace("Publish report for execution {}", event.executionId());
-        doIfPublisherExists(event.executionId(), (observer) -> observer.onNext(generateReport(event.executionId())));
+        doIfPublisherExists(event.executionId(), (observer) -> observer.onNext(generateRunningReport(event.executionId())));
+    }
+
+    private void publishLastReport(Event event) {
+        LOGGER.trace("Publish report for execution {}", event.executionId());
+        doIfPublisherExists(event.executionId(), (observer) -> observer.onNext(generateLastReport(event.executionId())));
     }
 
     private void publishReportAndCompletePublisher(Event event) {
         doIfPublisherExists(event.executionId(), (observer) -> {
-                publishReport(event);
+                publishLastReport(event);
                 completePublisher(event.executionId(), observer);
             });
     }
 
-    private StepExecutionReport generateReport(long executionId) {
-        return generateReport(rootSteps.get(executionId));
+    private StepExecutionReport generateRunningReport(long executionId) {
+        return generateReport(rootSteps.get(executionId), s -> RUNNING);
     }
 
-    StepExecutionReport generateReport(Step step) {
+    private StepExecutionReport generateLastReport(long executionId) {
+        return generateReport(rootSteps.get(executionId), s -> s.status());
+    }
+
+    StepExecutionReport generateReport(Step step, Function<Step, Status> statusSupplier) {
         Step.StepContextImpl stepContext = step.stepContext();
         return new StepExecutionReportBuilder().setName(step.definition().name)
             .setDuration(step.duration().toMillis())
             .setStartDate(step.startDate())
-            .setStatus(step.status())
+            .setStatus(statusSupplier.apply(step))
             .setInformation(step.informations())
             .setErrors(step.errors())
-            .setSteps(step.subSteps().stream().map(this::generateReport).collect(Collectors.toList()))
+            .setSteps(step.subSteps().stream().map(subStep -> generateReport(subStep, s -> s.status())).collect(Collectors.toList()))
             .setEvaluatedInputs(stepContext.getEvaluatedInputs())
             .setStepResults(stepContext.getStepOutputs())
             .setScenarioContext(stepContext.getScenarioContext())

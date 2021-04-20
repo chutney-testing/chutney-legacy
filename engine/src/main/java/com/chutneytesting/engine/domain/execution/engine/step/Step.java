@@ -258,6 +258,10 @@ public class Step {
                 + " - Exception: " + e.getClass() + " with message: \"" + e.getMessage() + "\""));
     }
 
+    public void addStepExecution(Step step) {
+        this.steps.add(step);
+    }
+
     public static class StepContextImpl implements StepContext {
 
         private final ScenarioContext scenarioContext;

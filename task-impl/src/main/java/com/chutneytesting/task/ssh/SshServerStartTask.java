@@ -109,7 +109,7 @@ public class SshServerStartTask implements Task {
     private void createQuitFinallyAction(SshServerMock sshServer) {
         finallyActionRegistry.registerFinallyAction(
             FinallyAction.Builder
-                .forAction("ssh-server-stop")
+                .forAction("ssh-server-stop", SshServerStartTask.class.getSimpleName())
                 .withInput("ssh-server", sshServer)
                 .build()
         );

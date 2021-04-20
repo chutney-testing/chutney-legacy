@@ -22,7 +22,7 @@ public class FinallyActionMapperTest {
             .build();
         Target taskTarget = domainTarget;
         FinallyAction finallyAction = FinallyAction.Builder
-            .forAction("test-action")
+            .forAction("test-action", "task name")
             .withTarget(taskTarget)
             .withInput("test-input", "test")
             .build();
@@ -30,6 +30,7 @@ public class FinallyActionMapperTest {
         StepDefinition stepDefinition = mapper.toStepDefinition(finallyAction);
 
         assertThat(stepDefinition.type).isEqualTo("test-action");
+        assertThat(stepDefinition.name).isEqualTo("Finally action generated for task name");
         assertThat(stepDefinition.inputs).containsOnly(entry("test-input", "test"));
         assertThat(stepDefinition.getTarget()).isPresent();
         Target targetCopy = stepDefinition.getTarget().get();

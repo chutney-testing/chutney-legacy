@@ -60,7 +60,7 @@ public class ScenarioExecution {
      * Make a copy of registered {@link FinallyAction} to avoid infinite loop
      * with {@link FinallyAction} registering {@link FinallyAction}.
      */
-    public void executeFinallyActions(ScenarioContext scenarioContext, StepBuilder stepBuilder) {
+    public void executeFinallyActions(Step rootStep, ScenarioContext scenarioContext, StepBuilder stepBuilder) {
         this.stop = false; // In case of a stopped scenario, we should set it to false in order to execute finally actions
         List<FinallyAction> finallyActionsSnapshot = new ArrayList<>(this.finallyActions);
         Collections.reverse(finallyActionsSnapshot);
@@ -68,6 +68,8 @@ public class ScenarioExecution {
             try {
                 Step step = stepBuilder.buildStep(finallyAction);
                 step.execute(this, scenarioContext);
+                rootStep.addStepExecution(step);
+
             } catch (RuntimeException e) {
                 LOGGER.error("Error when executing finallyActions", e);
             }

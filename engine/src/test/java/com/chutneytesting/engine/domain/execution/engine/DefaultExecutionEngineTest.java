@@ -80,7 +80,7 @@ public class DefaultExecutionEngineTest {
         reporter.subscribeOnExecution(mockScenarioExecution.executionId).blockingLast();
 
         // Then
-        verify(mockScenarioExecution, times(1)).executeFinallyActions(any(), any());
+        verify(mockScenarioExecution, times(1)).executeFinallyActions(any(),any(), any());
     }
 
     @Test
@@ -98,7 +98,7 @@ public class DefaultExecutionEngineTest {
         StepDefinition stepDefinition = new StepDefinition("name", null, "type", strategyDefinition, null, null, null, null, fakeEnvironment);
 
         ScenarioExecution scenarioExecution = ScenarioExecution.createScenarioExecution();
-        scenarioExecution.registerFinallyAction(FinallyAction.Builder.forAction("final").build());
+        scenarioExecution.registerFinallyAction(FinallyAction.Builder.forAction("final", "task name").build());
 
         List<BeginStepExecutionEvent> events = new ArrayList<>();
         getInstance().register(BeginStepExecutionEvent.class, events::add);
@@ -111,6 +111,7 @@ public class DefaultExecutionEngineTest {
         // Then
         Step finalStep = events.get(0).step;
         assertThat(finalStep.type()).isEqualTo("final");
+        assertThat(finalStep.definition().name).isEqualTo("Finally action generated for task name");
     }
 
     @Test
@@ -133,6 +134,6 @@ public class DefaultExecutionEngineTest {
         reporter.subscribeOnExecution(executionId).blockingLast();
 
         // Then
-        verify(mockScenarioExecution, times(1)).executeFinallyActions(any(), any());
+        verify(mockScenarioExecution, times(1)).executeFinallyActions(any(),any(), any());
     }
 }

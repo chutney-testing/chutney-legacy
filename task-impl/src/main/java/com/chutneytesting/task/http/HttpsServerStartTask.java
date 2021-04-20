@@ -5,14 +5,14 @@ import static com.github.tomakehurst.wiremock.client.WireMock.any;
 import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.chutneytesting.task.spi.FinallyAction;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.FinallyActionRegistry;
 import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -37,7 +37,7 @@ public class HttpsServerStartTask implements Task {
                                 @Input("truststore-password") String trustStorePassword,
                                 @Input("keystore-path") String keyStorePath,
                                 @Input("keystore-password") String keyStorePassword) {
-    	this.logger = logger;
+        this.logger = logger;
         this.finallyActionRegistry = finallyActionRegistry;
         this.port = NumberUtils.toInt(port, DEFAULT_HTTPS_PORT);
         this.trustStorePath = trustStorePath;
@@ -48,21 +48,21 @@ public class HttpsServerStartTask implements Task {
 
     @Override
     public TaskExecutionResult execute() {
-    	WireMockConfiguration wireMockConfiguration = wireMockConfig()
-                .dynamicPort()
-                .httpsPort(port)
-                .needClientAuth(true)
-                .trustStorePath(trustStorePath)
-                .trustStorePassword(trustStorePassword)
-                .containerThreads(7)
-                .asynchronousResponseThreads(1)
-                .jettyAcceptors(1);
-    	// add keystore path and pwd if present
-    	if(keyStorePath.isPresent()) {
-    		wireMockConfiguration
-    		.keystorePath(keyStorePath.get())
-    		.keystorePassword(keyStorePassword.orElse(""));
-    	}
+        WireMockConfiguration wireMockConfiguration = wireMockConfig()
+            .dynamicPort()
+            .httpsPort(port)
+            .needClientAuth(true)
+            .trustStorePath(trustStorePath)
+            .trustStorePassword(trustStorePassword)
+            .containerThreads(7)
+            .asynchronousResponseThreads(1)
+            .jettyAcceptors(1);
+        // add keystore path and pwd if present
+        if (keyStorePath.isPresent()) {
+            wireMockConfiguration
+                .keystorePath(keyStorePath.get())
+                .keystorePassword(keyStorePassword.orElse(""));
+        }
         WireMockServer wireMockServer = new WireMockServer(wireMockConfiguration);
         logger.info("Try to start https server on port " + port);
         wireMockServer.start();
@@ -85,7 +85,7 @@ public class HttpsServerStartTask implements Task {
     private void createQuitFinallyAction(WireMockServer httpsServer) {
         finallyActionRegistry.registerFinallyAction(
             FinallyAction.Builder
-                .forAction("https-server-stop")
+                .forAction("https-server-stop", HttpsServerStartTask.class.getSimpleName())
                 .withInput("https-server", httpsServer)
                 .build()
         );

@@ -54,7 +54,7 @@ public class JmsBrokerStartTask implements Task {
     private void createQuitFinallyAction(BrokerService brokerService) {
         finallyActionRegistry.registerFinallyAction(
             FinallyAction.Builder
-                .forAction("jms-broker-stop")
+                .forAction("jms-broker-stop", JmsBrokerStartTask.class.getSimpleName())
                 .withInput("jms-broker-service", brokerService)
                 .build()
         );
