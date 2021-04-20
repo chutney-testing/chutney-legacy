@@ -208,7 +208,7 @@ github_changelog_generator -u chutney-testing -p chutney --token <YOUR_TOKEN> --
 * Name your task in CamelCase. It will be converted in spinal-case such as `camel-case` for use in 
 when writing scenarios and to tell the engine which task to pick for execution
 
-* Create a constructor with your task parameters annoted with `com.chutneytesting.task.spi.injectable.Input`
+* Create a constructor with your task parameters annotated with `com.chutneytesting.task.spi.injectable.Input`
   * You can also use `com.chutneytesting.task.spi.injectable.Target` and `com.chutneytesting.task.spi.injectable.Logger`
 
 * Override the `execute()` method

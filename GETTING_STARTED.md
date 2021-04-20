@@ -42,12 +42,12 @@ Main class : com.chutneytesting.ServerBootstrap
 * cli: First draft of a cli
 * engine: Execution engine which sole responsibility is to execute scenarios and provide a report for each execution
 * packaging: default packaging used to start Chutney
-* server: Central module that
+* server: Main module that
     * Back-end for front-end
     * Store scenarios (json), execution report and campaigns in jdbc database
     * Store scenarios in Orient database for composed scenarios
     * Store in files target and environment information
-    * Send scenario to the execution engine and retrieve reports
+    * Send scenarios to the execution engine and retrieve reports
 * task-impl: Default implementation of task (Sql, Http, Jms,...)
 * task-spi: Contains interfaces to extend the engine 
 * tools: Utility class with no dependency 
