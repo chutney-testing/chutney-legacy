@@ -8,10 +8,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
-@Component
 public class GitBackupService {
 
     private final Remotes remotes;
@@ -22,7 +19,7 @@ public class GitBackupService {
     public GitBackupService(Remotes remotes,
                             GitClient gitClient,
                             Set<ChutneyContentProvider> contentProviders,
-                            @Value("${configuration-folder:conf/backups}") String gitRepositoryFolderPath) {
+                            String gitRepositoryFolderPath) {
         this.remotes = remotes;
         this.gitClient = gitClient;
         this.contentProviders = contentProviders;
