@@ -42,11 +42,6 @@ public class GitBackupController {
         gitBackupService.remove(name);
     }
 
-    @PostMapping(path = "/backupto}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void backup(@RequestBody GitRemoteDto dto) {
-        gitBackupService.backup(fromDto(dto));
-    }
-
     @GetMapping(path = "/{name}/backup")
     public void backup(@PathVariable("name") String name) {
         gitBackupService.backup(name);
