@@ -44,8 +44,8 @@ class HttpAgentClient implements AgentClient {
     private final ExploreResultApiMapper exploreResultApiMapper = new ExploreResultApiMapper();
 
     /**
-     * @param connectionChecker used to rapidly fail if the connection to an agent can't be established.<br/>
-     *                          This is useful as {@link #explore} may take a while before returning.<br/>
+     * @param connectionChecker used to rapidly fail if the connection to an agent can't be established.<br>
+     *                          This is useful as {@link #explore} may take a while before returning.<br>
      *                          So timeout of the supplied {@link RestTemplate} used internally must be kept to a high value whereas the given {@link ConnectionChecker} must have a minimal timeout.
      */
     HttpAgentClient(RestTemplate restTemplate, ConnectionChecker connectionChecker) throws UnknownHostException {

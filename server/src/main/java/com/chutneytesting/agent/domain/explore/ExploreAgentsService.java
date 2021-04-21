@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Service to explore agents from the current one, given a {@link NetworkConfiguration}.<br/>
+ * Service to explore agents from the current one, given a {@link NetworkConfiguration}.<br>
  * Exploration performs two tasks in once :
  * <ul>
  * <li>propagate a {@link NetworkConfiguration} recursively to all reachable agents</li>
@@ -53,7 +53,7 @@ public class ExploreAgentsService {
     /**
      * Propagate given {@link NetworkConfiguration} recursively to all reachable agents.
      *
-     * @return agentLinks & targetLinks discovered during propagation of the given {@link NetworkConfiguration} among agents
+     * @return agentLinks &amp; targetLinks discovered during propagation of the given {@link NetworkConfiguration} among agents
      */
     public ExploreResult explore(NetworkConfiguration networkConfiguration) {
         if (explorations.changeStateToIfPossible(networkConfiguration, ConfigurationState.EXPLORING)) {

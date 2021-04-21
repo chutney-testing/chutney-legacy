@@ -33,9 +33,9 @@ public interface GlobalvarRepository extends Backupable {
      *     }
      * }
      * will return a map of 3 object :
-     *    - "key1" => "value1"
-     *    - "key2.subKey1" => "subValue1"
-     *    - "key2.subKey2" => "subValue2"
+     *    - "key1" : "value1"
+     *    - "key2.subKey1" : "subValue1"
+     *    - "key2.subKey2" : "subValue2"
      * @return map with flatten key
      */
     Map<String, String> getFlatMap();

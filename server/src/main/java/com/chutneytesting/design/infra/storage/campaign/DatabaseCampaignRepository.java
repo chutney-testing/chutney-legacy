@@ -68,7 +68,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
      * Remove a campaign from its id.
      *
      * @param id The campaign id to remove.
-     * @return <tt>true</tt> if, and only if, the campaign has been removed.
+     * @return <code>true</code> if, and only if, the campaign has been removed.
      */
     @Override
     public boolean removeById(Long id) {
