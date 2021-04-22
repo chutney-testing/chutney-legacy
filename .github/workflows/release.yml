@@ -34,7 +34,7 @@ jobs:
           server-id: ossrh
           server-username: OSSRH_USERNAME
           server-password: OSSRH_PASSWORD
-          gpg-private-key: CHUTNEY_GPG_PRIVATE_KEY
+          gpg-private-key: ${{ secrets.CHUTNEY_GPG_PRIVATE_KEY }}
           gpg-passphrase: CHUTNEY_GPG_PASSPHRASE
 
       - name: Publish to central
@@ -42,7 +42,6 @@ jobs:
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-          CHUTNEY_GPG_PRIVATE_KEY: ${{ secrets.CHUTNEY_GPG_PRIVATE_KEY }}
           CHUTNEY_GPG_PASSPHRASE: ${{ secrets.CHUTNEY_GPG_PASSPHRASE }}
 
       - name: Create github release
