@@ -16,7 +16,7 @@
     <properties>
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <frontend-maven-plugin.version>1.8.0</frontend-maven-plugin.version>
-        <node.version>v12.20.1</node.version>
+        <node.version>v12.21.0</node.version>
         <useExternalNpm>false</useExternalNpm>
     </properties>
 
