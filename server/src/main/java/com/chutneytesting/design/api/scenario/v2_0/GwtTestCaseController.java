@@ -47,12 +47,12 @@ public class GwtTestCaseController {
         this.userService = userService;
     }
 
-    @GetMapping(path = "/{testCaseId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "/{testCaseId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public GwtTestCaseDto getTestCase(@PathVariable("testCaseId") String testCaseId) {
         return GwtTestCaseMapper.toDto(testCaseRepository.findById(testCaseId));
     }
 
-    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TestCaseIndexDto> getTestCases() {
         List<TestCaseMetadata> testCases = testCaseRepository.findAll();
         return testCases.stream()
@@ -65,12 +65,12 @@ public class GwtTestCaseController {
             .collect(Collectors.toList());
     }
 
-    @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String saveTestCase(@RequestBody GwtTestCaseDto testCase) {
         return saveOrUpdate(testCase);
     }
 
-    @PatchMapping(path = "", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PatchMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String updateTestCase(@RequestBody GwtTestCaseDto testCase) {
         return saveOrUpdate(testCase);
     }
@@ -90,13 +90,13 @@ public class GwtTestCaseController {
      *
      * */
 
-    @PostMapping(path = "/raw", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(path = "/raw", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String saveTestCase(@RequestBody RawTestCaseDto rawTestCaseDto) {
         GwtTestCase gwtTestCase = RawTestCaseMapper.fromDto(rawTestCaseDto);
         return gwtTestCaseSave(gwtTestCase);
     }
 
-    @GetMapping(path = "/raw/{testCaseId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "/raw/{testCaseId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public RawTestCaseDto getTestCaseById(@PathVariable("testCaseId") String testCaseId) {
         return RawTestCaseMapper.toDto(testCaseRepository.findById(testCaseId));
     }

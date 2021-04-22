@@ -24,7 +24,7 @@ public class HttpTestEngine implements TestEngine {
 
     @Override
     @CrossOrigin(origins = "*")
-    @PostMapping(path = EXECUTION_URL, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(path = EXECUTION_URL, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public StepExecutionReportDto execute(@RequestBody ExecutionRequestDto request) {
         return testEngine.execute(request);
     }

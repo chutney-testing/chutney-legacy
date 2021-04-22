@@ -5,6 +5,7 @@ import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.environment.domain.SecurityInfo;
 import com.chutneytesting.environment.domain.Target;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Collections;
 import java.util.List;
@@ -21,14 +22,14 @@ public class TargetDto {
     public final String keyStorePassword;
     public final String privateKey;
 
-    public TargetDto(@JsonProperty("name") String name,
-                     @JsonProperty("url") String url,
-                     @JsonProperty("properties") List<Entry> properties,
-                     @JsonProperty("username") String username,
-                     @JsonProperty("password") String password,
-                     @JsonProperty("keyStore") String keyStore,
-                     @JsonProperty("keyStorePassword") String keyStorePassword,
-                     @JsonProperty("privateKey") String privateKey) {
+    public TargetDto(String name,
+                     String url,
+                     List<Entry> properties,
+                     String username,
+                     String password,
+                     String keyStore,
+                     String keyStorePassword,
+                     String privateKey) {
         this.name = name.trim();
         this.url = url.trim();
         this.properties = nullToEmpty(properties);
@@ -95,7 +96,7 @@ public class TargetDto {
         public final String key;
         public final String value;
 
-        public Entry(@JsonProperty("key") String key, @JsonProperty("value") String value) {
+        public Entry(String key, String value) {
             this.key = key;
             this.value = value;
         }

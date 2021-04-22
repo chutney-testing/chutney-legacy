@@ -13,8 +13,10 @@ import com.chutneytesting.junit.api.EnvironmentService;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.SQLException;
 import java.util.Random;
 import org.apache.groovy.util.Maps;
+import org.h2.tools.Server;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.SocketUtils;
@@ -59,6 +61,11 @@ public class ChutneyTest {
         System.setProperty("persistence.agentNetwork.file", tmpConfDir.resolve("endpoints.json").toString());
 
         localChutney = SpringApplication.run(IntegrationTestConfiguration.class);
+        try {
+            Server.createWebServer("-web", "-webAllowOthers", "-webPort", "8082").start();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 
     @AfterAll

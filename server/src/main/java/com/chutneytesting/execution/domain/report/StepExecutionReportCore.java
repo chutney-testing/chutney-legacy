@@ -2,8 +2,6 @@ package com.chutneytesting.execution.domain.report;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -26,18 +24,18 @@ public class StepExecutionReportCore implements ServerReportStatus.HavingStatus 
     public final Map<String, Object> stepOutputs;
 
     @JsonCreator
-    public StepExecutionReportCore(@JsonProperty("executionId") Long executionId,
-                                   @JsonProperty("name") String name,
-                                   @JsonProperty("duration") Long duration,
-                                   @JsonProperty("startDate") Instant startDate,
-                                   @JsonProperty("status") ServerReportStatus status,
-                                   @JsonProperty("information") List<String> information,
-                                   @JsonProperty("errors") List<String> errors,
-                                   @JsonProperty("steps") List<StepExecutionReportCore> steps,
-                                   @JsonProperty("type") String type,
-                                   @JsonProperty("targetName") String targetName,
-                                   @JsonProperty("targetUrl") String targetUrl,
-                                   @JsonProperty("strategy") String strategy
+    public StepExecutionReportCore(Long executionId,
+                                   String name,
+                                   Long duration,
+                                   Instant startDate,
+                                   ServerReportStatus status,
+                                   List<String> information,
+                                   List<String> errors,
+                                   List<StepExecutionReportCore> steps,
+                                   String type,
+                                   String targetName,
+                                   String targetUrl,
+                                   String strategy
     ) {
         this(executionId, name, duration, startDate, status, information, errors, steps, type, targetName, targetUrl, strategy, null, null);
     }

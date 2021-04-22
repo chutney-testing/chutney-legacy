@@ -31,18 +31,18 @@ public class StepExecutionReport implements Status.HavingStatus {
     public Map<String, Object> scenarioContext;
 
     @JsonCreator
-    public StepExecutionReport(@JsonProperty("executionId") Long executionId,
-                               @JsonProperty("name") String name,
-                               @JsonProperty("duration") Long duration,
-                               @JsonProperty("startDate") Instant startDate,
-                               @JsonProperty("status") Status status,
-                               @JsonProperty("information") List<String> information,
-                               @JsonProperty("errors") List<String> errors,
-                               @JsonProperty("steps") List<StepExecutionReport> steps,
-                               @JsonProperty("type") String type,
-                               @JsonProperty("targetName") String targetName,
-                               @JsonProperty("targetUrl") String targetUrl,
-                               @JsonProperty("strategy") String strategy
+    public StepExecutionReport(Long executionId,
+                                String name,
+                               Long duration,
+                               Instant startDate,
+                               Status status,
+                               List<String> information,
+                               List<String> errors,
+                               List<StepExecutionReport> steps,
+                               String type,
+                               String targetName,
+                               String targetUrl,
+                               String strategy
     ) {
         this(executionId, name, duration, startDate, status, information, errors, steps, type, targetName, targetUrl, strategy, null, null, null);
     }

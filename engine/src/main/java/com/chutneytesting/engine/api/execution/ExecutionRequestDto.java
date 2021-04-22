@@ -1,9 +1,11 @@
 package com.chutneytesting.engine.api.execution;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.chutneytesting.engine.api.execution.StepDefinitionDto.StepStrategyDefinitionDto;
 import com.chutneytesting.engine.api.execution.StepDefinitionDto.StrategyPropertiesDto;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -12,17 +14,22 @@ import java.util.stream.Collectors;
 /**
  * Anemic model standing for the request for a Scenario execution.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ExecutionRequestDto {
+
     public final StepDefinitionRequestDto scenario;
 
-    public ExecutionRequestDto(@JsonProperty("scenario") StepDefinitionRequestDto scenario) {
+    @JsonCreator
+    public ExecutionRequestDto(StepDefinitionRequestDto scenario) {
         this.scenario = scenario;
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class StepStrategyDefinitionRequestDto {
         @JsonIgnore
         public final StepStrategyDefinitionDto definition;
 
+        @JsonCreator
         public StepStrategyDefinitionRequestDto(@JsonProperty("type") String type,
                                                 @JsonProperty("parameters") Map<String, Object> parameters
         ) {
@@ -30,6 +37,7 @@ public class ExecutionRequestDto {
         }
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class StepDefinitionRequestDto {
         @JsonIgnore
         public final StepDefinitionDto definition;
@@ -43,16 +51,17 @@ public class ExecutionRequestDto {
         public final Map<String, Object> validations;
         public final String environment;
 
+        @JsonCreator
         public StepDefinitionRequestDto(
-            @JsonProperty("name") String name,
-            @JsonProperty("target") TargetExecutionDto target,
+            String name,
+            TargetExecutionDto target,
             @JsonProperty("strategy") StepStrategyDefinitionRequestDto strategy,
-            @JsonProperty("type") String type,
-            @JsonProperty("inputs") Map<String, Object> inputs,
-            @JsonProperty("steps") List<StepDefinitionRequestDto> steps,
-            @JsonProperty("outputs") Map<String, Object> outputs,
-            @JsonProperty("validations") Map<String, Object> validations,
-            @JsonProperty("environment")String environment) {
+            String type,
+            Map<String, Object> inputs,
+            List<StepDefinitionRequestDto> steps,
+            Map<String, Object> outputs,
+            Map<String, Object> validations,
+            String environment) {
 
             this.name = name;
             this.target = target;

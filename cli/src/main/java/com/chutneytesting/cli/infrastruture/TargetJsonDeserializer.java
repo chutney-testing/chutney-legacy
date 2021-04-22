@@ -50,7 +50,7 @@ public class TargetJsonDeserializer extends JsonDeserializer<List<Target>> {
             targetBuilder.withUrl(targetNode.get("url").textValue());
         }
         if (targetNode.hasNonNull("properties")) {
-            targetBuilder.withProperties(mapper.readValue(targetNode.get("properties").toString(), new TypeReference<Map<String, ? extends String>>() {
+            targetBuilder.withProperties(mapper.readValue(targetNode.get("properties").toString(), new TypeReference<>() {
             }));
         }
         if (targetNode.hasNonNull("security")) {

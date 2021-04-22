@@ -8,10 +8,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReportBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.IOException;
 import java.time.Instant;
 import org.hamcrest.CoreMatchers;
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -31,8 +33,12 @@ public class HttpTestEngineTest {
     @Test
     public void controller_maps_anemic_request_and_call_engine() throws Exception {
         TestEngine engine = mock(TestEngine.class);
+        MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
+        mappingJackson2HttpMessageConverter.setObjectMapper(new ObjectMapper().findAndRegisterModules());
+
         MockMvc mvc = MockMvcBuilders
             .standaloneSetup(new HttpTestEngine(engine))
+            .setMessageConverters(mappingJackson2HttpMessageConverter)
             .build();
 
         StepExecutionReport report = new StepExecutionReportBuilder()
@@ -55,7 +61,7 @@ public class HttpTestEngineTest {
         mvc
             .perform(MockMvcRequestBuilders
                 .post(EXECUTION_URL)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(body)
             )
             .andDo(result -> LOGGER.info(result.getResponse().getContentAsString()))
@@ -72,7 +78,7 @@ public class HttpTestEngineTest {
     }
 
     private static final class Jsons {
-        private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+        private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().findAndRegisterModules();
 
         private Jsons() {
         }

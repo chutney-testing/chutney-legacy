@@ -1,7 +1,7 @@
 package com.chutneytesting.agent.api.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.chutneytesting.agent.domain.configure.NetworkConfiguration;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,10 +25,11 @@ public class NetworkConfigurationApiDto {
 
     public static class EnvironmentApiDto {
         public String name;
+        @JsonProperty("targets")
         public Set<TargetsApiDto> targetsConfiguration = new HashSet<>();
 
-        public EnvironmentApiDto(@JsonProperty("name") String name,
-                                 @JsonProperty("targets") Set<TargetsApiDto> targetsConfiguration) {
+        public EnvironmentApiDto(String name,
+                                 Set<TargetsApiDto> targetsConfiguration) {
             this.name = name;
             this.targetsConfiguration = targetsConfiguration;
         }
@@ -41,10 +42,10 @@ public class NetworkConfigurationApiDto {
         public final SecurityApiDto security;
 
         public TargetsApiDto(
-            @JsonProperty("name") String name,
-            @JsonProperty("url") String url,
-            @JsonProperty("properties") Map<String, String> properties,
-            @JsonProperty("security") SecurityApiDto security) {
+            String name,
+            String url,
+            Map<String, String> properties,
+            SecurityApiDto security) {
             this.name = name;
             this.url = url;
             this.properties = properties != null ? properties : new HashMap<>();
@@ -61,12 +62,12 @@ public class NetworkConfigurationApiDto {
         public final String trustStorePassword;
 
         public SecurityApiDto(
-            @JsonProperty("username") String username,
-            @JsonProperty("password") String password,
-            @JsonProperty("keyStore") String keyStore,
-            @JsonProperty("keyStorePassword") String keyStorePassword,
-            @JsonProperty("trustStore") String trustStore,
-            @JsonProperty("trustStorePassword") String trustStorePassword) {
+            String username,
+            String password,
+            String keyStore,
+            String keyStorePassword,
+            String trustStore,
+            String trustStorePassword) {
             this.username = username;
             this.password = password;
             this.keyStore = keyStore;

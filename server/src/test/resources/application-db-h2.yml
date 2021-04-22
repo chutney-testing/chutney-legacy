@@ -1,7 +1,3 @@
-
-chutney:
-  db-server:
-    port: 100
+spring:
   datasource:
-    internal:
-      url: jdbc:h2:mem:${chutney.db-server.port}
+    url: jdbc:h2:mem:testdb

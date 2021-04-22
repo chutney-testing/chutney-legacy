@@ -30,7 +30,7 @@ public class ExploreResultApiDto {
         public final String source;
         public final TargetIdEntity destination;
 
-        public TargetLinkEntity(@JsonProperty("source") String source, @JsonProperty("destination") TargetIdEntity destination) {
+        public TargetLinkEntity(String source, TargetIdEntity destination) {
             this.source = source;
             this.destination = destination;
         }
