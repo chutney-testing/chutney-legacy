@@ -20,22 +20,16 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: 11
-
-      - name: Build with Maven
-        env:
-          BUILD_ENV: 'github-actions'
-        run: mvn clean -B -V verify
-
-      - name: Set up deployment
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: 11
           server-id: ossrh
           server-username: OSSRH_USERNAME
           server-password: OSSRH_PASSWORD
           gpg-private-key: ${{ secrets.CHUTNEY_GPG_PRIVATE_KEY }}
           gpg-passphrase: CHUTNEY_GPG_PASSPHRASE
+
+      - name: Build with Maven
+        env:
+          BUILD_ENV: 'github-actions'
+        run: mvn clean -B -V verify
 
       - name: Publish to central
         run: mvn -DskipTests -Drelease=true deploy
