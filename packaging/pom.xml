@@ -16,8 +16,6 @@
     <properties>
         <chutney.version>${project.version}</chutney.version>
         <mainClass>com.chutneytesting.ServerBootstrap</mainClass>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
     <modules>
