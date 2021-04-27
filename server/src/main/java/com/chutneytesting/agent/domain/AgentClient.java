@@ -12,7 +12,7 @@ import com.chutneytesting.agent.domain.configure.ConfigurationState;
 public interface AgentClient {
 
     /**
-     * @return empty if remote agent is unreachable, otherwise, return the link <b>local -> remote</b> and all agentLinks known by the remote
+     * @return empty if remote agent is unreachable, otherwise, return the link <b>from local to remote</b> and all agentLinks known by the remote
      */
     ExploreResult explore(String localName, NamedHostAndPort agentInfo, NetworkConfiguration networkConfiguration);
 

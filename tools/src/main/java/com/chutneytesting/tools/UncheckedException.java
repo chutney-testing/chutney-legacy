@@ -1,7 +1,7 @@
 package com.chutneytesting.tools;
 
 /**
- * Specific {@link RuntimeException} thrown when checked {@link Exception} occurs in <b>Throwing</b>Functions.<br/>
+ * Specific {@link RuntimeException} thrown when checked {@link Exception} occurs in <b>Throwing</b>Functions.<br>
  * Checked {@link Exception} is set as cause.
  *
  * @see ThrowingFunction#toUnchecked(ThrowingFunction)

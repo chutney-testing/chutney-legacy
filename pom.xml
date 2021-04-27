@@ -5,7 +5,7 @@
 
     <groupId>com.chutneytesting</groupId>
     <artifactId>chutney-parent</artifactId>
-    <version>1.3.1-SNAPSHOT</version>
+    <version>1.3.1</version>
     <packaging>pom</packaging>
 
     <name>Chutney</name>
@@ -24,15 +24,19 @@
     <developers>
         <developer>
             <name>Loïc Ledoyen</name>
+            <url>https://github.com/ledoyen</url>
         </developer>
         <developer>
             <name>Mael Besson</name>
+            <url>https://github.com/bessonm</url>
         </developer>
         <developer>
             <name>Matthieu Gensollen</name>
+            <url>https://github.com/boddissattva</url>
         </developer>
         <developer>
             <name>Nicolas Brouand</name>
+            <url>https://github.com/nbrouand</url>
         </developer>
     </developers>
 
@@ -80,7 +84,7 @@
         <jackson.version>2.9.5</jackson.version>
         <guava.version>23.0</guava.version>
         <vavr.version>0.9.2</vavr.version>
-        <immutables.version>2.5.6</immutables.version>
+        <immutables.version>2.8.8</immutables.version>
         <sl4j.api.version>1.7.25</sl4j.api.version>
         <commonslang3.version>3.7</commonslang3.version>
         <commonstext.version>1.8</commonstext.version>
@@ -558,19 +562,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
@@ -580,7 +571,7 @@
                     <configuration>
                         <source>${maven.compiler.source}</source>
                         <target>${maven.compiler.target}</target>
-                         <forceJavacCompilerUse>true</forceJavacCompilerUse>
+                        <forceJavacCompilerUse>true</forceJavacCompilerUse>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -619,18 +610,30 @@
                     <version>1.7.0</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>3.1.0</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.0.2</version>
+                    <version>3.2.0</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
                     <version>3.2.1</version>
                 </plugin>
-
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>1.6</version>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
@@ -737,47 +740,82 @@
 
     <distributionManagement>
         <repository>
-            <id>bintray-server-id</id>
-            <name>chutney-testing-maven</name>
-            <url>https://api.bintray.com/maven/chutney-testing/maven/chutney/;publish=1</url>
+            <id>ossrh</id>
+            <name>Central Repository OSSRH</name>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <profiles>
         <profile>
-            <id>disable-java8-doclint</id>
-            <activation>
-                <jdk>[1.8,)</jdk>
-            </activation>
-            <properties>
-                <additionalparam>-Xdoclint:none</additionalparam>
-            </properties>
-        </profile>
-        <profile>
-            <id>bintray</id>
+            <id>release</id>
             <activation>
                 <property>
-                    <name>env.BUILD_ENV</name>
-                    <value>github-actions</value>
+                    <name>release</name>
+                    <value>true</value>
                 </property>
             </activation>
-            <repositories>
-                <repository>
-                    <id>bintray-repo</id>
-                    <name>bintray-repo</name>
-                    <url>https://jcenter.bintray.com</url>
-                </repository>
-            </repositories>
-            <pluginRepositories>
-                <pluginRepository>
-                    <id>bintray-plugins</id>
-                    <name>bintray-plugins</name>
-                    <url>https://jcenter.bintray.com</url>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                </pluginRepository>
-            </pluginRepositories>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <doclint>none</doclint>
+                            <quiet>true</quiet>
+                            <sourcepath>
+                                ${project.build.sourceDirectory}:${project.build.directory}/generated-sources/annotations;
+                                ${project.build.sourceDirectory}:${project.build.directory}/generated-sources/jaxb
+                            </sourcepath>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <configuration>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>

@@ -1,5 +1,41 @@
 # Changelog
 
+## [1.3.1](https://github.com/chutney-testing/chutney/tree/1.3.1) (2021-04-22)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.0...1.3.1)
+
+**Implemented enhancements:**
+
+- 🚀 | Create a smart git export of all Chutney data [\#342](https://github.com/chutney-testing/chutney/issues/342)
+- 🚀 | Improve campaign scheduling [\#330](https://github.com/chutney-testing/chutney/issues/330)
+- 🚀 | Allow assertions directly in task [\#303](https://github.com/chutney-testing/chutney/issues/303)
+- 🚀 | Report does not contain finally actions execution [\#302](https://github.com/chutney-testing/chutney/issues/302)
+
+**Fixed bugs:**
+
+- 🐛 | tastk-impl project in in dependency of engine project [\#400](https://github.com/chutney-testing/chutney/issues/400)
+- 🐛 | Http error responses are not print on the UI [\#396](https://github.com/chutney-testing/chutney/issues/396)
+- 🐛 | Global Variables resolution is not complete [\#385](https://github.com/chutney-testing/chutney/issues/385)
+- Dataset key with tab space could be saved but could not be used anymore [\#346](https://github.com/chutney-testing/chutney/issues/346)
+
+**Closed issues:**
+
+- Remove forcing campaign name in uppercase [\#337](https://github.com/chutney-testing/chutney/issues/337)
+
+**Merged pull requests:**
+
+- feat\(engine\): Add finally action in report [\#403](https://github.com/chutney-testing/chutney/pull/403) ([nbrouand](https://github.com/nbrouand))
+- Chore/engine dependency fix [\#401](https://github.com/chutney-testing/chutney/pull/401) ([nbrouand](https://github.com/nbrouand))
+- bugfix\(ui\): Show error message to users [\#395](https://github.com/chutney-testing/chutney/pull/395) ([bessonm](https://github.com/bessonm))
+- Feat/git export [\#394](https://github.com/chutney-testing/chutney/pull/394) ([bessonm](https://github.com/bessonm))
+- feat\(ui\): remove forcing campaigns & scenarios uppercased titles [\#392](https://github.com/chutney-testing/chutney/pull/392) ([rbenyoussef](https://github.com/rbenyoussef))
+- bugfix\(server\): Dataset with tab space at extrimity could not be used [\#389](https://github.com/chutney-testing/chutney/pull/389) ([rbenyoussef](https://github.com/rbenyoussef))
+- Add test on GwtScenarioMapper [\#388](https://github.com/chutney-testing/chutney/pull/388) ([nbrouand](https://github.com/nbrouand))
+- Global variables resolution [\#386](https://github.com/chutney-testing/chutney/pull/386) ([boddissattva](https://github.com/boddissattva))
+- feat: add campaign recurrent Planning per day, week and month [\#381](https://github.com/chutney-testing/chutney/pull/381) ([RedouaeElalami](https://github.com/RedouaeElalami))
+- feat\(server/ui/engine\): permit asserts declarations in tasks one [\#373](https://github.com/chutney-testing/chutney/pull/373) ([rbenyoussef](https://github.com/rbenyoussef))
+
+
 ## [1.3.0](https://github.com/chutney-testing/chutney/tree/1.3.0)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.20...1.3.0)

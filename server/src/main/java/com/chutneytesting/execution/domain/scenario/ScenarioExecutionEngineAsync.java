@@ -216,7 +216,7 @@ public class ScenarioExecutionEngineAsync {
     }
 
     /**
-     * Build a {@link DetachedExecution} to store via {@link ExecutionHistoryRepository}
+     * Build a {@link ExecutionHistory.DetachedExecution} to store via {@link ExecutionHistoryRepository}
      *
      * @param scenarioReport report to summarize
      */

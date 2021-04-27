@@ -5,7 +5,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Load objects from abstract sources.<br/>
+ * Load objects from abstract sources.<br>
  * Mechanism similar to {@link java.util.ServiceLoader} or {@link org.springframework.core.io.support.SpringFactoriesLoader} but more extensible.
  *
  * @param <EXTENSION> type of object to load

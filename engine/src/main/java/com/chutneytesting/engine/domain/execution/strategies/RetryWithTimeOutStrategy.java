@@ -19,8 +19,8 @@ import java.util.concurrent.TimeUnit;
  * - "min" or "m" for minutes
  * - "sec" or "s" for seconds
  * - "ms" for miliseconds
- * empty values are interpreted as seconds // TODO - respect State of the art -> unit is ms by default
- * Exemple: timeOut: "5 min", or "300 sec", ...
+ * empty values are interpreted as seconds
+ * Example: timeOut: "5 min", or "300 sec", ...
  */
 
 public class RetryWithTimeOutStrategy implements StepExecutionStrategy {
@@ -48,7 +48,7 @@ public class RetryWithTimeOutStrategy implements StepExecutionStrategy {
 
         // TODO - add a backoff parameter
         String timeOut = strategyDefinition.strategyProperties.getProperty("timeOut", String.class);
-        String retryDelay = strategyDefinition.strategyProperties.getProperty("retryDelay", String.class); // TODO - respect State of the art -> provide number of retries policy instead
+        String retryDelay = strategyDefinition.strategyProperties.getProperty("retryDelay", String.class); // TODO - respect State of the art : provide number of retries policy instead
         if (timeOut == null) {
             throw new IllegalStateException("Undefined parameter 'timeOut'"); // TODO - be friendly -> provide a default value instead
         }
