@@ -24,6 +24,7 @@
             <tr>
                 <th style="width:30px">
                 </th>
+                <th class="header index-col">#</th>
                 <th class="header" scope="col" *ngFor="let header of headers; let i = index" style="min-width:250px ">
                     <div style="text-align: center; margin-bottom: 2px;">
                         <button type="button" class="btn btn-outline-danger delete-button-height removeBtn"
@@ -45,6 +46,7 @@
                         <span class="fa fa-times"></span>
                     </button>
                 </td>
+                <td class="index-col">{{i+1}}</td>
                 <td [formGroupName]="i" *ngFor="let keyValue of line.controls; let j = index" style="min-width:250px">
                     <div [formGroupName]="j">
                         <input type="text" class="form-control" id="{{i-j}}-value"
