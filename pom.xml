@@ -95,7 +95,7 @@
         <jdom2.version>2.0.6</jdom2.version>
         <jsonpath.version>2.4.0</jsonpath.version>
         <org.everit.json.schema.version>1.11.0</org.everit.json.schema.version>
-        <sshj.version>0.29.0</sshj.version>
+        <sshj.version>0.31.0</sshj.version>
         <sshd.version>2.5.0</sshd.version>
         <hjson.version>3.0.0</hjson.version>
         <jms.version>2.0.1</jms.version>
