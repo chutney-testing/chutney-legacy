@@ -1,0 +1,28 @@
+version: 2
+updates:
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: monthly
+  open-pull-requests-limit: 10
+  labels:
+  - dependencies
+  ignore:
+  - dependency-name: com.github.tomakehurst:wiremock-standalone
+    versions:
+    - 2.27.2
+  - dependency-name: org.apache.maven.plugins:maven-resources-plugin
+    versions:
+    - 3.2.0
+  - dependency-name: com.orientechnologies:orientdb-core
+    versions:
+    - 3.1.7
+  - dependency-name: org.eclipse.jgit:org.eclipse.jgit
+    versions:
+    - 5.10.0.202012080955-r
+  - dependency-name: com.fasterxml.jackson.datatype:jackson-datatype-guava
+    versions:
+    - 2.12.1
+  - dependency-name: com.fasterxml.jackson.datatype:jackson-datatypes-collections
+    versions:
+    - 2.12.1
