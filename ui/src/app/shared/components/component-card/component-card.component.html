@@ -6,7 +6,9 @@
         </button>
     </div>
     <span class="fa" [ngClass]="component.implementation ? 'fa-clone' : 'fa-cubes'"></span>
-    <span class="ml-2">{{component.name}}</span>
+    <span class="ml-2">
+            <a [routerLink]="['/component', component.id]">{{component.name}}</a>
+    </span>
     <span *ngIf="component.implementation?.identifier"
           class="scenario-components-identifier mr-3 font-italic pl-3 float-right font-weight-bold">
         ({{component.implementation.identifier}})

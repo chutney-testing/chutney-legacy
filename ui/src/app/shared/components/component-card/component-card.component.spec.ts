@@ -1,5 +1,6 @@
 import { Component, ViewChildren, QueryList } from '@angular/core';
 import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ComponentCardComponent } from '@shared/components';
 
@@ -18,6 +19,7 @@ describe('ComponentCardComponent...', () => {
             TestBed.resetTestingModule();
             TestBed.configureTestingModule({
                 imports: [
+                    RouterTestingModule,
                     TranslateTestingModule,
                     FormsModule,
                     ReactiveFormsModule
@@ -127,6 +129,7 @@ describe('ComponentCardComponent...', () => {
             TestBed.resetTestingModule();
             TestBed.configureTestingModule({
                 imports: [
+                    RouterTestingModule,
                     TranslateTestingModule,
                     FormsModule,
                     ReactiveFormsModule
