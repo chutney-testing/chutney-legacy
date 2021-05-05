@@ -3,7 +3,6 @@ package com.chutneytesting.engine.domain.execution.engine.step;
 import static com.chutneytesting.tools.WaitUtils.awaitDuring;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 import com.chutneytesting.engine.domain.execution.report.Status;
 import java.time.Instant;

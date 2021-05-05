@@ -110,7 +110,7 @@ public class InputParameterResolverTest {
         java.lang.reflect.Parameter[] taskParameters = AssignableFromTask.class.getDeclaredConstructors()[0].getParameters();
         Parameter parameter = Parameter.fromJavaParameter(taskParameters[0]);
 
-        List<? extends Object> list = Lists.list("a string", (short) 5, 5, 5L, Boolean.TRUE, 'r', 7.9F, 7.9D, (byte) 42);
+        List<?> list = Lists.list("a string", (short) 5, 5, 5L, Boolean.TRUE, 'r', 7.9F, 7.9D, (byte) 42);
 
         for (Object o : list) {
             InputParameterResolver sut = new InputParameterResolver(Map.of("inputName", o));
@@ -136,7 +136,7 @@ public class InputParameterResolverTest {
         java.lang.reflect.Parameter[] taskParameters = CanResolveTask.class.getDeclaredConstructors()[0].getParameters();
         Parameter parameter = Parameter.fromJavaParameter(taskParameters[0]);
 
-        List<? extends Object> list = Lists.list((short) 5, 5, 5L, Boolean.TRUE, 'r', 7.9F, 7.9D, (byte) 78);
+        List<?> list = Lists.list((short) 5, 5, 5L, Boolean.TRUE, 'r', 7.9F, 7.9D, (byte) 78);
 
         for (Object o : list) {
             InputParameterResolver sut = new InputParameterResolver(Map.of("inputName", o));

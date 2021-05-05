@@ -18,9 +18,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class ExamplesRepository implements DelegateScenarioRepository {
 
-    private static Instant START_TIME = Instant.MIN;
+    private static final Instant START_TIME = Instant.MIN;
 
-    private Map<String, String> examples; // fileName, Content
+    private final Map<String, String> examples; // fileName, Content
     private boolean isActive;
     private final String ORIGIN = "examples";
 

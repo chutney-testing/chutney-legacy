@@ -46,7 +46,7 @@ public class HttpPostTask implements Task {
     public TaskExecutionResult execute() {
         HttpClient httpClient = new HttpClientFactory().create(target, String.class, timeout);
         HttpHeaders httpHeaders = new HttpHeaders();
-        headers.entrySet().forEach(e -> httpHeaders.add(e.getKey(), e.getValue()));
+        headers.forEach((key, value) -> httpHeaders.add(key, value));
         Supplier<ResponseEntity<String>> caller = () -> httpClient.post(this.uri, ofNullable(body).orElse("{}"), httpHeaders);
         return HttpTask.httpCall(logger, caller);
     }

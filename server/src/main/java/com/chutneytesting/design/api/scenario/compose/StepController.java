@@ -40,7 +40,7 @@ public class StepController {
         this.composableStepRepository = composableStepRepository;
     }
 
-    @PostMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public String save(@RequestBody ComposableStepDto step) {
         return toFrontId(composableStepRepository.save(fromDto(step)));
     }
@@ -50,7 +50,7 @@ public class StepController {
         composableStepRepository.deleteById(fromFrontId(stepId));
     }
 
-    @GetMapping(path = "/all", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ComposableStepDto> findAll() {
         return composableStepRepository.findAll()
             .stream()
@@ -59,7 +59,7 @@ public class StepController {
             .collect(Collectors.toList());
     }
 
-    @GetMapping(path = "/{stepId}/parents", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "/{stepId}/parents", produces = MediaType.APPLICATION_JSON_VALUE)
     public ParentsStepDto findParents(@PathVariable String stepId) {
         return ParentStepMapper.toDto(composableStepRepository.findParents(fromFrontId(stepId)));
     }
@@ -69,7 +69,7 @@ public class StepController {
     static final String FIND_STEPS_START_DEFAULT_VALUE = "1";
     static final String FIND_STEPS_LIMIT_DEFAULT_VALUE = "25";
 
-    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public PaginatedDto<ComposableStepDto> findSteps(@RequestParam(defaultValue = FIND_STEPS_NAME_DEFAULT_VALUE) String name,
                                                      @RequestParam(defaultValue = FIND_STEPS_USAGE_DEFAULT_VALUE) String usage,
                                                      @RequestParam(defaultValue = FIND_STEPS_START_DEFAULT_VALUE) Long start,
@@ -102,7 +102,7 @@ public class StepController {
             .build();
     }
 
-    @GetMapping(path = "/{stepId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "/{stepId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ComposableStepDto findById(@PathVariable String stepId) {
         return ComposableStepMapper.toDto(
             composableStepRepository.findById(fromFrontId(stepId))

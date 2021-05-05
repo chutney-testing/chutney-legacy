@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.design.domain.scenario.gwt.GwtScenario;
 import com.chutneytesting.design.domain.scenario.gwt.GwtStep;
-import com.google.common.io.Resources;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -15,7 +14,7 @@ import org.junit.jupiter.api.Test;
 public class OldFormatAdapterTest {
 
     private String getScenarioContent(String fileName) {
-        return Files.contentOf(new File(Resources.getResource("raw_scenarios/"+ fileName).getPath()), StandardCharsets.UTF_8);
+        return Files.contentOf(new File(OldFormatAdapterTest.class.getResource("/raw_scenarios/"+ fileName).getPath()), StandardCharsets.UTF_8);
     }
 
     @Test

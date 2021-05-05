@@ -48,7 +48,7 @@ public class CampaignExecutionUiController {
         this.userService = userService;
     }
 
-    @GetMapping(path = {"/{campaignName}", "/{campaignName}/{env}"}, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = {"/{campaignName}", "/{campaignName}/{env}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<CampaignExecutionReportDto> executeCampaignByName(@PathVariable("campaignName") String campaignName, @PathVariable("env") Optional<String> environment) {
         List<CampaignExecutionReport> reports;
         String userId = userService.getCurrentUser().getId();
@@ -62,7 +62,7 @@ public class CampaignExecutionUiController {
             .collect(Collectors.toList());
     }
 
-    @PostMapping(path = {"/replay/{campaignExecutionId}"}, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(path = {"/replay/{campaignExecutionId}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public CampaignExecutionReportDto replayFailedScenario(@PathVariable("campaignExecutionId") Long campaignExecutionId) {
         CampaignExecutionReport campaignExecutionReport = campaignRepository.findByExecutionId(campaignExecutionId);
         String userId = userService.getCurrentUser().getId();
@@ -93,7 +93,7 @@ public class CampaignExecutionUiController {
         campaignExecutionEngine.stopExecution(executionId);
     }
 
-    @GetMapping(path = {"/byID/{campaignId}", "/byID/{campaignId}/{env}"}, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = {"/byID/{campaignId}", "/byID/{campaignId}/{env}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public CampaignExecutionReportDto executeCampaignById(@PathVariable("campaignId") Long campaignId, @PathVariable("env") Optional<String> environment) {
         String userId = userService.getCurrentUser().getId();
         CampaignExecutionReport report;

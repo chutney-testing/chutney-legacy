@@ -9,6 +9,7 @@ import com.chutneytesting.task.TestLogger;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Logger;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -141,6 +142,6 @@ public class XmlAssertTaskTest {
 
     @SuppressWarnings("resource")
     private String loadFileFromClasspath(String filePath) {
-        return new Scanner(XmlAssertTask.class.getClassLoader().getResourceAsStream(filePath), "UTF-8").useDelimiter("\\A").next();
+        return new Scanner(XmlAssertTask.class.getClassLoader().getResourceAsStream(filePath), StandardCharsets.UTF_8).useDelimiter("\\A").next();
     }
 }

@@ -73,7 +73,7 @@ public class HttpClientTest {
         server.stubFor(any(anyUrl())
             .willReturn(aResponse()
                 .withBody(dtoAsString)
-                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .withStatus(200))
         );
 

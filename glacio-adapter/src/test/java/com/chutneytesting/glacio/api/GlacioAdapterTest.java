@@ -12,7 +12,6 @@ import static org.mockito.Mockito.when;
 import com.chutneytesting.engine.api.execution.StepDefinitionDto;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.glacio.domain.parser.StepFactory;
-import com.google.common.io.Resources;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -39,8 +38,8 @@ public class GlacioAdapterTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-        "en unit/lang_default.feature",
-        "fr unit/lang_fr.feature"
+        "en /unit/lang_default.feature",
+        "fr /unit/lang_fr.feature"
     })
     public void should_use_feature_language_hint_with_english_default(String langFeature) {
         String[] s = langFeature.split(" ");
@@ -60,7 +59,7 @@ public class GlacioAdapterTest {
     @Test
     public void should_adapt_as_many_glacio_scenarios_as_feature_has() {
         String featureName = "Feature with multiple scenarios";
-        String feature = fileContent("unit/multiple_scenarios.feature");
+        String feature = fileContent("/unit/multiple_scenarios.feature");
         List<StepDefinitionDto> stepDefinitions = sut.toChutneyStepDefinition(feature);
         assertThat(stepDefinitions).hasSize(3);
         assertThat(stepDefinitions)
@@ -75,12 +74,12 @@ public class GlacioAdapterTest {
     @Test
     public void should_delegate_step_creation_for_all_first_level_steps() {
         when(stepFactory.toStepDefinition(any(),any(), any())).thenReturn(new StepDefinition("fake", null, "", null, Collections.emptyMap(), Collections.emptyList(), Collections.emptyMap(), Collections.emptyMap(), ""));
-        String feature = fileContent("unit/multiple_non_executable_steps.feature");
+        String feature = fileContent("/unit/multiple_non_executable_steps.feature");
         sut.toChutneyStepDefinition(feature, ENVIRONMENT);
         verify(stepFactory, times(2)).toStepDefinition(eq(Locale.ENGLISH), any(), any());
     }
 
     private String fileContent(String resourcePath) {
-        return Files.contentOf(new File(Resources.getResource(resourcePath).getPath()), StandardCharsets.UTF_8);
+        return Files.contentOf(new File(GlacioAdapterTest.class.getResource(resourcePath).getPath()), StandardCharsets.UTF_8);
     }
 }

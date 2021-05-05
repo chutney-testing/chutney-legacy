@@ -37,10 +37,7 @@ public class ClasspathFunctions {
 
     @SpelFunction
     public static String resourceContent(String name, String charset) throws URISyntaxException, IOException {
-        return new String(
-            Files.readAllBytes(resourceToPath(name)),
-            ofNullable(charset).map(Charset::forName).orElse(Charset.defaultCharset())
-        );
+        return Files.readString(resourceToPath(name), ofNullable(charset).map(Charset::forName).orElse(Charset.defaultCharset()));
     }
 
     private static Path resourceToPath(String name) throws URISyntaxException {

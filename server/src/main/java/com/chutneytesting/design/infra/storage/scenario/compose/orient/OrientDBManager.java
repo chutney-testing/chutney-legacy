@@ -24,9 +24,9 @@ public class OrientDBManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrientDBManager.class);
 
-    private OrientConfigurationProperties orientConfigurationProperties;
+    private final OrientConfigurationProperties orientConfigurationProperties;
     private OrientDB orientDB;
-    private Map<String,ODatabasePool> dbPools = new HashMap<>();
+    private final Map<String,ODatabasePool> dbPools = new HashMap<>();
 
     public OrientDBManager(OrientConfigurationProperties orientConfigurationProperties) {
         this.orientConfigurationProperties = orientConfigurationProperties;

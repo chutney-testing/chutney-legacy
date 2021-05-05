@@ -13,9 +13,9 @@ import org.json.JSONTokener;
 
 public class JsonValidationTask implements Task {
 
-    private String json;
-    private String schema;
-    private Logger logger;
+    private final String json;
+    private final String schema;
+    private final Logger logger;
 
     public JsonValidationTask(Logger logger, @Input("json") String json, @Input("schema") String schema) {
         this.logger = logger;

@@ -48,7 +48,7 @@ public class ComposedTestCaseDatatableIterationsPreProcessor implements TestCase
 
     ExecutableComposedTestCase apply(ExecutableComposedTestCase testCase) {
         Optional<DataSet> oDataset = testCase.metadata.datasetId().map(dataSetRepository::findById);
-        if (!oDataset.isPresent()) {
+        if (oDataset.isEmpty()) {
             return testCase;
         }
 

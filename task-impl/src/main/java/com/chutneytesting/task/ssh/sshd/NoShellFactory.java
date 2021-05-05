@@ -7,7 +7,7 @@ import org.apache.sshd.server.shell.ShellFactory;
 
 public class NoShellFactory implements ShellFactory {
 
-    private SshServerMock sshServerMock;
+    private final SshServerMock sshServerMock;
 
     public NoShellFactory(SshServerMock sshServerMock) {
         this.sshServerMock = sshServerMock;

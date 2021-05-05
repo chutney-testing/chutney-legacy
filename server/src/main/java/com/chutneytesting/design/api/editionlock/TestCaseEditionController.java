@@ -32,14 +32,14 @@ public class TestCaseEditionController {
         this.userService = userService;
     }
 
-    @GetMapping(path = "/{testCaseId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "/{testCaseId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TestCaseEditionDto> testCasesEditions(@PathVariable("testCaseId") String testCaseId) {
         return testCaseEditionsService.getTestCaseEditions(fromFrontId(testCaseId)).stream()
             .map(TestCaseEditionController::toDto)
             .collect(toList());
     }
 
-    @PostMapping(path = "/{testCaseId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(path = "/{testCaseId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public TestCaseEditionDto editTestCase(@PathVariable("testCaseId") String testCaseId) {
         return toDto(testCaseEditionsService.editTestCase(fromFrontId(testCaseId), userService.getCurrentUser().getId()));
     }

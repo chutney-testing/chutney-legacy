@@ -170,7 +170,8 @@ public class DatabaseTestCaseRepository implements DelegateScenarioRepository {
                 .withVersion(rs.getInt("VERSION"));
 
             Try.exec(() ->  {
-                TypeReference<Map<String, String>> typeRef = new TypeReference<Map<String, String>>() {};
+                TypeReference<Map<String, String>> typeRef = new TypeReference<>() {
+                };
                 String executionParameters = rs.getString("DATASET");
                 return testCaseDataBuilder.withExecutionParameters(mapper.readValue(executionParameters != null ? executionParameters : "{}", typeRef));
             }).runtime();

@@ -77,7 +77,7 @@ public class LocalServerIdentifier {
     }
 
     public NetworkConfiguration withLocalHost(NetworkConfiguration networkConfiguration) {
-        if (!findLocalName(networkConfiguration).isPresent())
+        if (findLocalName(networkConfiguration).isEmpty())
             return ImmutableNetworkConfiguration.builder()
                 .from(networkConfiguration)
                 .agentNetworkConfiguration(ImmutableNetworkConfiguration.AgentNetworkConfiguration.builder()

@@ -18,18 +18,18 @@ public class TaskController {
 
     static final String BASE_URL = "/api/task/v1";
 
-    private EmbeddedTaskEngine embeddedTaskEngine;
+    private final EmbeddedTaskEngine embeddedTaskEngine;
 
     public TaskController(EmbeddedTaskEngine embeddedTaskEngine) {
         this.embeddedTaskEngine = embeddedTaskEngine;
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TaskDto> allTasks() {
         return embeddedTaskEngine.getAllTasks();
     }
 
-    @GetMapping(path = "/{taskId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public TaskDto byTaskId(@PathVariable String taskId) {
         return embeddedTaskEngine.getTask(taskId).orElseThrow(TaskNotFoundException::new);
     }

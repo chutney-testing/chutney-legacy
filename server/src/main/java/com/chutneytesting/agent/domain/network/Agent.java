@@ -2,8 +2,8 @@ package com.chutneytesting.agent.domain.network;
 
 import com.chutneytesting.agent.domain.TargetId;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -45,8 +45,8 @@ public class Agent {
     }
 
     public List<Agent> findFellowAgentForReaching(String targetName, String environment) {
-        List<Agent> result = Lists.newArrayList();
-        Optional<Agent> resultFound = findNext(this, TargetId.of(targetName, environment), Sets.newHashSet(this), result);
+        List<Agent> result = new ArrayList<>();
+        Optional<Agent> resultFound = findNext(this, TargetId.of(targetName, environment),  Sets.newHashSet(this), result);
         if (resultFound.isPresent()) {
             Collections.reverse(result);
             return result;

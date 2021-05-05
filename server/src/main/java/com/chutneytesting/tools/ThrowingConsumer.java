@@ -11,13 +11,13 @@ public interface ThrowingConsumer<T> {
     /**
      * @throws UncheckedException if given {@link ThrowingFunction} throws
      */
-    public static <T> Consumer<T> toUnchecked(ThrowingConsumer<T> throwingConsumer) throws UncheckedException {
+    static <T> Consumer<T> toUnchecked(ThrowingConsumer<T> throwingConsumer) throws UncheckedException {
         return silence(throwingConsumer, e -> {
             throw UncheckedException.throwUncheckedException(e);
         });
     }
 
-    public static <T> Consumer<T> silence(ThrowingConsumer<T> throwingConsumer, Consumer<Exception> exceptionHandler) {
+    static <T> Consumer<T> silence(ThrowingConsumer<T> throwingConsumer, Consumer<Exception> exceptionHandler) {
         return t -> {
             try {
                 throwingConsumer.accept(t);

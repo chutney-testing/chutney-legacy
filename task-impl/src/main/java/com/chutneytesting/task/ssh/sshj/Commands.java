@@ -48,14 +48,10 @@ public class Commands {
         List<CommandResult> results = new ArrayList<>();
 
         for (Command command : this.all) {
-            try {
-                LOGGER.debug("COMMANDS :: {}", command);
-                CommandResult result = command.executeWith(sshClient);
-                results.add(result);
-                LOGGER.debug("RESULT :: {}", result);
-            } catch (IOException e) {
-                throw e;
-            }
+            LOGGER.debug("COMMANDS :: {}", command);
+            CommandResult result = command.executeWith(sshClient);
+            results.add(result);
+            LOGGER.debug("RESULT :: {}", result);
         }
 
         return results;

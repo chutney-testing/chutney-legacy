@@ -31,15 +31,15 @@ public class DataSetController {
 
     public static final String BASE_URL = "/api/v1/datasets";
 
-    private DataSetRepository dataSetRepository;
-    private DataSetHistoryRepository dataSetHistoryRepository;
+    private final DataSetRepository dataSetRepository;
+    private final DataSetHistoryRepository dataSetHistoryRepository;
 
     public DataSetController(DataSetRepository dataSetRepository, DataSetHistoryRepository dataSetHistoryRepository) {
         this.dataSetRepository = dataSetRepository;
         this.dataSetHistoryRepository = dataSetHistoryRepository;
     }
 
-    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<DataSetDto> findAll() {
         return dataSetRepository.findAll()
             .stream()
@@ -48,7 +48,7 @@ public class DataSetController {
             .collect(Collectors.toList());
     }
 
-    @PostMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public DataSetDto save(@RequestBody DataSetDto dataSetDto) {
         DataSet newDataSet = fromDto(dataSetDto);
         String newDataSetId = dataSetRepository.save(newDataSet);
@@ -57,7 +57,7 @@ public class DataSetController {
         return toDto(newDataSet, savedVersion.map(Pair::getRight).orElseGet(() -> lastVersionNumber(newDataSetId)));
     }
 
-    @PutMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PutMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public DataSetDto update(@RequestBody DataSetDto dataSetDto) {
         final DataSet dataSetToUpdate = fromDto(dataSetDto);
         return ofNullable(dataSetToUpdate.id)
@@ -79,7 +79,7 @@ public class DataSetController {
         dataSetHistoryRepository.removeHistory(dataSetBackId);
     }
 
-    @GetMapping(path = "/{dataSetId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "/{dataSetId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public DataSetDto findById(@PathVariable String dataSetId) {
         return toDto(
             dataSetRepository.findById(fromFrontId(dataSetId)),
@@ -87,19 +87,19 @@ public class DataSetController {
         );
     }
 
-    @GetMapping(path = "/{dataSetId}/versions/last", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "/{dataSetId}/versions/last", produces = MediaType.APPLICATION_JSON_VALUE)
     public Integer lastVersionNumber(@PathVariable String dataSetId) {
         return dataSetHistoryRepository.lastVersion(fromFrontId(dataSetId));
     }
 
-    @GetMapping(path = "/{dataSetId}/versions", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "/{dataSetId}/versions", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<DataSetDto> allVersionNumbers(@PathVariable String dataSetId) {
         return dataSetHistoryRepository.allVersions(fromFrontId(dataSetId)).entrySet().stream()
             .map(e -> toDto(e.getValue(), e.getKey()))
             .collect(Collectors.toList());
     }
 
-    @GetMapping(path = {"/{dataSetId}/{version}", "/{dataSetId}/versions/{version}"}, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = {"/{dataSetId}/{version}", "/{dataSetId}/versions/{version}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public DataSetDto version(@PathVariable String dataSetId, @PathVariable Integer version) {
         return toDto(dataSetHistoryRepository.version(fromFrontId(dataSetId), version), version);
     }

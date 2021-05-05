@@ -46,7 +46,7 @@ public class HttpClient implements DelegationClient {
     public StepExecutionReport handDown(StepDefinition stepDefinition, NamedHostAndPort delegate) throws CannotDelegateException {
         if (connectionChecker.canConnectTo(delegate)) {
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+            headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<ExecutionRequestDto> request = new HttpEntity<>(ExecutionRequestMapper.from(stepDefinition), headers);
             StepExecutionReportDto reportDto = restTemplate.postForObject("https://" + delegate.host() + ":" + delegate.port() + EXECUTION_URL, request, StepExecutionReportDto.class);
             return StepExecutionReportMapper.fromDto(reportDto);

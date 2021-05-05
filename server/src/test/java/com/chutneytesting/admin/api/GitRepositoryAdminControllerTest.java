@@ -47,7 +47,7 @@ public class GitRepositoryAdminControllerTest {
 
         // When and then
         String contentAsString = mockMvc.perform(MockMvcRequestBuilders.get("/api/source/git/v1")
-            .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .accept(MediaType.APPLICATION_JSON_VALUE))
             .andDo(print())
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andReturn().getResponse().getContentAsString();
@@ -67,8 +67,8 @@ public class GitRepositoryAdminControllerTest {
         // When and then
         mockMvc.perform(MockMvcRequestBuilders.post("/api/source/git/v1")
             .content(om.writeValueAsString(gitRepoDto))
-            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-            .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .accept(MediaType.APPLICATION_JSON_VALUE))
             .andDo(print())
             .andExpect(MockMvcResultMatchers.status().isOk());
 
@@ -94,8 +94,8 @@ public class GitRepositoryAdminControllerTest {
         // When and then
         mockMvc.perform(MockMvcRequestBuilders.post("/api/source/git/v1")
             .content(om.writeValueAsString(gitRepoDto))
-            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-            .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .accept(MediaType.APPLICATION_JSON_VALUE))
             .andDo(print())
             .andExpect(MockMvcResultMatchers.status().isOk());
 

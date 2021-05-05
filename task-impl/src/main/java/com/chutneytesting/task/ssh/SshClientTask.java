@@ -22,7 +22,7 @@ public class SshClientTask implements Task {
     private final Target target;
     private final Logger logger;
     private final Commands commands;
-    private CHANNEL channel;
+    private final CHANNEL channel;
 
     public SshClientTask(Target target, Logger logger, @Input("commands") List<Object> commands, @Input("channel") String channel) {
         this.target = target;

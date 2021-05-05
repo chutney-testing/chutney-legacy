@@ -55,7 +55,7 @@ public class GwtTestCaseControllerTest {
     @Test
     public void should_delete_scenario_with_repository_when_delete_scenario() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/scenario/v2/1")
-            .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .accept(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(MockMvcResultMatchers.status().isOk());
         verify(testCaseRepository).removeById(eq("1"));
     }

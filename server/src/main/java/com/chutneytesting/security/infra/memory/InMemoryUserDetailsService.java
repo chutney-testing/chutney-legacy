@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 public class InMemoryUserDetailsService implements UserDetailsService {
 
-    private Map<String, UserDetails> users = new HashMap<>();
+    private final Map<String, UserDetails> users = new HashMap<>();
 
     public InMemoryUserDetailsService(InMemoryUsersProperties inMemoryUsersProperties) {
         inMemoryUsersProperties.getUsers().forEach(user -> users.put(user.getUsername(), user));

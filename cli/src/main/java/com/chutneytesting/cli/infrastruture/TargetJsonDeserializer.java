@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 // TODO file/http model must be placed in appropriate space without coupling to domain-used one {@link Target}
 public class TargetJsonDeserializer extends JsonDeserializer<List<Target>> {

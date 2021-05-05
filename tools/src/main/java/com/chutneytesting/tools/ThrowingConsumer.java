@@ -15,7 +15,7 @@ public interface ThrowingConsumer<T> {
         });
     }
 
-    public static <T> Consumer<T> silence(ThrowingConsumer<T> throwingConsumer, Consumer<Exception> exceptionHandler) {
+    static <T> Consumer<T> silence(ThrowingConsumer<T> throwingConsumer, Consumer<Exception> exceptionHandler) {
         return t -> {
             try {
                 throwingConsumer.accept(t);

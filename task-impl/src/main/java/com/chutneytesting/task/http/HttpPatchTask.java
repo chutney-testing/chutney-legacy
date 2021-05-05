@@ -45,7 +45,7 @@ public class HttpPatchTask implements Task {
     public TaskExecutionResult execute() {
         HttpClient httpClient = new HttpClientFactory().create(target, String.class, timeout);
         HttpHeaders httpHeaders = new HttpHeaders();
-        headers.entrySet().forEach(e -> httpHeaders.add(e.getKey(), e.getValue()));
+        headers.forEach((key, value) -> httpHeaders.add(key, value));
         Supplier<ResponseEntity<String>> caller = () -> httpClient.patch(this.uri, body, httpHeaders);
         return HttpTask.httpCall(logger, caller);
     }

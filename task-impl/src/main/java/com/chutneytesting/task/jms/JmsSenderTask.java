@@ -20,7 +20,7 @@ public class JmsSenderTask implements Task {
     private final Map<String, String> headers;
 
     // TODO create injectable service
-    private JmsConnectionFactory jmsConnectionFactory = new JmsConnectionFactory();
+    private final JmsConnectionFactory jmsConnectionFactory = new JmsConnectionFactory();
 
     public JmsSenderTask(Target target, Logger logger, @Input("destination") String destination, @Input("body") String body, @Input("headers") Map<String, String> headers) {
         this.target = target;

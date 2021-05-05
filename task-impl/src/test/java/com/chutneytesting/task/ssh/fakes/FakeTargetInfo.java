@@ -3,7 +3,6 @@ package com.chutneytesting.task.ssh.fakes;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.google.common.io.Resources;
 import com.chutneytesting.task.spi.injectable.SecurityInfo;
 import com.chutneytesting.task.spi.injectable.Target;
 import java.util.Collections;
@@ -13,7 +12,7 @@ import org.apache.sshd.server.SshServer;
 
 public class FakeTargetInfo {
 
-    private static final String RSA_PRIVATE_KEY = Resources.getResource("security/client.key").getPath();
+    private static final String RSA_PRIVATE_KEY = FakeTargetInfo.class.getResource("/security/client.key").getPath();
 
     public static Target buildInfoWithPasswordFor(SshServer sshServer) {
         SecurityInfo.Credential credential = mock(SecurityInfo.Credential.class);

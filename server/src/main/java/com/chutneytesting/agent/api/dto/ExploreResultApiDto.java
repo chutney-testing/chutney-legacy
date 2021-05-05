@@ -1,6 +1,5 @@
 package com.chutneytesting.agent.api.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.LinkedHashSet;
 import java.util.Set;
 

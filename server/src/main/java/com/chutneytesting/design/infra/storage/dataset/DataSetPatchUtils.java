@@ -173,8 +173,6 @@ public final class DataSetPatchUtils {
     }
 
     private static void addSpaces(StringBuilder line, Integer nb) {
-        for (int i = 0; i < nb; i++) {
-            line.append(SPACE);
-        }
+        line.append(SPACE.repeat(Math.max(0, nb)));
     }
 }

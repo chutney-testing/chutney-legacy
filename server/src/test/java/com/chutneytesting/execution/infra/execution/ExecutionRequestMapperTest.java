@@ -22,9 +22,7 @@ import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedS
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import com.chutneytesting.execution.domain.scenario.composed.StepImplementation;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.Resources;
 import java.io.File;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,7 +47,7 @@ public class ExecutionRequestMapperTest {
     public void should_map_test_case_to_execution_request() {
         // Given
         RawTestCase testCase = RawTestCase.builder()
-            .withScenario(Files.contentOf(new File(Resources.getResource("raw_scenarios/scenario.json").getPath()), StandardCharsets.UTF_8))
+            .withScenario(Files.contentOf(new File(ExecutionRequestMapperTest.class.getResource("/raw_scenarios/scenario.json").getPath()), StandardCharsets.UTF_8))
             .build();
         ExecutionRequest request = new ExecutionRequest(testCase, "", "");
 

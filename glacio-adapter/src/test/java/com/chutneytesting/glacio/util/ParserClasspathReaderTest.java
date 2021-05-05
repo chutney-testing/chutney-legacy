@@ -14,7 +14,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class ParserClasspathReaderTest {
@@ -45,7 +44,6 @@ class ParserClasspathReaderTest {
 
     private List<IParseExecutableStep> getIParseExecutableSteps() {
         Map<Pair<Locale, String>, IParseExecutableStep> glacioParsers = createGlacioParsers("META-INF/extension/chutney.glacio.parsers");
-        List<IParseExecutableStep> glacioExecutableStepParsers = glacioParsers.values().stream().collect(Collectors.toList());
-        return glacioExecutableStepParsers;
+        return glacioParsers.values().stream().collect(Collectors.toList());
     }
 }

@@ -38,8 +38,8 @@ public class OrientComposableTestCaseRepository implements ComposableTestCaseRep
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrientComposableTestCaseRepository.class);
 
-    private ODatabasePool componentDBPool;
-    private ExecutableComposedTestCaseMapper testCaseMapper;
+    private final ODatabasePool componentDBPool;
+    private final ExecutableComposedTestCaseMapper testCaseMapper;
 
     public OrientComposableTestCaseRepository(OrientComponentDB orientComponentDB, ExecutableComposedTestCaseMapper testCaseMapper) {
         this.componentDBPool = orientComponentDB.dbPool();

@@ -9,8 +9,8 @@ import java.io.IOException;
 
 public class SshServerStopTask implements Task {
 
-    private Logger logger;
-    private SshServerMock sshServer;
+    private final Logger logger;
+    private final SshServerMock sshServer;
 
     public SshServerStopTask(Logger logger, @Input("ssh-server") SshServerMock sshServer) {
         this.logger = logger;

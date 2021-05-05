@@ -16,14 +16,12 @@ public class FinallyActionMapperTest {
 
     @Test
     public void upright_finally_action_copy() {
-        TargetImpl domainTarget = TargetImpl.builder()
-            .withName("test-target")
-            .withUrl("proto://host:12345")
-            .build();
-        Target taskTarget = domainTarget;
         FinallyAction finallyAction = FinallyAction.Builder
             .forAction("test-action", "task name")
-            .withTarget(taskTarget)
+            .withTarget(TargetImpl.builder()
+                .withName("test-target")
+                .withUrl("proto://host:12345")
+                .build())
             .withInput("test-input", "test")
             .build();
 

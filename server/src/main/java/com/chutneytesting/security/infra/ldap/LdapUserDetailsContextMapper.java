@@ -10,7 +10,7 @@ import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 
 public class LdapUserDetailsContextMapper implements UserDetailsContextMapper {
 
-    private UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
     public LdapUserDetailsContextMapper(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;

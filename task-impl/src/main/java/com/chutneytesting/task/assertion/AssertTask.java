@@ -13,7 +13,7 @@ import java.util.Map;
 public class AssertTask implements Task {
 
     private final Logger logger;
-    private List<Map<String, Boolean>> asserts;
+    private final List<Map<String, Boolean>> asserts;
 
     public AssertTask(Logger logger, @Input("asserts") List<Map<String, Boolean>> asserts) {
         this.logger = logger;
@@ -21,7 +21,6 @@ public class AssertTask implements Task {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public TaskExecutionResult execute() {
         boolean result = asserts.stream().allMatch(l -> l.entrySet().stream()
             .map(e -> {
@@ -37,7 +36,7 @@ public class AssertTask implements Task {
                     return Boolean.FALSE;
                 }
             })
-            .allMatch(r -> r == true)
+            .allMatch(r -> r)
         );
         return result ? TaskExecutionResult.ok() : TaskExecutionResult.ko();
     }

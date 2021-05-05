@@ -50,7 +50,7 @@ public class ScenarioExecutionEngineAsync {
     private final TestCasePreProcessors testCasePreProcessors;
     private final DataSetHistoryRepository dataSetHistoryRepository;
 
-    private Map<Long, Pair<Observable<ScenarioExecutionReport>, Long>> scenarioExecutions = new ConcurrentHashMap<>();
+    private final Map<Long, Pair<Observable<ScenarioExecutionReport>, Long>> scenarioExecutions = new ConcurrentHashMap<>();
     private long retentionDelaySeconds;
     private long debounceMilliSeconds;
 

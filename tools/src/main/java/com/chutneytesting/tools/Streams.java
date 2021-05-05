@@ -44,7 +44,7 @@ public abstract class Streams {
     public static <T> Stream<T> toStream(final Enumeration<T> enumeration) {
         return StreamSupport.stream(
             Spliterators.spliteratorUnknownSize(
-                new Iterator<T>() {
+                new Iterator<>() {
                     public T next() {
                         return enumeration.nextElement();
                     }

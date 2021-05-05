@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -363,7 +363,7 @@ public class CampaignControllerTest {
     private CampaignDto insertCampaign(CampaignDto campaign) throws Exception {
         execute(post(urlTemplate)
             .content(om.writeValueAsString(campaign))
-            .contentType(APPLICATION_JSON_UTF8_VALUE))
+            .contentType(APPLICATION_JSON_VALUE))
             .andExpect(MockMvcResultMatchers.status().isOk());
         return resultExtractor.campaign();
     }

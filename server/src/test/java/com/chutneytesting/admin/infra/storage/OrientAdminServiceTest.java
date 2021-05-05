@@ -4,7 +4,6 @@ import static com.chutneytesting.design.infra.storage.scenario.compose.orient.Or
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.orientechnologies.common.log.OLogManager;
 import com.chutneytesting.admin.domain.DatabaseAdminService;
 import com.chutneytesting.admin.domain.SqlResult;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
@@ -14,16 +13,16 @@ import com.chutneytesting.tests.AbstractOrientDatabaseTest;
 import com.chutneytesting.tools.ImmutablePaginationRequestWrapperDto;
 import com.chutneytesting.tools.PaginatedDto;
 import com.chutneytesting.tools.PaginationRequestWrapperDto;
+import com.orientechnologies.common.log.OLogManager;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-@SuppressWarnings("ConstantConditions")
 public class OrientAdminServiceTest extends AbstractOrientDatabaseTest {
 
     private static String DATABASE_NAME = "orient_admin_test";

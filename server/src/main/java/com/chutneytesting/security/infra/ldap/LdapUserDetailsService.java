@@ -13,10 +13,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 public class LdapUserDetailsService implements UserDetailsService {
 
-    private String userIdAttribute;
-    private LdapTemplate ldapTemplate;
-    private AttributesMapper<User> ldapAttributesMapper;
-    private String[] attributesToRetrieve;
+    private final String userIdAttribute;
+    private final LdapTemplate ldapTemplate;
+    private final AttributesMapper<User> ldapAttributesMapper;
+    private final String[] attributesToRetrieve;
 
     LdapUserDetailsService(LdapTemplate ldapTemplate, LdapAttributesProperties ldapAttributesProperties, AttributesMapper<User> ldapAttributesMapper) {
         this.userIdAttribute = ldapAttributesProperties.getId();

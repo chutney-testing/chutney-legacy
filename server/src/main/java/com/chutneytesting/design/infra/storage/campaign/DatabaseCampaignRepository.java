@@ -194,15 +194,13 @@ public class DatabaseCampaignRepository implements CampaignRepository {
     private void updateScenarioReferences(Long campaignId, List<String> scenarioId) {
         clearAllAssociationToScenario(campaignId);
         final AtomicInteger index = new AtomicInteger(0);
-        scenarioId.forEach(id -> {
-            uiNamedParameterJdbcTemplate
-                .update("INSERT INTO CAMPAIGN_SCENARIOS(CAMPAIGN_ID, SCENARIO_ID, INDEX) VALUES (:campaignId, :scenarioId, :index)"
-                    , map(Pair.of("campaignId", campaignId)
-                        , Pair.of("scenarioId", id)
-                        , Pair.of("index", index.incrementAndGet())
-                    )
-                );
-        });
+        scenarioId.forEach(id -> uiNamedParameterJdbcTemplate
+            .update("INSERT INTO CAMPAIGN_SCENARIOS(CAMPAIGN_ID, SCENARIO_ID, INDEX) VALUES (:campaignId, :scenarioId, :index)"
+                , map(Pair.of("campaignId", campaignId)
+                    , Pair.of("scenarioId", id)
+                    , Pair.of("index", index.incrementAndGet())
+                )
+            ));
     }
 
     private boolean isCampaignExists(Long campaignId) {

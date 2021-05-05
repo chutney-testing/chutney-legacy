@@ -17,7 +17,7 @@ public class JsonFunctionsTest {
                 "\"key2\": \"gh\"" +
                 "}, {}]";
 
-        Object result = JsonFunctions.json(json, "$[0]");
+        Object result = JsonFunctions.jsonPath(json, "$[0]");
 
         Assertions.assertThat(result).isInstanceOfSatisfying(Map.class, map -> Assertions.assertThat(map).containsEntry("key1", 42));
     }
@@ -30,7 +30,7 @@ public class JsonFunctionsTest {
                 "\"key2\": \"gh\"" +
                 "}";
 
-        Object result = JsonFunctions.json(json, "$.key1");
+        Object result = JsonFunctions.jsonPath(json, "$.key1");
 
         Assertions.assertThat(result).isInstanceOfSatisfying(List.class, list -> Assertions.assertThat(list).contains("value1"));
     }

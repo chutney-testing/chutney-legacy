@@ -49,7 +49,7 @@ public class SeleniumSwitchToTask extends SeleniumTask implements SeleniumFindBe
             }
             break;
             case "Window": {
-                if (!webElement.isPresent()) {
+                if (webElement.isEmpty()) {
                     if (selector != null && by == null) {
                         webDriver.switchTo().window(selector);
                         logger.info("Switch to window");
@@ -63,7 +63,7 @@ public class SeleniumSwitchToTask extends SeleniumTask implements SeleniumFindBe
             }
             break;
             case "Popup": {
-                if (!webElement.isPresent()) {
+                if (webElement.isEmpty()) {
                     Set<String> windowHandlers = webDriver.getWindowHandles();
                     String parentWindowHandler = webDriver.getWindowHandle();
 

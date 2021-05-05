@@ -12,7 +12,7 @@ import java.util.Optional;
 public class DebugTask implements Task {
 
     private final Logger logger;
-    private Map<String, Object> inputs;
+    private final Map<String, Object> inputs;
     private final List<String> filter;
 
     public DebugTask(Logger logger, Map<String, Object> inputs, @Input("filters") List<String> filter) {

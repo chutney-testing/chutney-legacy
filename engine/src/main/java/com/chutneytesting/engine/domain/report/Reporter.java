@@ -35,8 +35,8 @@ public class Reporter {
     private static final Logger LOGGER = LoggerFactory.getLogger(Reporter.class);
     private static final long DEFAULT_RETENTION_DELAY_SECONDS = 5;
 
-    private Map<Long, Subject<StepExecutionReport>> reportsPublishers = new ConcurrentHashMap<>();
-    private Map<Long, Step> rootSteps = new ConcurrentHashMap<>();
+    private final Map<Long, Subject<StepExecutionReport>> reportsPublishers = new ConcurrentHashMap<>();
+    private final Map<Long, Step> rootSteps = new ConcurrentHashMap<>();
     private long retentionDelaySeconds;
 
     public Reporter() {

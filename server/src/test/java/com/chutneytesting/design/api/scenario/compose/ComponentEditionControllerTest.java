@@ -4,7 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -69,7 +69,7 @@ public class ComponentEditionControllerTest {
     public void should_save_testCase() throws Exception {
         // When
         mockMvc.perform(post(ComponentEditionController.BASE_URL)
-            .contentType(APPLICATION_JSON_UTF8_VALUE)
+            .contentType(APPLICATION_JSON_VALUE)
             .content(om.writeValueAsString(composableTestCaseDto)))
             .andExpect(status().isOk());
 

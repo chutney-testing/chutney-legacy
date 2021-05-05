@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 public class EmbeddedTaskEngine {
 
-    private List<TaskDto> allTasks;
+    private final List<TaskDto> allTasks;
 
     public EmbeddedTaskEngine(TaskTemplateRegistry taskTemplateRegistry) {
         this.allTasks = taskTemplateRegistry.getAll().parallelStream()

@@ -10,7 +10,7 @@ import com.jayway.jsonpath.JsonPath;
 
 public class JsonFunctions {
 
-    private static ObjectMapper om = new ObjectMapper();
+    private static final ObjectMapper om = new ObjectMapper();
 
     @Deprecated
     @SpelFunction

@@ -111,9 +111,7 @@ public class SurefireCampaignExecutionReportBuilderTest {
             assertThat(files).hasSize(4).containsKeys("test Campaign Title/test ♥ Scenario Title ok.xml", "test Campaign Title/test Scenario Title ko.xml", "test Campaign Title 2/test Scenario Title ko.xml", "test Campaign Title 2/test ♥ Scenario Title ok.xml");
 
             // assert That XML have been serialized:
-            assertThat(files.values()).allSatisfy(s -> {
-                assertThat(s).startsWith("<?xml version=\"1.0\" ?><testsuite");
-            });
+            assertThat(files.values()).allSatisfy(s -> assertThat(s).startsWith("<?xml version=\"1.0\" ?><testsuite"));
         }
     }
 

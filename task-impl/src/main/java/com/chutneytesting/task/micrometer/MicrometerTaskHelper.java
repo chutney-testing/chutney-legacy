@@ -67,9 +67,9 @@ final class MicrometerTaskHelper {
             .toArray(Duration[]::new);
     }
 
-    static long[] parseSlaListToLongs(String sla) {
+    static double[] parseSlaListToDoubles(String sla) {
         return splitStringList(sla)
-            .mapToLong(Long::parseLong)
+            .mapToDouble(Double::parseDouble)
             .toArray();
     }
 

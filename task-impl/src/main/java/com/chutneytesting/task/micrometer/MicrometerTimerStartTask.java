@@ -15,7 +15,7 @@ public class MicrometerTimerStartTask implements Task {
     protected static final String OUTPUT_TIMER_SAMPLE = "micrometerTimerSample";
 
     private final Logger logger;
-    private MeterRegistry registry;
+    private final MeterRegistry registry;
 
     public MicrometerTimerStartTask(Logger logger,
                                     @Input("registry") MeterRegistry registry) {

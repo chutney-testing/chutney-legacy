@@ -10,6 +10,7 @@ import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.task.sql.core.Records;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,7 +48,7 @@ public class SqlTaskTest {
         Object[] firstTuple = {1, "laitue", "laitue@fake.com"};
         Object[] secondTuple = {2, "carotte", "kakarot@fake.db"};
 
-        Task task = new SqlTask(sqlTarget, logger, Arrays.asList("select * from users"));
+        Task task = new SqlTask(sqlTarget, logger, Collections.singletonList("select * from users"));
         TaskExecutionResult result = task.execute();
 
         List<Records> recordResult = (List<Records>) result.outputs.get("recordResult");

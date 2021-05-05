@@ -21,10 +21,7 @@ public class WireMockFunction {
     public static Map<String, String> extractParameters(LoggedRequest request) {
         Map<String, String> parameters = new HashMap<>();
         request.getQueryParams()
-            .entrySet()
-            .forEach(e -> {
-                parameters.put(e.getValue().key(), StringUtils.join(e.getValue().values(), ", "));
-            });
+            .forEach((key, value) -> parameters.put(value.key(), StringUtils.join(value.values(), ", ")));
 
         return parameters;
     }

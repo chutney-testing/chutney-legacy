@@ -40,7 +40,7 @@ public class ComponentEditionController {
         this.userService = userService;
     }
 
-    @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String saveTestCase(@RequestBody ComposableTestCaseDto composableTestCaseDto) {
         ComposableTestCase composableTestCase = fromDto(composableTestCaseDto);
         composableTestCase = new ComposableTestCase(
@@ -54,7 +54,7 @@ public class ComponentEditionController {
         return toFrontId(composableTestCaseRepository.save(composableTestCase));
     }
 
-    @GetMapping(path = "/{testCaseId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "/{testCaseId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ComposableTestCaseDto getTestCase(@PathVariable("testCaseId") String testCaseId) {
         return toDto(composableTestCaseRepository.findById(fromFrontId(Optional.of(testCaseId))));
     }

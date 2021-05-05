@@ -36,17 +36,17 @@ public class JiraModuleController {
         this.jiraXrayPlugin = jiraXrayPlugin;
     }
 
-    @GetMapping(path = BASE_SCENARIO_URL, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = BASE_SCENARIO_URL, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, String> getLinkedScenarios() {
         return jiraRepository.getAllLinkedScenarios();
     }
 
-    @GetMapping(path = BASE_CAMPAIGN_URL, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = BASE_CAMPAIGN_URL, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, String> getLinkedCampaigns() {
         return jiraRepository.getAllLinkedCampaigns();
     }
 
-    @GetMapping(path = BASE_SCENARIO_URL + "/{scenarioId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = BASE_SCENARIO_URL + "/{scenarioId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public JiraDto getByScenarioId(@PathVariable String scenarioId) {
         String jiraId = jiraRepository.getByScenarioId(scenarioId);
         return ImmutableJiraDto.builder()
@@ -56,8 +56,8 @@ public class JiraModuleController {
     }
 
     @PostMapping(path = BASE_SCENARIO_URL,
-        consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
-        produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE)
     public JiraDto saveForScenario(@RequestBody JiraDto jiraDto) {
         jiraRepository.saveForScenario(jiraDto.chutneyId(), jiraDto.id());
         return ImmutableJiraDto.builder()
@@ -72,7 +72,7 @@ public class JiraModuleController {
     }
 
 
-    @GetMapping(path = BASE_CAMPAIGN_URL + "/{campaignId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = BASE_CAMPAIGN_URL + "/{campaignId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public JiraDto getByCampaignId(@PathVariable String campaignId) {
         String jiraId = jiraRepository.getByCampaignId(campaignId);
         return ImmutableJiraDto.builder()
@@ -81,7 +81,7 @@ public class JiraModuleController {
             .build();
     }
 
-    @GetMapping(path = BASE_TEST_EXEC_URL + "/{testExecId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = BASE_TEST_EXEC_URL + "/{testExecId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<String> getScenariosByCampaignIg(@PathVariable String testExecId) {
         if(testExecId.isEmpty())
             return new ArrayList<>();
@@ -97,8 +97,8 @@ public class JiraModuleController {
     }
 
     @PostMapping(path = BASE_CAMPAIGN_URL,
-        consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
-        produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE)
     public JiraDto saveForCampaign(@RequestBody JiraDto jiraDto) {
         jiraRepository.saveForCampaign(jiraDto.chutneyId(), jiraDto.id());
         return ImmutableJiraDto.builder()
@@ -112,7 +112,7 @@ public class JiraModuleController {
         jiraRepository.removeForCampaign(campaignId);
     }
 
-    @GetMapping(path = BASE_CONFIGURATION_URL, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = BASE_CONFIGURATION_URL, produces = MediaType.APPLICATION_JSON_VALUE)
     public JiraConfigurationDto getConfiguration() {
         JiraTargetConfiguration jiraTargetConfiguration = jiraRepository.loadServerConfiguration();
         return ImmutableJiraConfigurationDto.builder()
@@ -123,8 +123,8 @@ public class JiraModuleController {
     }
 
     @PostMapping(path = BASE_CONFIGURATION_URL,
-        consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
-        produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE)
     public void saveConfiguration(@RequestBody JiraConfigurationDto jiraConfigurationDto) {
         jiraRepository.saveServerConfiguration(new JiraTargetConfiguration(jiraConfigurationDto.url(), jiraConfigurationDto.username(), jiraConfigurationDto.password()));
     }

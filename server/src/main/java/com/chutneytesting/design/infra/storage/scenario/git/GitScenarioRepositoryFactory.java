@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class GitScenarioRepositoryFactory {
 
-    private GitClient gitClient;
-    private JsonMapper<TestCaseData> jsonMapper;
-    private JsonFilesGitRepository jsonFilesGitRepository;
+    private final GitClient gitClient;
+    private final JsonMapper<TestCaseData> jsonMapper;
+    private final JsonFilesGitRepository jsonFilesGitRepository;
 
     public GitScenarioRepositoryFactory(GitClient gitClient, JsonMapper<TestCaseData> jsonMapper, JsonFilesGitRepository jsonFilesGitRepository) {
         this.gitClient = gitClient;

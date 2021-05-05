@@ -47,17 +47,13 @@ public class GitClient {
     }
 
     public void removeCommitPushFile(String repoName, String commitMessage, String fileName) {
-        Consumer<Git> consumer = git -> {
-            Try.exec(() -> git.rm().addFilepattern(fileName).call());
-        };
+        Consumer<Git> consumer = git -> Try.exec(() -> git.rm().addFilepattern(fileName).call());
 
         doThenCommitAndPush(repoName, commitMessage, consumer);
     }
 
     public void addCommitPushFile(String repoName, String commitMessage) {
-        Consumer<Git> consumer = git -> {
-            Try.exec(() -> git.add().addFilepattern(".").call());
-        };
+        Consumer<Git> consumer = git -> Try.exec(() -> git.add().addFilepattern(".").call());
 
         doThenCommitAndPush(repoName, commitMessage, consumer);
     }

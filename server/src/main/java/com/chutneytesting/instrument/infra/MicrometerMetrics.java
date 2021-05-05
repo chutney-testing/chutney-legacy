@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.lang3.StringUtils;
@@ -69,11 +70,7 @@ class MicrometerMetrics implements ChutneyMetrics {
     private void updateMetrics(Map<ServerReportStatus, Long> scenarioCountByStatus, Map<ServerReportStatus, AtomicLong> cachedMetrics) {
         cachedMetrics.entrySet().stream().forEach(e -> {
             final Long valueInCache = scenarioCountByStatus.get(e.getKey());
-            if (valueInCache != null) {
-                e.getValue().set(valueInCache);
-            } else {
-                e.getValue().set(0L);
-            }
+            e.getValue().set(Objects.requireNonNullElse(valueInCache, 0L));
         });
     }
 

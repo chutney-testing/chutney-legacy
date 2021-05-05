@@ -57,7 +57,7 @@ public class HttpSoapTask implements Task {
     public TaskExecutionResult execute() {
         HttpClient httpClient = new HttpClientFactory().create(target, String.class, timeout);
         HttpHeaders httpHeaders = new HttpHeaders();
-        headers.entrySet().forEach(e -> httpHeaders.add(e.getKey(), e.getValue()));
+        headers.forEach((key, value) -> httpHeaders.add(key, value));
         Object finalBody = XmlFunction.getSoapBody(this.username, this.password, body.toString());
         Supplier<ResponseEntity<String>> caller = () -> httpClient.post(this.uri, ofNullable(finalBody).orElse("{}"), httpHeaders);
         return HttpTask.httpCall(logger, caller);
