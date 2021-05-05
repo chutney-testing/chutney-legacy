@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,7 @@ public class GitRepositoryAdminController {
         this.jsonFilesGitRepository = jsonFilesGitRepository;
     }
 
+    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<GitRepositoryDto> getGitRepositories() {
         return jsonFilesGitRepository.listGitRepository().stream()
@@ -36,6 +38,7 @@ public class GitRepositoryAdminController {
                 r.testSubFolder)).collect(Collectors.toList());
     }
 
+    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public void addNewGitRepository(@RequestBody GitRepositoryDto repo) {
         Set<GitRepository> gitRepositories = jsonFilesGitRepository.listGitRepository();
@@ -52,6 +55,7 @@ public class GitRepositoryAdminController {
         jsonFilesGitRepository.save(gitRepository);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @DeleteMapping(path = "/{repoId}")
     public void deleteGitRepository(@PathVariable("repoId") Long id) {
         Set<GitRepository> gitRepositories = jsonFilesGitRepository.listGitRepository();

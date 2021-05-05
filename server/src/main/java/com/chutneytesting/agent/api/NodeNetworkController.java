@@ -13,6 +13,7 @@ import com.chutneytesting.agent.domain.explore.ExploreAgentsService;
 import com.chutneytesting.agent.domain.explore.ExploreResult;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,6 +49,7 @@ public class NodeNetworkController {
 
     public static final String CONFIGURE_URL = "/api/v1/agentnetwork/configuration";
 
+    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @PostMapping(CONFIGURE_URL)
     public NetworkDescriptionApiDto configure(@RequestBody NetworkConfigurationApiDto networkConfigurationApi) {
         NetworkConfiguration networkConfiguration = networkConfigurationApiMapper.fromDtoAtNow(networkConfigurationApi);
@@ -58,6 +60,7 @@ public class NodeNetworkController {
 
     public static final String DESCRIPTION_URL = "/api/v1/description";
 
+    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @GetMapping(DESCRIPTION_URL)
     public NetworkDescriptionApiDto getConfiguration() {
         return networkDescriptionApiMapper.toDto(getCurrentNetworkDescription.getCurrentNetworkDescription());
@@ -65,6 +68,7 @@ public class NodeNetworkController {
 
     public static final String EXPLORE_URL = "/api/v1/agentnetwork/explore";
 
+    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @PostMapping(EXPLORE_URL)
     public ExploreResultApiDto explore(@RequestBody NetworkConfigurationApiDto networkConfigurationApiDto) {
         NetworkConfiguration networkConfiguration = networkConfigurationApiMapper.fromDto(networkConfigurationApiDto);
@@ -74,6 +78,7 @@ public class NodeNetworkController {
 
     public static final String WRAP_UP_URL = "/api/v1/agentnetwork/wrapup";
 
+    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @PostMapping(WRAP_UP_URL)
     public void wrapUp(@RequestBody NetworkDescriptionApiDto networkDescriptionApiDto) {
         NetworkDescription networkDescription = networkDescriptionApiMapper.fromDto(networkDescriptionApiDto);

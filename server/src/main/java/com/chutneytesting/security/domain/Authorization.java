@@ -1,0 +1,25 @@
+package com.chutneytesting.security.domain;
+
+public enum Authorization {
+
+    SCENARIO_READ,
+    SCENARIO_WRITE,
+    SCENARIO_EXECUTE,
+
+    CAMPAIGN_READ,
+    CAMPAIGN_WRITE,
+    CAMPAIGN_EXECUTE,
+
+    ENVIRONMENT_ACCESS,
+
+    GLOBAL_VAR_READ,
+    GLOBAL_VAR_WRITE,
+
+    DATASET_READ,
+    DATASET_WRITE,
+
+    COMPONENT_READ,
+    COMPONENT_WRITE,
+
+    ADMIN_ACCESS
+}

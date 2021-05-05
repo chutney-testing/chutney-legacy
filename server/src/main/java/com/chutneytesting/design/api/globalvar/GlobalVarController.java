@@ -1,12 +1,13 @@
 package com.chutneytesting.design.api.globalvar;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.design.infra.storage.globalvar.FileGlobalVarRepository;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Set;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/ui/globalvar/v1")
 public class GlobalVarController {
 
@@ -26,13 +28,13 @@ public class GlobalVarController {
         this.globalVarRepository = globalVarRepository;
     }
 
-    @CrossOrigin(origins = "*")
+    @PreAuthorize("hasAuthority('GLOBAL_VAR_READ')")
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Set<String> list() {
         return globalVarRepository.list();
     }
 
-    @CrossOrigin(origins = "*")
+    @PreAuthorize("hasAuthority('GLOBAL_VAR_WRITE')")
     @PostMapping(path = "/{fileName}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public void save(@PathVariable("fileName") String fileName, @RequestBody TextDto textContent) {
         try {
@@ -42,20 +44,20 @@ public class GlobalVarController {
         }
     }
 
-    @CrossOrigin(origins = "*")
+    @PreAuthorize("hasAuthority('GLOBAL_VAR_WRITE')")
     @DeleteMapping(path = "/{fileName}")
     public void delete(@PathVariable("fileName") String fileName) {
         globalVarRepository.deleteFile(fileName);
     }
 
-    @CrossOrigin(origins = "*")
+    @PreAuthorize("hasAuthority('GLOBAL_VAR_READ')")
     @GetMapping(path = "/{fileName}", produces = MediaType.APPLICATION_JSON_VALUE)
     public TextDto getFile(@PathVariable("fileName") String fileName) {
         return new TextDto(globalVarRepository.getFileContent(fileName));
     }
 
     public static class TextDto {
-        private String message;
+        private final String message;
 
         public TextDto(@JsonProperty("message") String message) {
             this.message = message;

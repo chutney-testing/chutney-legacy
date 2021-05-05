@@ -1,5 +1,7 @@
 package blackbox;
 
+import static java.util.stream.Collectors.toList;
+
 import com.chutneytesting.environment.api.dto.EnvironmentDto;
 import com.chutneytesting.environment.api.dto.TargetDto;
 import com.chutneytesting.environment.domain.Environment;
@@ -10,13 +12,18 @@ import com.chutneytesting.junit.api.AfterAll;
 import com.chutneytesting.junit.api.BeforeAll;
 import com.chutneytesting.junit.api.Chutney;
 import com.chutneytesting.junit.api.EnvironmentService;
+import com.chutneytesting.security.domain.Authorization;
+import com.chutneytesting.security.domain.Authorizations;
+import com.chutneytesting.security.domain.Role;
+import com.chutneytesting.security.domain.User;
+import com.chutneytesting.security.domain.UserRoles;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import org.apache.groovy.util.Maps;
-import org.h2.tools.Server;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.SocketUtils;
@@ -56,6 +63,8 @@ public class ChutneyTest {
         System.setProperty("configuration-folder", tmpConfDir.toString());
 
         localChutney = SpringApplication.run(IntegrationTestConfiguration.class);
+
+        initAuthorizations();
     }
 
     @AfterAll
@@ -156,5 +165,28 @@ public class ChutneyTest {
 
     private void cleanEnvironment() {
         environmentService.deleteEnvironment(TEST_ENV_NAME);
+    }
+
+    /**
+     * Declare roles and users roles.
+     * Users are declared in application-users.yml
+     */
+    private void initAuthorizations() {
+        Authorizations auth = localChutney.getBean(Authorizations.class);
+
+        UserRoles userRoles = UserRoles.builder()
+            .withRoles(List.of(
+                Role.DEFAULT,
+                Role.builder().withName("TESTCASE_EDITOR").withAuthorizations(List.of(Authorization.SCENARIO_WRITE.name())).build(),
+                Role.builder().withName("GOD").withAuthorizations(Arrays.stream(Authorization.values()).map(Enum::name).collect(toList())).build()
+            ))
+            .withUsers(List.of(
+                User.builder().withId("admin").withRole("GOD").build(),
+                User.builder().withId("robert").withRole("TESTCASE_EDITOR").build(),
+                User.builder().withId("paloma").withRole("TESTCASE_EDITOR").build()
+            ))
+            .build();
+
+        auth.save(userRoles);
     }
 }

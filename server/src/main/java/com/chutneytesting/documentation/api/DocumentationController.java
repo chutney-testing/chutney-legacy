@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/documentation")
+@CrossOrigin(origins = "*")
 public class DocumentationController {
 
     private final ExamplesRepository examplesRepository;
@@ -18,13 +19,11 @@ public class DocumentationController {
         this.examplesRepository = examplesRepository;
     }
 
-    @CrossOrigin(origins = "*")
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public boolean getActivationStatus() {
         return examplesRepository.isActive();
     }
 
-    @CrossOrigin(origins = "*")
     @PostMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public boolean toggleActivationStatus() {
         return examplesRepository.toggleActivation();

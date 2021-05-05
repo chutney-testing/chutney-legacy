@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,26 +32,31 @@ public class BackupController {
         this.backupRepository = backupRepository;
     }
 
+    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE)
     public String backup(@RequestBody BackupDto backupDto) {
         return backupRepository.save(fromDto(backupDto));
     }
 
+    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @DeleteMapping(path = "/{backupId}")
     public void delete(@PathVariable("backupId") String backupId) {
         backupRepository.delete(backupId);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @GetMapping(path = "/{backupId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public BackupDto get(@PathVariable("backupId") String backupId) {
         return toDto(backupRepository.read(backupId));
     }
 
+    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @GetMapping(path = "/{backupId}/download", produces = "application/zip")
     public void getBackupData(HttpServletResponse response, @PathVariable("backupId") String backupId) throws IOException {
         backupRepository.getBackupData(backupId, response.getOutputStream());
     }
 
+    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<BackupDto> list() {
         return backupRepository.list().stream()

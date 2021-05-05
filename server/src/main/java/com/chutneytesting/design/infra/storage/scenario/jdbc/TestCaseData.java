@@ -107,7 +107,7 @@ public class TestCaseData {
                 unmodifiableMap(ofNullable(executionParameters).orElse(emptyMap())),
                 ofNullable(rawScenario).orElse(""),
                 ofNullable(updateDate).orElse(creationDate),
-                ofNullable(author).orElseGet(User.ANONYMOUS_USER::getId),
+                ofNullable(author).orElseGet(() -> User.ANONYMOUS.id),
                 ofNullable(version).orElse(1)
             );
         }

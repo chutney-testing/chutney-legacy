@@ -21,7 +21,6 @@ import com.chutneytesting.execution.domain.state.ExecutionStateRepository;
 import com.chutneytesting.execution.infra.execution.ExecutionRequestMapper;
 import com.chutneytesting.execution.infra.execution.ServerTestEngineJavaImpl;
 import com.chutneytesting.instrument.domain.ChutneyMetrics;
-import com.chutneytesting.security.domain.UserService;
 import com.chutneytesting.task.api.EmbeddedTaskEngine;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.InetAddress;
@@ -184,11 +183,6 @@ public class ServerConfiguration {
             metrics,
             new ExecutorServiceAdapter(campaignExecutor)
         );
-    }
-
-    @Bean
-    UserService userService() {
-        return new UserService();
     }
 
     @Bean

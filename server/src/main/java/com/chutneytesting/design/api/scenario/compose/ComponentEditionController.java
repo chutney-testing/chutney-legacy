@@ -16,9 +16,10 @@ import com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepos
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
-import com.chutneytesting.security.domain.UserService;
+import com.chutneytesting.security.infra.SpringUserService;
 import java.util.Optional;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,16 +38,17 @@ public class ComponentEditionController {
 
     private final ComposableTestCaseRepository composableTestCaseRepository;
     private final TestCaseRepository testCaseRepository;
-    private final UserService userService;
+    private final SpringUserService userService;
     private final TestCasePreProcessors testCasePreProcessors;
 
-    public ComponentEditionController(ComposableTestCaseRepository composableTestCaseRepository, TestCaseRepository testCaseRepository, UserService userService, TestCasePreProcessors testCasePreProcessors) {
+    public ComponentEditionController(ComposableTestCaseRepository composableTestCaseRepository, TestCaseRepository testCaseRepository, SpringUserService userService, TestCasePreProcessors testCasePreProcessors) {
         this.composableTestCaseRepository = composableTestCaseRepository;
         this.testCaseRepository = testCaseRepository;
         this.userService = userService;
         this.testCasePreProcessors = testCasePreProcessors;
     }
 
+    @PreAuthorize("hasAuthority('SCENARIO_WRITE')")
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String saveTestCase(@RequestBody ComposableTestCaseDto composableTestCaseDto) {
         ComposableTestCase composableTestCase = fromDto(composableTestCaseDto);
@@ -54,18 +56,21 @@ public class ComponentEditionController {
             composableTestCase.id,
             TestCaseMetadataImpl.TestCaseMetadataBuilder.from(composableTestCase.metadata)
                 .withUpdateDate(now())
-                .withAuthor(userService.getCurrentUser().getId())
+                .withAuthor(userService.currentUser().getId())
                 .build(),
             composableTestCase.composableScenario
         );
         return toFrontId(composableTestCaseRepository.save(composableTestCase));
     }
 
+    @PreAuthorize("hasAuthority('SCENARIO_READ')")
     @GetMapping(path = "/{testCaseId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ComposableTestCaseDto getTestCase(@PathVariable("testCaseId") String testCaseId) {
         return toDto(composableTestCaseRepository.findById(fromFrontId(Optional.of(testCaseId))));
     }
 
+    // TODO - MGN
+    @PreAuthorize("hasAuthority('SCENARIO_READ')")
     @GetMapping(path = "/{testCaseId}/executable", produces = MediaType.APPLICATION_JSON_VALUE)
     public ComposableTestCaseDto getExecutableTestCase(@PathVariable("testCaseId") String testCaseId) {
         TestCase testCase = testCaseRepository.findById(fromFrontId(Optional.of(testCaseId)));
@@ -74,6 +79,7 @@ public class ComponentEditionController {
         return ExecutableComposableTestCaseMapper.toDto(result);
     }
 
+    @PreAuthorize("hasAuthority('SCENARIO_WRITE')")
     @DeleteMapping(path = "/{testCaseId}")
     public void removeScenarioById(@PathVariable("testCaseId") String testCaseId) {
         String testCaseBackId = fromFrontId(Optional.of(testCaseId));

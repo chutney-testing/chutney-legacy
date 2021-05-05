@@ -1,169 +1,98 @@
 package com.chutneytesting.security.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import static java.util.Optional.ofNullable;
 
-public class User implements UserDetails {
+import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
-    public static final User ANONYMOUS_USER;
-    private static final String ROLE_PREFIX = "ROLE_";
+public class User {
 
-    static {
-        ANONYMOUS_USER = new User();
-        ANONYMOUS_USER.setId("guest");
-        ANONYMOUS_USER.setName("guest");
-    }
+    public static User ANONYMOUS = User.builder().build();
 
-    private String id;
-    private String name;
-    private String firstname;
-    private String lastname;
-    private String mail;
+    public final String id;
+    public final String roleName;
 
-    @JsonIgnore
-    private Set<String> profiles;
-    private Set<GrantedAuthority> authorities;
-
-    // For in-memory usage
-    @JsonIgnore
-    private String password;
-    @JsonIgnore
-    private boolean accountExpired = false;
-    @JsonIgnore
-    private boolean locked = false;
-    @JsonIgnore
-    private boolean credentialExpired = false;
-    @JsonIgnore
-    private boolean enabled = false;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    @JsonIgnore
-    public String getUsername() {
-        return id;
-    }
-
-    @Override
-    @JsonIgnore
-    public boolean isAccountNonExpired() {
-        return !accountExpired;
-    }
-
-    @Override
-    @JsonIgnore
-    public boolean isAccountNonLocked() {
-        return !locked;
-    }
-
-    @Override
-    @JsonIgnore
-    public boolean isCredentialsNonExpired() {
-        return !credentialExpired;
-    }
-
-    @Override
-    @JsonIgnore
-    public boolean isEnabled() {
-        return !enabled;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
+    private User(String id, String roleName) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getMail() {
-        return mail;
-    }
-
-    public void setMail(String mail) {
-        this.mail = mail;
-    }
-
-    public Set<String> getProfiles() {
-        return profiles;
-    }
-
-    public void setProfiles(Set<String> profiles) {
-        this.profiles = profiles;
-    }
-
-    public void addProfile(String profile) {
-        if (profiles == null) {
-            profiles = new HashSet<>();
-        }
-        profiles.add(profile);
-    }
-
-    public void grantAuthority(String authority) {
-        if (authorities == null) {
-            authorities = new HashSet<>();
-        }
-        authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + authority));
-    }
-
-    public void setAccountExpired(boolean accountExpired) {
-        this.accountExpired = accountExpired;
-    }
-
-    public void setLocked(boolean locked) {
-        this.locked = locked;
-    }
-
-    public void setCredentialExpired(boolean credentialExpired) {
-        this.credentialExpired = credentialExpired;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+        this.roleName = roleName;
     }
 
     public static boolean isAnonymous(String userId) {
-        return userId == null || ANONYMOUS_USER.getId().equals(userId);
+        return ANONYMOUS.id.equals(userId);
+    }
+
+    public static Predicate<User> userByRoleNamePredicate(String roleName) {
+        return user -> user.roleName.equals(roleName);
+    }
+
+    public static Predicate<User> userByIdPredicate(String userId) {
+        return user -> user.id.equals(userId);
+    }
+
+    public static UserBuilder builder() {
+        return new UserBuilder();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id.equals(user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+            "id='" + id + '\'' +
+            ", role=" + roleName +
+            '}';
+    }
+
+    public static class UserBuilder {
+        private static final Predicate<String> USER_NAME_PREDICATE = Pattern.compile("^[0-9a-zA-Z_-]+$").asMatchPredicate();
+        private static final String ANONYMOUS_USER_ID = "guest";
+
+        private String id;
+        private String role;
+
+        private UserBuilder() {
+        }
+
+        public User build() {
+            return new User(
+                validateUserId(),
+                ofNullable(role).orElse(Role.DEFAULT.name)
+            );
+        }
+
+        public UserBuilder withId(String id) {
+            this.id = id;
+            return this;
+        }
+
+        public UserBuilder withRole(String role) {
+            this.role = role;
+            return this;
+        }
+
+        private String validateUserId() {
+            if (ofNullable(id).isEmpty()) {
+                return ANONYMOUS_USER_ID;
+            }
+            if (!USER_NAME_PREDICATE.test(id)) {
+                throw new IllegalArgumentException("User id must match the pattern `[0-9a-zA-Z_-]+`");
+            }
+            if (ANONYMOUS_USER_ID.equals(id)) {
+                throw new IllegalArgumentException("User id [" + ANONYMOUS_USER_ID + "] cannot be used");
+            }
+            return id;
+        }
     }
 }

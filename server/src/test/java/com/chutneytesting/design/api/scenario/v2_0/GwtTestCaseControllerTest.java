@@ -18,8 +18,8 @@ import com.chutneytesting.design.domain.scenario.gwt.GwtStep;
 import com.chutneytesting.design.domain.scenario.gwt.GwtStepImplementation;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
-import com.chutneytesting.security.domain.User;
-import com.chutneytesting.security.domain.UserService;
+import com.chutneytesting.security.api.UserDto;
+import com.chutneytesting.security.infra.SpringUserService;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -38,13 +38,13 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 public class GwtTestCaseControllerTest {
 
     private MockMvc mockMvc;
-    private TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
-    private ExecutionHistoryRepository executionHistoryRepository = mock(ExecutionHistoryRepository.class);
-    private UserService userService = mock(UserService.class);
+    private final TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
+    private final ExecutionHistoryRepository executionHistoryRepository = mock(ExecutionHistoryRepository.class);
+    private final SpringUserService userService = mock(SpringUserService.class);
 
     @BeforeEach
     public void setUp() {
-        when(userService.getCurrentUser()).thenReturn(User.ANONYMOUS_USER);
+        when(userService.currentUser()).thenReturn(UserDto.ANONYMOUS);
         GwtTestCaseController testCaseController = new GwtTestCaseController(testCaseRepository, executionHistoryRepository, userService);
         mockMvc = MockMvcBuilders.standaloneSetup(testCaseController).build();
 

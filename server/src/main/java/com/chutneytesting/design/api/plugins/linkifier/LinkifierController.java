@@ -5,6 +5,7 @@ import com.chutneytesting.design.domain.plugins.linkifier.Linkifiers;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +26,7 @@ public class LinkifierController {
         this.linkifiers = linkifiers;
     }
 
+    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<LinkifierDto> getAllLinkifier() {
         return linkifiers.getAll().stream()
@@ -32,11 +34,13 @@ public class LinkifierController {
             .collect(Collectors.toList());
     }
 
+    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public LinkifierDto saveLinkifier(@RequestBody LinkifierDto linkifierDto) {
         return toDto(linkifiers.add(new Linkifier(linkifierDto.pattern(), linkifierDto.link(), linkifierDto.id())));
     }
 
+    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @DeleteMapping(path = "/{id}")
     public void removeLinkifier(@PathVariable("id") String id) {
         linkifiers.remove(id);

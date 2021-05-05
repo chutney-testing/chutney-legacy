@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,21 +55,25 @@ public class CampaignController {
         this.campaignExecutionEngine = campaignExecutionEngine;
     }
 
+    @PreAuthorize("hasAuthority('CAMPAIGN_WRITE')")
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public CampaignDto saveCampaign(@RequestBody CampaignDto campaign) {
         return toDtoWithoutReport(campaignRepository.createOrUpdate(fromDto(campaign)));
     }
 
+    @PreAuthorize("hasAuthority('CAMPAIGN_WRITE')")
     @PutMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public CampaignDto updateCampaign(@RequestBody CampaignDto campaign) {
         return toDtoWithoutReport(campaignRepository.createOrUpdate(fromDto(campaign)));
     }
 
+    @PreAuthorize("hasAuthority('CAMPAIGN_WRITE')")
     @DeleteMapping(path = "/{campaignId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public boolean deleteCampaign(@PathVariable("campaignId") Long campaignId) {
         return campaignRepository.removeById(campaignId);
     }
 
+    @PreAuthorize("hasAuthority('CAMPAIGN_READ')")
     @GetMapping(path = "/{campaignId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public CampaignDto getCampaignById(@PathVariable("campaignId") Long campaignId) {
         Campaign campaign = campaignRepository.findById(campaignId);
@@ -81,6 +86,7 @@ public class CampaignController {
         return toDto(campaign, reports);
     }
 
+    @PreAuthorize("hasAuthority('CAMPAIGN_READ')")
     @GetMapping(path = "/{campaignId}/scenarios", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TestCaseIndexDto> getCampaignScenarios(@PathVariable("campaignId") Long campaignId) {
         return campaignRepository.findScenariosIds(campaignId).stream()
@@ -95,6 +101,7 @@ public class CampaignController {
             .collect(Collectors.toList());
     }
 
+    @PreAuthorize("hasAuthority('CAMPAIGN_READ')")
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<CampaignDto> getAllCampaigns() {
         return campaignRepository.findAll().stream()
@@ -102,6 +109,7 @@ public class CampaignController {
             .collect(Collectors.toList());
     }
 
+    @PreAuthorize("hasAuthority('CAMPAIGN_READ')")
     @GetMapping(path = "/lastexecutions/{limit}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<CampaignExecutionReportDto> getLastExecutions(@PathVariable("limit") Long limit) {
         List<CampaignExecutionReport> lastExecutions = campaignExecutionEngine.currentExecutions();
@@ -117,6 +125,7 @@ public class CampaignController {
             .collect(Collectors.toList());
     }
 
+    @PreAuthorize("hasAuthority('SCENARIO_READ')")
     @GetMapping(path = "/scenario/{scenarioId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<CampaignDto> getCampaignsByScenarioId(@PathVariable("scenarioId") String scenarioId) {
         return campaignRepository.findCampaignsByScenarioId(fromFrontId(scenarioId)).stream()

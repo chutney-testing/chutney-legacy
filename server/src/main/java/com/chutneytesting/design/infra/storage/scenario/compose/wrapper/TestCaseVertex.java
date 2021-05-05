@@ -26,12 +26,11 @@ import java.util.Map;
 /**
  * TestCase OrientDB model merges {@link com.chutneytesting.design.domain.scenario.compose.ComposableTestCase} metadata and
  * {@link com.chutneytesting.design.domain.scenario.compose.ComposableScenario} steps and parameters.
- *
+ * <p>
  * For this reason,
  * the vertex wrapped inside is sometime treated as a {@link com.chutneytesting.design.infra.storage.scenario.compose.wrapper.StepVertex} "root step",
  * which is a way to represent the scenario
- *
- * */
+ */
 public class TestCaseVertex {
 
     private final OVertex testCaseVertex;
@@ -114,21 +113,22 @@ public class TestCaseVertex {
         private String author;
         private List<ComposableStep> steps;
 
-        private TestCaseVertexBuilder() {}
+        private TestCaseVertexBuilder() {
+        }
 
         public TestCaseVertex build() {
             if (this.vertex == null) {
                 throw new ScenarioNotFoundException(id);
             }
 
-            ofNullable(title).ifPresent(t -> vertex.setProperty(TESTCASE_CLASS_PROPERTY_TITLE, t, OType.STRING) );
-            ofNullable(description).ifPresent(d -> setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_DESCRIPTION, d, OType.STRING) );
-            ofNullable(creationDate).ifPresent(cd -> setOnlyOnceProperty(vertex, TESTCASE_CLASS_PROPERTY_CREATIONDATE, cd, OType.DATETIME) );
-            ofNullable(tags).ifPresent(t -> vertex.setProperty(TESTCASE_CLASS_PROPERTY_TAGS, t, OType.EMBEDDEDLIST) );
-            ofNullable(parameters).ifPresent(p -> setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_PARAMETERS, p, OType.EMBEDDEDMAP) );
+            ofNullable(title).ifPresent(t -> vertex.setProperty(TESTCASE_CLASS_PROPERTY_TITLE, t, OType.STRING));
+            ofNullable(description).ifPresent(d -> setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_DESCRIPTION, d, OType.STRING));
+            ofNullable(creationDate).ifPresent(cd -> setOnlyOnceProperty(vertex, TESTCASE_CLASS_PROPERTY_CREATIONDATE, cd, OType.DATETIME));
+            ofNullable(tags).ifPresent(t -> vertex.setProperty(TESTCASE_CLASS_PROPERTY_TAGS, t, OType.EMBEDDEDLIST));
+            ofNullable(parameters).ifPresent(p -> setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_PARAMETERS, p, OType.EMBEDDEDMAP));
             ofNullable(datasetId).ifPresent(d -> setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_DATASET_ID, d, OType.STRING));
             ofNullable(updateDate).ifPresent(ud -> vertex.setProperty(TESTCASE_CLASS_PROPERTY_UPDATEDATE, ud, OType.DATETIME));
-            ofNullable(author).ifPresent(author -> setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_AUTHOR, author, a -> !User.isAnonymous(a), OType.STRING) );
+            ofNullable(author).ifPresent(author -> setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_AUTHOR, author, a -> !User.isAnonymous(a), OType.STRING));
 
             return new TestCaseVertex(vertex, steps);
         }

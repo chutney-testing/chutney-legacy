@@ -12,8 +12,8 @@ import com.chutneytesting.design.api.scenario.v2_0.dto.RawTestCaseDto;
 import com.chutneytesting.design.domain.scenario.ScenarioNotParsableException;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
-import com.chutneytesting.security.domain.User;
-import com.chutneytesting.security.domain.UserService;
+import com.chutneytesting.security.api.UserDto;
+import com.chutneytesting.security.infra.SpringUserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -38,12 +38,12 @@ public class TestCaseControllerTest {
         .build();
 
     private MockMvc mockMvc;
-    private TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
-    private UserService userService = mock(UserService.class);
+    private final TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
+    private final SpringUserService userService = mock(SpringUserService.class);
 
     @BeforeEach
     public void setUp() {
-        when(userService.getCurrentUser()).thenReturn(User.ANONYMOUS_USER);
+        when(userService.currentUser()).thenReturn(UserDto.ANONYMOUS);
 
         GwtTestCaseController testCaseController = new GwtTestCaseController(testCaseRepository, null, userService);
         mockMvc = MockMvcBuilders.standaloneSetup(testCaseController)

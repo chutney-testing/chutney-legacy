@@ -15,12 +15,12 @@ import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import com.chutneytesting.execution.api.ExecutionSummaryDto;
 import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
-import com.chutneytesting.security.domain.UserService;
-import com.google.common.base.Strings;
+import com.chutneytesting.security.infra.SpringUserService;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,21 +40,23 @@ public class GwtTestCaseController {
     private final TestCaseRepository testCaseRepository;
 
     private final ExecutionHistoryRepository executionHistoryRepository;
-    private final UserService userService;
+    private final SpringUserService userService;
 
     public GwtTestCaseController(TestCaseRepository testCaseRepository,
                                  ExecutionHistoryRepository executionHistoryRepository,
-                                 UserService userService) {
+                                 SpringUserService userService) {
         this.testCaseRepository = testCaseRepository;
         this.executionHistoryRepository = executionHistoryRepository;
         this.userService = userService;
     }
 
+    @PreAuthorize("hasAuthority('SCENARIO_READ')")
     @GetMapping(path = "/{testCaseId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public GwtTestCaseDto getTestCase(@PathVariable("testCaseId") String testCaseId) {
         return GwtTestCaseMapper.toDto(testCaseRepository.findById(testCaseId));
     }
 
+    @PreAuthorize("hasAuthority('SCENARIO_READ')")
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TestCaseIndexDto> getTestCases(@RequestParam( name = "textFilter", required = false) String textFilter) {
 
@@ -69,11 +71,13 @@ public class GwtTestCaseController {
             .collect(Collectors.toList());
     }
 
+    @PreAuthorize("hasAuthority('SCENARIO_WRITE')")
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String saveTestCase(@RequestBody GwtTestCaseDto testCase) {
         return saveOrUpdate(testCase);
     }
 
+    @PreAuthorize("hasAuthority('SCENARIO_WRITE')")
     @PatchMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String updateTestCase(@RequestBody GwtTestCaseDto testCase) {
         return saveOrUpdate(testCase);
@@ -84,6 +88,7 @@ public class GwtTestCaseController {
         return gwtTestCaseSave(gwtTestCase);
     }
 
+    @PreAuthorize("hasAuthority('SCENARIO_WRITE')")
     @DeleteMapping(path = "/{testCaseId}")
     public void removeScenarioById(@PathVariable("testCaseId") String testCaseId) {
         testCaseRepository.removeById(testCaseId);
@@ -94,12 +99,14 @@ public class GwtTestCaseController {
      *
      * */
 
+    @PreAuthorize("hasAuthority('SCENARIO_WRITE')")
     @PostMapping(path = "/raw", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String saveTestCase(@RequestBody RawTestCaseDto rawTestCaseDto) {
         GwtTestCase gwtTestCase = RawTestCaseMapper.fromDto(rawTestCaseDto);
         return gwtTestCaseSave(gwtTestCase);
     }
 
+    @PreAuthorize("hasAuthority('SCENARIO_READ')")
     @GetMapping(path = "/raw/{testCaseId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public RawTestCaseDto getTestCaseById(@PathVariable("testCaseId") String testCaseId) {
         return RawTestCaseMapper.toDto(testCaseRepository.findById(testCaseId));
@@ -109,7 +116,7 @@ public class GwtTestCaseController {
         gwtTestCase = GwtTestCase.builder()
             .withMetadata(TestCaseMetadataImpl.TestCaseMetadataBuilder.from(gwtTestCase.metadata)
                 .withUpdateDate(now())
-                .withAuthor(userService.getCurrentUser().getId())
+                .withAuthor(userService.currentUser().getId())
                 .build())
             .withScenario(gwtTestCase.scenario)
             .withExecutionParameters(gwtTestCase.executionParameters)

@@ -1,6 +1,7 @@
 package com.chutneytesting.security.infra.ldap;
 
-import com.chutneytesting.security.domain.User;
+import com.chutneytesting.security.api.UserDto;
+import com.chutneytesting.security.domain.AuthenticationService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -33,12 +34,14 @@ public class LdapConfiguration {
     }
 
     @Bean
-    public AttributesMapper<User> attributesMapper(LdapAttributesProperties ldapAttributesProperties, @Value("${ldap.groups-pattern}") String ldapGroupsPattern) {
-        return new LdapAttributesMapper(ldapAttributesProperties, ldapGroupsPattern);
+    public AttributesMapper<UserDto> attributesMapper(LdapAttributesProperties ldapAttributesProperties,
+                                                      @Value("${ldap.groups-pattern}") String ldapGroupsPattern,
+                                                      AuthenticationService authenticationService) {
+        return new LdapAttributesMapper(ldapAttributesProperties, ldapGroupsPattern, authenticationService);
     }
 
     @Bean
-    public LdapUserDetailsService ldapUserDetailsService(LdapTemplate ldapTemplate, LdapAttributesProperties ldapAttributesProperties, AttributesMapper<User> attributesMapper) {
+    public LdapUserDetailsService ldapUserDetailsService(LdapTemplate ldapTemplate, LdapAttributesProperties ldapAttributesProperties, AttributesMapper<UserDto> attributesMapper) {
         return new LdapUserDetailsService(ldapTemplate, ldapAttributesProperties, attributesMapper);
     }
 

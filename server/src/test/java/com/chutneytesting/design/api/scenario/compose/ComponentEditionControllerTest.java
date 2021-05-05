@@ -22,8 +22,8 @@ import com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepos
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedScenario;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
-import com.chutneytesting.security.domain.User;
-import com.chutneytesting.security.domain.UserService;
+import com.chutneytesting.security.api.UserDto;
+import com.chutneytesting.security.infra.SpringUserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,9 +45,9 @@ public class ComponentEditionControllerTest {
             )
             .build();
 
-    private ComposableTestCaseRepository composableTestCaseRepository = mock(ComposableTestCaseRepository.class);
+    private final ComposableTestCaseRepository composableTestCaseRepository = mock(ComposableTestCaseRepository.class);
     private final TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
-    private final UserService userService = mock(UserService.class);
+    private final SpringUserService userService = mock(SpringUserService.class);
     private final TestCasePreProcessors testCasePreProcessors  = mock(TestCasePreProcessors.class);;
 
     private MockMvc mockMvc;
@@ -66,7 +66,7 @@ public class ComponentEditionControllerTest {
         when(composableTestCaseRepository.save(any()))
             .thenReturn(DEFAULT_COMPOSABLE_TESTCASE_DB_ID);
 
-        when(userService.getCurrentUser()).thenReturn(User.ANONYMOUS_USER);
+        when(userService.currentUser()).thenReturn(UserDto.ANONYMOUS);
     }
 
     @Test

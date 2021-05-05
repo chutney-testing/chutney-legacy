@@ -290,7 +290,10 @@
             <artifactId>qpid-broker-plugins-memory-store</artifactId>
             <version>7.0.6</version>
         </dependency>
-
+        <dependency>
+            <groupId>net.jqwik</groupId>
+            <artifactId>jqwik</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

@@ -19,7 +19,7 @@ import com.chutneytesting.execution.domain.campaign.CampaignExecutionNotFoundExc
 import com.chutneytesting.execution.domain.compiler.ScenarioConversionException;
 import com.chutneytesting.execution.domain.scenario.FailedExecutionAttempt;
 import com.chutneytesting.execution.domain.scenario.ScenarioNotRunningException;
-import com.chutneytesting.security.domain.CurrentUserNotFound;
+import com.chutneytesting.security.domain.CurrentUserNotFoundException;
 import java.time.format.DateTimeParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +67,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         CampaignExecutionNotFoundException.class,
         EnvironmentNotFoundException.class,
         ComposableStepNotFoundException.class,
-        CurrentUserNotFound.class,
+        CurrentUserNotFoundException.class,
         BackupNotFoundException.class,
         DataSetNotFoundException.class,
         ScenarioNotRunningException.class

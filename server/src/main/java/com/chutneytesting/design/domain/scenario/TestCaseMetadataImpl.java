@@ -154,7 +154,7 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
                 ofNullable(repositorySource).orElse(TestCaseRepository.DEFAULT_REPOSITORY_SOURCE),
                 ofNullable(datasetId).orElse(null),
                 ofNullable(updateDate).orElse(creationDate),
-                ofNullable(author).orElseGet(User.ANONYMOUS_USER::getId),
+                ofNullable(author).orElseGet(() -> User.ANONYMOUS.id),
                 ofNullable(version).orElse(1));
         }
 
