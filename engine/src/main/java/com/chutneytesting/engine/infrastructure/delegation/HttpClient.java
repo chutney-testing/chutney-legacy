@@ -1,11 +1,8 @@
 package com.chutneytesting.engine.infrastructure.delegation;
 
 import static com.chutneytesting.engine.api.execution.HttpTestEngine.EXECUTION_URL;
+import static java.util.Optional.ofNullable;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.common.collect.Lists;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.StepExecutionReportDto;
 import com.chutneytesting.engine.domain.delegation.CannotDelegateException;
@@ -14,9 +11,14 @@ import com.chutneytesting.engine.domain.delegation.DelegationClient;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.common.collect.Lists;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
@@ -31,6 +33,10 @@ public class HttpClient implements DelegationClient {
     private final ConnectionChecker connectionChecker;
 
     public HttpClient() {
+        this(null, null);
+    }
+
+    public HttpClient(String username, String password) {
         this.restTemplate = new RestTemplate();
         this.connectionChecker = new TcpConnectionChecker();
 
@@ -40,6 +46,7 @@ public class HttpClient implements DelegationClient {
         objectMapper.findAndRegisterModules();
 
         restTemplate.setMessageConverters(Lists.newArrayList(new MappingJackson2HttpMessageConverter(objectMapper)));
+        addBasicAuth(username, password);
     }
 
     @Override
@@ -52,6 +59,14 @@ public class HttpClient implements DelegationClient {
             return StepExecutionReportMapper.fromDto(reportDto);
         } else {
             throw new CannotDelegateException("Unable to connect to " + delegate.name() + " at " + delegate.host() + ":" + delegate.port());
+        }
+    }
+
+    private void addBasicAuth(String user, String password) {
+        if (ofNullable(user).isPresent()) {
+            restTemplate.getInterceptors().add(
+                new BasicAuthenticationInterceptor(user, password)
+            );
         }
     }
 }

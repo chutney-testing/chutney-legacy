@@ -111,12 +111,16 @@ public class ServerConfiguration {
     }
 
     @Bean
-    public ExecutionConfiguration executionConfiguration(Executor engineExecutor,
-                                                         @Value(ENGINE_REPORTER_PUBLISHER_TTL_SPRING_VALUE) Long reporterTTL,
-                                                         @Value(TASK_SQL_NB_LOGGED_ROW) String nbLoggedRow) {
+    public ExecutionConfiguration executionConfiguration(
+        Executor engineExecutor,
+        @Value(ENGINE_REPORTER_PUBLISHER_TTL_SPRING_VALUE) Long reporterTTL,
+        @Value(TASK_SQL_NB_LOGGED_ROW) String nbLoggedRow,
+        @Value("${chutney.engine.delegation.user:#{null}}") String delegateUser,
+        @Value("${chutney.engine.delegation.password:#{null}}") String delegatePasword
+    ) {
         Map<String, String> tasksConfiguration = new HashMap<>();
         tasksConfiguration.put(CONFIGURABLE_NB_LOGGED_ROW, nbLoggedRow);
-        return new ExecutionConfiguration(reporterTTL, engineExecutor, tasksConfiguration);
+        return new ExecutionConfiguration(reporterTTL, engineExecutor, tasksConfiguration, delegateUser, delegatePasword);
     }
 
     @Bean
@@ -214,5 +218,4 @@ public class ServerConfiguration {
     Clock clock() {
         return Clock.systemDefaultZone();
     }
-
 }
