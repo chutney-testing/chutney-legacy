@@ -61,11 +61,6 @@ public class ChutneyTest {
         System.setProperty("persistence.agentNetwork.file", tmpConfDir.resolve("endpoints.json").toString());
 
         localChutney = SpringApplication.run(IntegrationTestConfiguration.class);
-        try {
-            Server.createWebServer("-web", "-webAllowOthers", "-webPort", "8082").start();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
     }
 
     @AfterAll
