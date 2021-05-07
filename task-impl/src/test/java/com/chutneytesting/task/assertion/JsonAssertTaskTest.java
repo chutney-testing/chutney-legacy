@@ -52,6 +52,9 @@ public class JsonAssertTaskTest {
         expected.put("$.something.thirddate", "$isEqualDate:2000-01-01T10:11:12.123Z");
         expected.put("$.something.anumber", "$isLessThan:42000");
         expected.put("$.something.thenumber", "$isGreaterThan:45");
+        expected.put("$.something.objectArray[?(@.name=='obj2')].array[0]", "$value:first");
+        expected.put("$.something.objectArray[?(@.name=='obj2')].array", "$value:[\"first\",\"second\",\"three\"]");
+        expected.put("$.something.objectArray[?(@.name=='obj1')].array[2]", "$value[0]:three");
 
         // Given
         String fakeActualResult = "{" +
@@ -64,7 +67,11 @@ public class JsonAssertTaskTest {
               "\"seconddate\":\"2000-01-01T10:11:12.123Z\"," +
               "\"thirddate\":\"2000-01-01T10:11:12.123Z\"," +
               "\"anumber\":4 100," +
-              "\"thenumber\":46" +
+              "\"thenumber\":46," +
+              "\"objectArray\": [" +
+                "{ \"name\": \"obj1\", \"array\": [ \"first\", \"second\", \"three\" ] }"+
+                "{ \"name\": \"obj2\", \"array\": [ \"first\", \"second\", \"three\" ] }"+
+              "]" +
             "}" +
         "}";
 
