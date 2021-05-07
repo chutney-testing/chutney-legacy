@@ -31,7 +31,7 @@ public class MicrometerGaugeTask implements Task {
     private final Object gaugeObject;
     private final String gaugeFunction;
     private final MeterRegistry registry;
-    private boolean strongReference;
+    private final boolean strongReference;
 
     public MicrometerGaugeTask(Logger logger,
                                @Input("name") String name,

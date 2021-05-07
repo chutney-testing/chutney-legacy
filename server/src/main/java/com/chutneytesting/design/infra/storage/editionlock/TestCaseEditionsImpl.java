@@ -22,7 +22,7 @@ public class TestCaseEditionsImpl implements TestCaseEditions {
     ) {
         editions = CacheBuilder.newBuilder()
             .expireAfterWrite(ttlValue, TimeUnit.valueOf(ttlUnit))
-            .build(new CacheLoader<TestCaseEdition, TestCaseEdition>() {
+            .build(new CacheLoader<>() {
                 @Override
                 public TestCaseEdition load(TestCaseEdition key) throws Exception {
                     return key;

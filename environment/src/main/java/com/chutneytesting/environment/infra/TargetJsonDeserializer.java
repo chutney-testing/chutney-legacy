@@ -29,7 +29,8 @@ public class TargetJsonDeserializer extends JsonDeserializer<JsonTarget> {
         }
         Map<String, String> properties = new HashMap<>();
         if (targetNode.hasNonNull("properties")) {
-           properties = mapper.readValue(targetNode.get("properties").toString(), new TypeReference<Map<String, ? extends String>>() {});
+           properties = mapper.readValue(targetNode.get("properties").toString(), new TypeReference<>() {
+           });
         }
         JsonTarget.JsonSecurityInfo securityInfo = null;
         if (targetNode.hasNonNull("security")) {

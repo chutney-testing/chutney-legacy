@@ -4,7 +4,7 @@ import com.chutneytesting.engine.domain.execution.event.Event;
 
 public class PauseExecutionAction implements Event {
 
-    private Long executionId;
+    private final Long executionId;
 
     public PauseExecutionAction(Long executionId) {
         this.executionId = executionId;

@@ -105,7 +105,7 @@ public class MicrometerTimerTask implements Task {
             .percentilePrecision(percentilePrecision)
             .publishPercentileHistogram(publishPercentilesHistogram)
             .publishPercentiles(percentiles)
-            .sla(sla);
+            .serviceLevelObjectives(sla);
 
         ofNullable(tags).ifPresent(t -> builder.tags(t.toArray(new String[0])));
 

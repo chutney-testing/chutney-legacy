@@ -9,7 +9,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -202,7 +202,7 @@ public class StepControllerTest {
         // When
         MvcResult mvcResult = mockMvc.perform(
             post(StepController.BASE_URL, "")
-                .contentType(APPLICATION_JSON_UTF8_VALUE)
+                .contentType(APPLICATION_JSON_VALUE)
                 .content(om.writeValueAsString(ImmutableComposableStepDto.builder().name("new component").build())))
             .andExpect(status().isOk())
             .andReturn();
@@ -231,7 +231,7 @@ public class StepControllerTest {
     }
 
     private PaginationRequestParametersDto buildDefaultPaginationRequestParametersDto() {
-        return buildPaginationRequestParametersDto(Long.valueOf(FIND_STEPS_START_DEFAULT_VALUE), Long.valueOf(FIND_STEPS_LIMIT_DEFAULT_VALUE));
+        return buildPaginationRequestParametersDto(Long.parseLong(FIND_STEPS_START_DEFAULT_VALUE), Long.parseLong(FIND_STEPS_LIMIT_DEFAULT_VALUE));
     }
 
     private PaginationRequestParametersDto buildPaginationRequestParametersDto(long startElementIdx, long limit) {

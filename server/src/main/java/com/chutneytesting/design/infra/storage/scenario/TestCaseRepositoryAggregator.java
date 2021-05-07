@@ -28,8 +28,8 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseRepositoryAggregator.class);
 
-    private DatabaseTestCaseRepository defaultRepository;
-    private GitScenarioRepositoryFactory gitScenarioRepositoryFactory;
+    private final DatabaseTestCaseRepository defaultRepository;
+    private final GitScenarioRepositoryFactory gitScenarioRepositoryFactory;
     private final ExamplesRepository examples;
     private final OrientComposableTestCaseRepository composableTestCaseRepository;
 

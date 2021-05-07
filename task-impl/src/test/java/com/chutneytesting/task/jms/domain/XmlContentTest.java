@@ -2,6 +2,7 @@ package com.chutneytesting.task.jms.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 import org.jdom2.Text;
 import org.jdom2.filter.Filters;
@@ -43,6 +44,6 @@ public class XmlContentTest {
 
     @SuppressWarnings("resource")
     private String loadFileFromClasspath(String filePath) {
-        return new Scanner(XmlContentTest.class.getClassLoader().getResourceAsStream(filePath), "UTF-8").useDelimiter("\\A").next();
+        return new Scanner(XmlContentTest.class.getClassLoader().getResourceAsStream(filePath), StandardCharsets.UTF_8).useDelimiter("\\A").next();
     }
 }

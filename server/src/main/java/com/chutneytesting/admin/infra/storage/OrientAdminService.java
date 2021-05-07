@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 @Component("orientAdminService")
 class OrientAdminService implements DatabaseAdminService {
 
-    private ODatabasePool componentDBPool;
+    private final ODatabasePool componentDBPool;
 
     OrientAdminService(OrientComponentDB orientComponentDB) {
         this.componentDBPool = orientComponentDB.dbPool();

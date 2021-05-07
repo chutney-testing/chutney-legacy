@@ -27,6 +27,7 @@ import com.chutneytesting.environment.domain.EnvironmentRepository;
 import com.chutneytesting.environment.domain.EnvironmentService;
 import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
 import com.chutneytesting.environment.domain.Target;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -36,11 +37,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.assertj.core.util.Lists;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -57,9 +60,7 @@ public class HttpEnvironmentApiTest {
 
     final Map<String, Environment> registeredEnvironments = new LinkedHashMap<>();
 
-    private final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(environmentControllerV2)
-        .setControllerAdvice(new EnvironmentRestExceptionHandler())
-        .build();
+    private MockMvc mockMvc;
 
     private static Object[] params_listEnvironments_returns_all_available() {
         return new Object[]{
@@ -67,6 +68,16 @@ public class HttpEnvironmentApiTest {
             new Object[]{new String[]{"env1", "env2"}},
             new Object[]{new String[]{"c", "b", "a"}}
         };
+    }
+
+    @BeforeEach
+    public void setUp() {
+        MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
+        mappingJackson2HttpMessageConverter.setObjectMapper(new ObjectMapper().findAndRegisterModules());
+        mockMvc = MockMvcBuilders.standaloneSetup(environmentControllerV2)
+            .setControllerAdvice(new EnvironmentRestExceptionHandler())
+            .setMessageConverters(mappingJackson2HttpMessageConverter)
+            .build();
     }
 
     @ParameterizedTest
@@ -94,7 +105,7 @@ public class HttpEnvironmentApiTest {
         mockMvc.perform(
             post(basePath)
                 .content("{\"name\": \"env_test\", \"description\": \"test description\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .contentType(MediaType.APPLICATION_JSON))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isOk());
 
@@ -113,7 +124,7 @@ public class HttpEnvironmentApiTest {
         mockMvc.perform(
             post(basePath)
                 .content("{\"name\": \"env test\", \"description\": \"test description\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .contentType(MediaType.APPLICATION_JSON))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isBadRequest());
     }
@@ -125,7 +136,7 @@ public class HttpEnvironmentApiTest {
         mockMvc.perform(
             post(basePath)
                 .content("{\"name\": \"env test\", \"description\": \"test description\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .contentType(MediaType.APPLICATION_JSON))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isConflict());
     }
@@ -155,7 +166,7 @@ public class HttpEnvironmentApiTest {
         mockMvc.perform(
             put(basePath + "/env test")
                 .content("{\"name\": \"env test\", \"description\": \"test description\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .contentType(MediaType.APPLICATION_JSON))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isNotFound());
     }
@@ -167,7 +178,7 @@ public class HttpEnvironmentApiTest {
         mockMvc.perform(
             put(basePath + "/env_test")
                 .content("{\"name\": \"env_test\", \"description\": \"test description\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .contentType(MediaType.APPLICATION_JSON))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isOk());
 
@@ -188,7 +199,7 @@ public class HttpEnvironmentApiTest {
         mockMvc.perform(
             put(basePath + "/env_test")
                 .content("{\"description\": \"test2 description\", \"name\": \"env_test_2\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .contentType(MediaType.APPLICATION_JSON))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isOk());
 
@@ -248,7 +259,7 @@ public class HttpEnvironmentApiTest {
         mockMvc.perform(
             post(basePath + "/env_test/target")
                 .content("{\"name\": \"server 2\", \"url\": \"ssh://somehost:42\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .contentType(MediaType.APPLICATION_JSON))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isOk());
 
@@ -269,7 +280,7 @@ public class HttpEnvironmentApiTest {
         mockMvc.perform(
             post(basePath + "/env test/target")
                 .content("{\"name\": \"server 1\", \"url\": \"ssh://somehost:42\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
         )
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isConflict());
@@ -302,7 +313,7 @@ public class HttpEnvironmentApiTest {
         mockMvc.perform(
             put(basePath + "/env test/target/server 2")
                 .content("{\"name\": \"server 2\", \"url\": \"http://somehost2:42\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .contentType(MediaType.APPLICATION_JSON))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isNotFound());
     }
@@ -314,7 +325,7 @@ public class HttpEnvironmentApiTest {
         mockMvc.perform(
             put(basePath + "/env_test/target/server 1")
                 .content("{\"name\": \"server 1\", \"url\": \"http://somehost2:42\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
         )
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isOk());
@@ -335,7 +346,7 @@ public class HttpEnvironmentApiTest {
         mockMvc.perform(
             put(basePath + "/env_test/target/server 1")
                 .content("{\"name\": \"server 2\", \"url\": \"http://somehost2:42\"}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .contentType(MediaType.APPLICATION_JSON))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isOk());
 

@@ -9,7 +9,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -94,7 +94,7 @@ public class DataSetControllerTest {
         // When
         MvcResult mvcResult = mockMvc.perform(
             post(DataSetController.BASE_URL)
-                .contentType(APPLICATION_JSON_UTF8_VALUE)
+                .contentType(APPLICATION_JSON_VALUE)
                 .content(om.writeValueAsString(dataSetDto)))
             .andExpect(status().isOk())
             .andReturn();
@@ -115,7 +115,7 @@ public class DataSetControllerTest {
         // When
         MvcResult mvcResult = mockMvc.perform(
             put(DataSetController.BASE_URL)
-                .contentType(APPLICATION_JSON_UTF8_VALUE)
+                .contentType(APPLICATION_JSON_VALUE)
                 .content(om.writeValueAsString(dataSet.getRight())))
             .andExpect(status().isOk())
             .andReturn();
@@ -200,7 +200,7 @@ public class DataSetControllerTest {
             .andReturn();
 
         // Then
-        List<DataSetDto> allVersions = om.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<DataSetDto>>() {
+        List<DataSetDto> allVersions = om.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {
         });
         assertThat(allVersions)
             .containsExactlyElementsOf(Lists.list(one.getRight(), two.getRight(), three.getRight()));

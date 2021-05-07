@@ -52,7 +52,7 @@ public class SshServerStartTask implements Task {
     private final List<String> sshUsernames;
     private final List<String> sshPasswords;
     private final String authorizedKeys;
-    private List<String> stubs;
+    private final List<String> stubs;
 
     public SshServerStartTask(Logger logger,
                               FinallyActionRegistry finallyActionRegistry,

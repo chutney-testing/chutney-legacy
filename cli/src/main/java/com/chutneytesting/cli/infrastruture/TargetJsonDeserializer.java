@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 // TODO file/http model must be placed in appropriate space without coupling to domain-used one {@link Target}
 public class TargetJsonDeserializer extends JsonDeserializer<List<Target>> {
@@ -50,7 +49,7 @@ public class TargetJsonDeserializer extends JsonDeserializer<List<Target>> {
             targetBuilder.withUrl(targetNode.get("url").textValue());
         }
         if (targetNode.hasNonNull("properties")) {
-            targetBuilder.withProperties(mapper.readValue(targetNode.get("properties").toString(), new TypeReference<Map<String, ? extends String>>() {
+            targetBuilder.withProperties(mapper.readValue(targetNode.get("properties").toString(), new TypeReference<>() {
             }));
         }
         if (targetNode.hasNonNull("security")) {

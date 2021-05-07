@@ -23,7 +23,7 @@ public class JmsListenerTask implements Task {
 
     private final JmsListenerParameters listenerJmsParameters;
 
-    private JmsConnectionFactory jmsConnectionFactory = new JmsConnectionFactory();
+    private final JmsConnectionFactory jmsConnectionFactory = new JmsConnectionFactory();
 
     public JmsListenerTask(Target target, Logger logger, @Input("listenerJmsParameters") JmsListenerParameters listenerJmsParameters) {
         this.target = target;

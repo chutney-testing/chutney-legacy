@@ -7,7 +7,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -55,7 +55,7 @@ public class GwtTestCaseControllerTest {
     @Test
     public void should_delete_scenario_with_repository_when_delete_scenario() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/scenario/v2/1")
-            .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .accept(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(MockMvcResultMatchers.status().isOk());
         verify(testCaseRepository).removeById(eq("1"));
     }
@@ -70,7 +70,7 @@ public class GwtTestCaseControllerTest {
 
         // Save a scenario
         mockMvc.perform(post("/api/scenario/v2")
-            .contentType(APPLICATION_JSON_UTF8_VALUE)
+            .contentType(APPLICATION_JSON)
             .content(exampleWithoutTechStep))
             .andDo(result -> bodyHolder.set(result.getResponse().getContentAsString()))
             .andExpect(status().isOk());
@@ -122,7 +122,7 @@ public class GwtTestCaseControllerTest {
         mockMvc.perform(
             post("/api/scenario/v2")
                 .content(contents)
-                .contentType(APPLICATION_JSON_UTF8_VALUE)
+                .contentType(APPLICATION_JSON)
         )
             //.andDo(MockMvcResultHandlers.print())
             .andDo(result -> bodyHolder.set(result.getResponse().getContentAsString()))
@@ -177,7 +177,7 @@ public class GwtTestCaseControllerTest {
 
         // Save a scenario
         mockMvc.perform(post("/api/scenario/v2")
-            .contentType(APPLICATION_JSON_UTF8_VALUE)
+            .contentType(APPLICATION_JSON)
             .content(exampleWithDataSet))
             .andDo(result -> bodyHolder.set(result.getResponse().getContentAsString()))
             .andExpect(status().isOk());

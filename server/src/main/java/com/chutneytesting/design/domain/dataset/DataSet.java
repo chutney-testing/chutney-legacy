@@ -73,7 +73,7 @@ public class DataSet {
     }
 
     public static class DataSetBuilder {
-        private static String DEFAULT_ID = "-1";
+        private static final String DEFAULT_ID = "-1";
 
         private String id;
         private String name;

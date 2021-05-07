@@ -21,7 +21,7 @@ public class MicrometerTimerStopTask implements Task {
     private final Logger logger;
     private final Timer.Sample sample;
     private final Timer timer;
-    private TimeUnit timeunit;
+    private final TimeUnit timeunit;
 
     public MicrometerTimerStopTask(Logger logger,
                                    @Input("sample") Timer.Sample sample,

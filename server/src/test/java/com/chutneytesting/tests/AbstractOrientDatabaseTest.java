@@ -41,7 +41,6 @@ public abstract class AbstractOrientDatabaseTest {
     protected static OrientComponentDB orientComponentDB;
     protected static OrientChangelogExecutor changelogExecution;
 
-    protected static EmbeddedTaskEngine mockEngine = Mockito.mock(EmbeddedTaskEngine.class);
     protected static RawImplementationMapper implementationMapper = new RawImplementationMapper(webConfiguration.objectMapper());
     protected static ExecutableComposedStepMapper stepMapper = new ExecutableComposedStepMapper(implementationMapper);
     protected static ExecutableComposedTestCaseMapper testCaseMapper = new ExecutableComposedTestCaseMapper(stepMapper);

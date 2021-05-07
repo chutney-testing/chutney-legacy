@@ -32,7 +32,7 @@ public class HttpEnvironmentApi implements EnvironmentApi{
     }
 
     @Override
-    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Set<EnvironmentDto> listEnvironments() {
         return embeddedApplication.listEnvironments();
     }
@@ -56,13 +56,13 @@ public class HttpEnvironmentApi implements EnvironmentApi{
     }
 
     @Override
-    @GetMapping(path = "/{environmentName}/target", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "/{environmentName}/target", produces = MediaType.APPLICATION_JSON_VALUE)
     public Set<TargetDto> listTargets(@PathVariable("environmentName") String environmentName) throws EnvironmentNotFoundException {
         return embeddedApplication.listTargets(environmentName);
     }
 
     @Override
-    @GetMapping(path = "/target", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "/target", produces = MediaType.APPLICATION_JSON_VALUE)
     public Set<TargetDto> listTargets() throws EnvironmentNotFoundException {
         return embeddedApplication.listTargets();
     }

@@ -82,7 +82,7 @@ public class NodeNetworkControllerTest {
         MockHttpServletResponse response = mockMvc
             .perform(
                 MockMvcRequestBuilders.post(NodeNetworkController.EXPLORE_URL)
-                    .contentType(MediaType.APPLICATION_JSON_UTF8)
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
                     .content(objectMapper.writeValueAsString(requestBody)))
             .andExpect(status().is2xxSuccessful()).andReturn().getResponse();
 
@@ -105,7 +105,7 @@ public class NodeNetworkControllerTest {
         when(networkDescriptionApiMapper.toDto(networkDescription)).thenReturn(controllerInnerDto);
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post(CONFIGURE_URL)
-            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(objectMapper.writeValueAsString(dto)))
             .andExpect(status().is2xxSuccessful())
             .andReturn().getResponse();
@@ -137,7 +137,7 @@ public class NodeNetworkControllerTest {
         NetworkDescriptionApiDto dto = new NetworkDescriptionApiDto();
 
         mockMvc.perform(MockMvcRequestBuilders.post(WRAP_UP_URL)
-            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(objectMapper.writeValueAsString(dto)))
             .andExpect(status().is2xxSuccessful());
 

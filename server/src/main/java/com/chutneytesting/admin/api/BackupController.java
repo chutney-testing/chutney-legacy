@@ -31,7 +31,7 @@ public class BackupController {
         this.backupRepository = backupRepository;
     }
 
-    @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE)
     public String backup(@RequestBody BackupDto backupDto) {
         return backupRepository.save(fromDto(backupDto));
     }
@@ -41,7 +41,7 @@ public class BackupController {
         backupRepository.delete(backupId);
     }
 
-    @GetMapping(path = "/{backupId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "/{backupId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public BackupDto get(@PathVariable("backupId") String backupId) {
         return toDto(backupRepository.read(backupId));
     }
@@ -51,7 +51,7 @@ public class BackupController {
         backupRepository.getBackupData(backupId, response.getOutputStream());
     }
 
-    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<BackupDto> list() {
         return backupRepository.list().stream()
             .map(BackupMapper::toDto)

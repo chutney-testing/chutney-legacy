@@ -1,6 +1,5 @@
 package com.chutneytesting.admin.api.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
 
 public class BackupDto {
@@ -12,12 +11,12 @@ public class BackupDto {
     private final Boolean components;
     private final Boolean globalVars;
 
-    public BackupDto(@JsonProperty("time") LocalDateTime time,
-                     @JsonProperty("homePage") Boolean homePage,
-                     @JsonProperty("agentsNetwork") Boolean agentsNetwork,
-                     @JsonProperty("environments") Boolean environments,
-                     @JsonProperty("components") Boolean components,
-                     @JsonProperty("globalVars") Boolean globalVars) {
+    public BackupDto(LocalDateTime time,
+                     Boolean homePage,
+                     Boolean agentsNetwork,
+                     Boolean environments,
+                     Boolean components,
+                     Boolean globalVars) {
         this.time = time;
         this.homePage = homePage;
         this.agentsNetwork = agentsNetwork;

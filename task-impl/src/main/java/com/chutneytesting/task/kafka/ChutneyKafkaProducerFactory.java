@@ -31,7 +31,7 @@ final class ChutneyKafkaProducerFactory {
         return this.factory;
     }
 
-    void destroy() throws Exception {
+    void destroy() {
         factory.destroy();
     }
 }

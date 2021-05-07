@@ -2,7 +2,6 @@ package com.chutneytesting.task.jms;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.google.common.io.Resources;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.KeyStore;
@@ -74,7 +73,7 @@ public class ActiveMQTestSupport {
         TrustManager[] trustStoreManagers;
         KeyStore trustedCertStore = KeyStore.getInstance("JKS");
 
-        trustedCertStore.load(Resources.getResource("security/truststore.jks").openStream(), "truststore".toCharArray());
+        trustedCertStore.load(ActiveMQTestSupport.class.getResource("/security/truststore.jks").openStream(), "truststore".toCharArray());
         TrustManagerFactory tmf =
             TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
 
@@ -88,25 +87,11 @@ public class ActiveMQTestSupport {
             KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
         KeyStore ks = KeyStore.getInstance("JKS");
         KeyManager[] keystoreManagers;
-        ks.load(Resources.getResource("security/server.jks").openStream(), "server".toCharArray());
+        ks.load(ActiveMQTestSupport.class.getResource("/security/server.jks").openStream(), "server".toCharArray());
         kmf.init(ks, "server".toCharArray());
         keystoreManagers = kmf.getKeyManagers();
 
         return keystoreManagers;
-    }
-
-    protected void assertMessageReceived(String queueName, String message) throws IOException, URISyntaxException, JMSException {
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(connector.getConnectUri());
-        QueueConnection connection = (QueueConnection) connectionFactory.createConnection();
-        connection.start();
-        expectedTotalConnections.incrementAndGet(); // One connection done
-
-        QueueSession session = connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
-        Message msg = session.createConsumer(new ActiveMQQueue(queueName)).receive(1000);
-        session.close();
-        connection.close();
-
-        assertThat(((TextMessage) msg).getText()).isEqualTo(message);
     }
 
 }

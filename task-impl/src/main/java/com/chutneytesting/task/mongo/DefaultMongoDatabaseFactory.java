@@ -1,6 +1,7 @@
 package com.chutneytesting.task.mongo;
 
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
@@ -22,7 +23,7 @@ public class DefaultMongoDatabaseFactory implements MongoDatabaseFactory {
         final MongoClient mongoClient;
         if (target.security().credential().isPresent()) {
             MongoCredential credential = MongoCredential.createCredential(target.security().credential().get().username(), databaseName, target.security().credential().get().password().toCharArray());
-            mongoClient = new MongoClient(serverAddress, Collections.singletonList(credential));
+            mongoClient = new MongoClient(serverAddress, credential, MongoClientOptions.builder().build());
         } else {
             mongoClient = new MongoClient(serverAddress);
         }

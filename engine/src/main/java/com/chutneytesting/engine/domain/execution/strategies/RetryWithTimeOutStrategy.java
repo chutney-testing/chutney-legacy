@@ -41,7 +41,7 @@ public class RetryWithTimeOutStrategy implements StepExecutionStrategy {
                           ScenarioContext scenarioContext,
                           StepExecutionStrategies strategies) throws IllegalStateException {
 
-        if (!step.strategy().isPresent()) {
+        if (step.strategy().isEmpty()) {
             throw new IllegalArgumentException("Should not have strategy definition empty for retry strategy");
         }
         StepStrategyDefinition strategyDefinition = step.strategy().get();

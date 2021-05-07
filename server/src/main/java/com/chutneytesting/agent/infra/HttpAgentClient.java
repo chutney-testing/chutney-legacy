@@ -68,7 +68,7 @@ class HttpAgentClient implements AgentClient {
     public void wrapUp(NamedHostAndPort agentInfo, NetworkDescription networkDescription) {
         if (connectionChecker.canConnectTo(agentInfo)) {
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+            headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<NetworkDescriptionApiDto> request = new HttpEntity<>(networkDescriptionApiMapper.toDto(networkDescription), headers);
             restTemplate.postForObject("https://" + agentInfo.host() + ":" + agentInfo.port() + WRAP_UP_URL, request, Void.class);
         }
@@ -77,7 +77,7 @@ class HttpAgentClient implements AgentClient {
     private ExploreResult exploreByHttp(String localName, NamedHostAndPort agentInfo, NetworkConfiguration networkConfiguration) {
         try {
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+            headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<NetworkConfigurationApiDto> request = new HttpEntity<>(networkConfigurationApiMapper.toDto(networkConfiguration), headers);
             ExploreResultApiDto response = restTemplate.postForObject("https://" + agentInfo.host() + ":" + agentInfo.port() + EXPLORE_URL, request, ExploreResultApiDto.class);
             return exploreResultApiMapper.fromDto(response, new AgentLinkEntity(localName, agentInfo.name()));

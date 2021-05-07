@@ -27,13 +27,13 @@ public class GlobalVarController {
     }
 
     @CrossOrigin(origins = "*")
-    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Set<String> list() {
         return globalVarRepository.list();
     }
 
     @CrossOrigin(origins = "*")
-    @PostMapping(path = "/{fileName}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(path = "/{fileName}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public void save(@PathVariable("fileName") String fileName, @RequestBody TextDto textContent) {
         try {
             globalVarRepository.saveFile(fileName, JsonValue.readHjson(textContent.getMessage()).toString(Stringify.HJSON));
@@ -49,7 +49,7 @@ public class GlobalVarController {
     }
 
     @CrossOrigin(origins = "*")
-    @GetMapping(path = "/{fileName}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "/{fileName}", produces = MediaType.APPLICATION_JSON_VALUE)
     public TextDto getFile(@PathVariable("fileName") String fileName) {
         return new TextDto(globalVarRepository.getFileContent(fileName));
     }

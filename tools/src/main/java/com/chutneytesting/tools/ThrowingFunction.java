@@ -13,13 +13,13 @@ public interface ThrowingFunction<T, R, E extends Exception> {
     /**
      * @throws UncheckedException if given {@link ThrowingFunction} throws
      */
-    public static <T, R, E extends Exception> Function<T, R> toUnchecked(ThrowingFunction<T, R, E> throwingFunction) throws UncheckedException {
+    static <T, R, E extends Exception> Function<T, R> toUnchecked(ThrowingFunction<T, R, E> throwingFunction) throws UncheckedException {
         return silence(throwingFunction, e -> {
             throw UncheckedException.throwUncheckedException(e);
         });
     }
 
-    public static <T, R, E extends Exception> Function<T, R> silence(ThrowingFunction<T, R, E> throwingFunction, Function<Exception, R> exceptionHandler) {
+    static <T, R, E extends Exception> Function<T, R> silence(ThrowingFunction<T, R, E> throwingFunction, Function<Exception, R> exceptionHandler) {
         return t -> {
             try {
                 return throwingFunction.apply(t);

@@ -1,8 +1,8 @@
 package com.chutneytesting.environment.domain;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
 import static java.util.Optional.ofNullable;
-import static org.apache.commons.collections.ListUtils.unmodifiableList;
 
 import com.chutneytesting.environment.domain.exception.AlreadyExistingTargetException;
 import com.chutneytesting.environment.domain.exception.TargetNotFoundException;

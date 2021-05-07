@@ -18,7 +18,7 @@ public class DelegationService {
     }
 
     public StepExecutor findExecutor(Optional<Target> target) {
-        if (!target.isPresent() || target.get().name().isEmpty()) {
+        if (target.isEmpty() || target.get().name().isEmpty()) {
             return localStepExecutor;
         }
 

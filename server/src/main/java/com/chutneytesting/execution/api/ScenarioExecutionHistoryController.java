@@ -22,7 +22,7 @@ class ScenarioExecutionHistoryController {
     }
 
     @CrossOrigin(origins = "*")
-    @GetMapping(path = "/api/ui/scenario/{scenarioId}/execution/v1", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "/api/ui/scenario/{scenarioId}/execution/v1", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ExecutionSummaryDto> listExecutions(@PathVariable("scenarioId") String scenarioId) {
         return ExecutionSummaryDto.toDto(
             executionHistoryRepository.getExecutions(
@@ -30,7 +30,7 @@ class ScenarioExecutionHistoryController {
     }
 
     @CrossOrigin(origins = "*")
-    @GetMapping(path = "/api/ui/scenario/{scenarioId}/execution/{executionId}/v1", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "/api/ui/scenario/{scenarioId}/execution/{executionId}/v1", produces = MediaType.APPLICATION_JSON_VALUE)
     public ExecutionHistory.Execution getExecutionReport(@PathVariable("scenarioId") String scenarioId, @PathVariable("executionId") Long executionId) {
         return executionHistoryRepository.getExecution(fromFrontId(Optional.of(scenarioId)), executionId);
     }

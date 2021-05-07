@@ -4,7 +4,6 @@ import static com.chutneytesting.tools.WaitUtils.awaitDuring;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.awaitility.Awaitility.await;
 
 import com.chutneytesting.execution.domain.history.ExecutionHistory.DetachedExecution;
 import com.chutneytesting.execution.domain.history.ExecutionHistory.Execution;

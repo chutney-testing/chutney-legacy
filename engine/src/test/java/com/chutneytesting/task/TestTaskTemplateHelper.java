@@ -41,7 +41,7 @@ public class TestTaskTemplateHelper {
                     return inputValue;
                 }
             };
-            Mockito.when(parameter.annotations()).thenReturn(new AnnotationSet(new HashSet<Annotation>(Collections.singletonList(newInput))));
+            Mockito.when(parameter.annotations()).thenReturn(new AnnotationSet(new HashSet<>(Collections.singletonList(newInput))));
         } else {
             Mockito.when(parameter.annotations()).thenReturn(new AnnotationSet(Collections.emptySet()));
         }

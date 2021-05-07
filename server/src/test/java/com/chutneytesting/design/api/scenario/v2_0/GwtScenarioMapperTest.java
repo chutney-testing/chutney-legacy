@@ -1,6 +1,5 @@
 package com.chutneytesting.design.api.scenario.v2_0;
 
-import static com.google.common.io.Resources.getResource;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.design.api.scenario.v2_0.mapper.GwtScenarioMapper;
@@ -18,7 +17,7 @@ public class GwtScenarioMapperTest {
     @Test
     public void should_deserialize_a_raw_scenario_with_x$ref() {
         // Given raw test v2.1 with x-$ref
-        String rawScenario = Files.contentOf(new File(getResource("raw_scenarios/raw_scenario_json_with_x-$ref.json").getPath()), StandardCharsets.UTF_8);
+        String rawScenario = Files.contentOf(new File(GwtScenarioMapperTest.class.getResource("/raw_scenarios/raw_scenario_json_with_x-$ref.json").getPath()), StandardCharsets.UTF_8);
 
         // When: deserialize into GwtScenario
         GwtScenario actualScenario = marshaller.deserialize("a title", "a description", rawScenario);
@@ -33,7 +32,7 @@ public class GwtScenarioMapperTest {
     @Test
     public void should_deserialize_a_raw_scenario() {
         // Given raw
-        String rawScenario = Files.contentOf(new File(getResource("raw_scenarios/scenario_executable.v2.1.json").getPath()), StandardCharsets.UTF_8);
+        String rawScenario = Files.contentOf(new File(GwtScenarioMapperTest.class.getResource("/raw_scenarios/scenario_executable.v2.1.json").getPath()), StandardCharsets.UTF_8);
 
         // When
         GwtScenario actualScenario = marshaller.deserialize("a title", "a description", rawScenario);

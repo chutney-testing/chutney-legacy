@@ -53,7 +53,7 @@ public class LiteEngineBootstrapRx implements Runnable {
             .concatMap(executionId -> {
                 Observable<StepExecutionReportDto> reports = testEngine.receiveNotification(executionId);
                 reports.subscribeOn(Schedulers.io())
-                    .subscribe(report -> { System.out.println(report.name + " - " + report.status ); });
+                    .subscribe(report -> System.out.println(report.name + " - " + report.status ));
                 return reports;
             })
             .blockingSubscribe( a->{}, b -> {}, () -> LOGGER.info("All scenarios executed"));
@@ -94,6 +94,7 @@ public class LiteEngineBootstrapRx implements Runnable {
     }
 
     public static void main(String... args) {
-        CommandLine.run(new LiteEngineBootstrapRx(), args);
+        CommandLine cmd = new CommandLine(new LiteEngineBootstrapRx());
+        cmd.execute(args);
     }
 }

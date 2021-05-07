@@ -6,13 +6,6 @@ import static com.fasterxml.jackson.annotation.PropertyAccessor.GETTER;
 import static com.fasterxml.jackson.annotation.PropertyAccessor.SETTER;
 import static org.hjson.JsonValue.readHjson;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.chutneytesting.design.api.scenario.OldFormatAdapter;
 import com.chutneytesting.design.api.scenario.v2_0.dto.GwtScenarioDto;
 import com.chutneytesting.design.api.scenario.v2_0.dto.GwtStepDto;
@@ -28,6 +21,13 @@ import com.chutneytesting.design.domain.scenario.gwt.GwtStepImplementation;
 import com.chutneytesting.design.domain.scenario.gwt.Strategy;
 import com.chutneytesting.execution.domain.compiler.GwtScenarioMarshaller;
 import com.chutneytesting.execution.domain.compiler.ScenarioConversionException;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -71,20 +71,20 @@ public class GwtScenarioMapper implements GwtScenarioMarshaller {
         String xRef;
 
         @JsonCreator
-        public GwtStepImplementationMixin(@JsonProperty("type") String type,
-                                          @JsonProperty("target") String target,
-                                          @JsonInclude(JsonInclude.Include.ALWAYS) @JsonProperty("inputs") Map<String, Object> inputs,
-                                          @JsonProperty("outputs") Map<String, Object> outputs,
-                                          @JsonProperty("validations") Map<String, Object> validations,
-                                          @JsonProperty("x-$ref") String xRef
+        public GwtStepImplementationMixin(String type,
+                                          String target,
+                                          @JsonInclude(JsonInclude.Include.ALWAYS) Map<String, Object> inputs, // Do not remove JsonInclude
+                                          Map<String, Object> outputs,
+                                          Map<String, Object> validations,
+                                          String xRef
         ) {
         }
     }
 
     private static class StrategyMixin {
         @JsonCreator
-        public StrategyMixin(@JsonProperty("type") String type,
-                             @JsonProperty("parameters") Map<String, Object> parameters) {
+        public StrategyMixin(String type,
+                             Map<String, Object> parameters) {
         }
     }
 

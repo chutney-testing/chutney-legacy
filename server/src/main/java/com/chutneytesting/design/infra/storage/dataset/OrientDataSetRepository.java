@@ -30,7 +30,7 @@ public class OrientDataSetRepository implements DataSetRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrientDataSetRepository.class);
 
-    private ODatabasePool componentDBPool;
+    private final ODatabasePool componentDBPool;
 
     public OrientDataSetRepository(OrientComponentDB orientComponentDB) {
         this.componentDBPool = orientComponentDB.dbPool();

@@ -126,7 +126,7 @@ public class DataSetPatch {
         }
 
         public DataSetPatchBuilder fromDataSets(DataSet newDataSet, DataSet previousDataSet) {
-            if (!ofNullable(previousDataSet).isPresent()) {
+            if (ofNullable(previousDataSet).isEmpty()) {
                 return fromDataSets(newDataSet);
             }
 

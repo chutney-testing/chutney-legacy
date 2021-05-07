@@ -24,7 +24,7 @@ public class MicrometerCounterTask implements Task {
     private final String unit;
     private final List<String> tags;
     private Counter counter;
-    private MeterRegistry registry;
+    private final MeterRegistry registry;
     private final Double increment;
 
     public MicrometerCounterTask(Logger logger,

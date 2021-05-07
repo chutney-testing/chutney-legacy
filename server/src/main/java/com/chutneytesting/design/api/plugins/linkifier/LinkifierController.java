@@ -25,14 +25,14 @@ public class LinkifierController {
         this.linkifiers = linkifiers;
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<LinkifierDto> getAllLinkifier() {
         return linkifiers.getAll().stream()
             .map(this::toDto)
             .collect(Collectors.toList());
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public LinkifierDto saveLinkifier(@RequestBody LinkifierDto linkifierDto) {
         return toDto(linkifiers.add(new Linkifier(linkifierDto.pattern(), linkifierDto.link(), linkifierDto.id())));
     }

@@ -112,14 +112,12 @@ public class SeleniumWaitTask extends SeleniumTask implements SeleniumFindBehavi
                 case AND:
                     return ExpectedConditions.and(
                         (ExpectedCondition<?>[]) expectedByConditions.parallelStream()
-                            .map(expectedByCondition -> expectedByCondition.toExpectedCondition(by))
-                            .collect(Collectors.toList()).toArray()
+                            .map(expectedByCondition -> expectedByCondition.toExpectedCondition(by)).toArray()
                     );
                 case OR:
                     return ExpectedConditions.or(
                         (ExpectedCondition<?>[]) expectedByConditions.parallelStream()
-                            .map(expectedByCondition -> expectedByCondition.toExpectedCondition(by))
-                            .collect(Collectors.toList()).toArray()
+                            .map(expectedByCondition -> expectedByCondition.toExpectedCondition(by)).toArray()
                     );
                 case NOT:
                     return ExpectedConditions.not(expectedByConditions.get(0).toExpectedCondition(by));

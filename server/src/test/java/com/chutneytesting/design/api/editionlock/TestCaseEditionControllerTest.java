@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -66,7 +66,7 @@ public class TestCaseEditionControllerTest {
         // Then
         List<TestCaseEditionDto> result = om.readValue(
             mvcResult.getResponse().getContentAsString(),
-            new TypeReference<List<TestCaseEditionDto>>() {
+            new TypeReference<>() {
             }
         );
 
@@ -85,7 +85,7 @@ public class TestCaseEditionControllerTest {
         // When
         MvcResult mvcResult = mockMvc.perform(
             post(TestCaseEditionController.BASE_URL + "/" + testCaseId)
-                .contentType(APPLICATION_JSON_UTF8_VALUE)
+                .contentType(APPLICATION_JSON_VALUE)
                 .content("")
         )
             .andExpect(status().isOk())

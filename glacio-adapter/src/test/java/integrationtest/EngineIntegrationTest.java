@@ -9,7 +9,6 @@ import com.chutneytesting.engine.api.execution.StepDefinitionDto;
 import com.chutneytesting.engine.api.execution.StepExecutionReportDto;
 import com.chutneytesting.glacio.GlacioAdapterConfiguration;
 import com.chutneytesting.glacio.api.ExecutionRequestMapper;
-import com.google.common.io.Resources;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -35,7 +34,7 @@ public class EngineIntegrationTest {
 
     @Test
     public void should_execute_simple_feature() {
-        List<StepExecutionReportDto> reports = executeFeature("integration/simple_parser.feature");
+        List<StepExecutionReportDto> reports = executeFeature("/integration/simple_parser.feature");
 
         // Then
         StepExecutionReportDto report = reports.get(0); // Success/Debug scenario
@@ -56,7 +55,7 @@ public class EngineIntegrationTest {
 
     @Test
     public void should_execute_sleep_feature() {
-        List<StepExecutionReportDto> reports = executeFeature("integration/sleep_parser.feature");
+        List<StepExecutionReportDto> reports = executeFeature("/integration/sleep_parser.feature");
 
         // Then
         assertThat(reports).hasSize(1);
@@ -81,7 +80,7 @@ public class EngineIntegrationTest {
 
     @Test
     public void should_execute_context_put_feature() {
-        List<StepExecutionReportDto> reports = executeFeature("integration/context-put_parser.feature");
+        List<StepExecutionReportDto> reports = executeFeature("/integration/context-put_parser.feature");
 
         // Then
         assertThat(reports).hasSize(2);
@@ -105,7 +104,7 @@ public class EngineIntegrationTest {
 
     @Test
     public void should_execute_http_feature() {
-        List<StepExecutionReportDto> reports = executeFeature("integration/http_parser.feature");
+        List<StepExecutionReportDto> reports = executeFeature("/integration/http_parser.feature");
 
         // Then
         assertThat(reports).hasSize(1);
@@ -130,7 +129,7 @@ public class EngineIntegrationTest {
     @Test
     @Disabled
     public void should_execute_sql_feature() {
-        List<StepExecutionReportDto> reports = executeFeature("integration/sql_parser.feature");
+        List<StepExecutionReportDto> reports = executeFeature("/integration/sql_parser.feature");
 
         // Then
         assertThat(reports.get(0).status).isEqualTo(SUCCESS);
@@ -139,7 +138,7 @@ public class EngineIntegrationTest {
     @Test
     @Disabled
     public void should_execute_blackbox_feature() {
-        List<StepExecutionReportDto> reports = executeFeature("integration/blackbox.feature");
+        List<StepExecutionReportDto> reports = executeFeature("/integration/blackbox.feature");
 
         // Then
         assertThat(reports.get(0).status).isEqualTo(SUCCESS);
@@ -147,7 +146,7 @@ public class EngineIntegrationTest {
 
     @Test
     public void should_execute_strategy_feature() {
-        List<StepExecutionReportDto> reports = executeFeature("integration/strategy_parser.feature");
+        List<StepExecutionReportDto> reports = executeFeature("/integration/strategy_parser.feature");
 
         /* Then */
         it_should_continue_on_softly_failed_steps(reports.get(0));
@@ -188,7 +187,7 @@ public class EngineIntegrationTest {
 
     @Test
     public void should_execute_strategy_feature_with_i18n_params() {
-        List<StepExecutionReportDto> reports = executeFeature("integration/strategy_parser_fr.feature");
+        List<StepExecutionReportDto> reports = executeFeature("/integration/strategy_parser_fr.feature");
 
         /* Then */
         it_should_continue_on_softly_failed_steps(reports.get(0));
@@ -212,6 +211,6 @@ public class EngineIntegrationTest {
     }
 
     private String fileContent(String resourcePath) {
-        return Files.contentOf(new File(Resources.getResource(resourcePath).getPath()), StandardCharsets.UTF_8);
+        return Files.contentOf(new File(EngineIntegrationTest.class.getResource(resourcePath).getPath()), StandardCharsets.UTF_8);
     }
 }

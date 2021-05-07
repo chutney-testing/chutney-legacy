@@ -5,9 +5,9 @@ import java.util.Optional;
 
 public class NamedHostAndPort {
 
-    private String name;
-    private String host;
-    private int port;
+    private final String name;
+    private final String host;
+    private final int port;
 
     public NamedHostAndPort(String name, String host, int port) {
         this.name = Optional.ofNullable(name).orElseThrow(() -> new IllegalArgumentException("Name should not be null"));

@@ -60,7 +60,7 @@ public class TestCaseControllerTest {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/api/scenario/v2/raw")
                 .content(om.writeValueAsString(SAMPLE_SCENARIO))
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
         )
             .andDo(result -> bodyHolder.set(result.getResponse().getContentAsString()))
             .andExpect(MockMvcResultMatchers.status().isOk());
@@ -77,7 +77,7 @@ public class TestCaseControllerTest {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/api/scenario/v2/raw")
                 .content(om.writeValueAsString(SAMPLE_SCENARIO))
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
         )
 //            .andDo(print())
             .andDo(result -> bodyHolder.set(result.getResponse().getContentAsString()))
@@ -93,7 +93,7 @@ public class TestCaseControllerTest {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/api/scenario/v2/raw")
                 .content(om.writeValueAsString(SAMPLE_SCENARIO))
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
         )
             .andDo(result -> resultContentLength.set(result.getResponse().getContentLength()))
             .andExpect(status().isForbidden());
@@ -111,7 +111,7 @@ public class TestCaseControllerTest {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/api/scenario/v2/raw")
                 .content(om.writeValueAsString(SAMPLE_SCENARIO))
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
         )
             .andDo(result -> message[0] = result.getResponse().getContentAsString())
             .andExpect(status().isUnprocessableEntity());
@@ -129,7 +129,7 @@ public class TestCaseControllerTest {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/api/scenario/v2/raw")
                 .content(om.writeValueAsString(SAMPLE_SCENARIO))
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
         )
 //            .andDo(print())
             .andDo(result -> bodyHolder.set(result.getResponse().getContentAsString()))

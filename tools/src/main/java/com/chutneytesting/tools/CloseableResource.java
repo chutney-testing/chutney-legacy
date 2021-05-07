@@ -7,17 +7,17 @@ public interface CloseableResource<T> extends AutoCloseable {
 	T getResource();
 
 	static <T> CloseableResource<T> build(T resource, Runnable closer) {
-		return new CloseableResource<T>() {
+		return new CloseableResource<>() {
 
-			@Override
-			public void close() {
-				closer.run();
-			}
+            @Override
+            public void close() {
+                closer.run();
+            }
 
-			@Override
-			public T getResource() {
-				return resource;
-			}
-		};
+            @Override
+            public T getResource() {
+                return resource;
+            }
+        };
 	}
 }

@@ -28,7 +28,7 @@ public class ScheduleCampaignController {
         this.schedulingCampaignRepository = schedulingCampaignRepository;
     }
 
-    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<SchedulingCampaignDto> getAll() {
         return schedulingCampaignRepository.getALl().stream()
             .map(sc -> new SchedulingCampaignDto(sc.id, sc.campaignId, sc.campaignTitle, sc.getSchedulingDate(), sc.frequency.label))
@@ -36,12 +36,12 @@ public class ScheduleCampaignController {
             .collect(Collectors.toList());
     }
 
-    @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public void add(@RequestBody SchedulingCampaignDto dto) {
         schedulingCampaignRepository.add(new SchedulingCampaign(null, dto.getCampaignId(), dto.getCampaignTitle(), dto.getSchedulingDate(), tofrequency(dto.getFrequency())));
     }
 
-    @DeleteMapping(path = "/{schedulingCampaignId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @DeleteMapping(path = "/{schedulingCampaignId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@PathVariable("schedulingCampaignId") Long schedulingCampaignId) {
         schedulingCampaignRepository.removeById(schedulingCampaignId);
     }

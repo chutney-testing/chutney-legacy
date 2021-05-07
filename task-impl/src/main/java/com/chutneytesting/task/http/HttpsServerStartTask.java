@@ -58,11 +58,9 @@ public class HttpsServerStartTask implements Task {
             .asynchronousResponseThreads(1)
             .jettyAcceptors(1);
         // add keystore path and pwd if present
-        if (keyStorePath.isPresent()) {
-            wireMockConfiguration
-                .keystorePath(keyStorePath.get())
-                .keystorePassword(keyStorePassword.orElse(""));
-        }
+        keyStorePath.ifPresent(s -> wireMockConfiguration
+            .keystorePath(s)
+            .keystorePassword(keyStorePassword.orElse("")));
         WireMockServer wireMockServer = new WireMockServer(wireMockConfiguration);
         logger.info("Try to start https server on port " + port);
         wireMockServer.start();

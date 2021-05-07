@@ -1,6 +1,5 @@
 package com.chutneytesting.agent.api.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -30,7 +29,7 @@ public class ExploreResultApiDto {
         public final String source;
         public final TargetIdEntity destination;
 
-        public TargetLinkEntity(@JsonProperty("source") String source, @JsonProperty("destination") TargetIdEntity destination) {
+        public TargetLinkEntity(String source, TargetIdEntity destination) {
             this.source = source;
             this.destination = destination;
         }

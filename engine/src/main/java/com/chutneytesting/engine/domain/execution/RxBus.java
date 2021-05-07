@@ -16,7 +16,7 @@ public class RxBus {
         return INSTANCE;
     }
 
-    private Subject<Object> bus = PublishSubject.create().toSerialized();
+    private final Subject<Object> bus = PublishSubject.create().toSerialized();
 
     public void post(Object event) {
         bus.onNext(event);

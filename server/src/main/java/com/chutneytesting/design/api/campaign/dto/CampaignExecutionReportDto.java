@@ -16,18 +16,19 @@ public class CampaignExecutionReportDto {
     private List<ScenarioExecutionReportOutlineDto> scenarioExecutionReports;
     private boolean partialExecution;
     private String executionEnvironment;
+    @JsonProperty("user")
     private String userId;
     private Long duration;
 
-    public CampaignExecutionReportDto(@JsonProperty("executionId") Long executionId,
-                                      @JsonProperty("scenarioExecutionReports") List<ScenarioExecutionReportOutlineDto> scenarioExecutionReports,
-                                      @JsonProperty("campaignName") String campaignName,
-                                      @JsonProperty("startDate") LocalDateTime startDate,
-                                      @JsonProperty("status") ServerReportStatus status,
-                                      @JsonProperty("partialExecution") boolean partialExecution,
-                                      @JsonProperty("executionEnvironment") String executionEnvironment,
-                                      @JsonProperty("user") String userId,
-                                      @JsonProperty("duration") Long duration) {
+    public CampaignExecutionReportDto(Long executionId,
+                                      List<ScenarioExecutionReportOutlineDto> scenarioExecutionReports,
+                                      String campaignName,
+                                      LocalDateTime startDate,
+                                      ServerReportStatus status,
+                                      boolean partialExecution,
+                                      String executionEnvironment,
+                                      String userId,
+                                      Long duration) {
         this.executionId = executionId;
         this.scenarioExecutionReports = scenarioExecutionReports;
         this.campaignName = campaignName;
@@ -78,7 +79,7 @@ public class CampaignExecutionReportDto {
         return executionEnvironment;
     }
 
-    public String getUserId(){
+    public String getUserId() {
         return userId;
     }
 }

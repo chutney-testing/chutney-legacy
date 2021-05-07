@@ -27,11 +27,9 @@ public class UndertowConfig {
     public UndertowServletWebServerFactory servletWebServerFactory() {
         UndertowServletWebServerFactory factory = new UndertowServletWebServerFactory();
         // Add http listener
-        factory.getBuilderCustomizers().add(builder -> {
-            builder.addHttpListener(httpPort, httpInterface);
-        });
+        factory.getBuilderCustomizers().add(builder -> builder.addHttpListener(httpPort, httpInterface));
         // Redirect rule to secure port
-        factory.getDeploymentInfoCustomizers().add(deploymentInfo -> {
+        factory.getDeploymentInfoCustomizers().add(deploymentInfo ->
             deploymentInfo.addSecurityConstraint(
                 new SecurityConstraint()
                     .addWebResourceCollection(new WebResourceCollection().addUrlPattern("/*"))
@@ -39,8 +37,7 @@ public class UndertowConfig {
                     .setEmptyRoleSemantic(SecurityInfo.EmptyRoleSemantic.PERMIT))
                 .setConfidentialPortManager(
                     exchange -> securePort
-                );
-        });
+            ));
         return factory;
     }
 }

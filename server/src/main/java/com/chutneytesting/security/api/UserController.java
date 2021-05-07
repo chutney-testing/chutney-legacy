@@ -21,7 +21,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping(path="", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(path="", produces = MediaType.APPLICATION_JSON_VALUE)
     @SuppressWarnings("unused")
     public User currentUser(HttpServletRequest request, HttpServletResponse response) {
         return userService.getCurrentUser();

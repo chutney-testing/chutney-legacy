@@ -11,7 +11,6 @@ import static org.assertj.core.api.Assertions.entry;
 
 import com.chutneytesting.design.domain.dataset.DataSet;
 import com.github.difflib.patch.PatchFailedException;
-import com.google.common.io.Resources;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -49,8 +48,8 @@ public class DataSetPatchUtilsTest {
     public void should_map_string_as_dataset_values() throws IOException, URISyntaxException {
         // Given
         DataSet dataSet = testDataSet();
-        String raw = new String(Files.readAllBytes(rawTestResources()), UTF_8);
-        String pretty = new String(Files.readAllBytes(prettyTestResources()), UTF_8);
+        String raw = Files.readString(rawTestResources());
+        String pretty = Files.readString(prettyTestResources());
 
         // When
         Pair<Map<String, String>, List<Map<String, String>>> rawValues = extractValues(raw);
@@ -133,14 +132,14 @@ public class DataSetPatchUtilsTest {
     }
 
     private Path rawTestResources() throws URISyntaxException {
-        return testResources("dataset/raw.txt");
+        return testResources("/dataset/raw.txt");
     }
 
     private Path prettyTestResources() throws URISyntaxException {
-        return testResources("dataset/pretty.txt");
+        return testResources("/dataset/pretty.txt");
     }
 
     private Path testResources(String s) throws URISyntaxException {
-        return Paths.get(Resources.getResource(s).toURI());
+        return Paths.get(DataSetPatchUtilsTest.class.getResource(s).toURI());
     }
 }

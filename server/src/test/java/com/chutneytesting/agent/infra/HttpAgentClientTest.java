@@ -115,9 +115,9 @@ public class HttpAgentClientTest {
         NamedHostAndPort agentInfoB = agentInfo("B", "host2", 1);
         server.expect(manyTimes(), requestTo("https://" + agentInfoB.host() + ":" + agentInfoB.port() + EXPLORE_URL))
             .andExpect(method(HttpMethod.POST))
-            .andExpect(MockRestRequestMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(MockRestRequestMatchers.content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.creationDate").value(configurationCreationInstant))
-            .andRespond(withSuccess(responseBody, MediaType.APPLICATION_JSON_UTF8));
+            .andRespond(withSuccess(responseBody, MediaType.APPLICATION_JSON));
 
         NetworkConfiguration networkConfiguration = buildNetworkConfiguration(Instant.parse(configurationCreationInstant),
             agentInfo("A", "host1", 1),

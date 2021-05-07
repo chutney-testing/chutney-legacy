@@ -25,14 +25,14 @@ public class GitBackupController {
         this.gitBackupService = gitBackupService;
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<GitRemoteDto> getAllRemotes() {
         return gitBackupService.getAll().stream()
             .map(this::toDto)
             .collect(Collectors.toList());
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public GitRemoteDto addRemote(@RequestBody GitRemoteDto dto) {
         return toDto(gitBackupService.add(fromDto(dto)));
     }

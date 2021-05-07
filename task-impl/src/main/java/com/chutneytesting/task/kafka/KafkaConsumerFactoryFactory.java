@@ -21,11 +21,9 @@ public class KafkaConsumerFactoryFactory {
             .putAll(properties)
             .build();
 
-        DefaultKafkaConsumerFactory<String, String> kafkaConsumerFactory =
-            new DefaultKafkaConsumerFactory<>(
+        return new DefaultKafkaConsumerFactory<>(
                 consumerConfig,
                 new StringDeserializer(),
                 new StringDeserializer());
-        return kafkaConsumerFactory;
     }
 }

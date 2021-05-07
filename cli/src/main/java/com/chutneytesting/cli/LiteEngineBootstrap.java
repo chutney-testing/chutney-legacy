@@ -99,6 +99,7 @@ public class LiteEngineBootstrap implements Runnable {
     }
 
     public static void main(String... args) {
-        CommandLine.run(new LiteEngineBootstrap(), args);
+        CommandLine cmd = new CommandLine(new LiteEngineBootstrap());
+        cmd.execute(args);
     }
 }

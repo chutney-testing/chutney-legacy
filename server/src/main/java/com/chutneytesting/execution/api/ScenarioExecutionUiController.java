@@ -79,7 +79,7 @@ public class ScenarioExecutionUiController {
         return objectMapper.writeValueAsString(report);
     }
 
-    @PostMapping(path = "/api/ui/scenario/executionasync/v1/{scenarioId}/{env}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(path = "/api/ui/scenario/executionasync/v1/{scenarioId}/{env}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String executeScenarioAsyncWithExecutionParameters(@PathVariable("scenarioId") String scenarioId, @PathVariable("env") String env, @RequestBody List<KeyValue> executionParametersKV) {
         LOGGER.debug("execute async scenario '{}' using parameters '{}'", scenarioId, executionParametersKV);
         TestCase testCase = testCaseRepository.findById(fromFrontId(Optional.of(scenarioId)));

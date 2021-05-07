@@ -20,13 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "*")
 public class GitRepositoryAdminController {
 
-    private JsonFilesGitRepository jsonFilesGitRepository;
+    private final JsonFilesGitRepository jsonFilesGitRepository;
 
     public GitRepositoryAdminController(JsonFilesGitRepository jsonFilesGitRepository) {
         this.jsonFilesGitRepository = jsonFilesGitRepository;
     }
 
-    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<GitRepositoryDto> getGitRepositories() {
         return jsonFilesGitRepository.listGitRepository().stream()
             .map(r -> new GitRepositoryDto(
@@ -36,19 +36,17 @@ public class GitRepositoryAdminController {
                 r.testSubFolder)).collect(Collectors.toList());
     }
 
-    @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public void addNewGitRepository(@RequestBody GitRepositoryDto repo) {
         Set<GitRepository> gitRepositories = jsonFilesGitRepository.listGitRepository();
         long id = gitRepositories.stream()
             .filter(g -> g.id.equals(repo.id))
             .map(g -> g.id)
             .findFirst()
-            .orElseGet(() -> {
-                return gitRepositories.stream()
-                    .mapToLong(g -> g.id)
-                    .max()
-                    .orElse(0L) + 1;
-            });
+            .orElseGet(() -> gitRepositories.stream()
+                .mapToLong(g -> g.id)
+                .max()
+                .orElse(0L) + 1);
 
         GitRepository gitRepository = new GitRepository(id, repo.url, repo.sourceDirectory, repo.name);
         jsonFilesGitRepository.save(gitRepository);
@@ -59,9 +57,7 @@ public class GitRepositoryAdminController {
         Set<GitRepository> gitRepositories = jsonFilesGitRepository.listGitRepository();
         gitRepositories.stream().filter(g -> g.id.equals(id))
             .findFirst()
-            .ifPresent(gitRepo -> {
-                jsonFilesGitRepository.delete(id);
-            });
+            .ifPresent(gitRepo -> jsonFilesGitRepository.delete(id));
     }
 
     public static class GitRepositoryDto {

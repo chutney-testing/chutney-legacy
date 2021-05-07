@@ -21,13 +21,13 @@ public class HomePageController {
     }
 
     @CrossOrigin(origins = "*")
-    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public HomePage load() {
         return repository.load();
     }
 
     @CrossOrigin(origins = "*")
-    @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public HomePage save(@RequestBody HomePage homePage) {
         return repository.save(homePage);
     }

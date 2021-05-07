@@ -14,7 +14,6 @@ import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.FinallyActionRegistry;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.google.common.io.Resources;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -24,8 +23,8 @@ import org.springframework.util.SocketUtils;
 public class HttpsServerStartTaskTest {
 
     private static final int wireMockPort = SocketUtils.findAvailableTcpPort();
-    private static final String TRUSTSTORE_JKS = Resources.getResource("security/truststore.jks").getPath();
-    private static final String KEYSTORE_JKS = Resources.getResource("security/server.jks").getPath();
+    private static final String TRUSTSTORE_JKS = HttpsServerStartTaskTest.class.getResource("/security/truststore.jks").getPath();
+    private static final String KEYSTORE_JKS = HttpsServerStartTaskTest.class.getResource("/security/server.jks").getPath();
     private final static FinallyActionRegistry finallyActionRegistry = Mockito.mock(FinallyActionRegistry.class);
 
     public static Object[] parametersForShould_start_https_server() {

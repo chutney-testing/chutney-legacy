@@ -26,6 +26,7 @@ import com.chutneytesting.task.infra.DefaultTaskTemplateLoader;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.tools.ThrowingFunction;
 import com.chutneytesting.tools.loader.ExtensionLoaders;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -126,7 +127,7 @@ public class ExecutionConfiguration {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> T instantiate(Class<?> clazz) throws IllegalAccessException, InstantiationException {
-        return (T) clazz.newInstance();
+    private static <T> T instantiate(Class<?> clazz) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+        return (T) clazz.getDeclaredConstructor().newInstance();
     }
 }
