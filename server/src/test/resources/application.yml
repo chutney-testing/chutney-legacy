@@ -6,7 +6,7 @@ server:
     port: ${port:80}
     interface: 0.0.0.0
   ssl:
-    keyStore: 'classpath:blackbox/security/server.jks'
+    keyStore: 'classpath:blackbox/keystores/server.jks'
     key-store-password: 'server'
     key-password: 'server'
   undertow:
