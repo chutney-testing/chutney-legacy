@@ -1,5 +1,7 @@
 package com.chutneytesting.task.sql.core;
 
+import static org.apache.commons.lang3.ClassUtils.isPrimitiveOrWrapper;
+
 import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -88,11 +90,22 @@ public class SqlClient {
             while (rs.next()) {
                 final List<Object> row = new ArrayList<>(columnCount);
                 for (int i = 1; i <= columnCount; i++) {
-                    row.add(rs.getObject(i));
+                    row.add(boxed(rs, i));
                 }
                 rows.add(row);
             }
             return rows;
         }
+
+        private static Object boxed(ResultSet rs, int i) throws SQLException {
+            Object o = rs.getObject(i);
+            Class<?> type = o.getClass();
+            if (isPrimitiveOrWrapper(type)) {
+                return o;
+            }
+
+            return rs.getString(i);
+        }
+
     }
 }
