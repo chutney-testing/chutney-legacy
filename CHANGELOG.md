@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.3.2](https://github.com/chutney-testing/chutney/tree/1.3.2)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.1...1.3.2)
+
+**Implemented enhancements:**
+
+- 🚀 | Add navigation between component [\#332](https://github.com/chutney-testing/chutney/issues/332)
+- 🚀 | Show line count on matrix dataset \(csv\) [\#211](https://github.com/chutney-testing/chutney/issues/211)
+- 🚀 | Display total scenario count on campaign page [\#206](https://github.com/chutney-testing/chutney/issues/206)
+
+**Closed issues:**
+
+- 🚀 | Migrate to maven central [\#328](https://github.com/chutney-testing/chutney/issues/328)
+
+**Merged pull requests:**
+
+- feat\(ui\):display total scenarios count on campaign page [\#426](https://github.com/chutney-testing/chutney/pull/426) ([amalmtt](https://github.com/amalmtt))
+- feat\(ui\): Add navigation between components [\#408](https://github.com/chutney-testing/chutney/pull/408) ([rbenyoussef](https://github.com/rbenyoussef))
+- Upgrade to GitHub-native Dependabot [\#407](https://github.com/chutney-testing/chutney/pull/407) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- feat\(ui\): show line count on matrix dataset [\#406](https://github.com/chutney-testing/chutney/pull/406) ([rbenyoussef](https://github.com/rbenyoussef))
+- chore: upgrade spring boot version [\#405](https://github.com/chutney-testing/chutney/pull/405) ([nbrouand](https://github.com/nbrouand))
+- chore: Release to maven central [\#404](https://github.com/chutney-testing/chutney/pull/404) ([bessonm](https://github.com/bessonm))
+- feat\(engine\): Add finally action in report [\#403](https://github.com/chutney-testing/chutney/pull/403) ([nbrouand](https://github.com/nbrouand))
+- Feat/git export [\#394](https://github.com/chutney-testing/chutney/pull/394) ([bessonm](https://github.com/bessonm))
+
+
 ## [1.3.1](https://github.com/chutney-testing/chutney/tree/1.3.1) (2021-04-22)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.0...1.3.1)
