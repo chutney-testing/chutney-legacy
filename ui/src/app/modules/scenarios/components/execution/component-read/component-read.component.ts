@@ -16,4 +16,7 @@ export class ComponentReadComponent implements OnInit {
 
     }
 
+    isNotEmpty(object: Object) {
+        return Object.keys(object).length > 0;
+    }
 }

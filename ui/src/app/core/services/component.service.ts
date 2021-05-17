@@ -54,7 +54,7 @@ export class ComponentService {
     findAllComponent(): Observable<Array<ComponentTask>> {
         return this.httpClient.get<Array<ComponentTask>>(environment.backend + this.stepUrl + '/all')
             .pipe(map((res: Array<ComponentTask>) => {
-                return res.map(c => this.mapToComponentTask(c));
+                return res.map(c => this.mapToComponentTask(c, true));
             }));
     }
 
@@ -85,8 +85,14 @@ export class ComponentService {
     }
 
     findComponentTestCase(id: string): Observable<ScenarioComponent> {
-        return this.httpClient.get<ScenarioComponent>(environment.backend + `${this.componentUrl}/${id}`).pipe(
-            map(value => this.mapJsonToScenarioComponent(value))
+        return this.httpClient.get<ScenarioComponent>(environment.backend + `${this.componentUrl}/${id}/executable`).pipe(
+            map(value => this.mapJsonToScenarioComponent(value, true))
+        );
+    }
+
+    findComponentTestCaseWithoutDeserializeImpl(id: string): Observable<ScenarioComponent> {
+        return this.httpClient.get<ScenarioComponent>(environment.backend + `${this.componentUrl}/${id}/executable`).pipe(
+            map(value => this.mapJsonToScenarioComponent(value, false))
         );
     }
 
@@ -129,7 +135,7 @@ export class ComponentService {
             componentTask.computedParameters);
     }
 
-    private mapJsonToScenarioComponent(jsonObject: any): ScenarioComponent {
+    private mapJsonToScenarioComponent(jsonObject: any, withDeserializeImplementation: boolean): ScenarioComponent {
         return new ScenarioComponent(
             jsonObject.id,
             jsonObject.title,
@@ -138,7 +144,7 @@ export class ComponentService {
             jsonObject.updateDate,
             jsonObject.version,
             jsonObject.author,
-            jsonObject.scenario.componentSteps.map((json: any) => this.mapToComponentTask(json)),
+            jsonObject.scenario.componentSteps.map((json: any) => this.mapToComponentTask(json, withDeserializeImplementation)),
             jsonObject.scenario.parameters.map(elt => new KeyValue(elt.key, elt.value)),
             jsonObject.computedParameters.map(elt => new KeyValue(elt.key, elt.value)),
             jsonObject.tags,
@@ -146,17 +152,31 @@ export class ComponentService {
         );
     }
 
-    private mapToComponentTask(jsonObject: any): ComponentTask {
+    private mapToComponentTask(jsonObject: any, withDeserializeImplementation: boolean): ComponentTask {
+        let implem;
+        if(jsonObject.task) {
+            if (withDeserializeImplementation) {
+                implem = Implementation.deserialize(JSON.parse(jsonObject.task));
+            } else {
+                implem =  JSON.parse(jsonObject.task);
+            }
+        }
+
         return new ComponentTask(
             jsonObject.name,
-            Implementation.deserialize(JSON.parse(jsonObject.task)),
-            jsonObject.steps.map(c => this.mapToComponentTask(c)),
+            implem,
+            jsonObject.steps.map(c => this.mapToComponentTask(c, withDeserializeImplementation)),
             jsonObject.parameters.map(elt => new KeyValue(elt.key, elt.value)),
             jsonObject.computedParameters.map(elt => new KeyValue(elt.key, elt.value)),
             jsonObject.tags,
             jsonObject.strategy != null ? new Strategy(jsonObject.strategy.type, jsonObject.strategy.parameters) : null,
             jsonObject.id
         );
+
+    }
+
+    private mapToComponentTaskWithImpl(jsonObject: any): ComponentTask {
+        return this.mapToComponentTask(jsonObject, true)
     }
 
     private mapToComponentTaskDto(component: ComponentTask): ComponentTaskDto {

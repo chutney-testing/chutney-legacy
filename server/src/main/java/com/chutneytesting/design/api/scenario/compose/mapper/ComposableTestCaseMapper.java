@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class ComposableTestCaseMapper {
 
-    public ComposableTestCaseMapper() {
+    private ComposableTestCaseMapper() {
     }
 
     public static ComposableTestCase fromDto(ComposableTestCaseDto composableTestCaseDto) {
