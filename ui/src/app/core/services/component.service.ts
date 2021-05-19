@@ -86,7 +86,7 @@ export class ComponentService {
     }
 
     findComponentTestCase(id: string): Observable<ScenarioComponent> {
-        return this.httpClient.get<ScenarioComponent>(environment.backend + `${this.componentUrl}/${id}/executable`).pipe(
+        return this.httpClient.get<ScenarioComponent>(environment.backend + `${this.componentUrl}/${id}`).pipe(
             map(value => this.mapJsonToScenarioComponent(value, true))
         );
     }
