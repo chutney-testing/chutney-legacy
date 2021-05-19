@@ -153,18 +153,15 @@ export class ComponentService {
     }
 
     private mapToComponentTask(jsonObject: any, withDeserializeImplementation: boolean): ComponentTask {
-        let implem;
-        if(jsonObject.task) {
-            if (withDeserializeImplementation) {
-                implem = Implementation.deserialize(JSON.parse(jsonObject.task));
-            } else {
-                implem =  JSON.parse(jsonObject.task);
-            }
+        let impl = Implementation.deserialize(JSON.parse(jsonObject.task));
+
+        if (jsonObject.task && !withDeserializeImplementation) {
+            impl =  JSON.parse(jsonObject.task);
         }
 
         return new ComponentTask(
             jsonObject.name,
-            implem,
+            impl,
             jsonObject.steps.map(c => this.mapToComponentTask(c, withDeserializeImplementation)),
             jsonObject.parameters.map(elt => new KeyValue(elt.key, elt.value)),
             jsonObject.computedParameters.map(elt => new KeyValue(elt.key, elt.value)),
