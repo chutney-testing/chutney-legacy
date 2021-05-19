@@ -17,12 +17,40 @@
             <input type="text" class="form-control" placeholder="{{ 'campaigns.search.placeholder' | translate }}"
                    [(ngModel)]="campaignFilter">
         </div>
+        <div class="row ml-2">
+            <div style="min-width: 170px;">
+                <button *ngIf=" !isSelectAll()" type="button" class="btn btn-xs btn-default m-2" (click)="selectAll()">
+                    <span class="fa fa-check"></span> {{ 'campaigns.search.selectAllText' | translate }}
+                </button>
+                <button *ngIf="isSelectAll()" type="button" class="btn btn-xs btn-default m-2" (click)="deselectAll()">
+                    <span class="fa fa-times"></span> {{ 'campaigns.search.deselectAllText' | translate }}
+                </button>
+            </div>
+            <div class="d-flex flex-wrap">
+                <div class="border-right border-dark ml-2 mr-2"></div>
+                <div class="align-self-center">
+                    <button class="chutney-tag"
+                            [ngClass]="tagFilter.isNoTagSelected() ? 'chutney-tag-selected' : 'chutney-tag-unselected'"
+                            (click)="toggleNoTagFilter()">
+                        NO_TAG
+                    </button>
+                </div>
+                <div class="border-right border-dark ml-2 mr-2"></div>
+                <div *ngFor="let tag of tagFilter.all()" class="align-self-center">
+                    <button
+                        [ngClass]="tagFilter.isSelected(tag)? 'chutney-tag chutney-tag-selected' : 'chutney-tag chutney-tag-unselected'"
+                        (click)="toggleTagFilter(tag)">
+                        {{tag}}
+                    </button>
+                </div>
+            </div>
+        </div>
 
-        <div class="table-responsive" *ngIf="campaigns.length > 0">
+        <div class="table-responsive" *ngIf="viewedCampaigns.length > 0">
             <table class="table table-sm table-striped table-hover">
                 <tbody>
-                <tr *ngFor="let campaign of (campaigns | searchTextPipe : campaignFilter:['title','description'])">
-                    <td class="small_text w95">
+                <tr *ngFor="let campaign of (viewedCampaigns | searchTextPipe : campaignFilter:['title','description'])">
+                    <td class="small_text w93">
                         <a [routerLink]="['/campaign',campaign.id,'execution']"
                            title="{{ 'campaigns.list.item.title.link.title' | translate }} {{campaign.title}}">{{campaign.title}}</a>
                     </td>
@@ -35,6 +63,21 @@
                             <span class="fab fa-jira" aria-hidden="true">
                             </span>
                         </a>
+                    </td>
+                    <td class="pl-0 w1">
+                        <span *ngIf="campaign.tags.length <= 3">
+                            <span *ngFor="let tag of campaign.tags"
+                                  class="chutney-tag chutney-tag-selected">{{tag}}</span>
+                        </span>
+                        <span *ngIf="campaign.tags.length > 3">
+                            <span *ngFor="let tag of campaign.tags | slice:0:2"
+                                  class="chutney-tag chutney-tag-selected">{{tag}}</span>
+                            <button type="button" class="chutney-tag chutney-tag-selected"
+                                    ngbPopover="{{campaign.tags}}" placement="left"
+                                    triggers="mouseenter:mouseleave" container="body">
+                                ...
+                            </button>
+                        </span>
                     </td>
                     <td class="pl-0 w1">
                         <button type="button" class="btn btn-link mr-0"

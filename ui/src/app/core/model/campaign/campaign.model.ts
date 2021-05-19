@@ -12,6 +12,7 @@ export class Campaign {
         public scheduleTime?: string,
         public parallelRun?: false,
         public retryAuto?: false,
-        public datasetId?: string) {
+        public datasetId?: string,
+        public tags: Array<string> = []) {
     }
 }

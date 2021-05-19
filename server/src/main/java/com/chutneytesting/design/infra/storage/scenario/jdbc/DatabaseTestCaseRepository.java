@@ -120,7 +120,7 @@ public class DatabaseTestCaseRepository implements DelegateScenarioRepository {
                 .addValue("dataSet", mapper.writeValueAsString(scenario.executionParameters))
                 .addValue("content", scenario.rawScenario)
                 .addValue("creationDate", Date.from(scenario.creationDate))
-                .addValue("tags", ScenarioTagListMapper.tagsListToString(scenario.tags))
+                .addValue("tags", TagListMapper.tagsListToString(scenario.tags))
                 .addValue("author", User.isAnonymous(scenario.author) ? null : scenario.author)
                 .addValue("version", scenario.version)
         ).runtime();
@@ -133,7 +133,7 @@ public class DatabaseTestCaseRepository implements DelegateScenarioRepository {
             String title = rs.getString("TITLE");
             String description = rs.getString("DESCRIPTION");
             Timestamp creationDate = rs.getTimestamp("CREATION_DATE");
-            List<String> tags = ScenarioTagListMapper.tagsStringToList(rs.getString("TAGS"));
+            List<String> tags = TagListMapper.tagsStringToList(rs.getString("TAGS"));
             String author = rs.getString("USER_ID");
             Timestamp updateDate = rs.getTimestamp("UPDATE_DATE");
             Integer version = rs.getInt("VERSION");
@@ -164,7 +164,7 @@ public class DatabaseTestCaseRepository implements DelegateScenarioRepository {
                 .withId(rs.getString("ID"))
                 .withTitle(rs.getString("TITLE"))
                 .withDescription(rs.getString("DESCRIPTION"))
-                .withTags(ScenarioTagListMapper.tagsStringToList(rs.getString("TAGS")))
+                .withTags(TagListMapper.tagsStringToList(rs.getString("TAGS")))
                 .withRawScenario(rs.getString("CONTENT"))
                 .withAuthor(rs.getString("USER_ID"))
                 .withVersion(rs.getInt("VERSION"));

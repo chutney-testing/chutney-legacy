@@ -64,6 +64,11 @@
                         {{ 'campaigns.edition.form.schedule.pattern' | translate }}
                     </div>
                 </div>
+                <div class="form-group col-md-2">
+                    <label>{{'campaigns.edition.form.tags' | translate}}</label>
+                    <input type="text" class="form-control mr-2 small-text"
+                            formControlName="campaignTags" placeholder="tags"/>
+                </div>
                 <div class="col-md-6">
                     {{ 'campaigns.edition.options' | translate }} :
                     <div class="ml-4">
@@ -126,7 +131,7 @@
                                 <td class="text-nowrap">{{scenario?.id}}</td>
                                 <td class="scenario-title-cell">{{scenario?.title}}</td>
                                 <td class="p-0">
-                                    <a *ngIf="jiraMap.has(scenario.id)" role="button" class="btn btn-sm btn-link mr-0" 
+                                    <a *ngIf="jiraMap.has(scenario.id)" role="button" class="btn btn-sm btn-link mr-0"
                                         target="_blank" href="{{getJiraLink(scenario.id)}}"
                                         ngbPopover="{{jiraMap.get(scenario.id)}}" placement="left" (click)="$event.stopPropagation()"
                                         triggers="mouseenter:mouseleave">
@@ -192,7 +197,7 @@
                                         </span>
                                 </td>
                                 <td class="p-0">
-                                    <a *ngIf="jiraMap.has(scenario.id)" role="button" class="btn btn-sm btn-link mr-0" 
+                                    <a *ngIf="jiraMap.has(scenario.id)" role="button" class="btn btn-sm btn-link mr-0"
                                         target="_blank" href="{{getJiraLink(scenario.id)}}"
                                         ngbPopover="{{jiraMap.get(scenario.id)}}" placement="left" (click)="$event.stopPropagation()"
                                         triggers="mouseenter:mouseleave">

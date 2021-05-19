@@ -17,7 +17,7 @@ export class CampaignService {
     constructor(private http: HttpClient) { }
 
     public static existRunningCampaignReport(lastCampaignReports: Array<CampaignExecutionReport>): boolean {
-        return lastCampaignReports && distinct(lastCampaignReports.map(report => report.status)).includes('RUNNING')
+        return lastCampaignReports && distinct(lastCampaignReports.map(report => report.status)).includes('RUNNING');
     }
 
     findAllCampaigns(): Observable<Array<Campaign>> {

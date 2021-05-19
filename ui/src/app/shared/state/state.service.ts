@@ -35,6 +35,15 @@ export class StateService {
         return this.state.tags;
     }
 
+    public changeCampaignTags(tags: Array<String>) {
+        this.state.campaignTags = tags;
+        this.save();
+    }
+
+    public getCampaignTags(): Array<String> {
+        return this.state.campaignTags;
+    }
+
     public getScenarioType() {
         return this.state.scenarioTypes;
     }
@@ -51,5 +60,14 @@ export class StateService {
 
     public getNoTag() {
         return this.state.noTag;
+    }
+
+    public changeCampaignNoTag(noTag) {
+        this.state.campaignNoTag = noTag;
+        this.save();
+    }
+
+    public getCampaignNoTag() {
+        return this.state.campaignNoTag;
     }
 }

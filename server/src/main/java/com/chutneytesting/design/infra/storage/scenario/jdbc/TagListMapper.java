@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 
-public final class ScenarioTagListMapper {
+public final class TagListMapper {
     private static final String TAGS_SEPARATOR = ",";
 
     public static List<String> tagsStringToList(String tags) {
@@ -19,7 +19,7 @@ public final class ScenarioTagListMapper {
             .collect(Collectors.toList());
     }
 
-    static String tagsListToString(Collection<String> tags) {
+    public static String tagsListToString(Collection<String> tags) {
         return Optional.ofNullable(tags)
             .map(Collection::stream)
             .orElse(Stream.empty())

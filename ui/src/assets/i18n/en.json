@@ -116,7 +116,9 @@
     },
     "campaigns": {
         "search": {
-            "placeholder": "Search for campaign"
+            "placeholder": "Search for campaign",
+            "selectAllText": "Select all",
+            "deselectAllText": "Deselect all"
         },
         "list": {
             "item": {
@@ -175,6 +177,7 @@
                     "required": "Title is mandatory."
                 },
                 "description": "Description",
+                "tags": "Tags",
                 "schedule": {
                     "label": "Schedule time",
                     "pattern": "Pattern should be HH:MM"

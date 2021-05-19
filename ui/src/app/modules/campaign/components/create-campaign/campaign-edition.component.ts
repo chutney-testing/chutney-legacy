@@ -63,6 +63,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
             title: ['', Validators.required],
             description: '',
             tags: [],
+            campaignTags: '',
             scenarioIds: [],
             scheduleTime: ['', Validators.pattern('^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$')],
             parameters: this.formBuilder.array([]),
@@ -116,6 +117,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
                     this.campaignForm.controls['scheduleTime'].setValue(this.campaign.scheduleTime);
                     this.campaignForm.controls['parallelRun'].setValue(this.campaign.parallelRun);
                     this.campaignForm.controls['retryAuto'].setValue(this.campaign.retryAuto);
+                    this.campaignForm.controls['campaignTags'].setValue(this.campaign.tags);
                     this.selectedEnvironment = new EnvironmentMetadata(this.campaign.environment, '');
                     this.setCampaignScenarios();
                     this.updateCampaignParameters();
@@ -260,6 +262,8 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         this.campaign.parallelRun = formValue['parallelRun'];
         this.campaign.retryAuto = formValue['retryAuto'];
         this.campaign.datasetId = this.datasetId;
+        const tags = formValue['campaignTags'] + '';
+        this.campaign.tags = tags.length !== 0 ? tags.split(',') : [];
 
         this.setCampaignScenariosIdsToAdd(this.scenariosToAdd);
         if (this.campaign.id != null) {

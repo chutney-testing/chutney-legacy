@@ -516,4 +516,15 @@
         <addNotNullConstraint tableName="SCENARIO" columnName="CREATION_DATE" columnDataType="TIMESTAMP(6)"/>
         <addNotNullConstraint tableName="SCENARIO" columnName="UPDATE_DATE" columnDataType="TIMESTAMP(6)"/>
     </changeSet>
+    <changeSet id="20210517_campaign_add_tags" author="ICG">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="CAMPAIGN" columnName="TAGS"/>
+            </not>
+        </preConditions>
+        <comment>Create column TAGS in CAMPAIGN</comment>
+        <addColumn tableName="CAMPAIGN">
+            <column name="TAGS" type="VARCHAR(300)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

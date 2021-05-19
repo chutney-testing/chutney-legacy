@@ -73,7 +73,8 @@ Feature:  Campaign execution
                     "scheduleTime":"",
                     "environment":"ENV",
                     "parallelRun": false,
-                    "retryAuto": false
+                    "retryAuto": false,
+                    "tags":[]
                 }
                 """
                 Take campaignId ${#jsonPath(#body, "$.id")}
@@ -130,7 +131,8 @@ Feature:  Campaign execution
                     "scheduleTime":"",
                     "environment":"ENV",
                     "parallelRun": false,
-                    "retryAuto": false
+                    "retryAuto": false,
+                    "tags":[]
                 }
                 """
                 Take campaignId ${#jsonPath(#body, "$.id")}
@@ -186,7 +188,8 @@ Feature:  Campaign execution
                     "scheduleTime":"",
                     "environment":"ENV",
                     "parallelRun": false,
-                    "retryAuto": false
+                    "retryAuto": false,
+                    "tags":[]
                 }
                 """
                 Take campaignId ${#jsonPath(#body, "$.id")}
