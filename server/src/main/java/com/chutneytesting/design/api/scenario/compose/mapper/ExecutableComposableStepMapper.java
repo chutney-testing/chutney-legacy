@@ -10,10 +10,6 @@ import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedS
 import com.chutneytesting.tools.ui.KeyValue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.HashMap;
-import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ExecutableComposableStepMapper {
 
