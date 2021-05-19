@@ -7,10 +7,15 @@ import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
 import static java.time.Instant.now;
 
 import com.chutneytesting.design.api.scenario.compose.dto.ComposableTestCaseDto;
+import com.chutneytesting.design.api.scenario.compose.mapper.ExecutableComposableTestCaseMapper;
+import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository;
+import com.chutneytesting.execution.domain.ExecutionRequest;
+import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import com.chutneytesting.security.domain.UserService;
 import java.util.Optional;
 import org.springframework.http.MediaType;
@@ -33,11 +38,13 @@ public class ComponentEditionController {
     private final ComposableTestCaseRepository composableTestCaseRepository;
     private final TestCaseRepository testCaseRepository;
     private final UserService userService;
+    private final TestCasePreProcessors testCasePreProcessors;
 
-    public ComponentEditionController(ComposableTestCaseRepository composableTestCaseRepository, TestCaseRepository testCaseRepository, UserService userService) {
+    public ComponentEditionController(ComposableTestCaseRepository composableTestCaseRepository, TestCaseRepository testCaseRepository, UserService userService, TestCasePreProcessors testCasePreProcessors) {
         this.composableTestCaseRepository = composableTestCaseRepository;
         this.testCaseRepository = testCaseRepository;
         this.userService = userService;
+        this.testCasePreProcessors = testCasePreProcessors;
     }
 
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -57,6 +64,14 @@ public class ComponentEditionController {
     @GetMapping(path = "/{testCaseId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ComposableTestCaseDto getTestCase(@PathVariable("testCaseId") String testCaseId) {
         return toDto(composableTestCaseRepository.findById(fromFrontId(Optional.of(testCaseId))));
+    }
+
+    @GetMapping(path = "/{testCaseId}/executable", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ComposableTestCaseDto getExecutableTestCase(@PathVariable("testCaseId") String testCaseId) {
+        TestCase testCase = testCaseRepository.findById(fromFrontId(Optional.of(testCaseId)));
+        ExecutableComposedTestCase result = testCasePreProcessors.apply(new ExecutionRequest(testCase, "env", "userId"));
+
+        return ExecutableComposableTestCaseMapper.toDto(result);
     }
 
     @DeleteMapping(path = "/{testCaseId}")

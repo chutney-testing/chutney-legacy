@@ -19,6 +19,9 @@ import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository;
+import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedScenario;
+import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import com.chutneytesting.security.domain.User;
 import com.chutneytesting.security.domain.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,12 +48,13 @@ public class ComponentEditionControllerTest {
     private ComposableTestCaseRepository composableTestCaseRepository = mock(ComposableTestCaseRepository.class);
     private final TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
     private final UserService userService = mock(UserService.class);
+    private final TestCasePreProcessors testCasePreProcessors  = mock(TestCasePreProcessors.class);;
 
     private MockMvc mockMvc;
 
     @BeforeEach
     public void setUp() {
-        ComponentEditionController sut = new ComponentEditionController(composableTestCaseRepository, testCaseRepository, userService);
+        ComponentEditionController sut = new ComponentEditionController(composableTestCaseRepository, testCaseRepository, userService, testCasePreProcessors);
 
         mockMvc = MockMvcBuilders.standaloneSetup(sut)
             .setControllerAdvice(new RestExceptionHandler())
@@ -84,6 +88,24 @@ public class ComponentEditionControllerTest {
 
         // Then
         verify(composableTestCaseRepository).findById(DEFAULT_COMPOSABLE_TESTCASE_DB_ID);
+    }
+
+    @Test
+    public void should_find_testCase_with_parameters_replaced() throws Exception {
+        // Given
+        when(testCasePreProcessors.apply(any()))
+            .thenReturn(new ExecutableComposedTestCase(
+            TestCaseMetadataImpl.builder()
+                .build(),
+            ExecutableComposedScenario.builder().build()
+        ));
+
+        // When
+        mockMvc.perform(get(ComponentEditionController.BASE_URL + "/" + DEFAULT_COMPOSABLE_TESTCASE_ID + "/executable" ));
+
+        // Then
+        verify(testCaseRepository).findById(DEFAULT_COMPOSABLE_TESTCASE_DB_ID);
+        verify(testCasePreProcessors).apply(any());
     }
 
     @Test

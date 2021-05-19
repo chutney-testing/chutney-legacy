@@ -69,7 +69,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
 
     loadScenario(action: string = '') {
         if (this.isComposed(this.currentScenarioId)) {
-            this.componentService.findComponentTestCase(this.currentScenarioId).subscribe((testCase: ScenarioComponent) => {
+            this.componentService.findComponentTestCaseWithoutDeserializeImpl(this.currentScenarioId).subscribe((testCase: ScenarioComponent) => {
                 this.testCase = TestCase.fromComponent(testCase);
                 this.scenarioComponent = testCase;
             });
