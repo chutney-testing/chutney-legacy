@@ -436,7 +436,7 @@ export class ActionEditComponent implements OnChanges {
     }
 
     private getInputType(input: SimpleInput) {
-        if (input.type !== undefined) {
+        if (input.type != null) {
             return input.type;
         }
         return this.task.inputs.find(i => i.name === input.name).type;

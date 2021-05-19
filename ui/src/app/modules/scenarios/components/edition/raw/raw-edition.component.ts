@@ -62,7 +62,7 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
     }
 
     load(id, duplicate: boolean) {
-        if (id !== undefined) {
+        if (id != null) {
             this.scenarioService.findRawTestCase(id).subscribe(
                 (rawScenario) => {
                     this.testCase = rawScenario;

@@ -25,7 +25,7 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
     datasetForm: FormGroup;
     private routeParamsSubscription: Subscription;
     private previousDataSet: Dataset = this.dataset;
-    private modificationsSaved: boolean = false;
+    private modificationsSaved = false;
     message;
     private savedMessage: string;
 
@@ -70,7 +70,7 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
     }
 
     load(id) {
-        if (id !== undefined) {
+        if (id != null) {
             this.dataSetService.findById(id).subscribe(
                 (res) => {
                     this.setCurrentDataSet(res);
@@ -141,11 +141,11 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
         const tags = this.datasetForm.value['tags'] ? this.datasetForm.value['tags'].split(',') : [];
         const date = new Date();
 
-        let kv = this.datasetForm.controls.keyValues as FormArray;
-        const keyValues = kv.value ? kv.value.map((kv) => new KeyValue(kv.key, kv.value)) : [];
+        const kv = this.datasetForm.controls.keyValues as FormArray;
+        const keyValues = kv.value ? kv.value.map((p) => new KeyValue(p.key, p.value)) : [];
 
-        let mkv = this.datasetForm.controls.multiKeyValues as FormArray;
-        const multiKeyValues = mkv.value ? mkv.value.map(a => a.map((kv) => new KeyValue(kv.key, kv.value))) : [];
+        const mkv = this.datasetForm.controls.multiKeyValues as FormArray;
+        const multiKeyValues = mkv.value ? mkv.value.map(a => a.map((p) => new KeyValue(p.key, p.value))) : [];
 
         const version = this.dataset.id ? this.dataset.version : 0;
         const id = this.dataset.id ? this.dataset.id : null;
@@ -163,7 +163,7 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
     }
 
     private dataSetNameFocus(): void {
-        if (this.dataset.id === undefined || this.dataset.id.length == 0) {
+        if (this.dataset.id == null || this.dataset.id.length === 0) {
             this.dataSetName.nativeElement.focus();
         }
     }

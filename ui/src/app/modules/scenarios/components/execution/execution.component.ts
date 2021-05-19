@@ -103,7 +103,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     onSelectExecution(execution: Execution) {
-        if (execution !== null) {
+        if (execution != null) {
             this.currentExecutionId = execution.executionId;
             this.executionError = '';
 

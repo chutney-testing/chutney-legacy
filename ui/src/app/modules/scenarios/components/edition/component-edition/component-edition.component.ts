@@ -97,7 +97,7 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
     }
 
     cancel() {
-        if (this.scenarioComponent.id !== null) {
+        if (this.scenarioComponent.id != null) {
             this.router.navigateByUrl('/scenario/' + this.scenarioComponent.id + '/execution/last');
         } else {
             this.router.navigateByUrl('/scenario/');
@@ -143,7 +143,7 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
     }
 
     private load(id, duplicate: boolean) {
-        if (id !== undefined) {
+        if (id != null) {
             this.componentService.findComponentTestCase(id).subscribe(
                 (componentScenario) => {
                     this.scenarioComponent = componentScenario;
@@ -201,7 +201,9 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
             (jiraId) => {
                 this.componentForm.controls['jiraId'].setValue(jiraId);
             },
-            (error) => { console.log(error);}
+            (error) => {
+                console.log(error);
+            }
         );
     }
 

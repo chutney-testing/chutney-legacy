@@ -42,8 +42,8 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     selectedTags: string[] = [];
     datasetId: string;
     jiraId: string;
-    jiraMap: Map<string,string> = new Map();
-    jiraUrl: string = '';
+    jiraMap: Map<string, string> = new Map();
+    jiraUrl = '';
     jiraScenarios: string[] = [];
     jiraScenariosToExclude: Array<ScenarioIndex> = [];
 
@@ -107,7 +107,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     }
 
     load(id) {
-        if (id !== undefined) {
+        if (id != null) {
             this.campaignService.find(id).subscribe(
                 (campaignFound) => {
                     this.campaign = campaignFound;
@@ -185,7 +185,9 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
                     this.loadJiraLink();
                     this.jiraLinkService.findScenarios()
                         .subscribe(
-                            (result) => { this.jiraMap = result; }
+                            (result) => {
+                                this.jiraMap = result;
+                            }
                         );
                 }
             });
@@ -203,8 +205,8 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         if (this.campaignForm.value['jiraId'] !== '') {
             this.jiraLinkService.findTestExecScenarios(this.campaignForm.value['jiraId'])
                 .subscribe(
-                    (result) => { 
-                        this.jiraScenarios = result; 
+                    (result) => {
+                        this.jiraScenarios = result;
                         this.jiraFilter();
                     }
                 );
@@ -260,7 +262,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         this.campaign.datasetId = this.datasetId;
 
         this.setCampaignScenariosIdsToAdd(this.scenariosToAdd);
-        if (this.campaign.id !== undefined) {
+        if (this.campaign.id != null) {
             this.subscribeToSaveResponse(
                 this.campaignService.update(this.campaign));
         } else {

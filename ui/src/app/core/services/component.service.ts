@@ -67,14 +67,15 @@ export class ComponentService {
 
     delete(id: string): Observable<void> {
         return this.httpClient.delete(environment.backend + this.stepUrl + `/${id}`)
-            .pipe(map(() => {}));
+            .pipe(map(() => {
+            }));
     }
 
     execute(component: ComponentTask, env: string): Observable<Object> {
         return this.httpClient.post(environment.backend + `${this.stepExecutionUrl}/${component.id}/${env}`, '')
-        .pipe(map((res: Object) => {
-            return res;
-        }));
+            .pipe(map((res: Object) => {
+                return res;
+            }));
     }
 
     saveComponentTestCase(scenarioComponent: ScenarioComponent): Observable<any> {
@@ -98,7 +99,8 @@ export class ComponentService {
 
     deleteComponentTestCase(id: string): Observable<void> {
         return this.httpClient.delete(environment.backend + `${this.componentUrl}/${id}`)
-            .pipe(map(() => {}));
+            .pipe(map(() => {
+            }));
     }
 
     findParents(id: string): Observable<any> {
@@ -170,10 +172,6 @@ export class ComponentService {
             jsonObject.id
         );
 
-    }
-
-    private mapToComponentTaskWithImpl(jsonObject: any): ComponentTask {
-        return this.mapToComponentTask(jsonObject, true)
     }
 
     private mapToComponentTaskDto(component: ComponentTask): ComponentTaskDto {

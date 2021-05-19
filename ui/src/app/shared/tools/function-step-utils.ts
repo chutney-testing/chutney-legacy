@@ -70,7 +70,7 @@ function macthStepParam(str: string): Array<string> {
   let stepParamMatchRegex = /\*\*(.*?)\*\*/ig;
   const matches: Array<string> = [];
   let match;
-  while ((match = stepParamMatchRegex.exec(str)) !== null) {
+  while ((match = stepParamMatchRegex.exec(str)) != null) {
     matches.push(match[1]);
   }
   return matches;

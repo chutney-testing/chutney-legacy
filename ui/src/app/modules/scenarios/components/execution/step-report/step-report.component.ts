@@ -36,16 +36,16 @@ export class StepReportComponent implements OnInit, OnDestroy {
     }
 
     getInformation(): string[] {
-        if (this.step !== undefined && this.step.information !== undefined) {
-            return this.step.information
+        if (this.step != null && this.step.information != null) {
+            return this.step.information;
         } else {
             return [];
         }
     }
 
     getErrors(): string[] {
-        if (this.step !== undefined && this.step.errors !== undefined) {
-            return this.step.errors
+        if (this.step != null && this.step.errors != null) {
+            return this.step.errors;
         } else {
             return [];
         }

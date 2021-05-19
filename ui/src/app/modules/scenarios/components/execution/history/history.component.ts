@@ -34,7 +34,7 @@ export class HistoryComponent implements OnInit, OnDestroy, OnChanges {
     ngOnChanges(simpleChanges: SimpleChanges) {
         if (simpleChanges['selectedExecutionId'] &&
             !this.checkExecutionIdInHistory(simpleChanges['selectedExecutionId'].currentValue) &&
-            !(simpleChanges['selectedExecutionId'].currentValue === null && simpleChanges['selectedExecutionId'].previousValue !== null)
+            !(simpleChanges['selectedExecutionId'].currentValue == null && simpleChanges['selectedExecutionId'].previousValue != null)
             ) {
             this.selectedLast = true;
             this.findScenarioExecutions();

@@ -40,7 +40,7 @@ export class DatasetListComponent implements OnInit {
     }
 
     showPreview(dataset: Dataset) {
-        if (this.preview === null || this.preview.id !== dataset.id) {
+        if (this.preview == null || this.preview.id !== dataset.id) {
             this.dataSetService.findById(dataset.id).subscribe(
                 (res) => {
                     this.preview = res;
