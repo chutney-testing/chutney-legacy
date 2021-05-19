@@ -46,8 +46,7 @@ export class StrategyFormComponent implements OnChanges, ControlValueAccessor {
             new StrategyDefinition('Retry',
                 [ new ParameterDefinition('timeout', 'duration'), new ParameterDefinition('delay', 'duration') ],
                 false),
-            new StrategyDefinition('Soft', [], false),
-            new StrategyDefinition('Loop', [ new ParameterDefinition('data', 'string') ], false)
+            new StrategyDefinition('Soft', [], false)
         ];
     }
     // # End of services
