@@ -36,20 +36,21 @@ public class SqlTask implements Task {
             List<Records> records = new ArrayList<>();
             Map<String, List<Records>> outputs = new HashMap<>();
             AtomicBoolean failure = new AtomicBoolean(false);
-            statements.stream()
-                .forEach(statement -> {
-                    try {
-                        records.add(sqlClient.execute(statement));
-                    } catch (SQLException e) {
-                        logger.error(e.getMessage() + " for " + statement + "; Vendor error code: " + e.getErrorCode());
-                        records.add(sqlClient.emptyRecords());
-                        failure.set(true);
-                    }
-                });
+            statements.forEach(statement -> {
+                try {
+                    Records result = sqlClient.execute(statement);
+                    records.add(result);
+                    logger.info(result.printable());
+                } catch (SQLException e) {
+                    logger.error(e.getMessage() + " for " + statement + "; Vendor error code: " + e.getErrorCode());
+                    records.add(sqlClient.emptyRecords());
+                    failure.set(true);
+                }
+            });
             outputs.put("recordResult", records);
             return failure.get() ? TaskExecutionResult.ko(outputs) : TaskExecutionResult.ok(outputs);
         } finally {
-            if(sqlClient != null) {
+            if (sqlClient != null) {
                 sqlClient.closeDatasource();
             }
         }
