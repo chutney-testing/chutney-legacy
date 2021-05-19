@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.3.3](https://github.com/chutney-testing/chutney/tree/1.3.3)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.2...1.3.3)
+
+**Implemented enhancements:**
+
+- Enhance read-only scenario with parameters [\#158](https://github.com/chutney-testing/chutney/issues/158)
+
+**Fixed bugs:**
+
+- 🐛 |  Cannot load home page [\#429](https://github.com/chutney-testing/chutney/issues/429)
+
+**Merged pull requests:**
+
+- bugfix\(server\): Fix home page serialization [\#430](https://github.com/chutney-testing/chutney/pull/430) ([nbrouand](https://github.com/nbrouand))
+- 🚀 feat\(tasks\): Pretty print SQL tasks results for execution reports [\#428](https://github.com/chutney-testing/chutney/pull/428) ([bessonm](https://github.com/bessonm))
+- feat\(server+ui\): Evaluate parameters for reading scenario [\#427](https://github.com/chutney-testing/chutney/pull/427) ([nbrouand](https://github.com/nbrouand))
+
+
 ## [1.3.2](https://github.com/chutney-testing/chutney/tree/1.3.2)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.1...1.3.2)
