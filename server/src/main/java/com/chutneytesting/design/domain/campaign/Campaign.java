@@ -19,6 +19,7 @@ public class Campaign {
     public final boolean parallelRun;
     public final boolean retryAuto;
     public final String externalDatasetId;
+    public final List<String> tags;
 
     private final LocalTime scheduleTime;
     private String environment;
@@ -38,7 +39,8 @@ public class Campaign {
                     String environment,
                     boolean parallelRun,
                     boolean retryAuto,
-                    String externalDatasetId) {
+                    String externalDatasetId,
+                    List<String> tags) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -49,6 +51,7 @@ public class Campaign {
         this.scheduleTime = scheduleTime;
         this.environment = environment;
         this.externalDatasetId = externalDatasetId;
+        this.tags = tags;
     }
 
     public void addScenario(String scenarioId) {

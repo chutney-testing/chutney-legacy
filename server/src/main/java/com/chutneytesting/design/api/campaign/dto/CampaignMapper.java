@@ -28,7 +28,8 @@ public class CampaignMapper {
             campaign.executionEnvironment(),
             campaign.parallelRun,
             campaign.retryAuto,
-            toFrontId(campaign.externalDatasetId));
+            toFrontId(campaign.externalDatasetId),
+            campaign.tags);
     }
 
     public static CampaignDto toDto(Campaign campaign, List<CampaignExecutionReport> campaignExecutionReports) {
@@ -45,7 +46,8 @@ public class CampaignMapper {
             campaign.executionEnvironment(),
             campaign.parallelRun,
             campaign.retryAuto,
-            toFrontId(campaign.externalDatasetId));
+            toFrontId(campaign.externalDatasetId),
+            campaign.tags);
     }
 
     public static Campaign fromDto(CampaignDto dto) {
@@ -61,7 +63,8 @@ public class CampaignMapper {
             dto.getEnvironment(),
             dto.isParallelRun(),
             dto.isRetryAuto(),
-            fromFrontId(dto.getDatasetId())
+            fromFrontId(dto.getDatasetId()),
+            dto.getTags().stream().map(String::trim).map(String::toUpperCase).collect(toList())
         );
     }
 

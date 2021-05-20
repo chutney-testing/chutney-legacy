@@ -1,5 +1,7 @@
 package com.chutneytesting.design.api.campaign.dto;
 
+import static java.util.Optional.ofNullable;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,7 @@ public class CampaignDto {
     private boolean parallelRun;
     private boolean retryAuto;
     private String datasetId;
+    private List<String> tags;
 
     public CampaignDto() {
     }
@@ -34,18 +37,20 @@ public class CampaignDto {
                        String environment,
                        boolean parallelRun,
                        boolean retryAuto,
-                       String datasetId) {
+                       String datasetId,
+                       List<String> tags) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.scenarioIds = scenarioIds;
         this.executionParameters = executionParameters;
-        this.campaignExecutionReports = Optional.ofNullable(campaignExecutionReports).orElseGet(ArrayList::new);
+        this.campaignExecutionReports = ofNullable(campaignExecutionReports).orElseGet(ArrayList::new);
         this.scheduleTime = scheduleTime;
         this.environment = environment;
         this.parallelRun = parallelRun;
         this.retryAuto = retryAuto;
         this.datasetId = datasetId;
+        this.tags = ofNullable(tags).orElseGet(ArrayList::new);
     }
 
     public Long getId() {
@@ -97,5 +102,9 @@ public class CampaignDto {
 
     public String getDatasetId() {
         return datasetId;
+    }
+
+    public List<String> getTags() {
+        return tags;
     }
 }

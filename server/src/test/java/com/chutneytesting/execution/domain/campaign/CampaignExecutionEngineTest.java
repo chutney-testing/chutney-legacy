@@ -429,11 +429,11 @@ public class CampaignExecutionEngineTest {
     }
 
     private Campaign createCampaign() {
-        return new Campaign(generateId(), "...", null, null, null, null, "campaignEnv", false, false, null);
+        return new Campaign(generateId(), "...", null, null, null, null, "campaignEnv", false, false, null, null);
     }
 
     private Campaign createCampaign(Long idCampaign) {
-        return new Campaign(idCampaign, "campaign1", null, emptyList(), emptyMap(), null, "env", false, false, null);
+        return new Campaign(idCampaign, "campaign1", null, emptyList(), emptyMap(), null, "env", false, false, null, null);
     }
 
     private Campaign createCampaign(TestCase firstTestCase, TestCase secondtTestCase) {
@@ -445,10 +445,10 @@ public class CampaignExecutionEngineTest {
     }
 
     private Campaign createCampaign(TestCase firstTestCase, TestCase secondtTestCase, boolean parallelRun, boolean retryAuto) {
-        return new Campaign(1L, "campaign1", null, Lists.list(firstTestCase.id(), secondtTestCase.id()), emptyMap(), null, "env", parallelRun, retryAuto, null);
+        return new Campaign(1L, "campaign1", null, Lists.list(firstTestCase.id(), secondtTestCase.id()), emptyMap(), null, "env", parallelRun, retryAuto, null, null);
     }
 
     private Campaign createCampaign(Map<String, String> dataSet, String dataSetId, TestCase... testCases) {
-        return new Campaign(generateId(), "...", null, stream(testCases).map(TestCase::id).collect(toList()), dataSet, null, "campaignEnv", false, false, dataSetId);
+        return new Campaign(generateId(), "...", null, stream(testCases).map(TestCase::id).collect(toList()), dataSet, null, "campaignEnv", false, false, dataSetId, null);
     }
 }

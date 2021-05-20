@@ -116,7 +116,9 @@
     },
     "campaigns": {
         "search": {
-            "placeholder": "Rechercher une campagne"
+            "placeholder": "Rechercher une campagne",
+            "selectAllText": "Tout sélectionner",
+            "deselectAllText": "Tout désélectionner"
         },
         "list": {
             "item": {
@@ -175,6 +177,7 @@
                     "required": "Le titre est obligatoire."
                 },
                 "description": "Description",
+                "tags": "Tags",
                 "schedule": {
                     "label": "Heure de planification",
                     "pattern": "Format doit être HH:MM"

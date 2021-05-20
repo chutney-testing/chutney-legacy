@@ -1,13 +1,15 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
-import { Campaign, CampaignExecutionReport } from '@core/model';
+import { Campaign, CampaignExecutionReport, SelectableTags } from '@core/model';
 import { CampaignService } from '@core/services';
 import { Subscription, timer } from 'rxjs';
 import { JiraPluginService } from '@core/services/jira-plugin.service';
 import { CampaignSchedulingService } from '@core/services/campaign-scheduling.service';
 import { CampaignScheduling } from '@core/model/campaign/campaign-scheduling.model';
 import { JiraPluginConfigurationService } from '@core/services/jira-plugin-configuration.service';
+import { StateService } from '@shared/state/state.service';
+import { distinct, filterOnTextContent, flatMap, intersection } from '@shared/tools/array-utils';
 
 @Component({
     selector: 'chutney-campaigns',
@@ -22,10 +24,13 @@ export class CampaignListComponent implements OnInit, OnDestroy {
     campaigns: Array<Campaign> = [];
     lastCampaignReports: Array<CampaignExecutionReport> = [];
     lastCampaignReportsSub: Subscription;
-    campaignFilter: string;
     jiraMap: Map<string, string> = new Map();
     jiraUrl = '';
     isScheduled: Boolean;
+    // Filter
+    campaignFilter: string;
+    viewedCampaigns: Array<Campaign> = [];
+    tagFilter = new SelectableTags<String>();
 
     scheduledCampaigns: Array<CampaignScheduling> = [];
 
@@ -34,6 +39,7 @@ export class CampaignListComponent implements OnInit, OnDestroy {
                 private jiraPluginConfigurationService: JiraPluginConfigurationService,
                 private router: Router,
                 private translate: TranslateService,
+                private stateService: StateService,
                 private campaignSchedulingService: CampaignSchedulingService,
     ) {
         translate.get('campaigns.confirm.deletion.prefix').subscribe((res: string) => {
@@ -49,13 +55,18 @@ export class CampaignListComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.unsuscribeLastCampaignReport();
+        this.unsubscribeLastCampaignReport();
     }
 
     loadAll() {
         this.initJiraPlugin();
         this.campaignService.findAllCampaigns().subscribe(
-            (res) => this.campaigns = res,
+            (res) => {
+                this.campaigns = res;
+                this.applyDefaultState();
+                this.applySavedState();
+                this.applyFilters();
+            },
             (error) => console.log(error)
         );
 
@@ -83,6 +94,95 @@ export class CampaignListComponent implements OnInit, OnDestroy {
                     this.campaigns = this.campaigns.slice();
                 });
         }
+    }
+
+    // Filtering //
+    updateTextFilter(text: string) {
+        this.campaignFilter = text;
+        this.applyFilters();
+    }
+
+    selectAll() {
+        this.tagFilter.selectAll();
+        this.stateService.changeCampaignTags(this.tagFilter.selected());
+        this.stateService.changeCampaignNoTag(this.tagFilter.setNoTag(true));
+        this.applyFilters();
+    }
+
+    isSelectAll() {
+        return this.tagFilter.isSelectAll();
+    }
+
+    deselectAll() {
+        this.tagFilter.deselectAll();
+        this.stateService.changeCampaignNoTag(false);
+        this.applyFilters();
+    }
+
+    toggleNoTagFilter() {
+        this.tagFilter.toggleNoTag();
+        this.stateService.changeCampaignNoTag(this.tagFilter.isNoTagSelected());
+        this.applyFilters();
+    }
+
+    toggleTagFilter(tag: String) {
+        this.tagFilter.toggleSelect(tag);
+        this.stateService.changeCampaignTags(this.tagFilter.selected());
+        this.applyFilters();
+    }
+
+    applyFilters() {
+        this.viewedCampaigns = filterOnTextContent(this.campaigns, this.campaignFilter, ['title', 'id']);
+        this.viewedCampaigns = this.filterOnAttributes();
+    }
+
+    private applyDefaultState() {
+        this.viewedCampaigns = this.campaigns;
+        this.tagFilter.initialize(this.findAllTags());
+    }
+
+    private findAllTags() {
+        return distinct(flatMap(this.campaigns, (campaign) => campaign.tags)).sort();
+    }
+
+    private applySavedState() {
+        this.setSelectedTags();
+    }
+
+
+    private setSelectedTags() {
+        const savedTags = this.stateService.getCampaignTags();
+        if (savedTags != null) {
+            this.tagFilter.selectTags(savedTags);
+        }
+
+        const noTag = this.stateService.getCampaignNoTag();
+        if (noTag != null) {
+            this.tagFilter.setNoTag(noTag);
+        }
+    }
+
+    private filterOnAttributes() {
+        const input = this.viewedCampaigns;
+        if (this.tagFilter.isSelectAll()) {
+            return input;
+        }
+
+        const tags = this.tagFilter.selected();
+        const noTag = this.tagFilter.isNoTagSelected();
+
+        return input.filter((campaign: Campaign) => {
+            return (this.tagPresent(tags, campaign)
+                    || this.noTagPresent(noTag, campaign));
+            });
+    }
+
+    private tagPresent(tags: String[], campaign: Campaign): boolean {
+        return intersection(tags, campaign.tags).length > 0;
+    }
+
+    private noTagPresent(noTag: boolean, campaign: Campaign): boolean {
+        return noTag && campaign.tags.length === 0;
     }
 
     // Jira link //
@@ -115,7 +215,7 @@ export class CampaignListComponent implements OnInit, OnDestroy {
             (lastCampaignReports) => {
                 this.lastCampaignReports = lastCampaignReports;
                 if (CampaignService.existRunningCampaignReport(lastCampaignReports)) {
-                    this.unsuscribeLastCampaignReport();
+                    this.unsubscribeLastCampaignReport();
                     this.lastCampaignReportsSub = timer(5000).subscribe(() => this.findLastCampaignReports());
                 }
             },
@@ -123,7 +223,7 @@ export class CampaignListComponent implements OnInit, OnDestroy {
         );
     }
 
-    private unsuscribeLastCampaignReport() {
+    private unsubscribeLastCampaignReport() {
         if (this.lastCampaignReportsSub) {
             this.lastCampaignReportsSub.unsubscribe();
         }
