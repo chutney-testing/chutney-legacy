@@ -8,7 +8,6 @@ import { JiraPluginService } from '@core/services/jira-plugin.service';
 import { CampaignSchedulingService } from '@core/services/campaign-scheduling.service';
 import { CampaignScheduling } from '@core/model/campaign/campaign-scheduling.model';
 import { JiraPluginConfigurationService } from '@core/services/jira-plugin-configuration.service';
-import { FREQUENCY } from '@core/model/campaign/FREQUENCY';
 
 @Component({
     selector: 'chutney-campaigns',
@@ -25,7 +24,7 @@ export class CampaignListComponent implements OnInit, OnDestroy {
     lastCampaignReportsSub: Subscription;
     campaignFilter: string;
     jiraMap: Map<string, string> = new Map();
-    jiraUrl: string = '';
+    jiraUrl = '';
     isScheduled: Boolean;
 
     scheduledCampaigns: Array<CampaignScheduling> = [];
@@ -125,7 +124,9 @@ export class CampaignListComponent implements OnInit, OnDestroy {
     }
 
     private unsuscribeLastCampaignReport() {
-        if (this.lastCampaignReportsSub) this.lastCampaignReportsSub.unsubscribe();
+        if (this.lastCampaignReportsSub) {
+            this.lastCampaignReportsSub.unsubscribe();
+        }
     }
 
     private removeJiraLink(campaignId: number) {
@@ -142,11 +143,11 @@ export class CampaignListComponent implements OnInit, OnDestroy {
                 this.scheduledCampaigns = res;
             },
             (error) => {
-                console.log(error)
+                console.log(error);
             });
     }
 
     isFrequencyCampaign(scheduledCampaign: CampaignScheduling) {
-        return scheduledCampaign.frequency !== undefined;
+        return scheduledCampaign.frequency != null;
     }
 }

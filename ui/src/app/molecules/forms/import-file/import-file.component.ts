@@ -50,9 +50,9 @@ export class ImportFileComponent implements OnInit {
         e.preventDefault();
 
         let files = [];
-        if (e.dataTransfer !== undefined) {
+        if (e.dataTransfer != null) {
             files = Array.from(e.dataTransfer.files);
-        } else if (e.target !== undefined) {
+        } else if (e.target != null) {
             files = Array.from(e.target.files);
         }
 

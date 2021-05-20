@@ -11,7 +11,7 @@ export class ValidationService {
     constructor() { }
 
     isNotEmpty(text: string): boolean {
-        return text !== null && text !== '';
+        return text != null && text !== '';
     }
 
     isValidUrl(text: string): boolean {

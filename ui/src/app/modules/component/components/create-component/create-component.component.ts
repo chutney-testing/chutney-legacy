@@ -142,9 +142,9 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
 
     initSelectedComponent(componentId) {
-        if (componentId !== null) {
+        if (componentId != null) {
             const foundComponent = this.componentTasks.find(c => c.id === componentId);
-            if (foundComponent !== undefined) {
+            if (foundComponent != null) {
                 this.editComponentTask(foundComponent);
             }
         }
@@ -162,7 +162,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     editComponentTask(componentToEdit: ComponentTask) {
         this.resetData();
 
-        if (componentToEdit.implementation === null) {
+        if (componentToEdit.implementation == null) {
             this.componentService.findParents(componentToEdit.id).subscribe(
                 (res) => { this.parents = res; }
             );

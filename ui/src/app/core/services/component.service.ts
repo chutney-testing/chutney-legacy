@@ -67,14 +67,15 @@ export class ComponentService {
 
     delete(id: string): Observable<void> {
         return this.httpClient.delete(environment.backend + this.stepUrl + `/${id}`)
-            .pipe(map(() => {}));
+            .pipe(map(() => {
+            }));
     }
 
     execute(component: ComponentTask, env: string): Observable<Object> {
         return this.httpClient.post(environment.backend + `${this.stepExecutionUrl}/${component.id}/${env}`, '')
-        .pipe(map((res: Object) => {
-            return res;
-        }));
+            .pipe(map((res: Object) => {
+                return res;
+            }));
     }
 
     saveComponentTestCase(scenarioComponent: ScenarioComponent): Observable<any> {
@@ -85,7 +86,7 @@ export class ComponentService {
     }
 
     findComponentTestCase(id: string): Observable<ScenarioComponent> {
-        return this.httpClient.get<ScenarioComponent>(environment.backend + `${this.componentUrl}/${id}/executable`).pipe(
+        return this.httpClient.get<ScenarioComponent>(environment.backend + `${this.componentUrl}/${id}`).pipe(
             map(value => this.mapJsonToScenarioComponent(value, true))
         );
     }
@@ -98,7 +99,8 @@ export class ComponentService {
 
     deleteComponentTestCase(id: string): Observable<void> {
         return this.httpClient.delete(environment.backend + `${this.componentUrl}/${id}`)
-            .pipe(map(() => {}));
+            .pipe(map(() => {
+            }));
     }
 
     findParents(id: string): Observable<any> {
@@ -153,18 +155,15 @@ export class ComponentService {
     }
 
     private mapToComponentTask(jsonObject: any, withDeserializeImplementation: boolean): ComponentTask {
-        let implem;
-        if(jsonObject.task) {
-            if (withDeserializeImplementation) {
-                implem = Implementation.deserialize(JSON.parse(jsonObject.task));
-            } else {
-                implem =  JSON.parse(jsonObject.task);
-            }
+        let impl = Implementation.deserialize(JSON.parse(jsonObject.task));
+
+        if (jsonObject.task && !withDeserializeImplementation) {
+            impl =  JSON.parse(jsonObject.task);
         }
 
         return new ComponentTask(
             jsonObject.name,
-            implem,
+            impl,
             jsonObject.steps.map(c => this.mapToComponentTask(c, withDeserializeImplementation)),
             jsonObject.parameters.map(elt => new KeyValue(elt.key, elt.value)),
             jsonObject.computedParameters.map(elt => new KeyValue(elt.key, elt.value)),
@@ -173,10 +172,6 @@ export class ComponentService {
             jsonObject.id
         );
 
-    }
-
-    private mapToComponentTaskWithImpl(jsonObject: any): ComponentTask {
-        return this.mapToComponentTask(jsonObject, true)
     }
 
     private mapToComponentTaskDto(component: ComponentTask): ComponentTaskDto {

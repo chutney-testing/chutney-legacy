@@ -76,7 +76,7 @@ export class EditionComponent extends CanDeactivatePage implements OnInit, OnDes
     }
 
     load(id) {
-        if (id !== undefined) {
+        if (id != null) {
             this.scenarioService.findTestCase(id).subscribe(
                 (response) => {
                     this.gwtTestCase = response;

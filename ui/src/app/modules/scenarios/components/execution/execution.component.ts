@@ -51,14 +51,13 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        const action: string = this.route.snapshot.queryParams['action'];
         this.routeParamsSubscription = this.route.params.subscribe((params) => {
             this.currentScenarioId = params['id'];
             if (params['execId'] && params['execId'] !== 'last') {
                 this.loadScenarioExecution(params['execId']);
             }
 
-            this.loadScenario(action);
+            this.loadScenario();
         });
     }
 
@@ -67,7 +66,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
         this.unsubscribeScenarioExecutionAsyncSubscription();
     }
 
-    loadScenario(action: string = '') {
+    loadScenario() {
         if (this.isComposed(this.currentScenarioId)) {
             this.componentService.findComponentTestCaseWithoutDeserializeImpl(this.currentScenarioId).subscribe((testCase: ScenarioComponent) => {
                 this.testCase = TestCase.fromComponent(testCase);
@@ -103,7 +102,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     onSelectExecution(execution: Execution) {
-        if (execution !== null) {
+        if (execution != null) {
             this.currentExecutionId = execution.executionId;
             this.executionError = '';
 

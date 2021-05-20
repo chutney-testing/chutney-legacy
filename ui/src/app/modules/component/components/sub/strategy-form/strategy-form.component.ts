@@ -46,8 +46,7 @@ export class StrategyFormComponent implements OnChanges, ControlValueAccessor {
             new StrategyDefinition('Retry',
                 [ new ParameterDefinition('timeout', 'duration'), new ParameterDefinition('delay', 'duration') ],
                 false),
-            new StrategyDefinition('Soft', [], false),
-            new StrategyDefinition('Loop', [ new ParameterDefinition('data', 'string') ], false)
+            new StrategyDefinition('Soft', [], false)
         ];
     }
     // # End of services
@@ -66,7 +65,7 @@ export class StrategyFormComponent implements OnChanges, ControlValueAccessor {
 
     // OnChanges
     ngOnChanges(): void {
-        if (this.strategy === undefined || this.strategy === null ) {
+        if (this.strategy == null ) {
             this.strategy = new Strategy(this.strategyDefinitions.find(s => s.isDefault === true ).type, {});
         }
 
@@ -90,7 +89,7 @@ export class StrategyFormComponent implements OnChanges, ControlValueAccessor {
 
     registerOnChange(fn: any): void {
         this.propagateChange = fn;
-        if (this.strategyForm.get('type').value !== null) {
+        if (this.strategyForm.get('type').value != null) {
             this.propagateChange(new Strategy(this.selectedStrategyDef.type, this.parameterValues));
         }
         this.strategyForm.valueChanges.subscribe(fn);

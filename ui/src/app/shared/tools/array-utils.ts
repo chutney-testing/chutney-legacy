@@ -99,7 +99,7 @@ export function filterOnTextContent(input: any, filter: string, attr: any[]) {
     return input.filter((item) => {
         return filter === undefined
             || filter === ''
-            || attr.map(a => item[a] !== undefined && normalize(item[a]).indexOf(normalize(filter)) !== -1)
+            || attr.map(a => item[a] != null && normalize(item[a]).indexOf(normalize(filter)) !== -1)
                 .reduce((p, c) => p || c);
     });
 }

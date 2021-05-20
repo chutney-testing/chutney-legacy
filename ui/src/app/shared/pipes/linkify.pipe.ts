@@ -38,7 +38,7 @@ export class LinkifyPipe implements PipeTransform {
         const regex = new RegExp(linkifiers[counter].pattern, 'g');
         const regTmp = new RegExp(linkifiers[counter].pattern);
 
-        while ((result = regex.exec(value)) !== null) {
+        while ((result = regex.exec(value)) != null) {
             const substr = value.substring(prevIndex, result.index);
             if (substr !== '')  {
                 chunks.splice(prevIndex, 0, this.slice(substr, linkifiers, counter + 1));
