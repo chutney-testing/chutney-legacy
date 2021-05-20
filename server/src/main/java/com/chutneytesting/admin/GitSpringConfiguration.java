@@ -32,7 +32,7 @@ public class GitSpringConfiguration {
     public GitBackupService gitBackupService(Remotes remotes,
                                              GitClient gitClient,
                                              Set<ChutneyContentProvider> contentProviders,
-                                             @Value("${configuration-folder:conf/backups}") String gitRepositoryFolderPath) {
+                                             @Value("${chutney.configuration-folder:~/.chutney/conf}") String gitRepositoryFolderPath) {
         return new GitBackupService(remotes, gitClient, contentProviders, gitRepositoryFolderPath);
     }
 

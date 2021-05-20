@@ -2,7 +2,7 @@
 chutney:
   db-server:
     port: 9360
-    base-dir: ./.chutney
+    base-dir: ./.chutney/data
 
 spring:
   datasource:

@@ -23,7 +23,7 @@ public class EnvironmentSpringConfiguration {
     }
 
     @Bean
-    JsonFilesEnvironmentRepository jsonFilesEnvironmentRepository(@Value("${configuration-folder:conf}") String storeFolderPath) throws UncheckedIOException {
+    JsonFilesEnvironmentRepository jsonFilesEnvironmentRepository(@Value("${chutney.configuration-folder:~/.chutney/conf}") String storeFolderPath) throws UncheckedIOException {
         return new JsonFilesEnvironmentRepository(storeFolderPath);
     }
 }

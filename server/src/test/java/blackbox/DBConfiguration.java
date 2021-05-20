@@ -26,8 +26,8 @@ public class DBConfiguration {
     @Bean
     EmbeddedPostgres dbServer(
         @Value("${chutney.db-server.port}") int dbServerPort,
-        @Value("${chutney.db-server.base-dir:~/.chutney/pgdata}") String baseDir,
-        @Value("${chutney.db-server.work-dir:~/.chutney/pgwork}") String workDir) throws IOException {
+        @Value("${chutney.db-server.base-dir:~/.chutney/data/pgdata}") String baseDir,
+        @Value("${chutney.db-server.work-dir:~/.chutney/data/pgwork}") String workDir) throws IOException {
 
         return EmbeddedPostgres.builder()
             .setPort(dbServerPort)

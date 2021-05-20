@@ -17,8 +17,8 @@ public class TestCaseEditionsImpl implements TestCaseEditions {
     private final LoadingCache<TestCaseEdition, TestCaseEdition> editions;
 
     public TestCaseEditionsImpl(
-        @Value("${iceberg.editions.ttl.value:6}") Integer ttlValue,
-        @Value("${iceberg.editions.ttl.unit:HOURS}") String ttlUnit
+        @Value("${chutney.editions.ttl.value:6}") Integer ttlValue,
+        @Value("${chutney.editions.ttl.unit:HOURS}") String ttlUnit
     ) {
         editions = CacheBuilder.newBuilder()
             .expireAfterWrite(ttlValue, TimeUnit.valueOf(ttlUnit))

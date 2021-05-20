@@ -24,7 +24,6 @@ public class SchedulingCampaignFileRepositoryTest {
     public static void setUp(@TempDir Path temporaryFolder) throws IOException {
         String tmpConfDir = temporaryFolder.toFile().getAbsolutePath();
         System.setProperty("configuration-folder", tmpConfDir);
-        System.setProperty("persistence-repository-folder", tmpConfDir);
 
         sut = new SchedulingCampaignFileRepository(tmpConfDir);
         SCHEDULING_CAMPAIGN_FILE = Paths.get(tmpConfDir + "/scheduling/schedulingCampaigns.json");

@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 public class JsonFilesEnvironmentRepository implements EnvironmentRepository {
 
+    static final Path ROOT_DIRECTORY_NAME = Paths.get("env");
     private static final String JSON_FILE_EXT = ".json";
 
     private final Path storeFolderPath;
@@ -31,7 +32,7 @@ public class JsonFilesEnvironmentRepository implements EnvironmentRepository {
         .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
     public JsonFilesEnvironmentRepository(String storeFolderPath) throws UncheckedIOException {
-        this.storeFolderPath = Paths.get(storeFolderPath).toAbsolutePath();
+        this.storeFolderPath = Paths.get(storeFolderPath).resolve(ROOT_DIRECTORY_NAME).toAbsolutePath();
         initFolder(this.storeFolderPath);
     }
 
@@ -64,15 +65,9 @@ public class JsonFilesEnvironmentRepository implements EnvironmentRepository {
             pathStream
                 .filter(Files::isRegularFile)
                 .filter(this::isJsonFile)
-                // TODO any - Use sub-repositories instead
-                .filter(this::isNotAgentConfigurationFile)
                 .map(FileUtils::getNameWithoutExtension)
                 .collect(Collectors.toList())
         );
-    }
-
-    private boolean isNotAgentConfigurationFile(Path path) {
-        return !"endpoints.json".equals(path.getFileName().toString());
     }
 
     private boolean isJsonFile(Path path) {

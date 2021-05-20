@@ -53,12 +53,7 @@ public class ChutneyTest {
         System.setProperty("port", String.valueOf(port));
         System.setProperty("securePort", String.valueOf(securePort));
         System.setProperty("chutney.db-server.port", String.valueOf(dbPort));
-
         System.setProperty("configuration-folder", tmpConfDir.toString());
-        System.setProperty("git-configuration-folder", tmpConfDir.resolve("git-conf").toString());
-        System.setProperty("chutney.backups.root", tmpConfDir.resolve("backups").toString());
-        System.setProperty("persistence-repository-folder", tmpConfDir.toString());
-        System.setProperty("persistence.agentNetwork.file", tmpConfDir.resolve("endpoints.json").toString());
 
         localChutney = SpringApplication.run(IntegrationTestConfiguration.class);
     }

@@ -1,11 +1,13 @@
 package com.chutneytesting.admin.infra.storage;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import static com.chutneytesting.tools.file.FileUtils.initFolder;
+
 import com.chutneytesting.admin.domain.HomePage;
 import com.chutneytesting.admin.domain.HomePageRepository;
 import com.chutneytesting.tools.ZipUtils;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class JsonHomePageRepository implements HomePageRepository {
 
+    private static final Path ROOT_DIRECTORY_NAME = Paths.get("homepage");
     static final String HOME_PAGE_NAME = "home-page.json";
     private final Path homePageContent;
 
@@ -33,18 +36,13 @@ public class JsonHomePageRepository implements HomePageRepository {
         .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
     private final ReadWriteLock rwLock;
 
-    public JsonHomePageRepository(@Value("${persistence-repository-folder:conf/persistence}") String storeFolderPath)
+    public JsonHomePageRepository(@Value("${chutney.configuration-folder:~/.chutney/conf}") String storeFolderPath)
         throws UncheckedIOException {
 
         this.rwLock = new ReentrantReadWriteLock(true);
-
-        try {
-            Path dir = Paths.get(storeFolderPath).toAbsolutePath();
-            Files.createDirectories(dir);
-            this.homePageContent = dir.resolve(HOME_PAGE_NAME);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        Path dir = Paths.get(storeFolderPath).resolve(ROOT_DIRECTORY_NAME).toAbsolutePath();
+        initFolder(dir);
+        this.homePageContent = dir.resolve(HOME_PAGE_NAME);
     }
 
     public HomePage load() {

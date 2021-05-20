@@ -52,7 +52,7 @@ public class DBConfiguration {
     }
 
     @Bean(value = "dbServer", destroyMethod = "stop")
-    Server dbServer(@Value("${chutney.db-server.port}") int dbServerPort, @Value("${chutney.db-server.base-dir:~/.chutney}") String baseDir) throws SQLException {
+    Server dbServer(@Value("${chutney.db-server.port}") int dbServerPort, @Value("${chutney.db-server.base-dir:~/.chutney/data}") String baseDir) throws SQLException {
       Server h2Server = Server.createTcpServer("-tcp", "-tcpPort", String.valueOf(dbServerPort), "-tcpAllowOthers", "-baseDir", baseDir).start();
       LOGGER.debug("Started H2 server " + h2Server.getURL());
       return h2Server;
@@ -66,8 +66,8 @@ public class DBConfiguration {
     @Bean
     EmbeddedPostgres dbServer(
         @Value("${chutney.db-server.port}") int dbServerPort,
-        @Value("${chutney.db-server.base-dir:~/.chutney/pgdata}") String baseDir,
-        @Value("${chutney.db-server.work-dir:~/.chutney/pgwork}") String workDir) throws IOException {
+        @Value("${chutney.db-server.base-dir:~/.chutney/data/pgdata}") String baseDir,
+        @Value("${chutney.db-server.work-dir:~/.chutney/data/pgwork}") String workDir) throws IOException {
 
       return EmbeddedPostgres.builder()
           .setPort(dbServerPort)

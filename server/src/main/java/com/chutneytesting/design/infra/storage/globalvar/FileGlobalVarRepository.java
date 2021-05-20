@@ -45,7 +45,7 @@ public class FileGlobalVarRepository implements GlobalvarRepository {
         .enable(SerializationFeature.INDENT_OUTPUT)
         .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
-    FileGlobalVarRepository(@Value("${configuration-folder:conf}") String storeFolderPath) throws UncheckedIOException {
+    FileGlobalVarRepository(@Value("${chutney.configuration-folder:~/.chutney/conf}") String storeFolderPath) throws UncheckedIOException {
         this.storeFolderPath = Paths.get(storeFolderPath).resolve(ROOT_DIRECTORY_NAME);
         initFolder(this.storeFolderPath);
     }

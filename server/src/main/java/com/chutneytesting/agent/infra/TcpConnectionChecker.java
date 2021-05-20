@@ -15,7 +15,7 @@ class TcpConnectionChecker implements ConnectionChecker {
     private static final Logger LOGGER = LoggerFactory.getLogger(TcpConnectionChecker.class);
     private final int timeout;
 
-    TcpConnectionChecker(@Value("${agentnetwork.connection-checker-timeout:1000}") int timeout) {
+    TcpConnectionChecker(@Value("${chutney.agentnetwork.connection-checker-timeout:1000}") int timeout) {
         this.timeout = timeout;
     }
 

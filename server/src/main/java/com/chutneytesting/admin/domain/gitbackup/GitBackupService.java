@@ -1,6 +1,7 @@
 package com.chutneytesting.admin.domain.gitbackup;
 
 import static com.chutneytesting.admin.domain.gitbackup.ChutneyContentFSWriter.writeChutneyContent;
+import static com.chutneytesting.tools.file.FileUtils.initFolder;
 
 import com.chutneytesting.tools.file.FileUtils;
 import java.nio.file.Path;
@@ -11,10 +12,12 @@ import java.util.stream.Collectors;
 
 public class GitBackupService {
 
+    private static final Path ROOT_DIRECTORY_NAME = Paths.get("backups", "git");
+
     private final Remotes remotes;
     private final GitClient gitClient;
     private final Set<ChutneyContentProvider> contentProviders;
-    private final String gitRepositoryFolderPath;
+    private final Path gitRepositoryFolderPath;
 
     public GitBackupService(Remotes remotes,
                             GitClient gitClient,
@@ -23,7 +26,8 @@ public class GitBackupService {
         this.remotes = remotes;
         this.gitClient = gitClient;
         this.contentProviders = contentProviders;
-        this.gitRepositoryFolderPath = gitRepositoryFolderPath;
+        this.gitRepositoryFolderPath = Paths.get(gitRepositoryFolderPath).resolve(ROOT_DIRECTORY_NAME).toAbsolutePath();
+        initFolder(this.gitRepositoryFolderPath);
     }
 
     public List<RemoteRepository> getAll() {
@@ -42,7 +46,7 @@ public class GitBackupService {
 
     public void remove(String name) {
         remotes.remove(name);
-        FileUtils.deleteFolder(Paths.get(gitRepositoryFolderPath).resolve(name));
+        FileUtils.deleteFolder(gitRepositoryFolderPath.resolve(name));
     }
 
     public void backup(String name) {
@@ -50,7 +54,7 @@ public class GitBackupService {
     }
 
     public void backup(RemoteRepository remote) {
-        Path workingDirectory = Paths.get(gitRepositoryFolderPath).resolve(remote.name);
+        Path workingDirectory = gitRepositoryFolderPath.resolve(remote.name);
         gitClient.initRepository(remote, workingDirectory);
         gitClient.update(remote, workingDirectory);
         writeChutneyContent(workingDirectory, contentProviders);

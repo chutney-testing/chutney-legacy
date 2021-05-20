@@ -1,5 +1,6 @@
 package com.chutneytesting.admin.infra.storage;
 
+import static com.chutneytesting.admin.infra.storage.FileSystemBackupRepository.ROOT_DIRECTORY_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -49,18 +50,18 @@ public class FileSystemBackupRepositoryTest {
 
     @AfterEach
     public void after() {
-        Try.exec(() -> FileSystemUtils.deleteRecursively(backupsRootPath)).runtime();
+        Try.exec(() -> FileSystemUtils.deleteRecursively(backupsRootPath.resolve(ROOT_DIRECTORY_NAME))).runtime();
     }
 
     @Test
     public void should_create_backup_root_path_when_instantiate() throws IOException {
         // Given
-        Files.deleteIfExists(backupsRootPath);
+        Files.deleteIfExists(backupsRootPath.resolve(ROOT_DIRECTORY_NAME));
         backupsRootPath = Paths.get("freshNewBackups");
         // When
         sut = new FileSystemBackupRepository(orientComponentDB, homePageRepository, environmentRepository, globalvarRepository, currentNetworkDescription, backupsRootPath.toString());
         // Then
-        assertThat(backupsRootPath.toFile().exists()).isTrue();
+        assertThat(backupsRootPath.resolve(ROOT_DIRECTORY_NAME).toFile().exists()).isTrue();
     }
 
     @Test
@@ -120,7 +121,7 @@ public class FileSystemBackupRepositoryTest {
         String backupStringId = sut.save(new Backup(false, false, false, false, true));
 
         // Then
-        assertThat(backupsRootPath.resolve(backupStringId).toFile().exists()).isTrue();
+        assertThat(backupsRootPath.resolve(ROOT_DIRECTORY_NAME).resolve(backupStringId).toFile().exists()).isTrue();
     }
 
     @ParameterizedTest
@@ -160,7 +161,7 @@ public class FileSystemBackupRepositoryTest {
     }
 
     private Path stubBackup(String backupName, Boolean homePage, Boolean agentsNetwork, Boolean environments, Boolean components, Boolean globalVars) throws IOException {
-        Path backupPath = Files.createDirectories(backupsRootPath.resolve(backupName));
+        Path backupPath = Files.createDirectories(backupsRootPath.resolve(ROOT_DIRECTORY_NAME).resolve(backupName));
         if (homePage) Files.createFile(backupPath.resolve(FileSystemBackupRepository.HOME_PAGE_BACKUP_NAME));
         if (agentsNetwork) Files.createFile(backupPath.resolve(FileSystemBackupRepository.AGENTS_BACKUP_NAME));
         if (environments) Files.createFile(backupPath.resolve(FileSystemBackupRepository.ENVIRONMENTS_BACKUP_NAME));

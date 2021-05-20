@@ -42,25 +42,9 @@ public class NodeNetworkSpringConfiguration {
     }
 
     @Bean
-    ObjectMapper agentNetworkPersistenceObjectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper()
-            .findAndRegisterModules()
-            .enable(SerializationFeature.INDENT_OUTPUT);
-
-        return objectMapper.setVisibility(
-            objectMapper.getSerializationConfig()
-                .getDefaultVisibilityChecker()
-                .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
-                .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
-                .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
-                .withCreatorVisibility(JsonAutoDetect.Visibility.NONE)
-        );
-    }
-
-    @Bean
     LocalServerIdentifier localServerIdentifier(@Value("${server.port:0}") int port,
-                                                @Value("${localAgent.defaultName:#{null}}") Optional<String> defaultLocalName,
-                                                @Value("${localAgent.defaultHostName:#{null}}") Optional<String> defaultLocalHostName
+                                                @Value("${chutney.localAgent.defaultName:#{null}}") Optional<String> defaultLocalName,
+                                                @Value("${chutney.localAgent.defaultHostName:#{null}}") Optional<String> defaultLocalHostName
     ) throws UnknownHostException {
         InetAddress localHost = InetAddress.getLocalHost();
         return new LocalServerIdentifier(

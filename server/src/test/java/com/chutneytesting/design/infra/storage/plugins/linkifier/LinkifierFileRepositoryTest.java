@@ -21,7 +21,6 @@ public class LinkifierFileRepositoryTest {
     public static void setUp(@TempDir Path temporaryFolder) {
         String tmpConfDir = temporaryFolder.toFile().getAbsolutePath();
         System.setProperty("configuration-folder", tmpConfDir);
-        System.setProperty("persistence-repository-folder", tmpConfDir);
 
         sut = new LinkifierFileRepository(tmpConfDir);
         LINKIFIER_FILE = Paths.get(tmpConfDir + "/plugins/linkifiers.json");
