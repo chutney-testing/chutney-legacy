@@ -3,6 +3,7 @@ package com.chutneytesting;
 import com.chutneytesting.admin.domain.BackupNotFoundException;
 import com.chutneytesting.design.domain.campaign.CampaignNotFoundException;
 import com.chutneytesting.design.domain.dataset.DataSetNotFoundException;
+import com.chutneytesting.design.domain.globalvar.GlobalVarNotFoundException;
 import com.chutneytesting.design.domain.scenario.AlreadyExistingScenarioException;
 import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.ScenarioNotParsableException;
@@ -17,6 +18,7 @@ import com.chutneytesting.environment.domain.exception.TargetNotFoundException;
 import com.chutneytesting.execution.domain.campaign.CampaignAlreadyRunningException;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionNotFoundException;
 import com.chutneytesting.execution.domain.compiler.ScenarioConversionException;
+import com.chutneytesting.execution.domain.history.ReportNotFoundException;
 import com.chutneytesting.execution.domain.scenario.FailedExecutionAttempt;
 import com.chutneytesting.execution.domain.scenario.ScenarioNotRunningException;
 import com.chutneytesting.security.domain.CurrentUserNotFoundException;
@@ -26,8 +28,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -56,8 +60,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     })
     public ResponseEntity<Object> _500(RuntimeException ex, WebRequest request) {
         LOGGER.error("Controller global exception handler", ex);
-        String bodyOfResponse = ex.getMessage();
-        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+        return handleExceptionInternalWithExceptionMessageAsBody(ex, HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
     @ExceptionHandler({
@@ -70,11 +73,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         CurrentUserNotFoundException.class,
         BackupNotFoundException.class,
         DataSetNotFoundException.class,
-        ScenarioNotRunningException.class
+        ScenarioNotRunningException.class,
+        GlobalVarNotFoundException.class,
+        ReportNotFoundException.class
     })
     protected ResponseEntity<Object> notFound(RuntimeException ex, WebRequest request) {
-        String bodyOfResponse = ex.getMessage();
-        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+        return handleExceptionInternalWithExceptionMessageAsBody(ex, HttpStatus.NOT_FOUND, request);
     }
 
     @ExceptionHandler({
@@ -86,8 +90,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         ComposableStepCyclicDependencyException.class
     })
     protected ResponseEntity<Object> conflict(RuntimeException ex, WebRequest request) {
-        String bodyOfResponse = ex.getMessage();
-        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
+        return handleExceptionInternalWithExceptionMessageAsBody(ex, HttpStatus.CONFLICT, request);
     }
 
     @ExceptionHandler({
@@ -95,24 +98,28 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         ScenarioNotParsableException.class
     })
     protected ResponseEntity<Object> unprocessableEntity(RuntimeException ex, WebRequest request) {
-        String bodyOfResponse = ex.getMessage();
-        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.UNPROCESSABLE_ENTITY, request);
+        return handleExceptionInternalWithExceptionMessageAsBody(ex, HttpStatus.UNPROCESSABLE_ENTITY, request);
     }
 
     @ExceptionHandler({
         DateTimeParseException.class,
-        InvalidEnvironmentNameException.class
+        InvalidEnvironmentNameException.class,
+        HttpMessageConversionException.class
     })
     protected ResponseEntity<Object> badRequest(RuntimeException ex, WebRequest request) {
-        String bodyOfResponse = ex.getMessage();
-        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+        return handleExceptionInternalWithExceptionMessageAsBody(ex, HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler({
-        IllegalArgumentException.class
+        IllegalArgumentException.class,
+        AccessDeniedException.class
     })
     protected ResponseEntity<Object> forbidden(RuntimeException ex, WebRequest request) {
+        return handleExceptionInternalWithExceptionMessageAsBody(ex, HttpStatus.FORBIDDEN, request);
+    }
+
+    private ResponseEntity<Object> handleExceptionInternalWithExceptionMessageAsBody(RuntimeException ex, HttpStatus status, WebRequest request) {
         String bodyOfResponse = ex.getMessage();
-        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), status, request);
     }
 }

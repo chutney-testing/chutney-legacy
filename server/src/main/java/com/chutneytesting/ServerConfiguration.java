@@ -66,6 +66,8 @@ public class ServerConfiguration {
 
     public static final String CONFIGURATION_FOLDER_SPRING_VALUE = "${chutney.configuration-folder:~/.chutney/conf}";
     public static final String ENGINE_REPORTER_PUBLISHER_TTL_SPRING_VALUE = "${chutney.engine.reporter.publisher.ttl:5}";
+    public static final String ENGINE_DELEGATION_USER_SPRING_VALUE = "${chutney.engine.delegation.user:#{null}}";
+    public static final String ENGINE_DELEGATION_PASSWORD_SPRING_VALUE = "${chutney.engine.delegation.password:#{null}}";
     public static final String EXECUTION_ASYNC_PUBLISHER_TTL_SPRING_VALUE = "${chutney.execution.async.publisher.ttl:5}";
     public static final String EXECUTION_ASYNC_PUBLISHER_DEBOUNCE_SPRING_VALUE = "${chutney.execution.async.publisher.debounce:250}";
     public static final String CAMPAIGNS_THREAD_SPRING_VALUE = "${chutney.campaigns.thread:20}";
@@ -112,11 +114,11 @@ public class ServerConfiguration {
 
     @Bean
     public ExecutionConfiguration executionConfiguration(
-        Executor engineExecutor,
         @Value(ENGINE_REPORTER_PUBLISHER_TTL_SPRING_VALUE) Long reporterTTL,
+        Executor engineExecutor,
         @Value(TASK_SQL_NB_LOGGED_ROW) String nbLoggedRow,
-        @Value("${chutney.engine.delegation.user:#{null}}") String delegateUser,
-        @Value("${chutney.engine.delegation.password:#{null}}") String delegatePasword
+        @Value(ENGINE_DELEGATION_USER_SPRING_VALUE) String delegateUser,
+        @Value(ENGINE_DELEGATION_PASSWORD_SPRING_VALUE) String delegatePasword
     ) {
         Map<String, String> tasksConfiguration = new HashMap<>();
         tasksConfiguration.put(CONFIGURABLE_NB_LOGGED_ROW, nbLoggedRow);

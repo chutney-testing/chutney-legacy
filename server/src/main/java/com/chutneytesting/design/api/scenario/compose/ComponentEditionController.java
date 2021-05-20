@@ -69,7 +69,6 @@ public class ComponentEditionController {
         return toDto(composableTestCaseRepository.findById(fromFrontId(Optional.of(testCaseId))));
     }
 
-    // TODO - MGN
     @PreAuthorize("hasAuthority('SCENARIO_READ')")
     @GetMapping(path = "/{testCaseId}/executable", produces = MediaType.APPLICATION_JSON_VALUE)
     public ComposableTestCaseDto getExecutableTestCase(@PathVariable("testCaseId") String testCaseId) {

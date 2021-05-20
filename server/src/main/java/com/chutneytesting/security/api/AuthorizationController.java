@@ -22,13 +22,13 @@ public class AuthorizationController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
-    @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public void save(@RequestBody AuthorizationsDto authorizations) {
         this.authorizations.save(AuthorizationMapper.fromDto(authorizations));
     }
 
     @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
-    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public AuthorizationsDto read() {
         return AuthorizationMapper.toDto(authorizations.read());
     }

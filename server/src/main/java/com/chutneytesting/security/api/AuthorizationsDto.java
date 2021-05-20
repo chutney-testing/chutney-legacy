@@ -1,14 +1,16 @@
 package com.chutneytesting.security.api;
 
+import static java.util.Collections.emptyList;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import java.util.Objects;
 
 public class AuthorizationsDto {
     @JsonProperty
-    private List<RoleDto> roles;
+    private List<RoleDto> roles = emptyList();
     @JsonProperty
-    private List<RoleUsersDto> authorizations;
+    private List<RoleUsersDto> authorizations = emptyList();
 
     public List<RoleDto> getRoles() {
         return roles;
@@ -49,9 +51,9 @@ public class AuthorizationsDto {
 
     public static class RoleDto {
         @JsonProperty
-        private String name;
+        private String name = "";
         @JsonProperty
-        private List<String> rights;
+        private List<String> rights = emptyList();
 
         public String getName() {
             return name;
@@ -93,9 +95,9 @@ public class AuthorizationsDto {
 
     public static class RoleUsersDto {
         @JsonProperty
-        private String name;
+        private String name = "";
         @JsonProperty
-        private List<String> users;
+        private List<String> users = emptyList();
 
         public String getName() {
             return name;

@@ -13,7 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class UserDto implements UserDetails {
+public final class UserDto implements UserDetails {
 
     public static UserDto ANONYMOUS;
 
@@ -29,6 +29,20 @@ public class UserDto implements UserDetails {
     private String firstname;
     private String lastname;
     private String mail;
+
+    public UserDto() {
+    }
+
+    public UserDto(UserDto copyFrom) {
+        this.id = copyFrom.getId();
+        this.name = copyFrom.getName();
+        this.firstname = copyFrom.getFirstname();
+        this.lastname = copyFrom.getLastname();
+        this.mail = copyFrom.getMail();
+        this.roles = new HashSet<>(copyFrom.getRoles());
+        this.authorizations = new HashSet<>(copyFrom.getAuthorities());
+        this.password = copyFrom.getPassword();
+    }
 
     @JsonIgnore
     private Set<String> roles;

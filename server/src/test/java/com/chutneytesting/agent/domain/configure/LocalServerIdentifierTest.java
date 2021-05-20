@@ -3,9 +3,9 @@ package com.chutneytesting.agent.domain.configure;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
 import com.chutneytesting.agent.domain.network.Agent;
 import com.chutneytesting.agent.domain.network.AgentGraph;
+import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.Instant;

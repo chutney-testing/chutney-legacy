@@ -1,5 +1,6 @@
 package com.chutneytesting.security.infra;
 
+import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
 
 import com.chutneytesting.security.api.AuthorizationMapper;
@@ -30,7 +31,7 @@ public class JsonFileAuthorizations implements Authorizations {
         .enable(SerializationFeature.INDENT_OUTPUT)
         .setSerializationInclusion(JsonInclude.Include.ALWAYS);
 
-    JsonFileAuthorizations(@Value("${configuration-folder:conf}") String configFolderPath) throws UncheckedIOException {
+    JsonFileAuthorizations(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String configFolderPath) throws UncheckedIOException {
         Path storeFolderPath = Paths.get(configFolderPath).resolve(ROOT_DIRECTORY_NAME);
         this.authorizationFilePath = storeFolderPath.resolve(AUTHORIZATION_FILE_NAME);
 

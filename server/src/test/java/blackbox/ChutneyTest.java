@@ -17,8 +17,7 @@ import com.chutneytesting.security.domain.Authorizations;
 import com.chutneytesting.security.domain.Role;
 import com.chutneytesting.security.domain.User;
 import com.chutneytesting.security.domain.UserRoles;
-import java.io.IOException;
-import java.nio.file.Files;
+import com.chutneytesting.tools.file.FileUtils;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
@@ -35,32 +34,28 @@ public class ChutneyTest {
     private final int port;
     private final int securePort;
     private final int dbPort;
-    private final Path tmpFolder;
 
     private final EnvironmentService environmentService;
     private static final String TEST_ENV_NAME = "ENV";
 
-    public ChutneyTest(EnvironmentService environmentService) throws IOException {
+    public ChutneyTest(EnvironmentService environmentService) {
         this.environmentService = environmentService;
 
         port = findAvailableTcpPort();
         securePort = findAvailableTcpPort();
         dbPort = findAvailableTcpPort();
 
-        tmpFolder = Files.createTempDirectory("chutney");
-        tmpFolder.toFile().createNewFile();
-
         setEnvironment();
+
+        // Clean configuration folder. cf. application.yaml for blackbox integration tests
+        FileUtils.deleteFolder(Path.of("./target/.chutney"));
     }
 
     @BeforeAll
     public void setUp() {
-        Path tmpConfDir = tmpFolder.resolve("conf");
-
         System.setProperty("port", String.valueOf(port));
         System.setProperty("securePort", String.valueOf(securePort));
         System.setProperty("chutney.db-server.port", String.valueOf(dbPort));
-        System.setProperty("configuration-folder", tmpConfDir.toString());
 
         localChutney = SpringApplication.run(IntegrationTestConfiguration.class);
 
@@ -69,7 +64,6 @@ public class ChutneyTest {
 
     @AfterAll
     public void tearDown() {
-        tmpFolder.toFile().delete();
         localChutney.stop();
         cleanEnvironment();
     }
@@ -177,13 +171,27 @@ public class ChutneyTest {
         UserRoles userRoles = UserRoles.builder()
             .withRoles(List.of(
                 Role.DEFAULT,
-                Role.builder().withName("TESTCASE_EDITOR").withAuthorizations(List.of(Authorization.SCENARIO_WRITE.name())).build(),
+                Role.builder().withName("NO_USER_ROLE").withAuthorizations(List.of(Authorization.ADMIN_ACCESS.name())).build(),
+                Role.builder().withName("SCENARIO_READ_ROLE").withAuthorizations(List.of(Authorization.SCENARIO_READ.name())).build(),
+                Role.builder().withName("SCENARIO_WRITE_ROLE").withAuthorizations(List.of(Authorization.SCENARIO_WRITE.name())).build(),
+                Role.builder().withName("SCENARIO_EXECUTE_ROLE").withAuthorizations(List.of(Authorization.SCENARIO_EXECUTE.name())).build(),
+                Role.builder().withName("CAMPAIGN_READ_ROLE").withAuthorizations(List.of(Authorization.CAMPAIGN_READ.name())).build(),
+                Role.builder().withName("CAMPAIGN_WRITE_ROLE").withAuthorizations(List.of(Authorization.CAMPAIGN_WRITE.name())).build(),
+                Role.builder().withName("CAMPAIGN_EXECUTE_ROLE").withAuthorizations(List.of(Authorization.CAMPAIGN_EXECUTE.name())).build(),
+                Role.builder().withName("ENVIRONMENT_ACCESS_ROLE").withAuthorizations(List.of(Authorization.ENVIRONMENT_ACCESS.name())).build(),
+                Role.builder().withName("GLOBAL_VAR_READ_ROLE").withAuthorizations(List.of(Authorization.GLOBAL_VAR_READ.name())).build(),
+                Role.builder().withName("GLOBAL_VAR_WRITE_ROLE").withAuthorizations(List.of(Authorization.GLOBAL_VAR_WRITE.name())).build(),
+                Role.builder().withName("DATASET_READ_ROLE").withAuthorizations(List.of(Authorization.DATASET_READ.name())).build(),
+                Role.builder().withName("DATASET_WRITE_ROLE").withAuthorizations(List.of(Authorization.DATASET_WRITE.name())).build(),
+                Role.builder().withName("COMPONENT_READ_ROLE").withAuthorizations(List.of(Authorization.COMPONENT_READ.name())).build(),
+                Role.builder().withName("COMPONENT_WRITE_ROLE").withAuthorizations(List.of(Authorization.COMPONENT_WRITE.name())).build(),
+                Role.builder().withName("ADMIN_ACCESS_ROLE").withAuthorizations(List.of(Authorization.ADMIN_ACCESS.name())).build(),
                 Role.builder().withName("GOD").withAuthorizations(Arrays.stream(Authorization.values()).map(Enum::name).collect(toList())).build()
             ))
             .withUsers(List.of(
                 User.builder().withId("admin").withRole("GOD").build(),
-                User.builder().withId("robert").withRole("TESTCASE_EDITOR").build(),
-                User.builder().withId("paloma").withRole("TESTCASE_EDITOR").build()
+                User.builder().withId("robert").withRole("SCENARIO_WRITE_ROLE").build(),
+                User.builder().withId("paloma").withRole("SCENARIO_WRITE_ROLE").build()
             ))
             .build();
 

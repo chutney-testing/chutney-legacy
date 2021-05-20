@@ -17,6 +17,20 @@ chutney:
         mail: paloma@paloma.com
         password: paloma
       -
+        id: secutest
+        name: secutest
+        firstname: secutest
+        lastname: secutest
+        mail: secutest@secutest.com
+        password: secutest
+      -
+        id: user
+        name: user
+        firstname: user
+        lastname: user
+        mail: user@user.com
+        password: user
+      -
         id: admin
         name: admin
         firstname: admin

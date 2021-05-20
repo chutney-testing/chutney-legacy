@@ -49,15 +49,17 @@ public class LdapAttributesMapper implements AttributesMapper<UserDto> {
     }
 
     private UserDto readRole(UserDto userDto) {
-        if (userDto.getRoles().contains("ADMIN")) {
-            userDto.grantAuthority(Authorization.ADMIN_ACCESS.name());
+        UserDto dto = new UserDto(userDto);
+
+        if (dto.getRoles().contains("ADMIN")) {
+            dto.grantAuthority(Authorization.ADMIN_ACCESS.name());
         }
 
-        Role role = authenticationService.userRoleById(userDto.getId());
-        userDto.addRole(role.name);
-        role.authorizations.stream().map(Enum::name).forEach(userDto::grantAuthority);
+        Role role = authenticationService.userRoleById(dto.getId());
+        dto.addRole(role.name);
+        role.authorizations.stream().map(Enum::name).forEach(dto::grantAuthority);
 
-        return userDto;
+        return dto;
     }
 
     private String applyLdapGroupMatcher(String ldapGroup) {

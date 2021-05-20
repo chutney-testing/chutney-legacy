@@ -53,6 +53,9 @@ chutney:
     reporter:
       publisher:
         ttl: 5
+#    delegation:
+#      user:
+#      password:
   examples:
     active: true
   campaigns:
