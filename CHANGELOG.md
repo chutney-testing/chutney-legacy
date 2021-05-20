@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.3.4](https://github.com/chutney-testing/chutney/tree/1.3.4)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.3...HEAD)
+
+**Implemented enhancements:**
+
+- 🚀 | Search campaign more easily [\#355](https://github.com/chutney-testing/chutney/issues/355)
+
+**Fixed bugs:**
+
+- 🐛 | Cannot edit component since 1.3.3 [\#433](https://github.com/chutney-testing/chutney/issues/433)
+
+**Merged pull requests:**
+
+- bugfix\(ui\): Fix component & scenario edition [\#435](https://github.com/chutney-testing/chutney/pull/435) ([bessonm](https://github.com/bessonm))
+- chore: Add maven badge [\#432](https://github.com/chutney-testing/chutney/pull/432) ([nbrouand](https://github.com/nbrouand))
+- feat\(ui+server\): add tags for campaigns [\#431](https://github.com/chutney-testing/chutney/pull/431) ([rbenyoussef](https://github.com/rbenyoussef))
+
+
 ## [1.3.3](https://github.com/chutney-testing/chutney/tree/1.3.3)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.2...1.3.3)
