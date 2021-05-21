@@ -60,7 +60,7 @@ public class FileSystemBackupRepositoryTest {
 
     @AfterEach
     public void after() {
-        Try.exec(() -> FileSystemUtils.deleteRecursively(backupsRootPath.resolve(ROOT_DIRECTORY_NAME))).runtime();
+        Try.exec(() -> FileSystemUtils.deleteRecursively(backupsRootPath)).runtime();
     }
 
     @Test

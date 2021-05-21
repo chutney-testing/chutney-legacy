@@ -2,8 +2,7 @@
 chutney:
   db-server:
     port: 9360
-    base-dir: ./.chutney/data/pgdata
-    work-dir: ./.chutney/data/pgwork
+    base-dir: ./.chutney/data
 
 spring:
   datasource:
