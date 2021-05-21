@@ -45,12 +45,13 @@ public class DefaultSqlConnectorTest {
     public void should_return_headers_and_rows_on_select_query() throws SQLException {
         List<Object> firstTuple = Arrays.asList(1, "laitue", "laitue@fake.com");
         List<Object> secondTuple = Arrays.asList(2, "carotte", "kakarot@fake.db");
+        List<Object> thirdTuple = Arrays.asList(3, "tomate", "null");
 
         SqlClient sqlClient = new DefaultSqlClientFactory().create(sqlTarget);
         Records records = sqlClient.execute("select * from users");
 
         assertThat(records.headers).containsOnly("ID", "NAME", "EMAIL");
-        assertThat(records.rows).containsExactly(firstTuple, secondTuple);
+        assertThat(records.rows).containsExactly(firstTuple, secondTuple, thirdTuple);
     }
 
     @Test
@@ -64,7 +65,7 @@ public class DefaultSqlConnectorTest {
     @Test
     public void should_return_count_on_count_queries() throws SQLException {
 
-        List<Object> expectedTuple = Collections.singletonList(2L);
+        List<Object> expectedTuple = Collections.singletonList(3L);
 
         SqlClient sqlClient = new DefaultSqlClientFactory().create(sqlTarget);
         Records records = sqlClient.execute("SELECT COUNT(*) as total FROM USERS");
@@ -85,8 +86,14 @@ public class DefaultSqlConnectorTest {
         secondTuple.put("NAME", "carotte");
         secondTuple.put("EMAIL", "kakarot@fake.db");
 
+        Map<String, Object> thirdTuple = new LinkedHashMap<>();
+        thirdTuple.put("ID", 3);
+        thirdTuple.put("NAME", "tomate");
+        thirdTuple.put("EMAIL", "null");
+
         listOfMaps.add(firstTuple);
         listOfMaps.add(secondTuple);
+        listOfMaps.add(thirdTuple);
 
         SqlClient sqlClient = new DefaultSqlClientFactory().create(sqlTarget);
         Records records = sqlClient.execute("select * from users");
@@ -96,7 +103,7 @@ public class DefaultSqlConnectorTest {
 
     @Test
     public void should_print_records_as_matrix() throws SQLException {
-        Object[][] expectedMatrix = new Object[2][3];
+        Object[][] expectedMatrix = new Object[3][3];
         expectedMatrix[0][0] = 1;
         expectedMatrix[0][1] = "laitue";
         expectedMatrix[0][2] = "laitue@fake.com";
@@ -104,6 +111,10 @@ public class DefaultSqlConnectorTest {
         expectedMatrix[1][0] = 2;
         expectedMatrix[1][1] = "carotte";
         expectedMatrix[1][2] = "kakarot@fake.db";
+
+        expectedMatrix[2][0] = 3;
+        expectedMatrix[2][1] = "tomate";
+        expectedMatrix[2][2] = "null";
 
         SqlClient sqlClient = new DefaultSqlClientFactory().create(sqlTarget);
         Records records = sqlClient.execute("select * from users");

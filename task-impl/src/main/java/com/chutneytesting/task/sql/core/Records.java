@@ -73,12 +73,12 @@ public class Records {
             sb.append("|");
             headers.forEach(header ->
                 sb.append(" ")
-                         .append(header)
-                         .append(nWhitespaces(maxColumnLength.get(header) - header.length()))
-                         .append(" |")
+                    .append(header)
+                    .append(nWhitespaces(maxColumnLength.get(header) - header.length()))
+                    .append(" |")
             );
             sb.append("\n");
-            sb.append("-".repeat(sb.length()-1));
+            sb.append("-".repeat(sb.length() - 1));
             sb.append("\n");
         }
         return sb.toString();
@@ -102,9 +102,9 @@ public class Records {
             sb.append("|");
             row.forEach((k, v) ->
                 sb.append(" ")
-                  .append(v.toString())
-                  .append(nWhitespaces(maxColumnLength.get(k) - v.toString().length()))
-                  .append(" |")
+                    .append(v.toString())
+                    .append(nWhitespaces(maxColumnLength.get(k) - v.toString().length()))
+                    .append(" |")
             );
         }
         sb.append("\n");
