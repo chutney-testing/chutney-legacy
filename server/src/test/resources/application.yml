@@ -34,6 +34,8 @@ spring:
 
 chutney:
   configuration-folder: target/.chutney/conf
+  environment:
+    configuration-folder: ${chutney.configuration-folder}
   orient:
     path: target/.chutney/data/orient
     dbproperties:

@@ -1,5 +1,10 @@
 package com.chutneytesting;
 
+import static com.chutneytesting.ServerConfiguration.DBSERVER_H2_BASEDIR_SPRING_VALUE;
+import static com.chutneytesting.ServerConfiguration.DBSERVER_PG_BASEDIR_SPRING_BASE_VALUE;
+import static com.chutneytesting.ServerConfiguration.DBSERVER_PG_WORKDIR_SPRING_BASE_VALUE;
+import static com.chutneytesting.ServerConfiguration.DBSERVER_PORT_SPRING_VALUE;
+
 import com.opentable.db.postgres.embedded.EmbeddedPostgres;
 import com.zaxxer.hikari.HikariDataSource;
 import java.io.File;
@@ -21,60 +26,62 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 public class DBConfiguration {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(DBConfiguration.class);
-
-  @Bean
-  @DependsOn("dbServer")
-  public DataSource dataSource(DataSourceProperties internalDataSourceProperties) {
-    return internalDataSourceProperties.initializeDataSourceBuilder()
-        .type(HikariDataSource.class).build();
-  }
-
-  @Configuration
-  @Profile("db-h2")
-  static class H2Configuration {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DBConfiguration.class);
 
     @Bean
-    @Primary
-    @ConfigurationProperties("spring.datasource")
-    public DataSourceProperties internalDataSourceProperties() {
-      return new DataSourceProperties() {
-        @Override
-        public String determineUsername() {
-          return this.getUsername();
+    @DependsOn("dbServer")
+    public DataSource dataSource(DataSourceProperties internalDataSourceProperties) {
+        return internalDataSourceProperties.initializeDataSourceBuilder()
+            .type(HikariDataSource.class).build();
+    }
+
+    @Configuration
+    @Profile("db-h2")
+    static class H2Configuration {
+
+        @Bean
+        @Primary
+        @ConfigurationProperties("spring.datasource")
+        public DataSourceProperties internalDataSourceProperties() {
+            return new DataSourceProperties() {
+                @Override
+                public String determineUsername() {
+                    return this.getUsername();
+                }
+
+                @Override
+                public String determinePassword() {
+                    return this.getPassword();
+                }
+            };
         }
 
-        @Override
-        public String determinePassword() {
-          return this.getPassword();
+        @Bean(value = "dbServer", destroyMethod = "stop")
+        Server dbServer(
+            @Value(DBSERVER_PORT_SPRING_VALUE) int dbServerPort,
+            @Value(DBSERVER_H2_BASEDIR_SPRING_VALUE) String baseDir) throws SQLException {
+            Server h2Server = Server.createTcpServer("-tcp", "-tcpPort", String.valueOf(dbServerPort), "-tcpAllowOthers", "-baseDir", baseDir).start();
+            LOGGER.debug("Started H2 server " + h2Server.getURL());
+            return h2Server;
         }
-      };
     }
 
-    @Bean(value = "dbServer", destroyMethod = "stop")
-    Server dbServer(@Value("${chutney.db-server.port}") int dbServerPort, @Value("${chutney.db-server.base-dir:~/.chutney/data}") String baseDir) throws SQLException {
-      Server h2Server = Server.createTcpServer("-tcp", "-tcpPort", String.valueOf(dbServerPort), "-tcpAllowOthers", "-baseDir", baseDir).start();
-      LOGGER.debug("Started H2 server " + h2Server.getURL());
-      return h2Server;
+    @Configuration
+    @Profile("db-pg")
+    static class PGConfiguration {
+
+        @Bean
+        EmbeddedPostgres dbServer(
+            @Value(DBSERVER_PORT_SPRING_VALUE) int dbServerPort,
+            @Value(DBSERVER_PG_BASEDIR_SPRING_BASE_VALUE) String baseDir,
+            @Value(DBSERVER_PG_WORKDIR_SPRING_BASE_VALUE) String workDir) throws IOException {
+
+            return EmbeddedPostgres.builder()
+                .setPort(dbServerPort)
+                .setDataDirectory(baseDir)
+                .setCleanDataDirectory(false)
+                .setOverrideWorkingDirectory(new File(workDir))
+                .start();
+        }
     }
-  }
-
-  @Configuration
-  @Profile("db-pg")
-  static class PGConfiguration {
-
-    @Bean
-    EmbeddedPostgres dbServer(
-        @Value("${chutney.db-server.port}") int dbServerPort,
-        @Value("${chutney.db-server.base-dir:~/.chutney/data/pgdata}") String baseDir,
-        @Value("${chutney.db-server.work-dir:~/.chutney/data/pgwork}") String workDir) throws IOException {
-
-      return EmbeddedPostgres.builder()
-          .setPort(dbServerPort)
-          .setDataDirectory(baseDir)
-          .setCleanDataDirectory(false)
-          .setOverrideWorkingDirectory(new File(workDir))
-          .start();
-    }
-  }
 }

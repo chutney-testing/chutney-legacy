@@ -47,7 +47,29 @@ public class ServerConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerConfiguration.class);
 
-    @Value("${server.port}")
+    public static final String SERVER_PORT_SPRING_VALUE = "${server.port}";
+    public static final String SERVER_HTTP_PORT_SPRING_VALUE = "${server.http.port}";
+    public static final String SERVER_HTTP_INTERFACE_SPRING_VALUE = "${server.http.interface}";
+
+    public static final String DBSERVER_PORT_SPRING_VALUE = "${chutney.db-server.port}";
+    private static final String DBSERVER_BASEDIR_SPRING_BASE_VALUE = "${chutney.db-server.base-dir:~/.chutney/data";
+    public static final String DBSERVER_H2_BASEDIR_SPRING_VALUE = DBSERVER_BASEDIR_SPRING_BASE_VALUE + "}";
+    public static final String DBSERVER_PG_BASEDIR_SPRING_BASE_VALUE = DBSERVER_BASEDIR_SPRING_BASE_VALUE + "/pgdata}";
+    public static final String DBSERVER_PG_WORKDIR_SPRING_BASE_VALUE = DBSERVER_BASEDIR_SPRING_BASE_VALUE + "/pgwork}";
+
+    public static final String CONFIGURATION_FOLDER_SPRING_VALUE = "${chutney.configuration-folder:~/.chutney/conf}";
+    public static final String ENGINE_REPORTER_PUBLISHER_TTL_SPRING_VALUE = "${chutney.engine.reporter.publisher.ttl:5}";
+    public static final String EXECUTION_ASYNC_PUBLISHER_TTL_SPRING_VALUE = "${chutney.execution.async.publisher.ttl:5}";
+    public static final String EXECUTION_ASYNC_PUBLISHER_DEBOUNCE_SPRING_VALUE = "${chutney.execution.async.publisher.debounce:250}";
+    public static final String CAMPAIGNS_THREAD_SPRING_VALUE = "${chutney.campaigns.thread:20}";
+    public static final String AGENTNETWORK_CONNECTION_CHECK_TIMEOUT_SPRING_VALUE = "${chutney.agentnetwork.connection-checker-timeout:1000}";
+    public static final String LOCALAGENT_DEFAULTNAME_SPRING_VALUE = "${chutney.localAgent.defaultName:#{null}}";
+    public static final String LOCALAGENT_DEFAULTHOSTNAME_SPRING_VALUE = "${chutney.localAgent.defaultHostName:#{null}}";
+    public static final String EXAMPLES_ACTIVE_SPRING_VALUE = "${chutney.examples.active:false}";
+    public static final String EDITIONS_TTL_VALUE_SPRING_VALUE = "${chutney.editions.ttl.value:6}";
+    public static final String EDITIONS_TTL_UNIT_SPRING_VALUE = "${chutney.editions.ttl.unit:HOURS}";
+
+    @Value(SERVER_PORT_SPRING_VALUE)
     int port;
 
     @PostConstruct
@@ -56,7 +78,7 @@ public class ServerConfiguration {
     }
 
     @Bean
-    public ExecutionConfiguration executionConfiguration(@Value("${chutney.engine.reporter.publisher.ttl:5}") Long reporterTTL) {
+    public ExecutionConfiguration executionConfiguration(@Value(ENGINE_REPORTER_PUBLISHER_TTL_SPRING_VALUE) Long reporterTTL) {
         return new ExecutionConfiguration(reporterTTL);
     }
 
@@ -86,8 +108,8 @@ public class ServerConfiguration {
                                                               TestCasePreProcessors testCasePreProcessors,
                                                               ObjectMapper objectMapper,
                                                               DataSetHistoryRepository dataSetHistoryRepository,
-                                                              @Value("${chutney.execution.async.publisher.ttl:5}") long replayerRetention,
-                                                              @Value("${chutney.execution.async.publisher.debounce:250}") long debounceMilliSeconds) {
+                                                              @Value(EXECUTION_ASYNC_PUBLISHER_TTL_SPRING_VALUE) long replayerRetention,
+                                                              @Value(EXECUTION_ASYNC_PUBLISHER_DEBOUNCE_SPRING_VALUE) long debounceMilliSeconds) {
         return new ScenarioExecutionEngineAsync(
             executionHistoryRepository,
             executionEngine,
@@ -113,7 +135,7 @@ public class ServerConfiguration {
                                                     DataSetHistoryRepository dataSetHistoryRepository,
                                                     JiraXrayPlugin jiraXrayPlugin,
                                                     ChutneyMetrics metrics,
-                                                    @Value("${chutney.campaigns.thread:20}") Integer threadForCampaigns) {
+                                                    @Value(CAMPAIGNS_THREAD_SPRING_VALUE) Integer threadForCampaigns) {
         return new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository, jiraXrayPlugin, metrics, threadForCampaigns);
     }
 

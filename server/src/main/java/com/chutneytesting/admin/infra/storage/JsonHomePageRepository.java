@@ -1,5 +1,6 @@
 package com.chutneytesting.admin.infra.storage;
 
+import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
 
 import com.chutneytesting.admin.domain.HomePage;
@@ -26,7 +27,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class JsonHomePageRepository implements HomePageRepository {
 
-    private static final Path ROOT_DIRECTORY_NAME = Paths.get("homepage");
+    static final Path ROOT_DIRECTORY_NAME = Paths.get("homepage");
     static final String HOME_PAGE_NAME = "home-page.json";
     private final Path homePageContent;
 
@@ -36,7 +37,7 @@ public class JsonHomePageRepository implements HomePageRepository {
         .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
     private final ReadWriteLock rwLock;
 
-    public JsonHomePageRepository(@Value("${chutney.configuration-folder:~/.chutney/conf}") String storeFolderPath)
+    public JsonHomePageRepository(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath)
         throws UncheckedIOException {
 
         this.rwLock = new ReentrantReadWriteLock(true);

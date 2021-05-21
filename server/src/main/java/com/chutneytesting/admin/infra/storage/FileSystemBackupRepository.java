@@ -1,5 +1,6 @@
 package com.chutneytesting.admin.infra.storage;
 
+import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
 
 import com.chutneytesting.admin.domain.Backup;
@@ -67,7 +68,7 @@ public class FileSystemBackupRepository implements BackupRepository {
                                       EnvironmentRepository environmentRepository,
                                       GlobalvarRepository globalvarRepository,
                                       CurrentNetworkDescription currentNetworkDescription,
-                                      @Value("${chutney.configuration-folder:~/.chutney/conf}") String backupsRootPath) {
+                                      @Value(CONFIGURATION_FOLDER_SPRING_VALUE) String backupsRootPath) {
         this.backupsRootPath = Paths.get(backupsRootPath).resolve(ROOT_DIRECTORY_NAME).toAbsolutePath();
         initFolder(this.backupsRootPath);
 

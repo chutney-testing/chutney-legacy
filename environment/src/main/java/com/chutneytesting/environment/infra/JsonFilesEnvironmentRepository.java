@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 public class JsonFilesEnvironmentRepository implements EnvironmentRepository {
 
-    static final Path ROOT_DIRECTORY_NAME = Paths.get("env");
+    static final Path ROOT_DIRECTORY_NAME = Paths.get("environment");
     private static final String JSON_FILE_EXT = ".json";
 
     private final Path storeFolderPath;

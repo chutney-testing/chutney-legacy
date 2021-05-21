@@ -1,5 +1,6 @@
 package com.chutneytesting.admin.infra.storage;
 
+import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
 
 import com.chutneytesting.design.infra.storage.scenario.git.GitRepository;
@@ -27,7 +28,7 @@ public class JsonFilesGitRepository {
         .enable(SerializationFeature.INDENT_OUTPUT)
         .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
-    JsonFilesGitRepository(@Value("${chutney.configuration-folder:~/.chutney/conf}") String storeFolderPath) throws UncheckedIOException {
+    JsonFilesGitRepository(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) throws UncheckedIOException {
         this.storeFolderPath = Paths.get(storeFolderPath).resolve(ROOT_DIRECTORY_NAME).toAbsolutePath();
         initFolder(this.storeFolderPath);
     }

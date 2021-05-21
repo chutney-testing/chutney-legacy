@@ -48,6 +48,8 @@ spring:
 
 chutney:
   configuration-folder: .chutney/conf
+  environment:
+    configuration-folder: ${chutney.configuration-folder}
   orient:
     path: .chutney/data/orient
     contextConfiguration:

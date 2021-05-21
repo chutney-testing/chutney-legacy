@@ -1,5 +1,7 @@
 package com.chutneytesting.admin;
 
+import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
+
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentProvider;
 import com.chutneytesting.admin.domain.gitbackup.GitBackupService;
 import com.chutneytesting.admin.domain.gitbackup.GitClient;
@@ -32,7 +34,7 @@ public class GitSpringConfiguration {
     public GitBackupService gitBackupService(Remotes remotes,
                                              GitClient gitClient,
                                              Set<ChutneyContentProvider> contentProviders,
-                                             @Value("${chutney.configuration-folder:~/.chutney/conf}") String gitRepositoryFolderPath) {
+                                             @Value(CONFIGURATION_FOLDER_SPRING_VALUE) String gitRepositoryFolderPath) {
         return new GitBackupService(remotes, gitClient, contentProviders, gitRepositoryFolderPath);
     }
 

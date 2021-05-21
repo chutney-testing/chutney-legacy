@@ -1,5 +1,6 @@
 package com.chutneytesting.agent.infra.storage;
 
+import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
 import static java.util.Optional.of;
 
@@ -36,7 +37,7 @@ public class JsonFileAgentNetworkDao {
     private final ReadWriteLock rwLock = new ReentrantReadWriteLock(false);
     private final File file;
 
-    public JsonFileAgentNetworkDao(@Value("${chutney.configuration-folder:~/.chutney/conf}") String storeFolderPath) {
+    public JsonFileAgentNetworkDao(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) {
         Path dir = Paths.get(storeFolderPath).resolve(ROOT_DIRECTORY_NAME).toAbsolutePath();
         initFolder(dir);
         this.file = dir.resolve(AGENTS_FILE_NAME).toFile();

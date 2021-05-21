@@ -50,14 +50,14 @@ public class FileSystemBackupRepositoryTest {
 
     @AfterEach
     public void after() {
-        Try.exec(() -> FileSystemUtils.deleteRecursively(backupsRootPath.resolve(ROOT_DIRECTORY_NAME))).runtime();
+        Try.exec(() -> FileSystemUtils.deleteRecursively(backupsRootPath)).runtime();
     }
 
     @Test
     public void should_create_backup_root_path_when_instantiate() throws IOException {
         // Given
         Files.deleteIfExists(backupsRootPath.resolve(ROOT_DIRECTORY_NAME));
-        backupsRootPath = Paths.get("freshNewBackups");
+        backupsRootPath = Files.createTempDirectory(Paths.get("target"), "freshNewBackups");
         // When
         sut = new FileSystemBackupRepository(orientComponentDB, homePageRepository, environmentRepository, globalvarRepository, currentNetworkDescription, backupsRootPath.toString());
         // Then

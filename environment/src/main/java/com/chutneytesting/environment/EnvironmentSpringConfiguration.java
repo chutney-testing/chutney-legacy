@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class EnvironmentSpringConfiguration {
 
+    public static final String CONFIGURATION_FOLDER_SPRING_VALUE = "${chutney.environment.configuration-folder:~/.chutney/conf}";
+
     @Bean
     EmbeddedEnvironmentApi environmentEmbeddedApplication(EnvironmentService environmentService) {
         return new EmbeddedEnvironmentApi(environmentService);
@@ -23,7 +25,7 @@ public class EnvironmentSpringConfiguration {
     }
 
     @Bean
-    JsonFilesEnvironmentRepository jsonFilesEnvironmentRepository(@Value("${chutney.configuration-folder:~/.chutney/conf}") String storeFolderPath) throws UncheckedIOException {
+    JsonFilesEnvironmentRepository jsonFilesEnvironmentRepository(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) throws UncheckedIOException {
         return new JsonFilesEnvironmentRepository(storeFolderPath);
     }
 }
