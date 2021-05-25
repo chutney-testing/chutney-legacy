@@ -11,6 +11,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class SqlClient {
 
@@ -99,12 +100,12 @@ public class SqlClient {
 
         private static Object boxed(ResultSet rs, int i) throws SQLException {
             Object o = rs.getObject(i);
-            Class<?> type = o.getClass();
+            Class<?> type = o==null ? Object.class : o.getClass();
             if (isPrimitiveOrWrapper(type)) {
                 return o;
             }
 
-            return rs.getString(i);
+            return Optional.ofNullable(rs.getString(i)).orElse("null");
         }
 
     }

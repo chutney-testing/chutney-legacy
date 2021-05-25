@@ -47,12 +47,13 @@ public class SqlTaskTest {
     public void testExecute() {
         Object[] firstTuple = {1, "laitue", "laitue@fake.com"};
         Object[] secondTuple = {2, "carotte", "kakarot@fake.db"};
+        Object[] thirdTuple = {3, "tomate", "null"};
 
         Task task = new SqlTask(sqlTarget, logger, Collections.singletonList("select * from users"));
         TaskExecutionResult result = task.execute();
 
         List<Records> recordResult = (List<Records>) result.outputs.get("recordResult");
         assertThat(result.status).isEqualTo(TaskExecutionResult.Status.Success);
-        assertThat(Arrays.stream(recordResult.get(0).toMatrix()).toArray()).containsExactly(firstTuple, secondTuple);
+        assertThat(Arrays.stream(recordResult.get(0).toMatrix()).toArray()).containsExactly(firstTuple, secondTuple, thirdTuple);
     }
 }
