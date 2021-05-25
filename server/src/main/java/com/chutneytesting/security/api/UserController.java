@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,5 +25,11 @@ public class UserController {
     @SuppressWarnings("unused")
     public UserDto currentUser(HttpServletRequest request, HttpServletResponse response) {
         return userService.currentUser();
+    }
+
+    @PostMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @SuppressWarnings("unused")
+    public UserDto loginForwardUser(HttpServletRequest request, HttpServletResponse response) {
+        return this.currentUser(request, response);
     }
 }
