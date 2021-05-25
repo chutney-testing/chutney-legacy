@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.3.5](https://github.com/chutney-testing/chutney/tree/1.3.5) (2021-05-25)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.4...HEAD)
+
+**Merged pull requests:**
+
+- bugfix\(task-impl\): fix NPE on null sql result column [\#438](https://github.com/chutney-testing/chutney/pull/438) ([rbenyoussef](https://github.com/rbenyoussef))
+
+
 ## [1.3.4](https://github.com/chutney-testing/chutney/tree/1.3.4)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.3...HEAD)
