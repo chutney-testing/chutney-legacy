@@ -35,7 +35,7 @@ public class ComposableTestCaseMapperTest {
             .title("Default title")
             .description("Default description")
             .creationDate(Instant.MIN)
-            .addTags("tag1", "tag2")
+            .addTags("tag1", "tag2", "")
             .scenario(
                 ImmutableComposableScenarioDto.builder()
                     .componentSteps(Collections.singletonList(

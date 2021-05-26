@@ -1,14 +1,15 @@
 package com.chutneytesting.design.domain.scenario;
 
-import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.security.domain.User;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 
 public final class TestCaseMetadataImpl implements TestCaseMetadata {
 
@@ -148,7 +149,7 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
                 ofNullable(id).orElse("-42"),
                 ofNullable(title).orElse(""),
                 ofNullable(description).orElse(""),
-                (ofNullable(tags).orElse(emptyList())).stream().map(String::toUpperCase).map(String::trim).collect(Collectors.toList()),
+                ofNullable(tags).stream().flatMap(Collection::stream).filter(StringUtils::isNotBlank).map(String::toUpperCase).map(String::trim).collect(Collectors.toList()),
                 creationDate,
                 ofNullable(repositorySource).orElse(TestCaseRepository.DEFAULT_REPOSITORY_SOURCE),
                 ofNullable(datasetId).orElse(null),
