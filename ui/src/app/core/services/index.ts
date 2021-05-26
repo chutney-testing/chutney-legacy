@@ -13,3 +13,4 @@ export * from './scenario.service';
 export * from './step.service';
 export * from './stores-admin.service';
 export * from './edition.service';
+export * from './roles.service';

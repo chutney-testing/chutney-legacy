@@ -14,7 +14,8 @@
             "backups": "Backups",
             "variable": "Variable",
             "dataset": "Dataset",
-            "jiraId": "Jira identifier"
+            "jiraId": "Jira identifier",
+            "roles": "Roles"
         }
     },
     "home": {
@@ -357,6 +358,10 @@
             "today.at": "Today at"
         },
         "actions": {
+            "ongoing": {
+                "saving": "Saving ..."
+            },
+
             "search": "Search",
             "add": "Add",
             "edit": "Edit",
@@ -380,6 +385,7 @@
             "stop": "Stop",
             "resume": "Resume",
             "pause": "Pause",
+            "help": "Help",
 
             "done": {
                 "saved": "Saved"

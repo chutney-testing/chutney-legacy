@@ -14,7 +14,8 @@
             "backups": "Sauvegardes",
             "variable": "Variable",
             "dataset": "Dataset",
-            "jiraId": "Identifiant jira"
+            "jiraId": "Identifiant jira",
+            "roles": "Roles"
         }
     },
     "home": {
@@ -357,6 +358,10 @@
             "today.at": "Aujourd'hui à"
         },
         "actions": {
+            "ongoing": {
+                "saving": "Sauvegarde ..."
+            },
+
             "search": "Rechercher",
             "add": "Ajouter",
             "edit": "Éditer",
@@ -380,6 +385,7 @@
             "stop": "Stopper",
             "resume": "Reprendre",
             "pause": "Suspendre",
+            "help": "Aide",
 
             "done": {
                 "saved": "Sauvegarde réalisée"
