@@ -179,6 +179,7 @@ export class ActionEditComponent implements OnChanges {
         this.clearFormArray(this.actionForm.controls.inputsList as FormArray);
         this.clearFormArray(this.actionForm.controls.parameters as FormArray);
         this.clearFormArray(this.actionForm.controls.outputs as FormArray);
+        this.clearFormArray(this.actionForm.controls.validations as FormArray);
 
         this.actionForm.controls.name.patchValue(component.name);
         this.actionForm.controls.target.patchValue(component.implementation.target);
