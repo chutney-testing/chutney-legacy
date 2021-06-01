@@ -1,7 +1,11 @@
 package com.chutneytesting.task.sql.core;
 
+import static com.chutneytesting.tools.ChutneyMemoryInfo.MAX_MEMORY;
+import static com.chutneytesting.tools.ChutneyMemoryInfo.hasEnoughAvailableMemory;
+import static com.chutneytesting.tools.ChutneyMemoryInfo.usedMemory;
 import static org.apache.commons.lang3.ClassUtils.isPrimitiveOrWrapper;
 
+import com.chutneytesting.tools.NotEnoughMemoryException;
 import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -16,9 +20,11 @@ import java.util.Optional;
 public class SqlClient {
 
     private final HikariDataSource dataSource;
+    private final int maxFetchSize;
 
-    public SqlClient(HikariDataSource dataSource) {
+    public SqlClient(HikariDataSource dataSource, int maxFetchSize) {
         this.dataSource = dataSource;
+        this.maxFetchSize = maxFetchSize;
     }
 
     public Records execute(String query) throws SQLException {
@@ -27,6 +33,7 @@ public class SqlClient {
         try {
             connection = dataSource.getConnection();
             try (final Statement statement = connection.createStatement()) {
+                statement.setFetchSize(maxFetchSize);
                 statement.execute(query);
                 records = StatementConverter.createRecords(statement);
             }
@@ -89,6 +96,10 @@ public class SqlClient {
         private static List<List<Object>> createRows(ResultSet rs, int columnCount) throws SQLException {
             final List<List<Object>> rows = new ArrayList<>();
             while (rs.next()) {
+                if (!hasEnoughAvailableMemory()) {
+                    throw new NotEnoughMemoryException(usedMemory(), MAX_MEMORY, "Query fetched " + rows.size() + " rows");
+                }
+
                 final List<Object> row = new ArrayList<>(columnCount);
                 for (int i = 1; i <= columnCount; i++) {
                     row.add(boxed(rs, i));

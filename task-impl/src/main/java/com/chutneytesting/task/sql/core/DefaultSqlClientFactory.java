@@ -1,11 +1,15 @@
 package com.chutneytesting.task.sql.core;
 
+import static java.util.Optional.ofNullable;
+
+import com.chutneytesting.task.spi.injectable.Target;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import com.chutneytesting.task.spi.injectable.Target;
 import java.util.Properties;
 
 public class DefaultSqlClientFactory implements SqlClientFactory {
+
+    private final int DEFAULT_MAX_FETCH_SIZE = 1000;
 
     @Override
     public SqlClient create(Target target) {
@@ -22,6 +26,6 @@ public class DefaultSqlClientFactory implements SqlClientFactory {
         final HikariConfig config = new HikariConfig(props);
         final HikariDataSource ds = new HikariDataSource(config);
 
-        return new SqlClient(ds);
+        return new SqlClient(ds, ofNullable(target.properties().get("maxFetchSize")).map(Integer::getInteger).orElse(DEFAULT_MAX_FETCH_SIZE));
     }
 }
