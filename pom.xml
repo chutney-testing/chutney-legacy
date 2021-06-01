@@ -125,7 +125,7 @@
         <wire-mock.version>2.26.3</wire-mock.version>
         <pitest.version>1.5.1</pitest.version>
         <otj-pg-embedded.version>0.13.1</otj-pg-embedded.version>
-        <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
         <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
         <awaitility.version>4.0.3</awaitility.version>
     </properties>
