@@ -3,7 +3,7 @@ package com.chutneytesting.task.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
-import com.chutneytesting.task.TestTaskTemplateFactory.ComplexeTask;
+import com.chutneytesting.task.TestTaskTemplateFactory.ComplexTask;
 import com.chutneytesting.task.TestTaskTemplateFactory.Pojo;
 import com.chutneytesting.task.TestTaskTemplateFactory.TwoParametersTask;
 import com.chutneytesting.task.TestTaskTemplateFactory.ValidSimpleTask;
@@ -46,8 +46,8 @@ public class TaskTemplateV2Test {
     }
 
     @Test
-    public void task_with_complexe_parameters_instantiation_and_execution() {
-        TaskTemplate taskTemplate = new TaskTemplateParserV2().parse(ComplexeTask.class).result();
+    public void task_with_complex_parameters_instantiation_and_execution() {
+        TaskTemplate taskTemplate = new TaskTemplateParserV2().parse(ComplexTask.class).result();
         String stringValue = UUID.randomUUID().toString();
         Pojo pojo = new Pojo("1", "2");
         Task task = taskTemplate.create(Arrays.asList(
@@ -55,7 +55,7 @@ public class TaskTemplateV2Test {
             new TypeBasedParameterResolver<>(Pojo.class, p -> pojo)
         ));
 
-        assertThat(task).isExactlyInstanceOf(ComplexeTask.class);
+        assertThat(task).isExactlyInstanceOf(ComplexTask.class);
 
         TaskExecutionResult executionResult = task.execute();
 

@@ -2,7 +2,7 @@ package com.chutneytesting.task.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.task.TestTaskTemplateFactory.ComplexeTask;
+import com.chutneytesting.task.TestTaskTemplateFactory.ComplexTask;
 import com.chutneytesting.task.TestTaskTemplateFactory.TwoConstructorTask;
 import com.chutneytesting.task.TestTaskTemplateFactory.TwoParametersTask;
 import com.chutneytesting.task.TestTaskTemplateFactory.ValidSimpleTask;
@@ -24,13 +24,13 @@ public class TaskTemplateParserV2Test {
     }
 
     @Test
-    public void complexe_task_parsing() {
-        ResultOrError<TaskTemplate, ParsingError> parsingResult = parser.parse(ComplexeTask.class);
+    public void complex_task_parsing() {
+        ResultOrError<TaskTemplate, ParsingError> parsingResult = parser.parse(ComplexTask.class);
 
         assertThat(parsingResult.isOk()).isTrue();
         TaskTemplate taskTemplate = parsingResult.result();
-        assertThat(taskTemplate.identifier()).isEqualTo("complexe");
-        assertThat(taskTemplate.implementationClass()).isEqualTo(ComplexeTask.class);
+        assertThat(taskTemplate.identifier()).isEqualTo("complex");
+        assertThat(taskTemplate.implementationClass()).isEqualTo(ComplexTask.class);
         assertThat(taskTemplate.parameters()).hasSize(2);
     }
 

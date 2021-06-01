@@ -83,12 +83,12 @@ public abstract class TestTaskTemplateFactory {
         }
     }
 
-    public static class ComplexeTask implements Task {
+    public static class ComplexTask implements Task {
 
         private final String someString;
         private final Pojo someObject;
 
-        public ComplexeTask(@Input("stringParam") String someString, @Input("pojoParam") Pojo someObject) {
+        public ComplexTask(@Input("stringParam") String someString, @Input("pojoParam") Pojo someObject) {
            this.someString = someString;
            this.someObject = someObject;
         }
