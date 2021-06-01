@@ -1,9 +1,13 @@
 package com.chutneytesting.admin.infra.storage;
 
+import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
+import static com.chutneytesting.tools.file.FileUtils.initFolder;
+
+import com.chutneytesting.design.infra.storage.scenario.git.GitRepository;
+import com.chutneytesting.tools.file.FileUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.chutneytesting.design.infra.storage.scenario.git.GitRepository;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
@@ -11,25 +15,22 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
 import java.util.stream.Collectors;
-import com.chutneytesting.tools.file.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-/**
- * TODO create abstract file persistence repository. Same as JsonFilesEnvironmentRepository.
- */
 @Repository
 public class JsonFilesGitRepository {
 
+    private static final Path ROOT_DIRECTORY_NAME = Paths.get("git");
     private final Path storeFolderPath;
     private final ObjectMapper objectMapper = new ObjectMapper()
         .findAndRegisterModules()
         .enable(SerializationFeature.INDENT_OUTPUT)
         .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
-    JsonFilesGitRepository(@Value("${git-configuration-folder:git-conf}") String storeFolderPath) throws UncheckedIOException {
-        this.storeFolderPath = Paths.get(storeFolderPath).toAbsolutePath();
-        initFolder();
+    JsonFilesGitRepository(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) throws UncheckedIOException {
+        this.storeFolderPath = Paths.get(storeFolderPath).resolve(ROOT_DIRECTORY_NAME).toAbsolutePath();
+        initFolder(this.storeFolderPath);
     }
 
     public synchronized void save(GitRepository gitRepository) throws UnsupportedOperationException {
@@ -77,29 +78,6 @@ public class JsonFilesGitRepository {
             Files.delete(gitRepositoryPath);
         } catch (IOException e) {
             throw new RuntimeException("Cannot delete git-configuration file: " + gitRepositoryPath, e);
-        }
-    }
-
-    private void initFolder() throws UncheckedIOException {
-        try {
-            Files.createDirectories(storeFolderPath);
-        } catch (IOException e) {
-            throw new IllegalStateException("Cannot create configuration directory: " + storeFolderPath, e);
-        }
-
-        Path testPath = storeFolderPath.resolve("test");
-        if (!Files.exists(testPath)) {
-            try {
-                Files.createFile(storeFolderPath.resolve("test"));
-            } catch (IOException e) {
-                throw new UncheckedIOException("Unable to initFolder in configuration directory: " + storeFolderPath, e);
-            }
-        }
-
-        try {
-            Files.delete(testPath);
-        } catch (IOException e) {
-            throw new UncheckedIOException("Unable to initFolder in configuration directory: " + storeFolderPath, e);
         }
     }
 

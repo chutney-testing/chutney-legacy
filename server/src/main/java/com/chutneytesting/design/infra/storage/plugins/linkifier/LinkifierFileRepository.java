@@ -1,5 +1,6 @@
 package com.chutneytesting.design.infra.storage.plugins.linkifier;
 
+import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
 
 import com.chutneytesting.design.domain.plugins.linkifier.Linkifier;
@@ -34,7 +35,7 @@ public class LinkifierFileRepository implements Linkifiers {
         .enable(SerializationFeature.INDENT_OUTPUT)
         .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
-    LinkifierFileRepository(@Value("${configuration-folder:conf}") String storeFolderPath) throws UncheckedIOException {
+    LinkifierFileRepository(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) throws UncheckedIOException {
         this.storeFolderPath = Paths.get(storeFolderPath).resolve(ROOT_DIRECTORY_NAME);
         this.resolvedFilePath = this.storeFolderPath.resolve(LINKIFIER_FILE);
         initFolder(this.storeFolderPath);
@@ -67,7 +68,8 @@ public class LinkifierFileRepository implements Linkifiers {
         try {
             if (Files.exists(resolvedFilePath)) {
                 byte[] bytes = Files.readAllBytes(resolvedFilePath);
-                linkifiers.putAll(objectMapper.readValue(bytes, new TypeReference<HashMap<String, LinkifierDto>>() {}));
+                linkifiers.putAll(objectMapper.readValue(bytes, new TypeReference<HashMap<String, LinkifierDto>>() {
+                }));
             }
         } catch (IOException e) {
             throw new UnsupportedOperationException("Cannot read configuration file: " + resolvedFilePath, e);

@@ -1,5 +1,8 @@
 package com.chutneytesting.admin.infra.storage;
 
+import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
+import static com.chutneytesting.tools.file.FileUtils.initFolder;
+
 import com.chutneytesting.admin.domain.Backup;
 import com.chutneytesting.admin.domain.BackupNotFoundException;
 import com.chutneytesting.admin.domain.BackupRepository;
@@ -40,6 +43,7 @@ public class FileSystemBackupRepository implements BackupRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemBackupRepository.class);
 
+    static final Path ROOT_DIRECTORY_NAME = Paths.get("backups", "zip");
     static final String HOME_PAGE_BACKUP_NAME = "homepage.zip";
     static final String ENVIRONMENTS_BACKUP_NAME = "environments.zip";
     static final String AGENTS_BACKUP_NAME = "agents.zip";
@@ -64,9 +68,9 @@ public class FileSystemBackupRepository implements BackupRepository {
                                       EnvironmentRepository environmentRepository,
                                       GlobalvarRepository globalvarRepository,
                                       CurrentNetworkDescription currentNetworkDescription,
-                                      @Value("${chutney.backups.root:backups}") String backupsRootPath) {
-        this.backupsRootPath = Paths.get(backupsRootPath).toAbsolutePath();
-        Try.exec(() -> Files.createDirectories(this.backupsRootPath)).runtime();
+                                      @Value(CONFIGURATION_FOLDER_SPRING_VALUE) String backupsRootPath) {
+        this.backupsRootPath = Paths.get(backupsRootPath).resolve(ROOT_DIRECTORY_NAME).toAbsolutePath();
+        initFolder(this.backupsRootPath);
 
         this.orientComponentDB = orientComponentDB;
         this.homePageRepository = homePageRepository;

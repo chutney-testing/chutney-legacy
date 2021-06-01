@@ -1,23 +1,28 @@
 package com.chutneytesting.agent.infra.storage;
 
+import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
+import static com.chutneytesting.tools.file.FileUtils.initFolder;
 import static java.util.Optional.of;
 
 import com.chutneytesting.tools.ThrowingRunnable;
 import com.chutneytesting.tools.ThrowingSupplier;
 import com.chutneytesting.tools.ZipUtils;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.io.Files;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.zip.ZipOutputStream;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
@@ -26,15 +31,16 @@ import org.springframework.stereotype.Component;
 @Primary
 public class JsonFileAgentNetworkDao {
 
-    private final ObjectMapper objectMapper;
+    static final Path ROOT_DIRECTORY_NAME = Paths.get("agents");
+    static final String AGENTS_FILE_NAME = "endpoints.json";
+    private final ObjectMapper objectMapper = buildObjectMapper();
     private final ReadWriteLock rwLock = new ReentrantReadWriteLock(false);
     private final File file;
 
-    public JsonFileAgentNetworkDao(
-        @Qualifier("agentNetworkPersistenceObjectMapper") ObjectMapper objectMapper,
-        @Value("${persistence.agentNetwork.file:conf/endpoints.json}") File file) {
-        this.objectMapper = objectMapper;
-        this.file = file;
+    public JsonFileAgentNetworkDao(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) {
+        Path dir = Paths.get(storeFolderPath).resolve(ROOT_DIRECTORY_NAME).toAbsolutePath();
+        initFolder(dir);
+        this.file = dir.resolve(AGENTS_FILE_NAME).toFile();
         file.delete(); // TODO keep/refresh network configuration on restart
     }
 
@@ -67,5 +73,20 @@ public class JsonFileAgentNetworkDao {
         } finally {
             lock.unlock();
         }
+    }
+
+    private ObjectMapper buildObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper()
+            .findAndRegisterModules()
+            .enable(SerializationFeature.INDENT_OUTPUT);
+
+        return objectMapper.setVisibility(
+            objectMapper.getSerializationConfig()
+                .getDefaultVisibilityChecker()
+                .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
+                .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
+                .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
+                .withCreatorVisibility(JsonAutoDetect.Visibility.NONE)
+        );
     }
 }

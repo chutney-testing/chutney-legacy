@@ -21,7 +21,6 @@ public class GitRemoteFileRepositoryTest {
     public static void setUp(@TempDir Path temporaryFolder) {
         String tmpConfDir = temporaryFolder.toFile().getAbsolutePath();
         System.setProperty("configuration-folder", tmpConfDir);
-        System.setProperty("persistence-repository-folder", tmpConfDir);
 
         sut = new RemotesFileRepository(tmpConfDir);
         REMOTES_FILE = Paths.get(tmpConfDir + "/plugins/git-remotes.json");

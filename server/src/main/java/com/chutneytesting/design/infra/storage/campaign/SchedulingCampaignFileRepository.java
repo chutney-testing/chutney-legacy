@@ -1,5 +1,6 @@
 package com.chutneytesting.design.infra.storage.campaign;
 
+import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
 import static com.chutneytesting.design.domain.campaign.FREQUENCY.tofrequency;
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
 
@@ -42,7 +43,7 @@ public class SchedulingCampaignFileRepository implements SchedulingCampaignRepos
         .enable(SerializationFeature.INDENT_OUTPUT)
         .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
-    SchedulingCampaignFileRepository(@Value("${configuration-folder:conf}") String storeFolderPath) throws UncheckedIOException {
+    SchedulingCampaignFileRepository(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) throws UncheckedIOException {
         this.storeFolderPath = Paths.get(storeFolderPath).resolve(ROOT_DIRECTORY_NAME);
         this.resolvedFilePath = this.storeFolderPath.resolve(SCHEDULING_CAMPAIGNS_FILE);
         initFolder(this.storeFolderPath);

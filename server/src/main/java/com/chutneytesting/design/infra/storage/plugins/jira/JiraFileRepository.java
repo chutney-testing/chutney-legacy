@@ -1,5 +1,6 @@
 package com.chutneytesting.design.infra.storage.plugins.jira;
 
+import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
 import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
 import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
@@ -41,7 +42,7 @@ public class JiraFileRepository implements JiraRepository {
         .enable(SerializationFeature.INDENT_OUTPUT)
         .setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
-    JiraFileRepository(@Value("${configuration-folder:conf}") String storeFolderPath) throws UncheckedIOException {
+    JiraFileRepository(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) throws UncheckedIOException {
         this.storeFolderPath = Paths.get(storeFolderPath).resolve(ROOT_DIRECTORY_NAME);
         initFolder(this.storeFolderPath);
     }

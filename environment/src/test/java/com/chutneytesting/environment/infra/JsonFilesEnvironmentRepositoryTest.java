@@ -1,13 +1,14 @@
 package com.chutneytesting.environment.infra;
 
+import static com.chutneytesting.environment.infra.JsonFilesEnvironmentRepository.ROOT_DIRECTORY_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.chutneytesting.environment.domain.Environment;
-import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
 import com.chutneytesting.environment.domain.SecurityInfo;
 import com.chutneytesting.environment.domain.Target;
+import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
 import com.chutneytesting.tools.ThrowingConsumer;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,7 +27,7 @@ public class JsonFilesEnvironmentRepositoryTest {
 
     @AfterEach
     public void after() {
-        try (Stream<Path> confStream = Files.list(CONFIGURATION_FOLDER)) {
+        try (Stream<Path> confStream = Files.list(CONFIGURATION_FOLDER.resolve(ROOT_DIRECTORY_NAME))) {
             confStream.forEach(ThrowingConsumer.toUnchecked(Files::delete));
         } catch (IOException e) {
             throw new RuntimeException(e);

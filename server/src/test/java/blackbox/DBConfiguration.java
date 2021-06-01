@@ -1,5 +1,9 @@
 package blackbox;
 
+import static com.chutneytesting.ServerConfiguration.DBSERVER_PG_BASEDIR_SPRING_BASE_VALUE;
+import static com.chutneytesting.ServerConfiguration.DBSERVER_PG_WORKDIR_SPRING_BASE_VALUE;
+import static com.chutneytesting.ServerConfiguration.DBSERVER_PORT_SPRING_VALUE;
+
 import com.opentable.db.postgres.embedded.EmbeddedPostgres;
 import com.zaxxer.hikari.HikariDataSource;
 import java.io.File;
@@ -25,9 +29,9 @@ public class DBConfiguration {
 
     @Bean
     EmbeddedPostgres dbServer(
-        @Value("${chutney.db-server.port}") int dbServerPort,
-        @Value("${chutney.db-server.base-dir:~/.chutney/pgdata}") String baseDir,
-        @Value("${chutney.db-server.work-dir:~/.chutney/pgwork}") String workDir) throws IOException {
+        @Value(DBSERVER_PORT_SPRING_VALUE) int dbServerPort,
+        @Value(DBSERVER_PG_BASEDIR_SPRING_BASE_VALUE) String baseDir,
+        @Value(DBSERVER_PG_WORKDIR_SPRING_BASE_VALUE) String workDir) throws IOException {
 
         return EmbeddedPostgres.builder()
             .setPort(dbServerPort)

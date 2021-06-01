@@ -47,27 +47,34 @@ spring:
       - db-h2
 
 chutney:
-  db-server:
-    port: 9360
-    base-dir: ./.chutney
-  engine:
-    reporter:
-      publisher:
-        ttl: 5
+  configuration-folder: .chutney/conf
+  environment:
+    configuration-folder: ${chutney.configuration-folder}
+  orient:
+    path: .chutney/data/orient
+    contextConfiguration:
+      "[storage.diskCache.diskFreeSpaceLimit]": 384
+      "[storage.diskCache.bufferSize]": 1024
   execution:
     async:
       publisher:
         ttl: 5
         debounce: 250
-  backups:
-    root: backups
+  engine:
+    reporter:
+      publisher:
+        ttl: 5
   examples:
     active: false
   campaigns:
     thread: 20
+  editions:
+    ttl:
+      value: 2
+      unit: SECONDS
+#  localAgent:
+#    defaultName:
+#    defaultHostName:
+  agentnetwork:
+    connection-checker-timeout: 1000
 
-orient:
-  path: .chutney/orient/
-  contextConfiguration:
-    "[storage.diskCache.diskFreeSpaceLimit]": 384
-    "[storage.diskCache.bufferSize]": 1024

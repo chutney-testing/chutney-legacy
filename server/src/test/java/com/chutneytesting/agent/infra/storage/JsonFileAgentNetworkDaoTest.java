@@ -1,5 +1,7 @@
 package com.chutneytesting.agent.infra.storage;
 
+import static com.chutneytesting.agent.infra.storage.JsonFileAgentNetworkDao.AGENTS_FILE_NAME;
+import static com.chutneytesting.agent.infra.storage.JsonFileAgentNetworkDao.ROOT_DIRECTORY_NAME;
 import static com.chutneytesting.tools.WaitUtils.awaitDuring;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,6 +17,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -38,9 +42,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 public class JsonFileAgentNetworkDaoTest {
 
-    private final static Path FILE_NAME = Paths.get("endpoints.json");
-
-    private final ObjectMapper objectMapper = mock(ObjectMapper.class);
+    private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
     private final ConcurrentLinkedQueue<String> errors = new ConcurrentLinkedQueue<>();
 
     private File file;
@@ -48,8 +50,10 @@ public class JsonFileAgentNetworkDaoTest {
 
     @BeforeEach
     public void setUp(@TempDir Path tempDir) throws Exception {
-        file = Files.createFile(tempDir.resolve(FILE_NAME.toString())).toFile();
-        sut = new JsonFileAgentNetworkDao(objectMapper, file);
+        sut = new JsonFileAgentNetworkDao(tempDir.toAbsolutePath().toString());
+        setFinal(sut, JsonFileAgentNetworkDao.class.getDeclaredField("objectMapper"), objectMapper);
+        Path filePath = tempDir.resolve(ROOT_DIRECTORY_NAME).resolve(AGENTS_FILE_NAME);
+        file = Files.createFile(filePath).toFile();
     }
 
     @Test
@@ -57,11 +61,10 @@ public class JsonFileAgentNetworkDaoTest {
     public void read_should_return_the_network() throws Exception {
         file.createNewFile();
         AgentNetworkForJsonFile agentNetwork = mock(AgentNetworkForJsonFile.class);
-        when(objectMapper.<AgentNetworkForJsonFile>readValue(same(file), any(Class.class))).thenReturn(agentNetwork);
+        when(objectMapper.<AgentNetworkForJsonFile>readValue(any(File.class), any(Class.class))).thenReturn(agentNetwork);
         Optional<AgentNetworkForJsonFile> result = sut.read();
         assertThat(result).hasValue(agentNetwork);
     }
-
 
     @Test
     public void read_without_existing_file_should_return_empty() throws IOException {
@@ -75,7 +78,7 @@ public class JsonFileAgentNetworkDaoTest {
         CyclicBarrier barrier = new CyclicBarrier(2);
 
         AgentNetworkForJsonFile agentNetwork = mock(AgentNetworkForJsonFile.class);
-        when(objectMapper.<AgentNetworkForJsonFile>readValue(same(file), any(Class.class))).thenAnswer(stuff -> {
+        when(objectMapper.<AgentNetworkForJsonFile>readValue(any(File.class), any(Class.class))).thenAnswer(stuff -> {
             tryAndKeepError(() -> barrier.await(1, TimeUnit.SECONDS));
             return agentNetwork;
         });
@@ -113,9 +116,9 @@ public class JsonFileAgentNetworkDaoTest {
             readSubmitted.tryAcquire(2, TimeUnit.SECONDS);
             if (reading.get()) errors.add("file has been read while writing");
             return null;
-        }).when(objectMapper).writeValue(same(file), same(agentNetwork));
+        }).when(objectMapper).writeValue(any(File.class), any(AgentNetworkForJsonFile.class));
 
-        when(objectMapper.<AgentNetworkForJsonFile>readValue(same(file), any(Class.class))).thenAnswer(stuff -> {
+        when(objectMapper.<AgentNetworkForJsonFile>readValue(any(File.class), any(Class.class))).thenAnswer(stuff -> {
             reading.set(true);
             return agentNetwork;
         });
@@ -147,7 +150,7 @@ public class JsonFileAgentNetworkDaoTest {
         }).doAnswer(stuff -> {
             otherWriting.set(true);
             return null;
-        }).when(objectMapper).writeValue(same(file), same(agentNetwork));
+        }).when(objectMapper).writeValue(any(File.class), any(AgentNetworkForJsonFile.class));
 
         ExecutorService executor = Executors.newFixedThreadPool(2);
         executor.submit(() -> sut.save(agentNetwork));
@@ -207,7 +210,7 @@ public class JsonFileAgentNetworkDaoTest {
         // Then
         ZipFile zipFile = new ZipFile(backup.toString());
         List<String> entriesNames = zipFile.stream().map(ZipEntry::getName).collect(Collectors.toList());
-        assertThat(entriesNames).containsExactly(FILE_NAME.toString());
+        assertThat(entriesNames).containsExactly(AGENTS_FILE_NAME);
     }
 
     private void tryAndKeepError(ThrowingRunnable runnable) {
@@ -218,5 +221,13 @@ public class JsonFileAgentNetworkDaoTest {
         } catch (Exception e) {
             errors.add(e.getMessage() != null ? e.getMessage() : "an error with no message occurred");
         }
+    }
+
+    private static void setFinal(Object object, Field field, Object newValue) throws Exception {
+        field.setAccessible(true);
+        Field modifiersField = Field.class.getDeclaredField("modifiers");
+        modifiersField.setAccessible(true);
+        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+        field.set(object, newValue);
     }
 }

@@ -1,7 +1,9 @@
 package com.chutneytesting.admin.infra.storage;
 
 import static com.chutneytesting.admin.infra.storage.JsonHomePageRepository.HOME_PAGE_NAME;
+import static com.chutneytesting.admin.infra.storage.JsonHomePageRepository.ROOT_DIRECTORY_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.util.Files.temporaryFolderPath;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -21,12 +23,13 @@ public class JsonHomePageRepositoryTest {
         // Given
         Path backup = Paths.get("./target/backup", "homepage");
         Files.createDirectories(backup.getParent());
-
         Files.deleteIfExists(backup);
 
-        Path homePagePath = Paths.get(org.assertj.core.util.Files.temporaryFolderPath(), HOME_PAGE_NAME);
+        Path tempDirRoot = Paths.get(temporaryFolderPath()).resolve(ROOT_DIRECTORY_NAME);
+        Files.createDirectories(tempDirRoot);
+        Path homePagePath = tempDirRoot.resolve(HOME_PAGE_NAME);
         homePagePath.toFile().createNewFile();
-        JsonHomePageRepository sut = new JsonHomePageRepository(homePagePath.getParent().toString());
+        JsonHomePageRepository sut = new JsonHomePageRepository(tempDirRoot.getParent().toAbsolutePath().toString());
 
         try (OutputStream outputStream = Files.newOutputStream(Files.createFile(backup))) {
             // When

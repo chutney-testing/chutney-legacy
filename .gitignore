@@ -1,16 +1,7 @@
 # Chutney files
-/conf/
-/git-conf/
 .chutney/
-server/conf/
-/backups
 .env/
 /ui/coverage
-
-######################
-# Chutney persistence dir
-######################
-.chutney/
 
 ######################
 # Project Specific

@@ -1,5 +1,9 @@
 package com.chutneytesting.agent;
 
+import static com.chutneytesting.ServerConfiguration.LOCALAGENT_DEFAULTHOSTNAME_SPRING_VALUE;
+import static com.chutneytesting.ServerConfiguration.LOCALAGENT_DEFAULTNAME_SPRING_VALUE;
+import static com.chutneytesting.ServerConfiguration.SERVER_PORT_SPRING_VALUE;
+
 import com.chutneytesting.agent.domain.AgentClient;
 import com.chutneytesting.agent.domain.configure.ConfigureService;
 import com.chutneytesting.agent.domain.configure.Explorations;
@@ -10,7 +14,6 @@ import com.chutneytesting.agent.domain.explore.ExploreAgentsService;
 import com.chutneytesting.engine.domain.delegation.ConnectionChecker;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
 import com.chutneytesting.tools.ui.MyMixInForIgnoreType;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -42,25 +45,9 @@ public class NodeNetworkSpringConfiguration {
     }
 
     @Bean
-    ObjectMapper agentNetworkPersistenceObjectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper()
-            .findAndRegisterModules()
-            .enable(SerializationFeature.INDENT_OUTPUT);
-
-        return objectMapper.setVisibility(
-            objectMapper.getSerializationConfig()
-                .getDefaultVisibilityChecker()
-                .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
-                .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
-                .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
-                .withCreatorVisibility(JsonAutoDetect.Visibility.NONE)
-        );
-    }
-
-    @Bean
-    LocalServerIdentifier localServerIdentifier(@Value("${server.port:0}") int port,
-                                                @Value("${localAgent.defaultName:#{null}}") Optional<String> defaultLocalName,
-                                                @Value("${localAgent.defaultHostName:#{null}}") Optional<String> defaultLocalHostName
+    LocalServerIdentifier localServerIdentifier(@Value(SERVER_PORT_SPRING_VALUE) int port,
+                                                @Value(LOCALAGENT_DEFAULTNAME_SPRING_VALUE) Optional<String> defaultLocalName,
+                                                @Value(LOCALAGENT_DEFAULTHOSTNAME_SPRING_VALUE) Optional<String> defaultLocalHostName
     ) throws UnknownHostException {
         InetAddress localHost = InetAddress.getLocalHost();
         return new LocalServerIdentifier(

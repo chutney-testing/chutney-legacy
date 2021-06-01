@@ -1,5 +1,6 @@
 package com.chutneytesting.admin.infra.gitbackup;
 
+import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
 
 import com.chutneytesting.admin.domain.gitbackup.RemoteRepository;
@@ -34,7 +35,7 @@ public class RemotesFileRepository implements Remotes {
         .enable(SerializationFeature.INDENT_OUTPUT)
         .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
-    RemotesFileRepository(@Value("${configuration-folder:conf}") String storeFolderPath) throws UncheckedIOException {
+    RemotesFileRepository(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) throws UncheckedIOException {
         this.storeFolderPath = Paths.get(storeFolderPath).resolve(ROOT_DIRECTORY_NAME);
         this.resolvedFilePath = this.storeFolderPath.resolve(REMOTES_FILE);
         initFolder(this.storeFolderPath);
@@ -72,7 +73,8 @@ public class RemotesFileRepository implements Remotes {
         try {
             if (Files.exists(resolvedFilePath)) {
                 byte[] bytes = Files.readAllBytes(resolvedFilePath);
-                remotes.putAll(objectMapper.readValue(bytes, new TypeReference<HashMap<String, GitRemoteDto>>() {}));
+                remotes.putAll(objectMapper.readValue(bytes, new TypeReference<HashMap<String, GitRemoteDto>>() {
+                }));
             }
         } catch (IOException e) {
             throw new RuntimeException("Cannot read configuration file: " + resolvedFilePath, e);
