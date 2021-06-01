@@ -122,7 +122,7 @@
         <eddsa.version>0.2.0</eddsa.version>
         <activemq.version>5.16.1</activemq.version>
         <rabbitmq-mock.version>1.1.1</rabbitmq-mock.version>
-        <wire-mock.version>2.26.3</wire-mock.version>
+        <wire-mock.version>2.27.1</wire-mock.version>
         <pitest.version>1.5.1</pitest.version>
         <otj-pg-embedded.version>0.13.1</otj-pg-embedded.version>
         <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
