@@ -43,7 +43,7 @@ spring:
       - undertow-https-redirect
       - users
       - mem-auth
-#      - dev-auth
+      - dev-auth
       - db-h2
 
 chutney:
