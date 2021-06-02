@@ -116,7 +116,7 @@ Feature: Roles declarations and users associations
             Do json-assert
                 With document ${#body}
                 With expected
-                | $.authorities[*].authority | ${#roleAuthorizations} |
+                | $.authorizations | ${#roleAuthorizations} |
         When Remove user from role
             Do http-post Post roles and authorizations to Chutney instance
                 On CHUTNEY_LOCAL
@@ -142,4 +142,4 @@ Feature: Roles declarations and users associations
             Do json-assert
                 With document ${#body}
                 With expected
-                | $.authorities | $isEmpty |
+                | $.authorizations | $isEmpty |

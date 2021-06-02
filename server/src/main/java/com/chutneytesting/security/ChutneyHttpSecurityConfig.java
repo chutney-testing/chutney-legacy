@@ -1,5 +1,13 @@
 package com.chutneytesting.security;
 
+import static java.util.Collections.singleton;
+
+import com.chutneytesting.security.api.UserDto;
+import com.chutneytesting.security.domain.Authorization;
+import com.chutneytesting.security.domain.Authorizations;
+import com.chutneytesting.security.domain.Role;
+import com.chutneytesting.security.domain.User;
+import com.chutneytesting.security.domain.UserRoles;
 import com.chutneytesting.security.infra.handlers.Http401FailureHandler;
 import com.chutneytesting.security.infra.handlers.HttpEmptyLogoutSuccessHandler;
 import com.chutneytesting.security.infra.handlers.HttpStatusInvalidSessionStrategy;
@@ -30,6 +38,9 @@ public class ChutneyHttpSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${server.servlet.session.cookie.secure:true}")
     private boolean sessionCookieSecure;
 
+    @Autowired
+    private Authorizations authorizations;
+
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         configureBaseHttpSecurity(http);
@@ -38,6 +49,7 @@ public class ChutneyHttpSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/v1/user/login").permitAll()
                 .antMatchers("/api/v1/user/logout").permitAll()
                 .antMatchers("/api/**").authenticated()
+                .antMatchers("/actuator/**").hasAuthority(Authorization.ADMIN_ACCESS.name())
                 .anyRequest().permitAll()
             .and()
             .httpBasic();
@@ -67,6 +79,19 @@ public class ChutneyHttpSecurityConfig extends WebSecurityConfigurerAdapter {
             .logout()
                 .logoutUrl("/api/v1/user/logout")
                 .logoutSuccessHandler(new HttpEmptyLogoutSuccessHandler());
+    }
+
+    protected UserDto anonymous() {
+        UserDto anonymous = new UserDto();
+        anonymous.setId(User.ANONYMOUS.id);
+        anonymous.setName(User.ANONYMOUS.id);
+
+        UserRoles userRoles = authorizations.read();
+        Role role = userRoles.roleByName(Role.DEFAULT.name);
+        anonymous.setRoles(singleton(role.name));
+        role.authorizations.stream().map(Enum::name).forEach(anonymous::grantAuthority);
+
+        return anonymous;
     }
 
     @Configuration

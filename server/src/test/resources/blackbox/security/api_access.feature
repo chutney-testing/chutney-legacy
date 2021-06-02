@@ -46,7 +46,7 @@ Feature: Chutney api security
                 Do json-assert
                     With document ${#body}
                     With expected
-                    | $.authorities | $isEmpty |
+                    | $.authorizations | $isEmpty |
             Do http-<http-verb> Access the api
                 On CHUTNEY_LOCAL_NO_USER
                 With headers
@@ -106,7 +106,7 @@ Feature: Chutney api security
                 Do json-assert
                     With document ${#body}
                     With expected
-                    | $.authorities[0].authority | <authority> |
+                    | $.authorizations[0] | <authority> |
             Do http-<http-verb> Access the api
                 On CHUTNEY_LOCAL_NO_USER
                 With headers
@@ -246,3 +246,19 @@ Feature: Chutney api security
             | post      | /api/v2/environment/envName/target                                 | ENVIRONMENT_ACCESS | {"name":"","url":""}                                            | 404    |
             | delete    | /api/v2/environment/envName/target/targetName                      | ENVIRONMENT_ACCESS |                                                                 | 404    |
             | put       | /api/v2/environment/envName/target/targetName                      | ENVIRONMENT_ACCESS | {"name":"","url":""}                                            | 404    |
+            | get       | /actuator                                                          | ADMIN_ACCESS       |                                                                 | 200    |
+            | get       | /actuator/beans                                                    | ADMIN_ACCESS       |                                                                 | 200    |
+            | get       | /actuator/caches                                                   | ADMIN_ACCESS       |                                                                 | 200    |
+            | get       | /actuator/health                                                   | ADMIN_ACCESS       |                                                                 | 200    |
+            | get       | /actuator/info                                                     | ADMIN_ACCESS       |                                                                 | 200    |
+            | get       | /actuator/conditions                                               | ADMIN_ACCESS       |                                                                 | 200    |
+            | get       | /actuator/configprops                                              | ADMIN_ACCESS       |                                                                 | 200    |
+            | get       | /actuator/env                                                      | ADMIN_ACCESS       |                                                                 | 200    |
+            | get       | /actuator/liquidbase                                               | ADMIN_ACCESS       |                                                                 | 404    |
+            | get       | /actuator/loggers                                                  | ADMIN_ACCESS       |                                                                 | 200    |
+            | get       | /actuator/heapdump                                                 | ADMIN_ACCESS       |                                                                 | 200    |
+            | get       | /actuator/threaddump                                               | ADMIN_ACCESS       |                                                                 | 200    |
+            | get       | /actuator/prometheus                                               | ADMIN_ACCESS       |                                                                 | 200    |
+            | get       | /actuator/metrics                                                  | ADMIN_ACCESS       |                                                                 | 200    |
+            | get       | /actuator/scheduledtasks                                           | ADMIN_ACCESS       |                                                                 | 200    |
+            | get       | /actuator/mappings                                                 | ADMIN_ACCESS       |                                                                 | 200    |

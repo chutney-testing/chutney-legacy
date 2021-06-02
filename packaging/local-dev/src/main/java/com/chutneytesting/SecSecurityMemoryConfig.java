@@ -1,7 +1,6 @@
 package com.chutneytesting;
 
 import com.chutneytesting.security.ChutneyHttpSecurityConfig;
-import com.chutneytesting.security.api.UserDto;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
@@ -17,7 +16,7 @@ public class SecSecurityMemoryConfig extends ChutneyHttpSecurityConfig {
         configureBaseHttpSecurity(http);
         http
             .anonymous()
-                .principal(UserDto.ANONYMOUS)
+                .principal(anonymous())
             .and()
             .authorizeRequests()
                 .anyRequest().permitAll()

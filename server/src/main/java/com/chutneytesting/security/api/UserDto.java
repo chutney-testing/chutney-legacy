@@ -1,10 +1,9 @@
 package com.chutneytesting.security.api;
 
 import static java.util.Collections.emptySet;
-import static java.util.Collections.singleton;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toSet;
 
-import com.chutneytesting.security.domain.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Collection;
 import java.util.HashSet;
@@ -14,15 +13,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public final class UserDto implements UserDetails {
-
-    public static UserDto ANONYMOUS;
-
-    static {
-        ANONYMOUS = new UserDto();
-        ANONYMOUS.setId(User.ANONYMOUS.id);
-        ANONYMOUS.setName(User.ANONYMOUS.id);
-        ANONYMOUS.setRoles(singleton(User.ANONYMOUS.roleName));
-    }
 
     private String id;
     private String name;
@@ -53,8 +43,15 @@ public final class UserDto implements UserDetails {
     private String password;
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return ofNullable(authorizations).orElse(emptySet());
+    }
+
+    public Collection<String> getAuthorizations() {
+        return ofNullable(authorizations)
+            .map(a -> a.stream().map(GrantedAuthority::getAuthority).collect(toSet()))
+            .orElse(emptySet());
     }
 
     @Override

@@ -21,6 +21,9 @@ management:
       cors:
         allowed-origins: '*'
         allowed-methods: GET
+  health:
+    ldap:
+      enabled: false
 
 spring:
   liquibase:

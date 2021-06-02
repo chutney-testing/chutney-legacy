@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { LoginService } from '@core/services';
-import { User } from '@model';
+import { User, Authorization } from '@model';
 
 @Component({
   selector: 'chutney-main-menu',
@@ -18,6 +18,7 @@ export class MainMenuComponent {
   ICON_REPO_SELECTED = require('../../../assets/icons/repository-selected.png');
 
   user$: Observable<User>;
+  Authorization = Authorization;
 
   constructor(
     private loginService: LoginService

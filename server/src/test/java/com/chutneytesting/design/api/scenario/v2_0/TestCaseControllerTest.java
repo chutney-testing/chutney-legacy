@@ -40,10 +40,12 @@ public class TestCaseControllerTest {
     private MockMvc mockMvc;
     private final TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
     private final SpringUserService userService = mock(SpringUserService.class);
+    private final UserDto currentUser = new UserDto();
 
     @BeforeEach
     public void setUp() {
-        when(userService.currentUser()).thenReturn(UserDto.ANONYMOUS);
+        currentUser.setId("currentUser");
+        when(userService.currentUser()).thenReturn(currentUser);
 
         GwtTestCaseController testCaseController = new GwtTestCaseController(testCaseRepository, null, userService);
         mockMvc = MockMvcBuilders.standaloneSetup(testCaseController)

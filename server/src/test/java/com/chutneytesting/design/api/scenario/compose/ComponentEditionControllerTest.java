@@ -48,7 +48,8 @@ public class ComponentEditionControllerTest {
     private final ComposableTestCaseRepository composableTestCaseRepository = mock(ComposableTestCaseRepository.class);
     private final TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
     private final SpringUserService userService = mock(SpringUserService.class);
-    private final TestCasePreProcessors testCasePreProcessors  = mock(TestCasePreProcessors.class);;
+    private final TestCasePreProcessors testCasePreProcessors  = mock(TestCasePreProcessors.class);
+    private final UserDto currentUser = new UserDto();
 
     private MockMvc mockMvc;
 
@@ -66,7 +67,8 @@ public class ComponentEditionControllerTest {
         when(composableTestCaseRepository.save(any()))
             .thenReturn(DEFAULT_COMPOSABLE_TESTCASE_DB_ID);
 
-        when(userService.currentUser()).thenReturn(UserDto.ANONYMOUS);
+        currentUser.setId("currentUser");
+        when(userService.currentUser()).thenReturn(currentUser);
     }
 
     @Test

@@ -11,7 +11,7 @@ import { ThumbnailPipe } from '@shared/pipes/thumbnail.pipe';
 import { MomentModule } from 'angular2-moment';
 import { AceEditorModule } from 'ng2-ace-editor';
 import { AlertService } from './alert.service';
-import { ErrorInterceptor } from './error-interceptor.service';
+//import { ErrorInterceptor } from './error-interceptor.service';
 import {
     ComponentCardComponent,
     EnvironmentComboComponent,
@@ -20,7 +20,7 @@ import {
     ScenarioCardComponent,
     TechnicalStepComponent
 } from './components';
-import { ImplementationHostDirective } from './directives';
+import { ImplementationHostDirective, HasAuthorizationDirective } from './directives';
 import { EventManagerService } from './event-manager.service';
 import { HjsonParserService } from './hjson-parser/hjson-parser.service';
 import {
@@ -77,6 +77,7 @@ import { StateService } from './state/state.service';
         ThumbnailPipe,
         TruncatePipe,
         WithoutScenarioPipe,
+        HasAuthorizationDirective,
     ],
     exports: [
         AceEditorComponent,
@@ -104,16 +105,17 @@ import { StateService } from './state/state.service';
         ThumbnailPipe,
         TruncatePipe,
         WithoutScenarioPipe,
+        HasAuthorizationDirective,
     ],
     entryComponents: [
         TechnicalStepComponent
     ],
     providers: [
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: ErrorInterceptor,
-            multi: true
-        },
+//         {
+//             provide: HTTP_INTERCEPTORS,
+//             useClass: ErrorInterceptor,
+//             multi: true
+//         },
         AlertService,
         EventManagerService,
         HjsonParserService,

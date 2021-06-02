@@ -15,7 +15,8 @@
             "variable": "Variable",
             "dataset": "Dataset",
             "jiraId": "Identifiant jira",
-            "roles": "Roles"
+            "roles": "Roles",
+            "admin": "Admin"
         }
     },
     "home": {

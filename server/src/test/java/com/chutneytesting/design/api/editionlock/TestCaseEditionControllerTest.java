@@ -1,6 +1,5 @@
 package com.chutneytesting.design.api.editionlock;
 
-import static com.chutneytesting.security.domain.User.ANONYMOUS;
 import static java.time.Instant.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -37,6 +36,7 @@ public class TestCaseEditionControllerTest {
     private final SpringUserService userService = mock(SpringUserService.class);
     private MockMvc mockMvc;
     private final ObjectMapper om = new WebConfiguration().objectMapper();
+    private final UserDto currentUser = new UserDto();
 
     @BeforeEach
     public void before() {
@@ -46,7 +46,8 @@ public class TestCaseEditionControllerTest {
             .setControllerAdvice(new RestExceptionHandler())
             .build();
 
-        when(userService.currentUser()).thenReturn(UserDto.ANONYMOUS);
+        currentUser.setId("currentUser");
+        when(userService.currentUser()).thenReturn(currentUser);
     }
 
     @Test
@@ -80,8 +81,8 @@ public class TestCaseEditionControllerTest {
     public void should_edit_testcase() throws Exception {
         // Given
         String testCaseId = "testCaseId";
-        TestCaseEdition newTestCaseEdition = buildEdition(testCaseId, 2, now(), ANONYMOUS.id);
-        when(testCaseEditionService.editTestCase(testCaseId, ANONYMOUS.id)).thenReturn(newTestCaseEdition);
+        TestCaseEdition newTestCaseEdition = buildEdition(testCaseId, 2, now(), currentUser.getId());
+        when(testCaseEditionService.editTestCase(testCaseId, currentUser.getId())).thenReturn(newTestCaseEdition);
 
         // When
         MvcResult mvcResult = mockMvc.perform(
@@ -108,7 +109,7 @@ public class TestCaseEditionControllerTest {
             .andReturn();
 
         // Then
-        verify(testCaseEditionService).endTestCaseEdition(testCaseId, ANONYMOUS.id);
+        verify(testCaseEditionService).endTestCaseEdition(testCaseId, currentUser.getId());
     }
 
     private void assertDtoIsEqualToEdition(TestCaseEditionDto dto, TestCaseEdition edition) {

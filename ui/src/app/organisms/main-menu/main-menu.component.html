@@ -1,38 +1,126 @@
 <nav class="navbar fixed-top navbar-expand-lg">
-    <ul class="navbar-nav menu-principal">
-        <chutney-menu-item [style]="''" [route]="'/scenario'" [label]="'menu.principal.scenarios' | translate" [img_src]="ICON_TESTS"
-            [img_src_selected]="ICON_TESTS_SELECTED"></chutney-menu-item>
+    <ul class="navbar-nav menu-principal" *ngIf="(user$ | async) as user">
+        <chutney-menu-item *hasAuthorization="[
+                                Authorization.SCENARIO_READ,
+                                Authorization.SCENARIO_WRITE,
+                                Authorization.SCENARIO_EXECUTE
+                           ]"
+                           [style]="''" [route]="'/scenario'"
+                           [label]="'menu.principal.scenarios' | translate"
+                           [img_src]="ICON_TESTS" [img_src_selected]="ICON_TESTS_SELECTED">
+        </chutney-menu-item>
         <li class="separator"></li>
-        <chutney-menu-item [style]="'nav-link'" [route]="'/campaign'" [label]="'menu.principal.campaigns' | translate" [img_src]="ICON_TESTS"
-            [img_src_selected]="ICON_TESTS_SELECTED"></chutney-menu-item>
+        <chutney-menu-item *hasAuthorization="[
+                                Authorization.CAMPAIGN_READ,
+                                Authorization.CAMPAIGN_WRITE,
+                                Authorization.CAMPAIGN_EXECUTE
+                           ]"
+                           [style]="'nav-link'" [route]="'/campaign'"
+                           [label]="'menu.principal.campaigns' | translate"
+                           [img_src]="ICON_TESTS" [img_src_selected]="ICON_TESTS_SELECTED">
+        </chutney-menu-item>
         <li class="separator"></li>
-        <chutney-menu-item [style]="'nav-link'" [route]="'/component'" [label]="'menu.principal.component' | translate" [img_src]="ICON_REPO"
-            [img_src_selected]="ICON_REPO_SELECTED"></chutney-menu-item>
-        <chutney-menu-item [style]="'nav-link'" [route]="'/variable'" [label]="'menu.principal.variable' | translate" [img_src]="ICON_REPO"
-            [img_src_selected]="ICON_REPO_SELECTED"></chutney-menu-item>
-        <chutney-menu-item [style]="'nav-link'" [route]="'/dataset'" [label]="'menu.principal.dataset' | translate" [img_src]="ICON_REPO"
-            [img_src_selected]="ICON_REPO_SELECTED"></chutney-menu-item>
+        <chutney-menu-item *hasAuthorization="[
+                                Authorization.COMPONENT_READ,
+                                Authorization.COMPONENT_WRITE
+                           ]"
+                           [style]="'nav-link'" [route]="'/component'"
+                           [label]="'menu.principal.component' | translate"
+                           [img_src]="ICON_REPO" [img_src_selected]="ICON_REPO_SELECTED">
+        </chutney-menu-item>
+        <chutney-menu-item *hasAuthorization="[
+                                Authorization.GLOBAL_VAR_READ,
+                                Authorization.GLOBAL_VAR_WRITE
+                           ]"
+                           [style]="'nav-link'" [route]="'/variable'"
+                           [label]="'menu.principal.variable' | translate"
+                           [img_src]="ICON_REPO" [img_src_selected]="ICON_REPO_SELECTED">
+        </chutney-menu-item>
+        <chutney-menu-item *hasAuthorization="[
+                                Authorization.DATASET_READ,
+                                Authorization.DATASET_WRITE
+                           ]"
+                           [style]="'nav-link'" [route]="'/dataset'"
+                           [label]="'menu.principal.dataset' | translate"
+                           [img_src]="ICON_REPO" [img_src_selected]="ICON_REPO_SELECTED">
+        </chutney-menu-item>
         <ul class="navbar-nav ml-auto">
-            <div class="dropdown">
-                <button class="dropbtn"><span class="fa fa-cog"></span>Admin</button>
+            <chutney-menu-item [style]="'nav-link'" [route]="'/documentation'"
+                               [label]="'menu.principal.documentation' | translate"
+                               [icon_fa_class]="'fa-book'">
+            </chutney-menu-item>
+            <div class="dropdown"
+                 *hasAuthorization="[
+                    Authorization.ENVIRONMENT_ACCESS,
+                    Authorization.ADMIN_ACCESS
+                 ]"
+            >
+                <button class="dropbtn"><span class="fa fa-cog"></span>{{'menu.principal.admin' | translate}}</button>
                 <div class="dropdown-content">
-                    <chutney-menu-item [style]="'nav-link'" [route]="'/databaseAdmin'" [label]="'menu.principal.databaseAdmin' | translate" [icon_fa_class]="'fa-database'"></chutney-menu-item>
-                    <chutney-menu-item [style]="'nav-link'" [route]="'/environmentAdmin'" [label]="'menu.principal.targets' | translate" [icon_fa_class]="'fa-cogs'"></chutney-menu-item>
-                    <chutney-menu-item [style]="'nav-link'" [route]="'/configurationAgent'" [label]="'menu.principal.workers' | translate" [icon_fa_class]="'fa-bars'"></chutney-menu-item>
-                    <chutney-menu-item [style]="'nav-link'" [route]="'/plugins'" [label]="'menu.principal.plugins' | translate" [icon_fa_class]="'fa-cog'"></chutney-menu-item>
-                    <chutney-menu-item [style]="'nav-link'" [route]="'/storesAdmin'" [label]="'menu.principal.storesAdmin' | translate" [icon_fa_class]="'fa-cubes'"></chutney-menu-item>
-                    <chutney-menu-item [style]="'nav-link'" [route]="'/documentation'" [label]="'menu.principal.documentation' | translate" [icon_fa_class]="'fa-book'"></chutney-menu-item>
-                    <chutney-menu-item [style]="'nav-link'" [route]="'/showroom'" [label]="'menu.principal.showroom' | translate" [icon_fa_class]="'fa-eye'"></chutney-menu-item>
-                    <chutney-menu-item [style]="'nav-link'" [route]="'/backups'" [label]="'menu.principal.backups' | translate" [icon_fa_class]="'fa-archive'"></chutney-menu-item>
-                    <chutney-menu-item [style]="'nav-link'" [route]="'/roles'" [label]="'menu.principal.roles' | translate" [icon_fa_class]="'fa-user-shield'"></chutney-menu-item>
+                    <chutney-menu-item *hasAuthorization="[
+                                            Authorization.ENVIRONMENT_ACCESS
+                                       ]"
+                                       [style]="'nav-link'" [route]="'/environmentAdmin'"
+                                       [label]="'menu.principal.targets' | translate"
+                                       [icon_fa_class]="'fa-cogs'">
+                    </chutney-menu-item>
+                    <chutney-menu-item *hasAuthorization="[
+                                            Authorization.ADMIN_ACCESS
+                                       ]"
+                                       [style]="'nav-link'" [route]="'/plugins'"
+                                       [label]="'menu.principal.plugins' | translate"
+                                       [icon_fa_class]="'fa-cog'">
+                    </chutney-menu-item>
+                    <chutney-menu-item *hasAuthorization="[
+                                            Authorization.ADMIN_ACCESS
+                                       ]"
+                                       [style]="'nav-link'" [route]="'/backups'"
+                                       [label]="'menu.principal.backups' | translate"
+                                       [icon_fa_class]="'fa-archive'">
+                    </chutney-menu-item>
+                    <chutney-menu-item *hasAuthorization="[
+                                            Authorization.ADMIN_ACCESS
+                                       ]"
+                                       [style]="'nav-link'" [route]="'/roles'"
+                                       [label]="'menu.principal.roles' | translate"
+                                       [icon_fa_class]="'fa-user-shield'">
+                    </chutney-menu-item>
+                    <chutney-menu-item *hasAuthorization="[
+                                            Authorization.ADMIN_ACCESS
+                                       ]"
+                                       [style]="'nav-link'" [route]="'/databaseAdmin'"
+                                       [label]="'menu.principal.databaseAdmin' | translate"
+                                       [icon_fa_class]="'fa-database'">
+                    </chutney-menu-item>
+                    <chutney-menu-item *hasAuthorization="[
+                                            Authorization.ENVIRONMENT_ACCESS,
+                                            Authorization.ADMIN_ACCESS
+                                       ]"
+                                       [style]="'nav-link'" [route]="'/configurationAgent'"
+                                       [label]="'menu.principal.workers' | translate"
+                                       [icon_fa_class]="'fa-bars'">
+                    </chutney-menu-item>
+                    <chutney-menu-item *hasAuthorization="[
+                                            Authorization.ADMIN_ACCESS
+                                       ]"
+                                       [style]="'nav-link'" [route]="'/storesAdmin'"
+                                       [label]="'menu.principal.storesAdmin' | translate"
+                                       [icon_fa_class]="'fa-cubes'">
+                    </chutney-menu-item>
                 </div>
             </div>
 
             <div class="dropdown">
-                <button class="dropbtn"><span class="fa fa-user"></span>{{(user$ | async)?.id}}</button>
+                <button class="dropbtn"><span class="fa fa-user"></span>{{user?.id}}</button>
                 <div class="dropdown-content">
-                    <chutney-menu-item *ngIf="(user$ | async)?.id" [label]="'Logout'" [icon_fa_class]="'fa-sign-out-alt'" [route]="'/login/logout'"></chutney-menu-item>
-                    <chutney-menu-item *ngIf="(user$ | async) == null" [label]="'Login'" [icon_fa_class]="'fa-sign-in-alt'" [route]="'/login'"></chutney-menu-item>
+                    <chutney-menu-item *ngIf="user?.id" [route]="'/login/logout'"
+                                       [label]="'Logout'"
+                                       [icon_fa_class]="'fa-sign-out-alt'">
+                    </chutney-menu-item>
+                    <chutney-menu-item *ngIf="user?.id == ''" [route]="'/login'"
+                                       [label]="'Login'"
+                                       [icon_fa_class]="'fa-sign-in-alt'">
+                    </chutney-menu-item>
                 </div>
             </div>
         </ul>
