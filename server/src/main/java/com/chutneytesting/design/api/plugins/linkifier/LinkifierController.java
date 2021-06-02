@@ -26,7 +26,6 @@ public class LinkifierController {
         this.linkifiers = linkifiers;
     }
 
-    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<LinkifierDto> getAllLinkifier() {
         return linkifiers.getAll().stream()

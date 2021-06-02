@@ -2,7 +2,7 @@
 
 Feature: Chutney api security
 
-    Background:
+    Scenario Outline: A user must be authenticated and has <authority> authority to access <uri> with verb <http-verb>
         Given Current roles and authorizations
             Do http-get
                 On CHUTNEY_LOCAL
@@ -17,8 +17,6 @@ Feature: Chutney api security
                 On CHUTNEY_LOCAL
                 With uri /api/v1/description
                 Take networkConfiguration ${#body}
-
-    Scenario Outline: A user must be authenticated and has <authority> authority to access <uri> with verb <http-verb>
         When An unknown user access the api
             Do http-<http-verb>
                 On CHUTNEY_LOCAL_NO_USER
@@ -190,7 +188,6 @@ Feature: Chutney api security
             | delete    | /api/ui/jira/v1/campaign/campaignId                                | CAMPAIGN_WRITE     |                                                                 | 200    |
             | get       | /api/ui/jira/v1/configuration                                      | ADMIN_ACCESS       |                                                                 | 200    |
             | post      | /api/ui/jira/v1/configuration                                      | ADMIN_ACCESS       | {"url":"","username":"","password":""}                          | 200    |
-            | get       | /api/v1/ui/plugins/linkifier/                                      | ADMIN_ACCESS       |                                                                 | 200    |
             | post      | /api/v1/ui/plugins/linkifier/                                      | ADMIN_ACCESS       | {"pattern":"","link":"","id":""}                                | 200    |
             | delete    | /api/v1/ui/plugins/linkifier/id                                    | ADMIN_ACCESS       |                                                                 | 200    |
             | post      | /api/scenario/component-edition                                    | SCENARIO_WRITE     | {"title":"","scenario":{}}                                      | 200    |
@@ -262,3 +259,51 @@ Feature: Chutney api security
             | get       | /actuator/metrics                                                  | ADMIN_ACCESS       |                                                                 | 200    |
             | get       | /actuator/scheduledtasks                                           | ADMIN_ACCESS       |                                                                 | 200    |
             | get       | /actuator/mappings                                                 | ADMIN_ACCESS       |                                                                 | 200    |
+
+    Scenario Outline: A user must be authenticated without any authority to access <uri> with verb <http-verb>
+        When An unknown user access the api
+            Do http-<http-verb>
+                On CHUTNEY_LOCAL_NO_USER
+                With headers
+                | Content-Type  | application/json;charset=UTF-8                                                        |
+                | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("unknown:user").getBytes())} |
+                With uri <uri>
+        Then The HTTP response status is 401
+            Do compare
+                With actual ${#status}
+                With expected 401
+                With mode equals
+        When A known user access the api without any authority
+            Check user has no authority
+                Do http-get
+                    On CHUTNEY_LOCAL_NO_USER
+                    With headers
+                    | Content-Type  | application/json;charset=UTF-8                                                             |
+                    | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("secutest:secutest").getBytes())} |
+                    With uri /api/v1/user
+                Do compare
+                    With actual ${#status}
+                    With expected 200
+                    With mode equals
+                Do json-assert
+                    With document ${#body}
+                    With expected
+                    | $.authorizations | $isEmpty |
+            Do http-<http-verb> Access the api
+                On CHUTNEY_LOCAL_NO_USER
+                With headers
+                | Content-Type  | application/json;charset=UTF-8                                                             |
+                | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("secutest:secutest").getBytes())} |
+                With uri <uri>
+                With body <body>
+        Then The HTTP response status is 200
+            Do compare
+                With actual ${#status}
+                With expected 200
+                With mode equals
+
+        Examples:
+            | http-verb | uri                             | body |
+            | get       | /api/v1/user                    |      |
+            | post      | /api/v1/user                    |      |
+            | get       | /api/v1/ui/plugins/linkifier/   |      |
