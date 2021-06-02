@@ -21,7 +21,6 @@ public class HomePageController {
         this.repository = repository;
     }
 
-    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public HomePage load() {
         return repository.load();

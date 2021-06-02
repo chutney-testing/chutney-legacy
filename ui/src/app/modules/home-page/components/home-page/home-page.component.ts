@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
-import { HomePageService } from '@core/services';
-import { HomePage } from '@model';
 import { Subscription } from 'rxjs';
-import { EventManagerService } from '@shared';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
 import { HomePageCreateDialogComponent } from '../home-page-create/home-page-create-dialog.component';
+import { EventManagerService } from '@shared';
+import { HomePageService } from '@core/services';
+import { HomePage, Authorization } from '@model';
 
 @Component({
   selector: 'chutney-home-page',
@@ -16,6 +17,8 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   public homePage: HomePage;
   private homePageModifedSubscription: Subscription;
+
+  Authorization = Authorization;
 
   constructor(
     private homePageService: HomePageService,

@@ -1,4 +1,6 @@
-<div id="documentation-header">
+<div id="documentation-header"
+     *hasAuthorization="[Authorization.ADMIN_ACCESS]"
+>
   <chutney-toggle-button [label]="'admin.documentation.toggle.examples' | translate" [id]="'light'" [style]="'light'" [isChecked]="isActivated" (change)="toggle()"></chutney-toggle-button>
 </div>
 

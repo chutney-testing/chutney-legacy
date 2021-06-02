@@ -144,7 +144,6 @@ Feature: Chutney api security
             | get       | /api/source/git/v1                                                 | ADMIN_ACCESS       |                                                                 | 200    |
             | post      | /api/source/git/v1                                                 | ADMIN_ACCESS       | {}                                                              | 200    |
             | delete    | /api/source/git/v1/666                                             | ADMIN_ACCESS       |                                                                 | 200    |
-            | get       | /api/homepage/v1                                                   | ADMIN_ACCESS       |                                                                 | 200    |
             | post      | /api/homepage/v1                                                   | ADMIN_ACCESS       | {"content":""}                                                  | 200    |
             | post      | /api/v1/agentnetwork/configuration                                 | ADMIN_ACCESS       | \${#jsonPath(#networkConfiguration, "\$.networkConfiguration")} | 200    |
             | get       | /api/v1/description                                                | ADMIN_ACCESS       |                                                                 | 200    |
@@ -307,3 +306,4 @@ Feature: Chutney api security
             | get       | /api/v1/user                    |      |
             | post      | /api/v1/user                    |      |
             | get       | /api/v1/ui/plugins/linkifier/   |      |
+            | get       | /api/homepage/v1                |      |
