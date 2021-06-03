@@ -13,10 +13,8 @@ import com.chutneytesting.junit.api.EnvironmentService;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.SQLException;
 import java.util.Random;
 import org.apache.groovy.util.Maps;
-import org.h2.tools.Server;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.SocketUtils;
@@ -53,7 +51,7 @@ public class ChutneyTest {
         System.setProperty("port", String.valueOf(port));
         System.setProperty("securePort", String.valueOf(securePort));
         System.setProperty("chutney.db-server.port", String.valueOf(dbPort));
-        System.setProperty("configuration-folder", tmpConfDir.toString());
+        System.setProperty("chutney.configuration-folder", tmpConfDir.toString());
 
         localChutney = SpringApplication.run(IntegrationTestConfiguration.class);
     }

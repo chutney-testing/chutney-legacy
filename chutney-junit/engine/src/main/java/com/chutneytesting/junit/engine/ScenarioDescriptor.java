@@ -1,5 +1,7 @@
 package com.chutneytesting.junit.engine;
 
+import static com.fasterxml.jackson.databind.SerializationFeature.FAIL_ON_EMPTY_BEANS;
+
 import com.chutneytesting.engine.api.execution.StatusDto;
 import com.chutneytesting.engine.api.execution.StepDefinitionDto;
 import com.chutneytesting.engine.api.execution.StepExecutionReportDto;
@@ -10,8 +12,6 @@ import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.hierarchical.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static com.fasterxml.jackson.databind.SerializationFeature.FAIL_ON_EMPTY_BEANS;
 
 public class ScenarioDescriptor extends AbstractTestDescriptor implements Node<ChutneyEngineExecutionContext> {
 
@@ -45,7 +45,7 @@ public class ScenarioDescriptor extends AbstractTestDescriptor implements Node<C
 
         LOGGER.info("Scenario {} execution", this.getDisplayName());
         LOGGER.info("status : {}", report.status);
-        //TODO fail on complexe objects in scenarioContext LOGGER.info(om.writerWithDefaultPrettyPrinter().writeValueAsString(report));
+        //TODO fail on complex objects in scenarioContext LOGGER.info(om.writerWithDefaultPrettyPrinter().writeValueAsString(report));
 
         if (StatusDto.FAILURE.equals(report.status)) {
             StepExecutionReportDto failedStepReport = findFailedStep(report);
