@@ -37,7 +37,7 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
         .withDescription("")
         .withTags(Collections.emptyList())
         .withExecutionParameters(Collections.emptyMap())
-        .withRawScenario("");
+        .withRawScenario("raw scenario 'content'");
 
     private final DatabaseTestCaseRepository repository = new DatabaseTestCaseRepository(namedParameterJdbcTemplate, new ObjectMapper());
 
@@ -283,5 +283,22 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
 
         Optional<TestCaseData> testCaseById = repository.findById(scenarioId);
         assertThat(testCaseById).hasValueSatisfying(tc -> assertThat(tc.author).isEqualTo(User.ANONYMOUS_USER.getId()));
+    }
+
+    @Test
+    public void should_search_scenario() {
+        // Given
+        String scenarioID = repository.save(TEST_CASE_DATA_BUILDER.build());
+
+        // When
+        List<TestCaseMetadata> raw = repository.search("raw 'content'");
+        // Then
+        assertThat(raw).hasSize(1);
+        assertThat(raw.get(0).id()).isEqualTo(scenarioID);
+
+        // When
+        List<TestCaseMetadata> raw2 = repository.search("raw notincontent");
+        // Then
+        assertThat(raw2).hasSize(0);
     }
 }

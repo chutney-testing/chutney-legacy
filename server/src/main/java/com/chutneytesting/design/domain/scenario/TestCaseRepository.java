@@ -19,4 +19,5 @@ public interface TestCaseRepository {
 
     Integer lastVersion(String testCaseId);
 
+    List<TestCaseMetadata> search(String textFilter);
 }

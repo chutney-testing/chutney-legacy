@@ -74,6 +74,11 @@ public class ExamplesRepository implements DelegateScenarioRepository {
         return testCaseData.map(tcd -> tcd.version);
     }
 
+    @Override
+    public List<TestCaseMetadata> search(String textFilter) {
+        return findAll();
+    }
+
     // TODO - remove duplication & do it only once on startup in DocumentationConfiguration
     private TestCaseData mapToTestCase(Map.Entry<String, String> entry) {
         return TestCaseData.builder()

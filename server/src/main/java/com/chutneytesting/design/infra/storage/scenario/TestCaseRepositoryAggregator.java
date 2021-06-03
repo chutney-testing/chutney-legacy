@@ -122,6 +122,15 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
         }
     }
 
+    @Override
+    public List<TestCaseMetadata> search(String textFilter) {
+        List<TestCaseMetadata> testCases = repositories()
+            .parallel()
+            .flatMap(r -> searchAllRepositoryStream(r, textFilter))
+            .collect(Collectors.toList());
+        return testCases;
+    }
+
     private Stream<? extends TestCaseMetadata> findAllRepositoryStream(DelegateScenarioRepository repository) {
         try {
             return repository.findAll().stream();
@@ -130,6 +139,16 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
             return Stream.empty();
         }
     }
+
+    private Stream<? extends TestCaseMetadata> searchAllRepositoryStream(DelegateScenarioRepository repository, String textFilter) {
+        try {
+            return repository.search(textFilter).stream();
+        } catch (RuntimeException e) {
+            LOGGER.warn("Could not aggregate scenarios from repository : " + repository.alias(), e);
+            return Stream.empty();
+        }
+    }
+
 
     private boolean isComposableScenarioId(String scenarioId) {
         return ORecordId.isA(scenarioId);

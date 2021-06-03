@@ -68,20 +68,7 @@ export class ScenarioService {
     findScenarios(): Observable<Array<ScenarioIndex>> {
         return this.httpClient.get<Array<ScenarioIndex>>(environment.backend + this.resourceUrlV2)
         .pipe(map((res: Array<any>) => {
-            res = res.map(s => new ScenarioIndex(
-                s.metadata.id,
-                s.metadata.title,
-                s.metadata.description,
-                s.metadata.repositorySource,
-                s.metadata.creationDate,
-                s.metadata.updateDate,
-                s.metadata.version,
-                s.metadata.author,
-                s.metadata.tags,
-                s.metadata.executions
-            ));
-
-            return res;
+            return this.mapJsonScenario(res);
         }));
     }
 
@@ -113,4 +100,25 @@ export class ScenarioService {
         return this.httpClient.delete(environment.backend + `${this.resourceUrlV2}/${id}`);
     }
 
+    search(textFilter: any) {
+        return this.httpClient.get<Array<ScenarioIndex>>(environment.backend + `${this.resourceUrlV2}/ui/search/${textFilter}`)
+            .pipe(map((res: Array<any>) => {
+                return this.mapJsonScenario(res);
+            }));
+    }
+
+    private mapJsonScenario(res: Array<any>) {
+        return res.map(s => new ScenarioIndex(
+            s.metadata.id,
+            s.metadata.title,
+            s.metadata.description,
+            s.metadata.repositorySource,
+            s.metadata.creationDate,
+            s.metadata.updateDate,
+            s.metadata.version,
+            s.metadata.author,
+            s.metadata.tags,
+            s.metadata.executions
+        ));
+    }
 }

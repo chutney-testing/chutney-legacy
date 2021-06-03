@@ -30,8 +30,8 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     scenarioTypeFilter = new SelectableTags<ScenarioType>();
 
     // Jira
-    jiraMap : Map<string,string> = new Map();
-    jiraUrl : string = '';
+    jiraMap: Map<string, string> = new Map();
+    jiraUrl = '';
 
     // Order
     orderBy = 'title';
@@ -216,15 +216,24 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     }
 
     applyFilters() {
-        this.viewedScenarios = filterOnTextContent(this.scenarios, this.textFilter, ['title', 'id']);
-        this.viewedScenarios = this.filterOnAttributes();
-        this.sortScenarios(this.orderBy, this.reverseOrder);
-        this.applyFiltersToRoute();
+        if (this.textFilter) {
+            this.scenarioService.search(this.textFilter).subscribe(res => {
+                    this.viewedScenarios = res;
+                    this.viewedScenarios = this.filterOnAttributes();
+                    this.sortScenarios(this.orderBy, this.reverseOrder);
+                    this.applyFiltersToRoute();
+                }
+            );
+        } else {
+            this.viewedScenarios = this.scenarios;
+            this.viewedScenarios = this.filterOnAttributes();
+            this.sortScenarios(this.orderBy, this.reverseOrder);
+            this.applyFiltersToRoute();
+        }
     }
 
     // Jira link //
-
-    initJiraPlugin() {  
+    initJiraPlugin() {
         this.jiraPluginConfigurationService.get()
         .subscribe((r) => {
                 if(r && r.url !== ''){
