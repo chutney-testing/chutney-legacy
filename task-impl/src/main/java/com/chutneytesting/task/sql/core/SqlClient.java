@@ -95,7 +95,12 @@ public class SqlClient {
 
         private static List<List<Object>> createRows(ResultSet rs, int columnCount) throws SQLException {
             final List<List<Object>> rows = new ArrayList<>();
+            int j = 0;
             while (rs.next()) {
+                if (j++ > 100000) {
+                    throw new NonOptimizedQueryException();
+                }
+
                 if (!hasEnoughAvailableMemory()) {
                     throw new NotEnoughMemoryException(usedMemory(), MAX_MEMORY, "Query fetched " + rows.size() + " rows");
                 }
