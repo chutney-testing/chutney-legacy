@@ -12,8 +12,13 @@ export class HasAuthorizationDirective {
         private loginService: LoginService
     ) {}
 
-    @Input() set hasAuthorization(authorization: any) {
-        if (this.loginService.hasAuthorization(authorization)) {
+    @Input() set hasAuthorization(a: any) {
+        const authorizations = a['authorizations'] || a;
+        const user = a['user'];
+        const not: boolean = a['not'] || false;
+
+        const hasAuthorization = this.loginService.hasAuthorization(authorizations, user);
+        if ((not && !hasAuthorization) || (!not && hasAuthorization)) {
             // Add template to DOM
             this.viewContainer.createEmbeddedView(this.templateRef);
         } else {

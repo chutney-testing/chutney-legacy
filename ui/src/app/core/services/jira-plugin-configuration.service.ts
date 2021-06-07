@@ -16,7 +16,11 @@ export class JiraPluginConfigurationService {
     }
 
     public get(): Observable<JiraPluginConfiguration> {
-        return this.http.get<JiraPluginConfiguration>(environment.backend + this.url );
+        return this.http.get<JiraPluginConfiguration>(environment.backend + this.url);
+    }
+
+    public getUrl(): Observable<string> {
+        return this.http.get<string>(environment.backend + this.url + '/url');
     }
 
     public save(configuration: JiraPluginConfiguration): Observable<String> {

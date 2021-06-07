@@ -93,7 +93,7 @@ public class ScenarioExecutionUiController {
         return executionEngineAsync.execute(new ExecutionRequest(testCase, env, executionParameters, userId)).toString();
     }
 
-    @PreAuthorize("hasAuthority('SCENARIO_EXECUTE')")
+    @PreAuthorize("hasAuthority('SCENARIO_READ')")
     @GetMapping(path = "/api/ui/scenario/executionasync/v1/{scenarioId}/execution/{executionId}")
     public Flux<ServerSentEvent<ScenarioExecutionReport>> followScenarioExecution(@PathVariable("scenarioId") String scenarioId, @PathVariable("executionId") Long executionId) {
         LOGGER.debug("followScenarioExecution for scenarioId='{}' and executionID='{}'", scenarioId, executionId);

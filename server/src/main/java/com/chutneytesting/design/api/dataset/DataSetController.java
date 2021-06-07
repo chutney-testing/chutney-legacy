@@ -40,7 +40,8 @@ public class DataSetController {
         this.dataSetHistoryRepository = dataSetHistoryRepository;
     }
 
-    @PreAuthorize("hasAuthority('DATASET_READ')")
+    // TODO - SCENARIO_READ ?
+    @PreAuthorize("hasAuthority('DATASET_READ') or hasAuthority('SCENARIO_WRITE')")
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<DataSetDto> findAll() {
         return dataSetRepository.findAll()

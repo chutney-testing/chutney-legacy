@@ -40,6 +40,13 @@ public class HttpEnvironmentApi implements EnvironmentApi {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('SCENARIO_EXECUTE')")
+    @GetMapping(path = "/names", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Set<String> listEnvironmentsNames() {
+        return embeddedApplication.listEnvironmentsNames();
+    }
+
+    @Override
     @PreAuthorize("hasAuthority('ENVIRONMENT_ACCESS')")
     @PostMapping("")
     public EnvironmentDto createEnvironment(@RequestBody EnvironmentDto environmentDto) throws InvalidEnvironmentNameException, AlreadyExistingEnvironmentException {
@@ -72,6 +79,13 @@ public class HttpEnvironmentApi implements EnvironmentApi {
     @GetMapping(path = "/target", produces = MediaType.APPLICATION_JSON_VALUE)
     public Set<TargetDto> listTargets() throws EnvironmentNotFoundException {
         return embeddedApplication.listTargets();
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('COMPONENT_WRITE')")
+    @GetMapping(path = "/target/names", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Set<String> listTargetsNames() throws EnvironmentNotFoundException {
+        return embeddedApplication.listTargetsNames();
     }
 
     @Override

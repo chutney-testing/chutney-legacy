@@ -3,6 +3,7 @@ package com.chutneytesting.environment.api;
 import com.chutneytesting.environment.api.dto.EnvironmentDto;
 import com.chutneytesting.environment.api.dto.TargetDto;
 import com.chutneytesting.environment.domain.EnvironmentService;
+import com.chutneytesting.environment.domain.Target;
 import com.chutneytesting.environment.domain.exception.AlreadyExistingEnvironmentException;
 import com.chutneytesting.environment.domain.exception.AlreadyExistingTargetException;
 import com.chutneytesting.environment.domain.exception.CannotDeleteEnvironmentException;
@@ -28,6 +29,11 @@ public class EmbeddedEnvironmentApi implements EnvironmentApi {
             .map(EnvironmentDto::from)
             .sorted(Comparator.comparing(e -> e.name))
             .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    @Override
+    public Set<String> listEnvironmentsNames() {
+        return environmentService.listEnvironmentsNames();
     }
 
     @Override
@@ -58,6 +64,14 @@ public class EmbeddedEnvironmentApi implements EnvironmentApi {
         return environmentService.listTargets().stream()
             .map(TargetDto::from)
             .sorted(Comparator.comparing(t -> t.name))
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    @Override
+    public Set<String> listTargetsNames() throws EnvironmentNotFoundException {
+        return environmentService.listTargets().stream()
+            .map(t -> t.name)
+            .sorted()
             .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 

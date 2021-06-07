@@ -13,6 +13,8 @@ import java.util.Set;
 public interface EnvironmentApi {
     Set<EnvironmentDto> listEnvironments();
 
+    Set<String> listEnvironmentsNames();
+
     EnvironmentDto createEnvironment(EnvironmentDto environmentMetadataDto) throws InvalidEnvironmentNameException, AlreadyExistingEnvironmentException;
 
     void deleteEnvironment(String environmentName) throws EnvironmentNotFoundException, CannotDeleteEnvironmentException;
@@ -22,6 +24,8 @@ public interface EnvironmentApi {
     Set<TargetDto> listTargets(String environmentName) throws EnvironmentNotFoundException;
 
     Set<TargetDto> listTargets() throws EnvironmentNotFoundException;
+
+    Set<String> listTargetsNames() throws EnvironmentNotFoundException;
 
     EnvironmentDto getEnvironment(String environmentName) throws EnvironmentNotFoundException;
 

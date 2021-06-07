@@ -20,11 +20,10 @@
             </button>
         </div>
     </form>
-    <div class="container col-md-3">
+    <div class="container col-md-6">
         <div *ngIf="connectionError" class="row text-danger justify-content-center"><b>{{ connectionError }}</b></div>
         <div *ngIf="action" class="row text-info justify-content-center">
             <b>{{ 'login.'+action | translate }}</b>
         </div>
     </div>
-
 </div>

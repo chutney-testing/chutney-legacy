@@ -9,6 +9,8 @@ import { Authorization } from '@model';
 export const appRoutes: Routes = [
     {
         path: '', component: ParentComponent,
+        canActivate: [AuthGuard],
+        data: { 'authenticate': true },
         children: [
             {
                 path: 'home-page',

@@ -15,15 +15,19 @@ export class AuthGuard implements CanActivate {
 
   public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
     const requestURL = state.url !== undefined ? state.url : '';
-    const authorizations: Array<Authorization> = route.data['authorizations'] || [];
-    return this._canActivate(requestURL, authorizations);
-  }
 
-  private _canActivate(requestURL: string, authorizations: Array<Authorization>): Observable<boolean> | Promise<boolean> | boolean {
+    if (route.data['authenticate']) {
+        if (!this.loginService.isAuthenticated()) {
+            this.router.navigateByUrl('/login');
+            return false;
+        }
+    }
+
+    const authorizations: Array<Authorization> = route.data['authorizations'] || [];
     if (this.loginService.hasAuthorization(authorizations)) {
         return true;
     } else {
-        this.router.navigateByUrl('/login' + (requestURL != null ? '?url=' + encodeURIComponent(requestURL) : ''));
+        this.router.navigateByUrl('/login/unauthorized');
         return false;
     }
   }

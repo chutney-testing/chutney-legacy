@@ -1,5 +1,6 @@
 import { async, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TranslateModule } from '@ngx-translate/core';
 import { ScenariosComponent } from './scenarios.component';
 import { SharedModule } from '@shared/shared.module';
@@ -24,19 +25,20 @@ describe('ScenariosComponent', () => {
         TestBed.resetTestingModule();
         const scenarioService = jasmine.createSpyObj('ScenarioService', ['findScenarios', 'search']);
         const jiraPluginService = jasmine.createSpyObj('JiraPluginService', ['findScenarios', 'findCampaigns']);
-        const jiraPluginConfigurationService = jasmine.createSpyObj('JiraPluginConfigurationService', ['get']);
+        const jiraPluginConfigurationService = jasmine.createSpyObj('JiraPluginConfigurationService', ['getUrl']);
         const mockScenarioIndex = [new ScenarioIndex('1', 'title1', 'description', 'source', new Date(), new Date(), 1, 'guest', [], []),
                                    new ScenarioIndex('2', 'title2', 'description', 'source', new Date(), new Date(), 1, 'guest', [], []),
                                    new ScenarioIndex('3', 'another scenario', 'description', 'source', new Date(), new Date(), 1, 'guest', [], [])];
         scenarioService.findScenarios.and.returnValue(of(mockScenarioIndex));
         scenarioService.search.and.returnValue(of(mockScenarioIndex));
-        jiraPluginConfigurationService.get.and.returnValue(empty());
+        jiraPluginConfigurationService.getUrl.and.returnValue(empty());
         jiraPluginService.findScenarios.and.returnValue(empty());
         jiraPluginService.findCampaigns.and.returnValue(empty());
         activatedRouteStub = new ActivatedRouteStub();
         TestBed.configureTestingModule({
             imports: [
                 RouterTestingModule,
+                HttpClientTestingModule,
                 TranslateModule.forRoot(),
                 MoleculesModule,
                 SharedModule,
@@ -121,9 +123,4 @@ function titleOf(elt: Element) {
 function sendInput(input: HTMLInputElement, value: string) {
     input.value = value;
     input.dispatchEvent(new Event('input'));
-}
-
-function jiraMock()
-{
-
 }

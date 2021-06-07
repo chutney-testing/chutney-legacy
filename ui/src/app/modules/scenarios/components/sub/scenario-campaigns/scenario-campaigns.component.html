@@ -1,7 +1,18 @@
 <!-- Campaigns related to a scenario -->
 <div *ngIf="campaignsForScenario.length > 0">
     {{ 'menu.principal.campaigns' | translate }} :
-    <ng-container *ngFor="let campaign of campaignsForScenario">
-        <a [routerLink]="['/campaign', campaign.id,'execution']" title="{{ 'campaigns.list.item.title.link.title' | translate }} {{campaign.title}}">{{campaign.title}}</a> &nbsp;
+    <ng-container *hasAuthorization="[Authorization.CAMPAIGN_READ]">
+        <ng-container *ngFor="let campaign of campaignsForScenario">
+            <a [routerLink]="['/campaign', campaign.id,'execution']"
+               title="{{ 'campaigns.list.item.title.link.title' | translate }} {{campaign.title}}">
+                {{campaign.title}}
+            </a>
+            &nbsp;
+        </ng-container>
+    </ng-container>
+    <ng-container *hasAuthorization="{not: true, authorizations: [Authorization.CAMPAIGN_READ]}">
+        <ng-container *ngFor="let campaign of campaignsForScenario">
+            <span>{{campaign.title}}</span> &nbsp;
+        </ng-container>
     </ng-container>
 </div>

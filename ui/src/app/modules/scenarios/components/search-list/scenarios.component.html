@@ -1,4 +1,6 @@
-<div class="create-scenario-wrapper">
+<div *hasAuthorization="[Authorization.SCENARIO_WRITE]"
+     class="create-scenario-wrapper"
+>
     <div class="create-scenario">
         <button type="button" class="btn btn-xs" title="{{ 'scenarios.search.create.form' | translate }}"
                 (click)="createNewScenario(false)">
@@ -152,7 +154,7 @@
                 </td>
 
                 <td>
-                    <a *ngIf="jiraMap.has(scenario.id)" role="button" class="btn btn-sm btn-link mr-0" 
+                    <a *ngIf="jiraMap.has(scenario.id)" role="button" class="btn btn-sm btn-link mr-0"
                         target="_blank" href="{{getJiraLink(scenario.id)}}"
                         ngbPopover="{{jiraMap.get(scenario.id)}}" placement="left" (click)="$event.stopPropagation()"
                         triggers="mouseenter:mouseleave">

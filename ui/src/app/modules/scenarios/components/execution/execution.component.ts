@@ -1,4 +1,3 @@
-///<reference path="../../../../../../node_modules/@angular/router/src/router.d.ts"/>
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -7,7 +6,7 @@ import { debounceTime, delay } from 'rxjs/internal/operators';
 
 import { EventManagerService } from '@shared/event-manager.service';
 
-import { Execution, GwtTestCase, ScenarioComponent, ScenarioExecutionReport, TestCase } from '@model';
+import { Execution, GwtTestCase, ScenarioComponent, ScenarioExecutionReport, TestCase, Authorization } from '@model';
 import { ComponentService, ScenarioExecutionService, ScenarioService } from '@core/services';
 
 @Component({
@@ -38,6 +37,8 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
 
     private routeParamsSubscription: Subscription;
     private scenarioExecutionAsyncSubscription: Subscription;
+
+    Authorization = Authorization;
 
     constructor(
         private eventManager: EventManagerService,

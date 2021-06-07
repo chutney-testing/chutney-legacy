@@ -53,7 +53,7 @@ public class StepController {
         composableStepRepository.deleteById(fromFrontId(stepId));
     }
 
-    @PreAuthorize("hasAuthority('COMPONENT_READ')")
+    @PreAuthorize("hasAuthority('COMPONENT_READ') or hasAuthority('SCENARIO_WRITE')")
     @GetMapping(path = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ComposableStepDto> findAll() {
         return composableStepRepository.findAll()

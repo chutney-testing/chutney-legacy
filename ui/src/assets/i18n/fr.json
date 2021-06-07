@@ -348,7 +348,7 @@
     },
     "login": {
         "logout": "Vous êtes déconnecté",
-        "invalid": "Votre session s'est terminée",
+        "unauthorized": "Vous n'êtes pas autorisé à accéder à cette vue. Contacter votre administrateur.",
         "username": "Nom d'utilisateur",
         "password": "Mot de passe (Sesame)"
     },

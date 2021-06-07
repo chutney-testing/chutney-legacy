@@ -348,7 +348,7 @@
     },
     "login": {
         "logout": "You are disconnected",
-        "invalid": "Your session has ended",
+        "unauthorized": "You are not authorized to access this vue. Contact your administrator.",
         "username": "Username",
         "password": "Password"
     },

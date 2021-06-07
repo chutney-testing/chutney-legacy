@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges } from '@angular/core';
 
 import { CampaignService } from '@core/services';
-import { Campaign } from '@model';
+import { Campaign, Authorization } from '@model';
 
 @Component({
     selector: 'chutney-scenario-campaigns',
@@ -12,6 +12,8 @@ export class ScenarioCampaignsComponent implements OnChanges {
 
     @Input() idScenario: string;
     campaignsForScenario: Array<Campaign> = [];
+
+    Authorization = Authorization;
 
     constructor(private campaignService: CampaignService) {
     }

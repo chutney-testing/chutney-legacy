@@ -1,14 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 
-import { ScenarioService } from '@core/services';
-import { ScenarioIndex, ScenarioType, SelectableTags } from '@model';
 import { distinct, flatMap, intersection, sortByAndOrder } from '@shared/tools/array-utils';
 import { StateService } from '@shared/state/state.service';
-import { Subscription } from 'rxjs';
-import { JiraPluginService } from '@core/services/jira-plugin.service';
-import { JiraPluginConfigurationService } from '@core/services/jira-plugin-configuration.service';
-import { map } from 'rxjs/operators';
+import { ScenarioService, JiraPluginService, JiraPluginConfigurationService } from '@core/services';
+import { ScenarioIndex, ScenarioType, SelectableTags, Authorization } from '@model';
 
 @Component({
     selector: 'chutney-scenarios',
@@ -37,6 +35,8 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     // Order
     orderBy = 'title';
     reverseOrder = false;
+
+    Authorization = Authorization;
 
     constructor(
         private router: Router,
@@ -253,12 +253,12 @@ export class ScenariosComponent implements OnInit, OnDestroy {
         this.applyFiltersToRoute();
     }
 
-// Jira link //
+    // Jira link //
     initJiraPlugin() {
-        this.jiraPluginConfigurationService.get()
-            .subscribe((r) => {
-                if (r && r.url !== '') {
-                    this.jiraUrl = r.url;
+        this.jiraPluginConfigurationService.getUrl()
+            .subscribe((url) => {
+                if (url !== '') {
+                    this.jiraUrl = url;
                     this.jiraLinkService.findScenarios()
                         .subscribe(
                             (result) => {

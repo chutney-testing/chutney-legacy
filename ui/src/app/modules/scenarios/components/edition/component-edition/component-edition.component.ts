@@ -100,7 +100,7 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
         if (this.scenarioComponent.id != null) {
             this.router.navigateByUrl('/scenario/' + this.scenarioComponent.id + '/execution/last');
         } else {
-            this.router.navigateByUrl('/scenario/');
+            this.router.navigateByUrl('/scenario');
         }
     }
 

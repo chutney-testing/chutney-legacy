@@ -133,6 +133,13 @@ public class JiraModuleController {
             .build();
     }
 
+    @PreAuthorize("hasAuthority('SCENARIO_READ')")
+    @GetMapping(path = BASE_CONFIGURATION_URL + "/url", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getConfigurationUrl() {
+        JiraTargetConfiguration jiraTargetConfiguration = jiraRepository.loadServerConfiguration();
+        return jiraTargetConfiguration.url;
+    }
+
     @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @PostMapping(path = BASE_CONFIGURATION_URL,
         consumes = MediaType.APPLICATION_JSON_VALUE,
