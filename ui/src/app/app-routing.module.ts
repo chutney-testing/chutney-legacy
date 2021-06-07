@@ -12,6 +12,7 @@ export const appRoutes: Routes = [
         canActivate: [AuthGuard],
         data: { 'authenticate': true },
         children: [
+            { path: '', redirectTo: '/home-page', pathMatch: 'full' },
             {
                 path: 'home-page',
                 loadChildren: './modules/home-page/home-page.module#HomePageModule'
