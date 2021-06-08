@@ -1,5 +1,34 @@
 # Changelog
 
+## [1.3.6](https://github.com/chutney-testing/chutney/tree/1.3.6)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.5...HEAD)
+
+**Implemented enhancements:**
+
+- 🚀 | Chutney working directory configuration [\#437](https://github.com/chutney-testing/chutney/issues/437)
+
+**Fixed bugs:**
+
+- 🐛 | Empty campaign execution user [\#454](https://github.com/chutney-testing/chutney/issues/454)
+- 🐛 | Empty tag on component scenarios [\#441](https://github.com/chutney-testing/chutney/issues/441)
+- 🐛 | Component's validations list keeps adding empty validations [\#439](https://github.com/chutney-testing/chutney/issues/439)
+
+**Merged pull requests:**
+
+- feat\(task\) : Prevent OOM on large SQL queries [\#462](https://github.com/chutney-testing/chutney/pull/462) ([bessonm](https://github.com/bessonm))
+- bugfix\(ui\): fix empty campaign execution user [\#455](https://github.com/chutney-testing/chutney/pull/455) ([rbenyoussef](https://github.com/rbenyoussef))
+- chore\(deps\): bump junit5.version from 5.7.1 to 5.7.2 [\#453](https://github.com/chutney-testing/chutney/pull/453) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps-dev\): bump mockito-core from 2.8.9 to 3.10.0 [\#452](https://github.com/chutney-testing/chutney/pull/452) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump exec-maven-plugin from 1.6.0 to 3.0.0 [\#451](https://github.com/chutney-testing/chutney/pull/451) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump jacoco-maven-plugin from 0.8.5 to 0.8.7 [\#450](https://github.com/chutney-testing/chutney/pull/450) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump cxf-xjc-plugin from 3.3.0 to 3.3.1 [\#448](https://github.com/chutney-testing/chutney/pull/448) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump everit-json-schema from 1.11.0 to 1.12.2 [\#444](https://github.com/chutney-testing/chutney/pull/444) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore: Upgrade selenium version to 3.141.59 [\#443](https://github.com/chutney-testing/chutney/pull/443) ([rbenyoussef](https://github.com/rbenyoussef))
+- bugfix\(server\): Prevent creating empty tags [\#442](https://github.com/chutney-testing/chutney/pull/442) ([bessonm](https://github.com/bessonm))
+- bugfix\(ui\): Reset component validations list when selecting another one [\#440](https://github.com/chutney-testing/chutney/pull/440) ([bessonm](https://github.com/bessonm))
+- chore\(\): Single chutney working directory configuration [\#436](https://github.com/chutney-testing/chutney/pull/436) ([boddissattva](https://github.com/boddissattva))
+
 ## [1.3.5](https://github.com/chutney-testing/chutney/tree/1.3.5) (2021-05-25)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.4...HEAD)
