@@ -22,6 +22,7 @@ public class SqlTask implements Task {
     private final List<String> statements;
 
     private final DefaultSqlClientFactory clientFactory = new DefaultSqlClientFactory();
+    private final int NB_LOGGED_ROWS = 10;
 
     public SqlTask(Target target, Logger logger, @Input("statements") List<String> statements) {
         this.target = target;
@@ -40,9 +41,13 @@ public class SqlTask implements Task {
                 try {
                     Records result = sqlClient.execute(statement);
                     records.add(result);
-                    logger.info(result.printable());
+                    logger.info(result.printable(NB_LOGGED_ROWS));
                 } catch (SQLException e) {
                     logger.error(e.getMessage() + " for " + statement + "; Vendor error code: " + e.getErrorCode());
+                    records.add(sqlClient.emptyRecords());
+                    failure.set(true);
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
                     records.add(sqlClient.emptyRecords());
                     failure.set(true);
                 }

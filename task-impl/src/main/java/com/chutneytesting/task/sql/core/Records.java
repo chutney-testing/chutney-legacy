@@ -20,8 +20,13 @@ public class Records {
     }
 
     public List<Map<String, Object>> toListOfMaps() {
-        final List<Map<String, Object>> listOfMaps = new ArrayList<>(rows.size());
-        for (List<Object> row : rows) {
+        return this.toListOfMaps(rows.size());
+    }
+
+    public List<Map<String, Object>> toListOfMaps(int n) {
+        final int limit = Math.min(n, rows.size());
+        final List<Map<String, Object>> listOfMaps = new ArrayList<>(limit);
+        for (List<Object> row : rows.subList(0, limit)) {
             final Map<String, Object> aRow = new LinkedHashMap<>(headers.size());
             for (int j = 0; j < headers.size(); j++) {
                 aRow.put(headers.get(j), row.get(j));
@@ -41,24 +46,24 @@ public class Records {
         return matrix;
     }
 
-    public String printable() {
+    public String printable(int limit) {
         StringBuilder sb = new StringBuilder();
-        Map<String, Integer> maxColumnLength = maximumColumnLength();
+        Map<String, Integer> maxColumnLength = maximumColumnLength(limit);
         sb.append(tableHeaders(maxColumnLength));
-        sb.append(tableRows(maxColumnLength));
+        sb.append(tableRows(limit, maxColumnLength));
         return sb.toString();
     }
 
-    public Map<String, Integer> maximumColumnLength() {
+    public Map<String, Integer> maximumColumnLength(int limit) {
         return headers.stream()
             .collect(Collectors.toMap(
                 h -> h,
-                this::maximumLength
+                h -> this.maximumLength(h, limit)
             ));
     }
 
-    private int maximumLength(String header) {
-        List<Map<String, Object>> list = toListOfMaps();
+    private int maximumLength(String header, int limit) {
+        List<Map<String, Object>> list = toListOfMaps(limit);
         Integer integer = list.stream()
             .map(r -> r.get(header).toString().length())
             .max(Integer::compare)
@@ -88,9 +93,9 @@ public class Records {
         return " ".repeat(i);
     }
 
-    public String tableRows(Map<String, Integer> maximumColumnLength) {
-        List<Map<String, Object>> rows = this.toListOfMaps();
-        List<String> lines = rows.stream().map(row -> rowAsString(row, maximumColumnLength)).collect(Collectors.toList());
+    public String tableRows(int limit, Map<String, Integer> maximumColumnLength) {
+        List<Map<String, Object>> rows = this.toListOfMaps(limit);
+        List<String> lines = rows.stream().limit(limit).map(row -> rowAsString(row, maximumColumnLength)).collect(Collectors.toList());
         StringBuilder sb = new StringBuilder();
         lines.forEach(sb::append);
         return sb.toString();

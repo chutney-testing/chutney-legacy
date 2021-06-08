@@ -11,7 +11,8 @@ import static org.mockito.Mockito.when;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.engine.step.StepContext;
-import com.chutneytesting.task.TestTaskTemplateFactory.ComplexeTask;
+import com.chutneytesting.task.TestTaskTemplateFactory.ComplexTask;
+import com.chutneytesting.task.TestTaskTemplateFactory.OomTask;
 import com.chutneytesting.task.domain.TaskTemplate;
 import com.chutneytesting.task.domain.TaskTemplateParserV2;
 import com.chutneytesting.task.domain.TaskTemplateRegistry;
@@ -59,7 +60,7 @@ public class DefaultStepExecutorTest {
     @Test
     public void should_execute_a_real_task() {
         TaskTemplateRegistry taskTemplateRegistry = mock(TaskTemplateRegistry.class);
-        TaskTemplate taskTemplate = new TaskTemplateParserV2().parse(ComplexeTask.class).result();
+        TaskTemplate taskTemplate = new TaskTemplateParserV2().parse(ComplexTask.class).result();
 
         when(taskTemplateRegistry.getByIdentifier(any())).thenReturn(Optional.of(taskTemplate));
 
@@ -69,6 +70,23 @@ public class DefaultStepExecutorTest {
         inputs.put("param1", "a");
         inputs.put("param2", "b");
         when(stepContext.getEvaluatedInputs()).thenReturn(inputs);
+
+        Step step = mock(Step.class, RETURNS_DEEP_STUBS);
+
+        StepExecutor stepExecutor = new DefaultStepExecutor(taskTemplateRegistry);
+        stepExecutor.execute(createScenarioExecution(), stepContext, mock(TargetImpl.class), step);
+
+        verify(step, times(0)).failure(any(Exception.class));
+    }
+
+    @Test
+    public void should_prevent_oom_exceptions() {
+        TaskTemplateRegistry taskTemplateRegistry = mock(TaskTemplateRegistry.class);
+        TaskTemplate taskTemplate = new TaskTemplateParserV2().parse(OomTask.class).result();
+
+        when(taskTemplateRegistry.getByIdentifier(any())).thenReturn(Optional.of(taskTemplate));
+
+        StepContext stepContext = mock(StepContext.class);
 
         Step step = mock(Step.class, RETURNS_DEEP_STUBS);
 

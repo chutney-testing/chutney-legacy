@@ -1,5 +1,8 @@
 package com.chutneytesting.task;
 
+import static com.chutneytesting.tools.ChutneyMemoryInfo.committedMemory;
+import static com.chutneytesting.tools.ChutneyMemoryInfo.usedMemory;
+
 import com.chutneytesting.task.domain.TaskInstantiationFailureException;
 import com.chutneytesting.task.domain.TaskTemplate;
 import com.chutneytesting.task.domain.UnresolvableTaskParameterException;
@@ -9,6 +12,8 @@ import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.time.Duration;
+import com.chutneytesting.tools.ChutneyMemoryInfo;
+import com.chutneytesting.tools.NotEnoughMemoryException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -83,12 +88,12 @@ public abstract class TestTaskTemplateFactory {
         }
     }
 
-    public static class ComplexeTask implements Task {
+    public static class ComplexTask implements Task {
 
         private final String someString;
         private final Pojo someObject;
 
-        public ComplexeTask(@Input("stringParam") String someString, @Input("pojoParam") Pojo someObject) {
+        public ComplexTask(@Input("stringParam") String someString, @Input("pojoParam") Pojo someObject) {
            this.someString = someString;
            this.someObject = someObject;
         }
@@ -99,6 +104,32 @@ public abstract class TestTaskTemplateFactory {
             store.put("someString", someString);
             store.put("someObject", someObject);
             return TaskExecutionResult.ok(store);
+        }
+    }
+
+    public static class OomTask implements Task {
+
+        @Override
+        public TaskExecutionResult execute() {
+
+            int dummyArraySize = Integer.MAX_VALUE / 10;
+            Map<String, String> outputs = new HashMap<>(1);
+            try {
+                long[] memoryAllocated;
+                for (int i = 0; i < Integer.MAX_VALUE; i++) {
+                    if (!ChutneyMemoryInfo.hasEnoughAvailableMemory()) {
+                        throw new NotEnoughMemoryException(usedMemory(), committedMemory(), "custom message");
+                    }
+                    memoryAllocated = new long[dummyArraySize];
+                    memoryAllocated[0] = dummyArraySize;
+                    dummyArraySize += Integer.MAX_VALUE / 100;
+                }
+            } catch (NotEnoughMemoryException e) {
+                outputs.put("result", e.getMessage());
+                return TaskExecutionResult.ko(outputs);
+            }
+
+            return TaskExecutionResult.ok();
         }
     }
 

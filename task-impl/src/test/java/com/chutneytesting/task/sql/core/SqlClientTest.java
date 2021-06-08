@@ -17,7 +17,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-public class DefaultSqlConnectorTest {
+public class SqlClientTest {
 
     private static String DB_NAME = "test";
     private Target sqlTarget = TestTarget.TestTargetBuilder.builder()
