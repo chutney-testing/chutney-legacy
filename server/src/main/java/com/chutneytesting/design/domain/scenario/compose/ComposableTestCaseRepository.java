@@ -16,4 +16,6 @@ public interface ComposableTestCaseRepository {
     void removeById(String testCaseId);
 
     Integer lastVersion(String composableTestCaseId);
+
+    List<TestCaseMetadata> search(String textFilter);
 }

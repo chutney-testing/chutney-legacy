@@ -13,8 +13,8 @@ import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository;
-import com.chutneytesting.design.infra.storage.scenario.compose.wrapper.TestCaseVertex;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
+import com.chutneytesting.design.infra.storage.scenario.compose.wrapper.TestCaseVertex;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCaseRepository;
 import com.google.common.collect.Lists;
@@ -26,9 +26,11 @@ import com.orientechnologies.orient.core.record.OElement;
 import com.orientechnologies.orient.core.record.OVertex;
 import com.orientechnologies.orient.core.sql.executor.OResultSet;
 import com.orientechnologies.orient.core.storage.ORecordDuplicatedException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -120,6 +122,22 @@ public class OrientComposableTestCaseRepository implements ComposableTestCaseRep
         }
     }
 
+    @Override
+    public List<TestCaseMetadata> search(String textFilter) {
+        String[] words = StringEscapeUtils.escapeSql(textFilter).split("\\s");
+        String fullTextSearch = Arrays.stream(words).map(w -> "+" + w + "*").collect(Collectors.joining(" "));
+        String query = "SELECT @rid FROM " + TESTCASE_CLASS + " WHERE SEARCH_CLASS(\"" + fullTextSearch + "\") = true";
+        try (ODatabaseSession dbSession = componentDBPool.acquire()) {
+            OResultSet allSteps = dbSession.query(query);
+            return Lists.newArrayList(allSteps).stream()
+                .map(rs -> {
+                    OVertex element = dbSession.load(new ORecordId(rs.getProperty("@rid").toString()));
+                    return vertexToTestCase(TestCaseVertex.builder().from(element).build()).metadata;
+                })
+                .collect(Collectors.toList());
+        }
+    }
+
     private OVertex save(ComposableTestCase composableTestCase, ODatabaseSession dbSession) {
         Optional<OElement> stepRecord = load(composableTestCase.id, dbSession);
         if (stepRecord.isPresent() && stepRecord.get().getVersion() != composableTestCase.metadata.version()) {
@@ -129,4 +147,5 @@ public class OrientComposableTestCaseRepository implements ComposableTestCaseRep
         TestCaseVertex testCaseVertex = testCaseToVertex(composableTestCase, testCase);
         return testCaseVertex.save(dbSession);
     }
+
 }

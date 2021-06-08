@@ -128,6 +128,7 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
             .parallel()
             .flatMap(r -> searchAllRepositoryStream(r, textFilter))
             .collect(Collectors.toList());
+        testCases.addAll(searchComposableTestCase(textFilter));
         return testCases;
     }
 
@@ -156,6 +157,14 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
 
     private List<TestCaseMetadata> findAllComposableTestCase() {
         return composableTestCaseRepository.findAll().stream()
+            .map(testCaseMetadata -> TestCaseMetadataImpl.TestCaseMetadataBuilder.from(testCaseMetadata)
+                .withId(toFrontId(testCaseMetadata.id()))
+                .build())
+            .collect(Collectors.toList());
+    }
+
+    private List<TestCaseMetadata> searchComposableTestCase(String textFilter) {
+        return composableTestCaseRepository.search(textFilter).stream()
             .map(testCaseMetadata -> TestCaseMetadataImpl.TestCaseMetadataBuilder.from(testCaseMetadata)
                 .withId(toFrontId(testCaseMetadata.id()))
                 .build())

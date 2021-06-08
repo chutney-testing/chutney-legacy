@@ -1,6 +1,8 @@
 package com.chutneytesting.design.infra.storage.scenario.compose.orient.changelog;
 
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_CREATIONDATE;
+import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_DESCRIPTION;
+import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_TITLE;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.TESTCASE_CLASS_PROPERTY_UPDATEDATE;
 import static java.util.Optional.ofNullable;
 
@@ -197,6 +199,15 @@ public class OrientChangelog {
         }
 
         LOGGER.info("TestCase update date initialized");
+    }
+
+    @ChangelogOrder(order = 11, uuid = "20210608-testcase-content-index")
+    public static void testcaseContentIndex(ODatabaseSession dbSession) {
+        OrientUtils.createProperty(OrientComponentDB.TESTCASE_CLASS, dbSession, TESTCASE_CLASS_PROPERTY_TITLE, OType.STRING);
+        OrientUtils.createProperty(OrientComponentDB.TESTCASE_CLASS, dbSession, TESTCASE_CLASS_PROPERTY_DESCRIPTION, OType.STRING);
+
+        OrientUtils.createIndex(OrientComponentDB.TESTCASE_CLASS, dbSession, "FullTextTestCaseIndex", OClass.INDEX_TYPE.FULLTEXT, TESTCASE_CLASS_PROPERTY_TITLE, TESTCASE_CLASS_PROPERTY_DESCRIPTION);
+        LOGGER.info("20210608-testcase-content-index changelog pass");
     }
 
     @ChangelogOrder(order = 12, uuid = "20210616-add-input-to-sql-task")
