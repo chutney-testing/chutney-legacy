@@ -6,12 +6,8 @@ public class ChutneyMemoryInfo {
     public static final int MINIMUM_MEMORY_PERCENTAGE_REQUIRED = 5;
     public static final long MINIMUM_MEMORY_REQUIRED = (MAX_MEMORY / 100) * MINIMUM_MEMORY_PERCENTAGE_REQUIRED;
 
-    public static long committedMemory() {
-        return Runtime.getRuntime().totalMemory();
-    }
-
     public static long availableMemory() {
-        return MAX_MEMORY - committedMemory();
+        return MAX_MEMORY - usedMemory();
     }
 
     public static long usedMemory() {
@@ -22,5 +18,4 @@ public class ChutneyMemoryInfo {
     public static boolean hasEnoughAvailableMemory() {
         return availableMemory() > MINIMUM_MEMORY_REQUIRED;
     }
-
 }
