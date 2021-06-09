@@ -1,6 +1,6 @@
 package com.chutneytesting.task;
 
-import static com.chutneytesting.tools.ChutneyMemoryInfo.committedMemory;
+import static com.chutneytesting.tools.ChutneyMemoryInfo.MAX_MEMORY;
 import static com.chutneytesting.tools.ChutneyMemoryInfo.usedMemory;
 
 import com.chutneytesting.task.domain.TaskInstantiationFailureException;
@@ -118,7 +118,7 @@ public abstract class TestTaskTemplateFactory {
                 long[] memoryAllocated;
                 for (int i = 0; i < Integer.MAX_VALUE; i++) {
                     if (!ChutneyMemoryInfo.hasEnoughAvailableMemory()) {
-                        throw new NotEnoughMemoryException(usedMemory(), committedMemory(), "custom message");
+                        throw new NotEnoughMemoryException(usedMemory(), MAX_MEMORY, "custom message");
                     }
                     memoryAllocated = new long[dummyArraySize];
                     memoryAllocated[0] = dummyArraySize;
