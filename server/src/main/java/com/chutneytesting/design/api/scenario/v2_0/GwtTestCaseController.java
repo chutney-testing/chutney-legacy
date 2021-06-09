@@ -56,7 +56,7 @@ public class GwtTestCaseController {
         return GwtTestCaseMapper.toDto(testCaseRepository.findById(testCaseId));
     }
 
-    @PreAuthorize("hasAuthority('SCENARIO_READ')")
+    @PreAuthorize("hasAuthority('SCENARIO_READ') or hasAuthority('CAMPAIGN_WRITE')")
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TestCaseIndexDto> getTestCases(@RequestParam( name = "textFilter", required = false) String textFilter) {
 

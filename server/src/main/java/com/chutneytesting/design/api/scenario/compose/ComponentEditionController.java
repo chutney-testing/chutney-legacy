@@ -17,6 +17,8 @@ import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import com.chutneytesting.security.infra.SpringUserService;
+import com.chutneytesting.tools.ui.KeyValue;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -67,6 +69,12 @@ public class ComponentEditionController {
     @GetMapping(path = "/{testCaseId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ComposableTestCaseDto getTestCase(@PathVariable("testCaseId") String testCaseId) {
         return toDto(composableTestCaseRepository.findById(fromFrontId(Optional.of(testCaseId))));
+    }
+
+    @PreAuthorize("hasAuthority('CAMPAIGN_WRITE')")
+    @GetMapping(path = "/{testCaseId}/executable/parameters", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<KeyValue> getTestCaseExecutionParameters(@PathVariable("testCaseId") String testCaseId) {
+        return toDto(composableTestCaseRepository.findById(fromFrontId(Optional.of(testCaseId)))).executionParameters();
     }
 
     @PreAuthorize("hasAuthority('SCENARIO_READ')")

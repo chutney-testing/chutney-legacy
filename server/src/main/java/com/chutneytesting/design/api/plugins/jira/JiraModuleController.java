@@ -37,7 +37,7 @@ public class JiraModuleController {
         this.jiraXrayPlugin = jiraXrayPlugin;
     }
 
-    @PreAuthorize("hasAuthority('SCENARIO_READ')")
+    @PreAuthorize("hasAuthority('SCENARIO_READ') or hasAuthority('CAMPAIGN_WRITE')")
     @GetMapping(path = BASE_SCENARIO_URL, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, String> getLinkedScenarios() {
         return jiraRepository.getAllLinkedScenarios();
@@ -133,7 +133,7 @@ public class JiraModuleController {
             .build();
     }
 
-    @PreAuthorize("hasAuthority('SCENARIO_READ')")
+    @PreAuthorize("hasAuthority('SCENARIO_READ') or hasAuthority('CAMPAIGN_READ')")
     @GetMapping(path = BASE_CONFIGURATION_URL + "/url", produces = MediaType.APPLICATION_JSON_VALUE)
     public String getConfigurationUrl() {
         JiraTargetConfiguration jiraTargetConfiguration = jiraRepository.loadServerConfiguration();

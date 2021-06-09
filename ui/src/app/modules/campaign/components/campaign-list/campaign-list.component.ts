@@ -1,13 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
-import { Campaign, CampaignExecutionReport, SelectableTags } from '@core/model';
-import { CampaignService } from '@core/services';
 import { Subscription, timer } from 'rxjs';
-import { JiraPluginService } from '@core/services/jira-plugin.service';
-import { CampaignSchedulingService } from '@core/services/campaign-scheduling.service';
-import { CampaignScheduling } from '@core/model/campaign/campaign-scheduling.model';
-import { JiraPluginConfigurationService } from '@core/services/jira-plugin-configuration.service';
+
+import { Campaign, CampaignExecutionReport, SelectableTags, CampaignScheduling, Authorization } from '@model';
+import { CampaignService, JiraPluginConfigurationService, JiraPluginService, CampaignSchedulingService } from '@core/services';
 import { StateService } from '@shared/state/state.service';
 import { distinct, filterOnTextContent, flatMap, intersection } from '@shared/tools/array-utils';
 
@@ -33,6 +30,8 @@ export class CampaignListComponent implements OnInit, OnDestroy {
     tagFilter = new SelectableTags<String>();
 
     scheduledCampaigns: Array<CampaignScheduling> = [];
+
+    Authorization = Authorization;
 
     constructor(private campaignService: CampaignService,
                 private jiraLinkService: JiraPluginService,
@@ -188,10 +187,10 @@ export class CampaignListComponent implements OnInit, OnDestroy {
     // Jira link //
 
     initJiraPlugin() {
-        this.jiraPluginConfigurationService.get()
+        this.jiraPluginConfigurationService.getUrl()
             .subscribe((r) => {
-                if (r && r.url !== '') {
-                    this.jiraUrl = r.url;
+                if (r !== '') {
+                    this.jiraUrl = r;
                     this.jiraLinkService.findCampaigns()
                         .subscribe(
                             (result) => {

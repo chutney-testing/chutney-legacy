@@ -1,15 +1,20 @@
-<div class="ml-5 mt-4">
-    <h2>Campagnes
-
-        <button type="button" class="btn btn-sm btn-outline-secondary ml-2" (click)="createCampaign()">
+<div class="row ml-4">
+    <div class="col-md-6">
+        <button *hasAuthorization="[Authorization.CAMPAIGN_WRITE]"
+                type="button"
+                class="btn btn-sm btn-outline-secondary"
+                (click)="createCampaign()"
+        >
             <span class="fa fa-plus" aria-hidden="true"></span> {{ 'campaigns.list.actions.create' | translate }}
         </button>
-
-        <button type="button" class="btn btn-sm btn-outline-secondary ml-2" [routerLink]="['scheduling']">
+        <button *hasAuthorization="[Authorization.CAMPAIGN_EXECUTE]"
+                type="button"
+                class="btn btn-sm btn-outline-secondary ml-2"
+                [routerLink]="['scheduling']"
+        >
             <span class="fa fa-plus" aria-hidden="true"></span> {{ 'campaigns.scheduling.schedule' | translate }}
         </button>
-
-    </h2>
+    </div>
 </div>
 <div class="row ml-4">
     <div class="col-md-6 pr-2">
@@ -50,7 +55,7 @@
             <table class="table table-sm table-striped table-hover">
                 <tbody>
                 <tr *ngFor="let campaign of (viewedCampaigns | searchTextPipe : campaignFilter:['title','description'])">
-                    <td class="small_text w93">
+                    <td class="small_text w93 align-middle">
                         <a [routerLink]="['/campaign',campaign.id,'execution']"
                            title="{{ 'campaigns.list.item.title.link.title' | translate }} {{campaign.title}}">{{campaign.title}}</a>
                     </td>
@@ -86,15 +91,15 @@
                             <span class="fa fa-info-circle" aria-hidden="true"></span>
                         </button>
                     </td>
-                    <td class="pl-0 w2">
+                    <td class="pl-0 w2" *hasAuthorization="[Authorization.CAMPAIGN_WRITE]">
+                        <button type="button" class="btn btn-light" (click)="editCampaign(campaign)">
+                            <span class="fa fa-pencil-alt"></span>
+                        </button>
+                    </td>
+                    <td class="pl-0 w2" *hasAuthorization="[Authorization.CAMPAIGN_WRITE]">
                         <button type="button" class="btn btn-outline-danger"
                                 (click)="deleteCampaign(campaign.id, campaign.title)">
                             <span class="fa fa-trash"></span>
-                        </button>
-                    </td>
-                    <td class="pl-0 w2">
-                        <button type="button" class="btn btn-light" (click)="editCampaign(campaign)">
-                            <span class="fa fa-pencil-alt"></span>
                         </button>
                     </td>
                 </tr>
@@ -106,7 +111,7 @@
         </div>
     </div>
     <div class="col-md-6 pl-2">
-        <h2 *ngIf="scheduledCampaigns.length > 0">Prochaines executions</h2>
+        <h2 *ngIf="scheduledCampaigns.length > 0">{{ 'campaigns.list.executions.next' | translate }}</h2>
         <div class="table-responsive" *ngIf="scheduledCampaigns.length > 0">
             <table class="table table-sm table-striped">
                 <tr *ngFor="let scheduledCampaign of scheduledCampaigns">
@@ -120,12 +125,13 @@
                               scheduledCampaign.frequency==='Monthly'? 'red': 'blue'
                               }"
                               aria-hidden="true"></span>
-                        - {{scheduledCampaign.campaignTitle}}</td>
+                        - {{scheduledCampaign.campaignTitle}}
+                    </td>
                     <td>{{scheduledCampaign.schedulingDate | amLocal | amDateFormat: 'YYYY-MM-DD HH:mm'}}</td>
                 </tr>
             </table>
         </div>
-        <h2>Dernières executions</h2>
+        <h2>{{ 'campaigns.list.executions.last' | translate }}</h2>
         <div class="table-responsive" *ngIf="campaigns.length > 0">
             <table class="table table-sm table-striped">
                 <tbody>

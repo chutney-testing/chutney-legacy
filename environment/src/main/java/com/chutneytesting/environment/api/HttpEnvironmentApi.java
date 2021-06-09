@@ -40,7 +40,7 @@ public class HttpEnvironmentApi implements EnvironmentApi {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCENARIO_EXECUTE')")
+    @PreAuthorize("hasAuthority('SCENARIO_EXECUTE') or hasAuthority('CAMPAIGN_WRITE') or hasAuthority('CAMPAIGN_EXECUTE')")
     @GetMapping(path = "/names", produces = MediaType.APPLICATION_JSON_VALUE)
     public Set<String> listEnvironmentsNames() {
         return embeddedApplication.listEnvironmentsNames();

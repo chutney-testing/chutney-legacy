@@ -1,5 +1,4 @@
 import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
-import { EnvironmentMetadata } from '@model';
 
 @Component({
     selector: 'chutney-environment-combo',
@@ -8,12 +7,11 @@ import { EnvironmentMetadata } from '@model';
 })
 export class EnvironmentComboComponent implements OnChanges {
 
-
-    @Input() environments: EnvironmentMetadata[];
+    @Input() environments: Array<string>;
     @Input() defaultValue: string;
     @Output() selectionEvent = new EventEmitter();
 
-    selectedEnvironment: EnvironmentMetadata;
+    selectedEnvironment: string;
 
     constructor() {
     }
@@ -23,13 +21,13 @@ export class EnvironmentComboComponent implements OnChanges {
     }
 
     changingValue(event: any) {
-        this.selectedEnvironment = this.environments.filter(env => env.name === event.target.value)[0];
+        this.selectedEnvironment = this.environments.filter(env => env === event.target.value)[0];
         this.selectionEvent.emit(this.selectedEnvironment);
     }
 
     private setSelectedEnvironment() {
         if (this.environments && this.environments.length > 0) {
-            const envFound = this.environments.find(e => e.name === this.defaultValue);
+            const envFound = this.environments.find(e => e === this.defaultValue);
             if (envFound) {
                 this.selectedEnvironment = envFound;
             } else {

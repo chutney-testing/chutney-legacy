@@ -13,7 +13,7 @@ import {
     ScenarioComponent,
     Strategy,
     Task
-} from '@core/model';
+} from '@model';
 
 @Injectable({
     providedIn: 'root'
@@ -89,6 +89,10 @@ export class ComponentService {
         return this.httpClient.get<ScenarioComponent>(environment.backend + `${this.componentUrl}/${id}`).pipe(
             map(value => this.mapJsonToScenarioComponent(value, true))
         );
+    }
+
+    findComponentTestCaseExecutableParameters(id: string): Observable<Array<KeyValue>> {
+        return this.httpClient.get<Array<KeyValue>>(environment.backend + `${this.componentUrl}/${id}/executable/parameters`);
     }
 
     findComponentTestCaseWithoutDeserializeImpl(id: string): Observable<ScenarioComponent> {

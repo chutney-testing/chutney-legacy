@@ -162,6 +162,7 @@ Feature: Chutney api security
             | delete    | /api/ui/campaign/v1/scheduling/666                                 | CAMPAIGN_WRITE     |                                                                 | 200    |
             | get       | /api/v1/datasets                                                   | DATASET_READ       |                                                                 | 200    |
             | get       | /api/v1/datasets                                                   | SCENARIO_WRITE     |                                                                 | 200    |
+            | get       | /api/v1/datasets                                                   | CAMPAIGN_WRITE     |                                                                 | 200    |
             | post      | /api/v1/datasets                                                   | DATASET_WRITE      | {"name":"secu1"}                                                | 200    |
             | put       | /api/v1/datasets                                                   | DATASET_WRITE      | {"name":"secu2"}                                                | 404    |
             | delete    | /api/v1/datasets/dataSetId                                         | DATASET_WRITE      |                                                                 | 404    |
@@ -178,6 +179,7 @@ Feature: Chutney api security
             | delete    | /api/ui/globalvar/v1/secudelete                                    | GLOBAL_VAR_WRITE   |                                                                 | 404    |
             | get       | /api/ui/globalvar/v1/secuget                                       | GLOBAL_VAR_READ    |                                                                 | 404    |
             | get       | /api/ui/jira/v1/scenario                                           | SCENARIO_READ      |                                                                 | 200    |
+            | get       | /api/ui/jira/v1/scenario                                           | CAMPAIGN_WRITE     |                                                                 | 200    |
             | get       | /api/ui/jira/v1/campaign                                           | CAMPAIGN_READ      |                                                                 | 200    |
             | get       | /api/ui/jira/v1/scenario/scenarioId                                | SCENARIO_WRITE     |                                                                 | 200    |
             | post      | /api/ui/jira/v1/scenario                                           | SCENARIO_WRITE     | {"id":"","chutneyId":""}                                        | 200    |
@@ -188,6 +190,7 @@ Feature: Chutney api security
             | delete    | /api/ui/jira/v1/campaign/campaignId                                | CAMPAIGN_WRITE     |                                                                 | 200    |
             | get       | /api/ui/jira/v1/configuration                                      | ADMIN_ACCESS       |                                                                 | 200    |
             | get       | /api/ui/jira/v1/configuration/url                                  | SCENARIO_READ      |                                                                 | 200    |
+            | get       | /api/ui/jira/v1/configuration/url                                  | CAMPAIGN_READ      |                                                                 | 200    |
             | post      | /api/ui/jira/v1/configuration                                      | ADMIN_ACCESS       | {"url":"","username":"","password":""}                          | 200    |
             | post      | /api/v1/ui/plugins/linkifier/                                      | ADMIN_ACCESS       | {"pattern":"","link":"","id":""}                                | 200    |
             | delete    | /api/v1/ui/plugins/linkifier/id                                    | ADMIN_ACCESS       |                                                                 | 200    |
@@ -195,6 +198,7 @@ Feature: Chutney api security
             | get       | /api/scenario/component-edition/testCaseId                         | SCENARIO_READ      |                                                                 | 404    |
             | delete    | /api/scenario/component-edition/testCaseId                         | SCENARIO_WRITE     |                                                                 | 200    |
             | get       | /api/scenario/component-edition/testCaseId/executable              | SCENARIO_READ      |                                                                 | 404    |
+            | get       | /api/scenario/component-edition/testCaseId/executable/parameters   | CAMPAIGN_WRITE     |                                                                 | 404    |
             | post      | /api/steps/v1                                                      | COMPONENT_WRITE    | {"name":""}                                                     | 200    |
             | delete    | /api/steps/v1/stepId                                               | COMPONENT_WRITE    |                                                                 | 200    |
             | get       | /api/steps/v1/all                                                  | COMPONENT_READ     |                                                                 | 200    |
@@ -204,6 +208,7 @@ Feature: Chutney api security
             | get       | /api/steps/v1/stepId                                               | COMPONENT_READ     |                                                                 | 404    |
             | get       | /api/scenario/v2/testCaseId                                        | SCENARIO_READ      |                                                                 | 404    |
             | get       | /api/scenario/v2                                                   | SCENARIO_READ      |                                                                 | 200    |
+            | get       | /api/scenario/v2                                                   | CAMPAIGN_WRITE     |                                                                 | 200    |
             | post      | /api/scenario/v2                                                   | SCENARIO_WRITE     | {"title":"","scenario":{"when":{}}}                             | 200    |
             | patch     | /api/scenario/v2                                                   | SCENARIO_WRITE     | {"title":"","scenario":{"when":{}}}                             | 200    |
             | delete    | /api/scenario/v2/testCaseId                                        | SCENARIO_WRITE     |                                                                 | 200    |
@@ -236,6 +241,8 @@ Feature: Chutney api security
             | get       | /api/task/v1/taskId                                                | COMPONENT_READ     |                                                                 | 404    |
             | get       | /api/v2/environment                                                | ENVIRONMENT_ACCESS |                                                                 | 200    |
             | get       | /api/v2/environment/names                                          | SCENARIO_EXECUTE   |                                                                 | 200    |
+            | get       | /api/v2/environment/names                                          | CAMPAIGN_WRITE     |                                                                 | 200    |
+            | get       | /api/v2/environment/names                                          | CAMPAIGN_EXECUTE   |                                                                 | 200    |
             | post      | /api/v2/environment                                                | ENVIRONMENT_ACCESS | {"name": "secuenv"}                                             | 200    |
             | delete    | /api/v2/environment/envName                                        | ENVIRONMENT_ACCESS |                                                                 | 404    |
             | put       | /api/v2/environment/envName                                        | ENVIRONMENT_ACCESS | {}                                                              | 404    |
