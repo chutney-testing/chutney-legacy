@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.7](https://github.com/chutney-testing/chutney/tree/1.3.7)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.6...HEAD)
+
+**Fixed bugs:**
+
+- 🐛 | When setting Xms on Chutney, SQL task always raise NotEnoughMemoryException [\#463](https://github.com/chutney-testing/chutney/issues/463)
+
+**Merged pull requests:**
+
+- bugfix\(engine+tools\): Fix memory check on sql task. Should not use co… [\#464](https://github.com/chutney-testing/chutney/pull/464) ([nbrouand](https://github.com/nbrouand))
+
 ## [1.3.6](https://github.com/chutney-testing/chutney/tree/1.3.6)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.5...HEAD)
