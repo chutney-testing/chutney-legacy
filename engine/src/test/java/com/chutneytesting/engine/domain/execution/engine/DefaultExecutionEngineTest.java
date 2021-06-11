@@ -25,6 +25,8 @@ import com.chutneytesting.engine.domain.report.Reporter;
 import com.chutneytesting.task.spi.FinallyAction;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Answers;
@@ -35,6 +37,7 @@ public class DefaultExecutionEngineTest {
     private final StepExecutionStrategies stepExecutionStrategies = mock(StepExecutionStrategies.class, Answers.RETURNS_DEEP_STUBS);
     private final DelegationService delegationService = mock(DelegationService.class, Answers.RETURNS_DEEP_STUBS);
     private final String fakeEnvironment = "";
+    private final Executor taskExecutor = Executors.newFixedThreadPool(1);
 
     @Test
     public void runtime_exception_should_be_catch_by_fault_barrier() {
@@ -44,7 +47,7 @@ public class DefaultExecutionEngineTest {
         when(strategy.execute(any(), any(), any(), any())).thenThrow(new RuntimeException("Should be catch by fault barrier"));
 
         Reporter reporter = new Reporter();
-        DefaultExecutionEngine engine = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter);
+        DefaultExecutionEngine engine = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter, taskExecutor);
         StrategyProperties strategyProperties = new StrategyProperties();
         StepStrategyDefinition strategyDefinition = new StepStrategyDefinition("retry", strategyProperties);
         StepDefinition stepDefinition = new StepDefinition("name", null, "type", strategyDefinition, null, null, null, null, fakeEnvironment);
@@ -63,7 +66,7 @@ public class DefaultExecutionEngineTest {
     public void should_execute_finally_actions_on_execution_end() {
         //Given
         Reporter reporter = new Reporter();
-        DefaultExecutionEngine engineUnderTest = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter);
+        DefaultExecutionEngine engineUnderTest = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter, taskExecutor);
 
         StepExecutionStrategy strategy = mock(StepExecutionStrategy.class);
         when(stepExecutionStrategies.buildStrategyFrom(any())).thenReturn(strategy);
@@ -87,7 +90,7 @@ public class DefaultExecutionEngineTest {
     public void should_execute_finally_actions_on_scenario_stop() {
         //Given
         Reporter reporter = new Reporter();
-        DefaultExecutionEngine engineUnderTest = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter);
+        DefaultExecutionEngine engineUnderTest = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter, taskExecutor);
 
         StepExecutionStrategy strategy = mock(StepExecutionStrategy.class);
         when(stepExecutionStrategies.buildStrategyFrom(any())).thenReturn(strategy);
@@ -122,7 +125,7 @@ public class DefaultExecutionEngineTest {
         when(strategy.execute(any(), any(), any(), any())).thenThrow(new RuntimeException("Should be catch by fault barrier"));
 
         Reporter reporter = new Reporter();
-        DefaultExecutionEngine engineUnderTest = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter);
+        DefaultExecutionEngine engineUnderTest = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter, taskExecutor);
         StrategyProperties strategyProperties = new StrategyProperties();
         StepStrategyDefinition strategyDefinition = new StepStrategyDefinition("retry", strategyProperties);
         StepDefinition stepDefinition = new StepDefinition("name", null, "type", strategyDefinition, null, null, null, null, fakeEnvironment);

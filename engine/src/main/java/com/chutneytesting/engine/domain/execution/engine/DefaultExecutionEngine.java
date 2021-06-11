@@ -17,8 +17,7 @@ import com.chutneytesting.engine.domain.report.Reporter;
 import com.chutneytesting.task.spi.injectable.Target;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -28,7 +27,7 @@ public class DefaultExecutionEngine implements ExecutionEngine {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultExecutionEngine.class);
 
-    private final ExecutorService executorService = Executors.newFixedThreadPool(10);
+    private final Executor taskExecutor;
 
     private final StepDataEvaluator dataEvaluator;
     private final StepExecutionStrategies stepExecutionStrategies;
@@ -38,11 +37,13 @@ public class DefaultExecutionEngine implements ExecutionEngine {
     public DefaultExecutionEngine(StepDataEvaluator dataEvaluator,
                                   StepExecutionStrategies stepExecutionStrategies,
                                   DelegationService delegationService,
-                                  Reporter reporter) {
+                                  Reporter reporter,
+                                  Executor taskExecutor) {
         this.dataEvaluator = dataEvaluator;
         this.stepExecutionStrategies = stepExecutionStrategies != null ? stepExecutionStrategies : new StepExecutionStrategies();
         this.delegationService = delegationService;
         this.reporter = reporter;
+        this.taskExecutor = taskExecutor;
     }
 
     @Override
@@ -51,7 +52,7 @@ public class DefaultExecutionEngine implements ExecutionEngine {
         AtomicReference<Step> rootStep = new AtomicReference<>(Step.nonExecutable(stepDefinition));
         reporter.createPublisher(execution.executionId, rootStep.get());
 
-        executorService.submit(() -> {
+        taskExecutor.execute(() -> {
 
             final ScenarioContext scenarioContext = new ScenarioContextImpl();
 
