@@ -85,10 +85,9 @@ public class ServerConfiguration {
     @Bean
     public TaskExecutor engineExecutor(@Value(ENGINE_THREAD_SPRING_VALUE) Integer threadForEngine) {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        if(threadForEngine > 4) {
-            executor.setCorePoolSize(4);
-        }
+        executor.setCorePoolSize(threadForEngine);
         executor.setMaxPoolSize(threadForEngine);
+
         executor.setThreadNamePrefix("engine-executor");
         executor.initialize();
         LOGGER.debug("Pool for engine created with size {}", threadForEngine);
@@ -98,9 +97,7 @@ public class ServerConfiguration {
     @Bean
     public TaskExecutor campaignExecutor(@Value(CAMPAIGNS_THREAD_SPRING_VALUE) Integer threadForCampaigns) {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        if(threadForCampaigns > 4) {
-            executor.setCorePoolSize(4);
-        }
+        executor.setCorePoolSize(threadForCampaigns);
         executor.setMaxPoolSize(threadForCampaigns);
         executor.setThreadNamePrefix("campaign-executor");
         executor.initialize();
