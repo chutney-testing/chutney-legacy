@@ -20,6 +20,7 @@ import com.chutneytesting.task.spi.TaskExecutionResult;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class DefaultStepExecutorTest {
@@ -80,6 +81,7 @@ public class DefaultStepExecutorTest {
     }
 
     @Test
+    @Disabled
     public void should_prevent_oom_exceptions() {
         TaskTemplateRegistry taskTemplateRegistry = mock(TaskTemplateRegistry.class);
         TaskTemplate taskTemplate = new TaskTemplateParserV2().parse(OomTask.class).result();
