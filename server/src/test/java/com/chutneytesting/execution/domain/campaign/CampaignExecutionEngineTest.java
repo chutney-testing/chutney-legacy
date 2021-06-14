@@ -47,14 +47,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.groovy.util.Maps;
 import org.assertj.core.util.Lists;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.stubbing.Answer;
+import org.springframework.core.task.support.ExecutorServiceAdapter;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StopWatch;
 
@@ -69,10 +73,20 @@ public class CampaignExecutionEngineTest {
     private final DataSetHistoryRepository dataSetHistoryRepository = mock(DataSetHistoryRepository.class);
     private final JiraXrayPlugin jiraXrayPlugin = mock(JiraXrayPlugin.class);
     private final ChutneyMetrics metrics = mock(ChutneyMetrics.class);
+    private static ExecutorService executorService;
+
+    @BeforeAll
+    public static void setUpAll() {
+        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+        taskExecutor.setCorePoolSize(2);
+        taskExecutor.setMaxPoolSize(2);
+        taskExecutor.initialize();
+        executorService = new ExecutorServiceAdapter(taskExecutor);
+    }
 
     @BeforeEach
     public void setUp() {
-        sut = new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository, jiraXrayPlugin, metrics, 2);
+        sut = new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository, jiraXrayPlugin, metrics, executorService);
     }
 
     @Test

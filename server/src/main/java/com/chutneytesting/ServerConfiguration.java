@@ -26,6 +26,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.Clock;
 import java.util.List;
+import java.util.concurrent.Executor;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import liquibase.integration.spring.SpringLiquibase;
@@ -37,8 +38,11 @@ import org.springframework.boot.autoconfigure.jms.activemq.ActiveMQAutoConfigura
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.core.task.support.ExecutorServiceAdapter;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @SpringBootApplication(exclude = {LiquibaseAutoConfiguration.class, ActiveMQAutoConfiguration.class, MongoAutoConfiguration.class})
 @EnableScheduling
@@ -62,6 +66,7 @@ public class ServerConfiguration {
     public static final String EXECUTION_ASYNC_PUBLISHER_TTL_SPRING_VALUE = "${chutney.execution.async.publisher.ttl:5}";
     public static final String EXECUTION_ASYNC_PUBLISHER_DEBOUNCE_SPRING_VALUE = "${chutney.execution.async.publisher.debounce:250}";
     public static final String CAMPAIGNS_THREAD_SPRING_VALUE = "${chutney.campaigns.thread:20}";
+    public static final String ENGINE_THREAD_SPRING_VALUE = "${chutney.scenarios.thread:20}";
     public static final String AGENTNETWORK_CONNECTION_CHECK_TIMEOUT_SPRING_VALUE = "${chutney.agentnetwork.connection-checker-timeout:1000}";
     public static final String LOCALAGENT_DEFAULTNAME_SPRING_VALUE = "${chutney.localAgent.defaultName:#{null}}";
     public static final String LOCALAGENT_DEFAULTHOSTNAME_SPRING_VALUE = "${chutney.localAgent.defaultHostName:#{null}}";
@@ -78,8 +83,31 @@ public class ServerConfiguration {
     }
 
     @Bean
-    public ExecutionConfiguration executionConfiguration(@Value(ENGINE_REPORTER_PUBLISHER_TTL_SPRING_VALUE) Long reporterTTL) {
-        return new ExecutionConfiguration(reporterTTL);
+    public TaskExecutor engineExecutor(@Value(ENGINE_THREAD_SPRING_VALUE) Integer threadForEngine) {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(threadForEngine);
+        executor.setMaxPoolSize(threadForEngine);
+
+        executor.setThreadNamePrefix("engine-executor");
+        executor.initialize();
+        LOGGER.debug("Pool for engine created with size {}", threadForEngine);
+        return executor;
+    }
+
+    @Bean
+    public TaskExecutor campaignExecutor(@Value(CAMPAIGNS_THREAD_SPRING_VALUE) Integer threadForCampaigns) {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(threadForCampaigns);
+        executor.setMaxPoolSize(threadForCampaigns);
+        executor.setThreadNamePrefix("campaign-executor");
+        executor.initialize();
+        LOGGER.debug("Pool for campaigns created with size {}", threadForCampaigns);
+        return executor;
+    }
+
+    @Bean
+    public ExecutionConfiguration executionConfiguration(@Value(ENGINE_REPORTER_PUBLISHER_TTL_SPRING_VALUE) Long reporterTTL, Executor engineExecutor) {
+        return new ExecutionConfiguration(reporterTTL, engineExecutor);
     }
 
     @Bean
@@ -135,8 +163,17 @@ public class ServerConfiguration {
                                                     DataSetHistoryRepository dataSetHistoryRepository,
                                                     JiraXrayPlugin jiraXrayPlugin,
                                                     ChutneyMetrics metrics,
-                                                    @Value(CAMPAIGNS_THREAD_SPRING_VALUE) Integer threadForCampaigns) {
-        return new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository, jiraXrayPlugin, metrics, threadForCampaigns);
+                                                    TaskExecutor campaignExecutor) {
+        return new CampaignExecutionEngine(
+            campaignRepository,
+            scenarioExecutionEngine,
+            executionHistoryRepository,
+            testCaseRepository,
+            dataSetHistoryRepository,
+            jiraXrayPlugin,
+            metrics,
+            new ExecutorServiceAdapter(campaignExecutor)
+        );
     }
 
     @Bean

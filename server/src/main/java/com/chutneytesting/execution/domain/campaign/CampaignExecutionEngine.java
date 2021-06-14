@@ -69,7 +69,7 @@ public class CampaignExecutionEngine {
                                    DataSetHistoryRepository dataSetHistoryRepository,
                                    JiraXrayPlugin jiraXrayPlugin,
                                    ChutneyMetrics metrics,
-                                   Integer threadForCampaigns) {
+                                   ExecutorService executorService) {
         this.campaignRepository = campaignRepository;
         this.scenarioExecutionEngine = scenarioExecutionEngine;
         this.executionHistoryRepository = executionHistoryRepository;
@@ -77,8 +77,7 @@ public class CampaignExecutionEngine {
         this.dataSetHistoryRepository = dataSetHistoryRepository;
         this.jiraXrayPlugin = jiraXrayPlugin;
         this.metrics = metrics;
-        this.executor = Executors.newFixedThreadPool(threadForCampaigns);
-        LOGGER.debug("Pool for campaigns created with size {}", threadForCampaigns);
+        this.executor = executorService;
     }
 
     public List<CampaignExecutionReport> executeByName(String campaignName, String userId) {

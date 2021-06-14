@@ -2,11 +2,14 @@ package com.chutneytesting.task.jms;
 
 import static com.chutneytesting.tools.ThrowingSupplier.toUnchecked;
 
-import com.chutneytesting.task.spi.injectable.SecurityInfo;
-import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.task.jms.consumer.Consumer;
 import com.chutneytesting.task.jms.consumer.ConsumerFactory;
 import com.chutneytesting.task.jms.consumer.JmsListenerParameters;
+import com.chutneytesting.task.spi.injectable.SecurityInfo;
+import com.chutneytesting.task.spi.injectable.Target;
+import com.chutneytesting.tools.CloseableResource;
+import com.chutneytesting.tools.ThrowingFunction;
+import com.chutneytesting.tools.UncheckedException;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -23,9 +26,6 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
-import com.chutneytesting.tools.CloseableResource;
-import com.chutneytesting.tools.ThrowingFunction;
-import com.chutneytesting.tools.UncheckedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +62,7 @@ public class JmsConnectionFactory {
         String connectionFactoryName = target.properties().getOrDefault("connectionFactoryName", "ConnectionFactory");
 
         try {
+            debugClassLoader();
             Context context = new InitialContext(environmentProperties);
             ConnectionFactory connectionFactory = (ConnectionFactory) context.lookup(connectionFactoryName);
 
@@ -88,6 +89,13 @@ public class JmsConnectionFactory {
         } catch (NamingException | JMSException e) {
             throw new UncheckedJmsException("Cannot connect to jms server " + target.name() + " (" + target.url() + "): " + e.getMessage(), e);
         }
+    }
+
+    private void debugClassLoader() {
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        LOGGER.debug("Thread.currentThread().getContextClassLoader(): " + contextClassLoader);
+        ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
+        LOGGER.debug("ClassLoader.getSystemClassLoader(): " + systemClassLoader);
     }
 
     private Connection createConnection(ConnectionFactory connectionFactory, Optional<SecurityInfo.Credential> optionalCredential) throws JMSException {

@@ -28,6 +28,8 @@ import com.chutneytesting.tools.ThrowingFunction;
 import com.chutneytesting.tools.loader.ExtensionLoaders;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,10 +50,10 @@ public class ExecutionConfiguration {
     private final Long reporterTTL;
 
     public ExecutionConfiguration() {
-        this(5L);
+        this(5L, Executors.newFixedThreadPool(10));
     }
 
-    public ExecutionConfiguration(Long reporterTTL) {
+    public ExecutionConfiguration(Long reporterTTL, Executor taskExecutor) {
         this.reporterTTL = reporterTTL;
 
         TaskTemplateLoader taskTemplateLoaderV2 = createTaskTemplateLoaderV2();
@@ -60,7 +62,7 @@ public class ExecutionConfiguration {
 
         taskTemplateRegistry = new DefaultTaskTemplateRegistry(new TaskTemplateLoaders(singletonList(taskTemplateLoaderV2)));
         reporter = createReporter();
-        executionEngine = createExecutionEngine();
+        executionEngine = createExecutionEngine(taskExecutor);
         embeddedTestEngine = createEmbeddedTestEngine();
     }
 
@@ -114,12 +116,13 @@ public class ExecutionConfiguration {
         return new Reporter(reporterTTL);
     }
 
-    private ExecutionEngine createExecutionEngine() {
+    private ExecutionEngine createExecutionEngine(Executor taskExecutor) {
         return new DefaultExecutionEngine(
             new StepDataEvaluator(spelFunctions),
             new StepExecutionStrategies(stepExecutionStrategies),
             new DelegationService(new DefaultStepExecutor(taskTemplateRegistry), new HttpClient()),
-            reporter);
+            reporter,
+            taskExecutor);
     }
 
     private TestEngine createEmbeddedTestEngine() {

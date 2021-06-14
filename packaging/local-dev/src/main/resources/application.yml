@@ -68,6 +68,8 @@ chutney:
     active: false
   campaigns:
     thread: 20
+  scenarios:
+    thread: 20
   editions:
     ttl:
       value: 2
