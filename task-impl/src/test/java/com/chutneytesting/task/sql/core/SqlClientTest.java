@@ -4,7 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.task.TestTarget;
 import com.chutneytesting.task.spi.injectable.Target;
+import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,7 +41,7 @@ public class SqlClientTest {
             .setType(EmbeddedDatabaseType.H2)
             .setScriptEncoding("UTF-8")
             .ignoreFailedDrops(true)
-            .addScripts("db/sql/create_db.sql", "db/sql/insert_users.sql")
+            .addScripts("db/sql/create_db.sql", "db/sql/insert_users.sql", "db/sql/insert_allsqltypes.sql")
             .build();
     }
 
@@ -120,5 +124,31 @@ public class SqlClientTest {
         Records records = sqlClient.execute("select * from users");
 
         assertThat(records.toMatrix()).isEqualTo(expectedMatrix);
+    }
+
+    @Test
+    public void should_retrieve_columns_as_string_but_for_date_and_numeric_sql_datatypes() throws SQLException {
+        SqlClient sqlClient = new DefaultSqlClientFactory().create(sqlTarget);
+        Records records = sqlClient.execute("select * from allsqltypes");
+
+        Map<String, Object> onlyRecord = records.toListOfMaps().get(0);
+        assertThat(onlyRecord.get("COL_BOOLEAN")).isInstanceOf(Boolean.class);
+        assertThat(onlyRecord.get("COL_TINYINT")).isInstanceOf(Byte.class);
+        assertThat(onlyRecord.get("COL_SMALLINT")).isInstanceOf(Short.class);
+        assertThat(onlyRecord.get("COL_MEDIUMINT")).isInstanceOf(Integer.class);
+        assertThat(onlyRecord.get("COL_INTEGER")).isInstanceOf(Integer.class);
+        assertThat(onlyRecord.get("COL_BIGINT")).isInstanceOf(Long.class);
+        assertThat(onlyRecord.get("COL_FLOAT")).isInstanceOf(Float.class);
+        assertThat(onlyRecord.get("COL_DOUBLE")).isInstanceOf(Double.class);
+        assertThat(onlyRecord.get("COL_DECIMAL")).isInstanceOf(BigDecimal.class);
+        assertThat(onlyRecord.get("COL_DECIMAL")).isInstanceOf(BigDecimal.class);
+        assertThat(onlyRecord.get("COL_DATE")).isInstanceOf(Date.class);
+        assertThat(onlyRecord.get("COL_TIME")).isInstanceOf(Time.class);
+        assertThat(onlyRecord.get("COL_TIMESTAMP")).isInstanceOf(Timestamp.class);
+        assertThat(onlyRecord.get("COL_CHAR")).isInstanceOf(String.class);
+        assertThat(onlyRecord.get("COL_VARCHAR")).isInstanceOf(String.class);
+        // INTERVAL SQL types : cf. SqlClient.StatementConverter#isJDBCDateType(Class)
+        assertThat(onlyRecord.get("COL_INTERVAL_YEAR")).isInstanceOf(String.class);
+        assertThat(onlyRecord.get("COL_INTERVAL_SECOND")).isInstanceOf(String.class);
     }
 }

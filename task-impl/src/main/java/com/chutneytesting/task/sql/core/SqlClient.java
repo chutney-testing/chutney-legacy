@@ -7,11 +7,17 @@ import static org.apache.commons.lang3.ClassUtils.isPrimitiveOrWrapper;
 
 import com.chutneytesting.tools.NotEnoughMemoryException;
 import com.zaxxer.hikari.HikariDataSource;
+import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -117,11 +123,31 @@ public class SqlClient {
         private static Object boxed(ResultSet rs, int i) throws SQLException {
             Object o = rs.getObject(i);
             Class<?> type = o==null ? Object.class : o.getClass();
-            if (isPrimitiveOrWrapper(type)) {
+            if (isPrimitiveOrWrapper(type) || isJDBCNumericType(type) || isJDBCDateType(type)) {
                 return o;
             }
 
             return Optional.ofNullable(rs.getString(i)).orElse("null");
+        }
+
+        private static boolean isJDBCNumericType(Class<?> type) {
+            return type.equals(BigDecimal.class) || // NUMERIC
+                type.equals(Byte.class) ||          // TINYINT
+                type.equals(Short.class) ||         // SMALLINT
+                type.equals(Integer.class) ||       // INTEGER
+                type.equals(Float.class) ||         // FLOAT
+                type.equals(Double.class);          // DOUBLE
+        }
+
+        private static boolean isJDBCDateType(Class<?> type) {
+            return type.equals(Date.class) ||       // DATE
+                type.equals(Time.class) ||          // TIME
+                type.equals(Timestamp.class) ||     // TIMESTAMP
+                // Note :
+                // INTERVAL SQL Type is not JDBC native and often DB specific.
+                // We take here classic java representation.
+                type.equals(Period.class) ||        // INTERVAL
+                type.equals(Duration.class);        // INTERVAL
         }
 
     }
