@@ -36,6 +36,7 @@ public class ChutneyDatasetContent implements ChutneyContentProvider {
     @Override
     public Stream<ChutneyContent> getContent() {
         return repository.findAll().stream()
+            .map(ds -> repository.findById(ds.id))
             .map(ds -> {
                 ChutneyContent.ChutneyContentBuilder builder = ChutneyContent.builder()
                     .withCategory(category()).withProvider(provider())
