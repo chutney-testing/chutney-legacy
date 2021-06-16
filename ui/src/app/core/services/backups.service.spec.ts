@@ -14,12 +14,12 @@ describe('BackupsService', () => {
 
   it('should return expected backups (HttpClient called once)', () => {
     const expectedBackups: BackupDto[] =
-      [new BackupDto(true, true, true, true, true)];
+      [new BackupDto(true, true, true, true, true, true)];
 
     httpClientSpy.get.and.returnValue(of(expectedBackups));
 
     sut.list().subscribe(
-      backups => expect(backups).toEqual([new Backup(true, true, true, true, true)], 'expected backups'),
+      backups => expect(backups).toEqual([new Backup(true, true, true, true, true, true)], 'expected backups'),
       fail
     );
     expect(httpClientSpy.get.calls.count()).toBe(1, 'one call');

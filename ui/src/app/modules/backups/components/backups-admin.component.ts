@@ -34,7 +34,8 @@ export class BackupsAdminComponent implements OnInit {
             this.formValue('agentsNetwork'),
             this.formValue('environments'),
             this.formValue('components'),
-            this.formValue('globalVars'))
+            this.formValue('globalVars'),
+            this.formValue('jiraLinks'))
         ).subscribe(() => this.reloadAfter(0));
     }
 
@@ -54,7 +55,8 @@ export class BackupsAdminComponent implements OnInit {
         this.formValue('agentsNetwork') ||
         this.formValue('environments') ||
         this.formValue('components') ||
-        this.formValue('globalVars');
+        this.formValue('globalVars') ||
+        this.formValue('jiraLinks');
     }
 
     private loadBackups() {
@@ -69,6 +71,7 @@ export class BackupsAdminComponent implements OnInit {
             environments: true,
             components: true,
             globalVars: true,
+            jiraLinks: true,
         });
     }
 

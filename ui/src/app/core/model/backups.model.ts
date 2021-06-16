@@ -7,6 +7,7 @@ export class Backup {
         public environments: boolean,
         public components: boolean,
         public globalVars: boolean,
+        public jiraLinks: boolean,
         public time?: Date) {
     }
 
