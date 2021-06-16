@@ -1,12 +1,14 @@
 package com.chutneytesting.admin.infra.storage;
 
 import static com.chutneytesting.admin.infra.storage.FileSystemBackupRepository.ROOT_DIRECTORY_NAME;
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.chutneytesting.admin.domain.Backup;
 import com.chutneytesting.admin.domain.BackupNotFoundException;
@@ -16,6 +18,7 @@ import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.design.domain.plugins.jira.JiraRepository;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
+import com.chutneytesting.environment.domain.Environment;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
 import com.chutneytesting.tools.Try;
 import java.io.IOException;
@@ -24,10 +27,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.util.FileSystemUtils;
@@ -157,6 +165,34 @@ public class FileSystemBackupRepositoryTest {
     public void should_throw_exception_when_delete_unknown_backup() {
         assertThatThrownBy(() -> sut.delete("unknownBackupId"))
             .isInstanceOf(BackupNotFoundException.class);
+    }
+
+    @Test()
+    public void should_backup_all_environments(@TempDir Path tmp) throws IOException {
+        // G
+        when(environmentRepository.getEnvironments())
+            .thenReturn(asList(
+                Environment.builder().withName("envA").build(),
+                Environment.builder().withName("envB").build()
+            ));
+
+        Backup backup = new Backup(false, false, true, false, false, false);
+
+        // W
+        sut.save(backup);
+
+        // T
+        ZipFile zipFile = new ZipFile(backupsRootPath.resolve("backups")
+            .resolve("zip")
+            .resolve(backup.id())
+            .resolve("environments.zip")
+            .toFile()
+        );
+        ArrayList<? extends ZipEntry> list = Collections.list(zipFile.entries());
+
+        assertThat(list).hasSize(2);
+        assertThat(list.get(0).getName()).isEqualTo("envA.json");
+        assertThat(list.get(1).getName()).isEqualTo("envB.json");
     }
 
     private Path stubBackup(String backupName) throws IOException {
