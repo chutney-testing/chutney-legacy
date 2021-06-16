@@ -6,7 +6,9 @@
             </chutney-forms-search-field>
         </div>
         <div class="col-md-4">
-            <button type="button" class="btn btn-outline-primary" [routerLink]="['/dataset', 'edition']">
+            <button *hasAuthorization="[Authorization.DATASET_WRITE]"
+                type="button" class="btn btn-outline-primary" [routerLink]="['/dataset', 'edition']"
+            >
                 <span class="fa fa-plus" aria-hidden="true"></span> {{ 'global.actions.create' | translate }}
             </button>
         </div>
@@ -41,7 +43,8 @@
                     style="cursor: pointer">
 
                     <td>
-                        <button type="button" class="btn btn-outline-primary btn-sm"
+                        <button *hasAuthorization="[Authorization.DATASET_WRITE]"
+                                type="button" class="btn btn-outline-primary btn-sm"
                                 [routerLink]="['/dataset', dataset.id, 'edition']">
                             <span class="fa fa-pencil-alt"
                                   aria-hidden="true"></span> {{ 'global.actions.edit' | translate }}
