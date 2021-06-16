@@ -1,12 +1,13 @@
 <div [formGroup]="parentForm" class="mt-3">
-    <span class="font-weight-bold"
+    <span class="font-weight-bold cursor-default"
           (click)="switchCollapseParam()">{{'components.shared.edition.blocks.parameters' | translate}}</span>
     <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
             (click)="switchCollapseParam()"
             title="{{(collapseParam ? 'global.actions.show' : 'global.actions.hide') | translate}}">
         <span class="fa" [ngClass]="collapseParam ? 'fa-eye' : 'fa-eye-slash'"></span>
     </button>
-    <button class="btn btn-sm btn-light btn-outline-dark border-0 ml-sm-1"
+    <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
+            class="btn btn-sm btn-light btn-outline-dark border-0 ml-sm-1"
             (click)="collapseParam = false; addParameters();"
             title="{{'global.actions.add' | translate}}">
         <span class="fa fa-plus"></span>
@@ -17,7 +18,9 @@
             <ng-container [formGroupName]="i">
                 <input type="text" class="col-4 form-control mr-2 small-text" formControlName="key" placeholder="key"/>
                 <textarea class="col-6 form-control mr-2 small-text" formControlName="value" rows="1" placeholder="value"></textarea>
-                <button type="button" class="btn btn-outline-danger delete-button-height"
+                <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
+                        type="button"
+                        class="btn btn-outline-danger delete-button-height"
                         (click)="removeParameters(i)"
                         title="{{'global.actions.delete' | translate}}">
                     <span class="fa fa-trash"></span>

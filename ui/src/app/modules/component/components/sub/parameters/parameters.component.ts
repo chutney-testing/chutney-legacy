@@ -2,8 +2,10 @@ import { Component, Input, OnInit, OnChanges } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
 
 import {
-    ComponentTask
+    ComponentTask,
+    Authorization
 } from '@model';
+import { LoginService } from '@core/services';
 
 
 @Component({
@@ -12,21 +14,22 @@ import {
     styleUrls: ['./parameters.component.scss']
 })
 export class ParametersComponent implements OnInit, OnChanges {
-    
-
 
     @Input() parentForm: FormGroup;
     @Input() editableComponent: ComponentTask;
 
     collapseParam = true;
 
+    Authorization = Authorization;
+
     constructor(
-        private formBuilder: FormBuilder
+        private formBuilder: FormBuilder,
+        private loginService: LoginService
     ) {
     }
 
     ngOnInit(): void {
-       
+
     }
 
     ngOnChanges(): void {
@@ -40,6 +43,9 @@ export class ParametersComponent implements OnInit, OnChanges {
                 })
             );
         });
+        if (!this.loginService.hasAuthorization([Authorization.COMPONENT_WRITE])) {
+            this.parentForm.disable();
+        }
     }
 
     addParameters(): void {

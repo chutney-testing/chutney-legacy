@@ -9,7 +9,12 @@
             </div>
             <div class="row">
                 <div class="col-1"></div>
-                <textarea formControlName="name" rows="2" class="no-resize form-control col is-{{actionForm.get('name').valid ? '' : 'in'}}valid"
+                <textarea formControlName="name" rows="2"
+                          class="no-resize form-control col"
+                          [ngClass]="{
+                            'is--valid': actionForm.get('name').valid && actionForm.get('name').enabled,
+                            'is--invalid': !actionForm.get('name').valid && actionForm.get('name').enabled
+                          }"
                           placeholder="{{'components.shared.edition.fields.intention.placeholder' | translate}}"
                           required></textarea>
                 <div class="col-1"></div>
@@ -17,21 +22,22 @@
             <div *ngIf="editComponent.implementation.hasTarget" class="row">
                 <label for="target" class="col-3">{{'components.shared.edition.fields.target.name' | translate}}</label>
                 <select id="target" class="form-control col-8" formControlName="target">
-                    <option *ngFor="let target of availableTargets" [value]="target.name">{{target.name}}</option>
+                    <option *ngFor="let target of availableTargets" [value]="target">{{target}}</option>
                 </select>
             </div>
         </div>
         <div class="col-5">
             <div class="row">
                 <div class="col text-center">
-                    <chutney-toolbar-component (editEvent)="edit()"
-                                           (cancelEvent)="cancel()"
-                                           (executeEvent)="execute($event)"
-                                           (childEvent)="sideBarToggle()"
-                                           (deleteEvent)="delete()"
-                                           (duplicateEvent)="duplicate()"
-                                           [editComponent]="editComponent"
-                                           [parents]="parents">
+                    <chutney-toolbar-component *hasAuthorization="[Authorization.COMPONENT_WRITE]"
+                        (editEvent)="edit()"
+                        (cancelEvent)="cancel()"
+                        (executeEvent)="execute($event)"
+                        (childEvent)="sideBarToggle()"
+                        (deleteEvent)="delete()"
+                        (duplicateEvent)="duplicate()"
+                        [editComponent]="editComponent"
+                        [parents]="parents">
                     </chutney-toolbar-component>
                 </div>
             </div>
@@ -50,7 +56,7 @@
             <!-- Inputs -->
             <div *ngIf="hasInputs()" class="mt-4" class="p-2">
                 <legend class="pl-3 pr-3 ">
-                    <span class="font-weight-bold" (click)="switchCollapseInputs()">{{'components.shared.edition.blocks.inputs' | translate}}</span>
+                    <span class="font-weight-bold cursor-default" (click)="switchCollapseInputs()">{{'components.shared.edition.blocks.inputs' | translate}}</span>
                     <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
                             (click)="switchCollapseInputs()"
                             title="{{(collapseInputs ? 'global.actions.show' : 'global.actions.hide') | translate}}">
@@ -63,11 +69,13 @@
                             <label for="input-{{i}}" class="col-3 col-form-label">{{input.value.key}}</label>
                             <textarea class="form-control col-8" id="input-{{i}}" rows="1"
                                       placeholder="{{input.value.placeholder}}" formControlName="value"></textarea>
-                            <button *ngIf="isVariableRef(i)" class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
-                                    (click)="switchVariableRefToStruct(i)"
-                                    title="{{'components.action.refvar.backTo.tooltip' | translate}}">
-                                <span class="font-weight-bold" style="text-decoration: line-through;">{{'components.action.refvar.label' | translate}}</span>
-                            </button>
+                            <ng-container *hasAuthorization="[Authorization.COMPONENT_WRITE]">
+                                <button *ngIf="isVariableRef(i)" class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
+                                        (click)="switchVariableRefToStruct(i)"
+                                        title="{{'components.action.refvar.backTo.tooltip' | translate}}">
+                                    <span class="font-weight-bold" style="text-decoration: line-through;">{{'components.action.refvar.label' | translate}}</span>
+                                </button>
+                            </ng-container>
                         </div>
                     </div>
                     <div formArrayName="inputsMap" *ngFor="let input of actionForm.get('inputsMap')?.controls; let i=index;">
@@ -79,12 +87,14 @@
                                     title="{{(collapseInputsMap[i] ? 'global.actions.show' : 'global.actions.hide') | translate}}">
                                 <span class="fa" [ngClass]="collapseInputsMap[i] ? 'fa-eye' : 'fa-eye-slash'"></span>
                             </button>
-                            <button class="btn btn-sm btn-light btn-outline-dark ml-sm-1 border-0"
+                            <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
+                                    class="btn btn-sm btn-light btn-outline-dark ml-sm-1 border-0"
                                     (click)="addMapItem(i);"
                                     title="{{'global.actions.add' | translate}}">
                                 <span class="fa fa-plus"></span>
                             </button>
-                            <button class="btn btn-sm btn-light btn-outline-dark ml-sm-1 border-0"
+                            <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
+                                    class="btn btn-sm btn-light btn-outline-dark ml-sm-1 border-0"
                                     (click)="switchMapToVariableRef(i);"
                                     title="{{'components.action.refvar.switchTo.tooltip' | translate}}">
                                 <span class="font-weight-bold">{{'components.action.refvar.label' | translate}}</span>
@@ -99,7 +109,8 @@
                                                    placeholder="key"/>
                                             <textarea class="col-6 ml-2 mr-2 form-control" formControlName="v"
                                                       placeholder="value" rows="1"></textarea>
-                                            <button type="button" class="btn btn-outline-danger"
+                                            <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
+                                                    type="button" class="btn btn-outline-danger"
                                                     (click)="removeMapItem(i,j)"
                                                     title="{{'global.actions.delete' | translate}}">
                                                 <span class="fa fa-trash"></span>
@@ -120,12 +131,14 @@
                                     title="{{(collapseInputsList[i] ? 'global.actions.show' : 'global.actions.hide') | translate}}">
                                 <span class="fa" [ngClass]="collapseInputsList[i] ? 'fa-eye' : 'fa-eye-slash'"></span>
                             </button>
-                            <button class="btn btn-sm btn-light btn-outline-dark ml-sm-1 border-0"
+                            <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
+                                    class="btn btn-sm btn-light btn-outline-dark ml-sm-1 border-0"
                                     (click)="addListItem(i);"
                                     title="{{'global.actions.add' | translate}}">
                                 <span class="fa fa-plus"></span>
                             </button>
-                            <button class="btn btn-sm btn-light btn-outline-dark ml-sm-1 border-0"
+                            <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
+                                    class="btn btn-sm btn-light btn-outline-dark ml-sm-1 border-0"
                                     (click)="switchListToVariableRef(i);"
                                     title="{{'components.action.refvar.switchTo.tooltip' | translate}}">
                                 <span class="font-weight-bold">{{'components.action.refvar.label' | translate}}</span>
@@ -138,7 +151,8 @@
                                             <div class="col-2"></div>
                                             <textarea class="col-8 mr-2 form-control" formControlName="l"
                                                       placeholder="value" rows="1"></textarea>
-                                            <button type="button" class="btn btn-outline-danger"
+                                            <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
+                                                    type="button" class="btn btn-outline-danger"
                                                     (click)="removeListItem(i,j)"
                                                     title="{{'global.actions.delete' | translate}}">
                                                 <span class="fa fa-trash"></span>
@@ -160,7 +174,8 @@
                             title="{{(collapseValidations ? 'global.actions.show' : 'global.actions.hide') | translate}}">
                         <span class="fa" [ngClass]="collapseValidations ? 'fa-eye' : 'fa-eye-slash'"></span>
                     </button>
-                    <button class="btn btn-sm btn-light btn-outline-dark border-0 ml-sm-1"
+                    <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
+                            class="btn btn-sm btn-light btn-outline-dark border-0 ml-sm-1"
                             (click)="addValidation();"
                             title="{{'global.actions.add' | translate}}">
                         <span class="fa fa-plus"></span>
@@ -174,7 +189,8 @@
                             <input type="text" class="col-2 form-control mr-2" formControlName="key" placeholder="key"/>
                             <textarea class="col-6 form-control mr-2" formControlName="value" rows="1"
                                       placeholder="value"></textarea>
-                            <button type="button" class="btn btn-outline-danger"
+                            <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
+                                    type="button" class="btn btn-outline-danger"
                                     (click)="removeValidation(i)"
                                     title="{{'global.actions.delete' | translate}}">
                                 <span class="fa fa-trash"></span>
@@ -192,7 +208,8 @@
                             title="{{(collapseOutputs ? 'global.actions.show' : 'global.actions.hide') | translate}}">
                         <span class="fa" [ngClass]="collapseOutputs ? 'fa-eye' : 'fa-eye-slash'"></span>
                     </button>
-                    <button class="btn btn-sm btn-light btn-outline-dark border-0 ml-sm-1"
+                    <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
+                            class="btn btn-sm btn-light btn-outline-dark border-0 ml-sm-1"
                             (click)="addOutput();"
                             title="{{'global.actions.add' | translate}}">
                         <span class="fa fa-plus"></span>
@@ -206,7 +223,8 @@
                             <input type="text" class="col-2 form-control mr-2" formControlName="key" placeholder="key"/>
                             <textarea class="col-6 form-control mr-2" formControlName="value" rows="1"
                                       placeholder="value"></textarea>
-                            <button type="button" class="btn btn-outline-danger"
+                            <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
+                                    type="button" class="btn btn-outline-danger"
                                     (click)="removeOutput(i)"
                                     title="{{'global.actions.delete' | translate}}">
                                 <span class="fa fa-trash"></span>

@@ -21,7 +21,7 @@
     </button>
     <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
         <button *ngFor="let env of environments" class="dropdown-item"
-                (click)="execute(env.name)">{{ env.name }}</button>
+                (click)="execute(env)">{{ env }}</button>
     </div>
 </div>
 

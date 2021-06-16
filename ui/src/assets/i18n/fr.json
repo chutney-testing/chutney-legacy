@@ -290,8 +290,9 @@
             },
             "edition": {
                 "draganddrop": "Glisser/Déposer ici",
-                "existInStep":"Présent dans step: ",
-                "existInScenario": "Présent dans scénario: ",
+                "existTitle": "Utilisations",
+                "existInStep": "Composant",
+                "existInScenario": "Scénario",
                 "seeParents": "Voir/cacher parents",
                 "blocks": {
                     "global": "Générale",

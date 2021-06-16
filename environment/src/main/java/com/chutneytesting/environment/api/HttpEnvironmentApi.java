@@ -40,7 +40,7 @@ public class HttpEnvironmentApi implements EnvironmentApi {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCENARIO_EXECUTE') or hasAuthority('CAMPAIGN_WRITE') or hasAuthority('CAMPAIGN_EXECUTE')")
+    @PreAuthorize("hasAuthority('SCENARIO_EXECUTE') or hasAuthority('CAMPAIGN_WRITE') or hasAuthority('CAMPAIGN_EXECUTE') or hasAuthority('COMPONENT_WRITE')")
     @GetMapping(path = "/names", produces = MediaType.APPLICATION_JSON_VALUE)
     public Set<String> listEnvironmentsNames() {
         return embeddedApplication.listEnvironmentsNames();
@@ -82,7 +82,7 @@ public class HttpEnvironmentApi implements EnvironmentApi {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('COMPONENT_WRITE')")
+    @PreAuthorize("hasAuthority('COMPONENT_READ')")
     @GetMapping(path = "/target/names", produces = MediaType.APPLICATION_JSON_VALUE)
     public Set<String> listTargetsNames() throws EnvironmentNotFoundException {
         return embeddedApplication.listTargetsNames();

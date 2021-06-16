@@ -1,10 +1,11 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
-import { ComponentTask } from '@model';
+import { ComponentTask, Authorization } from '@model';
+import { LoginService } from '@core/services';
 import { randomIntFromInterval } from '@shared/tools';
-import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'chutney-component-card',
@@ -22,7 +23,11 @@ export class ComponentCardComponent implements OnChanges, OnDestroy {
 
     private parametersValueChangeSubscription: Array<Subscription> = [];
 
-    constructor(private formBuilder: FormBuilder
+    Authorization = Authorization;
+
+    constructor(
+        private formBuilder: FormBuilder,
+        private loginService: LoginService
     ) {
     }
 
@@ -61,6 +66,10 @@ export class ComponentCardComponent implements OnChanges, OnDestroy {
                     })
                 );
             });
+
+            if (!this.loginService.hasAuthorization([Authorization.COMPONENT_WRITE, Authorization.SCENARIO_WRITE])) {
+                this.cardForm.disable();
+            }
         }
     }
 

@@ -290,8 +290,9 @@
             },
             "edition": {
                 "draganddrop": "Drag/drop your component",
-                "existInStep":"Exist in step: ",
-                "existInScenario": "Exist in scénario: ",
+                "existTitle":"References",
+                "existInStep": "Component",
+                "existInScenario": "Testcase",
                 "seeParents": "See/hide parents",
                 "blocks": {
                     "global": "General",

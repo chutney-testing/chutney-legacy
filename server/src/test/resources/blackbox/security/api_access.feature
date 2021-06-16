@@ -243,12 +243,13 @@ Feature: Chutney api security
             | get       | /api/v2/environment/names                                          | SCENARIO_EXECUTE   |                                                                 | 200    |
             | get       | /api/v2/environment/names                                          | CAMPAIGN_WRITE     |                                                                 | 200    |
             | get       | /api/v2/environment/names                                          | CAMPAIGN_EXECUTE   |                                                                 | 200    |
+            | get       | /api/v2/environment/names                                          | COMPONENT_WRITE    |                                                                 | 200    |
             | post      | /api/v2/environment                                                | ENVIRONMENT_ACCESS | {"name": "secuenv"}                                             | 200    |
             | delete    | /api/v2/environment/envName                                        | ENVIRONMENT_ACCESS |                                                                 | 404    |
             | put       | /api/v2/environment/envName                                        | ENVIRONMENT_ACCESS | {}                                                              | 404    |
             | get       | /api/v2/environment/envName/target                                 | ENVIRONMENT_ACCESS |                                                                 | 404    |
             | get       | /api/v2/environment/target                                         | ENVIRONMENT_ACCESS |                                                                 | 200    |
-            | get       | /api/v2/environment/target/names                                   | COMPONENT_WRITE    |                                                                 | 200    |
+            | get       | /api/v2/environment/target/names                                   | COMPONENT_READ     |                                                                 | 200    |
             | get       | /api/v2/environment/envName                                        | ENVIRONMENT_ACCESS |                                                                 | 404    |
             | get       | /api/v2/environment/envName/target/targetName                      | ENVIRONMENT_ACCESS |                                                                 | 404    |
             | post      | /api/v2/environment/envName/target                                 | ENVIRONMENT_ACCESS | {"name":"","url":""}                                            | 404    |
