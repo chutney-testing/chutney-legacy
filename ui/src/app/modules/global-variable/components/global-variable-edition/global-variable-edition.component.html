@@ -1,7 +1,8 @@
 <div *ngIf="data !== null" class="ml-3 mt-3">
 
     <div class="box2">
-        <button type="button" class="btn btn-success m-2 box2" (click)="save()">
+        <button *hasAuthorization="[Authorization.GLOBAL_VAR_WRITE]"
+            type="button" class="btn btn-success m-2 box2" (click)="save()">
             Save
             <span class="fa fa-check"></span>
         </button>
@@ -12,11 +13,12 @@
         </select>
     </div>
     <div class="box2">
-        <input id="filename" type="text" class="form-control" name="filename"
-               placeholder="Add a new file" [(ngModel)]="currentFileName"/>
+        <input *hasAuthorization="[Authorization.GLOBAL_VAR_WRITE]"
+            id="filename" type="text" class="form-control" name="filename"
+            placeholder="Add a new file" [(ngModel)]="currentFileName"/>
     </div>
     <div class="box2">
-        <chutney-delete-confirm-dialog
+        <chutney-delete-confirm-dialog *hasAuthorization="[Authorization.GLOBAL_VAR_WRITE]"
             [dialogMessage]="('global.confirm.question' | translate) + ' ' + ('global.actions.delete' | translate) + '\n' + currentFileName"
             [label]="'Delete file'"
             [disabled]="null"
