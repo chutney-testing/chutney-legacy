@@ -10,19 +10,22 @@ public class BackupDto {
     private final Boolean environments;
     private final Boolean components;
     private final Boolean globalVars;
+    private final Boolean jiraLinks;
 
     public BackupDto(LocalDateTime time,
                      Boolean homePage,
                      Boolean agentsNetwork,
                      Boolean environments,
                      Boolean components,
-                     Boolean globalVars) {
+                     Boolean globalVars,
+                     Boolean jiraLinks) {
         this.time = time;
         this.homePage = homePage;
         this.agentsNetwork = agentsNetwork;
         this.environments = environments;
         this.components = components;
         this.globalVars = globalVars;
+        this.jiraLinks = jiraLinks;
     }
 
     public LocalDateTime getTime() {
@@ -47,5 +50,9 @@ public class BackupDto {
 
     public Boolean getGlobalVars() {
         return globalVars;
+    }
+
+    public Boolean getJiraLinks() {
+        return jiraLinks;
     }
 }
