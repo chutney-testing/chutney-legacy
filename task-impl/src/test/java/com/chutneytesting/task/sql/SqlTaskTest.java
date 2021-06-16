@@ -1,11 +1,9 @@
 package com.chutneytesting.task.sql;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
-import com.chutneytesting.task.TestLogger;
 import com.chutneytesting.task.TestTarget;
 import com.chutneytesting.task.TestTasksConfiguration;
 import com.chutneytesting.task.spi.Task;

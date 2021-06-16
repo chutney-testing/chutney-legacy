@@ -467,6 +467,34 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
         assertThat(stepO.implementation.get()).doesNotContain("action", "value", "switchType", "menuItemSelector");
     }
 
+    @Test
+    public void changelog_n12_should_update_sql_tasks() {
+        // G
+        final ComposableStep step = saveAndReload(
+            buildComposableStep("new sql", "{\n" +
+                "            \"identifier\": \"sql\",\n" +
+                "            \"inputs\": [ \n" +
+                "              {\"name\":\"nbLoggedRow\",\"value\":\"42\"}\n" +
+                "             ]" +
+                "        }"));
+        final ComposableStep stepOld = saveAndReload(
+            buildComposableStep("old sql", "{\n" +
+                "            \"identifier\": \"sql\",\n" +
+                "            \"inputs\": []\n" +
+                "        }"));
+
+        // W
+        try (ODatabaseSession dbSession = orientComponentDB.dbPool().acquire()) {
+            OrientChangelog.addInputToSqlTask(dbSession);
+        }
+
+        // T
+        ComposableStep step1 = sut.findById(step.id);
+        assertThat(step1.implementation.get()).contains("name\":\"nbLoggedRow\",\"value\":\"42\"");
+        ComposableStep stepO = sut.findById(stepOld.id);
+        assertThat(stepO.implementation.get()).contains("name\":\"nbLoggedRow\",\"value\":\"\"");
+    }
+
     private ComposableStep saveAndReload(ComposableStep composableStep) {
         return saveAndReload(sut, composableStep);
     }
