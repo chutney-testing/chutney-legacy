@@ -51,7 +51,7 @@ public class DefaultStepExecutionStrategyTest {
     public void when_all_execution_succeed_global_status_is_ok() {
         Step step = buildSample("success", "success");
 
-        Status status = strategy.execute(ScenarioExecution.createScenarioExecution(), step, new ScenarioContextImpl(), new StepExecutionStrategies(Sets.newHashSet(DefaultStepExecutionStrategy.instance)));
+        Status status = strategy.execute(ScenarioExecution.createScenarioExecution(null), step, new ScenarioContextImpl(), new StepExecutionStrategies(Sets.newHashSet(DefaultStepExecutionStrategy.instance)));
         Assertions.assertThat(status).isEqualTo(Status.SUCCESS);
 
         Map<String, Status> expectedStatusByStepName = new HashMap<>();
@@ -71,7 +71,7 @@ public class DefaultStepExecutionStrategyTest {
     public void when_early_step_execution_fails_global_status_is_ko_and_next_steps_are_not_runned() {
         Step step = buildSample("fail", "fail");
 
-        Status status = strategy.execute(ScenarioExecution.createScenarioExecution(), step, new ScenarioContextImpl(), new StepExecutionStrategies(Sets.newHashSet(DefaultStepExecutionStrategy.instance)));
+        Status status = strategy.execute(ScenarioExecution.createScenarioExecution(null), step, new ScenarioContextImpl(), new StepExecutionStrategies(Sets.newHashSet(DefaultStepExecutionStrategy.instance)));
         Assertions.assertThat(status).isEqualTo(Status.FAILURE);
 
         Map<String, Status> expectedStatusByStepName = new HashMap<>();
@@ -91,7 +91,7 @@ public class DefaultStepExecutionStrategyTest {
     public void when_later_step_execution_fails_global_status_is_ko_meanwhile_first_steps_are_ok() {
         Step step = buildSample("success", "fail");
 
-        Status status = strategy.execute(ScenarioExecution.createScenarioExecution(), step, new ScenarioContextImpl(), new StepExecutionStrategies(Sets.newHashSet(DefaultStepExecutionStrategy.instance)));
+        Status status = strategy.execute(ScenarioExecution.createScenarioExecution(null), step, new ScenarioContextImpl(), new StepExecutionStrategies(Sets.newHashSet(DefaultStepExecutionStrategy.instance)));
         Assertions.assertThat(status).isEqualTo(Status.FAILURE);
 
         Map<String, Status> expectedStatusByStepName = new HashMap<>();

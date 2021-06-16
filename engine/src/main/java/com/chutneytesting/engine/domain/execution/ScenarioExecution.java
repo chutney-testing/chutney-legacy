@@ -8,6 +8,7 @@ import com.chutneytesting.engine.domain.execution.engine.scenario.StepBuilder;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.event.EndScenarioExecutionEvent;
 import com.chutneytesting.task.spi.FinallyAction;
+import com.chutneytesting.task.spi.injectable.TasksConfiguration;
 import io.reactivex.disposables.Disposable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,7 +22,7 @@ public class ScenarioExecution {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScenarioExecution.class);
     private final List<FinallyAction> finallyActions = new ArrayList<>();
-
+    private final TasksConfiguration taskConfiguration;
     public final long executionId;
 
     private boolean pause = false;
@@ -29,13 +30,14 @@ public class ScenarioExecution {
 
     private Disposable endExecutionSubscriber;
 
-    public static ScenarioExecution createScenarioExecution() {
+    public static ScenarioExecution createScenarioExecution(TasksConfiguration taskConfiguration) {
         long executionId = UUID.randomUUID().getMostSignificantBits();
-        return new ScenarioExecution(executionId);
+        return new ScenarioExecution(executionId, taskConfiguration);
     }
 
-    private ScenarioExecution(long executionId) {
+    private ScenarioExecution(long executionId, TasksConfiguration taskConfiguration) {
         this.executionId = executionId;
+        this.taskConfiguration = taskConfiguration;
 
         final Disposable pauseSubscriber = RxBus.getInstance()
             .registerOnExecutionId(PauseExecutionAction.class, executionId, e -> this.pause());
@@ -106,5 +108,7 @@ public class ScenarioExecution {
         pause = false;
     }
 
-
+    public TasksConfiguration getTasksConfiguration() {
+        return taskConfiguration;
+    }
 }

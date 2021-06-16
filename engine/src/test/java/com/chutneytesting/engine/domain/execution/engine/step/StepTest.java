@@ -52,7 +52,7 @@ public class StepTest {
         doThrow(new RuntimeException()).when(stepExecutor).execute(any(), any(), any(), any());
         Step step = buildEmptyStep(stepExecutor);
 
-        ScenarioExecution execution = ScenarioExecution.createScenarioExecution();
+        ScenarioExecution execution = ScenarioExecution.createScenarioExecution(null);
         awaitDuring(500, MILLISECONDS);
         RxBus.getInstance().post(new StopExecutionAction(execution.executionId));
         awaitDuring(500, MILLISECONDS);
@@ -68,7 +68,7 @@ public class StepTest {
         StepExecutor stepExecutor = mock(StepExecutor.class);
         Step step = buildEmptyStep(stepExecutor);
 
-        ScenarioExecution execution = ScenarioExecution.createScenarioExecution();
+        ScenarioExecution execution = ScenarioExecution.createScenarioExecution(null);
 
         RxBus.getInstance().post(new PauseExecutionAction(execution.executionId));
         Schedulers.io().createWorker().schedule(() -> step.execute(execution, new ScenarioContextImpl()));
@@ -96,7 +96,7 @@ public class StepTest {
         ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
 
         // When
-        step.execute(ScenarioExecution.createScenarioExecution(), scenarioContext);
+        step.execute(ScenarioExecution.createScenarioExecution(null), scenarioContext);
 
         // Then
         StepContext context = (StepContext) ReflectionTestUtils.getField(step, "stepContext");
@@ -118,7 +118,7 @@ public class StepTest {
         ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
 
         // When
-        step.execute(ScenarioExecution.createScenarioExecution(), scenarioContext);
+        step.execute(ScenarioExecution.createScenarioExecution(null), scenarioContext);
 
         // Then
         assertThat(step.status()).isEqualTo(Status.SUCCESS);
@@ -143,7 +143,7 @@ public class StepTest {
         ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
 
         // When
-        step.execute(ScenarioExecution.createScenarioExecution(), scenarioContext);
+        step.execute(ScenarioExecution.createScenarioExecution(null), scenarioContext);
 
         // Then
         assertThat(step.status()).isEqualTo(Status.FAILURE);
@@ -181,7 +181,7 @@ public class StepTest {
         ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
 
         // When
-        step.execute(ScenarioExecution.createScenarioExecution(), scenarioContext);
+        step.execute(ScenarioExecution.createScenarioExecution(null), scenarioContext);
 
         // Then
         StepContext context = (StepContext) ReflectionTestUtils.getField(step, "stepContext");
@@ -222,7 +222,7 @@ public class StepTest {
         ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
 
         // When
-        step.execute(ScenarioExecution.createScenarioExecution(), scenarioContext);
+        step.execute(ScenarioExecution.createScenarioExecution(null), scenarioContext);
 
         // Then
         StepContext context = (StepContext) ReflectionTestUtils.getField(step, "stepContext");
@@ -247,7 +247,7 @@ public class StepTest {
         Step step = new Step(dataEvaluator, fakeStepDefinition, Optional.of(fakeTarget), mock(StepExecutor.class), Lists.emptyList());
 
         // When
-        step.execute(ScenarioExecution.createScenarioExecution(), new ScenarioContextImpl());
+        step.execute(ScenarioExecution.createScenarioExecution(null), new ScenarioContextImpl());
 
         // Then
         StepContext context = (StepContext) ReflectionTestUtils.getField(step, "stepContext");
@@ -326,7 +326,7 @@ public class StepTest {
         ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
 
         // When
-        return step.execute(ScenarioExecution.createScenarioExecution(), scenarioContext);
+        return step.execute(ScenarioExecution.createScenarioExecution(null), scenarioContext);
     }
 
     private Step buildEmptyStep(StepExecutor stepExecutor) {

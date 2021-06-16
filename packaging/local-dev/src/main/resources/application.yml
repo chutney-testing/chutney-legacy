@@ -74,7 +74,11 @@ chutney:
     ttl:
       value: 2
       unit: SECONDS
-#  localAgent:
+  tasks:
+    sql:
+      nbLoggedRow: 30
+
+  #  localAgent:
 #    defaultName:
 #    defaultHostName:
   agentnetwork:

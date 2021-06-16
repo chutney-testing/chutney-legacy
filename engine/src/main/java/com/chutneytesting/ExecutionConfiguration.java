@@ -1,6 +1,7 @@
 package com.chutneytesting;
 
 import static com.chutneytesting.tools.Streams.identity;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 
 import com.chutneytesting.engine.api.execution.EmbeddedTestEngine;
@@ -24,9 +25,11 @@ import com.chutneytesting.task.domain.TaskTemplateParserV2;
 import com.chutneytesting.task.domain.TaskTemplateRegistry;
 import com.chutneytesting.task.infra.DefaultTaskTemplateLoader;
 import com.chutneytesting.task.spi.Task;
+import com.chutneytesting.task.spi.injectable.TasksConfiguration;
 import com.chutneytesting.tools.ThrowingFunction;
 import com.chutneytesting.tools.loader.ExtensionLoaders;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -50,10 +53,10 @@ public class ExecutionConfiguration {
     private final Long reporterTTL;
 
     public ExecutionConfiguration() {
-        this(5L, Executors.newFixedThreadPool(10));
+        this(5L, Executors.newFixedThreadPool(10), emptyMap());
     }
 
-    public ExecutionConfiguration(Long reporterTTL, Executor taskExecutor) {
+    public ExecutionConfiguration(Long reporterTTL, Executor taskExecutor, Map<String,String> tasksConfiguration) {
         this.reporterTTL = reporterTTL;
 
         TaskTemplateLoader taskTemplateLoaderV2 = createTaskTemplateLoaderV2();
@@ -63,7 +66,7 @@ public class ExecutionConfiguration {
         taskTemplateRegistry = new DefaultTaskTemplateRegistry(new TaskTemplateLoaders(singletonList(taskTemplateLoaderV2)));
         reporter = createReporter();
         executionEngine = createExecutionEngine(taskExecutor);
-        embeddedTestEngine = createEmbeddedTestEngine();
+        embeddedTestEngine = createEmbeddedTestEngine(new EngineTasksConfiguration(tasksConfiguration));
     }
 
     public TaskTemplateRegistry taskTemplateRegistry() {
@@ -125,8 +128,8 @@ public class ExecutionConfiguration {
             taskExecutor);
     }
 
-    private TestEngine createEmbeddedTestEngine() {
-        return new EmbeddedTestEngine(executionEngine, reporter, new ExecutionManager());
+    private TestEngine createEmbeddedTestEngine(TasksConfiguration tasksConfiguration) {
+        return new EmbeddedTestEngine(executionEngine, reporter, new ExecutionManager(), tasksConfiguration);
     }
 
     @SuppressWarnings("unchecked")

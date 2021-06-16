@@ -17,6 +17,7 @@ import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.FinallyActionRegistry;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
+import com.chutneytesting.task.spi.injectable.TasksConfiguration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -80,6 +81,7 @@ public class DefaultStepExecutor implements StepExecutor {
         parameterResolvers.add(new TypedValueParameterResolver<>(Logger.class, new DelegateLogger(step::addInformation, step::failure)));
         parameterResolvers.add(new TypedValueParameterResolver<>(StepDefinition.class, step.definition()));
         parameterResolvers.add(new TypedValueParameterResolver<>(FinallyActionRegistry.class, scenarioExecution::registerFinallyAction));
+        parameterResolvers.add(new TypedValueParameterResolver<>(TasksConfiguration.class, scenarioExecution.getTasksConfiguration()));
         parameterResolvers.add(new ContextParameterResolver(stepContext.getScenarioContext()));
         return parameterResolvers;
     }

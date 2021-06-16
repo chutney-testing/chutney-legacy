@@ -12,7 +12,6 @@ import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.engine.step.StepContext;
 import com.chutneytesting.task.TestTaskTemplateFactory.ComplexTask;
-import com.chutneytesting.task.TestTaskTemplateFactory.OomTask;
 import com.chutneytesting.task.domain.TaskTemplate;
 import com.chutneytesting.task.domain.TaskTemplateParserV2;
 import com.chutneytesting.task.domain.TaskTemplateRegistry;
@@ -20,7 +19,6 @@ import com.chutneytesting.task.spi.TaskExecutionResult;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class DefaultStepExecutorTest {
@@ -36,7 +34,7 @@ public class DefaultStepExecutorTest {
         StepContext stepContext = mock(StepContext.class);
 
         StepExecutor stepExecutor = new DefaultStepExecutor(taskTemplateRegistry);
-        stepExecutor.execute(createScenarioExecution(), stepContext, mock(TargetImpl.class), step);
+        stepExecutor.execute(createScenarioExecution(null), stepContext, mock(TargetImpl.class), step);
 
         verify(taskTemplate.create(any()), times(1)).execute();
         verify(step, times(0)).failure(any(Exception.class));
@@ -53,7 +51,7 @@ public class DefaultStepExecutorTest {
         StepContext stepContext = mock(StepContext.class);
 
         StepExecutor stepExecutor = new DefaultStepExecutor(taskTemplateRegistry);
-        stepExecutor.execute(createScenarioExecution(), stepContext, mock(TargetImpl.class), step);
+        stepExecutor.execute(createScenarioExecution(null), stepContext, mock(TargetImpl.class), step);
 
         verify(step, times(1)).failure("Task [null] failed: java.lang.RuntimeException");
     }
@@ -75,26 +73,9 @@ public class DefaultStepExecutorTest {
         Step step = mock(Step.class, RETURNS_DEEP_STUBS);
 
         StepExecutor stepExecutor = new DefaultStepExecutor(taskTemplateRegistry);
-        stepExecutor.execute(createScenarioExecution(), stepContext, mock(TargetImpl.class), step);
+        stepExecutor.execute(createScenarioExecution(null), stepContext, mock(TargetImpl.class), step);
 
         verify(step, times(0)).failure(any(Exception.class));
     }
 
-    @Test
-    @Disabled
-    public void should_prevent_oom_exceptions() {
-        TaskTemplateRegistry taskTemplateRegistry = mock(TaskTemplateRegistry.class);
-        TaskTemplate taskTemplate = new TaskTemplateParserV2().parse(OomTask.class).result();
-
-        when(taskTemplateRegistry.getByIdentifier(any())).thenReturn(Optional.of(taskTemplate));
-
-        StepContext stepContext = mock(StepContext.class);
-
-        Step step = mock(Step.class, RETURNS_DEEP_STUBS);
-
-        StepExecutor stepExecutor = new DefaultStepExecutor(taskTemplateRegistry);
-        stepExecutor.execute(createScenarioExecution(), stepContext, mock(TargetImpl.class), step);
-
-        verify(step, times(0)).failure(any(Exception.class));
-    }
 }

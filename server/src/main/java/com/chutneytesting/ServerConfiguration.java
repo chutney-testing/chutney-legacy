@@ -1,5 +1,7 @@
 package com.chutneytesting;
 
+import static com.chutneytesting.task.sql.SqlTask.CONFIGURABLE_NB_LOGGED_ROW;
+
 import com.chutneytesting.design.domain.campaign.CampaignRepository;
 import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditions;
@@ -25,7 +27,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.Clock;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
@@ -74,6 +78,8 @@ public class ServerConfiguration {
     public static final String EDITIONS_TTL_VALUE_SPRING_VALUE = "${chutney.editions.ttl.value:6}";
     public static final String EDITIONS_TTL_UNIT_SPRING_VALUE = "${chutney.editions.ttl.unit:HOURS}";
 
+    public static final String TASK_SQL_NB_LOGGED_ROW = "${" + CONFIGURABLE_NB_LOGGED_ROW + ":30}";
+
     @Value(SERVER_PORT_SPRING_VALUE)
     int port;
 
@@ -106,8 +112,12 @@ public class ServerConfiguration {
     }
 
     @Bean
-    public ExecutionConfiguration executionConfiguration(@Value(ENGINE_REPORTER_PUBLISHER_TTL_SPRING_VALUE) Long reporterTTL, Executor engineExecutor) {
-        return new ExecutionConfiguration(reporterTTL, engineExecutor);
+    public ExecutionConfiguration executionConfiguration(Executor engineExecutor,
+                                                         @Value(ENGINE_REPORTER_PUBLISHER_TTL_SPRING_VALUE) Long reporterTTL,
+                                                         @Value(TASK_SQL_NB_LOGGED_ROW) String nbLoggedRow) {
+        Map<String, String> tasksConfiguration = new HashMap<>();
+        tasksConfiguration.put(CONFIGURABLE_NB_LOGGED_ROW, nbLoggedRow);
+        return new ExecutionConfiguration(reporterTTL, engineExecutor, tasksConfiguration);
     }
 
     @Bean
