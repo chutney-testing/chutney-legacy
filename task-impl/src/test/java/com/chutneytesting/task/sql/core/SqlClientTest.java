@@ -1,9 +1,12 @@
 package com.chutneytesting.task.sql.core;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.chutneytesting.task.TestTarget;
 import com.chutneytesting.task.spi.injectable.Target;
+import com.chutneytesting.tools.ChutneyMemoryInfo;
+import com.chutneytesting.tools.NotEnoughMemoryException;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -17,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
@@ -150,5 +155,23 @@ public class SqlClientTest {
         // INTERVAL SQL types : cf. SqlClient.StatementConverter#isJDBCDateType(Class)
         assertThat(onlyRecord.get("COL_INTERVAL_YEAR")).isInstanceOf(String.class);
         assertThat(onlyRecord.get("COL_INTERVAL_SECOND")).isInstanceOf(String.class);
+    }
+
+    @Test
+    public void should_prevent_out_of_memory(){
+        try (MockedStatic<ChutneyMemoryInfo> chutneyMemoryInfoMockedStatic = Mockito.mockStatic(ChutneyMemoryInfo.class);) {
+            chutneyMemoryInfoMockedStatic.when(ChutneyMemoryInfo::hasEnoughAvailableMemory).thenReturn(true, true, false);
+            chutneyMemoryInfoMockedStatic.when(ChutneyMemoryInfo::usedMemory).thenReturn(42L * 1024 * 1024);
+            chutneyMemoryInfoMockedStatic.when(ChutneyMemoryInfo::maxMemory).thenReturn(1337L * 1024 * 1024);
+
+            SqlClient sqlClient = new DefaultSqlClientFactory().create(sqlTarget);
+
+            Exception exception = assertThrows(NotEnoughMemoryException.class, () -> {
+                sqlClient.execute("select * from users");
+            });
+            assertThat(exception.getMessage()).isEqualTo( "Running step was stopped to prevent application crash.42MB memory used of 1337MB max.\n" +
+                                                          "Current step may not be the cause.\n" +
+                                                          "Query fetched 2 rows");
+        }
     }
 }

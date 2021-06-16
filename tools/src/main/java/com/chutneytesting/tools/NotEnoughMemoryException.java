@@ -14,7 +14,7 @@ public class NotEnoughMemoryException extends RuntimeException {
     }
 
     private static String toMegaByte(long value) {
-        return new DecimalFormat("#.##").format(value / (double)(1204 * 1024));
+        return new DecimalFormat("#.##").format(value / (double)(1024 * 1024));
     }
 
 }
