@@ -14,6 +14,7 @@ import com.chutneytesting.admin.domain.BackupRepository;
 import com.chutneytesting.admin.domain.HomePageRepository;
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
+import com.chutneytesting.design.domain.plugins.jira.JiraRepository;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
 import com.chutneytesting.tools.Try;
@@ -41,11 +42,12 @@ public class FileSystemBackupRepositoryTest {
     private final EnvironmentRepository environmentRepository = mock(EnvironmentRepository.class);
     private final GlobalvarRepository globalvarRepository = mock(GlobalvarRepository.class);
     private final CurrentNetworkDescription currentNetworkDescription = mock(CurrentNetworkDescription.class);
+    private final JiraRepository jiraRepository = mock(JiraRepository.class);
 
     @BeforeEach
     public void before() {
         backupsRootPath = Try.exec(() -> Files.createTempDirectory(Paths.get("target"), "backups")).runtime();
-        sut = new FileSystemBackupRepository(orientComponentDB, homePageRepository, environmentRepository, globalvarRepository, currentNetworkDescription, backupsRootPath.toString());
+        sut = new FileSystemBackupRepository(backupsRootPath.toString(), orientComponentDB, homePageRepository, environmentRepository, globalvarRepository, currentNetworkDescription, jiraRepository);
     }
 
     @AfterEach
@@ -59,7 +61,7 @@ public class FileSystemBackupRepositoryTest {
         Files.deleteIfExists(backupsRootPath.resolve(ROOT_DIRECTORY_NAME));
         backupsRootPath = Files.createTempDirectory(Paths.get("target"), "freshNewBackups");
         // When
-        sut = new FileSystemBackupRepository(orientComponentDB, homePageRepository, environmentRepository, globalvarRepository, currentNetworkDescription, backupsRootPath.toString());
+        sut = new FileSystemBackupRepository(backupsRootPath.toString(), orientComponentDB, homePageRepository, environmentRepository, globalvarRepository, currentNetworkDescription, jiraRepository);
         // Then
         assertThat(backupsRootPath.resolve(ROOT_DIRECTORY_NAME).toFile().exists()).isTrue();
     }
@@ -118,7 +120,7 @@ public class FileSystemBackupRepositoryTest {
     @Test
     public void should_save_backup_as_directory() {
         // When
-        String backupStringId = sut.save(new Backup(false, false, false, false, true));
+        String backupStringId = sut.save(new Backup(false, false, false, false, true, false));
 
         // Then
         assertThat(backupsRootPath.resolve(ROOT_DIRECTORY_NAME).resolve(backupStringId).toFile().exists()).isTrue();
@@ -126,9 +128,9 @@ public class FileSystemBackupRepositoryTest {
 
     @ParameterizedTest
     @MethodSource("backupObjectsParameters")
-    public void should_call_right_repository_backup_when_save(boolean homePage, boolean agentsNetwork, boolean environments, boolean components, boolean globalVars) {
+    public void should_call_right_repository_backup_when_save(boolean homePage, boolean agentsNetwork, boolean environments, boolean components, boolean globalVars, boolean jiraLinks) {
         // When
-        sut.save(new Backup(homePage, agentsNetwork, environments, components, globalVars));
+        sut.save(new Backup(homePage, agentsNetwork, environments, components, globalVars, jiraLinks));
 
         // Then
         verify(homePageRepository, times(oneIfTrue(homePage))).backup(any());
@@ -136,6 +138,7 @@ public class FileSystemBackupRepositoryTest {
         verify(environmentRepository, times(oneIfTrue(environments))).getEnvironments();
         verify(orientComponentDB, times(oneIfTrue(components))).backup(any());
         verify(globalvarRepository, times(oneIfTrue(globalVars))).backup(any());
+        verify(jiraRepository, times(oneIfTrue(jiraLinks))).backup(any());
     }
 
     @Test
@@ -177,26 +180,27 @@ public class FileSystemBackupRepositoryTest {
     @SuppressWarnings("unused")
     private static Object[] backupObjectsParameters() {
         return new Object[]{
-            new Object[]{true, false, false, false, false},
-            new Object[]{false, true, false, false, false},
-            new Object[]{false, false, true, false, false},
-            new Object[]{false, false, false, true, false},
-            new Object[]{false, false, false, false, true},
-            new Object[]{true, true, false, false, false},
-            new Object[]{false, true, true, false, false},
-            new Object[]{false, false, true, true, false},
-            new Object[]{false, false, false, true, true},
-            new Object[]{true, false, false, false, true},
-            new Object[]{true, true, true, false, false},
-            new Object[]{false, true, true, true, false},
-            new Object[]{false, false, true, true, true},
-            new Object[]{true, false, false, true, true},
-            new Object[]{true, true, false, false, true},
-            new Object[]{true, true, true, true, false},
-            new Object[]{false, true, true, true, true},
-            new Object[]{true, true, false, true, true},
-            new Object[]{true, true, true, false, true},
-            new Object[]{true, true, true, true, true}
+            new Object[]{false, false, false, false, false, true},
+            new Object[]{true, false, false, false, false, false},
+            new Object[]{false, true, false, false, false, false},
+            new Object[]{false, false, true, false, false, false},
+            new Object[]{false, false, false, true, false, false},
+            new Object[]{false, false, false, false, true, false},
+            new Object[]{true, true, false, false, false, false},
+            new Object[]{false, true, true, false, false, false},
+            new Object[]{false, false, true, true, false, false},
+            new Object[]{false, false, false, true, true, false},
+            new Object[]{true, false, false, false, true, false},
+            new Object[]{true, true, true, false, false, false},
+            new Object[]{false, true, true, true, false, false},
+            new Object[]{false, false, true, true, true, false},
+            new Object[]{true, false, false, true, true, false},
+            new Object[]{true, true, false, false, true, false},
+            new Object[]{true, true, true, true, false, false},
+            new Object[]{false, true, true, true, true, false},
+            new Object[]{true, true, false, true, true, false},
+            new Object[]{true, true, true, false, true, false},
+            new Object[]{true, true, true, true, true, true}
         };
     }
 

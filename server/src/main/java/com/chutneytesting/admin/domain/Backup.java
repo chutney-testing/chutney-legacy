@@ -14,9 +14,10 @@ public class Backup {
     public final Boolean environments;
     public final Boolean components;
     public final Boolean globalVars;
+    public final Boolean jiraLinks;
 
-    public Backup(Boolean homePage, Boolean agentsNetwork, Boolean environments, Boolean components, Boolean globalVars) {
-        if (!(homePage || agentsNetwork || environments || components || globalVars)) {
+    public Backup(Boolean homePage, Boolean agentsNetwork, Boolean environments, Boolean components, Boolean globalVars, Boolean jiraLinks) {
+        if (!(homePage || agentsNetwork || environments || components || globalVars || jiraLinks)) {
             throw new IllegalArgumentException("Nothing to backup !!");
         }
 
@@ -26,15 +27,17 @@ public class Backup {
         this.environments = environments;
         this.components = components;
         this.globalVars = globalVars;
+        this.jiraLinks = jiraLinks;
     }
 
-    public Backup(String id, Boolean homePage, Boolean agentsNetwork, Boolean environments, Boolean components, Boolean globalVars) {
+    public Backup(String id, Boolean homePage, Boolean agentsNetwork, Boolean environments, Boolean components, Boolean globalVars, Boolean jiraLinks) {
         this.time = LocalDateTime.parse(id, backupIdTimeFormatter);
         this.homePage = homePage;
         this.agentsNetwork = agentsNetwork;
         this.environments = environments;
         this.components = components;
         this.globalVars = globalVars;
+        this.jiraLinks = jiraLinks;
     }
 
     public String id() {

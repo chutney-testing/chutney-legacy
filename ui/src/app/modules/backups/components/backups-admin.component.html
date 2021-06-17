@@ -11,6 +11,7 @@
                     <th scope="col" class="text-center">{{ 'admin.backups.table.environments.title' | translate }}</th>
                     <th scope="col" class="text-center">{{ 'admin.backups.table.components.title' | translate }}</th>
                     <th scope="col" class="text-center">{{ 'admin.backups.table.globalvars.title' | translate }}</th>
+                    <th scope="col" class="text-center">{{ 'admin.backups.table.jira.title' | translate }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -38,6 +39,9 @@
                     </td>
                     <td scope="row" class="text-center align-middle">
                         <input type="checkbox" formControlName="globalVars"/>
+                    </td>
+                    <td scope="row" class="text-center align-middle">
+                        <input type="checkbox" formControlName="jiraLinks"/>
                     </td>
                 </tr>
                 <tr *ngFor="let backup of backups">
@@ -77,6 +81,10 @@
 
                     <td scope="row" class="text-center align-middle">
                         <span *ngIf="backup.globalVars" class="fa fa-check-square" aria-hidden="true"></span>
+                    </td>
+
+                    <td scope="row" class="text-center align-middle">
+                        <span *ngIf="backup.jiraLinks" class="fa fa-check-square" aria-hidden="true"></span>
                     </td>
                 </tr>
                 </tbody>

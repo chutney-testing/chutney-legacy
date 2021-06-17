@@ -268,7 +268,8 @@
                 "agents.title": "Agents",
                 "environments.title": "Environnements",
                 "components.title": "Composants",
-                "globalvars.title": "Variables globales"
+                "globalvars.title": "Variables globales",
+                "jira.title": "Liens Jira"
             }
         }
     },
