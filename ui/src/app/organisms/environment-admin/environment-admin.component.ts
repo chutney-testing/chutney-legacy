@@ -22,6 +22,7 @@ export class EnvironmentAdminComponent implements OnInit {
     targets: Array<Target> = [];
 
     environments: EnvironmentMetadata[];
+    environmentsNames: Array<string>;
     selectedEnvironment: EnvironmentMetadata;
     envForm: FormGroup;
     envUpdate = false;
@@ -42,6 +43,7 @@ export class EnvironmentAdminComponent implements OnInit {
             (res) => {
                 this.environments = res;
                 this.selectedEnvironment = this.environments[0];
+                this.environmentsNames = res.map(e => e.name);
                 this.loadTarget();
             },
             (error) => {this.errorMessage = error.error; }
@@ -299,8 +301,8 @@ export class EnvironmentAdminComponent implements OnInit {
         this.envForm = null;
     }
 
-    changingValue(event: EnvironmentMetadata) {
-        this.selectedEnvironment = event;
+    changingValue(envName: string) {
+        this.selectedEnvironment = this.environments.filter(e => e.name === envName)[0];
         this.loadTarget();
     }
 }

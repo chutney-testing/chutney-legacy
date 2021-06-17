@@ -26,7 +26,7 @@
     <div class="row m-3" >
         <div class="col" *ngIf="environments">
             {{ 'admin.targets.environment' | translate }}:
-            <chutney-environment-combo [environments]="environments" (selectionEvent)="changingValue($event)">
+            <chutney-environment-combo [environments]="environmentsNames" (selectionEvent)="changingValue($event)">
             </chutney-environment-combo>
             <button type="button" class="btn btn-success m-3" (click)="initForUpdateEnvironment()">{{ 'global.actions.update' | translate }}</button>
             <button type="button" class="btn btn-success m-3" (click)="initEnvironment()">{{ 'global.actions.add' | translate }}</button>
