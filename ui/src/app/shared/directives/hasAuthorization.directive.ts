@@ -13,7 +13,7 @@ export class HasAuthorizationDirective {
     ) {}
 
     @Input() set hasAuthorization(a: any) {
-        const authorizations = a['authorizations'] || a;
+        const authorizations = a['authorizations'] || (Array.isArray(a) ? a : []);
         const user = a['user'];
         const not: boolean = a['not'] || false;
 
