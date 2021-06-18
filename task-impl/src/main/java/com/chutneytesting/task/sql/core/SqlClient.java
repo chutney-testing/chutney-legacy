@@ -1,7 +1,7 @@
 package com.chutneytesting.task.sql.core;
 
-import static com.chutneytesting.tools.ChutneyMemoryInfo.MAX_MEMORY;
 import static com.chutneytesting.tools.ChutneyMemoryInfo.hasEnoughAvailableMemory;
+import static com.chutneytesting.tools.ChutneyMemoryInfo.maxMemory;
 import static com.chutneytesting.tools.ChutneyMemoryInfo.usedMemory;
 import static org.apache.commons.lang3.ClassUtils.isPrimitiveOrWrapper;
 
@@ -27,6 +27,7 @@ public class SqlClient {
 
     private final HikariDataSource dataSource;
     private final int maxFetchSize;
+
 
     public SqlClient(HikariDataSource dataSource, int maxFetchSize) {
         this.dataSource = dataSource;
@@ -108,7 +109,7 @@ public class SqlClient {
                 }
 
                 if (!hasEnoughAvailableMemory()) {
-                    throw new NotEnoughMemoryException(usedMemory(), MAX_MEMORY, "Query fetched " + rows.size() + " rows");
+                    throw new NotEnoughMemoryException(usedMemory(), maxMemory(), "Query fetched " + rows.size() + " rows");
                 }
 
                 final List<Object> row = new ArrayList<>(columnCount);

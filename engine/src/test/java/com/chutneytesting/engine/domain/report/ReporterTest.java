@@ -41,7 +41,7 @@ public class ReporterTest {
     public void before() {
         step = buildFakeScenario();
         sut = new Reporter();
-        scenarioExecution = ScenarioExecution.createScenarioExecution();
+        scenarioExecution = ScenarioExecution.createScenarioExecution(null);
     }
 
     @Test

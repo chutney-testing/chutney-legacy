@@ -48,7 +48,7 @@ public class DataSetIterationsStrategyTest {
                 )
             );
 
-        Status status = defaultStepExecutionStrategy.execute(ScenarioExecution.createScenarioExecution(), rootStep, new ScenarioContextImpl(), strategies);
+        Status status = defaultStepExecutionStrategy.execute(ScenarioExecution.createScenarioExecution(null), rootStep, new ScenarioContextImpl(), strategies);
         assertThat(status).isEqualTo(Status.FAILURE);
 
         Map<String, Status> expectedStatusByStepName = new HashMap<>();
@@ -80,7 +80,7 @@ public class DataSetIterationsStrategyTest {
                 )
             );
 
-        Status status = defaultStepExecutionStrategy.execute(ScenarioExecution.createScenarioExecution(), rootStep, new ScenarioContextImpl(), strategies);
+        Status status = defaultStepExecutionStrategy.execute(ScenarioExecution.createScenarioExecution(null), rootStep, new ScenarioContextImpl(), strategies);
         assertThat(status).isEqualTo(Status.FAILURE);
 
         Map<String, Status> expectedStatusByStepName = new HashMap<>();
@@ -116,7 +116,7 @@ public class DataSetIterationsStrategyTest {
                 )
             );
 
-        Status status = defaultStepExecutionStrategy.execute(ScenarioExecution.createScenarioExecution(), rootStep, new ScenarioContextImpl(), strategies);
+        Status status = defaultStepExecutionStrategy.execute(ScenarioExecution.createScenarioExecution(null), rootStep, new ScenarioContextImpl(), strategies);
         assertThat(status).isEqualTo(Status.FAILURE);
 
         Map<String, Status> expectedStatusByStepName = new HashMap<>();

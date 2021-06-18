@@ -53,7 +53,7 @@ public class DefaultExecutionEngineTest {
         StepDefinition stepDefinition = new StepDefinition("name", null, "type", strategyDefinition, null, null, null, null, fakeEnvironment);
 
         //When
-        Long executionId = engine.execute(stepDefinition, ScenarioExecution.createScenarioExecution());
+        Long executionId = engine.execute(stepDefinition, ScenarioExecution.createScenarioExecution(null));
         StepExecutionReport report = reporter.subscribeOnExecution(executionId).blockingLast();
 
         Assertions.assertThat(executionId).isNotNull();
@@ -100,7 +100,7 @@ public class DefaultExecutionEngineTest {
         StepStrategyDefinition strategyDefinition = new StepStrategyDefinition("retry", strategyProperties);
         StepDefinition stepDefinition = new StepDefinition("name", null, "type", strategyDefinition, null, null, null, null, fakeEnvironment);
 
-        ScenarioExecution scenarioExecution = ScenarioExecution.createScenarioExecution();
+        ScenarioExecution scenarioExecution = ScenarioExecution.createScenarioExecution(null);
         scenarioExecution.registerFinallyAction(FinallyAction.Builder.forAction("final", "task name").build());
 
         List<BeginStepExecutionEvent> events = new ArrayList<>();

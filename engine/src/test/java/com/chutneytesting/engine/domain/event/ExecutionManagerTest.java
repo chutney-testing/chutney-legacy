@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 public class ExecutionManagerTest {
 
     private ExecutionManager em = new ExecutionManager();
-    ScenarioExecution execution = ScenarioExecution.createScenarioExecution();
+    ScenarioExecution execution = ScenarioExecution.createScenarioExecution(null);
 
     @BeforeEach
     public void setUp() throws Exception {

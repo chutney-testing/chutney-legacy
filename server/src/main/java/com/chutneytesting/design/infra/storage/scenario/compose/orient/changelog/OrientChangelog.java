@@ -9,6 +9,7 @@ import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUti
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
@@ -80,7 +81,7 @@ public class OrientChangelog {
             .forEach(step -> {
                 try {
                     JsonNode implementationNode = objectMapper.readTree(step.getProperty("implementation").toString());
-                    if(implementationNode != null) {
+                    if (implementationNode != null) {
                         switch (implementationNode.get("identifier").asText()) {
                             case "selenium-get":
                                 removeInputsByName(implementationNode, "action", "by", "wait", "switchType", "menuItemSelector");
@@ -110,29 +111,11 @@ public class OrientChangelog {
         LOGGER.info(countUpdated.get() + " selenium tasks updated");
     }
 
-    private static void removeInputsByName(JsonNode node, String... inputsNames) {
-        JsonNode inputsNode = node.get("inputs");
-        if (inputsNode.isArray()) {
-            List<String> inputsNamesList = Arrays.asList(inputsNames);
-            ArrayNode inputs = (ArrayNode) node.get("inputs");
-            for (int i = inputs.size() - 1; i >= 0; i--) {
-                JsonNode input = inputs.get(i);
-                if (inputsNamesList.contains(input.get("name").asText())) {
-                    inputs.remove(i);
-                }
-            }
-        } else if (inputsNode.isObject()) {
-            for (String inputName: inputsNames) {
-                ((ObjectNode)inputsNode).remove(inputName);
-            }
-        }
-    }
-
     @ChangelogOrder(order = 7, uuid = "2020127-update-component-strategies")
     public static void updateComponentStrategies(ODatabaseSession dbSession) {
 
         // Update null strategy with Default strategy
-        try(OResultSet steps = dbSession.query("SELECT FROM " + OrientComponentDB.STEP_CLASS + " WHERE `strategy` is null")) {
+        try (OResultSet steps = dbSession.query("SELECT FROM " + OrientComponentDB.STEP_CLASS + " WHERE `strategy` is null")) {
             steps.stream()
                 .filter(o -> o.getProperty("strategy") == null)
                 .map(OResult::getVertex)
@@ -146,7 +129,7 @@ public class OrientChangelog {
         }
 
         // Update strategy with data as Loop strategy
-        try(OResultSet steps = dbSession.query("SELECT FROM " + OrientComponentDB.STEP_CLASS + " WHERE `strategy` is not null")) {
+        try (OResultSet steps = dbSession.query("SELECT FROM " + OrientComponentDB.STEP_CLASS + " WHERE `strategy` is not null")) {
             steps.stream()
                 .filter(o -> o.getProperty("strategy") != null)
                 .filter(o -> ((OResult) o.getProperty("strategy")).hasProperty("data"))
@@ -161,7 +144,7 @@ public class OrientChangelog {
         }
 
         // Update strategy with retryDelay as Retry strategy
-        try(OResultSet steps = dbSession.query("SELECT FROM " + OrientComponentDB.STEP_CLASS + " WHERE `strategy` is not null")) {
+        try (OResultSet steps = dbSession.query("SELECT FROM " + OrientComponentDB.STEP_CLASS + " WHERE `strategy` is not null")) {
             steps.stream()
                 .filter(o -> o.getProperty("strategy") != null)
                 .filter(o -> ((OResult) o.getProperty("strategy")).hasProperty("retryDelay"))
@@ -214,5 +197,76 @@ public class OrientChangelog {
         }
 
         LOGGER.info("TestCase update date initialized");
+    }
+
+    @ChangelogOrder(order = 12, uuid = "20210616-add-input-to-sql-task")
+    public static void addInputToSqlTask(ODatabaseSession dbSession) {
+
+        String QUERY_FSTEPS_IMPLEMENTATION_ID =
+            "SELECT @rid, " + OrientComponentDB.STEP_CLASS_PROPERTY_IMPLEMENTATION +
+                " FROM " + OrientComponentDB.STEP_CLASS + " WHERE " + OrientComponentDB.STEP_CLASS_PROPERTY_IMPLEMENTATION + " is not null";
+
+        OResultSet steps = dbSession.query(QUERY_FSTEPS_IMPLEMENTATION_ID);
+        final ObjectMapper objectMapper = new ObjectMapper();
+        AtomicInteger countUpdated = new AtomicInteger();
+        Lists.newArrayList(steps)
+            .stream()
+            .map(step -> (OVertex) dbSession.load(new ORecordId(step.getProperty("@rid").toString())))
+            .forEach(step -> {
+                try {
+                    JsonNode implementationNode = objectMapper.readTree(step.getProperty("implementation").toString());
+                    if (implementationNode != null) {
+                        switch (implementationNode.get("identifier").asText()) {
+                            case "sql":
+                                addInputsByName(implementationNode, "nbLoggedRow");
+                                break;
+                        }
+                    }
+                    step.setProperty(OrientComponentDB.STEP_CLASS_PROPERTY_IMPLEMENTATION, objectMapper.writeValueAsString(implementationNode));
+                    step.save();
+                    countUpdated.incrementAndGet();
+                } catch (Exception e) {
+                    LOGGER.error("Cannot read/write implementation", e);
+                }
+            });
+        LOGGER.info(countUpdated.get() + " sql tasks updated");
+    }
+
+    private static void removeInputsByName(JsonNode node, String... inputsNames) {
+        JsonNode inputsNode = node.get("inputs");
+        if (inputsNode.isArray()) {
+            List<String> inputsNamesList = Arrays.asList(inputsNames);
+            ArrayNode inputs = (ArrayNode) node.get("inputs");
+            for (int i = inputs.size() - 1; i >= 0; i--) {
+                JsonNode input = inputs.get(i);
+                if (inputsNamesList.contains(input.get("name").asText())) {
+                    inputs.remove(i);
+                }
+            }
+        } else if (inputsNode.isObject()) {
+            for (String inputName : inputsNames) {
+                ((ObjectNode) inputsNode).remove(inputName);
+            }
+        }
+    }
+
+    private static void addInputsByName(JsonNode node, String inputName) {
+        JsonNode inputsNode = node.get("inputs");
+        if (inputsNode.isArray()) {
+            ArrayNode inputs = (ArrayNode) node.get("inputs");
+            boolean found = false;
+            for (int i = 0; i < inputs.size() && !found; i++) {
+                JsonNode input = inputs.get(i);
+                if (inputName.equals(input.get("name").asText())) {
+                    found = true;
+                }
+            }
+            if(!found) {
+                JsonNode nodeToCreate = JsonNodeFactory.instance.objectNode();
+                ((ObjectNode) nodeToCreate).put("name", inputName);
+                ((ObjectNode) nodeToCreate).put("value", "");
+                ((ArrayNode) inputsNode).add(nodeToCreate);
+            }
+        }
     }
 }

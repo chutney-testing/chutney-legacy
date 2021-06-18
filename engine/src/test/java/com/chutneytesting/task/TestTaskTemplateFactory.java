@@ -1,8 +1,5 @@
 package com.chutneytesting.task;
 
-import static com.chutneytesting.tools.ChutneyMemoryInfo.MAX_MEMORY;
-import static com.chutneytesting.tools.ChutneyMemoryInfo.usedMemory;
-
 import com.chutneytesting.task.domain.TaskInstantiationFailureException;
 import com.chutneytesting.task.domain.TaskTemplate;
 import com.chutneytesting.task.domain.UnresolvableTaskParameterException;
@@ -12,8 +9,6 @@ import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.time.Duration;
-import com.chutneytesting.tools.ChutneyMemoryInfo;
-import com.chutneytesting.tools.NotEnoughMemoryException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -94,8 +89,8 @@ public abstract class TestTaskTemplateFactory {
         private final Pojo someObject;
 
         public ComplexTask(@Input("stringParam") String someString, @Input("pojoParam") Pojo someObject) {
-           this.someString = someString;
-           this.someObject = someObject;
+            this.someString = someString;
+            this.someObject = someObject;
         }
 
         @Override
@@ -104,32 +99,6 @@ public abstract class TestTaskTemplateFactory {
             store.put("someString", someString);
             store.put("someObject", someObject);
             return TaskExecutionResult.ok(store);
-        }
-    }
-
-    public static class OomTask implements Task {
-
-        @Override
-        public TaskExecutionResult execute() {
-
-            int dummyArraySize = Integer.MAX_VALUE / 10;
-            Map<String, String> outputs = new HashMap<>(1);
-            try {
-                long[] memoryAllocated;
-                for (int i = 0; i < Integer.MAX_VALUE; i++) {
-                    if (!ChutneyMemoryInfo.hasEnoughAvailableMemory()) {
-                        throw new NotEnoughMemoryException(usedMemory(), MAX_MEMORY, "custom message");
-                    }
-                    memoryAllocated = new long[dummyArraySize];
-                    memoryAllocated[0] = dummyArraySize;
-                    dummyArraySize += Integer.MAX_VALUE / 100;
-                }
-            } catch (NotEnoughMemoryException e) {
-                outputs.put("result", e.getMessage());
-                return TaskExecutionResult.ko(outputs);
-            }
-
-            return TaskExecutionResult.ok();
         }
     }
 
@@ -200,7 +169,7 @@ public abstract class TestTaskTemplateFactory {
         public final String param1;
         public final String param2;
 
-        public Pojo(@Input("param1") String param1, @Input("param2")String param2) {
+        public Pojo(@Input("param1") String param1, @Input("param2") String param2) {
             this.param1 = param1;
             this.param2 = param2;
         }

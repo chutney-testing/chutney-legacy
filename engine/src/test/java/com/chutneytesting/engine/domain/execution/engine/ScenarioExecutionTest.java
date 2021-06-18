@@ -36,7 +36,7 @@ public class ScenarioExecutionTest {
     public void events_should_change_execution_state() {
 
         // Init
-        ScenarioExecution scenarioExecution = ScenarioExecution.createScenarioExecution();
+        ScenarioExecution scenarioExecution = ScenarioExecution.createScenarioExecution(null);
         assertThat(scenarioExecution.hasToPause()).isFalse();
         assertThat(scenarioExecution.hasToStop()).isFalse();
 
@@ -59,7 +59,7 @@ public class ScenarioExecutionTest {
 
     @Test
     public void finally_actions_are_executed_in_reverse_order() {
-        ScenarioExecution scenarioExecution = ScenarioExecution.createScenarioExecution();
+        ScenarioExecution scenarioExecution = ScenarioExecution.createScenarioExecution(null);
 
         TaskTemplateRegistry taskTemplateRegistry = TestTaskTemplateLoader.buildRegistry();
 
@@ -108,7 +108,7 @@ public class ScenarioExecutionTest {
 
     @Test
     public void should_execute_finally_actions_on_scenario_stop() {
-        ScenarioExecution scenarioExecution = ScenarioExecution.createScenarioExecution();
+        ScenarioExecution scenarioExecution = ScenarioExecution.createScenarioExecution(null);
 
         TaskTemplateRegistry taskTemplateRegistry = TestTaskTemplateLoader.buildRegistry();
 
@@ -137,7 +137,7 @@ public class ScenarioExecutionTest {
 
     @Test
     public void should_add_finally_actions_to_root_step() {
-        ScenarioExecution scenarioExecution = ScenarioExecution.createScenarioExecution();
+        ScenarioExecution scenarioExecution = ScenarioExecution.createScenarioExecution(null);
 
         TaskTemplateRegistry taskTemplateRegistry = TestTaskTemplateLoader.buildRegistry();
 

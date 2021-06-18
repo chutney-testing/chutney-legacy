@@ -17,6 +17,7 @@ import com.chutneytesting.task.spi.injectable.Target;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Optional;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
@@ -52,6 +53,7 @@ public class JmsSenderTaskTest {
         props.put(Context.INITIAL_CONTEXT_FACTORY, MockRunnerInitialContextFactory.class.getName());
         when(targetMock.properties()).thenReturn(props);
         when(targetMock.url()).thenReturn("unused URL");
+        when(targetMock.security().credential()).thenReturn(Optional.empty());
     }
 
     public static final class MockRunnerInitialContextFactory implements InitialContextFactory {
