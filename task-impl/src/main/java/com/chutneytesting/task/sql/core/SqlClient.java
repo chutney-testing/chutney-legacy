@@ -73,35 +73,36 @@ public class SqlClient {
 
         private static Records createRecords(Statement statement) throws SQLException {
             final int affectedRows = statement.getUpdateCount();
-            List<String> headers = Collections.emptyList();
-            List<List<Object>> rows = Collections.emptyList();
+            List<Column> columns = Collections.emptyList();
+            List<Row> rows = Collections.emptyList();
 
             if (isSelectQuery(affectedRows)) {
                 try (final ResultSet rs = statement.getResultSet()) {
                     final ResultSetMetaData md = rs.getMetaData();
 
-                    headers = createHeaders(md, md.getColumnCount());
-                    rows = createRows(rs, md.getColumnCount());
+                    columns = createHeaders(md, md.getColumnCount());
+                    rows = createRows(rs, columns, md.getColumnCount());
                 }
             }
 
-            return new Records(affectedRows, headers, rows);
+            return new Records(affectedRows, columns, rows);
         }
 
         private static boolean isSelectQuery(int affectedRows) {
             return affectedRows == -1;
         }
 
-        private static List<String> createHeaders(ResultSetMetaData md, int columnCount) throws SQLException {
-            final List<String> headers = new ArrayList<>(columnCount);
+        private static List<Column> createHeaders(ResultSetMetaData md, int columnCount) throws SQLException {
+            final List<Column> headers = new ArrayList<>(columnCount);
+            int j = 0;
             for (int i = 1; i <= columnCount; i++) {
-                headers.add(md.getColumnName(i));
+                headers.add(new Column(md.getColumnLabel(i), j++));
             }
             return headers;
         }
 
-        private static List<List<Object>> createRows(ResultSet rs, int columnCount) throws SQLException {
-            final List<List<Object>> rows = new ArrayList<>();
+        private static List<Row> createRows(ResultSet rs, List<Column> columns, int columnCount) throws SQLException {
+            final List<Row> rows = new ArrayList<>();
             int j = 0;
             while (rs.next()) {
                 if (j++ > 100000) {
@@ -112,18 +113,19 @@ public class SqlClient {
                     throw new NotEnoughMemoryException(usedMemory(), maxMemory(), "Query fetched " + rows.size() + " rows");
                 }
 
-                final List<Object> row = new ArrayList<>(columnCount);
+                final List<Cell> cells = new ArrayList<>(columnCount);
+                int columnIndex = 0;
                 for (int i = 1; i <= columnCount; i++) {
-                    row.add(boxed(rs, i));
+                    cells.add(new Cell(columns.get(columnIndex++), boxed(rs, i)));
                 }
-                rows.add(row);
+                rows.add(new Row(cells));
             }
             return rows;
         }
 
         private static Object boxed(ResultSet rs, int i) throws SQLException {
             Object o = rs.getObject(i);
-            Class<?> type = o==null ? Object.class : o.getClass();
+            Class<?> type = o == null ? Object.class : o.getClass();
             if (isPrimitiveOrWrapper(type) || isJDBCNumericType(type) || isJDBCDateType(type)) {
                 return o;
             }

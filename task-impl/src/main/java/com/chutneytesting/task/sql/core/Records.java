@@ -1,6 +1,7 @@
 package com.chutneytesting.task.sql.core;
 
-import com.google.common.base.MoreObjects;
+import static java.util.stream.Collectors.toList;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -11,25 +12,60 @@ public class Records {
 
     public final int affectedRows;
     public final List<String> headers;
-    public final List<List<Object>> rows;
+    @Deprecated public final List<List<Object>> rows;
 
-    public Records(int affectedRows, List<String> headers, List<List<Object>> rows) {
+    public final List<Column> columns;
+    public final List<Row> records;
+
+    public Records(int affectedRows, List<Column> columns, List<Row> records) {
         this.affectedRows = affectedRows;
-        this.headers = headers;
-        this.rows = rows;
+        this.columns = columns;
+        this.records = records;
+
+        this.headers = getHeaders();
+        this.rows = getRows();
     }
 
+    List<String> getHeaders() {
+        return this.columns.stream().map(Column::name).collect(toList());
+    }
+
+    List<List<Object>> getRows() {
+        return this.records.stream().map(r -> r.cells).map(l -> l.stream().map(c -> c.value).collect(toList())).collect(toList());
+    }
+
+    public int count() {
+        return records.size();
+    }
+
+    /**
+     * This method is deprecated because it is bugged by design.
+     * Since a row is a Map<String, Object>, where the key is the column name and value is the effective data,
+     * it can't represent different columns having the same name.
+     *
+     * @return list of rows, a row being a Map where the key is the column name and value is the effective data
+     */
+    @Deprecated
     public List<Map<String, Object>> toListOfMaps() {
-        return this.toListOfMaps(rows.size());
+        return this.toListOfMaps(records.size());
     }
 
+    /**
+     * This method is deprecated because it is bugged by design.
+     * Since a row is a Map<String, Object>, where the key is the column name and value is the effective data,
+     * it can't represent different columns having the same name.
+     *
+     * @param n limit the number of returned rows
+     * @return  list of rows, a row being a Map where the key is the column name and value is the effective data
+     */
+    @Deprecated
     public List<Map<String, Object>> toListOfMaps(int n) {
-        final int limit = Math.min(n, rows.size());
+        final int limit = Math.min(n, records.size());
         final List<Map<String, Object>> listOfMaps = new ArrayList<>(limit);
-        for (List<Object> row : rows.subList(0, limit)) {
-            final Map<String, Object> aRow = new LinkedHashMap<>(headers.size());
-            for (int j = 0; j < headers.size(); j++) {
-                aRow.put(headers.get(j), row.get(j));
+        for (Row row : records.subList(0, limit)) {
+            final Map<String, Object> aRow = new LinkedHashMap<>(columns.size());
+            for (Column column : columns) {
+                aRow.put(column.name, row.get(column).value);
             }
             listOfMaps.add(aRow);
         }
@@ -37,10 +73,10 @@ public class Records {
     }
 
     public Object[][] toMatrix() {
-        final Object[][] matrix = new Object[rows.size()][headers.size()];
-        for (int rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
-            for (int columnIndex = 0; columnIndex < headers.size(); columnIndex++) {
-                matrix[rowIndex][columnIndex] = rows.get(rowIndex).get(columnIndex);
+        final Object[][] matrix = new Object[records.size()][columns.size()];
+        for (int rowIndex = 0; rowIndex < records.size(); rowIndex++) {
+            for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
+                matrix[rowIndex][columnIndex] = records.get(rowIndex).get(columnIndex).value;
             }
         }
         return matrix;
@@ -48,38 +84,38 @@ public class Records {
 
     public String printable(int limit) {
         StringBuilder sb = new StringBuilder();
-        Map<String, Integer> maxColumnLength = maximumColumnLength(limit);
+        Map<Column, Integer> maxColumnLength = maximumColumnLength(limit);
         sb.append(tableHeaders(maxColumnLength));
         sb.append(tableRows(limit, maxColumnLength));
         return sb.toString();
     }
 
-    public Map<String, Integer> maximumColumnLength(int limit) {
-        return headers.stream()
+    Map<Column, Integer> maximumColumnLength(int limit) {
+        return columns.stream()
             .collect(Collectors.toMap(
-                h -> h,
-                h -> this.maximumLength(h, limit)
+                c -> c,
+                c -> this.maximumLength(c, limit)
             ));
     }
 
-    private int maximumLength(String header, int limit) {
-        List<Map<String, Object>> list = toListOfMaps(limit);
-        Integer integer = list.stream()
-            .map(r -> r.get(header).toString().length())
-            .max(Integer::compare)
-            .orElse(0);
-
-        return Math.max(header.length(), integer);
+    private int maximumLength(Column column, int limit) {
+        return Math.max(
+            column.name.length(),
+            records.stream()
+                .limit(limit)
+                .map(r -> r.get(column).value.toString().length())
+                .max(Integer::compare)
+                .orElse(0)
+        );
     }
 
-    public String tableHeaders(Map<String, Integer> maxColumnLength) {
+    public String tableHeaders(Map<Column, Integer> maxColumnLength) {
         StringBuilder sb = new StringBuilder();
-        if (headers.size() > 0) {
+        if (columns.size() > 0) {
             sb.append("|");
-            headers.forEach(header ->
+            columns.forEach(column ->
                 sb.append(" ")
-                    .append(header)
-                    .append(nWhitespaces(maxColumnLength.get(header) - header.length()))
+                    .append(column.printHeader(maxColumnLength.get(column)))
                     .append(" |")
             );
             sb.append("\n");
@@ -93,9 +129,11 @@ public class Records {
         return " ".repeat(i);
     }
 
-    public String tableRows(int limit, Map<String, Integer> maximumColumnLength) {
-        List<Map<String, Object>> rows = this.toListOfMaps(limit);
-        List<String> lines = rows.stream().limit(limit).map(row -> rowAsString(row, maximumColumnLength)).collect(Collectors.toList());
+    public String tableRows(int limit, Map<Column, Integer> maximumColumnLength) {
+        List<String> lines = records.stream()
+            .limit(limit)
+            .map(r -> r.print(maximumColumnLength))
+            .collect(toList());
         StringBuilder sb = new StringBuilder();
         lines.forEach(sb::append);
         return sb.toString();
@@ -118,10 +156,11 @@ public class Records {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-            .add("affectedRows", affectedRows)
-            .add("headers", headers)
-            .add("rows", rows)
-            .toString();
+        return "Records{" +
+            "affectedRows=" + affectedRows +
+            ", headers=" + headers +
+            ", records=" + records +
+            '}';
     }
+
 }

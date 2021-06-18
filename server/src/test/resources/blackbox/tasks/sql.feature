@@ -90,7 +90,7 @@ Feature: SQL Task test
         And the report contains record results
             Do compare
                 With actual ${#json(#report, "$.report.steps[-1:].stepOutputs.recordResult").toString()}
-                With expected [[{"affectedRows":-1,"headers":["ID","NAME","EMAIL"],"rows":[[1,"laitue","laitue@fake.com"],[2,"carotte","kakarot@fake.db"]]}]]
+                With expected [[{"affectedRows":-1,"headers":["ID","NAME","EMAIL"],"rows":[[1,"laitue","laitue@fake.com"],[2,"carotte","kakarot@fake.db"]],"columns":[{"name":"ID","index":0},{"name":"NAME","index":1},{"name":"EMAIL","index":2}],"records":[{},{}]}]]
                 With mode equals
 
     Scenario: Sql query wrong table
