@@ -20,6 +20,12 @@ public final class UserDto implements UserDetails {
     private String lastname;
     private String mail;
 
+    @JsonIgnore
+    private Set<String> roles;
+    private Set<GrantedAuthority> authorizations;
+    @JsonIgnore // For in-memory usage
+    private String password;
+
     public UserDto() {
     }
 
@@ -33,14 +39,6 @@ public final class UserDto implements UserDetails {
         this.authorizations = new HashSet<>(copyFrom.getAuthorities());
         this.password = copyFrom.getPassword();
     }
-
-    @JsonIgnore
-    private Set<String> roles;
-    private Set<GrantedAuthority> authorizations;
-
-    // For in-memory usage
-    @JsonIgnore
-    private String password;
 
     @Override
     @JsonIgnore

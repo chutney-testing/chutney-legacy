@@ -3,7 +3,7 @@ package com.chutneytesting.task.assertion.placeholder;
 import com.chutneytesting.task.spi.injectable.Logger;
 import net.minidev.json.JSONArray;
 
-public class isEmptyAsserter implements PlaceholderAsserter {
+public class IsEmptyAsserter implements PlaceholderAsserter {
 
     private static final String IS_EMPTY = "$isEmpty";
 

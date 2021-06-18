@@ -69,11 +69,13 @@ class RoleTest {
     }
 
     @Provide
+    @SuppressWarnings("unused")
     private Arbitrary<String> validRoleName() {
         return PropertyUtils.validRoleNameWithoutDefault();
     }
 
     @Provide
+    @SuppressWarnings("unused")
     private Arbitrary<String> invalidRoleName() {
         return PropertyUtils.invalidRoleName();
     }

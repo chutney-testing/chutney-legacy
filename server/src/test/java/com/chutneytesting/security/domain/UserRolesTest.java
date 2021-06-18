@@ -143,6 +143,7 @@ public class UserRolesTest {
     }
 
     @Provide
+    @SuppressWarnings("unused")
     private SetArbitrary<Role> validRoles() {
         return PropertyUtils.validRole().set().ofMinSize(1).ofMaxSize(10);
     }

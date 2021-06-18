@@ -41,6 +41,7 @@ class JsonFileAuthorizationsTest {
     }
 
     @Provide
+    @SuppressWarnings("unused")
     private Arbitrary<UserRoles> validUserRoles() {
         return PropertyUtils.validUserRoles();
     }

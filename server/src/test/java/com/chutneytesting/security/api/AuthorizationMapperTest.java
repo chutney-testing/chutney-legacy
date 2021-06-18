@@ -45,6 +45,7 @@ class AuthorizationMapperTest {
     }
 
     @Provide
+    @SuppressWarnings("unused")
     private Arbitrary<AuthorizationsDto> validDto() {
         return Combinators.combine(validRoleDtoList(), validDefaultRoleDto())
             .flatAs((r, d) -> {
@@ -55,6 +56,7 @@ class AuthorizationMapperTest {
     }
 
     @Provide
+    @SuppressWarnings("unused")
     private Arbitrary<UserRoles> validUserRoles() {
         return PropertyUtils.validUserRoles();
     }
@@ -115,6 +117,6 @@ class AuthorizationMapperTest {
             dto.setAuthorizations(authorizations);
             return Arbitraries.of(dto);
         }
-        return Arbitraries.just(null);
+        return just(null);
     }
 }

@@ -3,7 +3,6 @@ package com.chutneytesting.environment.api;
 import com.chutneytesting.environment.api.dto.EnvironmentDto;
 import com.chutneytesting.environment.api.dto.TargetDto;
 import com.chutneytesting.environment.domain.EnvironmentService;
-import com.chutneytesting.environment.domain.Target;
 import com.chutneytesting.environment.domain.exception.AlreadyExistingEnvironmentException;
 import com.chutneytesting.environment.domain.exception.AlreadyExistingTargetException;
 import com.chutneytesting.environment.domain.exception.CannotDeleteEnvironmentException;

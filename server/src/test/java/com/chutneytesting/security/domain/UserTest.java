@@ -51,11 +51,13 @@ class UserTest {
     }
 
     @Provide
+    @SuppressWarnings("unused")
     private Arbitrary<String> validUserId() {
         return PropertyUtils.validUserId();
     }
 
     @Provide
+    @SuppressWarnings("unused")
     private Arbitrary<String> invalidUserId() {
         return PropertyUtils.invalidUserId();
     }

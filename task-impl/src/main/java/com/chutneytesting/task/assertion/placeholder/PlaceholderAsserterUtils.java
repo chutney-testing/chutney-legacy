@@ -19,7 +19,7 @@ public class PlaceholderAsserterUtils {
         asserters.add(new LessThanAsserter());
         asserters.add(new GreaterThanAsserter());
         asserters.add(new ValueArrayAsserter());
-        asserters.add(new isEmptyAsserter());
+        asserters.add(new IsEmptyAsserter());
     }
 
     public static Optional<PlaceholderAsserter> getAsserterMatching(Object toMatch) {
