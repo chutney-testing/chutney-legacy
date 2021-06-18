@@ -1,5 +1,6 @@
 package com.chutneytesting.engine.domain.report;
 
+import static com.chutneytesting.engine.domain.execution.report.Status.PAUSED;
 import static com.chutneytesting.engine.domain.execution.report.Status.RUNNING;
 import static com.chutneytesting.engine.domain.execution.report.Status.SUCCESS;
 import static com.chutneytesting.tools.WaitUtils.awaitDuring;
@@ -161,12 +162,13 @@ public class ReporterTest {
         subStep12.endExecution(scenarioExecution);//7
         subStep1.endExecution(scenarioExecution);//8
         subStep2.beginExecution(scenarioExecution);//9
-        subStep2.success();
-        subStep2.endExecution(scenarioExecution);//10
-        step.endExecution(scenarioExecution);//11
+        subStep2.pauseExecution(scenarioExecution);//10
+        subStep2.success();//simulate a resume
+        subStep2.endExecution(scenarioExecution);//11
+        step.endExecution(scenarioExecution);//12
 
-        RxBus.getInstance().post(new EndScenarioExecutionEvent(scenarioExecution, step));//12
-        observer.assertResult(RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, SUCCESS);
+        RxBus.getInstance().post(new EndScenarioExecutionEvent(scenarioExecution, step));//13
+        observer.assertResult(RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, PAUSED, RUNNING, RUNNING, SUCCESS);
         assertThat(step.status()).isEqualTo(SUCCESS);
     }
 
