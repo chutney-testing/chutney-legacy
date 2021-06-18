@@ -5,6 +5,7 @@ import com.chutneytesting.admin.domain.gitbackup.GitBackupService;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +26,7 @@ public class GitBackupController {
         this.gitBackupService = gitBackupService;
     }
 
+    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<GitRemoteDto> getAllRemotes() {
         return gitBackupService.getAll().stream()
@@ -32,16 +34,19 @@ public class GitBackupController {
             .collect(Collectors.toList());
     }
 
+    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public GitRemoteDto addRemote(@RequestBody GitRemoteDto dto) {
         return toDto(gitBackupService.add(fromDto(dto)));
     }
 
+    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @DeleteMapping(path = "/{name}")
     public void removeRemote(@PathVariable("name") String name) {
         gitBackupService.remove(name);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @GetMapping(path = "/{name}/backup")
     public void backup(@PathVariable("name") String name) {
         gitBackupService.backup(name);

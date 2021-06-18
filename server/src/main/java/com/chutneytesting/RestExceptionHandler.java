@@ -1,6 +1,7 @@
 package com.chutneytesting;
 
 import com.chutneytesting.admin.domain.BackupNotFoundException;
+import com.chutneytesting.admin.domain.gitbackup.UnreachableRemoteException;
 import com.chutneytesting.design.domain.campaign.CampaignNotFoundException;
 import com.chutneytesting.design.domain.dataset.DataSetNotFoundException;
 import com.chutneytesting.design.domain.globalvar.GlobalVarNotFoundException;
@@ -75,7 +76,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         DataSetNotFoundException.class,
         ScenarioNotRunningException.class,
         GlobalVarNotFoundException.class,
-        ReportNotFoundException.class
+        ReportNotFoundException.class,
+        UnreachableRemoteException.class
     })
     protected ResponseEntity<Object> notFound(RuntimeException ex, WebRequest request) {
         return handleExceptionInternalWithExceptionMessageAsBody(ex, HttpStatus.NOT_FOUND, request);
