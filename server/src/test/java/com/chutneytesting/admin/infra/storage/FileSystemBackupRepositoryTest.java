@@ -182,17 +182,18 @@ public class FileSystemBackupRepositoryTest {
         sut.save(backup);
 
         // T
-        ZipFile zipFile = new ZipFile(backupsRootPath.resolve("backups")
+        try (ZipFile zipFile = new ZipFile(backupsRootPath.resolve("backups")
             .resolve("zip")
             .resolve(backup.id())
             .resolve("environments.zip")
             .toFile()
-        );
-        ArrayList<? extends ZipEntry> list = Collections.list(zipFile.entries());
+        )) {
+            ArrayList<? extends ZipEntry> list = Collections.list(zipFile.entries());
 
-        assertThat(list).hasSize(2);
-        assertThat(list.get(0).getName()).isEqualTo("envA.json");
-        assertThat(list.get(1).getName()).isEqualTo("envB.json");
+            assertThat(list).hasSize(2);
+            assertThat(list.get(0).getName()).isEqualTo("envA.json");
+            assertThat(list.get(1).getName()).isEqualTo("envB.json");
+        }
     }
 
     private Path stubBackup(String backupName) throws IOException {
