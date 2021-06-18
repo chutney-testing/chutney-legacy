@@ -18,6 +18,7 @@ import com.chutneytesting.tools.Try;
 import com.chutneytesting.tools.ZipUtils;
 import com.chutneytesting.tools.file.FileUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.BufferedOutputStream;
@@ -63,6 +64,7 @@ public class FileSystemBackupRepository implements BackupRepository {
 
     private final ObjectMapper om = new ObjectMapper()
         .findAndRegisterModules()
+        .disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET)
         .enable(SerializationFeature.INDENT_OUTPUT)
         .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
