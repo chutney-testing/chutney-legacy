@@ -91,6 +91,10 @@ public class ChutneyHttpSecurityConfig extends WebSecurityConfigurerAdapter {
         anonymous.setRoles(singleton(role.name));
         role.authorizations.stream().map(Enum::name).forEach(anonymous::grantAuthority);
 
+        if (role.authorizations.isEmpty()) {
+            anonymous.grantAuthority("ANONYMOUS");
+        }
+
         return anonymous;
     }
 

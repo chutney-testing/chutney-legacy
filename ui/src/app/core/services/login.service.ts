@@ -13,6 +13,7 @@ import { intersection } from '@shared/tools/array-utils';
 export class LoginService {
 
   private url = '/api/v1/user';
+  private loginUrl = '/api/v1/user/login';
   private NO_USER = new User('');
   private user$: BehaviorSubject<User> = new BehaviorSubject(this.NO_USER);
 
@@ -35,7 +36,7 @@ export class LoginService {
       headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')
     };
 
-    return this.http.post<User>(environment.backend + this.url + '/login', body.toString(), options)
+    return this.http.post<User>(environment.backend + this.loginUrl, body.toString(), options)
       .pipe(
         tap(user => this.setUser(user))
       );
@@ -58,7 +59,6 @@ export class LoginService {
 
   hasAuthorization(authorization: Array<Authorization> | Authorization = [], u: User = null): boolean {
     const user: User = u || this.user$.getValue();
-    console.log('hasAuthorization --- '+JSON.stringify(user)+' -- '+authorization);
     const auth = [].concat(authorization);
     if (user != this.NO_USER) {
         return auth.length == 0 || intersection(user.authorizations, auth).length > 0;
@@ -66,8 +66,11 @@ export class LoginService {
     return false;
   }
 
+  isLoginUrl(url: string): boolean {
+    return url.includes(this.loginUrl);
+  }
+
   private setUser(user: User) {
-    console.log('nextUser --- '+JSON.stringify(user));
     this.user$.next(user);
   }
 

@@ -89,4 +89,3 @@ chutney:
 #    defaultHostName:
   agentnetwork:
     connection-checker-timeout: 1000
-

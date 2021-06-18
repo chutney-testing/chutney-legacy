@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { LoginService } from '@core/services';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -11,7 +11,7 @@ import { contains } from '@shared/tools/array-utils';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnDestroy {
 
   username: string;
   password: string;
@@ -31,16 +31,16 @@ export class LoginComponent implements OnInit {
       this.action = params['action'];
       if (this.action) {
         this.loginService.logout();
+      } else {
+        this.userSubscription = this.loginService.getUser().subscribe(
+            user => this.navigateAfterLogin(user)
+        );
       }
     });
 
     this.route.queryParams.subscribe(params => {
-          this.forwardUrl = params['url'];
-        });
-  }
-
-  ngOnInit() {
-    this.forwardUrl = this.route.queryParams['url'];
+      this.forwardUrl = params['url'];
+    });
   }
 
   ngOnDestroy() {
@@ -50,11 +50,18 @@ export class LoginComponent implements OnInit {
   login() {
     this.loginService.login(this.username, this.password)
       .subscribe(
-        user => {
-            this.router.navigateByUrl(this.defaultForwardUrl(user));
-        },
-        error => { this.connectionError = error.error.message; }
+        user => this.navigateAfterLogin(user),
+        error => {
+            this.connectionError = error.error.message;
+            this.action = null;
+        }
       );
+  }
+
+  private navigateAfterLogin(user: User) {
+    if (user) {
+        this.router.navigateByUrl(this.defaultForwardUrl(user));
+    }
   }
 
   private defaultForwardUrl(user: User): string {

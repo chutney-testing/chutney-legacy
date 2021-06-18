@@ -354,8 +354,9 @@
     "login": {
         "logout": "Vous êtes déconnecté",
         "unauthorized": "Vous n'êtes pas autorisé à accéder à cette vue. Contacter votre administrateur.",
+        "expired": "Session expirée. Reconnectez-vous.",
         "username": "Nom d'utilisateur",
-        "password": "Mot de passe (Sesame)"
+        "password": "Mot de passe"
     },
     "global": {
         "time": {

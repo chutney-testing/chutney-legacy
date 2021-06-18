@@ -11,7 +11,7 @@ import { ThumbnailPipe } from '@shared/pipes/thumbnail.pipe';
 import { MomentModule } from 'angular2-moment';
 import { AceEditorModule } from 'ng2-ace-editor';
 import { AlertService } from './alert.service';
-//import { ErrorInterceptor } from './error-interceptor.service';
+import { ErrorInterceptor } from './error-interceptor.service';
 import {
     ComponentCardComponent,
     EnvironmentComboComponent,
@@ -111,11 +111,11 @@ import { StateService } from './state/state.service';
         TechnicalStepComponent
     ],
     providers: [
-//         {
-//             provide: HTTP_INTERCEPTORS,
-//             useClass: ErrorInterceptor,
-//             multi: true
-//         },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: ErrorInterceptor,
+            multi: true
+        },
         AlertService,
         EventManagerService,
         HjsonParserService,
