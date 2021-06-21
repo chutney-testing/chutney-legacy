@@ -1,6 +1,7 @@
 package com.chutneytesting.design.api.scenario.v2_0;
 
 import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.time.Instant.now;
 
 import com.chutneytesting.design.api.scenario.v2_0.dto.GwtTestCaseDto;
@@ -15,6 +16,7 @@ import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import com.chutneytesting.execution.api.ExecutionSummaryDto;
 import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
 import com.chutneytesting.security.domain.UserService;
+import com.google.common.base.Strings;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -53,8 +56,9 @@ public class GwtTestCaseController {
     }
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<TestCaseIndexDto> getTestCases() {
-        List<TestCaseMetadata> testCases = testCaseRepository.findAll();
+    public List<TestCaseIndexDto> getTestCases(@RequestParam( name = "textFilter", required = false) String textFilter) {
+
+        List<TestCaseMetadata> testCases = isNullOrEmpty(textFilter) ? testCaseRepository.findAll() : testCaseRepository.search(textFilter);
         return testCases.stream()
             .map((tc) -> {
                 List<ExecutionSummaryDto> executions = ExecutionSummaryDto.toDto(
@@ -99,19 +103,6 @@ public class GwtTestCaseController {
     @GetMapping(path = "/raw/{testCaseId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public RawTestCaseDto getTestCaseById(@PathVariable("testCaseId") String testCaseId) {
         return RawTestCaseMapper.toDto(testCaseRepository.findById(testCaseId));
-    }
-
-    @GetMapping(path = "/ui/search/{textFilter}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<TestCaseIndexDto> searchTestCase(@PathVariable("textFilter") String textFilter) {
-        List<TestCaseMetadata> testCases = testCaseRepository.search(textFilter);
-        return testCases.stream()
-            .map((tc) -> {
-                List<ExecutionSummaryDto> executions = ExecutionSummaryDto.toDto(
-                    executionHistoryRepository.getExecutions(
-                        fromFrontId(Optional.of(tc.id()))));
-                return TestCaseIndexDto.from(tc, executions);
-            })
-            .collect(Collectors.toList());
     }
 
     private String gwtTestCaseSave(GwtTestCase gwtTestCase) {

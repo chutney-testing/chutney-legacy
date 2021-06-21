@@ -101,7 +101,7 @@ export class ScenarioService {
     }
 
     search(textFilter: any) {
-        return this.httpClient.get<Array<ScenarioIndex>>(environment.backend + `${this.resourceUrlV2}/ui/search/${textFilter}`)
+        return this.httpClient.get<Array<ScenarioIndex>>(environment.backend + `${this.resourceUrlV2}?textFilter=${textFilter}`)
             .pipe(map((res: Array<any>) => {
                 return this.mapJsonScenario(res);
             }));
