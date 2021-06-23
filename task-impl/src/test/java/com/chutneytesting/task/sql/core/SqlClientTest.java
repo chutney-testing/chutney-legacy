@@ -13,7 +13,6 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -52,15 +51,19 @@ public class SqlClientTest {
 
     @Test
     public void should_return_headers_and_rows_on_select_query() throws SQLException {
-        List<Object> firstTuple = Arrays.asList(1, "laitue", "laitue@fake.com");
-        List<Object> secondTuple = Arrays.asList(2, "carotte", "kakarot@fake.db");
-        List<Object> thirdTuple = Arrays.asList(3, "tomate", "null");
+        Column c0 = new Column("ID", 0);
+        Column c1 = new Column("NAME", 1);
+        Column c2 = new Column("EMAIL", 2);
+
+        Row firstTuple =  new Row(List.of(new Cell(c0, 1), new Cell(c1, "laitue"), new Cell(c2, "laitue@fake.com")));
+        Row secondTuple = new Row(List.of(new Cell(c0, 2), new Cell(c1, "carotte"), new Cell(c2, "kakarot@fake.db")));
+        Row thirdTuple =  new Row(List.of(new Cell(c0, 3), new Cell(c1, "tomate"), new Cell(c2, "null")));
 
         SqlClient sqlClient = new DefaultSqlClientFactory().create(sqlTarget);
-        Records records = sqlClient.execute("select * from users");
+        Records actual = sqlClient.execute("select * from users");
 
-        assertThat(records.headers).containsOnly("ID", "NAME", "EMAIL");
-        assertThat(records.rows).containsExactly(firstTuple, secondTuple, thirdTuple);
+        assertThat(actual.headers).containsOnly("ID", "NAME", "EMAIL");
+        assertThat(actual.records).containsExactly(firstTuple, secondTuple, thirdTuple);
     }
 
     @Test
@@ -74,12 +77,13 @@ public class SqlClientTest {
     @Test
     public void should_return_count_on_count_queries() throws SQLException {
 
-        List<Object> expectedTuple = Collections.singletonList(3L);
+        Column c0 = new Column("TOTAL", 0);
+        Row expectedTuple =  new Row(Collections.singletonList(new Cell(c0, 3L)));
 
         SqlClient sqlClient = new DefaultSqlClientFactory().create(sqlTarget);
-        Records records = sqlClient.execute("SELECT COUNT(*) as total FROM USERS");
+        Records actual = sqlClient.execute("SELECT COUNT(*) as total FROM USERS");
 
-        assertThat(records.rows).containsExactly(expectedTuple);
+        assertThat(actual.records).containsExactly(expectedTuple);
     }
 
     @Test
@@ -134,27 +138,27 @@ public class SqlClientTest {
     @Test
     public void should_retrieve_columns_as_string_but_for_date_and_numeric_sql_datatypes() throws SQLException {
         SqlClient sqlClient = new DefaultSqlClientFactory().create(sqlTarget);
-        Records records = sqlClient.execute("select * from allsqltypes");
+        Records actual = sqlClient.execute("select * from allsqltypes");
 
-        Map<String, Object> onlyRecord = records.toListOfMaps().get(0);
-        assertThat(onlyRecord.get("COL_BOOLEAN")).isInstanceOf(Boolean.class);
-        assertThat(onlyRecord.get("COL_TINYINT")).isInstanceOf(Byte.class);
-        assertThat(onlyRecord.get("COL_SMALLINT")).isInstanceOf(Short.class);
-        assertThat(onlyRecord.get("COL_MEDIUMINT")).isInstanceOf(Integer.class);
-        assertThat(onlyRecord.get("COL_INTEGER")).isInstanceOf(Integer.class);
-        assertThat(onlyRecord.get("COL_BIGINT")).isInstanceOf(Long.class);
-        assertThat(onlyRecord.get("COL_FLOAT")).isInstanceOf(Float.class);
-        assertThat(onlyRecord.get("COL_DOUBLE")).isInstanceOf(Double.class);
-        assertThat(onlyRecord.get("COL_DECIMAL")).isInstanceOf(BigDecimal.class);
-        assertThat(onlyRecord.get("COL_DECIMAL")).isInstanceOf(BigDecimal.class);
-        assertThat(onlyRecord.get("COL_DATE")).isInstanceOf(Date.class);
-        assertThat(onlyRecord.get("COL_TIME")).isInstanceOf(Time.class);
-        assertThat(onlyRecord.get("COL_TIMESTAMP")).isInstanceOf(Timestamp.class);
-        assertThat(onlyRecord.get("COL_CHAR")).isInstanceOf(String.class);
-        assertThat(onlyRecord.get("COL_VARCHAR")).isInstanceOf(String.class);
+        Row onlyRecord = actual.records.get(0);
+        assertThat(onlyRecord.get("COL_BOOLEAN").value).isInstanceOf(Boolean.class);
+        assertThat(onlyRecord.get("COL_TINYINT").value).isInstanceOf(Byte.class);
+        assertThat(onlyRecord.get("COL_SMALLINT").value).isInstanceOf(Short.class);
+        assertThat(onlyRecord.get("COL_MEDIUMINT").value).isInstanceOf(Integer.class);
+        assertThat(onlyRecord.get("COL_INTEGER").value).isInstanceOf(Integer.class);
+        assertThat(onlyRecord.get("COL_BIGINT").value).isInstanceOf(Long.class);
+        assertThat(onlyRecord.get("COL_FLOAT").value).isInstanceOf(Float.class);
+        assertThat(onlyRecord.get("COL_DOUBLE").value).isInstanceOf(Double.class);
+        assertThat(onlyRecord.get("COL_DECIMAL").value).isInstanceOf(BigDecimal.class);
+        assertThat(onlyRecord.get("COL_DECIMAL").value).isInstanceOf(BigDecimal.class);
+        assertThat(onlyRecord.get("COL_DATE").value).isInstanceOf(Date.class);
+        assertThat(onlyRecord.get("COL_TIME").value).isInstanceOf(Time.class);
+        assertThat(onlyRecord.get("COL_TIMESTAMP").value).isInstanceOf(Timestamp.class);
+        assertThat(onlyRecord.get("COL_CHAR").value).isInstanceOf(String.class);
+        assertThat(onlyRecord.get("COL_VARCHAR").value).isInstanceOf(String.class);
         // INTERVAL SQL types : cf. SqlClient.StatementConverter#isJDBCDateType(Class)
-        assertThat(onlyRecord.get("COL_INTERVAL_YEAR")).isInstanceOf(String.class);
-        assertThat(onlyRecord.get("COL_INTERVAL_SECOND")).isInstanceOf(String.class);
+        assertThat(onlyRecord.get("COL_INTERVAL_YEAR").value).isInstanceOf(String.class);
+        assertThat(onlyRecord.get("COL_INTERVAL_SECOND").value).isInstanceOf(String.class);
     }
 
     @Test
