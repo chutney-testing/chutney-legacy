@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/user")
+@RequestMapping(UserController.BASE_URL)
 @CrossOrigin(origins = "*")
 public class UserController {
+
+    public static final String BASE_URL = "/api/v1/user";
 
     private final SpringUserService userService;
 

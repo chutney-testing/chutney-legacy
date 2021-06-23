@@ -2,6 +2,7 @@ package com.chutneytesting.security;
 
 import static java.util.Collections.singleton;
 
+import com.chutneytesting.security.api.UserController;
 import com.chutneytesting.security.api.UserDto;
 import com.chutneytesting.security.domain.Authorization;
 import com.chutneytesting.security.domain.Authorizations;
@@ -33,6 +34,11 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 @Configuration
 public class ChutneyHttpSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    public static final String LOGIN_URL = UserController.BASE_URL + "/login";
+    public static final String LOGOUT_URL = UserController.BASE_URL + "/logout";
+    public static final String API_BASE_URL_PATTERN = "/api/**";
+    public static final String ACTUATOR_BASE_URL_PATTERN = "/actuator/**";
+
     @Value("${server.servlet.session.cookie.http-only:true}")
     private boolean sessionCookieHttpOnly;
     @Value("${server.servlet.session.cookie.secure:true}")
@@ -46,10 +52,10 @@ public class ChutneyHttpSecurityConfig extends WebSecurityConfigurerAdapter {
         configureBaseHttpSecurity(http);
         http
             .authorizeRequests()
-                .antMatchers("/api/v1/user/login").permitAll()
-                .antMatchers("/api/v1/user/logout").permitAll()
-                .antMatchers("/api/**").authenticated()
-                .antMatchers("/actuator/**").hasAuthority(Authorization.ADMIN_ACCESS.name())
+                .antMatchers(LOGIN_URL).permitAll()
+                .antMatchers(LOGOUT_URL).permitAll()
+                .antMatchers(API_BASE_URL_PATTERN).authenticated()
+                .antMatchers(ACTUATOR_BASE_URL_PATTERN).hasAuthority(Authorization.ADMIN_ACCESS.name())
                 .anyRequest().permitAll()
             .and()
             .httpBasic();
@@ -72,12 +78,12 @@ public class ChutneyHttpSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().requiresSecure()
             .and()
             .formLogin()
-                .loginProcessingUrl("/api/v1/user/login")
-                .successForwardUrl("/api/v1/user")
+                .loginProcessingUrl(LOGIN_URL)
+                .successForwardUrl(UserController.BASE_URL)
                 .failureHandler(new Http401FailureHandler())
             .and()
             .logout()
-                .logoutUrl("/api/v1/user/logout")
+                .logoutUrl(LOGOUT_URL)
                 .logoutSuccessHandler(new HttpEmptyLogoutSuccessHandler());
     }
 
@@ -109,9 +115,9 @@ public class ChutneyHttpSecurityConfig extends WebSecurityConfigurerAdapter {
             final PasswordEncoder passwordEncoder,
             final InMemoryUserDetailsService inMemoryUserDetailsService) throws Exception {
 
-            users.getUsers().forEach(user -> {
-                user.setPassword(passwordEncoder.encode(user.getPassword()));
-            });
+            users.getUsers().forEach(user ->
+                user.setPassword(passwordEncoder.encode(user.getPassword()))
+            );
 
             auth
                 .userDetailsService(inMemoryUserDetailsService)
