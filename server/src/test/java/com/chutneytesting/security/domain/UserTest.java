@@ -3,7 +3,7 @@ package com.chutneytesting.security.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.chutneytesting.security.PropertyUtils;
+import com.chutneytesting.security.PropertyBasedTestingUtils;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
@@ -53,12 +53,12 @@ class UserTest {
     @Provide
     @SuppressWarnings("unused")
     private Arbitrary<String> validUserId() {
-        return PropertyUtils.validUserId();
+        return PropertyBasedTestingUtils.validUserId();
     }
 
     @Provide
     @SuppressWarnings("unused")
     private Arbitrary<String> invalidUserId() {
-        return PropertyUtils.invalidUserId();
+        return PropertyBasedTestingUtils.invalidUserId();
     }
 }

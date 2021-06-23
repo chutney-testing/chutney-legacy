@@ -5,7 +5,7 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.chutneytesting.security.PropertyUtils;
+import com.chutneytesting.security.PropertyBasedTestingUtils;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -71,12 +71,12 @@ class RoleTest {
     @Provide
     @SuppressWarnings("unused")
     private Arbitrary<String> validRoleName() {
-        return PropertyUtils.validRoleNameWithoutDefault();
+        return PropertyBasedTestingUtils.validRoleNameWithoutDefault();
     }
 
     @Provide
     @SuppressWarnings("unused")
     private Arbitrary<String> invalidRoleName() {
-        return PropertyUtils.invalidRoleName();
+        return PropertyBasedTestingUtils.invalidRoleName();
     }
 }

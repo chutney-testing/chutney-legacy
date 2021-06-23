@@ -7,7 +7,7 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.chutneytesting.security.PropertyUtils;
+import com.chutneytesting.security.PropertyBasedTestingUtils;
 import java.util.List;
 import java.util.Set;
 import net.jqwik.api.ForAll;
@@ -121,7 +121,7 @@ public class UserRolesTest {
     @Property
     void should_keep_users_and_roles_orders_when_build(@ForAll("validRoles") Set<Role> roles) {
         roles.add(Role.DEFAULT);
-        Set<User> users = PropertyUtils.validUsers(roles);
+        Set<User> users = PropertyBasedTestingUtils.validUsers(roles);
 
         List<Role> orderedRoles = List.copyOf(roles);
         List<User> orderedUsers = List.copyOf(users);
@@ -145,7 +145,7 @@ public class UserRolesTest {
     @Provide
     @SuppressWarnings("unused")
     private SetArbitrary<Role> validRoles() {
-        return PropertyUtils.validRole().set().ofMinSize(1).ofMaxSize(10);
+        return PropertyBasedTestingUtils.validRole().set().ofMinSize(1).ofMaxSize(10);
     }
 
     public static List<Authorization> authorizationsFromRoles(List<Role> userRoles) {

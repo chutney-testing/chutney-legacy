@@ -15,7 +15,7 @@ import net.jqwik.api.Arbitrary;
 import net.jqwik.api.Combinators;
 import net.jqwik.api.arbitraries.SetArbitrary;
 
-public final class PropertyUtils {
+public final class PropertyBasedTestingUtils {
 
 
     public static Arbitrary<UserRoles> validUserRoles() {

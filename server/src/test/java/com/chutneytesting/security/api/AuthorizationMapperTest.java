@@ -1,13 +1,13 @@
 package com.chutneytesting.security.api;
 
-import static com.chutneytesting.security.PropertyUtils.validRights;
-import static com.chutneytesting.security.PropertyUtils.validRoleNameWithoutDefault;
-import static com.chutneytesting.security.PropertyUtils.validUserId;
+import static com.chutneytesting.security.PropertyBasedTestingUtils.validRights;
+import static com.chutneytesting.security.PropertyBasedTestingUtils.validRoleNameWithoutDefault;
+import static com.chutneytesting.security.PropertyBasedTestingUtils.validUserId;
 import static com.chutneytesting.security.domain.UserRolesTest.authorizationsFromRoles;
 import static net.jqwik.api.Arbitraries.just;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.security.PropertyUtils;
+import com.chutneytesting.security.PropertyBasedTestingUtils;
 import com.chutneytesting.security.domain.Role;
 import com.chutneytesting.security.domain.UserRoles;
 import com.google.common.collect.Lists;
@@ -58,7 +58,7 @@ class AuthorizationMapperTest {
     @Provide
     @SuppressWarnings("unused")
     private Arbitrary<UserRoles> validUserRoles() {
-        return PropertyUtils.validUserRoles();
+        return PropertyBasedTestingUtils.validUserRoles();
     }
 
     private ListArbitrary<AuthorizationsDto.RoleDto> validRoleDtoList() {

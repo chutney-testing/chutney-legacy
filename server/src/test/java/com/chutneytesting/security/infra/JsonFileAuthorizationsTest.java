@@ -3,7 +3,7 @@ package com.chutneytesting.security.infra;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.util.Files.newTemporaryFolder;
 
-import com.chutneytesting.security.PropertyUtils;
+import com.chutneytesting.security.PropertyBasedTestingUtils;
 import com.chutneytesting.security.domain.Role;
 import com.chutneytesting.security.domain.UserRoles;
 import net.jqwik.api.Arbitrary;
@@ -43,6 +43,6 @@ class JsonFileAuthorizationsTest {
     @Provide
     @SuppressWarnings("unused")
     private Arbitrary<UserRoles> validUserRoles() {
-        return PropertyUtils.validUserRoles();
+        return PropertyBasedTestingUtils.validUserRoles();
     }
 }
