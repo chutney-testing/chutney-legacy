@@ -19,9 +19,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -87,6 +90,21 @@ public class DatabaseTestCaseRepository implements DelegateScenarioRepository {
             return Optional.of(uiNamedParameterJdbcTemplate.queryForObject("SELECT VERSION FROM SCENARIO WHERE ID = :id", buildIdParameterMap(scenarioId), Integer.class));
         } catch (IncorrectResultSizeDataAccessException e) {
             return empty();
+        }
+    }
+
+    @Override
+    public List<TestCaseMetadata> search(String textFilter) {
+        if(!textFilter.isEmpty()) {
+            String[] words =  StringEscapeUtils.escapeSql(textFilter).split("\\s");
+            String sqlSearch = Arrays.stream(words).map(w -> " CONTENT LIKE '%" + w + "%' ").collect(Collectors.joining(" AND "));
+            return uiNamedParameterJdbcTemplate.query(
+                "SELECT ID, TITLE, DESCRIPTION, TAGS, CREATION_DATE, USER_ID, UPDATE_DATE, VERSION " +
+                    "FROM SCENARIO " +
+                    "WHERE ACTIVATED is TRUE " +
+                    "AND " + sqlSearch, emptyMap(), SCENARIO_INDEX_ROW_MAPPER);
+        } else {
+            return findAll();
         }
     }
 
@@ -169,7 +187,7 @@ public class DatabaseTestCaseRepository implements DelegateScenarioRepository {
                 .withAuthor(rs.getString("USER_ID"))
                 .withVersion(rs.getInt("VERSION"));
 
-            Try.exec(() ->  {
+            Try.exec(() -> {
                 TypeReference<Map<String, String>> typeRef = new TypeReference<>() {
                 };
                 String executionParameters = rs.getString("DATASET");

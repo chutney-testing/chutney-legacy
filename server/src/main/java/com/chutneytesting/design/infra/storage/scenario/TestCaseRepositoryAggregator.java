@@ -122,6 +122,16 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
         }
     }
 
+    @Override
+    public List<TestCaseMetadata> search(String textFilter) {
+        List<TestCaseMetadata> testCases = repositories()
+            .parallel()
+            .flatMap(r -> searchAllRepositoryStream(r, textFilter))
+            .collect(Collectors.toList());
+        testCases.addAll(searchComposableTestCase(textFilter));
+        return testCases;
+    }
+
     private Stream<? extends TestCaseMetadata> findAllRepositoryStream(DelegateScenarioRepository repository) {
         try {
             return repository.findAll().stream();
@@ -131,12 +141,30 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
         }
     }
 
+    private Stream<? extends TestCaseMetadata> searchAllRepositoryStream(DelegateScenarioRepository repository, String textFilter) {
+        try {
+            return repository.search(textFilter).stream();
+        } catch (RuntimeException e) {
+            LOGGER.warn("Could not aggregate scenarios from repository : " + repository.alias(), e);
+            return Stream.empty();
+        }
+    }
+
+
     private boolean isComposableScenarioId(String scenarioId) {
         return ORecordId.isA(scenarioId);
     }
 
     private List<TestCaseMetadata> findAllComposableTestCase() {
         return composableTestCaseRepository.findAll().stream()
+            .map(testCaseMetadata -> TestCaseMetadataImpl.TestCaseMetadataBuilder.from(testCaseMetadata)
+                .withId(toFrontId(testCaseMetadata.id()))
+                .build())
+            .collect(Collectors.toList());
+    }
+
+    private List<TestCaseMetadata> searchComposableTestCase(String textFilter) {
+        return composableTestCaseRepository.search(textFilter).stream()
             .map(testCaseMetadata -> TestCaseMetadataImpl.TestCaseMetadataBuilder.from(testCaseMetadata)
                 .withId(toFrontId(testCaseMetadata.id()))
                 .build())

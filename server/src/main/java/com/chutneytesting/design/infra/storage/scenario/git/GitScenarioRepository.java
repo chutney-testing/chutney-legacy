@@ -125,6 +125,11 @@ public class GitScenarioRepository implements DelegateScenarioRepository {
         return empty();
     }
 
+    @Override
+    public List<TestCaseMetadata> search(String textFilter) {
+        return findAll();
+    }
+
     /**
      * @return path found if the filename hashcode equals to the scenarioId
      */

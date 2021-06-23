@@ -22,4 +22,6 @@ public interface DelegateScenarioRepository {
     void removeById(String scenarioId);
 
     Optional<Integer> lastVersion(String scenarioId);
+
+    List<TestCaseMetadata> search(String textFilter);
 }

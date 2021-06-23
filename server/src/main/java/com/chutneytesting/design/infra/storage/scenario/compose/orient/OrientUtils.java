@@ -163,6 +163,16 @@ public final class OrientUtils {
         }
     }
 
+    public static void createProperty(String className, ODatabaseSession dbSession, String propertyName, OType type) {
+        OClass aClass = dbSession.getClass(className);
+        aClass.createProperty(propertyName, type);
+    }
+
+    public static void createIndex(String className, ODatabaseSession dbSession, String indexName, OClass.INDEX_TYPE indexType, String... propertiesToIndex) {
+        OClass aClass = dbSession.getClass(className);
+        aClass.createIndex(indexName, indexType.name(), null, null, "LUCENE", propertiesToIndex);
+    }
+
     private static void dropClass(String className, ODatabaseSession dbSession) {
         try (OResultSet ignored = dbSession.command("DROP CLASS " + className)) {
         }

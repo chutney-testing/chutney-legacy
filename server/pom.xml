@@ -166,6 +166,10 @@
             <artifactId>orientdb-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.orientechnologies</groupId>
+            <artifactId>orientdb-lucene</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.github.java-diff-utils</groupId>
             <artifactId>java-diff-utils</artifactId>
         </dependency>

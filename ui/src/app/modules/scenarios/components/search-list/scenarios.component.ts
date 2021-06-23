@@ -3,11 +3,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { ScenarioService } from '@core/services';
 import { ScenarioIndex, ScenarioType, SelectableTags } from '@model';
-import { distinct, filterOnTextContent, flatMap, intersection, sortByAndOrder } from '@shared/tools/array-utils';
+import { distinct, flatMap, intersection, sortByAndOrder } from '@shared/tools/array-utils';
 import { StateService } from '@shared/state/state.service';
 import { Subscription } from 'rxjs';
 import { JiraPluginService } from '@core/services/jira-plugin.service';
 import { JiraPluginConfigurationService } from '@core/services/jira-plugin-configuration.service';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'chutney-scenarios',
@@ -25,13 +26,13 @@ export class ScenariosComponent implements OnInit, OnDestroy {
 
     // Filter
     viewedScenarios: Array<ScenarioIndex> = [];
-    textFilter: any = '';
+    textFilter: string;
     tagFilter = new SelectableTags<String>();
     scenarioTypeFilter = new SelectableTags<ScenarioType>();
 
     // Jira
-    jiraMap : Map<string,string> = new Map();
-    jiraUrl : string = '';
+    jiraMap: Map<string, string> = new Map();
+    jiraUrl = '';
 
     // Order
     orderBy = 'title';
@@ -113,18 +114,34 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     }
 
     private applyUriState() {
-        this.urlParams = this.route.queryParams.subscribe(
-            (params) => {
-                if (params['text']) { this.textFilter = params['text']; } else { this.textFilter = ''; }
-                if (params['orderBy']) { this.orderBy = params['orderBy']; }
-                if (params['reverseOrder']) { this.reverseOrder = params['reverseOrder'] === 'true'; }
-                if (params['type']) { this.scenarioTypeFilter.selectTags(params['type'].split(',')); }
-                if (params['noTag']) { this.tagFilter.setNoTag(params['noTag'] === 'true'); }
-                if (params['tags']) { this.tagFilter.selectTags(params['tags'].split(',')); }
-                this.applyFilters();
-            },
-            (error) => console.log(error)
-        );
+        this.urlParams = this.route.queryParams
+            .pipe(map((params: Array<any>) => {
+                    if (params['text']) {
+                        this.textFilter = params['text'];
+                    } else {
+                        this.textFilter = '';
+                    }
+                    if (params['orderBy']) {
+                        this.orderBy = params['orderBy'];
+                    }
+                    if (params['reverseOrder']) {
+                        this.reverseOrder = params['reverseOrder'] === 'true';
+                    }
+                    if (params['type']) {
+                        this.scenarioTypeFilter.selectTags(params['type'].split(','));
+                    }
+                    if (params['noTag']) {
+                        this.tagFilter.setNoTag(params['noTag'] === 'true');
+                    }
+                    if (params['tags']) {
+                        this.tagFilter.selectTags(params['tags'].split(','));
+                    }
+                    this.applyFilters();
+                    this.ngOnDestroy();
+                },
+                (error) => console.log(error)))
+            .subscribe();
+
     }
 
     createNewScenario(compose: boolean) {
@@ -166,8 +183,7 @@ export class ScenariosComponent implements OnInit, OnDestroy {
         if (property == 'lastExecution' || property == 'creationDate') {
             const now = Date.now();
             return i => i[property] == null ? now - 1491841324 /*2017-04-10T16:22:04*/ : now - Date.parse(i[property]);
-        }
-        else {
+        } else {
             return i => i[property] == null ? '' : i[property];
         }
     }
@@ -216,28 +232,44 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     }
 
     applyFilters() {
-        this.viewedScenarios = filterOnTextContent(this.scenarios, this.textFilter, ['title', 'id']);
+        if (this.textFilter) {
+            this.scenarioService.search(this.textFilter).subscribe(res => {
+                    if(this.textFilter) {
+                        this.localFilter(res);
+                    } else {
+                        this.localFilter(this.scenarios);
+                    }
+                }
+            );
+        } else {
+            this.localFilter(this.scenarios);
+        }
+    }
+
+    private localFilter(scenarios: Array<ScenarioIndex>) {
+        this.viewedScenarios = scenarios;
         this.viewedScenarios = this.filterOnAttributes();
         this.sortScenarios(this.orderBy, this.reverseOrder);
         this.applyFiltersToRoute();
     }
 
-    // Jira link //
-
-    initJiraPlugin() {  
+// Jira link //
+    initJiraPlugin() {
         this.jiraPluginConfigurationService.get()
-        .subscribe((r) => {
-                if(r && r.url !== ''){
+            .subscribe((r) => {
+                if (r && r.url !== '') {
                     this.jiraUrl = r.url;
                     this.jiraLinkService.findScenarios()
-                    .subscribe(
-                        (result) => { this.jiraMap = result; }
-                    );
+                        .subscribe(
+                            (result) => {
+                                this.jiraMap = result;
+                            }
+                        );
                 }
-        });
+            });
     }
 
-    getJiraLink(id : string){
+    getJiraLink(id: string) {
         return this.jiraUrl + '/browse/' + this.jiraMap.get(id);
     }
 
@@ -253,9 +285,9 @@ export class ScenariosComponent implements OnInit, OnDestroy {
 
         return input.filter((scenario: ScenarioIndex) => {
             return (this.tagPresent(tags, scenario)
-                    || this.noTagPresent(noTag, scenario))
-                    && this.scenarioTypePresent(scenarioTypes, scenario);
-            });
+                || this.noTagPresent(noTag, scenario))
+                && this.scenarioTypePresent(scenarioTypes, scenario);
+        });
     }
 
     private tagPresent(tags: String[], scenario: ScenarioIndex): boolean {

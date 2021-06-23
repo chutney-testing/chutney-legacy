@@ -22,13 +22,14 @@ describe('ScenariosComponent', () => {
 
     beforeEach(async(() => {
         TestBed.resetTestingModule();
-        const scenarioService = jasmine.createSpyObj('ScenarioService', ['findScenarios']);
-        const jiraPluginService = jasmine.createSpyObj('JiraPluginService', ['findScenarios','findCampaigns']);
+        const scenarioService = jasmine.createSpyObj('ScenarioService', ['findScenarios', 'search']);
+        const jiraPluginService = jasmine.createSpyObj('JiraPluginService', ['findScenarios', 'findCampaigns']);
         const jiraPluginConfigurationService = jasmine.createSpyObj('JiraPluginConfigurationService', ['get']);
         const mockScenarioIndex = [new ScenarioIndex('1', 'title1', 'description', 'source', new Date(), new Date(), 1, 'guest', [], []),
                                    new ScenarioIndex('2', 'title2', 'description', 'source', new Date(), new Date(), 1, 'guest', [], []),
                                    new ScenarioIndex('3', 'another scenario', 'description', 'source', new Date(), new Date(), 1, 'guest', [], [])];
         scenarioService.findScenarios.and.returnValue(of(mockScenarioIndex));
+        scenarioService.search.and.returnValue(of(mockScenarioIndex));
         jiraPluginConfigurationService.get.and.returnValue(empty());
         jiraPluginService.findScenarios.and.returnValue(empty());
         jiraPluginService.findCampaigns.and.returnValue(empty());
@@ -73,7 +74,7 @@ describe('ScenariosComponent', () => {
         });
     }));
 
-    it('should filter the list of scenario', async(() => {
+    it('should filter the list of scenario',() => {
         const fixture = TestBed.createComponent(ScenariosComponent);
         fixture.detectChanges();
         fixture.whenStable().then(() => {
@@ -87,9 +88,9 @@ describe('ScenariosComponent', () => {
             expect(cards.length).toBe(1);
             expect(titleOf(cards[0])).toBe('another scenario');
         });
-    }));
+    });
 
-    it('should apply filters from the URL', async(() => {
+    it('should apply filters from the URL', () => {
         const fixture = TestBed.createComponent(ScenariosComponent);
         activatedRouteStub.setParamMap({ text: 'title', orderBy: 'title', reverseOrder: 'true'});
         fixture.detectChanges();
@@ -105,7 +106,7 @@ describe('ScenariosComponent', () => {
             expect(titleOf(cards[1])).toBe('title1');
             expect(fixture.componentInstance.scenarios.length).toBe(3);
         });
-    }));
+    });
 
 });
 
@@ -124,5 +125,5 @@ function sendInput(input: HTMLInputElement, value: string) {
 
 function jiraMock()
 {
-    
+
 }

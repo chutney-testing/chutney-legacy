@@ -257,6 +257,27 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
         assertThat(loadById(composableTestCase.id)).isNull();
     }
 
+    @Test
+    public void should_search_testCases() {
+        // Given
+        ComposableTestCase composableTestCase1 = saveEmptyTestCase("one");
+        saveEmptyTestCase("two");
+        ComposableTestCase composableTestCase3 = saveEmptyTestCase("one two three");
+
+        // When
+        final List<TestCaseMetadata> searchOne = sut.search("one");
+        // Then
+        assertThat(searchOne).hasSize(2);
+        assertThat(searchOne).containsExactly(composableTestCase1.metadata, composableTestCase3.metadata);
+
+        // When
+        final List<TestCaseMetadata> searchOneThree = sut.search("one three");
+        // Then
+        assertThat(searchOneThree).hasSize(1);
+        assertThat(searchOneThree).containsExactly(composableTestCase3.metadata);
+    }
+
+
     private ComposableTestCase saveEmptyTestCase(String title) {
         final ComposableTestCase composableTestCase = new ComposableTestCase("",
             TestCaseMetadataImpl.builder().withTitle(title).build(),
