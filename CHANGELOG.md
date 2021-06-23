@@ -1,6 +1,40 @@
 # Changelog
 
-## [1.3.7](https://github.com/chutney-testing/chutney/tree/1.3.7)
+## [1.3.8](https://github.com/chutney-testing/chutney/tree/1.3.8) (2021-06-23)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.7...HEAD)
+
+**Implemented enhancements:**
+
+- 🚀 | Include jira link in backup [\#458](https://github.com/chutney-testing/chutney/issues/458)
+- 🚀 | Add research full text in scenario [\#397](https://github.com/chutney-testing/chutney/issues/397)
+- 🚀 | Add global variables support to new ui [\#390](https://github.com/chutney-testing/chutney/issues/390)
+
+**Fixed bugs:**
+
+- 🐛 | SQL task - mapping and print errors when having 2 or more column with same header [\#478](https://github.com/chutney-testing/chutney/issues/478)
+- 🐛 | Pause button doesnt appear anymore [\#476](https://github.com/chutney-testing/chutney/issues/476)
+- 🐛 | SQL client change [\#470](https://github.com/chutney-testing/chutney/issues/470)
+- 🐛 | Regression in scenario execution [\#469](https://github.com/chutney-testing/chutney/issues/469)
+- 🐛 | Random classnotfound exeception [\#466](https://github.com/chutney-testing/chutney/issues/466)
+- 🚀 | Missing dataset data in git export [\#461](https://github.com/chutney-testing/chutney/issues/461)
+- 🐛 | Environment backup [\#457](https://github.com/chutney-testing/chutney/issues/457)
+- 🐛 | Navigation to scenario components is broken [\#434](https://github.com/chutney-testing/chutney/issues/434)
+
+**Merged pull requests:**
+
+- fix\(task\): SQL result with duplicated column name [\#479](https://github.com/chutney-testing/chutney/pull/479) ([bessonm](https://github.com/bessonm))
+- bugfix\(engine\): Add pause as report status for running scenario [\#475](https://github.com/chutney-testing/chutney/pull/475) ([nbrouand](https://github.com/nbrouand))
+- fix\(server\): Backup all environments [\#474](https://github.com/chutney-testing/chutney/pull/474) ([bessonm](https://github.com/bessonm))
+- fix\(server\): Includes datatable & constants on exporting dataset to git [\#473](https://github.com/chutney-testing/chutney/pull/473) ([bessonm](https://github.com/bessonm))
+- feat\(ui+server\): Backup jira links [\#472](https://github.com/chutney-testing/chutney/pull/472) ([bessonm](https://github.com/bessonm))
+- Bugfix/sql task change [\#471](https://github.com/chutney-testing/chutney/pull/471) ([nbrouand](https://github.com/nbrouand))
+- fix\(task-impl\): Keep numeric and date JDBC SQL Types in task result [\#468](https://github.com/chutney-testing/chutney/pull/468) ([boddissattva](https://github.com/boddissattva))
+- Chore/taskexecutor [\#467](https://github.com/chutney-testing/chutney/pull/467) ([nbrouand](https://github.com/nbrouand))
+- feat\(ui+server\): Add full text scenario search [\#465](https://github.com/chutney-testing/chutney/pull/465) ([nbrouand](https://github.com/nbrouand))
+
+
+## [1.3.7](https://github.com/chutney-testing/chutney/tree/1.3.7) (2021-06-09)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.6...HEAD)
 
@@ -12,9 +46,10 @@
 
 - bugfix\(engine+tools\): Fix memory check on sql task. Should not use co… [\#464](https://github.com/chutney-testing/chutney/pull/464) ([nbrouand](https://github.com/nbrouand))
 
-## [1.3.6](https://github.com/chutney-testing/chutney/tree/1.3.6)
 
-[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.5...HEAD)
+## [1.3.6](https://github.com/chutney-testing/chutney/tree/1.3.6) (2021-06-08)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.5...1.3.6)
 
 **Implemented enhancements:**
 
@@ -43,7 +78,7 @@
 
 ## [1.3.5](https://github.com/chutney-testing/chutney/tree/1.3.5) (2021-05-25)
 
-[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.4...HEAD)
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.4...1.3.5)
 
 **Merged pull requests:**
 
@@ -52,7 +87,7 @@
 
 ## [1.3.4](https://github.com/chutney-testing/chutney/tree/1.3.4)
 
-[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.3...HEAD)
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.3...1.3.4)
 
 **Implemented enhancements:**
 
