@@ -353,7 +353,7 @@
     },
     "login": {
         "logout": "You are disconnected",
-        "unauthorized": "You are not authorized to access this vue. Contact your administrator.",
+        "unauthorized": "You are not authorized to access this view. Contact your administrator.",
         "expired": "Session expired. Sign in again.",
         "username": "Username",
         "password": "Password"
