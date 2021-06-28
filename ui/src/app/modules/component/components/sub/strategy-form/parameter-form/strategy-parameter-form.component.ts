@@ -35,7 +35,8 @@ export class StrategyParameterFormComponent implements OnChanges, ControlValueAc
     @Input() values: Object;
 
     parameterForm: FormGroup;
-    registeredControls: string[] = [];
+
+    private registeredControls: string[] = [];
 
     constructor(private fb: FormBuilder) {
         this.parameterForm = this.fb.group({});
@@ -48,6 +49,7 @@ export class StrategyParameterFormComponent implements OnChanges, ControlValueAc
     }
 
     private createParametersForm() {
+        const disabledSave = this.parameterForm.disabled;
         this.clearForm();
         this.parameters.forEach(p => {
             this.parameterForm.addControl(
@@ -56,6 +58,7 @@ export class StrategyParameterFormComponent implements OnChanges, ControlValueAc
             );
             this.registeredControls.push(p.name);
         });
+        this.setDisabledState(disabledSave);
     }
 
     private findValidatorFor(type: string) {

@@ -12,8 +12,8 @@
                 <textarea formControlName="name" rows="2"
                           class="no-resize form-control col"
                           [ngClass]="{
-                            'is--valid': actionForm.get('name').valid && actionForm.get('name').enabled,
-                            'is--invalid': !actionForm.get('name').valid && actionForm.get('name').enabled
+                            'is-valid': actionForm.get('name').valid && actionForm.get('name').enabled,
+                            'is-invalid': !actionForm.get('name').valid && actionForm.get('name').enabled
                           }"
                           placeholder="{{'components.shared.edition.fields.intention.placeholder' | translate}}"
                           required></textarea>

@@ -4,7 +4,11 @@
             {{parameter.name}}
         </label>
         <input id="strategy-{{parameter.name}}" type="text" autocomplete="off"
-               class="col-9 form-control is-{{parameterForm.get(parameter.name).valid ? '' : 'in'}}valid"
+               class="col-9 form-control"
+               [ngClass]="{
+                'is-valid': parameterForm.get(parameter.name).valid && parameterForm.get(parameter.name).enabled,
+                'is-invalid': !parameterForm.get(parameter.name).valid && parameterForm.get(parameter.name).enabled
+               }"
                formControlName="{{parameter.name}}" />
     </div>
 </div>
