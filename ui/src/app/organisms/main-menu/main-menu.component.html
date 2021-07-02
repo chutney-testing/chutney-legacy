@@ -151,12 +151,12 @@
             <div class="dropdown">
                 <button class="dropbtn"><span class="fa fa-user"></span>{{user?.id}}</button>
                 <div class="dropdown-content">
-                    <chutney-menu-item *ngIf="user?.id" [route]="'/login/logout'"
-                                       [label]="'Logout'"
+                    <chutney-menu-item *ngIf="user?.id" (clickEvent)="logout()"
+                                       [label]="'menu.principal.signOut' | translate"
                                        [icon_fa_class]="'fa-sign-out-alt'">
                     </chutney-menu-item>
-                    <chutney-menu-item *ngIf="user?.id == ''" [route]="'/login'"
-                                       [label]="'Login'"
+                    <chutney-menu-item *ngIf="user?.id == ''" (clickEvent)="login()"
+                                       [label]="'menu.principal.signIn' | translate"
                                        [icon_fa_class]="'fa-sign-in-alt'">
                     </chutney-menu-item>
                 </div>

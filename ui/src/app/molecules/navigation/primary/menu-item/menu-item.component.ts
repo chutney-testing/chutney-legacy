@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'chutney-menu-item',
@@ -13,10 +13,17 @@ export class MenuItemComponent implements OnInit {
     @Input() img_src: string;
     @Input() img_src_selected: string;
     @Input() icon_fa_class: string;
+    @Output() clickEvent = new EventEmitter<string>();
 
   constructor() { }
 
   ngOnInit() {
+  }
+
+  onClick() {
+    if (this.route == null) {
+        this.clickEvent.emit();
+    }
   }
 
 }

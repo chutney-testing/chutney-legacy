@@ -16,7 +16,9 @@
             "dataset": "Dataset",
             "jiraId": "Identifiant jira",
             "roles": "Roles",
-            "admin": "Admin"
+            "admin": "Admin",
+            "signIn": "Connexion",
+            "signOut": "Déconnexion"
         }
     },
     "home": {
@@ -355,8 +357,14 @@
         "logout": "Vous êtes déconnecté",
         "unauthorized": "Vous n'êtes pas autorisé à accéder à cette vue. Contacter votre administrateur.",
         "expired": "Session expirée. Reconnectez-vous.",
-        "username": "Nom d'utilisateur",
+        "username": "Utilisateur",
         "password": "Mot de passe"
+    },
+    "alert": {
+        "success": "Succès",
+        "info": "Information",
+        "error": "Erreur",
+        "warning": "Avertissement"
     },
     "global": {
         "time": {

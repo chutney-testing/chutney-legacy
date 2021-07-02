@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { LinkifierService } from '@core/services';
+import { Subscription } from 'rxjs';
+
+import { LinkifierService, LoginService } from '@core/services';
 
 @Component({
   selector: 'chutney-parent',
@@ -8,7 +10,24 @@ import { LinkifierService } from '@core/services';
 })
 export class ParentComponent {
 
-  constructor(linkifierService: LinkifierService) {
-      linkifierService.loadLinkifiers().subscribe(); // needed to fetch linkifiers into sessionStorage
+  private linkifierSubscription: Subscription;
+
+  constructor(
+    private linkifierService: LinkifierService,
+    private loginService: LoginService
+  ) {
+    this.linkifierSubscription = this.loginService.getUser().subscribe(
+        user => {
+            if (this.loginService.isAuthenticated()) {
+                this.linkifierService.loadLinkifiers().subscribe(); // needed to fetch linkifiers into sessionStorage
+            }
+        }
+    );
+  }
+
+  ngOnDestroy() {
+    if (this.linkifierSubscription) {
+        this.linkifierSubscription.unsubscribe();
+    }
   }
 }

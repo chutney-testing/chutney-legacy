@@ -10,9 +10,7 @@ export class CanDeactivateGuard implements CanDeactivate<CanDeactivatePage> {
   confirmationText: string;
 
   constructor(private translate: TranslateService) {
-    translate.get('global.confirm.page.deactivate').subscribe((res: string) => {
-      this.confirmationText = res;
-    });
+    this.initTranslation();
   }
 
   canDeactivate(page: CanDeactivatePage): boolean {
@@ -20,5 +18,18 @@ export class CanDeactivateGuard implements CanDeactivate<CanDeactivatePage> {
       return confirm(this.confirmationText);
     }
     return true;
+  }
+
+  private initTranslation() {
+    this.getTranslation();
+    this.translate.onLangChange.subscribe(() => {
+        this.getTranslation();
+    });
+  }
+
+  private getTranslation() {
+    this.translate.get('global.confirm.page.deactivate').subscribe((res: string) => {
+      this.confirmationText = res;
+    });
   }
 }

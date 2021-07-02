@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
@@ -6,17 +7,53 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class AlertService {
 
-  constructor(private toastr: ToastrService) { }
+  private successTitle: string = '';
+  private infoTitle: string = '';
+  private errorTitle: string = '';
+  private warningTitle: string = '';
 
-  success(msg: string, title = 'Done') {
-    this.toastr.success(msg, title);
+  constructor(
+    private toastr: ToastrService,
+    private translateService: TranslateService
+  ) {
+    this.initTranslation();
   }
 
-  error(msg: string, title = 'Error') {
-    this.toastr.error(msg, title);
+  success(msg: string, config = {}) {
+    this.toastr.success(msg, this.successTitle, config);
   }
 
-  warning(msg: string, title = 'Warning') {
-    this.toastr.warning(msg, title);
+  info(msg: string, config = {}) {
+    this.toastr.info(msg, this.infoTitle, config);
+  }
+
+  error(msg: string, config = {}) {
+    this.toastr.error(msg, this.errorTitle, config);
+  }
+
+  warning(msg: string, config = {}) {
+    this.toastr.warning(msg, this.warningTitle, config);
+  }
+
+  private initTranslation() {
+    this.getTranslation();
+    this.translateService.onLangChange.subscribe(() => {
+        this.getTranslation();
+    });
+  }
+
+  private getTranslation() {
+    this.translateService.get('alert.success').subscribe((res: string) => {
+        this.successTitle = res;
+    });
+    this.translateService.get('alert.info').subscribe((res: string) => {
+        this.infoTitle = res;
+    });
+    this.translateService.get('alert.error').subscribe((res: string) => {
+        this.errorTitle = res;
+    });
+    this.translateService.get('alert.warning').subscribe((res: string) => {
+        this.warningTitle = res;
+    });
   }
 }

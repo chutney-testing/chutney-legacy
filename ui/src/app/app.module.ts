@@ -1,7 +1,6 @@
-import { ToastrModule } from 'ngx-toastr';
-import { DefaultMissingTranslationHandler, HttpLoaderFactory } from './app.translate.factory';
 // Core
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -10,12 +9,14 @@ import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MissingTranslationHandler, TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { ModalModule } from 'ngx-bootstrap';
+import { ToastrModule } from 'ngx-toastr';
 import { DragulaModule } from 'ng2-dragula';
 // Internal common
-import { SharedModule } from '@shared/shared.module';
-import { AppRoutingModule } from './app-routing.module';
-import { CoreModule } from '@core/core.module';
 import { AppComponent } from './app.component';
+import { AppRoutingModule } from './app-routing.module';
+import { DefaultMissingTranslationHandler, HttpLoaderFactory } from './app.translate.factory';
+import { SharedModule } from '@shared/shared.module';
+import { CoreModule } from '@core/core.module';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { AppComponent } from './app.component';
   imports: [
     // Core
     BrowserModule,
+    BrowserAnimationsModule,
     CommonModule,
     AppRoutingModule,
     CoreModule,
@@ -42,7 +44,7 @@ import { AppComponent } from './app.component';
     }),
     ToastrModule.forRoot({
       timeOut: 10000,
-      positionClass: 'toast-bottom-right',
+      positionClass: 'toast-top-full-width',
       preventDuplicates: true,
     }),
     ModalModule.forRoot(),

@@ -16,7 +16,9 @@
             "dataset": "Dataset",
             "jiraId": "Jira identifier",
             "roles": "Roles",
-            "admin": "Admin"
+            "admin": "Admin",
+            "signIn": "Sign In",
+            "signOut": "Sign Out"
         }
     },
     "home": {
@@ -357,6 +359,12 @@
         "expired": "Session expired. Sign in again.",
         "username": "Username",
         "password": "Password"
+    },
+    "alert": {
+        "success": "Success",
+        "info": "Information",
+        "error": "Error",
+        "warning": "Warning"
     },
     "global": {
         "time": {

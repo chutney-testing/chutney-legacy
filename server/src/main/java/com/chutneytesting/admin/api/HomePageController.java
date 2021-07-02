@@ -8,26 +8,26 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/homepage/v1")
 @CrossOrigin(origins = "*")
 public class HomePageController {
+
+    public static final String BASE_URL = "/api/homepage/v1";
     private final HomePageRepository repository;
 
     public HomePageController(HomePageRepository repository) {
         this.repository = repository;
     }
 
-    @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = { BASE_URL, "/home" }, produces = MediaType.APPLICATION_JSON_VALUE)
     public HomePage load() {
         return repository.load();
     }
 
     @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
-    @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = BASE_URL, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public HomePage save(@RequestBody HomePage homePage) {
         return repository.save(homePage);
     }

@@ -324,3 +324,4 @@ Feature: Chutney api security
             | post      | /api/v1/user                    |
             | get       | /api/v1/ui/plugins/linkifier/   |
             | get       | /api/homepage/v1                |
+            | get       | /home                           |

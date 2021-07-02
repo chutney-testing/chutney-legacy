@@ -1,10 +1,8 @@
 import { Component, OnDestroy } from '@angular/core';
-import { LoginService } from '@core/services';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { User, Authorization } from '@model';
-import { contains } from '@shared/tools/array-utils';
+import { LoginService } from '@core/services';
 
 @Component({
   selector: 'chutney-login',
@@ -19,67 +17,40 @@ export class LoginComponent implements OnDestroy {
   action: string;
 
   private forwardUrl: string;
-  private userSubscription: Subscription;
+  private paramsSubscription: Subscription;
+  private queryParamsSubscription: Subscription;
 
   constructor(
     private loginService: LoginService,
-    private router: Router,
     private route: ActivatedRoute,
   ) {
 
-    this.route.params.subscribe(params => {
+    this.paramsSubscription = this.route.params.subscribe(params => {
       this.action = params['action'];
-      if (this.action) {
-        this.loginService.logout();
-      } else {
-        this.userSubscription = this.loginService.getUser().subscribe(
-            user => this.navigateAfterLogin(user)
-        );
-      }
     });
 
-    this.route.queryParams.subscribe(params => {
+    this.queryParamsSubscription = this.route.queryParams.subscribe(params => {
       this.forwardUrl = params['url'];
     });
   }
 
   ngOnDestroy() {
-    if (this.userSubscription) this.userSubscription.unsubscribe();
+    if (this.paramsSubscription) {
+        this.paramsSubscription.unsubscribe();
+    }
+    if (this.queryParamsSubscription) {
+        this.queryParamsSubscription.unsubscribe();
+    }
   }
 
   login() {
     this.loginService.login(this.username, this.password)
       .subscribe(
-        user => this.navigateAfterLogin(user),
+        user => this.loginService.navigateAfterLogin(this.forwardUrl),
         error => {
             this.connectionError = error.error.message;
             this.action = null;
         }
       );
-  }
-
-  private navigateAfterLogin(user: User) {
-    if (user) {
-        this.router.navigateByUrl(this.defaultForwardUrl(user));
-    }
-  }
-
-  private defaultForwardUrl(user: User): string {
-    if (this.forwardUrl) {
-        return this.forwardUrl;
-    }
-
-    const authorizations = user.authorizations;
-    if (authorizations) {
-        if (contains(authorizations, Authorization.SCENARIO_READ)) return '/scenario';
-        if (contains(authorizations, Authorization.CAMPAIGN_READ)) return '/campaign';
-        if (contains(authorizations, Authorization.COMPONENT_READ)) return '/component';
-        if (contains(authorizations, Authorization.ENVIRONMENT_ACCESS)) return '/environmentAdmin';
-        if (contains(authorizations, Authorization.GLOBAL_VAR_READ)) return '/variable';
-        if (contains(authorizations, Authorization.DATASET_READ)) return '/dataset';
-        if (contains(authorizations, Authorization.ADMIN_ACCESS)) return '/';
-    }
-
-    return '/home-page';
   }
 }

@@ -14,6 +14,7 @@ $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
 $danger: $labelko;
 
 @import 'node_modules/bootstrap/scss/bootstrap';
+@import 'node_modules/ngx-toastr/toastr-bs4-alert';
 
 @import "~@fortawesome/fontawesome-free/scss/fontawesome";
 @import "~@fortawesome/fontawesome-free/scss/brands";

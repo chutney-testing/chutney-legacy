@@ -7,12 +7,11 @@ import { AuthGuard } from '@core/guards';
 import { Authorization } from '@model';
 
 export const appRoutes: Routes = [
+    { path: 'login', component: LoginComponent },
+    { path: 'login/:action', component: LoginComponent },
     {
         path: '', component: ParentComponent,
-        canActivate: [AuthGuard],
-        data: { 'authenticate': true },
         children: [
-            { path: '', redirectTo: '/home-page', pathMatch: 'full' },
             {
                 path: 'home-page',
                 loadChildren: './modules/home-page/home-page.module#HomePageModule'
@@ -94,9 +93,7 @@ export const appRoutes: Routes = [
                 data: { 'authorizations': [ Authorization.ADMIN_ACCESS ] }
             },
         ]
-    },
-    { path: 'login', component: LoginComponent },
-    { path: 'login/:action', component: LoginComponent }
+    }
 ];
 
 @NgModule({
