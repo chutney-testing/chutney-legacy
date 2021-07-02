@@ -36,7 +36,7 @@ export class AuthGuard implements CanActivate {
     if (this.loginService.hasAuthorization(authorizations)) {
         return true;
     } else {
-        this.alertService.error(this.unauthorizedMessage, { timeOut: 0, extendedTimeOut: 0 });
+        this.alertService.error(this.unauthorizedMessage, { timeOut: 0, extendedTimeOut: 0, closeButton: true });
         this.navigateToAppRootIfLogin();
         return false;
     }

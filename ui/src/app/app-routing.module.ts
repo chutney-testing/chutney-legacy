@@ -12,8 +12,9 @@ export const appRoutes: Routes = [
     {
         path: '', component: ParentComponent,
         children: [
+            { path: '', redirectTo: '/home', pathMatch: 'full' },
             {
-                path: 'home-page',
+                path: 'home',
                 loadChildren: './modules/home-page/home-page.module#HomePageModule'
             },
             {

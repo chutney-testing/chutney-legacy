@@ -37,7 +37,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                         if (err.status === 401 || err.status === 403) {
                             if (this.loginService.isAuthenticated()) {
                                 this.loginService.logout();
-                                this.alertService.error(this.sessionExpiredMessage, { timeOut: 0, extendedTimeOut: 0 });
+                                this.alertService.error(this.sessionExpiredMessage, { timeOut: 0, extendedTimeOut: 0, closeButton: true });
                             } else {
                                 const requestURL = this.router.url !== undefined ? this.router.url : '';
                                 this.loginService.initLogin(requestURL);

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, BehaviorSubject, of } from 'rxjs';
-import { tap } from 'rxjs/internal/operators';
+import { tap, delay } from 'rxjs/internal/operators';
 
 import { environment } from '../../../environments/environment';
 import { User, Authorization } from '@model';
@@ -68,7 +68,8 @@ export class LoginService {
 
   logout() {
     this.http.post(environment.backend + this.url + '/logout', null).pipe(
-        tap(() => this.setUser(this.NO_USER))
+        tap(() => this.setUser(this.NO_USER)),
+        delay(500)
     ).subscribe(
         () => {
             this.router.navigateByUrl('/');
@@ -121,6 +122,6 @@ export class LoginService {
         if (contains(authorizations, Authorization.ADMIN_ACCESS)) return '/';
     }
 
-    return '/home-page';
+    return '/home';
   }
 }

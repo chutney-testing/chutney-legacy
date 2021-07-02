@@ -20,7 +20,8 @@ export class MenuItemComponent implements OnInit {
   ngOnInit() {
   }
 
-  onClick() {
+  onClick(e) {
+    e.stopPropagation();
     if (this.route == null) {
         this.clickEvent.emit();
     }
