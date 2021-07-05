@@ -1,7 +1,7 @@
 package com.chutneytesting.design.infra.storage.campaign;
 
 import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
-import static com.chutneytesting.design.domain.campaign.FREQUENCY.tofrequency;
+import static com.chutneytesting.design.domain.campaign.Frequency.toFrequency;
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
 
 import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaign;
@@ -104,7 +104,7 @@ public class SchedulingCampaignFileRepository implements PeriodicScheduledCampai
 
 
     private PeriodicScheduledCampaign fromDto(String id, SchedulingCampaignDto dto) {
-        return new PeriodicScheduledCampaign(Long.valueOf(dto.id), dto.campaignId, dto.campaignTitle, dto.schedulingDate, tofrequency(dto.frequency));
+        return new PeriodicScheduledCampaign(Long.valueOf(dto.id), dto.campaignId, dto.campaignTitle, dto.schedulingDate, toFrequency(dto.frequency));
     }
 
     private SchedulingCampaignDto toDto(long id, PeriodicScheduledCampaign periodicScheduledCampaign) {

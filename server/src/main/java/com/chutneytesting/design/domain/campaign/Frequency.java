@@ -1,6 +1,7 @@
 package com.chutneytesting.design.domain.campaign;
 
-public enum FREQUENCY {
+public enum Frequency {
+
     HOURLY("Hourly"),
     DAILY("Daily"),
     WEEKLY("Weekly"),
@@ -9,13 +10,14 @@ public enum FREQUENCY {
 
     public final String label;
 
-    FREQUENCY(String label) {
+    Frequency(String label) {
         this.label = label;
     }
 
-    public static FREQUENCY tofrequency(String actualLabel) {
-        for (FREQUENCY frequency : values())
-            if (frequency.label.equals(actualLabel)) return frequency;
+    public static Frequency toFrequency(String label) {
+        for (Frequency frequency : values()) {
+            if (frequency.label.equals(label)) return frequency;
+        }
         return EMPTY;
     }
 

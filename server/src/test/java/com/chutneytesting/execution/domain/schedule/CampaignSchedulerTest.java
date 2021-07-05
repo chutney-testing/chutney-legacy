@@ -1,6 +1,6 @@
 package com.chutneytesting.execution.domain.schedule;
 
-import static com.chutneytesting.design.domain.campaign.FREQUENCY.EMPTY;
+import static com.chutneytesting.design.domain.campaign.Frequency.EMPTY;
 import static com.chutneytesting.execution.domain.schedule.CampaignScheduler.SCHEDULER_EXECUTE_USER;
 import static java.time.LocalDateTime.now;
 import static java.util.Arrays.asList;
@@ -13,7 +13,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.design.domain.campaign.FREQUENCY;
+import com.chutneytesting.design.domain.campaign.Frequency;
 import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaign;
 import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaignRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
@@ -69,8 +69,8 @@ public class CampaignSchedulerTest {
     }
 
     @ParameterizedTest()
-    @EnumSource(FREQUENCY.class)
-    void should_execute_campaign_as_internal_user_named_auto_when_executing_periodic_scheduled_campaign(FREQUENCY frequency) {
+    @EnumSource(Frequency.class)
+    void should_execute_campaign_as_internal_user_named_auto_when_executing_periodic_scheduled_campaign(Frequency frequency) {
         List<PeriodicScheduledCampaign> periodicScheduledCampaign = createPeriodicScheduledCampaigns(singletonList(frequency));
         when(periodicScheduledCampaignRepository.getALl())
             .thenReturn(
@@ -83,8 +83,8 @@ public class CampaignSchedulerTest {
     }
 
     @ParameterizedTest()
-    @EnumSource(FREQUENCY.class)
-    void should_remove_last_execution_when_executing_periodic_scheduled_campaign(FREQUENCY frequency) {
+    @EnumSource(Frequency.class)
+    void should_remove_last_execution_when_executing_periodic_scheduled_campaign(Frequency frequency) {
         List<PeriodicScheduledCampaign> periodicScheduledCampaign = createPeriodicScheduledCampaigns(singletonList(frequency));
         when(periodicScheduledCampaignRepository.getALl())
             .thenReturn(
@@ -97,8 +97,8 @@ public class CampaignSchedulerTest {
     }
 
     @ParameterizedTest()
-    @EnumSource(FREQUENCY.class)
-    void should_add_next_execution_when_executing_periodic_scheduled_campaign_except_for_EMPTY_frequency(FREQUENCY frequency) {
+    @EnumSource(Frequency.class)
+    void should_add_next_execution_when_executing_periodic_scheduled_campaign_except_for_EMPTY_frequency(Frequency frequency) {
         List<PeriodicScheduledCampaign> periodicScheduledCampaign = createPeriodicScheduledCampaigns(singletonList(frequency));
         when(periodicScheduledCampaignRepository.getALl())
             .thenReturn(
@@ -133,7 +133,7 @@ public class CampaignSchedulerTest {
 
     @Test
     void should_not_explode_when_runtime_exceptions_occur_executing_campaigns() {
-        List<PeriodicScheduledCampaign> periodicScheduledCampaigns = createPeriodicScheduledCampaigns(asList(FREQUENCY.MONTHLY, FREQUENCY.DAILY));
+        List<PeriodicScheduledCampaign> periodicScheduledCampaigns = createPeriodicScheduledCampaigns(asList(Frequency.MONTHLY, Frequency.DAILY));
         when(periodicScheduledCampaignRepository.getALl())
             .thenReturn(
                 periodicScheduledCampaigns
@@ -161,7 +161,7 @@ public class CampaignSchedulerTest {
             .collect(toList());
     }
 
-    private List<PeriodicScheduledCampaign> createPeriodicScheduledCampaigns(List<FREQUENCY> frequencies) {
+    private List<PeriodicScheduledCampaign> createPeriodicScheduledCampaigns(List<Frequency> frequencies) {
         Random rand = new Random();
         return frequencies.stream()
             .map(f ->

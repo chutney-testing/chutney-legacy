@@ -1,6 +1,6 @@
 package com.chutneytesting.execution.domain.schedule;
 
-import com.chutneytesting.design.domain.campaign.FREQUENCY;
+import com.chutneytesting.design.domain.campaign.Frequency;
 import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaign;
 import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaignRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
@@ -71,7 +71,7 @@ public class CampaignScheduler {
 
     private void prepareScheduledCampaignForNextExecution(PeriodicScheduledCampaign periodicScheduledCampaign) {
         try {
-            if (!FREQUENCY.EMPTY.equals(periodicScheduledCampaign.frequency)) {
+            if (!Frequency.EMPTY.equals(periodicScheduledCampaign.frequency)) {
                 periodicScheduledCampaignRepository.add(periodicScheduledCampaign.nextScheduledExecution());
             }
             periodicScheduledCampaignRepository.removeById(periodicScheduledCampaign.id);

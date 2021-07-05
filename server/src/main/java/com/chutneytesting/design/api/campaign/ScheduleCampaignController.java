@@ -1,6 +1,6 @@
 package com.chutneytesting.design.api.campaign;
 
-import static com.chutneytesting.design.domain.campaign.FREQUENCY.tofrequency;
+import static com.chutneytesting.design.domain.campaign.Frequency.toFrequency;
 
 import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaign;
 import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaignRepository;
@@ -41,7 +41,7 @@ public class ScheduleCampaignController {
     @PreAuthorize("hasAuthority('CAMPAIGN_WRITE')")
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public void add(@RequestBody SchedulingCampaignDto dto) {
-        periodicScheduledCampaignRepository.add(new PeriodicScheduledCampaign(null, dto.getCampaignId(), dto.getCampaignTitle(), dto.getSchedulingDate(), tofrequency(dto.getFrequency())));
+        periodicScheduledCampaignRepository.add(new PeriodicScheduledCampaign(null, dto.getCampaignId(), dto.getCampaignTitle(), dto.getSchedulingDate(), toFrequency(dto.getFrequency())));
     }
 
     @PreAuthorize("hasAuthority('CAMPAIGN_WRITE')")
