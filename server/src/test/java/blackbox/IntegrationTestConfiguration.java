@@ -27,7 +27,7 @@ public class IntegrationTestConfiguration {
         SSLContextBuilder sslCtxBuilder = new SSLContextBuilder();
 
         KeyStore trustMaterial = KeyStore.getInstance(KeyStore.getDefaultType());
-        trustMaterial.load(IntegrationTestConfiguration.class.getResource("/blackbox/security/truststore.jks").openStream(), "truststore".toCharArray());
+        trustMaterial.load(IntegrationTestConfiguration.class.getResource("/blackbox/keystores/truststore.jks").openStream(), "truststore".toCharArray());
         sslCtxBuilder.loadTrustMaterial(trustMaterial, new TrustSelfSignedStrategy());
 
         return sslCtxBuilder.build();

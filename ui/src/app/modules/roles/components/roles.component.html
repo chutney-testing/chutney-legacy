@@ -1,0 +1,74 @@
+<div class="col">
+    <div class="row justify-content-center">
+        <div class="btn-group btn-group-sm">
+            <button
+                class="btn btn-sm btn-success mr-2"
+                title="{{'global.actions.save' | translate}}"
+                (click)="saveRoles()"
+            >
+                {{'global.actions.save' | translate}}
+                <span class="fa fa-check"></span>
+            </button>
+            <button
+                class="btn btn-sm btn-info"
+                title="{{'global.actions.help' | translate}}"
+                (click)="help = !help"
+            >
+                {{'global.actions.help' | translate}}
+                <span class="fa fa-info"></span>
+            </button>
+        </div>
+    </div>
+    <div *ngIf="help">
+        <pre class="text-white bg-info rounded">
+            Declare Roles and Map users to them.
+            A role DEFAULT has to be declared.
+
+            Roles has to be declared in a "roles" objects' list.
+            Role template :
+            {{'{
+                "name": "ROLE_NAME",
+                "rights": [
+                    "SCENARIO_READ",
+                    "SCENARIO_WRITE",
+                    "SCENARIO_EXECUTE",
+                    "CAMPAIGN_READ",
+                    "CAMPAIGN_WRITE",
+                    "CAMPAIGN_EXECUTE",
+                    "ENVIRONMENT_ACCESS",
+                    "GLOBAL_VAR_READ",
+                    "GLOBAL_VAR_WRITE",
+                    "DATASET_READ",
+                    "DATASET_WRITE",
+                    "COMPONENT_READ",
+                    "COMPONENT_WRITE",
+                    "ADMIN_ACCESS"
+                ]
+            }'}}
+
+            Users-roles mapping has to be declared in a "authorizations" objects' list.
+            User-Role mapping template :
+            {{'{
+                "name": "ROLE_NAME",
+                "users": [
+                    "user-id-1",
+                    "user-id-2"
+                ]
+            }'}}
+        </pre>
+    </div>
+    <div *ngIf="message"
+         class="row p-2 pointer text-white font-weight-bold"
+         [ngClass]="error ? 'bg-danger' : 'bg-success'"
+         (click)="message = null"
+    >
+        {{ message }}
+    </div>
+    <div class="row editor">
+        <chutney-ace-editor #rolesAceEditor
+                            class="w-100"
+                            [modes]="['json']"
+                            [initialContent]="rolesContent">
+        </chutney-ace-editor>
+    </div>
+</div>

@@ -22,7 +22,7 @@ export class ToolbarComponent implements OnInit{
     @Output() deleteEvent = new EventEmitter();
     @Output() duplicateEvent = new EventEmitter();
 
-    environments: EnvironmentMetadata[];
+    environments: Array<string>;
 
     constructor(
         private environmentAdminService: EnvironmentAdminService,
@@ -30,7 +30,7 @@ export class ToolbarComponent implements OnInit{
     }
 
     ngOnInit(): void {
-        this.environmentAdminService.listEnvironments().subscribe(
+        this.environmentAdminService.listEnvironmentsNames().subscribe(
             (res) => this.environments = res
         );
     }

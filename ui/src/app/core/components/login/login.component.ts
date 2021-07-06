@@ -1,43 +1,56 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
+
 import { LoginService } from '@core/services';
-import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'chutney-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnDestroy {
 
   username: string;
   password: string;
   connectionError: string;
-  returnUrl: string;
   action: string;
+
+  private forwardUrl: string;
+  private paramsSubscription: Subscription;
+  private queryParamsSubscription: Subscription;
 
   constructor(
     private loginService: LoginService,
-    private router: Router,
     private route: ActivatedRoute,
   ) {
 
-    this.route.params.subscribe(params => {
+    this.paramsSubscription = this.route.params.subscribe(params => {
       this.action = params['action'];
-      if (this.action) {
-        this.loginService.logout();
-      }
+    });
+
+    this.queryParamsSubscription = this.route.queryParams.subscribe(params => {
+      this.forwardUrl = params['url'];
     });
   }
 
-  ngOnInit() {
-    this.returnUrl = this.route.snapshot.queryParams['url'] || '/scenario';
+  ngOnDestroy() {
+    if (this.paramsSubscription) {
+        this.paramsSubscription.unsubscribe();
+    }
+    if (this.queryParamsSubscription) {
+        this.queryParamsSubscription.unsubscribe();
+    }
   }
 
   login() {
     this.loginService.login(this.username, this.password)
       .subscribe(
-        data => { this.router.navigateByUrl(this.returnUrl); },
-        error => { this.connectionError = error.error.message; }
+        user => this.loginService.navigateAfterLogin(this.forwardUrl),
+        error => {
+            this.connectionError = error.error.message;
+            this.action = null;
+        }
       );
   }
 }

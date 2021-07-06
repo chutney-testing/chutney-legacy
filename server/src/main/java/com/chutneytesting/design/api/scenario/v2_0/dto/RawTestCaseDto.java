@@ -39,7 +39,7 @@ public interface RawTestCaseDto {
 
     @Value.Default()
     default String author() {
-        return User.ANONYMOUS_USER.getId();
+        return User.ANONYMOUS.id;
     }
 
     @Value.Default()

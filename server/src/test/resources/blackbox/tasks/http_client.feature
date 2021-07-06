@@ -86,7 +86,7 @@ Feature: HTTP Task test
         Given an app providing an http interface
             Do https-server-start
                 With port ${#tcpPortRandomRange(100).toString()}
-                With truststore-path ${#resourcePath("blackbox/security/truststore.jks")}
+                With truststore-path ${#resourcePath("blackbox/keystores/truststore.jks")}
                 With truststore-password truststore
                 Take appServer ${#httpsServer}
         And a configured target for an endpoint
@@ -104,7 +104,7 @@ Feature: HTTP Task test
                         {
                             "name": "test_http",
                             "url": "${#appServer.baseUrl()}",
-                            "keyStore": "${#escapeJson(#resourcePath("blackbox/security/client.jks"))}",
+                            "keyStore": "${#escapeJson(#resourcePath("blackbox/keystores/client.jks"))}",
                             "keyStorePassword": "client"
                         }
                     ]

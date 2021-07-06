@@ -1,7 +1,9 @@
 package com.chutneytesting.security.infra.ldap;
 
-import com.chutneytesting.security.domain.User;
-import com.chutneytesting.security.domain.UserRoles;
+import com.chutneytesting.security.api.UserDto;
+import com.chutneytesting.security.domain.AuthenticationService;
+import com.chutneytesting.security.domain.Authorization;
+import com.chutneytesting.security.domain.Role;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -13,19 +15,23 @@ import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import org.springframework.ldap.core.AttributesMapper;
 
-public class LdapAttributesMapper implements AttributesMapper<User> {
+public class LdapAttributesMapper implements AttributesMapper<UserDto> {
 
     private final Pattern ldapGroupPattern;
     private final LdapAttributesProperties ldapAttributesProperties;
+    private final AuthenticationService authenticationService;
 
-    LdapAttributesMapper(LdapAttributesProperties ldapAttributesProperties, String ldapGroupsPattern) {
+    LdapAttributesMapper(LdapAttributesProperties ldapAttributesProperties,
+                         String ldapGroupsPattern,
+                         AuthenticationService authenticationService) {
         this.ldapGroupPattern = Pattern.compile(ldapGroupsPattern);
         this.ldapAttributesProperties = ldapAttributesProperties;
+        this.authenticationService = authenticationService;
     }
 
     @Override
-    public User mapFromAttributes(Attributes attributes) throws NamingException {
-        User user = new User();
+    public UserDto mapFromAttributes(Attributes attributes) throws NamingException {
+        UserDto user = new UserDto();
 
         user.setId(extractAttributeMonoValue(attributes.get(ldapAttributesProperties.getId())));
         user.setName(extractAttributeMonoValue(attributes.get(ldapAttributesProperties.getName())));
@@ -35,26 +41,31 @@ public class LdapAttributesMapper implements AttributesMapper<User> {
 
         List<String> groups = extractAttributeMultiValue(attributes.get(ldapAttributesProperties.getGroups()));
         groups.stream()
-            .map(this::mapLdapGroupToProfile)
+            .map(this::applyLdapGroupMatcher)
             .filter(Objects::nonNull)
-            .forEach(s -> updateUserProfiles(user, s));
+            .forEach(user::addRole);
 
-        if (user.getProfiles() == null || user.getProfiles().isEmpty()) {
-            user.grantAuthority(UserRoles.ANONYMOUS);
+        return readRole(user);
+    }
+
+    private UserDto readRole(UserDto userDto) {
+        UserDto dto = new UserDto(userDto);
+
+        if (dto.getRoles().contains("ADMIN")) {
+            dto.grantAuthority(Authorization.ADMIN_ACCESS.name());
         }
 
-        return user;
+        Role role = authenticationService.userRoleById(dto.getId());
+        dto.addRole(role.name);
+        role.authorizations.stream().map(Enum::name).forEach(dto::grantAuthority);
+
+        return dto;
     }
 
-    private void updateUserProfiles(User user, Profiles profile) {
-        user.addProfile(profile.name());
-        user.grantAuthority(profile.name());
-    }
-
-    private Profiles mapLdapGroupToProfile(String ldapGroup) {
+    private String applyLdapGroupMatcher(String ldapGroup) {
         Matcher ldapGroupMatcher = ldapGroupPattern.matcher(ldapGroup);
         if (ldapGroupMatcher.matches()) {
-            return Profiles.valueOf(ldapGroupMatcher.group(1));
+            return ldapGroupMatcher.group(1);
         }
         return null;
     }
@@ -79,7 +90,7 @@ public class LdapAttributesMapper implements AttributesMapper<User> {
 
         if (attribute != null) {
             NamingEnumeration<T> nameValues = (NamingEnumeration<T>) attribute.getAll();
-            while(nameValues.hasMoreElements()) {
+            while (nameValues.hasMoreElements()) {
                 T v = nameValues.nextElement();
                 if (v != null) {
                     values.add(v);
@@ -87,9 +98,5 @@ public class LdapAttributesMapper implements AttributesMapper<User> {
             }
         }
         return values;
-    }
-
-    private enum Profiles {
-        USER, ADMIN
     }
 }

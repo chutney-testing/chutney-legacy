@@ -11,7 +11,7 @@ import com.chutneytesting.execution.api.report.surefire.SurefireCampaignExecutio
 import com.chutneytesting.execution.api.report.surefire.SurefireScenarioExecutionReportBuilder;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
-import com.chutneytesting.security.domain.UserService;
+import com.chutneytesting.security.infra.SpringUserService;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,19 +40,20 @@ public class CampaignExecutionUiController {
     private final CampaignExecutionEngine campaignExecutionEngine;
     private final SurefireCampaignExecutionReportBuilder surefireCampaignExecutionReportBuilder;
     private final CampaignRepository campaignRepository;
-    private final UserService userService;
+    private final SpringUserService userService;
 
-    public CampaignExecutionUiController(CampaignExecutionEngine campaignExecutionEngine, SurefireScenarioExecutionReportBuilder surefireScenarioExecutionReportBuilder, CampaignRepository campaignRepository, UserService userService) {
+    public CampaignExecutionUiController(CampaignExecutionEngine campaignExecutionEngine, SurefireScenarioExecutionReportBuilder surefireScenarioExecutionReportBuilder, CampaignRepository campaignRepository, SpringUserService userService) {
         this.campaignExecutionEngine = campaignExecutionEngine;
         this.surefireCampaignExecutionReportBuilder = new SurefireCampaignExecutionReportBuilder(surefireScenarioExecutionReportBuilder);
         this.campaignRepository = campaignRepository;
         this.userService = userService;
     }
 
+    @PreAuthorize("hasAuthority('CAMPAIGN_EXECUTE')")
     @GetMapping(path = {"/{campaignName}", "/{campaignName}/{env}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<CampaignExecutionReportDto> executeCampaignByName(@PathVariable("campaignName") String campaignName, @PathVariable("env") Optional<String> environment) {
         List<CampaignExecutionReport> reports;
-        String userId = userService.getCurrentUser().getId();
+        String userId = userService.currentUser().getId();
         if (environment.isPresent()) {
             reports = campaignExecutionEngine.executeByName(campaignName, environment.get(), userId);
         } else {
@@ -62,10 +64,11 @@ public class CampaignExecutionUiController {
             .collect(Collectors.toList());
     }
 
+    @PreAuthorize("hasAuthority('CAMPAIGN_EXECUTE')")
     @PostMapping(path = {"/replay/{campaignExecutionId}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public CampaignExecutionReportDto replayFailedScenario(@PathVariable("campaignExecutionId") Long campaignExecutionId) {
         CampaignExecutionReport campaignExecutionReport = campaignRepository.findByExecutionId(campaignExecutionId);
-        String userId = userService.getCurrentUser().getId();
+        String userId = userService.currentUser().getId();
         List<String> failedIds = campaignExecutionReport.scenarioExecutionReports().stream().filter(s -> !ServerReportStatus.SUCCESS.equals(s.execution.status())).map(s -> s.scenarioId).collect(Collectors.toList());
         Campaign campaign = campaignRepository.findById(campaignExecutionReport.campaignId);
         campaign.executionEnvironment(campaignExecutionReport.executionEnvironment);
@@ -73,9 +76,10 @@ public class CampaignExecutionUiController {
         return toDto(newExecution);
     }
 
+    @PreAuthorize("hasAuthority('CAMPAIGN_EXECUTE')")
     @GetMapping(path = {"/{campaignPattern}/surefire", "/{campaignPattern}/surefire/{env}"}, produces = "application/zip")
     public byte[] executeCampaignsByPatternWithSurefireReport(HttpServletResponse response, @PathVariable("campaignPattern") String campaignPattern, @PathVariable("env") Optional<String> environment) {
-        String userId = userService.getCurrentUser().getId();
+        String userId = userService.currentUser().getId();
         response.addHeader("Content-Disposition", "attachment; filename=\"surefire-report.zip\"");
         List<CampaignExecutionReport> reports;
         if (environment.isPresent()) {
@@ -86,6 +90,7 @@ public class CampaignExecutionUiController {
         return surefireCampaignExecutionReportBuilder.createReport(reports);
     }
 
+    @PreAuthorize("hasAuthority('CAMPAIGN_EXECUTE')")
     @PostMapping(path = "/{executionId}/stop")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void stopExecution(@PathVariable("executionId") Long executionId) {
@@ -93,9 +98,10 @@ public class CampaignExecutionUiController {
         campaignExecutionEngine.stopExecution(executionId);
     }
 
+    @PreAuthorize("hasAuthority('CAMPAIGN_EXECUTE')")
     @GetMapping(path = {"/byID/{campaignId}", "/byID/{campaignId}/{env}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public CampaignExecutionReportDto executeCampaignById(@PathVariable("campaignId") Long campaignId, @PathVariable("env") Optional<String> environment) {
-        String userId = userService.getCurrentUser().getId();
+        String userId = userService.currentUser().getId();
         CampaignExecutionReport report;
         if (environment.isPresent()) {
             report = campaignExecutionEngine.executeById(campaignId, environment.get(), userId);

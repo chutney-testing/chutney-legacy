@@ -6,9 +6,10 @@ import static java.util.stream.Collectors.toList;
 
 import com.chutneytesting.design.domain.editionlock.TestCaseEdition;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditionsService;
-import com.chutneytesting.security.domain.UserService;
+import com.chutneytesting.security.infra.SpringUserService;
 import java.util.List;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,13 +26,14 @@ public class TestCaseEditionController {
     static final String BASE_URL = "/api/v1/editions/testcases";
 
     private final TestCaseEditionsService testCaseEditionsService;
-    private final UserService userService;
+    private final SpringUserService userService;
 
-    public TestCaseEditionController(TestCaseEditionsService testCaseEditionsService, UserService userService) {
+    public TestCaseEditionController(TestCaseEditionsService testCaseEditionsService, SpringUserService userService) {
         this.testCaseEditionsService = testCaseEditionsService;
         this.userService = userService;
     }
 
+    @PreAuthorize("hasAuthority('SCENARIO_READ')")
     @GetMapping(path = "/{testCaseId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TestCaseEditionDto> testCasesEditions(@PathVariable("testCaseId") String testCaseId) {
         return testCaseEditionsService.getTestCaseEditions(fromFrontId(testCaseId)).stream()
@@ -39,14 +41,16 @@ public class TestCaseEditionController {
             .collect(toList());
     }
 
+    @PreAuthorize("hasAuthority('SCENARIO_WRITE')")
     @PostMapping(path = "/{testCaseId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public TestCaseEditionDto editTestCase(@PathVariable("testCaseId") String testCaseId) {
-        return toDto(testCaseEditionsService.editTestCase(fromFrontId(testCaseId), userService.getCurrentUser().getId()));
+        return toDto(testCaseEditionsService.editTestCase(fromFrontId(testCaseId), userService.currentUser().getId()));
     }
 
+    @PreAuthorize("hasAuthority('SCENARIO_WRITE')")
     @DeleteMapping(path = "/{testCaseId}")
     public void endTestCaseEdition(@PathVariable("testCaseId") String testCaseId) {
-        testCaseEditionsService.endTestCaseEdition(fromFrontId(testCaseId), userService.getCurrentUser().getId());
+        testCaseEditionsService.endTestCaseEdition(fromFrontId(testCaseId), userService.currentUser().getId());
     }
 
     private static TestCaseEditionDto toDto(TestCaseEdition tcEdition) {

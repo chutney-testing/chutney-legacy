@@ -282,7 +282,7 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
         assertThat(id).isNull();
 
         Optional<TestCaseData> testCaseById = repository.findById(scenarioId);
-        assertThat(testCaseById).hasValueSatisfying(tc -> assertThat(tc.author).isEqualTo(User.ANONYMOUS_USER.getId()));
+        assertThat(testCaseById).hasValueSatisfying(tc -> assertThat(tc.author).isEqualTo(User.ANONYMOUS.id));
     }
 
     @Test

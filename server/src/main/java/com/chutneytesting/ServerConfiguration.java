@@ -21,7 +21,6 @@ import com.chutneytesting.execution.domain.state.ExecutionStateRepository;
 import com.chutneytesting.execution.infra.execution.ExecutionRequestMapper;
 import com.chutneytesting.execution.infra.execution.ServerTestEngineJavaImpl;
 import com.chutneytesting.instrument.domain.ChutneyMetrics;
-import com.chutneytesting.security.domain.UserService;
 import com.chutneytesting.task.api.EmbeddedTaskEngine;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.InetAddress;
@@ -67,6 +66,8 @@ public class ServerConfiguration {
 
     public static final String CONFIGURATION_FOLDER_SPRING_VALUE = "${chutney.configuration-folder:~/.chutney/conf}";
     public static final String ENGINE_REPORTER_PUBLISHER_TTL_SPRING_VALUE = "${chutney.engine.reporter.publisher.ttl:5}";
+    public static final String ENGINE_DELEGATION_USER_SPRING_VALUE = "${chutney.engine.delegation.user:#{null}}";
+    public static final String ENGINE_DELEGATION_PASSWORD_SPRING_VALUE = "${chutney.engine.delegation.password:#{null}}";
     public static final String EXECUTION_ASYNC_PUBLISHER_TTL_SPRING_VALUE = "${chutney.execution.async.publisher.ttl:5}";
     public static final String EXECUTION_ASYNC_PUBLISHER_DEBOUNCE_SPRING_VALUE = "${chutney.execution.async.publisher.debounce:250}";
     public static final String CAMPAIGNS_THREAD_SPRING_VALUE = "${chutney.campaigns.thread:20}";
@@ -112,12 +113,16 @@ public class ServerConfiguration {
     }
 
     @Bean
-    public ExecutionConfiguration executionConfiguration(Executor engineExecutor,
-                                                         @Value(ENGINE_REPORTER_PUBLISHER_TTL_SPRING_VALUE) Long reporterTTL,
-                                                         @Value(TASK_SQL_NB_LOGGED_ROW) String nbLoggedRow) {
+    public ExecutionConfiguration executionConfiguration(
+        @Value(ENGINE_REPORTER_PUBLISHER_TTL_SPRING_VALUE) Long reporterTTL,
+        Executor engineExecutor,
+        @Value(TASK_SQL_NB_LOGGED_ROW) String nbLoggedRow,
+        @Value(ENGINE_DELEGATION_USER_SPRING_VALUE) String delegateUser,
+        @Value(ENGINE_DELEGATION_PASSWORD_SPRING_VALUE) String delegatePasword
+    ) {
         Map<String, String> tasksConfiguration = new HashMap<>();
         tasksConfiguration.put(CONFIGURABLE_NB_LOGGED_ROW, nbLoggedRow);
-        return new ExecutionConfiguration(reporterTTL, engineExecutor, tasksConfiguration);
+        return new ExecutionConfiguration(reporterTTL, engineExecutor, tasksConfiguration, delegateUser, delegatePasword);
     }
 
     @Bean
@@ -187,11 +192,6 @@ public class ServerConfiguration {
     }
 
     @Bean
-    UserService userService() {
-        return new UserService();
-    }
-
-    @Bean
     TestCaseEditionsService testCaseEditionsService(TestCaseEditions testCaseEditions, TestCaseRepository testCaseRepository) {
         return new TestCaseEditionsService(testCaseEditions, testCaseRepository);
     }
@@ -220,5 +220,4 @@ public class ServerConfiguration {
     Clock clock() {
         return Clock.systemDefaultZone();
     }
-
 }

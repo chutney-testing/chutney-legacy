@@ -1,6 +1,5 @@
 package com.chutneytesting.design.api.editionlock;
 
-import static com.chutneytesting.security.domain.User.ANONYMOUS_USER;
 import static java.time.Instant.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -18,7 +17,8 @@ import com.chutneytesting.design.domain.editionlock.TestCaseEdition;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditionsService;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
-import com.chutneytesting.security.domain.UserService;
+import com.chutneytesting.security.api.UserDto;
+import com.chutneytesting.security.infra.SpringUserService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
@@ -33,9 +33,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 public class TestCaseEditionControllerTest {
 
     private final TestCaseEditionsService testCaseEditionService = mock(TestCaseEditionsService.class);
-    private final UserService userService = mock(UserService.class);
+    private final SpringUserService userService = mock(SpringUserService.class);
     private MockMvc mockMvc;
     private final ObjectMapper om = new WebConfiguration().objectMapper();
+    private final UserDto currentUser = new UserDto();
 
     @BeforeEach
     public void before() {
@@ -45,7 +46,8 @@ public class TestCaseEditionControllerTest {
             .setControllerAdvice(new RestExceptionHandler())
             .build();
 
-        when(userService.getCurrentUser()).thenReturn(ANONYMOUS_USER);
+        currentUser.setId("currentUser");
+        when(userService.currentUser()).thenReturn(currentUser);
     }
 
     @Test
@@ -79,8 +81,8 @@ public class TestCaseEditionControllerTest {
     public void should_edit_testcase() throws Exception {
         // Given
         String testCaseId = "testCaseId";
-        TestCaseEdition newTestCaseEdition = buildEdition(testCaseId, 2, now(), ANONYMOUS_USER.getId());
-        when(testCaseEditionService.editTestCase(testCaseId, ANONYMOUS_USER.getId())).thenReturn(newTestCaseEdition);
+        TestCaseEdition newTestCaseEdition = buildEdition(testCaseId, 2, now(), currentUser.getId());
+        when(testCaseEditionService.editTestCase(testCaseId, currentUser.getId())).thenReturn(newTestCaseEdition);
 
         // When
         MvcResult mvcResult = mockMvc.perform(
@@ -107,7 +109,7 @@ public class TestCaseEditionControllerTest {
             .andReturn();
 
         // Then
-        verify(testCaseEditionService).endTestCaseEdition(testCaseId, ANONYMOUS_USER.getId());
+        verify(testCaseEditionService).endTestCaseEdition(testCaseId, currentUser.getId());
     }
 
     private void assertDtoIsEqualToEdition(TestCaseEditionDto dto, TestCaseEdition edition) {

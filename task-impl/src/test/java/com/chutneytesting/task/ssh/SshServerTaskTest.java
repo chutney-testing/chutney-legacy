@@ -1,7 +1,7 @@
 package com.chutneytesting.task.ssh;
 
 import static java.util.Collections.singletonList;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -34,7 +34,7 @@ class SshServerTaskTest {
             SshServerStopTask sshServerStopTask = new SshServerStopTask(new TestLogger(), sshServer);
             sshServerStopTask.execute();
 
-            await().atMost(500, MILLISECONDS).untilAsserted(() ->
+            await().atMost(2, SECONDS).untilAsserted(() ->
                 assertThat(sshServer.isClosed()).isTrue()
             );
         }

@@ -31,6 +31,11 @@ public class EmbeddedEnvironmentApi implements EnvironmentApi {
     }
 
     @Override
+    public Set<String> listEnvironmentsNames() {
+        return environmentService.listEnvironmentsNames();
+    }
+
+    @Override
     public EnvironmentDto createEnvironment(EnvironmentDto environmentMetadataDto) throws InvalidEnvironmentNameException, AlreadyExistingEnvironmentException {
         return EnvironmentDto.from(environmentService.createEnvironment(environmentMetadataDto.toEnvironment()));
     }
@@ -58,6 +63,14 @@ public class EmbeddedEnvironmentApi implements EnvironmentApi {
         return environmentService.listTargets().stream()
             .map(TargetDto::from)
             .sorted(Comparator.comparing(t -> t.name))
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    @Override
+    public Set<String> listTargetsNames() throws EnvironmentNotFoundException {
+        return environmentService.listTargets().stream()
+            .map(t -> t.name)
+            .sorted()
             .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 

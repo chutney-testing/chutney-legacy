@@ -14,7 +14,11 @@
             "backups": "Sauvegardes",
             "variable": "Variable",
             "dataset": "Dataset",
-            "jiraId": "Identifiant jira"
+            "jiraId": "Identifiant jira",
+            "roles": "Roles",
+            "admin": "Admin",
+            "signIn": "Connexion",
+            "signOut": "Déconnexion"
         }
     },
     "home": {
@@ -126,6 +130,10 @@
                 "description.none": "Aucune description"
             },
             "empty": "Aucune campagne disponible",
+            "executions": {
+                "last": "Dernières exécutions",
+                "next": "Prochaines exécutions"
+            },
             "actions": {
                 "create": "Nouvelle campagne"
             }
@@ -284,8 +292,9 @@
             },
             "edition": {
                 "draganddrop": "Glisser/Déposer ici",
-                "existInStep":"Présent dans step: ",
-                "existInScenario": "Présent dans scénario: ",
+                "existTitle": "Utilisations",
+                "existInStep": "Composant",
+                "existInScenario": "Scénario",
                 "seeParents": "Voir/cacher parents",
                 "blocks": {
                     "global": "Générale",
@@ -346,9 +355,16 @@
     },
     "login": {
         "logout": "Vous êtes déconnecté",
-        "invalid": "Votre session s'est terminée",
-        "username": "Nom d'utilisateur",
-        "password": "Mot de passe (Sesame)"
+        "unauthorized": "Vous n'êtes pas autorisé à accéder à cette vue. Contacter votre administrateur.",
+        "expired": "Session expirée. Reconnectez-vous.",
+        "username": "Utilisateur",
+        "password": "Mot de passe"
+    },
+    "alert": {
+        "success": "Succès",
+        "info": "Information",
+        "error": "Erreur",
+        "warning": "Avertissement"
     },
     "global": {
         "time": {
@@ -357,6 +373,10 @@
             "today.at": "Aujourd'hui à"
         },
         "actions": {
+            "ongoing": {
+                "saving": "Sauvegarde ..."
+            },
+
             "search": "Rechercher",
             "add": "Ajouter",
             "edit": "Éditer",
@@ -380,6 +400,7 @@
             "stop": "Stopper",
             "resume": "Reprendre",
             "pause": "Suspendre",
+            "help": "Aide",
 
             "done": {
                 "saved": "Sauvegarde réalisée"

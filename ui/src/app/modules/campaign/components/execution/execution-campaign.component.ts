@@ -1,10 +1,13 @@
 import { Component, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, Observable, Subscription, timer } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { FileSaverService } from 'ngx-filesaver';
-import * as JSZip from 'jszip';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
+
+import { combineLatest, Observable, Subscription, timer } from 'rxjs';
+import { ChartDataSets, ChartOptions } from 'chart.js';
+import { Color, Label } from 'ng2-charts';
+import * as JSZip from 'jszip';
 
 import {
     Campaign,
@@ -12,13 +15,17 @@ import {
     EnvironmentMetadata,
     ScenarioExecutionReportOutline,
     ScenarioIndex,
-    TestCase
-} from '@core/model';
-import { CampaignService, EnvironmentAdminService, ScenarioService } from '@core/services';
+    TestCase,
+    Authorization
+} from '@model';
+import {
+    CampaignService,
+    EnvironmentAdminService,
+    ScenarioService,
+    JiraPluginService,
+    LoginService
+} from '@core/services';
 import { newInstance, sortByAndOrder } from '@shared/tools';
-import { ChartDataSets, ChartOptions } from 'chart.js';
-import { Color, Label } from 'ng2-charts';
-import { JiraPluginService } from '@core/services/jira-plugin.service';
 
 @Component({
     selector: 'chutney-execution-campaign',
@@ -45,7 +52,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
     currentScenariosReportsOutlines: Array<ScenarioExecutionReportOutline> = [];
     campaignSub: Subscription;
 
-    environments: EnvironmentMetadata[];
+    environments: Array<string>;
 
     orderBy: any;
     reverseOrder: any;
@@ -79,6 +86,8 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
     public lineChartType = 'line';
     public lineChartPlugins = [];
 
+    Authorization = Authorization;
+
     constructor(private campaignService: CampaignService,
                 private environmentAdminService: EnvironmentAdminService,
                 private fileSaverService: FileSaverService,
@@ -87,6 +96,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
                 private router: Router,
                 private scenarioService: ScenarioService,
                 private translate: TranslateService,
+                private loginService: LoginService
     ) {
         translate.get('campaigns.confirm.deletion.prefix').subscribe((res: string) => {
             this.deletionConfirmationTextPrefix = res;
@@ -101,9 +111,11 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
             this.loadCampaign(params['id'], false);
             this.loadScenarios(params['id']);
         });
-        this.environmentAdminService.listEnvironments().subscribe(
-            (res) => this.environments = res
-        );
+        if (this.loginService.hasAuthorization(Authorization.CAMPAIGN_EXECUTE)) {
+            this.environmentAdminService.listEnvironmentsNames().subscribe(
+                (res) => this.environments = res
+            );
+        }
     }
 
     ngOnDestroy() {
@@ -259,7 +271,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
     executeCampaignOnToggle() {
         if (this.environments.length === 1) {
             this.executeDropDown.first.close();
-            this.executeCampaign(this.environments[0].name);
+            this.executeCampaign(this.environments[0]);
         }
     }
 
@@ -370,6 +382,10 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
             () => {},
             (error) => { console.log(error); }
         );
+    }
+
+    hasAuthorization(authorizations: Array<Authorization>): boolean {
+        return this.loginService.hasAuthorization(authorizations);
     }
 }
 

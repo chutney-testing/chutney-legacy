@@ -5,6 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { MainMenuComponent } from './main-menu/main-menu.component';
 import { MoleculesModule } from '../molecules/molecules.module';
+import { SharedModule } from '@shared/shared.module';
 
 import { ProfileMenuComponent } from './profile-menu/profile-menu.component';
 
@@ -13,7 +14,8 @@ import { ProfileMenuComponent } from './profile-menu/profile-menu.component';
         CommonModule,
         RouterModule,
         MoleculesModule,
-        TranslateModule
+        TranslateModule,
+        SharedModule
     ],
     exports: [
         MainMenuComponent,

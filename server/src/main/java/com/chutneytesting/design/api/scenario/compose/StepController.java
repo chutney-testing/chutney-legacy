@@ -17,6 +17,7 @@ import com.chutneytesting.tools.PaginatedDto;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,16 +41,19 @@ public class StepController {
         this.composableStepRepository = composableStepRepository;
     }
 
+    @PreAuthorize("hasAuthority('COMPONENT_WRITE')")
     @PostMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public String save(@RequestBody ComposableStepDto step) {
         return toFrontId(composableStepRepository.save(fromDto(step)));
     }
 
+    @PreAuthorize("hasAuthority('COMPONENT_WRITE')")
     @DeleteMapping(path = "/{stepId}")
     public void deleteById(@PathVariable String stepId) {
         composableStepRepository.deleteById(fromFrontId(stepId));
     }
 
+    @PreAuthorize("hasAuthority('COMPONENT_READ') or hasAuthority('SCENARIO_WRITE')")
     @GetMapping(path = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ComposableStepDto> findAll() {
         return composableStepRepository.findAll()
@@ -59,6 +63,7 @@ public class StepController {
             .collect(Collectors.toList());
     }
 
+    @PreAuthorize("hasAuthority('COMPONENT_READ')")
     @GetMapping(path = "/{stepId}/parents", produces = MediaType.APPLICATION_JSON_VALUE)
     public ParentsStepDto findParents(@PathVariable String stepId) {
         return ParentStepMapper.toDto(composableStepRepository.findParents(fromFrontId(stepId)));
@@ -69,6 +74,7 @@ public class StepController {
     static final String FIND_STEPS_START_DEFAULT_VALUE = "1";
     static final String FIND_STEPS_LIMIT_DEFAULT_VALUE = "25";
 
+    @PreAuthorize("hasAuthority('COMPONENT_READ')")
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public PaginatedDto<ComposableStepDto> findSteps(@RequestParam(defaultValue = FIND_STEPS_NAME_DEFAULT_VALUE) String name,
                                                      @RequestParam(defaultValue = FIND_STEPS_USAGE_DEFAULT_VALUE) String usage,
@@ -102,6 +108,7 @@ public class StepController {
             .build();
     }
 
+    @PreAuthorize("hasAuthority('COMPONENT_READ')")
     @GetMapping(path = "/{stepId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ComposableStepDto findById(@PathVariable String stepId) {
         return ComposableStepMapper.toDto(

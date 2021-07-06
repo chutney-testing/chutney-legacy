@@ -1,16 +1,27 @@
-import { Component, ViewChildren, QueryList } from '@angular/core';
+import { NgModule, Component, ViewChildren, QueryList } from '@angular/core';
 import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ComponentCardComponent } from '@shared/components';
 
 import { TranslateTestingModule } from '../../../testing/translate-testing.module';
+import { HasAuthorizationDirective } from '../../../shared/directives/hasAuthorization.directive';
 
-import { ComponentTask, KeyValue, Implementation } from '@model';
+import { ComponentTask, KeyValue, Implementation, Authorization } from '@model';
+import { LoginService } from '@core/services';
 
 describe('ComponentCardComponent...', () => {
 
+    const loginService = jasmine.createSpyObj('LoginService', ['hasAuthorization']);
+    loginService.hasAuthorization.and.callFake(
+        function(a) {
+            return a[0] === Authorization.COMPONENT_WRITE;
+        }
+    );
+
     describe('StandAlone...', () => {
+
         let fixture: ComponentFixture<ComponentCardComponent>;
         let component: ComponentCardComponent;
         let page: Page;
@@ -19,12 +30,16 @@ describe('ComponentCardComponent...', () => {
             TestBed.resetTestingModule();
             TestBed.configureTestingModule({
                 imports: [
+                    HttpClientTestingModule,
                     RouterTestingModule,
                     TranslateTestingModule,
                     FormsModule,
-                    ReactiveFormsModule
+                    ReactiveFormsModule,
+                    HasAuthorizationTestingModule
                 ], declarations: [
                     ComponentCardComponent
+                ], providers: [
+                    { provide: LoginService, useValue: loginService }
                 ]
             }).compileComponents();
 
@@ -74,7 +89,7 @@ describe('ComponentCardComponent...', () => {
                 [simpleComponent, actionComponent, parametersComponent].forEach(c => {
                     component.component = c;
                     fixture.detectChanges();
-                    expect(page.name.textContent).toEqual(c.name);
+                    expect(page.name.textContent.trim()).toEqual(c.name);
                 });
             });
 
@@ -129,13 +144,17 @@ describe('ComponentCardComponent...', () => {
             TestBed.resetTestingModule();
             TestBed.configureTestingModule({
                 imports: [
+                    HttpClientTestingModule,
                     RouterTestingModule,
                     TranslateTestingModule,
                     FormsModule,
-                    ReactiveFormsModule
+                    ReactiveFormsModule,
+                    HasAuthorizationTestingModule
                 ], declarations: [
                     TestHostComponent,
                     ComponentCardComponent
+                ], providers: [
+                    { provide: LoginService, useValue: loginService }
                 ]
             }).compileComponents();
 
@@ -338,4 +357,15 @@ function buildParameters(nb: number): Array<KeyValue> {
         r.push(new KeyValue(`param${i}`, `value${i}`));
     }
     return r;
+}
+
+@NgModule({
+    declarations: [
+        HasAuthorizationDirective
+    ],
+    exports: [
+        HasAuthorizationDirective
+    ]
+})
+class HasAuthorizationTestingModule {
 }

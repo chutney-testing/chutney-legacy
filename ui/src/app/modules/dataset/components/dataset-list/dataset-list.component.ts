@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+
 import { newInstance } from '@shared/tools';
-import { DataSetService } from '@core/services';
-import { Dataset } from '@model';
 import { distinct, flatMap } from '@shared/tools/array-utils';
+import { DataSetService } from '@core/services';
+import { Dataset, Authorization } from '@model';
 
 @Component({
     selector: 'chutney-dataset-list',
@@ -21,7 +22,11 @@ export class DatasetListComponent implements OnInit {
     selectedTags: string[] = [];
     selectedItem: any[];
 
-    constructor(private dataSetService: DataSetService) {
+    Authorization = Authorization;
+
+    constructor(
+        private dataSetService: DataSetService
+    ) {
     }
 
     ngOnInit(): void {

@@ -16,10 +16,7 @@ public class WireMockServerSerializer extends StdSerializer<WireMockServer> {
     public void serialize(WireMockServer value, JsonGenerator gen, SerializerProvider provider) throws IOException {
         gen.writeStartObject();
         gen.writeStringField("https-server-instance", value.toString());
-        if (value instanceof WireMockServer) {
-            // TODO add some information on wiremockserver
-
-        }
+        // TODO - Eventually add some information on wiremockserver
         gen.writeEndObject();
     }
 }

@@ -1,13 +1,20 @@
 <div *ngIf="component" id="component-{{uid}}" class="card-body pointer p-2" [formGroup]="cardForm">
     <div class="float-sm-right">
-        <button type="button" class="btn btn-sm btn-outline-danger" (click)="delete()"
-                title="{{'global.actions.delete' | translate}}">
+        <button *hasAuthorization="[Authorization.COMPONENT_WRITE, Authorization.SCENARIO_WRITE]"
+            type="button" class="btn btn-sm btn-outline-danger"
+            (click)="delete()"
+            title="{{'global.actions.delete' | translate}}">
             <span class="fa fa-trash"></span>
         </button>
     </div>
     <span class="fa" [ngClass]="component.implementation ? 'fa-clone' : 'fa-cubes'"></span>
     <span class="ml-2">
+        <ng-container *hasAuthorization="[Authorization.COMPONENT_READ]">
             <a [routerLink]="['/component', component.id]">{{component.name}}</a>
+        </ng-container>
+        <ng-container *hasAuthorization="{ not: true, authorizations: [Authorization.COMPONENT_READ] }">
+            {{component.name}}
+        </ng-container>
     </span>
     <span *ngIf="component.implementation?.identifier"
           class="scenario-components-identifier mr-3 font-italic pl-3 float-right font-weight-bold">

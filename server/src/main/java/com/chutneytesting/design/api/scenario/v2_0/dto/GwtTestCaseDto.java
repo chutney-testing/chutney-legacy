@@ -40,7 +40,7 @@ public interface GwtTestCaseDto {
 
     @Value.Default()
     default String author() {
-        return User.ANONYMOUS_USER.getId();
+        return User.ANONYMOUS.id;
     }
 
     @Value.Default()

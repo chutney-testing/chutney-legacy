@@ -27,6 +27,10 @@ public class EnvironmentService {
         this.environmentRepository = environmentRepository;
     }
 
+    public Set<String> listEnvironmentsNames() {
+        return new LinkedHashSet<>(environmentRepository.listNames());
+    }
+
     public Set<Environment> listEnvironments() {
         return environmentRepository
             .listNames()

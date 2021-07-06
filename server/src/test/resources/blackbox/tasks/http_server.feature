@@ -18,7 +18,7 @@ Feature: HTTP server Task test
                         {
                             "name": "test_http",
                             "url": "https://localhost:8443",
-                            "keyStore": "${#escapeJson(#resourcePath("blackbox/security/client.jks"))}",
+                            "keyStore": "${#escapeJson(#resourcePath("blackbox/keystores/client.jks"))}",
                             "keyStorePassword": "client"
                         }
                     ]
@@ -43,7 +43,7 @@ Feature: HTTP server Task test
                             {
                                 "sentence":"Start HTTPS server",
                                 "implementation":{
-                                    "task":"{\n type: https-server-start \n inputs: {\n port: \"8443\" \n truststore-path: \${#resourcePath('blackbox/security/truststore.jks')} \n truststore-password: truststore \n}\n}"
+                                    "task":"{\n type: https-server-start \n inputs: {\n port: \"8443\" \n truststore-path: \${#resourcePath('blackbox/keystores/truststore.jks')} \n truststore-password: truststore \n}\n}"
                                 }
                             }
                         ],

@@ -1,5 +1,5 @@
 import { Component, Input} from '@angular/core';
-import { ComponentTask } from '@core/model';
+import { ComponentTask, Authorization } from '@core/model';
 
 
 @Component({
@@ -12,6 +12,8 @@ export class ChildPanelComponent {
     @Input() parents: any;
     @Input() componentTask: ComponentTask;
     @Input() show = false;
+
+    Authorization = Authorization;
 
     constructor(
     ) {

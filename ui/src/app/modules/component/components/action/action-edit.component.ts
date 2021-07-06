@@ -1,8 +1,18 @@
 import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
-import { ComponentTask, Implementation, KeyValue, ListInput, MapInput, SimpleInput, Target, Task } from '@model';
-import { ComponentService, EnvironmentAdminService } from '@core/services';
+import {
+    ComponentTask,
+    Implementation,
+    KeyValue,
+    ListInput,
+    MapInput,
+    SimpleInput,
+    Target,
+    Task,
+    Authorization
+} from '@model';
+import { ComponentService, EnvironmentAdminService, LoginService } from '@core/services';
 import { newInstance } from '@shared/tools/array-utils';
 
 
@@ -21,7 +31,7 @@ export class ActionEditComponent implements OnChanges {
 
     actionForm: FormGroup;
 
-    availableTargets: Array<Target>;
+    availableTargets: Array<string>;
     task: Task;
 
     executionResult: any;
@@ -34,12 +44,15 @@ export class ActionEditComponent implements OnChanges {
     sideBar = false;
     parents: any;
 
+    Authorization = Authorization;
+
     constructor(
         private formBuilder: FormBuilder,
         private environmentService: EnvironmentAdminService,
-        private componentService: ComponentService
+        private componentService: ComponentService,
+        private loginService: LoginService
     ) {
-        this.environmentService.targets().subscribe(
+        this.environmentService.targetsNames().subscribe(
             (res) => { this.availableTargets = res; }
         );
 
@@ -55,6 +68,9 @@ export class ActionEditComponent implements OnChanges {
             outputs: this.formBuilder.array([]),
             validations: this.formBuilder.array([]),
         });
+        if (!this.loginService.hasAuthorization([Authorization.COMPONENT_WRITE])) {
+            this.actionForm.disable();
+        }
     }
 
     ngOnChanges(): void {
@@ -238,6 +254,10 @@ export class ActionEditComponent implements OnChanges {
                 inputType: inputType
             }));
         });
+
+        if (!this.loginService.hasAuthorization([Authorization.COMPONENT_WRITE])) {
+            this.actionForm.disable();
+        }
     }
 
     addMapItem(index: number): void {
@@ -386,7 +406,7 @@ export class ActionEditComponent implements OnChanges {
     }
 
     isVariableRef(index: number) {
-        const inputType = this.actionForm.value['inputs'][index].inputType;
+        const inputType = this.actionForm.value['inputs'] ? this.actionForm.value['inputs'][index].inputType : '';
         return (inputType === 'java.util.List' || inputType === 'java.util.Map');
     }
 

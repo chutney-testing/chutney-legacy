@@ -3,6 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
+import { Authorization } from '@model';
+import { LoginService } from '@core/services';
+
 @Component({
   selector: 'chutney-doc-page',
   templateUrl: './documentation.component.html',
@@ -14,7 +17,12 @@ export class DocumentationComponent implements OnInit {
   isActivated: boolean;
   documentation: string;
 
-  constructor(private http: HttpClient) { }
+  Authorization = Authorization;
+
+  constructor(
+    private http: HttpClient,
+    private loginService: LoginService
+  ) { }
 
   ngOnInit() {
     fetch('/assets/doc/user_manual.adoc')
@@ -23,7 +31,9 @@ export class DocumentationComponent implements OnInit {
       this.documentation = data;
     });
 
-    this.getActivation();
+    if (this.loginService.hasAuthorization(Authorization.ADMIN_ACCESS)) {
+        this.getActivation();
+    }
   }
 
   getActivation(): any {

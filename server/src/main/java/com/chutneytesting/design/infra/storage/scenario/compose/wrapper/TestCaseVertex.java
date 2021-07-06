@@ -121,14 +121,14 @@ public class TestCaseVertex {
                 throw new ScenarioNotFoundException(id);
             }
 
-            ofNullable(title).ifPresent(t -> vertex.setProperty(TESTCASE_CLASS_PROPERTY_TITLE, t, OType.STRING) );
-            ofNullable(description).ifPresent(d -> setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_DESCRIPTION, d, OType.STRING) );
-            ofNullable(creationDate).ifPresent(cd -> setOnlyOnceProperty(vertex, TESTCASE_CLASS_PROPERTY_CREATIONDATE, cd, OType.DATETIME) );
-            ofNullable(tags).ifPresent(t -> vertex.setProperty(TESTCASE_CLASS_PROPERTY_TAGS, t, OType.EMBEDDEDLIST) );
-            ofNullable(parameters).ifPresent(p -> setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_PARAMETERS, p, OType.EMBEDDEDMAP) );
+            ofNullable(title).ifPresent(t -> vertex.setProperty(TESTCASE_CLASS_PROPERTY_TITLE, t, OType.STRING));
+            ofNullable(description).ifPresent(d -> setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_DESCRIPTION, d, OType.STRING));
+            ofNullable(creationDate).ifPresent(cd -> setOnlyOnceProperty(vertex, TESTCASE_CLASS_PROPERTY_CREATIONDATE, cd, OType.DATETIME));
+            ofNullable(tags).ifPresent(t -> vertex.setProperty(TESTCASE_CLASS_PROPERTY_TAGS, t, OType.EMBEDDEDLIST));
+            ofNullable(parameters).ifPresent(p -> setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_PARAMETERS, p, OType.EMBEDDEDMAP));
             ofNullable(datasetId).ifPresent(d -> setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_DATASET_ID, d, OType.STRING));
             ofNullable(updateDate).ifPresent(ud -> vertex.setProperty(TESTCASE_CLASS_PROPERTY_UPDATEDATE, ud, OType.DATETIME));
-            ofNullable(author).ifPresent(author -> setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_AUTHOR, author, a -> !User.isAnonymous(a), OType.STRING) );
+            ofNullable(author).ifPresent(author -> setOrRemoveProperty(vertex, TESTCASE_CLASS_PROPERTY_AUTHOR, author, a -> !User.isAnonymous(a), OType.STRING));
 
             return new TestCaseVertex(vertex, steps);
         }

@@ -50,6 +50,9 @@ chutney:
   configuration-folder: .chutney/conf
   environment:
     configuration-folder: ${chutney.configuration-folder}
+  db-server:
+    port: 9360
+    base-dir: ./.chutney
   orient:
     path: .chutney/data/orient
     contextConfiguration:
@@ -64,6 +67,9 @@ chutney:
     reporter:
       publisher:
         ttl: 5
+#    delegation:
+#      user:
+#      password:
   examples:
     active: false
   campaigns:
@@ -83,4 +89,3 @@ chutney:
 #    defaultHostName:
   agentnetwork:
     connection-checker-timeout: 1000
-

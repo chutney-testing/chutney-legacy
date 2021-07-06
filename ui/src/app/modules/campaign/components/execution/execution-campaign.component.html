@@ -4,7 +4,7 @@
         </h4>
         <small class="text-muted" [innerHTML]="campaign.description | linkify"></small>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-2" *hasAuthorization="[Authorization.CAMPAIGN_EXECUTE]">
         <div class="btn-toolbar">
             <button *ngIf="this.currentCampaignExecutionReport?.status === 'RUNNING'" type="button" class="btn btn-dark m-2" (click)="stopScenario()" [disabled]="stopRequested ">
                 <span class="fa fa-stop mr-2"></span>
@@ -19,13 +19,13 @@
                 </button>
                 <div ngbDropdownMenu aria-labelledby="execute-campaign-btn">
                     <button *ngFor="let env of environments" class="dropdown-item" ngbDropdownItem
-                            (click)="executeCampaign(env.name)">{{ env.name }}</button>
+                            (click)="executeCampaign(env)">{{ env }}</button>
                 </div>
             </div>
         </div>
     </div>
     <div class="col-md-5">
-        <div class="btn-toolbar">
+        <div class="btn-toolbar" *hasAuthorization="[Authorization.CAMPAIGN_WRITE]">
             <button type="button" class="btn btn-light border" (click)="editCampaign(campaign)">
                 <span class="fa fa-pencil-alt mr-2"></span>
                 <span class="btn-label">{{ 'global.actions.edit' | translate }}</span>
@@ -104,7 +104,8 @@
     <div class="col-md-10 pl-4" *ngIf="currentCampaignExecutionReport">
         <div *ngIf="current.hasFailure() || current.hasStopped()">
             <div class="d-inline-block mb-2">
-                <button id="replay-btn" type="button" class="btn btn-sm btn-success"
+                <button *hasAuthorization="[Authorization.CAMPAIGN_EXECUTE]"
+                        id="replay-btn" type="button" class="btn btn-sm btn-success"
                         title="{{ 'campaigns.execution.replay' | translate }}"
                         [disabled]="running || (scenarios && scenarios.length == 0)"
                         (click)="replayFailed()">
@@ -166,11 +167,16 @@
                                                 [spin]="true" [title]="scenarioReportOutline.error"></chutney-execution-badge>
                         </td>
                         <td>
-                            <a class="table-link"
-                               [routerLink]="['/scenario', scenarioReportOutline.scenarioId, 'execution', scenarioReportOutline.executionId != -1 ? scenarioReportOutline.executionId : 'last']"
-                                title="{{ 'campaigns.execution.scenarios.item.executions.link' | translate }} {{scenarioReportOutline.scenarioName}}">
+                            <ng-container *hasAuthorization="[Authorization.SCENARIO_READ]">
+                                <a class="table-link"
+                                   [routerLink]="['/scenario', scenarioReportOutline.scenarioId, 'execution', scenarioReportOutline.executionId != -1 ? scenarioReportOutline.executionId : 'last']"
+                                    title="{{ 'campaigns.execution.scenarios.item.executions.link' | translate }} {{scenarioReportOutline.scenarioName}}">
+                                    {{scenarioReportOutline.scenarioName}}
+                                </a>
+                            </ng-container>
+                            <ng-container *hasAuthorization="{not: true, authorizations: [Authorization.SCENARIO_READ]}">
                                 {{scenarioReportOutline.scenarioName}}
-                            </a>
+                            </ng-container>
                         </td>
                         <td>
                                 <span class=" small_text">{{scenarioReportOutline.duration | duration:'short' }}</span>
@@ -203,14 +209,19 @@
                 </thead>
                 <tbody>
                 <tr *ngFor="let scenario of orderedScenarios"
-                    [routerLink]="['/scenario', scenario.id, 'execution', 'last']"
-                    class="pointer">
+                    [routerLink]="hasAuthorization([Authorization.SCENARIO_READ]) ? ['/scenario', scenario.id, 'execution', 'last'] : null"
+                    [ngClass]="hasAuthorization([Authorization.SCENARIO_READ]) ? 'pointer' : ''">
                     <td>
                         <span class="fa" [ngClass]="scenario.isComposed ? 'fa-cubes' : 'fa-pencil-alt'"></span>
                     </td>
                     <td>
-                        <a class="table-link" [routerLink]="['/scenario', scenario.id,'execution', 'last']"
-                           title="{{ 'campaigns.execution.scenarios.item.title' | translate }} {{scenario.title}}">{{scenario.title}}</a>
+                        <ng-container *hasAuthorization="[Authorization.SCENARIO_READ]">
+                            <a class="table-link" [routerLink]="['/scenario', scenario.id,'execution', 'last']"
+                               title="{{ 'campaigns.execution.scenarios.item.title' | translate }} {{scenario.title}}">{{scenario.title}}</a>
+                        </ng-container>
+                        <ng-container *hasAuthorization="{not: true, authorizations: [Authorization.SCENARIO_READ]}">
+                            {{scenario.title}}
+                        </ng-container>
                     </td>
                     <td>
                         <span *ngFor="let tag of scenario.tags">

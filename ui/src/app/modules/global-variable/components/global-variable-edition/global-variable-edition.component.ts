@@ -1,7 +1,9 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {GlobalVariableService} from '@core/services/global-var.service';
 import {HttpErrorResponse} from '@angular/common/http';
+
 import {AceEditorComponent} from "@shared/ace-editor/ace-editor.component";
+import { Authorization } from '@model';
 
 @Component({
     selector: 'chutney-global-variable-edition',
@@ -19,6 +21,7 @@ export class GlobalVariableEditionComponent implements OnInit {
 
     @ViewChild('aceEditorGlobalVar') aceEditor: AceEditorComponent;
 
+    Authorization = Authorization;
 
     constructor(private globalVariableService: GlobalVariableService) {
     }

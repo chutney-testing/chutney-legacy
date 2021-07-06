@@ -53,10 +53,10 @@ public class ExecutionConfiguration {
     private final Long reporterTTL;
 
     public ExecutionConfiguration() {
-        this(5L, Executors.newFixedThreadPool(10), emptyMap());
+        this(5L, Executors.newFixedThreadPool(10), emptyMap(), null, null);
     }
 
-    public ExecutionConfiguration(Long reporterTTL, Executor taskExecutor, Map<String,String> tasksConfiguration) {
+    public ExecutionConfiguration(Long reporterTTL, Executor taskExecutor, Map<String,String> tasksConfiguration, String user, String password) {
         this.reporterTTL = reporterTTL;
 
         TaskTemplateLoader taskTemplateLoaderV2 = createTaskTemplateLoaderV2();
@@ -65,7 +65,7 @@ public class ExecutionConfiguration {
 
         taskTemplateRegistry = new DefaultTaskTemplateRegistry(new TaskTemplateLoaders(singletonList(taskTemplateLoaderV2)));
         reporter = createReporter();
-        executionEngine = createExecutionEngine(taskExecutor);
+        executionEngine = createExecutionEngine(taskExecutor, user, password);
         embeddedTestEngine = createEmbeddedTestEngine(new EngineTasksConfiguration(tasksConfiguration));
     }
 
@@ -119,11 +119,11 @@ public class ExecutionConfiguration {
         return new Reporter(reporterTTL);
     }
 
-    private ExecutionEngine createExecutionEngine(Executor taskExecutor) {
+    private ExecutionEngine createExecutionEngine(Executor taskExecutor, String user, String password) {
         return new DefaultExecutionEngine(
             new StepDataEvaluator(spelFunctions),
             new StepExecutionStrategies(stepExecutionStrategies),
-            new DelegationService(new DefaultStepExecutor(taskTemplateRegistry), new HttpClient()),
+            new DelegationService(new DefaultStepExecutor(taskTemplateRegistry), new HttpClient(user, password)),
             reporter,
             taskExecutor);
     }

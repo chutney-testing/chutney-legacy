@@ -12,6 +12,7 @@ import static com.chutneytesting.design.infra.storage.scenario.compose.orient.Or
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.resultSetToCount;
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientUtils.rollback;
 import static java.time.temporal.ChronoUnit.MILLIS;
+import static java.util.Collections.emptyMap;
 import static java.util.Optional.empty;
 
 import com.chutneytesting.design.domain.dataset.DataSet;
@@ -51,17 +52,23 @@ public class OrientDataSetHistoryRepository implements DataSetHistoryRepository 
 
     @Override
     public Integer lastVersion(String dataSetId) {
-        try (ODatabaseSession dbSession = componentDBPool.acquire()) {
-            OResultSet lastVersion = dbSession.query(QUERY_LAST_VERSION, new ORecordId(dataSetId));
-            if (lastVersion.hasNext()) {
-                return lastVersion.next().getProperty("maxVersion");
+        if (ORecordId.isA(dataSetId)) {
+            try (ODatabaseSession dbSession = componentDBPool.acquire()) {
+                OResultSet lastVersion = dbSession.query(QUERY_LAST_VERSION, new ORecordId(dataSetId));
+                if (lastVersion.hasNext()) {
+                    return lastVersion.next().getProperty("maxVersion");
+                }
             }
-            throw new DataSetNotFoundException(dataSetId);
         }
+        throw new DataSetNotFoundException(dataSetId);
     }
 
     @Override
     public Optional<Pair<String, Integer>> addVersion(DataSet newDataSet) {
+        if (!ORecordId.isA(newDataSet.id)) {
+            return empty();
+        }
+
         ODatabaseSession dbSession = null;
         DataSet previousDataSet = null;
         try {
@@ -103,10 +110,14 @@ public class OrientDataSetHistoryRepository implements DataSetHistoryRepository 
 
     @Override
     public Map<Integer, DataSet> allVersions(String dataSetId) {
+        if (!ORecordId.isA(dataSetId)) {
+            return emptyMap();
+        }
+
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
             OResultSet allVersions = dbSession.query(QUERY_ALL_VERSIONS, dataSetId);
             Map<Integer, DataSet> allVersionsMap = new LinkedHashMap<>();
-            while(allVersions.hasNext()) {
+            while (allVersions.hasNext()) {
                 Optional<OElement> element = allVersions.next().getElement();
                 if (element.isPresent()) {
                     OElement oDataSet = element.get();
@@ -126,37 +137,39 @@ public class OrientDataSetHistoryRepository implements DataSetHistoryRepository 
 
     @Override
     public DataSet version(String dataSetId, Integer version) {
-        try (ODatabaseSession dbSession = componentDBPool.acquire()) {
-            OResultSet query = dbSession.query(QUERY_FIND_VERSION, dataSetId, version);
-            if (query.hasNext()) {
-                DataSet.DataSetBuilder dataSetBuilder = DataSet.builder().withId(dataSetId);
-                String datasetValues = "";
-                for (OResult rs : Lists.newArrayList(query)) {
-                    Optional<OElement> element = rs.getElement();
-                    if (element.isPresent()) {
-                        DataSetPatch dataSetPatch = elementToDataSetPatch(element.get());
-                        if (dataSetPatch.name != null) {
-                            dataSetBuilder.withName(dataSetPatch.name);
+        if (ORecordId.isA(dataSetId)) {
+            try (ODatabaseSession dbSession = componentDBPool.acquire()) {
+                OResultSet query = dbSession.query(QUERY_FIND_VERSION, dataSetId, version);
+                if (query.hasNext()) {
+                    DataSet.DataSetBuilder dataSetBuilder = DataSet.builder().withId(dataSetId);
+                    String datasetValues = "";
+                    for (OResult rs : Lists.newArrayList(query)) {
+                        Optional<OElement> element = rs.getElement();
+                        if (element.isPresent()) {
+                            DataSetPatch dataSetPatch = elementToDataSetPatch(element.get());
+                            if (dataSetPatch.name != null) {
+                                dataSetBuilder.withName(dataSetPatch.name);
+                            }
+                            if (dataSetPatch.description != null) {
+                                dataSetBuilder.withDescription(dataSetPatch.description);
+                            }
+                            dataSetBuilder.withCreationDate(dataSetPatch.creationDate.truncatedTo(MILLIS));
+                            if (dataSetPatch.tags != null) {
+                                dataSetBuilder.withTags(dataSetPatch.tags);
+                            }
+                            datasetValues = patchString(datasetValues, dataSetPatch);
                         }
-                        if (dataSetPatch.description != null) {
-                            dataSetBuilder.withDescription(dataSetPatch.description);
-                        }
-                        dataSetBuilder.withCreationDate(dataSetPatch.creationDate.truncatedTo(MILLIS));
-                        if (dataSetPatch.tags != null) {
-                            dataSetBuilder.withTags(dataSetPatch.tags);
-                        }
-                        datasetValues = patchString(datasetValues, dataSetPatch);
                     }
+                    Pair<Map<String, String>, List<Map<String, String>>> values = extractValues(datasetValues);
+                    return dataSetBuilder
+                        .withConstants(values.getLeft())
+                        .withDatatable(values.getRight())
+                        .build();
                 }
-                Pair<Map<String, String>, List<Map<String, String>>> values = extractValues(datasetValues);
-                return dataSetBuilder
-                    .withConstants(values.getLeft())
-                    .withDatatable(values.getRight())
-                    .build();
+            } catch (Exception e) {
+                LOGGER.error("Error finding dataset [{}] version {}", dataSetId, version, e);
+                throw new RuntimeException(e);
             }
-        } catch (Exception e) {
-            LOGGER.error("Error finding dataset [{}] version {}", dataSetId, version, e);
-            throw new RuntimeException(e);
         }
         throw new DataSetNotFoundException(dataSetId);
     }

@@ -4,6 +4,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.any;
 import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static java.util.Optional.ofNullable;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.engine.api.execution.StatusDto;
@@ -20,6 +21,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -34,16 +36,19 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.util.SocketUtils;
 
 public class HttpClientTest {
 
-    private WireMockServer server =
-        new WireMockServer(wireMockConfig()
+    private final WireMockServer server = new WireMockServer(
+        wireMockConfig()
             .port(SocketUtils.findAvailableTcpPort())
-            .httpsPort(SocketUtils.findAvailableTcpPort()));
+            .httpsPort(SocketUtils.findAvailableTcpPort())
+    );
 
     static {
         //for localhost testing only
@@ -62,23 +67,27 @@ public class HttpClientTest {
         server.stop();
     }
 
-    @Test
-    public void should_delegate_execution_to_endpoint() throws JsonProcessingException {
+    @ParameterizedTest
+    @MethodSource("credentials")
+    public void should_delegate_execution_to_endpoint(String user, String password) throws JsonProcessingException {
         //G
         StepDefinition stepDefinition = createFakeStepDefinition();
         NamedHostAndPort remoteHost = new NamedHostAndPort("name", "localhost", server.httpsPort());
         StepExecutionReportDto dto = createStepExecutionReportDto();
         String dtoAsString = objectMapper().writeValueAsString(dto);
 
-        server.stubFor(any(anyUrl())
+        MappingBuilder mappingBuilder = any(anyUrl())
             .willReturn(aResponse()
                 .withBody(dtoAsString)
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .withStatus(200))
-        );
+                .withStatus(200));
+
+        ofNullable(user).ifPresent(u -> mappingBuilder.withBasicAuth(user, password));
+
+        server.stubFor(mappingBuilder);
 
         //W
-        HttpClient client = new HttpClient();
+        HttpClient client = new HttpClient(user, password);
         StepExecutionReport report = client.handDown(stepDefinition, remoteHost);
 
         //T
@@ -165,5 +174,13 @@ public class HttpClientTest {
         public X509Certificate[] getAcceptedIssuers() {
             return new X509Certificate[0];
         }
+    }
+
+    @SuppressWarnings("unused")
+    private static Object[] credentials() {
+        return new Object[]{
+            new Object[]{null, null},
+            new Object[]{"user", "password"}
+        };
     }
 }

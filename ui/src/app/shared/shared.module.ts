@@ -20,7 +20,7 @@ import {
     ScenarioCardComponent,
     TechnicalStepComponent
 } from './components';
-import { ImplementationHostDirective } from './directives';
+import { ImplementationHostDirective, HasAuthorizationDirective } from './directives';
 import { EventManagerService } from './event-manager.service';
 import { HjsonParserService } from './hjson-parser/hjson-parser.service';
 import {
@@ -77,6 +77,7 @@ import { StateService } from './state/state.service';
         ThumbnailPipe,
         TruncatePipe,
         WithoutScenarioPipe,
+        HasAuthorizationDirective,
     ],
     exports: [
         AceEditorComponent,
@@ -104,6 +105,7 @@ import { StateService } from './state/state.service';
         ThumbnailPipe,
         TruncatePipe,
         WithoutScenarioPipe,
+        HasAuthorizationDirective,
     ],
     entryComponents: [
         TechnicalStepComponent

@@ -1,14 +1,26 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
-
-import { ActivatedRoute, Router } from '@angular/router';
-import { Campaign, EnvironmentMetadata, KeyValue, ScenarioComponent, ScenarioIndex, TestCase } from '@model';
-import { CampaignService, ComponentService, EnvironmentAdminService, ScenarioService } from '@core/services';
 import { DragulaService } from 'ng2-dragula';
+
+import {
+    Campaign,
+    EnvironmentMetadata,
+    KeyValue,
+    ScenarioComponent,
+    ScenarioIndex,
+    TestCase
+} from '@model';
+import {
+    CampaignService,
+    ComponentService,
+    EnvironmentAdminService,
+    ScenarioService,
+    JiraPluginService,
+    JiraPluginConfigurationService
+} from '@core/services';
 import { distinct, flatMap, newInstance } from '@shared/tools/array-utils';
-import { JiraPluginService } from '@core/services/jira-plugin.service';
-import { JiraPluginConfigurationService } from '@core/services/jira-plugin-configuration.service';
 
 @Component({
     selector: 'chutney-campaign-edition',
@@ -34,8 +46,8 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
 
     DRAGGABLE = 'DRAGGABLE';
 
-    environments: EnvironmentMetadata[];
-    selectedEnvironment: EnvironmentMetadata;
+    environments: Array<string>;
+    selectedEnvironment: string;
 
     itemList = [];
     settings = {};
@@ -118,7 +130,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
                     this.campaignForm.controls['parallelRun'].setValue(this.campaign.parallelRun);
                     this.campaignForm.controls['retryAuto'].setValue(this.campaign.retryAuto);
                     this.campaignForm.controls['campaignTags'].setValue(this.campaign.tags);
-                    this.selectedEnvironment = new EnvironmentMetadata(this.campaign.environment, '');
+                    this.selectedEnvironment = this.campaign.environment;
                     this.setCampaignScenarios();
                     this.updateCampaignParameters();
                     this.datasetId = this.campaign.datasetId;
@@ -156,9 +168,9 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     }
 
     loadEnvironment() {
-        this.environmentAdminService.listEnvironments().subscribe(
+        this.environmentAdminService.listEnvironmentsNames().subscribe(
             (res) => {
-                this.environments = res.sort((t1, t2) => t1.name.toUpperCase() > t2.name.toUpperCase() ? 1 : 0);
+                this.environments = res.sort((t1, t2) => t1.toUpperCase() > t2.toUpperCase() ? 1 : 0);
             },
             (error) => {
                 this.errorMessage = error.error;
@@ -180,10 +192,10 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     }
 
     initJiraPlugin() {
-        this.jiraPluginConfigurationService.get()
+        this.jiraPluginConfigurationService.getUrl()
             .subscribe((r) => {
-                if (r && r.url !== '') {
-                    this.jiraUrl = r.url;
+                if (r !== '') {
+                    this.jiraUrl = r;
                     this.loadJiraLink();
                     this.jiraLinkService.findScenarios()
                         .subscribe(
@@ -258,7 +270,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         this.campaign.scenarioIds = formValue['scenarioIds'];
         this.campaign.computedParameters = computedParameters;
         this.campaign.scheduleTime = formValue['scheduleTime'];
-        this.campaign.environment = this.selectedEnvironment.name;
+        this.campaign.environment = this.selectedEnvironment;
         this.campaign.parallelRun = formValue['parallelRun'];
         this.campaign.retryAuto = formValue['retryAuto'];
         this.campaign.datasetId = this.datasetId;
@@ -297,18 +309,19 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
 
         for (const scenario of this.scenariosToAdd) {
             if (TestCase.isComposed(scenario.id)) {
-                this.componentService.findComponentTestCase(scenario.id).subscribe((testCase: ScenarioComponent) => {
-                    testCase.computedParameters.forEach((keyValue: KeyValue) => {
-                        if (!addedParams.has(keyValue.key)) {
-                            params.push(this.formBuilder.group({
-                                key: keyValue.key,
-                                value: this.campaign.computedParameters[keyValue.key] ?
-                                    this.campaign.computedParameters[keyValue.key] : ''
-                            }));
-                            addedParams.add(keyValue.key);
-                        }
+                this.componentService.findComponentTestCaseExecutableParameters(scenario.id)
+                    .subscribe((computedParameters: Array<KeyValue>) => {
+                        computedParameters.forEach((keyValue: KeyValue) => {
+                            if (!addedParams.has(keyValue.key)) {
+                                params.push(this.formBuilder.group({
+                                    key: keyValue.key,
+                                    value: this.campaign.computedParameters[keyValue.key] ?
+                                        this.campaign.computedParameters[keyValue.key] : ''
+                                }));
+                                addedParams.add(keyValue.key);
+                            }
+                        });
                     });
-                });
             }
         }
     }
@@ -370,7 +383,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         this.scenariosToAdd = Object.assign([], this.scenariosToAdd);
     }
 
-    setSelectedEnvironment(event: EnvironmentMetadata) {
+    setSelectedEnvironment(event: string) {
         this.selectedEnvironment = event;
     }
 

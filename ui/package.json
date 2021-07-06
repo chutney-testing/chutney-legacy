@@ -48,7 +48,7 @@
     "ngx-infinite-scroll": "^6.0.0",
     "ngx-pagination": "^3.0.0",
     "ngx-perfect-scrollbar": "^7.1.0",
-    "ngx-toastr": "^8.8.0",
+    "ngx-toastr": "^10.1.0",
     "ngx-vis": "^1.0.0",
     "rxjs": "^6.2.0",
     "sass-loader": "^6.0.7",

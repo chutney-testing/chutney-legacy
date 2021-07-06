@@ -12,15 +12,15 @@ import { HttpClient } from '@angular/common/http';
 })
 export class HomePageService {
     private resourceUrl = '/api/homepage/v1';
+    private homeUrl = '/home';
 
     private isLoaded = false;
 
     constructor(private http: HttpClient, private eventManager: EventManagerService) { }
 
-
     loadHomePage(): Observable<HomePage> {
         this.isLoaded = true;
-        return this.http.get<HomePage>(environment.backend + this.resourceUrl)
+        return this.http.get<HomePage>(environment.backend + this.homeUrl)
             .pipe(map((res: HomePage) => {
                 return new HomePage(res.content);
             }))
@@ -41,5 +41,4 @@ export class HomePageService {
         console.error(error.message || error);
         return throwError(error.message || error);
     }
-
 }

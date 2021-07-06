@@ -5,7 +5,7 @@ import org.openqa.selenium.WebDriver;
 
 public class SeleniumModule extends SimpleModule {
 
-    private static final String NAME = "CustomIntervalModule";
+    private static final String NAME = "ChutneySeleniumModule";
 
     public SeleniumModule() {
         super(NAME);

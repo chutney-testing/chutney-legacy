@@ -1,13 +1,13 @@
 import { Component, Input, Output, EventEmitter, OnInit, ViewChildren, QueryList } from '@angular/core';
 import { disabledBoolean } from '@shared/tools/bool-utils';
 
-import { TestCase, EnvironmentMetadata } from '@model';
-import { ScenarioService, ComponentService, EnvironmentAdminService } from '@core/services';
+import { TestCase, EnvironmentMetadata, Authorization } from '@model';
+import { ScenarioService, ComponentService, EnvironmentAdminService, JiraPluginService, LoginService } from '@core/services';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { FileSaverService } from 'ngx-filesaver';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
-import { JiraPluginService } from '@core/services/jira-plugin.service';
+import {  } from '@core/services/jira-plugin.service';
 
 @Component({
     selector: 'chutney-header',
@@ -16,7 +16,6 @@ import { JiraPluginService } from '@core/services/jira-plugin.service';
 })
 export class HeaderComponent implements OnInit {
 
-
     @Input() testCase: TestCase;
     @Input() canExecute = true;
 
@@ -24,10 +23,12 @@ export class HeaderComponent implements OnInit {
 
     isComposed = TestCase.isComposed;
 
-    environments: EnvironmentMetadata[];
+    environments: Array<string>;
 
     @ViewChildren(NgbDropdown)
     private executeDropDown: QueryList<NgbDropdown>;
+
+    Authorization = Authorization;
 
     constructor(private componentService: ComponentService,
                 private environmentAdminService: EnvironmentAdminService,
@@ -35,13 +36,16 @@ export class HeaderComponent implements OnInit {
                 private jiraLinkService: JiraPluginService,
                 private router: Router,
                 private scenarioService: ScenarioService,
+                private loginService: LoginService
     ) {
     }
 
     ngOnInit(): void {
-        this.environmentAdminService.listEnvironments().subscribe(
-            (res) => this.environments = res
-        );
+        if (this.loginService.hasAuthorization(Authorization.SCENARIO_EXECUTE)) {
+            this.environmentAdminService.listEnvironmentsNames().subscribe(
+                (res) => this.environments = res
+            );
+        }
     }
 
     executeScenario(envName: string) {
@@ -51,7 +55,7 @@ export class HeaderComponent implements OnInit {
     executeScenarioOnToggle() {
         if (this.environments.length == 1) {
             this.executeDropDown.first.close();
-            this.executeScenario(this.environments[0].name);
+            this.executeScenario(this.environments[0]);
         }
     }
 

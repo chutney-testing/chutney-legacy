@@ -20,6 +20,10 @@ export class EnvironmentAdminService {
         }));
     }
 
+    listEnvironmentsNames(): Observable<Array<string>> {
+        return this.http.get<Array<string>>(server.backend + this.baseUrl + '/names');
+    }
+
     exportEnvironment(environmentName: string): Observable<Array<Target>> {
         return this.http.get<Array<Target>>(server.backend + this.baseUrl + '/' + environmentName);
     }
@@ -38,6 +42,10 @@ export class EnvironmentAdminService {
 
     targets(): Observable<Array<Target>> {
         return this.http.get<Array<Target>>(server.backend + this.baseUrl + '/target');
+    }
+
+    targetsNames(): Observable<Array<string>> {
+        return this.http.get<Array<string>>(server.backend + this.baseUrl + '/target/names');
     }
 
     updateTarget(environmentName: string, targetName: string, target: Target): Observable<Object> {

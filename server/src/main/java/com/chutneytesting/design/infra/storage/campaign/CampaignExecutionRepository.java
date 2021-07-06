@@ -6,6 +6,7 @@ import static java.util.Collections.singletonList;
 
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
 import com.chutneytesting.design.domain.campaign.ScenarioExecutionReportCampaign;
+import com.chutneytesting.execution.domain.campaign.CampaignExecutionNotFoundException;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.util.HashMap;
@@ -79,8 +80,12 @@ class CampaignExecutionRepository {
         return getCampaignExecutionReportsById(campaignExecIds);
     }
 
-    CampaignExecutionReport getCampaignExecutionReportsById(Long campaignExecIds) {
-        return getCampaignExecutionReportsById(singletonList(campaignExecIds)).get(0);
+    CampaignExecutionReport getCampaignExecutionReportsById(Long campaignExecId) {
+        List<CampaignExecutionReport> campaignExecutionReportsById = getCampaignExecutionReportsById(singletonList(campaignExecId));
+        if (campaignExecutionReportsById.isEmpty()) {
+            throw new CampaignExecutionNotFoundException(campaignExecId);
+        }
+        return campaignExecutionReportsById.get(0);
     }
 
     private List<CampaignExecutionReport> getCampaignExecutionReportsById(List<Long> campaignExecIds) {

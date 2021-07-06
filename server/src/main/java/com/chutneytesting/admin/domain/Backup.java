@@ -9,14 +9,14 @@ public class Backup {
     public final static DateTimeFormatter backupIdTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
     public final LocalDateTime time;
-    public final Boolean homePage;
-    public final Boolean agentsNetwork;
-    public final Boolean environments;
-    public final Boolean components;
-    public final Boolean globalVars;
-    public final Boolean jiraLinks;
+    public final boolean homePage;
+    public final boolean agentsNetwork;
+    public final boolean environments;
+    public final boolean components;
+    public final boolean globalVars;
+    public final boolean jiraLinks;
 
-    public Backup(Boolean homePage, Boolean agentsNetwork, Boolean environments, Boolean components, Boolean globalVars, Boolean jiraLinks) {
+    public Backup(boolean homePage, boolean agentsNetwork, boolean environments, boolean components, boolean globalVars, boolean jiraLinks) {
         if (!(homePage || agentsNetwork || environments || components || globalVars || jiraLinks)) {
             throw new IllegalArgumentException("Nothing to backup !!");
         }

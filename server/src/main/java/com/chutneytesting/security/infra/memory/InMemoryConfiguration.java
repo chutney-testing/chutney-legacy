@@ -1,5 +1,6 @@
 package com.chutneytesting.security.infra.memory;
 
+import com.chutneytesting.security.domain.AuthenticationService;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +24,7 @@ public class InMemoryConfiguration {
     }
 
     @Bean
-    public InMemoryUserDetailsService inMemoryUserDetailsService() {
-        return new InMemoryUserDetailsService(users());
+    public InMemoryUserDetailsService inMemoryUserDetailsService(InMemoryUsersProperties users, AuthenticationService authenticationService) {
+        return new InMemoryUserDetailsService(users, authenticationService);
     }
 }
