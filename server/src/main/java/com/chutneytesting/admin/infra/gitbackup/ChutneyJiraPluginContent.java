@@ -42,25 +42,25 @@ public class ChutneyJiraPluginContent implements ChutneyContentProvider {
 
         try {
             configurationBuilder
-                .withName("jira_config")
-                .withContent(mapper.writeValueAsString(repository.loadServerConfiguration()))
-                .withFormat("json")
-                .withCategory(category())
                 .withProvider(provider())
+                .withCategory(category())
+                .withName("jira_config")
+                .withFormat("json")
+                .withContent(mapper.writeValueAsString(repository.loadServerConfiguration()))
                 .build();
 
             scenariosBuilder
+                .withProvider(provider())
+                .withCategory(category())
                 .withName("scenario_link")
                 .withContent(mapper.writeValueAsString(repository.getAllLinkedScenarios()))
-                .withCategory(category())
-                .withProvider(provider())
                 .build();
 
             campaignsBuilder
+                .withProvider(provider())
+                .withCategory(category())
                 .withName("campaign_link")
                 .withContent(mapper.writeValueAsString(repository.getAllLinkedCampaigns()))
-                .withCategory(category())
-                .withProvider(provider())
                 .build();
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e.getMessage(), e);

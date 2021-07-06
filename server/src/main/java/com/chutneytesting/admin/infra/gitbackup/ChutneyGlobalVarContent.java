@@ -33,10 +33,10 @@ public class ChutneyGlobalVarContent implements ChutneyContentProvider {
         return repository.list().stream()
             .map(name ->
                 ChutneyContent.builder()
+                    .withProvider(provider())
+                    .withCategory(category())
                     .withName(name)
                     .withContent(repository.getFileContent(name))
-                    .withCategory(category())
-                    .withProvider(provider())
                     .build()
             );
     }
