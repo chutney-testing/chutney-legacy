@@ -3,12 +3,14 @@ package com.chutneytesting.design.api.scenario.v2_0;
 import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.time.Instant.now;
+import static java.util.Collections.emptyList;
 
 import com.chutneytesting.design.api.scenario.v2_0.dto.GwtTestCaseDto;
 import com.chutneytesting.design.api.scenario.v2_0.dto.RawTestCaseDto;
 import com.chutneytesting.design.api.scenario.v2_0.dto.TestCaseIndexDto;
 import com.chutneytesting.design.api.scenario.v2_0.mapper.GwtTestCaseMapper;
 import com.chutneytesting.design.api.scenario.v2_0.mapper.RawTestCaseMapper;
+import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
@@ -54,6 +56,13 @@ public class GwtTestCaseController {
     @GetMapping(path = "/{testCaseId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public GwtTestCaseDto getTestCase(@PathVariable("testCaseId") String testCaseId) {
         return GwtTestCaseMapper.toDto(testCaseRepository.findById(testCaseId));
+    }
+
+    @PreAuthorize("hasAuthority('SCENARIO_READ')")
+    @GetMapping(path = "/{testCaseId}/metadata", produces = MediaType.APPLICATION_JSON_VALUE)
+    public TestCaseIndexDto testCaseMetaData(@PathVariable("testCaseId") String testCaseId) {
+        TestCase testCase = testCaseRepository.findById(fromFrontId(testCaseId));
+        return TestCaseIndexDto.from(testCase.metadata(), emptyList());
     }
 
     @PreAuthorize("hasAuthority('SCENARIO_READ') or hasAuthority('CAMPAIGN_WRITE')")

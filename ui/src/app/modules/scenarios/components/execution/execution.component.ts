@@ -18,8 +18,8 @@ import { ComponentService, ScenarioExecutionService, ScenarioService } from '@co
 export class ScenarioExecutionComponent implements OnInit, OnDestroy {
 
     testCase: TestCase = null;
-    scenarioComponent: ScenarioComponent = null;
-    scenarioGwt: GwtTestCase = null;
+    scenarioComponent$: Observable<ScenarioComponent>;
+    scenarioGwt$: Observable<GwtTestCase> = null;
 
     parseError: String;
     executionError: String;
@@ -69,17 +69,9 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
 
     loadScenario() {
         if (this.isComposed(this.currentScenarioId)) {
-            this.componentService.findComponentTestCaseWithoutDeserializeImpl(this.currentScenarioId).subscribe((testCase: ScenarioComponent) => {
-                this.testCase = TestCase.fromComponent(testCase);
-                this.scenarioComponent = testCase;
-            });
+            this.scenarioComponent$ = this.componentService.findComponentTestCaseWithoutDeserializeImpl(this.currentScenarioId);
         } else {
-            this.scenarioService.findRawTestCase(this.currentScenarioId).subscribe((testCase: TestCase) => {
-                this.testCase = testCase;
-            });
-            this.scenarioService.findTestCase(this.currentScenarioId).subscribe((testCase: GwtTestCase) => {
-                this.scenarioGwt = testCase;
-            });
+            this.scenarioGwt$ = this.scenarioService.findTestCase(this.currentScenarioId);
         }
     }
 
