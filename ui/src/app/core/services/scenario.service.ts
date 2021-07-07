@@ -72,6 +72,13 @@ export class ScenarioService {
         }));
     }
 
+    findScenarioMetadata(id: string): Observable<ScenarioIndex> {
+        return this.httpClient.get<ScenarioIndex>(environment.backend + `${this.resourceUrlV2}/${id}/metadata`)
+        .pipe(map((res: any) => {
+            return this.mapJsonScenario([res])[0];
+        }));
+    }
+
     findTestCase(id: string): Observable<GwtTestCase> {
         return this.httpClient.get<GwtTestCase>(environment.backend + `${this.resourceUrlV2}/${id}`).pipe(map((res: GwtTestCase) => {
             return GwtTestCase.deserialize(res);

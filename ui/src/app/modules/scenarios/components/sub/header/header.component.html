@@ -1,9 +1,9 @@
-<div *ngIf="testCase" class="row edition-header">
+<div *ngIf="testCaseMetadata" class="row edition-header">
     <div class="header-left">
-        <div class="title" [innerHTML]="testCase.title | linkify"></div>
-        <div class="description" [innerHTML]="testCase.description | linkify"></div>
+        <div class="title" [innerHTML]="testCaseMetadata.title | linkify"></div>
+        <div class="description" [innerHTML]="testCaseMetadata.description | linkify"></div>
         <div class="btn-group ml-4 header-tag">
-            <span *ngFor="let tag of testCase.tags">
+            <span *ngFor="let tag of testCaseMetadata.tags">
                 <span class="chutney-tag chutney-tag-selected">{{tag}}</span>
             </span>
         </div>
@@ -29,13 +29,13 @@
                     <ng-container *hasAuthorization="[Authorization.SCENARIO_WRITE]">
                         <div class="btn-group">
                             <button type="button" class="btn btn-light"
-                                routerLink="{{isComposed(testCase) ? '/scenario/' + testCase.id + '/component-edition' : '/scenario/' + testCase.id + '/edition'}}"
+                                routerLink="{{isComposed(testCaseId) ? '/scenario/' + testCaseId + '/component-edition' : '/scenario/' + testCaseId + '/edition'}}"
                                 [attr.disabled]="isNotEditable()">
                                 <span class="fa fa-pencil-alt"></span>
                                 <span class="btn-label">{{'global.actions.edit' | translate}}</span>
                             </button>
-                            <button *ngIf="!isComposed(testCase)" type="button" class="btn btn-light"
-                                routerLink="{{'/scenario/' + testCase.id + '/raw-edition'}}"
+                            <button *ngIf="!isComposed(testCaseId)" type="button" class="btn btn-light"
+                                routerLink="{{'/scenario/' + testCaseId + '/raw-edition'}}"
                                 [attr.disabled]="isNotEditable()">
                                 <span class="fa fa-pencil-alt"></span>
                                 <span class="btn-label">{{'global.actions.editRaw' | translate}}</span>
@@ -46,7 +46,7 @@
                 <div class="col-6 p-0">
                     <ng-container *hasAuthorization="[Authorization.SCENARIO_WRITE]">
                         <chutney-delete-confirm-dialog class="align-items-end" [dialogMessage]="'scenarios.execution.actions.remove' | translate"
-                            (deleteEvent)="deleteScenario(testCase.id)" [disabled]="isNotEditable()">
+                            (deleteEvent)="deleteScenario(testCaseId)" [disabled]="isNotEditable()">
                         </chutney-delete-confirm-dialog>
                         <button type="button" class="btn btn-success accept-spinner align-items-end" (click)="duplicateScenario()">
                             <span class="fa fa-clone"></span>

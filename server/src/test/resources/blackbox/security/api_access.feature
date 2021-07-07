@@ -211,6 +211,7 @@ Feature: Chutney api security
             | get       | /api/steps/v1                                                      | COMPONENT_READ     |                                                                                        | 200    |
             | get       | /api/steps/v1/stepId                                               | COMPONENT_READ     |                                                                                        | 404    |
             | get       | /api/scenario/v2/testCaseId                                        | SCENARIO_READ      |                                                                                        | 404    |
+            | get       | /api/scenario/v2/testCaseId/metadata                               | SCENARIO_READ      |                                                                                        | 404    |
             | get       | /api/scenario/v2                                                   | SCENARIO_READ      |                                                                                        | 200    |
             | get       | /api/scenario/v2                                                   | CAMPAIGN_WRITE     |                                                                                        | 200    |
             | post      | /api/scenario/v2                                                   | SCENARIO_WRITE     | {"title":"","scenario":{"when":{}}}                                                    | 200    |

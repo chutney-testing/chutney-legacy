@@ -1,5 +1,5 @@
-<ng-container *ngIf="testCase">
-    <chutney-header [testCase]="testCase"
+<ng-container>
+    <chutney-header [testCaseId]="currentScenarioId"
                     [canExecute]="parseError"
                     (executeEvent)="executeScenario($event)">
     </chutney-header>
@@ -91,12 +91,12 @@
             </div>
         </ng-container>
         <div *ngIf="!scenarioExecutionReport" class="border background-white">
-            <ng-container *ngIf="scenarioComponent">
+            <ng-container *ngIf="(scenarioComponent$ | async) as scenarioComponent">
                 <div *ngFor="let step of scenarioComponent.componentSteps">
                     <chutney-component-read [step]=step></chutney-component-read>
                 </div>
             </ng-container>
-            <ng-container *ngIf="scenarioGwt">
+            <ng-container *ngIf="(scenarioGwt$ | async) as scenarioGwt">
                 <div *ngIf="scenarioGwt.scenario.givens.length > 0" class="gwt" id="given">
                     <div *ngFor="let step of scenarioGwt.scenario.givens">
                         <chutney-gwt-read [step]=step [type]="'given'"></chutney-gwt-read>
