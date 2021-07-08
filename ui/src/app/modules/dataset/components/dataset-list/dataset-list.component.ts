@@ -79,4 +79,8 @@ export class DatasetListComponent implements OnInit {
         this.selectedTags.splice(this.selectedTags.indexOf(item.itemName), 1);
         this.selectedTags = newInstance(this.selectedTags);
     }
+
+    onItemDeSelectAll() {
+        this.selectedTags = newInstance([]);
+    }
 }
