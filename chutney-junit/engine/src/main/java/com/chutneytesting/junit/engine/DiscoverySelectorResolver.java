@@ -1,25 +1,42 @@
 package com.chutneytesting.junit.engine;
 
+import static java.util.stream.Collectors.toList;
+
 import com.chutneytesting.engine.api.execution.StepDefinitionDto;
 import com.chutneytesting.glacio.api.GlacioAdapter;
 import com.chutneytesting.junit.api.Chutney;
-import org.junit.platform.engine.*;
-import org.junit.platform.engine.discovery.*;
-import org.junit.platform.engine.support.descriptor.ClassSource;
-import org.junit.platform.engine.support.descriptor.MethodSource;
-import org.junit.platform.engine.support.descriptor.UriSource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Predicate;
-
-import static java.util.stream.Collectors.toList;
+import org.junit.platform.engine.EngineDiscoveryRequest;
+import org.junit.platform.engine.Filter;
+import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.TestSource;
+import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.discovery.ClassNameFilter;
+import org.junit.platform.engine.discovery.ClassSelector;
+import org.junit.platform.engine.discovery.ClasspathResourceSelector;
+import org.junit.platform.engine.discovery.ClasspathRootSelector;
+import org.junit.platform.engine.discovery.DirectorySelector;
+import org.junit.platform.engine.discovery.FileSelector;
+import org.junit.platform.engine.discovery.PackageNameFilter;
+import org.junit.platform.engine.discovery.PackageSelector;
+import org.junit.platform.engine.discovery.UniqueIdSelector;
+import org.junit.platform.engine.discovery.UriSelector;
+import org.junit.platform.engine.support.descriptor.ClassSource;
+import org.junit.platform.engine.support.descriptor.UriSource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 public class DiscoverySelectorResolver {
 
@@ -38,6 +55,7 @@ public class DiscoverySelectorResolver {
 
     public void resolveSelectors(EngineDiscoveryRequest engineDiscoveryRequest, ChutneyEngineDescriptor engineDescriptor) {
         Predicate<String> packageNameFilter = Filter.composeFilters(engineDiscoveryRequest.getFiltersByType(PackageNameFilter.class)).toPredicate();
+        Predicate<String> classNameFilter = Filter.composeFilters(engineDiscoveryRequest.getFiltersByType(ClassNameFilter.class)).toPredicate();
 
         // Keep class selector first in line in order to position classMode property
         List<ClassSelector> classSelectors = engineDiscoveryRequest.getSelectorsByType(ClassSelector.class);
@@ -50,7 +68,7 @@ public class DiscoverySelectorResolver {
         directorySelectors.forEach(ds -> resolveDirectory(engineDescriptor, ds.getDirectory()));
 
         List<ClasspathRootSelector> classpathRootSelectors = engineDiscoveryRequest.getSelectorsByType(ClasspathRootSelector.class);
-        classpathRootSelectors.forEach(crs -> resolveClassPathRoot(engineDescriptor, crs.getClasspathRoot(), packageNameFilter));
+        classpathRootSelectors.forEach(crs -> resolveClassPathRoot(engineDescriptor, crs.getClasspathRoot(), packageNameFilter.and(classNameFilter)));
 
         List<PackageSelector> packageSelectors = engineDiscoveryRequest.getSelectorsByType(PackageSelector.class);
         packageSelectors.stream()
@@ -121,11 +139,12 @@ public class DiscoverySelectorResolver {
         }
     }
 
-    private void resolveClassPathRoot(TestDescriptor parent, URI classpathRoot, Predicate<String> packageNameFilter) {
+    private void resolveClassPathRoot(TestDescriptor parent, URI classpathRoot, Predicate<String> classFilter) {
         try {
             Resource[] resources = pathResolver.getResources(classpathRoot.toString() + "/**/*" + FEATURE_EXTENSION);
             for (Resource resource : resources) {
-                if (packageNameFilter.test(resource.getURI().getPath().replace(classpathRoot.getPath(), "").replace("/", "."))) {
+                String pathFromRoot = resource.getURI().getPath().replace(classpathRoot.getPath(), "").replace("/", ".");
+                if (classFilter.test(pathFromRoot)) {
                     resolveResource(parent, resource);
                 }
             }
@@ -167,7 +186,7 @@ public class DiscoverySelectorResolver {
 
     private void resolveFeature(TestDescriptor parent, String name, String featureContent, TestSource testSource) {
         UniqueId uniqueId = parent.getUniqueId().append(FEATURE_SEGMENT_TYPE, name);
-        if (!parent.findByUniqueId(uniqueId).isPresent()) {
+        if (parent.findByUniqueId(uniqueId).isEmpty()) {
 
             FeatureDescriptor featureDescriptor = new FeatureDescriptor(uniqueId, name, featureSource(testSource));
 
@@ -183,7 +202,8 @@ public class DiscoverySelectorResolver {
             new ScenarioDescriptor(
                 parentFeature.getUniqueId().append(SCENARIO_SEGMENT_TYPE, stepDefinition.name),
                 stepDefinition.name,
-                scenarioSource(stepDefinition.name, parentFeature.getSource().get()), stepDefinition);
+                null,
+                stepDefinition);
 
         parentFeature.addChild(scenarioDescriptor);
     }
@@ -237,13 +257,6 @@ public class DiscoverySelectorResolver {
                 name = ((UriSource) testSource).getUri().getSchemeSpecificPart();
             }
             return ClassSource.from(name);
-        }
-        return testSource;
-    }
-
-    private TestSource scenarioSource(String scenarioName, TestSource testSource) {
-        if (testSource instanceof ClassSource) {
-            return MethodSource.from(((ClassSource) testSource).getClassName(), scenarioName, "");
         }
         return testSource;
     }
