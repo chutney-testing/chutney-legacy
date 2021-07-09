@@ -109,6 +109,10 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         this.selectedTags = newInstance(this.selectedTags);
     }
 
+    OnItemDeSelectAll() {
+        this.selectedTags = newInstance([]);
+    }
+
     // convenience getter for easy access to form fields
     get f() {
         return this.campaignForm.controls;
