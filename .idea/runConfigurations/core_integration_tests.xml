@@ -2,12 +2,6 @@
   <configuration default="false" name="core_integration_tests" type="JUnit" factoryName="JUnit">
     <module name="server" />
     <useClassPathOnly />
-    <extension name="coverage">
-      <pattern>
-        <option name="PATTERN" value="blackbox.*" />
-        <option name="ENABLED" value="true" />
-      </pattern>
-    </extension>
     <option name="PACKAGE_NAME" value="blackbox" />
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
