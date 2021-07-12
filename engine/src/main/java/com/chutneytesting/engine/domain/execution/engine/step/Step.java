@@ -249,7 +249,7 @@ public class Step {
                 if (!(boolean) v) {
                     failure("Validation [" + k + "] : KO (" + definition.validations.get(k).toString() + ")");
                 } else {
-                    success("Validation [" + k + "] : OK");
+                    state.addInformation("Validation [" + k + "] : OK");
                 }
             });
             return null;
