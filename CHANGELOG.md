@@ -1,5 +1,44 @@
 # Changelog
 
+## [1.3.9](https://github.com/chutney-testing/chutney/tree/1.3.9) (2021-07-12)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.8...HEAD)
+
+**Implemented enhancements:**
+
+- 🚀 | JSON assert : JSONPath with selector returns array problem with placeholder [\#344](https://github.com/chutney-testing/chutney/issues/344)
+- 🚀 | Add full scenario text research on scenario page [\#331](https://github.com/chutney-testing/chutney/issues/331)
+- 🚀 | Add authorization management [\#95](https://github.com/chutney-testing/chutney/issues/95)
+
+**Fixed bugs:**
+
+- 🐛 | soft strategy with validation should be in error [\#502](https://github.com/chutney-testing/chutney/issues/502)
+- 🐛 | UI lags on complex component testcases [\#494](https://github.com/chutney-testing/chutney/issues/494)
+- 🐛 | Datasets : search filter clear button is not working [\#481](https://github.com/chutney-testing/chutney/issues/481)
+- 🐛 | Chutney logo on login page unresolved when logout [\#480](https://github.com/chutney-testing/chutney/issues/480)
+- 🐛 | Wrong configuration folder during tests [\#460](https://github.com/chutney-testing/chutney/issues/460)
+- 🐛 | core\_unit\_tests run configuration also run core\_integration\_tests [\#402](https://github.com/chutney-testing/chutney/issues/402)
+- 🐛 | No error message when wrong login [\#338](https://github.com/chutney-testing/chutney/issues/338)
+
+**Closed issues:**
+
+- Out of memory on big SQL result [\#69](https://github.com/chutney-testing/chutney/issues/69)
+
+**Merged pull requests:**
+
+- fix\(egine\): Validations only set FAILURE step status [\#504](https://github.com/chutney-testing/chutney/pull/504) ([boddissattva](https://github.com/boddissattva))
+- fix\(ui\): Map deselect all event on angular-multiselect [\#497](https://github.com/chutney-testing/chutney/pull/497) ([boddissattva](https://github.com/boddissattva))
+- fix\(junit\): Use class filter in junit engine [\#496](https://github.com/chutney-testing/chutney/pull/496) ([boddissattva](https://github.com/boddissattva))
+- chore\(ui+server\): Load independently testcase header and content [\#493](https://github.com/chutney-testing/chutney/pull/493) ([boddissattva](https://github.com/boddissattva))
+- chore\(deps-dev\): bump assertj-core from 3.19.0 to 3.20.2 [\#491](https://github.com/chutney-testing/chutney/pull/491) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump sl4j.api.version from 1.7.30 to 1.7.31 [\#490](https://github.com/chutney-testing/chutney/pull/490) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps-dev\): bump mockito.version from 3.10.0 to 3.11.2 [\#489](https://github.com/chutney-testing/chutney/pull/489) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump commons-io from 2.8.0 to 2.10.0 [\#487](https://github.com/chutney-testing/chutney/pull/487) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump maven-javadoc-plugin from 3.2.0 to 3.3.0 [\#485](https://github.com/chutney-testing/chutney/pull/485) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps-dev\): bump otj-pg-embedded from 0.13.1 to 0.13.4 [\#484](https://github.com/chutney-testing/chutney/pull/484) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump qpid-broker.version from 7.0.6 to 8.0.5 [\#483](https://github.com/chutney-testing/chutney/pull/483) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Feat/authorizations [\#477](https://github.com/chutney-testing/chutney/pull/477) ([boddissattva](https://github.com/boddissattva))
+
 ## [1.3.8](https://github.com/chutney-testing/chutney/tree/1.3.8) (2021-06-23)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.7...HEAD)
