@@ -11,8 +11,6 @@ import { HttpClient } from '@angular/common/http';
 })
 export class ScenarioExecutionService {
 
-    public testCaseToExecute: TestCase;
-
     private resourceUrl = '/api/ui/scenario';
 
     constructor(private http: HttpClient) {

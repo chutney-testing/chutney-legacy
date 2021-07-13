@@ -1,11 +1,11 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
-import { Subscription } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
+import { delay, map, tap } from 'rxjs/operators';
 
 import { TestCase, ScenarioComponent, KeyValue } from '@model';
-import { ScenarioExecutionService, ComponentService } from '@core/services';
+import { ScenarioExecutionService, ComponentService, ScenarioService } from '@core/services';
 
 @Component({
     selector: 'chutney-execute',
@@ -14,71 +14,76 @@ import { ScenarioExecutionService, ComponentService } from '@core/services';
 })
 export class ExecuteComponent implements OnInit, OnDestroy {
 
-    @Input() testCase: TestCase;
+    testCase$: Observable<TestCase>;
+    private computedParameters: Array<KeyValue>;
+    private testCaseId: string;
 
     componentForm: FormGroup;
     env: string;
+    private isComposed = TestCase.isComposed;
     private routeParamsSubscription: Subscription;
 
     constructor(private scenarioExecutionService: ScenarioExecutionService,
                 private componentService: ComponentService,
+                private scenarioService: ScenarioService,
                 private formBuilder: FormBuilder,
                 private route: ActivatedRoute,
                 private router: Router) {
     }
 
     ngOnInit() {
-        if (!this.testCase && this.scenarioExecutionService.testCaseToExecute) {
-            this.testCase = this.scenarioExecutionService.testCaseToExecute;
-            this.initComponentForm();
-            this.routeParamsSubscription = this.route.params.subscribe((params) => {
-                this.env = params['env'];
-            });
-        } else {
-            this.routeParamsSubscription = this.route.params.subscribe((params) => {
-                this.loadScenario(params['id']);
-                this.env = params['env'];
-            });
-        }
+        this.routeParamsSubscription = this.route.params.subscribe((params) => {
+            this.loadScenario(params['id']);
+            this.env = params['env'];
+        });
     }
 
     ngOnDestroy(): void {
         if (this.routeParamsSubscription) {
             this.routeParamsSubscription.unsubscribe();
         }
-        this.scenarioExecutionService.testCaseToExecute = null;
     }
 
     execute(event: Event) {
         (event.currentTarget as HTMLButtonElement).disabled = true;
-        this.scenarioExecutionService.executeScenarioAsync(this.testCase.id, this.buildDataSetFromForm(), this.env)
+        this.scenarioExecutionService.executeScenarioAsync(this.testCaseId, this.buildDataSetFromForm(), this.env)
             .pipe(
                 delay(1000)
             )
             .subscribe(
             executionId =>
-                this.router.navigateByUrl(`/scenario/${this.testCase.id}/execution/${executionId}`)
+                this.router.navigateByUrl(`/scenario/${this.testCaseId}/execution/${executionId}`)
                     .then(null),
             error =>
-                this.router.navigateByUrl(`/scenario/${this.testCase.id}/execution/last`)
+                this.router.navigateByUrl(`/scenario/${this.testCaseId}/execution/last`)
                     .then(null)
         );
     }
 
     private loadScenario(testCaseId: string) {
-        this.componentService.findComponentTestCase(testCaseId).subscribe((testCase: ScenarioComponent) => {
-            this.testCase = TestCase.fromComponent(testCase);
-            this.initComponentForm();
-        });
+        this.testCaseId = testCaseId;
+
+        var tmp$: Observable<TestCase>;
+        if (this.isComposed(testCaseId)) {
+            tmp$ = this.componentService.findComponentTestCase(testCaseId).pipe(
+                map(sc => TestCase.fromComponent(sc))
+            );
+        } else {
+            tmp$ = this.scenarioService.findRawTestCase(testCaseId);
+        }
+
+        this.testCase$ = tmp$.pipe(tap(tc => this.initComponentForm(tc.computedParameters)));
     }
 
-    private initComponentForm() {
+    private initComponentForm(computedParams: Array<KeyValue>) {
+        this.computedParameters = computedParams;
+
         this.componentForm = this.formBuilder.group({
             parameters: this.formBuilder.array([])
         });
 
         const parameters = this.componentForm.controls.parameters as FormArray;
-        this.testCase.computedParameters.forEach((keyValue) => {
+        computedParams.forEach((keyValue) => {
             parameters.push(
                 this.formBuilder.control(keyValue.value, Validators.required)
             );
@@ -89,7 +94,7 @@ export class ExecuteComponent implements OnInit, OnDestroy {
         const computedParameters: Array<KeyValue> = [];
         const parameters = this.componentForm.controls.parameters as FormArray;
         parameters.controls.forEach((ctlr, i) => {
-            computedParameters.push(new KeyValue(this.testCase.computedParameters[i].key, ctlr.value));
+            computedParameters.push(new KeyValue(this.computedParameters[i].key, ctlr.value));
         });
         return computedParameters;
     }

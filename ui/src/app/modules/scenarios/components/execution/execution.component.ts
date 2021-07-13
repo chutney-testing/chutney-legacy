@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
-import { debounceTime, delay } from 'rxjs/internal/operators';
+import { debounceTime, delay, tap } from 'rxjs/internal/operators';
 
 import { EventManagerService } from '@shared/event-manager.service';
 
@@ -17,8 +17,7 @@ import { ComponentService, ScenarioExecutionService, ScenarioService } from '@co
 })
 export class ScenarioExecutionComponent implements OnInit, OnDestroy {
 
-    testCase: TestCase = null;
-    scenarioComponent$: Observable<ScenarioComponent>;
+    scenarioComponent$: Observable<ScenarioComponent> = null;
     scenarioGwt$: Observable<GwtTestCase> = null;
 
     parseError: String;
@@ -33,7 +32,8 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     toggleScenarioDetails = true;
     toggleScenarioInfo = true;
 
-    isComposed = TestCase.isComposed;
+    private isComposed = TestCase.isComposed;
+    private hasParameters: boolean = null;
 
     private routeParamsSubscription: Subscription;
     private scenarioExecutionAsyncSubscription: Subscription;
@@ -69,9 +69,19 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
 
     loadScenario() {
         if (this.isComposed(this.currentScenarioId)) {
-            this.scenarioComponent$ = this.componentService.findComponentTestCaseWithoutDeserializeImpl(this.currentScenarioId);
+            this.scenarioComponent$ = this.componentService
+                .findComponentTestCaseWithoutDeserializeImpl(this.currentScenarioId).pipe(
+                    tap(sc => {
+                        this.hasParameters = (sc.computedParameters && sc.computedParameters.length > 0);
+                    })
+                );
         } else {
-            this.scenarioGwt$ = this.scenarioService.findTestCase(this.currentScenarioId);
+            this.scenarioGwt$ = this.scenarioService
+                .findTestCase(this.currentScenarioId).pipe(
+                     tap(gwt => {
+                        this.hasParameters = (gwt.wrappedParams.params && gwt.wrappedParams.params.length > 0);
+                    })
+                 );
         }
     }
 
@@ -136,8 +146,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     executeScenario(env: string) {
-        if (this.testCase.hasParameters()) {
-            this.scenarioExecutionService.testCaseToExecute = this.testCase;
+        if (this.hasParameters) {
             this.router.navigateByUrl(`/scenario/${this.currentScenarioId}/execute/${env}`)
                 .then(null);
         } else {
