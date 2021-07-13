@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.3.10](https://github.com/chutney-testing/chutney/tree/1.3.10) (2021-07-13)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.9...HEAD)
+
+**Fixed bugs:**
+
+- 🐛 | LDAP authentification problem - Authorities have role prefix ROLE\_ [\#506](https://github.com/chutney-testing/chutney/issues/506)
+- 🐛 | Execute button of scenario does not work [\#505](https://github.com/chutney-testing/chutney/issues/505)
+
+**Merged pull requests:**
+
+- fix/scenario execute UI [\#507](https://github.com/chutney-testing/chutney/pull/507) ([boddissattva](https://github.com/boddissattva))
+
+
 ## [1.3.9](https://github.com/chutney-testing/chutney/tree/1.3.9) (2021-07-12)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.8...HEAD)
