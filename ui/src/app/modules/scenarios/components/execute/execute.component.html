@@ -1,4 +1,4 @@
-<ng-container *ngIf="testCase">
+<ng-container *ngIf="(testCase$ | async) as testCase">
     <div class="row edition-header">
         <div class="header-left">
             <div class="title" [innerHTML]="testCase.title | linkify"></div>
