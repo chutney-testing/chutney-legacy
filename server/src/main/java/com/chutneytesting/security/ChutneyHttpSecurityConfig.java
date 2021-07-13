@@ -140,7 +140,8 @@ public class ChutneyHttpSecurityConfig extends WebSecurityConfigurerAdapter {
                 .userSearchFilter("(uid={0})")
                 .ldapAuthoritiesPopulator(new NullLdapAuthoritiesPopulator())
                 .userDetailsContextMapper(userDetailsContextMapper)
-                .contextSource(ldapContextSource);
+                .contextSource(ldapContextSource)
+                .rolePrefix("");
         }
     }
 }
