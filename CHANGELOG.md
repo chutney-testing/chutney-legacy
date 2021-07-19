@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.3.11](https://github.com/chutney-testing/chutney/tree/1.3.11) (2021-07-19)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.10...HEAD)
+
+**Fixed bugs:**
+
+- 🐛 | Links to JIRA are not working [\#508](https://github.com/chutney-testing/chutney/issues/508)
+
+**Merged pull requests:**
+
+- fix\(server+ui\): JIRA configuration url endpoint produces plain text [\#509](https://github.com/chutney-testing/chutney/pull/509) ([boddissattva](https://github.com/boddissattva))
+
+
 ## [1.3.10](https://github.com/chutney-testing/chutney/tree/1.3.10) (2021-07-13)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.9...HEAD)
