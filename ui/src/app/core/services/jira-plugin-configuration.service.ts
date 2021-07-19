@@ -20,7 +20,7 @@ export class JiraPluginConfigurationService {
     }
 
     public getUrl(): Observable<string> {
-        return this.http.get<string>(environment.backend + this.url + '/url');
+        return this.http.get(environment.backend + this.url + '/url', {responseType: 'text'});
     }
 
     public save(configuration: JiraPluginConfiguration): Observable<String> {

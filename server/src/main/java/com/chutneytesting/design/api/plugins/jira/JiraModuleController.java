@@ -134,7 +134,7 @@ public class JiraModuleController {
     }
 
     @PreAuthorize("hasAuthority('SCENARIO_READ') or hasAuthority('CAMPAIGN_READ')")
-    @GetMapping(path = BASE_CONFIGURATION_URL + "/url", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = BASE_CONFIGURATION_URL + "/url", produces = MediaType.TEXT_PLAIN_VALUE)
     public String getConfigurationUrl() {
         JiraTargetConfiguration jiraTargetConfiguration = jiraRepository.loadServerConfiguration();
         return jiraTargetConfiguration.url;
