@@ -15,6 +15,6 @@ public class ScheduleCampaign {
 
     @Scheduled(fixedRate = 60000)
     public void executeScheduledCampaign() {
-        campaignScheduler.executeScheduledCampaign();
+        campaignScheduler.executeScheduledCampaigns();
     }
 }

@@ -3,8 +3,8 @@ package com.chutneytesting.design.infra.storage.campaign;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.design.domain.campaign.SchedulingCampaign;
-import com.chutneytesting.design.domain.campaign.SchedulingCampaignRepository;
+import com.chutneytesting.design.domain.campaign.ScheduledCampaign;
+import com.chutneytesting.design.domain.campaign.ScheduledCampaignRepository;
 import com.chutneytesting.tools.file.FileUtils;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -15,9 +15,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-public class SchedulingCampaignFileRepositoryTest {
+public class ScheduledCampaignFileRepositoryTest {
 
-    private static SchedulingCampaignRepository sut;
+    private static ScheduledCampaignRepository sut;
     private static Path SCHEDULING_CAMPAIGN_FILE;
 
     @BeforeAll
@@ -33,9 +33,9 @@ public class SchedulingCampaignFileRepositoryTest {
     public void should_add_get_and_remove_scheduled_campaign() {
         //// ADD
         // Given
-        SchedulingCampaign sc1 = new SchedulingCampaign(null, 11L, "campaign title 1", LocalDateTime.of(2020, 2, 4, 7, 10));
-        SchedulingCampaign sc2 = new SchedulingCampaign(null, 22L, "campaign title 2", LocalDateTime.of(2021, 3, 5, 8, 11));
-        SchedulingCampaign sc3 = new SchedulingCampaign(null, 33L, "campaign title 3", LocalDateTime.of(2022, 4, 6, 9, 12));
+        ScheduledCampaign sc1 = new ScheduledCampaign(null, 11L, "campaign title 1", LocalDateTime.of(2020, 2, 4, 7, 10));
+        ScheduledCampaign sc2 = new ScheduledCampaign(null, 22L, "campaign title 2", LocalDateTime.of(2021, 3, 5, 8, 11));
+        ScheduledCampaign sc3 = new ScheduledCampaign(null, 33L, "campaign title 3", LocalDateTime.of(2022, 4, 6, 9, 12));
         String expectedAdded =
             "{\n" +
                 "  \"1\" : {\n" +
@@ -94,12 +94,12 @@ public class SchedulingCampaignFileRepositoryTest {
 
         //// GET
         // When
-        List<SchedulingCampaign> scheduledCampaigns = sut.getALl();
+        List<ScheduledCampaign> scheduledCampaigns = sut.getALl();
 
         // Then
         assertThat(scheduledCampaigns).hasSize(2);
-        SchedulingCampaign sc1WithId = new SchedulingCampaign(1L, 11L, "campaign title 1", LocalDateTime.of(2020, 2, 4, 7, 10));
-        SchedulingCampaign sc3WithId = new SchedulingCampaign(3L, 33L, "campaign title 3", LocalDateTime.of(2022, 4, 6, 9, 12));
+        ScheduledCampaign sc1WithId = new ScheduledCampaign(1L, 11L, "campaign title 1", LocalDateTime.of(2020, 2, 4, 7, 10));
+        ScheduledCampaign sc3WithId = new ScheduledCampaign(3L, 33L, "campaign title 3", LocalDateTime.of(2022, 4, 6, 9, 12));
 
         assertThat(scheduledCampaigns).contains(sc1WithId, sc3WithId);
     }
