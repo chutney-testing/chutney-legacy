@@ -131,7 +131,7 @@
 
         <small class="text-muted ml-2">{{ 'global.time.in' | translate }}
             {{currentCampaignExecutionReport.duration | duration}}</small>
-        <small class="text-muted ml-2" *ngIf="currentCampaignExecutionReport">
+        <small class="text-muted ml-2">
             {{ 'global.time.at' | translate }}
             {{currentCampaignExecutionReport.startDate  | amDateFormat: 'DD MMM. YYYY HH:mm' }}
         </small>

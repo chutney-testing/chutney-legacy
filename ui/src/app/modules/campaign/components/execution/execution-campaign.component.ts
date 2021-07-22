@@ -162,14 +162,14 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
         this.campaignService.find(this.campaign.id).subscribe(
             (campaign) => {
                 const sortedReports = campaign.campaignExecutionReports.sort((a, b) => b.executionId - a.executionId);
-                if (this.campaign.campaignExecutionReports[0].executionId !== sortedReports[0].executionId) {
+                if (this.campaign.campaignExecutionReports[0] && this.campaign.campaignExecutionReports[0].executionId !== sortedReports[0].executionId) {
                     // Add new running report
                     this.campaign.campaignExecutionReports.unshift(sortedReports[0]);
                     this.selectReport(sortedReports[0]);
                 } else {
                     // Update running report
                     this.campaign.campaignExecutionReports[0] = sortedReports[0];
-                    if (this.currentCampaignExecutionReport.executionId === sortedReports[0].executionId) {
+                    if (this.currentCampaignExecutionReport && this.currentCampaignExecutionReport.executionId === sortedReports[0].executionId) {
                         this.currentCampaignExecutionReport = sortedReports[0];
                         this.currentScenariosReportsOutlines = newInstance(sortedReports[0].scenarioExecutionReports);
                     }
@@ -264,7 +264,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
             () => this.running = false
         );
         this.campaignSub = timer(this.TIMER).subscribe(() => {
-            this.updateRunningReport();
+            this.loadCampaign(this.campaign.id, true);
         });
     }
 
