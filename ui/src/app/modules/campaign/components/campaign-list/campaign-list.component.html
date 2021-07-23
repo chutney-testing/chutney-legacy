@@ -20,7 +20,7 @@
     <div class="col-md-6 pr-2">
         <div class="input-group mb-3">
             <input type="text" class="form-control" placeholder="{{ 'campaigns.search.placeholder' | translate }}"
-                   [(ngModel)]="campaignFilter">
+                   [ngModel]="campaignFilter" (ngModelChange)="campaignFilterChange($event)">
         </div>
         <div class="row ml-2">
             <div style="min-width: 170px;">
@@ -54,7 +54,7 @@
         <div class="table-responsive" *ngIf="viewedCampaigns.length > 0">
             <table class="table table-sm table-striped table-hover">
                 <tbody>
-                <tr *ngFor="let campaign of (viewedCampaigns | searchTextPipe : campaignFilter:['title','description'])">
+                <tr *ngFor="let campaign of (viewedCampaigns | searchTextPipe : campaignFilter:campaignFilterAttributes)">
                     <td class="small_text w93 align-middle">
                         <a [routerLink]="['/campaign',campaign.id,'execution']"
                            title="{{ 'campaigns.list.item.title.link.title' | translate }} {{campaign.title}}">{{campaign.title}}</a>
