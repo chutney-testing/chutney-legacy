@@ -23,6 +23,7 @@ import com.chutneytesting.execution.domain.scenario.FailedExecutionAttempt;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import com.chutneytesting.instrument.domain.ChutneyMetrics;
+import com.chutneytesting.tools.Try;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,7 +31,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Callable;
@@ -87,7 +87,7 @@ public class CampaignExecutionEngine {
     public List<CampaignExecutionReport> executeByName(String campaignName, String environment, String userId) {
         List<Campaign> campaigns = campaignRepository.findByName(campaignName);
         return campaigns.stream()
-            .map(campaign -> selectExecutionEnvironment(campaign, Optional.ofNullable(environment)))
+            .map(campaign -> selectExecutionEnvironment(campaign, environment))
             .map(campaign -> executeCampaign(campaign, userId))
             .collect(Collectors.toList());
     }
@@ -98,13 +98,14 @@ public class CampaignExecutionEngine {
 
     public CampaignExecutionReport executeById(Long campaignId, String environment, String userId) {
         return Optional.ofNullable(campaignRepository.findById(campaignId))
-            .map(campaign -> selectExecutionEnvironment(campaign, Optional.ofNullable(environment)))
+            .map(campaign -> selectExecutionEnvironment(campaign, environment))
             .map(campaign -> executeCampaign(campaign, userId))
             .orElseThrow(() -> new CampaignNotFoundException(campaignId));
     }
 
     public Optional<CampaignExecutionReport> currentExecution(Long campaignId) {
-        return currentCampaignExecutions.entrySet().stream().filter(e -> e.getKey().equals(campaignId)).map(Entry::getValue).findFirst();
+        return Optional.ofNullable(campaignId)
+            .map(id -> currentCampaignExecutions.get(campaignId));
     }
 
     public List<CampaignExecutionReport> currentExecutions() {
@@ -145,10 +146,18 @@ public class CampaignExecutionEngine {
         } finally {
             campaignExecutionReport.endCampaignExecution();
             LOGGER.info("Save campaign {} execution {} with status {}", campaign.id, campaignExecutionReport.executionId, campaignExecutionReport.status());
-            campaignRepository.saveReport(campaign.id, campaignExecutionReport);
-            metrics.onCampaignExecutionEnded(campaign, campaignExecutionReport);
             currentCampaignExecutionsStopRequests.remove(executionId);
             currentCampaignExecutions.remove(campaign.id);
+
+            Try.exec(() -> {
+                campaignRepository.saveReport(campaign.id, campaignExecutionReport);
+                return null;
+            }).ifFailed(e -> LOGGER.error("Error saving report of campaign {} execution {}", campaign.id, campaignExecutionReport.executionId));
+
+            Try.exec(() -> {
+                metrics.onCampaignExecutionEnded(campaign, campaignExecutionReport);
+                return null;
+            }).ifFailed(e -> LOGGER.error("Error saving metrics for campaign {} execution {}", campaign.id, campaignExecutionReport.executionId));
         }
     }
 
@@ -256,18 +265,14 @@ public class CampaignExecutionEngine {
     }
 
     private void verifyNotAlreadyRunning(Campaign campaign) {
-        Optional<CampaignExecutionReport> currentReport = Optional.ofNullable(currentExecutionReport(campaign.id));
+        Optional<CampaignExecutionReport> currentReport = currentExecution(campaign.id);
         if (currentReport.isPresent() && !currentReport.get().status().isFinal()) {
             throw new CampaignAlreadyRunningException(currentReport.get());
         }
     }
 
-    private Campaign selectExecutionEnvironment(Campaign campaign, Optional<String> environment) {
-        environment.ifPresent(campaign::executionEnvironment);
+    private Campaign selectExecutionEnvironment(Campaign campaign, String environment) {
+        Optional.ofNullable(environment).ifPresent(campaign::executionEnvironment);
         return campaign;
-    }
-
-    private CampaignExecutionReport currentExecutionReport(Long campaignId) {
-        return currentCampaignExecutions.get(campaignId);
     }
 }
