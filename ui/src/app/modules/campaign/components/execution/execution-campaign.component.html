@@ -31,7 +31,8 @@
                 <span class="btn-label">{{ 'global.actions.edit' | translate }}</span>
             </button>
             <button type="button" class="btn btn-outline-danger"
-                    (click)="deleteCampaign(campaign.id, campaign.title)">
+                    (click)="deleteCampaign(campaign.id, campaign.title)"
+                    [disabled]="running">
                 <span class="fa fa-trash mr-2"></span>
                 <span class="btn-label">{{ 'global.actions.delete' | translate }}</span>
             </button>
@@ -56,7 +57,7 @@
         <h2>{{ 'campaigns.execution.last.actual' | translate }}</h2>
         <div class="reports" *ngIf="last">
             <div class="row tile tile-click tile-ko tile-selected"
-                (click)="currentCampaignExecutionReport = null"
+                (click)="selectLastCompleteExecution()"
                 [ngClass]="{
                         'tile-ok': last.allPassed(),
                         'tile-ko': last.hasFailure() && !(last.hasStopped() || last.hasNotExecuted()),

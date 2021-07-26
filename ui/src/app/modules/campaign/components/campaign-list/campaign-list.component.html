@@ -137,7 +137,13 @@
                 <tbody>
                 <tr *ngFor="let report of lastCampaignReports" class="small_text">
                     <td class="w25">{{ report.startDate | amDateFormat: 'DD MMM. YYYY HH:mm' }}</td>
-                    <td class="pl-0 w60">{{ report.campaignName }}</td>
+                    <td class="pl-0 w60">
+                        <a class="table-link"
+                           [routerLink]="['/campaign', campaignIdFromName(report.campaignName), 'execution', report.executionId]"
+                           >
+                            {{ report.campaignName }}
+                        </a>
+                    </td>
                     <td class="pl-0 w5">
                         <chutney-execution-badge [status]="report.status" [spin]="true"></chutney-execution-badge>
                     </td>

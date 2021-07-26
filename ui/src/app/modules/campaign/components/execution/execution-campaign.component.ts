@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
 import { FileSaverService } from 'ngx-filesaver';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
@@ -29,6 +30,7 @@ import { newInstance, sortByAndOrder } from '@shared/tools';
 
 @Component({
     selector: 'chutney-execution-campaign',
+    providers: [Location],
     templateUrl: './execution-campaign.component.html',
     styleUrls: ['./execution-campaign.component.scss']
 })
@@ -96,7 +98,8 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
                 private router: Router,
                 private scenarioService: ScenarioService,
                 private translate: TranslateService,
-                private loginService: LoginService
+                private loginService: LoginService,
+                private location: Location
     ) {
         translate.get('campaigns.confirm.deletion.prefix').subscribe((res: string) => {
             this.deletionConfirmationTextPrefix = res;
@@ -108,7 +111,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.subscriptionLoadCampaign = this.route.params.subscribe((params) => {
-            this.loadCampaign(params['id'], false);
+            this.loadCampaign(params['id'], false, params['execId']);
             this.loadScenarios(params['id']);
         });
         if (this.loginService.hasAuthorization(Authorization.CAMPAIGN_EXECUTE)) {
@@ -125,12 +128,12 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
         this.unsubscribeCampaign();
     }
 
-    loadCampaign(campaignId: number, selectLast: boolean) {
+    private loadCampaign(campaignId: number, selectLast: boolean, executionId: number = null) {
         this.campaignService.find(campaignId).subscribe(
             (campaign) => {
                 if (campaign) {
                     this.campaign = campaign;
-                    this.loadReports(this.campaign, selectLast);
+                    this.loadReports(this.campaign, selectLast, executionId);
                 }
             },
             (error) => {
@@ -139,11 +142,17 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
         );
     }
 
-    loadReports(campaign: Campaign, selectLast: boolean) {
+    private loadReports(campaign: Campaign, selectLast: boolean, executionId: number = null) {
         if (this.campaign.campaignExecutionReports.length > 0) {
             this.sortCurrentCampaignReports();
             if (selectLast) {
                 this.selectReport(campaign.campaignExecutionReports[0]);
+            }
+            if (executionId) {
+                const execution = campaign.campaignExecutionReports.filter(r => r.executionId == executionId);
+                if (execution.length == 1) {
+                    this.selectReport(execution[0]);
+                }
             }
             this.running = CampaignService.existRunningCampaignReport(this.campaign.campaignExecutionReports);
             if (this.running) {
@@ -154,11 +163,16 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
                 );
             }
             this.setChartData(campaign.campaignExecutionReports);
-            this.last = new CampaignReport(this.getLastCompleteReport());
+            this.last = this.getLastCompleteReport();
         }
     }
 
-    updateRunningReport() {
+    selectLastCompleteExecution() {
+        this.currentCampaignExecutionReport = null;
+        this.updateLocation('last');
+    }
+
+    private updateRunningReport() {
         this.campaignService.find(this.campaign.id).subscribe(
             (campaign) => {
                 const sortedReports = campaign.campaignExecutionReports.sort((a, b) => b.executionId - a.executionId);
@@ -188,7 +202,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
         );
     }
 
-    setChartData(reports: Array<CampaignExecutionReport>) {
+    private setChartData(reports: Array<CampaignExecutionReport>) {
         const scenarioOK = reports.filter(r => !r.partialExecution).map(r => r.scenarioExecutionReports
             .filter(s => s.status === 'SUCCESS').length).reverse();
         const scenarioKO = reports.filter(r => !r.partialExecution).map(r => r.scenarioExecutionReports
@@ -197,16 +211,17 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
         this.lineChartLabels = reports.filter(r => !r.partialExecution).map(r => '' + r.executionId).reverse();
     }
 
-    getLastCompleteReport() {
+    private getLastCompleteReport() {
         for (const report of this.campaign.campaignExecutionReports) {
             const campaignReport = new CampaignReport(report);
-            if (!report.partialExecution && !campaignReport.hasNotExecuted() && !campaignReport.hasStopped()) {
-                return report;
+            if (!campaignReport.isRunning() && !report.partialExecution && !campaignReport.hasNotExecuted() && !campaignReport.hasStopped()) {
+                return campaignReport;
             }
         }
+        return null;
     }
 
-    loadScenarios(campaignId) {
+    private loadScenarios(campaignId) {
         this.campaignService.findAllScenarios(campaignId).subscribe(
             (scenarios) => {
                 this.scenarios = scenarios;
@@ -280,6 +295,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
         this.current = new CampaignReport(campaignExecutionReport);
         this.currentCampaignExecutionReport = campaignExecutionReport;
         this.currentScenariosReportsOutlines = newInstance(campaignExecutionReport.scenarioExecutionReports);
+        this.updateLocation(this.currentCampaignExecutionReport.executionId);
     }
 
     private resetOrdering() {
@@ -387,10 +403,14 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
     hasAuthorization(authorizations: Array<Authorization>): boolean {
         return this.loginService.hasAuthorization(authorizations);
     }
+
+    private updateLocation(executionId) {
+        this.location.replaceState('/campaign/' + this.campaign.id + '/execution/' + executionId);
+    }
 }
 
 class CampaignReport {
-    report: CampaignExecutionReport;
+    private report: CampaignExecutionReport;
 
     passed: number;
     failed: number;
@@ -407,7 +427,7 @@ class CampaignReport {
         this.total = this.passed + this.failed + this.stopped + this.notexecuted;
     }
 
-    countScenarioByStatus(status: String, report: CampaignExecutionReport) {
+    private countScenarioByStatus(status: String, report: CampaignExecutionReport) {
         return report.scenarioExecutionReports.filter(s => s.status === status).length;
     }
 
@@ -429,5 +449,9 @@ class CampaignReport {
 
     hasNotExecuted() {
         return this.notexecuted > 0;
+    }
+
+    isRunning() {
+        return 'RUNNING' === this.report.status;
     }
 }

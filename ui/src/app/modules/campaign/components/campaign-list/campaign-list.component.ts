@@ -40,7 +40,7 @@ export class CampaignListComponent implements OnInit, OnDestroy {
                 private router: Router,
                 private translate: TranslateService,
                 private stateService: StateService,
-                private campaignSchedulingService: CampaignSchedulingService,
+                private campaignSchedulingService: CampaignSchedulingService
     ) {
         translate.get('campaigns.confirm.deletion.prefix').subscribe((res: string) => {
             this.deletionConfirmationTextPrefix = res;
@@ -255,5 +255,10 @@ export class CampaignListComponent implements OnInit, OnDestroy {
 
     isFrequencyCampaign(scheduledCampaign: CampaignScheduling) {
         return scheduledCampaign.frequency != null;
+    }
+
+    campaignIdFromName(campaignName: string) {
+        return this.campaigns.filter(c => c.title == campaignName)
+            .map(c => c.id)[0];
     }
 }

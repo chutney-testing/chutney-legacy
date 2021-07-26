@@ -16,6 +16,11 @@ export const CampaignRoute: Routes = [
     },
     {
         path: ':id/execution',
+        redirectTo: ':id/execution/last',
+        pathMatch: 'full'
+    },
+    {
+        path: ':id/execution/:execId',
         component: CampaignExecutionComponent,
         canActivate: [AuthGuard],
         data: { 'authorizations': [ Authorization.CAMPAIGN_READ ] }
