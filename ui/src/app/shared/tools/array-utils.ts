@@ -98,8 +98,8 @@ function normalize(value) {
 }
 
 export function filterOnTextContent(input: any, filter: string, attr: any[]) {
-    if (!input || !filter || !attr) return input;
-    if (attr.length == 0) return input;
+    if (!input || !filter || !attr) { return input; }
+    if (attr.length === 0) { return input; }
 
     return input.filter((item) => {
         return filter === undefined

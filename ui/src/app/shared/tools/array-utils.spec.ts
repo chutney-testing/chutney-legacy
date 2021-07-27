@@ -17,12 +17,12 @@ fdescribe('filterOnTextContent function...', () => {
 
     describe('with objects list...', () => {
         const objects = [
-            { stringKey : "one", numKey: 666 },
-            { stringKey : "two", numKey: 676 },
-            { stringKey : "three", numKey: 677 }
+            { stringKey : 'one', numKey: 666 },
+            { stringKey : 'two', numKey: 676 },
+            { stringKey : 'three', numKey: 677 }
         ];
 
-        describe('should not explode (edges cases)...', () =>{
+        describe('should not explode (edges cases)...', () => {
 
             it('undefined filter', () => {
                 expect(() => filterOnTextContent(objects, undef, undef)).not.toThrow();
@@ -43,8 +43,8 @@ fdescribe('filterOnTextContent function...', () => {
 
         it('should filter on string attribute', () => {
             const expectedFilteredObjects = [
-                { stringKey : "one", numKey: 666 },
-                { stringKey : "two", numKey: 676 }
+                { stringKey : 'one', numKey: 666 },
+                { stringKey : 'two', numKey: 676 }
             ];
             expect(filterOnTextContent(objects, 'o', ['stringKey']))
                 .toEqual(expectedFilteredObjects);
@@ -52,8 +52,8 @@ fdescribe('filterOnTextContent function...', () => {
 
         it('should filter on number attribute', () => {
             const expectedFilteredObjects = [
-                { stringKey : "two", numKey: 676 },
-                { stringKey : "three", numKey: 677 }
+                { stringKey : 'two', numKey: 676 },
+                { stringKey : 'three', numKey: 677 }
             ];
             expect(filterOnTextContent(objects, '7', ['numKey']))
                 .toEqual(expectedFilteredObjects);

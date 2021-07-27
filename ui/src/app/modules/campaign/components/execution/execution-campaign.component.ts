@@ -149,8 +149,8 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
                 this.selectReport(campaign.campaignExecutionReports[0]);
             }
             if (executionId) {
-                const execution = campaign.campaignExecutionReports.filter(r => r.executionId == executionId);
-                if (execution.length == 1) {
+                const execution = campaign.campaignExecutionReports.filter((r) => r.executionId === executionId);
+                if (execution.length === 1) {
                     this.selectReport(execution[0]);
                 }
             }

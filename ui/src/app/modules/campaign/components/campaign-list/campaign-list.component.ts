@@ -258,7 +258,7 @@ export class CampaignListComponent implements OnInit, OnDestroy {
     }
 
     campaignIdFromName(campaignName: string) {
-        return this.campaigns.filter(c => c.title == campaignName)
-            .map(c => c.id)[0];
+        return this.campaigns.filter((c) => c.title === campaignName)
+            .map((c) => c.id)[0];
     }
 }
