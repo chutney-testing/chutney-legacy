@@ -1,8 +1,8 @@
 package com.chutneytesting.execution.domain.schedule;
 
 import com.chutneytesting.design.domain.campaign.FREQUENCY;
-import com.chutneytesting.design.domain.campaign.ScheduledCampaign;
-import com.chutneytesting.design.domain.campaign.ScheduledCampaignRepository;
+import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaign;
+import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaignRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -19,19 +19,19 @@ public class CampaignScheduler {
     public static final String SCHEDULER_EXECUTE_USER = "auto";
     private static final Logger LOGGER = LoggerFactory.getLogger(CampaignScheduler.class);
 
-    private LocalDateTime timeScheduledCampaignsLastExecution;
+    private LocalDateTime dailyScheduledCampaignsLastExecution;
     private final CampaignExecutionEngine campaignExecutionEngine;
-    private final TimeScheduledCampaignRepository timeScheduledCampaignRepository;
-    private final ScheduledCampaignRepository scheduledCampaignRepository;
+    private final DailyScheduledCampaignRepository dailyScheduledCampaignRepository;
+    private final PeriodicScheduledCampaignRepository periodicScheduledCampaignRepository;
     private final Clock clock;
 
-    public CampaignScheduler(CampaignExecutionEngine campaignExecutionEngine, TimeScheduledCampaignRepository timeScheduledCampaignRepository, Clock clock, ScheduledCampaignRepository scheduledCampaignRepository) {
+    public CampaignScheduler(CampaignExecutionEngine campaignExecutionEngine, DailyScheduledCampaignRepository dailyScheduledCampaignRepository, Clock clock, PeriodicScheduledCampaignRepository periodicScheduledCampaignRepository) {
         this.campaignExecutionEngine = campaignExecutionEngine;
-        this.timeScheduledCampaignRepository = timeScheduledCampaignRepository;
+        this.dailyScheduledCampaignRepository = dailyScheduledCampaignRepository;
         this.clock = clock;
-        this.scheduledCampaignRepository = scheduledCampaignRepository;
+        this.periodicScheduledCampaignRepository = periodicScheduledCampaignRepository;
 
-        this.timeScheduledCampaignsLastExecution = LocalDateTime.now(this.clock).minusMinutes(10);
+        this.dailyScheduledCampaignsLastExecution = LocalDateTime.now(this.clock).minusMinutes(10);
     }
 
     @Async
@@ -44,8 +44,8 @@ public class CampaignScheduler {
             .forEach(this::executeScheduledCampaignById);
     }
 
-    public LocalDateTime timeScheduledCampaignsLastExecution() {
-        return timeScheduledCampaignsLastExecution;
+    public LocalDateTime dailyScheduledCampaignsLastExecution() {
+        return dailyScheduledCampaignsLastExecution;
     }
 
     private void executeScheduledCampaignById(Long campaignId) {
@@ -59,8 +59,8 @@ public class CampaignScheduler {
 
     private Stream<Long> scheduledCampaignIdsToExecute() {
         try {
-            return scheduledCampaignRepository.getALl().stream()
-                .filter(sc -> sc.scheduledDate.isBefore(LocalDateTime.now(clock)))
+            return periodicScheduledCampaignRepository.getALl().stream()
+                .filter(sc -> sc.nextExecutionDate.isBefore(LocalDateTime.now(clock)))
                 .peek(this::prepareScheduledCampaignForNextExecution)
                 .map(sc -> sc.campaignId);
         } catch (Exception e) {
@@ -69,22 +69,22 @@ public class CampaignScheduler {
         }
     }
 
-    private void prepareScheduledCampaignForNextExecution(ScheduledCampaign scheduledCampaign) {
+    private void prepareScheduledCampaignForNextExecution(PeriodicScheduledCampaign periodicScheduledCampaign) {
         try {
-            if (!FREQUENCY.EMPTY.equals(scheduledCampaign.frequency)) {
-                scheduledCampaignRepository.add(scheduledCampaign.nextScheduledExecution());
+            if (!FREQUENCY.EMPTY.equals(periodicScheduledCampaign.frequency)) {
+                periodicScheduledCampaignRepository.add(periodicScheduledCampaign.nextScheduledExecution());
             }
-            scheduledCampaignRepository.removeById(scheduledCampaign.id);
+            periodicScheduledCampaignRepository.removeById(periodicScheduledCampaign.id);
         } catch (Exception e) {
-            LOGGER.error("Error preparing scheduled campaign next execution [{}]", scheduledCampaign.id, e);
+            LOGGER.error("Error preparing scheduled campaign next execution [{}]", periodicScheduledCampaign.id, e);
         }
     }
 
     private Stream<Long> timeScheduledCampaignIdsToExecute() {
         try {
             final LocalDateTime newLocalDateTime = LocalDateTime.now(clock);
-            final List<Long> campaignIdsToExecute = timeScheduledCampaignRepository.getCampaignScheduledAfter(timeScheduledCampaignsLastExecution);
-            timeScheduledCampaignsLastExecution = newLocalDateTime;
+            final List<Long> campaignIdsToExecute = dailyScheduledCampaignRepository.getCampaignScheduledAfter(dailyScheduledCampaignsLastExecution);
+            dailyScheduledCampaignsLastExecution = newLocalDateTime;
             return campaignIdsToExecute.stream();
         } catch (Exception e) {
             LOGGER.error("Error retrieving time scheduled campaigns", e);

@@ -3,7 +3,7 @@ package com.chutneytesting.execution.domain.schedule;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface TimeScheduledCampaignRepository {
+public interface DailyScheduledCampaignRepository {
 
     /**
      * @param lastExecutionDateTime

@@ -14,15 +14,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.chutneytesting.design.domain.campaign.FREQUENCY;
-import com.chutneytesting.design.domain.campaign.ScheduledCampaign;
-import com.chutneytesting.design.domain.campaign.ScheduledCampaignRepository;
+import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaign;
+import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaignRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,164 +33,140 @@ public class CampaignSchedulerTest {
 
     private CampaignScheduler sut;
 
-    private final TimeScheduledCampaignRepository timeScheduledCampaignRepository = mock(TimeScheduledCampaignRepository.class);
+    private final DailyScheduledCampaignRepository dailyScheduledCampaignRepository = mock(DailyScheduledCampaignRepository.class);
     private final CampaignExecutionEngine campaignExecutionEngine = mock(CampaignExecutionEngine.class);
-    private final ScheduledCampaignRepository scheduledCampaignRepository = mock(ScheduledCampaignRepository.class);
+    private final PeriodicScheduledCampaignRepository periodicScheduledCampaignRepository = mock(PeriodicScheduledCampaignRepository.class);
 
     private Clock clock;
 
     @BeforeEach
     public void setUp() {
         clock = Clock.systemDefaultZone();
-        sut = new CampaignScheduler(campaignExecutionEngine, timeScheduledCampaignRepository, clock, scheduledCampaignRepository);
+        sut = new CampaignScheduler(campaignExecutionEngine, dailyScheduledCampaignRepository, clock, periodicScheduledCampaignRepository);
     }
 
     @Test
-    void should_accepts_10_minutes_late_when_executing_time_scheduled_campaigns_for_the_first_time() {
-        LocalDateTime timeScheduledCampaignsLastExecutionInit = sut.timeScheduledCampaignsLastExecution();
-        sut.executeScheduledCampaigns();
-        LocalDateTime timeScheduledCampaignsLastExecution = sut.timeScheduledCampaignsLastExecution();
-
-        LocalDateTime afterDateTime = capturedDateTimesToSelectTimeScheduledCampaigns(1).get(0);
-
-        assertThat(afterDateTime).isEqualTo(timeScheduledCampaignsLastExecutionInit);
-        assertThat(timeScheduledCampaignsLastExecution).isAfterOrEqualTo(timeScheduledCampaignsLastExecutionInit.plusMinutes(10));
+    void should_init_last_execution_time_of_daily_scheduled_campaigns_10_minutes_before_init_time() {
+        LocalDateTime dailyScheduledCampaignsLastExecutionInit = sut.dailyScheduledCampaignsLastExecution();
+        assertThat(dailyScheduledCampaignsLastExecutionInit).isBeforeOrEqualTo(now(clock).minusMinutes(10));
     }
 
     @Test
-    void should_execute_time_scheduled_campaigns_selecting_them_by_time_frames() {
-        int nb_executions = 5;
-        List<Long> timeScheduledCampaigns = stubTimeScheduledCampaigns(2);
-
-        IntStream.range(0, nb_executions).forEach(
-            i -> sut.executeScheduledCampaigns()
-        );
-
-        List<LocalDateTime> values = capturedDateTimesToSelectTimeScheduledCampaigns(nb_executions);
-        assertThat(values).hasSize(nb_executions);
-        assertThat(values).isSortedAccordingTo(LocalDateTime::compareTo);
-
-        assertCampaignWasExecuted(timeScheduledCampaigns.get(0), nb_executions);
-        assertCampaignWasExecuted(timeScheduledCampaigns.get(1), nb_executions);
-    }
-
-    @ParameterizedTest()
-    @EnumSource(FREQUENCY.class)
-    void should_execute_campaign_as_user_when_executing_scheduled_campaign(FREQUENCY frequency) {
-        ScheduledCampaign lastScheduledCampaignExecution = stubScheduledCampaignsWith(singletonList(
-            Pair.of(now(clock).minusSeconds(5), frequency)
-        )).get(0);
+    void should_use_and_update_last_execution_time_of_daily_scheduled_campaigns_when_execute() {
+        LocalDateTime dailyScheduledCampaignsLastExecutionInit = sut.dailyScheduledCampaignsLastExecution();
+        List<Long> dailyScheduledCampaignId = createDailyScheduledCampaignIds(1);
+        when(dailyScheduledCampaignRepository.getCampaignScheduledAfter(any()))
+            .thenReturn(dailyScheduledCampaignId);
 
         sut.executeScheduledCampaigns();
 
-        assertCampaignWasExecuted(lastScheduledCampaignExecution.campaignId, 1);
+        ArgumentCaptor<LocalDateTime> afterDateTimeCapture = ArgumentCaptor.forClass(LocalDateTime.class);
+        verify(dailyScheduledCampaignRepository).getCampaignScheduledAfter(afterDateTimeCapture.capture());
+        List<LocalDateTime> values = afterDateTimeCapture.getAllValues();
+        assertThat(values).hasSize(1);
+        assertThat(values.get(0)).isEqualTo(dailyScheduledCampaignsLastExecutionInit);
+        verify(campaignExecutionEngine).executeById(dailyScheduledCampaignId.get(0), SCHEDULER_EXECUTE_USER);
     }
 
     @ParameterizedTest()
     @EnumSource(FREQUENCY.class)
-    void should_remove_last_scheduled_execution_when_executing_scheduled_campaign(FREQUENCY frequency) {
-        ScheduledCampaign lastScheduledCampaignExecution = stubScheduledCampaignsWith(singletonList(
-            Pair.of(now(clock).minusSeconds(5), frequency)
-        )).get(0);
+    void should_execute_campaign_as_internal_user_named_auto_when_executing_periodic_scheduled_campaign(FREQUENCY frequency) {
+        List<PeriodicScheduledCampaign> periodicScheduledCampaign = createPeriodicScheduledCampaigns(singletonList(frequency));
+        when(periodicScheduledCampaignRepository.getALl())
+            .thenReturn(
+                periodicScheduledCampaign
+            );
 
         sut.executeScheduledCampaigns();
 
-        verify(scheduledCampaignRepository).removeById(lastScheduledCampaignExecution.id);
+        verify(campaignExecutionEngine).executeById(periodicScheduledCampaign.get(0).campaignId, "auto");
     }
 
     @ParameterizedTest()
     @EnumSource(FREQUENCY.class)
-    void should_add_next_scheduled_execution_when_executing_scheduled_campaign_except_for_EMPTY_frequency(FREQUENCY frequency) {
-        clock = Clock.fixed(clock.instant(), clock.getZone());
+    void should_remove_last_execution_when_executing_periodic_scheduled_campaign(FREQUENCY frequency) {
+        List<PeriodicScheduledCampaign> periodicScheduledCampaign = createPeriodicScheduledCampaigns(singletonList(frequency));
+        when(periodicScheduledCampaignRepository.getALl())
+            .thenReturn(
+                periodicScheduledCampaign
+            );
 
-        ScheduledCampaign lastScheduledCampaignExecution = stubScheduledCampaignsWith(singletonList(
-            Pair.of(now(clock).minusSeconds(5), frequency)
-        )).get(0);
+        sut.executeScheduledCampaigns();
+
+        verify(periodicScheduledCampaignRepository).removeById(periodicScheduledCampaign.get(0).id);
+    }
+
+    @ParameterizedTest()
+    @EnumSource(FREQUENCY.class)
+    void should_add_next_execution_when_executing_periodic_scheduled_campaign_except_for_EMPTY_frequency(FREQUENCY frequency) {
+        List<PeriodicScheduledCampaign> periodicScheduledCampaign = createPeriodicScheduledCampaigns(singletonList(frequency));
+        when(periodicScheduledCampaignRepository.getALl())
+            .thenReturn(
+                periodicScheduledCampaign
+            );
 
         sut.executeScheduledCampaigns();
 
         if (EMPTY.equals(frequency)) {
-            verify(scheduledCampaignRepository, times(0)).add(any());
+            verify(periodicScheduledCampaignRepository, times(0)).add(any());
         } else {
-            verify(scheduledCampaignRepository).add(
-                lastScheduledCampaignExecution.nextScheduledExecution()
+            verify(periodicScheduledCampaignRepository).add(
+                periodicScheduledCampaign.get(0).nextScheduledExecution()
             );
         }
     }
 
     @Test
     void should_not_explode_when_runtime_exceptions_occur_retrieving_campaigns_to_execute() {
-        when(scheduledCampaignRepository.getALl())
+        when(periodicScheduledCampaignRepository.getALl())
             .thenThrow(new RuntimeException("scheduledCampaignRepository.getAll()"));
-        when(timeScheduledCampaignRepository.getCampaignScheduledAfter(any()))
+        when(dailyScheduledCampaignRepository.getCampaignScheduledAfter(any()))
             .thenThrow(new RuntimeException("timeScheduledCampaignRepository.getCampaignScheduledAfter()"));
 
         Assertions.assertDoesNotThrow(
             () -> sut.executeScheduledCampaigns()
         );
 
-        verify(scheduledCampaignRepository).getALl();
-        verify(timeScheduledCampaignRepository).getCampaignScheduledAfter(any());
+        verify(periodicScheduledCampaignRepository).getALl();
+        verify(dailyScheduledCampaignRepository).getCampaignScheduledAfter(any());
     }
 
     @Test
     void should_not_explode_when_runtime_exceptions_occur_executing_campaigns() {
-        List<ScheduledCampaign> scheduledCampaigns = stubScheduledCampaignsWith(asList(
-            Pair.of(now(clock).minusSeconds(5), FREQUENCY.MONTHLY),
-            Pair.of(now(clock).minusSeconds(5), FREQUENCY.DAILY)
-        ));
-        List<Long> timeScheduledCampaigns = stubTimeScheduledCampaigns(2);
+        List<PeriodicScheduledCampaign> periodicScheduledCampaigns = createPeriodicScheduledCampaigns(asList(FREQUENCY.MONTHLY, FREQUENCY.DAILY));
+        when(periodicScheduledCampaignRepository.getALl())
+            .thenReturn(
+                periodicScheduledCampaigns
+            );
+        List<Long> dailyScheduledCampaigns = createDailyScheduledCampaignIds(2);
+        when(dailyScheduledCampaignRepository.getCampaignScheduledAfter(any()))
+            .thenReturn(dailyScheduledCampaigns);
 
-        when(campaignExecutionEngine.executeById(scheduledCampaigns.get(0).campaignId, SCHEDULER_EXECUTE_USER))
+        when(campaignExecutionEngine.executeById(periodicScheduledCampaigns.get(0).campaignId, SCHEDULER_EXECUTE_USER))
             .thenThrow(new RuntimeException("campaignExecutionEngine.executeById"));
-        when(campaignExecutionEngine.executeById(timeScheduledCampaigns.get(1), SCHEDULER_EXECUTE_USER))
+        when(campaignExecutionEngine.executeById(dailyScheduledCampaigns.get(1), SCHEDULER_EXECUTE_USER))
             .thenThrow(new RuntimeException("campaignExecutionEngine.executeById"));
 
         Assertions.assertDoesNotThrow(
             () -> sut.executeScheduledCampaigns()
         );
 
-        assertCampaignWasExecuted(null, scheduledCampaigns.size() + timeScheduledCampaigns.size());
+        verify(campaignExecutionEngine, times(periodicScheduledCampaigns.size() + dailyScheduledCampaigns.size())).executeById(any(), any());
     }
 
-    private void assertCampaignWasExecuted(Long campaignId, int nb_executions) {
-        if (campaignId == null) {
-            verify(campaignExecutionEngine, times(nb_executions)).executeById(any(), any());
-        } else {
-            verify(campaignExecutionEngine, times(nb_executions)).executeById(campaignId, SCHEDULER_EXECUTE_USER);
-        }
-    }
-
-    private List<LocalDateTime> capturedDateTimesToSelectTimeScheduledCampaigns(int nbCalls) {
-        ArgumentCaptor<LocalDateTime> afterDateTimeCapture = ArgumentCaptor.forClass(LocalDateTime.class);
-        verify(timeScheduledCampaignRepository, times(nbCalls)).getCampaignScheduledAfter(afterDateTimeCapture.capture());
-        return afterDateTimeCapture.getAllValues();
-    }
-
-    private List<Long> stubTimeScheduledCampaigns(int nbStubs) {
+    private List<Long> createDailyScheduledCampaignIds(int nbIds) {
         Random rand = new Random();
-        List<Long> campaignIds = IntStream.range(0, nbStubs)
+        return IntStream.range(0, nbIds)
             .mapToObj(i -> rand.nextLong())
             .collect(toList());
-        when(timeScheduledCampaignRepository.getCampaignScheduledAfter(any()))
-            .thenReturn(campaignIds);
-        return campaignIds;
     }
 
-    private List<ScheduledCampaign> stubScheduledCampaignsWith(List<Pair<LocalDateTime, FREQUENCY>> scheduledDatesAndFrequencies) {
+    private List<PeriodicScheduledCampaign> createPeriodicScheduledCampaigns(List<FREQUENCY> frequencies) {
         Random rand = new Random();
-
-        List<ScheduledCampaign> scheduledCampaigns = scheduledDatesAndFrequencies.stream()
-            .map(p ->
-                new ScheduledCampaign(rand.nextLong(), rand.nextLong(), "title", p.getLeft(), p.getRight())
+        return frequencies.stream()
+            .map(f ->
+                new PeriodicScheduledCampaign(rand.nextLong(), rand.nextLong(), "title", now(clock).minusSeconds(5), f)
             )
             .collect(toList());
-
-        when(scheduledCampaignRepository.getALl())
-            .thenReturn(
-                scheduledCampaigns
-            );
-
-        return scheduledCampaigns;
     }
 }

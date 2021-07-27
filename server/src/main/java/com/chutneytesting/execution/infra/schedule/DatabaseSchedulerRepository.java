@@ -1,7 +1,7 @@
 package com.chutneytesting.execution.infra.schedule;
 
 import com.chutneytesting.design.domain.campaign.Campaign;
-import com.chutneytesting.execution.domain.schedule.TimeScheduledCampaignRepository;
+import com.chutneytesting.execution.domain.schedule.DailyScheduledCampaignRepository;
 import com.google.common.collect.ImmutableMap;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,7 +17,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DatabaseSchedulerRepository implements TimeScheduledCampaignRepository {
+public class DatabaseSchedulerRepository implements DailyScheduledCampaignRepository {
 
     private final Clock clock;
     private final NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate;

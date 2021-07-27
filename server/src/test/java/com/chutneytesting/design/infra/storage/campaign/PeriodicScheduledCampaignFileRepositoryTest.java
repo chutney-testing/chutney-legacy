@@ -3,8 +3,8 @@ package com.chutneytesting.design.infra.storage.campaign;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.design.domain.campaign.ScheduledCampaign;
-import com.chutneytesting.design.domain.campaign.ScheduledCampaignRepository;
+import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaign;
+import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaignRepository;
 import com.chutneytesting.tools.file.FileUtils;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -15,9 +15,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-public class ScheduledCampaignFileRepositoryTest {
+public class PeriodicScheduledCampaignFileRepositoryTest {
 
-    private static ScheduledCampaignRepository sut;
+    private static PeriodicScheduledCampaignRepository sut;
     private static Path SCHEDULING_CAMPAIGN_FILE;
 
     @BeforeAll
@@ -33,9 +33,9 @@ public class ScheduledCampaignFileRepositoryTest {
     public void should_add_get_and_remove_scheduled_campaign() {
         //// ADD
         // Given
-        ScheduledCampaign sc1 = new ScheduledCampaign(null, 11L, "campaign title 1", LocalDateTime.of(2020, 2, 4, 7, 10));
-        ScheduledCampaign sc2 = new ScheduledCampaign(null, 22L, "campaign title 2", LocalDateTime.of(2021, 3, 5, 8, 11));
-        ScheduledCampaign sc3 = new ScheduledCampaign(null, 33L, "campaign title 3", LocalDateTime.of(2022, 4, 6, 9, 12));
+        PeriodicScheduledCampaign sc1 = new PeriodicScheduledCampaign(null, 11L, "campaign title 1", LocalDateTime.of(2020, 2, 4, 7, 10));
+        PeriodicScheduledCampaign sc2 = new PeriodicScheduledCampaign(null, 22L, "campaign title 2", LocalDateTime.of(2021, 3, 5, 8, 11));
+        PeriodicScheduledCampaign sc3 = new PeriodicScheduledCampaign(null, 33L, "campaign title 3", LocalDateTime.of(2022, 4, 6, 9, 12));
         String expectedAdded =
             "{\n" +
                 "  \"1\" : {\n" +
@@ -94,13 +94,13 @@ public class ScheduledCampaignFileRepositoryTest {
 
         //// GET
         // When
-        List<ScheduledCampaign> scheduledCampaigns = sut.getALl();
+        List<PeriodicScheduledCampaign> periodicScheduledCampaigns = sut.getALl();
 
         // Then
-        assertThat(scheduledCampaigns).hasSize(2);
-        ScheduledCampaign sc1WithId = new ScheduledCampaign(1L, 11L, "campaign title 1", LocalDateTime.of(2020, 2, 4, 7, 10));
-        ScheduledCampaign sc3WithId = new ScheduledCampaign(3L, 33L, "campaign title 3", LocalDateTime.of(2022, 4, 6, 9, 12));
+        assertThat(periodicScheduledCampaigns).hasSize(2);
+        PeriodicScheduledCampaign sc1WithId = new PeriodicScheduledCampaign(1L, 11L, "campaign title 1", LocalDateTime.of(2020, 2, 4, 7, 10));
+        PeriodicScheduledCampaign sc3WithId = new PeriodicScheduledCampaign(3L, 33L, "campaign title 3", LocalDateTime.of(2022, 4, 6, 9, 12));
 
-        assertThat(scheduledCampaigns).contains(sc1WithId, sc3WithId);
+        assertThat(periodicScheduledCampaigns).contains(sc1WithId, sc3WithId);
     }
 }
