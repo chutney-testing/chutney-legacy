@@ -6,7 +6,7 @@ import { Authorization } from '@model';
 import { LoginService } from '@core/services';
 import { HasAuthorizationDirective } from './hasAuthorization.directive';
 
-fdescribe('hasAuthorization directive...', () => {
+describe('hasAuthorization directive...', () => {
 
     const loginService = jasmine.createSpyObj('LoginService', ['hasAuthorization']);
     // Default stub

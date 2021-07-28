@@ -92,10 +92,15 @@ export function pairwise<T>(list: Array<T>): Array<Array<T>> {
 }
 
 function normalize(value) {
-    return value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    return value.toLowerCase ?
+        value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') :
+        '' + value;
 }
 
 export function filterOnTextContent(input: any, filter: string, attr: any[]) {
+    if (!input || !filter || !attr) { return input; }
+    if (attr.length === 0) { return input; }
+
     return input.filter((item) => {
         return filter === undefined
             || filter === ''

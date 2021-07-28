@@ -25,6 +25,7 @@ export class CampaignListComponent implements OnInit, OnDestroy {
     jiraUrl = '';
     isScheduled: Boolean;
     // Filter
+    campaignFilterAttributes = ['title', 'description', 'id'];
     campaignFilter: string;
     viewedCampaigns: Array<Campaign> = [];
     tagFilter = new SelectableTags<String>();
@@ -39,7 +40,7 @@ export class CampaignListComponent implements OnInit, OnDestroy {
                 private router: Router,
                 private translate: TranslateService,
                 private stateService: StateService,
-                private campaignSchedulingService: CampaignSchedulingService,
+                private campaignSchedulingService: CampaignSchedulingService
     ) {
         translate.get('campaigns.confirm.deletion.prefix').subscribe((res: string) => {
             this.deletionConfirmationTextPrefix = res;
@@ -91,6 +92,7 @@ export class CampaignListComponent implements OnInit, OnDestroy {
                     this.removeJiraLink(id);
                     this.campaigns.splice(this.getIndexFromId(id), 1);
                     this.campaigns = this.campaigns.slice();
+                    this.applyFilters();
                 });
         }
     }
@@ -118,6 +120,11 @@ export class CampaignListComponent implements OnInit, OnDestroy {
         this.applyFilters();
     }
 
+    campaignFilterChange(campaignFilter: string) {
+        this.campaignFilter = campaignFilter;
+        this.applyFilters();
+    }
+
     toggleNoTagFilter() {
         this.tagFilter.toggleNoTag();
         this.stateService.changeCampaignNoTag(this.tagFilter.isNoTagSelected());
@@ -131,7 +138,7 @@ export class CampaignListComponent implements OnInit, OnDestroy {
     }
 
     applyFilters() {
-        this.viewedCampaigns = filterOnTextContent(this.campaigns, this.campaignFilter, ['title', 'id']);
+        this.viewedCampaigns = filterOnTextContent(this.campaigns, this.campaignFilter, this.campaignFilterAttributes);
         this.viewedCampaigns = this.filterOnAttributes();
     }
 
@@ -248,5 +255,10 @@ export class CampaignListComponent implements OnInit, OnDestroy {
 
     isFrequencyCampaign(scheduledCampaign: CampaignScheduling) {
         return scheduledCampaign.frequency != null;
+    }
+
+    campaignIdFromName(campaignName: string) {
+        return this.campaigns.filter((c) => c.title === campaignName)
+            .map((c) => c.id)[0];
     }
 }
