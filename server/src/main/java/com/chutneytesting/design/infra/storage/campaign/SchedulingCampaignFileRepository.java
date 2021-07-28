@@ -4,8 +4,8 @@ import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING
 import static com.chutneytesting.design.domain.campaign.FREQUENCY.tofrequency;
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
 
-import com.chutneytesting.design.domain.campaign.SchedulingCampaign;
-import com.chutneytesting.design.domain.campaign.SchedulingCampaignRepository;
+import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaign;
+import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaignRepository;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,7 +28,7 @@ import org.springframework.stereotype.Repository;
  * Scheduling campaign persistence.
  */
 @Repository
-public class SchedulingCampaignFileRepository implements SchedulingCampaignRepository {
+public class SchedulingCampaignFileRepository implements PeriodicScheduledCampaignRepository {
 
     private static final Path ROOT_DIRECTORY_NAME = Paths.get("scheduling");
     private static final String SCHEDULING_CAMPAIGNS_FILE = "schedulingCampaigns.json";
@@ -51,13 +51,13 @@ public class SchedulingCampaignFileRepository implements SchedulingCampaignRepos
     }
 
     @Override
-    public SchedulingCampaign add(SchedulingCampaign schedulingCampaign) {
+    public PeriodicScheduledCampaign add(PeriodicScheduledCampaign periodicScheduledCampaign) {
         Map<String, SchedulingCampaignDto> schedulingCampaigns = readFromDisk();
         long id = currentMaxId.incrementAndGet();
-        schedulingCampaigns.put(String.valueOf(id), toDto(id, schedulingCampaign));
+        schedulingCampaigns.put(String.valueOf(id), toDto(id, periodicScheduledCampaign));
         writeOnDisk(resolvedFilePath, schedulingCampaigns);
 
-        return schedulingCampaign;
+        return periodicScheduledCampaign;
     }
 
     @Override
@@ -68,7 +68,7 @@ public class SchedulingCampaignFileRepository implements SchedulingCampaignRepos
     }
 
     @Override
-    public List<SchedulingCampaign> getALl() {
+    public List<PeriodicScheduledCampaign> getALl() {
         return readFromDisk().entrySet().stream()
             .map(e -> this.fromDto(e.getKey(), e.getValue()))
             .collect(Collectors.toList());
@@ -103,12 +103,12 @@ public class SchedulingCampaignFileRepository implements SchedulingCampaignRepos
     }
 
 
-    private SchedulingCampaign fromDto(String id, SchedulingCampaignDto dto) {
-        return new SchedulingCampaign(Long.valueOf(dto.id), dto.campaignId, dto.campaignTitle, dto.schedulingDate, tofrequency(dto.frequency));
+    private PeriodicScheduledCampaign fromDto(String id, SchedulingCampaignDto dto) {
+        return new PeriodicScheduledCampaign(Long.valueOf(dto.id), dto.campaignId, dto.campaignTitle, dto.schedulingDate, tofrequency(dto.frequency));
     }
 
-    private SchedulingCampaignDto toDto(long id, SchedulingCampaign schedulingCampaign) {
-        return new SchedulingCampaignDto(String.valueOf(id), schedulingCampaign.campaignId, schedulingCampaign.campaignTitle, schedulingCampaign.getSchedulingDate(), schedulingCampaign.frequency.label);
+    private SchedulingCampaignDto toDto(long id, PeriodicScheduledCampaign periodicScheduledCampaign) {
+        return new SchedulingCampaignDto(String.valueOf(id), periodicScheduledCampaign.campaignId, periodicScheduledCampaign.campaignTitle, periodicScheduledCampaign.nextExecutionDate, periodicScheduledCampaign.frequency.label);
     }
 
 
