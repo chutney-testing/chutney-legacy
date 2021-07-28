@@ -16,7 +16,7 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class DatabaseDailyPeriodicPeriodicScheduledCampaignRepositoryTest extends AbstractLocalDatabaseTest {
+public class DatabaseDailyScheduledCampaignRepositoryTest extends AbstractLocalDatabaseTest {
 
     private DatabaseSchedulerRepository schedulerRepo;
     private Clock clock;
