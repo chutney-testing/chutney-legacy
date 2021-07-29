@@ -1,8 +1,6 @@
 package com.chutneytesting.design.domain.campaign;
 
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,14 +19,8 @@ public class Campaign {
     public final String externalDatasetId;
     public final List<String> tags;
 
-    private final LocalTime scheduleTime;
+    public final LocalTime scheduleTime;
     private String environment;
-
-    public static final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-        .appendPattern("HH")
-        .appendLiteral(":")
-        .appendPattern("mm")
-        .toFormatter();
 
     public Campaign(Long id,
                     String title,
@@ -56,10 +48,6 @@ public class Campaign {
 
     public void addScenario(String scenarioId) {
         scenarioIds.add(scenarioId);
-    }
-
-    public String scheduleTimeAsString() {
-        return scheduleTime != null ? scheduleTime.format(formatter) : null;
     }
 
     public void executionEnvironment(String environment) {
