@@ -58,10 +58,6 @@ public class Campaign {
         scenarioIds.add(scenarioId);
     }
 
-    public LocalTime getScheduleTime() {
-        return scheduleTime;
-    }
-
     public String scheduleTimeAsString() {
         return scheduleTime != null ? scheduleTime.format(formatter) : null;
     }

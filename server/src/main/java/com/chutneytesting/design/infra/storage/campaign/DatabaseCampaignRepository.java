@@ -104,7 +104,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
             campaign.description,
             campaign.scenarioIds,
             parameters,
-            campaign.getScheduleTime(),
+            campaign.scheduleTime,
             campaign.executionEnvironment(),
             campaign.parallelRun,
             campaign.retryAuto,
