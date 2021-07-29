@@ -62,7 +62,7 @@ public class Campaign {
         return scheduleTime;
     }
 
-    public String getStringScheduleTime() {
+    public String scheduleTimeAsString() {
         return scheduleTime != null ? scheduleTime.format(formatter) : null;
     }
 
