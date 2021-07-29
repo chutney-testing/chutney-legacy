@@ -1,6 +1,5 @@
 package com.chutneytesting.execution.infra.schedule;
 
-import com.chutneytesting.design.domain.campaign.Campaign;
 import com.chutneytesting.execution.domain.schedule.DailyScheduledCampaignRepository;
 import com.google.common.collect.ImmutableMap;
 import java.sql.ResultSet;
@@ -9,6 +8,8 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
@@ -18,6 +19,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DatabaseSchedulerRepository implements DailyScheduledCampaignRepository {
+
+    private static final DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder()
+        .appendPattern("HH")
+        .appendLiteral(":")
+        .appendPattern("mm")
+        .toFormatter();
 
     private final Clock clock;
     private final NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate;
@@ -61,7 +68,7 @@ public class DatabaseSchedulerRepository implements DailyScheduledCampaignReposi
         public Pair<Long, LocalTime> mapRow(ResultSet rs, int rowNum) throws SQLException {
             final Long id = rs.getLong("ID");
             final String scheduledTime = rs.getString("SCHEDULE_TIME");
-            return Pair.of(id, LocalTime.parse(scheduledTime, Campaign.formatter));
+            return Pair.of(id, LocalTime.parse(scheduledTime, FORMATTER));
         }
     }
 }

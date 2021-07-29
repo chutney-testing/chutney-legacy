@@ -2,7 +2,6 @@ package com.chutneytesting.execution.infra.schedule;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.design.domain.campaign.Campaign;
 import com.chutneytesting.tests.AbstractLocalDatabaseTest;
 import java.time.Clock;
 import java.time.LocalDate;
@@ -10,6 +9,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class DatabaseDailyScheduledCampaignRepositoryTest extends AbstractLocalDatabaseTest {
+
+    private static final DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder()
+        .appendPattern("HH")
+        .appendLiteral(":")
+        .appendPattern("mm")
+        .toFormatter();
 
     private DatabaseSchedulerRepository schedulerRepo;
     private Clock clock;
@@ -45,7 +52,7 @@ public class DatabaseDailyScheduledCampaignRepositoryTest extends AbstractLocalD
     private void createCampaign(Long id, LocalTime scheduleTime) {
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("campaignId", id);
-        parameters.put("scheduledTime", scheduleTime != null ? scheduleTime.format(Campaign.formatter) : null);
+        parameters.put("scheduledTime", scheduleTime != null ? scheduleTime.format(FORMATTER) : null);
 
         final String sql = "insert into campaign (id, title, description, schedule_time) values (:campaignId, 'test campaign', 'description', :scheduledTime)";
         namedParameterJdbcTemplate.update(sql, parameters);

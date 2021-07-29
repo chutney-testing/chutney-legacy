@@ -12,6 +12,8 @@ import com.google.common.collect.ImmutableMap;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +31,14 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class DatabaseCampaignRepository implements CampaignRepository {
+
     private static final CampaignRepositoryRowMapper CAMPAIGN_ENTITY_ROW_MAPPER = new CampaignRepositoryRowMapper();
+    private static final DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder()
+        .appendPattern("HH")
+        .appendLiteral(":")
+        .appendPattern("mm")
+        .toFormatter();
+
 
     private final NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate;
     private final CampaignExecutionRepository campaignExecutionRepository;
@@ -155,6 +164,13 @@ public class DatabaseCampaignRepository implements CampaignRepository {
         return campaignExecutionRepository.findExecutionHistory(campaignId);
     }
 
+    private static String scheduleTimeToString(LocalTime scheduleTime) {
+        return scheduleTime != null ? scheduleTime.format(FORMATTER) : null;
+    }
+
+    private static LocalTime stringToScheduleTime(String string) {
+        return string != null ? LocalTime.parse(string, FORMATTER) : null;
+    }
 
     @SuppressWarnings("unchecked")
     private Long doUpdate(Campaign campaign) {
@@ -171,7 +187,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
             , map(Pair.of("id", campaign.id)
                 , Pair.of("title", campaign.title)
                 , Pair.of("description", campaign.description)
-                , Pair.of("scheduletime", campaign.scheduleTimeAsString())
+                , Pair.of("scheduletime", scheduleTimeToString(campaign.scheduleTime))
                 , Pair.of("environment", campaign.executionEnvironment())
                 , Pair.of("paralellRun", campaign.parallelRun)
                 , Pair.of("retryAuto", campaign.retryAuto)
@@ -193,7 +209,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
             , map(Pair.of("id", id)
                 , Pair.of("title", unsavedCampaign.title)
                 , Pair.of("description", ofNullable(unsavedCampaign.description).orElse(""))
-                , Pair.of("scheduletime", unsavedCampaign.scheduleTimeAsString())
+                , Pair.of("scheduletime", scheduleTimeToString(unsavedCampaign.scheduleTime))
                 , Pair.of("environment", unsavedCampaign.executionEnvironment())
                 , Pair.of("paralellRun", unsavedCampaign.parallelRun)
                 , Pair.of("retryAuto", unsavedCampaign.retryAuto)
@@ -278,12 +294,12 @@ public class DatabaseCampaignRepository implements CampaignRepository {
             Long id = rs.getLong("ID");
             String title = rs.getString("TITLE");
             String description = rs.getString("DESCRIPTION");
-            String scheduleTimeAsString = rs.getString("SCHEDULE_TIME");
+            String scheduleTime = rs.getString("SCHEDULE_TIME");
             String environment = rs.getString("ENVIRONMENT");
             String datasetId = rs.getString("DATASET_ID");
             boolean parallelRun = rs.getBoolean("PARALLEL_RUN");
             boolean retryAuto = rs.getBoolean("RETRY_AUTO");
-            LocalTime localTime = scheduleTimeAsString != null ? LocalTime.parse(scheduleTimeAsString, Campaign.formatter) : null;
+            LocalTime localTime = stringToScheduleTime(scheduleTime);
             List<String> tags = TagListMapper.tagsStringToList(rs.getString("TAGS"));
             return new Campaign(id, title, description, null, null, localTime, environment, parallelRun, retryAuto, datasetId, tags);
         }

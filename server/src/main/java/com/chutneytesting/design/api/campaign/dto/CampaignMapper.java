@@ -9,10 +9,19 @@ import com.chutneytesting.design.domain.campaign.Campaign;
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
 import com.chutneytesting.tools.ui.ComposableIdUtils;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.List;
 import java.util.Optional;
 
 public class CampaignMapper {
+
+    private static final DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder()
+        .appendPattern("HH")
+        .appendLiteral(":")
+        .appendPattern("mm")
+        .toFormatter();
+
 
     public static CampaignDto toDtoWithoutReport(Campaign campaign) {
         return new CampaignDto(
@@ -24,7 +33,7 @@ public class CampaignMapper {
                 .collect(toList()),
             campaign.executionParameters,
             emptyList(),
-            campaign.scheduleTimeAsString(),
+            scheduleTimeToString(campaign.scheduleTime),
             campaign.executionEnvironment(),
             campaign.parallelRun,
             campaign.retryAuto,
@@ -42,7 +51,7 @@ public class CampaignMapper {
                 .collect(toList()),
             campaign.executionParameters,
             reportToDto(campaignExecutionReports),
-            campaign.scheduleTimeAsString(),
+            scheduleTimeToString(campaign.scheduleTime),
             campaign.executionEnvironment(),
             campaign.parallelRun,
             campaign.retryAuto,
@@ -66,6 +75,10 @@ public class CampaignMapper {
             fromFrontId(dto.getDatasetId()),
             dto.getTags().stream().map(String::trim).map(String::toUpperCase).collect(toList())
         );
+    }
+
+    private static String scheduleTimeToString(LocalTime scheduleTime) {
+        return scheduleTime != null ? scheduleTime.format(FORMATTER) : null;
     }
 
     private static List<CampaignExecutionReportDto> reportToDto(List<CampaignExecutionReport> campaignExecutionReports) {
