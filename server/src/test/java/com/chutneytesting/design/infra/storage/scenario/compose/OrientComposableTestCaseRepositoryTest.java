@@ -12,7 +12,7 @@ import com.chutneytesting.design.domain.scenario.compose.ComposableStepRepositor
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
-import com.chutneytesting.tests.AbstractOrientDatabaseTest;
+import com.chutneytesting.tests.OrientDatabaseHelperTest;
 import com.orientechnologies.common.log.OLogManager;
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.OElement;
@@ -22,41 +22,43 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.apache.groovy.util.Maps;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDatabaseTest {
+public class OrientComposableTestCaseRepositoryTest {
+
+    private static final String DATABASE_NAME = "orient_composable_testcase_test";
+    private static final OrientDatabaseHelperTest orientDatabaseHelperTest = new OrientDatabaseHelperTest(DATABASE_NAME);
 
     private static ComposableTestCaseRepository sut;
 
     @BeforeAll
     public static void setUp() {
-        OrientComposableStepRepositoryTest.initComponentDB(DATABASE_NAME);
-        sut = new OrientComposableTestCaseRepository(orientComponentDB, testCaseMapper);
+        sut = new OrientComposableTestCaseRepository(orientDatabaseHelperTest.orientComponentDB, orientDatabaseHelperTest.testCaseMapper);
         OLogManager.instance().setWarnEnabled(false);
         initComposableStepsRepository();
     }
 
     private static ComposableStep FUNC_STEP_REF;
-    private static Map<String, String> FUNC_STEP_REF_PARAMERTERS = Maps.of(
+    private static final Map<String, String> FUNC_STEP_REF_PARAMETERS = Maps.of(
         "child parameter with no overload", "child initial value",
         "child parameter with parent overload", "child value to be overloaded",
         "child parameter with scenario overload", "child value to be overloaded"
     );
     private static ComposableStep FUNC_STEP_PARENT_REF;
-    private static Map<String, String> FUNC_STEP_PARENT_REF_PARAMERTERS = Maps.of(
+    private static final Map<String, String> FUNC_STEP_PARENT_REF_PARAMETERS = Maps.of(
         "parent parameter with no overload", "parent initial value",
         "parent parameter with scenario overload", "parent value to be overloaded"
     );
 
     private static void initComposableStepsRepository() {
-        ComposableStepRepository funcComposableStepRepository = new OrientComposableStepRepository(orientComponentDB, stepMapper);
+        ComposableStepRepository funcComposableStepRepository = new OrientComposableStepRepository(orientDatabaseHelperTest.orientComponentDB, orientDatabaseHelperTest.stepMapper);
 
         ComposableStep FUNC_STEP = ComposableStep.builder()
             .withName("func step without children")
-            .withDefaultParameters(FUNC_STEP_REF_PARAMERTERS)
+            .withDefaultParameters(FUNC_STEP_REF_PARAMETERS)
             .build();
         FUNC_STEP_REF = ComposableStep.builder()
             .from(FUNC_STEP)
@@ -75,7 +77,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
         ComposableStep FUNC_STEP_P = ComposableStep.builder()
             .withName("func step with child")
             .withSteps(Collections.singletonList(funcStepInstance))
-            .withDefaultParameters(FUNC_STEP_PARENT_REF_PARAMERTERS)
+            .withDefaultParameters(FUNC_STEP_PARENT_REF_PARAMETERS)
             .build();
         FUNC_STEP_PARENT_REF = ComposableStep.builder()
             .from(FUNC_STEP_P)
@@ -85,12 +87,12 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
 
     @AfterEach
     public void after() {
-        truncateCollection(DATABASE_NAME, OrientComponentDB.TESTCASE_CLASS);
+        orientDatabaseHelperTest.truncateCollection(OrientComponentDB.TESTCASE_CLASS);
     }
 
     @AfterAll
     public static void tearDown() {
-        OrientComposableStepRepositoryTest.destroyDB(DATABASE_NAME);
+        orientDatabaseHelperTest.destroyDB();
     }
 
     @Test
@@ -103,7 +105,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
                 ComposableScenario.builder()
                     .withComposableSteps(
                         Collections.singletonList(
-                            buildComposableStep("", "", UKNOWN_FUNC_STEP_ID))
+                            orientDatabaseHelperTest.buildComposableStep("", "", UKNOWN_FUNC_STEP_ID))
                     )
                     .build()
             );
@@ -142,7 +144,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
         String testCaseId = sut.save(composableTestCase);
 
         // Then
-        final OElement element = loadById(testCaseId);
+        final OElement element = orientDatabaseHelperTest.loadById(testCaseId);
         assertThat(element).isNotNull();
         assertThat(element.getIdentity().toString()).isNotEqualTo(VALID_UNKNOWN_TESTCASE_ID);
     }
@@ -254,7 +256,7 @@ public class OrientComposableTestCaseRepositoryTest extends AbstractOrientDataba
         sut.removeById(composableTestCase.id);
 
         // Then
-        assertThat(loadById(composableTestCase.id)).isNull();
+        assertThat(orientDatabaseHelperTest.loadById(composableTestCase.id)).isNull();
     }
 
     @Test

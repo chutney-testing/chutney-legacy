@@ -5,6 +5,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import javax.sql.DataSource;
 import liquibase.Liquibase;
 import liquibase.database.Database;
@@ -24,9 +25,10 @@ public abstract class AbstractLocalDatabaseTest {
     protected final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     protected AbstractLocalDatabaseTest() {
+        Random rand = new Random();
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setMaximumPoolSize(2);
-        hikariConfig.setJdbcUrl("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+        hikariConfig.setJdbcUrl("jdbc:h2:mem:test_" + rand.nextInt(10000) + ";DB_CLOSE_DELAY=-1");
         localDataSource = new HikariDataSource(hikariConfig);
         jdbcTemplate = new JdbcTemplate(localDataSource);
         namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);

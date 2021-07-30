@@ -7,7 +7,7 @@ import static com.chutneytesting.design.infra.storage.scenario.compose.orient.ch
 import static com.chutneytesting.design.infra.storage.scenario.compose.orient.changelog.OrientChangelogExecutor.filterFStepSchemaScripts;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.tests.AbstractOrientDatabaseTest;
+import com.chutneytesting.tests.OrientDatabaseHelperTest;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.db.ODatabaseType;
 import com.orientechnologies.orient.core.index.OIndex;
@@ -27,21 +27,21 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class OrientComponentDBTest extends AbstractOrientDatabaseTest {
+public class OrientComponentDBTest {
 
-    private static final String DATABASE_NAME = "orient_db_test";
+    private static final String DATABASE_NAME = "orient_component_db_test";
+    private static final OrientDatabaseHelperTest orientDatabaseHelperTest = new OrientDatabaseHelperTest(DATABASE_NAME, ODatabaseType.PLOCAL);
 
     private static OrientComponentDB sut;
 
     @BeforeAll
     public static void setUp() {
-        initComponentDB(DATABASE_NAME, ODatabaseType.PLOCAL);
-        sut = orientComponentDB;
+        sut = orientDatabaseHelperTest.orientComponentDB;
     }
 
     @AfterAll
     public static void tearDown() {
-        destroyDB(DATABASE_NAME);
+        orientDatabaseHelperTest.destroyDB();
     }
 
     @Test
@@ -115,7 +115,7 @@ public class OrientComponentDBTest extends AbstractOrientDatabaseTest {
 
     @Test
     public void should_ChangeLog_completed_twice_with_no_change() {
-        changelogExecution.updateWithChangelog(sut.dbPool());
+        orientDatabaseHelperTest.changelogExecution.updateWithChangelog(sut.dbPool());
         should_ChangeLog_completed_when_database_initialized();
     }
 
