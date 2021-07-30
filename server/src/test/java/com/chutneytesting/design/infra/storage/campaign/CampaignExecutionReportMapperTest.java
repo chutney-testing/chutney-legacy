@@ -1,19 +1,21 @@
 package com.chutneytesting.design.infra.storage.campaign;
 
-import static java.time.temporal.ChronoUnit.MILLIS;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
+import com.chutneytesting.design.domain.campaign.ScenarioExecutionReportCampaign;
+import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
-import com.chutneytesting.execution.domain.history.ExecutionHistory;
-import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
 import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
+import com.chutneytesting.tools.Try;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -21,92 +23,186 @@ import java.time.ZoneId;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.stubbing.OngoingStubbing;
 
 public class CampaignExecutionReportMapperTest {
+
     private CampaignExecutionReportMapper sut;
-    private ExecutionHistoryRepository scenarioExecutionHistoryRepository;
     private TestCaseRepository testCaseRepositoryMock;
 
     @BeforeEach
     public void setUp() {
-        scenarioExecutionHistoryRepository = mock(ExecutionHistoryRepository.class);
         testCaseRepositoryMock = mock(TestCaseRepository.class);
         sut = new CampaignExecutionReportMapper(testCaseRepositoryMock);
     }
 
-    private long campaignExecutionId = 3;
-    private String scenarioId = "4";
-    private long scenarioExecutionId = 5;
-    private LocalDateTime started = LocalDateTime.now().truncatedTo(MILLIS);
-    private long duration = 6;
-    private ServerReportStatus status = ServerReportStatus.SUCCESS;
-
     @Test
     public void extractDataWithOneScenarioExecution() throws SQLException {
+        ScenarioExecutionReportCampaign scenarioExecutionReport = buildScenarioExecutionReportCampaign("scenarioId", "scenarioName");
+        CampaignExecutionReport campaignExecutionReport = buildCampaignExecutionReport(
+            1L,
+            2L,
+            singletonList(scenarioExecutionReport),
+            "campaignName",
+            false,
+            "environment",
+            "datasetId",
+            666,
+            "userId"
+        );
 
-        String scenarioName = "name";
-        ResultSet resultSet = mockResultSet(campaignExecutionId, scenarioId, scenarioExecutionId, scenarioName);
-        ExecutionHistory.Execution execution = getExecution(scenarioExecutionId, started, duration, status);
-        when(scenarioExecutionHistoryRepository.getExecution(scenarioId, scenarioExecutionId)).thenReturn(execution);
+        ResultSet resultSet = mockResultSet(singletonList(campaignExecutionReport));
         TestCase mockTestCase = mock(TestCase.class);
         TestCaseMetadata mockTestCaseMetadata = mock(TestCaseMetadata.class);
-        when(mockTestCaseMetadata.title()).thenReturn("scenario title");
+        when(mockTestCaseMetadata.title()).thenReturn(scenarioExecutionReport.scenarioName);
         when(mockTestCase.metadata()).thenReturn(mockTestCaseMetadata);
         when(testCaseRepositoryMock.findById(any())).thenReturn(mockTestCase);
+
         List<CampaignExecutionReport> campaignExecutionReports = sut.extractData(resultSet);
 
         assertThat(campaignExecutionReports).allSatisfy(report -> {
-            assertThat(report.executionId).isEqualTo(campaignExecutionId);
-            assertThat(report.campaignName).isEqualTo("Title");
+            assertThat(report.executionId).isEqualTo(campaignExecutionReport.executionId);
+            assertThat(report.campaignId).isEqualTo(campaignExecutionReport.campaignId);
+            assertThat(report.campaignName).isEqualTo(campaignExecutionReport.campaignName);
+            assertThat(report.executionEnvironment).isEqualTo(campaignExecutionReport.executionEnvironment);
+            assertThat(report.startDate).isEqualTo(campaignExecutionReport.startDate);
+            assertThat(report.partialExecution).isEqualTo(campaignExecutionReport.partialExecution);
+            assertThat(report.dataSetId).isEqualTo(campaignExecutionReport.dataSetId);
+            assertThat(report.dataSetVersion).isEqualTo(campaignExecutionReport.dataSetVersion);
+            assertThat(report.userId).isEqualTo(campaignExecutionReport.userId);
+
             assertThat(report.scenarioExecutionReports()).allSatisfy(scenarioReport -> {
-                assertThat(scenarioReport.scenarioId).isEqualTo(scenarioId);
-                assertThat(scenarioReport.scenarioName).isEqualTo("scenario title");
-                assertThat(scenarioReport.execution.executionId()).isEqualTo(scenarioExecutionId);
-                assertThat(scenarioReport.execution.status()).isEqualTo(status);
-                assertThat(scenarioReport.execution.duration()).isEqualTo(duration);
-                assertThat(scenarioReport.execution.time()).isEqualTo(started);
-                assertThat(scenarioReport.execution.environment()).isEqualTo("env");
-                assertThat(scenarioReport.execution.datasetId()).hasValue("#55:12");
-                assertThat(scenarioReport.execution.datasetVersion()).hasValue(2);
-                assertThat(scenarioReport.execution.user()).isEqualTo("user");
+                assertThat(scenarioReport.scenarioId).isEqualTo(scenarioExecutionReport.scenarioId);
+                assertThat(scenarioReport.scenarioName).isEqualTo(scenarioExecutionReport.scenarioName);
+                assertThat(scenarioReport.execution.executionId()).isEqualTo(scenarioExecutionReport.execution.executionId());
+                assertThat(scenarioReport.execution.status()).isEqualTo(scenarioExecutionReport.execution.status());
+                assertThat(scenarioReport.execution.duration()).isEqualTo(scenarioExecutionReport.execution.duration());
+                assertThat(scenarioReport.execution.time()).isEqualTo(scenarioExecutionReport.execution.time());
+                assertThat(scenarioReport.execution.environment()).isEqualTo(scenarioExecutionReport.execution.environment());
+                assertThat(scenarioReport.execution.datasetId()).hasValue(scenarioExecutionReport.execution.datasetId().toString());
+                assertThat(scenarioReport.execution.datasetVersion()).hasValue(scenarioExecutionReport.execution.datasetVersion().get());
+                assertThat(scenarioReport.execution.user()).isEqualTo(scenarioExecutionReport.execution.user());
             });
         });
     }
 
-    private ResultSet mockResultSet(long campaignExecutionId, String scenarioId, long scenarioExecutionId, String scenarioName) throws SQLException {
+    @Test
+    void should_not_explode_when_scenario_not_found() throws SQLException {
+        ScenarioExecutionReportCampaign scenarioExecutionReport = buildScenarioExecutionReportCampaign("scenarioId", "scenarioName");
+        ScenarioExecutionReportCampaign unknownScenarioExecutionReport = buildScenarioExecutionReportCampaign("unknownId", "unknownScenarioName");
+        CampaignExecutionReport campaignExecutionReport = buildCampaignExecutionReport(
+            1L,
+            2L,
+            asList(scenarioExecutionReport, unknownScenarioExecutionReport),
+            "campaignName",
+            false,
+            "environment",
+            "datasetId",
+            666,
+            "userId"
+        );
+        ResultSet resultSet = mockResultSet(singletonList(campaignExecutionReport));
+        when(testCaseRepositoryMock.findById(unknownScenarioExecutionReport.scenarioId)).thenThrow(new ScenarioNotFoundException(unknownScenarioExecutionReport.scenarioId));
+        TestCase mockTestCase = mock(TestCase.class);
+        TestCaseMetadata mockTestCaseMetadata = mock(TestCaseMetadata.class);
+        when(mockTestCaseMetadata.title()).thenReturn(scenarioExecutionReport.scenarioName);
+        when(mockTestCase.metadata()).thenReturn(mockTestCaseMetadata);
+        when(testCaseRepositoryMock.findById(scenarioExecutionReport.scenarioId)).thenReturn(mockTestCase);
+
+        List<CampaignExecutionReport> campaignExecutionReports = sut.extractData(resultSet);
+
+        assertThat(campaignExecutionReports).allSatisfy(report -> {
+            assertThat(report.executionId).isEqualTo(campaignExecutionReport.executionId);
+            assertThat(report.campaignId).isEqualTo(campaignExecutionReport.campaignId);
+            assertThat(report.campaignName).isEqualTo(campaignExecutionReport.campaignName);
+            assertThat(report.executionEnvironment).isEqualTo(campaignExecutionReport.executionEnvironment);
+            assertThat(report.startDate).isEqualTo(campaignExecutionReport.executionEnvironment);
+            assertThat(report.partialExecution).isEqualTo(campaignExecutionReport.partialExecution);
+            assertThat(report.dataSetId).isEqualTo(campaignExecutionReport.dataSetId);
+            assertThat(report.dataSetVersion).isEqualTo(campaignExecutionReport.dataSetVersion);
+            assertThat(report.userId).isEqualTo(campaignExecutionReport.userId);
+
+            assertThat(report.scenarioExecutionReports()).allSatisfy(scenarioReport -> {
+                assertThat(scenarioReport.scenarioId).isEqualTo(scenarioExecutionReport.scenarioId);
+                assertThat(scenarioReport.scenarioName).isEqualTo(scenarioExecutionReport.scenarioName);
+                assertThat(scenarioReport.execution.executionId()).isEqualTo(scenarioExecutionReport.execution.executionId());
+                assertThat(scenarioReport.execution.status()).isEqualTo(scenarioExecutionReport.execution.status());
+                assertThat(scenarioReport.execution.duration()).isEqualTo(scenarioExecutionReport.execution.duration());
+                assertThat(scenarioReport.execution.time()).isEqualTo(scenarioExecutionReport.execution.time());
+                assertThat(scenarioReport.execution.environment()).isEqualTo(scenarioExecutionReport.execution.environment());
+                assertThat(scenarioReport.execution.datasetId()).hasValue(scenarioExecutionReport.execution.datasetId().toString());
+                assertThat(scenarioReport.execution.datasetVersion()).hasValue(scenarioExecutionReport.execution.datasetVersion().get());
+                assertThat(scenarioReport.execution.user()).isEqualTo(scenarioExecutionReport.execution.user());
+            });
+        });
+    }
+
+    private ResultSet mockResultSet(List<CampaignExecutionReport> campaignExecutionReports) {
         ResultSet rs = mock(ResultSet.class);
-        when(rs.next()).thenReturn(true).thenReturn(false);
-        when(rs.getLong("ID")).thenReturn(campaignExecutionId);
-        when(rs.getString("SCENARIO_ID")).thenReturn(scenarioId);
-        when(rs.getLong("SCENARIO_EXECUTION_ID")).thenReturn(scenarioExecutionId);
-        when(rs.getString("TEST_CASE_TITLE")).thenReturn(scenarioName);
-        when(rs.getString("CAMPAIGN_TITLE")).thenReturn("Title");
-        when(rs.getBoolean("PARTIAL_EXECUTION")).thenReturn(false);
-        when(rs.getLong("SCENARIO_EXECUTION_ID")).thenReturn(scenarioExecutionId);
-        when(rs.getLong("EXECUTION_TIME")).thenReturn(started.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
-        when(rs.getLong("DURATION")).thenReturn(duration);
-        when(rs.getString("STATUS")).thenReturn(status.name());
-        when(rs.getString("INFORMATION")).thenReturn("");
-        when(rs.getString("ERROR")).thenReturn("");
-        when(rs.getString("TEST_CASE_TITLE")).thenReturn("fake");
-        when(rs.getString("ENVIRONMENT")).thenReturn("env");
-        when(rs.getString("DATASET_ID")).thenReturn("#55:12");
-        when(rs.getString("DATASET_VERSION")).thenReturn("2");
-        when(rs.getString("USER_ID")).thenReturn("user");
+        Try.exec(() -> {
+            OngoingStubbing<Boolean> whenNext = when(rs.next());
+            OngoingStubbing<Long> whenId = when(rs.getLong("ID"));
+            OngoingStubbing<String> whenScenarioId = when(rs.getString("SCENARIO_ID"));
+            OngoingStubbing<Long> whenScenarioExecutionId = when(rs.getLong("SCENARIO_EXECUTION_ID"));
+            OngoingStubbing<String> whenTestCaseTitle = when(rs.getString("TEST_CASE_TITLE"));
+            OngoingStubbing<String> whenCampaignTitle = when(rs.getString("CAMPAIGN_TITLE"));
+            OngoingStubbing<Boolean> whenPartialExecution = when(rs.getBoolean("PARTIAL_EXECUTION"));
+            OngoingStubbing<Long> whenExecutionTime = when(rs.getLong("EXECUTION_TIME"));
+            OngoingStubbing<Long> whenDuration = when(rs.getLong("DURATION"));
+            OngoingStubbing<String> whenStatus = when(rs.getString("STATUS"));
+            OngoingStubbing<String> whenInformation = when(rs.getString("INFORMATION"));
+            OngoingStubbing<String> whenError = when(rs.getString("ERROR"));
+            OngoingStubbing<String> whenEnvironment = when(rs.getString("ENVIRONMENT"));
+            OngoingStubbing<String> whenDatasetId = when(rs.getString("DATASET_ID"));
+            OngoingStubbing<String> whenDatasetVersion = when(rs.getString("DATASET_VERSION"));
+            OngoingStubbing<String> whenUserId = when(rs.getString("USER_ID"));
+
+            campaignExecutionReports.forEach(cer -> cer.scenarioExecutionReports().forEach(ser -> {
+                whenNext.thenReturn(true);
+                whenId.thenReturn(cer.executionId);
+                whenCampaignTitle.thenReturn(cer.campaignName);
+                whenPartialExecution.thenReturn(cer.partialExecution);
+                whenEnvironment.thenReturn(cer.executionEnvironment);
+
+                whenScenarioId.thenReturn(ser.scenarioId);
+                whenScenarioExecutionId.thenReturn(ser.execution.executionId());
+                whenExecutionTime.thenReturn(ser.execution.time().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+                whenTestCaseTitle.thenReturn(ser.scenarioName);
+                whenDuration.thenReturn(ser.execution.duration());
+                whenStatus.thenReturn(ser.status().name());
+                whenInformation.thenReturn(ser.execution.info().get());
+                whenError.thenReturn(ser.execution.error().get());
+                whenDatasetId.thenReturn(ser.execution.datasetId().toString());
+                whenDatasetVersion.thenReturn(ser.execution.datasetVersion().get().toString());
+                whenUserId.thenReturn(ser.execution.user());
+            }));
+
+            whenNext.thenReturn(false);
+
+            return null;
+        });
         return rs;
     }
 
-    private ExecutionHistory.Execution getExecution(long executionId, LocalDateTime started, long duration, ServerReportStatus status) {
-        return ImmutableExecutionHistory.Execution.builder()
-            .duration(duration)
-            .status(status)
-            .time(started)
-            .executionId(executionId)
-            .report("")
-            .testCaseTitle("fake")
-            .environment("env")
-            .datasetId("#55:12")
-            .user("user")
+    private CampaignExecutionReport buildCampaignExecutionReport(Long executionId, Long campaignId, List<ScenarioExecutionReportCampaign> scenarioExecutionReports, String campaignName, boolean partialExecution, String executionEnvironment, String datasetId, Integer datasetVersion, String userId) {
+        return new CampaignExecutionReport(executionId, campaignId, scenarioExecutionReports, campaignName, partialExecution, executionEnvironment, datasetId, datasetVersion, userId);
+    }
+
+    private ScenarioExecutionReportCampaign buildScenarioExecutionReportCampaign(String scenarioId, String scenarioName) {
+        ImmutableExecutionHistory.ExecutionSummary execution = ImmutableExecutionHistory.ExecutionSummary.builder()
+            .executionId(666L)
+            .time(LocalDateTime.now())
+            .duration(666)
+            .status(ServerReportStatus.SUCCESS)
+            .info("info")
+            .error("error")
+            .testCaseTitle("testcaseTitle")
+            .environment("environment")
+            .datasetId("datasetId")
+            .datasetVersion(666)
+            .user("userId")
             .build();
+
+        return new ScenarioExecutionReportCampaign(scenarioId, scenarioName, execution);
     }
 }
