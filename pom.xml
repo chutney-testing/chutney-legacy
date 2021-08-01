@@ -88,7 +88,7 @@
         <sl4j.api.version>1.7.31</sl4j.api.version>
         <commonslang3.version>3.12.0</commonslang3.version>
         <commonstext.version>1.9</commonstext.version>
-        <commonsio.version>2.10.0</commonsio.version>
+        <commonsio.version>2.11.0</commonsio.version>
         <rxjava.version>2.2.20</rxjava.version>
         <jgit-jsch.version>5.11.0.202103091610-r</jgit-jsch.version>
         <jsch.version>0.1.55</jsch.version>
