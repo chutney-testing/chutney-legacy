@@ -102,7 +102,7 @@
         <sshd.version>2.6.0</sshd.version>
         <hjson.version>3.0.0</hjson.version>
         <jms.version>2.0.1</jms.version>
-        <amqp-client.version>5.8.0</amqp-client.version>
+        <amqp-client.version>5.13.0</amqp-client.version>
         <qpid-broker.version>8.0.5</qpid-broker.version>
         <mongodb.version>3.12.8</mongodb.version>
         <orientdb.version>3.0.30</orientdb.version>
