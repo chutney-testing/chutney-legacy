@@ -4,10 +4,10 @@ import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
 import com.chutneytesting.design.domain.campaign.ScenarioExecutionReportCampaign;
+import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
-import com.chutneytesting.execution.domain.history.ReportNotFoundException;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.google.common.collect.Lists;
 import java.sql.ResultSet;
@@ -43,7 +43,6 @@ public class CampaignExecutionReportMapper implements ResultSetExtractor<List<Ca
         while (resultset.next()) {
             long campaignExecutionId = resultset.getLong("ID");
             String scenarioId = resultset.getString("SCENARIO_ID");
-            long scenarioExecutionId = resultset.getLong("SCENARIO_EXECUTION_ID");
             String title = resultset.getString("CAMPAIGN_TITLE");
             boolean partialExecution = resultset.getBoolean("PARTIAL_EXECUTION");
             String executionEnvironment = resultset.getString("EXECUTION_ENVIRONMENT");
@@ -52,14 +51,15 @@ public class CampaignExecutionReportMapper implements ResultSetExtractor<List<Ca
             String dataSetId = resultset.getString("EXECUTION_DATASET_ID");
             Integer dataSetVersion = ofNullable(resultset.getString("EXECUTION_DATASET_VERSION")).map(Integer::valueOf).orElse(null);
 
-            String scenarioName = repository.findById(scenarioId).metadata().title();
             try {
+                String scenarioName = repository.findById(scenarioId).metadata().title();
+
                 ScenarioExecutionReportCampaign scenarioExecutionReport = readScenarioExecutionReport(resultset, scenarioId, scenarioName);
                 scenarioByCampaignId.putIfAbsent(campaignExecutionId, Lists.newArrayList());
                 campaignExecutionReportByCampaignId.putIfAbsent(campaignExecutionId, new CampaignExecutionHolder(campaignExecutionId, title, partialExecution, executionEnvironment, userId, campaignId, dataSetId, dataSetVersion));
                 scenarioByCampaignId.get(campaignExecutionId).add(scenarioExecutionReport);
-            } catch (ReportNotFoundException e) {
-                LOGGER.warn("Campaign history reference a no longer existing scenario[" + scenarioId + "] execution[" + scenarioExecutionId + "]");
+            } catch (ScenarioNotFoundException snfe) {
+                LOGGER.warn("Campaign history reference a no longer existing scenario[" + scenarioId + "]");
             }
         }
         return scenarioByCampaignId.entrySet().stream().
@@ -79,7 +79,7 @@ public class CampaignExecutionReportMapper implements ResultSetExtractor<List<Ca
             }).collect(Collectors.toList());
     }
 
-    private ScenarioExecutionReportCampaign readScenarioExecutionReport(ResultSet resultset, String scenarioId, String scenarioName) throws SQLException, ReportNotFoundException {
+    private ScenarioExecutionReportCampaign readScenarioExecutionReport(ResultSet resultset, String scenarioId, String scenarioName) throws SQLException {
         ExecutionHistory.ExecutionSummary execution;
         if (resultset.getLong("SCENARIO_EXECUTION_ID") == -1) {
             execution = ImmutableExecutionHistory.ExecutionSummary.builder()
