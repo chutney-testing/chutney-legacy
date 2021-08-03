@@ -1,6 +1,8 @@
 package com.chutneytesting.task.micrometer;
 
 import static com.chutneytesting.task.micrometer.MicrometerSummaryTask.OUTPUT_SUMMARY;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelperTest.assertSuccessAndOutputObjectType;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelperTest.buildMeterName;
 import static io.micrometer.core.instrument.Metrics.globalRegistry;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -13,10 +15,10 @@ import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 
-public class MicrometerSummaryTaskTest extends MicrometerTaskTest {
+public class MicrometerSummaryTaskTest {
 
     private MicrometerSummaryTask sut;
-    private final String SUMMARY_NAME = "summaryName";
+    private final String METER_NAME_PREFIX = "summaryName";
 
     @Test
     public void summary_name_is_mandatory_if_no_given_summary() {
@@ -28,70 +30,72 @@ public class MicrometerSummaryTaskTest extends MicrometerTaskTest {
     @Test
     public void summary_buffer_length_must_be_an_integer() {
         assertThatThrownBy(() ->
-            new MicrometerSummaryTask(null, SUMMARY_NAME, null, null, null, "not a integer", null, null, null, null, null, null, null, null, null, null, null)
+            new MicrometerSummaryTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, "not a integer", null, null, null, null, null, null, null, null, null, null, null)
         ).isExactlyInstanceOf(NumberFormatException.class);
     }
 
     @Test
     public void summary_expiry_must_be_a_duration() {
         assertThatThrownBy(() ->
-            new MicrometerSummaryTask(null, SUMMARY_NAME, null, null, null, null, "not a duration", null, null, null, null, null, null, null, null, null, null)
+            new MicrometerSummaryTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, "not a duration", null, null, null, null, null, null, null, null, null, null)
         ).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     public void summary_max_value_must_be_a_long() {
         assertThatThrownBy(() ->
-            new MicrometerSummaryTask(null, SUMMARY_NAME, null, null, null, null, null, "not a long", null, null, null, null, null, null, null, null, null)
+            new MicrometerSummaryTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, "not a long", null, null, null, null, null, null, null, null, null)
         ).isExactlyInstanceOf(NumberFormatException.class);
     }
 
     @Test
     public void summary_min_value_must_be_a_long() {
         assertThatThrownBy(() ->
-            new MicrometerSummaryTask(null, SUMMARY_NAME, null, null, null, null, null, null, "not a long", null, null, null, null, null, null, null, null)
+            new MicrometerSummaryTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, "not a long", null, null, null, null, null, null, null, null)
         ).isExactlyInstanceOf(NumberFormatException.class);
     }
 
     @Test
     public void summary_percentile_precision_must_be_an_integer() {
         assertThatThrownBy(() ->
-            new MicrometerSummaryTask(null, SUMMARY_NAME, null, null, null, null, null, null, null, "not a integer", null, null, null, null, null, null, null)
+            new MicrometerSummaryTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, null, "not a integer", null, null, null, null, null, null, null)
         ).isExactlyInstanceOf(NumberFormatException.class);
     }
 
     @Test
     public void summary_percentiles_must_be_a_list_of_double() {
         assertThatThrownBy(() ->
-            new MicrometerSummaryTask(null, SUMMARY_NAME, null, null, null, null, null, null, null, null, null, "not a list of double", null, null, null, null, null)
+            new MicrometerSummaryTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, null, null, null, "not a list of double", null, null, null, null, null)
         ).isExactlyInstanceOf(NumberFormatException.class);
     }
 
     @Test
     public void summary_scale_must_be_a_double() {
         assertThatThrownBy(() ->
-            new MicrometerSummaryTask(null, SUMMARY_NAME, null, null, null, null, null, null, null, null, null, null, "not a double", null, null, null, null)
+            new MicrometerSummaryTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, null, null, null, null, "not a double", null, null, null, null)
         ).isExactlyInstanceOf(NumberFormatException.class);
     }
 
     @Test
     public void summary_sla_must_be_a_list_of_long() {
         assertThatThrownBy(() ->
-            new MicrometerSummaryTask(null, SUMMARY_NAME, null, null, null, null, null, null, null, null, null, null, null, "not a list of long", null, null, null)
+            new MicrometerSummaryTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, null, null, null, null, null, "not a list of long", null, null, null)
         ).isExactlyInstanceOf(NumberFormatException.class);
     }
 
     @Test
     public void summary_record_must_be_a_double() {
         assertThatThrownBy(() ->
-            new MicrometerSummaryTask(null, SUMMARY_NAME, null, null, null, null, null, null, null, null, null, null, null, null, null, null, "not a double")
+            new MicrometerSummaryTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, null, null, null, null, null, null, null, null, "not a double")
         ).isExactlyInstanceOf(NumberFormatException.class);
     }
 
     @Test
     public void should_create_micrometer_summary() {
         // Given
-        sut = new MicrometerSummaryTask(new TestLogger(), SUMMARY_NAME, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        MeterRegistry registry = new SimpleMeterRegistry();
+        String meterName = buildMeterName(METER_NAME_PREFIX);
+        sut = new MicrometerSummaryTask(new TestLogger(), meterName, null, null, null, null, null, null, null, null, null, null, null, null, null, registry, null);
 
         // When
         TaskExecutionResult result = sut.execute();
@@ -100,10 +104,7 @@ public class MicrometerSummaryTaskTest extends MicrometerTaskTest {
         assertSuccessAndSummaryObjectType(result);
 
         DistributionSummary outputSummary = (DistributionSummary) result.outputs.get(OUTPUT_SUMMARY);
-        assertThat(globalRegistry.find(SUMMARY_NAME).summary()).isEqualTo(outputSummary);
-        assertThat(meterRegistry.find(SUMMARY_NAME).summary())
-            .isNotNull()
-            .extracting("id").isEqualTo(outputSummary.getId());
+        assertThat(registry.find(meterName).summary()).isEqualTo(outputSummary);
         assertThat(outputSummary.totalAmount()).isEqualTo(0);
         assertThat(outputSummary.max()).isEqualTo(0);
         assertThat(outputSummary.mean()).isEqualTo(0);
@@ -114,7 +115,8 @@ public class MicrometerSummaryTaskTest extends MicrometerTaskTest {
     public void should_create_micrometer_summary_and_register_it_on_given_registry() {
         // Given
         MeterRegistry givenMeterRegistry = new SimpleMeterRegistry();
-        sut = new MicrometerSummaryTask(new TestLogger(), SUMMARY_NAME, "description", "my unit", Lists.list("tag", "my tag value"), null, null, null, null, null, null, null, null, null, null, givenMeterRegistry, null);
+        String meterName = buildMeterName(METER_NAME_PREFIX);
+        sut = new MicrometerSummaryTask(new TestLogger(), meterName, "description", "my unit", Lists.list("tag", "my tag value"), null, null, null, null, null, null, null, null, null, null, givenMeterRegistry, null);
 
         // When
         TaskExecutionResult result = sut.execute();
@@ -123,9 +125,8 @@ public class MicrometerSummaryTaskTest extends MicrometerTaskTest {
         assertSuccessAndSummaryObjectType(result);
 
         DistributionSummary outputSummary = (DistributionSummary) result.outputs.get(OUTPUT_SUMMARY);
-        assertThat(globalRegistry.find(SUMMARY_NAME).summaries()).isEmpty();
-        assertThat(meterRegistry.find(SUMMARY_NAME).summaries()).isEmpty();
-        assertThat(givenMeterRegistry.find(SUMMARY_NAME).summary()).isEqualTo(outputSummary);
+        assertThat(globalRegistry.find(meterName).summaries()).isEmpty();
+        assertThat(givenMeterRegistry.find(meterName).summary()).isEqualTo(outputSummary);
         assertThat(outputSummary.getId().getDescription()).isEqualTo("description");
         assertThat(outputSummary.getId().getBaseUnit()).isEqualTo("my unit");
         assertThat(outputSummary.getId().getTag("tag")).isEqualTo("my tag value");
@@ -134,7 +135,7 @@ public class MicrometerSummaryTaskTest extends MicrometerTaskTest {
     @Test
     public void should_create_micrometer_summary_and_record_an_event() {
         // Given
-        sut = new MicrometerSummaryTask(new TestLogger(), SUMMARY_NAME, null, null, null, null, null, null, null, null, null, null, null, null, null, null, "3.2");
+        sut = new MicrometerSummaryTask(new TestLogger(), buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, null, null, null, null, null, null, null, new SimpleMeterRegistry(), "3.2");
 
         // When
         TaskExecutionResult result = sut.execute();
@@ -143,18 +144,19 @@ public class MicrometerSummaryTaskTest extends MicrometerTaskTest {
         assertSuccessAndSummaryObjectType(result);
 
         DistributionSummary outputSummary = (DistributionSummary) result.outputs.get(OUTPUT_SUMMARY);
-        assertThat(outputSummary.totalAmount()).isEqualTo(3.2);
-        assertThat(outputSummary.max()).isEqualTo(3.2);
-        assertThat(outputSummary.mean()).isEqualTo(3.2);
+        assertThat(outputSummary.totalAmount()).as("summary totalAmount").isEqualTo(3.2);
+        assertThat(outputSummary.max()).as("summary max").isEqualTo(3.2);
+        assertThat(outputSummary.mean()).as("summary mean").isEqualTo(3.2);
         assertThat(outputSummary.count()).isEqualTo(1);
     }
 
     @Test
-    public void should_record_an_event_with_given_sumamry() {
+    public void should_record_an_event_with_given_summary() {
         // Given
-        DistributionSummary givenSummary = meterRegistry.summary(SUMMARY_NAME);
+        MeterRegistry registry = new SimpleMeterRegistry();
+        DistributionSummary givenSummary = registry.summary(buildMeterName(METER_NAME_PREFIX));
         givenSummary.record(3);
-        sut = new MicrometerSummaryTask(new TestLogger(), null, null, null, null, null, null, null, null, null, null, null, null, null, givenSummary, null, "6.8");
+        sut = new MicrometerSummaryTask(new TestLogger(), null, null, null, null, null, null, null, null, null, null, null, null, null, givenSummary, registry, "6.8");
 
         // When
         TaskExecutionResult result = sut.execute();
@@ -174,7 +176,8 @@ public class MicrometerSummaryTaskTest extends MicrometerTaskTest {
     public void should_log_summary_record_total_max_mean_and_count() {
         // Given
         TestLogger logger = new TestLogger();
-        sut = new MicrometerSummaryTask(logger, SUMMARY_NAME, null, null, null, null, null, null, null, null, null, null, null, null, null, null, "6");
+        MeterRegistry registry = new SimpleMeterRegistry();
+        sut = new MicrometerSummaryTask(logger, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, null, null, null, null, null, null, null, registry, "6");
 
         // When
         TaskExecutionResult result = sut.execute();

@@ -18,21 +18,20 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 public class SqlTaskTest {
 
-    private static String DB_NAME = "test";
+    private static final String DB_NAME = "test_" + SqlTaskTest.class;
 
-    private Target sqlTarget = TestTarget.TestTargetBuilder.builder()
+    private final Target sqlTarget = TestTarget.TestTargetBuilder.builder()
         .withTargetId("sql")
         .withUrl("jdbc:h2:mem:" + DB_NAME)
         .withSecurity("sa", "")
         .build();
 
-    private Logger logger = Mockito.mock(Logger.class);
+    private final Logger logger = Mockito.mock(Logger.class);
 
     @BeforeEach
     public void setUp() {
@@ -43,8 +42,6 @@ public class SqlTaskTest {
             .ignoreFailedDrops(true)
             .addScripts("db/sql/create_db.sql", "db/sql/insert_users.sql")
             .build();
-
-        MockitoAnnotations.initMocks(this);
     }
 
     @Test

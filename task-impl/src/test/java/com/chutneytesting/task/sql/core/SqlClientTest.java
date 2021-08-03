@@ -21,26 +21,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 public class SqlClientTest {
 
-    private static String DB_NAME = "test";
-    private Target sqlTarget = TestTarget.TestTargetBuilder.builder()
+    private static final String DB_NAME = "test_" + SqlClientTest.class;
+    private final Target sqlTarget = TestTarget.TestTargetBuilder.builder()
         .withTargetId("sql")
         .withUrl("jdbc:h2:mem:" + DB_NAME)
         .withSecurity("sa", "")
         .build();
 
-    @SuppressWarnings("unused")
-    private EmbeddedDatabase db;
-
     @BeforeEach
     public void setUp() {
-
-        db = new EmbeddedDatabaseBuilder()
+        new EmbeddedDatabaseBuilder()
             .setName(DB_NAME)
             .setType(EmbeddedDatabaseType.H2)
             .setScriptEncoding("UTF-8")

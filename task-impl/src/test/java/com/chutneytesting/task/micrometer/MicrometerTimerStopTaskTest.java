@@ -1,5 +1,7 @@
 package com.chutneytesting.task.micrometer;
 
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelperTest.assertSuccessAndOutputObjectType;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelperTest.buildMeterName;
 import static com.chutneytesting.task.micrometer.MicrometerTimerStopTask.OUTPUT_TIMER_SAMPLE_DURATION;
 import static io.micrometer.core.instrument.Metrics.globalRegistry;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -8,19 +10,21 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.chutneytesting.task.TestLogger;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import io.micrometer.core.instrument.Clock;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import java.time.Duration;
 import org.junit.jupiter.api.Test;
 
-public class MicrometerTimerStopTaskTest extends MicrometerTaskTest {
+public class MicrometerTimerStopTaskTest {
 
     private MicrometerTimerStopTask sut;
+    public static final String METER_NAME_PREFIX = "timerName";
 
     @Test
     public void timing_sample_is_mandatory() {
         assertThatThrownBy(() ->
-            new MicrometerTimerStopTask(null, null, Timer.builder("timerName").register(new SimpleMeterRegistry()), null).execute()
+            new MicrometerTimerStopTask(null, null, Timer.builder(buildMeterName(METER_NAME_PREFIX)).register(new SimpleMeterRegistry()), null).execute()
         ).isExactlyInstanceOf(NullPointerException.class);
     }
 
@@ -34,7 +38,9 @@ public class MicrometerTimerStopTaskTest extends MicrometerTaskTest {
     @Test
     public void should_stop_timing_sample_and_create_given_timer_associated_record() {
         // Given
-        Timer timer = Timer.builder("timerName").register(meterRegistry);
+        MeterRegistry meterRegistry = new SimpleMeterRegistry();
+        globalRegistry.add(meterRegistry);
+        Timer timer = Timer.builder(buildMeterName(METER_NAME_PREFIX)).register(meterRegistry);
         sut = new MicrometerTimerStopTask(new TestLogger(), Timer.start(Clock.SYSTEM), timer, null);
 
         // When
@@ -62,7 +68,9 @@ public class MicrometerTimerStopTaskTest extends MicrometerTaskTest {
     public void should_log_timing_sample_duration_and_timer_statistics() {
         // Given
         TestLogger logger = new TestLogger();
-        sut = new MicrometerTimerStopTask(logger, Timer.start(Clock.SYSTEM), Timer.builder("timerName").register(meterRegistry), null);
+        MeterRegistry meterRegistry = new SimpleMeterRegistry();
+        globalRegistry.add(meterRegistry);
+        sut = new MicrometerTimerStopTask(logger, Timer.start(Clock.SYSTEM), Timer.builder(buildMeterName(METER_NAME_PREFIX)).register(meterRegistry), null);
 
         // When
         TaskExecutionResult result = sut.execute();

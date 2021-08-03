@@ -1,6 +1,8 @@
 package com.chutneytesting.task.micrometer;
 
 import static com.chutneytesting.task.micrometer.MicrometerGaugeTask.OUTPUT_GAUGE;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelperTest.assertSuccessAndOutputObjectType;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelperTest.buildMeterName;
 import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Failure;
 import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Success;
 import static io.micrometer.core.instrument.Metrics.globalRegistry;
@@ -26,10 +28,10 @@ import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("unchecked")
-public class MicrometerGaugeTaskTest extends MicrometerTaskTest {
+public class MicrometerGaugeTaskTest {
 
     private MicrometerGaugeTask sut;
-    private final String GAUGE_NAME = "gaugeName";
+    private final String METER_NAME_PREFIX = "gaugeName";
 
     @Test
     public void gauge_name_is_mandatory() {
@@ -41,7 +43,7 @@ public class MicrometerGaugeTaskTest extends MicrometerTaskTest {
     @Test
     public void gauge_object_and_gauge_function_must_not_be_both_null() {
         assertThatThrownBy(() ->
-            new MicrometerGaugeTask(null, GAUGE_NAME, null, null, null, null, null, null, null)
+            new MicrometerGaugeTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, null)
         ).isExactlyInstanceOf(IllegalArgumentException.class).hasMessageContaining("both null");
     }
 
@@ -49,7 +51,7 @@ public class MicrometerGaugeTaskTest extends MicrometerTaskTest {
     public void gauge_function_must_be_fully_qualified_when_gauge_object_null() {
         // Given
         TestLogger logger = new TestLogger();
-        sut = new MicrometerGaugeTask(logger, GAUGE_NAME, null, null, null, null, null, "size", null);
+        sut = new MicrometerGaugeTask(logger, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, "size", null);
 
         // When
         TaskExecutionResult result = sut.execute();
@@ -62,7 +64,7 @@ public class MicrometerGaugeTaskTest extends MicrometerTaskTest {
     public void gauge_function_must_be_static_when_gauge_object_null() {
         // Given
         TestLogger logger = new TestLogger();
-        sut = new MicrometerGaugeTask(logger, GAUGE_NAME, null, null, null, null, null, "java.util.ArrayList.size", null);
+        sut = new MicrometerGaugeTask(logger, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, "java.util.ArrayList.size", null);
 
         // When
         TaskExecutionResult result = sut.execute();
@@ -75,7 +77,7 @@ public class MicrometerGaugeTaskTest extends MicrometerTaskTest {
     public void gauge_function_must_have_no_parameters() {
         // Given
         TestLogger logger = new TestLogger();
-        sut = new MicrometerGaugeTask(logger, GAUGE_NAME, null, null, null, null, new ArrayList<>(), "java.util.ArrayList.get", null);
+        sut = new MicrometerGaugeTask(logger, buildMeterName(METER_NAME_PREFIX), null, null, null, null, new ArrayList<>(), "java.util.ArrayList.get", null);
 
         // When
         TaskExecutionResult result = sut.execute();
@@ -88,7 +90,7 @@ public class MicrometerGaugeTaskTest extends MicrometerTaskTest {
     public void unqualified_gauge_function_should_be_search_for_gauge_object() {
         // Given
         TestLogger logger = new TestLogger();
-        sut = new MicrometerGaugeTask(logger, GAUGE_NAME, null, null, null, null, new ArrayList<>(), "unknown", null);
+        sut = new MicrometerGaugeTask(logger, buildMeterName(METER_NAME_PREFIX), null, null, null, null, new ArrayList<>(), "unknown", null);
 
         // When
         TaskExecutionResult result = sut.execute();
@@ -101,7 +103,7 @@ public class MicrometerGaugeTaskTest extends MicrometerTaskTest {
     public void gauge_function_should_return_a_number() {
         // Given
         TestLogger logger = new TestLogger();
-        sut = new MicrometerGaugeTask(logger, GAUGE_NAME, null, null, null, null, new ArrayList<>(), "trimToSize", null);
+        sut = new MicrometerGaugeTask(logger, buildMeterName(METER_NAME_PREFIX), null, null, null, null, new ArrayList<>(), "trimToSize", null);
 
         // When
         TaskExecutionResult result = sut.execute();
@@ -114,7 +116,7 @@ public class MicrometerGaugeTaskTest extends MicrometerTaskTest {
     public void gauge_object_must_be_a_collection_map_or_number_when_gauge_function_null() {
         // Given
         TestLogger logger = new TestLogger();
-        sut = new MicrometerGaugeTask(logger, GAUGE_NAME, null, null, null, null, new Object(), null, null);
+        sut = new MicrometerGaugeTask(logger, buildMeterName(METER_NAME_PREFIX), null, null, null, null, new Object(), null, null);
 
         // When
         TaskExecutionResult result = sut.execute();
@@ -126,8 +128,10 @@ public class MicrometerGaugeTaskTest extends MicrometerTaskTest {
     @Test
     public void should_create_gauge_from_a_number_object_when_gauge_function_null() {
         // Given
+        MeterRegistry registry = new SimpleMeterRegistry();
         AtomicInteger gaugeObject = new AtomicInteger(8);
-        sut = new MicrometerGaugeTask(new TestLogger(), GAUGE_NAME, null, null, null, null, gaugeObject, null, null);
+        String meterName = buildMeterName(METER_NAME_PREFIX);
+        sut = new MicrometerGaugeTask(new TestLogger(), meterName, null, null, null, null, gaugeObject, null, registry);
 
         // When
         TaskExecutionResult result = sut.execute();
@@ -138,19 +142,21 @@ public class MicrometerGaugeTaskTest extends MicrometerTaskTest {
         AtomicInteger outputGauge = (AtomicInteger) result.outputs.get(OUTPUT_GAUGE);
         assertThat(outputGauge).isEqualTo(gaugeObject);
 
-        assertGaugeValue(gaugeObject);
+        assertGaugeValue(gaugeObject, meterName, registry);
 
         // When
         gaugeObject.set(90);
         // Then
-        assertGaugeValue(gaugeObject);
+        assertGaugeValue(gaugeObject, meterName, registry);
     }
 
     @Test
     public void should_create_gauge_from_a_collection_object_measuring_its_size_when_gauge_function_null() {
         // Given
+        MeterRegistry registry = new SimpleMeterRegistry();
         ArrayList<String> gaugeObject = new ArrayList<>();
-        sut = new MicrometerGaugeTask(new TestLogger(), GAUGE_NAME, null, null, null, null, gaugeObject, null, null);
+        String meterName = buildMeterName(METER_NAME_PREFIX);
+        sut = new MicrometerGaugeTask(new TestLogger(), meterName, null, null, null, null, gaugeObject, null, registry);
 
         // When
         TaskExecutionResult result = sut.execute();
@@ -161,19 +167,21 @@ public class MicrometerGaugeTaskTest extends MicrometerTaskTest {
         ArrayList outputGauge = (ArrayList) result.outputs.get(OUTPUT_GAUGE);
         assertThat(outputGauge).isEqualTo(gaugeObject);
 
-        assertGaugeValue(gaugeObject.size());
+        assertGaugeValue(gaugeObject.size(), meterName, registry);
 
         // When
         gaugeObject.addAll(Lists.list("", "", ""));
         // Then
-        assertGaugeValue(gaugeObject.size());
+        assertGaugeValue(gaugeObject.size(), meterName, registry);
     }
 
     @Test
     public void should_create_gauge_from_a_map_object_measuring_its_size_when_gauge_function_null() {
         // Given
+        MeterRegistry registry = new SimpleMeterRegistry();
         HashMap<String, Object> gaugeObject = new HashMap<>();
-        sut = new MicrometerGaugeTask(new TestLogger(), GAUGE_NAME, null, null, null, null, gaugeObject, null, null);
+        String meterName = buildMeterName(METER_NAME_PREFIX);
+        sut = new MicrometerGaugeTask(new TestLogger(), meterName, null, null, null, null, gaugeObject, null, registry);
 
         // When
         TaskExecutionResult result = sut.execute();
@@ -184,12 +192,12 @@ public class MicrometerGaugeTaskTest extends MicrometerTaskTest {
         Map outputGauge = (Map) result.outputs.get(OUTPUT_GAUGE);
         assertThat(outputGauge).isEqualTo(gaugeObject);
 
-        assertGaugeValue(gaugeObject.size());
+        assertGaugeValue(gaugeObject.size(), meterName, registry);
 
         // When
         gaugeObject.putAll(Maps.of("", "", "", ""));
         // Then
-        assertGaugeValue(gaugeObject.size());
+        assertGaugeValue(gaugeObject.size(), meterName, registry);
     }
 
     @Test
@@ -211,8 +219,10 @@ public class MicrometerGaugeTaskTest extends MicrometerTaskTest {
             }
         }
 
+        MeterRegistry registry = new SimpleMeterRegistry();
         TestObject gaugeObject = new TestObject(6);
-        sut = new MicrometerGaugeTask(new TestLogger(), GAUGE_NAME, null, null, null, null, gaugeObject, "measure", null);
+        String meterName = buildMeterName(METER_NAME_PREFIX);
+        sut = new MicrometerGaugeTask(new TestLogger(), meterName, null, null, null, null, gaugeObject, "measure", registry);
 
         // When
         TaskExecutionResult result = sut.execute();
@@ -223,19 +233,21 @@ public class MicrometerGaugeTaskTest extends MicrometerTaskTest {
         TestObject outputGauge = (TestObject) result.outputs.get(OUTPUT_GAUGE);
         assertThat(outputGauge).isEqualTo(gaugeObject);
 
-        assertGaugeValue(gaugeObject.measure());
+        assertGaugeValue(gaugeObject.measure(), meterName, registry);
 
         // When
         gaugeObject.changeState(2);
         // Then
-        assertGaugeValue(gaugeObject.measure());
+        assertGaugeValue(gaugeObject.measure(), meterName, registry);
     }
 
     @Test
     public void should_create_gauge_from_a_static_public_function() {
         // Given
         staticFunction(); // Avoid auto clean unused method
-        sut = new MicrometerGaugeTask(new TestLogger(), GAUGE_NAME, null, null, null, null, null, this.getClass().getName() + ".staticFunction", null);
+        MeterRegistry registry = new SimpleMeterRegistry();
+        String meterName = buildMeterName(METER_NAME_PREFIX);
+        sut = new MicrometerGaugeTask(new TestLogger(), meterName, null, null, null, null, null, this.getClass().getName() + ".staticFunction", registry);
 
         // When
         TaskExecutionResult result = sut.execute();
@@ -244,14 +256,14 @@ public class MicrometerGaugeTaskTest extends MicrometerTaskTest {
         assertThat(result.status).isEqualTo(Success);
         assertThat(result.outputs).isEmpty();
 
-        Iterable<Measurement> firstMeasure = requireNonNull(meterRegistry.find(GAUGE_NAME).gauge()).measure();
+        Iterable<Measurement> firstMeasure = requireNonNull(registry.find(meterName).gauge()).measure();
         assertThat(firstMeasure).hasSize(1);
         double firstValue = getFirstValueFromMeasurements(firstMeasure).getValue();
 
         // When
-        double secondValue = requireNonNull(meterRegistry.find(GAUGE_NAME).gauge()).value();
+        double secondValue = requireNonNull(registry.find(meterName).gauge()).value();
         // Then
-        assertThat(requireNonNull(meterRegistry.find(GAUGE_NAME).gauge()).measure()).hasSize(1);
+        assertThat(requireNonNull(registry.find(meterName).gauge()).measure()).hasSize(1);
         assertThat(secondValue).isNotEqualTo(firstValue);
     }
 
@@ -259,7 +271,8 @@ public class MicrometerGaugeTaskTest extends MicrometerTaskTest {
     public void should_create_gauge_and_register_it_on_given_registry() {
         // Given
         MeterRegistry givenMeterRegistry = new SimpleMeterRegistry();
-        sut = new MicrometerGaugeTask(new TestLogger(), GAUGE_NAME, "description", "my unit", null, Lists.list("tag", "my tag value"), new AtomicInteger(), null, givenMeterRegistry);
+        String meterName = buildMeterName(METER_NAME_PREFIX);
+        sut = new MicrometerGaugeTask(new TestLogger(), meterName, "description", "my unit", null, Lists.list("tag", "my tag value"), new AtomicInteger(), null, givenMeterRegistry);
 
         // When
         TaskExecutionResult result = sut.execute();
@@ -267,17 +280,16 @@ public class MicrometerGaugeTaskTest extends MicrometerTaskTest {
         // Then
         assertSuccessAndGaugeObjectType(result, AtomicInteger.class);
 
-        assertThat(globalRegistry.find(GAUGE_NAME).gauges()).isEmpty();
-        assertThat(meterRegistry.find(GAUGE_NAME).gauges()).isEmpty();
-        Gauge gauge = givenMeterRegistry.find(GAUGE_NAME).gauge();
+        assertThat(globalRegistry.find(meterName).gauges()).isEmpty();
+        Gauge gauge = givenMeterRegistry.find(meterName).gauge();
         assertThat(gauge).isNotNull();
         assertThat(gauge.getId().getDescription()).isEqualTo("description");
         assertThat(gauge.getId().getBaseUnit()).isEqualTo("my unit");
         assertThat(gauge.getId().getTag("tag")).isEqualTo("my tag value");
     }
 
-    private void assertGaugeValue(Number gaugeObject) {
-        assertThat(requireNonNull(meterRegistry.find(GAUGE_NAME).gauge()).value()).isEqualTo(gaugeObject.doubleValue());
+    private void assertGaugeValue(Number gaugeObject, String meterName, MeterRegistry registry) {
+        assertThat(requireNonNull(registry.find(meterName).gauge()).value()).isEqualTo(gaugeObject.doubleValue());
     }
 
     private void assertOneError(TaskExecutionResult result, TestLogger logger, String... messages) {

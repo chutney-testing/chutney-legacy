@@ -1,5 +1,7 @@
 package com.chutneytesting.task.micrometer;
 
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelperTest.assertSuccessAndOutputObjectType;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelperTest.buildMeterName;
 import static com.chutneytesting.task.micrometer.MicrometerTimerTask.OUTPUT_TIMER;
 import static io.micrometer.core.instrument.Metrics.globalRegistry;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,10 +16,10 @@ import java.util.concurrent.TimeUnit;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 
-public class MicrometerTimerTaskTest extends MicrometerTaskTest {
+public class MicrometerTimerTaskTest {
 
     private MicrometerTimerTask sut;
-    private final String TIMER_NAME = "timerName";
+    private final String METER_NAME_PREFIX = "timerName";
 
     @Test
     public void timer_name_is_mandatory_if_no_given_timer() {
@@ -29,63 +31,65 @@ public class MicrometerTimerTaskTest extends MicrometerTaskTest {
     @Test
     public void timer_buffer_length_must_be_an_integer() {
         assertThatThrownBy(() ->
-            new MicrometerTimerTask(null, TIMER_NAME, null, null, "not a integer", null, null, null, null, null, null, null, null, null, null, null)
+            new MicrometerTimerTask(null, buildMeterName(METER_NAME_PREFIX), null, null, "not a integer", null, null, null, null, null, null, null, null, null, null, null)
         ).isExactlyInstanceOf(NumberFormatException.class);
     }
 
     @Test
     public void timer_expiry_must_be_a_duration() {
         assertThatThrownBy(() ->
-            new MicrometerTimerTask(null, TIMER_NAME, null, null, null, "not a duration", null, null, null, null, null, null, null, null, null, null)
+            new MicrometerTimerTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, "not a duration", null, null, null, null, null, null, null, null, null, null)
         ).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     public void timer_max_value_must_be_a_duration() {
         assertThatThrownBy(() ->
-            new MicrometerTimerTask(null, TIMER_NAME, null, null, null, null, "not a duration", null, null, null, null, null, null, null, null, null)
+            new MicrometerTimerTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, "not a duration", null, null, null, null, null, null, null, null, null)
         ).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     public void timer_min_value_must_be_a_duration() {
         assertThatThrownBy(() ->
-            new MicrometerTimerTask(null, TIMER_NAME, null, null, null, null, null, "not a duration", null, null, null, null, null, null, null, null)
+            new MicrometerTimerTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, "not a duration", null, null, null, null, null, null, null, null)
         ).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     public void timer_percentile_precision_must_be_an_integer() {
         assertThatThrownBy(() ->
-            new MicrometerTimerTask(null, TIMER_NAME, null, null, null, null, null, null, "not a integer", null, null, null, null, null, null, null)
+            new MicrometerTimerTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, "not a integer", null, null, null, null, null, null, null)
         ).isExactlyInstanceOf(NumberFormatException.class);
     }
 
     @Test
     public void timer_percentiles_must_be_a_list_of_double() {
         assertThatThrownBy(() ->
-            new MicrometerTimerTask(null, TIMER_NAME, null, null, null, null, null, null, null, null, "not a list of double", null, null, null, null, null)
+            new MicrometerTimerTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, null, null, "not a list of double", null, null, null, null, null)
         ).isExactlyInstanceOf(NumberFormatException.class);
     }
 
     @Test
     public void timer_sla_must_be_a_list_of_duration() {
         assertThatThrownBy(() ->
-            new MicrometerTimerTask(null, TIMER_NAME, null, null, null, null, null, null, null, null, null, "not a list of duration", null, null, null, null)
+            new MicrometerTimerTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, null, null, null, "not a list of duration", null, null, null, null)
         ).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     public void timer_record_must_be_a_duration() {
         assertThatThrownBy(() ->
-            new MicrometerTimerTask(null, TIMER_NAME, null, null, null, null, null, null, null, null, null, null, null, null, null, "not a duration")
+            new MicrometerTimerTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, null, null, null, null, null, null, null, "not a duration")
         ).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     public void should_create_micrometer_timer() {
         // Given
-        sut = new MicrometerTimerTask(new TestLogger(), TIMER_NAME, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        MeterRegistry registry = new SimpleMeterRegistry();
+        String meterName = buildMeterName(METER_NAME_PREFIX);
+        sut = new MicrometerTimerTask(new TestLogger(), meterName, null, null, null, null, null, null, null, null, null, null, null, registry, null, null);
 
         // When
         TaskExecutionResult result = sut.execute();
@@ -94,10 +98,7 @@ public class MicrometerTimerTaskTest extends MicrometerTaskTest {
         assertSuccessAndTimerObjectType(result);
 
         Timer outputTimer = (Timer) result.outputs.get(OUTPUT_TIMER);
-        assertThat(globalRegistry.find(TIMER_NAME).timer()).isEqualTo(outputTimer);
-        assertThat(meterRegistry.find(TIMER_NAME).timer())
-            .isNotNull()
-            .extracting("id").isEqualTo(outputTimer.getId());
+        assertThat(registry.find(meterName).timer()).isEqualTo(outputTimer);
         assertThat(outputTimer.totalTime(TimeUnit.MILLISECONDS)).isEqualTo(0);
         assertThat(outputTimer.max(TimeUnit.MILLISECONDS)).isEqualTo(0);
         assertThat(outputTimer.mean(TimeUnit.MILLISECONDS)).isEqualTo(0);
@@ -108,7 +109,8 @@ public class MicrometerTimerTaskTest extends MicrometerTaskTest {
     public void should_create_micrometer_counter_and_register_it_on_given_registry() {
         // Given
         MeterRegistry givenMeterRegistry = new SimpleMeterRegistry();
-        sut = new MicrometerTimerTask(new TestLogger(), TIMER_NAME, "description", Lists.list("tag", "my tag value"), null, null, null, null, null, null, null, null, null, givenMeterRegistry, null, null);
+        String meterName = buildMeterName(METER_NAME_PREFIX);
+        sut = new MicrometerTimerTask(new TestLogger(), meterName, "description", Lists.list("tag", "my tag value"), null, null, null, null, null, null, null, null, null, givenMeterRegistry, null, null);
 
         // When
         TaskExecutionResult result = sut.execute();
@@ -117,9 +119,8 @@ public class MicrometerTimerTaskTest extends MicrometerTaskTest {
         assertSuccessAndTimerObjectType(result);
 
         Timer outputTimer = (Timer) result.outputs.get(OUTPUT_TIMER);
-        assertThat(globalRegistry.find(TIMER_NAME).timers()).isEmpty();
-        assertThat(meterRegistry.find(TIMER_NAME).timers()).isEmpty();
-        assertThat(givenMeterRegistry.find(TIMER_NAME).timer()).isEqualTo(outputTimer);
+        assertThat(globalRegistry.find(meterName).timers()).isEmpty();
+        assertThat(givenMeterRegistry.find(meterName).timer()).isEqualTo(outputTimer);
         assertThat(outputTimer.getId().getDescription()).isEqualTo("description");
         assertThat(outputTimer.getId().getTag("tag")).isEqualTo("my tag value");
     }
@@ -127,7 +128,7 @@ public class MicrometerTimerTaskTest extends MicrometerTaskTest {
     @Test
     public void should_create_micrometer_timer_and_record_an_event() {
         // Given
-        sut = new MicrometerTimerTask(new TestLogger(), TIMER_NAME, null, null, null, null, null, null, null, null, null, null, null, null, null, "3 s");
+        sut = new MicrometerTimerTask(new TestLogger(), buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, null, null, null, null, null, new SimpleMeterRegistry(), null, "3 s");
 
         // When
         TaskExecutionResult result = sut.execute();
@@ -145,9 +146,10 @@ public class MicrometerTimerTaskTest extends MicrometerTaskTest {
     @Test
     public void should_record_an_event_with_given_timer() {
         // Given
-        Timer givenTimer = meterRegistry.timer(TIMER_NAME);
+        MeterRegistry registry = new SimpleMeterRegistry();
+        Timer givenTimer = registry.timer(buildMeterName(METER_NAME_PREFIX));
         givenTimer.record(3, TimeUnit.SECONDS);
-        sut = new MicrometerTimerTask(new TestLogger(), null, null, null, null, null, null, null, null, null, null, null, givenTimer, null, null, "6 s");
+        sut = new MicrometerTimerTask(new TestLogger(), null, null, null, null, null, null, null, null, null, null, null, givenTimer, registry, null, "6 s");
 
         // When
         TaskExecutionResult result = sut.execute();
@@ -167,7 +169,7 @@ public class MicrometerTimerTaskTest extends MicrometerTaskTest {
     public void should_log_timer_record_total_max_mean_and_count() {
         // Given
         TestLogger logger = new TestLogger();
-        sut = new MicrometerTimerTask(logger, TIMER_NAME, null, null, null, null, null, null, null, null, null, null, null, null, null, "6 s");
+        sut = new MicrometerTimerTask(logger, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, null, null, null, null, null, new SimpleMeterRegistry(), null, "6 s");
 
         // When
         TaskExecutionResult result = sut.execute();
