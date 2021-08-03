@@ -22,14 +22,14 @@ public class FileUtils {
         try {
             Files.createDirectories(folderPath);
         } catch (IOException e) {
-            throw new IllegalStateException("Cannot create configuration directory: " + folderPath);
+            throw new IllegalStateException("Cannot create directory: " + folderPath);
         }
         Path testPath = folderPath.resolve("test");
         if (!Files.exists(testPath)) {
             try {
                 Files.createFile(folderPath.resolve("test"));
             } catch (IOException e) {
-                throw new UncheckedIOException("Unable to write in configuration directory: " + folderPath, e);
+                throw new UncheckedIOException("Unable to write in directory: " + folderPath, e);
             }
         }
 
@@ -44,7 +44,7 @@ public class FileUtils {
         } catch (DirectoryNotEmptyException e) {
             cleanFolder(folderPath);
         } catch (IOException e) {
-            throw new UncheckedIOException("Unable to delete in configuration directory: " + folderPath, e);
+            throw new UncheckedIOException("Unable to delete directory: " + folderPath, e);
         }
     }
 

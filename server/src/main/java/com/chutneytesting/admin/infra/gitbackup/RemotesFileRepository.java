@@ -37,7 +37,7 @@ public class RemotesFileRepository implements Remotes {
         .enable(SerializationFeature.INDENT_OUTPUT)
         .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
-    RemotesFileRepository(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) throws UncheckedIOException {
+    public RemotesFileRepository(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) throws UncheckedIOException {
         this.storeFolderPath = Paths.get(storeFolderPath).resolve(ROOT_DIRECTORY_NAME);
         this.resolvedFilePath = this.storeFolderPath.resolve(REMOTES_FILE);
         initFolder(this.storeFolderPath);
