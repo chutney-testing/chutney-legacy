@@ -5,7 +5,9 @@ import static com.chutneytesting.engine.domain.execution.report.Status.RUNNING;
 import static com.chutneytesting.engine.domain.execution.report.Status.SUCCESS;
 import static com.chutneytesting.tools.WaitUtils.awaitDuring;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.mock;
 
 import com.chutneytesting.engine.domain.environment.TargetImpl;
@@ -50,7 +52,7 @@ public class ReporterTest {
         Step subSubStep1 = step.subSteps().get(0).subSteps().get(0);
         Step subSubStep2 = step.subSteps().get(0).subSteps().get(1);
 
-        StepExecutionReport report = sut.generateReport(step, s -> s.status());
+        StepExecutionReport report = sut.generateReport(step, Step::status);
         assertThat(report.status).isEqualTo(Status.NOT_EXECUTED);
         assertThat(report.steps.get(0).status).isEqualTo(Status.NOT_EXECUTED);
         assertThat(report.steps.get(0).steps.get(0).status).isEqualTo(Status.NOT_EXECUTED);
@@ -60,7 +62,7 @@ public class ReporterTest {
         step.beginExecution(scenarioExecution);
         subStep1.beginExecution(scenarioExecution);
         subSubStep1.beginExecution(scenarioExecution);
-        report = sut.generateReport(step, s -> s.status());
+        report = sut.generateReport(step, Step::status);
         assertThat(report.status).isEqualTo(RUNNING);
         assertThat(report.steps.get(0).status).isEqualTo(RUNNING);
         assertThat(report.steps.get(0).steps.get(0).status).isEqualTo(RUNNING);
@@ -68,7 +70,7 @@ public class ReporterTest {
         assertThat(report.steps.get(1).status).isEqualTo(Status.NOT_EXECUTED);
 
         subSubStep1.pauseExecution(scenarioExecution);
-        report = sut.generateReport(step, s -> s.status());
+        report = sut.generateReport(step, Step::status);
         assertThat(report.status).isEqualTo(Status.PAUSED);
         assertThat(report.steps.get(0).status).isEqualTo(Status.PAUSED);
         assertThat(report.steps.get(0).steps.get(0).status).isEqualTo(Status.PAUSED);
@@ -76,7 +78,7 @@ public class ReporterTest {
         assertThat(report.steps.get(1).status).isEqualTo(Status.NOT_EXECUTED);
 
         subSubStep1.success();
-        report = sut.generateReport(step, s -> s.status());
+        report = sut.generateReport(step, Step::status);
         assertThat(report.status).isEqualTo(RUNNING);
         assertThat(report.steps.get(0).status).isEqualTo(RUNNING);
         assertThat(report.steps.get(0).steps.get(0).status).isEqualTo(SUCCESS);
@@ -84,7 +86,7 @@ public class ReporterTest {
         assertThat(report.steps.get(1).status).isEqualTo(Status.NOT_EXECUTED);
 
         subSubStep2.beginExecution(scenarioExecution);
-        report = sut.generateReport(step, s -> s.status());
+        report = sut.generateReport(step, Step::status);
         assertThat(report.status).isEqualTo(RUNNING);
         assertThat(report.steps.get(0).status).isEqualTo(RUNNING);
         assertThat(report.steps.get(0).steps.get(0).status).isEqualTo(SUCCESS);
@@ -93,7 +95,7 @@ public class ReporterTest {
 
         subSubStep2.success();
         subStep1.endExecution(scenarioExecution);
-        report = sut.generateReport(step, s -> s.status());
+        report = sut.generateReport(step, Step::status);
         assertThat(report.status).isEqualTo(RUNNING);
         assertThat(report.steps.get(0).status).isEqualTo(SUCCESS);
         assertThat(report.steps.get(0).steps.get(0).status).isEqualTo(SUCCESS);
@@ -168,7 +170,9 @@ public class ReporterTest {
         step.endExecution(scenarioExecution);//12
 
         RxBus.getInstance().post(new EndScenarioExecutionEvent(scenarioExecution, step));//13
-        observer.assertResult(RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, PAUSED, RUNNING, RUNNING, SUCCESS);
+        await().atMost(3, SECONDS).untilAsserted(() ->
+            observer.assertResult(RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, PAUSED, RUNNING, RUNNING, SUCCESS)
+        );
         assertThat(step.status()).isEqualTo(SUCCESS);
     }
 
