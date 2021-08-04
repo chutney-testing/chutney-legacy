@@ -1,5 +1,6 @@
 package com.chutneytesting.admin.domain.gitbackup;
 
+import static com.chutneytesting.admin.domain.gitbackup.ChutneyContentFSReader.readChutneyContent;
 import static com.chutneytesting.admin.domain.gitbackup.ChutneyContentFSWriter.writeChutneyContent;
 import static com.chutneytesting.tools.file.FileUtils.deleteFolder;
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
@@ -9,9 +10,12 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GitBackupService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(GitBackupService.class);
     private static final Path ROOT_DIRECTORY_NAME = Paths.get("backups", "git");
 
     private final Remotes remotes;
@@ -71,5 +75,18 @@ public class GitBackupService {
 
     public void backup() {
         backup(remotes.getAll().get(0));
+    }
+
+    public void importFrom(String name) {
+        this.importFrom(remotes.get(name));
+    }
+
+    public void importFrom(RemoteRepository remote) {
+        LOGGER.info("Importing data from " + remote);
+        Path workingDirectory = gitRepositoryFolderPath.resolve(remote.name);
+        cleanWorkingFolder(workingDirectory);
+        gitClient.initRepository(remote, workingDirectory);
+        gitClient.update(remote, workingDirectory);
+        readChutneyContent(workingDirectory, contentProviders);
     }
 }

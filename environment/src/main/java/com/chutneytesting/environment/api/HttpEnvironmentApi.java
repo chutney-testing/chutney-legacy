@@ -50,7 +50,12 @@ public class HttpEnvironmentApi implements EnvironmentApi {
     @PreAuthorize("hasAuthority('ENVIRONMENT_ACCESS')")
     @PostMapping("")
     public EnvironmentDto createEnvironment(@RequestBody EnvironmentDto environmentDto) throws InvalidEnvironmentNameException, AlreadyExistingEnvironmentException {
-        return embeddedApplication.createEnvironment(environmentDto);
+        return embeddedApplication.createEnvironment(environmentDto, false);
+    }
+
+    @Override
+    public EnvironmentDto createEnvironment(@RequestBody EnvironmentDto environmentDto, boolean force) {
+        return createEnvironment(environmentDto);
     }
 
     @Override

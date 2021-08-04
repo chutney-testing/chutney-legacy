@@ -36,8 +36,8 @@ public class EmbeddedEnvironmentApi implements EnvironmentApi {
     }
 
     @Override
-    public EnvironmentDto createEnvironment(EnvironmentDto environmentMetadataDto) throws InvalidEnvironmentNameException, AlreadyExistingEnvironmentException {
-        return EnvironmentDto.from(environmentService.createEnvironment(environmentMetadataDto.toEnvironment()));
+    public EnvironmentDto createEnvironment(EnvironmentDto environmentMetadataDto, boolean force) throws InvalidEnvironmentNameException, AlreadyExistingEnvironmentException {
+        return EnvironmentDto.from(environmentService.createEnvironment(environmentMetadataDto.toEnvironment(), force));
     }
 
     @Override

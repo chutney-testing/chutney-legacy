@@ -6,6 +6,11 @@ import com.chutneytesting.admin.domain.gitbackup.ChutneyContent;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentProvider;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
+import com.chutneytesting.tools.file.FileUtils;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 import java.util.stream.Stream;
 import org.springframework.stereotype.Component;
 
@@ -39,6 +44,27 @@ public class ChutneyGlobalVarContent implements ChutneyContentProvider {
                     .withContent(repository.getFileContent(name))
                     .build()
             );
+    }
+
+    @Override
+    public void importDefaultFolder(Path workingDirectory) {
+        importFolder(providerFolder(workingDirectory));
+    }
+
+    public void importFolder(Path folderPath) {
+        List<Path> globalVars = FileUtils.listFiles(folderPath);
+        globalVars.forEach(this::importFile);
+    }
+
+    public void importFile(Path filePath) {
+        if (Files.exists(filePath)) {
+            try {
+                String content = new String(Files.readAllBytes(filePath));
+                repository.saveFile(FileUtils.getNameWithoutExtension(filePath), content);
+            } catch (IOException e) {
+                throw new UnsupportedOperationException("Cannot read global var file : " + filePath, e);
+            }
+        }
     }
 
 }

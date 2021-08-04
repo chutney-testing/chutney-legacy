@@ -11,12 +11,15 @@ import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FileUtils {
 
-    private FileUtils(){}
+    private FileUtils() {
+    }
 
     public static void initFolder(Path folderPath) throws UncheckedIOException {
         try {
@@ -72,6 +75,14 @@ public class FileUtils {
         } catch (IOException e) {
             throw new UncheckedIOException("Unable to do something on files of path: " + path, e);
         }
+    }
+
+    public static List<Path> listFiles(Path folder) {
+        return FileUtils.doOnListFiles(folder, (pathStream) ->
+            pathStream
+                .filter(Files::isRegularFile)
+                .collect(Collectors.toList())
+        );
     }
 
     public static String readContent(Path path) throws UncheckedIOException {

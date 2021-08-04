@@ -1,7 +1,7 @@
 package com.chutneytesting.admin.api.gitbackup;
 
-import com.chutneytesting.admin.domain.gitbackup.RemoteRepository;
 import com.chutneytesting.admin.domain.gitbackup.GitBackupService;
+import com.chutneytesting.admin.domain.gitbackup.RemoteRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.http.MediaType;
@@ -50,6 +50,12 @@ public class GitBackupController {
     @GetMapping(path = "/{name}/backup")
     public void backup(@PathVariable("name") String name) {
         gitBackupService.backup(name);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
+    @GetMapping(path = "/{name}/import")
+    public void importContent(@PathVariable("name") String name) {
+        gitBackupService.importFrom(name);
     }
 
     private GitRemoteDto toDto(RemoteRepository remote) {

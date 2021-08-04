@@ -47,13 +47,18 @@ public class JsonHomePageRepository implements HomePageRepository {
     }
 
     public HomePage load() {
-        if (!Files.exists(homePageContent)) {
+        return load(homePageContent);
+    }
+
+    @Override
+    public HomePage load(Path filePath) {
+        if (!Files.exists(filePath)) {
             return new HomePage("NO CONTENT");
         }
 
         final Lock readLock;
         (readLock = rwLock.readLock()).lock();
-        try (InputStream is = Files.newInputStream(homePageContent)) {
+        try (InputStream is = Files.newInputStream(filePath)) {
             return objectMapper.readValue(is, HomePage.class);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);

@@ -103,7 +103,7 @@ class GitBackupServiceTest {
         FileUtils.initFolder(confPath);
         Path fileToDelete = confPath.resolve("to_be_removed.txt");
         Files.write(fileToDelete, "".getBytes());
-        
+
         RemoteRepository remote = new RemoteRepository("fake", "fake", "fake", "fake", "fake");
         when(gitClientMock.hasAccess(any())).thenReturn(true);
 
@@ -140,5 +140,8 @@ class GitBackupServiceTest {
                     .build()
             );
         }
+
+        @Override
+        public void importDefaultFolder(Path workingDirectory) {}
     }
 }

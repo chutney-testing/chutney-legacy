@@ -9,6 +9,7 @@ import com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepos
 import com.chutneytesting.tools.ui.ComposableIdUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.nio.file.Path;
 import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -54,5 +55,10 @@ public class ChutneyComposedScenarioContent implements ChutneyContentProvider {
                 }
                 return builder.build();
             });
+    }
+
+    @Override
+    public void importDefaultFolder(Path workingDirectory) {
+        // TODO
     }
 }
