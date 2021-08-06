@@ -1,6 +1,6 @@
 import { filterOnTextContent } from '@shared/tools';
 
-fdescribe('filterOnTextContent function...', () => {
+describe('filterOnTextContent function...', () => {
 
     var undef;
 
