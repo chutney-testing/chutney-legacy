@@ -74,4 +74,8 @@ public class SshServerMock {
     public boolean isClosed() {
         return sshServer.isClosed();
     }
+
+    public boolean isOpen() {
+        return sshServer.isOpen();
+    }
 }

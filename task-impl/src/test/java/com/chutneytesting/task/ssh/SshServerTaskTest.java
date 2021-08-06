@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -116,7 +117,10 @@ class SshServerTaskTest {
         TaskExecutionResult result = sshServerTask.execute();
         sshServer = (SshServerMock) result.outputs.get("sshServer");
 
-        assertThat(sshServer.isStarted()).isTrue();
+        Awaitility.await().untilAsserted(() -> {
+            assertThat(sshServer.isStarted()).isTrue();
+            assertThat(sshServer.isOpen()).isTrue();
+        });
         FinallyAction stopServerTask = finallyActionRegistry.finallyActions.get(0);
         assertThat(stopServerTask.actionIdentifier()).isEqualTo("ssh-server-stop");
         assertThat(stopServerTask.inputs().get("ssh-server")).isEqualTo(sshServer);
