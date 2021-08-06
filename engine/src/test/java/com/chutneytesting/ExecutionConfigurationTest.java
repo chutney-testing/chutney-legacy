@@ -1,7 +1,5 @@
 package com.chutneytesting;
 
-import static com.chutneytesting.tools.WaitUtils.awaitDuring;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
@@ -15,7 +13,6 @@ import com.chutneytesting.task.domain.TaskTemplateRegistry;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import io.reactivex.Observable;
-import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,24 +24,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class ExecutionConfigurationTest {
 
     private final ExecutionConfiguration sut = new ExecutionConfiguration();
-
-    @Test
-    public void should_load_configuration_without_error() {
-        assertThat(sut).isNotNull();
-//        assertThat(applicationContext.getBean(TaskTemplateLoader.class)).isNotNull();
-//        assertThat(applicationContext.getBean(TaskTemplateRegistry.class)).isNotNull();
-//        assertThat(applicationContext.getBean(SpelFunctions.class)).isNotNull();
-//        assertThat(applicationContext.getBean("stepExecutionStrategies")).isNotNull();
-//        assertThat(applicationContext.getBean(StepExecutionStrategies.class)).isNotNull();
-//        assertThat(applicationContext.getBean(StepDataEvaluator.class)).isNotNull();
-//        assertThat(applicationContext.getBean(ExecutionEngine.class)).isNotNull();
-//        assertThat(applicationContext.getBean(TestEngine.class)).isNotNull();
-//        assertThat(applicationContext.getBean(DelegationService.class)).isNotNull();
-//        assertThat(applicationContext.getBean(DelegationClient.class)).isNotNull();
-//        assertThat(applicationContext.getBean(Reporter.class)).isNotNull();
-//        assertThat(applicationContext.getBean(ExecutionManager.class)).isNotNull();
-//        assertThat(applicationContext.getBean(StepExecutor.class)).isNotNull();
-    }
 
     @Test
     public void should_execute_scenario_async() {
@@ -85,21 +64,19 @@ public class ExecutionConfigurationTest {
         ExecutionRequestDto requestDto = new ExecutionRequestDto(stepDefinition);
 
         //W
+        List<StepExecutionReportDto> results = new ArrayList<>();
         Long executionId = testEngine.executeAsync(requestDto);
         Observable<StepExecutionReportDto> reports = testEngine.receiveNotification(executionId);
-        List<StepExecutionReportDto> results = new ArrayList<>();
-        reports.subscribeOn(Schedulers.io()).subscribe(results::add);
-        awaitDuring(200, MILLISECONDS); // wait initialization and execution of the first step
-
-        testEngine.pauseExecution(executionId);
-        awaitDuring(800, MILLISECONDS); // wait pause of 1 second (@See ScenarioExecution)
-
-        // Resume before next pause
-        testEngine.resumeExecution(executionId);
-        awaitDuring(600, MILLISECONDS);
-        testEngine.stopExecution(executionId);
-        awaitDuring(600, MILLISECONDS);
-
+        reports.blockingSubscribe(report -> {
+            if (StatusDto.RUNNING.equals(report.steps.get(0).status)) {
+                testEngine.pauseExecution(executionId);
+            } else if (StatusDto.PAUSED.equals(report.steps.get(1).status)) {
+                testEngine.resumeExecution(executionId);
+            } else if (StatusDto.RUNNING.equals(report.steps.get(1).status)) {
+                testEngine.stopExecution(executionId);
+            }
+            results.add(report);
+        });
 
         StepExecutionReportDto finalReport = results.get(results.size() - 1);
         // check scenario status
