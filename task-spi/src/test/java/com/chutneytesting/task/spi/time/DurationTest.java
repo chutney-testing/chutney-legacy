@@ -2,7 +2,6 @@ package com.chutneytesting.task.spi.time;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import java.util.function.Supplier;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -11,21 +10,30 @@ public class DurationTest {
 
     @ParameterizedTest(name = "\"{0} is parsed to {1} ms\"")
     @MethodSource("parametersForParsing_nominal_cases")
-    public void parsing_nominal_cases(String durationAsString, double expectedMilliseconds, String expectedStringRepresentation) {
+    public void parsing_nominal_cases(String durationAsString, Double expectedMilliseconds, String expectedStringRepresentation) {
         Duration duration = Duration.parse(durationAsString);
         SoftAssertions softly = new SoftAssertions();
-        softly.assertThat(Math.abs(duration.toMilliseconds() - expectedMilliseconds)).isLessThan(10 * 60 * 1000); // comparison with +-1.5 sec precision for slow runner
-        softly.assertThat(duration.toString()).isEqualTo(expectedStringRepresentation != null ? expectedStringRepresentation : duration.toMilliseconds() + " ms");
+
+        if (Double.MIN_VALUE == expectedMilliseconds) {
+            softly.assertThat(duration.toMilliseconds()).isPositive();
+        } else {
+            softly.assertThat(Math.abs(duration.toMilliseconds() - expectedMilliseconds)).isZero();
+        }
+
+        if (expectedStringRepresentation.isBlank()) {
+            softly.assertThat(duration.toString()).isNotBlank();
+        } else {
+            softly.assertThat(duration.toString()).isEqualTo(expectedStringRepresentation);
+        }
         softly.assertAll();
     }
 
     public static Object[] parametersForParsing_nominal_cases() {
-        Supplier<Long> durationInMsUntil = () -> UntilHourDurationParserTest.millisTo(17, 42);
         return new Object[][]{
-            {"5890 ns", 5890 * 0.00001, "5890 ns"},
-            {"765 \u03bcs", 765 * 0.001, "765 \u03bcs"},
-            {"10 m", 10 * 60 * 1000, "10 min"},
-            {"until 17:42", durationInMsUntil.get(), null}
+            {"5890 ns", 0.0, "5890 ns"},
+            {"765 \u03bcs", 1.0, "765 \u03bcs"},
+            {"10 m", 10 * 60 * 1000.0, "10 min"},
+            {"until 17:42", Double.MIN_VALUE, ""}
         };
     }
 

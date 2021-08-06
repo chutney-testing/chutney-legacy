@@ -10,7 +10,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 public class DurationWithUnitParserTest {
 
-    private DurationParser durationWithUnitParser = new DurationWithUnitParser();
+    private final DurationParser durationWithUnitParser = new DurationWithUnitParser();
 
     @ParameterizedTest(name = "{0} is parsed to {1} ms")
     @MethodSource("parametersForParsing_nominal_cases")
