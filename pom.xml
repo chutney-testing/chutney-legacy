@@ -82,7 +82,7 @@
         <!-- Runtime dependencies versions -->
 
         <springboot.version>2.3.10.RELEASE</springboot.version>
-        <jackson.version>2.12.3</jackson.version>
+        <jackson.version>2.12.4</jackson.version>
         <guava.version>30.1.1-jre</guava.version>
         <immutables.version>2.8.8</immutables.version>
         <sl4j.api.version>1.7.32</sl4j.api.version>
