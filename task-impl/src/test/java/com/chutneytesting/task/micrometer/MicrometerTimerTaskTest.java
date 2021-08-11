@@ -1,7 +1,7 @@
 package com.chutneytesting.task.micrometer;
 
-import static com.chutneytesting.task.micrometer.MicrometerTaskHelperTest.assertSuccessAndOutputObjectType;
-import static com.chutneytesting.task.micrometer.MicrometerTaskHelperTest.buildMeterName;
+import static com.chutneytesting.task.micrometer.MicrometerTaskTestHelper.assertSuccessAndOutputObjectType;
+import static com.chutneytesting.task.micrometer.MicrometerTaskTestHelper.buildMeterName;
 import static com.chutneytesting.task.micrometer.MicrometerTimerTask.OUTPUT_TIMER;
 import static io.micrometer.core.instrument.Metrics.globalRegistry;
 import static org.assertj.core.api.Assertions.assertThat;

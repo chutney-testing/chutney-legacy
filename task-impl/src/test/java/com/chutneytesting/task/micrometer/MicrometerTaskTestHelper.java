@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import java.util.Random;
 
-final class MicrometerTaskHelperTest {
+final class MicrometerTaskTestHelper {
 
     private static final Random rand = new Random();
 

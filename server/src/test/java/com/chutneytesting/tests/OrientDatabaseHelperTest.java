@@ -55,10 +55,6 @@ public class OrientDatabaseHelperTest {
         orientComponentDB = initComponentDB(databaseName, dbType);
     }
 
-    private OrientComponentDB initComponentDB(String databaseName) {
-        return initComponentDB(databaseName, ODatabaseType.MEMORY);
-    }
-
     private OrientComponentDB initComponentDB(String databaseName, ODatabaseType dbType) {
         OrientConfigurationProperties orientConfigurationProperties = new OrientConfigurationProperties();
         orientConfigurationProperties.getDBProperties().setDbName(databaseName);

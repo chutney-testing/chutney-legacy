@@ -32,7 +32,19 @@ public class OrientComposableTestCaseRepositoryTest {
     private static final String DATABASE_NAME = "orient_composable_testcase_test";
     private static final OrientDatabaseHelperTest orientDatabaseHelperTest = new OrientDatabaseHelperTest(DATABASE_NAME);
 
+    private static final Map<String, String> FUNC_STEP_REF_PARAMETERS = Maps.of(
+        "child parameter with no overload", "child initial value",
+        "child parameter with parent overload", "child value to be overloaded",
+        "child parameter with scenario overload", "child value to be overloaded"
+    );
+    private static final Map<String, String> FUNC_STEP_PARENT_REF_PARAMETERS = Maps.of(
+        "parent parameter with no overload", "parent initial value",
+        "parent parameter with scenario overload", "parent value to be overloaded"
+    );
+
     private static ComposableTestCaseRepository sut;
+    private static ComposableStep FUNC_STEP_REF;
+    private static ComposableStep FUNC_STEP_PARENT_REF;
 
     @BeforeAll
     public static void setUp() {
@@ -40,18 +52,6 @@ public class OrientComposableTestCaseRepositoryTest {
         OLogManager.instance().setWarnEnabled(false);
         initComposableStepsRepository();
     }
-
-    private static ComposableStep FUNC_STEP_REF;
-    private static final Map<String, String> FUNC_STEP_REF_PARAMETERS = Maps.of(
-        "child parameter with no overload", "child initial value",
-        "child parameter with parent overload", "child value to be overloaded",
-        "child parameter with scenario overload", "child value to be overloaded"
-    );
-    private static ComposableStep FUNC_STEP_PARENT_REF;
-    private static final Map<String, String> FUNC_STEP_PARENT_REF_PARAMETERS = Maps.of(
-        "parent parameter with no overload", "parent initial value",
-        "parent parameter with scenario overload", "parent value to be overloaded"
-    );
 
     private static void initComposableStepsRepository() {
         ComposableStepRepository funcComposableStepRepository = new OrientComposableStepRepository(orientDatabaseHelperTest.orientComponentDB, orientDatabaseHelperTest.stepMapper);

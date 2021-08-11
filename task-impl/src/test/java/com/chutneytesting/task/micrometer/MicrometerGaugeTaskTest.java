@@ -1,8 +1,8 @@
 package com.chutneytesting.task.micrometer;
 
 import static com.chutneytesting.task.micrometer.MicrometerGaugeTask.OUTPUT_GAUGE;
-import static com.chutneytesting.task.micrometer.MicrometerTaskHelperTest.assertSuccessAndOutputObjectType;
-import static com.chutneytesting.task.micrometer.MicrometerTaskHelperTest.buildMeterName;
+import static com.chutneytesting.task.micrometer.MicrometerTaskTestHelper.assertSuccessAndOutputObjectType;
+import static com.chutneytesting.task.micrometer.MicrometerTaskTestHelper.buildMeterName;
 import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Failure;
 import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Success;
 import static io.micrometer.core.instrument.Metrics.globalRegistry;

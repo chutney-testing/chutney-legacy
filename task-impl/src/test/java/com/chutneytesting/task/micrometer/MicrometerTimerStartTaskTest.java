@@ -1,6 +1,6 @@
 package com.chutneytesting.task.micrometer;
 
-import static com.chutneytesting.task.micrometer.MicrometerTaskHelperTest.assertSuccessAndOutputObjectType;
+import static com.chutneytesting.task.micrometer.MicrometerTaskTestHelper.assertSuccessAndOutputObjectType;
 import static com.chutneytesting.task.micrometer.MicrometerTimerStartTask.OUTPUT_TIMER_SAMPLE;
 import static org.assertj.core.api.Assertions.assertThat;
 
