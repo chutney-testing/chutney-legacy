@@ -39,7 +39,8 @@ public class ChutneyDatasetContent implements ChutneyContentProvider {
             .map(ds -> repository.findById(ds.id))
             .map(ds -> {
                 ChutneyContent.ChutneyContentBuilder builder = ChutneyContent.builder()
-                    .withCategory(category()).withProvider(provider())
+                    .withProvider(provider())
+                    .withCategory(category())
                     .withName(ds.name);
                 try {
                     builder

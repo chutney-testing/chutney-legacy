@@ -1,8 +1,12 @@
 package com.chutneytesting.task.amqp.utils;
 
 import com.rabbitmq.client.LongString;
-
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class AmqpUtils {

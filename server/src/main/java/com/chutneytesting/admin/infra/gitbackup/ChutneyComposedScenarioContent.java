@@ -42,7 +42,8 @@ public class ChutneyComposedScenarioContent implements ChutneyContentProvider {
             .map(repository::findById)
             .map(t -> {
                 ChutneyContent.ChutneyContentBuilder builder = ChutneyContent.builder()
-                    .withCategory(category()).withProvider(provider())
+                    .withProvider(provider())
+                    .withCategory(category())
                     .withName("[" + ComposableIdUtils.toFrontId(t.id()) + "]-" + t.metadata().title());
                 try {
                     builder

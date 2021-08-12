@@ -9,9 +9,9 @@ public class PeriodicScheduledCampaign {
     public final Long campaignId;
     public final String campaignTitle;
     public final LocalDateTime nextExecutionDate;
-    public final FREQUENCY frequency;
+    public final Frequency frequency;
 
-    public PeriodicScheduledCampaign(Long id, Long campaignId, String campaignTitle, LocalDateTime nextExecutionDate, FREQUENCY frequency) {
+    public PeriodicScheduledCampaign(Long id, Long campaignId, String campaignTitle, LocalDateTime nextExecutionDate, Frequency frequency) {
         this.id = id;
         this.campaignId = campaignId;
         this.campaignTitle = campaignTitle;
@@ -20,7 +20,7 @@ public class PeriodicScheduledCampaign {
     }
 
     public PeriodicScheduledCampaign(Long id, Long campaignId, String campaignTitle, LocalDateTime nextExecutionDate) {
-        this(id, campaignId, campaignTitle, nextExecutionDate, FREQUENCY.EMPTY);
+        this(id, campaignId, campaignTitle, nextExecutionDate, Frequency.EMPTY);
     }
 
     @Override

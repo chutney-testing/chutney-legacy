@@ -43,12 +43,13 @@ public class ChutneyScenarioContent implements ChutneyContentProvider {
             .map(repository::findById)
             .map(t -> {
                 ChutneyContent.ChutneyContentBuilder builder = ChutneyContent.builder()
-                    .withCategory(category()).withProvider(provider())
+                    .withProvider(provider())
+                    .withCategory(category())
                     .withName("[" + t.id() + "]-" + t.metadata().title());
                 try {
                     builder
-                        .withContent(mapper.writeValueAsString(t))
-                        .withFormat("json");
+                        .withFormat("json")
+                        .withContent(mapper.writeValueAsString(t));
                 } catch (JsonProcessingException e) {
                    throw new RuntimeException(e.getMessage(), e);
                 }

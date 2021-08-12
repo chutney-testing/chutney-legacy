@@ -43,8 +43,8 @@ public class ChutneyEnvironmentContent implements ChutneyContentProvider {
                     .withName(env.name);
                 try {
                     builder
-                        .withContent(mapper.writeValueAsString(env))
-                        .withFormat("json");
+                        .withFormat("json")
+                        .withContent(mapper.writeValueAsString(env));
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e.getMessage(), e);
                 }

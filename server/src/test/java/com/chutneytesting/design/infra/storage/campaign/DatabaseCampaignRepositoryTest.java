@@ -121,7 +121,7 @@ public class DatabaseCampaignRepositoryTest extends AbstractLocalDatabaseTest {
         assertThat(selected.title).isEqualTo(new_title);
         assertThat(selected.description).isEqualTo(new_description);
         assertThat(selected.scenarioIds).containsExactlyElementsOf(new_scenarios);
-        assertThat(selected.getScheduleTime()).isAfter(LocalTime.now().minusMinutes(1));
+        assertThat(selected.scheduleTime).isAfter(LocalTime.now().minusMinutes(1));
     }
 
     @Test
