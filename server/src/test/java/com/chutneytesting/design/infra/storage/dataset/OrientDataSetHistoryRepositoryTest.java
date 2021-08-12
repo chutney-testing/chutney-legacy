@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.chutneytesting.design.domain.dataset.DataSet;
 import com.chutneytesting.design.domain.dataset.DataSetNotFoundException;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
-import com.chutneytesting.tests.AbstractOrientDatabaseTest;
+import com.chutneytesting.tests.OrientDatabaseHelperTest;
 import com.orientechnologies.common.log.OLogManager;
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +20,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class OrientDataSetHistoryRepositoryTest extends AbstractOrientDatabaseTest {
+public class OrientDataSetHistoryRepositoryTest {
+
+    private static final String DATABASE_NAME = "orient_dataset_history_test";
+    private static final OrientDatabaseHelperTest orientDatabaseHelperTest = new OrientDatabaseHelperTest(DATABASE_NAME);
 
     private static OrientDataSetHistoryRepository sut;
 
@@ -28,22 +31,21 @@ public class OrientDataSetHistoryRepositoryTest extends AbstractOrientDatabaseTe
 
     @BeforeAll
     public static void setUp() {
-        initComponentDB(DATABASE_NAME);
-        sut = new OrientDataSetHistoryRepository(orientComponentDB);
+        sut = new OrientDataSetHistoryRepository(orientDatabaseHelperTest.orientComponentDB);
         OLogManager.instance().setWarnEnabled(false);
 
-        OrientDataSetRepository orientDataSetRepository = new OrientDataSetRepository(orientComponentDB);
+        OrientDataSetRepository orientDataSetRepository = new OrientDataSetRepository(orientDatabaseHelperTest.orientComponentDB);
         originalDataSet = orientDataSetRepository.findById(orientDataSetRepository.save(dataSet()));
     }
 
     @AfterEach
     public void after() {
-        truncateCollection(DATABASE_NAME, OrientComponentDB.DATASET_HISTORY_CLASS);
+        orientDatabaseHelperTest.truncateCollection(OrientComponentDB.DATASET_HISTORY_CLASS);
     }
 
     @AfterAll
     public static void tearDown() {
-        destroyDB(DATABASE_NAME);
+        orientDatabaseHelperTest.destroyDB();
     }
 
     @Test

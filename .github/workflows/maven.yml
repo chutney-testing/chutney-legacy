@@ -42,6 +42,6 @@ jobs:
     - name: Build with Maven
       env:
         BUILD_ENV: 'github-actions'
-      run: mvn -B -V verify
+      run: mvn -T 1C -B -V verify
     - name: Codecov
       uses: codecov/codecov-action@v1.2.1

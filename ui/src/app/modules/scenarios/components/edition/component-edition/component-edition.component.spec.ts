@@ -7,6 +7,7 @@ import { MomentModule } from 'angular2-moment';
 import { TranslateModule } from '@ngx-translate/core';
 import { DragulaModule, DragulaService } from 'ng2-dragula';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ToastrModule } from 'ngx-toastr';
 import { of } from 'rxjs';
 
 import { SharedModule } from '@shared/shared.module';
@@ -50,6 +51,7 @@ describe('ComponentEditionComponent', () => {
                 MomentModule,
                 DragulaModule,
                 NgbModule.forRoot(),
+                ToastrModule.forRoot()
             ],
             declarations: [
                 ScenarioCampaignsComponent,

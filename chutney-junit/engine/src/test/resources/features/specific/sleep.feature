@@ -7,12 +7,12 @@ Feature: Sleep feature
         When The night is out there
             Do success
         Then I rest for short time periods
-            Do: sleep for 1 sec
+            Do: sleep for 100 ms
             Execute success
-            Do rest during 200 ms
+            Do rest during 120 ms
         And I wait for some more short periods of time
-            Execute await 300 ms
+            Execute await 110 ms
             Do success
             Execute pause during 120 ms
             Do success
-            Execute: Wait for 390 ms
+            Execute: Wait for 100 ms

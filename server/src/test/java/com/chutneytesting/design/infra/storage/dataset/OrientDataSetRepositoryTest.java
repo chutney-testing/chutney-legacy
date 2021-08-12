@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import com.chutneytesting.design.domain.dataset.DataSet;
 import com.chutneytesting.design.domain.dataset.DataSetNotFoundException;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
-import com.chutneytesting.tests.AbstractOrientDatabaseTest;
+import com.chutneytesting.tests.OrientDatabaseHelperTest;
 import com.orientechnologies.common.log.OLogManager;
 import java.time.Instant;
 import java.util.List;
@@ -20,25 +20,27 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class OrientDataSetRepositoryTest extends AbstractOrientDatabaseTest {
+public class OrientDataSetRepositoryTest {
+
+    private static final String DATABASE_NAME = "orient_dataset_test";
+    private static final OrientDatabaseHelperTest orientDatabaseHelperTest = new OrientDatabaseHelperTest(DATABASE_NAME);
 
     private static OrientDataSetRepository sut;
 
     @BeforeAll
     public static void setUp() {
-        initComponentDB(DATABASE_NAME);
-        sut = new OrientDataSetRepository(orientComponentDB);
+        sut = new OrientDataSetRepository(orientDatabaseHelperTest.orientComponentDB);
         OLogManager.instance().setWarnEnabled(false);
     }
 
     @AfterEach
     public void after() {
-        truncateCollection(DATABASE_NAME, OrientComponentDB.DATASET_CLASS);
+        orientDatabaseHelperTest.truncateCollection(OrientComponentDB.DATASET_CLASS);
     }
 
     @AfterAll
     public static void tearDown() {
-        destroyDB(DATABASE_NAME);
+        orientDatabaseHelperTest.destroyDB();
     }
 
     @Test

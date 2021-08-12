@@ -9,7 +9,7 @@ import com.chutneytesting.admin.domain.SqlResult;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
 import com.chutneytesting.design.domain.scenario.compose.ComposableStepRepository;
 import com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepRepository;
-import com.chutneytesting.tests.AbstractOrientDatabaseTest;
+import com.chutneytesting.tests.OrientDatabaseHelperTest;
 import com.chutneytesting.tools.ImmutablePaginationRequestWrapperDto;
 import com.chutneytesting.tools.PaginatedDto;
 import com.chutneytesting.tools.PaginationRequestWrapperDto;
@@ -23,31 +23,30 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class OrientAdminServiceTest extends AbstractOrientDatabaseTest {
+public class OrientAdminServiceTest {
 
-    private static String DATABASE_NAME = "orient_admin_test";
+    private static final String DATABASE_NAME = "orient_admin_test";
+    private static final OrientDatabaseHelperTest orientDatabaseHelperTest = new OrientDatabaseHelperTest(DATABASE_NAME);
 
     private static ComposableStepRepository orientRepository;
     private static DatabaseAdminService sut;
 
     @BeforeAll
     public static void setUp() {
-        OrientAdminServiceTest.initComponentDB(DATABASE_NAME);
-
-        orientRepository = new OrientComposableStepRepository(orientComponentDB, stepMapper);
-        sut = new OrientAdminService(orientComponentDB);
+        orientRepository = new OrientComposableStepRepository(orientDatabaseHelperTest.orientComponentDB, orientDatabaseHelperTest.stepMapper);
+        sut = new OrientAdminService(orientDatabaseHelperTest.orientComponentDB);
         OLogManager.instance().setWarnEnabled(false);
     }
 
     @AfterEach
     public void after() {
-        truncateCollection(DATABASE_NAME, STEP_CLASS);
-        truncateCollection(DATABASE_NAME, GE_STEP_CLASS);
+        orientDatabaseHelperTest.truncateCollection(STEP_CLASS);
+        orientDatabaseHelperTest.truncateCollection(GE_STEP_CLASS);
     }
 
     @AfterAll
     public static void tearDown() throws Exception {
-        OrientAdminServiceTest.destroyDB(DATABASE_NAME);
+        orientDatabaseHelperTest.destroyDB();
     }
 
     @Test

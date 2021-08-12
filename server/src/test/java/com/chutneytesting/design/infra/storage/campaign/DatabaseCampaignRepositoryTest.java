@@ -17,7 +17,9 @@ import java.util.stream.Collectors;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
+@ResourceLock("changelog")
 public class DatabaseCampaignRepositoryTest extends AbstractLocalDatabaseTest {
 
     private CampaignRepository sut;

@@ -104,7 +104,7 @@ public class DefaultExecutionEngineTest {
         scenarioExecution.registerFinallyAction(FinallyAction.Builder.forAction("final", "task name").build());
 
         List<BeginStepExecutionEvent> events = new ArrayList<>();
-        getInstance().register(BeginStepExecutionEvent.class, events::add);
+        getInstance().registerOnExecutionId(BeginStepExecutionEvent.class, scenarioExecution.executionId, e -> events.add((BeginStepExecutionEvent) e));
 
         // When
         engineUnderTest.execute(stepDefinition, scenarioExecution);

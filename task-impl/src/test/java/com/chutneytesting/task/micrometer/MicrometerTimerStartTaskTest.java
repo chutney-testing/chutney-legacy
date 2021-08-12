@@ -1,7 +1,7 @@
 package com.chutneytesting.task.micrometer;
 
+import static com.chutneytesting.task.micrometer.MicrometerTaskTestHelper.assertSuccessAndOutputObjectType;
 import static com.chutneytesting.task.micrometer.MicrometerTimerStartTask.OUTPUT_TIMER_SAMPLE;
-import static io.micrometer.core.instrument.Metrics.globalRegistry;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.task.TestLogger;
@@ -11,7 +11,7 @@ import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.Test;
 
-public class MicrometerTimerStartTaskTest extends MicrometerTaskTest {
+public class MicrometerTimerStartTaskTest {
 
     private MicrometerTimerStartTask sut;
 
@@ -27,8 +27,6 @@ public class MicrometerTimerStartTaskTest extends MicrometerTaskTest {
         assertSuccessAndSampleObjectType(result);
 
         Timer.Sample timerSampleOutput = (Timer.Sample) result.outputs.get(OUTPUT_TIMER_SAMPLE);
-        assertThat(globalRegistry.getMeters()).isEmpty();
-        assertThat(meterRegistry.getMeters()).isEmpty();
         assertThat(timerSampleOutput).isNotNull();
     }
 
@@ -45,8 +43,6 @@ public class MicrometerTimerStartTaskTest extends MicrometerTaskTest {
         assertSuccessAndSampleObjectType(result);
 
         Timer.Sample timerSampleOutput = (Timer.Sample) result.outputs.get(OUTPUT_TIMER_SAMPLE);
-        assertThat(globalRegistry.getMeters()).isEmpty();
-        assertThat(meterRegistry.getMeters()).isEmpty();
         assertThat(givenMeterRegistry.getMeters()).isEmpty();
         assertThat(timerSampleOutput).isNotNull();
     }

@@ -76,7 +76,7 @@ public class ScenarioExecutionTest {
 
         List<BeginStepExecutionEvent> events = new ArrayList<>();
 
-        getInstance().register(BeginStepExecutionEvent.class, events::add);
+        getInstance().registerOnExecutionId(BeginStepExecutionEvent.class, scenarioExecution.executionId, e -> events.add((BeginStepExecutionEvent) e));
 
         Step rootStep = createRootStep();
         scenarioExecution.executeFinallyActions(rootStep, new ScenarioContextImpl(), fa -> new Step(

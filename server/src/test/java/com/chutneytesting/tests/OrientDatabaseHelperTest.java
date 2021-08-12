@@ -18,7 +18,6 @@ import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientCon
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientDBManager;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.changelog.OrientChangelogExecutor;
 import com.chutneytesting.design.infra.storage.scenario.compose.wrapper.StepVertex;
-import com.chutneytesting.task.api.EmbeddedTaskEngine;
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.db.ODatabaseType;
@@ -30,26 +29,33 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.apache.groovy.util.Maps;
-import org.mockito.Mockito;
 
-public abstract class AbstractOrientDatabaseTest {
+public class OrientDatabaseHelperTest {
 
-    private static OrientDBManager orientDBManager;
-    private static final WebConfiguration webConfiguration = new WebConfiguration();
+    private OrientDBManager orientDBManager;
 
-    protected static final String DATABASE_NAME = "orient_repo_test";
-    protected static OrientComponentDB orientComponentDB;
-    protected static OrientChangelogExecutor changelogExecution;
+    private final String databaseName;
+    public final OrientChangelogExecutor changelogExecution;
+    public final OrientComponentDB orientComponentDB;
+    public final RawImplementationMapper implementationMapper;
+    public final ExecutableComposedStepMapper stepMapper;
+    public final ExecutableComposedTestCaseMapper testCaseMapper;
 
-    protected static RawImplementationMapper implementationMapper = new RawImplementationMapper(webConfiguration.objectMapper());
-    protected static ExecutableComposedStepMapper stepMapper = new ExecutableComposedStepMapper(implementationMapper);
-    protected static ExecutableComposedTestCaseMapper testCaseMapper = new ExecutableComposedTestCaseMapper(stepMapper);
-
-    protected static void initComponentDB(String databaseName) {
-        initComponentDB(databaseName, ODatabaseType.MEMORY);
+    public OrientDatabaseHelperTest(String databaseName) {
+        this(databaseName, ODatabaseType.MEMORY);
     }
 
-    protected static void initComponentDB(String databaseName, ODatabaseType dbType) {
+    public OrientDatabaseHelperTest(String databaseName, ODatabaseType dbType) {
+        this.databaseName = databaseName;
+        WebConfiguration webConfiguration = new WebConfiguration();
+        implementationMapper = new RawImplementationMapper(webConfiguration.objectMapper());
+        changelogExecution = new OrientChangelogExecutor();
+        stepMapper = new ExecutableComposedStepMapper(implementationMapper);
+        testCaseMapper = new ExecutableComposedTestCaseMapper(stepMapper);
+        orientComponentDB = initComponentDB(databaseName, dbType);
+    }
+
+    private OrientComponentDB initComponentDB(String databaseName, ODatabaseType dbType) {
         OrientConfigurationProperties orientConfigurationProperties = new OrientConfigurationProperties();
         orientConfigurationProperties.getDBProperties().setDbName(databaseName);
         orientConfigurationProperties.getDBProperties().setDbType(dbType.name());
@@ -59,45 +65,44 @@ public abstract class AbstractOrientDatabaseTest {
             "storage.useWAL", false
         ));
 
-        changelogExecution = new OrientChangelogExecutor();
         orientDBManager = new OrientDBManager(orientConfigurationProperties);
         orientDBManager.init();
-        orientComponentDB = new OrientComponentDB(orientDBManager, orientConfigurationProperties, changelogExecution);
+        return new OrientComponentDB(orientDBManager, orientConfigurationProperties, changelogExecution);
     }
 
-    protected static void destroyDB(String databaseName) {
+    public void destroyDB() {
         orientDBManager.dropOrientDB(databaseName);
         orientDBManager.destroy();
     }
 
-    protected ODatabasePool dbPool(String databaseName) {
+    public ODatabasePool dbPool() {
         return orientDBManager.getDBPool(databaseName);
     }
 
-    protected void truncateCollection(String databaseName, String collection) {
-        try (ODatabaseSession dbSession = dbPool(databaseName).acquire()) {
+    public void truncateCollection(String collection) {
+        try (ODatabaseSession dbSession = dbPool().acquire()) {
             dbSession.command("TRUNCATE CLASS " + collection + " UNSAFE");
         }
-        assertThat(countCollectionRecords(databaseName, collection)).isZero();
+        assertThat(countCollectionRecords(collection)).isZero();
     }
 
-    private long countCollectionRecords(String databaseName, String collection) {
-        try (ODatabaseSession dbSession = dbPool(databaseName).acquire()) {
+    private long countCollectionRecords(String collection) {
+        try (ODatabaseSession dbSession = dbPool().acquire()) {
             long count = dbSession.getClass(collection).count();
             dbSession.close();
             return count;
         }
     }
 
-    protected OElement loadById(String recordId) {
-        try (ODatabaseSession dbSession = dbPool(AbstractOrientDatabaseTest.DATABASE_NAME).acquire()) {
+    public OElement loadById(String recordId) {
+        try (ODatabaseSession dbSession = dbPool().acquire()) {
             return dbSession.load(new ORecordId(recordId));
         }
     }
 
     private static final String FIND_ELEMENTS_OF_CLASS_BY_PROPERTY = "SELECT FROM %s WHERE %s = ?";
 
-    protected Optional<OElement> loadByProperty(final String className, final String propertyName, final String propertyValue, final ODatabaseSession dbSession) {
+    public Optional<OElement> loadByProperty(final String className, final String propertyName, final String propertyValue, final ODatabaseSession dbSession) {
         try (OResultSet rs = dbSession.query(String.format(FIND_ELEMENTS_OF_CLASS_BY_PROPERTY, className, propertyName), propertyValue)) {
             if (rs.hasNext()) {
                 return rs.next().getElement();
@@ -124,41 +129,41 @@ public abstract class AbstractOrientDatabaseTest {
             .build();
     }
 
-    protected ComposableStep buildComposableStep(String name, Strategy strategy, ComposableStep... subSteps) {
+    public ComposableStep buildComposableStep(String name, Strategy strategy, ComposableStep... subSteps) {
         return build(null, name, null, null, null, strategy, asList(subSteps));
     }
 
-    protected ComposableStep buildComposableStep(String name, ComposableStep... subSteps) {
+    public ComposableStep buildComposableStep(String name, ComposableStep... subSteps) {
         return build(null, name, null, null, null, null, asList(subSteps));
     }
 
-    protected ComposableStep buildComposableStep(String name, Map<String, String> defaultParameters) {
-        return  build(null, name, defaultParameters, null, null, null, Collections.emptyList());
+    public ComposableStep buildComposableStep(String name, Map<String, String> defaultParameters) {
+        return build(null, name, defaultParameters, null, null, null, Collections.emptyList());
     }
 
-    protected ComposableStep buildComposableStep(String name, Map<String, String> parameters, ComposableStep... subSteps) {
-        return  build(null, name, parameters, null, null, null, asList(subSteps));
+    public ComposableStep buildComposableStep(String name, Map<String, String> parameters, ComposableStep... subSteps) {
+        return build(null, name, parameters, null, null, null, asList(subSteps));
     }
 
-    protected ComposableStep buildComposableStep(String name, String implementation) {
+    public ComposableStep buildComposableStep(String name, String implementation) {
         return build(null, name, null, null, implementation, null, null);
     }
 
-    protected ComposableStep buildComposableStep(String name, String implementation, String id) {
+    public ComposableStep buildComposableStep(String name, String implementation, String id) {
         return build(id, name, null, null, implementation, null, null);
     }
 
-    protected ComposableStep buildComposableStep(String name, List<String> tags) {
+    public ComposableStep buildComposableStep(String name, List<String> tags) {
         return build(null, name, null, tags, null, null, null);
     }
 
-    protected ComposableStep saveAndReload(ComposableStepRepository composableStepRepository, ComposableStep composableStep) {
+    public ComposableStep saveAndReload(ComposableStepRepository composableStepRepository, ComposableStep composableStep) {
         composableStepRepository.save(composableStep);
         return findByName(composableStep.name);
     }
 
-    protected ComposableStep findByName(final String name) {
-        try (ODatabaseSession dbSession = dbPool(DATABASE_NAME).acquire()) {
+    public ComposableStep findByName(final String name) {
+        try (ODatabaseSession dbSession = dbPool().acquire()) {
             return loadByProperty(STEP_CLASS, STEP_CLASS_PROPERTY_NAME, name, dbSession)
                 .map(oElement -> vertexToComposableStep(StepVertex.builder().from(oElement.asVertex().get()).build())).orElse(null);
         }

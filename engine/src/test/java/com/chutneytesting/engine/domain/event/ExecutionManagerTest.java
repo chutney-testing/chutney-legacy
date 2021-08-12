@@ -1,6 +1,8 @@
 package com.chutneytesting.engine.domain.event;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.mock;
 
 import com.chutneytesting.engine.domain.execution.ExecutionManager;
@@ -13,11 +15,13 @@ import org.junit.jupiter.api.Test;
 
 public class ExecutionManagerTest {
 
-    private ExecutionManager em = new ExecutionManager();
-    ScenarioExecution execution = ScenarioExecution.createScenarioExecution(null);
+    private ExecutionManager sut;
+    private ScenarioExecution execution;
 
     @BeforeEach
     public void setUp() throws Exception {
+        sut = new ExecutionManager();
+        execution = ScenarioExecution.createScenarioExecution(null);
         Step step = mock(Step.class);
         RxBus.getInstance().post(new StartScenarioExecutionEvent(execution, step));
     }
@@ -25,16 +29,24 @@ public class ExecutionManagerTest {
     @Test
     public void pauseAndRestartExecution() {
         assertThat(execution.hasToPause()).isFalse();
-        em.pauseExecution(execution.executionId);
-        assertThat(execution.hasToPause()).isTrue();
-        em.resumeExecution(execution.executionId);
-        assertThat(execution.hasToPause()).isFalse();
+
+        sut.pauseExecution(execution.executionId);
+        await().atMost(1, SECONDS).untilAsserted(() ->
+            assertThat(execution.hasToPause()).isTrue()
+        );
+
+        sut.resumeExecution(execution.executionId);
+        await().atMost(1, SECONDS).untilAsserted(() ->
+            assertThat(execution.hasToPause()).isFalse()
+        );
     }
 
     @Test
     public void stopExecution() {
         assertThat(execution.hasToStop()).isFalse();
-        em.stopExecution(execution.executionId);
-        assertThat(execution.hasToStop()).isTrue();
+        sut.stopExecution(execution.executionId);
+        await().atMost(1, SECONDS).untilAsserted(() ->
+            assertThat(execution.hasToStop()).isTrue()
+        );
     }
 }

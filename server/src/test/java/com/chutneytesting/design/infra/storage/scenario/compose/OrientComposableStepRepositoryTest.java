@@ -13,7 +13,7 @@ import com.chutneytesting.design.domain.scenario.compose.ParentStepId;
 import com.chutneytesting.design.domain.scenario.compose.Strategy;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.changelog.OrientChangelog;
-import com.chutneytesting.tests.AbstractOrientDatabaseTest;
+import com.chutneytesting.tests.OrientDatabaseHelperTest;
 import com.chutneytesting.tools.ImmutablePaginationRequestParametersDto;
 import com.chutneytesting.tools.ImmutableSortRequestParametersDto;
 import com.chutneytesting.tools.PaginatedDto;
@@ -34,26 +34,28 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTest {
+public class OrientComposableStepRepositoryTest {
+
+    private static final String DATABASE_NAME = "orient_composable_step_test";
+    private static final OrientDatabaseHelperTest orientDatabaseHelperTest = new OrientDatabaseHelperTest(DATABASE_NAME);
 
     private static ComposableStepRepository sut;
 
     @BeforeAll
     public static void setUp() {
-        OrientComposableStepRepositoryTest.initComponentDB(DATABASE_NAME);
-        sut = new OrientComposableStepRepository(orientComponentDB, stepMapper);
+        sut = new OrientComposableStepRepository(orientDatabaseHelperTest.orientComponentDB, orientDatabaseHelperTest.stepMapper);
         OLogManager.instance().setWarnEnabled(false);
     }
 
     @AfterEach
     public void after() {
-        truncateCollection(DATABASE_NAME, OrientComponentDB.STEP_CLASS);
-        truncateCollection(DATABASE_NAME, OrientComponentDB.GE_STEP_CLASS);
+        orientDatabaseHelperTest.truncateCollection(OrientComponentDB.STEP_CLASS);
+        orientDatabaseHelperTest.truncateCollection(OrientComponentDB.GE_STEP_CLASS);
     }
 
     @AfterAll
     public static void tearDown() {
-        OrientComposableStepRepositoryTest.destroyDB(DATABASE_NAME);
+        orientDatabaseHelperTest.destroyDB();
     }
 
     @Test
@@ -64,7 +66,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
         parameters.put("retryDelay", "10 s");
 
         final ComposableStep fStep = saveAndReload(
-            buildComposableStep(
+            orientDatabaseHelperTest.buildComposableStep(
                 "a thing is connected",
                 new Strategy("retry-with-timeout", parameters)
             )
@@ -87,7 +89,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
         // Given
         List<String> tags = Stream.of("zug zug", "dabu").collect(toList());
         final ComposableStep fStep = saveAndReload(
-            buildComposableStep(
+            orientDatabaseHelperTest.buildComposableStep(
                 "a thing is connected",
                 tags
             )
@@ -114,18 +116,18 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
     public void should_save_all_func_steps_with_multiple_step_types_when_save_scenario() {
         // Given
         final ComposableStep f1 = saveAndReload(
-            buildComposableStep("when"));
+            orientDatabaseHelperTest.buildComposableStep("when"));
         final ComposableStep f21 = saveAndReload(
-            buildComposableStep("then sub 1"));
+            orientDatabaseHelperTest.buildComposableStep("then sub 1"));
         final ComposableStep f22 = saveAndReload(
-            buildComposableStep("then sub 2 with implementation", "{\"type\": \"debug\"}"));
+            orientDatabaseHelperTest.buildComposableStep("then sub 2 with implementation", "{\"type\": \"debug\"}"));
         final ComposableStep f23 = saveAndReload(
-            buildComposableStep("then sub 3 with implementation", "  \"type\": \"debug\"  "));
+            orientDatabaseHelperTest.buildComposableStep("then sub 3 with implementation", "  \"type\": \"debug\"  "));
         final ComposableStep f24 = saveAndReload(
-            buildComposableStep("then sub 4"));
+            orientDatabaseHelperTest.buildComposableStep("then sub 4"));
         final ComposableStep f25 = saveAndReload(
-            buildComposableStep("then sub 5 with implementation", " {\r\"type\": \"debug\"\r} "));
-        final ComposableStep f2 = buildComposableStep("then", f21, f22, f23, f24, f25);
+            orientDatabaseHelperTest.buildComposableStep("then sub 5 with implementation", " {\r\"type\": \"debug\"\r} "));
+        final ComposableStep f2 = orientDatabaseHelperTest.buildComposableStep("then", f21, f22, f23, f24, f25);
         List<ComposableStep> steps = Arrays.asList(f1, f2);
 
         // When
@@ -141,10 +143,10 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
     public void should_not_update_func_step_when_name_already_exists() {
         // Given
         String name = "a thing is connected";
-        sut.save(buildComposableStep(name));
+        sut.save(orientDatabaseHelperTest.buildComposableStep(name));
 
         // When
-        assertThatThrownBy(() -> sut.save(buildComposableStep(name)))
+        assertThatThrownBy(() -> sut.save(orientDatabaseHelperTest.buildComposableStep(name)))
             .isInstanceOf(AlreadyExistingComposableStepException.class)
             .hasMessageContaining("already exists");
     }
@@ -153,17 +155,17 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
     public void should_update_func_step_when_id_already_exists() {
         // Given
         final ComposableStep subWithImplementation = saveAndReload(
-            buildComposableStep("sub with implementation", "{\"type\": \"debug\"}"));
+            orientDatabaseHelperTest.buildComposableStep("sub with implementation", "{\"type\": \"debug\"}"));
         String name = "a thing is connected";
         String fStepId = sut.save(
-            buildComposableStep(name, subWithImplementation)
+            orientDatabaseHelperTest.buildComposableStep(name, subWithImplementation)
         );
 
         // When
         String newName = "another thing is connected";
         String newSubTechnicalContent = "{\"type\": \"success\"}";
         final ComposableStep newSub_with_implementation = saveAndReload(
-            buildComposableStep("sub with implementation", newSubTechnicalContent, subWithImplementation.id));
+            orientDatabaseHelperTest.buildComposableStep("sub with implementation", newSubTechnicalContent, subWithImplementation.id));
         String updateFStepId = sut.save(ComposableStep.builder()
             .withName(newName)
             .withId(fStepId)
@@ -182,19 +184,19 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
     public void should_find_saved_func_steps_by_page_when_find_called() {
         // Given
         final ComposableStep fStep_11 = saveAndReload(
-            buildComposableStep("sub something happen 1.1"));
+            orientDatabaseHelperTest.buildComposableStep("sub something happen 1.1"));
         final ComposableStep fStep_12 = saveAndReload(
-            buildComposableStep("sub something happen 1.2 with implementation", "{\"type\": \"debug\"}"));
+            orientDatabaseHelperTest.buildComposableStep("sub something happen 1.2 with implementation", "{\"type\": \"debug\"}"));
         final ComposableStep fStep_13 = saveAndReload(
-            buildComposableStep("sub something happen 1.3"));
+            orientDatabaseHelperTest.buildComposableStep("sub something happen 1.3"));
         final ComposableStep fStep_1 = saveAndReload(
-            buildComposableStep("sub something happen 1", fStep_11, fStep_12, fStep_13));
+            orientDatabaseHelperTest.buildComposableStep("sub something happen 1", fStep_11, fStep_12, fStep_13));
         final ComposableStep fStep_2 = saveAndReload(
-            buildComposableStep("another sub something 2 with implementation", "{\"type\": \"debug\"}"));
+            orientDatabaseHelperTest.buildComposableStep("another sub something 2 with implementation", "{\"type\": \"debug\"}"));
         final ComposableStep fStep_3 = saveAndReload(
-            buildComposableStep("sub something happen 3"));
+            orientDatabaseHelperTest.buildComposableStep("sub something happen 3"));
         final ComposableStep fStepRoot = saveAndReload(
-            buildComposableStep("something happen", fStep_1, fStep_2, fStep_3));
+            orientDatabaseHelperTest.buildComposableStep("something happen", fStep_1, fStep_2, fStep_3));
 
         List<ComposableStep> fSteps = Arrays.asList(fStepRoot, fStep_11, fStep_12, fStep_13, fStep_1, fStep_2, fStep_3);
 
@@ -226,13 +228,13 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
     public void should_find_saved_func_steps_with_filter_when_find_called() {
         // Given
         final ComposableStep fStep_1 = saveAndReload(
-            buildComposableStep("some thing is set"));
+            orientDatabaseHelperTest.buildComposableStep("some thing is set"));
         final ComposableStep fStep_2 = saveAndReload(
-            buildComposableStep("another thing happens", "{\"type\": \"debug\"}"));
+            orientDatabaseHelperTest.buildComposableStep("another thing happens", "{\"type\": \"debug\"}"));
         final ComposableStep fStep_3 = saveAndReload(
-            buildComposableStep("the result is beauty"));
+            orientDatabaseHelperTest.buildComposableStep("the result is beauty"));
         final ComposableStep fStepRoot = saveAndReload(
-            buildComposableStep("big root thing", fStep_1, fStep_2, fStep_3));
+            orientDatabaseHelperTest.buildComposableStep("big root thing", fStep_1, fStep_2, fStep_3));
 
         // When
         PaginatedDto<ComposableStep> filteredByNameFSteps = findWithFilters("beauty", null, null);
@@ -250,12 +252,12 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
     @Test
     public void should_find_func_step_parents_when_asked_for() {
         // Given
-        ComposableStep fStep_111   = saveAndReload(buildComposableStep("that 1"));
-        ComposableStep fStep_112   = saveAndReload(buildComposableStep("that 2"));
-        ComposableStep fStep_11    = saveAndReload(buildComposableStep("that", fStep_111, fStep_112));
-        ComposableStep fStep_12    = saveAndReload(buildComposableStep("inner that", fStep_11));
-        ComposableStep fStepRoot_1 = saveAndReload(buildComposableStep("a thing", fStep_11, fStep_12, fStep_11));
-        ComposableStep fStep_21    = saveAndReload(buildComposableStep("this", fStep_11));
+        ComposableStep fStep_111   = saveAndReload(orientDatabaseHelperTest.buildComposableStep("that 1"));
+        ComposableStep fStep_112   = saveAndReload(orientDatabaseHelperTest.buildComposableStep("that 2"));
+        ComposableStep fStep_11    = saveAndReload(orientDatabaseHelperTest.buildComposableStep("that", fStep_111, fStep_112));
+        ComposableStep fStep_12    = saveAndReload(orientDatabaseHelperTest.buildComposableStep("inner that", fStep_11));
+        ComposableStep fStepRoot_1 = saveAndReload(orientDatabaseHelperTest.buildComposableStep("a thing", fStep_11, fStep_12, fStep_11));
+        ComposableStep fStep_21    = saveAndReload(orientDatabaseHelperTest.buildComposableStep("this", fStep_11));
 
         // When
         List<ParentStepId> parentsId = sut.findParents(fStep_11.id);
@@ -277,7 +279,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
             "action parameter with no default value", "",
             "another action parameter with default value", "another default action parameter value");
         final ComposableStep actionStep = saveAndReload(
-            buildComposableStep(
+            orientDatabaseHelperTest.buildComposableStep(
                 "action with parameters",
                 actionParameters
             )
@@ -306,7 +308,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
             "middle parent parameter with not default value", "",
             "another middle parent parameter with default value", "another default middle parent parameter value");
         final ComposableStep middleParentStep = saveAndReload(
-            buildComposableStep(
+            orientDatabaseHelperTest.buildComposableStep(
                 "middle parent with parameters",
                 middleParentParameters,
                 firstActionStepInstance, secondActionStepInstance
@@ -356,7 +358,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
         Map<String, String> parentParameters = Maps.of(
             "parent parameter", "parent parameter default value");
         final ComposableStep parentStep = saveAndReload(
-            buildComposableStep(
+            orientDatabaseHelperTest.buildComposableStep(
                 "parent with parameters",
                 parentParameters,
                 firstMiddleParentStepInstance, thirdActionStepInstance, secondMiddleParentStepInstance
@@ -399,7 +401,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
     public void should_delete_step_and_update_edges_when_deleteById_called() {
         // Given
         final ComposableStep step = saveAndReload(
-            buildComposableStep("a step", Maps.of("param", "default value")));
+            orientDatabaseHelperTest.buildComposableStep("a step", Maps.of("param", "default value")));
 
         final ComposableStep stepInstance = ComposableStep.builder()
             .from(step)
@@ -412,7 +414,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
             .build();
 
         final ComposableStep parentFStep = saveAndReload(
-            buildComposableStep("a parent step", stepInstance, stepInstanceB)
+            orientDatabaseHelperTest.buildComposableStep("a parent step", stepInstance, stepInstanceB)
         );
 
         // When
@@ -420,16 +422,15 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
         ComposableStep parentFoundStep = sut.findById(parentFStep.id);
 
         // Then
-        assertThat(loadById(step.id)).isNull();
+        assertThat(orientDatabaseHelperTest.loadById(step.id)).isNull();
         assertThat(parentFoundStep.steps).isEmpty();
     }
-
 
     @Test
     public void changelog_n5_should_update_selenium_tasks() {
         // G
         final ComposableStep step = saveAndReload(
-            buildComposableStep("selenium-get", "{\n" +
+            orientDatabaseHelperTest.buildComposableStep("selenium-get", "{\n" +
                 "            \"identifier\": \"selenium-get-text\",\n" +
                 "            \"inputs\": [ \n" +
                 "              {\"name\":\"web-driver\",\"value\":\"${#webDriver}\"},\n" +
@@ -442,7 +443,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
                 "              {\"name\":\"menuItemSelector\",\"value\":\"\"}]\n" +
                 "        }"));
         final ComposableStep stepOld = saveAndReload(
-            buildComposableStep("selenium-get-old", "{\n" +
+            orientDatabaseHelperTest.buildComposableStep("selenium-get-old", "{\n" +
                 "            \"identifier\": \"selenium-get-text\",\n" +
                 "            \"inputs\": {\n" +
                 "                \"web-driver\": \"${#webDriver}\",\n" +
@@ -456,7 +457,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
                 "        }"));
 
         // W
-        try (ODatabaseSession dbSession = orientComponentDB.dbPool().acquire()) {
+        try (ODatabaseSession dbSession = orientDatabaseHelperTest.orientComponentDB.dbPool().acquire()) {
             OrientChangelog.updateSeleniumTaskParametersRight(dbSession);
         }
 
@@ -471,20 +472,20 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
     public void changelog_n12_should_update_sql_tasks() {
         // G
         final ComposableStep step = saveAndReload(
-            buildComposableStep("new sql", "{\n" +
+            orientDatabaseHelperTest.buildComposableStep("new sql", "{\n" +
                 "            \"identifier\": \"sql\",\n" +
                 "            \"inputs\": [ \n" +
                 "              {\"name\":\"nbLoggedRow\",\"value\":\"42\"}\n" +
                 "             ]" +
                 "        }"));
         final ComposableStep stepOld = saveAndReload(
-            buildComposableStep("old sql", "{\n" +
+            orientDatabaseHelperTest.buildComposableStep("old sql", "{\n" +
                 "            \"identifier\": \"sql\",\n" +
                 "            \"inputs\": []\n" +
                 "        }"));
 
         // W
-        try (ODatabaseSession dbSession = orientComponentDB.dbPool().acquire()) {
+        try (ODatabaseSession dbSession = orientDatabaseHelperTest.orientComponentDB.dbPool().acquire()) {
             OrientChangelog.addInputToSqlTask(dbSession);
         }
 
@@ -496,7 +497,7 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
     }
 
     private ComposableStep saveAndReload(ComposableStep composableStep) {
-        return saveAndReload(sut, composableStep);
+        return orientDatabaseHelperTest.saveAndReload(sut, composableStep);
     }
 
     private void assertScenarioRids(List<ComposableStep> scenario, List<String> rids) {
@@ -699,7 +700,6 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
             "parent default param", "parent default value",
             "parent empty param", ""
         ));
-
     }
 
     @Test
@@ -733,8 +733,8 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
         );
 
         // Verify everything is setup correctly before updating leaf default parameters
-        ComposableStep actualParent = findByName(parent.name);
-        ComposableStep actualSubStep = findByName(subStep.name);
+        ComposableStep actualParent = orientDatabaseHelperTest.findByName(parent.name);
+        ComposableStep actualSubStep = orientDatabaseHelperTest.findByName(subStep.name);
         assertThat(actualParent.defaultParameters).isEqualTo(emptyMap());
         assertThat(actualParent.executionParameters).isEqualTo(emptyMap());
         assertThat(actualSubStep.defaultParameters).isEqualTo(emptyMap());
@@ -763,8 +763,8 @@ public class OrientComposableStepRepositoryTest extends AbstractOrientDatabaseTe
         sut.save(updatedLeaf);
 
         // Then
-        ComposableStep actualParentAfterUpdate = findByName(parent.name);
-        ComposableStep actualSubStepAfterUpdate = findByName(subStep.name);
+        ComposableStep actualParentAfterUpdate = orientDatabaseHelperTest.findByName(parent.name);
+        ComposableStep actualSubStepAfterUpdate = orientDatabaseHelperTest.findByName(subStep.name);
         assertThat(actualParentAfterUpdate.defaultParameters).isEqualTo(emptyMap());
         assertThat(actualParentAfterUpdate.executionParameters).isEqualTo(Maps.of("another empty param", ""));
         assertThat(actualSubStepAfterUpdate.defaultParameters).isEqualTo(emptyMap());

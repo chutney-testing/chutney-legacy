@@ -12,7 +12,9 @@ import java.util.Collections;
 import java.util.Optional;
 import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
+@ResourceLock("changelog")
 public class DatabaseAdminServiceImplTest extends AbstractLocalDatabaseTest {
 
     private final DatabaseAdminService databaseAdminService = new DatabaseAdminServiceImpl(localDataSource);

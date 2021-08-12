@@ -70,16 +70,20 @@ public class StepTest {
 
         ScenarioExecution execution = ScenarioExecution.createScenarioExecution(null);
 
+        RxBus.getInstance().registerOnExecutionId(PauseExecutionAction.class, execution.executionId, e -> {
+            Schedulers.io().createWorker().schedule(() -> step.execute(execution, new ScenarioContextImpl()));
+            await().atMost(1100, MILLISECONDS).untilAsserted(() ->
+                verify(stepExecutor, times(0)).execute(any(), any(), any(), any())
+            );
+        });
         RxBus.getInstance().post(new PauseExecutionAction(execution.executionId));
-        Schedulers.io().createWorker().schedule(() -> step.execute(execution, new ScenarioContextImpl()));
-        await().atMost(1100, MILLISECONDS).untilAsserted(() ->
-            verify(stepExecutor, times(0)).execute(any(), any(), any(), any())
-        );
 
+        RxBus.getInstance().registerOnExecutionId(ResumeExecutionAction.class, execution.executionId, e -> {
+            await().atMost(1100, MILLISECONDS).untilAsserted(() ->
+                verify(stepExecutor, times(1)).execute(any(), any(), any(), any())
+            );
+        });
         RxBus.getInstance().post(new ResumeExecutionAction(execution.executionId));
-        await().atMost(1100, MILLISECONDS).untilAsserted(() ->
-            verify(stepExecutor, times(1)).execute(any(), any(), any(), any())
-        );
     }
 
     @Test
