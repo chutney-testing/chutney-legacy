@@ -7,6 +7,7 @@ import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.chutneytesting.task.api.ComplexParameterTestClass.SubComplexObject;
 import com.chutneytesting.task.api.TaskDto.InputsDto;
 import com.chutneytesting.task.domain.TaskTemplate;
 import com.chutneytesting.task.domain.parameter.Parameter;
@@ -77,7 +78,8 @@ public class TaskTemplateMapperTest {
             .containsExactlyInAnyOrder(
                 new InputsDto("first", String.class),
                 new InputsDto("second", Integer.class),
-                new InputsDto("complexParam2", Integer.class)
+                new InputsDto("complexParam2", Integer.class),
+                new InputsDto("third", SubComplexObject.class)
             );
     }
 }
