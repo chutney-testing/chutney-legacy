@@ -6,7 +6,6 @@ import static java.time.LocalDateTime.now;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -18,7 +17,6 @@ import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaign;
 import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaignRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import java.time.Clock;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
@@ -27,13 +25,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.mockito.ArgumentCaptor;
 
 public class CampaignSchedulerTest {
 
     private CampaignScheduler sut;
 
-    private final DailyScheduledCampaignRepository dailyScheduledCampaignRepository = mock(DailyScheduledCampaignRepository.class);
     private final CampaignExecutionEngine campaignExecutionEngine = mock(CampaignExecutionEngine.class);
     private final PeriodicScheduledCampaignRepository periodicScheduledCampaignRepository = mock(PeriodicScheduledCampaignRepository.class);
 
@@ -42,30 +38,7 @@ public class CampaignSchedulerTest {
     @BeforeEach
     public void setUp() {
         clock = Clock.systemDefaultZone();
-        sut = new CampaignScheduler(campaignExecutionEngine, dailyScheduledCampaignRepository, clock, periodicScheduledCampaignRepository);
-    }
-
-    @Test
-    void should_init_last_execution_time_of_daily_scheduled_campaigns_10_minutes_before_init_time() {
-        LocalDateTime dailyScheduledCampaignsLastExecutionInit = sut.dailyScheduledCampaignsLastExecution();
-        assertThat(dailyScheduledCampaignsLastExecutionInit).isBeforeOrEqualTo(now(clock).minusMinutes(10));
-    }
-
-    @Test
-    void should_use_and_update_last_execution_time_of_daily_scheduled_campaigns_when_execute() {
-        LocalDateTime dailyScheduledCampaignsLastExecutionInit = sut.dailyScheduledCampaignsLastExecution();
-        List<Long> dailyScheduledCampaignId = createDailyScheduledCampaignIds(1);
-        when(dailyScheduledCampaignRepository.getCampaignScheduledAfter(any()))
-            .thenReturn(dailyScheduledCampaignId);
-
-        sut.executeScheduledCampaigns();
-
-        ArgumentCaptor<LocalDateTime> afterDateTimeCapture = ArgumentCaptor.forClass(LocalDateTime.class);
-        verify(dailyScheduledCampaignRepository).getCampaignScheduledAfter(afterDateTimeCapture.capture());
-        List<LocalDateTime> values = afterDateTimeCapture.getAllValues();
-        assertThat(values).hasSize(1);
-        assertThat(values.get(0)).isEqualTo(dailyScheduledCampaignsLastExecutionInit);
-        verify(campaignExecutionEngine).executeById(dailyScheduledCampaignId.get(0), SCHEDULER_EXECUTE_USER);
+        sut = new CampaignScheduler(campaignExecutionEngine, clock, periodicScheduledCampaignRepository);
     }
 
     @ParameterizedTest()
@@ -120,15 +93,11 @@ public class CampaignSchedulerTest {
     void should_not_explode_when_runtime_exceptions_occur_retrieving_campaigns_to_execute() {
         when(periodicScheduledCampaignRepository.getALl())
             .thenThrow(new RuntimeException("scheduledCampaignRepository.getAll()"));
-        when(dailyScheduledCampaignRepository.getCampaignScheduledAfter(any()))
-            .thenThrow(new RuntimeException("timeScheduledCampaignRepository.getCampaignScheduledAfter()"));
-
         Assertions.assertDoesNotThrow(
             () -> sut.executeScheduledCampaigns()
         );
 
         verify(periodicScheduledCampaignRepository).getALl();
-        verify(dailyScheduledCampaignRepository).getCampaignScheduledAfter(any());
     }
 
     @Test
@@ -138,27 +107,14 @@ public class CampaignSchedulerTest {
             .thenReturn(
                 periodicScheduledCampaigns
             );
-        List<Long> dailyScheduledCampaigns = createDailyScheduledCampaignIds(2);
-        when(dailyScheduledCampaignRepository.getCampaignScheduledAfter(any()))
-            .thenReturn(dailyScheduledCampaigns);
-
         when(campaignExecutionEngine.executeById(periodicScheduledCampaigns.get(0).campaignId, SCHEDULER_EXECUTE_USER))
-            .thenThrow(new RuntimeException("campaignExecutionEngine.executeById"));
-        when(campaignExecutionEngine.executeById(dailyScheduledCampaigns.get(1), SCHEDULER_EXECUTE_USER))
             .thenThrow(new RuntimeException("campaignExecutionEngine.executeById"));
 
         Assertions.assertDoesNotThrow(
             () -> sut.executeScheduledCampaigns()
         );
 
-        verify(campaignExecutionEngine, times(periodicScheduledCampaigns.size() + dailyScheduledCampaigns.size())).executeById(any(), any());
-    }
-
-    private List<Long> createDailyScheduledCampaignIds(int nbIds) {
-        Random rand = new Random();
-        return IntStream.range(0, nbIds)
-            .mapToObj(i -> rand.nextLong())
-            .collect(toList());
+        verify(campaignExecutionEngine, times(periodicScheduledCampaigns.size())).executeById(any(), any());
     }
 
     private List<PeriodicScheduledCampaign> createPeriodicScheduledCampaigns(List<Frequency> frequencies) {

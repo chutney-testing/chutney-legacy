@@ -527,4 +527,11 @@
             <column name="TAGS" type="VARCHAR(300)"/>
         </addColumn>
     </changeSet>
+    <changeSet id="20210813-remove-scehduletime" author="ICG">
+        <preConditions onFail="MARK_RAN">
+            <columnExists columnName="SCHEDULE_TIME" tableName="CAMPAIGN"/>
+        </preConditions>
+        <comment>Remove SCHEDULE_TIME column</comment>
+        <dropColumn tableName="CAMPAIGN" columnName="SCHEDULE_TIME"></dropColumn>
+    </changeSet>
 </databaseChangeLog>

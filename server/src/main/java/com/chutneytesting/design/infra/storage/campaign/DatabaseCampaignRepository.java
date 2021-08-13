@@ -113,7 +113,6 @@ public class DatabaseCampaignRepository implements CampaignRepository {
             campaign.description,
             campaign.scenarioIds,
             parameters,
-            campaign.scheduleTime,
             campaign.executionEnvironment(),
             campaign.parallelRun,
             campaign.retryAuto,
@@ -177,7 +176,6 @@ public class DatabaseCampaignRepository implements CampaignRepository {
         uiNamedParameterJdbcTemplate.update("UPDATE CAMPAIGN SET " +
                 "TITLE = :title, " +
                 "DESCRIPTION = :description, " +
-                "SCHEDULE_TIME = :scheduletime, " +
                 "ENVIRONMENT = :environment, " +
                 "PARALLEL_RUN = :paralellRun, " +
                 "RETRY_AUTO = :retryAuto, " +
@@ -187,7 +185,6 @@ public class DatabaseCampaignRepository implements CampaignRepository {
             , map(Pair.of("id", campaign.id)
                 , Pair.of("title", campaign.title)
                 , Pair.of("description", campaign.description)
-                , Pair.of("scheduletime", scheduleTimeToString(campaign.scheduleTime))
                 , Pair.of("environment", campaign.executionEnvironment())
                 , Pair.of("paralellRun", campaign.parallelRun)
                 , Pair.of("retryAuto", campaign.retryAuto)
@@ -204,12 +201,11 @@ public class DatabaseCampaignRepository implements CampaignRepository {
     private Long doSave(final Campaign unsavedCampaign) {
         final Long id = uiNamedParameterJdbcTemplate.queryForObject("SELECT nextval('CAMPAIGN_SEQ')", emptyMap(), Long.class);
 
-        uiNamedParameterJdbcTemplate.update("INSERT INTO CAMPAIGN(ID, TITLE, DESCRIPTION, SCHEDULE_TIME, ENVIRONMENT, PARALLEL_RUN, RETRY_AUTO, DATASET_ID, TAGS) " +
-                "VALUES (:id, :title, :description, :scheduletime, :environment, :paralellRun, :retryAuto, :datasetId, :tags)"
+        uiNamedParameterJdbcTemplate.update("INSERT INTO CAMPAIGN(ID, TITLE, DESCRIPTION, ENVIRONMENT, PARALLEL_RUN, RETRY_AUTO, DATASET_ID, TAGS) " +
+                "VALUES (:id, :title, :description, :environment, :paralellRun, :retryAuto, :datasetId, :tags)"
             , map(Pair.of("id", id)
                 , Pair.of("title", unsavedCampaign.title)
                 , Pair.of("description", ofNullable(unsavedCampaign.description).orElse(""))
-                , Pair.of("scheduletime", scheduleTimeToString(unsavedCampaign.scheduleTime))
                 , Pair.of("environment", unsavedCampaign.executionEnvironment())
                 , Pair.of("paralellRun", unsavedCampaign.parallelRun)
                 , Pair.of("retryAuto", unsavedCampaign.retryAuto)
@@ -294,14 +290,12 @@ public class DatabaseCampaignRepository implements CampaignRepository {
             Long id = rs.getLong("ID");
             String title = rs.getString("TITLE");
             String description = rs.getString("DESCRIPTION");
-            String scheduleTime = rs.getString("SCHEDULE_TIME");
             String environment = rs.getString("ENVIRONMENT");
             String datasetId = rs.getString("DATASET_ID");
             boolean parallelRun = rs.getBoolean("PARALLEL_RUN");
             boolean retryAuto = rs.getBoolean("RETRY_AUTO");
-            LocalTime localTime = stringToScheduleTime(scheduleTime);
             List<String> tags = TagListMapper.tagsStringToList(rs.getString("TAGS"));
-            return new Campaign(id, title, description, null, null, localTime, environment, parallelRun, retryAuto, datasetId, tags);
+            return new Campaign(id, title, description, null, null, environment, parallelRun, retryAuto, datasetId, tags);
         }
     }
 }

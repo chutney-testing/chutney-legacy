@@ -77,7 +77,6 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
             tags: [],
             campaignTags: '',
             scenarioIds: [],
-            scheduleTime: ['', Validators.pattern('^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$')],
             parameters: this.formBuilder.array([]),
             parallelRun: false,
             retryAuto: false,
@@ -130,7 +129,6 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
                     this.campaign = campaignFound;
                     this.campaignForm.controls['title'].setValue(this.campaign.title);
                     this.campaignForm.controls['description'].setValue(this.campaign.description);
-                    this.campaignForm.controls['scheduleTime'].setValue(this.campaign.scheduleTime);
                     this.campaignForm.controls['parallelRun'].setValue(this.campaign.parallelRun);
                     this.campaignForm.controls['retryAuto'].setValue(this.campaign.retryAuto);
                     this.campaignForm.controls['campaignTags'].setValue(this.campaign.tags);
@@ -273,7 +271,6 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         this.campaign.description = formValue['description'];
         this.campaign.scenarioIds = formValue['scenarioIds'];
         this.campaign.computedParameters = computedParameters;
-        this.campaign.scheduleTime = formValue['scheduleTime'];
         this.campaign.environment = this.selectedEnvironment;
         this.campaign.parallelRun = formValue['parallelRun'];
         this.campaign.retryAuto = formValue['retryAuto'];
