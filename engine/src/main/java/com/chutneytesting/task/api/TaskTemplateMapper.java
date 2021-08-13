@@ -54,14 +54,16 @@ public class TaskTemplateMapper {
         Constructor<?>[] constructors = parameter.rawType().getConstructors();
         if (constructors.length == 1) {
             Constructor constructor = constructors[0];
-            return Arrays.stream(constructor.getParameters())
+            List<InputsDto> result = Arrays.stream(constructor.getParameters())
                 .map(Parameter::fromJavaParameter)
                 .filter(p -> p.annotations().optional(Input.class).isPresent())
                 .map(p -> new InputsDto(p.annotations().get(Input.class).value(), p.rawType()))
                 .collect(toList());
-        } else {
-            return singletonList(simpleParameterToInputsDto(parameter));
+            if (!result.isEmpty()) {
+                return result;
+            }
         }
+        return singletonList(simpleParameterToInputsDto(parameter));
     }
 
     private static boolean isSimpleType(Parameter parameter) {
