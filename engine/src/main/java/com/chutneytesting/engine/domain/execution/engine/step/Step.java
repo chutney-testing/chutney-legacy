@@ -152,6 +152,10 @@ public class Step {
         state.addInformation(info);
     }
 
+    public void addErrorMessage(String... errors) {
+        state.addErrors(errors);
+    }
+
     public void failure(Exception e) {
         failure(ofNullable(e.getMessage()).orElse(e.toString()));
     }

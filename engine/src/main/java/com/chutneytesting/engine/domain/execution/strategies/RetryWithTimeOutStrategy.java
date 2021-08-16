@@ -5,6 +5,8 @@ import com.chutneytesting.engine.domain.execution.engine.scenario.ScenarioContex
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.task.spi.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -61,6 +63,7 @@ public class RetryWithTimeOutStrategy implements StepExecutionStrategy {
         Long timeLeft = timeOutMs;
         Status st = Status.NOT_EXECUTED;
         int tries = 1;
+        List<String> lastErrors = new ArrayList<>();
         do {
             Long tryStartTime = System.currentTimeMillis();
             step.addInformation("Retry strategy definition : [timeOut " + timeOut + "] [delay " + retryDelay + "]");
@@ -78,9 +81,16 @@ public class RetryWithTimeOutStrategy implements StepExecutionStrategy {
                 }
                 timeLeft -= System.currentTimeMillis() - tryStartTime;
             } else {
+                if(!lastErrors.isEmpty()){
+                    step.addErrorMessage("Error(s) on last step execution:");
+                    lastErrors.forEach(step::addErrorMessage);
+                }
                 break;
             }
+
             if (timeLeft > 0) {
+                lastErrors.clear();
+                lastErrors.addAll(step.errors());
                 step.resetExecution();
             }
         } while (timeLeft > 0); // TODO - needs to backoff a bit before retry
