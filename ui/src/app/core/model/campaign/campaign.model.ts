@@ -9,7 +9,6 @@ export class Campaign {
         public campaignExecutionReports: Array<CampaignExecutionReport> = [],
         public computedParameters: Map<string, string> = new Map(),
         public environment: string = '',
-        public scheduleTime?: string,
         public parallelRun?: false,
         public retryAuto?: false,
         public datasetId?: string,

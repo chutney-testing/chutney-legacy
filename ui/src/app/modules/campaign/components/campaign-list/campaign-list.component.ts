@@ -7,6 +7,7 @@ import { Campaign, CampaignExecutionReport, SelectableTags, CampaignScheduling, 
 import { CampaignService, JiraPluginConfigurationService, JiraPluginService, CampaignSchedulingService } from '@core/services';
 import { StateService } from '@shared/state/state.service';
 import { distinct, filterOnTextContent, flatMap, intersection } from '@shared/tools/array-utils';
+import { FREQUENCY } from '@core/model/campaign/FREQUENCY';
 
 @Component({
     selector: 'chutney-campaigns',
@@ -254,7 +255,7 @@ export class CampaignListComponent implements OnInit, OnDestroy {
     }
 
     isFrequencyCampaign(scheduledCampaign: CampaignScheduling) {
-        return scheduledCampaign.frequency != null;
+        return Object.values(FREQUENCY).includes(scheduledCampaign.frequency);
     }
 
     campaignIdFromName(campaignName: string) {

@@ -17,7 +17,6 @@ public class CampaignDto {
     @JsonProperty("computedParameters")
     private Map<String, String> executionParameters;
     private List<CampaignExecutionReportDto> campaignExecutionReports;
-    private String scheduleTime;
     private String environment;
     private boolean parallelRun;
     private boolean retryAuto;
@@ -33,7 +32,6 @@ public class CampaignDto {
                        List<String> scenarioIds,
                        Map<String, String> executionParameters,
                        List<CampaignExecutionReportDto> campaignExecutionReports,
-                       String scheduleTime,
                        String environment,
                        boolean parallelRun,
                        boolean retryAuto,
@@ -45,7 +43,6 @@ public class CampaignDto {
         this.scenarioIds = scenarioIds;
         this.executionParameters = executionParameters;
         this.campaignExecutionReports = ofNullable(campaignExecutionReports).orElseGet(ArrayList::new);
-        this.scheduleTime = scheduleTime;
         this.environment = environment;
         this.parallelRun = parallelRun;
         this.retryAuto = retryAuto;
@@ -75,17 +72,6 @@ public class CampaignDto {
 
     public List<CampaignExecutionReportDto> getCampaignExecutionReports() {
         return campaignExecutionReports;
-    }
-
-    public String getScheduleTime() {
-        return scheduleTime;
-    }
-
-    public Optional<String> safeGetScheduleTime() {
-        if (scheduleTime == null || scheduleTime.isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.of(scheduleTime);
     }
 
     public String getEnvironment() {

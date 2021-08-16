@@ -1,6 +1,5 @@
 package com.chutneytesting.design.domain.campaign;
 
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +18,6 @@ public class Campaign {
     public final String externalDatasetId;
     public final List<String> tags;
 
-    public final LocalTime scheduleTime;
     private String environment;
 
     public Campaign(Long id,
@@ -27,7 +25,6 @@ public class Campaign {
                     String description,
                     List<String> scenarioIds,
                     Map<String, String> executionParameters,
-                    LocalTime scheduleTime,
                     String environment,
                     boolean parallelRun,
                     boolean retryAuto,
@@ -40,7 +37,6 @@ public class Campaign {
         this.executionParameters = Optional.ofNullable(executionParameters).orElse(new HashMap<>());
         this.parallelRun = parallelRun;
         this.retryAuto = retryAuto;
-        this.scheduleTime = scheduleTime;
         this.environment = environment;
         this.externalDatasetId = externalDatasetId;
         this.tags = tags;
