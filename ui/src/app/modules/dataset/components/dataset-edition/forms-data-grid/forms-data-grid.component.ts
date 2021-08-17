@@ -167,9 +167,9 @@ export class FormsDataGridComponent implements ControlValueAccessor {
 
     private cleanLastSemicolon(value: string): string{
         if(value.length > 0 && value[value.length - 1] === ';') {
-            value = value.slice(0, value.length - 1)
+            value = value.slice(0, value.length - 1);
         }
-        return value
+        return value;
     }
 
     // CVA
