@@ -148,11 +148,10 @@ export class FormsDataGridComponent implements ControlValueAccessor {
             const content = '' + fileReader.result;
             const lines = content.split('\n');
 
-            this.headers = lines.shift().split(';');
-            this.headers.pop();
+            this.headers = this.cleanLastSemicolon(lines.shift()).split(';');
 
             lines.forEach(l => {
-                const lineValues = l.split(';');
+                const lineValues = this.cleanLastSemicolon(l).split(';');
 
                 const kv = this.headers
                     .map( (header, i) => [header, lineValues[i]])
@@ -164,6 +163,13 @@ export class FormsDataGridComponent implements ControlValueAccessor {
             this.dataGridForm.enable();
         };
         fileReader.readAsText(file);
+    }
+
+    private cleanLastSemicolon(value: string): string{
+        if(value.length > 0 && value[value.length - 1] === ';') {
+            value = value.slice(0, value.length - 1)
+        }
+        return value
     }
 
     // CVA
