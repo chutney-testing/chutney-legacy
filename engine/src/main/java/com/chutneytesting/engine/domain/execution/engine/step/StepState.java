@@ -89,6 +89,10 @@ public class StepState {
         informations.addAll(Lists.newArrayList(message));
     }
 
+    void addErrors(String... message) {
+        errors.addAll(Lists.newArrayList(message));
+    }
+
     public Duration duration() {
         return stopwatch.elapsed();
     }

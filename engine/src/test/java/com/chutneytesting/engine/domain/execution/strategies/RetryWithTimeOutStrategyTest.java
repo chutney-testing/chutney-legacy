@@ -1,6 +1,7 @@
 package com.chutneytesting.engine.domain.execution.strategies;
 
 import static com.chutneytesting.engine.domain.execution.ScenarioExecution.createScenarioExecution;
+import static java.util.List.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.AdditionalMatchers.and;
@@ -120,6 +121,21 @@ public class RetryWithTimeOutStrategyTest {
         strategyUnderTest.execute(createScenarioExecution(null), step, null, null);
 
         verify(step, times(4)).execute(any(), any());
+    }
+
+    @Test
+    public void step_should_keep_last_error_message() {
+        StrategyProperties strategyProperties = properties("1 sec", "5 ms");
+        StepStrategyDefinition strategyDefinition = new StepStrategyDefinition("", strategyProperties);
+
+        Step step = mockStep(Status.FAILURE, Status.FAILURE, Status.SUCCESS);
+        when(step.strategy()).thenReturn(Optional.of(strategyDefinition));
+        when(step.errors()).thenReturn(of("Error message"));
+        strategyUnderTest.execute(createScenarioExecution(null), step, null, null);
+
+        verify(step, times(3)).execute(any(), any());
+        verify(step).addErrorMessage(eq("Error(s) on last step execution:"));
+        verify(step).addErrorMessage(eq("Error message"));
     }
 
     @Test
