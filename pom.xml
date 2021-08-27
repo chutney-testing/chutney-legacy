@@ -109,6 +109,7 @@
         <orientdb.version>3.0.30</orientdb.version>
         <selenium.version>3.141.59</selenium.version>
         <groovy.version>3.0.9</groovy.version>
+        <radius.version>1.1.0</radius.version>
 
         <!-- jdk11 -->
         <javax.activation.version>1.2.0</javax.activation.version>
@@ -467,6 +468,11 @@
                 <groupId>io.github.java-diff-utils</groupId>
                 <artifactId>java-diff-utils</artifactId>
                 <version>4.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.tinyradius</groupId>
+                <artifactId>tinyradius</artifactId>
+                <version>${radius.version}</version>
             </dependency>
 
             <!-- Test dependencies -->
