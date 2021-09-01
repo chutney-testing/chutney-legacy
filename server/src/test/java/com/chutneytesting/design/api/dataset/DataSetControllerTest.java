@@ -1,8 +1,10 @@
 package com.chutneytesting.design.api.dataset;
 
 import static com.chutneytesting.design.api.dataset.DataSetMapper.fromDto;
+import static com.chutneytesting.design.api.dataset.DataSetMapper.toDto;
 import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
 import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
+import static java.util.List.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -21,6 +23,8 @@ import com.chutneytesting.WebConfiguration;
 import com.chutneytesting.design.domain.dataset.DataSet;
 import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.dataset.DataSetRepository;
+import com.chutneytesting.tools.ui.ImmutableKeyValue;
+import com.chutneytesting.tools.ui.KeyValue;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
@@ -31,6 +35,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.groovy.util.Maps;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -51,6 +56,25 @@ public class DataSetControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(sut)
             .setControllerAdvice(new RestExceptionHandler())
             .build();
+    }
+
+    @Test
+    @Disabled
+    // Should pass, see issue https://github.com/chutney-testing/chutney/issues/532 for more details
+    public void should_keep_column_order(){
+        //G
+        DataSetDto dataSetDto = ImmutableDataSetDto.builder()
+            .id(Optional.ofNullable("10-2"))
+            .name("name")
+            .version(1)
+            .lastUpdated(Instant.now())
+            .addConstants(keyOf("key1","v1"), keyOf("key2","v2"), keyOf("key3","v3"), keyOf("key4","v4"))
+            .addDatatable(of(keyOf("col1","v1"), keyOf("col2","v2"), keyOf("col3","v3"), keyOf("col4","v4")))
+            .build();
+        //W
+        DataSet dataSet = fromDto(dataSetDto);
+        //T
+        assertThat(dataSetDto).isEqualTo(toDto(dataSet, 1));
     }
 
     @Test
@@ -239,4 +263,9 @@ public class DataSetControllerTest {
             .build();
         return Pair.of(fromDto(dataSetDto), dataSetDto);
     }
+
+    private KeyValue keyOf(String key, String value) {
+        return ImmutableKeyValue.builder().key(key).value(value).build();
+    }
+
 }
