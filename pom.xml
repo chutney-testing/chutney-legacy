@@ -107,7 +107,7 @@
         <mongodb.version>3.12.8</mongodb.version>
         <orientdb.version>3.0.30</orientdb.version>
         <selenium.version>3.141.59</selenium.version>
-        <groovy.version>2.5.14</groovy.version>
+        <groovy.version>3.0.8</groovy.version>
 
         <!-- jdk11 -->
         <javax.activation.version>1.2.0</javax.activation.version>
