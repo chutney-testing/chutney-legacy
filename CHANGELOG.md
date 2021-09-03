@@ -1,5 +1,59 @@
 # Changelog
 
+## [1.3.12](https://github.com/chutney-testing/chutney/tree/1.3.12) (2021-09-03)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.11...HEAD)
+
+**Implemented enhancements:**
+
+- 🚀 | Simplify campaign scheduling  [\#511](https://github.com/chutney-testing/chutney/issues/511)
+
+**Fixed bugs:**
+
+- 🐛 | Task development with complex object inputs [\#526](https://github.com/chutney-testing/chutney/issues/526)
+- 🐛 | Add try catch with log on schedule campaign [\#498](https://github.com/chutney-testing/chutney/issues/498)
+- 🐛 | Log authentication errors [\#495](https://github.com/chutney-testing/chutney/issues/495)
+- 🐛 | First campaign execution error [\#456](https://github.com/chutney-testing/chutney/issues/456)
+- 🐛 | Panel of last 10 executions disappear [\#324](https://github.com/chutney-testing/chutney/issues/324)
+- 🐛 | Cannot see report of running execution [\#306](https://github.com/chutney-testing/chutney/issues/306)
+- 🐛 | Dataset export/import to csv has line end issue [\#212](https://github.com/chutney-testing/chutney/issues/212)
+- 🐛 | Too many open files [\#159](https://github.com/chutney-testing/chutney/issues/159)
+- 🐛 | Lost of info and error when we stop scenario [\#119](https://github.com/chutney-testing/chutney/issues/119)
+
+**Closed issues:**
+
+- Link to campaign execution [\#17](https://github.com/chutney-testing/chutney/issues/17)
+- Is it necessary to have the java exception in the error message? [\#165](https://github.com/chutney-testing/chutney/issues/165)
+- Add progress bar for running campaign [\#112](https://github.com/chutney-testing/chutney/issues/112)
+
+**Merged pull requests:**
+
+- chore\(deps\): bump jackson.version from 2.12.4 to 2.12.5 [\#547](https://github.com/chutney-testing/chutney/pull/547) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump qpid-broker.version from 8.0.5 to 8.0.6 [\#543](https://github.com/chutney-testing/chutney/pull/543) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps-dev\): bump mockito.version from 3.11.2 to 3.12.4 [\#542](https://github.com/chutney-testing/chutney/pull/542) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps-dev\): bump awaitility from 4.0.3 to 4.1.0 [\#540](https://github.com/chutney-testing/chutney/pull/540) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump pitest.version from 1.6.8 to 1.6.9 [\#539](https://github.com/chutney-testing/chutney/pull/539) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps-dev\): bump activemq.version from 5.16.1 to 5.16.3 [\#538](https://github.com/chutney-testing/chutney/pull/538) ([dependabot[bot]](https://github.com/apps/dependabot))
+-  Fix missing column import in dataset if no semi colon at the end of the file [\#533](https://github.com/chutney-testing/chutney/pull/533) ([nbrouand](https://github.com/nbrouand))
+- feat\(engine\): Git export on shutdown [\#531](https://github.com/chutney-testing/chutney/pull/531) ([bessonm](https://github.com/bessonm))
+- feat\(engine\): On retry strategy, add last error message [\#530](https://github.com/chutney-testing/chutney/pull/530) ([nbrouand](https://github.com/nbrouand))
+- feat\(server\): Remove scheduletime from campaign [\#529](https://github.com/chutney-testing/chutney/pull/529) ([nbrouand](https://github.com/nbrouand))
+- feat\(server\): Export campaigns and composable steps [\#528](https://github.com/chutney-testing/chutney/pull/528) ([bessonm](https://github.com/bessonm))
+- bugfix\(engine\): Complex input without annotation does not appear in UI [\#527](https://github.com/chutney-testing/chutney/pull/527) ([nbrouand](https://github.com/nbrouand))
+- chore/junit parallel [\#525](https://github.com/chutney-testing/chutney/pull/525) ([boddissattva](https://github.com/boddissattva))
+- chore\(deps\): bump spring-boot-maven-plugin from 2.1.3.RELEASE to 2.5.3 [\#524](https://github.com/chutney-testing/chutney/pull/524) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump commons-io from 2.10.0 to 2.11.0 [\#523](https://github.com/chutney-testing/chutney/pull/523) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump jackson.version from 2.12.3 to 2.12.4 [\#522](https://github.com/chutney-testing/chutney/pull/522) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump org.eclipse.jgit.ssh.jsch from 5.11.0.202103091610-r to 5.12.0.202106070339-r [\#521](https://github.com/chutney-testing/chutney/pull/521) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump amqp-client from 5.8.0 to 5.13.0 [\#520](https://github.com/chutney-testing/chutney/pull/520) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps-dev\): bump json-path from 2.4.0 to 2.6.0 [\#519](https://github.com/chutney-testing/chutney/pull/519) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump sl4j.api.version from 1.7.31 to 1.7.32 [\#518](https://github.com/chutney-testing/chutney/pull/518) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump pitest.version from 1.5.1 to 1.6.8 [\#515](https://github.com/chutney-testing/chutney/pull/515) ([dependabot[bot]](https://github.com/apps/dependabot))
+- fix\(server\): Warn when scenario is not found getting campaign last executions [\#514](https://github.com/chutney-testing/chutney/pull/514) ([boddissattva](https://github.com/boddissattva))
+- fix/logauth and campaign UI [\#512](https://github.com/chutney-testing/chutney/pull/512) ([boddissattva](https://github.com/boddissattva))
+- fix\(server\): Campaign scheduler robustness [\#510](https://github.com/chutney-testing/chutney/pull/510) ([boddissattva](https://github.com/boddissattva))
+
+
 ## [1.3.11](https://github.com/chutney-testing/chutney/tree/1.3.11) (2021-07-19)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.10...HEAD)
