@@ -2,7 +2,6 @@ package com.chutneytesting.admin.infra.gitbackup;
 
 import com.chutneytesting.admin.domain.gitbackup.GitClient;
 import com.chutneytesting.admin.domain.gitbackup.RemoteRepository;
-import com.chutneytesting.tools.file.FileUtils;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -142,13 +141,6 @@ public class GitClientImpl implements GitClient {
 
     @Override
     public void initRepository(RemoteRepository remote, Path workingDirectory) {
-        try {
-            FileUtils.deleteFolder(workingDirectory);
-            Files.createDirectories(workingDirectory);
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot init repository: " + remote.url + ". " + e.getMessage(), e);
-        }
-
         try (Git git = Git.init().setInitialBranch(remote.branch).setDirectory(workingDirectory.toFile()).call()) {
             git.remoteAdd()
                 .setName(remote.name)

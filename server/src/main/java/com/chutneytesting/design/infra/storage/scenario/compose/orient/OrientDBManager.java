@@ -1,5 +1,6 @@
 package com.chutneytesting.design.infra.storage.scenario.compose.orient;
 
+import com.orientechnologies.orient.core.Orient;
 import com.orientechnologies.orient.core.config.OGlobalConfiguration;
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
@@ -35,6 +36,7 @@ public class OrientDBManager {
     @PostConstruct
     public void init() {
         openEmbeddedOrient();
+        Orient.instance().removeShutdownHook();
     }
 
     @PreDestroy
@@ -47,7 +49,7 @@ public class OrientDBManager {
         if (orientDB.createIfNotExists(dbName, dbtype)) {
             LOGGER.info("Database created : {} {}", dbName, dbtype);
         } else {
-            LOGGER.warn("Database already exists : {}. Type {} cannot be garanteed...", dbName, dbtype);
+            LOGGER.warn("Database already exists : {}. Type {} cannot be guaranteed...", dbName, dbtype);
         }
         ODatabasePool dbPool = new ODatabasePool(orientDB, dbName, "admin", "admin", contextConfiguration());
         dbPools.put(dbName, dbPool);

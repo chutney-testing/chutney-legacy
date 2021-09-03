@@ -1,9 +1,9 @@
 package com.chutneytesting.admin.domain.gitbackup;
 
 import static com.chutneytesting.admin.domain.gitbackup.ChutneyContentFSWriter.writeChutneyContent;
+import static com.chutneytesting.tools.file.FileUtils.deleteFolder;
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
 
-import com.chutneytesting.tools.file.FileUtils;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -46,7 +46,7 @@ public class GitBackupService {
 
     public void remove(String name) {
         remotes.remove(name);
-        FileUtils.deleteFolder(gitRepositoryFolderPath.resolve(name));
+        deleteFolder(gitRepositoryFolderPath.resolve(name));
     }
 
     public void backup(String name) {
@@ -55,6 +55,7 @@ public class GitBackupService {
 
     public void backup(RemoteRepository remote) {
         Path workingDirectory = gitRepositoryFolderPath.resolve(remote.name);
+        cleanWorkingFolder(workingDirectory);
         gitClient.initRepository(remote, workingDirectory);
         gitClient.update(remote, workingDirectory);
         writeChutneyContent(workingDirectory, contentProviders);
@@ -63,4 +64,12 @@ public class GitBackupService {
         gitClient.push(remote, workingDirectory);
     }
 
+    private void cleanWorkingFolder(Path workingDirectory) {
+        deleteFolder(workingDirectory);
+        initFolder(workingDirectory);
+    }
+
+    public void backup() {
+        backup(remotes.getAll().get(0));
+    }
 }
