@@ -22,6 +22,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
@@ -90,6 +91,8 @@ public class FileSystemBackupRepository implements BackupRepository {
         Path backupPath = backupsRootPath.resolve(backupId);
         try (ZipOutputStream zipOutPut = new ZipOutputStream(new BufferedOutputStream(outputStream, 4096))) {
             ZipUtils.compressDirectoryToZipfile(backupPath.getParent(), Paths.get(backupId), zipOutPut);
+        } catch (FileNotFoundException fnfe) {
+            throw new BackupNotFoundException(backupId);
         }
     }
 
