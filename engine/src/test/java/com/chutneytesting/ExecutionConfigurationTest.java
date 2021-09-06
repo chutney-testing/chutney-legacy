@@ -157,7 +157,7 @@ public class ExecutionConfigurationTest {
             null,
             null,
             "sleep",
-            Maps.newHashMap("duration", "500 ms"),
+            Maps.newHashMap("duration", "1 s"),
             null,
             Collections.emptyMap(),
             Collections.emptyMap(),
