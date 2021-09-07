@@ -57,9 +57,15 @@
                 <td> {{ remote.branch }} </td>
                 <td> {{ remote.privateKeyPath }} </td>
                 <td>
-                    <button type="button" class="btn btn-primary"
+                    <button type="button" class="btn btn-primary" title="Import from repository"
+                            (click)="importFrom(remote)">
+                        <span class="fa fa-download"></span>
+                    </button>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-primary" title="Export to repository"
                         (click)="backupTo(remote)">
-                        <span class="fa fa-file-code"></span>
+                        <span class="fa fa-upload"></span>
                     </button>
                 </td>
                 <td>

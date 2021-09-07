@@ -99,6 +99,18 @@ export class GitBackupComponent implements OnInit {
         );
     }
 
+    importFrom(remote: GitRemoteConfig) {
+        this.gitBackupService.importFrom(remote).subscribe(
+            (res) => {
+                this.notify('Chutney has been successfully imported from ' + remote.name, false);
+                this.loadRemotes();
+            },
+            (error) => {
+                this.notify(error.error, true);
+            }
+        );
+    }
+
     remove(remote: GitRemoteConfig, i: number) {
         this.remotes.splice(i);
         this.gitBackupService.remove(remote).subscribe(

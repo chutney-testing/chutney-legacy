@@ -24,19 +24,19 @@ export class JiraPluginService {
     constructor(private http: HttpClient) {
     }
 
-    public findScenarios(): Observable<Map<string,string>> {
+    public findScenarios(): Observable<Map<string, string>> {
         return this.http.get<any>(environment.backend + this.scenarioUrl )
-        .pipe(map((res: Object) => {return new Map(Object.entries(res));}));
+        .pipe(map((res: Object) => new Map(Object.entries(res))));
     }
 
-    public findCampaigns(): Observable<Map<string,string>> {
+    public findCampaigns(): Observable<Map<string, string>> {
         return this.http.get<any>(environment.backend + this.campaignUrl )
-        .pipe(map((res: Object) => {return new Map(Object.entries(res));}));
+        .pipe(map((res: Object) => new Map(Object.entries(res))));
     }
 
     public findTestExecScenarios(testExecId: string): Observable<string[]> {
         return this.http.get<any>(environment.backend + this.testExecUrl + '/' + testExecId)
-        .pipe(map((res: string[]) => {return res;}));
+        .pipe(map((res: string[]) => res));
     }
 
     public findByScenarioId(scenarioId: string): Observable<string> {
