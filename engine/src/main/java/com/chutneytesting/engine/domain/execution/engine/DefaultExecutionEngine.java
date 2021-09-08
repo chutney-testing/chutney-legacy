@@ -14,7 +14,10 @@ import com.chutneytesting.engine.domain.execution.event.StartScenarioExecutionEv
 import com.chutneytesting.engine.domain.execution.strategies.StepExecutionStrategies;
 import com.chutneytesting.engine.domain.execution.strategies.StepExecutionStrategy;
 import com.chutneytesting.engine.domain.report.Reporter;
+import com.chutneytesting.task.spi.FinallyAction;
 import com.chutneytesting.task.spi.injectable.Target;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
@@ -55,38 +58,66 @@ public class DefaultExecutionEngine implements ExecutionEngine {
         taskExecutor.execute(() -> {
 
             final ScenarioContext scenarioContext = new ScenarioContextImpl();
-
             try {
-                rootStep.set(buildStep(stepDefinition));
+                if (initRootStep(stepDefinition, rootStep)) {
+                    RxBus.getInstance().post(new StartScenarioExecutionEvent(execution, rootStep.get()));
 
-                RxBus.getInstance().post(new StartScenarioExecutionEvent(execution, rootStep.get()));
-
-                final StepExecutionStrategy strategy = stepExecutionStrategies.buildStrategyFrom(rootStep.get());
-                strategy.execute(execution, rootStep.get(), scenarioContext, stepExecutionStrategies);
-            } catch (RuntimeException e) {
-                // Do not remove this fault barrier, the engine must not be stopped by external events
-                // (such as exceptions not raised by the engine)
-                rootStep.get().failure(e);
-                LOGGER.warn("Intercepted exception!", e);
+                    executeRootStep(execution, rootStep, scenarioContext);
+                    executeFinallyActions(execution, rootStep, scenarioContext);
+                }
+            } finally {
+                RxBus.getInstance().post(new EndScenarioExecutionEvent(execution, rootStep.get()));
             }
-
-            try {
-                execution.executeFinallyActions(
-                    rootStep.get(),
-                    scenarioContext,
-                    finallyAction -> buildStep(new FinallyActionMapper().toStepDefinition(finallyAction))
-                );
-            } catch (RuntimeException e) {
-                // Do not remove this fault barrier, the engine must not be stopped by external events
-                // (such as exceptions not raised by the engine)
-                rootStep.get().failure(e);
-                LOGGER.warn("Teardown did not finish properly !", e);
-            }
-
-            RxBus.getInstance().post(new EndScenarioExecutionEvent(execution, rootStep.get()));
         });
 
         return execution.executionId;
+    }
+
+    private boolean initRootStep(StepDefinition stepDefinition, AtomicReference<Step> rootStep) {
+        try {
+            rootStep.set(buildStep(stepDefinition));
+            return true;
+        } catch (RuntimeException e) {
+            // Do not remove this fault barrier, the engine must not be stopped by external events
+            // (such as exceptions not raised by the engine)
+            LOGGER.warn("Cannot init root step !", e);
+            return false;
+        }
+    }
+
+    private void executeRootStep(ScenarioExecution execution, AtomicReference<Step> rootStep, ScenarioContext scenarioContext) {
+        try {
+            final StepExecutionStrategy strategy = stepExecutionStrategies.buildStrategyFrom(rootStep.get());
+            strategy.execute(execution, rootStep.get(), scenarioContext, stepExecutionStrategies);
+        } catch (RuntimeException e) {
+            // Do not remove this fault barrier, the engine must not be stopped by external events
+            // (such as exceptions not raised by the engine)
+            rootStep.get().failure(e);
+            LOGGER.warn("Intercepted exception !", e);
+        }
+    }
+
+    private void executeFinallyActions(ScenarioExecution execution, AtomicReference<Step> rootStep, ScenarioContext scenarioContext) {
+        try {
+            List<FinallyAction> finallyActionsSnapshot = new ArrayList<>(execution.finallyActions());
+            Collections.reverse(finallyActionsSnapshot);
+            for (FinallyAction finallyAction : Collections.unmodifiableList(finallyActionsSnapshot)) {
+                try {
+                    execution.initFinallyActionExecution();
+
+                    Step step = buildStep(new FinallyActionMapper().toStepDefinition(finallyAction));
+                    step.execute(execution, scenarioContext);
+                    rootStep.get().addStepExecution(step);
+                } catch (RuntimeException e) {
+                    LOGGER.error("Error when executing finallyActions", e);
+                }
+            }
+        } catch (RuntimeException e) {
+            // Do not remove this fault barrier, the engine must not be stopped by external events
+            // (such as exceptions not raised by the engine)
+            rootStep.get().failure(e);
+            LOGGER.warn("Teardown did not finish properly !", e);
+        }
     }
 
     private Step buildStep(StepDefinition definition) {
