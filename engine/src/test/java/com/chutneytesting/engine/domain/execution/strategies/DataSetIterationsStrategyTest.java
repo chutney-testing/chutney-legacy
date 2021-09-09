@@ -157,7 +157,7 @@ public class DataSetIterationsStrategyTest {
 
     private StrategyProperties properties() {
         StrategyProperties strategyProperties = new StrategyProperties();
-        strategyProperties.setProperty("timeOut", "50 ms");
+        strategyProperties.setProperty("timeOut", "500 ms");
         strategyProperties.setProperty("retryDelay", "5 ms");
         return strategyProperties;
     }

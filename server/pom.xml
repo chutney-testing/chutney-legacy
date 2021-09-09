@@ -191,6 +191,10 @@
         </dependency>
         <!-- Test dependencies -->
         <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.chutneytesting</groupId>
             <artifactId>chutney-junit-engine</artifactId>
         </dependency>
