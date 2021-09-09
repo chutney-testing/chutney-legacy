@@ -82,6 +82,7 @@
         <!-- Runtime dependencies versions -->
 
         <springboot.version>2.3.10.RELEASE</springboot.version>
+        <spring.version>5.3.9.RELEASE</spring.version> <!-- Be careful to follow springboot version-->
         <jackson.version>2.12.5</jackson.version>
         <guava.version>30.1.1-jre</guava.version>
         <immutables.version>2.8.8</immutables.version>
@@ -107,7 +108,7 @@
         <mongodb.version>3.12.8</mongodb.version>
         <orientdb.version>3.0.30</orientdb.version>
         <selenium.version>3.141.59</selenium.version>
-        <groovy.version>2.5.14</groovy.version>
+        <groovy.version>3.0.9</groovy.version>
 
         <!-- jdk11 -->
         <javax.activation.version>1.2.0</javax.activation.version>
@@ -530,6 +531,12 @@
                 <groupId>com.opentable.components</groupId>
                 <artifactId>otj-pg-embedded</artifactId>
                 <version>${otj-pg-embedded.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-test</artifactId>
+                <version>${spring.version}</version>
                 <scope>test</scope>
             </dependency>
             <!-- Mutation Testing -->
