@@ -6,6 +6,7 @@ import com.chutneytesting.admin.domain.gitbackup.ChutneyContent;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentProvider;
 import com.chutneytesting.design.domain.dataset.DataSet;
+import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.dataset.DataSetRepository;
 import com.chutneytesting.tools.file.FileUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,7 +15,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
@@ -22,10 +25,14 @@ import org.springframework.stereotype.Component;
 public class ChutneyDatasetContent implements ChutneyContentProvider {
 
     private final DataSetRepository repository;
+    private final DataSetHistoryRepository dataSetHistoryRepository;
     private final ObjectMapper mapper;
 
-    public ChutneyDatasetContent(DataSetRepository repository, @Qualifier("gitObjectMapper") ObjectMapper mapper) {
+    public ChutneyDatasetContent(DataSetRepository repository,
+                                 DataSetHistoryRepository dataSetHistoryRepository,
+                                 @Qualifier("gitObjectMapper") ObjectMapper mapper) {
         this.repository = repository;
+        this.dataSetHistoryRepository = dataSetHistoryRepository;
         this.mapper = mapper;
     }
 
@@ -75,7 +82,8 @@ public class ChutneyDatasetContent implements ChutneyContentProvider {
                 byte[] bytes = Files.readAllBytes(filePath);
                 try {
                     DataSet ds = mapper.readValue(bytes, DataSet.class);
-                    repository.save(ds);
+                    String datasetId = repository.save(ds);
+                    dataSetHistoryRepository.addVersion(DataSet.builder().fromDataSet(ds).withId(datasetId).build());
                 } catch (IOException e) {
                     throw new UnsupportedOperationException("Cannot deserialize dataset file : " + filePath, e);
                 }

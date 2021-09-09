@@ -5,7 +5,9 @@ import static com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory.S
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContent;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentProvider;
+import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
+import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import com.chutneytesting.tools.file.FileUtils;
@@ -80,7 +82,8 @@ public class ChutneyScenarioContent implements ChutneyContentProvider {
                 byte[] bytes = Files.readAllBytes(filePath);
                 try {
                     GwtTestCase testCase = mapper.readValue(bytes, GwtTestCase.class);
-                    repository.save(testCase);
+                    GwtTestCase tc = manageVersionConsistency(testCase);
+                    repository.save(tc);
                 } catch (IOException e) {
                     throw new UnsupportedOperationException("Cannot deserialize dataset file : " + filePath, e);
                 }
@@ -88,5 +91,17 @@ public class ChutneyScenarioContent implements ChutneyContentProvider {
                 throw new UnsupportedOperationException("Cannot read dataset file : " + filePath, e);
             }
         }
+    }
+
+    private GwtTestCase manageVersionConsistency(GwtTestCase testCase) {
+        Integer lastVersion = 1;
+        try {
+            lastVersion = repository.lastVersion(testCase.id());
+        }
+        catch (ScenarioNotFoundException e) {
+            // lastVersion = 1;
+        }
+        TestCaseMetadataImpl meta = TestCaseMetadataImpl.TestCaseMetadataBuilder.from(testCase.metadata).withVersion(lastVersion).build();
+        return GwtTestCase.builder().from(testCase).withMetadata(meta).build();
     }
 }
