@@ -3,6 +3,7 @@ com.chutneytesting.task.context.FailTask
 com.chutneytesting.task.context.DebugTask
 com.chutneytesting.task.context.SleepTask
 com.chutneytesting.task.context.ContextPutTask
+com.chutneytesting.task.context.FinalTask
 
 com.chutneytesting.task.groovy.GroovyTask
 
