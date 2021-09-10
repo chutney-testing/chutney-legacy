@@ -1,5 +1,9 @@
 package com.chutneytesting.engine.domain.execution.engine;
 
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonList;
+import static java.util.Optional.empty;
+
 import com.chutneytesting.engine.domain.delegation.DelegationService;
 import com.chutneytesting.engine.domain.execution.ExecutionEngine;
 import com.chutneytesting.engine.domain.execution.RxBus;
@@ -13,6 +17,8 @@ import com.chutneytesting.engine.domain.execution.event.EndScenarioExecutionEven
 import com.chutneytesting.engine.domain.execution.event.StartScenarioExecutionEvent;
 import com.chutneytesting.engine.domain.execution.strategies.StepExecutionStrategies;
 import com.chutneytesting.engine.domain.execution.strategies.StepExecutionStrategy;
+import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
+import com.chutneytesting.engine.domain.execution.strategies.StrategyProperties;
 import com.chutneytesting.engine.domain.report.Reporter;
 import com.chutneytesting.task.spi.FinallyAction;
 import com.chutneytesting.task.spi.injectable.Target;
@@ -23,6 +29,7 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,26 +104,63 @@ public class DefaultExecutionEngine implements ExecutionEngine {
         }
     }
 
-    private void executeFinallyActions(ScenarioExecution execution, AtomicReference<Step> rootStep, ScenarioContext scenarioContext) {
+    private Optional<Step> initFinalRootStep(AtomicReference<Step> rootStep, List<FinallyAction> finallyActionsSnapshot) {
         try {
-            List<FinallyAction> finallyActionsSnapshot = new ArrayList<>(execution.finallyActions());
-            Collections.reverse(finallyActionsSnapshot);
-            for (FinallyAction finallyAction : Collections.unmodifiableList(finallyActionsSnapshot)) {
-                try {
-                    execution.initFinallyActionExecution();
+            Pair<List<StepDefinition>, List<Step>> finalStepsWithDefinitions = finallyActionsSnapshot.stream()
+                .map(fa -> {
+                    StepDefinition definition = new FinallyActionMapper().toStepDefinition(fa);
+                    return Pair.of(singletonList(definition), singletonList(buildStep(definition)));
+                })
+                .reduce(Pair.of(new ArrayList<>(), new ArrayList<>()), (p1, p2) -> {
+                    p1.getLeft().addAll(p2.getLeft());
+                    p1.getRight().addAll(p2.getRight());
+                    return p1;
+                });
 
-                    Step step = buildStep(new FinallyActionMapper().toStepDefinition(finallyAction));
-                    step.execute(execution, scenarioContext);
-                    rootStep.get().addStepExecution(step);
-                } catch (RuntimeException e) {
-                    LOGGER.error("Error when executing finallyActions", e);
-                }
-            }
+            StepDefinition finalRootStepDefinition = new StepDefinition(
+                "...",
+                null,
+                "",
+                new StepStrategyDefinition("soft-assert", new StrategyProperties()),
+                emptyMap(),
+                finalStepsWithDefinitions.getLeft(),
+                emptyMap(),
+                emptyMap(),
+                rootStep.get().definition().environment
+            );
+
+            return Optional.of(
+                new Step(dataEvaluator, finalRootStepDefinition, empty(), delegationService.findExecutor(empty()), finalStepsWithDefinitions.getRight())
+            );
         } catch (RuntimeException e) {
             // Do not remove this fault barrier, the engine must not be stopped by external events
             // (such as exceptions not raised by the engine)
             rootStep.get().failure(e);
-            LOGGER.warn("Teardown did not finish properly !", e);
+            LOGGER.warn("Cannot init final root step !", e);
+            return empty();
+        }
+    }
+
+    private void executeFinallyActions(ScenarioExecution execution, AtomicReference<Step> rootStep, ScenarioContext scenarioContext) {
+        if (!execution.finallyActions().isEmpty()) {
+            List<FinallyAction> finallyActionsSnapshot = new ArrayList<>(execution.finallyActions());
+            Collections.reverse(finallyActionsSnapshot);
+
+            Optional<Step> finalRootStep = initFinalRootStep(rootStep, finallyActionsSnapshot);
+            finalRootStep.ifPresent(frs -> {
+                rootStep.get().addStepExecution(frs);
+                execution.initFinallyActionExecution();
+
+                try {
+                    final StepExecutionStrategy strategy = stepExecutionStrategies.buildStrategyFrom(frs);
+                    strategy.execute(execution, frs, scenarioContext, stepExecutionStrategies);
+                } catch (RuntimeException e) {
+                    // Do not remove this fault barrier, the engine must not be stopped by external events
+                    // (such as exceptions not raised by the engine)
+                    frs.failure(e);
+                    LOGGER.warn("Teardown did not finish properly !", e);
+                }
+            });
         }
     }
 

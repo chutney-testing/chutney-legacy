@@ -17,6 +17,8 @@ import com.chutneytesting.engine.domain.execution.event.BeginStepExecutionEvent;
 import com.chutneytesting.engine.domain.execution.event.EndScenarioExecutionEvent;
 import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
+import com.chutneytesting.engine.domain.execution.strategies.DefaultStepExecutionStrategy;
+import com.chutneytesting.engine.domain.execution.strategies.SoftAssertStrategy;
 import com.chutneytesting.engine.domain.execution.strategies.StepExecutionStrategies;
 import com.chutneytesting.engine.domain.execution.strategies.StepExecutionStrategy;
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
@@ -33,13 +35,12 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.mockito.Answers;
 
 public class DefaultExecutionEngineTest {
 
-    private final StepDataEvaluator dataEvaluator = mock(StepDataEvaluator.class, Answers.RETURNS_DEEP_STUBS);
-    private final StepExecutionStrategies stepExecutionStrategies = mock(StepExecutionStrategies.class, Answers.RETURNS_DEEP_STUBS);
-    private final DelegationService delegationService = mock(DelegationService.class, Answers.RETURNS_DEEP_STUBS);
+    private final StepDataEvaluator dataEvaluator = mock(StepDataEvaluator.class);
+    private final StepExecutionStrategies stepExecutionStrategies = mock(StepExecutionStrategies.class);
+    private final DelegationService delegationService = mock(DelegationService.class);
     private final String fakeEnvironment = "";
     private final Executor taskExecutor = Executors.newFixedThreadPool(1);
 
@@ -74,15 +75,16 @@ public class DefaultExecutionEngineTest {
         DefaultExecutionEngine engineUnderTest = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter, taskExecutor);
 
         StepExecutionStrategy strategy = mock(StepExecutionStrategy.class);
-        when(stepExecutionStrategies.buildStrategyFrom(any())).thenReturn(strategy);
+        when(stepExecutionStrategies.buildStrategyFrom(any()))
+            .thenReturn(strategy) // for step definition
+            .thenReturn(new SoftAssertStrategy()); // for final action step
         when(strategy.execute(any(), any(), any(), any())).thenReturn(endStatus);
 
-        StrategyProperties strategyProperties = new StrategyProperties();
-        StepStrategyDefinition strategyDefinition = new StepStrategyDefinition("retry", strategyProperties);
-        StepDefinition stepDefinition = new StepDefinition("name", null, "type", strategyDefinition, null, null, null, null, fakeEnvironment);
+        StepDefinition stepDefinition = new StepDefinition("name", null, "type", null, null, null, null, null, fakeEnvironment);
 
         ScenarioExecution scenarioExecution = ScenarioExecution.createScenarioExecution(null);
-        scenarioExecution.registerFinallyAction(FinallyAction.Builder.forAction("final", "task name").build());
+        FinallyAction finallyAction = FinallyAction.Builder.forAction("final", "task name").build();
+        scenarioExecution.registerFinallyAction(finallyAction);
 
         List<BeginStepExecutionEvent> events = new ArrayList<>();
         getInstance().registerOnExecutionId(BeginStepExecutionEvent.class, scenarioExecution.executionId, e -> events.add((BeginStepExecutionEvent) e));
@@ -90,20 +92,23 @@ public class DefaultExecutionEngineTest {
         // When
         engineUnderTest.execute(stepDefinition, scenarioExecution);
         reporter.subscribeOnExecution(scenarioExecution.executionId).blockingLast();
+        await().until(() -> events.size() == 2);
 
         // Then
         assertThat(scenarioExecution.hasToStop()).isFalse();
 
         Step finalStep = events.get(0).step;
-        assertThat(finalStep.type()).isEqualTo("final");
-        assertThat(finalStep.definition().name).isEqualTo("Finally action generated for task name");
+        assertThat(finalStep.type()).isEqualTo("");
+        assertThat(finalStep.definition().name).isEqualTo("...");
+        assertThat(finalStep.subSteps().get(0).definition().type).isEqualTo(finallyAction.actionIdentifier());
+        assertThat(finalStep.subSteps().get(0).definition().name).isEqualTo("Finally action generated for " + finallyAction.originalTask());
     }
 
     @Test
     public void should_execute_finally_actions_on_runtime_exception() {
         //Given
         StepExecutionStrategy strategy = mock(StepExecutionStrategy.class);
-        when(stepExecutionStrategies.buildStrategyFrom(any())).thenReturn(strategy);
+        when(stepExecutionStrategies.buildStrategyFrom(any())).thenReturn(strategy).thenReturn(DefaultStepExecutionStrategy.instance);
         when(strategy.execute(any(), any(), any(), any())).thenThrow(new RuntimeException("Should be catch by fault barrier"));
 
         Reporter reporter = new Reporter();
@@ -113,7 +118,8 @@ public class DefaultExecutionEngineTest {
         StepDefinition stepDefinition = new StepDefinition("name", null, "type", strategyDefinition, null, null, null, null, fakeEnvironment);
 
         ScenarioExecution scenarioExecution = ScenarioExecution.createScenarioExecution(null);
-        scenarioExecution.registerFinallyAction(FinallyAction.Builder.forAction("final", "task name").build());
+        FinallyAction finallyAction = FinallyAction.Builder.forAction("final", "task name").build();
+        scenarioExecution.registerFinallyAction(finallyAction);
 
         List<BeginStepExecutionEvent> events = new ArrayList<>();
         getInstance().registerOnExecutionId(BeginStepExecutionEvent.class, scenarioExecution.executionId, e -> events.add((BeginStepExecutionEvent) e));
@@ -125,9 +131,11 @@ public class DefaultExecutionEngineTest {
         // Then
         assertThat(scenarioExecution.hasToStop()).isFalse();
 
-        Step finalStep = events.get(0).step;
-        assertThat(finalStep.type()).isEqualTo("final");
-        assertThat(finalStep.definition().name).isEqualTo("Finally action generated for task name");
+        Step finalRootStep = events.get(0).step;
+        assertThat(finalRootStep.type()).isEqualTo("");
+        assertThat(finalRootStep.definition().name).isEqualTo("...");
+        assertThat(finalRootStep.definition().steps.get(0).type).isEqualTo(finallyAction.actionIdentifier());
+        assertThat(finalRootStep.definition().steps.get(0).name).isEqualTo("Finally action generated for " + finallyAction.originalTask());
     }
 
     @Test
@@ -137,7 +145,9 @@ public class DefaultExecutionEngineTest {
         DefaultExecutionEngine engineUnderTest = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter, taskExecutor);
 
         StepExecutionStrategy strategy = mock(StepExecutionStrategy.class);
-        when(stepExecutionStrategies.buildStrategyFrom(any())).thenReturn(strategy);
+        when(stepExecutionStrategies.buildStrategyFrom(any()))
+            .thenReturn(strategy) // for step definition
+            .thenReturn(new SoftAssertStrategy()); // for final action step
         when(strategy.execute(any(), any(), any(), any())).thenReturn(Status.SUCCESS);
 
         StepDefinition stepDefinition = new StepDefinition("name", null, "type", null, null, null, null, null, fakeEnvironment);
@@ -159,12 +169,16 @@ public class DefaultExecutionEngineTest {
         // When
         engineUnderTest.execute(stepDefinition, scenarioExecution);
         reporter.subscribeOnExecution(scenarioExecution.executionId).blockingLast();
+        await().until(() -> events.size() == 4);
 
         // Then
         //Test order is reversed
-        Step thirdStep = events.get(0).step;
-        Step secondStep = events.get(1).step;
-        Step firstStep = events.get(2).step;
+        Step finalStep = events.get(0).step;
+        Step thirdStep = events.get(1).step;
+        Step secondStep = events.get(2).step;
+        Step firstStep = events.get(3).step;
+
+        assertThat(finalStep.isParentStep()).isTrue();
 
         assertThat(thirdStep.type()).isEqualTo("context-put");
         Map<String, Object> e1 = (Map<String, Object>) thirdStep.definition().inputs.get("entries");
@@ -190,7 +204,7 @@ public class DefaultExecutionEngineTest {
 
         ScenarioExecution scenarioExecution = ScenarioExecution.createScenarioExecution(null);
 
-        FinallyAction finallyAction = FinallyAction.Builder.forAction("final", "name").build();
+        FinallyAction finallyAction = FinallyAction.Builder.forAction("final", "finalActionName").build();
         scenarioExecution.registerFinallyAction(finallyAction);
 
         AtomicReference<EndScenarioExecutionEvent> endEvent = new AtomicReference<>();
@@ -204,6 +218,8 @@ public class DefaultExecutionEngineTest {
         // Then
         Step rootStep = endEvent.get().step;
         assertThat(rootStep.subSteps().size()).isEqualTo(1);
-        assertThat(rootStep.subSteps().get(0).definition().name).isEqualTo("Finally action generated for name");
+        assertThat(rootStep.subSteps().get(0).definition().name).isEqualTo("...");
+        assertThat(rootStep.subSteps().get(0).definition().steps.size()).isEqualTo(1);
+        assertThat(rootStep.subSteps().get(0).definition().steps.get(0).name).isEqualTo("Finally action generated for " + finallyAction.originalTask());
     }
 }

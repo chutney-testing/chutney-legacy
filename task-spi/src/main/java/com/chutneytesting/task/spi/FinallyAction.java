@@ -1,5 +1,7 @@
 package com.chutneytesting.task.spi;
 
+import static java.util.Optional.ofNullable;
+
 import com.chutneytesting.task.spi.injectable.Target;
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,39 +11,51 @@ import java.util.Optional;
 public class FinallyAction {
     private final String originalTask;
     private final String actionIdentifier;
-    private final Optional<Target> target;
+    private final Target target;
     private final Map<String, Object> inputs;
+    private final String strategyType;
+    private final Map<String, Object> strategyProperties;
 
     @Deprecated
     private FinallyAction(String actionIdentifier, Optional<Target> target, Map<String, Object> inputs) {
-        this.originalTask = "";
-        this.actionIdentifier = actionIdentifier;
-        this.target = target;
-        this.inputs = inputs;
+        this("", actionIdentifier, target, inputs);
     }
 
+    @Deprecated
     private FinallyAction(String originalTask, String actionIdentifier, Optional<Target> target, Map<String, Object> inputs) {
+        this(originalTask, actionIdentifier, target.orElse(null), inputs, null, null);
+    }
+
+    private FinallyAction(String originalTask, String actionIdentifier, Target target, Map<String, Object> inputs) {
+        this(originalTask, actionIdentifier, target, inputs, null, null);
+    }
+
+    private FinallyAction(String originalTask, String actionIdentifier, Target target, Map<String, Object> inputs, String strategyType, Map<String, Object> strategyProperties) {
         this.originalTask = originalTask;
         this.actionIdentifier = actionIdentifier;
         this.target = target;
         this.inputs = inputs;
+        this.strategyType = strategyType;
+        this.strategyProperties = strategyProperties;
     }
 
     public static class Builder {
-        private final String orginalTask;
+        private final String originalTask;
         private final String identifier;
-        private Optional<Target> target = Optional.empty();
+        private Target target;
         private final Map<String, Object> inputs = new HashMap<>();
+        private String strategyType;
+        private Map<String, Object> strategyProperties;
 
         @Deprecated
         private Builder(String identifier) {
             this.identifier = identifier;
-            this.orginalTask = "";
+            this.originalTask = "";
         }
 
-        private Builder(String identifier, String orginalTask) {
+        private Builder(String identifier, String originalTask) {
             this.identifier = identifier;
-            this.orginalTask = orginalTask;
+            this.originalTask = originalTask;
         }
 
         public static Builder forAction(String identifier, String name) {
@@ -49,7 +63,7 @@ public class FinallyAction {
         }
 
         public Builder withTarget(Target target) {
-            this.target = Optional.of(target);
+            this.target = target;
             return this;
         }
 
@@ -58,12 +72,22 @@ public class FinallyAction {
             return this;
         }
 
+        public Builder withStrategyType(String strategyType) {
+            this.strategyType = strategyType;
+            return this;
+        }
+
+        public Builder withStrategyProperties(Map<String, Object> strategyProperties) {
+            this.strategyProperties = strategyProperties;
+            return this;
+        }
+
         public FinallyAction build() {
-            return new FinallyAction(orginalTask, identifier, target, Collections.unmodifiableMap(inputs));
+            return new FinallyAction(originalTask, identifier, target, Collections.unmodifiableMap(inputs), strategyType, strategyProperties);
         }
     }
 
-    public String getOriginalTask() {
+    public String originalTask() {
         return originalTask;
     }
 
@@ -72,11 +96,19 @@ public class FinallyAction {
     }
 
     public Optional<Target> target() {
-        return target;
+        return ofNullable(target);
     }
 
     public Map<String, Object> inputs() {
         return inputs;
+    }
+
+    public Optional<String> strategyType() {
+        return ofNullable(strategyType);
+    }
+
+    public Optional<Map<String, Object>> strategyProperties() {
+        return ofNullable(strategyProperties);
     }
 
     @Override
@@ -85,6 +117,8 @@ public class FinallyAction {
             "actionIdentifier='" + actionIdentifier + '\'' +
             ", targetName=" + target +
             ", inputs=" + inputs +
+            ", strategyType=" + strategyType +
+            ", strategyProperties=" + strategyProperties +
             '}';
     }
 }
