@@ -40,18 +40,20 @@ public class SoftAssertStrategy implements StepExecutionStrategy {
         subStepsStatuses.putIfAbsent(step, new ArrayList<>());
         Iterator<Step> subStepsIterator = step.subSteps().iterator();
         step.beginExecution(scenarioExecution);
-        Step currentRunningStep = step;
         try {
+            Step currentRunningStep = step;
             while (subStepsIterator.hasNext()) {
-                currentRunningStep = subStepsIterator.next();
-                StepExecutionStrategy strategy = strategies.buildStrategyFrom(currentRunningStep);
-                Status childStatus = strategy.execute(scenarioExecution, currentRunningStep, scenarioContext, strategies);
-                subStepsStatuses.get(step).add(childStatus);
+                try {
+                    currentRunningStep = subStepsIterator.next();
+                    StepExecutionStrategy strategy = strategies.buildStrategyFrom(currentRunningStep);
+                    Status childStatus = strategy.execute(scenarioExecution, currentRunningStep, scenarioContext, strategies);
+                    subStepsStatuses.get(step).add(childStatus);
+                } catch (RuntimeException e) {
+                    LOGGER.warn("Intercepted exception!", e);
+                    currentRunningStep.failure(e);
+                    subStepsStatuses.get(step).add(step.status());
+                }
             }
-        } catch (RuntimeException e) {
-            LOGGER.warn("Intercepted exception!", e);
-            currentRunningStep.failure(e);
-            subStepsStatuses.get(step).add(step.status());
         } finally {
             step.endExecution(scenarioExecution);
         }
