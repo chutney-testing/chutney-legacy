@@ -29,6 +29,8 @@ Currently, there are 3 ways of writing scenarios :
 - Write scenarios using a Kotlin DSL tool to generate and manage them easily
     - [example](https://github.com/chutney-testing/chutney-kotlin-dsl)
 
+![archi](https://user-images.githubusercontent.com/7816908/132717205-bb092328-e639-4a80-90d4-f1cdabe7e8a4.jpg)
+
 ## Summary
 
 * [Why another test tool ?](#why)
