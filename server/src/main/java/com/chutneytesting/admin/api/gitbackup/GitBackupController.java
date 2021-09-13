@@ -29,7 +29,7 @@ public class GitBackupController {
     @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<GitRemoteDto> getAllRemotes() {
-        return gitBackupService.getAll().stream()
+        return gitBackupService.repositories().stream()
             .map(this::toDto)
             .collect(Collectors.toList());
     }
@@ -49,7 +49,7 @@ public class GitBackupController {
     @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @GetMapping(path = "/{name}/backup")
     public void backup(@PathVariable("name") String name) {
-        gitBackupService.backup(name);
+        gitBackupService.export(name);
     }
 
     @PreAuthorize("hasAuthority('ADMIN_ACCESS')")

@@ -85,10 +85,10 @@ public class ChutneyScenarioContent implements ChutneyContentProvider {
                     GwtTestCase tc = manageVersionConsistency(testCase);
                     repository.save(tc);
                 } catch (IOException e) {
-                    throw new UnsupportedOperationException("Cannot deserialize dataset file : " + filePath, e);
+                    throw new UnsupportedOperationException("Cannot deserialize scenario file : " + filePath, e);
                 }
             } catch (IOException e) {
-                throw new UnsupportedOperationException("Cannot read dataset file : " + filePath, e);
+                throw new UnsupportedOperationException("Cannot read scenario file : " + filePath, e);
             }
         }
     }

@@ -4,8 +4,10 @@ import static com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory.C
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -27,8 +29,9 @@ class GitBackupServiceTest {
     private final Remotes remotesMock = mock(RemotesFileRepository.class);
     private final GitClient gitClientMock = mock(GitClientImpl.class);
 
-    private final ChutneyContentProvider providerMock = new FakeProvider();
-    private final Set<ChutneyContentProvider> contentProviders = Set.of(providerMock);
+    private final ChutneyContentProvider providerFake = new FakeProvider();
+    private final ChutneyContentProvider providerSpy = spy(FakeProvider.class);
+    private final Set<ChutneyContentProvider> contentProviders = Set.of(providerFake, providerSpy);
 
     @TempDir
     static Path temporaryFolder;
@@ -41,7 +44,7 @@ class GitBackupServiceTest {
         GitBackupService sut = new GitBackupService(remotesMock, gitClientMock, contentProviders, temporaryFolder.toString());
 
         // When
-        List<RemoteRepository> all = sut.getAll();
+        List<RemoteRepository> all = sut.repositories();
 
         // Then
         assertThat(all.get(0).privateKeyPassphrase).isNullOrEmpty();
@@ -90,7 +93,7 @@ class GitBackupServiceTest {
         }
 
         // When
-        sut.backup(remote);
+        sut.export(remote);
 
         // Then
         assertThat(Files.exists(expectedFile)).isTrue();
@@ -110,10 +113,62 @@ class GitBackupServiceTest {
         GitBackupService sut = new GitBackupService(new RemotesFileRepository(temporaryFolder.toString()), gitClientMock, contentProviders, temporaryFolder.toString());
 
         // When
-        sut.backup(remote);
+        sut.export(remote);
 
         // Then
         assertThat(Files.exists(fileToDelete)).as("should be delete").isFalse();
+    }
+
+    @Test
+    void should_read_file_content_on_import() throws IOException {
+        // Given
+        RemoteRepository remote = new RemoteRepository("fake", "fake", "fake", "fake", "fake");
+        when(gitClientMock.hasAccess(any())).thenReturn(true);
+
+        GitBackupService sut = new GitBackupService(new RemotesFileRepository(temporaryFolder.toString()), gitClientMock, contentProviders, temporaryFolder.toString());
+
+        // When
+        sut.importFrom(remote);
+
+        // Then
+        verify(providerSpy, times(1)).importDefaultFolder(any());
+    }
+
+    @Test
+    void should_delete_existing_content_before_import() throws IOException {
+        // Given
+        Path confPath = temporaryFolder.resolve("backups").resolve("git").resolve("fake").resolve(CONF.name().toLowerCase()).resolve("provider_name");
+        FileUtils.initFolder(confPath);
+        Path fileToDelete = confPath.resolve("to_be_removed.txt");
+        Files.write(fileToDelete, "".getBytes());
+
+        RemoteRepository remote = new RemoteRepository("fake", "fake", "fake", "fake", "fake");
+        when(gitClientMock.hasAccess(any())).thenReturn(true);
+
+        GitBackupService sut = new GitBackupService(new RemotesFileRepository(temporaryFolder.toString()), gitClientMock, contentProviders, temporaryFolder.toString());
+
+        // When
+        sut.importFrom(remote);
+
+        // Then
+        assertThat(Files.exists(fileToDelete)).as("should be delete").isFalse();
+    }
+
+    @Test
+    void should_throw_on_import_when_remote_isnt_accessible() {
+        // Given
+        RemoteRepository remote = new RemoteRepository("unreachable", "unreachable", "a", "a", "a");
+        when(gitClientMock.hasAccess(any())).thenReturn(false);
+
+        GitBackupService sut = new GitBackupService(new RemotesFileRepository(temporaryFolder.toString()), gitClientMock, contentProviders, temporaryFolder.toString());
+        try {
+            sut.add(remote);
+        } catch (Exception e) {
+            // ignore
+        }
+
+        // Then
+        assertThrows(UnreachableRemoteException.class, () -> /*When*/ sut.importFrom(remote));
     }
 
     static class FakeProvider implements ChutneyContentProvider {

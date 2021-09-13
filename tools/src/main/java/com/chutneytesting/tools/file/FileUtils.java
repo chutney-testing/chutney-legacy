@@ -18,8 +18,7 @@ import java.util.stream.Stream;
 
 public class FileUtils {
 
-    private FileUtils() {
-    }
+    private FileUtils() {}
 
     public static void initFolder(Path folderPath) throws UncheckedIOException {
         try {

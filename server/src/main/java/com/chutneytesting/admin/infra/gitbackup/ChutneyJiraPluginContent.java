@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -64,57 +66,55 @@ public class ChutneyJiraPluginContent implements ChutneyContentProvider {
 
     @Override
     public void importDefaultFolder(Path workingDirectory) {
-        importFolder(workingDirectory);
+        importFolder(providerFolder(workingDirectory));
     }
 
     public void importFolder(Path folderPath) {
-        importJiraConfiguration(providerFolder(folderPath).resolve("jira_config.json"));
-        importScenarioLinks(providerFolder(folderPath).resolve("scenario_link.json"));
-        importCampaignLinks(providerFolder(folderPath).resolve("campaign_link.json"));
+        List<Exception> exceptions = new ArrayList<>(3);
+        try {
+            importJiraConfiguration(folderPath.resolve("jira_config.json"));
+        } catch (IOException e) {
+            exceptions.add(new IOException("Cannot read jira plugin configuration", e));
+        }
+
+        try {
+            importScenarioLinks(folderPath.resolve("scenario_link.json"));
+        } catch (IOException e) {
+            exceptions.add(new IOException("Cannot read jira scenarios links", e));
+        }
+
+        try {
+            importCampaignLinks(folderPath.resolve("campaign_link.json"));
+        } catch (IOException e) {
+            exceptions.add(new IOException("Cannot read jira campaigns links", e));
+        }
+
+        exceptions.stream()
+            .reduce((e1, e2) -> {
+                e1.addSuppressed(e2);
+                return e1;
+            })
+            .ifPresent(e -> {throw new RuntimeException(e);});
     }
 
-    private void importJiraConfiguration(Path filePath) {
+    private void importJiraConfiguration(Path filePath) throws IOException {
         if (Files.exists(filePath)) {
-            try {
-                byte[] bytes = Files.readAllBytes(filePath);
-                try {
-                    config(bytes);
-                } catch (IOException e) {
-                    throw new UnsupportedOperationException("Cannot deserialize file", e);
-                }
-            } catch (IOException e) {
-                throw new UnsupportedOperationException("Cannot read file", e);
-            }
+            byte[] bytes = Files.readAllBytes(filePath);
+            config(bytes);
         }
     }
 
-    private void importScenarioLinks(Path filePath) {
+    private void importScenarioLinks(Path filePath) throws IOException {
         if (Files.exists(filePath)) {
-            try {
-                byte[] bytes = Files.readAllBytes(filePath);
-                try {
-                    scenarios(bytes);
-                } catch (IOException e) {
-                    throw new UnsupportedOperationException("Cannot deserialize file", e);
-                }
-            } catch (IOException e) {
-                throw new UnsupportedOperationException("Cannot read file", e);
-            }
+            byte[] bytes = Files.readAllBytes(filePath);
+            scenarios(bytes);
         }
     }
 
-    private void importCampaignLinks(Path filePath) {
+    private void importCampaignLinks(Path filePath) throws IOException {
         if (Files.exists(filePath)) {
-            try {
-                byte[] bytes = Files.readAllBytes(filePath);
-                try {
-                    campaigns(bytes);
-                } catch (IOException e) {
-                    throw new UnsupportedOperationException("Cannot deserialize file", e);
-                }
-            } catch (IOException e) {
-                throw new UnsupportedOperationException("Cannot read file", e);
-            }
+            byte[] bytes = Files.readAllBytes(filePath);
+            campaigns(bytes);
         }
     }
 

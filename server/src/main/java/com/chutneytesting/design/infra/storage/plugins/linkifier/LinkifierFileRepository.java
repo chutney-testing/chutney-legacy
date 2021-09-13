@@ -46,7 +46,7 @@ public class LinkifierFileRepository implements Linkifiers {
         return getAll(resolvedFilePath);
     }
 
-    public List<Linkifier> getAll(Path filePath) {
+    private List<Linkifier> getAll(Path filePath) {
         return readFile(filePath).entrySet().stream()
             .map(e -> this.fromDto(e.getKey(), e.getValue()))
             .collect(Collectors.toList());
@@ -71,7 +71,7 @@ public class LinkifierFileRepository implements Linkifiers {
         return readFile(resolvedFilePath);
     }
 
-    public Map<String, LinkifierDto> readFile(Path filePath) {
+    private Map<String, LinkifierDto> readFile(Path filePath) {
         Map<String, LinkifierDto> linkifiers = new HashMap<>();
         try {
             if (Files.exists(filePath)) {

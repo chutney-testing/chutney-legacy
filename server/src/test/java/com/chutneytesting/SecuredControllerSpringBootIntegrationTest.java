@@ -64,6 +64,7 @@ public class SecuredControllerSpringBootIntegrationTest {
             {HttpMethod.POST, "/api/v1/backups/git", "ADMIN_ACCESS", "{\"name\":\"secuback\",\"url\":\"\",\"branch\":\"\",\"privateKeyPath\":\"\",\"privateKeyPassphrase\":\"\"}"},
             {HttpMethod.DELETE, "/api/v1/backups/git/name", "ADMIN_ACCESS", null},
             {HttpMethod.GET, "/api/v1/backups/git/name/backup", "ADMIN_ACCESS", null},
+            {HttpMethod.GET, "/api/v1/backups/git/name/import", "ADMIN_ACCESS", null},
             {HttpMethod.GET, "/api/v1/backups", "ADMIN_ACCESS", null},
             {HttpMethod.POST, "/api/v1/backups", "ADMIN_ACCESS", "{\"homePage\":true}"},
             {HttpMethod.GET, "/api/v1/backups/backupId", "ADMIN_ACCESS", null},

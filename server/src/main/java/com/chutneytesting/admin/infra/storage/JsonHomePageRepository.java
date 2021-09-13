@@ -46,6 +46,7 @@ public class JsonHomePageRepository implements HomePageRepository {
         this.homePageContent = dir.resolve(HOME_PAGE_NAME);
     }
 
+    @Override
     public HomePage load() {
         return load(homePageContent);
     }

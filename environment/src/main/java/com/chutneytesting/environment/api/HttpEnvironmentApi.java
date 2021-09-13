@@ -55,7 +55,7 @@ public class HttpEnvironmentApi implements EnvironmentApi {
 
     @Override
     public EnvironmentDto createEnvironment(@RequestBody EnvironmentDto environmentDto, boolean force) {
-        return createEnvironment(environmentDto);
+        throw new UnsupportedOperationException();
     }
 
     @Override

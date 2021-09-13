@@ -6,9 +6,7 @@ import { DragulaService } from 'ng2-dragula';
 
 import {
     Campaign,
-    EnvironmentMetadata,
     KeyValue,
-    ScenarioComponent,
     ScenarioIndex,
     TestCase
 } from '@model';

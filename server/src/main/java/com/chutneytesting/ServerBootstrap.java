@@ -70,7 +70,7 @@ public class ServerBootstrap {
 
     private static Set<Thread> chutneyHooks(ConfigurableApplicationContext context) {
         Set<Thread> chutneyHooks = new HashSet<>();
-        chutneyHooks.add(new Thread(() -> context.getBean(GitBackupService.class).backup()));
+        chutneyHooks.add(new Thread(() -> context.getBean(GitBackupService.class).export()));
         return chutneyHooks;
     }
 
