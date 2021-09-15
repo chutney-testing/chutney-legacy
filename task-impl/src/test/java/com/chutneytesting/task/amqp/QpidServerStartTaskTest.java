@@ -28,7 +28,7 @@ class QpidServerStartTaskTest {
             .hasSize(1)
             .hasOnlyElementsOfType(FinallyAction.class);
 
-        assertThat(finallyActionRegistry.finallyActions.get(0).actionIdentifier())
+        assertThat(finallyActionRegistry.finallyActions.get(0).type())
             .isEqualTo("qpid-server-stop");
     }
 

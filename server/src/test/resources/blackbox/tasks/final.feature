@@ -17,7 +17,7 @@ Feature: Final task for registering final actions for a testcase
                         "when":{
                             "sentence":"Final task is registered",
                             "implementation":{
-                                "task":"{\n type: final \n inputs: {\n identifier: success \n what-for: Testing final task... \n} \n}"
+                                "task":"{\n type: final \n inputs: {\n type: success \n name: Testing final task... \n} \n}"
                             }
                         },
                         "thens": []
@@ -48,13 +48,13 @@ Feature: Final task for registering final actions for a testcase
             Do json-assert
                 With document ${#report}
                 With expected
-                | $.report.steps[1].name | ... |
+                | $.report.steps[1].name | TearDown |
                 | $.report.steps[2].name | $isNull |
         And The report contains a single final action execution
             Do json-assert
                 With document ${#report}
                 With expected
-                | $.report.steps[1].steps[0].name | Finally action generated for Testing final task... |
+                | $.report.steps[1].steps[0].name | Testing final task... |
                 | $.report.steps[1].steps[0].type | success |
                 | $.report.steps[1].steps[1] | $isNull |
 
@@ -76,20 +76,20 @@ Feature: Final task for registering final actions for a testcase
                                 {
                                     "sentence":"Register an assertion",
                                     "implementation":{
-                                        "task":"{\n type: final \n inputs: {\n identifier: compare \n inputs: {\n actual: aValue \n expected: aValue \n mode: equals \n} \n} \n}"
+                                        "task":"{\n type: final \n inputs: {\n type: compare \n name: An assertion \n inputs: {\n actual: aValue \n expected: aValue \n mode: equals \n} \n} \n}"
                                     }
                                 },
                                 {
                                     "sentence":"Register a fail with retry",
                                     "implementation":{
-                                        "task":"{\n type: final \n inputs: {\n identifier: fail \n strategy-type: retry-with-timeout \n strategy-properties: {\n timeOut: 1500 ms \n retryDelay: 1 s \n} \n} \n}"
+                                        "task":"{\n type: final \n inputs: {\n type: fail \n name: I'm no good \n strategy-type: retry-with-timeout \n strategy-properties: {\n timeOut: 1500 ms \n retryDelay: 1 s \n} \n} \n}"
                                     }
                                 },
                                 {
                                     "sentence":"Register variable in context",
                                     "implementation":{
                                         "target": "CHUTNEY_LOCAL",
-                                        "task":"{\n type: final \n inputs: {\n identifier: context-put \n inputs: {\n entries: {\n myKey: myValue \n} \n} \n} \n}"
+                                        "task":"{\n type: final \n inputs: {\n type: context-put \n name: Put myKey \n inputs: {\n entries: {\n myKey: myValue \n} \n} validations: {\n putOk: \${#myKey == 'myValue'} \n} \n} \n}"
                                     }
                                 }
                             ]
@@ -122,10 +122,10 @@ Feature: Final task for registering final actions for a testcase
             Do json-assert
                 With document ${#report}
                 With expected
-                | $.report.steps[1].steps[0].type | context-put |
+                | $.report.steps[1].steps[0].type | compare |
                 | $.report.steps[1].steps[0].status | SUCCESS |
                 | $.report.steps[1].steps[1].type | fail |
                 | $.report.steps[1].steps[1].status | FAILURE |
                 | $.report.steps[1].steps[1].strategy | retry-with-timeout |
-                | $.report.steps[1].steps[2].type | compare |
+                | $.report.steps[1].steps[2].type | context-put |
                 | $.report.steps[1].steps[2].status | SUCCESS |

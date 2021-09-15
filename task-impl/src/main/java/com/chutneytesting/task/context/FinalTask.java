@@ -17,45 +17,49 @@ public class FinalTask implements Task {
 
     private final Logger logger;
     private final FinallyActionRegistry finallyActionRegistry;
-    private final String taskIdentifier;
-    private final String whatFor;
+    private final String type;
+    private final String name;
     private final Target target;
     private final Map<String, Object> inputs;
+    private Map<String, Object> validations;
     private final String strategyType;
     private final Map<String, Object> strategyProperties;
 
     public FinalTask(Logger logger,
                      FinallyActionRegistry finallyActionRegistry,
-                     @Input("identifier") String taskIdentifier,
-                     @Input("what-for") String whatFor,
+                     @Input("type") String type,
+                     @Input("name") String name,
                      Target target,
                      @Input("inputs") Map<String, Object> inputs,
+                     @Input("validations") Map<String, Object> validations,
                      @Input("strategy-type") String strategyType,
                      @Input("strategy-properties") Map<String, Object> strategyProperties
     ) {
         this.logger = logger;
         this.finallyActionRegistry = finallyActionRegistry;
-        this.taskIdentifier = requireNonNull(taskIdentifier, "identifier is mandatory");
-        this.whatFor = ofNullable(whatFor).orElse(FinalTask.class.getSimpleName());
+        this.type = requireNonNull(type, "type is mandatory");
+        this.name = requireNonNull(name, "name is mandatory");
         this.target = target;
         this.inputs = inputs;
+        this.validations = validations;
         this.strategyType = strategyType;
         this.strategyProperties = strategyProperties;
     }
 
     @Override
     public TaskExecutionResult execute() {
-        FinallyAction.Builder finallyActionBuilder = FinallyAction.Builder.forAction(taskIdentifier, whatFor);
+        FinallyAction.Builder finallyActionBuilder = FinallyAction.Builder.forAction(type, name);
 
         ofNullable(target).ifPresent(finallyActionBuilder::withTarget);
         ofNullable(inputs).map(Map::entrySet).ifPresent(entries -> entries.forEach(e -> finallyActionBuilder.withInput(e.getKey(), e.getValue())));
+        ofNullable(validations).map(Map::entrySet).ifPresent(entries -> entries.forEach(e -> finallyActionBuilder.withValidation(e.getKey(), e.getValue())));
         ofNullable(strategyType).ifPresent(st -> {
             finallyActionBuilder.withStrategyType(st);
             ofNullable(strategyProperties).ifPresent(finallyActionBuilder::withStrategyProperties);
         });
 
         finallyActionRegistry.registerFinallyAction(finallyActionBuilder.build());
-        logger.info(taskIdentifier + " as finally action registered");
+        logger.info(name + " (" + type + ") as finally action registered");
         return ok();
     }
 }

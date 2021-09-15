@@ -24,6 +24,7 @@ public class FinallyActionMapperTest {
                 .withUrl("proto://host:12345")
                 .build())
             .withInput("test-input", "test")
+            .withValidation("test-validation", true)
             .withStrategyType("strategyType")
             .withStrategyProperties(Map.of("param", "value"))
             .build();
@@ -31,8 +32,9 @@ public class FinallyActionMapperTest {
         StepDefinition stepDefinition = mapper.toStepDefinition(finallyAction);
 
         assertThat(stepDefinition.type).isEqualTo("test-action");
-        assertThat(stepDefinition.name).isEqualTo("Finally action generated for task name");
+        assertThat(stepDefinition.name).isEqualTo("task name");
         assertThat(stepDefinition.inputs).containsOnly(entry("test-input", "test"));
+        assertThat(stepDefinition.validations).containsOnly(entry("test-validation", true));
         assertThat(stepDefinition.getTarget()).isPresent();
         Target targetCopy = stepDefinition.getTarget().get();
         assertThat(targetCopy.name()).isEqualTo("test-target");

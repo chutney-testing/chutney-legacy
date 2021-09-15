@@ -1,65 +1,73 @@
 package com.chutneytesting.task.spi;
 
+import static java.util.Collections.unmodifiableMap;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.task.spi.injectable.Target;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 public class FinallyAction {
-    private final String originalTask;
-    private final String actionIdentifier;
+
+    private final String name;
+    private final String type;
     private final Target target;
     private final Map<String, Object> inputs;
+    private final Map<String, Object> validations;
     private final String strategyType;
     private final Map<String, Object> strategyProperties;
 
     @Deprecated
-    private FinallyAction(String actionIdentifier, Optional<Target> target, Map<String, Object> inputs) {
-        this("", actionIdentifier, target, inputs);
+    private FinallyAction(String type, Optional<Target> target, Map<String, Object> inputs) {
+        this("", type, target, inputs);
     }
 
     @Deprecated
-    private FinallyAction(String originalTask, String actionIdentifier, Optional<Target> target, Map<String, Object> inputs) {
-        this(originalTask, actionIdentifier, target.orElse(null), inputs, null, null);
+    private FinallyAction(String name, String type, Optional<Target> target, Map<String, Object> inputs) {
+        this(name, type, target.orElse(null), inputs, null, null, null);
     }
 
-    private FinallyAction(String originalTask, String actionIdentifier, Target target, Map<String, Object> inputs) {
-        this(originalTask, actionIdentifier, target, inputs, null, null);
+    private FinallyAction(String name, String type, Target target, Map<String, Object> inputs, Map<String, Object> validations) {
+        this(name, type, target, inputs, null, null, null);
     }
 
-    private FinallyAction(String originalTask, String actionIdentifier, Target target, Map<String, Object> inputs, String strategyType, Map<String, Object> strategyProperties) {
-        this.originalTask = originalTask;
-        this.actionIdentifier = actionIdentifier;
+    private FinallyAction(String name, String type, Target target, Map<String, Object> inputs, Map<String, Object> validations, String strategyType, Map<String, Object> strategyProperties) {
+        this.name = name;
+        this.type = type;
         this.target = target;
         this.inputs = inputs;
+        this.validations = validations;
         this.strategyType = strategyType;
         this.strategyProperties = strategyProperties;
     }
 
     public static class Builder {
-        private final String originalTask;
-        private final String identifier;
+        private final String name;
+        private final String type;
         private Target target;
         private final Map<String, Object> inputs = new HashMap<>();
+        private final Map<String, Object> validations = new HashMap<>();
         private String strategyType;
         private Map<String, Object> strategyProperties;
 
         @Deprecated
-        private Builder(String identifier) {
-            this.identifier = identifier;
-            this.originalTask = "";
+        private Builder(String type) {
+            this.type = type;
+            this.name = "";
         }
 
-        private Builder(String identifier, String originalTask) {
-            this.identifier = identifier;
-            this.originalTask = originalTask;
+        private Builder(String type, String name) {
+            this.type = type;
+            this.name = ofNullable(name).orElse("");
         }
 
-        public static Builder forAction(String identifier, String name) {
-            return new Builder(identifier, name);
+        public static Builder forAction(String type, String name) {
+            return new Builder(type, name);
+        }
+
+        public static Builder forAction(String type, Class<?> originalTask) {
+            return new Builder(type, "Finally action generated for " + originalTask.getSimpleName());
         }
 
         public Builder withTarget(Target target) {
@@ -69,6 +77,11 @@ public class FinallyAction {
 
         public Builder withInput(String key, Object value) {
             inputs.put(key, value);
+            return this;
+        }
+
+        public Builder withValidation(String key, Object value) {
+            validations.put(key, value);
             return this;
         }
 
@@ -83,16 +96,26 @@ public class FinallyAction {
         }
 
         public FinallyAction build() {
-            return new FinallyAction(originalTask, identifier, target, Collections.unmodifiableMap(inputs), strategyType, strategyProperties);
+            return new FinallyAction(name, type, target, unmodifiableMap(inputs), unmodifiableMap(validations), strategyType, strategyProperties);
         }
     }
 
+    @Deprecated
     public String originalTask() {
-        return originalTask;
+        return name();
     }
 
+    public String name() {
+        return name;
+    }
+
+    @Deprecated
     public String actionIdentifier() {
-        return actionIdentifier;
+        return type();
+    }
+
+    public String type() {
+        return type;
     }
 
     public Optional<Target> target() {
@@ -101,6 +124,10 @@ public class FinallyAction {
 
     public Map<String, Object> inputs() {
         return inputs;
+    }
+
+    public Map<String, Object> validations() {
+        return validations;
     }
 
     public Optional<String> strategyType() {
@@ -114,7 +141,8 @@ public class FinallyAction {
     @Override
     public String toString() {
         return "FinallyAction{" +
-            "actionIdentifier='" + actionIdentifier + '\'' +
+            "name='" + name + '\'' +
+            ", type=" + type +
             ", targetName=" + target +
             ", inputs=" + inputs +
             ", strategyType=" + strategyType +

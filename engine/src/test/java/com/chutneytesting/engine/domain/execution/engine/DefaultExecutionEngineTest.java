@@ -99,9 +99,9 @@ public class DefaultExecutionEngineTest {
 
         Step finalStep = events.get(0).step;
         assertThat(finalStep.type()).isEqualTo("");
-        assertThat(finalStep.definition().name).isEqualTo("...");
-        assertThat(finalStep.subSteps().get(0).definition().type).isEqualTo(finallyAction.actionIdentifier());
-        assertThat(finalStep.subSteps().get(0).definition().name).isEqualTo("Finally action generated for " + finallyAction.originalTask());
+        assertThat(finalStep.definition().name).isEqualTo("TearDown");
+        assertThat(finalStep.subSteps().get(0).definition().type).isEqualTo(finallyAction.type());
+        assertThat(finalStep.subSteps().get(0).definition().name).isEqualTo(finallyAction.name());
     }
 
     @Test
@@ -133,13 +133,13 @@ public class DefaultExecutionEngineTest {
 
         Step finalRootStep = events.get(0).step;
         assertThat(finalRootStep.type()).isEqualTo("");
-        assertThat(finalRootStep.definition().name).isEqualTo("...");
-        assertThat(finalRootStep.definition().steps.get(0).type).isEqualTo(finallyAction.actionIdentifier());
-        assertThat(finalRootStep.definition().steps.get(0).name).isEqualTo("Finally action generated for " + finallyAction.originalTask());
+        assertThat(finalRootStep.definition().name).isEqualTo("TearDown");
+        assertThat(finalRootStep.definition().steps.get(0).type).isEqualTo(finallyAction.type());
+        assertThat(finalRootStep.definition().steps.get(0).name).isEqualTo(finallyAction.name());
     }
 
     @Test
-    public void finally_actions_are_executed_in_reverse_order() {
+    public void finally_actions_are_executed_in_declaration_order() {
         // Given
         Reporter reporter = new Reporter();
         DefaultExecutionEngine engineUnderTest = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter, taskExecutor);
@@ -174,9 +174,9 @@ public class DefaultExecutionEngineTest {
         // Then
         //Test order is reversed
         Step finalStep = events.get(0).step;
-        Step thirdStep = events.get(1).step;
+        Step firstStep = events.get(1).step;
         Step secondStep = events.get(2).step;
-        Step firstStep = events.get(3).step;
+        Step thirdStep = events.get(3).step;
 
         assertThat(finalStep.isParentStep()).isTrue();
 
@@ -218,8 +218,8 @@ public class DefaultExecutionEngineTest {
         // Then
         Step rootStep = endEvent.get().step;
         assertThat(rootStep.subSteps().size()).isEqualTo(1);
-        assertThat(rootStep.subSteps().get(0).definition().name).isEqualTo("...");
+        assertThat(rootStep.subSteps().get(0).definition().name).isEqualTo("TearDown");
         assertThat(rootStep.subSteps().get(0).definition().steps.size()).isEqualTo(1);
-        assertThat(rootStep.subSteps().get(0).definition().steps.get(0).name).isEqualTo("Finally action generated for " + finallyAction.originalTask());
+        assertThat(rootStep.subSteps().get(0).definition().steps.get(0).name).isEqualTo(finallyAction.name());
     }
 }

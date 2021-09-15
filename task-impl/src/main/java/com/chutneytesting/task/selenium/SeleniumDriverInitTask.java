@@ -49,7 +49,7 @@ public class SeleniumDriverInitTask implements Task {
 
         finallyActionRegistry.registerFinallyAction(
             FinallyAction.Builder
-                .forAction("selenium-quit", SeleniumDriverInitTask.class.getSimpleName())
+                .forAction("selenium-quit", SeleniumDriverInitTask.class)
                 .withInput("web-driver", webDriver)
                 .build()
         );

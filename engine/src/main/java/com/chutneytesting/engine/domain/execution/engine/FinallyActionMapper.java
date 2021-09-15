@@ -12,17 +12,17 @@ class FinallyActionMapper {
 
     StepDefinition toStepDefinition(FinallyAction finallyAction) {
         return new StepDefinition(
-            "Finally action generated for " + finallyAction.originalTask(),
+            finallyAction.name(),
             finallyAction.target()
                 .orElse(TargetImpl.NONE),
-            finallyAction.actionIdentifier(),
+            finallyAction.type(),
             finallyAction.strategyType()
                 .map(st -> new StepStrategyDefinition(st, new StrategyProperties(finallyAction.strategyProperties().orElse(emptyMap()))))
                 .orElse(null),
             finallyAction.inputs(),
             null,
             null,
-            null,
+            finallyAction.validations(),
             null
         );
     }
