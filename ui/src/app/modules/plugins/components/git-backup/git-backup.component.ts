@@ -87,7 +87,7 @@ export class GitBackupComponent implements OnInit {
         this.remoteConfigForm.controls.passphrase.patchValue(remote.privateKeyPassphrase);
     }
 
-    backupTo(remote: GitRemoteConfig) {
+    export(remote: GitRemoteConfig) {
         this.gitBackupService.backupTo(remote).subscribe(
             (res) => {
                 this.notify('Chutney has been successfully backed up on ' + remote.name, false);
@@ -97,6 +97,28 @@ export class GitBackupComponent implements OnInit {
                 this.notify(error.error, true);
             }
         );
+    }
+
+    importFrom(remote: GitRemoteConfig) {
+        if (confirm("/!\\ WARNING /!\\" +
+            "\nImporting content will overwrite existing data." +
+            "\nAre you sure you want to import content from " + remote.name + " ?")) {
+
+            let name = prompt("Please enter the name of the repository you want to import:");
+            if (name === remote.name) {
+                this.gitBackupService.importFrom(remote).subscribe(
+                    (res) => {
+                        this.notify('Chutney has been successfully imported from ' + remote.name, false);
+                        this.loadRemotes();
+                    },
+                    (error) => {
+                        this.notify(error.error, true);
+                    }
+                );
+            } else {
+                this.notify('Unknown repository: ' + name, true);
+            }
+        }
     }
 
     remove(remote: GitRemoteConfig, i: number) {

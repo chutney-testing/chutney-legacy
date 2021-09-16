@@ -44,7 +44,7 @@ public class OrientDataSetRepository implements DataSetRepository {
             dbSession.begin();
             OElement savedDataSet = save(dataSet, dbSession);
             dbSession.commit();
-            LOGGER.info("Save dataSet : " + savedDataSet.toString());
+            LOGGER.info("Save dataset : " + savedDataSet.toString());
             return savedDataSet.getIdentity().toString(null).toString();
         } catch (Exception e) {
             rollback(dbSession);
@@ -86,8 +86,8 @@ public class OrientDataSetRepository implements DataSetRepository {
     @Override
     public List<DataSet> findAll() {
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
-            OResultSet allSteps = dbSession.query(QUERY_SELECT_ALL);
-            return Lists.newArrayList(allSteps).stream()
+            OResultSet datasets = dbSession.query(QUERY_SELECT_ALL);
+            return Lists.newArrayList(datasets).stream()
                 .map(rs -> {
                     OElement element = dbSession.load(new ORecordId(rs.getProperty("@rid").toString()));
                     return elementToDataSetMetaData(element);

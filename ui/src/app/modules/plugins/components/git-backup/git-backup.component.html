@@ -57,13 +57,19 @@
                 <td> {{ remote.branch }} </td>
                 <td> {{ remote.privateKeyPath }} </td>
                 <td>
-                    <button type="button" class="btn btn-primary"
-                        (click)="backupTo(remote)">
-                        <span class="fa fa-file-code"></span>
+                    <button type="button" class="btn btn-danger" title="Import from repository"
+                            (click)="importFrom(remote)">
+                        <span class="fa fa-download">Import</span>
                     </button>
                 </td>
                 <td>
-                    <button type="button" class="btn btn-light ml-1"
+                    <button type="button" class="btn btn-primary" title="Export to repository"
+                        (click)="export(remote)">
+                        <span class="fa fa-upload">Export</span>
+                    </button>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-outline-primary ml-1"
                             (click)="edit(remote)"
                             title="{{'global.actions.edit' | translate}}">
                         <span class="fa fa-pencil-alt"></span>

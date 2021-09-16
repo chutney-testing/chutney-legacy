@@ -1,11 +1,14 @@
 package com.chutneytesting.environment.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.chutneytesting.environment.domain.exception.AlreadyExistingEnvironmentException;
 import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -32,5 +35,30 @@ class EnvironmentServiceTest {
 
         assertThatThrownBy(() -> sut.updateEnvironment("OLD_NAME", Environment.builder().withName("illegal name").withDescription("some description").build()))
             .isInstanceOf(InvalidEnvironmentNameException.class);
+    }
+
+    @Test
+    void create_environment_should_throw_when_env_already_exist() {
+        // Given
+        when(environmentRepository.listNames())
+            .thenReturn(List.of("EXISTING"));
+
+        // Then
+        assertThatThrownBy(() -> sut.createEnvironment(Environment.builder().withName("EXISTING").build()))
+            .isInstanceOf(AlreadyExistingEnvironmentException.class);
+    }
+
+    @Test
+    void create_environment_not_throw_when_env_already_exist_but_is_forced() {
+        // Given
+        Environment expected = Environment.builder().withName("EXISTING").build();
+        when(environmentRepository.listNames())
+            .thenReturn(List.of("EXISTING"));
+
+        // When
+        Environment actual = sut.createEnvironment(expected, true);
+
+        // Then
+        assertThat(actual).isEqualTo(expected);
     }
 }

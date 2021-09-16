@@ -1,8 +1,6 @@
 package com.chutneytesting.tools;
 
 import java.util.function.Consumer;
-import com.chutneytesting.tools.ThrowingFunction;
-import com.chutneytesting.tools.UncheckedException;
 
 @FunctionalInterface
 public interface ThrowingConsumer<T> {

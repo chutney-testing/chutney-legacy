@@ -36,4 +36,13 @@ public class RemoteRepository {
     public int hashCode() {
         return Objects.hash(name);
     }
+
+    @Override
+    public String toString() {
+        return "RemoteRepository{" +
+            "name='" + name + '\'' +
+            ", url='" + url + '\'' +
+            ", branch='" + branch + '\'' +
+            '}';
+    }
 }
