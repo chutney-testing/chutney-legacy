@@ -1,6 +1,21 @@
 # Changelog
 
-## [1.3.12](https://github.com/chutney-testing/chutney/tree/1.3.12) (2021-09-03)
+## [1.4.0](https://github.com/chutney-testing/chutney/tree/1.4.0) (2021-09-16)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.12...HEAD)
+
+**Implemented enhancements:**
+
+- 🚀 | Import/Export Chutney content as files from git [\#552](https://github.com/chutney-testing/chutney/issues/552)
+- 🚀 | Allow the declaration of finally action in the scenario [\#534](https://github.com/chutney-testing/chutney/issues/534)
+
+**Merged pull requests:**
+
+- feat/finally action register task [\#551](https://github.com/chutney-testing/chutney/pull/551) ([boddissattva](https://github.com/boddissattva))
+- feat\(ui/server\): Import content from git [\#550](https://github.com/chutney-testing/chutney/pull/550) ([bessonm](https://github.com/bessonm))
+- chore: Add unit test for testing url security [\#548](https://github.com/chutney-testing/chutney/pull/548) ([nbrouand](https://github.com/nbrouand))
+- chore: Add architecture image to readme [\#537](https://github.com/chutney-testing/chutney/pull/537) ([nbrouand](https://github.com/nbrouand))
+
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.11...HEAD)
 
