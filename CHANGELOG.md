@@ -17,6 +17,8 @@
 - chore: Add architecture image to readme [\#537](https://github.com/chutney-testing/chutney/pull/537) ([nbrouand](https://github.com/nbrouand))
 
 
+## [1.3.12](https://github.com/chutney-testing/chutney/tree/1.3.12) (2021-09-03)
+
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.11...HEAD)
 
 **Implemented enhancements:**
