@@ -3,20 +3,20 @@ package com.chutneytesting.task.amqp;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
+import com.chutneytesting.task.TestFinallyActionRegistry;
+import com.chutneytesting.task.TestLogger;
+import com.chutneytesting.task.TestTarget;
+import com.chutneytesting.task.spi.FinallyAction;
+import com.chutneytesting.task.spi.Task;
+import com.chutneytesting.task.spi.TaskExecutionResult;
+import com.chutneytesting.task.spi.TaskExecutionResult.Status;
+import com.chutneytesting.task.spi.injectable.Target;
 import com.github.fridujo.rabbitmq.mock.MockConnectionFactory;
 import com.google.common.collect.ImmutableList;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.GetResponse;
 import com.rabbitmq.client.LongString;
 import com.rabbitmq.client.impl.LongStringHelper;
-import com.chutneytesting.task.spi.FinallyAction;
-import com.chutneytesting.task.spi.Task;
-import com.chutneytesting.task.spi.TaskExecutionResult;
-import com.chutneytesting.task.spi.TaskExecutionResult.Status;
-import com.chutneytesting.task.spi.injectable.Target;
-import com.chutneytesting.task.TestFinallyActionRegistry;
-import com.chutneytesting.task.TestLogger;
-import com.chutneytesting.task.TestTarget;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -183,8 +183,8 @@ public class AmqpTasksTest {
         TaskExecutionResult amqpCreateBoundTemporaryQueueResult = amqpCreateBoundTemporaryQueueTask.execute();
         assertThat(amqpCreateBoundTemporaryQueueResult.status).isEqualTo(Status.Success);
         assertThat(finallyActionRegistry.finallyActions)
-            .extracting(FinallyAction::actionIdentifier)
-            .containsExactly("amqp-delete-queue", "amqp-unbind-queue");
+            .extracting(FinallyAction::type)
+            .containsExactly("amqp-unbind-queue", "amqp-delete-queue");
 
         return (String) amqpCreateBoundTemporaryQueueResult.outputs.get("queueName");
     }

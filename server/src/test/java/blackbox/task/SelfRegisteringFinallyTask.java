@@ -21,7 +21,7 @@ public class SelfRegisteringFinallyTask implements Task {
 
     @Override
     public TaskExecutionResult execute() {
-        finallyActionRegistry.registerFinallyAction(FinallyAction.Builder.forAction("self-registering-finally", SelfRegisteringFinallyTask.class.getSimpleName()).build());
+        finallyActionRegistry.registerFinallyAction(FinallyAction.Builder.forAction("self-registering-finally", SelfRegisteringFinallyTask.class).build());
         return TaskExecutionResult.ok();
     }
 }

@@ -83,7 +83,7 @@ public class HttpsServerStartTask implements Task {
     private void createQuitFinallyAction(WireMockServer httpsServer) {
         finallyActionRegistry.registerFinallyAction(
             FinallyAction.Builder
-                .forAction("https-server-stop", HttpsServerStartTask.class.getSimpleName())
+                .forAction("https-server-stop", HttpsServerStartTask.class)
                 .withInput("https-server", httpsServer)
                 .build()
         );

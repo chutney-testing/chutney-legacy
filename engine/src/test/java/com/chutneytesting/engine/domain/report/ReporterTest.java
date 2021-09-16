@@ -110,6 +110,8 @@ public class ReporterTest {
         scenarioExecutionReportObservable.assertValueCount(0);
 
         executeFakeScenarioSuccess();
+
+        scenarioExecutionReportObservable.assertTerminated();
         scenarioExecutionReportObservable.assertValueCount(10);
 
         scenarioExecutionReportObservable.dispose();

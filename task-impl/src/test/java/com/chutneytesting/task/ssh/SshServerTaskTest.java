@@ -1,7 +1,6 @@
 package com.chutneytesting.task.ssh;
 
 import static java.util.Collections.singletonList;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -29,14 +28,10 @@ class SshServerTaskTest {
     private SshServerMock sshServer;
 
     @AfterEach
-    public void tearDown() {
+    public void tearDown() throws InterruptedException {
         if (sshServer != null) {
             SshServerStopTask sshServerStopTask = new SshServerStopTask(new TestLogger(), sshServer);
             sshServerStopTask.execute();
-
-            await().atMost(2, SECONDS).untilAsserted(() ->
-                assertThat(sshServer.isClosed()).isTrue()
-            );
         }
     }
 
@@ -121,7 +116,7 @@ class SshServerTaskTest {
             assertThat(sshServer.isOpen()).isTrue();
         });
         FinallyAction stopServerTask = finallyActionRegistry.finallyActions.get(0);
-        assertThat(stopServerTask.actionIdentifier()).isEqualTo("ssh-server-stop");
+        assertThat(stopServerTask.type()).isEqualTo("ssh-server-stop");
         assertThat(stopServerTask.inputs().get("ssh-server")).isEqualTo(sshServer);
     }
 
