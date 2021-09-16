@@ -75,6 +75,15 @@ export class EnvironmentAdminComponent implements OnInit {
         );
     }
 
+    deleteEnvironment() {
+            this.environmentAdminService.deleteEnvironment(this.selectedEnvironment.name, name).subscribe(
+                (res) => {
+                    this.loadEnvironment();
+                },
+                (error) => { console.log(error); this.errorMessage = error.error; }
+            );
+        }
+
     updateSelectedTarget() {
         this.updateTarget(this.selectedTargetName, this.selectedTarget);
     }

@@ -60,6 +60,10 @@ export class EnvironmentAdminService {
         return this.http.delete(server.backend + this.baseUrl + '/' + environmentName + '/target/' + targetName);
     }
 
+    deleteEnvironment(environmentName: string, environment: EnvironmentMetadata): Observable<Object> {
+            return this.http.delete(server.backend + this.baseUrl + '/' + environmentName);
+        }
+
     exportTarget(environmentName: string, targetName: string): Observable<Object> {
         return this.http.get(server.backend + this.baseUrl + '/' + environmentName + '/target/' + targetName);
     }
