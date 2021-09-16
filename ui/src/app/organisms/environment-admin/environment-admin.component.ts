@@ -6,6 +6,7 @@ import { FileSaverService } from 'ngx-filesaver';
 import { EnvironmentMetadata, Target } from '@model';
 import { ValidationService } from '../../molecules/validation/validation.service';
 import { EnvironmentAdminService } from '@core/services';
+import { environment } from '@env/environment';
 
 @Component({
     selector: 'chutney-environment-admin',
@@ -76,17 +77,22 @@ export class EnvironmentAdminComponent implements OnInit {
     }
 
     deleteEnvironment() {
-            this.environmentAdminService.deleteEnvironment(this.selectedEnvironment.name, name).subscribe(
+        const res = confirm('Êtes-vous sûr de vouloir supprimer l\'environnement ' + this.selectedEnvironment.name + ' ?');
+
+        if (res) {
+            this.environmentAdminService.deleteEnvironment(this.selectedEnvironment.name).subscribe(
                 (res) => {
                     this.loadEnvironment();
                 },
                 (error) => { console.log(error); this.errorMessage = error.error; }
             );
         }
+    }
 
     updateSelectedTarget() {
         this.updateTarget(this.selectedTargetName, this.selectedTarget);
     }
+
 
     updateTarget(oldTargetName: string, newTarget: Target) {
         if (!this.isValid(newTarget)) {
