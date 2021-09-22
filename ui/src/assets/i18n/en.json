@@ -34,7 +34,8 @@
                 "form": "Write a testcase",
                 "component": "Compose a testcase"
             },
-            "placeholder": "Search for scenario",
+            "placeholder": "Search for scenario (id or title)",
+            "placeholder-fulltext": "Search in scenario content (json scenario only)",
             "created": " Last created",
             "executed": "Last executed",
             "lastExecution": "Last execution",

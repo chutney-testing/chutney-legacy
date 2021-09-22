@@ -17,15 +17,6 @@ export class StateService {
         localStorage.setItem(StateService.localStorageKey, JSON.stringify(this.state));
     }
 
-    public changeScenarioList(list: boolean) {
-        this.state.scenarioList = list;
-        this.save();
-    }
-
-    public getScenarioListValue(): boolean {
-        return this.state.scenarioList;
-    }
-
     public changeTags(tags: Array<String>) {
         this.state.tags = tags;
         this.save();

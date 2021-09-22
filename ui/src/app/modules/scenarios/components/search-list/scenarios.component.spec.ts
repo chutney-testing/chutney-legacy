@@ -9,7 +9,7 @@ import { MoleculesModule } from '../../../../molecules/molecules.module';
 
 import { MomentModule } from 'angular2-moment';
 import { NgbModule, NgbPopoverConfig } from '@ng-bootstrap/ng-bootstrap';
-import { of, empty } from 'rxjs';
+import { empty, of } from 'rxjs';
 import { ScenarioIndex } from '@core/model';
 import { ScenarioService } from '@core/services';
 
@@ -17,6 +17,17 @@ import { JiraPluginService } from '@core/services/jira-plugin.service';
 import { JiraPluginConfigurationService } from '@core/services/jira-plugin-configuration.service';
 import { ActivatedRoute } from '@angular/router';
 import { ActivatedRouteStub } from '../../../../testing/activated-route-stub';
+import { AngularMultiSelectModule } from 'angular2-multiselect-dropdown';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+
+function getScenarios(html: HTMLElement) {
+    return html.querySelectorAll('.scenario-title');
+}
+
+function sendInput(input: HTMLInputElement, value: string) {
+    input.value = value;
+    input.dispatchEvent(new Event('input'));
+}
 
 describe('ScenariosComponent', () => {
     let activatedRouteStub;
@@ -43,7 +54,8 @@ describe('ScenariosComponent', () => {
                 MoleculesModule,
                 SharedModule,
                 MomentModule,
-                NgbModule
+                NgbModule,
+                AngularMultiSelectModule
             ],
             declarations: [
                 ScenariosComponent
@@ -54,7 +66,8 @@ describe('ScenariosComponent', () => {
                 {provide: JiraPluginService, useValue: jiraPluginService},
                 {provide: JiraPluginConfigurationService, useValue: jiraPluginConfigurationService},
                 {provide: ActivatedRoute, useValue: activatedRouteStub}
-            ]
+            ],
+            schemas:[NO_ERRORS_SCHEMA],
         }).compileComponents();
     }));
 
@@ -67,11 +80,11 @@ describe('ScenariosComponent', () => {
             const app = fixture.debugElement.componentInstance;
             expect(app).toBeTruthy();
             const html: HTMLElement = fixture.nativeElement;
-            const cards = getCards(html);
-            expect(cards.length).toBe(3);
-            expect(titleOf(cards[0])).toBe('title1');
-            expect(titleOf(cards[1])).toBe('title2');
-            expect(titleOf(cards[2])).toBe('another scenario');
+            const scenarios = getScenarios(html);
+            expect(scenarios.length).toBe(3);
+            expect(scenarios[0].textContent).toBe('title1');
+            expect(scenarios[1].textContent).toBe('title2');
+            expect(scenarios[2].textContent).toBe('another scenario');
             expect(fixture.componentInstance.scenarios.length).toBe(3);
         });
     }));
@@ -86,9 +99,9 @@ describe('ScenariosComponent', () => {
             sendInput(searchInput, 'another');
             fixture.detectChanges();
 
-            const cards = getCards(html);
-            expect(cards.length).toBe(1);
-            expect(titleOf(cards[0])).toBe('another scenario');
+            const scenarios = getScenarios(html);
+            expect(scenarios.length).toBe(1);
+            expect(scenarios[0].textContent).toBe('another scenario');
         });
     });
 
@@ -101,26 +114,15 @@ describe('ScenariosComponent', () => {
             const app = fixture.debugElement.componentInstance;
             expect(app).toBeTruthy();
             const html: HTMLElement = fixture.nativeElement;
-            const cards = getCards(html);
+            const scenarios = getScenarios(html);
 
-            expect(cards.length).toBe(2);
-            expect(titleOf(cards[0])).toBe('title2');
-            expect(titleOf(cards[1])).toBe('title1');
+            expect(scenarios.length).toBe(2);
+            expect(scenarios[0].textContent).toBe('title2');
+            expect(scenarios[1].textContent).toBe('title1');
             expect(fixture.componentInstance.scenarios.length).toBe(3);
         });
     });
 
 });
 
-function getCards(html: HTMLElement) {
-    return html.querySelectorAll('#cards > chutney-scenario-card');
-}
 
-function titleOf(elt: Element) {
-    return elt.querySelector('.scenario-title').textContent;
-}
-
-function sendInput(input: HTMLInputElement, value: string) {
-    input.value = value;
-    input.dispatchEvent(new Event('input'));
-}

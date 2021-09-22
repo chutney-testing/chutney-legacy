@@ -27,12 +27,6 @@
     }
 }
 
-.scenarios-card {
-    width: 390px;
-    height: 152px;
-    border-radius: 8px;
-}
-
 .header-scenario {
     margin-top: 20px;
     margin-bottom: 10px;
@@ -50,33 +44,12 @@
     background-color: $vert2;
 }
 
-.active {
-    font-size: 20px;
-    color: $grisfonce1;
-    border-bottom: 2px solid $vert2;
-    cursor: pointer;
-}
-
-.not-active {
-    font-size: 14px;
-    color: $grisfonce3;
-    border-bottom: none;
-    cursor: pointer;
-}
-
-.arrow {
-    background-image: url('../../../../../assets/icons/over.png');
-    background-repeat: no-repeat;
-    background-position-y: 0;
-    background-position-x: 70px;
-    height: 20px;
-}
-
 .scenario-type-filter {
     cursor: pointer;
 }
 
 .scenario-type-filter-selected {
+    cursor: pointer;
     color: $bleu6;
 }
 
@@ -90,6 +63,7 @@
 
 .filter {
     cursor: pointer;
+    text-align: center;
 }
 
 :host ::ng-deep {
@@ -116,4 +90,13 @@
         color: $blanc;
         border-radius: 0.5rem;
     }
+}
+
+.btn:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.width-button-table {
+    width: 50px;
 }

@@ -17,7 +17,6 @@ import {
     EnvironmentComboComponent,
     ExecutionBadgeComponent,
     FunctionalStepComponent,
-    ScenarioCardComponent,
     TechnicalStepComponent
 } from './components';
 import { ImplementationHostDirective, HasAuthorizationDirective } from './directives';
@@ -68,7 +67,6 @@ import { StateService } from './state/state.service';
         PrettyPrintPipe,
         SafePipe,
         ScenarioCampaignSearchPipe,
-        ScenarioCardComponent,
         ScenarioSearchPipe,
         SearchTextPipe,
         SortByFieldPipe,
@@ -96,7 +94,6 @@ import { StateService } from './state/state.service';
         PrettyPrintPipe,
         SafePipe,
         ScenarioCampaignSearchPipe,
-        ScenarioCardComponent,
         ScenarioSearchPipe,
         SearchTextPipe,
         SortByFieldPipe,
