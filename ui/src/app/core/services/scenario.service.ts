@@ -107,7 +107,7 @@ export class ScenarioService {
         return this.httpClient.delete(environment.backend + `${this.resourceUrlV2}/${id}`);
     }
 
-    search(textFilter: any) {
+    search(textFilter: any): Observable<Array<ScenarioIndex>>  {
         return this.httpClient.get<Array<ScenarioIndex>>(environment.backend + `${this.resourceUrlV2}?textFilter=${textFilter}`)
             .pipe(map((res: Array<any>) => {
                 return this.mapJsonScenario(res);

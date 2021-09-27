@@ -34,7 +34,8 @@
                 "form": "Ecrire un cas de test",
                 "component": "Composer un cas de test"
             },
-            "placeholder": "Rechercher un scénario",
+            "placeholder": "Rechercher un scénario (id ou titre)",
+            "placeholder-fulltext": "Rechercher dans le contenu du scénario (scénario json seulement)",
             "created": " Derniers créés",
             "executed": "Derniers executés",
             "lastExecution": "Dernière execution",
