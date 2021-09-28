@@ -6,7 +6,7 @@
 Pour commencer, vous pouvez :
 
 * Ajouter un serveur à tester : link:#/environmentAdmin[Configuration -> Global]
-* Ajouter un nouveau scénario de test : link:#/scenario/edition[Scenario]
+* Ajouter un nouveau scénario de test : link:#/scenario/raw-edition[Scenario]
 ====
 
 [NOTE]

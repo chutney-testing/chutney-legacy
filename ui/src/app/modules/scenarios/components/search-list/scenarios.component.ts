@@ -170,7 +170,7 @@ export class ScenariosComponent implements OnInit, OnDestroy {
         if (compose) {
             this.router.navigateByUrl('/scenario/component-edition');
         } else {
-            this.router.navigateByUrl('/scenario/edition');
+            this.router.navigateByUrl('/scenario/raw-edition');
         }
     }
 
