@@ -108,8 +108,8 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
             );
             this.loadJiraLink(id);
         } else {
-            this.testCase.title = 'scenario title'
-            this.testCase.description = 'scenario description'
+            this.testCase.title = 'scenario title';
+            this.testCase.description = 'scenario description';
             this.testCase.content = this.defaultContent;
             this.modifiedContent = this.defaultContent;
             this.previousTestCase = this.testCase.clone();
