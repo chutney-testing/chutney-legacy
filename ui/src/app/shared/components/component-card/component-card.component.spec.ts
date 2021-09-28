@@ -6,7 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ComponentCardComponent } from '@shared/components';
 
 import { TranslateTestingModule } from '../../../testing/translate-testing.module';
-import { HasAuthorizationDirective } from '../../../shared/directives/hasAuthorization.directive';
+import { HasAuthorizationDirective } from '@shared/directives';
 
 import { ComponentTask, KeyValue, Implementation, Authorization } from '@model';
 import { LoginService } from '@core/services';

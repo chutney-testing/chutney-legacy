@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, ViewChild, ElementRef, OnChanges, ViewEncapsulation } from '@angular/core';
 import AsciidocConverter from '../../../assets/js/asciidoctor-converter';
-import { HighLightJService } from '../../shared/highlight/highlight.service';
+import { HighLightJService } from '@shared/highlight/highlight.service';
 
 @Component({
   selector: 'chutney-asciidoctor',

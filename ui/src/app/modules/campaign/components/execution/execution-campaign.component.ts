@@ -13,7 +13,6 @@ import * as JSZip from 'jszip';
 import {
     Campaign,
     CampaignExecutionReport,
-    EnvironmentMetadata,
     ScenarioExecutionReportOutline,
     ScenarioIndex,
     TestCase,

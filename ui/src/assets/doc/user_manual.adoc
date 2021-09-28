@@ -1382,9 +1382,10 @@ Avec date et son formatteur "yyyy-MM-dd'T'HH:mm:ss", l'output est type LocalDate
 
 === `#str_replace`
 
-```
+[source]
+----
 String str_replace(String input, String regularExpression, String replacement)
-```
+----
 
 .Exemple
 [source]
@@ -1433,9 +1434,10 @@ String str_replace(String input, String regularExpression, String replacement)
 
 === `#nullable`
 
-```
+[source]
+----
 Object nullable(Object maybeNullValue)
-```
+----
 
 Le résultat d'une expression SpEL est parfois _null_,
 ce qui est traité comme une erreur par le système.

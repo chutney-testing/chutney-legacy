@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 
 import {
-    ComponentTask, EnvironmentMetadata
+    ComponentTask
 } from '@model';
 import { EnvironmentAdminService } from '@core/services';
 
