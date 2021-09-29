@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { environment } from '@env/environment';
-import { Execution, ScenarioExecutionReport, TestCase, KeyValue } from '@model';
+import { Execution, ScenarioExecutionReport, KeyValue } from '@model';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({

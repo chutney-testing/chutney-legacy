@@ -24,7 +24,6 @@ import { StepComponent } from './components/execution/step/step.component';
 import { HistoryComponent } from './components/execution/history/history.component';
 import { ScenarioExecutionComponent } from './components/execution/execution.component';
 import { MoleculesModule } from '../../molecules/molecules.module';
-import { EditionComponent } from './components/edition/scenario-edition/edition.component';
 import { RawEditionComponent } from './components/edition/raw/raw-edition.component';
 import { ComponentEditionComponent } from './components/edition/component-edition/component-edition.component';
 import { DragulaModule } from 'ng2-dragula';
@@ -71,7 +70,6 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
         StepComponent,
         ScenarioCampaignsComponent,
         HistoryComponent,
-        EditionComponent,
         RawEditionComponent,
         ComponentEditionComponent,
         ExecuteComponent,

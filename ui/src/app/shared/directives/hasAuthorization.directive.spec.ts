@@ -1,6 +1,5 @@
 import { Component, ViewChild, Injectable } from '@angular/core';
 import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { Authorization } from '@model';
 import { LoginService } from '@core/services';
@@ -112,11 +111,11 @@ describe('hasAuthorization directive...', () => {
     });
 
     it('should pass user to service...', () => {
-        const user_obj = new Object();
+        const userObj = {};
 
-        testInject.authorizations.and.returnValue({user: user_obj});
+        testInject.authorizations.and.returnValue({user: userObj});
         loginService.hasAuthorization.and.callFake(
-            function(a, u) { return Object.keys(a).length == 0 && u === user_obj; }
+            function(a, u) { return Object.keys(a).length == 0 && u === userObj; }
         );
         fixture.detectChanges();
 

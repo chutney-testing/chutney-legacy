@@ -29,16 +29,10 @@
                     <ng-container *hasAuthorization="[Authorization.SCENARIO_WRITE]">
                         <div class="btn-group">
                             <button type="button" class="btn btn-light"
-                                routerLink="{{isComposed(testCaseId) ? '/scenario/' + testCaseId + '/component-edition' : '/scenario/' + testCaseId + '/edition'}}"
+                                routerLink="{{isComposed(testCaseId) ? '/scenario/' + testCaseId + '/component-edition' : '/scenario/' + testCaseId + '/raw-edition'}}"
                                 [attr.disabled]="isNotEditable()">
                                 <span class="fa fa-pencil-alt"></span>
                                 <span class="btn-label">{{'global.actions.edit' | translate}}</span>
-                            </button>
-                            <button *ngIf="!isComposed(testCaseId)" type="button" class="btn btn-light"
-                                routerLink="{{'/scenario/' + testCaseId + '/raw-edition'}}"
-                                [attr.disabled]="isNotEditable()">
-                                <span class="fa fa-pencil-alt"></span>
-                                <span class="btn-label">{{'global.actions.editRaw' | translate}}</span>
                             </button>
                         </div>
                     </ng-container>

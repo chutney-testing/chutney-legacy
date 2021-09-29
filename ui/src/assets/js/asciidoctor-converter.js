@@ -17,14 +17,13 @@ class AsciidocConverter {
   }
 
   convert(content) {
-    var htmlContent = this.asciidoctor.convert(content, this.options);
-    return htmlContent;
+      return this.asciidoctor.convert(content, this.options);
   }
 
   styleEmbeddedDocWithLeftToc(baseAsciiDocElement, styleClass) {
     if (baseAsciiDocElement.querySelector('.'+this.TOC_CLASSNAME) != null) {
       const allChildren = baseAsciiDocElement.children;
-      for (var i = 0; i < allChildren.length; i++) {
+      for (let i = 0; i < allChildren.length; i++) {
         if (!allChildren[i].classList.contains(this.TOC_CLASSNAME)) {
           allChildren[i].classList.add(styleClass);
         }

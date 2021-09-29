@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 
 import { Entry } from '@model';
-import { ValidationService } from './../../validation/validation.service';
+import { ValidationService } from '../../validation/validation.service';
 
 @Component({
     selector: 'chutney-property-table-panel',

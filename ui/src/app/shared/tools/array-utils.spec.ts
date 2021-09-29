@@ -2,7 +2,7 @@ import { filterOnTextContent } from '@shared/tools';
 
 describe('filterOnTextContent function...', () => {
 
-    var undef;
+    const undef = void 0;
 
     describe('should not explode (edges cases)...', () => {
 

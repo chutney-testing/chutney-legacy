@@ -1,10 +1,10 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 import { delay, map, tap } from 'rxjs/operators';
 
-import { TestCase, ScenarioComponent, KeyValue } from '@model';
+import { TestCase, KeyValue } from '@model';
 import { ScenarioExecutionService, ComponentService, ScenarioService } from '@core/services';
 
 @Component({
@@ -63,7 +63,7 @@ export class ExecuteComponent implements OnInit, OnDestroy {
     private loadScenario(testCaseId: string) {
         this.testCaseId = testCaseId;
 
-        var tmp$: Observable<TestCase>;
+        let tmp$: Observable<TestCase>;
         if (this.isComposed(testCaseId)) {
             tmp$ = this.componentService.findComponentTestCase(testCaseId).pipe(
                 map(sc => TestCase.fromComponent(sc))

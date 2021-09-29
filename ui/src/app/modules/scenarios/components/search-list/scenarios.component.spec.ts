@@ -9,7 +9,7 @@ import { MoleculesModule } from '../../../../molecules/molecules.module';
 
 import { MomentModule } from 'angular2-moment';
 import { NgbModule, NgbPopoverConfig } from '@ng-bootstrap/ng-bootstrap';
-import { empty, of } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import { ScenarioIndex } from '@core/model';
 import { ScenarioService } from '@core/services';
 
@@ -42,9 +42,9 @@ describe('ScenariosComponent', () => {
                                    new ScenarioIndex('3', 'another scenario', 'description', 'source', new Date(), new Date(), 1, 'guest', [], [])];
         scenarioService.findScenarios.and.returnValue(of(mockScenarioIndex));
         scenarioService.search.and.returnValue(of(mockScenarioIndex));
-        jiraPluginConfigurationService.getUrl.and.returnValue(empty());
-        jiraPluginService.findScenarios.and.returnValue(empty());
-        jiraPluginService.findCampaigns.and.returnValue(empty());
+        jiraPluginConfigurationService.getUrl.and.returnValue(EMPTY);
+        jiraPluginService.findScenarios.and.returnValue(EMPTY);
+        jiraPluginService.findCampaigns.and.returnValue(EMPTY);
         activatedRouteStub = new ActivatedRouteStub();
         TestBed.configureTestingModule({
             imports: [

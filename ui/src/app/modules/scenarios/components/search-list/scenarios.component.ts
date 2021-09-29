@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { debounceTime, map } from 'rxjs/operators';
 
 import {
     distinct,
@@ -170,7 +170,7 @@ export class ScenariosComponent implements OnInit, OnDestroy {
         if (compose) {
             this.router.navigateByUrl('/scenario/component-edition');
         } else {
-            this.router.navigateByUrl('/scenario/edition');
+            this.router.navigateByUrl('/scenario/raw-edition');
         }
     }
 
