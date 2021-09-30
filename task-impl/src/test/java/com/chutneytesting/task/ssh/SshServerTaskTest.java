@@ -13,12 +13,11 @@ import com.chutneytesting.task.spi.FinallyAction;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.SecurityInfo;
 import com.chutneytesting.task.spi.injectable.Target;
+import com.chutneytesting.task.ssh.fakes.HardcodedTarget;
 import com.chutneytesting.task.ssh.sshd.SshServerMock;
 import com.chutneytesting.task.ssh.sshj.CommandResult;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -129,37 +128,5 @@ class SshServerTaskTest {
         when(securityInfoMock.credential()).thenReturn(Optional.of(credential));
 
         return new HardcodedTarget(sshServer, securityInfoMock);
-    }
-
-    private static class HardcodedTarget implements Target {
-
-        private final SshServerMock sshServer;
-        private final SecurityInfo securityInfo;
-
-        HardcodedTarget(SshServerMock sshServer, SecurityInfo securityInfoMock) {
-            this.sshServer = sshServer;
-            this.securityInfo = securityInfoMock;
-        }
-
-        @Override
-        public String name() {
-            return "SSH_SERVER";
-        }
-
-        @Override
-        public String url() {
-            return "ssh://" + sshServer.host() + ":" + sshServer.port();
-        }
-
-        @Override
-        public Map<String, String> properties() {
-            return Collections.emptyMap();
-        }
-
-        @Override
-        public SecurityInfo security() {
-            return securityInfo;
-        }
-
     }
 }
