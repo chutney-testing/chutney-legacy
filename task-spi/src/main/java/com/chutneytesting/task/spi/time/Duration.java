@@ -54,6 +54,10 @@ public class Duration {
         return parsed.orElseThrow(() -> new IllegalArgumentException(String.format(ERROR_MESSAGE_TEMPLATE, literalDuration)));
     }
 
+    public static int parseToMs(String literalDuration) {
+        return (int) parse(literalDuration).toMilliseconds();
+    }
+
     @Override
     public String toString() {
         return DISPLAY_FORMATTER.format(durationValue).replace(',', '.') + " " + durationUnit;

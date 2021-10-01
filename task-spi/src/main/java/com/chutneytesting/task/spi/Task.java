@@ -1,5 +1,10 @@
 package com.chutneytesting.task.spi;
 
+import com.chutneytesting.task.spi.validation.Validator;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Marking interface for an executable {@link Task}.<br>
  * A task implementation will be instantiated for each execution, so that no state will be kept from one execution to another.<br>
@@ -22,4 +27,11 @@ public interface Task {
      * @return a {@link TaskExecutionResult} according to how the execution went
      */
     TaskExecutionResult execute();
+
+    /**
+     * @return the errors returned
+     */
+    default List<String> validateInputs() {
+        return Collections.emptyList();
+    }
 }

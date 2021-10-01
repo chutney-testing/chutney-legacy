@@ -16,6 +16,7 @@ import com.chutneytesting.task.domain.TaskTemplate;
 import com.chutneytesting.task.domain.TaskTemplateParserV2;
 import com.chutneytesting.task.domain.TaskTemplateRegistry;
 import com.chutneytesting.task.spi.TaskExecutionResult;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -78,4 +79,20 @@ public class DefaultStepExecutorTest {
         verify(step, times(0)).failure(any(Exception.class));
     }
 
+    @Test
+    public void should_fail_step_if_bad_input() {
+        TaskTemplateRegistry taskTemplateRegistry = mock(TaskTemplateRegistry.class);
+        TaskTemplate taskTemplate = mock(TaskTemplate.class, RETURNS_DEEP_STUBS);
+        when(taskTemplate.create(any()).validateInputs()).thenReturn(Collections.singletonList("one error"));
+        when(taskTemplateRegistry.getByIdentifier(any())).thenReturn(Optional.of(taskTemplate));
+        Step step = mock(Step.class, RETURNS_DEEP_STUBS);
+
+        StepContext stepContext = mock(StepContext.class);
+
+        StepExecutor stepExecutor = new DefaultStepExecutor(taskTemplateRegistry);
+        stepExecutor.execute(createScenarioExecution(null), stepContext, mock(TargetImpl.class), step);
+
+        verify(taskTemplate.create(any()), times(0)).execute();
+        verify(step, times(1)).failure((String) any());
+    }
 }
