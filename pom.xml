@@ -115,7 +115,7 @@
         <jaxb.api.version>2.3.0</jaxb.api.version>
 
         <!-- Test dependencies versions -->
-        <junit5.version>5.7.2</junit5.version>
+        <junit5.version>5.8.1</junit5.version>
         <junit-jupiter.version>${junit5.version}</junit-jupiter.version>
         <assertj.version>3.20.2</assertj.version>
         <mockito.version>3.12.4</mockito.version>
