@@ -129,7 +129,7 @@
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
         <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
         <awaitility.version>4.1.0</awaitility.version>
-        <jqwik.version>1.5.1</jqwik.version>
+        <jqwik.version>1.5.6</jqwik.version>
     </properties>
 
     <dependencies>
@@ -659,7 +659,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.3.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
