@@ -1,19 +1,24 @@
 package com.chutneytesting.task.mongo;
 
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.MongoIterable;
+import static com.chutneytesting.task.TaskValidatorsUtils.stringValidation;
+import static com.chutneytesting.task.TaskValidatorsUtils.targetValidation;
+import static com.chutneytesting.task.mongo.MongoTaskValidatorsUtils.mongoTargetValidation;
+import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
+import static java.util.Optional.ofNullable;
+
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
+import com.chutneytesting.tools.CloseableResource;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.MongoIterable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import org.bson.BsonDocument;
 import org.bson.Document;
-import com.chutneytesting.tools.CloseableResource;
 
 public class MongoFindTask implements Task {
 
@@ -34,7 +39,17 @@ public class MongoFindTask implements Task {
         this.logger = logger;
         this.collection = collection;
         this.query = query;
-        this.limit = limit;
+        this.limit = ofNullable(limit).orElse(20);
+    }
+
+    @Override
+    public List<String> validateInputs() {
+        return getErrorsFrom(
+            targetValidation(target),
+            stringValidation(collection, "collection"),
+            stringValidation(query, "query"),
+            mongoTargetValidation(target)
+        );
     }
 
     @Override
@@ -43,7 +58,7 @@ public class MongoFindTask implements Task {
             MongoIterable<String> documents = database.getResource()
                 .getCollection(collection)
                 .find(BsonDocument.parse(query))
-                .limit(Optional.ofNullable(limit).orElse(20))
+                .limit(limit)
                 .map(Document::toJson);
 
             List<String> documentList = new ArrayList<>();

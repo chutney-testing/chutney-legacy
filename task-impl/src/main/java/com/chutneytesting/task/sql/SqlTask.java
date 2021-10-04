@@ -1,5 +1,8 @@
 package com.chutneytesting.task.sql;
 
+import static com.chutneytesting.task.TaskValidatorsUtils.listValidation;
+import static com.chutneytesting.task.TaskValidatorsUtils.targetValidation;
+import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.task.spi.Task;
@@ -37,6 +40,14 @@ public class SqlTask implements Task {
         this.nbLoggedRow = ofNullable(nbLoggedRow)
             .orElse(configuration.getInteger(CONFIGURABLE_NB_LOGGED_ROW, DEFAULT_NB_LOGGED_ROW));
 
+    }
+
+    @Override
+    public List<String> validateInputs() {
+        return getErrorsFrom(
+            targetValidation(target),
+            listValidation(statements, "statements")
+        );
     }
 
     @Override

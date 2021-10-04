@@ -1,11 +1,18 @@
 package com.chutneytesting.task.micrometer;
 
-import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkDoubleOrNull;
-import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkDurationOrNull;
-import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkIntOrNull;
-import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkMapOrNull;
-import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkRegistry;
+import static com.chutneytesting.task.TaskValidatorsUtils.doubleOrNullValidation;
+import static com.chutneytesting.task.TaskValidatorsUtils.durationOrNullValidation;
+import static com.chutneytesting.task.TaskValidatorsUtils.integerOrNullValidation;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.parseDoubleOrNull;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.parseDurationOrNull;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.parseIntOrNull;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.parseMapOrNull;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.percentilesListValidation;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.slaListToDoublesValidation;
 import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.toOutputs;
+import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
+import static com.chutneytesting.task.spi.validation.Validator.of;
+import static io.micrometer.core.instrument.Metrics.globalRegistry;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
@@ -13,9 +20,9 @@ import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
+import com.chutneytesting.task.spi.validation.Validator;
 import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.MeterRegistry;
-import java.time.Duration;
 import java.util.List;
 
 public class MicrometerSummaryTask implements Task {
@@ -27,19 +34,19 @@ public class MicrometerSummaryTask implements Task {
     private final String description;
     private final String unit;
     private final List<String> tags;
-    private final Integer bufferLength;
-    private final Duration expiry;
-    private final Double maxValue;
-    private final Double minValue;
-    private final Integer percentilePrecision;
+    private final String bufferLength;
+    private final String expiry;
+    private final String maxValue;
+    private final String minValue;
+    private final String percentilePrecision;
     private final Boolean publishPercentilesHistogram;
-    private final double[] percentiles;
-    private final Double scale;
-    private final double[] sla;
+    private final String percentiles;
+    private final String scale;
+    private final String sla;
 
     private DistributionSummary distributionSummary;
     private final MeterRegistry registry;
-    private final Double record;
+    private final String record;
 
     public MicrometerSummaryTask(Logger logger,
                                  @Input("name") String name,
@@ -63,19 +70,38 @@ public class MicrometerSummaryTask implements Task {
         this.description = description;
         this.unit = unit;
         this.tags = tags;
-        this.bufferLength = checkIntOrNull(bufferLength);
-        this.expiry = checkDurationOrNull(expiry);
-        this.maxValue = checkDoubleOrNull(maxValue);
-        this.minValue = checkDoubleOrNull(minValue);
-        this.percentilePrecision = checkIntOrNull(percentilePrecision);
         this.publishPercentilesHistogram = publishPercentilesHistogram;
-        this.percentiles = checkMapOrNull(percentiles, MicrometerTaskHelper::parsePercentilesList);
-        this.scale = checkDoubleOrNull(scale);
-        this.sla = checkMapOrNull(sla, MicrometerTaskHelper::parseSlaListToDoubles);
-
-        this.record = checkDoubleOrNull(record);
         this.distributionSummary = distributionSummary;
-        this.registry = registry;
+        this.registry = ofNullable(registry).orElse(globalRegistry);
+
+        this.bufferLength = bufferLength;
+        this.percentilePrecision = percentilePrecision;
+        this.expiry = expiry;
+        this.maxValue = maxValue;
+        this.minValue = minValue;
+        this.scale = scale;
+        this.record = record;
+        this.percentiles = percentiles;
+        this.sla = sla;
+    }
+
+    @Override
+    public List<String> validateInputs() {
+        Validator<Object> metricNameValidation = of(null)
+            .validate(a -> name != null || distributionSummary != null, "name and distributionSummary cannot be both null");
+
+        return getErrorsFrom(
+            metricNameValidation,
+            integerOrNullValidation(bufferLength, "bufferLength"),
+            integerOrNullValidation(percentilePrecision, "percentilePrecision"),
+            doubleOrNullValidation(maxValue, "maxValue"),
+            doubleOrNullValidation(minValue, "minValue"),
+            doubleOrNullValidation(scale, "scale"),
+            doubleOrNullValidation(record, "record"),
+            durationOrNullValidation(expiry, "expiry"),
+            percentilesListValidation(percentiles),
+            slaListToDoublesValidation(sla)
+        );
     }
 
     @Override
@@ -83,7 +109,7 @@ public class MicrometerSummaryTask implements Task {
         try {
             this.distributionSummary = ofNullable(distributionSummary).orElseGet(() -> this.retrieveSummary(registry));
             if (record != null) {
-                distributionSummary.record(record);
+                distributionSummary.record(parseDoubleOrNull(record));
                 logger.info("Distribution summary updated by " + record);
             }
             logger.info("Distribution summary current total is " + distributionSummary.totalAmount());
@@ -98,23 +124,21 @@ public class MicrometerSummaryTask implements Task {
     }
 
     private DistributionSummary retrieveSummary(MeterRegistry registry) {
-        MeterRegistry registryToUse = checkRegistry(registry);
-
         DistributionSummary.Builder builder = DistributionSummary.builder(requireNonNull(name))
             .description(description)
             .baseUnit(unit)
-            .distributionStatisticBufferLength(bufferLength)
-            .distributionStatisticExpiry(expiry)
-            .maximumExpectedValue(maxValue)
-            .minimumExpectedValue(minValue)
-            .percentilePrecision(percentilePrecision)
+            .distributionStatisticBufferLength(parseIntOrNull(bufferLength))
+            .distributionStatisticExpiry(parseDurationOrNull(expiry))
+            .maximumExpectedValue(parseDoubleOrNull(maxValue))
+            .minimumExpectedValue(parseDoubleOrNull(minValue))
+            .percentilePrecision(parseIntOrNull(percentilePrecision))
             .publishPercentileHistogram(publishPercentilesHistogram)
-            .publishPercentiles(percentiles)
-            .serviceLevelObjectives(sla);
+            .publishPercentiles(parseMapOrNull(percentiles, MicrometerTaskHelper::parsePercentilesList))
+            .serviceLevelObjectives(parseMapOrNull(sla, MicrometerTaskHelper::parseSlaListToDoubles));
 
-        ofNullable(scale).ifPresent(t -> builder.scale(scale));
+        ofNullable(scale).ifPresent(t -> builder.scale(parseDoubleOrNull(scale)));
         ofNullable(tags).ifPresent(t -> builder.tags(t.toArray(new String[0])));
 
-        return builder.register(registryToUse);
+        return builder.register(registry);
     }
 }

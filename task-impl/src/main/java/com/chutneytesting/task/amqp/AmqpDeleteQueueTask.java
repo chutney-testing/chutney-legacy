@@ -1,34 +1,46 @@
 package com.chutneytesting.task.amqp;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
+import static com.chutneytesting.task.TaskValidatorsUtils.stringValidation;
+import static com.chutneytesting.task.TaskValidatorsUtils.targetValidation;
+import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
+
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public class AmqpDeleteQueueTask implements Task {
     private final ConnectionFactoryFactory connectionFactoryFactory = new ConnectionFactoryFactory();
 
-    private final ConnectionFactory connectionFactory;
+    private final Target target;
     private final String queueName;
     private final Logger logger;
 
     public AmqpDeleteQueueTask(Target target,
                                @Input("queue-name") String queueName,
                                Logger logger) {
-        this.connectionFactory = connectionFactoryFactory.create(target);
+        this.target = target;
         this.queueName = queueName;
         this.logger = logger;
     }
 
     @Override
+    public List<String> validateInputs() {
+        return getErrorsFrom(
+            stringValidation(queueName, "queue-name"),
+            targetValidation(target)
+        );
+    }
+
+    @Override
     public TaskExecutionResult execute() {
-        try (Connection connection = connectionFactory.newConnection();
+        try (Connection connection = connectionFactoryFactory.create(target).newConnection();
              Channel channel = connection.createChannel()) {
 
             long messageCount = channel.messageCount(queueName);

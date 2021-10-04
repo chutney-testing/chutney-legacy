@@ -1,22 +1,29 @@
 package com.chutneytesting.task.micrometer;
 
-import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkDurationOrNull;
-import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkIntOrNull;
-import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkMapOrNull;
-import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkRegistry;
-import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkTimeUnit;
+import static com.chutneytesting.task.TaskValidatorsUtils.durationOrNullValidation;
+import static com.chutneytesting.task.TaskValidatorsUtils.integerOrNullValidation;
 import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.logTimerState;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.parseDuration;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.parseDurationOrNull;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.parseIntOrNull;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.parseMapOrNull;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.percentilesListValidation;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.slaListToDoublesValidation;
 import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.toOutputs;
+import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
+import static com.chutneytesting.task.spi.validation.Validator.of;
+import static io.micrometer.core.instrument.Metrics.globalRegistry;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
+import static java.util.concurrent.TimeUnit.valueOf;
 
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
+import com.chutneytesting.task.spi.validation.Validator;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
-import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -28,19 +35,19 @@ public class MicrometerTimerTask implements Task {
     private final String name;
     private final String description;
     private final List<String> tags;
-    private final Integer bufferLength;
-    private final Duration expiry;
-    private final Duration maxValue;
-    private final Duration minValue;
-    private final Integer percentilePrecision;
+    private final String bufferLength;
+    private final String expiry;
+    private final String maxValue;
+    private final String minValue;
+    private final String percentilePrecision;
     private final Boolean publishPercentilesHistogram;
-    private final double[] percentiles;
-    private final Duration[] sla;
+    private final String percentiles;
+    private final String sla;
 
     private Timer timer;
     private final MeterRegistry registry;
-    private final TimeUnit timeunit;
-    private final Duration record;
+    private final String timeunit;
+    private final String record;
 
     public MicrometerTimerTask(Logger logger,
                                @Input("name") String name,
@@ -62,19 +69,37 @@ public class MicrometerTimerTask implements Task {
         this.name = name;
         this.description = description;
         this.tags = tags;
-        this.bufferLength = checkIntOrNull(bufferLength);
-        this.expiry = checkDurationOrNull(expiry);
-        this.maxValue = checkDurationOrNull(maxValue);
-        this.minValue = checkDurationOrNull(minValue);
-        this.percentilePrecision = checkIntOrNull(percentilePrecision);
+        this.bufferLength = bufferLength;
+        this.expiry = expiry;
+        this.maxValue = maxValue;
+        this.minValue = minValue;
+        this.percentilePrecision = percentilePrecision;
         this.publishPercentilesHistogram = publishPercentilesHistogram;
-        this.percentiles = checkMapOrNull(percentiles, MicrometerTaskHelper::parsePercentilesList);
-        this.sla = checkMapOrNull(sla, MicrometerTaskHelper::parseSlaListToDurations);
+        this.percentiles = percentiles;
+        this.sla = sla;
 
-        this.timeunit = checkTimeUnit(timeunit);
-        this.record = checkDurationOrNull(record);
+        this.timeunit = ofNullable(timeunit).orElse(TimeUnit.SECONDS.name());
+        this.record = record;
         this.timer = timer;
-        this.registry = registry;
+        this.registry = ofNullable(registry).orElse(globalRegistry);
+    }
+
+    @Override
+    public List<String> validateInputs() {
+        Validator<Object> metricNameValidation = of(null)
+            .validate(a -> name != null || timer != null, "name and timer cannot be both null");
+
+        return getErrorsFrom(
+            metricNameValidation,
+            integerOrNullValidation(bufferLength, "bufferLength"),
+            integerOrNullValidation(percentilePrecision, "percentilePrecision"),
+            durationOrNullValidation(maxValue, "maxValue"),
+            durationOrNullValidation(minValue, "minValue"),
+            durationOrNullValidation(record, "record"),
+            durationOrNullValidation(expiry, "expiry"),
+            percentilesListValidation(percentiles),
+            slaListToDoublesValidation(sla)
+        );
     }
 
     @Override
@@ -82,10 +107,10 @@ public class MicrometerTimerTask implements Task {
         try {
             this.timer = ofNullable(timer).orElseGet(() -> this.retrieveTimer(registry));
             if (record != null) {
-                timer.record(record);
+                timer.record(parseDuration(record));
                 logger.info("Timer updated by " + record);
             }
-            logTimerState(logger, timer, timeunit);
+            logTimerState(logger, timer, valueOf(timeunit));
             return TaskExecutionResult.ok(toOutputs(OUTPUT_TIMER, timer));
         } catch (Exception e) {
             logger.error(e);
@@ -94,21 +119,19 @@ public class MicrometerTimerTask implements Task {
     }
 
     private Timer retrieveTimer(MeterRegistry registry) {
-        MeterRegistry registryToUse = checkRegistry(registry);
-
         Timer.Builder builder = Timer.builder(requireNonNull(name))
             .description(description)
-            .distributionStatisticBufferLength(bufferLength)
-            .distributionStatisticExpiry(expiry)
-            .maximumExpectedValue(maxValue)
-            .minimumExpectedValue(minValue)
-            .percentilePrecision(percentilePrecision)
+            .distributionStatisticBufferLength(parseIntOrNull(bufferLength))
+            .distributionStatisticExpiry(parseDurationOrNull(expiry))
+            .maximumExpectedValue(parseDurationOrNull(maxValue))
+            .minimumExpectedValue(parseDurationOrNull(minValue))
+            .percentilePrecision(parseIntOrNull(percentilePrecision))
             .publishPercentileHistogram(publishPercentilesHistogram)
-            .publishPercentiles(percentiles)
-            .serviceLevelObjectives(sla);
+            .publishPercentiles(parseMapOrNull(percentiles, MicrometerTaskHelper::parsePercentilesList))
+            .serviceLevelObjectives(parseMapOrNull(sla, MicrometerTaskHelper::parseSlaListToDurations));
 
         ofNullable(tags).ifPresent(t -> builder.tags(t.toArray(new String[0])));
 
-        return builder.register(registryToUse);
+        return builder.register(registry);
     }
 }

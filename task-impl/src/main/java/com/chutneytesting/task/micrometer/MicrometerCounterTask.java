@@ -1,8 +1,11 @@
 package com.chutneytesting.task.micrometer;
 
-import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkDoubleOrNull;
-import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkRegistry;
+import static com.chutneytesting.task.TaskValidatorsUtils.doubleOrNullValidation;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.parseDoubleOrNull;
 import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.toOutputs;
+import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
+import static com.chutneytesting.task.spi.validation.Validator.of;
+import static io.micrometer.core.instrument.Metrics.globalRegistry;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
@@ -10,6 +13,7 @@ import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
+import com.chutneytesting.task.spi.validation.Validator;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import java.util.List;
@@ -25,7 +29,7 @@ public class MicrometerCounterTask implements Task {
     private final List<String> tags;
     private Counter counter;
     private final MeterRegistry registry;
-    private final Double increment;
+    private final String increment;
 
     public MicrometerCounterTask(Logger logger,
                                  @Input("name") String name,
@@ -40,9 +44,20 @@ public class MicrometerCounterTask implements Task {
         this.description = description;
         this.unit = unit;
         this.tags = tags;
-        this.increment = checkDoubleOrNull(increment);
+        this.increment = increment;
         this.counter = counter;
-        this.registry = registry;
+        this.registry = ofNullable(registry).orElse(globalRegistry);
+    }
+
+    @Override
+    public List<String> validateInputs() {
+        Validator<Object> metricNameValidation = of(null)
+            .validate(a -> name != null || counter != null, "name and counter cannot be both null");
+
+        return getErrorsFrom(
+            metricNameValidation,
+            doubleOrNullValidation(increment, "increment")
+        );
     }
 
     @Override
@@ -50,7 +65,7 @@ public class MicrometerCounterTask implements Task {
         try {
             this.counter = ofNullable(counter).orElseGet(() -> this.retrieveCounter(registry));
             if (increment != null) {
-                counter.increment(increment);
+                counter.increment(parseDoubleOrNull(increment));
                 logger.info("Counter incremented by " + increment);
             }
             logger.info("Counter current count is " + counter.count());
@@ -62,7 +77,6 @@ public class MicrometerCounterTask implements Task {
     }
 
     private Counter retrieveCounter(MeterRegistry registry) {
-        MeterRegistry registryToUse = checkRegistry(registry);
 
         Counter.Builder builder = Counter.builder(requireNonNull(name))
             .description(description)
@@ -70,6 +84,6 @@ public class MicrometerCounterTask implements Task {
 
         ofNullable(tags).ifPresent(t -> builder.tags(t.toArray(new String[0])));
 
-        return builder.register(registryToUse);
+        return builder.register(registry);
     }
 }

@@ -3,7 +3,6 @@ package com.chutneytesting.task.spi.validation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.task.spi.injectable.Logger;
 import java.util.Objects;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;

@@ -11,8 +11,11 @@ import static java.util.Arrays.stream;
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_XML_VALUE;
 import static org.springframework.util.MimeTypeUtils.TEXT_PLAIN_VALUE;
@@ -26,6 +29,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
@@ -324,14 +328,20 @@ public class KafkaBasicConsumeTaskTest {
     }
 
     private MessageListener<String, String> overrideTaskMessageListenerContainer(Task task) {
-        ConsumerFactory<String, String> cf = mock(ConsumerFactory.class);
+        ConsumerFactory<String, String> cf = mock(ConsumerFactory.class, RETURNS_DEEP_STUBS);
         Consumer<String, String> consumer = mock(Consumer.class);
         given(cf.createConsumer(any(), any(), any(), any())).willReturn(consumer);
+        when(cf.getConfigurationProperties().get(eq(ConsumerConfig.GROUP_ID_CONFIG))).thenReturn(GROUP);
+
+        KafkaConsumerFactoryFactory kafkaConsumerFactoryFactory = mock(KafkaConsumerFactoryFactory.class);
+        when(kafkaConsumerFactoryFactory.create(any(), any(), any())).thenReturn(cf);
+        ReflectionTestUtils.setField(task, "kafkaConsumerFactoryFactory", kafkaConsumerFactoryFactory);
+
         ContainerProperties containerProperties = new ContainerProperties(TOPIC);
         containerProperties.setGroupId(GROUP);
         containerProperties.setMessageListener(ReflectionTestUtils.invokeMethod(task, "createMessageListener"));
         ConcurrentMessageListenerContainer<String, String> messageListenerContainer = new ConcurrentMessageListenerContainer<>(cf, containerProperties);
-        ReflectionTestUtils.setField(task, "messageListenerContainer", messageListenerContainer);
+
         return (MessageListener<String, String>) messageListenerContainer.getContainerProperties().getMessageListener();
     }
 

@@ -2,7 +2,7 @@ package com.chutneytesting.task.function;
 
 import static java.util.Objects.requireNonNull;
 
-import com.chutneytesting.task.assertion.json.JsonUtils;
+import com.chutneytesting.task.assertion.utils.JsonUtils;
 import com.chutneytesting.task.spi.SpelFunction;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

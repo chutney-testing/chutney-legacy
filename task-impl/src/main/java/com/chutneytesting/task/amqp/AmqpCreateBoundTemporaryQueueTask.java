@@ -1,5 +1,9 @@
 package com.chutneytesting.task.amqp;
 
+import static com.chutneytesting.task.TaskValidatorsUtils.stringValidation;
+import static com.chutneytesting.task.TaskValidatorsUtils.targetValidation;
+import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
+
 import com.chutneytesting.task.spi.FinallyAction;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
@@ -9,9 +13,9 @@ import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeoutException;
 
@@ -25,7 +29,6 @@ public class AmqpCreateBoundTemporaryQueueTask implements Task {
     private final String queueName;
     private final Logger logger;
     private final FinallyActionRegistry finallyActionRegistry;
-    private final ConnectionFactory connectionFactory;
 
     public AmqpCreateBoundTemporaryQueueTask(Target target,
                                              @Input("exchange-name") String exchangeName,
@@ -34,7 +37,6 @@ public class AmqpCreateBoundTemporaryQueueTask implements Task {
                                              Logger logger,
                                              FinallyActionRegistry finallyActionRegistry) {
         this.target = target;
-        this.connectionFactory = connectionFactoryFactory.create(target);
         this.exchangeName = exchangeName;
         this.routingKey = routingKey;
         this.queueName = queueName;
@@ -43,8 +45,17 @@ public class AmqpCreateBoundTemporaryQueueTask implements Task {
     }
 
     @Override
+    public List<String> validateInputs() {
+        return getErrorsFrom(
+            stringValidation(queueName, "queue-name"),
+            stringValidation(queueName, "exchange-name"),
+            targetValidation(target)
+        );
+    }
+
+    @Override
     public TaskExecutionResult execute() {
-        try (Connection connection = connectionFactory.newConnection();
+        try (Connection connection = connectionFactoryFactory.create(target).newConnection();
              Channel channel = connection.createChannel()) {
             createQueue(queueName, channel);
             bindQueue(channel, queueName);
