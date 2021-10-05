@@ -1,5 +1,6 @@
 package com.chutneytesting.task.ssh;
 
+import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.task.spi.Task;
@@ -13,9 +14,13 @@ import com.chutneytesting.task.ssh.sshj.Connection;
 import com.chutneytesting.task.ssh.sshj.SshClient;
 import com.chutneytesting.task.ssh.sshj.SshJClient;
 import java.io.IOException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Predicate;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class SshClientTask implements Task {
 
@@ -26,16 +31,20 @@ public class SshClientTask implements Task {
 
     public SshClientTask(Target target, Logger logger, @Input("commands") List<Object> commands, @Input("channel") String channel) {
         this.target = target;
-        this.logger = logger;
+        this.logger = requireNonNull(logger, "Logger cannot be null...");
         this.commands = Commands.from(commands);
         this.channel = ofNullable(channel).map(CHANNEL::from).orElse(CHANNEL.COMMAND);
     }
 
     @Override
     public TaskExecutionResult execute() {
+        if (!couldExecute()) {
+            return TaskExecutionResult.ko();
+        }
+
         try {
             Connection connection = Connection.from(target);
-            SshClient sshClient = new SshJClient(connection, CHANNEL.SHELL.equals(channel));
+            SshClient sshClient = new SshJClient(connection, CHANNEL.SHELL.equals(channel), logger);
 
             List<CommandResult> commandResults = commands.executeWith(sshClient);
 
@@ -49,6 +58,39 @@ public class SshClientTask implements Task {
         }
     }
 
+    private boolean couldExecute() {
+        boolean couldExecute;
+
+        // Validate target
+        couldExecute = checkForError(target,
+            List.of(
+                Pair.of(Objects::isNull, "Target is mandatory"),
+                Pair.of(t -> t.url() == null || t.url().isBlank(), "Target url is mandatory"),
+                Pair.of(t -> {
+                    try {
+                        t.getUrlAsURI();
+                        return false;
+                    } catch (IllegalStateException ise) {
+                        return true;
+                    }
+                }, "Target url is not valid"),
+                Pair.of(t -> {
+                    URI uri = target.getUrlAsURI();
+                    return uri.getHost() == null || uri.getHost().isBlank();
+                }, "Target url has an undefined host")
+            )
+        );
+
+        // Validate commands
+        couldExecute &= checkForError(commands,
+            List.of(
+                Pair.of(c -> c.all.isEmpty(), "No commands provided")
+            )
+        );
+
+        return couldExecute;
+    }
+
     private enum CHANNEL {
         COMMAND, SHELL;
 
@@ -60,6 +102,16 @@ public class SshClientTask implements Task {
             }
             return COMMAND;
         }
+    }
+
+    private <T> boolean checkForError(T objectToCheck, List<Pair<Predicate<T>, String>> checksWithMessages) {
+        for (Pair<Predicate<T>, String> checkWithMessage : checksWithMessages) {
+            if (checkWithMessage.getLeft().test(objectToCheck)) {
+                logger.error(checkWithMessage.getRight());
+                return false;
+            }
+        }
+        return true;
     }
 
 }
