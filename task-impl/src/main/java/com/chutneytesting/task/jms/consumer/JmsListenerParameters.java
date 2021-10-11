@@ -1,12 +1,11 @@
 package com.chutneytesting.task.jms.consumer;
 
-import static com.chutneytesting.task.TaskValidatorsUtils.durationValidation;
-import static com.chutneytesting.task.TaskValidatorsUtils.stringValidation;
-import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.durationValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.task.spi.injectable.Input;
-import java.util.List;
+import com.chutneytesting.task.spi.validation.Validator;
 
 public class JmsListenerParameters {
 
@@ -36,10 +35,10 @@ public class JmsListenerParameters {
         this.timeout = ofNullable(timeout).orElse(DEFAULT_TIMEOUT);
     }
 
-    public static List<String> validateJmsListenerParameters(JmsListenerParameters listenerJmsParameters) {
-        return getErrorsFrom(
-            stringValidation(listenerJmsParameters.destination, "destination"),
+    public static Validator[] validateJmsListenerParameters(JmsListenerParameters listenerJmsParameters) {
+        return new Validator[]{
+            notBlankStringValidation(listenerJmsParameters.destination, "destination"),
             durationValidation(listenerJmsParameters.timeout, "timeout")
-        );
+        };
     }
 }

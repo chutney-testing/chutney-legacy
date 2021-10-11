@@ -1,8 +1,8 @@
 package com.chutneytesting.task.kafka;
 
-import static com.chutneytesting.task.TaskValidatorsUtils.durationValidation;
-import static com.chutneytesting.task.TaskValidatorsUtils.stringValidation;
-import static com.chutneytesting.task.TaskValidatorsUtils.targetValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.durationValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.targetValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
@@ -94,7 +94,7 @@ public class KafkaBasicConsumeTask implements Task {
     @Override
     public List<String> validateInputs() {
         return getErrorsFrom(
-            stringValidation(topic, "topic"),
+            notBlankStringValidation(topic, "topic"),
             targetValidation(target),
             durationValidation(timeout, "timeout")
         );

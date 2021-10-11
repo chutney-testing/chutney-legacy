@@ -1,6 +1,6 @@
 package com.chutneytesting.task.micrometer;
 
-import static com.chutneytesting.task.TaskValidatorsUtils.doubleOrNullValidation;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.doubleStringValidation;
 import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.parseDoubleOrNull;
 import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.toOutputs;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
@@ -56,7 +56,7 @@ public class MicrometerCounterTask implements Task {
 
         return getErrorsFrom(
             metricNameValidation,
-            doubleOrNullValidation(increment, "increment")
+            doubleStringValidation(increment, "increment")
         );
     }
 

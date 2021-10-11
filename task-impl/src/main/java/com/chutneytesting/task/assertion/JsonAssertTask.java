@@ -1,8 +1,8 @@
 package com.chutneytesting.task.assertion;
 
-import static com.chutneytesting.task.TaskValidatorsUtils.mapValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notEmptyMapValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
-import static com.chutneytesting.task.spi.validation.Validator.of;
 
 import com.chutneytesting.task.assertion.placeholder.PlaceholderAsserter;
 import com.chutneytesting.task.assertion.placeholder.PlaceholderAsserterUtils;
@@ -11,7 +11,6 @@ import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
-import com.chutneytesting.task.spi.validation.Validator;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.JsonPath;
@@ -20,7 +19,6 @@ import com.jayway.jsonpath.ReadContext;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 public class JsonAssertTask implements Task {
@@ -39,12 +37,9 @@ public class JsonAssertTask implements Task {
 
     @Override
     public List<String> validateInputs() {
-        Validator<String> documentValidation = of(document)
-            .validate(Objects::nonNull, "No document provided")
-            .validate(d -> JsonUtils.jsonStringify(d), noException -> true, "Cannot parse document");
         return getErrorsFrom(
-            documentValidation,
-            mapValidation(mapExpectedResults, "expected")
+            notBlankStringValidation(document, "document"),
+            notEmptyMapValidation(mapExpectedResults, "expected")
         );
     }
 

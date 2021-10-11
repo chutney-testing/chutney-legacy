@@ -1,7 +1,7 @@
 package com.chutneytesting.task.micrometer;
 
-import static com.chutneytesting.task.TaskValidatorsUtils.durationOrNullValidation;
-import static com.chutneytesting.task.TaskValidatorsUtils.integerOrNullValidation;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.durationStringValidation;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.integerStringValidation;
 import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.logTimerState;
 import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.parseDuration;
 import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.parseDurationOrNull;
@@ -91,12 +91,12 @@ public class MicrometerTimerTask implements Task {
 
         return getErrorsFrom(
             metricNameValidation,
-            integerOrNullValidation(bufferLength, "bufferLength"),
-            integerOrNullValidation(percentilePrecision, "percentilePrecision"),
-            durationOrNullValidation(maxValue, "maxValue"),
-            durationOrNullValidation(minValue, "minValue"),
-            durationOrNullValidation(record, "record"),
-            durationOrNullValidation(expiry, "expiry"),
+            integerStringValidation(bufferLength, "bufferLength"),
+            integerStringValidation(percentilePrecision, "percentilePrecision"),
+            durationStringValidation(maxValue, "maxValue"),
+            durationStringValidation(minValue, "minValue"),
+            durationStringValidation(record, "record"),
+            durationStringValidation(expiry, "expiry"),
             percentilesListValidation(percentiles),
             slaListToDoublesValidation(sla)
         );

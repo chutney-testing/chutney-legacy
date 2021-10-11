@@ -1,8 +1,8 @@
 package com.chutneytesting.task.assertion;
 
-import static com.chutneytesting.task.TaskValidatorsUtils.mapValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notEmptyMapValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
-import static com.chutneytesting.task.spi.validation.Validator.of;
 
 import com.chutneytesting.task.assertion.placeholder.PlaceholderAsserter;
 import com.chutneytesting.task.assertion.placeholder.PlaceholderAsserterUtils;
@@ -12,10 +12,8 @@ import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
-import com.chutneytesting.task.spi.validation.Validator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import org.jdom2.Attribute;
 import org.jdom2.CDATA;
@@ -42,13 +40,10 @@ public class XmlAssertTask implements Task {
 
     @Override
     public List<String> validateInputs() {
-        Validator<String> xmlValidation = of(documentAsString)
-            .validate(Objects::nonNull, "No document provided")
-            .validate(j -> {
-                SAXBuilder saxBuilder = new SAXBuilder();
-                return new XmlContent(saxBuilder, j).buildDocumentWithoutNamespaces();
-            }, noException -> true, "Cannot parse json");
-        return getErrorsFrom(xmlValidation, mapValidation(xpathsAndExpectedResults, "expected"));
+        return getErrorsFrom(
+            notBlankStringValidation(documentAsString, "document"),
+            notEmptyMapValidation(xpathsAndExpectedResults, "expected")
+        );
     }
 
     @Override

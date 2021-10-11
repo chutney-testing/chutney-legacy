@@ -1,8 +1,7 @@
 package com.chutneytesting.task.mongo;
 
-import static com.chutneytesting.task.TaskValidatorsUtils.stringValidation;
-import static com.chutneytesting.task.TaskValidatorsUtils.targetValidation;
 import static com.chutneytesting.task.mongo.MongoTaskValidatorsUtils.mongoTargetValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 import static java.util.Optional.ofNullable;
 
@@ -45,9 +44,8 @@ public class MongoFindTask implements Task {
     @Override
     public List<String> validateInputs() {
         return getErrorsFrom(
-            targetValidation(target),
-            stringValidation(collection, "collection"),
-            stringValidation(query, "query"),
+            notBlankStringValidation(collection, "collection"),
+            notBlankStringValidation(query, "query"),
             mongoTargetValidation(target)
         );
     }

@@ -54,8 +54,8 @@ public class Duration {
         return parsed.orElseThrow(() -> new IllegalArgumentException(String.format(ERROR_MESSAGE_TEMPLATE, literalDuration)));
     }
 
-    public static int parseToMs(String literalDuration) {
-        return (int) parse(literalDuration).toMilliseconds();
+    public static long parseToMs(String literalDuration) {
+        return parse(literalDuration).toMilliseconds();
     }
 
     @Override

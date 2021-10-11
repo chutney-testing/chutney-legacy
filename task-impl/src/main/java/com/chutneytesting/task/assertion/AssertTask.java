@@ -1,5 +1,8 @@
 package com.chutneytesting.task.assertion;
 
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notEmptyListValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.targetValidation;
+import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 
@@ -21,6 +24,13 @@ public class AssertTask implements Task {
     public AssertTask(Logger logger, @Input("asserts") List<Map<String, Boolean>> asserts) {
         this.logger = logger;
         this.asserts = ofNullable(asserts).orElse(emptyList());
+    }
+
+    @Override
+    public List<String> validateInputs() {
+        return getErrorsFrom(
+            notEmptyListValidation(asserts, "asserts")
+        );
     }
 
     @Override

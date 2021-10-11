@@ -1,7 +1,7 @@
 package com.chutneytesting.task.amqp;
 
-import static com.chutneytesting.task.TaskValidatorsUtils.stringValidation;
-import static com.chutneytesting.task.TaskValidatorsUtils.targetValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.targetValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 import static java.util.stream.Collectors.joining;
 
@@ -54,8 +54,8 @@ public class AmqpBasicPublishTask implements Task {
     @Override
     public List<String> validateInputs() {
         return getErrorsFrom(
-            stringValidation(exchangeName, "exchange-name"),
-            stringValidation(payload, "payload"),
+            notBlankStringValidation(exchangeName, "exchange-name"),
+            notBlankStringValidation(payload, "payload"),
             targetValidation(target)
         );
     }
@@ -63,7 +63,7 @@ public class AmqpBasicPublishTask implements Task {
     @Override
     public TaskExecutionResult execute() {
         try (Connection connection = connectionFactoryFactory.create(target).newConnection();
-             Channel channel = connection.createChannel()) {
+            Channel channel = connection.createChannel()) {
 
             BasicProperties basicProperties = buildProperties();
             channel.basicPublish(exchangeName, routingKey, basicProperties, payload.getBytes());

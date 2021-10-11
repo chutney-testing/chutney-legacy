@@ -1,7 +1,7 @@
 package com.chutneytesting.task.jms;
 
-import static com.chutneytesting.task.TaskValidatorsUtils.stringValidation;
-import static com.chutneytesting.task.TaskValidatorsUtils.targetValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.targetValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 
 import com.chutneytesting.task.spi.Task;
@@ -39,8 +39,8 @@ public class JmsSenderTask implements Task {
     public List<String> validateInputs() {
         return getErrorsFrom(
             targetValidation(target),
-            stringValidation(destination, "destination"),
-            stringValidation(body, "body")
+            notBlankStringValidation(destination, "destination"),
+            notBlankStringValidation(body, "body")
         );
     }
 

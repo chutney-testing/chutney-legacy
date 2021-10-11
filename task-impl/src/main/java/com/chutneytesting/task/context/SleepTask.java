@@ -1,6 +1,6 @@
 package com.chutneytesting.task.context;
 
-import static com.chutneytesting.task.TaskValidatorsUtils.durationValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.durationValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 
 import com.chutneytesting.task.spi.Task;

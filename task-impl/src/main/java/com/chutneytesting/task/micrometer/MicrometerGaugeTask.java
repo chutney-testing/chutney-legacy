@@ -1,6 +1,6 @@
 package com.chutneytesting.task.micrometer;
 
-import static com.chutneytesting.task.TaskValidatorsUtils.stringValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
 import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.toOutputs;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 import static com.chutneytesting.task.spi.validation.Validator.of;
@@ -67,7 +67,7 @@ public class MicrometerGaugeTask implements Task {
             gaugeObjectValidation
                 .validate(go -> go instanceof Number || go instanceof Collection || go instanceof Map, "gaugeObject must be a Number, a Collection or a Map if no gaugeFunction supplied");
         }
-        return getErrorsFrom(stringValidation(name, "name"), gaugeValidation, gaugeObjectValidation);
+        return getErrorsFrom(notBlankStringValidation(name, "name"), gaugeValidation, gaugeObjectValidation);
     }
 
     @Override

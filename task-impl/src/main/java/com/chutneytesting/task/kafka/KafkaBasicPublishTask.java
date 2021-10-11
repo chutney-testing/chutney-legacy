@@ -1,7 +1,7 @@
 package com.chutneytesting.task.kafka;
 
-import static com.chutneytesting.task.TaskValidatorsUtils.stringValidation;
-import static com.chutneytesting.task.TaskValidatorsUtils.targetValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.targetValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.joining;
@@ -46,7 +46,7 @@ public class KafkaBasicPublishTask implements Task {
     @Override
     public List<String> validateInputs() {
         return getErrorsFrom(
-            stringValidation(payload, "payload"),
+            notBlankStringValidation(payload, "payload"),
             targetValidation(target)
         );
     }

@@ -1,7 +1,7 @@
 package com.chutneytesting.task.ssh;
 
-import static com.chutneytesting.task.TaskValidatorsUtils.listValidation;
-import static com.chutneytesting.task.TaskValidatorsUtils.targetValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notEmptyListValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.targetValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 import static java.util.Optional.ofNullable;
 
@@ -37,7 +37,7 @@ public class SshClientTask implements Task {
 
     @Override
     public List<String> validateInputs() {
-        Validator<List> commandsValidator = listValidation(this.commands, "commands")
+        Validator<List> commandsValidator = notEmptyListValidation(this.commands, "commands")
             .validate(c -> Commands.from(c), noException -> true, "Syntax is a List of String or a List of {command: \"xxx\", timeout:\"10 s\"} Json");
         return getErrorsFrom(
             targetValidation(target),

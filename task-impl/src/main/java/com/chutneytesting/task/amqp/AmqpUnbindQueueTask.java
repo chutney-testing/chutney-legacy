@@ -1,7 +1,7 @@
 package com.chutneytesting.task.amqp;
 
-import static com.chutneytesting.task.TaskValidatorsUtils.stringValidation;
-import static com.chutneytesting.task.TaskValidatorsUtils.targetValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.targetValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 
 import com.chutneytesting.task.spi.Task;
@@ -39,7 +39,7 @@ public class AmqpUnbindQueueTask implements Task {
     @Override
     public List<String> validateInputs() {
         return getErrorsFrom(
-            stringValidation(queueName, "queue-name"),
+            notBlankStringValidation(queueName, "queue-name"),
             targetValidation(target)
         );
     }

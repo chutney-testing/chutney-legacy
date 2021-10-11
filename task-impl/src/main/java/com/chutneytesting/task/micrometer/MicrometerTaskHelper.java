@@ -1,6 +1,8 @@
 package com.chutneytesting.task.micrometer;
 
 import static com.chutneytesting.task.spi.validation.Validator.of;
+import static java.lang.Double.parseDouble;
+import static java.lang.Integer.parseInt;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
 
@@ -18,12 +20,23 @@ import java.util.stream.Stream;
 
 final class MicrometerTaskHelper {
 
-    static Integer parseIntOrNull(String str) {
-        return parseMapOrNull(str, Integer::parseInt);
+    static Validator<String> durationStringValidation(String timeout, String label) {
+        return of(timeout)
+            .validate(s -> s == null || com.chutneytesting.task.spi.time.Duration.parseToMs(s) >= Long.MIN_VALUE , noException -> true, label + " is not parsable");
     }
 
-    static Long parseLongOrNull(String str) {
-        return parseMapOrNull(str, Long::parseLong);
+    static Validator<String> integerStringValidation(String toVerify, String inputLabel) {
+        return of(toVerify)
+            .validate(s -> s == null || parseInt(s) >= Integer.MIN_VALUE, noException -> true, inputLabel + " parsing");
+    }
+
+    static Validator<String> doubleStringValidation(String toVerify, String inputLabel) {
+        return of(toVerify)
+            .validate(s -> s == null || parseDouble(s) >= Double.MIN_VALUE, noException -> true, inputLabel + " parsing");
+    }
+
+    static Integer parseIntOrNull(String str) {
+        return parseMapOrNull(str, Integer::parseInt);
     }
 
     static Double parseDoubleOrNull(String str) {
@@ -32,10 +45,6 @@ final class MicrometerTaskHelper {
 
     static Duration parseDurationOrNull(String str) {
         return parseMapOrNull(str, MicrometerTaskHelper::parseDuration);
-    }
-
-    static TimeUnit parseTimeUnit(String str) {
-        return ofNullable(str).map(TimeUnit::valueOf).orElse(TimeUnit.SECONDS);
     }
 
     static <T, U> T parseMapOrNull(U nullable, Function<U, T> mapfunction) {

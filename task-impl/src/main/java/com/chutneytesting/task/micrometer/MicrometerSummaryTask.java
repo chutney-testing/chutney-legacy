@@ -1,8 +1,8 @@
 package com.chutneytesting.task.micrometer;
 
-import static com.chutneytesting.task.TaskValidatorsUtils.doubleOrNullValidation;
-import static com.chutneytesting.task.TaskValidatorsUtils.durationOrNullValidation;
-import static com.chutneytesting.task.TaskValidatorsUtils.integerOrNullValidation;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.doubleStringValidation;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.durationStringValidation;
+import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.integerStringValidation;
 import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.parseDoubleOrNull;
 import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.parseDurationOrNull;
 import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.parseIntOrNull;
@@ -92,13 +92,13 @@ public class MicrometerSummaryTask implements Task {
 
         return getErrorsFrom(
             metricNameValidation,
-            integerOrNullValidation(bufferLength, "bufferLength"),
-            integerOrNullValidation(percentilePrecision, "percentilePrecision"),
-            doubleOrNullValidation(maxValue, "maxValue"),
-            doubleOrNullValidation(minValue, "minValue"),
-            doubleOrNullValidation(scale, "scale"),
-            doubleOrNullValidation(record, "record"),
-            durationOrNullValidation(expiry, "expiry"),
+            integerStringValidation(bufferLength, "bufferLength"),
+            integerStringValidation(percentilePrecision, "percentilePrecision"),
+            doubleStringValidation(maxValue, "maxValue"),
+            doubleStringValidation(minValue, "minValue"),
+            doubleStringValidation(scale, "scale"),
+            doubleStringValidation(record, "record"),
+            durationStringValidation(expiry, "expiry"),
             percentilesListValidation(percentiles),
             slaListToDoublesValidation(sla)
         );

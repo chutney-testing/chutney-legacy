@@ -1,7 +1,6 @@
 package com.chutneytesting.task.http;
 
-import static com.chutneytesting.task.TaskValidatorsUtils.durationValidation;
-import static com.chutneytesting.task.TaskValidatorsUtils.targetValidation;
+import static com.chutneytesting.task.http.HttpTaskHelper.httpCommonValidation;
 import static com.chutneytesting.task.spi.time.Duration.parseToMs;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 import static java.util.Optional.ofNullable;
@@ -42,14 +41,13 @@ public class HttpGetTask implements Task {
     @Override
     public List<String> validateInputs() {
         return getErrorsFrom(
-            targetValidation(target),
-            durationValidation(this.timeout, "timeout")
+            httpCommonValidation(target, timeout)
         );
     }
 
     @Override
     public TaskExecutionResult execute() {
-        HttpClient httpClient = new HttpClientFactory().create(target, String.class, parseToMs(timeout));
+        HttpClient httpClient = new HttpClientFactory().create(target, String.class, (int) parseToMs(timeout));
         HttpHeaders httpHeaders = new HttpHeaders();
         headers.forEach((key, value) -> httpHeaders.add(key, value));
         Supplier<ResponseEntity<String>> caller = () -> httpClient.get(this.uri, httpHeaders);

@@ -1,6 +1,6 @@
 package com.chutneytesting.task.assertion;
 
-import static com.chutneytesting.task.TaskValidatorsUtils.stringValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 import static com.chutneytesting.task.spi.validation.Validator.of;
 
@@ -37,7 +37,7 @@ public class XsdValidationTask implements Task {
         Validator<String> xmlValidation = of(xsdPath)
             .validate(Objects::nonNull, "No xsd provided")
             .validate(x -> XsdValidationTask.class.getResource(x).getFile(), noException -> true, "Cannot find xsd");
-        return getErrorsFrom(xmlValidation, stringValidation(xml, "xml"));
+        return getErrorsFrom(xmlValidation, notBlankStringValidation(xml, "xml"));
     }
 
     @Override

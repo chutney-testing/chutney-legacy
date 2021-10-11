@@ -18,11 +18,8 @@ public class ScenarioExecutionTest {
 
         // Init
         ScenarioExecution scenarioExecution = ScenarioExecution.createScenarioExecution(null);
-        await().atMost(1, SECONDS).untilAsserted(() -> {
-                assertThat(scenarioExecution.hasToPause()).isFalse();
-                assertThat(scenarioExecution.hasToStop()).isFalse();
-            }
-        );
+        assertThat(scenarioExecution.hasToPause()).isFalse();
+        assertThat(scenarioExecution.hasToStop()).isFalse();
 
         // Pause
         getInstance().post(new PauseExecutionAction(scenarioExecution.executionId));
@@ -39,7 +36,7 @@ public class ScenarioExecutionTest {
                 assertThat(scenarioExecution.hasToStop()).isFalse();
             }
         );
-        
+
         // Stop
         getInstance().post(new StopExecutionAction(scenarioExecution.executionId));
         await().atMost(1, SECONDS).untilAsserted(() -> {

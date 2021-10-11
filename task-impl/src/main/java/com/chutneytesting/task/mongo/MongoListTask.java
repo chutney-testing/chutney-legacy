@@ -1,6 +1,5 @@
 package com.chutneytesting.task.mongo;
 
-import static com.chutneytesting.task.TaskValidatorsUtils.targetValidation;
 import static com.chutneytesting.task.mongo.MongoTaskValidatorsUtils.mongoTargetValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 
@@ -29,7 +28,6 @@ public class MongoListTask implements Task {
     @Override
     public List<String> validateInputs() {
         return getErrorsFrom(
-            targetValidation(target),
             mongoTargetValidation(target)
         );
     }

@@ -1,8 +1,8 @@
 package com.chutneytesting.task.amqp;
 
-import static com.chutneytesting.task.TaskValidatorsUtils.durationValidation;
-import static com.chutneytesting.task.TaskValidatorsUtils.stringValidation;
-import static com.chutneytesting.task.TaskValidatorsUtils.targetValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.durationValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.targetValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
@@ -53,7 +53,7 @@ public class AmqpBasicConsumeTask implements Task {
     @Override
     public List<String> validateInputs() {
         return getErrorsFrom(
-            stringValidation(queueName, "queue-name"),
+            notBlankStringValidation(queueName, "queue-name"),
             targetValidation(target),
             durationValidation(this.timeout, "timeout")
         );

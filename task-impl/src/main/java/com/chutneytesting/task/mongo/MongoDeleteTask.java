@@ -1,8 +1,7 @@
 package com.chutneytesting.task.mongo;
 
-import static com.chutneytesting.task.TaskValidatorsUtils.stringValidation;
-import static com.chutneytesting.task.TaskValidatorsUtils.targetValidation;
 import static com.chutneytesting.task.mongo.MongoTaskValidatorsUtils.mongoTargetValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 
 import com.chutneytesting.task.spi.Task;
@@ -38,9 +37,8 @@ public class MongoDeleteTask implements Task {
     @Override
     public List<String> validateInputs() {
         return getErrorsFrom(
-            targetValidation(target),
-            stringValidation(collection, "collection"),
-            stringValidation(query, "query"),
+            notBlankStringValidation(collection, "collection"),
+            notBlankStringValidation(query, "query"),
             mongoTargetValidation(target)
         );
     }

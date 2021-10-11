@@ -27,14 +27,14 @@ public final class Validator<T> {
     }
 
     /**
-     * Example : .validate(Objects::nonNull, "should not be null")
+     * Example : .validate(Person::getAge, a -> a >= 18, "should be eighteen or over");
      */
     public <U> Validator<T> validate(Function<? super T, ? extends U> projection, Predicate<? super U> validation, String message) {
         return validate(projection.andThen(validation::test)::apply, message);
     }
 
     /**
-     * Example : .validate(Person::getAge, a -> a >= 18, "should be eighteen or over");
+     * Example : .validate(Objects::nonNull, "should not be null")
      */
     public Validator<T> validate(final Predicate<? super T> validation, final String message) {
         try {
