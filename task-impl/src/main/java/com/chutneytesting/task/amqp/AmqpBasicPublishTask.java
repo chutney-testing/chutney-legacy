@@ -1,20 +1,23 @@
 package com.chutneytesting.task.amqp;
 
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.targetValidation;
+import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 import static java.util.stream.Collectors.joining;
 
-import com.rabbitmq.client.AMQP.BasicProperties;
-import com.rabbitmq.client.AMQP.BasicProperties.Builder;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
+import com.rabbitmq.client.AMQP.BasicProperties;
+import com.rabbitmq.client.AMQP.BasicProperties.Builder;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
@@ -24,7 +27,7 @@ public class AmqpBasicPublishTask implements Task {
 
     private final ConnectionFactoryFactory connectionFactoryFactory = new ConnectionFactoryFactory();
 
-    private final ConnectionFactory connectionFactory;
+    private final Target target;
     private final String exchangeName;
     private final String routingKey;
     private final Map<String, Object> headers;
@@ -39,7 +42,7 @@ public class AmqpBasicPublishTask implements Task {
                                 @Input("properties") Map<String, String> properties,
                                 @Input("payload") String payload,
                                 Logger logger) {
-        this.connectionFactory = connectionFactoryFactory.create(target);
+        this.target = target;
         this.exchangeName = exchangeName;
         this.routingKey = routingKey;
         this.headers = headers != null ? headers : Collections.emptyMap();
@@ -49,9 +52,18 @@ public class AmqpBasicPublishTask implements Task {
     }
 
     @Override
+    public List<String> validateInputs() {
+        return getErrorsFrom(
+            notBlankStringValidation(exchangeName, "exchange-name"),
+            notBlankStringValidation(payload, "payload"),
+            targetValidation(target)
+        );
+    }
+
+    @Override
     public TaskExecutionResult execute() {
-        try (Connection connection = connectionFactory.newConnection();
-             Channel channel = connection.createChannel()) {
+        try (Connection connection = connectionFactoryFactory.create(target).newConnection();
+            Channel channel = connection.createChannel()) {
 
             BasicProperties basicProperties = buildProperties();
             channel.basicPublish(exchangeName, routingKey, basicProperties, payload.getBytes());

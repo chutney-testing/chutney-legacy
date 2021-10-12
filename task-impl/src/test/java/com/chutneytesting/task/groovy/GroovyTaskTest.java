@@ -23,7 +23,7 @@ public class GroovyTaskTest {
             "return new GroovyTask(script, [:], logger).execute().outputs";
 
         TestLogger logger = new TestLogger();
-        TaskExecutionResult executionResult = new GroovyTask(script, Collections.emptyMap(), logger).execute();
+        TaskExecutionResult executionResult = new GroovyTask(script, null, logger).execute();
 
         assertThat(executionResult.status).as("Status of GroovyTask\n" + logger).isEqualTo(Status.Success);
         assertThat(executionResult.outputs).isEmpty();

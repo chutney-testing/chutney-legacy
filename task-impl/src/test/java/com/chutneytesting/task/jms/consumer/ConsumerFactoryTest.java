@@ -11,7 +11,7 @@ public class ConsumerFactoryTest {
 
     @Test
     public void building_consumer_without_body_selector_returns_a_simple_consumer() throws JMSException {
-        JmsListenerParameters arguments = new JmsListenerParameters("","",null,0,"");
+        JmsListenerParameters arguments = new JmsListenerParameters("","",null,0,"1 sec");
         ConsumerFactory consumerFactory = new ConsumerFactory(arguments);
 
         Session session = mock(Session.class);
@@ -22,7 +22,7 @@ public class ConsumerFactoryTest {
 
     @Test
     public void building_consumer_with_body_selector_returns_a_selected_consumer() throws JMSException {
-        JmsListenerParameters arguments = new JmsListenerParameters("","","XPATH '/test'",0,"");
+        JmsListenerParameters arguments = new JmsListenerParameters("","","XPATH '/test'",0,"1 sec");
         ConsumerFactory consumerFactory = new ConsumerFactory(arguments);
 
         Session session = mock(Session.class);

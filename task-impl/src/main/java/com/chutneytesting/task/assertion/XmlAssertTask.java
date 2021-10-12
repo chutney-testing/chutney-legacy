@@ -1,13 +1,17 @@
 package com.chutneytesting.task.assertion;
 
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notEmptyMapValidation;
+import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
+
 import com.chutneytesting.task.assertion.placeholder.PlaceholderAsserter;
 import com.chutneytesting.task.assertion.placeholder.PlaceholderAsserterUtils;
+import com.chutneytesting.task.assertion.xml.XmlUtils;
+import com.chutneytesting.task.jms.domain.XmlContent;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
-import com.chutneytesting.task.assertion.xml.XmlUtils;
-import com.chutneytesting.task.jms.domain.XmlContent;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,6 +38,13 @@ public class XmlAssertTask implements Task {
         this.xpathsAndExpectedResults = xpathsAndExpectedResults;
     }
 
+    @Override
+    public List<String> validateInputs() {
+        return getErrorsFrom(
+            notBlankStringValidation(documentAsString, "document"),
+            notEmptyMapValidation(xpathsAndExpectedResults, "expected")
+        );
+    }
 
     @Override
     public TaskExecutionResult execute() {

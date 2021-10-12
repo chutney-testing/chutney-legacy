@@ -6,13 +6,13 @@ import java.util.Map;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
-import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
 
 final class ChutneyKafkaProducerFactory {
 
     private DefaultKafkaProducerFactory<String, String> factory;
 
-    ProducerFactory<String, String> create(Target target) {
+    KafkaTemplate<String, String> create(Target target) {
         Map<String, Object> configProps = new HashMap<>();
 
         configProps.put(
@@ -26,9 +26,10 @@ final class ChutneyKafkaProducerFactory {
             ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
             StringSerializer.class);
 
-        this.factory = new DefaultKafkaProducerFactory<>(configProps);
+        target.properties().entrySet().forEach(p -> configProps.put(p.getKey(), p.getValue()));
 
-        return this.factory;
+        this.factory = new DefaultKafkaProducerFactory<>(configProps);
+        return new KafkaTemplate(this.factory, true);
     }
 
     void destroy() {

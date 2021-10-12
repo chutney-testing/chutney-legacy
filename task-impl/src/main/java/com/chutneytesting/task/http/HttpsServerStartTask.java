@@ -4,6 +4,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.any;
 import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.task.spi.FinallyAction;
 import com.chutneytesting.task.spi.Task;
@@ -42,8 +43,8 @@ public class HttpsServerStartTask implements Task {
         this.port = NumberUtils.toInt(port, DEFAULT_HTTPS_PORT);
         this.trustStorePath = trustStorePath;
         this.trustStorePassword = trustStorePassword;
-        this.keyStorePath = Optional.ofNullable(keyStorePath);
-        this.keyStorePassword = Optional.ofNullable(keyStorePassword);
+        this.keyStorePath = ofNullable(keyStorePath);
+        this.keyStorePassword = ofNullable(keyStorePassword);
     }
 
     @Override

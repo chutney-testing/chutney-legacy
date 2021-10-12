@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.sshd.common.util.OsUtils;
 import org.apache.sshd.server.SshServer;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -136,32 +137,20 @@ public class SshClientTaskTest {
         assertThat(actualResult.status).isEqualTo(Failure);
     }
 
-    public static List<Arguments> invalid_inputs() {
-        return List.of(
-            Arguments.of(null, singletonList("command"), "Target is mandatory"),
-            Arguments.of(TestTarget.TestTargetBuilder.builder().withUrl(null).build(), singletonList("command"), "Target url is mandatory"),
-            Arguments.of(TestTarget.TestTargetBuilder.builder().withUrl(":/not/AVali:dUr/l").build(), singletonList("command"), "Target url is not valid"),
-            Arguments.of(TestTarget.TestTargetBuilder.builder().withUrl("ssh://:22/nohosturl").build(), singletonList("command"), "Target url has an undefined host"),
-            Arguments.of(TestTarget.TestTargetBuilder.builder().withUrl("ssh://host:22").build(), null, "No commands provided"),
-            Arguments.of(TestTarget.TestTargetBuilder.builder().withUrl("ssh://host:22").build(), emptyList(), "No commands provided")
-        );
-    }
-
-    @ParameterizedTest(name = "{2}")
-    @MethodSource("invalid_inputs")
-    void should_fail_with_log_errors_when_inputs_are_not_valid_for_task_execution(Target target, List<Object> commands, String errorMessage) {
-        TestLogger logger = new TestLogger();
-        SshClientTask sshClient = new SshClientTask(target, logger, commands, null);
-        TaskExecutionResult result = sshClient.execute();
-
-        assertThat(result.status).isEqualTo(Failure);
-        assertThat(logger.info).isEmpty();
-        assertThat(logger.errors).containsExactly(errorMessage);
-    }
-
     @Test
-    void should_throw_nullPointer_when_logger_is_null() {
-        assertThatThrownBy(() -> new SshClientTask(null, null, null, null))
-            .isInstanceOf(NullPointerException.class);
+    void should_validate_all_input() {
+        SshClientTask sshClientTask = new SshClientTask(null, null, null, null);
+        List<String> errors = sshClientTask.validateInputs();
+
+        assertThat(errors.size()).isEqualTo(7);
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(errors.get(0)).isEqualTo("No target provided");
+        softly.assertThat(errors.get(1)).isEqualTo("[Target name is blank] not applied because of exception java.lang.NullPointerException(null)");
+        softly.assertThat(errors.get(2)).isEqualTo("[No url defined on the target] not applied because of exception java.lang.NullPointerException(null)");
+        softly.assertThat(errors.get(3)).isEqualTo("[Target url is not valid] not applied because of exception java.lang.NullPointerException(null)");
+        softly.assertThat(errors.get(4)).isEqualTo("[Target url has an undefined host] not applied because of exception java.lang.NullPointerException(null)");
+        softly.assertThat(errors.get(5)).isEqualTo("No commands provided (List)");
+        softly.assertThat(errors.get(6)).isEqualTo("[commands should not be empty] not applied because of exception java.lang.NullPointerException(null)");
+        softly.assertAll();
     }
 }

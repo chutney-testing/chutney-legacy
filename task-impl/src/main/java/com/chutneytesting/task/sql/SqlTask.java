@@ -1,5 +1,9 @@
 package com.chutneytesting.task.sql;
 
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notEmptyListValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.targetValidation;
+import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
+import static com.chutneytesting.task.spi.validation.Validator.of;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.task.spi.Task;
@@ -8,6 +12,7 @@ import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.task.spi.injectable.TasksConfiguration;
+import com.chutneytesting.task.spi.validation.Validator;
 import com.chutneytesting.task.sql.core.DefaultSqlClientFactory;
 import com.chutneytesting.task.sql.core.Records;
 import com.chutneytesting.task.sql.core.SqlClient;
@@ -17,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import org.apache.commons.lang3.StringUtils;
 
 public class SqlTask implements Task {
 
@@ -36,7 +42,17 @@ public class SqlTask implements Task {
         this.statements = statements;
         this.nbLoggedRow = ofNullable(nbLoggedRow)
             .orElse(configuration.getInteger(CONFIGURABLE_NB_LOGGED_ROW, DEFAULT_NB_LOGGED_ROW));
+    }
 
+    @Override
+    public List<String> validateInputs() {
+        Validator<Target> targetPropertiesValidation = of(target)
+            .validate(t -> target.properties().get("jdbcUrl"), StringUtils::isNotBlank, "Missing Target property 'jdbcUrl'");
+        return getErrorsFrom(
+            targetPropertiesValidation,
+            targetValidation(target),
+            notEmptyListValidation(statements, "statements")
+        );
     }
 
     @Override

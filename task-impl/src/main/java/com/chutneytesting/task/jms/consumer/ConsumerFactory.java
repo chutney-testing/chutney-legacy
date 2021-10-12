@@ -1,5 +1,7 @@
 package com.chutneytesting.task.jms.consumer;
 
+import static com.chutneytesting.task.spi.time.Duration.parseToMs;
+
 import com.chutneytesting.task.jms.consumer.bodySelector.BodySelector;
 import com.chutneytesting.task.jms.consumer.bodySelector.BodySelectorFactory;
 import javax.jms.Destination;
@@ -22,7 +24,7 @@ public class ConsumerFactory {
         final Consumer consumer;
         if (arguments.bodySelector == null) {
             MessageConsumer messageConsumer = session.createConsumer(destination, arguments.selector);
-            consumer = new SimpleMessageConsumer(messageConsumer, arguments.timeout);
+            consumer = new SimpleMessageConsumer(messageConsumer, (int) parseToMs(arguments.timeout));
         } else {
             QueueBrowser browser = session.createBrowser((Queue) destination, arguments.selector);
             BodySelector bodySelector = bodySelectorFactory.build(arguments.bodySelector);

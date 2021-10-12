@@ -1,7 +1,9 @@
 package com.chutneytesting.engine.domain.execution.engine;
 
 import static com.chutneytesting.engine.domain.execution.RxBus.getInstance;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.action.PauseExecutionAction;
@@ -21,19 +23,26 @@ public class ScenarioExecutionTest {
 
         // Pause
         getInstance().post(new PauseExecutionAction(scenarioExecution.executionId));
-        assertThat(scenarioExecution.hasToPause()).isTrue();
-        assertThat(scenarioExecution.hasToStop()).isFalse();
+        await().atMost(1, SECONDS).untilAsserted(() -> {
+                assertThat(scenarioExecution.hasToPause()).isTrue();
+                assertThat(scenarioExecution.hasToStop()).isFalse();
+            }
+        );
 
         // Resume
         getInstance().post(new ResumeExecutionAction(scenarioExecution.executionId));
-        assertThat(scenarioExecution.hasToPause()).isFalse();
-        assertThat(scenarioExecution.hasToStop()).isFalse();
+        await().atMost(1, SECONDS).untilAsserted(() -> {
+                assertThat(scenarioExecution.hasToPause()).isFalse();
+                assertThat(scenarioExecution.hasToStop()).isFalse();
+            }
+        );
 
         // Stop
         getInstance().post(new StopExecutionAction(scenarioExecution.executionId));
-        assertThat(scenarioExecution.hasToPause()).isFalse();
-        assertThat(scenarioExecution.hasToStop()).isTrue();
-
+        await().atMost(1, SECONDS).untilAsserted(() -> {
+                assertThat(scenarioExecution.hasToPause()).isFalse();
+                assertThat(scenarioExecution.hasToStop()).isTrue();
+            }
+        );
     }
-
 }

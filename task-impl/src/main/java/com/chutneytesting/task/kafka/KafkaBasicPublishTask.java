@@ -1,5 +1,8 @@
 package com.chutneytesting.task.kafka;
 
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.targetValidation;
+import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.joining;
 
@@ -20,10 +23,9 @@ import org.springframework.kafka.core.KafkaTemplate;
 
 public class KafkaBasicPublishTask implements Task {
 
-
     private final ChutneyKafkaProducerFactory producerFactory = new ChutneyKafkaProducerFactory();
 
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final Target target;
     private final String topic;
     private final Map<String, String> headers;
     private final String payload;
@@ -34,7 +36,7 @@ public class KafkaBasicPublishTask implements Task {
                                  @Input("headers") Map<String, String> headers,
                                  @Input("payload") String payload,
                                  Logger logger) {
-        this.kafkaTemplate = new KafkaTemplate<>(producerFactory.create(target), true);
+        this.target = target;
         this.topic = topic;
         this.headers = headers != null ? headers : Collections.emptyMap();
         this.payload = payload;
@@ -42,9 +44,16 @@ public class KafkaBasicPublishTask implements Task {
     }
 
     @Override
+    public List<String> validateInputs() {
+        return getErrorsFrom(
+            notBlankStringValidation(payload, "payload"),
+            targetValidation(target)
+        );
+    }
+
+    @Override
     public TaskExecutionResult execute() {
         try {
-
             List<Header> recordHeaders = headers.entrySet().stream()
                 .map(it -> new RecordHeader(it.getKey(), it.getValue().getBytes()))
                 .collect(Collectors.toList());
@@ -52,7 +61,9 @@ public class KafkaBasicPublishTask implements Task {
             logger.info("sending message to topic=" + topic);
             ProducerRecord<String, String> producerRecord = new ProducerRecord<String, String>(topic, null, null, payload, recordHeaders);
 
+            KafkaTemplate<String, String> kafkaTemplate = producerFactory.create(target);
             kafkaTemplate.send(producerRecord).get(5, SECONDS);
+
             logger.info("Published Kafka Message on topic " + topic);
             return TaskExecutionResult.ok(outputs(headers, payload));
         } catch (Exception e) {
@@ -76,5 +87,4 @@ public class KafkaBasicPublishTask implements Task {
         );
         return results;
     }
-
 }

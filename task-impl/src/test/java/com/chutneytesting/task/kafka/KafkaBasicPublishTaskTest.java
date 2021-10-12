@@ -41,12 +41,15 @@ public class KafkaBasicPublishTaskTest {
         TestLogger logger = new TestLogger();
         Task task = new KafkaBasicPublishTask(getKafkaTarget(), TOPIC, null, PAYLOAD, logger);
         //mocks
+        ChutneyKafkaProducerFactory producerFactoryMock = mock(ChutneyKafkaProducerFactory.class);
         KafkaTemplate kafkaTemplateMock = mock(KafkaTemplate.class);
+        when(producerFactoryMock.create(any())).thenReturn(kafkaTemplateMock);
+
         ListenableFuture<SendResult> listenableFutureMock = mock(ListenableFuture.class);
         when(listenableFutureMock.get(anyLong(), any(TimeUnit.class))).thenReturn(null);
         when(kafkaTemplateMock.send(any(ProducerRecord.class))).thenReturn(listenableFutureMock);
 
-        ReflectionTestUtils.setField(task, "kafkaTemplate", kafkaTemplateMock);
+        ReflectionTestUtils.setField(task, "producerFactory", producerFactoryMock);
 
         //when
         TaskExecutionResult taskExecutionResult = task.execute();
@@ -63,12 +66,15 @@ public class KafkaBasicPublishTaskTest {
         TestLogger logger = new TestLogger();
         Task task = new KafkaBasicPublishTask(getKafkaTarget(), TOPIC, null, PAYLOAD, logger);
         //mocks
+        ChutneyKafkaProducerFactory producerFactoryMock = mock(ChutneyKafkaProducerFactory.class);
         KafkaTemplate kafkaTemplateMock = mock(KafkaTemplate.class);
+        when(producerFactoryMock.create(any())).thenReturn(kafkaTemplateMock);
+
         ListenableFuture<SendResult> listenableFutureMock = mock(ListenableFuture.class);
         when(listenableFutureMock.get(anyLong(), any(TimeUnit.class))).thenThrow(TimeoutException.class);
         when(kafkaTemplateMock.send(any(ProducerRecord.class))).thenReturn(listenableFutureMock);
 
-        ReflectionTestUtils.setField(task, "kafkaTemplate", kafkaTemplateMock);
+        ReflectionTestUtils.setField(task, "producerFactory", producerFactoryMock);
 
         //when
         TaskExecutionResult taskExecutionResult = task.execute();

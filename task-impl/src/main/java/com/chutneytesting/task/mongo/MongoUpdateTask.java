@@ -1,20 +1,26 @@
 package com.chutneytesting.task.mongo;
 
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.UpdateOptions;
-import com.mongodb.client.result.UpdateResult;
+import static com.chutneytesting.task.mongo.MongoTaskValidatorsUtils.mongoTargetValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
+import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
+import static java.util.Collections.emptyList;
+import static java.util.Optional.ofNullable;
+
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
+import com.chutneytesting.tools.CloseableResource;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.result.UpdateResult;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.bson.BsonDocument;
 import org.bson.Document;
-import com.chutneytesting.tools.CloseableResource;
 
 public class MongoUpdateTask implements Task {
 
@@ -39,7 +45,16 @@ public class MongoUpdateTask implements Task {
         this.collection = collection;
         this.filter = filter;
         this.update = update;
-        this.arrayFilters = arrayFilters;
+        this.arrayFilters = ofNullable(arrayFilters).orElse(emptyList());
+    }
+
+    @Override
+    public List<String> validateInputs() {
+        return getErrorsFrom(
+            notBlankStringValidation(collection, "collection"),
+            notBlankStringValidation(update, "update"),
+            mongoTargetValidation(target)
+        );
     }
 
     @Override
@@ -50,7 +65,7 @@ public class MongoUpdateTask implements Task {
                 .getCollection(this.collection);
 
             final UpdateResult updateResult;
-            if (arrayFilters != null && !arrayFilters.isEmpty()) {
+            if (!arrayFilters.isEmpty()) {
                 List<BsonDocument> arrayFilterDocuments = arrayFilters.stream()
                     .map(BsonDocument::parse)
                     .collect(Collectors.toList());

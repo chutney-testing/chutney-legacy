@@ -1,20 +1,26 @@
 package com.chutneytesting.task.jms;
 
+import static com.chutneytesting.task.jms.consumer.JmsListenerParameters.validateJmsListenerParameters;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.targetValidation;
+import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
+
+import com.chutneytesting.task.jms.consumer.Consumer;
+import com.chutneytesting.task.jms.consumer.JmsListenerParameters;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
-import com.chutneytesting.task.jms.consumer.Consumer;
-import com.chutneytesting.task.jms.consumer.JmsListenerParameters;
+import com.chutneytesting.tools.CloseableResource;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.TextMessage;
-import com.chutneytesting.tools.CloseableResource;
+import org.apache.commons.lang3.ArrayUtils;
 
 public class JmsCleanQueueTask implements Task {
 
@@ -29,6 +35,15 @@ public class JmsCleanQueueTask implements Task {
         this.target = target;
         this.logger = logger;
         this.listenerJmsParameters = listenerJmsParameters;
+    }
+
+    @Override
+    public List<String> validateInputs() {
+        return getErrorsFrom(
+            ArrayUtils.add(
+                validateJmsListenerParameters(listenerJmsParameters),
+                targetValidation(target))
+        );
     }
 
     @Override
