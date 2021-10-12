@@ -145,7 +145,7 @@ public class SshClientTaskTest {
         assertThat(errors.size()).isEqualTo(7);
         SoftAssertions softly = new SoftAssertions();
         softly.assertThat(errors.get(0)).isEqualTo("No target provided");
-        softly.assertThat(errors.get(1)).isEqualTo("[No target provided] not applied because of exception java.lang.NullPointerException(null)");
+        softly.assertThat(errors.get(1)).isEqualTo("[Target name is blank] not applied because of exception java.lang.NullPointerException(null)");
         softly.assertThat(errors.get(2)).isEqualTo("[No url defined on the target] not applied because of exception java.lang.NullPointerException(null)");
         softly.assertThat(errors.get(3)).isEqualTo("[Target url is not valid] not applied because of exception java.lang.NullPointerException(null)");
         softly.assertThat(errors.get(4)).isEqualTo("[Target url has an undefined host] not applied because of exception java.lang.NullPointerException(null)");

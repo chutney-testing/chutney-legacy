@@ -11,9 +11,7 @@ import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
-import com.chutneytesting.task.spi.validation.Validator;
 import com.chutneytesting.tools.CloseableResource;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +20,7 @@ import java.util.Optional;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.TextMessage;
+import org.apache.commons.lang3.ArrayUtils;
 
 public class JmsListenerTask implements Task {
 
@@ -40,9 +39,11 @@ public class JmsListenerTask implements Task {
 
     @Override
     public List<String> validateInputs() {
-        List<Validator> validators = Arrays.asList(validateJmsListenerParameters(listenerJmsParameters));
-        validators.add(targetValidation(target));
-        return getErrorsFrom(validators.toArray(new Validator[0]));
+        return getErrorsFrom(
+            ArrayUtils.add(
+                validateJmsListenerParameters(listenerJmsParameters),
+                targetValidation(target))
+        );
     }
 
     @Override

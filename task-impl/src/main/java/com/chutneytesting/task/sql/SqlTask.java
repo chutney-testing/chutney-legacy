@@ -21,9 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.apache.activemq.broker.BrokerService;
 import org.apache.commons.lang3.StringUtils;
 
 public class SqlTask implements Task {
@@ -49,8 +47,7 @@ public class SqlTask implements Task {
     @Override
     public List<String> validateInputs() {
         Validator<Target> targetPropertiesValidation = of(target)
-            .validate(t -> target.properties().get("jdbcUrl"), StringUtils::isNotBlank, "Missing Target property 'jdbcUrl'")
-            .validate(t -> target.properties().get("driverClassName"), StringUtils::isNotBlank, "Missing Target property 'driverClassName'");
+            .validate(t -> target.properties().get("jdbcUrl"), StringUtils::isNotBlank, "Missing Target property 'jdbcUrl'");
         return getErrorsFrom(
             targetPropertiesValidation,
             targetValidation(target),

@@ -2,6 +2,8 @@ package com.chutneytesting.task.groovy;
 
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 import static com.chutneytesting.task.spi.validation.Validator.of;
+import static java.util.Collections.emptyMap;
+import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
@@ -27,7 +29,7 @@ public class GroovyTask implements Task {
                       @Input("parameters") Map<String, Object> parameters,
                       Logger logger) {
         this.scriptAsString = scriptAsString;
-        this.parameters = parameters;
+        this.parameters = ofNullable(parameters).orElse(emptyMap());
         this.logger = logger;
     }
 

@@ -1,7 +1,6 @@
 package com.chutneytesting.task.assertion;
 
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notEmptyListValidation;
-import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.targetValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
