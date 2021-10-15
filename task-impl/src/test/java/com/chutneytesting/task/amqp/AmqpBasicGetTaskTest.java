@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 public class AmqpBasicGetTaskTest {
 
     @Test
-    public void basicGet_fails_when_no_message_is_available() throws IOException, NoSuchAlgorithmException, KeyManagementException, URISyntaxException {
+    public void basicGet_fails_when_no_message_is_available() {
         MockConnectionFactory mockConnectionFactory = new MockConnectionFactory();
         TestLogger logger = new TestLogger();
         Target target = TestTarget.TestTargetBuilder.builder()
