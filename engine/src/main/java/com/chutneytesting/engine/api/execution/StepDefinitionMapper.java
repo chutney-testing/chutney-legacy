@@ -59,6 +59,7 @@ class StepDefinitionMapper {
             .keyStorePassword(dto.keyStorePassword)
             .trustStore(dto.trustStore)
             .trustStorePassword(dto.trustStorePassword)
+            .keyPassword(dto.keyPassword)
             .privateKey(dto.privateKey)
             .build();
     }

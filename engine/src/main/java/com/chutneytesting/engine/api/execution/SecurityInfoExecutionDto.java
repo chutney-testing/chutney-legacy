@@ -8,14 +8,16 @@ public class SecurityInfoExecutionDto {
     public final String trustStorePassword;
     public final String keyStore;
     public final String keyStorePassword;
+    public final String keyPassword;
     public final String privateKey;
 
-    public SecurityInfoExecutionDto(CredentialExecutionDto credential, String trustStore, String trustStorePassword, String keyStore, String keyStorePassword, String privateKey) {
+    public SecurityInfoExecutionDto(CredentialExecutionDto credential, String trustStore, String trustStorePassword, String keyStore, String keyStorePassword, String keyPassword, String privateKey) {
         this.credential = credential;
         this.trustStore = trustStore;
         this.trustStorePassword = trustStorePassword;
         this.keyStore = keyStore;
         this.keyStorePassword = keyStorePassword;
+        this.keyPassword = keyPassword;
         this.privateKey = privateKey;
     }
 
@@ -29,12 +31,13 @@ public class SecurityInfoExecutionDto {
             Objects.equals(trustStorePassword, that.trustStorePassword) &&
             Objects.equals(keyStore, that.keyStore) &&
             Objects.equals(keyStorePassword, that.keyStorePassword) &&
+            Objects.equals(keyPassword, that.keyPassword) &&
             Objects.equals(privateKey, that.privateKey);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(credential, trustStore, trustStorePassword, keyStore, keyStorePassword, privateKey);
+        return Objects.hash(credential, trustStore, trustStorePassword, keyStore, keyStorePassword, keyPassword, privateKey);
     }
 
     @Override
@@ -45,6 +48,7 @@ public class SecurityInfoExecutionDto {
             ", trustStorePassword='" + trustStorePassword + '\'' +
             ", keyStore='" + keyStore + '\'' +
             ", keyStorePassword='" + keyStorePassword + '\'' +
+            ", keyPassword='" + keyPassword + '\'' +
             ", privateKey='" + privateKey + '\'' +
             '}';
     }

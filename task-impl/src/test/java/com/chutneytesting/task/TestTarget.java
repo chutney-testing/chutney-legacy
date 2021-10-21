@@ -67,7 +67,7 @@ public class TestTarget implements Target {
         }
 
         public TestTargetBuilder withSecurity(String user, String password) {
-            this.security = TestSecurityInfo.TestSecurityInfoBuilder.builder().withUsername(user).withPassword(password).build();
+            this.security = TestSecurityInfo.builder().withUsername(user).withPassword(password).build();
             return this;
         }
 

@@ -1,10 +1,12 @@
 package com.chutneytesting.environment.api.dto;
 
+import static com.chutneytesting.tools.Entry.toEntryList;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.environment.domain.SecurityInfo;
 import com.chutneytesting.environment.domain.Target;
+import com.chutneytesting.tools.Entry;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +20,7 @@ public class TargetDto {
     public final String password;
     public final String keyStore;
     public final String keyStorePassword;
+    public final String keyPassword;
     public final String privateKey;
 
     public TargetDto(String name,
@@ -27,6 +30,7 @@ public class TargetDto {
                      String password,
                      String keyStore,
                      String keyStorePassword,
+                     String keyPassword,
                      String privateKey) {
         this.name = name.trim();
         this.url = url.trim();
@@ -35,6 +39,7 @@ public class TargetDto {
         this.password = emptyToNull(password);
         this.keyStore = emptyToNull(keyStore);
         this.keyStorePassword = emptyToNull(keyStorePassword);
+        this.keyPassword = emptyToNull(keyPassword);
         this.privateKey = emptyToNull(privateKey);
     }
 
@@ -42,6 +47,7 @@ public class TargetDto {
         SecurityInfo.SecurityInfoBuilder securityInfo = SecurityInfo.builder()
             .keyStore(keyStore)
             .keyStorePassword(keyStorePassword)
+            .keyPassword(keyPassword)
             .privateKey(privateKey);
         if (username != null || password != null) {
             securityInfo.credential(SecurityInfo.Credential.of(username, password));
@@ -64,6 +70,7 @@ public class TargetDto {
             ofNullable(target.security.credential).map(c -> c.password).orElse(null),
             ofNullable(target.security.keyStore).orElse(null),
             ofNullable(target.security.keyStorePassword).orElse(null),
+            ofNullable(target.security.keyPassword).orElse(null),
             ofNullable(target.security.privateKey).orElse(null)
         );
     }
@@ -82,21 +89,5 @@ public class TargetDto {
 
     private <T> List<T> nullToEmpty(List<T> list) {
         return list == null ? Collections.emptyList() : list;
-    }
-
-    private static List<Entry> toEntryList(Map<String, String> properties) {
-        return properties.entrySet().stream()
-            .map(e -> new Entry(e.getKey(), e.getValue()))
-            .collect(Collectors.toList());
-    }
-
-    public static class Entry {
-        public final String key;
-        public final String value;
-
-        public Entry(String key, String value) {
-            this.key = key;
-            this.value = value;
-        }
     }
 }

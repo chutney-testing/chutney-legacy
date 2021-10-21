@@ -46,6 +46,8 @@ public class EnvironmentApiMapper {
         ofNullable(security.keyStorePassword).ifPresent(k -> builder.keyStorePassword(k));
         ofNullable(security.trustStore).ifPresent(k -> builder.trustStore(k));
         ofNullable(security.trustStorePassword).ifPresent(k -> builder.trustStorePassword(k));
+        ofNullable(security.keyPassword).ifPresent(k -> builder.keyPassword(k));
+        ofNullable(security.privateKey).ifPresent(k -> builder.privateKey(k));
 
         return builder.build();
     }
@@ -66,6 +68,8 @@ public class EnvironmentApiMapper {
         String keyStorePassword = ofNullable(security.keyStorePassword).orElse(null);
         String trustStore = ofNullable(security.trustStore).orElse(null);
         String trustStorePassword = ofNullable(security.trustStorePassword).orElse(null);
-        return new SecurityApiDto(username, password, keyStore, keyStorePassword, trustStore, trustStorePassword);
+        String keyPassword = ofNullable(security.keyPassword).orElse(null);
+        String privateKey = ofNullable(security.privateKey).orElse(null);
+        return new SecurityApiDto(username, password, keyStore, keyStorePassword, trustStore, trustStorePassword, keyPassword, privateKey);
     }
 }
