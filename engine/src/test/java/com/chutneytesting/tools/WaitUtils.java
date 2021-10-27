@@ -8,7 +8,7 @@ public class WaitUtils {
         try {
             timeUnit.sleep(mills);
         } catch (InterruptedException e) {
-            throw new RuntimeException("Exception during slepp", e);
+            throw new RuntimeException("Exception during sleep", e);
         }
     }
 }
