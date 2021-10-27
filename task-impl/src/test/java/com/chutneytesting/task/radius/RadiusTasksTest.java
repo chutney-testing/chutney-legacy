@@ -4,7 +4,6 @@ package com.chutneytesting.task.radius;
 import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Success;
 import static java.lang.String.valueOf;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.springframework.util.SocketUtils.findAvailableTcpPort;
 
 import com.chutneytesting.task.TestLogger;
@@ -85,16 +84,14 @@ class RadiusTasksTest {
         assertThat(result.status).isEqualTo(Success);
     }
 
-
     @ParameterizedTest(name = "{0}")
     @MethodSource("parametersForAuthenticate_should_failed_on_wrong_input")
-    public void authenticate_should_failed_on_wrong_input(String title, Target target, String userName, String password, Class exceptionType) {
-        assertThatExceptionOfType(exceptionType)
-            .isThrownBy(() -> {
-                new RadiusAuthenticateTask(new TestLogger(), target, userName, password, null, null);
-            });
+    public void authenticate_should_failed_on_wrong_input(String testName, Target target, String userName, String password) {
+        RadiusAuthenticateTask radiusAuthenticateTask = new RadiusAuthenticateTask(new TestLogger(), target, userName, password, null, null);
+        assertThat(radiusAuthenticateTask.validateInputs())
+            .as(testName)
+            .isNotEmpty();
     }
-
 
     public static Object[] parametersForAuthenticate_should_failed_on_wrong_input() {
         TestTarget noUrl = TestTarget.TestTargetBuilder.builder()
@@ -118,24 +115,23 @@ class RadiusTasksTest {
             .withProperty("authenticatePort", valueOf(authPort))
             .build();
         return new Object[]{
-            new Object[]{"No target", null, "userName", "password", NullPointerException.class, "Please provide a target"},
-            new Object[]{"No userName", testTarget, "", "password", IllegalArgumentException.class, "Please set userName"},
-            new Object[]{"No password", testTarget, "userName", "", IllegalArgumentException.class, "Please set userPassword"},
-            new Object[]{"No url", noUrl, "userName", "password", NullPointerException.class, "Please set url on target"},
-            new Object[]{"No secret", noSecret, "userName", "password", NullPointerException.class, "Please set sharedSecret properties on target"},
-            new Object[]{"No authenticatePort", noAuthenticatePort, "userName", "password", NullPointerException.class, "Please set authenticatePort properties on target"},
-            new Object[]{"No accountingPort", noAccountingPort, "userName", "password", NullPointerException.class, "Please set accountingPort properties on target"}
+            new Object[]{"No target", null, "userName", "password"},
+            new Object[]{"No userName", testTarget, "", "password"},
+            new Object[]{"No password", testTarget, "userName", ""},
+            new Object[]{"No url", noUrl, "userName", "password"},
+            new Object[]{"No secret", noSecret, "userName", "password"},
+            new Object[]{"No authenticatePort", noAuthenticatePort, "userName", "password"},
+            new Object[]{"No accountingPort", noAccountingPort, "userName", "password"}
         };
     }
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("parametersForAccounting_should_failed_on_wrong_input")
-    public void accounting_should_failed_on_wrong_input(String title, Target target, String userName, Integer accountingType, Class exceptionType, String message) {
-        assertThatExceptionOfType(exceptionType)
-            .isThrownBy(() -> {
-                new RadiusAccountingTask(new TestLogger(), target, userName, null, accountingType);
-            })
-            .withMessage(message);
+    public void accounting_should_failed_on_wrong_input(String testName, Target target, String userName, Integer accountingType) {
+        RadiusAccountingTask radiusAccountingTask = new RadiusAccountingTask(new TestLogger(), target, userName, null, accountingType);
+        assertThat(radiusAccountingTask.validateInputs())
+            .as(testName)
+            .isNotEmpty();
     }
 
     public static Object[] parametersForAccounting_should_failed_on_wrong_input() {
@@ -160,13 +156,14 @@ class RadiusTasksTest {
             .withProperty("authenticatePort", valueOf(authPort))
             .build();
         return new Object[]{
-            new Object[]{"No target", null, "userName", 1, NullPointerException.class, "Please provide a target"},
-            new Object[]{"No userName", testTarget, "", 1, IllegalArgumentException.class, "Please set userName"},
-            new Object[]{"No accountingType", testTarget, "userName", null, NullPointerException.class, "Please set accountingType (by default start = 1, stop = 2, interim = 3, on = 7, off = 8)"},
-            new Object[]{"No url", noUrl, "userName", 1, NullPointerException.class, "Please set url on target"},
-            new Object[]{"No secret", noSecret, "userName", 1, NullPointerException.class, "Please set sharedSecret properties on target"},
-            new Object[]{"No authenticatePort", noAuthenticatePort, "userName", 1, NullPointerException.class, "Please set authenticatePort properties on target"},
-            new Object[]{"No accountingPort", noAccountingPort, "userName", 1, NullPointerException.class, "Please set accountingPort properties on target"}
+            new Object[]{"No target", null, "userName", 1},
+            new Object[]{"No userName", testTarget, "", 1},
+            new Object[]{"No accountingType", testTarget, "userName", null},
+            new Object[]{"Invalid accountingType", testTarget, "userName", 16},
+            new Object[]{"No url", noUrl, "userName", 1},
+            new Object[]{"No secret", noSecret, "userName", 1},
+            new Object[]{"No authenticatePort", noAuthenticatePort, "userName", 1},
+            new Object[]{"No accountingPort", noAccountingPort, "userName", 1}
         };
     }
 

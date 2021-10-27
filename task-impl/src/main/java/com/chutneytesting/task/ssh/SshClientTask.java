@@ -37,8 +37,8 @@ public class SshClientTask implements Task {
 
     @Override
     public List<String> validateInputs() {
-        Validator<List> commandsValidator = notEmptyListValidation(this.commands, "commands")
-            .validate(c -> Commands.from(c), noException -> true, "Syntax is a List of String or a List of {command: \"xxx\", timeout:\"10 s\"} Json");
+        Validator<List<Object>> commandsValidator = notEmptyListValidation(this.commands, "commands")
+            .validate(Commands::from, noException -> true, "Syntax is a List of String or a List of {command: \"xxx\", timeout:\"10 s\"} Json");
         return getErrorsFrom(
             targetValidation(target),
             commandsValidator

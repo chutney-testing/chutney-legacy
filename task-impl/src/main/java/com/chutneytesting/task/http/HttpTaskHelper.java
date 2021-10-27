@@ -9,9 +9,9 @@ import com.chutneytesting.task.spi.validation.Validator;
 public class HttpTaskHelper {
 
     private HttpTaskHelper() {
-
     }
-    static Validator[] httpCommonValidation(Target target, String timeout) {
+
+    static Validator<?>[] httpCommonValidation(Target target, String timeout) {
         return new Validator[]{targetValidation(target),
             durationValidation(timeout, "timeout")};
     }
