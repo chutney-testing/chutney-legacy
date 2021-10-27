@@ -1,6 +1,6 @@
 import { areEquals, Equals } from '@shared/equals';
 import { cloneAsPossible, Clonable } from '@shared/clonable';
-import { FunctionalStep } from '@core/model';
+import { FunctionalStep } from '@core/model/scenario/functional-step.model';
 
 export class Scenario implements Equals<Scenario>, Clonable<Scenario> {
 

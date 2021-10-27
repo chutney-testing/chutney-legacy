@@ -1,9 +1,9 @@
 import { addOptionalParam } from '@shared/tools/object-utils';
 import { areEquals, Equals } from '@shared/equals';
 import { Clonable, cloneAsPossible } from '@shared/clonable';
-import { ExampleParameters } from '@core/model';
-import { Execution } from '@core/model';
-import {Scenario } from '@core/model';
+import { ExampleParameters } from '@core/model/scenario/example-parameters.model';
+import { Execution } from '@core/model/scenario/execution.model';
+import { Scenario } from '@core/model/scenario/scenario.model';
 
 export class GwtTestCase implements Equals<GwtTestCase>, Clonable<GwtTestCase> {
 
