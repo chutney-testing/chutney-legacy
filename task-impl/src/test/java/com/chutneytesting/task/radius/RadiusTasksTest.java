@@ -51,6 +51,7 @@ class RadiusTasksTest {
         server.setAcctPort(accPort);
 
         testTarget = TestTarget.TestTargetBuilder.builder()
+            .withTargetId("target")
             .withUrl("tcp://localhost:12345")
             .withProperty("sharedSecret", "secret")
             .withProperty("authenticatePort", valueOf(authPort))
@@ -86,84 +87,108 @@ class RadiusTasksTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("parametersForAuthenticate_should_failed_on_wrong_input")
-    public void authenticate_should_failed_on_wrong_input(String testName, Target target, String userName, String password) {
+    public void authenticate_should_failed_on_wrong_input(String testName, Target target, String userName, String password, int expectedErrorsNb) {
         RadiusAuthenticateTask radiusAuthenticateTask = new RadiusAuthenticateTask(new TestLogger(), target, userName, password, null, null);
         assertThat(radiusAuthenticateTask.validateInputs())
             .as(testName)
-            .isNotEmpty();
+            .hasSize(expectedErrorsNb);
     }
 
     public static Object[] parametersForAuthenticate_should_failed_on_wrong_input() {
         TestTarget noUrl = TestTarget.TestTargetBuilder.builder()
+            .withTargetId("target")
             .withProperty("sharedSecret", "secret")
             .withProperty("authenticatePort", valueOf(authPort))
             .withProperty("accountingPort", valueOf(accPort))
             .build();
         TestTarget noSecret = TestTarget.TestTargetBuilder.builder()
+            .withTargetId("target")
             .withUrl("tcp://localhost:12345")
             .withProperty("authenticatePort", valueOf(authPort))
             .withProperty("accountingPort", valueOf(accPort))
             .build();
         TestTarget noAuthenticatePort = TestTarget.TestTargetBuilder.builder()
+            .withTargetId("target")
             .withUrl("tcp://localhost:12345")
             .withProperty("sharedSecret", "secret")
             .withProperty("accountingPort", valueOf(accPort))
             .build();
         TestTarget noAccountingPort = TestTarget.TestTargetBuilder.builder()
+            .withTargetId("target")
             .withUrl("tcp://localhost:12345")
             .withProperty("sharedSecret", "secret")
             .withProperty("authenticatePort", valueOf(authPort))
             .build();
+        TestTarget invalidPorts = TestTarget.TestTargetBuilder.builder()
+            .withTargetId("target")
+            .withUrl("tcp://localhost:12345")
+            .withProperty("sharedSecret", "secret")
+            .withProperty("authenticatePort", "authPort")
+            .withProperty("accountingPort", valueOf(0))
+            .build();
         return new Object[]{
-            new Object[]{"No target", null, "userName", "password"},
-            new Object[]{"No userName", testTarget, "", "password"},
-            new Object[]{"No password", testTarget, "userName", ""},
-            new Object[]{"No url", noUrl, "userName", "password"},
-            new Object[]{"No secret", noSecret, "userName", "password"},
-            new Object[]{"No authenticatePort", noAuthenticatePort, "userName", "password"},
-            new Object[]{"No accountingPort", noAccountingPort, "userName", "password"}
+            new Object[]{"No target", null, "userName", "password", 10},
+            new Object[]{"No userName", testTarget, "", "password", 1},
+            new Object[]{"No password", testTarget, "userName", "", 1},
+            new Object[]{"No url", noUrl, "userName", "password", 3},
+            new Object[]{"No secret", noSecret, "userName", "password", 1},
+            new Object[]{"No authenticatePort", noAuthenticatePort, "userName", "password", 2},
+            new Object[]{"No accountingPort", noAccountingPort, "userName", "password", 2},
+            new Object[]{"InvalidPorts", invalidPorts, "userName", "password", 2}
         };
     }
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("parametersForAccounting_should_failed_on_wrong_input")
-    public void accounting_should_failed_on_wrong_input(String testName, Target target, String userName, Integer accountingType) {
+    public void accounting_should_failed_on_wrong_input(String testName, Target target, String userName, Integer accountingType, int expectedErrorsNb) {
         RadiusAccountingTask radiusAccountingTask = new RadiusAccountingTask(new TestLogger(), target, userName, null, accountingType);
         assertThat(radiusAccountingTask.validateInputs())
             .as(testName)
-            .isNotEmpty();
+            .hasSize(expectedErrorsNb);
     }
 
     public static Object[] parametersForAccounting_should_failed_on_wrong_input() {
         TestTarget noUrl = TestTarget.TestTargetBuilder.builder()
+            .withTargetId("target")
             .withProperty("sharedSecret", "secret")
             .withProperty("authenticatePort", valueOf(authPort))
             .withProperty("accountingPort", valueOf(accPort))
             .build();
         TestTarget noSecret = TestTarget.TestTargetBuilder.builder()
+            .withTargetId("target")
             .withUrl("tcp://localhost:12345")
             .withProperty("authenticatePort", valueOf(authPort))
             .withProperty("accountingPort", valueOf(accPort))
             .build();
         TestTarget noAuthenticatePort = TestTarget.TestTargetBuilder.builder()
+            .withTargetId("target")
             .withUrl("tcp://localhost:12345")
             .withProperty("sharedSecret", "secret")
             .withProperty("accountingPort", valueOf(accPort))
             .build();
         TestTarget noAccountingPort = TestTarget.TestTargetBuilder.builder()
+            .withTargetId("target")
             .withUrl("tcp://localhost:12345")
             .withProperty("sharedSecret", "secret")
             .withProperty("authenticatePort", valueOf(authPort))
             .build();
+        TestTarget invalidPorts = TestTarget.TestTargetBuilder.builder()
+            .withTargetId("target")
+            .withUrl("tcp://localhost:12345")
+            .withProperty("sharedSecret", "secret")
+            .withProperty("authenticatePort", "authPort")
+            .withProperty("accountingPort", valueOf(0))
+            .build();
         return new Object[]{
-            new Object[]{"No target", null, "userName", 1},
-            new Object[]{"No userName", testTarget, "", 1},
-            new Object[]{"No accountingType", testTarget, "userName", null},
-            new Object[]{"Invalid accountingType", testTarget, "userName", 16},
-            new Object[]{"No url", noUrl, "userName", 1},
-            new Object[]{"No secret", noSecret, "userName", 1},
-            new Object[]{"No authenticatePort", noAuthenticatePort, "userName", 1},
-            new Object[]{"No accountingPort", noAccountingPort, "userName", 1}
+            new Object[]{"No target", null, "userName", 1, 10},
+            new Object[]{"No userName", testTarget, "", 1, 1},
+            new Object[]{"No accountingType", testTarget, "userName", null, 1},
+            new Object[]{"Invalid accountingType", testTarget, "userName", 16, 1},
+            new Object[]{"No url", noUrl, "userName", 1, 3},
+            new Object[]{"No secret", noSecret, "userName", 1, 1},
+            new Object[]{"No authenticatePort", noAuthenticatePort, "userName", 1, 2},
+            new Object[]{"No accountingPort", noAccountingPort, "userName", 1, 2},
+            new Object[]{"InvalidPorts", invalidPorts, "userName", 1, 2}
         };
     }
 

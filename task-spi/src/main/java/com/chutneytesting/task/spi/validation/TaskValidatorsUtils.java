@@ -48,6 +48,6 @@ public class TaskValidatorsUtils {
     public static Validator<String> notBlankStringValidation(String toVerify, String inputLabel) {
         return of(toVerify)
             .validate(Objects::nonNull, "No " + inputLabel + " provided (String)")
-            .validate(s -> s != null && !s.isBlank(), inputLabel + " should not be blank");
+            .validate(StringUtils::isNotBlank, inputLabel + " should not be blank");
     }
 }

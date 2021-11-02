@@ -2,6 +2,7 @@ package com.chutneytesting.task.radius;
 
 import static com.chutneytesting.task.radius.RadiusHelper.createRadiusClient;
 import static com.chutneytesting.task.radius.RadiusHelper.getRadiusProtocol;
+import static com.chutneytesting.task.radius.RadiusHelper.radiusTargetPortPropertiesValidation;
 import static com.chutneytesting.task.radius.RadiusHelper.radiusTargetPropertiesValidation;
 import static com.chutneytesting.task.radius.RadiusHelper.silentGetAttribute;
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
@@ -47,6 +48,7 @@ public class RadiusAuthenticateTask implements Task {
         return getErrorsFrom(
             targetValidation(target),
             radiusTargetPropertiesValidation(target),
+            radiusTargetPortPropertiesValidation(target),
             notBlankStringValidation(userName, "userName"),
             notBlankStringValidation(userPassword, "userPassword")
         );

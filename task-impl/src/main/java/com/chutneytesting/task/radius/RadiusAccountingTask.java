@@ -1,6 +1,7 @@
 package com.chutneytesting.task.radius;
 
 import static com.chutneytesting.task.radius.RadiusHelper.createRadiusClient;
+import static com.chutneytesting.task.radius.RadiusHelper.radiusTargetPortPropertiesValidation;
 import static com.chutneytesting.task.radius.RadiusHelper.radiusTargetPropertiesValidation;
 import static com.chutneytesting.task.radius.RadiusHelper.silentGetAttribute;
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
@@ -15,6 +16,7 @@ import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
+import com.chutneytesting.task.spi.validation.Validator;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -45,8 +47,9 @@ public class RadiusAccountingTask implements Task {
         return getErrorsFrom(
             targetValidation(target),
             radiusTargetPropertiesValidation(target),
+            radiusTargetPortPropertiesValidation(target),
             notBlankStringValidation(userName, "userName"),
-            of(accountingType).validate(at -> (at < 1 || at > 15), "Invalid accountingType (by default start = 1, stop = 2, interim = 3, on = 7, off = 8)")
+            accountingTypeValidation()
         );
     }
 
@@ -77,5 +80,9 @@ public class RadiusAccountingTask implements Task {
             logger.error(e);
             return TaskExecutionResult.ko();
         }
+    }
+
+    private Validator<Integer> accountingTypeValidation() {
+        return of(accountingType).validate(at -> (at >= 1 && at <= 15), "Invalid accountingType (by default start = 1, stop = 2, interim = 3, on = 7, off = 8)");
     }
 }
