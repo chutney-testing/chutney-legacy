@@ -3,7 +3,6 @@ package com.chutneytesting.task.radius;
 import static com.chutneytesting.task.radius.RadiusHelper.createRadiusClient;
 import static com.chutneytesting.task.radius.RadiusHelper.radiusTargetPortPropertiesValidation;
 import static com.chutneytesting.task.radius.RadiusHelper.radiusTargetPropertiesValidation;
-import static com.chutneytesting.task.radius.RadiusHelper.silentGetAttribute;
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.targetValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
@@ -70,11 +69,7 @@ public class RadiusAccountingTask implements Task {
             Map<String, Object> outputs = new HashMap<>();
             outputs.put("radiusResponse", response);
 
-            if (response.getPacketType() == RadiusPacket.ACCESS_REJECT) {
-                logger.error("Accounting rejected. " + silentGetAttribute(response, "Reply-Message"));
-                return TaskExecutionResult.ko(outputs);
-            }
-            logger.info("Accounting succeeded for [" + userName + "]");
+            logger.info("Accounting request as [" + userName + "] response type : " + response.getPacketTypeName());
             return TaskExecutionResult.ok(outputs);
         } catch (IOException | RadiusException e) {
             logger.error(e);

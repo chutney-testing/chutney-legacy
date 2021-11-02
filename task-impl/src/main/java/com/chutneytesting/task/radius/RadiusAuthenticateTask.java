@@ -72,12 +72,11 @@ public class RadiusAuthenticateTask implements Task {
             Map<String, Object> outputs = new HashMap<>();
             outputs.put("radiusResponse", response);
 
-            if (response.getPacketType() == RadiusPacket.ACCESS_REJECT) {
-                logger.error("Authentication rejected. " + silentGetAttribute(response, "Reply-Message"));
-                return TaskExecutionResult.ko(outputs);
-            }
+            logger.info("Access request for [" + userName + "] response type : " + response.getPacketTypeName());
             String ip = silentGetAttribute(response, "Framed-IP-Address");
-            logger.info("Authentication succeeded for [" + userName + "]" + (ip.equals("") ? "" : " with ip address " + ip));
+            if (!ip.isBlank()) {
+                logger.info("Response ip address " + ip);
+            }
             return TaskExecutionResult.ok(outputs);
         } catch (IOException | RadiusException e) {
             logger.error(e);
