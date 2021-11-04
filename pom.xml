@@ -117,7 +117,7 @@
         <!-- Test dependencies versions -->
         <junit5.version>5.8.1</junit5.version>
         <junit-jupiter.version>${junit5.version}</junit-jupiter.version>
-        <assertj.version>3.20.2</assertj.version>
+        <assertj.version>3.21.0</assertj.version>
         <mockito.version>4.0.0</mockito.version>
         <mockrunner-jms.version>1.1.2</mockrunner-jms.version>
         <eddsa.version>0.2.0</eddsa.version>
