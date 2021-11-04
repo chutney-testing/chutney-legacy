@@ -7,6 +7,7 @@ import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 
+import com.chutneytesting.task.amqp.consumer.ConsumerSupervisor;
 import com.chutneytesting.task.amqp.consumer.QueueingConsumer;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class AmqpBasicConsumeTask implements Task {
 
@@ -45,7 +47,7 @@ public class AmqpBasicConsumeTask implements Task {
         this.queueName = queueName;
         this.logger = logger;
         this.nbMessages = defaultIfNull(nbMessages, 1);
-        this.timeout = defaultIfEmpty(timeout, "60 sec");
+        this.timeout = defaultIfEmpty(timeout, "10 sec");
         this.selector = selector;
         this.ack = defaultIfNull(ack, true);
     }
@@ -61,21 +63,67 @@ public class AmqpBasicConsumeTask implements Task {
 
     @Override
     public TaskExecutionResult execute() {
-        try (Connection connection = connectionFactoryFactory.create(target).newConnection(); Channel channel = connection.createChannel()) {
-            final long duration = Duration.parse(timeout).toMilliseconds();
-            QueueingConsumer.Result result = new QueueingConsumer(channel, queueName, nbMessages, selector, duration, ack).consume();
+        long originalDuration = Duration.parse(timeout).toMilliseconds();
+
+        ConsumerSupervisor instance = ConsumerSupervisor.getInstance();
+        Connection connection = null;
+        Channel channel = null;
+        try {
+            Pair<Boolean, Long> waitingResult = instance.waitUntilQueueAvailable(queueName, originalDuration, logger);
+            boolean lockAcquired = waitingResult.getLeft();
+            if (!lockAcquired) {
+                return TaskExecutionResult.ko();
+            }
+
+            connection = connectionFactoryFactory.create(target).newConnection();
+            channel = connection.createChannel();
+
+            long consumingDuration = waitingResult.getRight();
+            QueueingConsumer.Result result = new QueueingConsumer(channel, queueName, nbMessages, selector, consumingDuration, ack).consume();
             if (result.messages.size() != nbMessages) {
                 logger.error("Unable to get the expected number of messages [" + nbMessages + "] during " + timeout + ".");
                 return TaskExecutionResult.ko();
             }
-            final Map<String, Object> results = new HashMap<>();
-            results.put("body", result.messages);
-            results.put("payloads", result.payloads);
-            results.put("headers", result.headers);
-            return TaskExecutionResult.ok(results);
+            logger.info("Message(s) found in " + result.consumeDuration);
+            return TaskExecutionResult.ok(extractOutputs(result));
         } catch (TimeoutException | InterruptedException | IOException e) {
             logger.error("Unable to establish connection to RabbitMQ: " + e.getMessage());
             return TaskExecutionResult.ko();
+        } finally {
+            try {
+                closeChannel(channel);
+                closeConnection(connection);
+            } finally {
+                instance.unlock(this.queueName);
+            }
+        }
+    }
+
+    private Map<String, Object> extractOutputs(QueueingConsumer.Result result) {
+        final Map<String, Object> results = new HashMap<>();
+        results.put("body", result.messages);
+        results.put("payloads", result.payloads);
+        results.put("headers", result.headers);
+        return results;
+    }
+
+    private void closeConnection(Connection connection) {
+        if (connection != null && connection.isOpen()) {
+            try {
+                connection.close(1000);
+            } catch (IOException e) {
+                logger.error("Error during connection closing: " + e.getMessage());
+            }
+        }
+    }
+
+    private void closeChannel(Channel channel) {
+        if (channel != null && channel.isOpen()) {
+            try {
+                channel.close();
+            } catch (IOException | TimeoutException e) {
+                logger.error("Error during channel closing: " + e.getMessage());
+            }
         }
     }
 }
