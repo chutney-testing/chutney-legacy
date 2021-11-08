@@ -20,7 +20,7 @@ public class JmsSenderTaskWithActiveMqIntegrationTest extends ActiveMQTestSuppor
         Map<String, String> headers = new HashMap<>();
 
 
-        TestSecurityInfo security = TestSecurityInfo.TestSecurityInfoBuilder.builder()
+        TestSecurityInfo security = TestSecurityInfo.builder()
             .withTrustStore("security/truststore.jks")
             .withTrustStorePassword("truststore")
             .build();

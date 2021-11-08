@@ -9,6 +9,7 @@ public interface SecurityInfo {
     Optional<String> trustStorePassword();
     Optional<String> keyStore();
     Optional<String> keyStorePassword();
+    Optional<String> keyPassword();
     Optional<String> privateKey();
 
     interface Credential {

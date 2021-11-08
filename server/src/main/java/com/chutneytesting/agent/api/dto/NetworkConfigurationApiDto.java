@@ -49,7 +49,7 @@ public class NetworkConfigurationApiDto {
             this.name = name;
             this.url = url;
             this.properties = properties != null ? properties : new HashMap<>();
-            this.security = security != null ? security : new SecurityApiDto(null, null, null, null, null, null);
+            this.security = security != null ? security : new SecurityApiDto(null, null, null, null, null, null, null, null);
         }
     }
 
@@ -60,6 +60,8 @@ public class NetworkConfigurationApiDto {
         public final String keyStorePassword;
         public final String trustStore;
         public final String trustStorePassword;
+        public final String keyPassword;
+        public final String privateKey;
 
         public SecurityApiDto(
             String username,
@@ -67,13 +69,15 @@ public class NetworkConfigurationApiDto {
             String keyStore,
             String keyStorePassword,
             String trustStore,
-            String trustStorePassword) {
+            String trustStorePassword, String keyPassword, String privateKey) {
             this.username = username;
             this.password = password;
             this.keyStore = keyStore;
             this.keyStorePassword = keyStorePassword;
             this.trustStore = trustStore;
             this.trustStorePassword = trustStorePassword;
+            this.keyPassword = keyPassword;
+            this.privateKey = privateKey;
         }
     }
 }

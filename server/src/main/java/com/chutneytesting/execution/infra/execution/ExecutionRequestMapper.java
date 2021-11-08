@@ -168,6 +168,7 @@ public class ExecutionRequestMapper {
             null,
             targetDto.keyStore,
             targetDto.keyStorePassword,
+            targetDto.keyPassword,
             targetDto.privateKey
         );
     }

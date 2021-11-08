@@ -1,5 +1,7 @@
 package com.chutneytesting.task;
 
+import static java.util.Optional.ofNullable;
+
 import com.chutneytesting.task.spi.injectable.SecurityInfo;
 import java.util.Optional;
 
@@ -9,43 +11,58 @@ public class TestSecurityInfo implements SecurityInfo {
 
     private final String trustStore;
     private final String trustStorePassword;
+    private final String keyStore;
+    private final String keyStorePassword;
+    private final String keyPassword;
     private final String privateKey;
 
-    private TestSecurityInfo(Credential credential, String trustStore, String trustStorePassword, String privateKey) {
+    private TestSecurityInfo(Credential credential, String trustStore, String trustStorePassword, String keyStore, String keyStorePassword, String keyPassword, String privateKey) {
         this.credential = credential;
         this.trustStore = trustStore;
         this.trustStorePassword = trustStorePassword;
+        this.keyStore = keyStore;
+        this.keyStorePassword = keyStorePassword;
+        this.keyPassword = keyPassword;
         this.privateKey = privateKey;
+    }
+
+    public static TestSecurityInfoBuilder builder() {
+        return new TestSecurityInfoBuilder();
     }
 
     @Override
     public Optional<Credential> credential() {
-        return Optional.ofNullable(credential);
+        return ofNullable(credential);
     }
 
     @Override
     public Optional<String> trustStore() {
-        return Optional.ofNullable(trustStore);
+        return ofNullable(trustStore);
     }
 
     @Override
     public Optional<String> trustStorePassword() {
-        return Optional.ofNullable(trustStorePassword);
+        return ofNullable(trustStorePassword);
     }
 
     @Override
     public Optional<String> keyStore() {
-        return Optional.empty();
+        return ofNullable(keyStore);
     }
 
     @Override
     public Optional<String> keyStorePassword() {
-        return Optional.empty();
+        return ofNullable(keyStorePassword);
+    }
+
+    @Override
+    public Optional<String> keyPassword() {
+        return ofNullable(keyPassword);
     }
 
     @Override
     public Optional<String> privateKey() {
-        return Optional.ofNullable(privateKey);
+        return ofNullable(privateKey);
     }
 
     private static class TestCredential implements SecurityInfo.Credential {
@@ -73,13 +90,16 @@ public class TestSecurityInfo implements SecurityInfo {
         private String password;
         private String trustStore;
         private String trustStorePassword;
+        private String keyStore;
+        private String keyStorePassword;
         private String privateKey;
+        private String keyPassword;
 
         private TestSecurityInfoBuilder() {
         }
 
-        public static TestSecurityInfoBuilder builder() {
-            return new TestSecurityInfoBuilder();
+        public TestSecurityInfo build() {
+            return new TestSecurityInfo(new TestCredential(username, password), trustStore, trustStorePassword, keyStore, keyStorePassword, keyPassword, privateKey);
         }
 
         public TestSecurityInfoBuilder withUsername(String username) {
@@ -102,8 +122,19 @@ public class TestSecurityInfo implements SecurityInfo {
             return this;
         }
 
-        public TestSecurityInfo build() {
-            return new TestSecurityInfo(new TestCredential(username, password), trustStore, trustStorePassword, privateKey);
+        public TestSecurityInfoBuilder withKeyStore(String keyStore) {
+            this.keyStore = keyStore;
+            return this;
+        }
+
+        public TestSecurityInfoBuilder withKeyStorePassword(String keyStorePassword) {
+            this.keyStorePassword = keyStorePassword;
+            return this;
+        }
+
+        public TestSecurityInfoBuilder withKeyPassword(String keyPassword) {
+            this.keyPassword = keyPassword;
+            return this;
         }
 
         public TestSecurityInfoBuilder withPrivateKey(String privateKey) {

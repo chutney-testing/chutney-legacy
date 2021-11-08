@@ -46,6 +46,7 @@ public class JsonTarget {
                 .keyStorePassword(security.keyStorePassword)
                 .trustStore(security.trustStore)
                 .trustStorePassword(security.trustStorePassword)
+                .keyPassword(security.keyPassword)
                 .privateKey(security.privateKey)
                 .build();
         }
@@ -65,14 +66,16 @@ public class JsonTarget {
         public final String trustStorePassword;
         public final String keyStore;
         public final String keyStorePassword;
+        public final String keyPassword;
         public final String privateKey;
 
-        public JsonSecurityInfo(JsonCredential credential, String trustStore, String trustStorePassword, String keyStore, String keyStorePassword, String privateKey) {
+        public JsonSecurityInfo(JsonCredential credential, String trustStore, String trustStorePassword, String keyStore, String keyStorePassword, String keyPassword, String privateKey) {
             this.credential = credential;
             this.trustStore = trustStore;
             this.trustStorePassword = trustStorePassword;
             this.keyStore = keyStore;
             this.keyStorePassword = keyStorePassword;
+            this.keyPassword = keyPassword;
             this.privateKey = privateKey;
         }
 
@@ -83,6 +86,7 @@ public class JsonTarget {
                 security.trustStorePassword,
                 security.keyStore,
                 security.keyStorePassword,
+                security.keyPassword,
                 security.privateKey
             );
         }

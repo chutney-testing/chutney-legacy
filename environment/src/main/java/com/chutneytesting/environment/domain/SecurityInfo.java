@@ -11,14 +11,16 @@ public class SecurityInfo {
     public final String trustStorePassword;
     public final String keyStore;
     public final String keyStorePassword;
+    public final String keyPassword;
     public final String privateKey;
 
-    private SecurityInfo(Credential credential, String trustStore, String trustStorePassword, String keyStore, String keyStorePassword, String privateKey) {
+    private SecurityInfo(Credential credential, String trustStore, String trustStorePassword, String keyStore, String keyStorePassword, String keyPassword, String privateKey) {
         this.credential = credential;
         this.trustStore = trustStore;
         this.trustStorePassword = trustStorePassword;
         this.keyStore = keyStore;
         this.keyStorePassword = keyStorePassword;
+        this.keyPassword = keyPassword;
         this.privateKey = privateKey;
     }
 
@@ -50,6 +52,7 @@ public class SecurityInfo {
         private String trustStorePassword;
         private String keyStore;
         private String keyStorePassword;
+        private String keyPassword;
         private String privateKey;
 
         private SecurityInfoBuilder() {}
@@ -61,6 +64,7 @@ public class SecurityInfo {
                 trustStorePassword,
                 keyStore,
                 keyStorePassword,
+                keyPassword,
                 privateKey
             );
         }
@@ -90,11 +94,15 @@ public class SecurityInfo {
             return this;
         }
 
+        public SecurityInfoBuilder keyPassword(String keyPassword) {
+            this.keyPassword = keyPassword;
+            return this;
+        }
+
         public SecurityInfoBuilder privateKey(String privateKey) {
             this.privateKey = privateKey;
             return this;
         }
-
     }
 
     public static class Credential {

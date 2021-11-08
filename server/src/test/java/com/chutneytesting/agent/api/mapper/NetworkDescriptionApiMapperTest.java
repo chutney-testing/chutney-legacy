@@ -112,7 +112,7 @@ public class NetworkDescriptionApiMapperTest {
 
     private EnvironmentApiDto createtargetInfoApiDto(String name, String url) {
         TargetsApiDto targetsApiDto = new TargetsApiDto(name, url, null,
-            new SecurityApiDto(null, null, null, null, null, null)
+            new SecurityApiDto(null, null, null, null, null, null, null, null)
         );
         Set<TargetsApiDto> targets = new HashSet<>();
         targets.add(targetsApiDto);
