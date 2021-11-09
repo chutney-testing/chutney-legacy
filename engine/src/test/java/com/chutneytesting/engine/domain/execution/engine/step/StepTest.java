@@ -55,12 +55,10 @@ public class StepTest {
         ScenarioExecution execution = ScenarioExecution.createScenarioExecution(null);
         awaitDuring(500, MILLISECONDS);
         RxBus.getInstance().post(new StopExecutionAction(execution.executionId));
-        awaitDuring(500, MILLISECONDS);
-        Status result = step.execute(execution, new ScenarioContextImpl());
+        await().atMost(5, SECONDS).untilAsserted(() -> assertThat(execution.hasToStop()).isTrue());
 
-        await().atMost(5, SECONDS).untilAsserted(() ->
-            assertThat(result).isEqualTo(Status.STOPPED)
-        );
+        Status result = step.execute(execution, new ScenarioContextImpl());
+        assertThat(result).isEqualTo(Status.STOPPED);
     }
 
     @Test

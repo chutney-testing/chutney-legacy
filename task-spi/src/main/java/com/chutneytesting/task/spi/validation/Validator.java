@@ -51,8 +51,8 @@ public final class Validator<T> {
         errors.add(message);
     }
 
-    public static List<String> getErrorsFrom(Validator... validators) {
-        return (List<String>) Arrays.stream(validators).flatMap(l -> l.getErrors().stream()).collect(Collectors.toList());
+    public static List<String> getErrorsFrom(Validator<?>... validators) {
+        return Arrays.stream(validators).flatMap(l -> l.getErrors().stream()).collect(Collectors.toList());
     }
 
     public boolean isValid() {

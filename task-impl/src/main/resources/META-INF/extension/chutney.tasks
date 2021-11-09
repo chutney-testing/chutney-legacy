@@ -83,3 +83,6 @@ com.chutneytesting.task.micrometer.MicrometerTimerTask
 com.chutneytesting.task.micrometer.MicrometerTimerStartTask
 com.chutneytesting.task.micrometer.MicrometerTimerStopTask
 com.chutneytesting.task.micrometer.MicrometerSummaryTask
+
+com.chutneytesting.task.radius.RadiusAuthenticateTask
+com.chutneytesting.task.radius.RadiusAccountingTask

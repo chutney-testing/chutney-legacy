@@ -166,6 +166,12 @@
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-support</artifactId>
         </dependency>
+        <!-- Radius tasks -->
+        <dependency>
+            <groupId>org.tinyradius</groupId>
+            <artifactId>tinyradius</artifactId>
+        </dependency>
+        <!-- Others -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
@@ -178,6 +184,7 @@
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-core</artifactId>
         </dependency>
+
         <!--TEST-->
         <dependency>
             <groupId>com.github.fridujo</groupId>
