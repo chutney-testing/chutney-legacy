@@ -1,5 +1,31 @@
 # Changelog
 
+## [Unreleased](https://github.com/chutney-testing/chutney/tree/HEAD)
+
+## [1.4.2](https://github.com/chutney-testing/chutney/tree/1.4.2) (2021-11-09)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.4.1...1.4.2)
+
+**Implemented enhancements:**
+
+- 🚀 | Add Radius operation in task-impl [\#535](https://github.com/chutney-testing/chutney/issues/535)
+
+**Fixed bugs:**
+
+- 🐛 | Multi consumer on same queue for amqp basic consume [\#587](https://github.com/chutney-testing/chutney/issues/587)
+
+**Merged pull requests:**
+
+- chore\(deps\): bump jackson.version from 2.12.5 to 2.13.0 [\#599](https://github.com/chutney-testing/chutney/pull/599) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump pitest.version from 1.7.1 to 1.7.2 [\#598](https://github.com/chutney-testing/chutney/pull/598) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump postgresql from 42.2.16 to 42.3.1 [\#597](https://github.com/chutney-testing/chutney/pull/597) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps-dev\): bump assertj-core from 3.20.2 to 3.21.0 [\#595](https://github.com/chutney-testing/chutney/pull/595) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump everit-json-schema from 1.12.2 to 1.14.0 [\#594](https://github.com/chutney-testing/chutney/pull/594) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps-dev\): bump mockito.version from 3.12.4 to 4.0.0 [\#591](https://github.com/chutney-testing/chutney/pull/591) ([dependabot[bot]](https://github.com/apps/dependabot))
+- feat: Use keystore keypassword [\#589](https://github.com/chutney-testing/chutney/pull/589) ([bessonm](https://github.com/bessonm))
+- bugfix\(task-impl\): Allow only one consumer by queue at a time for amqp [\#588](https://github.com/chutney-testing/chutney/pull/588) ([nbrouand](https://github.com/nbrouand))
+- chore\(deps\): bump groovy from 2.5.14 to 3.0.9 [\#549](https://github.com/chutney-testing/chutney/pull/549) ([dependabot[bot]](https://github.com/apps/dependabot))
+- feat\(task-impl\): Add radius tasks [\#536](https://github.com/chutney-testing/chutney/pull/536) ([nbrouand](https://github.com/nbrouand))
 
 ## [1.4.1](https://github.com/chutney-testing/chutney/tree/1.4.1) (2021-10-12)
 
