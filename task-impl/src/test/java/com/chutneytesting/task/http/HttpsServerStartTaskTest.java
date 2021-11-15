@@ -25,18 +25,22 @@ public class HttpsServerStartTaskTest {
     private static final int wireMockPort = SocketUtils.findAvailableTcpPort();
     private static final String TRUSTSTORE_JKS = HttpsServerStartTaskTest.class.getResource("/security/truststore.jks").getPath();
     private static final String KEYSTORE_JKS = HttpsServerStartTaskTest.class.getResource("/security/server.jks").getPath();
+    private static final String KEYSTORE_WITH_KEYPWD = HttpsServerStartTaskTest.class.getResource("/security/keystore-with-keypwd.jks").getPath();
     private final static FinallyActionRegistry finallyActionRegistry = Mockito.mock(FinallyActionRegistry.class);
 
     public static Object[] parametersForShould_start_https_server() {
         Logger logger = new TestLogger();
 
-        Task httpsServerStartTask = new HttpsServerStartTask(logger, finallyActionRegistry, String.valueOf(wireMockPort), TRUSTSTORE_JKS, "truststore", null, null);
+        Task httpsServerStartTask = new HttpsServerStartTask(logger, finallyActionRegistry, String.valueOf(wireMockPort), TRUSTSTORE_JKS, "truststore", null, null, null);
 
-        Task httpsServerStartTaskWithKeyStore = new HttpsServerStartTask(logger, finallyActionRegistry, String.valueOf(wireMockPort), TRUSTSTORE_JKS, "truststore", KEYSTORE_JKS, "server");
+        Task httpsServerStartTaskWithKeyStore = new HttpsServerStartTask(logger, finallyActionRegistry, String.valueOf(wireMockPort), TRUSTSTORE_JKS, "truststore", KEYSTORE_JKS, "server", "server");
+
+        Task httpsServerStartTaskWithKeyStoreAndKeyPwd = new HttpsServerStartTask(logger, finallyActionRegistry, String.valueOf(wireMockPort), TRUSTSTORE_JKS, "truststore", KEYSTORE_WITH_KEYPWD, "server", "key_pwd");
 
         return new Object[][]{
             {httpsServerStartTask},
-            {httpsServerStartTaskWithKeyStore}
+            {httpsServerStartTaskWithKeyStore},
+            {httpsServerStartTaskWithKeyStoreAndKeyPwd}
         };
     }
 
