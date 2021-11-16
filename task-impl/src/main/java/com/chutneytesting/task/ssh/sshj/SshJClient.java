@@ -1,5 +1,6 @@
 package com.chutneytesting.task.ssh.sshj;
 
+import static java.util.Collections.emptyList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -8,12 +9,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.PublicKey;
+import java.util.Collections;
+import java.util.List;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.common.IOUtils;
 import net.schmizz.sshj.common.LoggerFactory;
 import net.schmizz.sshj.common.StreamCopier;
 import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.transport.TransportException;
+import net.schmizz.sshj.transport.verification.HostKeyVerifier;
 import net.schmizz.sshj.userauth.UserAuthException;
 import net.schmizz.sshj.userauth.keyprovider.KeyProvider;
 
@@ -47,7 +52,16 @@ public class SshJClient implements SshClient {
     }
 
     private void connect(SSHClient client, Connection connection) throws IOException {
-        client.addHostKeyVerifier((a, b, c) -> true); // TODO : Add best way host key verifier to really check.
+        client.addHostKeyVerifier(new HostKeyVerifier() {
+            @Override
+            public boolean verify(String hostname, int port, PublicKey key) {
+                return true;
+            }
+            @Override
+            public List<String> findExistingAlgorithms(String hostname, int port) {
+                return emptyList();
+            }
+        }); // TODO : Add best way host key verifier to really check.
         client.connect(connection.serverHost, connection.serverPort);
     }
 
