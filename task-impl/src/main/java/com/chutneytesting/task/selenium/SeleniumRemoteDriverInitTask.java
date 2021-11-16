@@ -1,5 +1,7 @@
 package com.chutneytesting.task.selenium;
 
+import static java.time.temporal.ChronoUnit.SECONDS;
+
 import com.chutneytesting.task.spi.FinallyAction;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
@@ -8,6 +10,7 @@ import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.Capabilities;
@@ -77,17 +80,13 @@ public class SeleniumRemoteDriverInitTask implements Task {
     }
 
     WebDriver createChromeRemoteWebDriver() {
-        DesiredCapabilities chromeCapability = DesiredCapabilities.chrome();
-        chromeCapability.setBrowserName(browser);
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.addArguments("start-maximized");
-        chromeCapability.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
-        return createRemoteWebDriver(chromeCapability);
+        chromeOptions.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
+        return createRemoteWebDriver(chromeOptions);
     }
 
     WebDriver createInternetExplorerRemoteWebDriver() {
-        DesiredCapabilities internetExplorerCapabilities = DesiredCapabilities.internetExplorer();
-        internetExplorerCapabilities.setBrowserName(browser);
         return createRemoteWebDriver(SeleniumDriverInitTask.setIeOptions());
     }
 
@@ -108,7 +107,7 @@ public class SeleniumRemoteDriverInitTask implements Task {
 
     void configureWebDriver(WebDriver webDriver) {
         try {
-            webDriver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+            webDriver.manage().timeouts().implicitlyWait(Duration.of(0, SECONDS));
         } catch (Exception e) {
             logger.error("Default configuration of the remote webDriver failed");
         }
