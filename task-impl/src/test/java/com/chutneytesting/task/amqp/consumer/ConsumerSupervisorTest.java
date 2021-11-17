@@ -4,6 +4,7 @@ package com.chutneytesting.task.amqp.consumer;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
+import static org.hamcrest.CoreMatchers.notNullValue;
 
 import com.chutneytesting.task.TestLogger;
 import java.util.concurrent.TimeUnit;
@@ -15,8 +16,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class ConsumerSupervisorTest {
 
-    public static final int LOCK_WAITING = 500;
-    ConsumerSupervisor consumerSupervisor = ConsumerSupervisor.getInstance();
+    private static final int LOCK_WAITING = 500;
+    private final ConsumerSupervisor consumerSupervisor = ConsumerSupervisor.getInstance();
 
     @Test
     public void test_lock_unlock() {
@@ -68,36 +69,49 @@ class ConsumerSupervisorTest {
     }
 
     @ParameterizedTest
-    @ValueSource(longs = {-100, 0, 300, 600, 745, 1000})
-    public void should_set_timeleft_depending_of_duration_for_one_lock(long duration) throws InterruptedException {
-        final String queue = "name";
-        consumerSupervisor.lock(queue);
+    @ValueSource(longs = {-100, 0, 300})
+    public void should_set_timeleft_to_zero_for_duration_under_supervisor_lock_waiting(long duration) throws InterruptedException {
+        assertThat(duration < LOCK_WAITING).isTrue();
 
+        String queue = "name_" + duration;
+
+        consumerSupervisor.lock(queue);
+        Pair<Boolean, Long> result = consumerSupervisor.waitUntilQueueAvailable(queue, duration, new TestLogger());
+        consumerSupervisor.unlock(queue);
+
+        boolean locked = result.getLeft();
+        assertThat(locked).isFalse();
+
+        long timeLeft = result.getRight();
+        assertThat(timeLeft).isZero();
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {600, 745, 1000})
+    public void should_set_timeleft_for_duration_above_supervisor_lock_waiting(long duration) throws InterruptedException {
+        assertThat(duration > LOCK_WAITING).isTrue();
+
+        String queue = "name_" + duration;
         AtomicReference<Pair<Boolean, Long>> result = new AtomicReference<>();
-        new Thread(() -> {
+        Thread waitThread = new Thread(() -> {
             try {
                 result.set(consumerSupervisor.waitUntilQueueAvailable(queue, duration, new TestLogger()));
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-        }).start();
+        });
+
+        consumerSupervisor.lock(queue);
+        waitThread.start();
         TimeUnit.MILLISECONDS.sleep(400);
         consumerSupervisor.unlock(queue);
 
-        await().atMost(1, SECONDS).untilAsserted(() -> {
-                assertThat(result.get()).isNotNull();
-            }
-        );
+        await().atMost(5, SECONDS).untilAtomic(result, notNullValue(Pair.class));
+
         boolean locked = result.get().getLeft();
-        if (duration < LOCK_WAITING) {
-            assertThat(locked).isFalse();
-        } else {
-            assertThat(locked).isTrue();
-        }
+        assertThat(locked).isTrue();
+
         long timeLeft = result.get().getRight();
-        long expected = duration > LOCK_WAITING ? duration - LOCK_WAITING : 0;
-        assertThat(timeLeft).isEqualTo(expected);
+        assertThat((duration - timeLeft) % LOCK_WAITING).isZero();
     }
-
-
 }

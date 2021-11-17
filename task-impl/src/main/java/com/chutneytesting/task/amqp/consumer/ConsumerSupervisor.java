@@ -27,15 +27,10 @@ public class ConsumerSupervisor {
     }
 
     public synchronized boolean lock(String queueName) {
-        if (queuesLocked.contains(queueName)) {
-            return false;
-        } else {
-            queuesLocked.add(queueName);
-            return true;
-        }
+        return queuesLocked.add(queueName);
     }
 
-    public void unlock(String queueName) {
+    public synchronized void unlock(String queueName) {
         queuesLocked.remove(queueName);
     }
 
@@ -44,14 +39,14 @@ public class ConsumerSupervisor {
 
         boolean locked = lock(queueName);
         while (!locked && timeLeft >= LOCK_WAITING) {
-            timeLeft = timeLeft - LOCK_WAITING;
+            timeLeft -= LOCK_WAITING;
             TimeUnit.MILLISECONDS.sleep(LOCK_WAITING);
             locked = lock(queueName);
         }
 
         if (!locked) {
             logger.error("Cannot consume on queue [" + queueName + "]. Another consumer already listening on this queue");
-            return Pair.of(false, 0l);
+            return Pair.of(false, 0L);
         } else if (originalDuration - timeLeft > 0) {
             logger.info("Waited " + (originalDuration - timeLeft) + " ms to acquire lock to consume queue " + queueName);
         }
