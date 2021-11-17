@@ -22,7 +22,7 @@ class HttpClientFactoryTest {
         // Given
         SSLContextBuilder context = new SSLContextBuilder();
         SecurityInfo security = TestSecurityInfo.builder()
-            .withKeyStore(HttpClientFactoryTest.class.getResource("/security/keystore-with-keypwd.jks").getPath().toString())
+            .withKeyStore("src/test/resources/security/keystore-with-keypwd.jks")
             .withKeyStorePassword("server")
             .withKeyPassword("key_pwd")
             .build();
@@ -40,7 +40,7 @@ class HttpClientFactoryTest {
         // Given
         SSLContextBuilder context = new SSLContextBuilder();
         Map<String, String> properties = new HashMap<>(3);
-        properties.put("keyStore", HttpClientFactoryTest.class.getResource("/security/keystore-with-keypwd.jks").getPath().toString());
+        properties.put("keyStore", "src/test/resources/security/keystore-with-keypwd.jks");
         properties.put("keyStorePassWord", "server");
         properties.put("keyPassword", "key_pwd");
 
