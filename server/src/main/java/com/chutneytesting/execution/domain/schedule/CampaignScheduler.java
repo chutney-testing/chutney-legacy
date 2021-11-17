@@ -1,5 +1,7 @@
 package com.chutneytesting.execution.domain.schedule;
 
+import static java.util.Collections.emptyList;
+
 import com.chutneytesting.design.domain.campaign.Frequency;
 import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaign;
 import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaignRepository;
@@ -7,7 +9,7 @@ import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -32,7 +34,7 @@ public class CampaignScheduler {
     @Async
     public void executeScheduledCampaigns() {
         scheduledCampaignIdsToExecute()
-            .parallel()
+            .parallelStream()
             .forEach(this::executeScheduledCampaignById);
     }
 
@@ -45,15 +47,16 @@ public class CampaignScheduler {
         }
     }
 
-    private Stream<Long> scheduledCampaignIdsToExecute() {
+    private List<Long> scheduledCampaignIdsToExecute() {
         try {
             return periodicScheduledCampaignRepository.getALl().stream()
                 .filter(sc -> sc.nextExecutionDate.isBefore(LocalDateTime.now(clock)))
                 .peek(this::prepareScheduledCampaignForNextExecution)
-                .map(sc -> sc.campaignId);
+                .map(sc -> sc.campaignId)
+                .collect(Collectors.toUnmodifiableList());
         } catch (Exception e) {
             LOGGER.error("Error retrieving scheduled campaigns", e);
-            return Stream.empty();
+            return emptyList();
         }
     }
 

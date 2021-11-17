@@ -19,7 +19,6 @@ import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import java.time.Clock;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.IntStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
