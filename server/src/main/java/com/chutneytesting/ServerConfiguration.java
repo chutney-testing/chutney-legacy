@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import liquibase.integration.spring.SpringLiquibase;
@@ -45,16 +44,12 @@ import org.springframework.boot.autoconfigure.jms.activemq.ActiveMQAutoConfigura
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.core.task.support.ExecutorServiceAdapter;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
 @SpringBootApplication(exclude = {LiquibaseAutoConfiguration.class, ActiveMQAutoConfiguration.class, MongoAutoConfiguration.class})
 @EnableScheduling
@@ -80,6 +75,8 @@ public class ServerConfiguration implements AsyncConfigurer {
     public static final String EXECUTION_ASYNC_PUBLISHER_TTL_SPRING_VALUE = "${chutney.execution.async.publisher.ttl:5}";
     public static final String EXECUTION_ASYNC_PUBLISHER_DEBOUNCE_SPRING_VALUE = "${chutney.execution.async.publisher.debounce:250}";
     public static final String CAMPAIGNS_THREAD_SPRING_VALUE = "${chutney.campaigns.thread:20}";
+    public static final String SCHEDULED_CAMPAIGNS_THREAD_SPRING_VALUE = "${chutney.schedule.campaigns.thread:20}";
+    public static final String SCHEDULED_CAMPAIGNS_FIXED_DELAY_SPRING_VALUE = "${chutney.schedule.campaigns.fixedDelay:60000}";
     public static final String ENGINE_THREAD_SPRING_VALUE = "${chutney.scenarios.thread:20}";
     public static final String AGENTNETWORK_CONNECTION_CHECK_TIMEOUT_SPRING_VALUE = "${chutney.agentnetwork.connection-checker-timeout:1000}";
     public static final String LOCALAGENT_DEFAULTNAME_SPRING_VALUE = "${chutney.localAgent.defaultName:#{null}}";
@@ -126,6 +123,17 @@ public class ServerConfiguration implements AsyncConfigurer {
         executor.initialize();
         LOGGER.debug("Pool for campaigns created with size {}", threadForCampaigns);
         return executor;
+    }
+
+    @Bean
+    public ExecutorService scheduledCampaignsExecutor(@Value(SCHEDULED_CAMPAIGNS_THREAD_SPRING_VALUE) Integer threadForScheduledCampaigns) {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(threadForScheduledCampaigns);
+        executor.setMaxPoolSize(threadForScheduledCampaigns);
+        executor.setThreadNamePrefix("scheduled-campaigns-executor");
+        executor.initialize();
+        LOGGER.debug("Pool for scheduled campaigns created with size {}", threadForScheduledCampaigns);
+        return new ExecutorServiceAdapter(executor);
     }
 
     @Bean
