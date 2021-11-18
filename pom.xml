@@ -99,7 +99,7 @@
         <!-- task impl -->
         <jdom2.version>2.0.6</jdom2.version>
         <jsonpath.version>2.6.0</jsonpath.version>
-        <sshj.version>0.31.0</sshj.version>
+        <sshj.version>0.32.0</sshj.version>
         <sshd.version>2.6.0</sshd.version>
         <hjson.version>3.0.0</hjson.version>
         <jms.version>2.0.1</jms.version>
