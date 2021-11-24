@@ -26,8 +26,8 @@ public class HttpsServerStartTask implements Task {
     private final Logger logger;
     private final FinallyActionRegistry finallyActionRegistry;
     private final int port;
-    private final String trustStorePath;
-    private final String trustStorePassword;
+    private final Optional<String> trustStorePath;
+    private final Optional<String> trustStorePassword;
     private final Optional<String> keyStorePath;
     private final Optional<String> keyStorePassword;
     private final Optional<String> keyPassword;
@@ -43,8 +43,8 @@ public class HttpsServerStartTask implements Task {
         this.logger = logger;
         this.finallyActionRegistry = finallyActionRegistry;
         this.port = NumberUtils.toInt(port, DEFAULT_HTTPS_PORT);
-        this.trustStorePath = trustStorePath;
-        this.trustStorePassword = trustStorePassword;
+        this.trustStorePath = ofNullable(trustStorePath);
+        this.trustStorePassword = ofNullable(trustStorePassword);
         this.keyStorePath = ofNullable(keyStorePath);
         this.keyStorePassword = ofNullable(keyStorePassword);
         this.keyPassword = ofNullable(keyPassword);
@@ -55,12 +55,16 @@ public class HttpsServerStartTask implements Task {
         WireMockConfiguration wireMockConfiguration = wireMockConfig()
             .dynamicPort()
             .httpsPort(port)
-            .needClientAuth(true)
-            .trustStorePath(trustStorePath)
-            .trustStorePassword(trustStorePassword)
             .containerThreads(7)
             .asynchronousResponseThreads(1)
             .jettyAcceptors(1);
+
+        trustStorePath.ifPresent(ts -> wireMockConfiguration
+            .needClientAuth(true)
+            .trustStorePath(trustStorePath.orElse(""))
+            .trustStorePassword(trustStorePassword.orElse(""))
+        );
+
         // add keystore path and pwd if present
         keyStorePath.ifPresent(s -> wireMockConfiguration
             .keystorePath(s)
