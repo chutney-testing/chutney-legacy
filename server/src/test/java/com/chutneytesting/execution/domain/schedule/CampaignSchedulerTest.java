@@ -19,7 +19,7 @@ import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import java.time.Clock;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.IntStream;
+import java.util.concurrent.Executors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ public class CampaignSchedulerTest {
     @BeforeEach
     public void setUp() {
         clock = Clock.systemDefaultZone();
-        sut = new CampaignScheduler(campaignExecutionEngine, clock, periodicScheduledCampaignRepository);
+        sut = new CampaignScheduler(campaignExecutionEngine, clock, periodicScheduledCampaignRepository, Executors.newFixedThreadPool(2));
     }
 
     @ParameterizedTest()
