@@ -81,7 +81,7 @@ public class FileSystemBackupRepositoryTest {
         Path backup1Path = stubBackup(Backup.backupIdTimeFormatter.format(now.minus(2, ChronoUnit.DAYS)));
         Path backup2Path = stubBackup(Backup.backupIdTimeFormatter.format(now.minus(1, ChronoUnit.DAYS)));
         stubBackup("wrongBackupId");
-
+        String toto;
         // When
         List<Backup> backups = sut.list();
 
