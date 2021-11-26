@@ -1,6 +1,6 @@
 package com.chutneytesting.design.infra.storage.scenario;
 
-import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
+import static com.chutneytesting.tools.functional.ComposableIdUtils.toFrontId;
 
 import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.TestCase;

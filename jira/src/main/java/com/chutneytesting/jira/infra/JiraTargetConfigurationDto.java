@@ -1,15 +1,15 @@
-package com.chutneytesting.design.domain.plugins.jira;
+package com.chutneytesting.jira.infra;
 
-public class JiraTargetConfiguration {
+public class JiraTargetConfigurationDto {
     public final String url;
     public final String username;
     public final String password;
 
-    public JiraTargetConfiguration() {
+    public JiraTargetConfigurationDto() {
         this("", "", "");
     }
 
-    public JiraTargetConfiguration(String url, String username, String password) {
+    public JiraTargetConfigurationDto(String url, String username, String password) {
         this.url = url;
         this.username = username;
         this.password = password;

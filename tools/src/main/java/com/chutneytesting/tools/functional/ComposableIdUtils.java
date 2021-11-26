@@ -1,4 +1,4 @@
-package com.chutneytesting.tools.ui;
+package com.chutneytesting.tools.functional;
 
 import static java.util.Optional.ofNullable;
 

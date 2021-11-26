@@ -2,7 +2,7 @@ package com.chutneytesting.design.api.dataset;
 
 import static com.chutneytesting.design.api.dataset.DataSetMapper.fromDto;
 import static com.chutneytesting.design.api.dataset.DataSetMapper.toDto;
-import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
+import static com.chutneytesting.tools.functional.ComposableIdUtils.fromFrontId;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.design.domain.dataset.DataSet;

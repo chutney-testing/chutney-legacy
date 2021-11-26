@@ -1,8 +1,8 @@
-package com.chutneytesting.design.api.plugins.jira;
+package com.chutneytesting.jira.api;
 
-import com.chutneytesting.design.domain.plugins.jira.JiraRepository;
-import com.chutneytesting.design.domain.plugins.jira.JiraTargetConfiguration;
-import com.chutneytesting.execution.domain.jira.JiraXrayPlugin;
+import com.chutneytesting.jira.domain.JiraRepository;
+import com.chutneytesting.jira.domain.JiraTargetConfiguration;
+import com.chutneytesting.jira.domain.JiraXrayService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,11 +30,11 @@ public class JiraModuleController {
     public static final String BASE_CONFIGURATION_URL = "configuration";
 
     private final JiraRepository jiraRepository;
-    private final JiraXrayPlugin jiraXrayPlugin;
+    private final JiraXrayService jiraXrayService;
 
-    public JiraModuleController(JiraRepository jiraRepository, JiraXrayPlugin jiraXrayPlugin) {
+    public JiraModuleController(JiraRepository jiraRepository, JiraXrayService jiraXrayService) {
         this.jiraRepository = jiraRepository;
-        this.jiraXrayPlugin = jiraXrayPlugin;
+        this.jiraXrayService = jiraXrayService;
     }
 
     @PreAuthorize("hasAuthority('SCENARIO_READ') or hasAuthority('CAMPAIGN_WRITE')")
@@ -90,12 +90,12 @@ public class JiraModuleController {
 
     @PreAuthorize("hasAuthority('CAMPAIGN_WRITE')")
     @GetMapping(path = BASE_TEST_EXEC_URL + "/{testExecId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<String> getScenariosByCampaignIg(@PathVariable String testExecId) {
-        if(testExecId.isEmpty())
+    public List<String> getScenariosByCampaignId(@PathVariable String testExecId) {
+        if (testExecId.isEmpty())
             return new ArrayList<>();
 
         Map<String, String> allLinkedScenarios = jiraRepository.getAllLinkedScenarios();
-        List<String> testExecScenariosId = jiraXrayPlugin.getTestExecutionScenarios(testExecId);
+        List<String> testExecScenariosId = jiraXrayService.getTestExecutionScenarios(testExecId);
 
         return allLinkedScenarios.entrySet()
             .stream()

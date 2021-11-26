@@ -10,10 +10,10 @@ import com.chutneytesting.admin.domain.Backupable;
 import com.chutneytesting.admin.domain.HomePageRepository;
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
-import com.chutneytesting.design.domain.plugins.jira.JiraRepository;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
 import com.chutneytesting.environment.domain.Environment;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
+import com.chutneytesting.jira.domain.JiraRepository;
 import com.chutneytesting.tools.Try;
 import com.chutneytesting.tools.ZipUtils;
 import com.chutneytesting.tools.file.FileUtils;
@@ -125,7 +125,7 @@ public class FileSystemBackupRepository implements BackupRepository {
         }
 
         if (backup.jiraLinks) {
-            backup(jiraRepository, backupPath.resolve(JIRA_BACKUP_NAME), "jira links");
+            backup(backupPath.resolve(JIRA_BACKUP_NAME), "jira links", this::backupJira);
         }
 
         LOGGER.info("Backup [{}] completed", backupId);
@@ -203,6 +203,15 @@ public class FileSystemBackupRepository implements BackupRepository {
             }
         } catch (IOException ioe) {
             throw new UncheckedIOException(ioe);
+        }
+    }
+
+    private void backupJira(OutputStream outputStream) {
+        try (ZipOutputStream zipOutPut = new ZipOutputStream(new BufferedOutputStream(outputStream, 4096))) {
+            Path folderPath = jiraRepository.getFolderPath();
+            ZipUtils.compressDirectoryToZipfile(folderPath.getParent(), folderPath.getFileName(), zipOutPut);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.chutneytesting.design.domain.plugins.jira;
+package com.chutneytesting.jira.infra.xraymodelapi;
 
 import java.util.List;
 

@@ -16,10 +16,10 @@ import com.chutneytesting.admin.domain.BackupRepository;
 import com.chutneytesting.admin.domain.HomePageRepository;
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
-import com.chutneytesting.design.domain.plugins.jira.JiraRepository;
 import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
 import com.chutneytesting.environment.domain.Environment;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
+import com.chutneytesting.jira.domain.JiraRepository;
 import com.chutneytesting.tools.Try;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -81,7 +81,7 @@ public class FileSystemBackupRepositoryTest {
         Path backup1Path = stubBackup(Backup.backupIdTimeFormatter.format(now.minus(2, ChronoUnit.DAYS)));
         Path backup2Path = stubBackup(Backup.backupIdTimeFormatter.format(now.minus(1, ChronoUnit.DAYS)));
         stubBackup("wrongBackupId");
-
+        String toto;
         // When
         List<Backup> backups = sut.list();
 
@@ -146,7 +146,7 @@ public class FileSystemBackupRepositoryTest {
         verify(environmentRepository, times(oneIfTrue(environments))).getEnvironments();
         verify(orientComponentDB, times(oneIfTrue(components))).backup(any());
         verify(globalvarRepository, times(oneIfTrue(globalVars))).backup(any());
-        verify(jiraRepository, times(oneIfTrue(jiraLinks))).backup(any());
+        verify(jiraRepository, times(oneIfTrue(jiraLinks))).getFolderPath();
     }
 
     @Test

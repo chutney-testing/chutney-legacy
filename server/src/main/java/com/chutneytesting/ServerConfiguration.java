@@ -6,14 +6,12 @@ import com.chutneytesting.design.domain.campaign.CampaignRepository;
 import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditions;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditionsService;
-import com.chutneytesting.design.domain.plugins.jira.JiraRepository;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.engine.api.execution.TestEngine;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessor;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;
 import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
-import com.chutneytesting.execution.domain.jira.JiraXrayPlugin;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngineAsync;
 import com.chutneytesting.execution.domain.scenario.ServerTestEngine;
@@ -21,6 +19,8 @@ import com.chutneytesting.execution.domain.state.ExecutionStateRepository;
 import com.chutneytesting.execution.infra.execution.ExecutionRequestMapper;
 import com.chutneytesting.execution.infra.execution.ServerTestEngineJavaImpl;
 import com.chutneytesting.instrument.domain.ChutneyMetrics;
+import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
+import com.chutneytesting.jira.domain.JiraXrayService;
 import com.chutneytesting.task.api.EmbeddedTaskEngine;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.Method;
@@ -201,7 +201,7 @@ public class ServerConfiguration implements AsyncConfigurer {
                                                     ExecutionHistoryRepository executionHistoryRepository,
                                                     TestCaseRepository testCaseRepository,
                                                     DataSetHistoryRepository dataSetHistoryRepository,
-                                                    JiraXrayPlugin jiraXrayPlugin,
+                                                    JiraXrayEmbeddedApi jiraXrayEmbeddedApi,
                                                     ChutneyMetrics metrics,
                                                     TaskExecutor campaignExecutor) {
         return new CampaignExecutionEngine(
@@ -210,7 +210,7 @@ public class ServerConfiguration implements AsyncConfigurer {
             executionHistoryRepository,
             testCaseRepository,
             dataSetHistoryRepository,
-            jiraXrayPlugin,
+            jiraXrayEmbeddedApi,
             metrics,
             new ExecutorServiceAdapter(campaignExecutor)
         );
@@ -234,11 +234,6 @@ public class ServerConfiguration implements AsyncConfigurer {
     @Bean
     EmbeddedTaskEngine embeddedTaskEngine(ExecutionConfiguration executionConfiguration) {
         return new EmbeddedTaskEngine(executionConfiguration.taskTemplateRegistry());
-    }
-
-    @Bean
-    JiraXrayPlugin jiraXrayPlugin(JiraRepository jiraRepository, ObjectMapper objectMapper) {
-        return new JiraXrayPlugin(jiraRepository, objectMapper);
     }
 
     @Bean

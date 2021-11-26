@@ -8,8 +8,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContent;
-import com.chutneytesting.design.domain.plugins.jira.JiraRepository;
-import com.chutneytesting.design.domain.plugins.jira.JiraTargetConfiguration;
+import com.chutneytesting.jira.domain.JiraRepository;
+import com.chutneytesting.jira.domain.JiraTargetConfiguration;
+import com.chutneytesting.jira.infra.JiraTargetConfigurationDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.nio.file.Files;

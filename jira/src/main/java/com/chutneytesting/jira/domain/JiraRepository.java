@@ -1,9 +1,11 @@
-package com.chutneytesting.design.domain.plugins.jira;
+package com.chutneytesting.jira.domain;
 
-import com.chutneytesting.admin.domain.Backupable;
+import java.nio.file.Path;
 import java.util.Map;
 
-public interface JiraRepository extends Backupable {
+public interface JiraRepository {
+
+    Path getFolderPath();
 
     Map<String, String> getAllLinkedCampaigns();
 
@@ -24,5 +26,4 @@ public interface JiraRepository extends Backupable {
     JiraTargetConfiguration loadServerConfiguration();
 
     void saveServerConfiguration(JiraTargetConfiguration jiraTargetConfiguration);
-
 }
