@@ -1,6 +1,6 @@
 package com.chutneytesting.design.api.scenario.compose.mapper;
 
-import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
+import static com.chutneytesting.tools.functional.ComposableIdUtils.toFrontId;
 
 import com.chutneytesting.design.api.scenario.compose.dto.ComposableStepDto;
 import com.chutneytesting.design.api.scenario.compose.dto.ComposableTestCaseDto;

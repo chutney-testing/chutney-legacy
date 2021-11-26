@@ -1,19 +1,15 @@
-package com.chutneytesting.design.infra.storage.plugins.jira;
+package com.chutneytesting.jira.infra;
 
-import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
-import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
-import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
+import static com.chutneytesting.tools.functional.ComposableIdUtils.fromFrontId;
+import static com.chutneytesting.tools.functional.ComposableIdUtils.toFrontId;
 
-import com.chutneytesting.design.domain.plugins.jira.JiraRepository;
-import com.chutneytesting.design.domain.plugins.jira.JiraTargetConfiguration;
-import com.chutneytesting.tools.ZipUtils;
+import com.chutneytesting.jira.domain.JiraRepository;
+import com.chutneytesting.jira.domain.JiraTargetConfiguration;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,11 +17,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.zip.ZipOutputStream;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
-@Component
 public class JiraFileRepository implements JiraRepository {
 
     private static final String FILE_EXTENSION = ".json";
@@ -42,18 +34,14 @@ public class JiraFileRepository implements JiraRepository {
         .enable(SerializationFeature.INDENT_OUTPUT)
         .setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
-    JiraFileRepository(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) throws UncheckedIOException {
+    public JiraFileRepository(String storeFolderPath) throws UncheckedIOException {
         this.storeFolderPath = Paths.get(storeFolderPath).resolve(ROOT_DIRECTORY_NAME);
         initFolder(this.storeFolderPath);
     }
 
     @Override
-    public void backup(OutputStream outputStream) throws UncheckedIOException {
-        try (ZipOutputStream zipOutPut = new ZipOutputStream(new BufferedOutputStream(outputStream, 4096))) {
-            ZipUtils.compressDirectoryToZipfile(storeFolderPath.getParent(), storeFolderPath.getFileName(), zipOutPut);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+    public Path getFolderPath() {
+        return storeFolderPath;
     }
 
     @Override
@@ -103,24 +91,30 @@ public class JiraFileRepository implements JiraRepository {
 
     @Override
     public JiraTargetConfiguration loadServerConfiguration() {
-        return doLoadServerConfiguration();
+        JiraTargetConfigurationDto dto = doLoadServerConfiguration();
+        return new JiraTargetConfiguration(dto.url, dto.username, dto.password);
     }
 
     @Override
     public void saveServerConfiguration(JiraTargetConfiguration jiraTargetConfiguration) {
+        JiraTargetConfigurationDto jiraTargetConfigurationDto = new JiraTargetConfigurationDto(jiraTargetConfiguration.url, jiraTargetConfiguration.username, jiraTargetConfiguration.password);
         Path resolvedFilePath = storeFolderPath.resolve(CONFIGURATION_FILE);
-        doSave(resolvedFilePath, jiraTargetConfiguration);
+        doSave(resolvedFilePath, jiraTargetConfigurationDto);
     }
 
-    private JiraTargetConfiguration doLoadServerConfiguration() {
+    public void saveServerConfiguration(JiraTargetConfigurationDto jiraTargetConfiguration) {
+
+    }
+
+    private JiraTargetConfigurationDto doLoadServerConfiguration() {
         Path configurationFilePath = storeFolderPath.resolve(CONFIGURATION_FILE);
         if (!Files.exists(configurationFilePath)) {
-            return new JiraTargetConfiguration("", "", "");
+            return new JiraTargetConfigurationDto("", "", "");
         }
         try {
             byte[] bytes = Files.readAllBytes(configurationFilePath);
             try {
-                return objectMapper.readValue(bytes, JiraTargetConfiguration.class);
+                return objectMapper.readValue(bytes, JiraTargetConfigurationDto.class);
             } catch (IOException e) {
                 throw new UnsupportedOperationException("Cannot deserialize configuration file: " + configurationFilePath, e);
             }

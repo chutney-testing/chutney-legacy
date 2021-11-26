@@ -1,13 +1,13 @@
 package com.chutneytesting.design.api.campaign.dto;
 
-import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
-import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
+import static com.chutneytesting.tools.functional.ComposableIdUtils.fromFrontId;
+import static com.chutneytesting.tools.functional.ComposableIdUtils.toFrontId;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 import com.chutneytesting.design.domain.campaign.Campaign;
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
-import com.chutneytesting.tools.ui.ComposableIdUtils;
+import com.chutneytesting.tools.functional.ComposableIdUtils;
 import java.util.List;
 import java.util.Optional;
 

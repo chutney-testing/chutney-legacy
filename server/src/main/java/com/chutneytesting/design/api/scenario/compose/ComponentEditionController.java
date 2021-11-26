@@ -2,8 +2,8 @@ package com.chutneytesting.design.api.scenario.compose;
 
 import static com.chutneytesting.design.api.scenario.compose.mapper.ComposableTestCaseMapper.fromDto;
 import static com.chutneytesting.design.api.scenario.compose.mapper.ComposableTestCaseMapper.toDto;
-import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
-import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
+import static com.chutneytesting.tools.functional.ComposableIdUtils.fromFrontId;
+import static com.chutneytesting.tools.functional.ComposableIdUtils.toFrontId;
 import static java.time.Instant.now;
 
 import com.chutneytesting.design.api.scenario.compose.dto.ComposableTestCaseDto;
