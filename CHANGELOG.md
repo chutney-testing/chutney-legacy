@@ -2,6 +2,25 @@
 
 ## [Unreleased](https://github.com/chutney-testing/chutney/tree/HEAD)
 
+## [1.4.3](https://github.com/chutney-testing/chutney/tree/1.4.3) (2021-11-29)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.4.2...HEAD)
+
+**Fixed bugs:**
+
+- 🐛 | Parralel issue on campagin schedule [\#590](https://github.com/chutney-testing/chutney/issues/590)
+
+**Merged pull requests:**
+
+- fix\(server\): Check we have at least one remote to export [\#612](https://github.com/chutney-testing/chutney/pull/612) ([boddissattva](https://github.com/boddissattva))
+- feat\(task\): HTTPS Server mock trust all by default [\#610](https://github.com/chutney-testing/chutney/pull/610) ([bessonm](https://github.com/bessonm))
+- fix/scheduled campaigns [\#604](https://github.com/chutney-testing/chutney/pull/604) ([boddissattva](https://github.com/boddissattva))
+- chore/fix build [\#603](https://github.com/chutney-testing/chutney/pull/603) ([boddissattva](https://github.com/boddissattva))
+- feat: Use key store key password for JMS and Wiremock [\#602](https://github.com/chutney-testing/chutney/pull/602) ([bessonm](https://github.com/bessonm))
+- chore: Auto set UI node version for nix [\#601](https://github.com/chutney-testing/chutney/pull/601) ([bessonm](https://github.com/bessonm))
+- chore\(deps\): bump sshj from 0.31.0 to 0.32.0 [\#592](https://github.com/chutney-testing/chutney/pull/592) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+
 ## [1.4.2](https://github.com/chutney-testing/chutney/tree/1.4.2) (2021-11-09)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.4.1...1.4.2)
