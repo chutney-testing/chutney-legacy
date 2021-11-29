@@ -7,6 +7,8 @@ import { EnvironmentMetadata, Target } from '@model';
 import { ValidationService } from '../../molecules/validation/validation.service';
 import { EnvironmentAdminService } from '@core/services';
 import { environment } from '@env/environment';
+import { TranslateService } from '@ngx-translate/core';
+
 
 @Component({
     selector: 'chutney-environment-admin',
@@ -32,9 +34,14 @@ export class EnvironmentAdminComponent implements OnInit {
         private environmentAdminService: EnvironmentAdminService,
         public validationService: ValidationService,
         private fileSaverService: FileSaverService,
-        private formBuilder: FormBuilder) {
+        private formBuilder: FormBuilder,
+        private translate: TranslateService) {
     }
-
+private initTranslation() {
+        this.translate.get('global.actions.done.saved').subscribe((res: string) => {
+            this.savedMessage = res;
+        });
+    }
     ngOnInit() {
         this.loadEnvironment();
     }
@@ -77,7 +84,8 @@ export class EnvironmentAdminComponent implements OnInit {
     }
 
     deleteEnvironment() {
-        const res = confirm('Êtes-vous sûr de vouloir supprimer l\'environnement ' + this.selectedEnvironment.name + ' ?');
+
+        const res = confirm(this.translate.get ('Êtes-vous sûr de vouloir supprimer l\'environnement ' + this.selectedEnvironment.name + ' ?'));
 
         if (res) {
             this.environmentAdminService.deleteEnvironment(this.selectedEnvironment.name).subscribe(
