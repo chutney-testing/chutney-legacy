@@ -22,8 +22,12 @@ export class GitBackupService {
         return this.http.post<string>(environment.backend + this.url, remoteConfig);
     }
 
-    backupTo(remote: GitRemoteConfig): Observable<string> {
+    public backupTo(remote: GitRemoteConfig): Observable<string> {
         return this.http.get<string>(environment.backend + this.url + remote.name + '/backup');
+    }
+
+    public importFrom(remote: GitRemoteConfig) {
+        return this.http.get<string>(environment.backend + this.url + remote.name + '/import');
     }
 
     public remove(remoteConfig: GitRemoteConfig): Observable<string> {

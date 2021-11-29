@@ -1,5 +1,9 @@
 package com.chutneytesting.task.kafka;
 
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.durationValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.targetValidation;
+import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
@@ -41,6 +45,8 @@ import org.springframework.util.MimeTypeUtils;
 
 public class KafkaBasicConsumeTask implements Task {
 
+    private KafkaConsumerFactoryFactory kafkaConsumerFactoryFactory = new KafkaConsumerFactoryFactory();
+
     static final String OUTPUT_BODY = "body";
     static final String OUTPUT_BODY_HEADERS_KEY = "headers";
     static final String OUTPUT_BODY_PAYLOAD_KEY = "payload";
@@ -52,14 +58,15 @@ public class KafkaBasicConsumeTask implements Task {
     private final String topic;
     private final Logger logger;
     private final Integer nbMessages;
+    private final Map<String, String> properties;
     private MimeType contentType;
     private final String timeout;
     private final String selector;
     private final String headerSelector;
-    private final ConsumerFactory<String, String> consumerFactory;
+    private final Target target;
     private final CountDownLatch countDownLatch;
     private final List<Map<String, Object>> consumedMessages = new ArrayList<>();
-    private final ConcurrentMessageListenerContainer<String, String> messageListenerContainer;
+    private final String group;
 
     public KafkaBasicConsumeTask(Target target,
                                  @Input("topic") String topic,
@@ -77,14 +84,25 @@ public class KafkaBasicConsumeTask implements Task {
         this.headerSelector = headerSelector;
         this.contentType = ofNullable(contentType).map(ct -> defaultIfEmpty(ct, APPLICATION_JSON_VALUE)).map(MimeTypeUtils::parseMimeType).orElse(APPLICATION_JSON);
         this.timeout = defaultIfEmpty(timeout, "60 sec");
-        this.consumerFactory = new KafkaConsumerFactoryFactory().create(target, group, defaultIfNull(properties, emptyMap()));
+        this.target = target;
         this.countDownLatch = new CountDownLatch(this.nbMessages);
-        this.messageListenerContainer = createMessageListenerContainer(createMessageListener());
+        this.group = group;
         this.logger = logger;
+        this.properties = defaultIfNull(properties, emptyMap());
+    }
+
+    @Override
+    public List<String> validateInputs() {
+        return getErrorsFrom(
+            notBlankStringValidation(topic, "topic"),
+            targetValidation(target),
+            durationValidation(timeout, "timeout")
+        );
     }
 
     @Override
     public TaskExecutionResult execute() {
+        ConcurrentMessageListenerContainer<String, String> messageListenerContainer = createMessageListenerContainer(createMessageListener());
         try {
             logger.info("Consuming message from topic " + topic);
             messageListenerContainer.start();
@@ -187,6 +205,7 @@ public class KafkaBasicConsumeTask implements Task {
     }
 
     private ConcurrentMessageListenerContainer<String, String> createMessageListenerContainer(MessageListener<String, String> messageListener) {
+        ConsumerFactory<String, String> consumerFactory = kafkaConsumerFactoryFactory.create(target, group, properties);
         ContainerProperties containerProperties = new ContainerProperties(topic);
         containerProperties.setMessageListener(messageListener);
         return new ConcurrentMessageListenerContainer<>(

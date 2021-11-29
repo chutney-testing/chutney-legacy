@@ -12,6 +12,8 @@ import com.chutneytesting.task.spi.TaskExecutionResult;
 import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import java.util.List;
+import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 
@@ -22,72 +24,22 @@ public class MicrometerSummaryTaskTest {
 
     @Test
     public void summary_name_is_mandatory_if_no_given_summary() {
-        assertThatThrownBy(() ->
-            new MicrometerSummaryTask(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null).execute()
-        ).isExactlyInstanceOf(NullPointerException.class);
-    }
+        MicrometerSummaryTask micrometerSummaryTask = new MicrometerSummaryTask(null, null, null, null, null, "not a integer", "not a duration", "not a long", "not a long", "not a integer", null, "not a list of double", "not a double", "not a list of long", null, null, "not a double");
+        List<String> errors = micrometerSummaryTask.validateInputs();
 
-    @Test
-    public void summary_buffer_length_must_be_an_integer() {
-        assertThatThrownBy(() ->
-            new MicrometerSummaryTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, "not a integer", null, null, null, null, null, null, null, null, null, null, null)
-        ).isExactlyInstanceOf(NumberFormatException.class);
-    }
-
-    @Test
-    public void summary_expiry_must_be_a_duration() {
-        assertThatThrownBy(() ->
-            new MicrometerSummaryTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, "not a duration", null, null, null, null, null, null, null, null, null, null)
-        ).isExactlyInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    public void summary_max_value_must_be_a_long() {
-        assertThatThrownBy(() ->
-            new MicrometerSummaryTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, "not a long", null, null, null, null, null, null, null, null, null)
-        ).isExactlyInstanceOf(NumberFormatException.class);
-    }
-
-    @Test
-    public void summary_min_value_must_be_a_long() {
-        assertThatThrownBy(() ->
-            new MicrometerSummaryTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, "not a long", null, null, null, null, null, null, null, null)
-        ).isExactlyInstanceOf(NumberFormatException.class);
-    }
-
-    @Test
-    public void summary_percentile_precision_must_be_an_integer() {
-        assertThatThrownBy(() ->
-            new MicrometerSummaryTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, null, "not a integer", null, null, null, null, null, null, null)
-        ).isExactlyInstanceOf(NumberFormatException.class);
-    }
-
-    @Test
-    public void summary_percentiles_must_be_a_list_of_double() {
-        assertThatThrownBy(() ->
-            new MicrometerSummaryTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, null, null, null, "not a list of double", null, null, null, null, null)
-        ).isExactlyInstanceOf(NumberFormatException.class);
-    }
-
-    @Test
-    public void summary_scale_must_be_a_double() {
-        assertThatThrownBy(() ->
-            new MicrometerSummaryTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, null, null, null, null, "not a double", null, null, null, null)
-        ).isExactlyInstanceOf(NumberFormatException.class);
-    }
-
-    @Test
-    public void summary_sla_must_be_a_list_of_long() {
-        assertThatThrownBy(() ->
-            new MicrometerSummaryTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, null, null, null, null, null, "not a list of long", null, null, null)
-        ).isExactlyInstanceOf(NumberFormatException.class);
-    }
-
-    @Test
-    public void summary_record_must_be_a_double() {
-        assertThatThrownBy(() ->
-            new MicrometerSummaryTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, null, null, null, null, null, null, null, null, "not a double")
-        ).isExactlyInstanceOf(NumberFormatException.class);
+        assertThat(errors.size()).isEqualTo(10);
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(errors.get(0)).isEqualTo("name and distributionSummary cannot be both null");
+        softly.assertThat(errors.get(1)).isEqualTo("[bufferLength parsing] not applied because of exception java.lang.NumberFormatException(For input string: \"not a integer\")");
+        softly.assertThat(errors.get(2)).isEqualTo("[percentilePrecision parsing] not applied because of exception java.lang.NumberFormatException(For input string: \"not a integer\")");
+        softly.assertThat(errors.get(3)).isEqualTo("[maxValue parsing] not applied because of exception java.lang.NumberFormatException(For input string: \"not a long\")");
+        softly.assertThat(errors.get(4)).isEqualTo("[minValue parsing] not applied because of exception java.lang.NumberFormatException(For input string: \"not a long\")");
+        softly.assertThat(errors.get(5)).isEqualTo("[scale parsing] not applied because of exception java.lang.NumberFormatException(For input string: \"not a double\")");
+        softly.assertThat(errors.get(6)).isEqualTo("[record parsing] not applied because of exception java.lang.NumberFormatException(For input string: \"not a double\")");
+        softly.assertThat(errors.get(7)).startsWith("[expiry is not parsable] not applied because of exception java.lang.IllegalArgumentException(Cannot parse duration: not a duration");
+        softly.assertThat(errors.get(8)).isEqualTo("[Cannot parse percentils list] not applied because of exception java.lang.NumberFormatException(For input string: \"not a list of double\")");
+        softly.assertThat(errors.get(9)).isEqualTo("[Cannot parse sla list] not applied because of exception java.lang.NumberFormatException(For input string: \"not a list of long\")");
+        softly.assertAll();
     }
 
     @Test
@@ -177,7 +129,7 @@ public class MicrometerSummaryTaskTest {
         // Given
         TestLogger logger = new TestLogger();
         MeterRegistry registry = new SimpleMeterRegistry();
-        sut = new MicrometerSummaryTask(logger, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, null, null, null, null, null, null, null, registry, "6");
+        sut = new MicrometerSummaryTask(logger, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, null, null, null, null, null, null, null, registry, "6.0");
 
         // When
         TaskExecutionResult result = sut.execute();

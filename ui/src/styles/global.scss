@@ -96,7 +96,7 @@ caption {
 }
 
 .row {
-    margin: $row-margin-up-down 0px $row-margin-up-down 0px;
+    margin: $row-margin-up-down 0 $row-margin-up-down 0;
 }
 
 div.alert.not-found{
@@ -141,10 +141,10 @@ button.btn{
 // multi-select
 .custom-multiselect .selected-list .c-btn {
     color: black !important;
-    border:0px !important;
+    border:0 !important;
     border-bottom: 1px solid $vert2 !important;
     box-shadow: unset !important;
-    border-radius: 0px !important;
+    border-radius: 0 !important;
     margin-left:30px;
 }
 .selected-list .fa-angle-down, .selected-list .fa-angle-up {

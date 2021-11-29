@@ -51,6 +51,10 @@ public class TargetJsonDeserializer extends JsonDeserializer<JsonTarget> {
             if (security.hasNonNull("keyStorePassword")) {
                 keyStorePassword = security.get("keyStorePassword").textValue();
             }
+            String keyPassword = null;
+            if (security.hasNonNull("keyPassword")) {
+                keyPassword = security.get("keyPassword").textValue();
+            }
             String privateKey = null;
             if (security.hasNonNull("privateKey")) {
                 privateKey = security.get("privateKey").textValue();
@@ -65,7 +69,7 @@ public class TargetJsonDeserializer extends JsonDeserializer<JsonTarget> {
                     credential = new JsonTarget.JsonCredential(username, password);
                 }
             }
-            securityInfo = new JsonTarget.JsonSecurityInfo(credential, trustStore,trustStorePassword, keyStore, keyStorePassword, privateKey );
+            securityInfo = new JsonTarget.JsonSecurityInfo(credential, trustStore,trustStorePassword, keyStore, keyStorePassword, keyPassword, privateKey );
         }
         return new JsonTarget(url, properties, securityInfo, name);
     }

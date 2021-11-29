@@ -1,8 +1,84 @@
 # Changelog
 
+## [Unreleased](https://github.com/chutney-testing/chutney/tree/HEAD)
+
+## [1.4.2](https://github.com/chutney-testing/chutney/tree/1.4.2) (2021-11-09)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.4.1...1.4.2)
+
+**Implemented enhancements:**
+
+- 🚀 | Add Radius operation in task-impl [\#535](https://github.com/chutney-testing/chutney/issues/535)
+
+**Fixed bugs:**
+
+- 🐛 | Multi consumer on same queue for amqp basic consume [\#587](https://github.com/chutney-testing/chutney/issues/587)
+
+**Merged pull requests:**
+
+- chore\(deps\): bump jackson.version from 2.12.5 to 2.13.0 [\#599](https://github.com/chutney-testing/chutney/pull/599) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump pitest.version from 1.7.1 to 1.7.2 [\#598](https://github.com/chutney-testing/chutney/pull/598) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump postgresql from 42.2.16 to 42.3.1 [\#597](https://github.com/chutney-testing/chutney/pull/597) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps-dev\): bump assertj-core from 3.20.2 to 3.21.0 [\#595](https://github.com/chutney-testing/chutney/pull/595) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump everit-json-schema from 1.12.2 to 1.14.0 [\#594](https://github.com/chutney-testing/chutney/pull/594) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps-dev\): bump mockito.version from 3.12.4 to 4.0.0 [\#591](https://github.com/chutney-testing/chutney/pull/591) ([dependabot[bot]](https://github.com/apps/dependabot))
+- feat: Use keystore keypassword [\#589](https://github.com/chutney-testing/chutney/pull/589) ([bessonm](https://github.com/bessonm))
+- bugfix\(task-impl\): Allow only one consumer by queue at a time for amqp [\#588](https://github.com/chutney-testing/chutney/pull/588) ([nbrouand](https://github.com/nbrouand))
+- chore\(deps\): bump groovy from 2.5.14 to 3.0.9 [\#549](https://github.com/chutney-testing/chutney/pull/549) ([dependabot[bot]](https://github.com/apps/dependabot))
+- feat\(task-impl\): Add radius tasks [\#536](https://github.com/chutney-testing/chutney/pull/536) ([nbrouand](https://github.com/nbrouand))
+
+## [1.4.1](https://github.com/chutney-testing/chutney/tree/1.4.1) (2021-10-12)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.4.0...1.4.1)
+
+**Implemented enhancements:**
+
+- 🚀 | Add validation input to task-spi [\#585](https://github.com/chutney-testing/chutney/issues/585)
+- 🚀 | Make json compare as soft assert [\#577](https://github.com/chutney-testing/chutney/issues/577)
+
+**Fixed bugs:**
+
+- 🐛 | SSH client task : Cannot use private key with passphrase authentication [\#564](https://github.com/chutney-testing/chutney/issues/564)
+- 🐛 | With parrarell testing, some test failed randomly [\#561](https://github.com/chutney-testing/chutney/issues/561)
+- 🐛 | Search scenario issues [\#554](https://github.com/chutney-testing/chutney/issues/554)
+
+**Merged pull requests:**
+
+- Task input validators [\#584](https://github.com/chutney-testing/chutney/pull/584) ([nbrouand](https://github.com/nbrouand))
+- chore\(deps\): bump maven-javadoc-plugin from 3.3.0 to 3.3.1 [\#575](https://github.com/chutney-testing/chutney/pull/575) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump org.eclipse.jgit.ssh.jsch from 5.12.0.202106070339-r to 5.13.0.202109080827-r [\#574](https://github.com/chutney-testing/chutney/pull/574) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps-dev\): bump jqwik from 1.5.1 to 1.5.6 [\#573](https://github.com/chutney-testing/chutney/pull/573) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump wss4j from 1.6.17 to 1.6.19 [\#572](https://github.com/chutney-testing/chutney/pull/572) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump mongodb.version from 3.12.8 to 3.12.10 [\#570](https://github.com/chutney-testing/chutney/pull/570) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump pitest.version from 1.6.9 to 1.7.1 [\#567](https://github.com/chutney-testing/chutney/pull/567) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump junit5.version from 5.7.2 to 5.8.1 [\#566](https://github.com/chutney-testing/chutney/pull/566) ([dependabot[bot]](https://github.com/apps/dependabot))
+- SSH client task - Private key with passphrase authentication [\#565](https://github.com/chutney-testing/chutney/pull/565) ([boddissattva](https://github.com/boddissattva))
+- Chore/UI clean [\#563](https://github.com/chutney-testing/chutney/pull/563) ([nbrouand](https://github.com/nbrouand))
+- Chore/parallel test pb [\#562](https://github.com/chutney-testing/chutney/pull/562) ([nbrouand](https://github.com/nbrouand))
+- bugfix\(ui\): Debounce on full text search + redesign scenario search UI + [\#560](https://github.com/chutney-testing/chutney/pull/560) ([nbrouand](https://github.com/nbrouand))
+
+
+
+## [1.4.0](https://github.com/chutney-testing/chutney/tree/1.4.0) (2021-09-16)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.12...1.4.0)
+
+**Implemented enhancements:**
+
+- 🚀 | Import/Export Chutney content as files from git [\#552](https://github.com/chutney-testing/chutney/issues/552)
+- 🚀 | Allow the declaration of finally action in the scenario [\#534](https://github.com/chutney-testing/chutney/issues/534)
+
+**Merged pull requests:**
+
+- feat/finally action register task [\#551](https://github.com/chutney-testing/chutney/pull/551) ([boddissattva](https://github.com/boddissattva))
+- feat\(ui/server\): Import content from git [\#550](https://github.com/chutney-testing/chutney/pull/550) ([bessonm](https://github.com/bessonm))
+- chore: Add unit test for testing url security [\#548](https://github.com/chutney-testing/chutney/pull/548) ([nbrouand](https://github.com/nbrouand))
+- chore: Add architecture image to readme [\#537](https://github.com/chutney-testing/chutney/pull/537) ([nbrouand](https://github.com/nbrouand))
+
+
 ## [1.3.12](https://github.com/chutney-testing/chutney/tree/1.3.12) (2021-09-03)
 
-[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.11...HEAD)
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.11...1.3.12)
 
 **Implemented enhancements:**
 
@@ -56,7 +132,7 @@
 
 ## [1.3.11](https://github.com/chutney-testing/chutney/tree/1.3.11) (2021-07-19)
 
-[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.10...HEAD)
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.10...1.3.11)
 
 **Fixed bugs:**
 
@@ -69,7 +145,7 @@
 
 ## [1.3.10](https://github.com/chutney-testing/chutney/tree/1.3.10) (2021-07-13)
 
-[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.9...HEAD)
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.9...1.3.10)
 
 **Fixed bugs:**
 
@@ -83,7 +159,7 @@
 
 ## [1.3.9](https://github.com/chutney-testing/chutney/tree/1.3.9) (2021-07-12)
 
-[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.8...HEAD)
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.8...1.3.9)
 
 **Implemented enhancements:**
 
@@ -122,7 +198,7 @@
 
 ## [1.3.8](https://github.com/chutney-testing/chutney/tree/1.3.8) (2021-06-23)
 
-[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.7...HEAD)
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.7...1.3.8)
 
 **Implemented enhancements:**
 
@@ -156,7 +232,7 @@
 
 ## [1.3.7](https://github.com/chutney-testing/chutney/tree/1.3.7) (2021-06-09)
 
-[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.6...HEAD)
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.6...1.3.7)
 
 **Fixed bugs:**
 

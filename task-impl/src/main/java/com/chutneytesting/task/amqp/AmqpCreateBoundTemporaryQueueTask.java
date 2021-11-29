@@ -1,5 +1,9 @@
 package com.chutneytesting.task.amqp;
 
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.targetValidation;
+import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
+
 import com.chutneytesting.task.spi.FinallyAction;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
@@ -9,9 +13,9 @@ import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeoutException;
 
@@ -25,7 +29,6 @@ public class AmqpCreateBoundTemporaryQueueTask implements Task {
     private final String queueName;
     private final Logger logger;
     private final FinallyActionRegistry finallyActionRegistry;
-    private final ConnectionFactory connectionFactory;
 
     public AmqpCreateBoundTemporaryQueueTask(Target target,
                                              @Input("exchange-name") String exchangeName,
@@ -34,7 +37,6 @@ public class AmqpCreateBoundTemporaryQueueTask implements Task {
                                              Logger logger,
                                              FinallyActionRegistry finallyActionRegistry) {
         this.target = target;
-        this.connectionFactory = connectionFactoryFactory.create(target);
         this.exchangeName = exchangeName;
         this.routingKey = routingKey;
         this.queueName = queueName;
@@ -43,11 +45,21 @@ public class AmqpCreateBoundTemporaryQueueTask implements Task {
     }
 
     @Override
+    public List<String> validateInputs() {
+        return getErrorsFrom(
+            notBlankStringValidation(queueName, "queue-name"),
+            notBlankStringValidation(queueName, "exchange-name"),
+            targetValidation(target)
+        );
+    }
+
+    @Override
     public TaskExecutionResult execute() {
-        try (Connection connection = connectionFactory.newConnection();
+        try (Connection connection = connectionFactoryFactory.create(target).newConnection();
              Channel channel = connection.createChannel()) {
             createQueue(queueName, channel);
             bindQueue(channel, queueName);
+            createQuitFinallyActions();
             return TaskExecutionResult.ok(Collections.singletonMap("queueName", queueName));
         } catch (TimeoutException | IOException e) {
             logger.error("Unable to establish connection to RabbitMQ: " + e.getMessage());
@@ -59,24 +71,28 @@ public class AmqpCreateBoundTemporaryQueueTask implements Task {
         String routingKey = Optional.ofNullable(this.routingKey).orElse(queueName);
         channel.queueBind(queueName, exchangeName, routingKey);
         logger.info("Created AMQP binding " + exchangeName + " (with " + this.routingKey + ") -> " + queueName);
-
-        finallyActionRegistry.registerFinallyAction(FinallyAction.Builder
-            .forAction("amqp-unbind-queue", AmqpCreateBoundTemporaryQueueTask.class.getSimpleName())
-            .withTarget(target)
-            .withInput("queue-name", queueName)
-            .withInput("exchange-name", exchangeName)
-            .withInput("routing-key", routingKey)
-            .build());
-        logger.info("Registered unbinding finally action");
     }
 
     private void createQueue(String queueName, Channel channel) throws IOException {
         channel.queueDeclare(queueName, true, false, false, null);
         logger.info("Created AMQP Queue with name: " + queueName);
+    }
+
+    private void createQuitFinallyActions() {
+        finallyActionRegistry.registerFinallyAction(FinallyAction.Builder
+            .forAction("amqp-unbind-queue", AmqpCreateBoundTemporaryQueueTask.class)
+            .withTarget(target)
+            .withInput("queue-name", queueName)
+            .withInput("exchange-name", exchangeName)
+            .withInput("routing-key", routingKey)
+            .build());
+        logger.info("Registered unbinding queue finally action");
+
         finallyActionRegistry.registerFinallyAction(FinallyAction.Builder
             .forAction("amqp-delete-queue", AmqpCreateBoundTemporaryQueueTask.class.getSimpleName())
             .withTarget(target)
             .withInput("queue-name", queueName)
             .build());
+        logger.info("Registered delete queue finally action");
     }
 }

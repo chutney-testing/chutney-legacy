@@ -1,13 +1,12 @@
 import { Component, Input, Output, EventEmitter, OnInit, ViewChildren, QueryList } from '@angular/core';
 import { disabledBoolean } from '@shared/tools/bool-utils';
 
-import { TestCase, ScenarioComponent, ScenarioIndex, EnvironmentMetadata, Authorization } from '@model';
+import { TestCase, ScenarioIndex, Authorization } from '@model';
 import { ScenarioService, ComponentService, EnvironmentAdminService, JiraPluginService, LoginService } from '@core/services';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { FileSaverService } from 'ngx-filesaver';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
-import {  } from '@core/services/jira-plugin.service';
 
 @Component({
     selector: 'chutney-header',

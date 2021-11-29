@@ -40,7 +40,11 @@ public class EnvironmentService {
     }
 
     public Environment createEnvironment(Environment environment) throws InvalidEnvironmentNameException, AlreadyExistingEnvironmentException {
-        if (envAlreadyExist(environment)) {
+        return createEnvironment(environment, false);
+    }
+
+    public Environment createEnvironment(Environment environment, boolean force) throws InvalidEnvironmentNameException, AlreadyExistingEnvironmentException {
+        if (!force && envAlreadyExist(environment)) {
             throw new AlreadyExistingEnvironmentException("Environment [" + environment.name + "] already exists");
         }
         createOrUpdate(environment);

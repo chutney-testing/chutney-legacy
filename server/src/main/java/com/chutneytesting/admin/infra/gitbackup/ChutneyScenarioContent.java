@@ -5,11 +5,19 @@ import static com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory.S
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContent;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentProvider;
+import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
+import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
+import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
+import com.chutneytesting.tools.file.FileUtils;
 import com.chutneytesting.tools.ui.ComposableIdUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -51,10 +59,49 @@ public class ChutneyScenarioContent implements ChutneyContentProvider {
                         .withFormat("json")
                         .withContent(mapper.writeValueAsString(t));
                 } catch (JsonProcessingException e) {
-                   throw new RuntimeException(e.getMessage(), e);
+                    throw new RuntimeException(e.getMessage(), e);
                 }
                 return builder.build();
 
             });
+    }
+
+    @Override
+    public void importDefaultFolder(Path workingDirectory) {
+        importFolder(providerFolder(workingDirectory));
+    }
+
+    public void importFolder(Path folderPath) {
+        List<Path> scenarios = FileUtils.listFiles(folderPath);
+        scenarios.forEach(this::importFile);
+    }
+
+    public void importFile(Path filePath) {
+        if (Files.exists(filePath)) {
+            try {
+                byte[] bytes = Files.readAllBytes(filePath);
+                try {
+                    GwtTestCase testCase = mapper.readValue(bytes, GwtTestCase.class);
+                    GwtTestCase tc = manageVersionConsistency(testCase);
+                    repository.save(tc);
+                } catch (IOException e) {
+                    throw new UnsupportedOperationException("Cannot deserialize scenario file : " + filePath, e);
+                }
+            } catch (IOException e) {
+                throw new UnsupportedOperationException("Cannot read scenario file : " + filePath, e);
+            }
+        }
+    }
+
+    private GwtTestCase manageVersionConsistency(GwtTestCase testCase) {
+        Integer lastVersion = 1;
+        try {
+            lastVersion = repository.lastVersion(testCase.id());
+        }
+        catch (ScenarioNotFoundException e) {
+            // lastVersion = 1;
+        }
+        TestCaseMetadataImpl meta = TestCaseMetadataImpl.TestCaseMetadataBuilder.from(testCase.metadata).withVersion(lastVersion).build();
+        return GwtTestCase.builder().from(testCase).withMetadata(meta).build();
     }
 }

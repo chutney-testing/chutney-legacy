@@ -99,5 +99,12 @@ public class GwtTestCase implements TestCase {
             this.executionParameters = unmodifiableMap(parameters);
             return this;
         }
+
+        public GwtTestCaseBuilder from(GwtTestCase testCase) {
+            withMetadata(testCase.metadata);
+            withScenario(testCase.scenario);
+            withExecutionParameters(testCase.executionParameters);
+            return this;
+        }
     }
 }

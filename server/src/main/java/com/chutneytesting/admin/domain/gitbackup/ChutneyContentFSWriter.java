@@ -12,6 +12,7 @@ public class ChutneyContentFSWriter {
 
     private static final Matcher ILLEGAL_CHARACTER_MATCHER = Pattern.compile("[\\s\\\\/\"<>|:*?%,;=~#&+]").matcher("");
 
+    // TODO - mbb - refactor everything, it doesn't seem right nor intuitive
     static long writeChutneyContent(Path workingDirectory, Set<ChutneyContentProvider> contentProviders) {
         return contentProviders.stream()
             .peek(cp -> FileUtils.initFolder(

@@ -13,6 +13,7 @@ import com.chutneytesting.tools.ui.ComposableIdUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -62,6 +63,11 @@ public class ChutneyComposableStepContent implements ChutneyContentProvider {
                 }
                 return builder.build();
             });
+    }
+
+    @Override
+    public void importDefaultFolder(Path workingDirectory) {
+        // TODO
     }
 
     private FSStepDefinition componentType(ComposableStep cs) {

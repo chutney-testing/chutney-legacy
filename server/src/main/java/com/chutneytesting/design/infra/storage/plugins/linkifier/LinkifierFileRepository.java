@@ -43,14 +43,18 @@ public class LinkifierFileRepository implements Linkifiers {
 
     @Override
     public List<Linkifier> getAll() {
-        return readFromDisk().entrySet().stream()
+        return getAll(resolvedFilePath);
+    }
+
+    private List<Linkifier> getAll(Path filePath) {
+        return readFile(filePath).entrySet().stream()
             .map(e -> this.fromDto(e.getKey(), e.getValue()))
             .collect(Collectors.toList());
     }
 
     @Override
     public Linkifier add(Linkifier linkifier) {
-        Map<String, LinkifierDto> linkifiers = readFromDisk();
+        Map<String, LinkifierDto> linkifiers = readDefaultFile();
         linkifiers.put(linkifier.id, toDto(linkifier));
         writeOnDisk(resolvedFilePath, linkifiers);
         return linkifier;
@@ -58,21 +62,24 @@ public class LinkifierFileRepository implements Linkifiers {
 
     @Override
     public void remove(String id) {
-        Map<String, LinkifierDto> linkifiers = readFromDisk();
+        Map<String, LinkifierDto> linkifiers = readDefaultFile();
         linkifiers.remove(id);
         writeOnDisk(resolvedFilePath, linkifiers);
     }
 
-    private Map<String, LinkifierDto> readFromDisk() {
+    private Map<String, LinkifierDto> readDefaultFile() {
+        return readFile(resolvedFilePath);
+    }
+
+    private Map<String, LinkifierDto> readFile(Path filePath) {
         Map<String, LinkifierDto> linkifiers = new HashMap<>();
         try {
-            if (Files.exists(resolvedFilePath)) {
-                byte[] bytes = Files.readAllBytes(resolvedFilePath);
-                linkifiers.putAll(objectMapper.readValue(bytes, new TypeReference<HashMap<String, LinkifierDto>>() {
-                }));
+            if (Files.exists(filePath)) {
+                byte[] bytes = Files.readAllBytes(filePath);
+                linkifiers.putAll(objectMapper.readValue(bytes, new TypeReference<HashMap<String, LinkifierDto>>() {}));
             }
         } catch (IOException e) {
-            throw new UnsupportedOperationException("Cannot read configuration file: " + resolvedFilePath, e);
+            throw new UnsupportedOperationException("Cannot read configuration file: " + filePath, e);
         }
 
         return linkifiers;
@@ -92,11 +99,11 @@ public class LinkifierFileRepository implements Linkifiers {
     }
 
 
-    private Linkifier fromDto(String id, LinkifierDto dto) {
+    public Linkifier fromDto(String id, LinkifierDto dto) {
         return new Linkifier(dto.pattern, dto.link, id);
     }
 
-    private LinkifierDto toDto(Linkifier linkifier) {
+    public LinkifierDto toDto(Linkifier linkifier) {
         return new LinkifierDto(linkifier.pattern, linkifier.link);
     }
 }

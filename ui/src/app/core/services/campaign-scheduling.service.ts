@@ -2,9 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '@env/environment';
-import { Campaign, CampaignExecutionReport, TestCase, ScenarioIndex } from '@model';
 import { HttpClient } from '@angular/common/http';
-import { distinct } from '@shared/tools';
 import { CampaignScheduling } from '@core/model/campaign/campaign-scheduling.model';
 
 @Injectable({

@@ -1,4 +1,4 @@
-import { StepExecutionReport } from './step-execution-report.model';
+import { StepExecutionReport } from '@core/model/scenario/step-execution-report.model';
 
 export class ScenarioExecutionReport {
     constructor(

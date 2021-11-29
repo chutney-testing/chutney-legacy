@@ -9,6 +9,7 @@ import { EnvironmentAdminService } from '@core/services';
 import { environment } from '@env/environment';
 import { TranslateService } from '@ngx-translate/core';
 
+let savedMessage; // déclaration variable
 
 @Component({
     selector: 'chutney-environment-admin',
@@ -37,7 +38,9 @@ export class EnvironmentAdminComponent implements OnInit {
         private formBuilder: FormBuilder,
         private translate: TranslateService) {
     }
+
 private initTranslation() {
+
         this.translate.get('global.actions.done.saved').subscribe((res: string) => {
             this.savedMessage = res;
         });
@@ -85,7 +88,7 @@ private initTranslation() {
 
     deleteEnvironment() {
 
-        const res = confirm(this.translate.get ('Êtes-vous sûr de vouloir supprimer l\'environnement ' + this.selectedEnvironment.name + ' ?'));
+        const res = confirm(savedMessage('Êtes-vous sûr de vouloir supprimer l\'environnement '))     + this.selectedEnvironment.name + ' ?');
 
         if (res) {
             this.environmentAdminService.deleteEnvironment(this.selectedEnvironment.name).subscribe(

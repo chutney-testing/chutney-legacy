@@ -13,6 +13,7 @@ import com.chutneytesting.engine.domain.execution.engine.step.StepContext;
 import com.chutneytesting.task.domain.TaskTemplate;
 import com.chutneytesting.task.domain.TaskTemplateRegistry;
 import com.chutneytesting.task.domain.parameter.ParameterResolver;
+import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.FinallyActionRegistry;
 import com.chutneytesting.task.spi.injectable.Logger;
@@ -44,9 +45,15 @@ public class DefaultStepExecutor implements StepExecutor {
 
             TaskExecutionResult executionResult;
             try {
-                executionResult = matchedTask.get().create(parameterResolvers).execute();
-                updateStepFromTaskResult(step, executionResult);
-                updateStepContextFromTaskResult(stepContext, executionResult);
+                Task task = matchedTask.get().create(parameterResolvers);
+                List<String> errors = task.validateInputs();
+                if (errors.isEmpty()) {
+                    executionResult = task.execute();
+                    updateStepFromTaskResult(step, executionResult);
+                    updateStepContextFromTaskResult(stepContext, executionResult);
+                } else {
+                    step.failure(errors.toArray(new String[0]));
+                }
             } catch (Exception e) {
                 LOGGER.error("Cannot execute step: ", e);
                 step.failure("Task [" + type + "] failed: " + ofNullable(e.getMessage()).orElse(e.toString()));

@@ -124,6 +124,7 @@ public class ExecutionRequestMapper {
             security.trustStorePassword().orElse(null),
             security.keyStore().orElse(null),
             security.keyStorePassword().orElse(null),
+            security.keyPassword().orElse(null),
             security.privateKey().orElse(null)
         );
     }

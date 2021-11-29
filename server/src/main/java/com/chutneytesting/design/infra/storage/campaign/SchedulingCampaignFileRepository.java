@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -42,8 +45,10 @@ public class SchedulingCampaignFileRepository implements PeriodicScheduledCampai
         .registerModule(new JavaTimeModule())
         .enable(SerializationFeature.INDENT_OUTPUT)
         .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+    private final ReadWriteLock rwLock;
 
     SchedulingCampaignFileRepository(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) throws UncheckedIOException {
+        this.rwLock = new ReentrantReadWriteLock(true);
         this.storeFolderPath = Paths.get(storeFolderPath).resolve(ROOT_DIRECTORY_NAME);
         this.resolvedFilePath = this.storeFolderPath.resolve(SCHEDULING_CAMPAIGNS_FILE);
         initFolder(this.storeFolderPath);
@@ -52,30 +57,44 @@ public class SchedulingCampaignFileRepository implements PeriodicScheduledCampai
 
     @Override
     public PeriodicScheduledCampaign add(PeriodicScheduledCampaign periodicScheduledCampaign) {
-        Map<String, SchedulingCampaignDto> schedulingCampaigns = readFromDisk();
-        long id = currentMaxId.incrementAndGet();
-        schedulingCampaigns.put(String.valueOf(id), toDto(id, periodicScheduledCampaign));
-        writeOnDisk(resolvedFilePath, schedulingCampaigns);
+        final Lock writeLock;
+        (writeLock = rwLock.writeLock()).lock();
+        try {
+            Map<String, SchedulingCampaignDto> schedulingCampaigns = readFromDisk();
+            long id = currentMaxId.incrementAndGet();
+            schedulingCampaigns.put(String.valueOf(id), toDto(id, periodicScheduledCampaign));
+            writeOnDisk(resolvedFilePath, schedulingCampaigns);
 
-        return periodicScheduledCampaign;
+            return periodicScheduledCampaign;
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     @Override
     public void removeById(Long id) {
-        Map<String, SchedulingCampaignDto> schedulingCampaigns = readFromDisk();
-        schedulingCampaigns.remove(String.valueOf(id));
-        writeOnDisk(resolvedFilePath, schedulingCampaigns);
+        final Lock writeLock;
+        (writeLock = rwLock.writeLock()).lock();
+        try {
+            Map<String, SchedulingCampaignDto> schedulingCampaigns = readFromDisk();
+            schedulingCampaigns.remove(String.valueOf(id));
+            writeOnDisk(resolvedFilePath, schedulingCampaigns);
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     @Override
     public List<PeriodicScheduledCampaign> getALl() {
-        return readFromDisk().entrySet().stream()
-            .map(e -> this.fromDto(e.getKey(), e.getValue()))
+        return readFromDisk().values().stream()
+            .map(this::fromDto)
             .collect(Collectors.toList());
     }
 
     private Map<String, SchedulingCampaignDto> readFromDisk() {
         Map<String, SchedulingCampaignDto> stringSchedulingCampaignDTO = new HashMap<>();
+        final Lock readLock;
+        (readLock = rwLock.readLock()).lock();
         try {
             if (Files.exists(resolvedFilePath)) {
                 byte[] bytes = Files.readAllBytes(resolvedFilePath);
@@ -84,6 +103,8 @@ public class SchedulingCampaignFileRepository implements PeriodicScheduledCampai
             }
         } catch (IOException e) {
             throw new UnsupportedOperationException("Cannot read configuration file: " + resolvedFilePath, e);
+        } finally {
+            readLock.unlock();
         }
 
         return stringSchedulingCampaignDTO;
@@ -102,14 +123,11 @@ public class SchedulingCampaignFileRepository implements PeriodicScheduledCampai
         }
     }
 
-
-    private PeriodicScheduledCampaign fromDto(String id, SchedulingCampaignDto dto) {
+    private PeriodicScheduledCampaign fromDto(SchedulingCampaignDto dto) {
         return new PeriodicScheduledCampaign(Long.valueOf(dto.id), dto.campaignId, dto.campaignTitle, dto.schedulingDate, toFrequency(dto.frequency));
     }
 
     private SchedulingCampaignDto toDto(long id, PeriodicScheduledCampaign periodicScheduledCampaign) {
         return new SchedulingCampaignDto(String.valueOf(id), periodicScheduledCampaign.campaignId, periodicScheduledCampaign.campaignTitle, periodicScheduledCampaign.nextExecutionDate, periodicScheduledCampaign.frequency.label);
     }
-
-
 }

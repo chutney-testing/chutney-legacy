@@ -1,13 +1,22 @@
 package com.chutneytesting.task.groovy;
 
+import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
+import static com.chutneytesting.task.spi.validation.Validator.of;
+import static java.util.Collections.emptyMap;
+import static java.util.Optional.ofNullable;
+
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
+import com.chutneytesting.task.spi.validation.Validator;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.groovy.control.CompilationFailedException;
 
 public class GroovyTask implements Task {
@@ -20,8 +29,16 @@ public class GroovyTask implements Task {
                       @Input("parameters") Map<String, Object> parameters,
                       Logger logger) {
         this.scriptAsString = scriptAsString;
-        this.parameters = parameters;
+        this.parameters = ofNullable(parameters).orElse(emptyMap());
         this.logger = logger;
+    }
+
+    @Override
+    public List<String> validateInputs() {
+        Validator<String> scriptValidation = of(scriptAsString)
+            .validate(Objects::nonNull, "No script provided")
+            .validate(StringUtils::isNotBlank, "Script is empty");
+        return getErrorsFrom(scriptValidation);
     }
 
     @Override

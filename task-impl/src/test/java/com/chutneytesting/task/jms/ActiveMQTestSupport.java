@@ -1,27 +1,14 @@
 package com.chutneytesting.task.jms;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.security.KeyStore;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.QueueConnection;
-import javax.jms.QueueSession;
-import javax.jms.Session;
-import javax.jms.TextMessage;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.SslBrokerService;
 import org.apache.activemq.broker.SslContext;
 import org.apache.activemq.broker.TransportConnector;
-import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.transport.TransportFactory;
 import org.apache.activemq.transport.tcp.SslTransportFactory;
 import org.junit.jupiter.api.AfterAll;

@@ -1,7 +1,8 @@
 package com.chutneytesting.task.micrometer;
 
-import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkRegistry;
 import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.toOutputs;
+import static io.micrometer.core.instrument.Metrics.globalRegistry;
+import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
@@ -20,7 +21,7 @@ public class MicrometerTimerStartTask implements Task {
     public MicrometerTimerStartTask(Logger logger,
                                     @Input("registry") MeterRegistry registry) {
         this.logger = logger;
-        this.registry = checkRegistry(registry);
+        this.registry = ofNullable(registry).orElse(globalRegistry);
     }
 
     @Override

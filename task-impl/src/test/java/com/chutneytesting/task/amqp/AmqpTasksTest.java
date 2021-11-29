@@ -2,21 +2,22 @@ package com.chutneytesting.task.amqp;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static org.mockito.ArgumentMatchers.any;
 
+import com.chutneytesting.task.TestFinallyActionRegistry;
+import com.chutneytesting.task.TestLogger;
+import com.chutneytesting.task.TestTarget;
+import com.chutneytesting.task.spi.FinallyAction;
+import com.chutneytesting.task.spi.Task;
+import com.chutneytesting.task.spi.TaskExecutionResult;
+import com.chutneytesting.task.spi.TaskExecutionResult.Status;
+import com.chutneytesting.task.spi.injectable.Target;
 import com.github.fridujo.rabbitmq.mock.MockConnectionFactory;
 import com.google.common.collect.ImmutableList;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.GetResponse;
 import com.rabbitmq.client.LongString;
 import com.rabbitmq.client.impl.LongStringHelper;
-import com.chutneytesting.task.spi.FinallyAction;
-import com.chutneytesting.task.spi.Task;
-import com.chutneytesting.task.spi.TaskExecutionResult;
-import com.chutneytesting.task.spi.TaskExecutionResult.Status;
-import com.chutneytesting.task.spi.injectable.Target;
-import com.chutneytesting.task.TestFinallyActionRegistry;
-import com.chutneytesting.task.TestLogger;
-import com.chutneytesting.task.TestTarget;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 import wiremock.com.google.common.collect.ImmutableMap;
 
@@ -130,7 +132,7 @@ public class AmqpTasksTest {
         final List<Map<String, Object>> headers = (List<Map<String, Object>>) amqpBasicConsumeResult.outputs.get("headers");
         assertThat(body.size()).isEqualTo(5);
         final Map<String, Object> message = body.get(0);
-        final Map<String, Object>  payload1 = (Map<String, Object>) message.get("payload");
+        final Map<String, Object> payload1 = (Map<String, Object>) message.get("payload");
         assertThat(payload1.get("value")).isEqualTo("test message");
         final Map<String, Object> headers1 = (Map<String, Object>) message.get("headers");
         assertThat(headers1).containsAllEntriesOf(ImmutableMap.of("header1", "value1",
@@ -183,8 +185,8 @@ public class AmqpTasksTest {
         TaskExecutionResult amqpCreateBoundTemporaryQueueResult = amqpCreateBoundTemporaryQueueTask.execute();
         assertThat(amqpCreateBoundTemporaryQueueResult.status).isEqualTo(Status.Success);
         assertThat(finallyActionRegistry.finallyActions)
-            .extracting(FinallyAction::actionIdentifier)
-            .containsExactly("amqp-delete-queue", "amqp-unbind-queue");
+            .extracting(FinallyAction::type)
+            .containsExactly("amqp-unbind-queue", "amqp-delete-queue");
 
         return (String) amqpCreateBoundTemporaryQueueResult.outputs.get("queueName");
     }
@@ -206,7 +208,9 @@ public class AmqpTasksTest {
 
 
     static <T extends Task> T mockConnectionFactory(T task, ConnectionFactory connectionFactory) {
-        ReflectionTestUtils.setField(task, "connectionFactory", connectionFactory);
+        ConnectionFactoryFactory mock = Mockito.mock(ConnectionFactoryFactory.class);
+        Mockito.when(mock.create(any())).thenReturn(connectionFactory);
+        ReflectionTestUtils.setField(task, "connectionFactoryFactory", mock);
         return task;
     }
 }

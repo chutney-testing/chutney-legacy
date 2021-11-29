@@ -1,5 +1,8 @@
 package com.chutneytesting.task.ssh.sshj;
 
+import static java.util.Collections.emptyList;
+import static java.util.Optional.ofNullable;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,20 +15,16 @@ public class Commands {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Commands.class);
 
-    final List<Command> all;
+    public final List<Command> all;
 
     private Commands(List<Command> commands) {
         this.all = commands;
     }
 
     public static Commands from(List<Object> commands) {
-        List<Command> cmds = commands.stream()
+        List<Command> cmds = ofNullable(commands).orElse(emptyList()).stream()
             .map(Commands::buildCommand)
             .collect(Collectors.toList());
-
-        if (cmds.isEmpty()) {
-            throw new IllegalArgumentException("No command defined");
-        }
 
         return new Commands(cmds);
     }

@@ -32,7 +32,7 @@ public class TargetStepParserTest {
 
     @Test
     public void should_build_target_from_step_by_name() {
-        TargetDto expectedTarget = new TargetDto("My target name","http://url:8080", null,null,null,null,null,null);
+        TargetDto expectedTarget = new TargetDto("My target name","http://url:8080", null,null,null,null,null, null, null);
 
         Step stepParent = mock(Step.class);
         Step step = mock(Step.class);

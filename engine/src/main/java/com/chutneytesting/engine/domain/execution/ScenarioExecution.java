@@ -3,24 +3,17 @@ package com.chutneytesting.engine.domain.execution;
 import com.chutneytesting.engine.domain.execution.action.PauseExecutionAction;
 import com.chutneytesting.engine.domain.execution.action.ResumeExecutionAction;
 import com.chutneytesting.engine.domain.execution.action.StopExecutionAction;
-import com.chutneytesting.engine.domain.execution.engine.scenario.ScenarioContext;
-import com.chutneytesting.engine.domain.execution.engine.scenario.StepBuilder;
-import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.event.EndScenarioExecutionEvent;
 import com.chutneytesting.task.spi.FinallyAction;
 import com.chutneytesting.task.spi.injectable.TasksConfiguration;
 import io.reactivex.disposables.Disposable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ScenarioExecution {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScenarioExecution.class);
     private final List<FinallyAction> finallyActions = new ArrayList<>();
     private final TasksConfiguration taskConfiguration;
     public final long executionId;
@@ -58,24 +51,8 @@ public class ScenarioExecution {
         finallyActions.add(finallyAction);
     }
 
-    /**
-     * Make a copy of registered {@link FinallyAction} to avoid infinite loop
-     * with {@link FinallyAction} registering {@link FinallyAction}.
-     */
-    public void executeFinallyActions(Step rootStep, ScenarioContext scenarioContext, StepBuilder stepBuilder) {
+    public void initFinallyActionExecution() {
         this.stop = false; // In case of a stopped scenario, we should set it to false in order to execute finally actions
-        List<FinallyAction> finallyActionsSnapshot = new ArrayList<>(this.finallyActions);
-        Collections.reverse(finallyActionsSnapshot);
-        for (FinallyAction finallyAction : Collections.unmodifiableList(finallyActionsSnapshot)) {
-            try {
-                Step step = stepBuilder.buildStep(finallyAction);
-                step.execute(this, scenarioContext);
-                rootStep.addStepExecution(step);
-
-            } catch (RuntimeException e) {
-                LOGGER.error("Error when executing finallyActions", e);
-            }
-        }
     }
 
     public void waitForRestart() {
@@ -110,5 +87,9 @@ public class ScenarioExecution {
 
     public TasksConfiguration getTasksConfiguration() {
         return taskConfiguration;
+    }
+
+    public List<FinallyAction> finallyActions() {
+        return finallyActions;
     }
 }

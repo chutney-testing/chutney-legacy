@@ -5,7 +5,7 @@
 
     <groupId>com.chutneytesting</groupId>
     <artifactId>chutney-parent</artifactId>
-    <version>SNAPSHOT</version>
+    <version>1.4.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Chutney</name>
@@ -83,7 +83,7 @@
 
         <springboot.version>2.3.10.RELEASE</springboot.version>
         <spring.version>5.3.9.RELEASE</spring.version> <!-- Be careful to follow springboot version-->
-        <jackson.version>2.12.5</jackson.version>
+        <jackson.version>2.13.0</jackson.version>
         <guava.version>30.1.1-jre</guava.version>
         <immutables.version>2.8.8</immutables.version>
         <sl4j.api.version>1.7.32</sl4j.api.version>
@@ -91,45 +91,46 @@
         <commonstext.version>1.9</commonstext.version>
         <commonsio.version>2.11.0</commonsio.version>
         <rxjava.version>2.2.20</rxjava.version>
-        <jgit-jsch.version>5.12.0.202106070339-r</jgit-jsch.version>
+        <jgit-jsch.version>5.13.0.202109080827-r</jgit-jsch.version>
         <jsch.version>0.1.55</jsch.version>
-        <org.everit.json.schema.version>1.12.2</org.everit.json.schema.version>
+        <org.everit.json.schema.version>1.14.0</org.everit.json.schema.version>
         <glacio.version>0.0.1</glacio.version>
 
         <!-- task impl -->
         <jdom2.version>2.0.6</jdom2.version>
         <jsonpath.version>2.6.0</jsonpath.version>
-        <sshj.version>0.31.0</sshj.version>
+        <sshj.version>0.32.0</sshj.version>
         <sshd.version>2.6.0</sshd.version>
         <hjson.version>3.0.0</hjson.version>
         <jms.version>2.0.1</jms.version>
         <amqp-client.version>5.13.0</amqp-client.version>
         <qpid-broker.version>8.0.6</qpid-broker.version>
-        <mongodb.version>3.12.8</mongodb.version>
+        <mongodb.version>3.12.10</mongodb.version>
         <orientdb.version>3.0.30</orientdb.version>
         <selenium.version>3.141.59</selenium.version>
-        <groovy.version>2.5.14</groovy.version>
+        <groovy.version>3.0.9</groovy.version>
+        <radius.version>1.1.0</radius.version>
 
         <!-- jdk11 -->
         <javax.activation.version>1.2.0</javax.activation.version>
         <jaxb.api.version>2.3.0</jaxb.api.version>
 
         <!-- Test dependencies versions -->
-        <junit5.version>5.7.2</junit5.version>
+        <junit5.version>5.8.1</junit5.version>
         <junit-jupiter.version>${junit5.version}</junit-jupiter.version>
-        <assertj.version>3.20.2</assertj.version>
-        <mockito.version>3.12.4</mockito.version>
+        <assertj.version>3.21.0</assertj.version>
+        <mockito.version>4.0.0</mockito.version>
         <mockrunner-jms.version>1.1.2</mockrunner-jms.version>
         <eddsa.version>0.2.0</eddsa.version>
         <activemq.version>5.16.3</activemq.version>
         <rabbitmq-mock.version>1.1.1</rabbitmq-mock.version>
-        <wire-mock.version>2.26.3</wire-mock.version>
-        <pitest.version>1.6.9</pitest.version>
+        <wire-mock.version>2.27.2</wire-mock.version>
+        <pitest.version>1.7.2</pitest.version>
         <otj-pg-embedded.version>0.13.4</otj-pg-embedded.version>
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
         <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
         <awaitility.version>4.1.0</awaitility.version>
-        <jqwik.version>1.5.1</jqwik.version>
+        <jqwik.version>1.5.6</jqwik.version>
     </properties>
 
     <dependencies>
@@ -468,6 +469,11 @@
                 <artifactId>java-diff-utils</artifactId>
                 <version>4.5</version>
             </dependency>
+            <dependency>
+                <groupId>org.tinyradius</groupId>
+                <artifactId>tinyradius</artifactId>
+                <version>${radius.version}</version>
+            </dependency>
 
             <!-- Test dependencies -->
             <dependency>
@@ -659,7 +665,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.3.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -781,6 +787,25 @@
             <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>jcenter</id>
+            <url>https://jcenter.bintray.com</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>jcenter</id>
+            <url>https://jcenter.bintray.com</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
     <profiles>
         <profile>

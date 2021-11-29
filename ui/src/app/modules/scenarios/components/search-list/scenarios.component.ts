@@ -1,12 +1,19 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, map } from 'rxjs/operators';
 
-import { distinct, flatMap, intersection, sortByAndOrder } from '@shared/tools/array-utils';
+import {
+    distinct,
+    filterOnTextContent,
+    flatMap,
+    intersection,
+    newInstance,
+    sortByAndOrder
+} from '@shared/tools/array-utils';
 import { StateService } from '@shared/state/state.service';
 import { ScenarioService, JiraPluginService, JiraPluginConfigurationService } from '@core/services';
-import { ScenarioIndex, ScenarioType, SelectableTags, Authorization } from '@model';
+import { ScenarioIndex, ScenarioType, SelectableTags, Authorization, TestCase } from '@model';
 
 @Component({
     selector: 'chutney-scenarios',
@@ -20,21 +27,24 @@ export class ScenariosComponent implements OnInit, OnDestroy {
 
     scenarios: Array<ScenarioIndex> = [];
 
-    listView = false;
-
     // Filter
     viewedScenarios: Array<ScenarioIndex> = [];
     textFilter: string;
-    tagFilter = new SelectableTags<String>();
+    fullTextFilter: string;
     scenarioTypeFilter = new SelectableTags<ScenarioType>();
-
+    settings = {};
+    tags;
+    selectedTags = [];
+    fullTextSearch = false;
     // Jira
     jiraMap: Map<string, string> = new Map();
     jiraUrl = '';
-
     // Order
-    orderBy = 'title';
+    orderBy = 'lastExecution';
     reverseOrder = false;
+
+    private isComposed = TestCase.isComposed;
+    private searchSub$ = new Subject<string>();
 
     Authorization = Authorization;
 
@@ -49,6 +59,19 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this.searchSub$.pipe(
+            debounceTime(400)
+            //distinctUntilChanged()
+        ).subscribe((inputValue) => {
+            this.scenarioService.search(this.fullTextFilter).subscribe((res) => {
+                    if (this.fullTextFilter) {
+                        this.localFilter(res);
+                    } else {
+                        this.localFilter(this.scenarios);
+                    }
+                }
+            );
+        });
         this.initJiraPlugin();
         this.getScenarios()
             .then(r => {
@@ -59,6 +82,19 @@ export class ScenariosComponent implements OnInit, OnDestroy {
                 this.applyFilters();
             })
             .catch(err => console.log(err));
+
+
+        this.settings = {
+            text: 'Select tag',
+            enableCheckAll: false,
+            enableSearchFilter: true,
+            autoPosition: false
+        };
+    }
+
+    private initTags() {
+        const allTagsInScenario: string[] = this.findAllTags();
+        this.tags = this.getTagsForComboModel(allTagsInScenario);
     }
 
     ngOnDestroy(): void {
@@ -74,7 +110,7 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     private applyDefaultState() {
         this.viewedScenarios = this.scenarios;
         this.scenarioTypeFilter.initialize(this.SCENARIO_TYPES);
-        this.tagFilter.initialize(this.findAllTags());
+        this.initTags();
     }
 
     private findAllTags() {
@@ -82,34 +118,20 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     }
 
     private applySavedState() {
-        this.setView();
         this.setSelectedTypes();
         this.setSelectedTags();
-    }
-
-    private setView() {
-        const listView = this.stateService.getScenarioListValue();
-        if (listView) {
-            this.listView = listView;
-        }
-    }
-
-    private setSelectedTypes() {
-        const savedScenarioType = this.stateService.getScenarioType();
-        if (savedScenarioType != null && savedScenarioType.length > 0) {
-            this.scenarioTypeFilter.selectTags(savedScenarioType);
-        }
     }
 
     private setSelectedTags() {
         const savedTags = this.stateService.getTags();
         if (savedTags != null) {
-            this.tagFilter.selectTags(savedTags);
+            this.selectedTags = this.getTagsForComboModel(savedTags);
         }
-
-        const noTag = this.stateService.getNoTag();
-        if (noTag != null) {
-            this.tagFilter.setNoTag(noTag);
+    }
+    private setSelectedTypes() {
+        const savedScenarioType = this.stateService.getScenarioType();
+        if (savedScenarioType != null && savedScenarioType.length > 0) {
+            this.scenarioTypeFilter.selectTags(savedScenarioType);
         }
     }
 
@@ -130,11 +152,11 @@ export class ScenariosComponent implements OnInit, OnDestroy {
                     if (params['type']) {
                         this.scenarioTypeFilter.selectTags(params['type'].split(','));
                     }
-                    if (params['noTag']) {
-                        this.tagFilter.setNoTag(params['noTag'] === 'true');
-                    }
                     if (params['tags']) {
-                        this.tagFilter.selectTags(params['tags'].split(','));
+                        const uriTag = params['tags'].split(',');
+                        if (uriTag != null) {
+                            this.selectedTags = this.getTagsForComboModel(uriTag);
+                        }
                     }
                     this.applyFilters();
                     this.ngOnDestroy();
@@ -148,17 +170,11 @@ export class ScenariosComponent implements OnInit, OnDestroy {
         if (compose) {
             this.router.navigateByUrl('/scenario/component-edition');
         } else {
-            this.router.navigateByUrl('/scenario/edition');
+            this.router.navigateByUrl('/scenario/raw-edition');
         }
     }
 
-    toggleListView() {
-        this.listView = !this.listView;
-        this.stateService.changeScenarioList(this.listView);
-    }
-
     // Ordering //
-
     sortBy(property) {
         if (this.orderBy === property) {
             this.reverseOrder = !this.reverseOrder;
@@ -177,10 +193,10 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     }
 
     private getKeyExtractorBy(property: string) {
-        if (property == 'title') {
+        if (property === 'title') {
             return i => i[property] == null ? '' : i[property].toLowerCase();
         }
-        if (property == 'lastExecution' || property == 'creationDate') {
+        if (property === 'lastExecution' || property === 'creationDate') {
             const now = Date.now();
             return i => i[property] == null ? now - 1491841324 /*2017-04-10T16:22:04*/ : now - Date.parse(i[property]);
         } else {
@@ -195,21 +211,8 @@ export class ScenariosComponent implements OnInit, OnDestroy {
         this.applyFilters();
     }
 
-    selectAll() {
-        this.tagFilter.selectAll();
-        this.stateService.changeTags(this.tagFilter.selected());
-        this.stateService.changeNoTag(this.tagFilter.setNoTag(true));
-        this.stateService.changeScenarioType(this.scenarioTypeFilter.selected());
-        this.applyFilters();
-    }
-
-    isSelectAll() {
-        return this.tagFilter.isSelectAll();
-    }
-
-    deselectAll() {
-        this.tagFilter.deselectAll();
-        this.stateService.changeNoTag(false);
+    updateFullTextFilter(text: string) {
+        this.fullTextFilter = text;
         this.applyFilters();
     }
 
@@ -219,35 +222,16 @@ export class ScenariosComponent implements OnInit, OnDestroy {
         this.applyFilters();
     }
 
-    toggleNoTagFilter() {
-        this.tagFilter.toggleNoTag();
-        this.stateService.changeNoTag(this.tagFilter.isNoTagSelected());
-        this.applyFilters();
-    }
-
-    toggleTagFilter(tag: String) {
-        this.tagFilter.toggleSelect(tag);
-        this.stateService.changeTags(this.tagFilter.selected());
-        this.applyFilters();
-    }
-
     applyFilters() {
-        if (this.textFilter) {
-            this.scenarioService.search(this.textFilter).subscribe(res => {
-                    if(this.textFilter) {
-                        this.localFilter(res);
-                    } else {
-                        this.localFilter(this.scenarios);
-                    }
-                }
-            );
+        if (this.fullTextFilter) {
+            this.searchSub$.next(this.fullTextFilter);
         } else {
             this.localFilter(this.scenarios);
         }
     }
 
     private localFilter(scenarios: Array<ScenarioIndex>) {
-        this.viewedScenarios = scenarios;
+        this.viewedScenarios = filterOnTextContent(scenarios, this.textFilter, ['title', 'id']);
         this.viewedScenarios = this.filterOnAttributes();
         this.sortScenarios(this.orderBy, this.reverseOrder);
         this.applyFiltersToRoute();
@@ -275,27 +259,13 @@ export class ScenariosComponent implements OnInit, OnDestroy {
 
     private filterOnAttributes() {
         const input = this.viewedScenarios;
-        if (this.tagFilter.isSelectAll() && this.scenarioTypeFilter.isSelectAll()) {
-            return input;
-        }
 
-        const tags = this.tagFilter.selected();
-        const noTag = this.tagFilter.isNoTagSelected();
+        const tags = this.getSelectedTags();
         const scenarioTypes = this.scenarioTypeFilter.selected();
 
         return input.filter((scenario: ScenarioIndex) => {
-            return (this.tagPresent(tags, scenario)
-                || this.noTagPresent(noTag, scenario))
-                && this.scenarioTypePresent(scenarioTypes, scenario);
+            return this.tagPresent(tags, scenario) && this.scenarioTypePresent(scenarioTypes, scenario);
         });
-    }
-
-    private tagPresent(tags: String[], scenario: ScenarioIndex): boolean {
-        return intersection(tags, scenario.tags).length > 0;
-    }
-
-    private noTagPresent(noTag: boolean, scenario: ScenarioIndex): boolean {
-        return noTag && scenario.tags.length === 0;
     }
 
     private scenarioTypePresent(scenarioTypes: ScenarioType[], scenario: ScenarioIndex): boolean {
@@ -310,9 +280,44 @@ export class ScenariosComponent implements OnInit, OnDestroy {
                 orderBy: this.orderBy,
                 reverseOrder: this.reverseOrder,
                 type: this.scenarioTypeFilter.selected().toString(),
-                noTag: this.tagFilter.isNoTagSelected(),
-                tags: this.tagFilter.selected().toString()
+                tags: this.getSelectedTags().toString()
             }
+        });
+    }
+
+    private tagPresent(tags: String[], scenario: ScenarioIndex): boolean {
+        if(tags.length > 0) {
+            return intersection(tags, scenario.tags).length > 0;
+        } else {
+            return true;
+        }
+    }
+
+    onItemSelect() {
+        this.stateService.changeTags(this.getSelectedTags());
+        this.applyFilters();
+    }
+
+    OnItemDeSelect() {
+        this.stateService.changeTags(this.getSelectedTags());
+        this.applyFilters();
+    }
+
+    OnItemDeSelectAll() {
+        this.selectedTags = newInstance([]);
+        this.stateService.changeTags(this.getSelectedTags());
+        this.applyFilters();
+    }
+
+    private getSelectedTags() {
+        return this.selectedTags.map((i) => i.itemName);
+    }
+
+    private getTagsForComboModel(tags: String[]) {
+        let index = 0;
+        return tags.map((t) => {
+            index++;
+            return {'id': index, 'itemName': t};
         });
     }
 }

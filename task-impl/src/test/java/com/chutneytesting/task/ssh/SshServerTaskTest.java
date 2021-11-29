@@ -1,7 +1,6 @@
 package com.chutneytesting.task.ssh;
 
 import static java.util.Collections.singletonList;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -14,12 +13,11 @@ import com.chutneytesting.task.spi.FinallyAction;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.SecurityInfo;
 import com.chutneytesting.task.spi.injectable.Target;
+import com.chutneytesting.task.ssh.fakes.HardcodedTarget;
 import com.chutneytesting.task.ssh.sshd.SshServerMock;
 import com.chutneytesting.task.ssh.sshj.CommandResult;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -29,14 +27,10 @@ class SshServerTaskTest {
     private SshServerMock sshServer;
 
     @AfterEach
-    public void tearDown() {
+    public void tearDown() throws InterruptedException {
         if (sshServer != null) {
             SshServerStopTask sshServerStopTask = new SshServerStopTask(new TestLogger(), sshServer);
             sshServerStopTask.execute();
-
-            await().atMost(2, SECONDS).untilAsserted(() ->
-                assertThat(sshServer.isClosed()).isTrue()
-            );
         }
     }
 
@@ -121,7 +115,7 @@ class SshServerTaskTest {
             assertThat(sshServer.isOpen()).isTrue();
         });
         FinallyAction stopServerTask = finallyActionRegistry.finallyActions.get(0);
-        assertThat(stopServerTask.actionIdentifier()).isEqualTo("ssh-server-stop");
+        assertThat(stopServerTask.type()).isEqualTo("ssh-server-stop");
         assertThat(stopServerTask.inputs().get("ssh-server")).isEqualTo(sshServer);
     }
 
@@ -134,37 +128,5 @@ class SshServerTaskTest {
         when(securityInfoMock.credential()).thenReturn(Optional.of(credential));
 
         return new HardcodedTarget(sshServer, securityInfoMock);
-    }
-
-    private static class HardcodedTarget implements Target {
-
-        private final SshServerMock sshServer;
-        private final SecurityInfo securityInfo;
-
-        HardcodedTarget(SshServerMock sshServer, SecurityInfo securityInfoMock) {
-            this.sshServer = sshServer;
-            this.securityInfo = securityInfoMock;
-        }
-
-        @Override
-        public String name() {
-            return "SSH_SERVER";
-        }
-
-        @Override
-        public String url() {
-            return "ssh://" + sshServer.host() + ":" + sshServer.port();
-        }
-
-        @Override
-        public Map<String, String> properties() {
-            return Collections.emptyMap();
-        }
-
-        @Override
-        public SecurityInfo security() {
-            return securityInfo;
-        }
-
     }
 }

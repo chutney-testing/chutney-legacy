@@ -1,5 +1,6 @@
 package com.chutneytesting.task.jms;
 
+import static com.chutneytesting.tools.Entry.toEntryList;
 import static com.chutneytesting.tools.ThrowingSupplier.toUnchecked;
 
 import com.chutneytesting.task.jms.consumer.Consumer;
@@ -112,6 +113,13 @@ public class JmsConnectionFactory {
     private void configureSsl(Target target, Hashtable<String, String> environmentProperties) {
         target.security().keyStore().ifPresent(keyStore -> environmentProperties.put("connection.ConnectionFactory.keyStore", keyStore));
         target.security().keyStorePassword().ifPresent(keyStorePassword -> environmentProperties.put("connection.ConnectionFactory.keyStorePassword", keyStorePassword));
+
+        target.security().keyPassword()
+            .or(() -> toEntryList(target.properties()).stream()
+                .filter(e -> e.key.equalsIgnoreCase("keyPassword"))
+                .findFirst()
+                .map(e -> e.value)
+            ).ifPresent(keyStoreKeyPassword -> environmentProperties.put("connection.ConnectionFactory.keyStoreKeyPassword", keyStoreKeyPassword));
 
         target.security().trustStore().ifPresent(trustStore -> environmentProperties.put("connection.ConnectionFactory.trustStore", trustStore));
         target.security().trustStorePassword().ifPresent(trustStorePassword -> environmentProperties.put("connection.ConnectionFactory.trustStorePassword", trustStorePassword));

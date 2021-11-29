@@ -2,6 +2,7 @@ package com.chutneytesting.design.infra.storage.campaign;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaign;
 import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaignRepository;
@@ -10,7 +11,12 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -102,5 +108,36 @@ public class PeriodicScheduledCampaignFileRepositoryTest {
         PeriodicScheduledCampaign sc3WithId = new PeriodicScheduledCampaign(3L, 33L, "campaign title 3", LocalDateTime.of(2022, 4, 6, 9, 12));
 
         assertThat(periodicScheduledCampaigns).contains(sc1WithId, sc3WithId);
+    }
+
+    @Test
+    void should_read_and_write_concurrently() throws InterruptedException {
+        List<Exception> exceptions = new ArrayList<>();
+        Runnable addScheduledCampaign = () -> {
+            try {
+                sut.add(new PeriodicScheduledCampaign(null, 11L, "campaign title 1", LocalDateTime.now().minusWeeks(1)));
+            } catch (Exception e) {
+                exceptions.add(e);
+            }
+        };
+        Runnable readScheduledCampaigns = () -> {
+            try {
+                sut.getALl();
+            } catch (Exception e) {
+                exceptions.add(e);
+            }
+        };
+
+        ExecutorService pool = Executors.newFixedThreadPool(2);
+        IntStream.range(1, 5).forEach((i) -> {
+            pool.submit(addScheduledCampaign);
+            pool.submit(readScheduledCampaigns);
+        });
+        pool.shutdown();
+        if (pool.awaitTermination(5, TimeUnit.SECONDS)) {
+            assertThat(exceptions).isEmpty();
+        } else {
+            fail("Pool termination timeout ...");
+        }
     }
 }

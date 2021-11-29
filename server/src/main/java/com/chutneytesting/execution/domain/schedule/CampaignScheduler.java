@@ -6,10 +6,13 @@ import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaignReposi
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -22,27 +25,43 @@ public class CampaignScheduler {
     private final CampaignExecutionEngine campaignExecutionEngine;
     private final PeriodicScheduledCampaignRepository periodicScheduledCampaignRepository;
     private final Clock clock;
+    private final ExecutorService executor;
 
-    public CampaignScheduler(CampaignExecutionEngine campaignExecutionEngine, Clock clock, PeriodicScheduledCampaignRepository periodicScheduledCampaignRepository) {
+    public CampaignScheduler(
+        CampaignExecutionEngine campaignExecutionEngine,
+        Clock clock,
+        PeriodicScheduledCampaignRepository periodicScheduledCampaignRepository,
+        @Qualifier("scheduledCampaignsExecutor") ExecutorService executor
+    ) {
         this.campaignExecutionEngine = campaignExecutionEngine;
         this.clock = clock;
         this.periodicScheduledCampaignRepository = periodicScheduledCampaignRepository;
+        this.executor = executor;
     }
 
     @Async
     public void executeScheduledCampaigns() {
-        scheduledCampaignIdsToExecute()
-            .parallel()
-            .forEach(this::executeScheduledCampaignById);
+        try {
+            executor.invokeAll(
+                scheduledCampaignIdsToExecute()
+                    .map(this::executeScheduledCampaignById)
+                    .collect(Collectors.toList())
+            );
+        } catch (InterruptedException e) {
+            LOGGER.error("Scheduled campaigns thread interrupted", e);
+        }
     }
 
-    private void executeScheduledCampaignById(Long campaignId) {
-        LOGGER.info("Execute campaign with id [{}]", campaignId);
-        try {
-            campaignExecutionEngine.executeById(campaignId, SCHEDULER_EXECUTE_USER);
-        } catch (Exception e) {
-            LOGGER.error("Error during campaign [{}] execution", campaignId, e);
-        }
+    private Callable<Void> executeScheduledCampaignById(Long campaignId) {
+        return () -> {
+            LOGGER.info("Execute campaign with id [{}]", campaignId);
+            try {
+                campaignExecutionEngine.executeById(campaignId, SCHEDULER_EXECUTE_USER);
+            } catch (Exception e) {
+                LOGGER.error("Error during campaign [{}] execution", campaignId, e);
+            }
+            return null;
+        };
     }
 
     private Stream<Long> scheduledCampaignIdsToExecute() {

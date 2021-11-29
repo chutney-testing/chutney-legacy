@@ -60,7 +60,7 @@ public class SeleniumDriverInitTaskTest {
         // Then
         verify(finallyActionRegistry, times(1)).registerFinallyAction(any());
         FinallyAction quitAction = finallyActionRegistry.finallyActions.get(0);
-        assertThat(quitAction.actionIdentifier()).isEqualTo("selenium-quit");
+        assertThat(quitAction.type()).isEqualTo("selenium-quit");
         assertThat(quitAction.inputs()).containsOnlyKeys("web-driver");
 
         assertThat(result.status).isEqualTo(TaskExecutionResult.Status.Success);

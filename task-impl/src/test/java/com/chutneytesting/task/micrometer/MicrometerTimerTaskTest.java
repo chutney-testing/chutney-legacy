@@ -12,7 +12,9 @@ import com.chutneytesting.task.spi.TaskExecutionResult;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 
@@ -22,66 +24,22 @@ public class MicrometerTimerTaskTest {
     private final String METER_NAME_PREFIX = "timerName";
 
     @Test
-    public void timer_name_is_mandatory_if_no_given_timer() {
-        assertThatThrownBy(() ->
-            new MicrometerTimerTask(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null).execute()
-        ).isExactlyInstanceOf(NullPointerException.class);
-    }
+    public void summary_name_is_mandatory_if_no_given_summary() {
+        MicrometerTimerTask micrometerTimerTask = new MicrometerTimerTask(null, null, null, null, "not a integer", "not a duration", "not a duration", "not a duration", "not a integer", null, "not a list of double", "not a list of duration", null, null, null, "not a duration");
+        List<String> errors = micrometerTimerTask.validateInputs();
 
-    @Test
-    public void timer_buffer_length_must_be_an_integer() {
-        assertThatThrownBy(() ->
-            new MicrometerTimerTask(null, buildMeterName(METER_NAME_PREFIX), null, null, "not a integer", null, null, null, null, null, null, null, null, null, null, null)
-        ).isExactlyInstanceOf(NumberFormatException.class);
-    }
-
-    @Test
-    public void timer_expiry_must_be_a_duration() {
-        assertThatThrownBy(() ->
-            new MicrometerTimerTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, "not a duration", null, null, null, null, null, null, null, null, null, null)
-        ).isExactlyInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    public void timer_max_value_must_be_a_duration() {
-        assertThatThrownBy(() ->
-            new MicrometerTimerTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, "not a duration", null, null, null, null, null, null, null, null, null)
-        ).isExactlyInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    public void timer_min_value_must_be_a_duration() {
-        assertThatThrownBy(() ->
-            new MicrometerTimerTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, "not a duration", null, null, null, null, null, null, null, null)
-        ).isExactlyInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    public void timer_percentile_precision_must_be_an_integer() {
-        assertThatThrownBy(() ->
-            new MicrometerTimerTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, "not a integer", null, null, null, null, null, null, null)
-        ).isExactlyInstanceOf(NumberFormatException.class);
-    }
-
-    @Test
-    public void timer_percentiles_must_be_a_list_of_double() {
-        assertThatThrownBy(() ->
-            new MicrometerTimerTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, null, null, "not a list of double", null, null, null, null, null)
-        ).isExactlyInstanceOf(NumberFormatException.class);
-    }
-
-    @Test
-    public void timer_sla_must_be_a_list_of_duration() {
-        assertThatThrownBy(() ->
-            new MicrometerTimerTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, null, null, null, "not a list of duration", null, null, null, null)
-        ).isExactlyInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    public void timer_record_must_be_a_duration() {
-        assertThatThrownBy(() ->
-            new MicrometerTimerTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, null, null, null, null, null, null, null, null, "not a duration")
-        ).isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThat(errors.size()).isEqualTo(9);
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(errors.get(0)).isEqualTo("name and timer cannot be both null");
+        softly.assertThat(errors.get(1)).isEqualTo("[bufferLength parsing] not applied because of exception java.lang.NumberFormatException(For input string: \"not a integer\")");
+        softly.assertThat(errors.get(2)).isEqualTo("[percentilePrecision parsing] not applied because of exception java.lang.NumberFormatException(For input string: \"not a integer\")");
+        softly.assertThat(errors.get(3)).startsWith("[maxValue is not parsable] not applied because of exception java.lang.IllegalArgumentException(Cannot parse duration: not a duration");
+        softly.assertThat(errors.get(4)).startsWith("[minValue is not parsable] not applied because of exception java.lang.IllegalArgumentException(Cannot parse duration: not a duration");
+        softly.assertThat(errors.get(5)).startsWith("[record is not parsable] not applied because of exception java.lang.IllegalArgumentException(Cannot parse duration: not a duration");
+        softly.assertThat(errors.get(6)).startsWith("[expiry is not parsable] not applied because of exception java.lang.IllegalArgumentException(Cannot parse duration: not a duration");
+        softly.assertThat(errors.get(7)).isEqualTo("[Cannot parse percentils list] not applied because of exception java.lang.NumberFormatException(For input string: \"not a list of double\")");
+        softly.assertThat(errors.get(8)).isEqualTo("[Cannot parse sla list] not applied because of exception java.lang.NumberFormatException(For input string: \"not a list of duration\")");
+        softly.assertAll();
     }
 
     @Test
@@ -178,7 +136,7 @@ public class MicrometerTimerTaskTest {
         assertSuccessAndTimerObjectType(result);
 
         assertThat(logger.info).hasSize(5);
-        assertThat(logger.info.get(0)).isEqualTo("Timer updated by PT6S");
+        assertThat(logger.info.get(0)).isEqualTo("Timer updated by 6 s");
         assertThat(logger.info.get(1)).isEqualTo("Timer current total time is 6.0 SECONDS");
         assertThat(logger.info.get(2)).isEqualTo("Timer current max time is 6.0 SECONDS");
         assertThat(logger.info.get(3)).isEqualTo("Timer current mean time is 6.0 SECONDS");

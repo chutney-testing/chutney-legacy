@@ -7,10 +7,17 @@
     <parent>
         <groupId>com.chutneytesting</groupId>
         <artifactId>chutney-parent</artifactId>
-        <version>SNAPSHOT</version>
+        <version>1.4.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>task-spi</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+    </dependencies>
 
     <profiles>
         <!-- Mutation Testing -->

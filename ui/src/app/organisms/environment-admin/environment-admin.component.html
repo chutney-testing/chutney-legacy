@@ -8,11 +8,11 @@
                 <div class="form-group row">
                     <label for="name" class="col-3 col-form-label">Name</label>
                     <div class="col-9 pr-0">
-                        <input type="text" class="form-control" formControlName="name"/>
+                        <input id="name" type="text" class="form-control" formControlName="name"/>
                     </div>
                     <label for="description" class="col-3 col-form-label">Description</label>
                     <div class="col-9 pr-0">
-                            <input type="text" class="form-control" formControlName="description"/>
+                            <input id="description" type="text" class="form-control" formControlName="description"/>
                     </div>
                 </div>
                 <button *ngIf="!envUpdate" type="button" class="btn btn-success m-3" (click)="updateEnvironment()">{{ 'global.actions.create' | translate }}</button>

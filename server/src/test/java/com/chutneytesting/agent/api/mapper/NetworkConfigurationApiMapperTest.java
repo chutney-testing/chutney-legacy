@@ -41,7 +41,7 @@ public class NetworkConfigurationApiMapperTest {
         agentInfoApiDto.port = 1000;
         dto.agentNetworkConfiguration = new LinkedHashSet<>(Collections.singletonList(agentInfoApiDto));
 
-        SecurityApiDto security = new SecurityApiDto("user1", null, null, null, null, null);
+        SecurityApiDto security = new SecurityApiDto("user1", null, null, null, null, null, null, null);
         TargetsApiDto targetsApiDto = new TargetsApiDto("s1", "proto://host:12/lol", null, security);
 
         LinkedHashSet<TargetsApiDto> targetSet = new LinkedHashSet<>();
@@ -85,7 +85,7 @@ public class NetworkConfigurationApiMapperTest {
         agentInfoApiDto.port = 1000;
         dto.agentNetworkConfiguration = new LinkedHashSet<>(Collections.singletonList(agentInfoApiDto));
 
-        SecurityApiDto securityApiDto = new SecurityApiDto("sa", "", null, null, null, null);
+        SecurityApiDto securityApiDto = new SecurityApiDto("sa", "", null, null, null, null, null, null);
         TargetsApiDto targetsApiDto = new TargetsApiDto("s1", "proto://host:1/lol", new HashMap<>(), securityApiDto);
         EnvironmentApiDto envApiDto = new EnvironmentApiDto("envName", singleton(targetsApiDto));
         dto.environmentsConfiguration = new LinkedHashSet(Collections.singletonList(envApiDto));

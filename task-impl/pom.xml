@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.chutneytesting</groupId>
         <artifactId>chutney-parent</artifactId>
-        <version>SNAPSHOT</version>
+        <version>1.4.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>task-impl</artifactId>
@@ -166,6 +166,12 @@
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-support</artifactId>
         </dependency>
+        <!-- Radius tasks -->
+        <dependency>
+            <groupId>org.tinyradius</groupId>
+            <artifactId>tinyradius</artifactId>
+        </dependency>
+        <!-- Others -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
@@ -178,6 +184,7 @@
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-core</artifactId>
         </dependency>
+
         <!--TEST-->
         <dependency>
             <groupId>com.github.fridujo</groupId>
@@ -206,7 +213,7 @@
         <dependency>
             <groupId>org.apache.ws.security</groupId>
             <artifactId>wss4j</artifactId>
-            <version>1.6.17</version>
+            <version>1.6.19</version>
         </dependency>
     </dependencies>
 

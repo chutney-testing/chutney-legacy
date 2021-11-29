@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, BehaviorSubject, of } from 'rxjs';
+import { Observable, BehaviorSubject} from 'rxjs';
 import { tap, delay } from 'rxjs/internal/operators';
 
-import { environment } from '../../../environments/environment';
+import { environment } from '@env/environment';
 import { User, Authorization } from '@model';
 import { intersection, contains, isNullOrBlankString } from '@shared/tools';
 

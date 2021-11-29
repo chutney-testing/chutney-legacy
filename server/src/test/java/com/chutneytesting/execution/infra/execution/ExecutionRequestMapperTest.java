@@ -66,7 +66,7 @@ public class ExecutionRequestMapperTest {
         // Given
         String expectedType = "task-id";
         String expectedTargetId = "target name";
-        SecurityInfoExecutionDto securityDto = new SecurityInfoExecutionDto(null, null, null, null, null, null);
+        SecurityInfoExecutionDto securityDto = new SecurityInfoExecutionDto(null, null, null, null, null, null, null);
         TargetExecutionDto expectedTarget = new TargetExecutionDto(expectedTargetId, "", emptyMap(), securityDto, emptyList());
 
         LinkedHashMap<String, Object> expectedOutputs = new LinkedHashMap<>(Maps.of(
@@ -131,7 +131,7 @@ public class ExecutionRequestMapperTest {
         );
 
         when(environmentApplication.getTarget(any(), eq(expectedTargetId)))
-            .thenReturn(new TargetDto(expectedTargetId, "", null, null, null, null, null, null));
+            .thenReturn(new TargetDto(expectedTargetId, "", null, null, null, null, null, null, null));
 
         // When
         ExecutionRequest request = new ExecutionRequest(testCase, "", "");
@@ -161,7 +161,7 @@ public class ExecutionRequestMapperTest {
     }
 
     private void assertRootStepDefinitionRequestDto(ExecutionRequestDto.StepDefinitionRequestDto stepDefinitionRequestDto, String name) {
-        SecurityInfoExecutionDto securityDto = new SecurityInfoExecutionDto(null, null, null, null, null, null);
+        SecurityInfoExecutionDto securityDto = new SecurityInfoExecutionDto(null, null, null, null, null, null, null);
 
         assertThat(stepDefinitionRequestDto).isNotNull();
         assertThat(stepDefinitionRequestDto.name).isEqualTo(name);

@@ -13,14 +13,16 @@ public class SecurityInfoImpl implements SecurityInfo {
     private String trustStorePassword;
     private String keyStore;
     private String keyStorePassword;
+    private String keyPassword;
     private String privateKey;
 
-    private SecurityInfoImpl(Credential credential, String trustStore, String trustStorePassword, String keyStore, String keyStorePassword, String privateKey) {
+    private SecurityInfoImpl(Credential credential, String trustStore, String trustStorePassword, String keyStore, String keyStorePassword, String keyPassword, String privateKey) {
         this.credential = credential;
         this.trustStore = trustStore;
         this.trustStorePassword = trustStorePassword;
         this.keyStore = keyStore;
         this.keyStorePassword = keyStorePassword;
+        this.keyPassword = keyPassword;
         this.privateKey = privateKey;
     }
 
@@ -56,6 +58,11 @@ public class SecurityInfoImpl implements SecurityInfo {
     @Override
     public Optional<String> keyStorePassword() {
         return ofNullable(keyStorePassword);
+    }
+
+    @Override
+    public Optional<String> keyPassword() {
+        return ofNullable(keyPassword);
     }
 
     @Override
@@ -102,6 +109,7 @@ public class SecurityInfoImpl implements SecurityInfo {
         private String trustStorePassword;
         private String keyStore;
         private String keyStorePassword;
+        private String keyPassword;
         private String privateKey;
 
         private SecurityInfoBuilder() {}
@@ -113,6 +121,7 @@ public class SecurityInfoImpl implements SecurityInfo {
                 trustStorePassword,
                 keyStore,
                 keyStorePassword,
+                keyPassword,
                 privateKey
             );
         }
@@ -142,11 +151,15 @@ public class SecurityInfoImpl implements SecurityInfo {
             return this;
         }
 
+        public SecurityInfoBuilder keyPassword(String keyPassword) {
+            this.keyPassword = keyPassword;
+            return this;
+        }
+
         public SecurityInfoBuilder privateKey(String privateKey) {
             this.privateKey = privateKey;
             return this;
         }
-
     }
 
     public static class Credential implements SecurityInfo.Credential {

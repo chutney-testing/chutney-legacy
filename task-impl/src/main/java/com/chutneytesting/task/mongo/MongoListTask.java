@@ -1,15 +1,18 @@
 package com.chutneytesting.task.mongo;
 
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.MongoIterable;
+import static com.chutneytesting.task.mongo.MongoTaskValidatorsUtils.mongoTargetValidation;
+import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
+
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
+import com.chutneytesting.tools.CloseableResource;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.MongoIterable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import com.chutneytesting.tools.CloseableResource;
 
 public class MongoListTask implements Task {
 
@@ -20,6 +23,13 @@ public class MongoListTask implements Task {
     public MongoListTask(Target target, Logger logger) {
         this.target = target;
         this.logger = logger;
+    }
+
+    @Override
+    public List<String> validateInputs() {
+        return getErrorsFrom(
+            mongoTargetValidation(target)
+        );
     }
 
     @Override

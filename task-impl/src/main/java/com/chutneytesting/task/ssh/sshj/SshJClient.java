@@ -1,32 +1,41 @@
 package com.chutneytesting.task.ssh.sshj;
 
+import static java.util.Collections.emptyList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.springframework.util.StringUtils.isEmpty;
 
+import com.chutneytesting.task.spi.injectable.Logger;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.PublicKey;
+import java.util.Collections;
+import java.util.List;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.common.IOUtils;
 import net.schmizz.sshj.common.LoggerFactory;
 import net.schmizz.sshj.common.StreamCopier;
 import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.transport.TransportException;
+import net.schmizz.sshj.transport.verification.HostKeyVerifier;
 import net.schmizz.sshj.userauth.UserAuthException;
 import net.schmizz.sshj.userauth.keyprovider.KeyProvider;
 
 public class SshJClient implements SshClient {
 
     private final Connection connection;
+    private final Logger logger;
     private final boolean shell;
 
-    public SshJClient(Connection connection) {
-        this(connection, false);
+    @Deprecated
+    public SshJClient(Connection connection, Logger logger) {
+        this(connection, false, logger);
     }
 
-    public SshJClient(Connection connection, boolean shell) {
+    public SshJClient(Connection connection, boolean shell, Logger logger) {
         this.connection = connection;
+        this.logger = logger;
         this.shell = shell;
     }
 
@@ -43,15 +52,26 @@ public class SshJClient implements SshClient {
     }
 
     private void connect(SSHClient client, Connection connection) throws IOException {
-        client.addHostKeyVerifier((a, b, c) -> true); // TODO GVE : Add best way host key verifier to really check.
+        client.addHostKeyVerifier(new HostKeyVerifier() {
+            @Override
+            public boolean verify(String hostname, int port, PublicKey key) {
+                return true;
+            }
+            @Override
+            public List<String> findExistingAlgorithms(String hostname, int port) {
+                return emptyList();
+            }
+        }); // TODO : Add best way host key verifier to really check.
         client.connect(connection.serverHost, connection.serverPort);
     }
 
     private void authenticate(SSHClient client, Connection connection) throws IOException {
         if (isEmpty(connection.privateKey)) {
+            logger.info("Authentication via username/password as " + connection.username);
             loginWithPassword(client, connection.username, connection.password);
         } else {
-            loginWithPrivateKey(client, connection.username, connection.privateKey);
+            logger.info("Authentication via private key as " + connection.username);
+            loginWithPrivateKey(client, connection.username, connection.privateKey, connection.passphrase);
         }
     }
 
@@ -59,8 +79,8 @@ public class SshJClient implements SshClient {
         client.authPassword(username, password);
     }
 
-    private void loginWithPrivateKey(SSHClient client, String username, String privateKey) throws IOException {
-        KeyProvider keyProvider = client.loadKeys(privateKey);
+    private void loginWithPrivateKey(SSHClient client, String username, String privateKey, String passphrase) throws IOException {
+        KeyProvider keyProvider = client.loadKeys(privateKey, passphrase);
         client.authPublickey(username, keyProvider);
     }
 

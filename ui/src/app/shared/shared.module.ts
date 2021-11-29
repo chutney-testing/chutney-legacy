@@ -15,10 +15,7 @@ import { ErrorInterceptor } from './error-interceptor.service';
 import {
     ComponentCardComponent,
     EnvironmentComboComponent,
-    ExecutionBadgeComponent,
-    FunctionalStepComponent,
-    ScenarioCardComponent,
-    TechnicalStepComponent
+    ExecutionBadgeComponent
 } from './components';
 import { ImplementationHostDirective, HasAuthorizationDirective } from './directives';
 import { EventManagerService } from './event-manager.service';
@@ -61,19 +58,16 @@ import { StateService } from './state/state.service';
         LinkifyPipe,
         EnvironmentComboComponent,
         ExecutionBadgeComponent,
-        FunctionalStepComponent,
         ImplementationHostDirective,
         InputFocusDirective,
         ObjectAsEntryListPipe,
         PrettyPrintPipe,
         SafePipe,
         ScenarioCampaignSearchPipe,
-        ScenarioCardComponent,
         ScenarioSearchPipe,
         SearchTextPipe,
         SortByFieldPipe,
         StringifyPipe,
-        TechnicalStepComponent,
         ThumbnailPipe,
         TruncatePipe,
         WithoutScenarioPipe,
@@ -89,26 +83,22 @@ import { StateService } from './state/state.service';
         LinkifyPipe,
         EnvironmentComboComponent,
         ExecutionBadgeComponent,
-        FunctionalStepComponent,
         ImplementationHostDirective,
         InputFocusDirective,
         ObjectAsEntryListPipe,
         PrettyPrintPipe,
         SafePipe,
         ScenarioCampaignSearchPipe,
-        ScenarioCardComponent,
         ScenarioSearchPipe,
         SearchTextPipe,
         SortByFieldPipe,
         StringifyPipe,
-        TechnicalStepComponent,
         ThumbnailPipe,
         TruncatePipe,
         WithoutScenarioPipe,
         HasAuthorizationDirective,
     ],
     entryComponents: [
-        TechnicalStepComponent
     ],
     providers: [
         {

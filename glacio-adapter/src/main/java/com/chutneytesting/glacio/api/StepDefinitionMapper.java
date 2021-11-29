@@ -65,6 +65,7 @@ class StepDefinitionMapper {
             securityInfo.trustStorePassword().orElse(null),
             securityInfo.keyStore().orElse(null),
             securityInfo.keyStorePassword().orElse(null),
+            securityInfo.keyPassword().orElse(null),
             securityInfo.privateKey().orElse(null)
         );
     }

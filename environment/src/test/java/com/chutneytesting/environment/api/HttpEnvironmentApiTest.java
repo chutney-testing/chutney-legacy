@@ -374,7 +374,7 @@ public class HttpEnvironmentApiTest {
         for (String targetName : targetNames) {
             result
                 .andExpect(jsonPath("$.targets[?(@.name == '" + targetName + "')].length()",
-                    equalTo(singletonList(8))))
+                    equalTo(singletonList(9))))
                 .andExpect(jsonPath("$.targets[?(@.name == '" + targetName + "')].properties.length()",
                     equalTo(singletonList(0))))
                 .andExpect(jsonPath("$.targets[?(@.name == '" + targetName + "')].security.credential.username",

@@ -11,7 +11,7 @@ export class HighLightJService {
   }
 
   highlightElement(baseElement: Element, codeSelectorAll: string = 'pre code') {
-    var codes = baseElement.querySelectorAll(codeSelectorAll);
-    codes.forEach(code => hljs.highlightBlock(code));
+      const codes = baseElement.querySelectorAll(codeSelectorAll);
+      codes.forEach(code => hljs.highlightBlock(code));
   }
 }

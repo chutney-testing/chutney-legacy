@@ -1,5 +1,7 @@
 package com.chutneytesting.task.context;
 
+import static java.util.Collections.emptyMap;
+import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.builder.ToStringStyle.NO_CLASS_NAME_STYLE;
 
 import com.chutneytesting.task.spi.Task;
@@ -18,9 +20,7 @@ public class ContextPutTask implements Task {
 
     public ContextPutTask(Logger logger, @Input("entries") Map<String, Object> entries) {
         this.logger = logger;
-        this.entries = entries;
-
-        assertExecutionIsPossible();
+        this.entries = ofNullable(entries).orElse(emptyMap());
     }
 
     @Override
@@ -29,18 +29,8 @@ public class ContextPutTask implements Task {
         return TaskExecutionResult.ok(entries);
     }
 
-    private void assertExecutionIsPossible() {
-        if (entries == null) {
-            throw new IllegalArgumentException("Entries to put in context not found.");
-        }
-
-        if (entries.isEmpty()) {
-            logger.info("Nothing to put in context");
-        }
-    }
-
     private String prettyLog(Object value) {
-        if(value == null) {
+        if (value == null) {
             return "null";
         } else if (value instanceof String) {
             return value.toString();

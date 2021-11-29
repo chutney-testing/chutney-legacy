@@ -1,8 +1,12 @@
 package com.chutneytesting.task.assertion;
 
-import com.chutneytesting.task.assertion.json.JsonUtils;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notEmptyMapValidation;
+import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
+
 import com.chutneytesting.task.assertion.placeholder.PlaceholderAsserter;
 import com.chutneytesting.task.assertion.placeholder.PlaceholderAsserterUtils;
+import com.chutneytesting.task.assertion.utils.JsonUtils;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
@@ -13,43 +17,36 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.ReadContext;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public class JsonAssertTask implements Task {
 
     private final Logger logger;
-    private final String serializedDocument;
+    private final String document;
     private final Map<String, Object> mapExpectedResults;
 
     public JsonAssertTask(Logger logger,
                           @Input("document") String document,
                           @Input("expected") Map<String, Object> mapExpectedResults) {
-
-        checkInputs(document, mapExpectedResults);
-
         this.logger = logger;
-        this.serializedDocument = JsonUtils.jsonStringify(document);
+        this.document = document;
         this.mapExpectedResults = mapExpectedResults;
     }
 
-    /**
-     * Checks whether all required fields are provided.
-     */
-    private void checkInputs(String serializedDocument, Map<String, Object> mapExpectedResults) throws IllegalStateException {
-        if (serializedDocument == null) {
-            logger.error("'document' argument is required");
-            throw new IllegalStateException("'document' argument is required");
-        }
-        if (mapExpectedResults == null || mapExpectedResults.isEmpty()) {
-            logger.error("'expected' argument is required");
-            throw new IllegalStateException("'expected' argument is required");
-        }
+    @Override
+    public List<String> validateInputs() {
+        return getErrorsFrom(
+            notBlankStringValidation(document, "document"),
+            notEmptyMapValidation(mapExpectedResults, "expected")
+        );
     }
 
     @Override
     public TaskExecutionResult execute() {
         try {
+            String serializedDocument = JsonUtils.jsonStringify(document);
             ReadContext document = JsonPath.parse(serializedDocument, Configuration.defaultConfiguration().addOptions(Option.SUPPRESS_EXCEPTIONS));
 
             boolean matchesOk = mapExpectedResults.entrySet().stream().allMatch(entry -> {

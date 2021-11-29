@@ -1,5 +1,6 @@
 package com.chutneytesting.admin.domain.gitbackup;
 
+import static com.chutneytesting.admin.domain.gitbackup.ChutneyContentFSReader.readChutneyContent;
 import static com.chutneytesting.admin.domain.gitbackup.ChutneyContentFSWriter.writeChutneyContent;
 import static com.chutneytesting.tools.file.FileUtils.deleteFolder;
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
@@ -9,9 +10,12 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class GitBackupService {
+public class GitBackupService implements BackupService<RemoteRepository> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(GitBackupService.class);
     private static final Path ROOT_DIRECTORY_NAME = Paths.get("backups", "git");
 
     private final Remotes remotes;
@@ -30,12 +34,14 @@ public class GitBackupService {
         initFolder(this.gitRepositoryFolderPath);
     }
 
-    public List<RemoteRepository> getAll() {
+    @Override
+    public List<RemoteRepository> repositories() {
         return remotes.getAll().stream()
             .map(r -> new RemoteRepository(r.name, r.url, r.branch, r.privateKeyPath, ""))
             .collect(Collectors.toList());
     }
 
+    @Override
     public RemoteRepository add(RemoteRepository remoteRepository) {
         if (gitClient.hasAccess(remoteRepository)) {
             return remotes.add(remoteRepository);
@@ -44,16 +50,19 @@ public class GitBackupService {
         throw new UnreachableRemoteException("Remote cannot be reached. Please check provided information.");
     }
 
+    @Override
     public void remove(String name) {
         remotes.remove(name);
         deleteFolder(gitRepositoryFolderPath.resolve(name));
     }
 
-    public void backup(String name) {
-        this.backup(remotes.get(name));
+    @Override
+    public void export(String name) {
+        this.export(remotes.get(name));
     }
 
-    public void backup(RemoteRepository remote) {
+    @Override
+    public void export(RemoteRepository remote) {
         Path workingDirectory = gitRepositoryFolderPath.resolve(remote.name);
         cleanWorkingFolder(workingDirectory);
         gitClient.initRepository(remote, workingDirectory);
@@ -69,7 +78,27 @@ public class GitBackupService {
         initFolder(workingDirectory);
     }
 
-    public void backup() {
-        backup(remotes.getAll().get(0));
+    @Override
+    public void export() {
+        export(remotes.getAll().get(0));
+    }
+
+    @Override
+    public void importFrom(String name) {
+        this.importFrom(remotes.get(name));
+    }
+
+    @Override
+    public void importFrom(RemoteRepository remote) {
+        if (!gitClient.hasAccess(remote)) {
+            throw new UnreachableRemoteException("Remote cannot be reached. Please check provided information.");
+        }
+
+        LOGGER.info("Importing data from " + remote);
+        Path workingDirectory = gitRepositoryFolderPath.resolve(remote.name);
+        cleanWorkingFolder(workingDirectory);
+        gitClient.initRepository(remote, workingDirectory);
+        gitClient.update(remote, workingDirectory);
+        readChutneyContent(workingDirectory, contentProviders);
     }
 }

@@ -4,6 +4,7 @@ import static com.chutneytesting.task.amqp.utils.AmqpUtils.convertMapLongStringT
 
 import com.chutneytesting.task.amqp.utils.JsonPathEvaluator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Stopwatch;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Delivery;
 import java.io.IOException;
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 public class QueueingConsumer {
 
+    private final Stopwatch stopwatch = Stopwatch.createUnstarted();
     private static final Logger LOGGER = LoggerFactory.getLogger(QueueingConsumer.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -41,8 +43,12 @@ public class QueueingConsumer {
     }
 
     public Result consume() throws IOException, InterruptedException {
-        channel.basicConsume(queueName, this::deliveryCallback, this::cancelCallback);
+        stopwatch.start();
+        String consumerTag = channel.basicConsume(queueName, this::deliveryCallback, this::cancelCallback);
         messageCounter.await(maxAwait, TimeUnit.MILLISECONDS);
+        channel.basicCancel(consumerTag);
+        stopwatch.stop();
+        result.consumeDuration = (stopwatch.elapsed().getNano() / 1_000_000) + " ms";
         return result;
     }
 
@@ -105,6 +111,7 @@ public class QueueingConsumer {
         public final List<Map<String, Object>> messages = new ArrayList<>();
         public final List<Object> payloads = new ArrayList<>();
         public final List<Map<String, Object>> headers = new ArrayList<>();
+        public String consumeDuration;
 
         private void handleMessage(Map<String, Object> message) {
             messages.add(message);

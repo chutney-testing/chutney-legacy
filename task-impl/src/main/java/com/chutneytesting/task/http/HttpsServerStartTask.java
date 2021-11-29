@@ -4,6 +4,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.any;
 import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.task.spi.FinallyAction;
 import com.chutneytesting.task.spi.Task;
@@ -29,6 +30,7 @@ public class HttpsServerStartTask implements Task {
     private final String trustStorePassword;
     private final Optional<String> keyStorePath;
     private final Optional<String> keyStorePassword;
+    private final Optional<String> keyPassword;
 
     public HttpsServerStartTask(Logger logger,
                                 FinallyActionRegistry finallyActionRegistry,
@@ -36,14 +38,16 @@ public class HttpsServerStartTask implements Task {
                                 @Input("truststore-path") String trustStorePath,
                                 @Input("truststore-password") String trustStorePassword,
                                 @Input("keystore-path") String keyStorePath,
-                                @Input("keystore-password") String keyStorePassword) {
+                                @Input("keystore-password") String keyStorePassword,
+                                @Input("key-password") String keyPassword) {
         this.logger = logger;
         this.finallyActionRegistry = finallyActionRegistry;
         this.port = NumberUtils.toInt(port, DEFAULT_HTTPS_PORT);
         this.trustStorePath = trustStorePath;
         this.trustStorePassword = trustStorePassword;
-        this.keyStorePath = Optional.ofNullable(keyStorePath);
-        this.keyStorePassword = Optional.ofNullable(keyStorePassword);
+        this.keyStorePath = ofNullable(keyStorePath);
+        this.keyStorePassword = ofNullable(keyStorePassword);
+        this.keyPassword = ofNullable(keyPassword);
     }
 
     @Override
@@ -60,7 +64,9 @@ public class HttpsServerStartTask implements Task {
         // add keystore path and pwd if present
         keyStorePath.ifPresent(s -> wireMockConfiguration
             .keystorePath(s)
-            .keystorePassword(keyStorePassword.orElse("")));
+            .keystorePassword(keyStorePassword.orElse(""))
+            .keyManagerPassword(keyPassword.orElse(""))
+        );
         WireMockServer wireMockServer = new WireMockServer(wireMockConfiguration);
         logger.info("Try to start https server on port " + port);
         wireMockServer.start();
@@ -83,7 +89,7 @@ public class HttpsServerStartTask implements Task {
     private void createQuitFinallyAction(WireMockServer httpsServer) {
         finallyActionRegistry.registerFinallyAction(
             FinallyAction.Builder
-                .forAction("https-server-stop", HttpsServerStartTask.class.getSimpleName())
+                .forAction("https-server-stop", HttpsServerStartTask.class)
                 .withInput("https-server", httpsServer)
                 .build()
         );

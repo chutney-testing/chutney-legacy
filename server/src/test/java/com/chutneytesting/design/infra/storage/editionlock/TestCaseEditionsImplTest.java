@@ -1,7 +1,7 @@
 package com.chutneytesting.design.infra.storage.editionlock;
 
 import static java.time.Instant.now;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
@@ -58,9 +58,8 @@ public class TestCaseEditionsImplTest {
         assertThat(sut.add(new TestCaseEdition(TestCaseMetadataImpl.builder().build(), now().minusSeconds(5), "user"))).isTrue();
         // When
         // Then
-        await().atMost(1500, MILLISECONDS).untilAsserted(() ->
+        await().atMost(5, SECONDS).untilAsserted(() ->
             assertThat(sut.findAll()).isEmpty()
         );
-
     }
 }

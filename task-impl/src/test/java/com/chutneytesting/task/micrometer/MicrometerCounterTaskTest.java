@@ -12,6 +12,7 @@ import com.chutneytesting.task.spi.TaskExecutionResult;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import java.util.List;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 
@@ -22,9 +23,12 @@ public class MicrometerCounterTaskTest {
 
     @Test
     public void counter_increment_must_be_number() {
-        assertThatThrownBy(() ->
-            new MicrometerCounterTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, "no number")
-        ).isExactlyInstanceOf(NumberFormatException.class);
+        MicrometerCounterTask no_number = new MicrometerCounterTask(null, buildMeterName(METER_NAME_PREFIX), null, null, null, null, null, "no number");
+
+        List<String> errors = no_number.validateInputs();
+
+        assertThat(errors.size()).isEqualTo(1);
+        assertThat(errors.get(0)).isEqualTo("[increment parsing] not applied because of exception java.lang.NumberFormatException(For input string: \"no number\")");
     }
 
     @Test

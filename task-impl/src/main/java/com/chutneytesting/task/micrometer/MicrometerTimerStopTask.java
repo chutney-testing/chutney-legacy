@@ -1,17 +1,22 @@
 package com.chutneytesting.task.micrometer;
 
-import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.checkTimeUnit;
 import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.logTimerState;
 import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.toOutputs;
-import static java.util.Objects.requireNonNull;
+import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
+import static com.chutneytesting.task.spi.validation.Validator.of;
+import static java.util.Optional.ofNullable;
+import static java.util.concurrent.TimeUnit.valueOf;
 
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
+import com.chutneytesting.task.spi.validation.Validator;
 import io.micrometer.core.instrument.Timer;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class MicrometerTimerStopTask implements Task {
@@ -21,16 +26,27 @@ public class MicrometerTimerStopTask implements Task {
     private final Logger logger;
     private final Timer.Sample sample;
     private final Timer timer;
-    private final TimeUnit timeunit;
+    private final String timeunit;
 
     public MicrometerTimerStopTask(Logger logger,
                                    @Input("sample") Timer.Sample sample,
                                    @Input("timer") Timer timer,
                                    @Input("timeunit") String timeunit) {
         this.logger = logger;
-        this.sample = requireNonNull(sample);
-        this.timer = requireNonNull(timer);
-        this.timeunit = checkTimeUnit(timeunit);
+        this.sample = sample;
+        this.timer = timer;
+        this.timeunit = ofNullable(timeunit).orElse(TimeUnit.SECONDS.name());
+    }
+
+    @Override
+    public List<String> validateInputs() {
+        Validator<Timer.Sample> sampleValidation = of(sample)
+            .validate(Objects::nonNull, "No sample provided");
+        Validator<Timer> timerValidation = of(timer)
+            .validate(Objects::nonNull, "No timer provided");
+        Validator<String> timeunitValidation = of(timeunit)
+            .validate(t -> valueOf(timeunit), noException -> true, "Timeunit not parsable");
+        return getErrorsFrom(sampleValidation, timerValidation, timeunitValidation);
     }
 
     @Override
@@ -39,7 +55,7 @@ public class MicrometerTimerStopTask implements Task {
             long duration = sample.stop(timer);
             Duration durationObj = Duration.of(duration, ChronoUnit.NANOS);
             logger.info("Timer sample stopped and last for " + durationObj);
-            logTimerState(logger, timer, timeunit);
+            logTimerState(logger, timer, valueOf(timeunit));
             return TaskExecutionResult.ok(toOutputs(OUTPUT_TIMER_SAMPLE_DURATION, durationObj));
         } catch (Exception e) {
             logger.error(e);
