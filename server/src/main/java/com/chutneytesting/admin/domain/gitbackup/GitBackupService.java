@@ -80,7 +80,10 @@ public class GitBackupService implements BackupService<RemoteRepository> {
 
     @Override
     public void export() {
-        export(remotes.getAll().get(0));
+        List<RemoteRepository> allRemotes = remotes.getAll();
+        if (allRemotes.size() > 0) {
+            export(allRemotes.get(0));
+        }
     }
 
     @Override
