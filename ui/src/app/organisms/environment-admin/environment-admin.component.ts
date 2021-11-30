@@ -9,7 +9,7 @@ import { EnvironmentAdminService } from '@core/services';
 import { environment } from '@env/environment';
 import { TranslateService } from '@ngx-translate/core';
 
-let savedMessage; // déclaration variable
+let savedMessage; // déclaration variable (?)
 
 @Component({
     selector: 'chutney-environment-admin',
