@@ -88,7 +88,7 @@ private initTranslation() {
 
     deleteEnvironment() {
 
-        const res = confirm(savedMessage('Êtes-vous sûr de vouloir supprimer l\'environnement '))     + this.selectedEnvironment.name + ' ?');
+        const res = confirm(savedMessage(('Êtes-vous sûr de vouloir supprimer l\'environnement '))     + this.selectedEnvironment.name + ' ?');
 
         if (res) {
             this.environmentAdminService.deleteEnvironment(this.selectedEnvironment.name).subscribe(
