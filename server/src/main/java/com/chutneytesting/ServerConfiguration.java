@@ -20,7 +20,6 @@ import com.chutneytesting.execution.infra.execution.ExecutionRequestMapper;
 import com.chutneytesting.execution.infra.execution.ServerTestEngineJavaImpl;
 import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
-import com.chutneytesting.jira.domain.JiraXrayService;
 import com.chutneytesting.task.api.EmbeddedTaskEngine;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.Method;
@@ -203,7 +202,8 @@ public class ServerConfiguration implements AsyncConfigurer {
                                                     DataSetHistoryRepository dataSetHistoryRepository,
                                                     JiraXrayEmbeddedApi jiraXrayEmbeddedApi,
                                                     ChutneyMetrics metrics,
-                                                    TaskExecutor campaignExecutor) {
+                                                    TaskExecutor campaignExecutor,
+                                                    ObjectMapper objectMapper) {
         return new CampaignExecutionEngine(
             campaignRepository,
             scenarioExecutionEngine,
@@ -212,7 +212,8 @@ public class ServerConfiguration implements AsyncConfigurer {
             dataSetHistoryRepository,
             jiraXrayEmbeddedApi,
             metrics,
-            new ExecutorServiceAdapter(campaignExecutor)
+            new ExecutorServiceAdapter(campaignExecutor),
+            objectMapper
         );
     }
 

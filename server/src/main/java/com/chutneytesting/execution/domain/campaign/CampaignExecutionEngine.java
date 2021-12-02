@@ -23,8 +23,8 @@ import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
-import com.chutneytesting.jira.domain.JiraXrayService;
 import com.chutneytesting.tools.Try;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,6 +62,7 @@ public class CampaignExecutionEngine {
 
     private final Map<Long, CampaignExecutionReport> currentCampaignExecutions = new ConcurrentHashMap<>();
     private final Map<Long, Boolean> currentCampaignExecutionsStopRequests = new ConcurrentHashMap<>();
+    private final ObjectMapper objectMapper;
 
     public CampaignExecutionEngine(CampaignRepository campaignRepository,
                                    ScenarioExecutionEngine scenarioExecutionEngine,
@@ -70,7 +71,8 @@ public class CampaignExecutionEngine {
                                    DataSetHistoryRepository dataSetHistoryRepository,
                                    JiraXrayEmbeddedApi jiraXrayEmbeddedApi,
                                    ChutneyMetrics metrics,
-                                   ExecutorService executorService) {
+                                   ExecutorService executorService,
+                                   ObjectMapper objectMapper) {
         this.campaignRepository = campaignRepository;
         this.scenarioExecutionEngine = scenarioExecutionEngine;
         this.executionHistoryRepository = executionHistoryRepository;
@@ -79,8 +81,8 @@ public class CampaignExecutionEngine {
         this.jiraXrayEmbeddedApi = jiraXrayEmbeddedApi;
         this.metrics = metrics;
         this.executor = executorService;
+        this.objectMapper = objectMapper;
     }
-
     public List<CampaignExecutionReport> executeByName(String campaignName, String userId) {
         return executeByName(campaignName, null, userId);
     }
@@ -208,7 +210,7 @@ public class CampaignExecutionEngine {
                         campaignExecutionReport.endScenarioExecution(serc);
                         // update xray test
                         ExecutionHistory.Execution execution = executionHistoryRepository.getExecution(serc.scenarioId, serc.execution.executionId());
-                        jiraXrayEmbeddedApi.updateTestExecution(campaign.id, serc.scenarioId, JiraReportMapper.from(execution.report()));
+                        jiraXrayEmbeddedApi.updateTestExecution(campaign.id, serc.scenarioId, JiraReportMapper.from(execution.report(), objectMapper));
                     });
             }
         };
