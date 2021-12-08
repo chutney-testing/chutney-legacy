@@ -3,9 +3,11 @@ package com.chutneytesting.jira.api;
 import com.chutneytesting.jira.domain.JiraRepository;
 import com.chutneytesting.jira.domain.JiraTargetConfiguration;
 import com.chutneytesting.jira.domain.JiraXrayService;
+import com.chutneytesting.jira.infra.xraymodelapi.XrayTestExecTest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -90,18 +92,22 @@ public class JiraModuleController {
 
     @PreAuthorize("hasAuthority('CAMPAIGN_WRITE')")
     @GetMapping(path = BASE_TEST_EXEC_URL + "/{testExecId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<String> getScenariosByCampaignId(@PathVariable String testExecId) {
+    public List<JiraDto> getScenariosByCampaignId(@PathVariable String testExecId) {
         if (testExecId.isEmpty())
             return new ArrayList<>();
 
         Map<String, String> allLinkedScenarios = jiraRepository.getAllLinkedScenarios();
-        List<String> testExecScenariosId = jiraXrayService.getTestExecutionScenarios(testExecId);
+        Map<String, XrayTestExecTest> collect = jiraXrayService.getTestExecutionScenarios(testExecId).stream().collect(Collectors.toMap(XrayTestExecTest::getKey, Function.identity()));
 
         return allLinkedScenarios.entrySet()
             .stream()
-            .filter(entry -> testExecScenariosId.contains(entry.getValue()))
-            .map(Map.Entry::getKey
-            ).collect(Collectors.toList());
+            .filter(entry -> collect.get(entry.getValue()) != null)
+            .map(m -> ImmutableJiraDto.builder()
+                .id(m.getValue())
+                .chutneyId(m.getKey())
+                .lastExecStatus(collect.get(m.getValue()).getStatus())
+                .build())
+            .collect(Collectors.toList());
     }
 
     @PreAuthorize("hasAuthority('CAMPAIGN_WRITE')")

@@ -123,8 +123,8 @@
                                 </td>
                                 <td class="text-nowrap">{{scenario?.id}}</td>
                                 <td class="scenario-title-cell">{{scenario?.title}}</td>
-                                <td class="p-0">
-                                    <a *ngIf="jiraMap.has(scenario.id)" role="button" class="btn btn-sm btn-link mr-0"
+                                <td *ngIf="jiraMap.has(scenario.id)" class="p-0">
+                                    <a role="button" class="btn btn-sm btn-link mr-0"
                                         target="_blank" href="{{getJiraLink(scenario.id)}}"
                                         ngbPopover="{{jiraMap.get(scenario.id)}}" placement="left" (click)="$event.stopPropagation()"
                                         triggers="mouseenter:mouseleave">
@@ -162,7 +162,6 @@
                             <input name="search" type="text" class="form-control search-field mb-2" id="scenarioIds"
                                    formControlName="scenarioIds" placeholder="Filtrer scénarios"
                                    [(ngModel)]="scenariosFilter"/>
-
                             <angular2-multiselect [data]="itemList"
                                                   [settings]="settings"
                                                   (onSelect)="onItemSelect($event)"
@@ -170,6 +169,17 @@
                                                   (onDeSelectAll)="OnItemDeSelectAll()"
                                                   formControlName="tags">
                             </angular2-multiselect>
+                            <ng-container *ngIf="jiraScenarios.length > 0 && campaignForm.controls['onlyLinkedScenarios'].value === true">
+                                <div class="pt-2">
+                                <angular2-multiselect [data]="jiraItemList"
+                                                  [settings]="jirasettings"
+                                                  (onSelect)="onJiraItemSelect($event)"
+                                                  (onDeSelect)="OnJiraItemDeSelect($event)"
+                                                  (onDeSelectAll)="OnJiraItemDeSelectAll()"
+                                                  formControlName="jiratags">
+                                </angular2-multiselect>
+                            </div>
+                            </ng-container>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -189,6 +199,12 @@
                                         <span *ngFor="let tag of scenario.tags">
                                             <span class="chutney-tag chutney-tag-selected">{{tag}}</span>
                                         </span>
+                                </td>
+                                <td class="p-0">
+                                    <span *ngIf="jiraMap.has(scenario.id) && getJiraLastExecutionStatus(scenario.id) !==''" 
+                                        [ngClass]="getJiraLastExecutionStatus(scenario.id) === 'PASS' ? 'badge-success' : 'badge-danger'" class="badge">
+                                        {{getJiraLastExecutionStatus(scenario.id)}}
+                                    </span>
                                 </td>
                                 <td class="p-0">
                                     <a *ngIf="jiraMap.has(scenario.id)" role="button" class="btn btn-sm btn-link mr-0"

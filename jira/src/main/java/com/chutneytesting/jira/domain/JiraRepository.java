@@ -9,6 +9,9 @@ public interface JiraRepository {
 
     Map<String, String> getAllLinkedCampaigns();
 
+    /**
+     * @return key chutney id, value jira id
+     */
     Map<String, String> getAllLinkedScenarios();
 
     String getByScenarioId(String scenarioId);

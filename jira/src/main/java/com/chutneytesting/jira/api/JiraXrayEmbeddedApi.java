@@ -3,6 +3,8 @@ package com.chutneytesting.jira.api;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import com.chutneytesting.jira.domain.JiraXrayService;
+import com.chutneytesting.jira.infra.xraymodelapi.XrayTestExecTest;
+import java.util.List;
 
 public class JiraXrayEmbeddedApi {
 
@@ -16,6 +18,10 @@ public class JiraXrayEmbeddedApi {
         if (report != null && isNotEmpty(scenarioId) && campaignId != null) {
             jiraXrayService.updateTestExecution(campaignId, scenarioId, report);
         }
+    }
+
+    public List<XrayTestExecTest> getTestStatusInTestExec(String testExec) {
+        return jiraXrayService.getTestExecutionScenarios(testExec);
     }
 }
 

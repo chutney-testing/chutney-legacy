@@ -3,6 +3,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { environment } from '@env/environment';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { JiraScenario } from '@model';
 
 export class JiraDto {
     constructor(
@@ -34,9 +35,9 @@ export class JiraPluginService {
         .pipe(map((res: Object) => new Map(Object.entries(res))));
     }
 
-    public findTestExecScenarios(testExecId: string): Observable<string[]> {
+    public findTestExecScenarios(testExecId: string): Observable<JiraScenario[]> {
         return this.http.get<any>(environment.backend + this.testExecUrl + '/' + testExecId)
-        .pipe(map((res: string[]) => res));
+        .pipe(map((res: JiraScenario[]) => res));
     }
 
     public findByScenarioId(scenarioId: string): Observable<string> {

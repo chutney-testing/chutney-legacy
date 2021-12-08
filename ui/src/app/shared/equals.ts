@@ -36,3 +36,7 @@ export function areEquals(val1: any, val2: any): boolean {
 
   return false;
 }
+
+export function isNotEmpty(value: string): boolean {
+  return value && value !== '';
+}

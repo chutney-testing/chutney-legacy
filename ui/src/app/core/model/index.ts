@@ -17,3 +17,4 @@ export * from './table.model';
 export * from './task.model';
 export * from './task.model';
 export * from './user.model';
+export * from './jira-scenario.model';
