@@ -1,10 +1,10 @@
 package com.chutneytesting.design.api.dataset;
 
-import static com.chutneytesting.tools.functional.ComposableIdUtils.toFrontId;
+import static com.chutneytesting.tools.orient.ComposableIdUtils.toFrontId;
 
 import com.chutneytesting.tools.ui.KeyValue;
 import com.chutneytesting.design.domain.dataset.DataSet;
-import com.chutneytesting.tools.functional.ComposableIdUtils;
+import com.chutneytesting.tools.orient.ComposableIdUtils;
 import java.util.stream.Collectors;
 
 public class DataSetMapper {

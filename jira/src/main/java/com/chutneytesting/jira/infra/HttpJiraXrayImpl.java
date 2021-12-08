@@ -1,5 +1,7 @@
 package com.chutneytesting.jira.infra;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import com.chutneytesting.jira.domain.JiraTargetConfiguration;
 import com.chutneytesting.jira.domain.JiraXrayApi;
 import com.chutneytesting.jira.infra.xraymodelapi.Xray;
@@ -38,7 +40,7 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
     public void updateRequest(Xray xray, JiraTargetConfiguration jiraTargetConfiguration) {
         String updateUri = jiraTargetConfiguration.url + "/rest/raven/1.0/import/execution";
 
-        if (jiraTargetConfiguration.url.isEmpty()) {
+        if (isNotBlank(jiraTargetConfiguration.url)) {
             LOGGER.error("Unable to update xray, jira url is undefined");
             return;
         }

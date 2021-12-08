@@ -6,7 +6,7 @@ import com.chutneytesting.admin.domain.gitbackup.ChutneyContent;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentProvider;
 import com.chutneytesting.design.domain.scenario.compose.ComposableTestCaseRepository;
-import com.chutneytesting.tools.functional.ComposableIdUtils;
+import com.chutneytesting.tools.orient.ComposableIdUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.file.Path;

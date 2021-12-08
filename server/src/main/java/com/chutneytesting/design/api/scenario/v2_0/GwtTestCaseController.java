@@ -1,6 +1,6 @@
 package com.chutneytesting.design.api.scenario.v2_0;
 
-import static com.chutneytesting.tools.functional.ComposableIdUtils.fromFrontId;
+import static com.chutneytesting.tools.orient.ComposableIdUtils.fromFrontId;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.time.Instant.now;
 import static java.util.Collections.emptyList;

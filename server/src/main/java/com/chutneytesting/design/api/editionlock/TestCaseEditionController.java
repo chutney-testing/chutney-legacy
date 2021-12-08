@@ -1,7 +1,7 @@
 package com.chutneytesting.design.api.editionlock;
 
-import static com.chutneytesting.tools.functional.ComposableIdUtils.fromFrontId;
-import static com.chutneytesting.tools.functional.ComposableIdUtils.toFrontId;
+import static com.chutneytesting.tools.orient.ComposableIdUtils.fromFrontId;
+import static com.chutneytesting.tools.orient.ComposableIdUtils.toFrontId;
 import static java.util.stream.Collectors.toList;
 
 import com.chutneytesting.design.domain.editionlock.TestCaseEdition;

@@ -86,6 +86,7 @@ class JiraModuleControllerTest {
 
         assertThat(jiraDto.chutneyId()).isEqualTo("123");
         assertThat(jiraDto.id()).isEqualTo("SCE-123");
+        assertThat(jiraRepository.getAllLinkedScenarios()).contains(entry("123", "SCE-123"));
     }
 
     @Test
@@ -121,6 +122,7 @@ class JiraModuleControllerTest {
 
         assertThat(jiraDto.chutneyId()).isEqualTo("123");
         assertThat(jiraDto.id()).isEqualTo("JIRA-123");
+        assertThat(jiraRepository.getAllLinkedCampaigns()).contains(entry("123", "JIRA-123"));
     }
 
     @Test

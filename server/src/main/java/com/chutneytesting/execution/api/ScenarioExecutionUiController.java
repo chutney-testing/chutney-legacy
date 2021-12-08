@@ -1,6 +1,6 @@
 package com.chutneytesting.execution.api;
 
-import static com.chutneytesting.tools.functional.ComposableIdUtils.fromFrontId;
+import static com.chutneytesting.tools.orient.ComposableIdUtils.fromFrontId;
 
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;

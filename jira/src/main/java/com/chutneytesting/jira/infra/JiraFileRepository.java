@@ -1,8 +1,8 @@
 package com.chutneytesting.jira.infra;
 
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
-import static com.chutneytesting.tools.functional.ComposableIdUtils.fromFrontId;
-import static com.chutneytesting.tools.functional.ComposableIdUtils.toFrontId;
+import static com.chutneytesting.tools.orient.ComposableIdUtils.fromFrontId;
+import static com.chutneytesting.tools.orient.ComposableIdUtils.toFrontId;
 
 import com.chutneytesting.jira.domain.JiraRepository;
 import com.chutneytesting.jira.domain.JiraTargetConfiguration;
@@ -102,14 +102,10 @@ public class JiraFileRepository implements JiraRepository {
         doSave(resolvedFilePath, jiraTargetConfigurationDto);
     }
 
-    public void saveServerConfiguration(JiraTargetConfigurationDto jiraTargetConfiguration) {
-
-    }
-
     private JiraTargetConfigurationDto doLoadServerConfiguration() {
         Path configurationFilePath = storeFolderPath.resolve(CONFIGURATION_FILE);
         if (!Files.exists(configurationFilePath)) {
-            return new JiraTargetConfigurationDto("", "", "");
+            return new JiraTargetConfigurationDto();
         }
         try {
             byte[] bytes = Files.readAllBytes(configurationFilePath);
