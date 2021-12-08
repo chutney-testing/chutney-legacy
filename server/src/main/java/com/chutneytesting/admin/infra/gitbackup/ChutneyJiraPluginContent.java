@@ -5,8 +5,8 @@ import static com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory.C
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContent;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentProvider;
-import com.chutneytesting.design.domain.plugins.jira.JiraRepository;
-import com.chutneytesting.design.domain.plugins.jira.JiraTargetConfiguration;
+import com.chutneytesting.jira.domain.JiraRepository;
+import com.chutneytesting.jira.domain.JiraTargetConfiguration;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -94,7 +94,9 @@ public class ChutneyJiraPluginContent implements ChutneyContentProvider {
                 e1.addSuppressed(e2);
                 return e1;
             })
-            .ifPresent(e -> {throw new RuntimeException(e);});
+            .ifPresent(e -> {
+                throw new RuntimeException(e);
+            });
     }
 
     private void importJiraConfiguration(Path filePath) throws IOException {

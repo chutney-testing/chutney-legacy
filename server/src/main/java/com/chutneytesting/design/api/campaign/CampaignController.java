@@ -3,8 +3,8 @@ package com.chutneytesting.design.api.campaign;
 import static com.chutneytesting.design.api.campaign.dto.CampaignMapper.fromDto;
 import static com.chutneytesting.design.api.campaign.dto.CampaignMapper.toDto;
 import static com.chutneytesting.design.api.campaign.dto.CampaignMapper.toDtoWithoutReport;
-import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
-import static com.chutneytesting.tools.ui.ComposableIdUtils.isComposableDomainId;
+import static com.chutneytesting.tools.orient.ComposableIdUtils.fromFrontId;
+import static com.chutneytesting.tools.orient.ComposableIdUtils.isComposableDomainId;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import com.chutneytesting.design.api.campaign.dto.CampaignDto;

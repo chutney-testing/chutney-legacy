@@ -1,4 +1,4 @@
-package com.chutneytesting.design.api.plugins.jira;
+package com.chutneytesting.jira.api;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

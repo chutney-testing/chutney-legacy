@@ -1,7 +1,7 @@
 package com.chutneytesting.design.api.scenario.compose.mapper;
 
-import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
-import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
+import static com.chutneytesting.tools.orient.ComposableIdUtils.fromFrontId;
+import static com.chutneytesting.tools.orient.ComposableIdUtils.toFrontId;
 import static java.util.stream.Collectors.toList;
 
 import com.chutneytesting.design.api.scenario.compose.dto.ComposableStepDto;

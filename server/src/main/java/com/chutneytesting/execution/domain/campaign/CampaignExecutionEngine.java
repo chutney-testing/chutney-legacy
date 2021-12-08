@@ -16,14 +16,15 @@ import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
-import com.chutneytesting.execution.domain.jira.JiraXrayPlugin;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.execution.domain.scenario.FailedExecutionAttempt;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
 import com.chutneytesting.instrument.domain.ChutneyMetrics;
+import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
 import com.chutneytesting.tools.Try;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -56,28 +57,31 @@ public class CampaignExecutionEngine {
     private final ExecutionHistoryRepository executionHistoryRepository;
     private final TestCaseRepository testCaseRepository;
     private final DataSetHistoryRepository dataSetHistoryRepository;
-    private final JiraXrayPlugin jiraXrayPlugin;
+    private final JiraXrayEmbeddedApi jiraXrayEmbeddedApi;
     private final ChutneyMetrics metrics;
 
     private final Map<Long, CampaignExecutionReport> currentCampaignExecutions = new ConcurrentHashMap<>();
     private final Map<Long, Boolean> currentCampaignExecutionsStopRequests = new ConcurrentHashMap<>();
+    private final ObjectMapper objectMapper;
 
     public CampaignExecutionEngine(CampaignRepository campaignRepository,
                                    ScenarioExecutionEngine scenarioExecutionEngine,
                                    ExecutionHistoryRepository executionHistoryRepository,
                                    TestCaseRepository testCaseRepository,
                                    DataSetHistoryRepository dataSetHistoryRepository,
-                                   JiraXrayPlugin jiraXrayPlugin,
+                                   JiraXrayEmbeddedApi jiraXrayEmbeddedApi,
                                    ChutneyMetrics metrics,
-                                   ExecutorService executorService) {
+                                   ExecutorService executorService,
+                                   ObjectMapper objectMapper) {
         this.campaignRepository = campaignRepository;
         this.scenarioExecutionEngine = scenarioExecutionEngine;
         this.executionHistoryRepository = executionHistoryRepository;
         this.testCaseRepository = testCaseRepository;
         this.dataSetHistoryRepository = dataSetHistoryRepository;
-        this.jiraXrayPlugin = jiraXrayPlugin;
+        this.jiraXrayEmbeddedApi = jiraXrayEmbeddedApi;
         this.metrics = metrics;
         this.executor = executorService;
+        this.objectMapper = objectMapper;
     }
 
     public List<CampaignExecutionReport> executeByName(String campaignName, String userId) {
@@ -207,7 +211,7 @@ public class CampaignExecutionEngine {
                         campaignExecutionReport.endScenarioExecution(serc);
                         // update xray test
                         ExecutionHistory.Execution execution = executionHistoryRepository.getExecution(serc.scenarioId, serc.execution.executionId());
-                        jiraXrayPlugin.updateTestExecution(campaign.id, serc.scenarioId, execution.report());
+                        jiraXrayEmbeddedApi.updateTestExecution(campaign.id, serc.scenarioId, JiraReportMapper.from(execution.report(), objectMapper));
                     });
             }
         };

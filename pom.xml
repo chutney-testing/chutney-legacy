@@ -69,6 +69,7 @@
         <module>packaging</module>
         <module>glacio-adapter</module>
         <module>chutney-junit</module>
+        <module>jira</module>
     </modules>
 
     <properties>
@@ -197,6 +198,11 @@
             <dependency>
                 <groupId>com.chutneytesting</groupId>
                 <artifactId>environment</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.chutneytesting</groupId>
+                <artifactId>jira</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -1,8 +1,8 @@
 package com.chutneytesting.design.api.scenario.compose;
 
 import static com.chutneytesting.design.api.scenario.compose.mapper.ComposableStepMapper.fromDto;
-import static com.chutneytesting.tools.ui.ComposableIdUtils.fromFrontId;
-import static com.chutneytesting.tools.ui.ComposableIdUtils.toFrontId;
+import static com.chutneytesting.tools.orient.ComposableIdUtils.fromFrontId;
+import static com.chutneytesting.tools.orient.ComposableIdUtils.toFrontId;
 
 import com.chutneytesting.design.api.scenario.compose.dto.ComposableStepDto;
 import com.chutneytesting.design.api.scenario.compose.dto.ParentsStepDto;
