@@ -1,6 +1,6 @@
 export class StepExecutionReport {
     constructor(
-        public duration: number,
+        public duration: string,
         public status: string,
         public startDate: string,
         public information: string[],

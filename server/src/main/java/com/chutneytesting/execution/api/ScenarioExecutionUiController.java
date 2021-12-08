@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
@@ -42,14 +43,24 @@ public class ScenarioExecutionUiController {
     private final ScenarioExecutionEngineAsync executionEngineAsync;
     private final TestCaseRepository testCaseRepository;
     private final ObjectMapper objectMapper;
+    private final ObjectMapper reportObjectMapper;
     private final ExecutableStepRepository stepRepository;
     private final SpringUserService userService;
 
-    ScenarioExecutionUiController(ScenarioExecutionEngine executionEngine, ScenarioExecutionEngineAsync executionEngineAsync, TestCaseRepository testCaseRepository, ObjectMapper objectMapper, ExecutableStepRepository stepRepository, SpringUserService userService) {
+    ScenarioExecutionUiController(
+        ScenarioExecutionEngine executionEngine,
+        ScenarioExecutionEngineAsync executionEngineAsync,
+        TestCaseRepository testCaseRepository,
+        ObjectMapper objectMapper,
+        @Qualifier("reportObjectMapper") ObjectMapper reportObjectMapper,
+        ExecutableStepRepository stepRepository,
+        SpringUserService userService
+    ) {
         this.executionEngine = executionEngine;
         this.executionEngineAsync = executionEngineAsync;
         this.testCaseRepository = testCaseRepository;
         this.objectMapper = objectMapper;
+        this.reportObjectMapper = reportObjectMapper;
         this.stepRepository = stepRepository;
         this.userService = userService;
     }
@@ -61,7 +72,7 @@ public class ScenarioExecutionUiController {
         TestCase testCase = testCaseRepository.findById(scenarioId);
         String userId = userService.currentUser().getId();
         ScenarioExecutionReport report = executionEngine.execute(new ExecutionRequest(testCase, env, userId));
-        return objectMapper.writeValueAsString(report);
+        return reportObjectMapper.writeValueAsString(report);
     }
 
     @PreAuthorize("hasAuthority('COMPONENT_WRITE')")
@@ -71,7 +82,7 @@ public class ScenarioExecutionUiController {
         ExecutableComposedStep composedStep = stepRepository.findExecutableById(fromFrontId(Optional.of(componentId)));
         String userId = userService.currentUser().getId();
         ScenarioExecutionReport report = executionEngine.execute(composedStep, env, userId);
-        return objectMapper.writeValueAsString(report);
+        return reportObjectMapper.writeValueAsString(report);
     }
 
     @PreAuthorize("hasAuthority('SCENARIO_EXECUTE')")
@@ -95,7 +106,7 @@ public class ScenarioExecutionUiController {
 
     @PreAuthorize("hasAuthority('SCENARIO_READ')")
     @GetMapping(path = "/api/ui/scenario/executionasync/v1/{scenarioId}/execution/{executionId}")
-    public Flux<ServerSentEvent<ScenarioExecutionReport>> followScenarioExecution(@PathVariable("scenarioId") String scenarioId, @PathVariable("executionId") Long executionId) {
+    public Flux<ServerSentEvent<String>> followScenarioExecution(@PathVariable("scenarioId") String scenarioId, @PathVariable("executionId") Long executionId) {
         LOGGER.debug("followScenarioExecution for scenarioId='{}' and executionID='{}'", scenarioId, executionId);
         return createScenarioExecutionSSEFlux(
             executionEngineAsync.followExecution(scenarioId, executionId)
@@ -126,12 +137,12 @@ public class ScenarioExecutionUiController {
         executionEngineAsync.resume(scenarioId, executionId);
     }
 
-    private Flux<ServerSentEvent<ScenarioExecutionReport>> createScenarioExecutionSSEFlux(Observable<ScenarioExecutionReport> scenarioExecutionReports) {
+    private Flux<ServerSentEvent<String>> createScenarioExecutionSSEFlux(Observable<ScenarioExecutionReport> scenarioExecutionReports) {
         return Flux.from(scenarioExecutionReports.map(
-            reportEvent -> ServerSentEvent.<ScenarioExecutionReport>builder()
+            reportEvent -> ServerSentEvent.<String>builder()
                 .id(String.valueOf(reportEvent.executionId))
                 .event(reportEvent.report.isTerminated() ? "last" : "partial")
-                .data(reportEvent)
+                .data(reportObjectMapper.writeValueAsString(reportEvent))
                 .build()
         ).toFlowable(BackpressureStrategy.BUFFER));
     }

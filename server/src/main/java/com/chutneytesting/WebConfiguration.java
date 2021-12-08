@@ -3,6 +3,7 @@ package com.chutneytesting;
 import com.chutneytesting.tools.ui.MyMixInForIgnoreType;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.json.JsonWriteFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.File;
@@ -36,6 +37,17 @@ public class WebConfiguration {
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+            .findAndRegisterModules();
+    }
+
+    @Bean
+    public ObjectMapper reportObjectMapper() {
+        return new ObjectMapper()
+            .addMixIn(Resource.class, MyMixInForIgnoreType.class)
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+            .enable(JsonWriteFeature.WRITE_NUMBERS_AS_STRINGS.mappedFeature())
             .findAndRegisterModules();
     }
 

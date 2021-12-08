@@ -38,6 +38,7 @@ import liquibase.integration.spring.SpringLiquibase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jms.activemq.ActiveMQAutoConfiguration;
@@ -173,7 +174,7 @@ public class ServerConfiguration implements AsyncConfigurer {
                                                               ExecutionStateRepository executionStateRepository,
                                                               ChutneyMetrics metrics,
                                                               TestCasePreProcessors testCasePreProcessors,
-                                                              ObjectMapper objectMapper,
+                                                              @Qualifier("reportObjectMapper") ObjectMapper objectMapper,
                                                               DataSetHistoryRepository dataSetHistoryRepository,
                                                               @Value(EXECUTION_ASYNC_PUBLISHER_TTL_SPRING_VALUE) long replayerRetention,
                                                               @Value(EXECUTION_ASYNC_PUBLISHER_DEBOUNCE_SPRING_VALUE) long debounceMilliSeconds) {

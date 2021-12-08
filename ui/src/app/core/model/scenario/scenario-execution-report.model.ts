@@ -2,7 +2,7 @@ import { StepExecutionReport } from '@core/model/scenario/step-execution-report.
 
 export class ScenarioExecutionReport {
     constructor(
-        public executionId: number,
+        public executionId: string,
         public report: StepExecutionReport,
         public environment: string,
         public user: string,
