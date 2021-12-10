@@ -1,16 +1,27 @@
 package com.chutneytesting.task.function;
 
+import static java.util.Collections.list;
 import static org.springframework.util.SocketUtils.findAvailableTcpPort;
 import static org.springframework.util.SocketUtils.findAvailableTcpPorts;
 import static org.springframework.util.SocketUtils.findAvailableUdpPort;
 import static org.springframework.util.SocketUtils.findAvailableUdpPorts;
 
 import com.chutneytesting.task.spi.SpelFunction;
+
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.util.Random;
 import java.util.SortedSet;
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
+import com.chutneytesting.tools.ThrowingFunction;
+import com.chutneytesting.tools.ThrowingPredicate;
 import org.springframework.util.SocketUtils;
 
-public class SocketFunctions {
+public class NetworkFunctions {
 
     @SpelFunction
     public static int tcpPort() {
@@ -84,6 +95,49 @@ public class SocketFunctions {
     public static SortedSet<Integer> udpPortsRandomRange(int num, int range) {
         Integer[] httpPortRange = getRandomPortRange(range);
         return findAvailableUdpPorts(num, httpPortRange[0], httpPortRange[1]);
+    }
+
+    @SpelFunction
+    public static String randomNetworkMask() {
+        StringBuilder networkMaskBuilder = new StringBuilder();
+        networkMaskBuilder.append(System.nanoTime() * new Random().nextLong());
+        // reverse current timestamp to get the 9 last numbers
+        networkMaskBuilder.reverse();
+        networkMaskBuilder.delete(9, networkMaskBuilder.length());
+        // split into xxx.xxx.xxx
+        networkMaskBuilder.insert(6, '.').insert(3, '.');
+
+        // reinit networkMaskBuilder to get fields into range [0,255]
+        StringTokenizer stringTokenizer = new StringTokenizer(networkMaskBuilder.toString(), ".");
+        networkMaskBuilder = new StringBuilder();
+        while (stringTokenizer.hasMoreTokens()) {
+            networkMaskBuilder.append(Integer.valueOf(stringTokenizer.nextToken()) % 255);
+            networkMaskBuilder.append(".");
+        }
+
+        // delete the last "."
+        networkMaskBuilder.deleteCharAt(networkMaskBuilder.length() - 1);
+        return networkMaskBuilder.toString();
+    }
+
+    @SpelFunction
+    public static String hostIpMatching(String regex) throws Exception {
+        return list(NetworkInterface.getNetworkInterfaces())
+            .stream()
+            .filter(ThrowingPredicate.toUnchecked(NetworkInterface::isUp))
+            .map(ThrowingFunction.toUnchecked(NetworkInterface::getInetAddresses))
+            .flatMap(addresses -> list(addresses).stream())
+            .flatMap(address -> Stream.of(address.getCanonicalHostName(), address.getHostAddress()))
+            .distinct()
+            .filter( ip -> matches(regex, ip))
+            .findFirst()
+            .orElse(InetAddress.getLocalHost().getHostAddress());
+    }
+
+    private static Boolean matches(String regex, String text) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(text);
+        return matcher.matches();
     }
 
     private static Integer[] getRandomPortRange(int maxRangesNumber) {
