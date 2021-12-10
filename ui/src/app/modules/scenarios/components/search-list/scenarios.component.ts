@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, Subscription } from 'rxjs';
+import { forkJoin, Subject, Subscription } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
 
 import {
@@ -33,7 +33,7 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     fullTextFilter: string;
     scenarioTypeFilter = new SelectableTags<ScenarioType>();
     settings = {};
-    tags;
+    tags = [];
     selectedTags = [];
     fullTextSearch = false;
     // Jira
@@ -59,9 +59,10 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this.initJiraPlugin();
         this.searchSub$.pipe(
             debounceTime(400)
-            //distinctUntilChanged()
+            // distinctUntilChanged()
         ).subscribe((inputValue) => {
             this.scenarioService.search(this.fullTextFilter).subscribe((res) => {
                     if (this.fullTextFilter) {
@@ -72,7 +73,7 @@ export class ScenariosComponent implements OnInit, OnDestroy {
                 }
             );
         });
-        this.initJiraPlugin();
+
         this.getScenarios()
             .then(r => {
                 this.scenarios = r || [];
@@ -231,7 +232,14 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     }
 
     private localFilter(scenarios: Array<ScenarioIndex>) {
-        this.viewedScenarios = filterOnTextContent(scenarios, this.textFilter, ['title', 'id']);
+        const scenariosWithJiraId = scenarios.map(sce => {
+            const jiraId = this.jiraMap.get(sce.id);
+            if (jiraId) {
+                sce.jiraId = jiraId;
+            }
+            return sce;
+        });
+        this.viewedScenarios = filterOnTextContent(scenariosWithJiraId, this.textFilter, ['title', 'id', 'jiraId']);
         this.viewedScenarios = this.filterOnAttributes();
         this.sortScenarios(this.orderBy, this.reverseOrder);
         this.applyFiltersToRoute();

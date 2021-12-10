@@ -33,7 +33,7 @@
                 "form": "Write a testcase",
                 "component": "Compose a testcase"
             },
-            "placeholder": "Search for scenario (id or title)",
+            "placeholder": "Search for scenario (id or title or jira)",
             "placeholder-fulltext": "Search in scenario content (json scenario only)",
             "created": " Last created",
             "executed": "Last executed",
