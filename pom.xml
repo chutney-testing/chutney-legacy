@@ -125,7 +125,6 @@
         <activemq.version>5.16.3</activemq.version>
         <rabbitmq-mock.version>1.1.1</rabbitmq-mock.version>
         <wire-mock.version>2.27.2</wire-mock.version>
-        <pitest.version>1.7.3</pitest.version>
         <otj-pg-embedded.version>0.13.4</otj-pg-embedded.version>
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
         <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
@@ -543,20 +542,6 @@
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-test</artifactId>
                 <version>${spring.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <!-- Mutation Testing -->
-            <dependency>
-                <groupId>org.pitest</groupId>
-                <artifactId>pitest-parent</artifactId>
-                <scope>test</scope>
-                <version>${pitest.version}</version>
-                <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>org.pitest</groupId>
-                <artifactId>pitest</artifactId>
-                <version>${pitest.version}</version>
                 <scope>test</scope>
             </dependency>
             <!-- Property Based Testing -->
