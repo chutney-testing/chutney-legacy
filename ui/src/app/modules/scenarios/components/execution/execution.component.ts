@@ -146,7 +146,10 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     executeScenario(env: string) {
-        if (this.hasParameters) {
+        if (this.hasParameters == null) {
+            let scenario$ : Observable<Object> = this.isComposed(this.currentScenarioId) ? this.scenarioComponent$ : this.scenarioGwt$;
+            scenario$.subscribe(() => this.executeScenario(env));
+        } else if (this.hasParameters) {
             this.router.navigateByUrl(`/scenario/${this.currentScenarioId}/execute/${env}`)
                 .then(null);
         } else {
