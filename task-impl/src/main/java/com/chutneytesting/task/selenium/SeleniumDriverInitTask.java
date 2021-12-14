@@ -1,11 +1,14 @@
 package com.chutneytesting.task.selenium;
 
+import static java.time.temporal.ChronoUnit.SECONDS;
+
 import com.chutneytesting.task.spi.FinallyAction;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.FinallyActionRegistry;
 import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -87,7 +90,7 @@ public class SeleniumDriverInitTask implements Task {
 
     void configureWebDriver(WebDriver webDriver) {
         try {
-            webDriver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+            webDriver.manage().timeouts().implicitlyWait(Duration.of(0, SECONDS));
         } catch (Exception e) {
             logger.error("Default configuration of webDriver failed");
         }
