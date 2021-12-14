@@ -7,6 +7,6 @@ com.chutneytesting.task.function.GenerateFunction
 com.chutneytesting.task.http.function.WireMockFunction
 com.chutneytesting.task.function.NullableFunction
 com.chutneytesting.task.micrometer.MicrometerFunctions
-com.chutneytesting.task.function.SocketFunctions
+com.chutneytesting.task.function.NetworkFunctions
 com.chutneytesting.task.function.ClasspathFunctions
 com.chutneytesting.task.function.EscapeFunctions

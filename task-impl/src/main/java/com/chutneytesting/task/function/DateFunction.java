@@ -1,6 +1,7 @@
 package com.chutneytesting.task.function;
 
 import com.chutneytesting.task.spi.SpelFunction;
+
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,6 +18,11 @@ public class DateFunction {
             dateFormatter = DateTimeFormatter.ofPattern(format[0]);
         }
         return parseDateWithFormatter(date, dateFormatter);
+    }
+
+    @SpelFunction
+    public static String currentTimeMillis() {
+        return String.valueOf(System.currentTimeMillis());
     }
 
      public static Temporal parseDateWithFormatter(String date, DateTimeFormatter dateFormatter) {
