@@ -49,11 +49,14 @@ chutney:
   configuration-folder: .chutney/conf
   environment:
     configuration-folder: ${chutney.configuration-folder}
-  db-server:
-    port: 9360
-    base-dir: ./.chutney
+#  db-server: (cf. application-db-[h2|pg].yml configuration files)
+#    port: 9360
+#    base-dir: ./.chutney
   orient:
     path: .chutney/data/orient
+#    dBProperties:
+#      dbName: chutney_component_db
+#      dbType: PLOCAL
     contextConfiguration:
       "[storage.diskCache.diskFreeSpaceLimit]": 384
       "[storage.diskCache.bufferSize]": 1024
