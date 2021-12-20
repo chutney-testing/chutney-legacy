@@ -20,6 +20,7 @@ import {
 } from '@core/services';
 import { distinct, flatMap, newInstance } from '@shared/tools/array-utils';
 import { isNotEmpty } from '@shared';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'chutney-campaign-edition',
@@ -71,7 +72,8 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         private router: Router,
         private route: ActivatedRoute,
         private dragulaService: DragulaService,
-        private environmentAdminService: EnvironmentAdminService
+        private environmentAdminService: EnvironmentAdminService,
+        private translate: TranslateService,
     ) {
         this.campaignForm = this.formBuilder.group({
             title: ['', Validators.required],
@@ -89,21 +91,27 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-
+        this.initMultiSelectSettings();
         this.submitted = false;
         this.loadEnvironment();
         this.loadAllScenarios();
+    }
 
-        this.settings = {
-            text: 'Select tag',
-            enableCheckAll: false,
-            autoPosition: false
-        };
-        this.jirasettings = {
-            text: 'Select jira execution status',
-            enableCheckAll: false,
-            autoPosition: false
-        };
+    private initMultiSelectSettings() {
+        this.translate.get('campaigns.edition.selectTag').subscribe((res: string) => {
+            this.settings = {
+                text: res,
+                enableCheckAll: false,
+                autoPosition: false
+            };
+        });
+        this.translate.get('campaigns.edition.selectJiraTag').subscribe((res: string) => {
+            this.jirasettings = {
+                text: res,
+                enableCheckAll: false,
+                autoPosition: false
+            };
+        });
     }
 
     onItemSelect(item: any) {
