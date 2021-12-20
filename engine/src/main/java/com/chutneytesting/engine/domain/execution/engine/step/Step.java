@@ -89,8 +89,10 @@ public class Step {
                 .exec(() -> new StepContextImpl(evaluatedInputs, scenarioContext))
                 .ifSuccess(stepContextExecuted -> {
                     executor.execute(scenarioExecution, stepContextExecuted, target, this);
-                    executeStepValidations(stepContextExecuted);
-                    copyStepResultsToScenarioContext(stepContextExecuted, scenarioContext);
+                    if (Status.SUCCESS.equals(this.state.status())) {
+                        executeStepValidations(stepContextExecuted);
+                        copyStepResultsToScenarioContext(stepContextExecuted, scenarioContext);
+                    }
                     this.stepContext = (StepContextImpl) stepContextExecuted.copy();
                 })
                 .ifFailed(this::failure);
@@ -258,8 +260,8 @@ public class Step {
             });
             return null;
         })
-            .ifFailed(e -> failure("Step validation failed."
-                + " - Exception: " + e.getClass() + " with message: \"" + e.getMessage() + "\""));
+        .ifFailed(e -> failure("Step validation failed."
+            + " - Exception: " + e.getClass() + " with message: \"" + e.getMessage() + "\""));
     }
 
     public void addStepExecution(Step step) {
