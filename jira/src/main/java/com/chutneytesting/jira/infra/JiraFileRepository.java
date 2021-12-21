@@ -7,6 +7,7 @@ import static com.chutneytesting.tools.orient.ComposableIdUtils.toFrontId;
 import com.chutneytesting.jira.domain.JiraRepository;
 import com.chutneytesting.jira.domain.JiraTargetConfiguration;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.IOException;
@@ -54,7 +55,7 @@ public class JiraFileRepository implements JiraRepository {
         return getAll(SCENARIO_FILE)
             .entrySet()
             .stream()
-            .collect(Collectors.toMap(entry -> toFrontId(entry.getKey()), entry -> entry.getValue()));
+            .collect(Collectors.toMap(entry -> toFrontId(entry.getKey()), Map.Entry::getValue));
     }
 
     @Override
@@ -131,7 +132,7 @@ public class JiraFileRepository implements JiraRepository {
         try {
             byte[] bytes = Files.readAllBytes(resolvedFilePath);
             try {
-                return objectMapper.readValue(bytes, Map.class);
+                return objectMapper.readValue(bytes, new TypeReference<>() {});
             } catch (IOException e) {
                 throw new UnsupportedOperationException("Cannot deserialize configuration file: " + resolvedFilePath, e);
             }
@@ -147,7 +148,7 @@ public class JiraFileRepository implements JiraRepository {
 
             if (Files.exists(resolvedFilePath)) {
                 byte[] bytes = Files.readAllBytes(resolvedFilePath);
-                map.putAll(objectMapper.readValue(bytes, Map.class));
+                map.putAll(objectMapper.readValue(bytes, new TypeReference<Map<String, String>>() {}));
             }
 
             if (jiraId.isEmpty())
@@ -182,7 +183,7 @@ public class JiraFileRepository implements JiraRepository {
 
             if (Files.exists(resolvedFilePath)) {
                 byte[] bytes = Files.readAllBytes(resolvedFilePath);
-                map.putAll(objectMapper.readValue(bytes, Map.class));
+                map.putAll(objectMapper.readValue(bytes, new TypeReference<Map<String, String>>() {}));
             }
 
             map.remove(chutneyId);

@@ -2,6 +2,7 @@ package com.chutneytesting.jira.api;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import java.util.Optional;
 import org.immutables.value.Value;
 
 @Value.Immutable
@@ -14,4 +15,5 @@ public interface JiraDto {
 
     String chutneyId();
 
+    Optional<String> lastExecStatus();
 }

@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.web.client.RestClientException;
@@ -32,9 +31,6 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpJiraXrayImpl.class);
 
     private static final int MS_TIMEOUT = 10 * 1000; // 10 s
-
-    public HttpJiraXrayImpl() {
-    }
 
     @Override
     public void updateRequest(Xray xray, JiraTargetConfiguration jiraTargetConfiguration) {
@@ -48,7 +44,7 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
         RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration.username, jiraTargetConfiguration.password);
 
         try {
-            ResponseEntity response = restTemplate.postForEntity(updateUri, xray, String.class);
+            ResponseEntity<String> response = restTemplate.postForEntity(updateUri, xray, String.class);
             if (response.getStatusCode().equals(HttpStatus.OK)) {
                 LOGGER.debug(response.toString());
                 LOGGER.info("Xray successfully updated for " + xray.getTestExecutionKey());
@@ -61,8 +57,8 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
     }
 
     @Override
-    public List<String> getTestExecutionScenarios(String testExecutionId, JiraTargetConfiguration jiraTargetConfiguration)  {
-        List<String> scenarios = new ArrayList<>();
+    public List<XrayTestExecTest> getTestExecutionScenarios(String testExecutionId, JiraTargetConfiguration jiraTargetConfiguration)  {
+        List<XrayTestExecTest> tests = new ArrayList<>();
 
         String uriTemplate = jiraTargetConfiguration.url + "/rest/raven/1.0/api/testexec/%s/test";
         String uri = String.format(uriTemplate, testExecutionId);
@@ -70,9 +66,8 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
         RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration.username, jiraTargetConfiguration.password);
         try {
             ResponseEntity<XrayTestExecTest[]> response = restTemplate.getForEntity(uri, XrayTestExecTest[].class);
-            if (response.getStatusCode().equals(HttpStatus.OK)) {
-                scenarios = Arrays.stream(response.getBody())
-                    .map(XrayTestExecTest::getKey)
+            if (response.getStatusCode().equals(HttpStatus.OK) && response.getBody() != null) {
+                tests = Arrays.stream(response.getBody())
                     .collect(Collectors.toList());
             } else {
                 LOGGER.error(response.toString());
@@ -80,7 +75,7 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
         } catch (RestClientException e) {
             LOGGER.error("Unable to get xray test execution[" + testExecutionId + "] scenarios : " + e);
         }
-        return scenarios;
+        return tests;
     }
 
     private SSLContext buildSslContext() {
@@ -101,9 +96,9 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
             .setSSLSocketFactory(socketFactory)
             .build();
 
-        ClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
-        ((HttpComponentsClientHttpRequestFactory) requestFactory).setReadTimeout(MS_TIMEOUT);
-        ((HttpComponentsClientHttpRequestFactory) requestFactory).setConnectTimeout(MS_TIMEOUT);
+        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
+        requestFactory.setReadTimeout(MS_TIMEOUT);
+        requestFactory.setConnectTimeout(MS_TIMEOUT);
 
         restTemplate = new RestTemplate(requestFactory);
         restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor(username, password));

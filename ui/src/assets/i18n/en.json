@@ -200,7 +200,9 @@
             "options": "Options",
             "parallelRun": "Parallel run",
             "retryAuto": "1 auto retry on failed scenario",
-            "jiraLinkedTest": "Test exec scenarios"
+            "jiraLinkedTest": "Test exec scenarios",
+            "selectTag": "Select tag",
+            "selectJiraTag": "Select jira execution status"
         },
         "confirm": {
             "deletion.prefix": "Are you sure you want to delete the campaign ",

@@ -8,6 +8,7 @@ import com.chutneytesting.jira.infra.xraymodelapi.Xray;
 import com.chutneytesting.jira.infra.xraymodelapi.XrayEvidence;
 import com.chutneytesting.jira.infra.xraymodelapi.XrayInfo;
 import com.chutneytesting.jira.infra.xraymodelapi.XrayTest;
+import com.chutneytesting.jira.infra.xraymodelapi.XrayTestExecTest;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public class JiraXrayService {
         }
     }
 
-    public List<String> getTestExecutionScenarios(String testExecutionId) {
+    public List<XrayTestExecTest> getTestExecutionScenarios(String testExecutionId) {
         JiraTargetConfiguration jiraTargetConfiguration = jiraRepository.loadServerConfiguration();
         if (jiraTargetConfiguration.url.isEmpty()) {
             return emptyList();
@@ -77,7 +78,6 @@ public class JiraXrayService {
         }
         if (!currentStep.steps.isEmpty()) {
             currentStep.steps
-                .stream()
                 .forEach(subStep -> errors.putAll(getErrors(subStep, parentStep + " > " + currentStep.name)));
         }
         return errors;
@@ -96,7 +96,6 @@ public class JiraXrayService {
         }
         if (!currentStep.steps.isEmpty()) {
             currentStep.steps
-                .stream()
                 .forEach(subStep -> evidences.addAll(getEvidences(subStep, formatEvidenceFilename(parentStep, currentStep.name))));
         }
         return evidences;
@@ -107,5 +106,6 @@ public class JiraXrayService {
             + (parentStep.trim().isEmpty() ? "" : "_")
             + stepName.trim().replace(" ", "-");
     }
+
 
 }

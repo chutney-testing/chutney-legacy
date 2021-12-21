@@ -13,10 +13,12 @@ import com.chutneytesting.jira.domain.JiraTargetConfiguration;
 import com.chutneytesting.jira.domain.JiraXrayApi;
 import com.chutneytesting.jira.domain.JiraXrayService;
 import com.chutneytesting.jira.infra.JiraFileRepository;
+import com.chutneytesting.jira.infra.xraymodelapi.XrayTestExecTest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -107,18 +109,29 @@ class JiraModuleControllerTest {
 
     @Test
     void getScenariosByCampaignId() {
-        when(jiraXrayApiMock.getTestExecutionScenarios(anyString(), any())).thenReturn(List.of("SCE-2", "SCE-4"));
-        List<String> scenarios = getJiraController("/api/ui/jira/v1/testexec/JIRA-10", new TypeReference<>() {
+
+        List<XrayTestExecTest> result = new ArrayList<>();
+        XrayTestExecTest xrayTestExecTest = new XrayTestExecTest();
+        xrayTestExecTest.setId("12345");
+        xrayTestExecTest.setKey("SCE-2");
+        xrayTestExecTest.setStatus("PASS");
+        result.add(xrayTestExecTest);
+
+        when(jiraXrayApiMock.getTestExecutionScenarios(anyString(), any())).thenReturn(result);
+
+        List<JiraDto> scenarios = getJiraController("/api/ui/jira/v1/testexec/JIRA-10", new TypeReference<>() {
         });
 
-        assertThat(scenarios).containsExactly("2");
+        assertThat(scenarios).hasSize(1);
+        assertThat(scenarios.get(0).id()).isEqualTo("SCE-2");
+        assertThat(scenarios.get(0).chutneyId()).isEqualTo("2");
+        assertThat(scenarios.get(0).lastExecStatus().get()).isEqualTo("PASS");
     }
 
     @Test
     void saveForCampaign() {
         JiraDto dto = ImmutableJiraDto.builder().chutneyId("123").id("JIRA-123").build();
-        JiraDto jiraDto = postJiraController("/api/ui/jira/v1/campaign", new TypeReference<>() {
-        }, dto);
+        JiraDto jiraDto = postJiraController("/api/ui/jira/v1/campaign", new TypeReference<>() {}, dto);
 
         assertThat(jiraDto.chutneyId()).isEqualTo("123");
         assertThat(jiraDto.id()).isEqualTo("JIRA-123");

@@ -5,7 +5,7 @@ import { Observable, Subscription } from 'rxjs';
 import { DragulaService } from 'ng2-dragula';
 
 import {
-    Campaign,
+    Campaign, JiraScenario,
     KeyValue,
     ScenarioIndex,
     TestCase
@@ -19,6 +19,8 @@ import {
     JiraPluginConfigurationService
 } from '@core/services';
 import { distinct, flatMap, newInstance } from '@shared/tools/array-utils';
+import { isNotEmpty } from '@shared';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'chutney-campaign-edition',
@@ -48,13 +50,16 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     selectedEnvironment: string;
 
     itemList = [];
+    jiraItemList = [];
     settings = {};
+    jirasettings = {};
     selectedTags: string[] = [];
+    jiraSelectedTags: string[] = [];
     datasetId: string;
     jiraId: string;
     jiraMap: Map<string, string> = new Map();
     jiraUrl = '';
-    jiraScenarios: string[] = [];
+    jiraScenarios: JiraScenario[] = [];
     jiraScenariosToExclude: Array<ScenarioIndex> = [];
 
     constructor(
@@ -67,12 +72,14 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         private router: Router,
         private route: ActivatedRoute,
         private dragulaService: DragulaService,
-        private environmentAdminService: EnvironmentAdminService
+        private environmentAdminService: EnvironmentAdminService,
+        private translate: TranslateService,
     ) {
         this.campaignForm = this.formBuilder.group({
             title: ['', Validators.required],
             description: '',
             tags: [],
+            jiratags: [],
             campaignTags: '',
             scenarioIds: [],
             parameters: this.formBuilder.array([]),
@@ -84,16 +91,27 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-
+        this.initMultiSelectSettings();
         this.submitted = false;
         this.loadEnvironment();
         this.loadAllScenarios();
+    }
 
-        this.settings = {
-            text: 'Sélectionner tag',
-            enableCheckAll: false,
-            autoPosition: false
-        };
+    private initMultiSelectSettings() {
+        this.translate.get('campaigns.edition.selectTag').subscribe((res: string) => {
+            this.settings = {
+                text: res,
+                enableCheckAll: false,
+                autoPosition: false
+            };
+        });
+        this.translate.get('campaigns.edition.selectJiraTag').subscribe((res: string) => {
+            this.jirasettings = {
+                text: res,
+                enableCheckAll: false,
+                autoPosition: false
+            };
+        });
     }
 
     onItemSelect(item: any) {
@@ -108,6 +126,23 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
 
     OnItemDeSelectAll() {
         this.selectedTags = newInstance([]);
+    }
+
+    onJiraItemSelect(item: any) {
+        this.jiraSelectedTags.push(item.itemName);
+        this.jiraSelectedTags = newInstance(this.jiraSelectedTags);
+        this.jiraFilter();
+    }
+
+    OnJiraItemDeSelect(item: any) {
+        this.jiraSelectedTags.splice(this.jiraSelectedTags.indexOf(item.itemName), 1);
+        this.jiraSelectedTags = newInstance(this.jiraSelectedTags);
+        this.jiraFilter();
+    }
+
+    OnJiraItemDeSelectAll() {
+        this.jiraSelectedTags = newInstance([]);
+        this.jiraFilter();
     }
 
     // convenience getter for easy access to form fields
@@ -160,10 +195,9 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
 
     private initTags() {
         const allTagsInScenario: string[] = distinct(flatMap(this.scenarios, (sc) => sc.tags)).sort();
-        let index = 0;
-        this.itemList = allTagsInScenario.map(t => {
-            index++;
-            return {'id': index, 'itemName': t};
+
+       allTagsInScenario.forEach((currentValue, index) => {
+            this.itemList.push( {'id': index, 'itemName': currentValue});
         });
     }
 
@@ -211,6 +245,24 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         return this.jiraUrl + '/browse/' + this.jiraMap.get(id);
     }
 
+    getJiraLastExecutionStatus(id: string) {
+        const jiraScenario = this.jiraScenarios.filter(s => s.chutneyId === id);
+        if  (jiraScenario.length > 0) {
+            return jiraScenario[0].lastExecStatus;
+        } else {
+            return '';
+        }
+    }
+
+    getJiraLastExecutionStatusClass(id: string) {
+        const status = this.getJiraLastExecutionStatus(id);
+        switch (status) {
+            case 'PASS' : return 'badge-success';
+            case 'FAIL' : return 'badge-danger';
+            default : return 'badge-secondary';
+        }
+    }
+
     hasJiraId() {
         return this.campaignForm.value['jiraId'] != null && this.campaignForm.value['jiraId'] !== '';
     }
@@ -221,6 +273,13 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
                 .subscribe(
                     (result) => {
                         this.jiraScenarios = result;
+                        let index = 0;
+                        this.jiraScenarios.forEach((currentValue) => {
+                            if (isNotEmpty(currentValue.lastExecStatus)) {
+                                this.jiraItemList.push( {'id': index, 'itemName': currentValue.lastExecStatus});
+                                index++;
+                            }
+                        });
                         this.jiraFilter();
                     }
                 );
@@ -234,7 +293,13 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     jiraFilter() {
         if (this.campaignForm.controls['onlyLinkedScenarios'].value === true) {
             this.jiraScenariosToExclude = this.scenarios.filter((item) => {
-                return !this.jiraScenarios.includes(item.id);
+                let jiraTagFilter = false;
+                if (this.jiraSelectedTags.length > 0) {
+
+                    jiraTagFilter = (this.jiraScenarios.find(s => item.id === s.chutneyId &&
+                                    this.jiraSelectedTags.includes(s.lastExecStatus))) === undefined;
+                }
+                return (!this.jiraScenarios.map(j => j.chutneyId).includes(item.id)) || jiraTagFilter;
             });
         } else {
             this.jiraScenariosToExclude = [];
