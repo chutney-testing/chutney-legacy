@@ -123,8 +123,8 @@
                                 </td>
                                 <td class="text-nowrap">{{scenario?.id}}</td>
                                 <td class="scenario-title-cell">{{scenario?.title}}</td>
-                                <td *ngIf="jiraMap.has(scenario.id)" class="p-0">
-                                    <a role="button" class="btn btn-sm btn-link mr-0"
+                                <td class="p-0">
+                                    <a  *ngIf="jiraMap.has(scenario.id)" role="button" class="btn btn-sm btn-link mr-0"
                                         target="_blank" href="{{getJiraLink(scenario.id)}}"
                                         ngbPopover="{{jiraMap.get(scenario.id)}}" placement="left" (click)="$event.stopPropagation()"
                                         triggers="mouseenter:mouseleave">
@@ -201,8 +201,8 @@
                                         </span>
                                 </td>
                                 <td class="p-0">
-                                    <span *ngIf="jiraMap.has(scenario.id) && getJiraLastExecutionStatus(scenario.id) !==''" 
-                                        [ngClass]="getJiraLastExecutionStatus(scenario.id) === 'PASS' ? 'badge-success' : 'badge-danger'" class="badge">
+                                    <span *ngIf="jiraMap.has(scenario.id)" 
+                                        [ngClass]="getJiraLastExecutionStatusClass(scenario.id)" class="badge">
                                         {{getJiraLastExecutionStatus(scenario.id)}}
                                     </span>
                                 </td>

@@ -254,6 +254,15 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         }
     }
 
+    getJiraLastExecutionStatusClass(id: string) {
+        const status = this.getJiraLastExecutionStatus(id);
+        switch (status) {
+            case 'PASS' : return 'badge-success';
+            case 'FAIL' : return 'badge-danger';
+            default : return 'badge-secondary';
+        }
+    }
+
     hasJiraId() {
         return this.campaignForm.value['jiraId'] != null && this.campaignForm.value['jiraId'] !== '';
     }
