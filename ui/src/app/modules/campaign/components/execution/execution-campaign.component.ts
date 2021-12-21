@@ -16,14 +16,16 @@ import {
     ScenarioExecutionReportOutline,
     ScenarioIndex,
     TestCase,
-    Authorization
+    Authorization,
+    JiraScenario
 } from '@model';
 import {
     CampaignService,
     EnvironmentAdminService,
     ScenarioService,
     JiraPluginService,
-    LoginService
+    LoginService,
+    JiraPluginConfigurationService
 } from '@core/services';
 import { newInstance, sortByAndOrder } from '@shared/tools';
 
@@ -89,16 +91,23 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
 
     Authorization = Authorization;
 
+    // Jira
+    jiraStatus = ['PASS', 'FAIL', 'UNKNOWN'];
+    testExecutionId: string;
+    jiraScenarios: JiraScenario[] = [];
+    jiraUrl = '';
+
     constructor(private campaignService: CampaignService,
                 private environmentAdminService: EnvironmentAdminService,
                 private fileSaverService: FileSaverService,
+                private jiraPluginConfigurationService: JiraPluginConfigurationService,
                 private jiraLinkService: JiraPluginService,
                 private route: ActivatedRoute,
                 private router: Router,
                 private scenarioService: ScenarioService,
                 private translate: TranslateService,
                 private loginService: LoginService,
-                private location: Location
+                private location: Location,
     ) {
         translate.get('campaigns.confirm.deletion.prefix').subscribe((res: string) => {
             this.deletionConfirmationTextPrefix = res;
@@ -133,6 +142,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
                 if (campaign) {
                     this.campaign = campaign;
                     this.loadReports(this.campaign, selectLast, executionId);
+                    this.initJiraTestExecutionId();
                 }
             },
             (error) => {
@@ -175,14 +185,16 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
         this.campaignService.find(this.campaign.id).subscribe(
             (campaign) => {
                 const sortedReports = campaign.campaignExecutionReports.sort((a, b) => b.executionId - a.executionId);
-                if (this.campaign.campaignExecutionReports[0] && this.campaign.campaignExecutionReports[0].executionId !== sortedReports[0].executionId) {
+                if (this.campaign.campaignExecutionReports[0] &&
+                    this.campaign.campaignExecutionReports[0].executionId !== sortedReports[0].executionId) {
                     // Add new running report
                     this.campaign.campaignExecutionReports.unshift(sortedReports[0]);
                     this.selectReport(sortedReports[0]);
                 } else {
                     // Update running report
                     this.campaign.campaignExecutionReports[0] = sortedReports[0];
-                    if (this.currentCampaignExecutionReport && this.currentCampaignExecutionReport.executionId === sortedReports[0].executionId) {
+                    if (this.currentCampaignExecutionReport &&
+                        this.currentCampaignExecutionReport.executionId === sortedReports[0].executionId) {
                         this.currentCampaignExecutionReport = sortedReports[0];
                         this.currentScenariosReportsOutlines = newInstance(sortedReports[0].scenarioExecutionReports);
                     }
@@ -213,7 +225,8 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
     private getLastCompleteReport() {
         for (const report of this.campaign.campaignExecutionReports) {
             const campaignReport = new CampaignReport(report);
-            if (!campaignReport.isRunning() && !report.partialExecution && !campaignReport.hasNotExecuted() && !campaignReport.hasStopped()) {
+            if (!campaignReport.isRunning() && !report.partialExecution &&
+                !campaignReport.hasNotExecuted() && !campaignReport.hasStopped()) {
                 return campaignReport;
             }
         }
@@ -254,10 +267,10 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
     }
 
     private getKeyExtractorBy(property: string) {
-        if (property == 'title') {
+        if (property === 'title') {
             return i => i[property] == null ? '' : i[property].toLowerCase();
         }
-        if (property == 'creationDate') {
+        if (property === 'creationDate') {
             const now = Date.now();
             return i => i[property] == null ? now - 1491841324 /*2017-04-10T16:22:04*/ : now - Date.parse(i[property]);
         } else {
@@ -380,6 +393,61 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
         this.campaignSub = timer(this.TIMER).subscribe(() => {
             this.updateRunningReport();
         });
+    }
+
+    updateStatus(scenarioId: string, event: any) {
+        const newStatus = event.target.value;
+        if(newStatus === 'PASS' || newStatus === 'FAIL') {
+            this.jiraLinkService.updateScenarioStatus(this.testExecutionId, scenarioId, newStatus).subscribe(
+                () => {},
+                (error) => { console.log(error); }
+            );
+        }
+    }
+
+    scenarioStatus(scenarioId: String): string {
+        const jiraScenario = this.jiraScenarios.filter(s => s.chutneyId === scenarioId);
+        if  (jiraScenario.length > 0) {
+            if (jiraScenario[0].executionStatus === 'PASS' || jiraScenario[0].executionStatus === 'FAIL') {
+                return jiraScenario[0].executionStatus;
+            }
+        }
+        return 'UNKNOWN';
+    }
+
+    initJiraTestExecutionId() {
+
+        this.jiraPluginConfigurationService.getUrl()
+        .subscribe((r) => {
+            if (r !== '') {
+                this.jiraUrl = r;
+            }
+        });
+        this.jiraLinkService.findByCampaignId(this.campaign.id).subscribe(
+            (jiraId) => {
+                this.testExecutionId = jiraId;
+
+                this.jiraLinkService.findTestExecScenarios( this.testExecutionId)
+                .subscribe(
+                    (result) => {
+                        this.jiraScenarios = result;
+                    }
+                );
+            },
+            (error) => {
+                this.errorMessage = error.error;
+            }
+        );
+
+    }
+
+    getJiraLink(chutneyId: string) {
+        const foundScenario = this.jiraScenarios.find(s => s.chutneyId === chutneyId);
+        if(foundScenario) {
+            return this.jiraUrl + '/browse/' + foundScenario.id;
+        } else {
+            return null;
+        }
     }
 
     private sortCurrentCampaignReports() {

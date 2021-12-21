@@ -1,6 +1,6 @@
 package com.chutneytesting.jira.infra;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import com.chutneytesting.jira.domain.JiraTargetConfiguration;
 import com.chutneytesting.jira.domain.JiraXrayApi;
@@ -36,7 +36,7 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
     public void updateRequest(Xray xray, JiraTargetConfiguration jiraTargetConfiguration) {
         String updateUri = jiraTargetConfiguration.url + "/rest/raven/1.0/import/execution";
 
-        if (isNotBlank(jiraTargetConfiguration.url)) {
+        if (isBlank(jiraTargetConfiguration.url)) {
             LOGGER.error("Unable to update xray, jira url is undefined");
             return;
         }
@@ -57,11 +57,17 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
     }
 
     @Override
-    public List<XrayTestExecTest> getTestExecutionScenarios(String testExecutionId, JiraTargetConfiguration jiraTargetConfiguration)  {
+    public List<XrayTestExecTest> getTestExecutionScenarios(String testExecutionId, JiraTargetConfiguration jiraTargetConfiguration) {
         List<XrayTestExecTest> tests = new ArrayList<>();
+
+        if (isBlank(jiraTargetConfiguration.url)) {
+            LOGGER.error("Unable to update xray, jira url is undefined");
+            return tests;
+        }
 
         String uriTemplate = jiraTargetConfiguration.url + "/rest/raven/1.0/api/testexec/%s/test";
         String uri = String.format(uriTemplate, testExecutionId);
+
 
         RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration.username, jiraTargetConfiguration.password);
         try {
@@ -73,9 +79,27 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
                 LOGGER.error(response.toString());
             }
         } catch (RestClientException e) {
-            LOGGER.error("Unable to get xray test execution[" + testExecutionId + "] scenarios : " + e);
+            LOGGER.error("Unable to get xray test execution[" + testExecutionId + "] scenarios : ", e);
         }
         return tests;
+    }
+
+    @Override
+    public void updateStatusByTestRunId(String testRuntId, String executionStatus, JiraTargetConfiguration jiraTargetConfiguration) {
+        if (isBlank(jiraTargetConfiguration.url)) {
+            LOGGER.error("Unable to update xray, jira url is undefined");
+            return;
+        }
+
+        String uriTemplate = jiraTargetConfiguration.url + "/rest/raven/1.0/api/testrun/%s/status?status=%s";
+        String uri = String.format(uriTemplate, testRuntId, executionStatus);
+
+        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration.username, jiraTargetConfiguration.password);
+        try {
+            restTemplate.put(uri, null);
+        } catch (RestClientException e) {
+            LOGGER.error("Unable to update xray testRuntId[" + testRuntId + "] with status[" + executionStatus + "] : ", e);
+        }
     }
 
     private SSLContext buildSslContext() {

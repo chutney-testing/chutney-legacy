@@ -2,9 +2,12 @@ package com.chutneytesting.jira.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.data.MapEntry.entry;
+import static org.assertj.core.util.Lists.list;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -21,6 +24,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -125,7 +129,7 @@ class JiraModuleControllerTest {
         assertThat(scenarios).hasSize(1);
         assertThat(scenarios.get(0).id()).isEqualTo("SCE-2");
         assertThat(scenarios.get(0).chutneyId()).isEqualTo("2");
-        assertThat(scenarios.get(0).lastExecStatus().get()).isEqualTo("PASS");
+        assertThat(scenarios.get(0).executionStatus().get()).isEqualTo("PASS");
     }
 
     @Test
@@ -179,6 +183,26 @@ class JiraModuleControllerTest {
 
         JiraTargetConfiguration expected = jiraRepository.loadServerConfiguration();
         assertThat(expected).usingRecursiveComparison().isEqualTo(newConfiguration);
+    }
+
+    @Test
+    void updateStatus() throws Exception {
+        JiraDto dto = ImmutableJiraDto.builder().chutneyId("3").id("").executionStatus("PASS").build();
+
+        XrayTestExecTest xrayTestExecTest = new XrayTestExecTest();
+        xrayTestExecTest.setId("runIdentifier");
+        xrayTestExecTest.setKey("SCE-3");
+
+        when(jiraXrayApiMock.getTestExecutionScenarios(anyString(), any())).thenReturn(list(xrayTestExecTest));
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/ui/jira/v1/testexec/JIRA-10\"")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(om.writeValueAsString(dto))
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andDo(print())
+            .andExpect(MockMvcResultMatchers.status().isOk());
+
+        verify(jiraXrayApiMock).updateStatusByTestRunId(eq("runIdentifier"), eq("PASS"), any());
     }
 
     private <T> T getJiraController(String url, TypeReference<T> typeReference) {

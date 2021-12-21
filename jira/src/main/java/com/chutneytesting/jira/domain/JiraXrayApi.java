@@ -9,4 +9,6 @@ public interface JiraXrayApi {
     void updateRequest(Xray xray, JiraTargetConfiguration jiraTargetConfiguration);
 
     List<XrayTestExecTest> getTestExecutionScenarios(String testExecutionId, JiraTargetConfiguration jiraTargetConfiguration);
+
+    void updateStatusByTestRunId(String id, String executionStatus, JiraTargetConfiguration jiraTargetConfiguration);
 }

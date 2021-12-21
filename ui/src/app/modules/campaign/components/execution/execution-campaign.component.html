@@ -148,7 +148,7 @@
                             <span *ngIf="orderBy == 'status' && reverseOrder" class="fa fa-caret-down"></span>
                             <span *ngIf="orderBy == 'status' && !reverseOrder" class="fa fa-caret-up"></span>
                         </th>
-                        <th scope="col" class="filter w80" (click)="sortCurrentBy('scenarioName')">{{ 'campaigns.execution.scenarios.item.header.title' | translate }}
+                        <th scope="col" class="filter w65" (click)="sortCurrentBy('scenarioName')">{{ 'campaigns.execution.scenarios.item.header.title' | translate }}
                             <span *ngIf="orderBy == 'scenarioName' && reverseOrder" class="fa fa-caret-down"></span>
                             <span *ngIf="orderBy == 'scenarioName' && !reverseOrder" class="fa fa-caret-up"></span>
                         </th>
@@ -156,6 +156,9 @@
                             <span *ngIf="orderBy == 'duration' && reverseOrder" class="fa fa-caret-down"></span>
                             <span *ngIf="orderBy == 'duration' && !reverseOrder" class="fa fa-caret-up"></span>
                         </th>
+                        <th *ngIf="testExecutionId" scope="col" class="filter w5" ></th>
+                        <th *ngIf="testExecutionId" scope="col" class="filter w10" > Jira status</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
@@ -180,7 +183,21 @@
                             </ng-container>
                         </td>
                         <td>
-                                <span class=" small_text">{{scenarioReportOutline.duration | duration:'short' }}</span>
+                            <span class=" small_text">{{scenarioReportOutline.duration | duration:'short' }}</span>
+                        </td>
+                        <td *ngIf="testExecutionId">
+                            <a *ngIf="getJiraLink(scenarioReportOutline.scenarioId)" role="button" class="btn btn-sm btn-link m-0"
+                                target="_blank" href="{{getJiraLink(scenarioReportOutline.scenarioId)}}"
+                                ngbPopover="{{getJiraLink(scenarioReportOutline.scenarioId)}}" placement="left" (click)="$event.stopPropagation()"
+                                triggers="mouseenter:mouseleave">
+                                <span class="fab fa-jira" aria-hidden="true">
+                                </span>
+                            </a>
+                        </td>
+                        <td *ngIf="testExecutionId">
+                            <select class="form-control small_text" (change)="updateStatus(scenarioReportOutline.scenarioId, $event)">
+                                <option *ngFor="let status of jiraStatus" [selected]="scenarioStatus(scenarioReportOutline.scenarioId) === status">{{ status }}</option>
+                            </select>
                         </td>
                     </tr>
                 </tbody>

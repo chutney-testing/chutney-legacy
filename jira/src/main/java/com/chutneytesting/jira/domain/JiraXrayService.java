@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +65,20 @@ public class JiraXrayService {
         return jiraXrayApi.getTestExecutionScenarios(testExecutionId, jiraTargetConfiguration);
     }
 
+    public void updateScenarioStatus(String testExecId, String chutneyId, String executionStatus) {
+        JiraTargetConfiguration jiraTargetConfiguration = jiraRepository.loadServerConfiguration();
+        if (jiraTargetConfiguration.url.isEmpty()) {
+            return;
+        }
+        String scenarioJiraId = jiraRepository.getByScenarioId(chutneyId);
+
+        List<XrayTestExecTest> testExecutionScenarios = getTestExecutionScenarios(testExecId);
+        Optional<XrayTestExecTest> foundTest = testExecutionScenarios.stream().filter(test -> scenarioJiraId.equals(test.getKey())).findFirst();
+        if(foundTest.isPresent()) {
+            jiraXrayApi.updateStatusByTestRunId(foundTest.get().getId(), executionStatus, jiraTargetConfiguration);
+        }
+    }
+
     private List<String> getErrors(ReportForJira report) {
         List<String> errors = new ArrayList<>();
         getErrors(report.rootStep, "").forEach((k, v) -> errors.add(k + " => " + v));
@@ -106,6 +121,4 @@ public class JiraXrayService {
             + (parentStep.trim().isEmpty() ? "" : "_")
             + stepName.trim().replace(" ", "-");
     }
-
-
 }
