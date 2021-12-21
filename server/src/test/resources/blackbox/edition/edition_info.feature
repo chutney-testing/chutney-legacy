@@ -5,8 +5,8 @@ Feature: Support testcase edition metadata
     Background:
         Given A start date
             Do put in context
-            | startDate         | ${T(java.time.Instant).now()}                        |
-            | isoFormatter      | ${T(java.time.format.DateTimeFormatter).ISO_INSTANT} |
+            | startDate         | ${#now().toInstant()}                        |
+            | isoFormatter      | ${#isoDateFormatter('instant')} |
 
     Scenario: Consult new testcase metadata
         Given robert has created a testcase with metadata

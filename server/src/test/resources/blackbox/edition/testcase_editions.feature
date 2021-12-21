@@ -5,8 +5,8 @@ Feature: Support testcase editions
     Background:
         Given A start date
             Do put in context
-            | startDate         | ${T(java.time.Instant).now()}                        |
-            | isoFormatter      | ${T(java.time.format.DateTimeFormatter).ISO_INSTANT} |
+            | startDate         | ${#now().toInstant()}                        |
+            | isoFormatter      | ${#isoDateFormatter('instant')} |
         And An existing testcase
             Do http-post
                 On CHUTNEY_LOCAL

@@ -16,7 +16,7 @@ public enum DurationUnit {
     HOURS(TimeUnit.HOURS, 1000 * 60 * 60, "h", "hour", "hours", "hour(s)"),
     DAYS(TimeUnit.DAYS, 1000 * 60 * 60 * 24, "d", "day", "days", "day(s)");
 
-    final TimeUnit timeUnit;
+    public final TimeUnit timeUnit;
     final double toMilliFactor;
     final Set<String> labels;
     final String mostRelevantLabel;
@@ -28,7 +28,7 @@ public enum DurationUnit {
         mostRelevantLabel = labels[labels.length - 1];
     }
 
-    static DurationUnit parse(String label) {
+    public static DurationUnit parse(String label) {
         String unitText = label.trim().toLowerCase();
         return Arrays
             .stream(values())
