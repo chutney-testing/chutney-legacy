@@ -24,10 +24,7 @@ Feature: Support testcase editions
                 }
                 """
                 Take testcaseId ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
 
     Scenario: Request testcase edition
         Given paloma requests an edition on an existing testcase
@@ -36,20 +33,14 @@ Feature: Support testcase editions
                 With uri /api/v1/editions/testcases/${#testcaseId}
                 With headers
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("paloma:paloma").getBytes())} |
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         And robert requests an edition on the same testcase
             Do http-post
                 On CHUTNEY_LOCAL_NO_USER
                 With uri /api/v1/editions/testcases/${#testcaseId}
                 With headers
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("robert:robert").getBytes())} |
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         When admin consults the current editions of this testcase
             Do http-get
                 On CHUTNEY_LOCAL_NO_USER
@@ -57,10 +48,7 @@ Feature: Support testcase editions
                 With headers
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("admin:admin").getBytes())} |
                 Take currentEditions ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then paloma and robert are seen as current editors
             Do json-assert Check paloma's edition
                 With document ${#jsonSerialize(#json(#currentEditions, "$[?(@.editionUser=='paloma')]").get(0))}
@@ -83,10 +71,7 @@ Feature: Support testcase editions
                 With headers
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("paloma:paloma").getBytes())} |
                 Take firstEdition ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         When paloma requests an edition on the same testcase
             Do http-post
                 On CHUTNEY_LOCAL_NO_USER
@@ -94,10 +79,7 @@ Feature: Support testcase editions
                 With headers
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("paloma:paloma").getBytes())} |
                 Take secondEdition ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then the edition received is the first one
             Do json-compare
                 With document1 ${#firstEdition}
@@ -112,30 +94,21 @@ Feature: Support testcase editions
                 With uri /api/v1/editions/testcases/${#testcaseId}
                 With headers
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("paloma:paloma").getBytes())} |
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         When paloma ends its edition
             Do http-delete
                 On CHUTNEY_LOCAL_NO_USER
                 With uri /api/v1/editions/testcases/${#testcaseId}
                 With headers
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("paloma:paloma").getBytes())} |
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then paloma cannot be seen as current editor
             Consults the current editions of this testcase
                 Do http-get
                     On CHUTNEY_LOCAL
                     With uri /api/v1/editions/testcases/${#testcaseId}
                     Take currentEditions ${#body}
-                Do compare Assert HTTP status is 200
-                    With actual ${#status}
-                    With expected 200
-                    With mode equals
+                    Validate httpStatusCode_200 ${#status == 200}
             Do json-assert Check paloma's edition inexistence
                 With document ${#currentEditions}
                 With expected
@@ -148,10 +121,7 @@ Feature: Support testcase editions
                 With uri /api/v1/editions/testcases/${#testcaseId}
                 With headers
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("paloma:paloma").getBytes())} |
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         When edition lasts beyond defined ttl
             Do wait for 2500 ms
         Then paloma cannot be seen as current editor
@@ -160,10 +130,7 @@ Feature: Support testcase editions
                     On CHUTNEY_LOCAL
                     With uri /api/v1/editions/testcases/${#testcaseId}
                     Take currentEditions ${#body}
-                Do compare Assert HTTP status is 200
-                    With actual ${#status}
-                    With expected 200
-                    With mode equals
+                    Validate httpStatusCode_200 ${#status == 200}
             Do json-assert Check paloma's edition inexistence
                 With document ${#currentEditions}
                 With expected

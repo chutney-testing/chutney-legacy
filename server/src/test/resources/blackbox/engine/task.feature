@@ -7,19 +7,13 @@ Feature: Engine tasks exposition
                 On CHUTNEY_LOCAL
                 With uri /api/task/v1
                 Take allTasks ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         And Request engine for task <task-id>
             Do http-get
                 On CHUTNEY_LOCAL
                 With uri /api/task/v1/<task-id>
                 Take task ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then Its inputs are present in both responses
             Do json-compare Assert inputs from all tasks
                 With document1 ${#json(#allTasks, "$[*][?(@.identifier == '<task-id>')].inputs").toString()}

@@ -13,10 +13,7 @@ Feature: Roles declarations and users associations
                     On CHUTNEY_LOCAL
                     With uri /api/v1/authorizations
                     Take currentAuthorizations ${#body}
-                Do compare Assert HTTP status is 200
-                    With actual ${#status}
-                    With expected 200
-                    With mode equals
+                    Validate httpStatusCode_200 ${#status == 200}
             Add the new role
                 Do http-post Post roles and authorizations to Chutney instance
                     On CHUTNEY_LOCAL
@@ -30,20 +27,14 @@ Feature: Roles declarations and users associations
                         "authorizations": ${#jsonPath(#currentAuthorizations, '$.authorizations')}
                     }
                     """
-                Do compare Assert HTTP status is 200
-                    With actual ${#status}
-                    With expected 200
-                    With mode equals
+                    Validate httpStatusCode_200 ${#status == 200}
         Then It must be read back
             Ask for current roles and authorizations
                 Do http-get
                     On CHUTNEY_LOCAL
                     With uri /api/v1/authorizations
                     Take readAuthorizations ${#body}
-                Do compare Assert HTTP status is 200
-                    With actual ${#status}
-                    With expected 200
-                    With mode equals
+                    Validate httpStatusCode_200 ${#status == 200}
             Do json-assert Validate the new role existence
                 With document ${#readAuthorizations}
                 With expected
@@ -61,10 +52,7 @@ Feature: Roles declarations and users associations
                     On CHUTNEY_LOCAL
                     With uri /api/v1/authorizations
                     Take currentAuthorizations ${#body}
-                Do compare Assert HTTP status is 200
-                    With actual ${#status}
-                    With expected 200
-                    With mode equals
+                    Validate httpStatusCode_200 ${#status == 200}
             Do json-assert Validate the role
                 With document ${#currentAuthorizations}
                 With expected
@@ -84,20 +72,14 @@ Feature: Roles declarations and users associations
                     "authorizations": ${#jsonSerialize(#jsonPath(#currentAuthorizations, "$.authorizations[?(@.name!='"+#roleNameWithNoUser+"')]").appendElement(#roleUserAuthorizations))}
                 }
                 """
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then It must be read back
             Ask for current roles and authorizations
                 Do http-get
                     On CHUTNEY_LOCAL
                     With uri /api/v1/authorizations
                     Take readAuthorizations ${#body}
-                Do compare Assert HTTP status is 200
-                    With actual ${#status}
-                    With expected 200
-                    With mode equals
+                    Validate httpStatusCode_200 ${#status == 200}
             Do json-assert Validate the user existence
                 With document ${#readAuthorizations}
                 With expected
@@ -109,10 +91,7 @@ Feature: Roles declarations and users associations
                 | Content-Type  | application/json;charset=UTF-8                                                             |
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("user:user").getBytes())} |
                 With uri /api/v1/user
-            Do compare
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
             Do json-assert
                 With document ${#body}
                 With expected
@@ -124,10 +103,7 @@ Feature: Roles declarations and users associations
                 With headers
                 | Content-Type | application/json;charset=UTF-8 |
                 With body ${#currentAuthorizations}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         And Check user authority
             Do http-get
                 On CHUTNEY_LOCAL_NO_USER
@@ -135,10 +111,7 @@ Feature: Roles declarations and users associations
                 | Content-Type  | application/json;charset=UTF-8                                                             |
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("user:user").getBytes())} |
                 With uri /api/v1/user
-            Do compare
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
             Do json-assert
                 With document ${#body}
                 With expected

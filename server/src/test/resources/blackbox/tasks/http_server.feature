@@ -26,10 +26,7 @@ Feature: HTTP server Task test
                     ]
                 }
                 """
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         And this scenario is saved
             Do http-post Post scenario to Chutney instance
                 On CHUTNEY_LOCAL
@@ -67,20 +64,14 @@ Feature: HTTP server Task test
                 }
                 """
                 Take scenarioId ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         When last saved scenario is executed
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
                 With uri /api/ui/scenario/execution/v1/${#scenarioId}/HTTP_SERVER_ENV
                 With timeout 5 s
                 Take report ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then the report status is SUCCESS
             Do compare
                 With actual ${#json(#report, "$.report.status")}

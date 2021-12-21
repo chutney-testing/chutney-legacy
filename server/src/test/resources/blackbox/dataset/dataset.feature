@@ -27,10 +27,7 @@ Feature: Dataset management
                 }
                 """
                 Take datasetId ${#jsonPath(#body, "$.id")}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
 
     Scenario: Find existing dataset
         When search for the dataset
@@ -38,12 +35,9 @@ Feature: Dataset management
                 On CHUTNEY_LOCAL
                 With uri /api/v1/datasets/${#datasetId}
                 Take dataset ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then the dataset is retrieved
-            Do compare Assert HTTP status is 200
+            Do compare
                 With actual ${#jsonPath(#dataset, "$.name")}
                 With expected my dataset name
                 With mode equals
@@ -53,18 +47,12 @@ Feature: Dataset management
             Do http-delete
                 On CHUTNEY_LOCAL
                 With uri /api/v1/datasets/${#datasetId}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then the dataset cannot be found
             Do http-get
                 On CHUTNEY_LOCAL
                 With uri /api/v1/datasets/${#datasetId}
-            Do compare Assert HTTP status is 404
-                With actual ${#status}
-                With expected 404
-                With mode equals
+                Validate httpStatusCode_404 ${#status == 404}
 
     Scenario: Versioning
         When a new version is saved
@@ -91,10 +79,7 @@ Feature: Dataset management
                 }
                 """
                 Take datasetVersion ${#jsonPath(#body, "$.version")}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         And another version without space
             Do http-post Post dataset to Chutney instance
                 On CHUTNEY_LOCAL
@@ -119,10 +104,7 @@ Feature: Dataset management
                 }
                 """
                 Take datasetVersion ${#jsonPath(#body, "$.version")}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         And another new version
             Do http-post Post dataset to Chutney instance
                 On CHUTNEY_LOCAL
@@ -147,10 +129,7 @@ Feature: Dataset management
                 }
                 """
                 Take datasetVersion ${#jsonPath(#body, "$.version")}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then the dataset last version number is 4
             Do compare
                 With actual ${T(Integer).toString(#datasetVersion)}
@@ -161,10 +140,7 @@ Feature: Dataset management
                 On CHUTNEY_LOCAL
                 With uri /api/v1/datasets/${#datasetId}/versions
                 Take datasetVersionList ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
             Do compare Assert version's list
                 With actual ${#jsonPath(#datasetVersionList, "$[*].version").toString()}
                 With expected [1,2,3,4]
@@ -173,10 +149,7 @@ Feature: Dataset management
             Do http-get
                 On CHUTNEY_LOCAL
                 With uri /api/v1/datasets/${#datasetId}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
             Do compare Assert last version number
                 With actual ${#jsonPath(#body, "$.version").toString()}
                 With expected 4
@@ -185,10 +158,7 @@ Feature: Dataset management
             Do http-get
                 On CHUTNEY_LOCAL
                 With uri /api/v1/datasets/${#datasetId}/2
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
             Do compare Assert version number
                 With actual ${#jsonPath(#body, "$.version").toString()}
                 With expected 2

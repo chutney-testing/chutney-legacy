@@ -25,10 +25,7 @@ Feature:  Campaign execution
                 }
                 """
                 Take scenario1Id ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         And a scenario with name "scenario2" is stored
             Do http-post Post scenario to Chutney instance
                 On CHUTNEY_LOCAL
@@ -51,10 +48,7 @@ Feature:  Campaign execution
                 }
                 """
                 Take scenario2Id ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
 
     Scenario: Execution by campaign id with 2 scenarios
         Given a campaign is stored
@@ -77,19 +71,13 @@ Feature:  Campaign execution
                 }
                 """
                 Take campaignId ${#jsonPath(#body, "$.id")}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         When this campaign is executed by id
             Do http-get
                 On CHUTNEY_LOCAL
                 With uri /api/ui/campaign/execution/v1/byID/${#campaignId}
                 Take report ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then the execution report is returned
             Do compare Check execution id not empty
                 With actual ${#json(#report, "$.executionId").toString()}
@@ -134,19 +122,13 @@ Feature:  Campaign execution
                 }
                 """
                 Take campaignId ${#jsonPath(#body, "$.id")}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         When this campaign is executed by name
             Do http-get
                 On CHUTNEY_LOCAL
                 With uri /api/ui/campaign/execution/v1/campaignName/ENV
                 Take report ${#json(#body, "$[0]")}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then the execution reports are returned
             Do compare Check execution id not empty
                 With actual ${#json(#report, "$.executionId").toString()}
@@ -190,19 +172,13 @@ Feature:  Campaign execution
                 }
                 """
                 Take campaignId ${#jsonPath(#body, "$.id")}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         When this campaign is executed for surefire
             Do http-get
                 On CHUTNEY_LOCAL
                 With uri /api/ui/campaign/execution/v1/campaignSurefire/surefire
                 Take responseHeaders ${#headers}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then the response is a non empty zip file
             Do compare
                 With actual ${#responseHeaders.getContentType().toString()}
@@ -223,10 +199,7 @@ Feature:  Campaign execution
                 On CHUTNEY_LOCAL
                 With uri /api/ui/campaign/execution/v1/byID/666/ENV
         Then the campaign is not found
-            Do compare Assert HTTP status is 404
-                With actual ${#status}
-                With expected 404
-                With mode equals
+                Validate httpStatusCode_404 ${#status == 404}
 
     Scenario: Execution by name of an unknown campaign
         When an unknown campaign is executed by name
@@ -234,12 +207,9 @@ Feature:  Campaign execution
                 On CHUTNEY_LOCAL
                 With uri /api/ui/campaign/execution/v1/unknownName
                 Take report ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then the campaign report is empty
-            Do compare Assert HTTP status is 404
+            Do compare
                 With actual ${#report}
                 With expected []
                 With mode equals

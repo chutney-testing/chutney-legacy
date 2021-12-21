@@ -25,20 +25,14 @@ Feature: Final task for registering final actions for a testcase
                 }
                 """
                 Take scenarioId ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         When Last saved scenario is executed
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
                 With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
                 With timeout 5 s
                 Take report ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then The report status is SUCCESS
             Do compare
                 With actual ${#json(#report, "$.report.status")}
@@ -99,20 +93,14 @@ Feature: Final task for registering final actions for a testcase
                 }
                 """
                 Take scenarioId ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         When Last saved scenario is executed
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
                 With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
                 With timeout 5 s
                 Take report ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${#status}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then The report status is FAILURE
             Do compare
                 With actual ${#json(#report, "$.report.status")}
