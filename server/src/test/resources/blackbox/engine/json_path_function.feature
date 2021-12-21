@@ -32,7 +32,7 @@ Feature: Execution with jsonPath function
                 """
                 Take scenarioId ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         When last saved scenario is executed
@@ -41,7 +41,7 @@ Feature: Execution with jsonPath function
                 With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
                 Take report ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then the extracted value is 'value1'
@@ -81,7 +81,7 @@ Feature: Execution with jsonPath function
                 """
                 Take scenarioId ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         When last saved scenario is executed
@@ -90,7 +90,7 @@ Feature: Execution with jsonPath function
                 With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
                 Take report ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then the extracted value is '["value1","value1"]'
@@ -130,7 +130,7 @@ Feature: Execution with jsonPath function
                 """
                 Take scenarioId ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         When last saved scenario is executed
@@ -139,7 +139,7 @@ Feature: Execution with jsonPath function
                 With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
                 Take report ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then the extracted value is '{field1=value1}'

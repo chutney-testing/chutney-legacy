@@ -16,7 +16,7 @@ Feature: Replace scenario parameters with data set or global var values
                 }
                 """
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
 
@@ -42,7 +42,7 @@ Feature: Replace scenario parameters with data set or global var values
                 With timeout 5 s
                 Take report ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then the report status is SUCCESS
@@ -165,7 +165,7 @@ Feature: Replace scenario parameters with data set or global var values
                 """
                 Take scenarioId ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         When last saved scenario is executed
@@ -175,7 +175,7 @@ Feature: Replace scenario parameters with data set or global var values
                 With timeout 5 s
                 Take report ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then the report status is SUCCESS
@@ -219,7 +219,7 @@ Feature: Replace scenario parameters with data set or global var values
                 """
                 Take contextPutWrapperComponentId ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         And A assert-equals composable task component wrapper
@@ -256,7 +256,7 @@ Feature: Replace scenario parameters with data set or global var values
                 """
                 Take assertEqualsWrapperComponentId ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         And a composable testcase
@@ -554,7 +554,7 @@ Feature: Replace scenario parameters with data set or global var values
                 """
                 Take scenarioId ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         When last saved scenario is executed
@@ -564,7 +564,7 @@ Feature: Replace scenario parameters with data set or global var values
                 With timeout 5 s
                 Take report ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then the report status is SUCCESS

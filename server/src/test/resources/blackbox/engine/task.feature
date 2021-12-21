@@ -8,7 +8,7 @@ Feature: Engine tasks exposition
                 With uri /api/task/v1
                 Take allTasks ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         And Request engine for task <task-id>
@@ -17,7 +17,7 @@ Feature: Engine tasks exposition
                 With uri /api/task/v1/<task-id>
                 Take task ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then Its inputs are present in both responses

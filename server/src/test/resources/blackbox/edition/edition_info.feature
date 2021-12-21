@@ -34,7 +34,7 @@ Feature: Support testcase edition metadata
                 """
                 Take testcaseId ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         When admin consult it
@@ -44,7 +44,7 @@ Feature: Support testcase edition metadata
                 With headers
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("admin:admin").getBytes())} |
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then Check testcase metadata
@@ -85,7 +85,7 @@ Feature: Support testcase edition metadata
                 """
                 Take testcaseId ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         When admin consult it
@@ -95,7 +95,7 @@ Feature: Support testcase edition metadata
                 With headers
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("admin:admin").getBytes())} |
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then Check testcase metadata
@@ -136,7 +136,7 @@ Feature: Support testcase edition metadata
                 """
                 Take testcaseId ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         And paloma has updated it with metadata
@@ -164,7 +164,7 @@ Feature: Support testcase edition metadata
                 }
                 """
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         When admin consult it
@@ -174,7 +174,7 @@ Feature: Support testcase edition metadata
                 With headers
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("admin:admin").getBytes())} |
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then Check testcase metadata
@@ -215,7 +215,7 @@ Feature: Support testcase edition metadata
                 """
                 Take testcaseId ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         And paloma has updated it with metadata
@@ -243,7 +243,7 @@ Feature: Support testcase edition metadata
                 }
                 """
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         When admin consult it
@@ -253,7 +253,7 @@ Feature: Support testcase edition metadata
                 With headers
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("admin:admin").getBytes())} |
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then Check testcase metadata
@@ -294,7 +294,7 @@ Feature: Support testcase edition metadata
                 """
                 Take testcaseId ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         When paloma has updated it with wrong version
@@ -323,7 +323,7 @@ Feature: Support testcase edition metadata
                 """
         Then request fails with error status 404
             Do compare
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 404
                 With mode equals
         And message contains "version [666] not found"
@@ -358,7 +358,7 @@ Feature: Support testcase edition metadata
                 """
                 Take testcaseId ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         When paloma updates it with wrong version
@@ -387,7 +387,7 @@ Feature: Support testcase edition metadata
                 """
         Then request fails with error status 404
             Do compare
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 404
                 With mode equals
         And message contains "version [666] not found"

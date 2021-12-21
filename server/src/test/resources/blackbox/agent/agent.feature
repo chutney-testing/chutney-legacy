@@ -46,7 +46,7 @@ We are the agent B. The agent A send us its network configuration in order we sa
                 }
                 """
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then target FAKE_TARGET is saved locally
@@ -56,7 +56,7 @@ We are the agent B. The agent A send us its network configuration in order we sa
                     With uri /api/v2/environment
                     Take environments ${#body}
                 Do compare Assert HTTP status is 200
-                    With actual ${T(Integer).toString(#status)}
+                    With actual ${#status}
                     With expected 200
                     With mode equals
             Do compare Check target is present

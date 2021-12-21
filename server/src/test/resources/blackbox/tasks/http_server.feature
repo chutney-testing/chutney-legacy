@@ -27,7 +27,7 @@ Feature: HTTP server Task test
                 }
                 """
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         And this scenario is saved
@@ -68,7 +68,7 @@ Feature: HTTP server Task test
                 """
                 Take scenarioId ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         When last saved scenario is executed
@@ -78,7 +78,7 @@ Feature: HTTP server Task test
                 With timeout 5 s
                 Take report ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then the report status is SUCCESS

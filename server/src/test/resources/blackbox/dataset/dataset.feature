@@ -28,7 +28,7 @@ Feature: Dataset management
                 """
                 Take datasetId ${#jsonPath(#body, "$.id")}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
 
@@ -39,7 +39,7 @@ Feature: Dataset management
                 With uri /api/v1/datasets/${#datasetId}
                 Take dataset ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then the dataset is retrieved
@@ -54,7 +54,7 @@ Feature: Dataset management
                 On CHUTNEY_LOCAL
                 With uri /api/v1/datasets/${#datasetId}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then the dataset cannot be found
@@ -62,7 +62,7 @@ Feature: Dataset management
                 On CHUTNEY_LOCAL
                 With uri /api/v1/datasets/${#datasetId}
             Do compare Assert HTTP status is 404
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 404
                 With mode equals
 
@@ -92,7 +92,7 @@ Feature: Dataset management
                 """
                 Take datasetVersion ${#jsonPath(#body, "$.version")}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         And another version without space
@@ -120,7 +120,7 @@ Feature: Dataset management
                 """
                 Take datasetVersion ${#jsonPath(#body, "$.version")}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         And another new version
@@ -148,7 +148,7 @@ Feature: Dataset management
                 """
                 Take datasetVersion ${#jsonPath(#body, "$.version")}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then the dataset last version number is 4
@@ -162,7 +162,7 @@ Feature: Dataset management
                 With uri /api/v1/datasets/${#datasetId}/versions
                 Take datasetVersionList ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
             Do compare Assert version's list
@@ -174,7 +174,7 @@ Feature: Dataset management
                 On CHUTNEY_LOCAL
                 With uri /api/v1/datasets/${#datasetId}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
             Do compare Assert last version number
@@ -186,7 +186,7 @@ Feature: Dataset management
                 On CHUTNEY_LOCAL
                 With uri /api/v1/datasets/${#datasetId}/2
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
             Do compare Assert version number

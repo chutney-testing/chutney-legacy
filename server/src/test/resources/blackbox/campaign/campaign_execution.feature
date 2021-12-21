@@ -26,7 +26,7 @@ Feature:  Campaign execution
                 """
                 Take scenario1Id ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         And a scenario with name "scenario2" is stored
@@ -52,7 +52,7 @@ Feature:  Campaign execution
                 """
                 Take scenario2Id ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
 
@@ -78,7 +78,7 @@ Feature:  Campaign execution
                 """
                 Take campaignId ${#jsonPath(#body, "$.id")}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         When this campaign is executed by id
@@ -87,7 +87,7 @@ Feature:  Campaign execution
                 With uri /api/ui/campaign/execution/v1/byID/${#campaignId}
                 Take report ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then the execution report is returned
@@ -135,7 +135,7 @@ Feature:  Campaign execution
                 """
                 Take campaignId ${#jsonPath(#body, "$.id")}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         When this campaign is executed by name
@@ -144,7 +144,7 @@ Feature:  Campaign execution
                 With uri /api/ui/campaign/execution/v1/campaignName/ENV
                 Take report ${#json(#body, "$[0]")}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then the execution reports are returned
@@ -191,7 +191,7 @@ Feature:  Campaign execution
                 """
                 Take campaignId ${#jsonPath(#body, "$.id")}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         When this campaign is executed for surefire
@@ -200,7 +200,7 @@ Feature:  Campaign execution
                 With uri /api/ui/campaign/execution/v1/campaignSurefire/surefire
                 Take responseHeaders ${#headers}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then the response is a non empty zip file
@@ -224,7 +224,7 @@ Feature:  Campaign execution
                 With uri /api/ui/campaign/execution/v1/byID/666/ENV
         Then the campaign is not found
             Do compare Assert HTTP status is 404
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 404
                 With mode equals
 
@@ -235,7 +235,7 @@ Feature:  Campaign execution
                 With uri /api/ui/campaign/execution/v1/unknownName
                 Take report ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then the campaign report is empty

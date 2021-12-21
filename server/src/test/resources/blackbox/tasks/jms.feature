@@ -29,7 +29,7 @@ Feature: Jms Task test
                 }
                 """
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         And this scenario is saved
@@ -53,7 +53,7 @@ Feature: Jms Task test
                             {
                                 "sentence":"Assert http status",
                                 "implementation":{
-                                    "task":"{\n type: compare \n inputs: {\n actual: \${T(Integer).toString(#status)} \n expected: 200 \n mode: not equals \n} \n}"
+                                    "task":"{\n type: compare \n inputs: {\n actual: \${#status} \n expected: 200 \n mode: not equals \n} \n}"
                                 }
                             }
                         ]
@@ -62,7 +62,7 @@ Feature: Jms Task test
                 """
                 Take scenarioId ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         When last saved scenario is executed
@@ -72,7 +72,7 @@ Feature: Jms Task test
                 With timeout 5 s
                 Take report ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then the report status is FAILURE
@@ -117,7 +117,7 @@ Feature: Jms Task test
                 }
                 """
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         And this scenario is saved
@@ -168,7 +168,7 @@ Feature: Jms Task test
                 """
                 Take scenarioId ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         When last saved scenario is executed
@@ -178,7 +178,7 @@ Feature: Jms Task test
                 With timeout 5 s
                 Take report ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then the report status is SUCCESS

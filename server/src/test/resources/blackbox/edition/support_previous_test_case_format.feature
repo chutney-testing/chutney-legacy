@@ -19,7 +19,7 @@ Feature: Support previous test case format
                 """
                 Take scenarioId ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then the persisted test case is converted to the last format
@@ -160,7 +160,7 @@ Feature: Support previous test case format
                 }
                 """
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         When last saved scenario is executed
@@ -170,7 +170,7 @@ Feature: Support previous test case format
                 With timeout 5 s
                 Take report ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then the report status is SUCCESS
@@ -219,7 +219,7 @@ Feature: Support previous test case format
                 }
                 """
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         When last saved scenario execution produces an error
@@ -228,7 +228,7 @@ Feature: Support previous test case format
                 With uri /api/ui/scenario/execution/v1/${#scenarioId}/EDITION_ENV_<env_id>_KO
                 Take report ${#body}
             Do compare Assert HTTP status is 500
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 500
                 With mode equals
         Then the error has the message <message>
@@ -258,7 +258,7 @@ Feature: Support previous test case format
                 """
                 Take scenarioId ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then the task implementation is HJSON readable

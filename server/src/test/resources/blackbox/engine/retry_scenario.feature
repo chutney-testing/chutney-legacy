@@ -50,7 +50,7 @@ Scenario: Retry should stop after success assertion
             """
             Take scenarioId ${#body}
         Do compare Assert HTTP status is 200
-            With actual ${T(Integer).toString(#status)}
+            With actual ${#status}
             With expected 200
             With mode equals
     When last saved scenario is executed
@@ -60,7 +60,7 @@ Scenario: Retry should stop after success assertion
             With timeout 10 s
             Take report ${#body}
         Do compare Assert HTTP status is 200
-            With actual ${T(Integer).toString(#status)}
+            With actual ${#status}
             With expected 200
             With mode equals
     Then the report status is SUCCESS

@@ -28,7 +28,7 @@ Feature: SQL Task test
                 }
                 """
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         And this scenario is saved
@@ -69,7 +69,7 @@ Feature: SQL Task test
                 """
                 Take scenarioId ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         When last saved scenario is executed
@@ -79,7 +79,7 @@ Feature: SQL Task test
                 With timeout 5 s
                 Take report ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then the report status is SUCCESS
@@ -119,7 +119,7 @@ Feature: SQL Task test
                 }
                 """
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         And this scenario is saved
@@ -145,7 +145,7 @@ Feature: SQL Task test
                 """
                 Take scenarioId ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         When last saved scenario is executed
@@ -154,7 +154,7 @@ Feature: SQL Task test
                 With uri /api/ui/scenario/execution/v1/${#scenarioId}/SQL_ENV_KO
                 Take report ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then the report status is FAILURE

@@ -25,7 +25,7 @@ Feature: Support testcase editions
                 """
                 Take testcaseId ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
 
@@ -37,7 +37,7 @@ Feature: Support testcase editions
                 With headers
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("paloma:paloma").getBytes())} |
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         And robert requests an edition on the same testcase
@@ -47,7 +47,7 @@ Feature: Support testcase editions
                 With headers
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("robert:robert").getBytes())} |
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         When admin consults the current editions of this testcase
@@ -58,7 +58,7 @@ Feature: Support testcase editions
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("admin:admin").getBytes())} |
                 Take currentEditions ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then paloma and robert are seen as current editors
@@ -84,7 +84,7 @@ Feature: Support testcase editions
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("paloma:paloma").getBytes())} |
                 Take firstEdition ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         When paloma requests an edition on the same testcase
@@ -95,7 +95,7 @@ Feature: Support testcase editions
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("paloma:paloma").getBytes())} |
                 Take secondEdition ${#body}
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then the edition received is the first one
@@ -113,7 +113,7 @@ Feature: Support testcase editions
                 With headers
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("paloma:paloma").getBytes())} |
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         When paloma ends its edition
@@ -123,7 +123,7 @@ Feature: Support testcase editions
                 With headers
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("paloma:paloma").getBytes())} |
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         Then paloma cannot be seen as current editor
@@ -133,7 +133,7 @@ Feature: Support testcase editions
                     With uri /api/v1/editions/testcases/${#testcaseId}
                     Take currentEditions ${#body}
                 Do compare Assert HTTP status is 200
-                    With actual ${T(Integer).toString(#status)}
+                    With actual ${#status}
                     With expected 200
                     With mode equals
             Do json-assert Check paloma's edition inexistence
@@ -149,7 +149,7 @@ Feature: Support testcase editions
                 With headers
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("paloma:paloma").getBytes())} |
             Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 200
                 With mode equals
         When edition lasts beyond defined ttl
@@ -161,7 +161,7 @@ Feature: Support testcase editions
                     With uri /api/v1/editions/testcases/${#testcaseId}
                     Take currentEditions ${#body}
                 Do compare Assert HTTP status is 200
-                    With actual ${T(Integer).toString(#status)}
+                    With actual ${#status}
                     With expected 200
                     With mode equals
             Do json-assert Check paloma's edition inexistence

@@ -26,7 +26,7 @@ Scenario: Step of a type self registering as Finally Action does not create an i
             """
             Take scenarioId ${#body}
         Do compare Assert HTTP status is 200
-            With actual ${T(Integer).toString(#status)}
+            With actual ${#status}
             With expected 200
             With mode equals
     When last saved scenario is executed
@@ -35,7 +35,7 @@ Scenario: Step of a type self registering as Finally Action does not create an i
             With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
             Take report ${#body}
         Do compare Assert HTTP status is 200
-            With actual ${T(Integer).toString(#status)}
+            With actual ${#status}
             With expected 200
             With mode equals
     Then the report status is SUCCESS
