@@ -359,7 +359,7 @@ public class KafkaBasicConsumeTaskTest {
     }
 
     private KafkaBasicConsumeTask givenKafkaConsumeTask(int expectedMessageNb, String selector, String headerSelector, String mimeType, String timeout) {
-        return new KafkaBasicConsumeTask(TARGET_STUB, TOPIC, GROUP, emptyMap(), expectedMessageNb, selector, headerSelector, mimeType, timeout, logger);
+        return new KafkaBasicConsumeTask(TARGET_STUB, TOPIC, GROUP, emptyMap(), expectedMessageNb, selector, headerSelector, mimeType, timeout, null, logger);
     }
 
     private void givenTaskReceiveMessages(Task task, ConsumerRecord<String, String>... messages) {
