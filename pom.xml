@@ -107,7 +107,7 @@
         <amqp-client.version>5.14.0</amqp-client.version>
         <qpid-broker.version>8.0.6</qpid-broker.version>
         <mongodb.version>3.12.10</mongodb.version>
-        <orientdb.version>3.0.30</orientdb.version>
+        <orientdb.version>3.2.4</orientdb.version>
         <selenium.version>4.1.1</selenium.version>
         <groovy.version>3.0.9</groovy.version>
         <radius.version>1.1.0</radius.version>
