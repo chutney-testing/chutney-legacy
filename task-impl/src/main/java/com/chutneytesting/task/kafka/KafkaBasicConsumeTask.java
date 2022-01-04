@@ -1,6 +1,7 @@
 package com.chutneytesting.task.kafka;
 
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.durationValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.enumValidation;
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.targetValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
@@ -45,6 +46,7 @@ import org.springframework.util.MimeTypeUtils;
 public class KafkaBasicConsumeTask implements Task {
 
     private final KafkaConsumerFactoryFactory kafkaConsumerFactoryFactory = new KafkaConsumerFactoryFactory();
+    private static final String AUTO_COMMIT_COUNT_CONFIG = "auto.commit.count";
 
     static final String OUTPUT_BODY = "body";
     static final String OUTPUT_BODY_HEADERS_KEY = "headers";
@@ -92,7 +94,7 @@ public class KafkaBasicConsumeTask implements Task {
         this.properties = defaultIfNull(properties, new HashMap<>());
         this.ackMode = ofNullable(ackMode)
             .or(() -> ofNullable(this.target != null ? target.properties().get("ackMode") : null))
-            .orElse(ContainerProperties.AckMode.TIME.name());
+            .orElse(ContainerProperties.AckMode.BATCH.name());
     }
 
     @Override
@@ -100,8 +102,8 @@ public class KafkaBasicConsumeTask implements Task {
         return getErrorsFrom(
             notBlankStringValidation(topic, "topic"),
             targetValidation(target),
-            durationValidation(timeout, "timeout")
-            // TODO - Valid ackMode via enum valueOf
+            durationValidation(timeout, "timeout"),
+            enumValidation(ContainerProperties.AckMode.class, ackMode, "ackMode")
         );
     }
 
@@ -218,6 +220,8 @@ public class KafkaBasicConsumeTask implements Task {
         containerProperties.setAckMode(ContainerProperties.AckMode.valueOf(this.ackMode));
         ofNullable(mergedProperties.get(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG))
             .ifPresent(acims -> containerProperties.setAckTime(Long.parseLong(acims)));
+        ofNullable(mergedProperties.get(AUTO_COMMIT_COUNT_CONFIG))
+            .ifPresent(acc -> containerProperties.setAckCount(Integer.parseInt(acc)));
         return new ConcurrentMessageListenerContainer<>(
             kafkaConsumerFactoryFactory.create(target, group, properties),
             containerProperties);

@@ -151,7 +151,7 @@ Feature: Kafka all Tasks test
                 With expected SUCCESS
                 With mode equals
 
-    Scenario Outline: Kafka basic publish / consume with ackMode <ackMode>
+    Scenario Outline: Kafka basic one publish / two consumes with ackMode <ackMode>
         Given an embedded kafka server with a topic a-topic
             Do kafka-broker-start
                 With topics
@@ -173,7 +173,8 @@ Feature: Kafka all Tasks test
                             "url": "tcp://${#kafkaBroker.getBrokerAddresses()[0]}",
                             "properties": [
                                 { "key": "ackMode", "value": "<ackMode>" },
-                                { "key": "auto.offset.reset", "value": "earliest" }
+                                { "key": "auto.offset.reset", "value": "earliest" },
+                                { "key": "auto.commit.count", "value": "1" }
                             ]
                         }
                     ]
@@ -236,12 +237,20 @@ Feature: Kafka all Tasks test
                 Take report ${#body}
                 Validate httpStatusCode_200 ${#status == 200}
         Then the report status is <reportStatus>
-            Do compare
+            Do compare Global status
                 With actual ${#json(#report, "$.report.status")}
+                With expected <reportStatus>
+                With mode equals
+            Do compare Second consume step status
+                With actual ${#json(#report, "$.report.steps[?(@.name=='Consume from broker the same message again')].status").get(0)}
                 With expected <reportStatus>
                 With mode equals
 
         Examples:
-            | ackMode | reportStatus |
-            | MANUAL  | SUCCESS      |
-            | RECORD  | FAILURE      |
+            | ackMode    | reportStatus |
+            | MANUAL     | SUCCESS      |
+            | RECORD     | FAILURE      |
+            | BATCH      | FAILURE      |
+            | COUNT      | FAILURE      |
+            | COUNT_TIME | FAILURE      |
+            | BATCH      | FAILURE      |
