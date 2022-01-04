@@ -18,10 +18,7 @@ Feature: Support previous test case format
                 }
                 """
                 Take scenarioId ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then the persisted test case is converted to the last format
             Do sql Request scenario version from Chutney database
                 On CHUTNEY_DB
@@ -159,20 +156,14 @@ Feature: Support previous test case format
                     "targets": []
                 }
                 """
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         When last saved scenario is executed
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
                 With uri /api/ui/scenario/execution/v1/${#scenarioId}/EDITION_ENV_<env_id>_OK
                 With timeout 5 s
                 Take report ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then the report status is SUCCESS
             Do compare
                 With actual ${#json(#report, "$.report.status")}
@@ -218,19 +209,13 @@ Feature: Support previous test case format
                     "targets": []
                 }
                 """
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         When last saved scenario execution produces an error
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
                 With uri /api/ui/scenario/execution/v1/${#scenarioId}/EDITION_ENV_<env_id>_KO
                 Take report ${#body}
-            Do compare Assert HTTP status is 500
-                With actual ${T(Integer).toString(#status)}
-                With expected 500
-                With mode equals
+                Validate httpStatusCode_500 ${#status == 500}
         Then the error has the message <message>
             Do compare Check error message
                 With actual ${#report}
@@ -257,10 +242,7 @@ Feature: Support previous test case format
                 }
                 """
                 Take scenarioId ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then the task implementation is HJSON readable
             retrieved as raw
                 Do http-get Request scenario from Chutney instance

@@ -5,8 +5,8 @@ Feature: Support testcase edition metadata
     Background:
         Given A start date
             Do put in context
-            | startDate         | ${T(java.time.Instant).now()}                        |
-            | isoFormatter      | ${T(java.time.format.DateTimeFormatter).ISO_INSTANT} |
+            | startDate         | ${#now().toInstant()}                        |
+            | isoFormatter      | ${#isoDateFormatter('instant')} |
 
     Scenario: Consult new testcase metadata
         Given robert has created a testcase with metadata
@@ -33,20 +33,14 @@ Feature: Support testcase edition metadata
                 }
                 """
                 Take testcaseId ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         When admin consult it
             Do http-get
                 On CHUTNEY_LOCAL_NO_USER
                 With uri /api/scenario/v2/${#testcaseId}
                 With headers
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("admin:admin").getBytes())} |
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then Check testcase metadata
             Do json-assert
                 With document ${#body}
@@ -84,20 +78,14 @@ Feature: Support testcase edition metadata
                 }
                 """
                 Take testcaseId ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         When admin consult it
             Do http-get
                 On CHUTNEY_LOCAL_NO_USER
                 With uri /api/scenario/component-edition/${#testcaseId}
                 With headers
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("admin:admin").getBytes())} |
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then Check testcase metadata
             Do json-assert
                 With document ${#body}
@@ -135,10 +123,7 @@ Feature: Support testcase edition metadata
                 }
                 """
                 Take testcaseId ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         And paloma has updated it with metadata
             Do http-patch
                 On CHUTNEY_LOCAL_NO_USER
@@ -163,20 +148,14 @@ Feature: Support testcase edition metadata
                     }
                 }
                 """
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         When admin consult it
             Do http-get
                 On CHUTNEY_LOCAL_NO_USER
                 With uri /api/scenario/v2/${#testcaseId}
                 With headers
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("admin:admin").getBytes())} |
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then Check testcase metadata
             Do json-assert
                 With document ${#body}
@@ -214,10 +193,7 @@ Feature: Support testcase edition metadata
                 }
                 """
                 Take testcaseId ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         And paloma has updated it with metadata
             Do http-post
                 On CHUTNEY_LOCAL_NO_USER
@@ -242,20 +218,14 @@ Feature: Support testcase edition metadata
                     }
                 }
                 """
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         When admin consult it
             Do http-get
                 On CHUTNEY_LOCAL_NO_USER
                 With uri /api/scenario/component-edition/${#testcaseId}
                 With headers
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("admin:admin").getBytes())} |
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then Check testcase metadata
             Do json-assert
                 With document ${#body}
@@ -293,10 +263,7 @@ Feature: Support testcase edition metadata
                 }
                 """
                 Take testcaseId ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         When paloma has updated it with wrong version
             Do http-patch
                 On CHUTNEY_LOCAL_NO_USER
@@ -323,7 +290,7 @@ Feature: Support testcase edition metadata
                 """
         Then request fails with error status 404
             Do compare
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 404
                 With mode equals
         And message contains "version [666] not found"
@@ -357,10 +324,7 @@ Feature: Support testcase edition metadata
                 }
                 """
                 Take testcaseId ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         When paloma updates it with wrong version
             Do http-post
                 On CHUTNEY_LOCAL_NO_USER
@@ -387,7 +351,7 @@ Feature: Support testcase edition metadata
                 """
         Then request fails with error status 404
             Do compare
-                With actual ${T(Integer).toString(#status)}
+                With actual ${#status}
                 With expected 404
                 With mode equals
         And message contains "version [666] not found"

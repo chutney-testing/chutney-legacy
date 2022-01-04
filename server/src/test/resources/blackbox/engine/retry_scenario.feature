@@ -16,7 +16,7 @@ Scenario: Retry should stop after success assertion
                     "when":{
                         "sentence":"Set stop date",
                         "implementation":{
-                            "task":"{\n type: context-put \n inputs: {\n entries: {\n dateTimeFormat: ss \n secondsPlus5: \${T(java.time.format.DateTimeFormatter).ofPattern(#dateTimeFormat).format(T(java.time.ZonedDateTime).now().plusSeconds(5))} \n} \n} \n}"
+                            "task":"{\n type: context-put \n inputs: {\n entries: {\n dateTimeFormat: ss \n secondsPlus5: \${#dateFormatter(#dateTimeFormat).format(#now().plusSeconds(5))} \n} \n} \n}"
                         }
                     },
                     "thens":[
@@ -33,7 +33,7 @@ Scenario: Retry should stop after success assertion
                                 {
                                     "sentence":"Set current date",
                                     "implementation":{
-                                        "task":"{\n type: context-put \n inputs: {\n entries: {\n currentSeconds: \${T(java.time.format.DateTimeFormatter).ofPattern(#dateTimeFormat).format(T(java.time.ZonedDateTime).now())} \n} \n} \n}"
+                                        "task":"{\n type: context-put \n inputs: {\n entries: {\n currentSeconds: \${#dateFormatter(#dateTimeFormat).format(#now())} \n} \n} \n}"
                                     }
                                 },
                                 {
@@ -49,20 +49,14 @@ Scenario: Retry should stop after success assertion
             }
             """
             Take scenarioId ${#body}
-        Do compare Assert HTTP status is 200
-            With actual ${T(Integer).toString(#status)}
-            With expected 200
-            With mode equals
+            Validate httpStatusCode_200 ${#status == 200}
     When last saved scenario is executed
         Do http-post Post scenario execution to Chutney instance
             On CHUTNEY_LOCAL
             With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
             With timeout 10 s
             Take report ${#body}
-        Do compare Assert HTTP status is 200
-            With actual ${T(Integer).toString(#status)}
-            With expected 200
-            With mode equals
+            Validate httpStatusCode_200 ${#status == 200}
     Then the report status is SUCCESS
         Do compare
             With actual ${#json(#report, "$.report.status")}

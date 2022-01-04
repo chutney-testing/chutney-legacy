@@ -15,10 +15,7 @@ Feature: Replace scenario parameters with data set or global var values
                     "message": "{ \"simple\": { \"word\": \"a_word\", \"line\": \"one line\", \"multiline\": \"My half empty glass,\\nI will fill your empty half.\\nNow you are half full.\" }, \"escape\": { \"quote\": \"line with quote \\\"\", \"backslash\": \"line with backslash \\\\\", \"slash\": \"line with slash as url http://host:port/path\", \"apostrophe\": \"line with apostrophe '\" } }"
                 }
                 """
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
 
     Scenario: Execute raw scenario with global vars
         Given an existing testcase written in old format
@@ -41,10 +38,7 @@ Feature: Replace scenario parameters with data set or global var values
                 With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
                 With timeout 5 s
                 Take report ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then the report status is SUCCESS
             Do compare
                 With actual ${#json(#report, "$.report.status")}
@@ -164,20 +158,14 @@ Feature: Replace scenario parameters with data set or global var values
                 }
                 """
                 Take scenarioId ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         When last saved scenario is executed
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
                 With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
                 With timeout 5 s
                 Take report ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then the report status is SUCCESS
             Do compare
                 With actual ${#json(#report, "$.report.status")}
@@ -218,10 +206,7 @@ Feature: Replace scenario parameters with data set or global var values
                 }
                 """
                 Take contextPutWrapperComponentId ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         And A assert-equals composable task component wrapper
             Do http-post Post scenario to Chutney instance
                 On CHUTNEY_LOCAL
@@ -255,10 +240,7 @@ Feature: Replace scenario parameters with data set or global var values
                 }
                 """
                 Take assertEqualsWrapperComponentId ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         And a composable testcase
             Do http-post Post scenario to Chutney instance
                 On CHUTNEY_LOCAL
@@ -553,20 +535,14 @@ Feature: Replace scenario parameters with data set or global var values
                 }
                 """
                 Take scenarioId ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         When last saved scenario is executed
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
                 With uri /api/ui/component/execution/v1/${#scenarioId}/ENV
                 With timeout 5 s
                 Take report ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then the report status is SUCCESS
             Do compare
                 With actual ${#json(#report, "$.report.status")}

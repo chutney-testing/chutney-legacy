@@ -31,19 +31,13 @@ Feature: Execution with jsonPath function
                 }
                 """
                 Take scenarioId ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         When last saved scenario is executed
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
                 With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
                 Take report ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then the extracted value is 'value1'
             Do compare
                 With actual ${#json(#report, "$.report.steps[1].stepOutputs.extracted")}
@@ -80,19 +74,13 @@ Feature: Execution with jsonPath function
                 }
                 """
                 Take scenarioId ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         When last saved scenario is executed
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
                 With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
                 Take report ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then the extracted value is '["value1","value1"]'
             Do compare
                 With actual ${#json(#report, "$.report.steps[1].stepOutputs.extracted[0]")}
@@ -129,19 +117,13 @@ Feature: Execution with jsonPath function
                 }
                 """
                 Take scenarioId ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         When last saved scenario is executed
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
                 With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
                 Take report ${#body}
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then the extracted value is '{field1=value1}'
             Do compare
                 With actual ${#json(#report, "$.report.steps[1].stepOutputs.extracted.field1")}

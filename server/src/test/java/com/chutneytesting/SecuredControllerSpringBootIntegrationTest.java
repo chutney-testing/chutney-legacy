@@ -60,6 +60,7 @@ public class SecuredControllerSpringBootIntegrationTest {
 
     private static Object[] securedEndPointList() {
         return new Object[][]{
+            {HttpMethod.POST, "/api/homepage/v1", "ADMIN_ACCESS", "{\"content\":\"\"}"},
             {HttpMethod.GET, "/api/v1/backups/git", "ADMIN_ACCESS", null},
             {HttpMethod.POST, "/api/v1/backups/git", "ADMIN_ACCESS", "{\"name\":\"secuback\",\"url\":\"\",\"branch\":\"\",\"privateKeyPath\":\"\",\"privateKeyPassphrase\":\"\"}"},
             {HttpMethod.DELETE, "/api/v1/backups/git/name", "ADMIN_ACCESS", null},
@@ -77,7 +78,6 @@ public class SecuredControllerSpringBootIntegrationTest {
             {HttpMethod.GET, "/api/source/git/v1", "ADMIN_ACCESS", null},
             {HttpMethod.POST, "/api/source/git/v1", "ADMIN_ACCESS", "{}"},
             {HttpMethod.DELETE, "/api/source/git/v1/666", "ADMIN_ACCESS", null},
-            {HttpMethod.POST, "/api/homepage/v1", "ADMIN_ACCESS", "{\"content\":\"\"}"},
             {HttpMethod.POST, "/api/v1/agentnetwork/configuration", "ADMIN_ACCESS", "{}"},
             {HttpMethod.GET, "/api/v1/description", "ADMIN_ACCESS", null},
             {HttpMethod.POST, "/api/v1/agentnetwork/explore", "ADMIN_ACCESS", "{\"creationDate\":\"1235\"}"},
@@ -137,9 +137,9 @@ public class SecuredControllerSpringBootIntegrationTest {
             {HttpMethod.GET, "/api/steps/v1/all", "SCENARIO_WRITE", null},
             {HttpMethod.GET, "/api/steps/v1/stepId/parents", "COMPONENT_READ", null},
             {HttpMethod.GET, "/api/steps/v1", "COMPONENT_READ", null},
-            {HttpMethod.GET, "/api/steps/v1/stepId ", "COMPONENT_READ", null},
+            {HttpMethod.GET, "/api/steps/v1/stepId", "COMPONENT_READ", null},
             {HttpMethod.GET, "/api/scenario/v2/testCaseId", "SCENARIO_READ", null},
-            {HttpMethod.GET, "/api/scenario/v2/testCaseId/metadata ", "SCENARIO_READ", null},
+            {HttpMethod.GET, "/api/scenario/v2/testCaseId/metadata", "SCENARIO_READ", null},
             {HttpMethod.GET, "/api/scenario/v2", "SCENARIO_READ", null},
             {HttpMethod.GET, "/api/scenario/v2", "CAMPAIGN_WRITE", null},
             {HttpMethod.POST, "/api/scenario/v2", "SCENARIO_WRITE", "{\"title\":\"\",\"scenario\":{\"when\":{}}}"},
@@ -182,7 +182,7 @@ public class SecuredControllerSpringBootIntegrationTest {
             {HttpMethod.PUT, "/api/v2/environment/envName", "ENVIRONMENT_ACCESS", "{}"},
             {HttpMethod.GET, "/api/v2/environment/envName/target", "ENVIRONMENT_ACCESS", null},
             {HttpMethod.GET, "/api/v2/environment/target", "ENVIRONMENT_ACCESS", null},
-            {HttpMethod.GET, "/api/v2/environment/target/names ", "COMPONENT_READ", null},
+            {HttpMethod.GET, "/api/v2/environment/target/names", "COMPONENT_READ", null},
             {HttpMethod.GET, "/api/v2/environment/envName", "ENVIRONMENT_ACCESS", null},
             {HttpMethod.GET, "/api/v2/environment/envName/target/targetName", "ENVIRONMENT_ACCESS", null},
             {HttpMethod.POST, "/api/v2/environment/envName/target", "ENVIRONMENT_ACCESS", "{\"name\":\"\",\"url\":\"\"}"},

@@ -45,20 +45,14 @@ We are the agent B. The agent A send us its network configuration in order we sa
                     "agentsGraph": ${#jsonSerialize(#jsonPath(#networkConfiguration, "$.agentsGraph"))}
                 }
                 """
-            Do compare Assert HTTP status is 200
-                With actual ${T(Integer).toString(#status)}
-                With expected 200
-                With mode equals
+                Validate httpStatusCode_200 ${#status == 200}
         Then target FAKE_TARGET is saved locally
             Request environment conf from Chutney instance
                 Do http-get
                     On CHUTNEY_LOCAL
                     With uri /api/v2/environment
                     Take environments ${#body}
-                Do compare Assert HTTP status is 200
-                    With actual ${T(Integer).toString(#status)}
-                    With expected 200
-                    With mode equals
+                    Validate httpStatusCode_200 ${#status == 200}
             Do compare Check target is present
                 With actual ${#json(#environments, "$[0].targets[0].name")}
                 With expected fake_target
