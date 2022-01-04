@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.Callable;
+import java.util.function.Predicate;
 import org.apache.commons.lang3.StringUtils;
 
 public class TaskValidatorsUtils {
@@ -49,5 +51,27 @@ public class TaskValidatorsUtils {
         return of(toVerify)
             .validate(Objects::nonNull, "No " + inputLabel + " provided (String)")
             .validate(StringUtils::isNotBlank, inputLabel + " should not be blank");
+    }
+
+    public static <E extends Enum<E>> Validator<String> enumValidation(Class<E> enumClazz, String enumName, String inputLabel) {
+        try {
+            return of(enumName)
+                .validate(testNoException(() -> Enum.valueOf(enumClazz, enumName)),
+                    inputLabel + " is not a valid value in " + Arrays.toString((E[]) enumClazz.getMethod("values").invoke(null))
+                );
+        } catch (ReflectiveOperationException roe) {
+            throw new IllegalStateException("Oops, enum class does not have the values function !!");
+        }
+    }
+
+    private static <T, V> Predicate<T> testNoException(Callable<V> r) {
+        return (nan) -> {
+            try {
+                r.call();
+                return true;
+            } catch (Throwable t) {
+                return false;
+            }
+        };
     }
 }
