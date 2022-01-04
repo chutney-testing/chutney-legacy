@@ -16,7 +16,7 @@ Scenario: Retry should stop after success assertion
                     "when":{
                         "sentence":"Set stop date",
                         "implementation":{
-                            "task":"{\n type: context-put \n inputs: {\n entries: {\n dateTimeFormat: ss \n secondsPlus5: \${#localDateFormatter(#dateTimeFormat).format(#now().plusSeconds(5))} \n} \n} \n}"
+                            "task":"{\n type: context-put \n inputs: {\n entries: {\n dateTimeFormat: ss \n secondsPlus5: \${#dateFormatter(#dateTimeFormat).format(#now().plusSeconds(5))} \n} \n} \n}"
                         }
                     },
                     "thens":[
@@ -33,7 +33,7 @@ Scenario: Retry should stop after success assertion
                                 {
                                     "sentence":"Set current date",
                                     "implementation":{
-                                        "task":"{\n type: context-put \n inputs: {\n entries: {\n currentSeconds: \${#localDateFormatter(#dateTimeFormat).format(#now())} \n} \n} \n}"
+                                        "task":"{\n type: context-put \n inputs: {\n entries: {\n currentSeconds: \${#dateFormatter(#dateTimeFormat).format(#now())} \n} \n} \n}"
                                     }
                                 },
                                 {

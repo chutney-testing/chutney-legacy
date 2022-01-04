@@ -38,12 +38,12 @@ public class DateTimeFunctions {
     }
 
     @SpelFunction
-    public static DateTimeFormatter localDateFormatter(String pattern) {
+    public static DateTimeFormatter dateFormatter(String pattern) {
         return DateTimeFormatter.ofPattern(pattern);
     }
 
     @SpelFunction
-    public static DateTimeFormatter dateFormatter(String pattern, String locale) {
+    public static DateTimeFormatter dateFormatterWithLocale(String pattern, String locale) {
         return DateTimeFormatter.ofPattern(pattern, LocaleUtils.toLocale(locale));
     }
 

@@ -80,13 +80,13 @@ public class DateTimeFunctionsTest {
         @Test
         @DisplayName("from pattern")
         void should_build_DateTimeFormatter_from_pattern() {
-            assertDoesNotThrow(() -> DateTimeFunctions.localDateFormatter("yyyy"));
+            assertDoesNotThrow(() -> DateTimeFunctions.dateFormatter("yyyy"));
         }
 
         @Test
         @DisplayName("from pattern and locale")
         void should_build_DateTimeFormatter_from_pattern_and_locale() {
-            assertDoesNotThrow(() -> DateTimeFunctions.dateFormatter("yyyy", "fr_FR"));
+            assertDoesNotThrow(() -> DateTimeFunctions.dateFormatterWithLocale("yyyy", "fr_FR"));
         }
 
         @ParameterizedTest(name = "{0}")
