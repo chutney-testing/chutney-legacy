@@ -448,11 +448,31 @@
                 <groupId>com.orientechnologies</groupId>
                 <artifactId>orientdb-core</artifactId>
                 <version>${orientdb.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.graalvm.tools</groupId>
+                        <artifactId>profiler</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.graalvm.tools</groupId>
+                        <artifactId>chromeinspector</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.orientechnologies</groupId>
                 <artifactId>orientdb-lucene</artifactId>
                 <version>${orientdb.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.graalvm.tools</groupId>
+                        <artifactId>profiler</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.graalvm.tools</groupId>
+                        <artifactId>chromeinspector</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
