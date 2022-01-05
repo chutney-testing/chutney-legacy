@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.PublicKey;
-import java.util.Collections;
 import java.util.List;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.common.IOUtils;
@@ -57,6 +56,7 @@ public class SshJClient implements SshClient {
             public boolean verify(String hostname, int port, PublicKey key) {
                 return true;
             }
+
             @Override
             public List<String> findExistingAlgorithms(String hostname, int port) {
                 return emptyList();
