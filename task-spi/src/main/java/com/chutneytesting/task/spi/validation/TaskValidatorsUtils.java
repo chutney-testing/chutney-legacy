@@ -8,8 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.Callable;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import org.apache.commons.lang3.StringUtils;
 
 public class TaskValidatorsUtils {
@@ -60,16 +60,16 @@ public class TaskValidatorsUtils {
                     inputLabel + " is not a valid value in " + Arrays.toString((E[]) enumClazz.getMethod("values").invoke(null))
                 );
         } catch (ReflectiveOperationException roe) {
-            throw new IllegalStateException("Oops, enum class does not have the values function !!");
+            throw new IllegalStateException("Should never happens !! unless Enum class does not have the values function !!");
         }
     }
 
-    private static <T, V> Predicate<T> testNoException(Callable<V> r) {
-        return (nan) -> {
+    private static <T, V> Predicate<T> testNoException(Supplier<V> r) {
+        return (x) -> {
             try {
-                r.call();
+                r.get();
                 return true;
-            } catch (Throwable t) {
+            } catch (Exception e) {
                 return false;
             }
         };

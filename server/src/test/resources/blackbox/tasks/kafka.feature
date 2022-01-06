@@ -165,7 +165,7 @@ Feature: Kafka all Tasks test
                 With body
                 """
                 {
-                    "name": "KAFKA_ENV_<ackMode>",
+                    "name": "KAFKA_ENV_<testEnvName>",
                     "description": "",
                     "targets": [
                         {
@@ -232,7 +232,7 @@ Feature: Kafka all Tasks test
         When last saved scenario is executed
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
-                With uri /api/ui/scenario/execution/v1/${#scenarioId}/KAFKA_ENV_<ackMode>
+                With uri /api/ui/scenario/execution/v1/${#scenarioId}/KAFKA_ENV_<testEnvName>
                 With timeout 5 s
                 Take report ${#body}
                 Validate httpStatusCode_200 ${#status == 200}
@@ -247,10 +247,11 @@ Feature: Kafka all Tasks test
                 With mode equals
 
         Examples:
-            | ackMode    | reportStatus |
-            | MANUAL     | SUCCESS      |
-            | RECORD     | FAILURE      |
-            | BATCH      | FAILURE      |
-            | COUNT      | FAILURE      |
-            | COUNT_TIME | FAILURE      |
-            | BATCH      | FAILURE      |
+            | ackMode          | reportStatus | testEnvName    |
+            | MANUAL           | SUCCESS      | MANUAL         |
+            | MANUAL_IMMEDIATE | SUCCESS      | MANUAL_IMM     |
+            | RECORD           | FAILURE      | RECORD         |
+            | TIME             | FAILURE      | TIME           |
+            | COUNT            | FAILURE      | COUNT          |
+            | COUNT_TIME       | FAILURE      | COUNT_TIME     |
+            | BATCH            | FAILURE      | BATCH          |

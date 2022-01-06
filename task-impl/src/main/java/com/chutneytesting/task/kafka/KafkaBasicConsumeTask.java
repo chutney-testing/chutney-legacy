@@ -6,6 +6,7 @@ import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlan
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.targetValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -34,6 +35,7 @@ import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
+import org.apache.commons.exec.util.MapUtils;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
@@ -91,9 +93,11 @@ public class KafkaBasicConsumeTask implements Task {
         this.countDownLatch = new CountDownLatch(this.nbMessages);
         this.group = group;
         this.logger = logger;
-        this.properties = defaultIfNull(properties, new HashMap<>());
+        this.properties = ofNullable(
+            MapUtils.merge(ofNullable(target).map(Target::properties).orElse(emptyMap()), properties)
+        ).orElse(new HashMap<>());
         this.ackMode = ofNullable(ackMode)
-            .or(() -> ofNullable(this.target != null ? target.properties().get("ackMode") : null))
+            .or(() -> ofNullable(this.properties.get("ackMode")))
             .orElse(ContainerProperties.AckMode.BATCH.name());
     }
 
@@ -212,15 +216,12 @@ public class KafkaBasicConsumeTask implements Task {
     }
 
     private ConcurrentMessageListenerContainer<String, String> createMessageListenerContainer(MessageListener<String, String> messageListener) {
-        Map<String, String> mergedProperties = new HashMap<>(target.properties());
-        mergedProperties.putAll(properties);
-
         ContainerProperties containerProperties = new ContainerProperties(topic);
         containerProperties.setMessageListener(messageListener);
         containerProperties.setAckMode(ContainerProperties.AckMode.valueOf(this.ackMode));
-        ofNullable(mergedProperties.get(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG))
+        ofNullable(properties.get(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG))
             .ifPresent(acims -> containerProperties.setAckTime(Long.parseLong(acims)));
-        ofNullable(mergedProperties.get(AUTO_COMMIT_COUNT_CONFIG))
+        ofNullable(properties.get(AUTO_COMMIT_COUNT_CONFIG))
             .ifPresent(acc -> containerProperties.setAckCount(Integer.parseInt(acc)));
         return new ConcurrentMessageListenerContainer<>(
             kafkaConsumerFactoryFactory.create(target, group, properties),

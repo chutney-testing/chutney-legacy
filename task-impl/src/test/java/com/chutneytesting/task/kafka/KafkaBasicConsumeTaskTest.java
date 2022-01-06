@@ -45,6 +45,7 @@ import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.MessageListener;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.util.MimeType;
 import wiremock.com.google.common.collect.ImmutableMap;
 
 @SuppressWarnings("unchecked")
@@ -67,6 +68,46 @@ public class KafkaBasicConsumeTaskTest {
     @BeforeEach
     public void before() {
         logger = new TestLogger();
+    }
+
+    @Test
+    void should_set_inputs_default_values() {
+        KafkaBasicConsumeTask defaultTask = new KafkaBasicConsumeTask(null, null, null, null, null, null, null, null, null, null, null);
+        assertThat(defaultTask)
+            .hasFieldOrPropertyWithValue("topic", null)
+            .hasFieldOrPropertyWithValue("group", null)
+            .hasFieldOrPropertyWithValue("properties", emptyMap())
+            .hasFieldOrPropertyWithValue("nbMessages", 1)
+            .hasFieldOrPropertyWithValue("selector", null)
+            .hasFieldOrPropertyWithValue("headerSelector", null)
+            .hasFieldOrPropertyWithValue("contentType", MimeType.valueOf("application/json"))
+            .hasFieldOrPropertyWithValue("timeout", "60 sec")
+            .hasFieldOrPropertyWithValue("ackMode", "BATCH")
+        ;
+    }
+
+    @Test
+    void should_merge_target_properties_with_input_properties() {
+        Target target = TestTarget.TestTargetBuilder.builder()
+            .withProperty("a.target.property", "a value")
+            .withProperty("property.to.override", "a target value")
+            .build();
+
+        Map<String, String> properties = Map.of(
+            "a.input.property", "a VALUE",
+            "property.to.override", "a property value"
+        );
+
+        Map<String, String> expectedConfig = Map.of(
+            "a.target.property", "a value",
+            "a.input.property", "a VALUE",
+            "property.to.override", "a property value"
+        );
+
+        KafkaBasicConsumeTask defaultTask = new KafkaBasicConsumeTask(target, null, null, properties, null, null, null, null, null, null, null);
+        assertThat(defaultTask)
+            .hasFieldOrPropertyWithValue("properties", expectedConfig)
+        ;
     }
 
     @Test
