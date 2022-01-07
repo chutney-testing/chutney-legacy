@@ -35,6 +35,7 @@ import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.apache.kafka.common.record.TimestampType;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -84,6 +85,51 @@ public class KafkaBasicConsumeTaskTest {
             .hasFieldOrPropertyWithValue("timeout", "60 sec")
             .hasFieldOrPropertyWithValue("ackMode", "BATCH")
         ;
+    }
+
+    @Test
+    void should_validate_all_mandatory_inputs() {
+        KafkaBasicConsumeTask defaultTask = new KafkaBasicConsumeTask(null, null, null, null, null, null, null, null, null, null, null);
+        List<String> errors = defaultTask.validateInputs();
+
+        assertThat(errors.size()).isEqualTo(9);
+        SoftAssertions softly = new SoftAssertions();
+
+        softly.assertThat(errors.get(0)).isEqualTo("No topic provided (String)");
+        softly.assertThat(errors.get(1)).isEqualTo("topic should not be blank");
+
+        softly.assertThat(errors.get(2)).isEqualTo("No group provided (String)");
+        softly.assertThat(errors.get(3)).isEqualTo("group should not be blank");
+
+        softly.assertThat(errors.get(4)).isEqualTo("No target provided");
+        softly.assertThat(errors.get(5)).isEqualTo("[Target name is blank] not applied because of exception java.lang.NullPointerException(null)");
+        softly.assertThat(errors.get(6)).isEqualTo("[No url defined on the target] not applied because of exception java.lang.NullPointerException(null)");
+        softly.assertThat(errors.get(7)).isEqualTo("[Target url is not valid] not applied because of exception java.lang.NullPointerException(null)");
+        softly.assertThat(errors.get(8)).isEqualTo("[Target url has an undefined host] not applied because of exception java.lang.NullPointerException(null)");
+
+        softly.assertAll();
+    }
+
+    @Test
+    void should_validate_timeout_input() {
+        String badTimeout = "twenty seconds";
+        KafkaBasicConsumeTask defaultTask = new KafkaBasicConsumeTask(TARGET_STUB, "topic", "group", null, null, null, null, null, badTimeout, null, null);
+
+        List<String> errors = defaultTask.validateInputs();
+
+        assertThat(errors.size()).isEqualTo(1);
+        assertThat(errors.get(0)).startsWith("[timeout is not parsable]");
+    }
+
+    @Test
+    void should_validate_ackMode_input() {
+        String badTackMode = "UNKNOWN_ACKMODE";
+        KafkaBasicConsumeTask defaultTask = new KafkaBasicConsumeTask(TARGET_STUB, "topic", "group", null, null, null, null, null, null, badTackMode, null);
+
+        List<String> errors = defaultTask.validateInputs();
+
+        assertThat(errors.size()).isEqualTo(1);
+        assertThat(errors.get(0)).startsWith("ackMode is not a valid value");
     }
 
     @Test

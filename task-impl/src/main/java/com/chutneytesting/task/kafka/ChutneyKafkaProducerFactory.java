@@ -14,11 +14,11 @@ final class ChutneyKafkaProducerFactory {
 
     private DefaultKafkaProducerFactory<String, String> factory;
 
-    KafkaTemplate<String, String> create(Target target) {
+    KafkaTemplate<String, String> create(Target target, Map<String, String> config) {
 
         Map<String, Object> producerConfig = new HashMap<>();
         producerConfig.put(BOOTSTRAP_SERVERS_CONFIG, resolveBootStrapServerConfig(target));
-        producerConfig.putAll(target.properties());
+        producerConfig.putAll(config);
 
         this.factory = new DefaultKafkaProducerFactory<>(
             producerConfig,

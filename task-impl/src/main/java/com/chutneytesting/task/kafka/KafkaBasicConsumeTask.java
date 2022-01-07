@@ -105,6 +105,7 @@ public class KafkaBasicConsumeTask implements Task {
     public List<String> validateInputs() {
         return getErrorsFrom(
             notBlankStringValidation(topic, "topic"),
+            notBlankStringValidation(group, "group"),
             targetValidation(target),
             durationValidation(timeout, "timeout"),
             enumValidation(ContainerProperties.AckMode.class, ackMode, "ackMode")
