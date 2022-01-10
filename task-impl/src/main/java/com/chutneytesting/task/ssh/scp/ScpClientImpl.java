@@ -3,9 +3,10 @@ package com.chutneytesting.task.ssh.scp;
 import com.chutneytesting.task.ssh.sshj.Connection;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.security.KeyPair;
 import java.util.Collections;
+import java.util.List;
 import org.apache.sshd.client.SshClient;
+import org.apache.sshd.client.auth.UserAuthFactory;
 import org.apache.sshd.client.auth.password.UserAuthPasswordFactory;
 import org.apache.sshd.client.auth.pubkey.UserAuthPublicKeyFactory;
 import org.apache.sshd.client.future.AuthFuture;
@@ -62,24 +63,8 @@ public class ScpClientImpl implements ScpClient {
 
         public ScpClient build() throws IOException {
             SshClient defaultClient = createScpClient();
-            ClientSession session;
-
-            if (connection.usePrivateKey()) {
-                defaultClient.setUserAuthFactories(Collections.singletonList(UserAuthPublicKeyFactory.INSTANCE));
-
-                session = connect(defaultClient);
-
-                FileKeyPairProvider provider = new FileKeyPairProvider(Path.of(connection.privateKey));
-                provider.setPasswordFinder(FilePasswordProvider.of(connection.passphrase));
-                session.setKeyIdentityProvider(provider);
-            }
-            else {
-                defaultClient.setUserAuthFactories(Collections.singletonList(UserAuthPasswordFactory.INSTANCE));
-
-                session = connect(defaultClient);
-
-                session.addPasswordIdentity(connection.password);
-            }
+            defaultClient.setUserAuthFactories(getAuthFactory());
+            ClientSession session = connect(defaultClient);
 
             AuthFuture authFuture = session.auth().verify();
 
@@ -90,9 +75,27 @@ public class ScpClientImpl implements ScpClient {
             return new ScpClientImpl(session, scpClient);
         }
 
+        private List<UserAuthFactory> getAuthFactory() {
+            if (connection.usePrivateKey()) {
+                return Collections.singletonList(UserAuthPublicKeyFactory.INSTANCE);
+            }
+            return Collections.singletonList(UserAuthPasswordFactory.INSTANCE);
+        }
+
         private ClientSession connect(SshClient client) throws IOException {
             ConnectFuture connectFuture = client.connect(connection.username, connection.serverHost, connection.serverPort).verify();
-            return connectFuture.getSession();
+            return configureAuthMethod(connectFuture.getSession());
+        }
+
+        private ClientSession configureAuthMethod(ClientSession session) {
+            if (connection.usePrivateKey()) {
+                FileKeyPairProvider provider = new FileKeyPairProvider(Path.of(connection.privateKey));
+                provider.setPasswordFinder(FilePasswordProvider.of(connection.passphrase));
+                session.setKeyIdentityProvider(provider);
+            } else {
+                session.addPasswordIdentity(connection.password);
+            }
+            return session;
         }
 
     }
