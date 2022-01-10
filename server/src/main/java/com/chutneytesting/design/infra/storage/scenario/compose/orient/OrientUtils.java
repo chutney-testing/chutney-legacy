@@ -98,7 +98,7 @@ public final class OrientUtils {
                 .filter(clusterId -> oClass.getDefaultClusterId() != clusterId)
                 .forEach(clusterId -> {
                     oClass.removeClusterId(clusterId);
-                    dbSession.dropCluster(clusterId, false);
+                    dbSession.dropCluster(clusterId);
                 });
 
             OrientUtils.dropClass(className, dbSession);

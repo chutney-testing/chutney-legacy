@@ -1,5 +1,7 @@
 package com.chutneytesting.design.infra.storage.scenario.compose.orient;
 
+import static com.orientechnologies.orient.core.config.OGlobalConfiguration.CREATE_DEFAULT_USERS;
+
 import com.orientechnologies.orient.core.Orient;
 import com.orientechnologies.orient.core.config.OGlobalConfiguration;
 import com.orientechnologies.orient.core.db.ODatabasePool;
@@ -27,7 +29,7 @@ public class OrientDBManager {
 
     private final OrientConfigurationProperties orientConfigurationProperties;
     private OrientDB orientDB;
-    private final Map<String,ODatabasePool> dbPools = new HashMap<>();
+    private final Map<String, ODatabasePool> dbPools = new HashMap<>();
 
     public OrientDBManager(OrientConfigurationProperties orientConfigurationProperties) {
         this.orientConfigurationProperties = orientConfigurationProperties;
@@ -45,11 +47,14 @@ public class OrientDBManager {
         closeEmbeddedOrient();
     }
 
-    public void createOrientDB(String dbName, ODatabaseType dbtype) {
-        if (orientDB.createIfNotExists(dbName, dbtype)) {
-            LOGGER.info("Database created : {} {}", dbName, dbtype);
+    public void createOrientDB(String dbName, ODatabaseType dbType) {
+        OrientDBConfig defaultCreationConfig = OrientDBConfig.builder()
+            .addConfig(CREATE_DEFAULT_USERS, true)
+            .build();
+        if (orientDB.createIfNotExists(dbName, dbType, defaultCreationConfig)) {
+            LOGGER.info("Database created : {} {}", dbName, dbType);
         } else {
-            LOGGER.warn("Database already exists : {}. Type {} cannot be guaranteed...", dbName, dbtype);
+            LOGGER.warn("Database already exists : {}. Type {} cannot be guaranteed...", dbName, dbType);
         }
         ODatabasePool dbPool = new ODatabasePool(orientDB, dbName, "admin", "admin", contextConfiguration());
         dbPools.put(dbName, dbPool);
