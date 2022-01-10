@@ -35,6 +35,7 @@ import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.apache.kafka.common.record.TimestampType;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -45,6 +46,7 @@ import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.MessageListener;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.util.MimeType;
 import wiremock.com.google.common.collect.ImmutableMap;
 
 @SuppressWarnings("unchecked")
@@ -67,6 +69,91 @@ public class KafkaBasicConsumeTaskTest {
     @BeforeEach
     public void before() {
         logger = new TestLogger();
+    }
+
+    @Test
+    void should_set_inputs_default_values() {
+        KafkaBasicConsumeTask defaultTask = new KafkaBasicConsumeTask(null, null, null, null, null, null, null, null, null, null, null);
+        assertThat(defaultTask)
+            .hasFieldOrPropertyWithValue("topic", null)
+            .hasFieldOrPropertyWithValue("group", null)
+            .hasFieldOrPropertyWithValue("properties", emptyMap())
+            .hasFieldOrPropertyWithValue("nbMessages", 1)
+            .hasFieldOrPropertyWithValue("selector", null)
+            .hasFieldOrPropertyWithValue("headerSelector", null)
+            .hasFieldOrPropertyWithValue("contentType", MimeType.valueOf("application/json"))
+            .hasFieldOrPropertyWithValue("timeout", "60 sec")
+            .hasFieldOrPropertyWithValue("ackMode", "BATCH")
+        ;
+    }
+
+    @Test
+    void should_validate_all_mandatory_inputs() {
+        KafkaBasicConsumeTask defaultTask = new KafkaBasicConsumeTask(null, null, null, null, null, null, null, null, null, null, null);
+        List<String> errors = defaultTask.validateInputs();
+
+        assertThat(errors.size()).isEqualTo(9);
+        SoftAssertions softly = new SoftAssertions();
+
+        softly.assertThat(errors.get(0)).isEqualTo("No topic provided (String)");
+        softly.assertThat(errors.get(1)).isEqualTo("topic should not be blank");
+
+        softly.assertThat(errors.get(2)).isEqualTo("No group provided (String)");
+        softly.assertThat(errors.get(3)).isEqualTo("group should not be blank");
+
+        softly.assertThat(errors.get(4)).isEqualTo("No target provided");
+        softly.assertThat(errors.get(5)).isEqualTo("[Target name is blank] not applied because of exception java.lang.NullPointerException(null)");
+        softly.assertThat(errors.get(6)).isEqualTo("[No url defined on the target] not applied because of exception java.lang.NullPointerException(null)");
+        softly.assertThat(errors.get(7)).isEqualTo("[Target url is not valid] not applied because of exception java.lang.NullPointerException(null)");
+        softly.assertThat(errors.get(8)).isEqualTo("[Target url has an undefined host] not applied because of exception java.lang.NullPointerException(null)");
+
+        softly.assertAll();
+    }
+
+    @Test
+    void should_validate_timeout_input() {
+        String badTimeout = "twenty seconds";
+        KafkaBasicConsumeTask defaultTask = new KafkaBasicConsumeTask(TARGET_STUB, "topic", "group", null, null, null, null, null, badTimeout, null, null);
+
+        List<String> errors = defaultTask.validateInputs();
+
+        assertThat(errors.size()).isEqualTo(1);
+        assertThat(errors.get(0)).startsWith("[timeout is not parsable]");
+    }
+
+    @Test
+    void should_validate_ackMode_input() {
+        String badTackMode = "UNKNOWN_ACKMODE";
+        KafkaBasicConsumeTask defaultTask = new KafkaBasicConsumeTask(TARGET_STUB, "topic", "group", null, null, null, null, null, null, badTackMode, null);
+
+        List<String> errors = defaultTask.validateInputs();
+
+        assertThat(errors.size()).isEqualTo(1);
+        assertThat(errors.get(0)).startsWith("ackMode is not a valid value");
+    }
+
+    @Test
+    void should_merge_target_properties_with_input_properties() {
+        Target target = TestTarget.TestTargetBuilder.builder()
+            .withProperty("a.target.property", "a value")
+            .withProperty("property.to.override", "a target value")
+            .build();
+
+        Map<String, String> properties = Map.of(
+            "a.input.property", "a VALUE",
+            "property.to.override", "a property value"
+        );
+
+        Map<String, String> expectedConfig = Map.of(
+            "a.target.property", "a value",
+            "a.input.property", "a VALUE",
+            "property.to.override", "a property value"
+        );
+
+        KafkaBasicConsumeTask defaultTask = new KafkaBasicConsumeTask(target, null, null, properties, null, null, null, null, null, null, null);
+        assertThat(defaultTask)
+            .hasFieldOrPropertyWithValue("properties", expectedConfig)
+        ;
     }
 
     @Test
@@ -359,7 +446,7 @@ public class KafkaBasicConsumeTaskTest {
     }
 
     private KafkaBasicConsumeTask givenKafkaConsumeTask(int expectedMessageNb, String selector, String headerSelector, String mimeType, String timeout) {
-        return new KafkaBasicConsumeTask(TARGET_STUB, TOPIC, GROUP, emptyMap(), expectedMessageNb, selector, headerSelector, mimeType, timeout, logger);
+        return new KafkaBasicConsumeTask(TARGET_STUB, TOPIC, GROUP, emptyMap(), expectedMessageNb, selector, headerSelector, mimeType, timeout, null, logger);
     }
 
     private void givenTaskReceiveMessages(Task task, ConsumerRecord<String, String>... messages) {

@@ -1,6 +1,7 @@
 package com.chutneytesting.task.kafka;
 
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.durationValidation;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.enumValidation;
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.targetValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
@@ -34,9 +35,10 @@ import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
+import org.apache.commons.exec.util.MapUtils;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
-import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.MessageListener;
@@ -45,7 +47,8 @@ import org.springframework.util.MimeTypeUtils;
 
 public class KafkaBasicConsumeTask implements Task {
 
-    private KafkaConsumerFactoryFactory kafkaConsumerFactoryFactory = new KafkaConsumerFactoryFactory();
+    private final KafkaConsumerFactoryFactory kafkaConsumerFactoryFactory = new KafkaConsumerFactoryFactory();
+    private static final String AUTO_COMMIT_COUNT_CONFIG = "auto.commit.count";
 
     static final String OUTPUT_BODY = "body";
     static final String OUTPUT_BODY_HEADERS_KEY = "headers";
@@ -67,6 +70,7 @@ public class KafkaBasicConsumeTask implements Task {
     private final CountDownLatch countDownLatch;
     private final List<Map<String, Object>> consumedMessages = new ArrayList<>();
     private final String group;
+    private final String ackMode;
 
     public KafkaBasicConsumeTask(Target target,
                                  @Input("topic") String topic,
@@ -77,6 +81,7 @@ public class KafkaBasicConsumeTask implements Task {
                                  @Input("header-selector") String headerSelector,
                                  @Input("content-type") String contentType,
                                  @Input("timeout") String timeout,
+                                 @Input("ackMode") String ackMode,
                                  Logger logger) {
         this.topic = topic;
         this.nbMessages = defaultIfNull(nbMessages, 1);
@@ -88,15 +93,22 @@ public class KafkaBasicConsumeTask implements Task {
         this.countDownLatch = new CountDownLatch(this.nbMessages);
         this.group = group;
         this.logger = logger;
-        this.properties = defaultIfNull(properties, emptyMap());
+        this.properties = ofNullable(
+            MapUtils.merge(ofNullable(target).map(Target::properties).orElse(emptyMap()), properties)
+        ).orElse(new HashMap<>());
+        this.ackMode = ofNullable(ackMode)
+            .or(() -> ofNullable(this.properties.get("ackMode")))
+            .orElse(ContainerProperties.AckMode.BATCH.name());
     }
 
     @Override
     public List<String> validateInputs() {
         return getErrorsFrom(
             notBlankStringValidation(topic, "topic"),
+            notBlankStringValidation(group, "group"),
             targetValidation(target),
-            durationValidation(timeout, "timeout")
+            durationValidation(timeout, "timeout"),
+            enumValidation(ContainerProperties.AckMode.class, ackMode, "ackMode")
         );
     }
 
@@ -205,11 +217,15 @@ public class KafkaBasicConsumeTask implements Task {
     }
 
     private ConcurrentMessageListenerContainer<String, String> createMessageListenerContainer(MessageListener<String, String> messageListener) {
-        ConsumerFactory<String, String> consumerFactory = kafkaConsumerFactoryFactory.create(target, group, properties);
         ContainerProperties containerProperties = new ContainerProperties(topic);
         containerProperties.setMessageListener(messageListener);
+        containerProperties.setAckMode(ContainerProperties.AckMode.valueOf(this.ackMode));
+        ofNullable(properties.get(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG))
+            .ifPresent(acims -> containerProperties.setAckTime(Long.parseLong(acims)));
+        ofNullable(properties.get(AUTO_COMMIT_COUNT_CONFIG))
+            .ifPresent(acc -> containerProperties.setAckCount(Integer.parseInt(acc)));
         return new ConcurrentMessageListenerContainer<>(
-            consumerFactory,
+            kafkaConsumerFactoryFactory.create(target, group, properties),
             containerProperties);
     }
 

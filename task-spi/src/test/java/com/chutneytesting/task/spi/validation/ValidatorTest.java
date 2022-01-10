@@ -1,9 +1,14 @@
 package com.chutneytesting.task.spi.validation;
 
-
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.data.Index.atIndex;
 
+import java.util.List;
 import java.util.Objects;
+import org.assertj.core.api.Condition;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -66,5 +71,38 @@ class ValidatorTest {
         public Integer getAge() {
             return age;
         }
+    }
+
+    @ParameterizedTest()
+    @MethodSource("parametersForShould_validate_string_as_enum")
+    void should_validate_string_as_enum(String input, boolean expected, int numberOfErrors) {
+        Validator<String> validateAString = TaskValidatorsUtils.enumValidation(InnerEnum.class, input, "label");
+        assertThat(validateAString.isValid()).isEqualTo(expected);
+        assertThat(validateAString.getErrors().size()).isEqualTo(numberOfErrors);
+    }
+
+    private enum InnerEnum {ONE, TWO, THREE}
+
+    public static Object[] parametersForShould_validate_string_as_enum() {
+        return new Object[][]{
+            {"ONE", true, 0},
+            {"FOUR", false, 1}
+        };
+    }
+
+    @Test
+    void TODO_should_not_say_failing_validation_is_not_applied_when_validation_consists_of_exception_checking() {
+        Validator<List<Object>> validation = Validator.of(emptyList())
+            .validate(l -> l.get(1), noException -> true, "validation message");
+
+        Condition<String> doesNotHaveNotAppliedMessage = new Condition<>(
+            s -> !s.contains("not applied"),
+            "Should not contains 'not applied'"
+        );
+
+        // TODO - Does not like the current behavior
+        Assertions.assertThrows(AssertionError.class,
+            () -> assertThat(validation.getErrors()).has(doesNotHaveNotAppliedMessage, atIndex(0))
+        );
     }
 }

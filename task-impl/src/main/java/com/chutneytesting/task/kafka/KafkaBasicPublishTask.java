@@ -3,6 +3,8 @@ package com.chutneytesting.task.kafka;
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.targetValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
+import static java.util.Collections.emptyMap;
+import static java.util.Optional.ofNullable;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.joining;
 
@@ -11,11 +13,11 @@ import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.apache.commons.exec.util.MapUtils;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
@@ -29,23 +31,29 @@ public class KafkaBasicPublishTask implements Task {
     private final String topic;
     private final Map<String, String> headers;
     private final String payload;
+    private final Map<String, String> properties;
     private final Logger logger;
 
     public KafkaBasicPublishTask(Target target,
                                  @Input("topic") String topic,
                                  @Input("headers") Map<String, String> headers,
                                  @Input("payload") String payload,
+                                 @Input("properties") Map<String, String> properties,
                                  Logger logger) {
         this.target = target;
         this.topic = topic;
-        this.headers = headers != null ? headers : Collections.emptyMap();
+        this.headers = headers != null ? headers : emptyMap();
         this.payload = payload;
+        this.properties = ofNullable(
+            MapUtils.merge(ofNullable(target).map(Target::properties).orElse(emptyMap()), properties)
+        ).orElse(new HashMap<>());
         this.logger = logger;
     }
 
     @Override
     public List<String> validateInputs() {
         return getErrorsFrom(
+            notBlankStringValidation(topic, "topic"),
             notBlankStringValidation(payload, "payload"),
             targetValidation(target)
         );
@@ -61,11 +69,11 @@ public class KafkaBasicPublishTask implements Task {
             logger.info("sending message to topic=" + topic);
             ProducerRecord<String, String> producerRecord = new ProducerRecord<String, String>(topic, null, null, payload, recordHeaders);
 
-            KafkaTemplate<String, String> kafkaTemplate = producerFactory.create(target);
+            KafkaTemplate<String, String> kafkaTemplate = producerFactory.create(target, properties);
             kafkaTemplate.send(producerRecord).get(5, SECONDS);
 
             logger.info("Published Kafka Message on topic " + topic);
-            return TaskExecutionResult.ok(outputs(headers, payload));
+            return TaskExecutionResult.ok(toOutputs(headers, payload));
         } catch (Exception e) {
             logger.error("An exception occurs when sending a message to Kafka server: " + e.getMessage());
             return TaskExecutionResult.ko();
@@ -78,7 +86,7 @@ public class KafkaBasicPublishTask implements Task {
         }
     }
 
-    public Map<String, Object> outputs(Map<String, String> headers, String payload) {
+    private Map<String, Object> toOutputs(Map<String, String> headers, String payload) {
         Map<String, Object> results = new HashMap<>();
         results.put("payload", payload);
         results.put("headers", headers.entrySet().stream()
