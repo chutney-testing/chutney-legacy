@@ -11,6 +11,7 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.kafka.core.ConsumerFactory;
@@ -22,13 +23,14 @@ class KafkaConsumerFactoryFactoryTest {
         .withUrl("tcp://127.0.0.1:5555");
 
     @Nested
-    @TestMethodOrder(MethodOrderer.MethodName.class)
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @DisplayName("should set kafka client bootstrap.servers configuration")
     class BootstrapServersConfig {
 
         @Test
+        @Order(1)
         @DisplayName("from configuration")
-        void a_should_use_configuration_for_bootstrap_servers_kafka_client_configuration() {
+        void should_use_configuration_for_bootstrap_servers_kafka_client_configuration() {
             Target target = targetWithoutProperties
                 .withProperty(BOOTSTRAP_SERVERS_CONFIG, "target.host:6666")
                 .build();
@@ -42,8 +44,9 @@ class KafkaConsumerFactoryFactoryTest {
         }
 
         @Test
+        @Order(2)
         @DisplayName("from target properties")
-        void b_should_use_target_properties_for_bootstrap_servers_kafka_client_configuration() {
+        void should_use_target_properties_for_bootstrap_servers_kafka_client_configuration() {
             Target target = targetWithoutProperties
                 .withProperty(BOOTSTRAP_SERVERS_CONFIG, "target.host:6666")
                 .build();
@@ -55,8 +58,9 @@ class KafkaConsumerFactoryFactoryTest {
         }
 
         @Test
-        @DisplayName("from target's url authority otherwise")
-        void c_should_use_target_authority_url_for_bootstrap_servers_kafka_client_configuration() {
+        @Order(3)
+        @DisplayName("from target's url authority")
+        void should_use_target_authority_url_for_bootstrap_servers_kafka_client_configuration() {
             Target target = targetWithoutProperties.build();
 
             ConsumerFactory<String, String> consumerFactoryFactory = new KafkaConsumerFactoryFactory().create(target, null, emptyMap());
@@ -66,8 +70,9 @@ class KafkaConsumerFactoryFactoryTest {
         }
 
         @Test
-        @DisplayName("fallback to target's url")
-        void d_should_use_target_host_url_for_bootstrap_servers_kafka_client_configuration() {
+        @Order(4)
+        @DisplayName("from whole target's url otherwise")
+        void should_use_target_host_url_for_bootstrap_servers_kafka_client_configuration() {
             Target target = targetWithoutProperties
                 .withUrl("http:/a/path")
                 .build();
