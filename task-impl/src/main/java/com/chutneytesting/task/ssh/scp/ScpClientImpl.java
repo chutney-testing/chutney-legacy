@@ -2,16 +2,12 @@ package com.chutneytesting.task.ssh.scp;
 
 import com.chutneytesting.task.ssh.sshj.Connection;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Path;
 import java.security.KeyPair;
 import java.util.Collections;
-import java.util.List;
 import org.apache.sshd.client.SshClient;
-import org.apache.sshd.client.auth.UserAuthFactory;
 import org.apache.sshd.client.auth.password.UserAuthPasswordFactory;
 import org.apache.sshd.client.auth.pubkey.UserAuthPublicKeyFactory;
-import org.apache.sshd.client.config.hosts.HostConfigEntry;
 import org.apache.sshd.client.future.AuthFuture;
 import org.apache.sshd.client.future.ConnectFuture;
 import org.apache.sshd.client.session.ClientSession;
@@ -19,7 +15,6 @@ import org.apache.sshd.common.config.keys.FilePasswordProvider;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.scp.client.CloseableScpClient;
 import org.apache.sshd.scp.client.ScpClientCreator;
-import org.junit.platform.commons.util.StringUtils;
 
 public class ScpClientImpl implements ScpClient {
 
@@ -52,69 +47,11 @@ public class ScpClientImpl implements ScpClient {
     }
 
     public static class ScpClientBuilder {
-        //        private Connection connection;
-
-        private String username;
-        private String host;
-        private int port;
-
-        private String password;
-        private String privateKey;
-        private String passphrase;
-
-        private List<UserAuthFactory> userAuthFactory;
+        private Connection connection;
 
         public ScpClientBuilder withConnection(Connection connection) {
-//            this.connection = connection;
-            return withHost(connection.serverHost)
-                .withPort(connection.serverPort)
-                .withUsername(connection.username)
-                .withPassword(connection.password)
-                .withPrivateKey(connection.privateKey)
-                .withPassphrase(connection.passphrase);
-        }
-
-        public ScpClientBuilder withUsername(String username) {
-            this.username = username;
+            this.connection = connection;
             return this;
-        }
-
-        public ScpClientBuilder withHost(String host) {
-            this.host = host;
-            return this;
-        }
-
-        public ScpClientBuilder withPort(int port) {
-            this.port = port;
-            return this;
-        }
-
-        public ScpClientBuilder withPassword(String password) {
-            this.password = password;
-            this.setUserAuthFactory(Collections.singletonList(UserAuthPasswordFactory.INSTANCE));
-            return this;
-        }
-
-        public ScpClientBuilder withPrivateKey(String privateKey) {
-            this.privateKey = privateKey;
-            if (usePrivateKey()) {
-                this.setUserAuthFactory(Collections.singletonList(UserAuthPublicKeyFactory.INSTANCE));
-            }
-            return this;
-        }
-
-        public ScpClientBuilder withPassphrase(String passphrase) {
-            this.passphrase = passphrase;
-            return this;
-        }
-
-
-        private void setUserAuthFactory(List<UserAuthFactory> userAuthFactory) {
-            this.userAuthFactory = userAuthFactory;
-        }
-
-        private boolean usePrivateKey() {
-            return StringUtils.isNotBlank(privateKey);
         }
 
         private SshClient createScpClient() {
@@ -127,14 +64,21 @@ public class ScpClientImpl implements ScpClient {
             SshClient defaultClient = createScpClient();
             ClientSession session;
 
-            defaultClient.setUserAuthFactories(userAuthFactory);
-            session = connect(defaultClient);
-            if (usePrivateKey()) {
-                FileKeyPairProvider provider = new FileKeyPairProvider(Path.of(privateKey));
-                provider.setPasswordFinder(FilePasswordProvider.of(passphrase));
+            if (connection.usePrivateKey()) {
+                defaultClient.setUserAuthFactories(Collections.singletonList(UserAuthPublicKeyFactory.INSTANCE));
+
+                session = connect(defaultClient);
+
+                FileKeyPairProvider provider = new FileKeyPairProvider(Path.of(connection.privateKey));
+                provider.setPasswordFinder(FilePasswordProvider.of(connection.passphrase));
                 session.setKeyIdentityProvider(provider);
-            } else {
-                session.addPasswordIdentity(password);
+            }
+            else {
+                defaultClient.setUserAuthFactories(Collections.singletonList(UserAuthPasswordFactory.INSTANCE));
+
+                session = connect(defaultClient);
+
+                session.addPasswordIdentity(connection.password);
             }
 
             AuthFuture authFuture = session.auth().verify();
@@ -147,7 +91,7 @@ public class ScpClientImpl implements ScpClient {
         }
 
         private ClientSession connect(SshClient client) throws IOException {
-            ConnectFuture connectFuture = client.connect(username, host, port).verify();
+            ConnectFuture connectFuture = client.connect(connection.username, connection.serverHost, connection.serverPort).verify();
             return connectFuture.getSession();
         }
 
