@@ -1,13 +1,12 @@
 package com.chutneytesting.task.mongo;
 
+import com.chutneytesting.task.spi.injectable.Target;
+import com.chutneytesting.tools.CloseableResource;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
-import com.chutneytesting.task.spi.injectable.Target;
-import java.util.Collections;
-import com.chutneytesting.tools.CloseableResource;
 import org.springframework.util.StringUtils;
 
 public class DefaultMongoDatabaseFactory implements MongoDatabaseFactory {
@@ -18,7 +17,7 @@ public class DefaultMongoDatabaseFactory implements MongoDatabaseFactory {
             throw new IllegalArgumentException("Missing Target property 'databaseName'");
         }
 
-        ServerAddress serverAddress = new ServerAddress(target.getUrlAsURI().getHost(), target.getUrlAsURI().getPort());
+        ServerAddress serverAddress = new ServerAddress(target.host(), target.port());
 
         final MongoClient mongoClient;
         if (target.security().credential().isPresent()) {

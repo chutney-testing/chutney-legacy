@@ -10,7 +10,7 @@ public class ConnectionFactoryFactory {
     public ConnectionFactory create(Target target) {
         ConnectionFactory connectionFactory = new ConnectionFactory();
         try {
-            connectionFactory.setUri(target.getUrlAsURI());
+            connectionFactory.setUri(target.uri());
         } catch (URISyntaxException | GeneralSecurityException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }

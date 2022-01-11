@@ -6,6 +6,8 @@ import static java.util.Collections.unmodifiableMap;
 import com.chutneytesting.task.spi.injectable.SecurityInfo;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.task.ssh.sshd.SshServerMock;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 import org.apache.sshd.server.SshServer;
 
@@ -48,6 +50,15 @@ public class HardcodedTarget implements Target {
     @Override
     public SecurityInfo security() {
         return securityInfo;
+    }
+
+    @Override
+    public URI uri() {
+        try {
+            return new URI(url());
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override

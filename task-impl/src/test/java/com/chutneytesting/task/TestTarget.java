@@ -2,6 +2,8 @@ package com.chutneytesting.task;
 
 import com.chutneytesting.task.spi.injectable.SecurityInfo;
 import com.chutneytesting.task.spi.injectable.Target;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +39,15 @@ public class TestTarget implements Target {
     @Override
     public SecurityInfo security() {
         return security;
+    }
+
+    @Override
+    public URI uri() {
+        try {
+            return new URI(url);
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public static final class TestTargetBuilder {

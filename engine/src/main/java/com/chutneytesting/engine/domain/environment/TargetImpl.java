@@ -26,7 +26,7 @@ public class TargetImpl implements Target {
     private TargetImpl(String name, String url, Map<String, String> properties, SecurityInfoImpl security, List<NamedHostAndPort> agents) {
         this.name = name;
         this.url = url;
-        this.uri = getUrlAsURI(url);
+        this.uri = uriFrom(url);
         this.properties = properties;
         this.security = security;
         this.agents = agents;
@@ -54,6 +54,11 @@ public class TargetImpl implements Target {
     @Override
     public SecurityInfo security() {
         return security;
+    }
+
+    @Override
+    public URI uri() {
+        return uri;
     }
 
     public static class TargetBuilder {
@@ -110,7 +115,7 @@ public class TargetImpl implements Target {
         }
     }
 
-    private URI getUrlAsURI(String url) {
+    private URI uriFrom(String url) {
         try {
             return new URI(url);
         } catch (URISyntaxException e) {
