@@ -1,15 +1,18 @@
 package com.chutneytesting.task.ssh.scp;
 
+import static java.util.Collections.singletonList;
+
+import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.task.ssh.sshj.Connection;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.auth.UserAuthFactory;
 import org.apache.sshd.client.auth.password.UserAuthPasswordFactory;
 import org.apache.sshd.client.auth.pubkey.UserAuthPublicKeyFactory;
-import org.apache.sshd.client.future.AuthFuture;
 import org.apache.sshd.client.future.ConnectFuture;
 import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.common.config.keys.FilePasswordProvider;
@@ -38,126 +41,56 @@ public class ScpClientImpl implements ScpClient {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() throws Exception {
         session.close();
         sshClient.close();
     }
 
-    public static ScpClientBuilder builder() {
-        return new ScpClientBuilder();
+    public static ScpClient buildFor(Target target, long timeout) throws IOException {
+        Connection connection = Connection.from(target);
+        SshClient defaultClient = createDefaultClient();
+        defaultClient.setUserAuthFactories(getAuthFactory(connection));
+        ClientSession session = getConnectedSession(defaultClient, connection);
+
+        session.auth().verify(timeout);
+
+        return new ScpClientImpl(session, closeableClient(session));
     }
 
-    public static class ScpClientBuilder {
-        private Connection connection;
-
-        public ScpClientBuilder withConnection(Connection connection) {
-            this.connection = connection;
-            return this;
-        }
-
-        private SshClient createScpClient() {
-            SshClient defaultClient = SshClient.setUpDefaultClient();
-            defaultClient.start();
-            return defaultClient;
-        }
-
-        public ScpClient build() throws IOException {
-            SshClient defaultClient = createScpClient();
-            defaultClient.setUserAuthFactories(getAuthFactory());
-            ClientSession session = connect(defaultClient);
-
-            AuthFuture authFuture = session.auth().verify();
-
-            ScpClientCreator creator = ScpClientCreator.instance();
-            CloseableScpClient scpClient = CloseableScpClient.singleSessionInstance(
-                creator.createScpClient(session)
-            );
-            return new ScpClientImpl(session, scpClient);
-        }
-
-        private List<UserAuthFactory> getAuthFactory() {
-            if (connection.usePrivateKey()) {
-                return Collections.singletonList(UserAuthPublicKeyFactory.INSTANCE);
-            }
-            return Collections.singletonList(UserAuthPasswordFactory.INSTANCE);
-        }
-
-        private ClientSession connect(SshClient client) throws IOException {
-            ConnectFuture connectFuture = client.connect(connection.username, connection.serverHost, connection.serverPort).verify();
-            return configureAuthMethod(connectFuture.getSession());
-        }
-
-        private ClientSession configureAuthMethod(ClientSession session) {
-            if (connection.usePrivateKey()) {
-                FileKeyPairProvider provider = new FileKeyPairProvider(Path.of(connection.privateKey));
-                provider.setPasswordFinder(FilePasswordProvider.of(connection.passphrase));
-                session.setKeyIdentityProvider(provider);
-            } else {
-                session.addPasswordIdentity(connection.password);
-            }
-            return session;
-        }
-
+    private static SshClient createDefaultClient() {
+        SshClient defaultClient = SshClient.setUpDefaultClient();
+        defaultClient.start();
+        return defaultClient;
     }
 
-    /*
-    protected static final ScpTransferEventListener DEBUG_LISTENER = new ScpTransferEventListener() {
-        @Override
-        public void startFolderEvent(
-            Session s, FileOperation op, Path file, Set<PosixFilePermission> perms) {
-            logEvent("starFolderEvent", s, op, file, false, -1L, perms, null);
+    private static List<UserAuthFactory> getAuthFactory(Connection connection) {
+        if (connection.usePrivateKey()) {
+            return singletonList(UserAuthPublicKeyFactory.INSTANCE);
         }
+        return singletonList(UserAuthPasswordFactory.INSTANCE);
+    }
 
-        @Override
-        public void startFileEvent(
-            Session s, FileOperation op, Path file, long length, Set<PosixFilePermission> perms) {
-            logEvent("startFileEvent", s, op, file, true, length, perms, null);
-        }
+    private static ClientSession getConnectedSession(SshClient client, Connection connection) throws IOException {
+        ConnectFuture connectFuture = client.connect(connection.username, connection.serverHost, connection.serverPort).verify();
+        return configureSessionAuthMethod(connectFuture.getSession(), connection);
+    }
 
-        @Override
-        public void endFolderEvent(
-            Session s, FileOperation op, Path file, Set<PosixFilePermission> perms, Throwable thrown) {
-            logEvent("endFolderEvent", s, op, file, false, -1L, perms, thrown);
+    private static ClientSession configureSessionAuthMethod(ClientSession session, Connection connection) {
+        if (connection.usePrivateKey()) {
+            FileKeyPairProvider provider = new FileKeyPairProvider(Path.of(connection.privateKey));
+            provider.setPasswordFinder(FilePasswordProvider.of(connection.passphrase));
+            session.setKeyIdentityProvider(provider);
+        } else {
+            session.addPasswordIdentity(connection.password);
         }
+        return session;
+    }
 
-        @Override
-        public void endFileEvent(
-            Session s, FileOperation op, Path file, long length, Set<PosixFilePermission> perms, Throwable thrown) {
-            logEvent("endFileEvent", s, op, file, true, length, perms, thrown);
-        }
+    private static CloseableScpClient closeableClient(ClientSession session) {
+        ScpClientCreator creator = ScpClientCreator.instance();
+        return CloseableScpClient.singleSessionInstance(
+            creator.createScpClient(session)
+        );
+    }
 
-        @Override
-        public void handleFileEventAckInfo(
-            Session session, FileOperation op, Path file, long length,
-            Set<PosixFilePermission> perms, ScpAckInfo ackInfo)
-            throws IOException {
-            logEvent("ackInfo(" + ackInfo + ")", session, op, file, true, length, perms, null);
-        }
-
-        private void logEvent(
-            String type, Session s, FileOperation op, Path path, boolean isFile,
-            long length, Collection<PosixFilePermission> perms, Throwable t) {
-            if (!OUTPUT_DEBUG_MESSAGES) {
-                return; // just in case
-            }
-            StringBuilder sb = new StringBuilder(Byte.MAX_VALUE);
-            sb.append("    ").append(type)
-                .append('[').append(s).append(']')
-                .append('[').append(op).append(']')
-                .append(' ').append(isFile ? "File" : "Directory").append('=').append(path)
-                .append(' ').append("length=").append(length)
-                .append(' ').append("perms=").append(perms);
-            if (t != null) {
-                sb.append(' ').append("ERROR=").append(t.getClass().getSimpleName()).append(": ").append(t.getMessage());
-            }
-            outputDebugMessage(sb.toString());
-        }
-    };
-*/
-
-/*    public static void outputDebugMessage(Object message) {
-        if (OUTPUT_DEBUG_MESSAGES) {
-            System.out.append("===[DEBUG]=== ").println(message);
-        }
-    }*/
 }

@@ -50,7 +50,7 @@ public class ScpTaskTest {
         String dstFile = temporaryFolder.toString();
         Path expectedFile = temporaryFolder.resolve(ScpTaskTest.class.getSimpleName() + ".class");
 
-        ScpUploadTask task = new ScpUploadTask(target, mock(Logger.class), srcFile, dstFile);
+        ScpUploadTask task = new ScpUploadTask(target, mock(Logger.class), srcFile, dstFile, "5 s");
 
         // When
         TaskExecutionResult actualResult = task.execute();
@@ -68,7 +68,7 @@ public class ScpTaskTest {
         String dstFile = temporaryFolder.resolve("downloaded").toString();
         Path expectedFile = temporaryFolder.resolve("downloaded");
 
-        ScpDownloadTask task = new ScpDownloadTask(target, mock(Logger.class), srcFile, dstFile);
+        ScpDownloadTask task = new ScpDownloadTask(target, mock(Logger.class), srcFile, dstFile, "5 s");
 
         // When
         TaskExecutionResult actualResult = task.execute();
@@ -78,22 +78,14 @@ public class ScpTaskTest {
         assertThat(Files.exists(expectedFile)).isTrue();
     }
 
-    public static List<Arguments> securedTargets() throws IOException {
+    public static List<Arguments> securedTargets() {
         return List.of(
-            Arguments.of(buildServerAndTarget(credentialSshServer, FakeTargetInfo::buildTargetWithCredentialUsernamePassword)),
-            Arguments.of(buildServerAndTarget(credentialSshServer, FakeTargetInfo::buildTargetWithPropertiesUsernamePassword)),
-            Arguments.of(buildServerAndTarget(keySshServer, FakeTargetInfo::buildTargetWithPrivateKeyWithoutPassphrase)),
-            Arguments.of(buildServerAndTarget(keySshServer, FakeTargetInfo::buildTargetWithPrivateKeyWithPropertiesPassphrase)),
-            Arguments.of(buildServerAndTarget(keySshServer, FakeTargetInfo::buildTargetWithPrivateKeyWithCredentialPassphrase))
+            Arguments.of(FakeTargetInfo.buildTargetWithCredentialUsernamePassword(credentialSshServer)),
+            Arguments.of(FakeTargetInfo.buildTargetWithPropertiesUsernamePassword(credentialSshServer)),
+            Arguments.of(FakeTargetInfo.buildTargetWithPrivateKeyWithoutPassphrase(keySshServer)),
+            Arguments.of(FakeTargetInfo.buildTargetWithPrivateKeyWithPropertiesPassphrase(keySshServer)),
+            Arguments.of(FakeTargetInfo.buildTargetWithPrivateKeyWithCredentialPassphrase(keySshServer))
         );
-    }
-
-    interface TargetBuilder {
-        Target buildFrom(SshServer s);
-    }
-
-    static Target buildServerAndTarget(SshServer server, TargetBuilder builder) throws IOException {
-        return builder.buildFrom(server);
     }
 
 }

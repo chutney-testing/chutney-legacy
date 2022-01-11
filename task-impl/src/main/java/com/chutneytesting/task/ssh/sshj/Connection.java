@@ -1,8 +1,9 @@
 package com.chutneytesting.task.ssh.sshj;
 
 
+import static org.junit.platform.commons.util.StringUtils.isNotBlank;
+
 import com.chutneytesting.task.spi.injectable.Target;
-import org.apache.commons.lang3.StringUtils;
 
 public class Connection {
 
@@ -38,7 +39,7 @@ public class Connection {
     }
 
     public boolean usePrivateKey() {
-        return StringUtils.isNotBlank(privateKey);
+        return isNotBlank(privateKey);
     }
 
     private static void guardClause(Target target) {
