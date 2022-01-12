@@ -194,9 +194,10 @@
                                 </span>
                             </a>
                         </td>
-                        <td *ngIf="testExecutionId">
+                        <td>
                             <select class="form-control small_text" (change)="updateStatus(scenarioReportOutline.scenarioId, $event)">
-                                <option *ngFor="let status of jiraStatus" [selected]="scenarioStatus(scenarioReportOutline.scenarioId) === status">{{ status }}</option>
+                                <option *ngFor="let enum of xrayStatuses()" [selected]="scenarioStatus(scenarioReportOutline.scenarioId) === enum">{{ enum }}</option>
+                                <option [selected]="scenarioStatus(scenarioReportOutline.scenarioId) === UNSUPORTED" disabled>{{UNSUPORTED}}</option>
                             </select>
                         </td>
                     </tr>

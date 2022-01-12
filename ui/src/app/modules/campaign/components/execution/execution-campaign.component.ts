@@ -17,7 +17,8 @@ import {
     ScenarioIndex,
     TestCase,
     Authorization,
-    JiraScenario
+    JiraScenario,
+    XrayStatus
 } from '@model';
 import {
     CampaignService,
@@ -92,10 +93,10 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
     Authorization = Authorization;
 
     // Jira
-    jiraStatus = ['PASS', 'FAIL', 'UNKNOWN'];
     testExecutionId: string;
     jiraScenarios: JiraScenario[] = [];
     jiraUrl = '';
+    UNSUPORTED = 'UNSUPPORTED';
 
     constructor(private campaignService: CampaignService,
                 private environmentAdminService: EnvironmentAdminService,
@@ -397,7 +398,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
 
     updateStatus(scenarioId: string, event: any) {
         const newStatus = event.target.value;
-        if(newStatus === 'PASS' || newStatus === 'FAIL') {
+        if (newStatus === XrayStatus.PASS || newStatus === XrayStatus.FAIL) {
             this.jiraLinkService.updateScenarioStatus(this.testExecutionId, scenarioId, newStatus).subscribe(
                 () => {},
                 (error) => { console.log(error); }
@@ -408,11 +409,11 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
     scenarioStatus(scenarioId: String): string {
         const jiraScenario = this.jiraScenarios.filter(s => s.chutneyId === scenarioId);
         if  (jiraScenario.length > 0) {
-            if (jiraScenario[0].executionStatus === 'PASS' || jiraScenario[0].executionStatus === 'FAIL') {
+            if (jiraScenario[0].executionStatus === XrayStatus.PASS || jiraScenario[0].executionStatus === XrayStatus.FAIL) {
                 return jiraScenario[0].executionStatus;
             }
         }
-        return 'UNKNOWN';
+        return this.UNSUPORTED;
     }
 
     initJiraTestExecutionId() {
@@ -443,11 +444,16 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
 
     getJiraLink(chutneyId: string) {
         const foundScenario = this.jiraScenarios.find(s => s.chutneyId === chutneyId);
-        if(foundScenario) {
+        if (foundScenario) {
             return this.jiraUrl + '/browse/' + foundScenario.id;
         } else {
             return null;
         }
+    }
+
+    xrayStatuses(): Array<string> {
+        const keys = Object.keys(XrayStatus);
+        return keys.slice();
     }
 
     private sortCurrentCampaignReports() {

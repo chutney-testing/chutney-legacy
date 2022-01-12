@@ -1,5 +1,6 @@
 package com.chutneytesting.jira.api;
 
+import static com.chutneytesting.jira.domain.XrayStatus.PASS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.data.MapEntry.entry;
 import static org.assertj.core.util.Lists.list;
@@ -16,7 +17,7 @@ import com.chutneytesting.jira.domain.JiraTargetConfiguration;
 import com.chutneytesting.jira.domain.JiraXrayApi;
 import com.chutneytesting.jira.domain.JiraXrayService;
 import com.chutneytesting.jira.infra.JiraFileRepository;
-import com.chutneytesting.jira.infra.xraymodelapi.XrayTestExecTest;
+import com.chutneytesting.jira.xray_api.XrayTestExecTest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -24,7 +25,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -118,7 +118,7 @@ class JiraModuleControllerTest {
         XrayTestExecTest xrayTestExecTest = new XrayTestExecTest();
         xrayTestExecTest.setId("12345");
         xrayTestExecTest.setKey("SCE-2");
-        xrayTestExecTest.setStatus("PASS");
+        xrayTestExecTest.setStatus(PASS.value);
         result.add(xrayTestExecTest);
 
         when(jiraXrayApiMock.getTestExecutionScenarios(anyString(), any())).thenReturn(result);
@@ -129,7 +129,7 @@ class JiraModuleControllerTest {
         assertThat(scenarios).hasSize(1);
         assertThat(scenarios.get(0).id()).isEqualTo("SCE-2");
         assertThat(scenarios.get(0).chutneyId()).isEqualTo("2");
-        assertThat(scenarios.get(0).executionStatus().get()).isEqualTo("PASS");
+        assertThat(scenarios.get(0).executionStatus().get()).isEqualTo(PASS.value);
     }
 
     @Test
@@ -187,7 +187,7 @@ class JiraModuleControllerTest {
 
     @Test
     void updateStatus() throws Exception {
-        JiraDto dto = ImmutableJiraDto.builder().chutneyId("3").id("").executionStatus("PASS").build();
+        JiraDto dto = ImmutableJiraDto.builder().chutneyId("3").id("").executionStatus(PASS.value).build();
 
         XrayTestExecTest xrayTestExecTest = new XrayTestExecTest();
         xrayTestExecTest.setId("runIdentifier");
@@ -202,7 +202,7 @@ class JiraModuleControllerTest {
             .andDo(print())
             .andExpect(MockMvcResultMatchers.status().isOk());
 
-        verify(jiraXrayApiMock).updateStatusByTestRunId(eq("runIdentifier"), eq("PASS"), any());
+        verify(jiraXrayApiMock).updateStatusByTestRunId(eq("runIdentifier"), eq(PASS.value), any());
     }
 
     private <T> T getJiraController(String url, TypeReference<T> typeReference) {

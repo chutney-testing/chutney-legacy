@@ -42,7 +42,6 @@ import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedT
 import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
 import com.chutneytesting.jira.api.ReportForJira;
-import com.chutneytesting.jira.infra.xraymodelapi.Xray;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;

@@ -1,5 +1,7 @@
 package com.chutneytesting.jira.api;
 
+import static com.chutneytesting.jira.domain.XrayStatus.FAIL;
+import static com.chutneytesting.jira.domain.XrayStatus.PASS;
 import static java.util.List.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -14,9 +16,9 @@ import com.chutneytesting.jira.domain.JiraTargetConfiguration;
 import com.chutneytesting.jira.domain.JiraXrayApi;
 import com.chutneytesting.jira.domain.JiraXrayService;
 import com.chutneytesting.jira.infra.JiraFileRepository;
-import com.chutneytesting.jira.infra.xraymodelapi.Xray;
-import com.chutneytesting.jira.infra.xraymodelapi.XrayTest;
-import com.chutneytesting.jira.infra.xraymodelapi.XrayTestExecTest;
+import com.chutneytesting.jira.xray_api.Xray;
+import com.chutneytesting.jira.xray_api.XrayTest;
+import com.chutneytesting.jira.xray_api.XrayTestExecTest;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.Instant;
@@ -52,20 +54,20 @@ class JiraXrayEmbeddedApiTest {
         XrayTestExecTest xrayTestExecTest = new XrayTestExecTest();
         xrayTestExecTest.setId("12345");
         xrayTestExecTest.setKey("SCE-2");
-        xrayTestExecTest.setStatus("PASS");
+        xrayTestExecTest.setStatus(PASS.value);
         result.add(xrayTestExecTest);
 
         XrayTestExecTest xrayTestExecTest2 = new XrayTestExecTest();
         xrayTestExecTest2.setId("123456");
         xrayTestExecTest2.setKey("SCE-1");
-        xrayTestExecTest2.setStatus("FAIL");
+        xrayTestExecTest2.setStatus(FAIL.value);
         result.add(xrayTestExecTest2);
 
         when(jiraXrayApiMock.getTestExecutionScenarios(anyString(), any())).thenReturn(result);
 
         List<XrayTestExecTest> statusByTest = jiraXrayEmbeddedApi.getTestStatusInTestExec("");
-        assertThat(statusByTest.get(0).getStatus()).isEqualTo("PASS");
-        assertThat(statusByTest.get(1).getStatus()).isEqualTo("FAIL");
+        assertThat(statusByTest.get(0).getStatus()).isEqualTo(PASS.value);
+        assertThat(statusByTest.get(1).getStatus()).isEqualTo(FAIL.value);
     }
 
     @Test
@@ -95,6 +97,6 @@ class JiraXrayEmbeddedApiTest {
         assertThat(xrayTest.getStart()).isEqualTo(Instant.parse("2021-05-19T11:22:33.00Z").atZone(ZoneId.systemDefault()).format(formatter));
         assertThat(xrayTest.getFinish()).isEqualTo(Instant.parse("2021-05-19T11:22:43.00Z").atZone(ZoneId.systemDefault()).format(formatter));
         assertThat(xrayTest.getComment()).isEqualTo("[ > rootStep > sub step => [Sub step error 1, Sub step error 2],  > rootStep => [Root error]]");
-        assertThat(xrayTest.getStatus()).isEqualTo("PASS");
+        assertThat(xrayTest.getStatus()).isEqualTo(PASS.value);
     }
 }

@@ -1,4 +1,4 @@
-package com.chutneytesting.jira.infra.xraymodelapi;
+package com.chutneytesting.jira.xray_api;
 
 public class XrayTestExecTest {
 

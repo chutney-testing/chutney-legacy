@@ -1,14 +1,15 @@
 package com.chutneytesting.jira.domain;
 
 
-import static java.util.Collections.emptyList;
+import static com.chutneytesting.jira.domain.XrayStatus.FAIL;
+import static com.chutneytesting.jira.domain.XrayStatus.PASS;
 
 import com.chutneytesting.jira.api.ReportForJira;
-import com.chutneytesting.jira.infra.xraymodelapi.Xray;
-import com.chutneytesting.jira.infra.xraymodelapi.XrayEvidence;
-import com.chutneytesting.jira.infra.xraymodelapi.XrayInfo;
-import com.chutneytesting.jira.infra.xraymodelapi.XrayTest;
-import com.chutneytesting.jira.infra.xraymodelapi.XrayTestExecTest;
+import com.chutneytesting.jira.xray_api.Xray;
+import com.chutneytesting.jira.xray_api.XrayEvidence;
+import com.chutneytesting.jira.xray_api.XrayInfo;
+import com.chutneytesting.jira.xray_api.XrayTest;
+import com.chutneytesting.jira.xray_api.XrayTestExecTest;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -24,8 +25,6 @@ import org.slf4j.LoggerFactory;
 public class JiraXrayService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JiraXrayService.class);
-    private static final String SUCCESS_STATUS = "PASS";
-    private static final String FAILED_STATUS = "FAIL";
 
     private final JiraRepository jiraRepository;
     private final JiraXrayApi jiraXrayApi;
@@ -46,7 +45,7 @@ public class JiraXrayService {
                 report.startDate.atZone(ZoneId.systemDefault()).format(formatter),
                 report.startDate.plusNanos(report.duration * 1000000).atZone(ZoneId.systemDefault()).format(formatter),
                 getErrors(report).toString(),
-                report.status.equals("SUCCESS") ? SUCCESS_STATUS : FAILED_STATUS
+                report.status.equals("SUCCESS") ? PASS.value : FAIL.value
             );
 
             xrayTest.setEvidences(getEvidences(report.rootStep, ""));
@@ -59,22 +58,17 @@ public class JiraXrayService {
 
     public List<XrayTestExecTest> getTestExecutionScenarios(String testExecutionId) {
         JiraTargetConfiguration jiraTargetConfiguration = jiraRepository.loadServerConfiguration();
-        if (jiraTargetConfiguration.url.isEmpty()) {
-            return emptyList();
-        }
         return jiraXrayApi.getTestExecutionScenarios(testExecutionId, jiraTargetConfiguration);
     }
 
     public void updateScenarioStatus(String testExecId, String chutneyId, String executionStatus) {
         JiraTargetConfiguration jiraTargetConfiguration = jiraRepository.loadServerConfiguration();
-        if (jiraTargetConfiguration.url.isEmpty()) {
-            return;
-        }
+
         String scenarioJiraId = jiraRepository.getByScenarioId(chutneyId);
 
         List<XrayTestExecTest> testExecutionScenarios = getTestExecutionScenarios(testExecId);
         Optional<XrayTestExecTest> foundTest = testExecutionScenarios.stream().filter(test -> scenarioJiraId.equals(test.getKey())).findFirst();
-        if(foundTest.isPresent()) {
+        if (foundTest.isPresent()) {
             jiraXrayApi.updateStatusByTestRunId(foundTest.get().getId(), executionStatus, jiraTargetConfiguration);
         }
     }
