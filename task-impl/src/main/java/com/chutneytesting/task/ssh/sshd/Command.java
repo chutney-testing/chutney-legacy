@@ -10,11 +10,11 @@ import java.util.concurrent.Executors;
 import org.apache.commons.io.IOUtils;
 import org.apache.sshd.server.Environment;
 import org.apache.sshd.server.ExitCallback;
-import org.apache.sshd.server.SessionAware;
 import org.apache.sshd.server.channel.ChannelSession;
 import org.apache.sshd.server.session.ServerSession;
+import org.apache.sshd.server.session.ServerSessionAware;
 
-public class Command implements org.apache.sshd.server.command.Command, SessionAware, Runnable {
+public class Command implements org.apache.sshd.server.command.Command, ServerSessionAware, Runnable {
 
     private final SshServerMock sshServerMock;
     private String command = null;

@@ -1,8 +1,9 @@
 package com.chutneytesting.task.ssh.sshj;
 
 
+import static org.junit.platform.commons.util.StringUtils.isNotBlank;
+
 import com.chutneytesting.task.spi.injectable.Target;
-import java.net.URI;
 
 public class Connection {
 
@@ -27,35 +28,35 @@ public class Connection {
     public static Connection from(Target target) {
         guardClause(target);
 
-        final String host = extractHost(target);
+        final String host = target.host();
         final int port = extractPort(target);
-        final String username = extractUsername(target);
-        final String password = extractPassword(target);
-        final String privateKey = extractPrivateKey(target);
-        final String passphrase = extractPassPhrase(target);
+        final String username = getUsername(target);
+        final String password = getPassword(target);
+        final String privateKey = getPrivateKey(target);
+        final String passphrase = getPassPhrase(target);
 
         return new Connection(host, port, username, password, privateKey, passphrase);
     }
 
+    public boolean usePrivateKey() {
+        return isNotBlank(privateKey);
+    }
+
     private static void guardClause(Target target) {
-        if (target.getUrlAsURI() == null) {
+        if (target.uri() == null) {
             throw new IllegalArgumentException("Target URL is undefined");
         }
-        if (target.getUrlAsURI().getHost() == null || target.getUrlAsURI().getHost().isEmpty()) {
+        if (target.host() == null || target.host().isEmpty()) {
             throw new IllegalArgumentException("Target is badly defined");
         }
     }
 
-    private static String extractHost(Target target) {
-        return target.getUrlAsURI().getHost();
-    }
-
     private static int extractPort(Target target) {
-        URI serverUrl = target.getUrlAsURI();
-        return serverUrl.getPort() == -1 ? 22 : serverUrl.getPort();
+        int serverPort = target.port();
+        return serverPort == -1 ? 22 : serverPort;
     }
 
-    private static String extractUsername(Target target) {
+    private static String getUsername(Target target) {
         if (target.properties().containsKey("username")) {
             return target.properties().get("username");
         }
@@ -65,7 +66,7 @@ public class Connection {
         return EMPTY;
     }
 
-    private static String extractPassword(Target target) {
+    private static String getPassword(Target target) {
         if (target.properties().containsKey("password")) {
             return target.properties().get("password");
         }
@@ -75,7 +76,7 @@ public class Connection {
         return EMPTY;
     }
 
-    private static String extractPrivateKey(Target target) {
+    private static String getPrivateKey(Target target) {
         if (target.properties().containsKey("privateKey")) {
             return target.properties().get("privateKey");
         }
@@ -85,7 +86,7 @@ public class Connection {
         return EMPTY;
     }
 
-    private static String extractPassPhrase(Target target) {
+    private static String getPassPhrase(Target target) {
         if (target.properties().containsKey("privateKeyPassphrase")) {
             return target.properties().get("privateKeyPassphrase");
         }

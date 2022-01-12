@@ -10,7 +10,6 @@ import static org.mockito.Mockito.when;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContent;
 import com.chutneytesting.jira.domain.JiraRepository;
 import com.chutneytesting.jira.domain.JiraTargetConfiguration;
-import com.chutneytesting.jira.infra.JiraTargetConfigurationDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -47,9 +46,7 @@ public class ChutneyJiraPluginContentTest {
             .thenReturn(Map.of("42", "4242"));
 
         when(repositoryMock.getAllLinkedCampaigns())
-            .thenReturn(Map.of(
-            "13", "37"
-        ));
+            .thenReturn(Map.of("13", "37"));
 
         // When
         sut = new ChutneyJiraPluginContent(repositoryMock, objectMapperMock);

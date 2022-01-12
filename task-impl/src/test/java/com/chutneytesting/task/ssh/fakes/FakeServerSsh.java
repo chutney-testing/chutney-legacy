@@ -6,8 +6,11 @@ import java.io.UncheckedIOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.UnknownHostException;
+import org.apache.sshd.core.CoreModuleProperties;
 import org.apache.sshd.server.SshServer;
+import org.apache.sshd.server.auth.password.RejectAllPasswordAuthenticator;
 import org.apache.sshd.server.auth.pubkey.AcceptAllPublickeyAuthenticator;
+import org.apache.sshd.server.auth.pubkey.RejectAllPublickeyAuthenticator;
 import org.apache.sshd.server.keyprovider.AbstractGeneratorHostKeyProvider;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
 import org.apache.sshd.server.shell.InteractiveProcessShellFactory;
@@ -21,15 +24,20 @@ public class FakeServerSsh {
     private static final String DEFAULT_TEST_HOST_KEY_PROVIDER_ALGORITHM = "RSA";
 
     public static SshServer buildLocalServer() throws IOException {
+        return buildLocalServer(true, true, 20);
+    }
+
+    public static SshServer buildLocalServer(boolean acceptAllPubKeys, boolean acceptAllPassword, int maxAuthRequests) throws IOException {
         SshServer sshd = SshServer.setUpDefaultServer();
         sshd.setHost(getHostIPAddress());
         sshd.setPort(getFreePort());
         AbstractGeneratorHostKeyProvider hostKeyProvider = prepareKeyPairProvider();
         sshd.setKeyPairProvider(hostKeyProvider);
-        sshd.setPasswordAuthenticator((username, password, session) -> USERNAME.equals(username) && PASSWORD.equals(password));
-        sshd.setPublickeyAuthenticator(AcceptAllPublickeyAuthenticator.INSTANCE);
+        sshd.setPublickeyAuthenticator(acceptAllPubKeys ? AcceptAllPublickeyAuthenticator.INSTANCE : RejectAllPublickeyAuthenticator.INSTANCE);
+        sshd.setPasswordAuthenticator(acceptAllPassword ? (username, password, session) -> USERNAME.equals(username) && PASSWORD.equals(password) : RejectAllPasswordAuthenticator.INSTANCE);
         sshd.setShellFactory(InteractiveProcessShellFactory.INSTANCE);
         sshd.setCommandFactory(ProcessShellCommandFactory.INSTANCE);
+        CoreModuleProperties.MAX_AUTH_REQUESTS.set(sshd, maxAuthRequests);
         return sshd;
     }
 

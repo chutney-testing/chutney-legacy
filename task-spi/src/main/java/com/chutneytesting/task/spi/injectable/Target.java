@@ -1,7 +1,6 @@
 package com.chutneytesting.task.spi.injectable;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Map;
 
 public interface Target {
@@ -14,12 +13,14 @@ public interface Target {
 
     SecurityInfo security();
 
-    default URI getUrlAsURI() {
-        try {
-            return new URI(url());
-        } catch (URISyntaxException e) {
-            throw new IllegalStateException(e);
-        }
+    URI uri();
+
+    default String host() {
+        return uri().getHost();
+    }
+
+    default int port() {
+        return uri().getPort();
     }
 
 }

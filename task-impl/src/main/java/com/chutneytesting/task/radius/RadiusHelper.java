@@ -38,7 +38,7 @@ public final class RadiusHelper {
     }
 
     public static RadiusClient createRadiusClient(Target target) {
-        String hostname = target.getUrlAsURI().getHost();
+        String hostname = target.host();
         String sharedSecret = target.properties().get(SHARED_SECRET_TARGET_PROPERTY);
         int authenticatePort = parseInt(target.properties().get(AUTH_PORT_TARGET_PROPERTY));
         int accountingPort = parseInt(target.properties().get(ACC_PORT_TARGET_PROPERTY));
