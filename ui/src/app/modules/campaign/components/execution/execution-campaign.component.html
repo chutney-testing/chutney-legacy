@@ -156,8 +156,8 @@
                             <span *ngIf="orderBy == 'duration' && reverseOrder" class="fa fa-caret-down"></span>
                             <span *ngIf="orderBy == 'duration' && !reverseOrder" class="fa fa-caret-up"></span>
                         </th>
-                        <th *ngIf="testExecutionId" scope="col" class="filter w5" ></th>
-                        <th *ngIf="testExecutionId" scope="col" class="filter w10" > Jira status</th>
+                        <th *ngIf="testExecutionId" scope="col" class="w5" ></th>
+                        <th *ngIf="testExecutionId" scope="col" class="w10" >{{ 'campaigns.execution.scenarios.item.header.jiraStatus' | translate }}</th>
                         
                     </tr>
                 </thead>

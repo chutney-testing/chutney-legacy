@@ -165,7 +165,8 @@
                         "id": "Id",
                         "state": "State",
                         "title": "Title",
-                        "duration": "Duration"
+                        "duration": "Duration",
+                        "jiraStatus": "Jira status"
                     },
                     "title": "Go to the executions of",
                     "description.none": "No description",
