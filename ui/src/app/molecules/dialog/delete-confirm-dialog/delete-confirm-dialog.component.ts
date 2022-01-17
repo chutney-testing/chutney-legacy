@@ -15,8 +15,11 @@ export class DeleteConfirmDialogComponent {
     @Input() dialogMessage: string;
     @Input() type = 'trash-button';
     @Input() label: string;
+    @Input() title: string;
     @Input() disabled = false;
     @Input() btnSizeClass: string;
+    @Input() btnClassIcon: string;
+    @Input() btnColor: string;
     @Output() deleteEvent = new EventEmitter();
 
     disabledBoolean = disabledBoolean;

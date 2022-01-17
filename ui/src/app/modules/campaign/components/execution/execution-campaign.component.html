@@ -52,6 +52,15 @@
     <em class="text-white font-weight-bold">{{executionError}}</em>
 </div>
 
+<div class="row bg-danger" *ngIf="errorMessage">
+    <div class="col-2 pl-0">
+        <button type="button" class="btn text-white" (click)="errorMessage = ''">
+            <span class="fa fa-times"></span>
+        </button>
+    </div>
+    <em class="text-white font-weight-bold">{{errorMessage}}</em>
+</div>
+
 <div class="row">
     <div class="history-panel col col-md-2">
         <h2>{{ 'campaigns.execution.last.actual' | translate }}</h2>
@@ -148,7 +157,7 @@
                             <span *ngIf="orderBy == 'status' && reverseOrder" class="fa fa-caret-down"></span>
                             <span *ngIf="orderBy == 'status' && !reverseOrder" class="fa fa-caret-up"></span>
                         </th>
-                        <th scope="col" class="filter w65" (click)="sortCurrentBy('scenarioName')">{{ 'campaigns.execution.scenarios.item.header.title' | translate }}
+                        <th scope="col" class="filter w55" (click)="sortCurrentBy('scenarioName')">{{ 'campaigns.execution.scenarios.item.header.title' | translate }}
                             <span *ngIf="orderBy == 'scenarioName' && reverseOrder" class="fa fa-caret-down"></span>
                             <span *ngIf="orderBy == 'scenarioName' && !reverseOrder" class="fa fa-caret-up"></span>
                         </th>
@@ -157,7 +166,7 @@
                             <span *ngIf="orderBy == 'duration' && !reverseOrder" class="fa fa-caret-up"></span>
                         </th>
                         <th *ngIf="testExecutionId" scope="col" class="w5" ></th>
-                        <th *ngIf="testExecutionId" scope="col" class="w10" >{{ 'campaigns.execution.scenarios.item.header.jiraStatus' | translate }}</th>
+                        <th *ngIf="testExecutionId" scope="col" class="w20" >{{ 'campaigns.execution.scenarios.item.header.jiraStatus' | translate }}</th>
                         
                     </tr>
                 </thead>
@@ -195,9 +204,19 @@
                             </a>
                         </td>
                         <td>
-                            <select class="form-control small_text" (change)="updateStatus(scenarioReportOutline.scenarioId, $event)">
+                            <chutney-delete-confirm-dialog class="mr-2 mt-1"
+                                [dialogMessage]="('campaigns.execution.update.jira' | translate)"
+                                [label]=null
+                                [title]="('global.actions.update' | translate)"
+                                [disabled]="selectedStatusByScenarioId.get(scenarioReportOutline.scenarioId) !=='PASS' && selectedStatusByScenarioId.get(scenarioReportOutline.scenarioId) !=='FAIL' "
+                                [btnSizeClass]="'sm'"
+                                [btnClassIcon]="'fa-pencil-alt'"
+                                [btnColor]="'primary'"
+                                (deleteEvent)="updateStatus(scenarioReportOutline.scenarioId)">
+                            </chutney-delete-confirm-dialog>
+                            <select class="custom-select small_text mt-1" (change)="selectedUpdateStatus(scenarioReportOutline.scenarioId, $event)" style="width: 120px;font-size: 0.5em;"  >
                                 <option *ngFor="let enum of xrayStatuses()" [selected]="scenarioStatus(scenarioReportOutline.scenarioId) === enum">{{ enum }}</option>
-                                <option [selected]="scenarioStatus(scenarioReportOutline.scenarioId) === UNSUPORTED" disabled>{{UNSUPORTED}}</option>
+                                <option [selected]="scenarioStatus(scenarioReportOutline.scenarioId) === UNSUPPORTED">{{UNSUPPORTED}}</option>
                             </select>
                         </td>
                     </tr>

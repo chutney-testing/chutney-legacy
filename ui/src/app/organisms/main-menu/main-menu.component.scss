@@ -29,8 +29,8 @@ chutney-menu-item {
     height: $nav-height;
     background-color: white;
     color: $grisclair1;
-    padding: 16px;
-    font-size: 16px;
+    padding: 16px 5px;
+    font-size: 14px;
     border: none;
     cursor: pointer;
 
@@ -42,7 +42,7 @@ chutney-menu-item {
 .dropdown {
     position: relative;
     display: inline-block;
-    margin-left: 16px;
+    margin-left: 5px;
 }
 
 .dropdown-content {

@@ -8,7 +8,7 @@
             "plugins": "Plugins",
             "databaseAdmin": "DB",
             "storesAdmin": "Stores",
-            "documentation": "Documentation",
+            "documentation": "Doc.",
             "component": "Components",
             "backups": "Backups",
             "variable": "Variable",
@@ -173,6 +173,9 @@
                     "executions.link": "Go to the executions of"
                 },
                 "empty": "No scenario available"
+            },
+            "update": {
+                "jira": "Update jira status ?"
             }
         },
         "edition": {

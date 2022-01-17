@@ -49,13 +49,6 @@ public class JiraRestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({
-    })
-    protected ResponseEntity<Object> conflict(RuntimeException ex, WebRequest request) {
-        String bodyOfResponse = ex.getMessage();
-        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
-    }
-
-    @ExceptionHandler({
         DateTimeParseException.class,
     })
     protected ResponseEntity<Object> badRequest(RuntimeException ex, WebRequest request) {

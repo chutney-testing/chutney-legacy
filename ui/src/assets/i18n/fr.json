@@ -8,7 +8,7 @@
             "plugins": "Plugins",
             "databaseAdmin": "BDD",
             "storesAdmin": "Stores",
-            "documentation": "Documentation",
+            "documentation": "Doc.",
             "component": "Composants",
             "backups": "Sauvegardes",
             "variable": "Variable",
@@ -173,6 +173,9 @@
                     "executions.link": "Voir les exécutions de"
                 },
                 "empty": "Aucun scénario disponible"
+            },
+            "update": {
+                "jira": "Mettre à jour le statut jira ?"
             }
         },
         "edition": {

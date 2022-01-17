@@ -65,7 +65,6 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
     private executeDropDown: QueryList<NgbDropdown>;
 
     running = false;
-    // todo: add errorMessage in template
     errorMessage: any;
 
     private subscriptionLoadCampaign: Subscription;
@@ -96,7 +95,8 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
     testExecutionId: string;
     jiraScenarios: JiraScenario[] = [];
     jiraUrl = '';
-    UNSUPORTED = 'UNSUPPORTED';
+    UNSUPPORTED = 'UNSUPPORTED';
+    selectedStatusByScenarioId: Map<string, string> = new Map();
 
     constructor(private campaignService: CampaignService,
                 private environmentAdminService: EnvironmentAdminService,
@@ -120,7 +120,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.subscriptionLoadCampaign = this.route.params.subscribe((params) => {
-            this.loadCampaign(params['id'], false, params['execId']);
+            this.loadCampaign(params['id'], true, params['execId']);
             this.loadScenarios(params['id']);
         });
         if (this.loginService.hasAuthorization(Authorization.CAMPAIGN_EXECUTE)) {
@@ -396,12 +396,19 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
         });
     }
 
-    updateStatus(scenarioId: string, event: any) {
-        const newStatus = event.target.value;
+    selectedUpdateStatus(scenarioId: string, event: any) {
+        this.selectedStatusByScenarioId.set(scenarioId, event.target.value);
+    }
+
+    updateStatus(scenarioId: string) {
+        const newStatus = this.selectedStatusByScenarioId.get(scenarioId);
         if (newStatus === XrayStatus.PASS || newStatus === XrayStatus.FAIL) {
             this.jiraLinkService.updateScenarioStatus(this.testExecutionId, scenarioId, newStatus).subscribe(
                 () => {},
-                (error) => { console.log(error); }
+                (error) => {
+                    console.log(error);
+                    this.errorMessage = 'Cannot update jira status. \n' + error.error;
+                }
             );
         }
     }
@@ -413,7 +420,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
                 return jiraScenario[0].executionStatus;
             }
         }
-        return this.UNSUPORTED;
+        return this.UNSUPPORTED;
     }
 
     initJiraTestExecutionId() {
