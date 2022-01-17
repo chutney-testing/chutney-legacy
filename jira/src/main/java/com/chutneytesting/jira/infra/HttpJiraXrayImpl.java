@@ -2,8 +2,8 @@ package com.chutneytesting.jira.infra;
 
 import com.chutneytesting.jira.domain.JiraTargetConfiguration;
 import com.chutneytesting.jira.domain.JiraXrayApi;
-import com.chutneytesting.jira.xray_api.Xray;
-import com.chutneytesting.jira.xray_api.XrayTestExecTest;
+import com.chutneytesting.jira.xrayapi.Xray;
+import com.chutneytesting.jira.xrayapi.XrayTestExecTest;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,14 +30,19 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
 
     private static final int MS_TIMEOUT = 10 * 1000; // 10 s
 
-    @Override
-    public void updateRequest(Xray xray, JiraTargetConfiguration jiraTargetConfiguration) {
-        String updateUri = jiraTargetConfiguration.url + "/rest/raven/1.0/import/execution";
+    private final JiraTargetConfiguration jiraTargetConfiguration;
 
+    public HttpJiraXrayImpl(JiraTargetConfiguration jiraTargetConfiguration) {
+        this.jiraTargetConfiguration = jiraTargetConfiguration;
         if (jiraTargetConfiguration.isValid()) {
             LOGGER.error("Unable to update xray, jira url is undefined");
             return;
         }
+    }
+
+    @Override
+    public void updateRequest(Xray xray) {
+        String updateUri = jiraTargetConfiguration.url + "/rest/raven/1.0/import/execution";
 
         RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration.username, jiraTargetConfiguration.password);
 
@@ -50,12 +55,13 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
                 LOGGER.error(response.toString());
             }
         } catch (RestClientException e) {
-            LOGGER.error("Unable to update xray : " + e);
+            LOGGER.error("Unable to update test execution [" + xray.getTestExecutionKey() + "] : ", e);
+            throw new RuntimeException("Unable to update test execution [" + xray.getTestExecutionKey() + "] : ", e);
         }
     }
 
     @Override
-    public List<XrayTestExecTest> getTestExecutionScenarios(String testExecutionId, JiraTargetConfiguration jiraTargetConfiguration) {
+    public List<XrayTestExecTest> getTestExecutionScenarios(String testExecutionId) {
         List<XrayTestExecTest> tests = new ArrayList<>();
 
         if (jiraTargetConfiguration.isValid()) {
@@ -78,12 +84,13 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
             }
         } catch (RestClientException e) {
             LOGGER.error("Unable to get xray test execution[" + testExecutionId + "] scenarios : ", e);
+            throw new RuntimeException("Unable to get xray test execution[" + testExecutionId + "] scenarios : ", e);
         }
         return tests;
     }
 
     @Override
-    public void updateStatusByTestRunId(String testRuntId, String executionStatus, JiraTargetConfiguration jiraTargetConfiguration) {
+    public void updateStatusByTestRunId(String testRuntId, String executionStatus) {
         if (jiraTargetConfiguration.isValid()) {
             LOGGER.error("Unable to update xray, jira url is undefined");
             return;
@@ -97,6 +104,7 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
             restTemplate.put(uri, null);
         } catch (RestClientException e) {
             LOGGER.error("Unable to update xray testRuntId[" + testRuntId + "] with status[" + executionStatus + "] : ", e);
+            throw new RuntimeException("Unable to update xray testRuntId[" + testRuntId + "] with status[" + executionStatus + "] : ", e);
         }
     }
 

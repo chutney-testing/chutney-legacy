@@ -1,4 +1,4 @@
-package com.chutneytesting.jira.api;
+package com.chutneytesting.jira.domain;
 
 import static com.chutneytesting.jira.domain.XrayStatus.PASS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -7,17 +7,22 @@ import static org.assertj.core.util.Lists.list;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
+import com.chutneytesting.jira.api.ImmutableJiraDto;
+import com.chutneytesting.jira.api.JiraConfigurationDto;
+import com.chutneytesting.jira.api.JiraDto;
+import com.chutneytesting.jira.api.JiraModuleController;
 import com.chutneytesting.jira.domain.JiraRepository;
 import com.chutneytesting.jira.domain.JiraTargetConfiguration;
 import com.chutneytesting.jira.domain.JiraXrayApi;
 import com.chutneytesting.jira.domain.JiraXrayService;
 import com.chutneytesting.jira.infra.JiraFileRepository;
-import com.chutneytesting.jira.xray_api.XrayTestExecTest;
+import com.chutneytesting.jira.xrayapi.XrayTestExecTest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -27,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -36,16 +42,17 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 class JiraModuleControllerTest {
 
     private JiraRepository jiraRepository;
-    private final JiraXrayApi jiraXrayApiMock = mock(JiraXrayApi.class);
     private MockMvc mockMvc;
-
+    private JiraXrayApi mockJiraXrayApi = mock(JiraXrayApi.class);
     private final ObjectMapper om = new ObjectMapper().findAndRegisterModules();
-
 
     @BeforeEach
     public void setUp() throws IOException {
         jiraRepository = new JiraFileRepository(Files.createTempDirectory("jira").toString());
-        JiraXrayService jiraXrayService = new JiraXrayService(jiraRepository, jiraXrayApiMock);
+        JiraXrayService jiraXrayServiceSpy = Mockito.spy(new JiraXrayService(jiraRepository));
+
+        doReturn(mockJiraXrayApi).when(jiraXrayServiceSpy).createHttpJiraXrayImpl();
+
         jiraRepository.saveServerConfiguration(new JiraTargetConfiguration("an url", "a username", "a password"));
         jiraRepository.saveForCampaign("10", "JIRA-10");
         jiraRepository.saveForCampaign("20", "JIRA-20");
@@ -53,7 +60,7 @@ class JiraModuleControllerTest {
         jiraRepository.saveForScenario("2", "SCE-2");
         jiraRepository.saveForScenario("3", "SCE-3");
 
-        JiraModuleController jiraModuleController = new JiraModuleController(jiraRepository, jiraXrayService);
+        JiraModuleController jiraModuleController = new JiraModuleController(jiraRepository, jiraXrayServiceSpy);
         mockMvc = MockMvcBuilders.standaloneSetup(jiraModuleController).build();
     }
 
@@ -121,7 +128,7 @@ class JiraModuleControllerTest {
         xrayTestExecTest.setStatus(PASS.value);
         result.add(xrayTestExecTest);
 
-        when(jiraXrayApiMock.getTestExecutionScenarios(anyString(), any())).thenReturn(result);
+        when(mockJiraXrayApi.getTestExecutionScenarios(anyString())).thenReturn(result);
 
         List<JiraDto> scenarios = getJiraController("/api/ui/jira/v1/testexec/JIRA-10", new TypeReference<>() {
         });
@@ -193,7 +200,7 @@ class JiraModuleControllerTest {
         xrayTestExecTest.setId("runIdentifier");
         xrayTestExecTest.setKey("SCE-3");
 
-        when(jiraXrayApiMock.getTestExecutionScenarios(anyString(), any())).thenReturn(list(xrayTestExecTest));
+        when(mockJiraXrayApi.getTestExecutionScenarios(anyString())).thenReturn(list(xrayTestExecTest));
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/ui/jira/v1/testexec/JIRA-10\"")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -202,7 +209,7 @@ class JiraModuleControllerTest {
             .andDo(print())
             .andExpect(MockMvcResultMatchers.status().isOk());
 
-        verify(jiraXrayApiMock).updateStatusByTestRunId(eq("runIdentifier"), eq(PASS.value), any());
+        verify(mockJiraXrayApi).updateStatusByTestRunId(eq("runIdentifier"), eq(PASS.value));
     }
 
     private <T> T getJiraController(String url, TypeReference<T> typeReference) {

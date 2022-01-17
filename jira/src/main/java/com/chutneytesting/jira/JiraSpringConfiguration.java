@@ -23,18 +23,13 @@ public class JiraSpringConfiguration {
 
     // domain Bean
     @Bean
-    JiraXrayService jiraXrayService(JiraRepository jiraRepository, JiraXrayApi jiraXrayApi) {
-        return new JiraXrayService(jiraRepository, jiraXrayApi);
+    JiraXrayService jiraXrayService(JiraRepository jiraRepository) {
+        return new JiraXrayService(jiraRepository);
     }
 
     // infra Bean
     @Bean
     JiraRepository jiraFileRepository(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) {
         return new JiraFileRepository(storeFolderPath);
-    }
-
-    @Bean
-    JiraXrayApi httpJiraXrayApi() {
-        return new HttpJiraXrayImpl();
     }
 }

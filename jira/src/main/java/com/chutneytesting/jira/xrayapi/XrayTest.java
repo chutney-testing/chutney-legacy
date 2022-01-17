@@ -1,4 +1,4 @@
-package com.chutneytesting.jira.xray_api;
+package com.chutneytesting.jira.xrayapi;
 
 import java.util.List;
 

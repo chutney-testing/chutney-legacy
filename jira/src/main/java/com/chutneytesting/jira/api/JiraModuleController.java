@@ -3,7 +3,7 @@ package com.chutneytesting.jira.api;
 import com.chutneytesting.jira.domain.JiraRepository;
 import com.chutneytesting.jira.domain.JiraTargetConfiguration;
 import com.chutneytesting.jira.domain.JiraXrayService;
-import com.chutneytesting.jira.xray_api.XrayTestExecTest;
+import com.chutneytesting.jira.xrayapi.XrayTestExecTest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

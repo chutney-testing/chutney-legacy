@@ -1,24 +1,26 @@
-package com.chutneytesting.jira.api;
+package com.chutneytesting.jira.domain;
 
 import static com.chutneytesting.jira.domain.XrayStatus.FAIL;
 import static com.chutneytesting.jira.domain.XrayStatus.PASS;
 import static java.util.List.of;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
+import com.chutneytesting.jira.api.ReportForJira;
 import com.chutneytesting.jira.domain.JiraRepository;
 import com.chutneytesting.jira.domain.JiraTargetConfiguration;
 import com.chutneytesting.jira.domain.JiraXrayApi;
 import com.chutneytesting.jira.domain.JiraXrayService;
 import com.chutneytesting.jira.infra.JiraFileRepository;
-import com.chutneytesting.jira.xray_api.Xray;
-import com.chutneytesting.jira.xray_api.XrayTest;
-import com.chutneytesting.jira.xray_api.XrayTestExecTest;
+import com.chutneytesting.jira.xrayapi.Xray;
+import com.chutneytesting.jira.xrayapi.XrayTest;
+import com.chutneytesting.jira.xrayapi.XrayTestExecTest;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.Instant;
@@ -30,6 +32,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 
 class JiraXrayEmbeddedApiTest {
 
@@ -44,8 +47,10 @@ class JiraXrayEmbeddedApiTest {
     public void setUp() throws IOException {
         jiraRepository = new JiraFileRepository(Files.createTempDirectory("jira").toString());
         jiraRepository.saveServerConfiguration(jiraTargetConfiguration);
-        JiraXrayService jiraXrayService = new JiraXrayService(jiraRepository, jiraXrayApiMock);
-        jiraXrayEmbeddedApi = new JiraXrayEmbeddedApi(jiraXrayService);
+        JiraXrayService jiraXrayServiceSpy = Mockito.spy(new JiraXrayService(jiraRepository));
+        doReturn(jiraXrayApiMock).when(jiraXrayServiceSpy).createHttpJiraXrayImpl();
+
+        jiraXrayEmbeddedApi = new JiraXrayEmbeddedApi(jiraXrayServiceSpy);
     }
 
     @Test
@@ -63,7 +68,7 @@ class JiraXrayEmbeddedApiTest {
         xrayTestExecTest2.setStatus(FAIL.value);
         result.add(xrayTestExecTest2);
 
-        when(jiraXrayApiMock.getTestExecutionScenarios(anyString(), any())).thenReturn(result);
+        when(jiraXrayApiMock.getTestExecutionScenarios(anyString())).thenReturn(result);
 
         List<XrayTestExecTest> statusByTest = jiraXrayEmbeddedApi.getTestStatusInTestExec("");
         assertThat(statusByTest.get(0).getStatus()).isEqualTo(PASS.value);
@@ -85,11 +90,7 @@ class JiraXrayEmbeddedApiTest {
 
         //T
         ArgumentCaptor<Xray> xrayArgumentCaptor = ArgumentCaptor.forClass(Xray.class);
-        ArgumentCaptor<JiraTargetConfiguration> jiraTargetConfigurationArgumentCaptor = ArgumentCaptor.forClass(JiraTargetConfiguration.class);
-        verify(jiraXrayApiMock, times(1)).updateRequest(xrayArgumentCaptor.capture(), jiraTargetConfigurationArgumentCaptor.capture());
-
-        JiraTargetConfiguration configurationValue = jiraTargetConfigurationArgumentCaptor.getValue();
-        assertThat(jiraTargetConfiguration).usingRecursiveComparison().isEqualTo(configurationValue);
+        verify(jiraXrayApiMock, times(1)).updateRequest(xrayArgumentCaptor.capture());
 
         Xray xrayValue = xrayArgumentCaptor.getValue();
         XrayTest xrayTest = xrayValue.getTests().get(0);

@@ -166,7 +166,7 @@
                         "state": "Etat",
                         "title": "Titre",
                         "duration": "Durée",
-                        "jiraStatus": "Status Jira"
+                        "jiraStatus": "Statut Jira"
                     },
                     "title": "Voir les exécutions de",
                     "description.none": "Aucune description",

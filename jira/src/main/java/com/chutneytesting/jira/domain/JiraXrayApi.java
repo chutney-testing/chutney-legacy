@@ -1,14 +1,14 @@
 package com.chutneytesting.jira.domain;
 
-import com.chutneytesting.jira.xray_api.Xray;
-import com.chutneytesting.jira.xray_api.XrayTestExecTest;
+import com.chutneytesting.jira.xrayapi.Xray;
+import com.chutneytesting.jira.xrayapi.XrayTestExecTest;
 import java.util.List;
 
 public interface JiraXrayApi {
 
-    void updateRequest(Xray xray, JiraTargetConfiguration jiraTargetConfiguration);
+    void updateRequest(Xray xray);
 
-    List<XrayTestExecTest> getTestExecutionScenarios(String testExecutionId, JiraTargetConfiguration jiraTargetConfiguration);
+    List<XrayTestExecTest> getTestExecutionScenarios(String testExecutionId);
 
-    void updateStatusByTestRunId(String id, String executionStatus, JiraTargetConfiguration jiraTargetConfiguration);
+    void updateStatusByTestRunId(String id, String executionStatus);
 }

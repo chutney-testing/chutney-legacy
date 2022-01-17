@@ -3,13 +3,17 @@ package com.chutneytesting.jira.domain;
 
 import static com.chutneytesting.jira.domain.XrayStatus.FAIL;
 import static com.chutneytesting.jira.domain.XrayStatus.PASS;
+import static java.util.Collections.emptyList;
 
 import com.chutneytesting.jira.api.ReportForJira;
-import com.chutneytesting.jira.xray_api.Xray;
-import com.chutneytesting.jira.xray_api.XrayEvidence;
-import com.chutneytesting.jira.xray_api.XrayInfo;
-import com.chutneytesting.jira.xray_api.XrayTest;
-import com.chutneytesting.jira.xray_api.XrayTestExecTest;
+import com.chutneytesting.jira.domain.exception.NoJiraConfigurationException;
+import com.chutneytesting.jira.infra.HttpJiraXrayImpl;
+import com.chutneytesting.jira.xrayapi.Xray;
+import com.chutneytesting.jira.xrayapi.XrayEvidence;
+import com.chutneytesting.jira.xrayapi.XrayInfo;
+import com.chutneytesting.jira.xrayapi.XrayTest;
+import com.chutneytesting.jira.xrayapi.XrayTestExecTest;
+import com.google.common.annotations.VisibleForTesting;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -27,14 +31,15 @@ public class JiraXrayService {
     private static final Logger LOGGER = LoggerFactory.getLogger(JiraXrayService.class);
 
     private final JiraRepository jiraRepository;
-    private final JiraXrayApi jiraXrayApi;
 
-    public JiraXrayService(JiraRepository jiraRepository, JiraXrayApi jiraXrayApi) {
+    public JiraXrayService(JiraRepository jiraRepository) {
         this.jiraRepository = jiraRepository;
-        this.jiraXrayApi = jiraXrayApi;
+
     }
 
     public void updateTestExecution(Long campaignId, String scenarioId, ReportForJira report) {
+        JiraXrayApi jiraXrayApi = createHttpJiraXrayImpl();
+
         String testKey = jiraRepository.getByScenarioId(scenarioId);
         String testExecutionKey = jiraRepository.getByCampaignId(campaignId.toString());
         if (!testKey.isEmpty() && !testExecutionKey.isEmpty()) {
@@ -51,25 +56,36 @@ public class JiraXrayService {
             xrayTest.setEvidences(getEvidences(report.rootStep, ""));
             XrayInfo info = new XrayInfo(Collections.singletonList(report.environment));
             Xray xray = new Xray(testExecutionKey, Collections.singletonList(xrayTest), info);
-            JiraTargetConfiguration jiraTargetConfiguration = jiraRepository.loadServerConfiguration();
-            jiraXrayApi.updateRequest(xray, jiraTargetConfiguration);
+            jiraXrayApi.updateRequest(xray);
         }
     }
 
     public List<XrayTestExecTest> getTestExecutionScenarios(String testExecutionId) {
-        JiraTargetConfiguration jiraTargetConfiguration = jiraRepository.loadServerConfiguration();
-        return jiraXrayApi.getTestExecutionScenarios(testExecutionId, jiraTargetConfiguration);
+        JiraXrayApi jiraXrayApi = createHttpJiraXrayImpl();
+
+        return jiraXrayApi.getTestExecutionScenarios(testExecutionId);
     }
 
     public void updateScenarioStatus(String testExecId, String chutneyId, String executionStatus) {
-        JiraTargetConfiguration jiraTargetConfiguration = jiraRepository.loadServerConfiguration();
+        JiraXrayApi jiraXrayApi = createHttpJiraXrayImpl();
 
         String scenarioJiraId = jiraRepository.getByScenarioId(chutneyId);
 
         List<XrayTestExecTest> testExecutionScenarios = getTestExecutionScenarios(testExecId);
         Optional<XrayTestExecTest> foundTest = testExecutionScenarios.stream().filter(test -> scenarioJiraId.equals(test.getKey())).findFirst();
         if (foundTest.isPresent()) {
-            jiraXrayApi.updateStatusByTestRunId(foundTest.get().getId(), executionStatus, jiraTargetConfiguration);
+            jiraXrayApi.updateStatusByTestRunId(foundTest.get().getId(), executionStatus);
+        }
+    }
+
+    @VisibleForTesting
+    JiraXrayApi createHttpJiraXrayImpl() {
+        JiraTargetConfiguration jiraTargetConfiguration = jiraRepository.loadServerConfiguration();
+        if (jiraTargetConfiguration.isValid()) {
+            LOGGER.error("Unable to update xray, jira url is undefined");
+            throw new NoJiraConfigurationException();
+        } else {
+            return new HttpJiraXrayImpl(jiraTargetConfiguration);
         }
     }
 
