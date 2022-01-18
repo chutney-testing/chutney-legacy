@@ -14,8 +14,8 @@ import org.apache.sshd.server.SshServer;
 
 public class FakeTargetInfo {
 
-    private static final String RSA_PRIVATE_KEY = FakeTargetInfo.class.getResource("/security/client.key").getPath();
-    private static final String ECDSA_PRIVATE_KEY = FakeTargetInfo.class.getResource("/security/clientpass.key").getPath();
+    private static final String RSA_PRIVATE_KEY = FakeTargetInfo.class.getResource("/security/client_rsa.key").getPath();
+    private static final String ECDSA_PRIVATE_KEY = FakeTargetInfo.class.getResource("/security/client_ecdsa.key").getPath();
 
     public static Target buildTargetWithCredentialUsernamePassword(SshServer sshServer) {
         return buildTarget(sshServer, FakeServerSsh.USERNAME, FakeServerSsh.PASSWORD, null, emptyMap());
