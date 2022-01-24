@@ -1,20 +1,17 @@
 package com.chutneytesting.task.ssh;
 
 import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Failure;
-import static com.chutneytesting.task.ssh.fakes.FakeServerSsh.buildLocalServer;
+import static com.chutneytesting.task.ssh.fakes.FakeServerSsh.buildLocalSshServer;
 import static com.chutneytesting.task.ssh.fakes.FakeTargetInfo.buildTargetWithCredentialUsernamePassword;
 import static com.chutneytesting.task.ssh.fakes.FakeTargetInfo.buildTargetWithPrivateKeyWithCredentialPassphrase;
 import static com.chutneytesting.task.ssh.fakes.FakeTargetInfo.buildTargetWithPrivateKeyWithPropertiesPassphrase;
 import static com.chutneytesting.task.ssh.fakes.FakeTargetInfo.buildTargetWithPrivateKeyWithoutPassphrase;
 import static com.chutneytesting.task.ssh.fakes.FakeTargetInfo.buildTargetWithPropertiesUsernamePassword;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
 import com.chutneytesting.task.TestLogger;
-import com.chutneytesting.task.TestTarget;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
@@ -41,7 +38,7 @@ public class SshClientTaskTest {
 
     @BeforeAll
     public static void prepare_ssh_server() throws Exception {
-        fakeSshServer = buildLocalServer();
+        fakeSshServer = buildLocalSshServer();
         fakeSshServer.start();
     }
 

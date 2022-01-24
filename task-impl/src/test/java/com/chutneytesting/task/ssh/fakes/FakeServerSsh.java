@@ -1,5 +1,7 @@
 package com.chutneytesting.task.ssh.fakes;
 
+import static java.util.Collections.singletonList;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -18,6 +20,7 @@ import org.apache.sshd.server.keyprovider.AbstractGeneratorHostKeyProvider;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
 import org.apache.sshd.server.shell.InteractiveProcessShellFactory;
 import org.apache.sshd.server.shell.ProcessShellCommandFactory;
+import org.apache.sshd.sftp.server.SftpSubsystemFactory;
 import org.junit.platform.commons.util.StringUtils;
 
 public class FakeServerSsh {
@@ -27,18 +30,34 @@ public class FakeServerSsh {
 
     private static final String DEFAULT_TEST_HOST_KEY_PROVIDER_ALGORITHM = "RSA";
 
-    public static SshServer buildLocalServer() throws IOException {
-        return buildLocalServer(true, true, 20, "");
+    public static SshServer buildLocalSftpServer(boolean acceptAllPubKeys, boolean acceptAllPassword, int maxAuthRequests) throws IOException {
+        return buildLocalServer(acceptAllPubKeys, acceptAllPassword, maxAuthRequests, "", true);
     }
 
-    public static SshServer buildLocalServer(boolean acceptAllPubKeys, boolean acceptAllPassword, int maxAuthRequests) throws IOException {
-        return buildLocalServer(acceptAllPubKeys, acceptAllPassword, maxAuthRequests, "");
+    public static SshServer buildLocalSftpServer(boolean acceptAllPubKeys, boolean acceptAllPassword, int maxAuthRequests, String authorizedKeys) throws IOException {
+        return buildLocalServer(acceptAllPubKeys, acceptAllPassword, maxAuthRequests, authorizedKeys, true);
     }
 
-    public static SshServer buildLocalServer(boolean acceptAllPubKeys, boolean acceptAllPassword, int maxAuthRequests, String authorizedKeys) throws IOException {
+    public static SshServer buildLocalSshServer() throws IOException {
+        return buildLocalServer(true, true, 20, "", false);
+    }
+
+    public static SshServer buildLocalSshServer(boolean acceptAllPubKeys, boolean acceptAllPassword, int maxAuthRequests) throws IOException {
+        return buildLocalServer(acceptAllPubKeys, acceptAllPassword, maxAuthRequests, "", false);
+    }
+
+    public static SshServer buildLocalSshServer(boolean acceptAllPubKeys, boolean acceptAllPassword, int maxAuthRequests, String authorizedKeys) throws IOException {
+        return buildLocalServer(acceptAllPubKeys, acceptAllPassword, maxAuthRequests, authorizedKeys, false);
+    }
+
+    public static SshServer buildLocalServer(boolean acceptAllPubKeys, boolean acceptAllPassword, int maxAuthRequests, String authorizedKeys, boolean withSftp) throws IOException {
         SshServer sshd = SshServer.setUpDefaultServer();
         sshd.setHost(getHostIPAddress());
         sshd.setPort(getFreePort());
+        if (withSftp) {
+            SftpSubsystemFactory factory = new SftpSubsystemFactory.Builder().build();
+            sshd.setSubsystemFactories(singletonList(factory));
+        }
         AbstractGeneratorHostKeyProvider hostKeyProvider = prepareKeyPairProvider();
         sshd.setKeyPairProvider(hostKeyProvider);
         sshd.setPublickeyAuthenticator(getPublickeyAuthenticator(acceptAllPubKeys, authorizedKeys));

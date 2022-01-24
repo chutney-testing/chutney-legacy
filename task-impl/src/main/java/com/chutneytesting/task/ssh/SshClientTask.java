@@ -13,7 +13,6 @@ import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.task.spi.validation.Validator;
 import com.chutneytesting.task.ssh.sshj.CommandResult;
 import com.chutneytesting.task.ssh.sshj.Commands;
-import com.chutneytesting.task.ssh.sshj.Connection;
 import com.chutneytesting.task.ssh.sshj.SshClient;
 import com.chutneytesting.task.ssh.sshj.SshJClient;
 import java.io.IOException;

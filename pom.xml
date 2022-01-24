@@ -405,6 +405,11 @@
                 <version>${sshd.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.sshd</groupId>
+                <artifactId>sshd-sftp</artifactId>
+                <version>${sshd.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.hjson</groupId>
                 <artifactId>hjson</artifactId>
                 <version>${hjson.version}</version>

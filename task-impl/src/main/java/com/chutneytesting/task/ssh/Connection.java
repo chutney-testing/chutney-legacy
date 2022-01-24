@@ -1,4 +1,4 @@
-package com.chutneytesting.task.ssh.sshj;
+package com.chutneytesting.task.ssh;
 
 
 import static org.junit.platform.commons.util.StringUtils.isNotBlank;
