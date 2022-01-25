@@ -31,7 +31,7 @@ public class ScpTaskTest {
     @BeforeAll
     public static void setUp() throws IOException {
         credentialSshServer = buildLocalServer(false, true, 1);
-        keySshServer = buildLocalServer(true, false, 2); // MAX_AUTH_REQUEST set to 2 due to session.auth().verify() performing 2 auth requests instead of 1
+        keySshServer = buildLocalServer(false, false, 2, "src/test/resources/security/authorized_keys"); // MAX_AUTH_REQUEST set to 2 due to session.auth().verify() performing 2 auth requests instead of 1
         credentialSshServer.start();
         keySshServer.start();
     }
