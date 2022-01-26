@@ -79,7 +79,7 @@ public class JiraXrayService {
     }
 
     @VisibleForTesting
-    JiraXrayApi createHttpJiraXrayImpl() {
+    public JiraXrayApi createHttpJiraXrayImpl() {
         JiraTargetConfiguration jiraTargetConfiguration = jiraRepository.loadServerConfiguration();
         if (jiraTargetConfiguration.isValid()) {
             LOGGER.error("Unable to update xray, jira url is undefined");
