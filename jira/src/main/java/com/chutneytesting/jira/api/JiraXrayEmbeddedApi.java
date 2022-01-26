@@ -3,7 +3,7 @@ package com.chutneytesting.jira.api;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import com.chutneytesting.jira.domain.JiraXrayService;
-import com.chutneytesting.jira.infra.xraymodelapi.XrayTestExecTest;
+import com.chutneytesting.jira.xrayapi.XrayTestExecTest;
 import java.util.List;
 
 public class JiraXrayEmbeddedApi {

@@ -8,7 +8,7 @@
             "plugins": "Plugins",
             "databaseAdmin": "BDD",
             "storesAdmin": "Stores",
-            "documentation": "Documentation",
+            "documentation": "Doc.",
             "component": "Composants",
             "backups": "Sauvegardes",
             "variable": "Variable",
@@ -165,13 +165,17 @@
                         "id": "Id",
                         "state": "Etat",
                         "title": "Titre",
-                        "duration": "Durée"
+                        "duration": "Durée",
+                        "jiraStatus": "Statut Jira"
                     },
                     "title": "Voir les exécutions de",
                     "description.none": "Aucune description",
                     "executions.link": "Voir les exécutions de"
                 },
                 "empty": "Aucun scénario disponible"
+            },
+            "update": {
+                "jira": "Mettre à jour le statut jira ?"
             }
         },
         "edition": {

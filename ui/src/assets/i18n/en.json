@@ -8,7 +8,7 @@
             "plugins": "Plugins",
             "databaseAdmin": "DB",
             "storesAdmin": "Stores",
-            "documentation": "Documentation",
+            "documentation": "Doc.",
             "component": "Components",
             "backups": "Backups",
             "variable": "Variable",
@@ -165,13 +165,17 @@
                         "id": "Id",
                         "state": "State",
                         "title": "Title",
-                        "duration": "Duration"
+                        "duration": "Duration",
+                        "jiraStatus": "Jira status"
                     },
                     "title": "Go to the executions of",
                     "description.none": "No description",
                     "executions.link": "Go to the executions of"
                 },
                 "empty": "No scenario available"
+            },
+            "update": {
+                "jira": "Update jira status ?"
             }
         },
         "edition": {

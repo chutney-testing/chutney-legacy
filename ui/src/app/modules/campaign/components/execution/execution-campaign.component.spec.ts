@@ -14,6 +14,7 @@ import { Campaign, TestCase, CampaignExecutionReport, ScenarioExecutionReportOut
 import { ScenarioService, CampaignService, EnvironmentAdminService } from '@core/services';
 import { TranslateTestingModule } from '../../../../testing/translate-testing.module';
 import { ChartsModule } from 'ng2-charts';
+import { BsModalService, ModalModule } from 'ngx-bootstrap';
 
 
 describe('CampaignExecutionComponent', () => {
@@ -41,11 +42,13 @@ describe('CampaignExecutionComponent', () => {
         HttpClientTestingModule,
         RouterTestingModule,
         TranslateTestingModule,
+        ModalModule.forRoot(),
         MoleculesModule,
         SharedModule,
         MomentModule,
         ChartsModule,
-        NgbModule.forRoot()],
+        NgbModule.forRoot(),
+        ],
       declarations: [
         CampaignExecutionComponent
       ],
@@ -86,6 +89,7 @@ describe('CampaignExecutionComponent', () => {
 
     const fixture = TestBed.createComponent(CampaignExecutionComponent);
     const html: HTMLElement = fixture.nativeElement;
+
     fixture.detectChanges();
 
     const c = fixture.componentInstance;

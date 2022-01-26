@@ -3,7 +3,7 @@ package com.chutneytesting.jira.api;
 import com.chutneytesting.jira.domain.JiraRepository;
 import com.chutneytesting.jira.domain.JiraTargetConfiguration;
 import com.chutneytesting.jira.domain.JiraXrayService;
-import com.chutneytesting.jira.infra.xraymodelapi.XrayTestExecTest;
+import com.chutneytesting.jira.xrayapi.XrayTestExecTest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -105,7 +106,7 @@ public class JiraModuleController {
             .map(m -> ImmutableJiraDto.builder()
                 .id(m.getValue())
                 .chutneyId(m.getKey())
-                .lastExecStatus(collect.get(m.getValue()).getStatus())
+                .executionStatus(collect.get(m.getValue()).getStatus())
                 .build())
             .collect(Collectors.toList());
     }
@@ -154,4 +155,13 @@ public class JiraModuleController {
         jiraRepository.saveServerConfiguration(new JiraTargetConfiguration(jiraConfigurationDto.url(), jiraConfigurationDto.username(), jiraConfigurationDto.password()));
     }
 
+    @PreAuthorize("hasAuthority('CAMPAIGN_WRITE')")
+    @PutMapping(path = BASE_TEST_EXEC_URL + "/{testExecId}",
+        produces = MediaType.APPLICATION_JSON_VALUE,
+        consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void updateScenarioStatus(@PathVariable String testExecId, @RequestBody JiraDto jiraDto) {
+        if (!testExecId.isEmpty() && jiraDto.executionStatus().isPresent()) {
+            jiraXrayService.updateScenarioStatus(testExecId, jiraDto.chutneyId(), jiraDto.executionStatus().get());
+        }
+    }
 }

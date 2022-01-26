@@ -248,7 +248,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     getJiraLastExecutionStatus(id: string) {
         const jiraScenario = this.jiraScenarios.filter(s => s.chutneyId === id);
         if  (jiraScenario.length > 0) {
-            return jiraScenario[0].lastExecStatus;
+            return jiraScenario[0].executionStatus;
         } else {
             return '';
         }
@@ -275,8 +275,8 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
                         this.jiraScenarios = result;
                         let index = 0;
                         this.jiraScenarios.forEach((currentValue) => {
-                            if (isNotEmpty(currentValue.lastExecStatus)) {
-                                this.jiraItemList.push( {'id': index, 'itemName': currentValue.lastExecStatus});
+                            if (isNotEmpty(currentValue.executionStatus)) {
+                                this.jiraItemList.push( {'id': index, 'itemName': currentValue.executionStatus});
                                 index++;
                             }
                         });
@@ -297,7 +297,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
                 if (this.jiraSelectedTags.length > 0) {
 
                     jiraTagFilter = (this.jiraScenarios.find(s => item.id === s.chutneyId &&
-                                    this.jiraSelectedTags.includes(s.lastExecStatus))) === undefined;
+                                    this.jiraSelectedTags.includes(s.executionStatus))) === undefined;
                 }
                 return (!this.jiraScenarios.map(j => j.chutneyId).includes(item.id)) || jiraTagFilter;
             });

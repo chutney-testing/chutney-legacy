@@ -5,12 +5,6 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { JiraScenario } from '@model';
 
-export class JiraDto {
-    constructor(
-        public id: string,
-        public chutneyId: string) {
-    }
-}
 
 @Injectable({
     providedIn: 'root'
@@ -41,14 +35,14 @@ export class JiraPluginService {
     }
 
     public findByScenarioId(scenarioId: string): Observable<string> {
-        return this.http.get<JiraDto>(environment.backend + this.scenarioUrl + '/' + scenarioId)
-            .pipe(map((jiraDto: JiraDto) => {
+        return this.http.get<JiraScenario>(environment.backend + this.scenarioUrl + '/' + scenarioId)
+            .pipe(map((jiraDto: JiraScenario) => {
                 return jiraDto.id;
             }));
     }
 
-    public saveForScenario(scenarioId: string, jiraId: string): Observable<JiraDto> {
-        return this.http.post<JiraDto>(environment.backend + this.scenarioUrl, new JiraDto(jiraId, scenarioId));
+    public saveForScenario(scenarioId: string, jiraId: string): Observable<JiraScenario> {
+        return this.http.post<JiraScenario>(environment.backend + this.scenarioUrl, new JiraScenario(jiraId, scenarioId));
     }
 
     public removeForScenario(scenarioId: string) {
@@ -56,17 +50,22 @@ export class JiraPluginService {
     }
 
     public findByCampaignId(campaignId: number): Observable<string> {
-        return this.http.get<JiraDto>(environment.backend + this.campaignUrl + '/' + campaignId)
-            .pipe(map((jiraDto: JiraDto) => {
+        return this.http.get<JiraScenario>(environment.backend + this.campaignUrl + '/' + campaignId)
+            .pipe(map((jiraDto: JiraScenario) => {
                 return jiraDto.id;
             }));
     }
 
-    public saveForCampaign(campaignId: number, jiraId: string): Observable<JiraDto> {
-        return this.http.post<JiraDto>(environment.backend + this.campaignUrl, new JiraDto(jiraId, campaignId.toString()));
+    public saveForCampaign(campaignId: number, jiraId: string): Observable<JiraScenario> {
+        return this.http.post<JiraScenario>(environment.backend + this.campaignUrl, new JiraScenario(jiraId, campaignId.toString()));
     }
 
     public removeForCampaign(campaignId: number) {
         return this.http.delete<HttpResponse<any>>(environment.backend + this.campaignUrl + '/' + campaignId);
+    }
+
+    public updateScenarioStatus(testExecId: string, scenarioId: string, newStatus: string) {
+        return this.http.put<HttpResponse<any>>(environment.backend + this.testExecUrl + '/' + testExecId,
+                                                new JiraScenario('', scenarioId, newStatus));
     }
 }

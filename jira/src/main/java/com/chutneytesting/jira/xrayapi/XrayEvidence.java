@@ -1,4 +1,4 @@
-package com.chutneytesting.jira.infra.xraymodelapi;
+package com.chutneytesting.jira.xrayapi;
 
 public class XrayEvidence {
 

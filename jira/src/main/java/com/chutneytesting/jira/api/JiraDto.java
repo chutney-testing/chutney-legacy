@@ -15,5 +15,5 @@ public interface JiraDto {
 
     String chutneyId();
 
-    Optional<String> lastExecStatus();
+    Optional<String> executionStatus();
 }

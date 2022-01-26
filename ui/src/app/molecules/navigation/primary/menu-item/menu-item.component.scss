@@ -3,7 +3,7 @@
 
 .menu-item {
     height: $nav-height;
-    padding: 10px;
+    padding: 10px 0;
     font-size: 15px;
     border: none;
     cursor: pointer;
@@ -25,17 +25,16 @@
 }
 
 .menu-item--active {
-    font-size: 20px;
+    font-size: 16px;
     font-weight: bold;
     height: $nav-height;
-    padding-top: 0;
 
     a {
         color: $grisfonce;
     }
 
     img {
-        width: 20px;
-        height: 20px;
+        width: 16px;
+        height: 16px;
     }
 }
