@@ -1,4 +1,4 @@
-package com.chutneytesting.jira.domain;
+package com.chutneytesting.jira.api;
 
 import static com.chutneytesting.jira.domain.XrayStatus.PASS;
 import static org.assertj.core.api.Assertions.assertThat;

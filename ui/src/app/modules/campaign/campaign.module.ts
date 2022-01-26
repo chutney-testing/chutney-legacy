@@ -17,7 +17,7 @@ import { CampaignListComponent } from './components/campaign-list/campaign-list.
 import { CampaignExecutionComponent } from './components/execution/execution-campaign.component';
 import { CampaignEditionComponent } from './components/create-campaign/campaign-edition.component';
 import { CampaignSchedulingComponent } from './components/campaign-scheduling/campaign-scheduling.component';
-import { MoleculesModule } from 'src/app/molecules/molecules.module';
+import { MoleculesModule } from '../../molecules/molecules.module';
 
 const ROUTES = [
     ...CampaignRoute
