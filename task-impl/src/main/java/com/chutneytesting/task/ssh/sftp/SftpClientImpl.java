@@ -4,6 +4,11 @@ import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.task.ssh.SshClientFactory;
 import java.io.IOException;
+import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.sftp.client.SftpClient;
 import org.apache.sshd.sftp.client.SftpClientFactory;
@@ -27,12 +32,19 @@ public class SftpClientImpl implements ChutneySftpClient {
 
     @Override
     public void receive(String remote, String local) throws IOException {
-
+        // todo
     }
 
     @Override
-    public void listDirectory(String remote) throws IOException {
+    public List<String> listDirectory(String directory) throws IOException {
+        SftpClient.Handle handle = sftpClient.openDir(directory);
+        Iterable<SftpClient.DirEntry> files = sftpClient.listDir(handle);
 
+        return StreamSupport.stream(
+                Spliterators.spliteratorUnknownSize(files.iterator(), Spliterator.ORDERED), false)
+            .map(SftpClient.DirEntry::getFilename)
+            .filter(f -> !".".equals(f) && !"..".equals(f))
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -67,7 +79,7 @@ public class SftpClientImpl implements ChutneySftpClient {
 
         @Override
         public void errorData(byte[] buf, int start, int len) {
-            logger.error("");
+            logger.error("TODO");
         }
 
     }

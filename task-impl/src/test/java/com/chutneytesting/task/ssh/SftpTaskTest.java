@@ -9,9 +9,10 @@ import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.task.ssh.fakes.FakeTargetInfo;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import org.apache.sshd.server.SshServer;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -35,21 +36,29 @@ public class SftpTaskTest {
     }
 
     @Test
-    public void wip_upload() {
+    public void should_list_directory_files() {
         // Given
         Target target = FakeTargetInfo.buildTargetWithCredentialUsernamePassword(sftpServer);
-        String srcFile = ScpTaskTest.class.getResource("/sftptest.file.txt").getPath();
-        String dstFile = temporaryFolder.toString();
-        Path expectedFile = temporaryFolder.resolve(ScpTaskTest.class.getSimpleName() + ".class");
+        String directory = ScpTaskTest.class.getResource("/security").getPath();
+        List<String> expectedFiles = Lists.newArrayList(
+            "client_rsa.pub",
+            "authorized_keys",
+            "client_ecdsa.pub",
+            "keystore-with-keypwd.jks",
+            "client_rsa.key",
+            "client_ecdsa.key",
+            "server.jks",
+            "truststore.jks"
+        );
 
-        SftpUploadTask task = new SftpUploadTask(target, new TestLogger(), srcFile, dstFile, "1 h");
+        SftpListDirTask task = new SftpListDirTask(target, new TestLogger(), directory, "1 h");
 
         // When
         TaskExecutionResult actualResult = task.execute();
 
         // Then
         assertThat(actualResult.status).isEqualTo(Success);
-        assertThat(Files.exists(expectedFile)).isTrue();
+        assertThat((List<String>)actualResult.outputs.get("files")).hasSameElementsAs(expectedFiles);
     }
 
 }
