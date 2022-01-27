@@ -1,10 +1,59 @@
 # Changelog
 
-## [Unreleased](https://github.com/chutney-testing/chutney/tree/HEAD)
+## [1.4.4](https://github.com/chutney-testing/chutney/tree/1.4.4) (2022-01-22)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.4.3...1.4.4)
+
+**Implemented enhancements:**
+
+- 🚀 | Add Scp task [\#638](https://github.com/chutney-testing/chutney/issues/638)
+- 🚀 | UI - add a filter on JIRA id to search scenario [\#609](https://github.com/chutney-testing/chutney/issues/609)
+- 🚀 | Filter the tests to add to the campaign according to the status in the test exec [\#606](https://github.com/chutney-testing/chutney/issues/606)
+- 🚀 | Update of the status of an xray test from the chutney execution report [\#605](https://github.com/chutney-testing/chutney/issues/605)
+- 🚀 | add search with jira id [\#576](https://github.com/chutney-testing/chutney/issues/576)
+
+**Fixed bugs:**
+
+- 🐛 | Do not evaluate output if task is on error [\#629](https://github.com/chutney-testing/chutney/issues/629)
+- 🐛 |  Parameters page is not displayed for execution [\#613](https://github.com/chutney-testing/chutney/issues/613)
+- 🐛 | Output of task in report have serialization error [\#424](https://github.com/chutney-testing/chutney/issues/424)
+
+**Merged pull requests:**
+
+- fix\(server\): Scheduled campaigns : Referential update by only one thread [\#658](https://github.com/chutney-testing/chutney/pull/658) ([boddissattva](https://github.com/boddissattva))
+- feat\(task\): SCP client upload/download [\#657](https://github.com/chutney-testing/chutney/pull/657) ([bessonm](https://github.com/bessonm))
+- feat\(jira+ui\): Update of the status of an xray test from campaign execution report [\#656](https://github.com/chutney-testing/chutney/pull/656) ([nbrouand](https://github.com/nbrouand))
+- chore\(\): Codeql [\#654](https://github.com/chutney-testing/chutney/pull/654) ([nbrouand](https://github.com/nbrouand))
+- chore\(deps\): bump spring-boot-maven-plugin from 2.6.1 to 2.6.2 [\#652](https://github.com/chutney-testing/chutney/pull/652) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps-dev\): bump jqwik from 1.5.6 to 1.6.2 [\#651](https://github.com/chutney-testing/chutney/pull/651) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump orientdb.version from 3.0.30 to 3.2.4 [\#650](https://github.com/chutney-testing/chutney/pull/650) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump picocli from 4.6.1 to 4.6.2 [\#649](https://github.com/chutney-testing/chutney/pull/649) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump jackson.version from 2.13.0 to 2.13.1 [\#648](https://github.com/chutney-testing/chutney/pull/648) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump guava from 30.1.1-jre to 31.0.1-jre [\#647](https://github.com/chutney-testing/chutney/pull/647) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump selenium.version from 4.0.0 to 4.1.1 [\#646](https://github.com/chutney-testing/chutney/pull/646) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump frontend-maven-plugin from 1.8.0 to 1.12.1 [\#645](https://github.com/chutney-testing/chutney/pull/645) ([dependabot[bot]](https://github.com/apps/dependabot))
+- feat\(task-impl\): Kafka consume with acknowledge mode as input [\#643](https://github.com/chutney-testing/chutney/pull/643) ([boddissattva](https://github.com/boddissattva))
+- chore\(\): doc enhancement [\#642](https://github.com/chutney-testing/chutney/pull/642) ([boddissattva](https://github.com/boddissattva))
+- feat/datetime functions [\#641](https://github.com/chutney-testing/chutney/pull/641) ([boddissattva](https://github.com/boddissattva))
+- feat\(engine\): Run step validations & outputs only on successfull task [\#636](https://github.com/chutney-testing/chutney/pull/636) ([bessonm](https://github.com/bessonm))
+- Filter the tests to add to the campaign according to the status in the test exec [\#635](https://github.com/chutney-testing/chutney/pull/635) ([nbrouand](https://github.com/nbrouand))
+- feat\(functions\): Add spEL functions [\#628](https://github.com/chutney-testing/chutney/pull/628) ([bessonm](https://github.com/bessonm))
+- fix\(ui\): Check if scenario has parameters before manual execution [\#627](https://github.com/chutney-testing/chutney/pull/627) ([boddissattva](https://github.com/boddissattva))
+- Feat/609 [\#626](https://github.com/chutney-testing/chutney/pull/626) ([nbrouand](https://github.com/nbrouand))
+- Feat/jira refacto [\#625](https://github.com/chutney-testing/chutney/pull/625) ([nbrouand](https://github.com/nbrouand))
+- chore\(deps-dev\): bump awaitility from 4.1.0 to 4.1.1 [\#623](https://github.com/chutney-testing/chutney/pull/623) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps-dev\): bump mockito.version from 4.0.0 to 4.1.0 [\#622](https://github.com/chutney-testing/chutney/pull/622) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump spring-boot-maven-plugin from 2.5.3 to 2.6.1 [\#621](https://github.com/chutney-testing/chutney/pull/621) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump amqp-client from 5.13.0 to 5.14.0 [\#620](https://github.com/chutney-testing/chutney/pull/620) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump junit5.version from 5.8.1 to 5.8.2 [\#619](https://github.com/chutney-testing/chutney/pull/619) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump pitest.version from 1.7.2 to 1.7.3 [\#616](https://github.com/chutney-testing/chutney/pull/616) ([dependabot[bot]](https://github.com/apps/dependabot))
+- fix\(server\): Scenario execution report JSON with numbers as strings [\#611](https://github.com/chutney-testing/chutney/pull/611) ([boddissattva](https://github.com/boddissattva))
+- chore\(deps\): bump selenium.version from 3.141.59 to 4.0.0 [\#596](https://github.com/chutney-testing/chutney/pull/596) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 
 ## [1.4.3](https://github.com/chutney-testing/chutney/tree/1.4.3) (2021-11-29)
 
-[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.4.2...HEAD)
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.4.2...1.4.3)
 
 **Fixed bugs:**
 
