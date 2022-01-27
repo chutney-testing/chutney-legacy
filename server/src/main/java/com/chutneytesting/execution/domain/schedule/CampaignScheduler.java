@@ -64,7 +64,7 @@ public class CampaignScheduler {
         };
     }
 
-    private Stream<Long> scheduledCampaignIdsToExecute() {
+    synchronized private Stream<Long> scheduledCampaignIdsToExecute() {
         try {
             return periodicScheduledCampaignRepository.getALl().stream()
                 .filter(sc -> sc.nextExecutionDate.isBefore(LocalDateTime.now(clock)))
@@ -80,6 +80,7 @@ public class CampaignScheduler {
         try {
             if (!Frequency.EMPTY.equals(periodicScheduledCampaign.frequency)) {
                 periodicScheduledCampaignRepository.add(periodicScheduledCampaign.nextScheduledExecution());
+                LOGGER.info("Next execution of scheduled campaign [{}] with frequency [{}] has been added", periodicScheduledCampaign.campaignId, periodicScheduledCampaign.frequency);
             }
             periodicScheduledCampaignRepository.removeById(periodicScheduledCampaign.id);
         } catch (Exception e) {
