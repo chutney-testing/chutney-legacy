@@ -4,11 +4,10 @@ import static java.util.Collections.singletonList;
 
 import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.task.ssh.sshj.Connection;
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.auth.UserAuthFactory;
 import org.apache.sshd.client.auth.password.UserAuthPasswordFactory;
@@ -77,7 +76,7 @@ public class ScpClientImpl implements ScpClient {
 
     private static ClientSession configureSessionAuthMethod(ClientSession session, Connection connection) {
         if (connection.usePrivateKey()) {
-            FileKeyPairProvider provider = new FileKeyPairProvider(Path.of(connection.privateKey));
+            FileKeyPairProvider provider = new FileKeyPairProvider(new File(connection.privateKey).toPath());
             provider.setPasswordFinder(FilePasswordProvider.of(connection.passphrase));
             session.setKeyIdentityProvider(provider);
         } else {

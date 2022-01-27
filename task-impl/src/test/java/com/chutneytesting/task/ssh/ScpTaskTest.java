@@ -50,7 +50,7 @@ public class ScpTaskTest {
         String dstFile = temporaryFolder.toString();
         Path expectedFile = temporaryFolder.resolve(ScpTaskTest.class.getSimpleName() + ".class");
 
-        ScpUploadTask task = new ScpUploadTask(target, mock(Logger.class), srcFile, dstFile, "5 s");
+        ScpUploadTask task = new ScpUploadTask(target, mock(Logger.class), srcFile, dstFile, "10 s");
 
         // When
         TaskExecutionResult actualResult = task.execute();
@@ -68,7 +68,7 @@ public class ScpTaskTest {
         String dstFile = temporaryFolder.resolve("downloaded").toString();
         Path expectedFile = temporaryFolder.resolve("downloaded");
 
-        ScpDownloadTask task = new ScpDownloadTask(target, mock(Logger.class), srcFile, dstFile, "5 s");
+        ScpDownloadTask task = new ScpDownloadTask(target, mock(Logger.class), srcFile, dstFile, "10 s");
 
         // When
         TaskExecutionResult actualResult = task.execute();
