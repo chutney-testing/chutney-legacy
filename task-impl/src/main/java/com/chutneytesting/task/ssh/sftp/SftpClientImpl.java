@@ -6,7 +6,14 @@ import static java.time.ZoneId.systemDefault;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.task.ssh.SshClientFactory;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,13 +38,26 @@ public class SftpClientImpl implements ChutneySftpClient {
     }
 
     @Override
-    public void upload(String local, String remote) throws IOException {
-        // todo
+    public void upload(String source, String destination) throws IOException {
+        Path file = Paths.get(source);
+        byte[] fileContent = Files.readAllBytes(file);
+
+        try (BufferedOutputStream out = new BufferedOutputStream(sftpClient.write(destination))) {
+            out.write(fileContent);
+        }
     }
 
     @Override
-    public void download(String remote, String local) throws IOException {
-        // todo
+    public void download(String source, String destination) throws IOException {
+        try (InputStream read = sftpClient.read(source)) {
+            byte[] fileContent = read.readAllBytes();
+            File file = new File(destination);
+            file.getParentFile().mkdirs();
+
+            try (BufferedOutputStream out = new BufferedOutputStream(Files.newOutputStream(file.toPath()))) {
+                out.write(fileContent);
+            }
+        }
     }
 
     @Override

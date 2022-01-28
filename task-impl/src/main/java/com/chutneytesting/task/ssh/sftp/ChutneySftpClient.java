@@ -6,9 +6,9 @@ import java.util.Map;
 
 public interface ChutneySftpClient extends AutoCloseable {
 
-    void upload(String local, String remote) throws IOException;
+    void upload(String source, String destination) throws IOException;
 
-    void download(String remote, String local) throws IOException;
+    void download(String source, String destination) throws IOException;
 
     List<String> listDirectory(String directory) throws IOException;
 

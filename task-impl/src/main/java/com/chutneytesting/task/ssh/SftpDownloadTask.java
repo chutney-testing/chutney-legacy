@@ -17,7 +17,7 @@ import com.chutneytesting.task.ssh.sftp.ChutneySftpClient;
 import com.chutneytesting.task.ssh.sftp.SftpClientImpl;
 import java.util.List;
 
-public class SftpUploadTask implements Task {
+public class SftpDownloadTask implements Task {
 
     private final Target target;
     private final Logger logger;
@@ -25,7 +25,7 @@ public class SftpUploadTask implements Task {
     private final String destination;
     private final String timeout;
 
-    public SftpUploadTask(Target target, Logger logger, @Input("source") String source, @Input("destination") String destination, @Input("timeout") String timeout) {
+    public SftpDownloadTask(Target target, Logger logger, @Input("source") String source, @Input("destination") String destination, @Input("timeout") String timeout) {
         this.target = target;
         this.logger = logger;
         this.source = source;
@@ -36,8 +36,7 @@ public class SftpUploadTask implements Task {
     @Override
     public List<String> validateInputs() {
         return getErrorsFrom(
-            notBlankStringValidation(source, "local source"),
-            notBlankStringValidation(destination, "remote destination"),
+            notBlankStringValidation(destination, "local destination file"),
             durationValidation(timeout, "timeout"),
             targetValidation(target)
         );
@@ -46,7 +45,7 @@ public class SftpUploadTask implements Task {
     @Override
     public TaskExecutionResult execute() {
         try (ChutneySftpClient client = SftpClientImpl.buildFor(target, Duration.parseToMs(timeout), logger)) {
-            client.upload(source, destination);
+            client.download(source, destination);
             return TaskExecutionResult.ok();
         } catch (Exception e) {
             logger.error(e.getMessage());
