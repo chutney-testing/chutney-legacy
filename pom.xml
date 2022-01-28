@@ -96,6 +96,7 @@
         <jsch.version>0.1.55</jsch.version>
         <org.everit.json.schema.version>1.14.0</org.everit.json.schema.version>
         <glacio.version>0.0.1</glacio.version>
+        <caffeine.version>3.0.5</caffeine.version>
 
         <!-- task impl -->
         <jdom2.version>2.0.6</jdom2.version>
@@ -518,6 +519,11 @@
                 <groupId>org.tinyradius</groupId>
                 <artifactId>tinyradius</artifactId>
                 <version>${radius.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.ben-manes.caffeine</groupId>
+                <artifactId>caffeine</artifactId>
+                <version>${caffeine.version}</version>
             </dependency>
 
             <!-- Test dependencies -->

@@ -5,9 +5,8 @@ import static com.chutneytesting.ServerConfiguration.EDITIONS_TTL_VALUE_SPRING_V
 
 import com.chutneytesting.design.domain.editionlock.TestCaseEdition;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditions;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -23,14 +22,9 @@ public class TestCaseEditionsImpl implements TestCaseEditions {
         @Value(EDITIONS_TTL_VALUE_SPRING_VALUE) Integer ttlValue,
         @Value(EDITIONS_TTL_UNIT_SPRING_VALUE) String ttlUnit
     ) {
-        editions = CacheBuilder.newBuilder()
+        editions = Caffeine.newBuilder()
             .expireAfterWrite(ttlValue, TimeUnit.valueOf(ttlUnit))
-            .build(new CacheLoader<>() {
-                @Override
-                public TestCaseEdition load(TestCaseEdition key) throws Exception {
-                    return key;
-                }
-            });
+            .build(key -> key);
     }
 
     @Override
@@ -40,7 +34,7 @@ public class TestCaseEditionsImpl implements TestCaseEditions {
 
     @Override
     public boolean add(TestCaseEdition testCaseEdition) {
-        editions.getUnchecked(testCaseEdition);
+        editions.get(testCaseEdition);
         return true;
     }
 
