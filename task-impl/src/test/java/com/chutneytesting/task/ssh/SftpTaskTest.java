@@ -39,7 +39,7 @@ public class SftpTaskTest {
     public void should_list_directory_files() {
         // Given
         Target target = FakeTargetInfo.buildTargetWithCredentialUsernamePassword(sftpServer);
-        String directory = ScpTaskTest.class.getResource("/security").getPath();
+        String directory = ScpTaskTest.class.getResource("/security/authorized_keys").getPath();
         List<String> expectedFiles = Lists.newArrayList(
             "client_rsa.pub",
             "authorized_keys",
@@ -51,14 +51,38 @@ public class SftpTaskTest {
             "truststore.jks"
         );
 
-        SftpListDirTask task = new SftpListDirTask(target, new TestLogger(), directory, "1 h");
+        SftpListDirTask task = new SftpListDirTask(target, new TestLogger(), directory, "1 m");
 
         // When
         TaskExecutionResult actualResult = task.execute();
 
         // Then
         assertThat(actualResult.status).isEqualTo(Success);
-        assertThat((List<String>)actualResult.outputs.get("files")).hasSameElementsAs(expectedFiles);
+        assertThat((List<String>) actualResult.outputs.get("files")).hasSameElementsAs(expectedFiles);
+    }
+
+    @Test
+    public void should_get_file_attributes() {
+        // Given
+        Target target = FakeTargetInfo.buildTargetWithCredentialUsernamePassword(sftpServer);
+        String directory = ScpTaskTest.class.getResource("/security").getPath();
+        String regularFile = ScpTaskTest.class.getResource("/security/authorized_keys").getPath();
+        String[] expectedKeys = {"CreationDate", "lastAccess", "lastModification", "type", "owner:group"};
+
+        SftpFileInfoTask fileTask = new SftpFileInfoTask(target, new TestLogger(), regularFile, "1 m");
+        SftpFileInfoTask dirTask = new SftpFileInfoTask(target, new TestLogger(), directory, "1 m");
+
+        // When
+        TaskExecutionResult fileResult = fileTask.execute();
+        TaskExecutionResult dirResult = dirTask.execute();
+
+        // Then
+        assertThat(fileResult.status).isEqualTo(Success);
+        assertThat(dirResult.status).isEqualTo(Success);
+        assertThat(fileResult.outputs.get("type")).isEqualTo("regular file");
+        assertThat(dirResult.outputs.get("type")).isEqualTo("directory");
+        assertThat(fileResult.outputs).containsKeys(expectedKeys);
+        assertThat(dirResult.outputs).containsKeys(expectedKeys);
     }
 
 }

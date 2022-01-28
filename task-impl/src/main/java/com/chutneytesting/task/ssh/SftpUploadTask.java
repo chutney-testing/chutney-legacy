@@ -46,7 +46,7 @@ public class SftpUploadTask implements Task {
     @Override
     public TaskExecutionResult execute() {
         try (ChutneySftpClient client = SftpClientImpl.buildFor(target, Duration.parseToMs(timeout), logger)) {
-            client.send(local, remote);
+            client.upload(local, remote);
             return TaskExecutionResult.ok();
         } catch (Exception e) {
             logger.error(e.getMessage());

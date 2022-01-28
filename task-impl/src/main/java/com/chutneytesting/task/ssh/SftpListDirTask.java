@@ -46,7 +46,7 @@ public class SftpListDirTask implements Task {
     public TaskExecutionResult execute() {
         try (ChutneySftpClient client = SftpClientImpl.buildFor(target, Duration.parseToMs(timeout), logger)) {
             List<String> files = client.listDirectory(directory);
-            Map<String, List<String>> taskResult = new HashMap<>();
+            Map<String, List<String>> taskResult = new HashMap<>(1);
             taskResult.put("files", files);
             return TaskExecutionResult.ok(taskResult);
         } catch (Exception e) {

@@ -1,10 +1,15 @@
 package com.chutneytesting.task.ssh.sftp;
 
+import static java.time.LocalDateTime.ofInstant;
+import static java.time.ZoneId.systemDefault;
+
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.task.ssh.SshClientFactory;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Collectors;
@@ -26,12 +31,12 @@ public class SftpClientImpl implements ChutneySftpClient {
     }
 
     @Override
-    public void send(String local, String remote) throws IOException {
+    public void upload(String local, String remote) throws IOException {
         // todo
     }
 
     @Override
-    public void receive(String remote, String local) throws IOException {
+    public void download(String remote, String local) throws IOException {
         // todo
     }
 
@@ -45,6 +50,18 @@ public class SftpClientImpl implements ChutneySftpClient {
             .map(SftpClient.DirEntry::getFilename)
             .filter(f -> !".".equals(f) && !"..".equals(f))
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<String, Object> getAttributes(String file) throws IOException {
+        SftpClient.Attributes stat = sftpClient.stat(file);
+        Map<String, Object> attributes = new HashMap<>(5);
+        attributes.put("CreationDate", ofInstant(stat.getCreateTime().toInstant(), systemDefault()));
+        attributes.put("lastAccess", ofInstant(stat.getAccessTime().toInstant(), systemDefault()));
+        attributes.put("lastModification", ofInstant(stat.getModifyTime().toInstant(), systemDefault()));
+        attributes.put("type", FileType.from(stat).label);
+        attributes.put("owner:group", stat.getOwner() + ":" + stat.getGroup());
+        return attributes;
     }
 
     @Override
@@ -82,5 +99,26 @@ public class SftpClientImpl implements ChutneySftpClient {
             logger.error("TODO");
         }
 
+    }
+
+    private enum FileType {
+
+        FILE("regular file"),
+        DIRECTORY("directory"),
+        SYMBOLIC_LINK("symbolic link"),
+        OTHER("other");
+
+        public final String label;
+
+        FileType(String label) {
+            this.label = label;
+        }
+
+        static FileType from(SftpClient.Attributes stat) {
+            if (stat.isRegularFile()) return FILE;
+            if (stat.isDirectory()) return DIRECTORY;
+            if (stat.isSymbolicLink()) return SYMBOLIC_LINK;
+            return OTHER;
+        }
     }
 }
