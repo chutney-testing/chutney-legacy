@@ -1,7 +1,6 @@
 package com.chutneytesting.task.ssh;
 
 import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Success;
-import static com.chutneytesting.task.ssh.fakes.FakeServerSsh.buildLocalSftpServer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -17,7 +16,6 @@ import java.util.List;
 import org.apache.sshd.server.SshServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

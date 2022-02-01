@@ -4,6 +4,7 @@ import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.duratio
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.targetValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
+import static com.chutneytesting.task.ssh.SshClientFactory.DEFAULT_TIMEOUT;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 
 import com.chutneytesting.task.spi.Task;
@@ -12,10 +13,8 @@ import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.task.spi.time.Duration;
-import com.chutneytesting.task.ssh.scp.ScpClient;
 import com.chutneytesting.task.ssh.sftp.ChutneySftpClient;
 import com.chutneytesting.task.ssh.sftp.SftpClientImpl;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,13 +29,13 @@ public class SftpListDirTask implements Task {
         this.target = target;
         this.logger = logger;
         this.directory = directory;
-        this.timeout = defaultIfEmpty(timeout, ScpClient.DEFAULT_TIMEOUT);
+        this.timeout = defaultIfEmpty(timeout, DEFAULT_TIMEOUT);
     }
 
     @Override
     public List<String> validateInputs() {
         return getErrorsFrom(
-            notBlankStringValidation(directory, "remote directory path"),
+            notBlankStringValidation(directory, "directory"),
             durationValidation(timeout, "timeout"),
             targetValidation(target)
         );
@@ -46,8 +45,7 @@ public class SftpListDirTask implements Task {
     public TaskExecutionResult execute() {
         try (ChutneySftpClient client = SftpClientImpl.buildFor(target, Duration.parseToMs(timeout), logger)) {
             List<String> files = client.listDirectory(directory);
-            Map<String, List<String>> taskResult = new HashMap<>(1);
-            taskResult.put("files", files);
+            Map<String, List<String>> taskResult = Map.of("files", files);
             return TaskExecutionResult.ok(taskResult);
         } catch (Exception e) {
             logger.error(e.getMessage());

@@ -44,7 +44,7 @@ public class SftpTaskTest {
     public void should_list_directory_files() {
         // Given
         Target target = FakeTargetInfo.buildTargetWithCredentialUsernamePassword(sftpServer);
-        String directory = SftpTaskTest.class.getResource("/security/authorized_keys").getPath();
+        String directory = SftpTaskTest.class.getResource("/security").getPath();
         List<String> expectedFiles = Lists.newArrayList(
             "client_rsa.pub",
             "authorized_keys",

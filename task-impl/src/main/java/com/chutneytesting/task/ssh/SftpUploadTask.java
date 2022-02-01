@@ -4,6 +4,7 @@ import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.duratio
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.targetValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
+import static com.chutneytesting.task.ssh.SshClientFactory.DEFAULT_TIMEOUT;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 
 import com.chutneytesting.task.spi.Task;
@@ -12,7 +13,6 @@ import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.task.spi.time.Duration;
-import com.chutneytesting.task.ssh.scp.ScpClient;
 import com.chutneytesting.task.ssh.sftp.ChutneySftpClient;
 import com.chutneytesting.task.ssh.sftp.SftpClientImpl;
 import java.util.List;
@@ -30,14 +30,14 @@ public class SftpUploadTask implements Task {
         this.logger = logger;
         this.source = source;
         this.destination = destination;
-        this.timeout = defaultIfEmpty(timeout, ScpClient.DEFAULT_TIMEOUT);
+        this.timeout = defaultIfEmpty(timeout, DEFAULT_TIMEOUT);
     }
 
     @Override
     public List<String> validateInputs() {
         return getErrorsFrom(
-            notBlankStringValidation(source, "local source"),
-            notBlankStringValidation(destination, "remote destination"),
+            notBlankStringValidation(source, "source"),
+            notBlankStringValidation(destination, "destination"),
             durationValidation(timeout, "timeout"),
             targetValidation(target)
         );

@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 
 import com.chutneytesting.task.spi.injectable.SecurityInfo;
 import com.chutneytesting.task.spi.injectable.Target;
-import java.nio.file.Path;
+import java.io.File;
 import java.util.Map;
 import org.apache.sshd.server.SshServer;
 
@@ -53,7 +53,7 @@ public class FakeTargetInfo {
         when(securityInfoMock.toString()).thenReturn(
             "{username = '" + credentialUserName +
                 "', password='" + credentialPassword +
-                "',privateKey=" + ofNullable(privateKeyPath).map(pk -> pk.substring(1)).map(pk -> Path.of(pk).getFileName()).orElse(null) +
+                "',privateKey=" + ofNullable(privateKeyPath).map(pk -> pk.substring(1)).map(pk -> new File(pk).toPath().getFileName()).orElse(null) +
                 "}"
         );
 

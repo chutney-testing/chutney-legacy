@@ -6,15 +6,14 @@ import static java.time.ZoneId.systemDefault;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.task.ssh.SshClientFactory;
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Spliterator;
@@ -75,13 +74,13 @@ public class SftpClientImpl implements ChutneySftpClient {
     @Override
     public Map<String, Object> getAttributes(String file) throws IOException {
         SftpClient.Attributes stat = sftpClient.stat(file);
-        Map<String, Object> attributes = new HashMap<>(5);
-        attributes.put("CreationDate", ofInstant(stat.getCreateTime().toInstant(), systemDefault()));
-        attributes.put("lastAccess", ofInstant(stat.getAccessTime().toInstant(), systemDefault()));
-        attributes.put("lastModification", ofInstant(stat.getModifyTime().toInstant(), systemDefault()));
-        attributes.put("type", FileType.from(stat).label);
-        attributes.put("owner:group", stat.getOwner() + ":" + stat.getGroup());
-        return attributes;
+        return Map.of(
+            "CreationDate", ofInstant(stat.getCreateTime().toInstant(), systemDefault()),
+            "lastAccess", ofInstant(stat.getAccessTime().toInstant(), systemDefault()),
+            "lastModification", ofInstant(stat.getModifyTime().toInstant(), systemDefault()),
+            "type", FileType.from(stat).label,
+            "owner:group", stat.getOwner() + ":" + stat.getGroup()
+        );
     }
 
     @Override
@@ -116,7 +115,7 @@ public class SftpClientImpl implements ChutneySftpClient {
 
         @Override
         public void errorData(byte[] buf, int start, int len) {
-            logger.error("TODO");
+            logger.error(new String(buf, StandardCharsets.UTF_8));
         }
 
     }

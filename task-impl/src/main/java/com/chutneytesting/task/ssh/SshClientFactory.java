@@ -3,8 +3,8 @@ package com.chutneytesting.task.ssh;
 import static java.util.Collections.singletonList;
 
 import com.chutneytesting.task.spi.injectable.Target;
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.auth.UserAuthFactory;
@@ -16,6 +16,8 @@ import org.apache.sshd.common.config.keys.FilePasswordProvider;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 
 public class SshClientFactory {
+
+    public static String DEFAULT_TIMEOUT = "5 s";
 
     public static ClientSession buildSSHClientSession(Target target, long timeout) throws IOException {
         Connection connection = Connection.from(target);
@@ -47,7 +49,7 @@ public class SshClientFactory {
 
     private static ClientSession configureSessionAuthMethod(ClientSession session, Connection connection) {
         if (connection.usePrivateKey()) {
-            FileKeyPairProvider provider = new FileKeyPairProvider(Path.of(connection.privateKey));
+            FileKeyPairProvider provider = new FileKeyPairProvider(new File(connection.privateKey).toPath());
             provider.setPasswordFinder(FilePasswordProvider.of(connection.passphrase));
             session.setKeyIdentityProvider(provider);
         } else {
