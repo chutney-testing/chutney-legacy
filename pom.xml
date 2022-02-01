@@ -92,7 +92,7 @@
         <commonstext.version>1.9</commonstext.version>
         <commonsio.version>2.11.0</commonsio.version>
         <rxjava.version>2.2.20</rxjava.version>
-        <jgit-jsch.version>5.13.0.202109080827-r</jgit-jsch.version>
+        <jgit-jsch.version>6.0.0.202111291000-r</jgit-jsch.version>
         <jsch.version>0.1.55</jsch.version>
         <org.everit.json.schema.version>1.14.0</org.everit.json.schema.version>
         <glacio.version>0.0.1</glacio.version>
