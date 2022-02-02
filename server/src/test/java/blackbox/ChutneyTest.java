@@ -18,7 +18,7 @@ import com.chutneytesting.security.domain.Role;
 import com.chutneytesting.security.domain.User;
 import com.chutneytesting.security.domain.UserRoles;
 import com.chutneytesting.tools.file.FileUtils;
-import java.nio.file.Path;
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -48,7 +48,7 @@ public class ChutneyTest {
         setEnvironment();
 
         // Clean configuration folder. cf. application.yaml for blackbox integration tests
-        FileUtils.deleteFolder(Path.of("./target/.chutney"));
+        FileUtils.deleteFolder(new File("./target/.chutney").toPath());
     }
 
     @BeforeAll
