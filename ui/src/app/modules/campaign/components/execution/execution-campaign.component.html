@@ -194,8 +194,8 @@
                         <td>
                             <span class=" small_text">{{scenarioReportOutline.duration | duration:'short' }}</span>
                         </td>
-                        <td *ngIf="testExecutionId">
-                            <a *ngIf="getJiraLink(scenarioReportOutline.scenarioId)" role="button" class="btn btn-sm btn-link m-0"
+                        <td *ngIf="testExecutionId && getJiraLink(scenarioReportOutline.scenarioId) !== null">
+                            <a role="button" class="btn btn-sm btn-link m-0"
                                 target="_blank" href="{{getJiraLink(scenarioReportOutline.scenarioId)}}"
                                 ngbPopover="{{getJiraLink(scenarioReportOutline.scenarioId)}}" placement="left" (click)="$event.stopPropagation()"
                                 triggers="mouseenter:mouseleave">
@@ -203,7 +203,7 @@
                                 </span>
                             </a>
                         </td>
-                        <td>
+                        <td *ngIf="testExecutionId && getJiraLink(scenarioReportOutline.scenarioId) !== null">
                             <chutney-delete-confirm-dialog class="mr-2 mt-1"
                                 [dialogMessage]="('campaigns.execution.update.jira' | translate)"
                                 [label]=null
