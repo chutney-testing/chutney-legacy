@@ -2,6 +2,7 @@ package com.chutneytesting.jira.api;
 
 import static com.chutneytesting.jira.domain.XrayStatus.PASS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.data.MapEntry.entry;
 import static org.assertj.core.util.Lists.list;
 import static org.mockito.ArgumentMatchers.any;
@@ -21,6 +22,7 @@ import com.chutneytesting.jira.domain.JiraRepository;
 import com.chutneytesting.jira.domain.JiraTargetConfiguration;
 import com.chutneytesting.jira.domain.JiraXrayApi;
 import com.chutneytesting.jira.domain.JiraXrayService;
+import com.chutneytesting.jira.domain.exception.NoJiraConfigurationException;
 import com.chutneytesting.jira.infra.JiraFileRepository;
 import com.chutneytesting.jira.xrayapi.XrayTestExecTest;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -62,6 +64,22 @@ class JiraModuleControllerTest {
 
         JiraModuleController jiraModuleController = new JiraModuleController(jiraRepository, jiraXrayServiceSpy);
         mockMvc = MockMvcBuilders.standaloneSetup(jiraModuleController).build();
+    }
+
+    @Test
+    void should_create_HttpJiraXrayImpl_if_url_exist(){
+        JiraXrayService jiraXrayService = new JiraXrayService(jiraRepository);
+        jiraRepository.saveServerConfiguration(new JiraTargetConfiguration("an url", "a username", "a password"));
+        JiraXrayApi httpJiraXrayImpl = jiraXrayService.createHttpJiraXrayImpl();
+        assertThat(httpJiraXrayImpl).isNotNull();
+    }
+
+    @Test
+    void should_not_create_HttpJiraXrayImpl_if_url_not_exist(){
+        JiraXrayService jiraXrayService = new JiraXrayService(jiraRepository);
+        jiraRepository.saveServerConfiguration(new JiraTargetConfiguration("", "a username", "a password"));
+        assertThatExceptionOfType(NoJiraConfigurationException.class)
+            .isThrownBy(() -> jiraXrayService.createHttpJiraXrayImpl());
     }
 
     @Test

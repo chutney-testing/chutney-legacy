@@ -2,6 +2,7 @@ package com.chutneytesting.jira.infra;
 
 import com.chutneytesting.jira.domain.JiraTargetConfiguration;
 import com.chutneytesting.jira.domain.JiraXrayApi;
+import com.chutneytesting.jira.domain.exception.NoJiraConfigurationException;
 import com.chutneytesting.jira.xrayapi.Xray;
 import com.chutneytesting.jira.xrayapi.XrayTestExecTest;
 import java.security.GeneralSecurityException;
@@ -34,9 +35,9 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
 
     public HttpJiraXrayImpl(JiraTargetConfiguration jiraTargetConfiguration) {
         this.jiraTargetConfiguration = jiraTargetConfiguration;
-        if (jiraTargetConfiguration.isValid()) {
+        if (!jiraTargetConfiguration.isValid()) {
             LOGGER.error("Unable to update xray, jira url is undefined");
-            return;
+            throw new NoJiraConfigurationException();
         }
     }
 
@@ -64,11 +65,6 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
     public List<XrayTestExecTest> getTestExecutionScenarios(String testExecutionId) {
         List<XrayTestExecTest> tests = new ArrayList<>();
 
-        if (jiraTargetConfiguration.isValid()) {
-            LOGGER.error("Unable to update xray, jira url is undefined");
-            return tests;
-        }
-
         String uriTemplate = jiraTargetConfiguration.url + "/rest/raven/1.0/api/testexec/%s/test";
         String uri = String.format(uriTemplate, testExecutionId);
 
@@ -91,11 +87,6 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
 
     @Override
     public void updateStatusByTestRunId(String testRuntId, String executionStatus) {
-        if (jiraTargetConfiguration.isValid()) {
-            LOGGER.error("Unable to update xray, jira url is undefined");
-            return;
-        }
-
         String uriTemplate = jiraTargetConfiguration.url + "/rest/raven/1.0/api/testrun/%s/status?status=%s";
         String uri = String.format(uriTemplate, testRuntId, executionStatus);
 
