@@ -3,17 +3,14 @@ package com.chutneytesting.jira.domain;
 
 import static com.chutneytesting.jira.domain.XrayStatus.FAIL;
 import static com.chutneytesting.jira.domain.XrayStatus.PASS;
-import static java.util.Collections.emptyList;
 
 import com.chutneytesting.jira.api.ReportForJira;
 import com.chutneytesting.jira.domain.exception.NoJiraConfigurationException;
-import com.chutneytesting.jira.infra.HttpJiraXrayImpl;
 import com.chutneytesting.jira.xrayapi.Xray;
 import com.chutneytesting.jira.xrayapi.XrayEvidence;
 import com.chutneytesting.jira.xrayapi.XrayInfo;
 import com.chutneytesting.jira.xrayapi.XrayTest;
 import com.chutneytesting.jira.xrayapi.XrayTestExecTest;
-import com.google.common.annotations.VisibleForTesting;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -31,10 +28,11 @@ public class JiraXrayService {
     private static final Logger LOGGER = LoggerFactory.getLogger(JiraXrayService.class);
 
     private final JiraRepository jiraRepository;
+    private final JiraXrayFactory jiraXrayImplFactory;
 
-    public JiraXrayService(JiraRepository jiraRepository) {
+    public JiraXrayService(JiraRepository jiraRepository, JiraXrayFactory jiraXrayImplFactory) {
         this.jiraRepository = jiraRepository;
-
+        this.jiraXrayImplFactory = jiraXrayImplFactory;
     }
 
     public void updateTestExecution(Long campaignId, String scenarioId, ReportForJira report) {
@@ -78,14 +76,13 @@ public class JiraXrayService {
         }
     }
 
-    @VisibleForTesting
-    public JiraXrayApi createHttpJiraXrayImpl() {
+    private JiraXrayApi createHttpJiraXrayImpl() {
         JiraTargetConfiguration jiraTargetConfiguration = jiraRepository.loadServerConfiguration();
         if (!jiraTargetConfiguration.isValid()) {
             LOGGER.error("Unable to create xray http service, jira url is undefined");
             throw new NoJiraConfigurationException();
         } else {
-            return new HttpJiraXrayImpl(jiraTargetConfiguration);
+            return jiraXrayImplFactory.createHttpJiraXrayImpl(jiraTargetConfiguration);
         }
     }
 
