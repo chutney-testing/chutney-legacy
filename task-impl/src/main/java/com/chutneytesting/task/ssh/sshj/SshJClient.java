@@ -5,6 +5,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import com.chutneytesting.task.spi.injectable.Logger;
+import com.chutneytesting.task.ssh.Connection;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;

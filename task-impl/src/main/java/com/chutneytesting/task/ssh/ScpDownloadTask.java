@@ -4,6 +4,7 @@ import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.duratio
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.targetValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
+import static com.chutneytesting.task.ssh.SshClientFactory.DEFAULT_TIMEOUT;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 
 import com.chutneytesting.task.spi.Task;
@@ -29,14 +30,14 @@ public class ScpDownloadTask implements Task {
         this.logger = logger;
         this.remote = source;
         this.local = destination;
-        this.timeout = defaultIfEmpty(timeout, ScpClient.DEFAULT_TIMEOUT);
+        this.timeout = defaultIfEmpty(timeout, DEFAULT_TIMEOUT);
     }
 
     @Override
     public List<String> validateInputs() {
         return getErrorsFrom(
-            notBlankStringValidation(remote, "remote source"),
-            notBlankStringValidation(local, "local destination"),
+            notBlankStringValidation(remote, "source"),
+            notBlankStringValidation(local, "destination"),
             durationValidation(timeout, "timeout"),
             targetValidation(target)
         );

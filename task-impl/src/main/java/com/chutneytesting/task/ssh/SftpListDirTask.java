@@ -13,31 +13,29 @@ import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.task.spi.time.Duration;
-import com.chutneytesting.task.ssh.scp.ScpClient;
-import com.chutneytesting.task.ssh.scp.ScpClientImpl;
+import com.chutneytesting.task.ssh.sftp.ChutneySftpClient;
+import com.chutneytesting.task.ssh.sftp.SftpClientImpl;
 import java.util.List;
+import java.util.Map;
 
-public class ScpUploadTask implements Task {
+public class SftpListDirTask implements Task {
 
     private final Target target;
     private final Logger logger;
-    private final String local;
-    private final String remote;
+    private final String directory;
     private final String timeout;
 
-    public ScpUploadTask(Target target, Logger logger, @Input("source") String source, @Input("destination") String destination, @Input("timeout") String timeout) {
+    public SftpListDirTask(Target target, Logger logger, @Input("directory") String directory, @Input("timeout") String timeout) {
         this.target = target;
         this.logger = logger;
-        this.local = source;
-        this.remote = destination;
+        this.directory = directory;
         this.timeout = defaultIfEmpty(timeout, DEFAULT_TIMEOUT);
     }
 
     @Override
     public List<String> validateInputs() {
         return getErrorsFrom(
-            notBlankStringValidation(local, "source"),
-            notBlankStringValidation(remote, "destination"),
+            notBlankStringValidation(directory, "directory"),
             durationValidation(timeout, "timeout"),
             targetValidation(target)
         );
@@ -45,9 +43,10 @@ public class ScpUploadTask implements Task {
 
     @Override
     public TaskExecutionResult execute() {
-        try (ScpClient client = ScpClientImpl.buildFor(target, Duration.parseToMs(timeout))) {
-            client.upload(local, remote);
-            return TaskExecutionResult.ok();
+        try (ChutneySftpClient client = SftpClientImpl.buildFor(target, Duration.parseToMs(timeout), logger)) {
+            List<String> files = client.listDirectory(directory);
+            Map<String, List<String>> taskResult = Map.of("files", files);
+            return TaskExecutionResult.ok(taskResult);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return TaskExecutionResult.ko();

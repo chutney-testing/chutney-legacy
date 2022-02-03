@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.chutneytesting.design.infra.storage.scenario.git.GitClient;
 import com.chutneytesting.security.api.UserDto;
 import com.chutneytesting.tools.file.FileUtils;
-import java.nio.file.Path;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.junit.jupiter.api.BeforeAll;
@@ -51,7 +51,7 @@ public class SecuredControllerSpringBootIntegrationTest {
 
     @BeforeAll
     public static void cleanUp() {
-        FileUtils.deleteFolder(Path.of("./target/.chutney"));
+        FileUtils.deleteFolder(new File("./target/.chutney").toPath());
     }
 
     @BeforeEach

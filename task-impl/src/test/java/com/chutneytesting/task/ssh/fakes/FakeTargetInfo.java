@@ -8,14 +8,14 @@ import static org.mockito.Mockito.when;
 
 import com.chutneytesting.task.spi.injectable.SecurityInfo;
 import com.chutneytesting.task.spi.injectable.Target;
-import java.nio.file.Path;
+import java.io.File;
 import java.util.Map;
 import org.apache.sshd.server.SshServer;
 
 public class FakeTargetInfo {
 
-    private static final String RSA_PRIVATE_KEY = FakeTargetInfo.class.getResource("/security/client.key").getPath();
-    private static final String ECDSA_PRIVATE_KEY = FakeTargetInfo.class.getResource("/security/clientpass.key").getPath();
+    private static final String RSA_PRIVATE_KEY = FakeTargetInfo.class.getResource("/security/client_rsa.key").getPath();
+    private static final String ECDSA_PRIVATE_KEY = FakeTargetInfo.class.getResource("/security/client_ecdsa.key").getPath();
 
     public static Target buildTargetWithCredentialUsernamePassword(SshServer sshServer) {
         return buildTarget(sshServer, FakeServerSsh.USERNAME, FakeServerSsh.PASSWORD, null, emptyMap());
@@ -53,7 +53,7 @@ public class FakeTargetInfo {
         when(securityInfoMock.toString()).thenReturn(
             "{username = '" + credentialUserName +
                 "', password='" + credentialPassword +
-                "',privateKey=" + ofNullable(privateKeyPath).map(pk -> pk.substring(1)).map(pk -> Path.of(pk).getFileName()).orElse(null) +
+                "',privateKey=" + ofNullable(privateKeyPath).map(pk -> pk.substring(1)).map(pk -> new File(pk).toPath().getFileName()).orElse(null) +
                 "}"
         );
 

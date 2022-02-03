@@ -1,13 +1,13 @@
 package com.chutneytesting.task.ssh;
 
 import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Success;
-import static com.chutneytesting.task.ssh.fakes.FakeServerSsh.buildLocalServer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
+import com.chutneytesting.task.ssh.fakes.FakeServerSsh;
 import com.chutneytesting.task.ssh.fakes.FakeTargetInfo;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -30,8 +30,8 @@ public class ScpTaskTest {
 
     @BeforeAll
     public static void setUp() throws IOException {
-        credentialSshServer = buildLocalServer(false, true, 1);
-        keySshServer = buildLocalServer(true, false, 2); // MAX_AUTH_REQUEST set to 2 due to session.auth().verify() performing 2 auth requests instead of 1
+        credentialSshServer = FakeServerSsh.buildLocalSshServer(false, true, 1);
+        keySshServer = FakeServerSsh.buildLocalSshServer(false, false, 2, "src/test/resources/security/authorized_keys"); // MAX_AUTH_REQUEST set to 2 due to session.auth().verify() performing 2 auth requests instead of 1
         credentialSshServer.start();
         keySshServer.start();
     }

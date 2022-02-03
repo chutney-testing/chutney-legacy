@@ -13,31 +13,31 @@ import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.task.spi.time.Duration;
-import com.chutneytesting.task.ssh.scp.ScpClient;
-import com.chutneytesting.task.ssh.scp.ScpClientImpl;
+import com.chutneytesting.task.ssh.sftp.ChutneySftpClient;
+import com.chutneytesting.task.ssh.sftp.SftpClientImpl;
 import java.util.List;
 
-public class ScpUploadTask implements Task {
+public class SftpDownloadTask implements Task {
 
     private final Target target;
     private final Logger logger;
-    private final String local;
-    private final String remote;
+    private final String source;
+    private final String destination;
     private final String timeout;
 
-    public ScpUploadTask(Target target, Logger logger, @Input("source") String source, @Input("destination") String destination, @Input("timeout") String timeout) {
+    public SftpDownloadTask(Target target, Logger logger, @Input("source") String source, @Input("destination") String destination, @Input("timeout") String timeout) {
         this.target = target;
         this.logger = logger;
-        this.local = source;
-        this.remote = destination;
+        this.source = source;
+        this.destination = destination;
         this.timeout = defaultIfEmpty(timeout, DEFAULT_TIMEOUT);
     }
 
     @Override
     public List<String> validateInputs() {
         return getErrorsFrom(
-            notBlankStringValidation(local, "source"),
-            notBlankStringValidation(remote, "destination"),
+            notBlankStringValidation(source, "source"),
+            notBlankStringValidation(destination, "destination"),
             durationValidation(timeout, "timeout"),
             targetValidation(target)
         );
@@ -45,8 +45,8 @@ public class ScpUploadTask implements Task {
 
     @Override
     public TaskExecutionResult execute() {
-        try (ScpClient client = ScpClientImpl.buildFor(target, Duration.parseToMs(timeout))) {
-            client.upload(local, remote);
+        try (ChutneySftpClient client = SftpClientImpl.buildFor(target, Duration.parseToMs(timeout), logger)) {
+            client.download(source, destination);
             return TaskExecutionResult.ok();
         } catch (Exception e) {
             logger.error(e.getMessage());
