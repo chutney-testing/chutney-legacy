@@ -14,7 +14,7 @@ import static org.mockito.Mockito.when;
 import com.chutneytesting.jira.domain.JiraRepository;
 import com.chutneytesting.jira.domain.JiraTargetConfiguration;
 import com.chutneytesting.jira.domain.JiraXrayApi;
-import com.chutneytesting.jira.domain.JiraXrayFactory;
+import com.chutneytesting.jira.domain.JiraXrayClientFactory;
 import com.chutneytesting.jira.domain.JiraXrayService;
 import com.chutneytesting.jira.infra.JiraFileRepository;
 import com.chutneytesting.jira.xrayapi.Xray;
@@ -35,7 +35,7 @@ import org.mockito.ArgumentCaptor;
 class JiraXrayEmbeddedApiTest {
 
     private final JiraXrayApi jiraXrayApiMock = mock(JiraXrayApi.class);
-    private final JiraXrayFactory jiraXrayFactory = mock(JiraXrayFactory.class);
+    private final JiraXrayClientFactory jiraXrayFactory = mock(JiraXrayClientFactory.class);
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZZZZZ");
     private final JiraTargetConfiguration jiraTargetConfiguration = new JiraTargetConfiguration("an url", "a username", "a password");
 
@@ -49,7 +49,7 @@ class JiraXrayEmbeddedApiTest {
 
         JiraXrayService jiraXrayService = new JiraXrayService(jiraRepository, jiraXrayFactory);
 
-        when(jiraXrayFactory.createHttpJiraXrayImpl(any())).thenReturn(jiraXrayApiMock);
+        when(jiraXrayFactory.create(any())).thenReturn(jiraXrayApiMock);
 
         jiraXrayEmbeddedApi = new JiraXrayEmbeddedApi(jiraXrayService);
     }

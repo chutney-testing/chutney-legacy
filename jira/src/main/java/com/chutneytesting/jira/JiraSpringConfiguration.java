@@ -2,7 +2,7 @@ package com.chutneytesting.jira;
 
 import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
 import com.chutneytesting.jira.domain.JiraRepository;
-import com.chutneytesting.jira.domain.JiraXrayFactory;
+import com.chutneytesting.jira.domain.JiraXrayClientFactory;
 import com.chutneytesting.jira.domain.JiraXrayService;
 import com.chutneytesting.jira.infra.JiraFileRepository;
 import com.chutneytesting.jira.infra.JiraXrayFactoryImpl;
@@ -23,13 +23,13 @@ public class JiraSpringConfiguration {
 
     // domain Bean
     @Bean
-    JiraXrayService jiraXrayService(JiraRepository jiraRepository, JiraXrayFactory jiraXrayFactory) {
+    JiraXrayService jiraXrayService(JiraRepository jiraRepository, JiraXrayClientFactory jiraXrayFactory) {
         return new JiraXrayService(jiraRepository, jiraXrayFactory);
     }
 
     // infra Bean
     @Bean
-    JiraXrayFactory jiraXrayFactory() {
+    JiraXrayClientFactory jiraXrayFactory() {
         return new JiraXrayFactoryImpl();
     }
 

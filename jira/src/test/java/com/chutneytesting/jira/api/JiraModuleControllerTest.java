@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import com.chutneytesting.jira.domain.JiraRepository;
 import com.chutneytesting.jira.domain.JiraTargetConfiguration;
 import com.chutneytesting.jira.domain.JiraXrayApi;
-import com.chutneytesting.jira.domain.JiraXrayFactory;
+import com.chutneytesting.jira.domain.JiraXrayClientFactory;
 import com.chutneytesting.jira.domain.JiraXrayService;
 import com.chutneytesting.jira.infra.JiraFileRepository;
 import com.chutneytesting.jira.xrayapi.XrayTestExecTest;
@@ -40,7 +40,7 @@ class JiraModuleControllerTest {
     private JiraRepository jiraRepository;
     private MockMvc mockMvc;
     private JiraXrayApi mockJiraXrayApi = mock(JiraXrayApi.class);
-    private final JiraXrayFactory jiraXrayFactory = mock(JiraXrayFactory.class);
+    private final JiraXrayClientFactory jiraXrayFactory = mock(JiraXrayClientFactory.class);
     private final ObjectMapper om = new ObjectMapper().findAndRegisterModules();
 
     @BeforeEach
@@ -48,7 +48,7 @@ class JiraModuleControllerTest {
         jiraRepository = new JiraFileRepository(Files.createTempDirectory("jira").toString());
         JiraXrayService jiraXrayService = new JiraXrayService(jiraRepository, jiraXrayFactory);
 
-        when(jiraXrayFactory.createHttpJiraXrayImpl(any())).thenReturn(mockJiraXrayApi);
+        when(jiraXrayFactory.create(any())).thenReturn(mockJiraXrayApi);
 
         jiraRepository.saveServerConfiguration(new JiraTargetConfiguration("an url", "a username", "a password"));
         jiraRepository.saveForCampaign("10", "JIRA-10");

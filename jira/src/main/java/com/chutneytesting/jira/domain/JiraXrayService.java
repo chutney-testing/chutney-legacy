@@ -28,9 +28,9 @@ public class JiraXrayService {
     private static final Logger LOGGER = LoggerFactory.getLogger(JiraXrayService.class);
 
     private final JiraRepository jiraRepository;
-    private final JiraXrayFactory jiraXrayImplFactory;
+    private final JiraXrayClientFactory jiraXrayImplFactory;
 
-    public JiraXrayService(JiraRepository jiraRepository, JiraXrayFactory jiraXrayImplFactory) {
+    public JiraXrayService(JiraRepository jiraRepository, JiraXrayClientFactory jiraXrayImplFactory) {
         this.jiraRepository = jiraRepository;
         this.jiraXrayImplFactory = jiraXrayImplFactory;
     }
@@ -82,7 +82,7 @@ public class JiraXrayService {
             LOGGER.error("Unable to create xray http service, jira url is undefined");
             throw new NoJiraConfigurationException();
         } else {
-            return jiraXrayImplFactory.createHttpJiraXrayImpl(jiraTargetConfiguration);
+            return jiraXrayImplFactory.create(jiraTargetConfiguration);
         }
     }
 
