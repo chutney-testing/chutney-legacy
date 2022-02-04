@@ -29,7 +29,7 @@ jobs:
       - name: Build with Maven
         env:
           BUILD_ENV: 'github-actions'
-        run: mvn -T 1C -B -V clean verify
+        run: mvn 1C -B -V clean verify
 
       - name: Publish to central
         run: mvn -DskipTests -Drelease=true deploy
