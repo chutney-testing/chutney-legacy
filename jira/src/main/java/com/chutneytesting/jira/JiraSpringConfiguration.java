@@ -2,10 +2,10 @@ package com.chutneytesting.jira;
 
 import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
 import com.chutneytesting.jira.domain.JiraRepository;
-import com.chutneytesting.jira.domain.JiraXrayApi;
+import com.chutneytesting.jira.domain.JiraXrayClientFactory;
 import com.chutneytesting.jira.domain.JiraXrayService;
-import com.chutneytesting.jira.infra.HttpJiraXrayImpl;
 import com.chutneytesting.jira.infra.JiraFileRepository;
+import com.chutneytesting.jira.infra.JiraXrayFactoryImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,11 +23,16 @@ public class JiraSpringConfiguration {
 
     // domain Bean
     @Bean
-    JiraXrayService jiraXrayService(JiraRepository jiraRepository) {
-        return new JiraXrayService(jiraRepository);
+    JiraXrayService jiraXrayService(JiraRepository jiraRepository, JiraXrayClientFactory jiraXrayFactory) {
+        return new JiraXrayService(jiraRepository, jiraXrayFactory);
     }
 
     // infra Bean
+    @Bean
+    JiraXrayClientFactory jiraXrayFactory() {
+        return new JiraXrayFactoryImpl();
+    }
+
     @Bean
     JiraRepository jiraFileRepository(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) {
         return new JiraFileRepository(storeFolderPath);

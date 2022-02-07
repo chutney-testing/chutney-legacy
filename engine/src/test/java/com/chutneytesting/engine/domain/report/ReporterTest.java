@@ -171,7 +171,7 @@ public class ReporterTest {
         step.endExecution(scenarioExecution);//12
 
         RxBus.getInstance().post(new EndScenarioExecutionEvent(scenarioExecution, step));//13
-        await().atMost(10, SECONDS).untilAsserted(() ->
+        await().atMost(20, SECONDS).untilAsserted(() ->
             observer.assertResult(RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, RUNNING, PAUSED, RUNNING, RUNNING, SUCCESS)
         );
         assertThat(step.status()).isEqualTo(SUCCESS);

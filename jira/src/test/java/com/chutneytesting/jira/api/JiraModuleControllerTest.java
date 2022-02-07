@@ -8,21 +8,16 @@ import static org.assertj.core.util.Lists.list;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
-import com.chutneytesting.jira.api.ImmutableJiraDto;
-import com.chutneytesting.jira.api.JiraConfigurationDto;
-import com.chutneytesting.jira.api.JiraDto;
-import com.chutneytesting.jira.api.JiraModuleController;
 import com.chutneytesting.jira.domain.JiraRepository;
 import com.chutneytesting.jira.domain.JiraTargetConfiguration;
 import com.chutneytesting.jira.domain.JiraXrayApi;
+import com.chutneytesting.jira.domain.JiraXrayClientFactory;
 import com.chutneytesting.jira.domain.JiraXrayService;
-import com.chutneytesting.jira.domain.exception.NoJiraConfigurationException;
 import com.chutneytesting.jira.infra.JiraFileRepository;
 import com.chutneytesting.jira.xrayapi.XrayTestExecTest;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -34,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -46,14 +40,15 @@ class JiraModuleControllerTest {
     private JiraRepository jiraRepository;
     private MockMvc mockMvc;
     private JiraXrayApi mockJiraXrayApi = mock(JiraXrayApi.class);
+    private final JiraXrayClientFactory jiraXrayFactory = mock(JiraXrayClientFactory.class);
     private final ObjectMapper om = new ObjectMapper().findAndRegisterModules();
 
     @BeforeEach
     public void setUp() throws IOException {
         jiraRepository = new JiraFileRepository(Files.createTempDirectory("jira").toString());
-        JiraXrayService jiraXrayServiceSpy = Mockito.spy(new JiraXrayService(jiraRepository));
+        JiraXrayService jiraXrayService = new JiraXrayService(jiraRepository, jiraXrayFactory);
 
-        doReturn(mockJiraXrayApi).when(jiraXrayServiceSpy).createHttpJiraXrayImpl();
+        when(jiraXrayFactory.create(any())).thenReturn(mockJiraXrayApi);
 
         jiraRepository.saveServerConfiguration(new JiraTargetConfiguration("an url", "a username", "a password"));
         jiraRepository.saveForCampaign("10", "JIRA-10");
@@ -62,24 +57,17 @@ class JiraModuleControllerTest {
         jiraRepository.saveForScenario("2", "SCE-2");
         jiraRepository.saveForScenario("3", "SCE-3");
 
-        JiraModuleController jiraModuleController = new JiraModuleController(jiraRepository, jiraXrayServiceSpy);
+        JiraModuleController jiraModuleController = new JiraModuleController(jiraRepository, jiraXrayService);
         mockMvc = MockMvcBuilders.standaloneSetup(jiraModuleController).build();
     }
 
     @Test
-    void should_create_HttpJiraXrayImpl_if_url_exist(){
-        JiraXrayService jiraXrayService = new JiraXrayService(jiraRepository);
-        jiraRepository.saveServerConfiguration(new JiraTargetConfiguration("an url", "a username", "a password"));
-        JiraXrayApi httpJiraXrayImpl = jiraXrayService.createHttpJiraXrayImpl();
-        assertThat(httpJiraXrayImpl).isNotNull();
-    }
-
-    @Test
     void should_not_create_HttpJiraXrayImpl_if_url_not_exist(){
-        JiraXrayService jiraXrayService = new JiraXrayService(jiraRepository);
         jiraRepository.saveServerConfiguration(new JiraTargetConfiguration("", "a username", "a password"));
-        assertThatExceptionOfType(NoJiraConfigurationException.class)
-            .isThrownBy(() -> jiraXrayService.createHttpJiraXrayImpl());
+
+        assertThatExceptionOfType(RuntimeException.class)
+            .isThrownBy(() -> getJiraController("/api/ui/jira/v1/testexec/JIRA-10", new TypeReference<>() {}))
+            .withMessageContaining("Cannot request xray server, jira url is undefined");
     }
 
     @Test

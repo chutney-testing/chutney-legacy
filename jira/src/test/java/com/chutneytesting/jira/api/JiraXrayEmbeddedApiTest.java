@@ -4,18 +4,17 @@ import static com.chutneytesting.jira.domain.XrayStatus.FAIL;
 import static com.chutneytesting.jira.domain.XrayStatus.PASS;
 import static java.util.List.of;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
-import com.chutneytesting.jira.api.ReportForJira;
 import com.chutneytesting.jira.domain.JiraRepository;
 import com.chutneytesting.jira.domain.JiraTargetConfiguration;
 import com.chutneytesting.jira.domain.JiraXrayApi;
+import com.chutneytesting.jira.domain.JiraXrayClientFactory;
 import com.chutneytesting.jira.domain.JiraXrayService;
 import com.chutneytesting.jira.infra.JiraFileRepository;
 import com.chutneytesting.jira.xrayapi.Xray;
@@ -32,11 +31,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 
 class JiraXrayEmbeddedApiTest {
 
     private final JiraXrayApi jiraXrayApiMock = mock(JiraXrayApi.class);
+    private final JiraXrayClientFactory jiraXrayFactory = mock(JiraXrayClientFactory.class);
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZZZZZ");
     private final JiraTargetConfiguration jiraTargetConfiguration = new JiraTargetConfiguration("an url", "a username", "a password");
 
@@ -47,10 +46,12 @@ class JiraXrayEmbeddedApiTest {
     public void setUp() throws IOException {
         jiraRepository = new JiraFileRepository(Files.createTempDirectory("jira").toString());
         jiraRepository.saveServerConfiguration(jiraTargetConfiguration);
-        JiraXrayService jiraXrayServiceSpy = Mockito.spy(new JiraXrayService(jiraRepository));
-        doReturn(jiraXrayApiMock).when(jiraXrayServiceSpy).createHttpJiraXrayImpl();
 
-        jiraXrayEmbeddedApi = new JiraXrayEmbeddedApi(jiraXrayServiceSpy);
+        JiraXrayService jiraXrayService = new JiraXrayService(jiraRepository, jiraXrayFactory);
+
+        when(jiraXrayFactory.create(any())).thenReturn(jiraXrayApiMock);
+
+        jiraXrayEmbeddedApi = new JiraXrayEmbeddedApi(jiraXrayService);
     }
 
     @Test
