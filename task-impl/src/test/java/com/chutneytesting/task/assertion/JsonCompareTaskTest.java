@@ -11,13 +11,44 @@ import static org.mockito.Mockito.verify;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Logger;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 public class JsonCompareTaskTest {
 
+    @ParameterizedTest
+    @NullAndEmptySource
+    void documents_must_not_be_blanks(String doc1) {
+        // When
+        int expectedNbErrors = doc1 == null ? 4 : 2;
+        JsonCompareTask jsonAssertTask = new JsonCompareTask(mock(Logger.class), doc1, doc1, null, null);
+        List<String> errors = jsonAssertTask.validateInputs();
+
+        // Then
+        assertThat(errors).hasSize(expectedNbErrors);
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void should_compare_documents_roots_by_default(Map<String, String> paths) {
+        // Given
+        String doc1 = "{\"string\": \"string_value\", \"object\":{\"number\":3}, \"list\": [1, 2, 3]}";
+
+        // When
+        Logger mock = mock(Logger.class);
+        JsonCompareTask jsonAssertTask = new JsonCompareTask(mock, doc1, doc1, paths, null);
+        TaskExecutionResult result = jsonAssertTask.execute();
+
+        // Then
+        assertThat(result.status).isEqualTo(Success);
+        verify(mock, times(2)).info(anyString());
+    }
+
     @Test
-    public void should_execute_2_successful_assertions_on_comparing_actual_result_to_expected() {
+    void should_execute_2_successful_assertions_on_comparing_actual_result_to_expected() {
         Map<String, String> pathInputs = new HashMap<>();
         pathInputs.put("$.something.value", "$.something_else.value");
         pathInputs.put("$.a_thing", "$.a_thing");
@@ -27,10 +58,7 @@ public class JsonCompareTaskTest {
         String doc2 = "{\"something_else\":{\"value\":3},\"a_thing\":{\"type\":\"my_type\"}}";
 
         // When
-        JsonCompareTask jsonAssertTask = new JsonCompareTask(mock(Logger.class),
-            doc1,
-            doc2,
-            pathInputs);
+        JsonCompareTask jsonAssertTask = new JsonCompareTask(mock(Logger.class), doc1, doc2, pathInputs, null);
         TaskExecutionResult result = jsonAssertTask.execute();
 
         // Then
@@ -38,7 +66,7 @@ public class JsonCompareTaskTest {
     }
 
     @Test
-    public void should_failed_on_bad_assertions() {
+    void should_failed_on_bad_assertions() {
         // Given
         Map<String, String> pathInputs = new HashMap<>();
         pathInputs.put("$.something.value", "$.something.value");//ko
@@ -50,11 +78,7 @@ public class JsonCompareTaskTest {
 
         Logger mockLogger = mock(Logger.class);
         // When
-        JsonCompareTask jsonAssertTask = new JsonCompareTask(
-            mockLogger,
-            doc1,
-            doc2,
-            pathInputs);
+        JsonCompareTask jsonAssertTask = new JsonCompareTask(mockLogger, doc1, doc2, pathInputs, null);
         TaskExecutionResult result = jsonAssertTask.execute();
 
         // Then
