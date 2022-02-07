@@ -13,8 +13,14 @@ import com.chutneytesting.task.spi.injectable.Logger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 public class JsonCompareTaskTest {
@@ -84,5 +90,67 @@ public class JsonCompareTaskTest {
         // Then
         assertThat(result.status).isEqualTo(Failure);
         verify(mockLogger, times(2)).error(anyString());
+    }
+
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("should do lenient comparison")
+    class LenientComparison {
+
+        @ParameterizedTest
+        @DisplayName("classic equality is ok")
+        @MethodSource("classic_equals")
+        void lenient_should_be_ok_for_strict_json_equal(String doc) {
+            // When
+            Logger mock = mock(Logger.class);
+            JsonCompareTask jsonAssertTask = new JsonCompareTask(mock, doc, doc, null, "lenient");
+            TaskExecutionResult result = jsonAssertTask.execute();
+
+            // Then
+            assertThat(result.status).isEqualTo(Success);
+        }
+
+        Stream<Arguments> classic_equals() {
+            return Stream.of(
+                Arguments.of("{}"),
+                Arguments.of("[1, \"value\"]"),
+                Arguments.of("{\"string\": \"value\"}"),
+                Arguments.of("{\"number\": 666}"),
+                Arguments.of("{\"array\": [1, 2, 3]}"),
+                Arguments.of("{\"object\":{\"string\":\"value\"}}")
+            );
+        }
+
+        @ParameterizedTest
+        @MethodSource("extra_attributes")
+        @DisplayName("extra attributes are ok for one document only")
+        void lenient_should_be_ok_with_extra_attributes_for_one_document_only(String doc1, String doc2, TaskExecutionResult.Status expectedStatus) {
+            // When
+            Logger mock = mock(Logger.class);
+            JsonCompareTask jsonAssertTask = new JsonCompareTask(mock, doc1, doc2, null, "LeNiEnT");
+            TaskExecutionResult result = jsonAssertTask.execute();
+
+            // Then
+            assertThat(result.status).isEqualTo(expectedStatus);
+        }
+
+        Stream<Arguments> extra_attributes() {
+            return Stream.of(
+                Arguments.of("{}", "{\"number\": 666}", Success),
+                Arguments.of("{\"string\": \"val\"}", "{}", Success),
+                Arguments.of("{}", "{\"array\": [666, \"val\", {\"att\": \"val\"}]}", Success),
+                Arguments.of("{\"object\": {\"att\": \"val\"}}", "{}", Success),
+
+                Arguments.of("{\"string\": \"val\"}", "{\"string\": \"val\", \"extra_number\": 666}", Success),
+                Arguments.of("{\"string\": \"val\"}", "{\"string\": \"val\", \"extra_string\": \"value\"}", Success),
+                Arguments.of("{\"string\": \"val\"}", "{\"string\": \"val\", \"extra_array\": [666, \"val\", {\"att\": \"val\"}]}", Success),
+                Arguments.of("{\"string\": \"val\"}", "{\"string\": \"val\", \"extra_object\": {\"att\": \"val\"}}", Success),
+
+                Arguments.of("{\"object\": {\"att\": \"val\"}}", "{\"object\": {\"att\": \"val\", \"extra_att\": \"extra_val\"}}", Success),
+
+                Arguments.of("{\"string\": \"val\", \"extra_number_one\": 666}", "{\"string\": \"val\", \"extra_number_two\": 666}", Failure),
+                Arguments.of("{\"string\": \"val\", \"object\": {\"att\": \"val\", \"extra_att_one\": \"val\"}}", "{\"string\": \"val\", \"object\": {\"att\": \"val\", \"extra_att_two\": \"val\"}}", Failure)
+            );
+        }
     }
 }
