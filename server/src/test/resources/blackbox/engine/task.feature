@@ -16,18 +16,18 @@ Feature: Engine tasks exposition
                 Validate httpStatusCode_200 ${#status == 200}
         Then Its inputs are present in both responses
             Do json-compare Assert inputs from all tasks
-                With document1 ${#json(#allTasks, "$[*][?(@.identifier == '<task-id>')].inputs").toString()}
-                With document2 ${#json('<inputs>', "$").toString()}
+                With document1 ${#allTasks}
+                With document2 <inputs>
                 With comparingPaths
-                | $[0] | $ |
-            Do json-compare Assert inputs from all tasks
-                With document1 ${#json(#task, "$.inputs").toString()}
-                With document2 ${#json('<inputs>', "$").toString()}
+                | $[*][?(@.identifier == '<task-id>')].inputs | $ |
+            Do json-compare Assert inputs from task alone
+                With document1 ${#task}
+                With document2 <inputs>
                 With comparingPaths
-                | $ | $ |
+                | $.inputs | $[0] |
 
         Examples:
-            | task-id | inputs                                                                                                                                      |
-            | debug   | [{"name": "filters","type": "java.util.List"}]                                                                                              |
-            | assert  | [{"name": "asserts","type": "java.util.List"}]                                                                                              |
-            | compare | [{"name": "actual","type": "java.lang.String"},{"name": "expected","type": "java.lang.String"},{"name": "mode","type": "java.lang.String"}] |
+            | task-id | inputs                                                                                                                                        |
+            | debug   | [[{"name": "filters","type": "java.util.List"}]]                                                                                              |
+            | assert  | [[{"name": "asserts","type": "java.util.List"}]]                                                                                              |
+            | compare | [[{"name": "actual","type": "java.lang.String"},{"name": "expected","type": "java.lang.String"},{"name": "mode","type": "java.lang.String"}]] |
