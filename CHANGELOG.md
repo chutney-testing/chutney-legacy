@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.5](https://github.com/chutney-testing/chutney/tree/1.4.5) (2022-02-08)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.4.4...1.4.5)
+
+**Fixed bugs:**
+- 🐛 | chore(jira): Remove infra dependency in JiraXrayService [\#673] (https://github.com/chutney-testing/chutney/pull/673)
+
 ## [1.4.4](https://github.com/chutney-testing/chutney/tree/1.4.4) (2022-01-22)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.4.3...1.4.4)
