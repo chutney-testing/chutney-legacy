@@ -27,7 +27,7 @@ public class JsonCompareTask implements Task {
     private final Logger logger;
     private final String document1;
     private final String document2;
-    private final Map<String, String> pahs;
+    private final Map<String, String> paths;
     private final String mode;
 
     private final static Map<String, String> DEFAULT_PATHS = Map.of("$", "$");
@@ -41,7 +41,7 @@ public class JsonCompareTask implements Task {
         this.logger = logger;
         this.document1 = document1;
         this.document2 = document2;
-        this.pahs = ofNullable(comparingPaths).filter(not(Map::isEmpty)).orElse(DEFAULT_PATHS);
+        this.paths = ofNullable(comparingPaths).filter(not(Map::isEmpty)).orElse(DEFAULT_PATHS);
         this.mode = ofNullable(mode).filter(not(String::isEmpty)).map(String::toUpperCase).orElse(COMPARE_MODE.STRICT.name());
     }
 
@@ -59,7 +59,7 @@ public class JsonCompareTask implements Task {
         ReadContext doc1 = JsonPath.parse(JsonUtils.jsonStringify(document1));
         ReadContext doc2 = JsonPath.parse(JsonUtils.jsonStringify(document2));
         AtomicBoolean result = new AtomicBoolean(true);
-        pahs.forEach((key, value) -> {
+        paths.forEach((key, value) -> {
             try {
                 Object read1 = doc1.read(key);
                 Object read2 = doc2.read(value);
