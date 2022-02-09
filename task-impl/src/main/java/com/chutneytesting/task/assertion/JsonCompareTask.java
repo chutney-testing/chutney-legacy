@@ -91,6 +91,7 @@ public class JsonCompareTask implements Task {
         return false;
     }
 
+    @SuppressWarnings("unchecked")
     private boolean lenientEqual(Object read1, Object read2, Boolean leftContains) {
         if (read1 instanceof Map && read2 instanceof Map) {
             Map<Object, Object> map1 = (Map<Object, Object>) read1;
@@ -108,9 +109,12 @@ public class JsonCompareTask implements Task {
                     .reduce(Boolean::logicalAnd).orElse(true);
             }
             return false;
+        } else if (read1 instanceof List && read2 instanceof List) {
+            List<Object> list1 = (List<Object>) read1;
+            List<Object> list2 = (List<Object>) read2;
+            return list1.size() == list2.size() && list1.containsAll(list2);
         } else {
             return read1.equals(read2);
         }
     }
-
 }
