@@ -152,5 +152,33 @@ public class JsonCompareTaskTest {
                 Arguments.of("{\"string\": \"val\", \"object\": {\"att\": \"val\", \"extra_att_one\": \"val\"}}", "{\"string\": \"val\", \"object\": {\"att\": \"val\", \"extra_att_two\": \"val\"}}", Failure)
             );
         }
+
+        @ParameterizedTest
+        @MethodSource("array_order")
+        @DisplayName("different array order is ok")
+        void lenient_should_be_ok_with_different_array_order(String doc1, String doc2, TaskExecutionResult.Status expectedStatus) {
+            // When
+            Logger mock = mock(Logger.class);
+            JsonCompareTask jsonAssertTask = new JsonCompareTask(mock, doc1, doc2, null, "LENIENT");
+            TaskExecutionResult result = jsonAssertTask.execute();
+
+            // Then
+            assertThat(result.status).isEqualTo(expectedStatus);
+        }
+
+        Stream<Arguments> array_order() {
+            return Stream.of(
+                Arguments.of("[1, 2, 3]", "[2, 3, 1]", Success),
+                Arguments.of("[1, 2, 3, 1]", "[2, 3, 1]", Failure),
+                Arguments.of("{\"array\": [1, null, 3]}", "{\"array\": [null, 3, 1]}", Success),
+                Arguments.of("[null, 3]", "[null, 3, null]", Failure),
+
+                Arguments.of("[{\"att\": \"val\"}, 3]}", "[3, {\"att\": \"val\"}]", Success),
+                Arguments.of("{\"object\": {\"array\": [null, {\"att\": \"val\"}]}}", "{\"object\": {\"array\": [{\"att\": \"val\"}, null]}}", Success),
+                Arguments.of("[{\"att\": \"val\"}]", "[{\"att\": \"val\"}, null]", Failure),
+
+                Arguments.of("[1, [1, 2, 3], 3]", "[1, [3, 2, 1], 3]", Failure)
+            );
+        }
     }
 }
