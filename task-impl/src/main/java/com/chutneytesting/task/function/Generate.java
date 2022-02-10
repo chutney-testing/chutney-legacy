@@ -1,19 +1,25 @@
 package com.chutneytesting.task.function;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Generate {
-    private static final Random LONG_GENERATOR = new Random();
+    private static final Random RANDOM_GENERATOR = new Random();
+    private static final int ONE_HUNDRED_MEGA_BYTES = 1024 * 1024 * 100; // 100MB
 
     public String uuid() {
         return UUID.randomUUID().toString();
     }
 
-    public String randomLong() { return String.valueOf(LONG_GENERATOR.nextLong()); }
+    public String randomLong() { return String.valueOf(RANDOM_GENERATOR.nextLong()); }
 
-    public String randomInt(int bound) { return String.valueOf(LONG_GENERATOR.nextInt(bound)); }
+    public String randomInt(int bound) { return String.valueOf(RANDOM_GENERATOR.nextInt(bound)); }
 
     public String id(String prefix, int length) { return id(prefix, length, ""); }
 
@@ -21,8 +27,31 @@ public class Generate {
 
     public String id(String prefix, int length, String suffix) {
         String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-        int random = ThreadLocalRandom.current().nextInt(0, uuid.length() - length);;
+        int random = ThreadLocalRandom.current().nextInt(0, uuid.length() - length);
         return prefix + uuid.substring(random, random+length) + suffix;
     }
 
+    public String file() throws IOException {
+        return this.file(System.getProperty("java.io.tmpdir") + FileSystems.getDefault().getSeparator() + "chutney" + this.uuid(), 1024);
+    }
+
+    public String file(int fileSize) throws IOException {
+        return this.file(System.getProperty("java.io.tmpdir") + FileSystems.getDefault().getSeparator() + "chutney" + this.uuid(), fileSize);
+    }
+
+    public String file(String destination, int fileSize) throws IOException {
+        if (fileSize > ONE_HUNDRED_MEGA_BYTES) {
+            fileSize = ONE_HUNDRED_MEGA_BYTES;
+        }
+
+        byte[] randomContent = new byte[fileSize];
+        RANDOM_GENERATOR.nextBytes(randomContent);
+
+        File file = new File(destination);
+        file.getParentFile().mkdirs();
+        try (BufferedOutputStream out = new BufferedOutputStream(Files.newOutputStream(file.toPath()))) {
+            out.write(randomContent);
+        }
+        return file.getCanonicalPath();
+    }
 }
