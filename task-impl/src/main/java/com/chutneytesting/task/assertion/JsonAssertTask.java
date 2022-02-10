@@ -6,7 +6,6 @@ import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 
 import com.chutneytesting.task.assertion.placeholder.PlaceholderAsserter;
 import com.chutneytesting.task.assertion.placeholder.PlaceholderAsserterUtils;
-import com.chutneytesting.task.assertion.utils.JsonUtils;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
@@ -46,13 +45,12 @@ public class JsonAssertTask implements Task {
     @Override
     public TaskExecutionResult execute() {
         try {
-            String serializedDocument = JsonUtils.jsonStringify(document);
-            ReadContext document = JsonPath.parse(serializedDocument, Configuration.defaultConfiguration().addOptions(Option.SUPPRESS_EXCEPTIONS));
+            ReadContext json = JsonPath.parse(document, Configuration.defaultConfiguration().addOptions(Option.SUPPRESS_EXCEPTIONS));
 
             boolean matchesOk = mapExpectedResults.entrySet().stream().allMatch(entry -> {
                     String path = entry.getKey();
                     Object expected = entry.getValue();
-                    Object actualValue = document.read(path);
+                    Object actualValue = json.read(path);
 
                     boolean result;
 
