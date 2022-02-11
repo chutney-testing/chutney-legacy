@@ -52,9 +52,7 @@ public class GenerateFunctionTest {
         String result = new Generate().file();
 
         // Then
-        assertThat(result).isNotBlank();
-        assertThat(Files.exists(Paths.get(result))).isTrue();
-        assertThat(Files.size(Paths.get(result))).isEqualTo(DEFAULT_FILE_SIZE);
+        assertGeneratedFile(result, Paths.get(result), DEFAULT_FILE_SIZE);
     }
 
     @Test
@@ -69,9 +67,7 @@ public class GenerateFunctionTest {
         String result = new Generate().file(destination, givenFileSize);
 
         // Then
-        assertThat(result).isEqualTo(expectedFile.toString());
-        assertThat(Files.exists(expectedFile)).isTrue();
-        assertThat(Files.size(expectedFile)).isEqualTo(givenFileSize);
+        assertGeneratedFile(result, expectedFile, givenFileSize);
     }
 
     @Test
@@ -87,9 +83,13 @@ public class GenerateFunctionTest {
         String result = new Generate().file(destination, oneMegaBytes, maxFileSize);
 
         // Then
-        assertThat(result).isEqualTo(expectedFile.toString());
+        assertGeneratedFile(result, expectedFile, maxFileSize);
+    }
+
+    private void assertGeneratedFile(String result, Path expectedFile, int expectedFileSize) throws IOException {
+        assertThat(result).isNotBlank();
         assertThat(Files.exists(expectedFile)).isTrue();
-        assertThat(Files.size(expectedFile)).isEqualTo(maxFileSize);
+        assertThat(Files.size(expectedFile)).isEqualTo(expectedFileSize);
     }
 
 }
