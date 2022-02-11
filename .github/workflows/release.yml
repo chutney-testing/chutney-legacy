@@ -4,11 +4,9 @@ on:
   push:
     tags:
       - '*.*.*'
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     name: Deploy to central
     steps:
       - uses: actions/checkout@v2
@@ -31,6 +29,20 @@ jobs:
           BUILD_ENV: 'github-actions'
         run: mvn -B -V clean verify
 
+      - name: Temporarily save server artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: server-artifacts
+          path: |
+            packaging/local-dev/target/chutney-local-dev-*.jar
+          retention-days: 1
+      - name: Temporarily save ui artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ui-artifacts
+          path: |
+            ui/dist
+          retention-days: 1
       - name: Publish to central
         run: mvn -DskipTests -Drelease=true deploy
         env:
@@ -71,4 +83,65 @@ jobs:
           asset_path: ${{ github.workspace }}/packaging/local-dev/target/chutney-local-dev-${{ env.RELEASE_VERSION }}.jar.asc
           asset_name: chutney-local-dev-${{ env.RELEASE_VERSION }}.jar.asc
           asset_content_type: application/pgp-signature
+    outputs:
+      RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
+
+  docker-deploy-server:
+    runs-on: ubuntu-latest
+    needs: [ deploy ]
+    name: Deploy server to docker registry
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download server artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: server-artifacts
+          path: artifacts/server
+      - name: Login to Github Packages
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push server docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ${{ github.workspace }}
+          file: ${{ github.workspace }}/.docker/server/Dockerfile
+          tags: |
+            ghcr.io/chutney-testing/chutney/server:latest
+            ghcr.io/chutney-testing/chutney/server:${{ needs.deploy.outputs.RELEASE_VERSION }}
+          push: true
+          build-args: |
+            JAR_PATH=artifacts/server
+
+  docker-deploy-ui:
+    runs-on: ubuntu-latest
+    needs: [ deploy ]
+    name: Deploy ui to docker registry
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download ui artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: ui-artifacts
+          path: artifacts/ui
+      - name: Login to Github Packages
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push ui docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ${{ github.workspace }}
+          file: ${{ github.workspace }}/.docker/ui/Dockerfile
+          tags: |
+            ghcr.io/chutney-testing/chutney/ui:latest
+            ghcr.io/chutney-testing/chutney/ui:${{ needs.deploy.outputs.RELEASE_VERSION }}
+          push: true
+          build-args: |
+            WEBSITE=artifacts/ui
 
