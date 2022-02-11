@@ -1,5 +1,6 @@
 package com.chutneytesting.task.function;
 
+import static com.chutneytesting.task.function.Generate.DEFAULT_FILE_SIZE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
@@ -46,23 +47,6 @@ public class GenerateFunctionTest {
     }
 
     @Test
-    void should_generate_file_at_given_path_with_random_content() throws IOException {
-        // Given
-        String destination = temporaryFolder.resolve("generated_file.txt").toString();
-        int fileSize = 1024;
-
-        Path expectedFile = temporaryFolder.resolve(destination);
-
-        // When
-        String result = new Generate().file(destination, fileSize);
-
-        // Then
-        assertThat(result).isEqualTo(expectedFile.toString());
-        assertThat(Files.exists(expectedFile)).isTrue();
-        assertThat(Files.size(expectedFile)).isEqualTo(fileSize);
-    }
-
-    @Test
     void should_generate_file_with_random_content() throws IOException {
         // When
         String result = new Generate().file();
@@ -70,7 +54,42 @@ public class GenerateFunctionTest {
         // Then
         assertThat(result).isNotBlank();
         assertThat(Files.exists(Paths.get(result))).isTrue();
-        assertThat(Files.size(Paths.get(result))).isEqualTo(1024);
+        assertThat(Files.size(Paths.get(result))).isEqualTo(DEFAULT_FILE_SIZE);
+    }
+
+    @Test
+    void should_generate_file_at_given_path_with_random_content() throws IOException {
+        // Given
+        String destination = temporaryFolder.resolve("generated_file.txt").toString();
+        int givenFileSize = 1024*10;
+
+        Path expectedFile = temporaryFolder.resolve(destination);
+
+        // When
+        String result = new Generate().file(destination, givenFileSize);
+
+        // Then
+        assertThat(result).isEqualTo(expectedFile.toString());
+        assertThat(Files.exists(expectedFile)).isTrue();
+        assertThat(Files.size(expectedFile)).isEqualTo(givenFileSize);
+    }
+
+    @Test
+    void should_generate_file_not_exceeding_maximum_file_size() throws IOException {
+        // Given
+        String destination = temporaryFolder.resolve("generated_file.txt").toString();
+        int oneMegaBytes = 1024*1024; // 1MB
+        int maxFileSize = 1024*10; // 10KB
+
+        Path expectedFile = temporaryFolder.resolve(destination);
+
+        // When
+        String result = new Generate().file(destination, oneMegaBytes, maxFileSize);
+
+        // Then
+        assertThat(result).isEqualTo(expectedFile.toString());
+        assertThat(Files.exists(expectedFile)).isTrue();
+        assertThat(Files.size(expectedFile)).isEqualTo(maxFileSize);
     }
 
 }

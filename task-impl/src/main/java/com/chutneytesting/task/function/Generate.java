@@ -11,7 +11,9 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Generate {
     private static final Random RANDOM_GENERATOR = new Random();
+    private static final String DEFAULT_DIR = System.getProperty("java.io.tmpdir") + FileSystems.getDefault().getSeparator();
     private static final int ONE_HUNDRED_MEGA_BYTES = 1024 * 1024 * 100; // 100MB
+    static final int DEFAULT_FILE_SIZE = 1024; // 1KB
 
     public String uuid() {
         return UUID.randomUUID().toString();
@@ -32,16 +34,20 @@ public class Generate {
     }
 
     public String file() throws IOException {
-        return this.file(System.getProperty("java.io.tmpdir") + FileSystems.getDefault().getSeparator() + "chutney" + this.uuid(), 1024);
+        return this.file(DEFAULT_FILE_SIZE);
     }
 
     public String file(int fileSize) throws IOException {
-        return this.file(System.getProperty("java.io.tmpdir") + FileSystems.getDefault().getSeparator() + "chutney" + this.uuid(), fileSize);
+        return this.file(DEFAULT_DIR + "chutney" + this.uuid(), fileSize);
     }
 
     public String file(String destination, int fileSize) throws IOException {
-        if (fileSize > ONE_HUNDRED_MEGA_BYTES) {
-            fileSize = ONE_HUNDRED_MEGA_BYTES;
+        return this.file(destination, fileSize, ONE_HUNDRED_MEGA_BYTES);
+    }
+
+    String file(String destination, int fileSize, int maxFileSize) throws IOException {
+        if (fileSize > maxFileSize) {
+            fileSize = maxFileSize;
         }
 
         byte[] randomContent = new byte[fileSize];
