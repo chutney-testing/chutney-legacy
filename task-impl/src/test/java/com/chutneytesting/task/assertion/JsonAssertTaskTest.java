@@ -2,6 +2,7 @@ package com.chutneytesting.task.assertion;
 
 import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Failure;
 import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Success;
+import static java.util.Optional.ofNullable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -10,9 +11,14 @@ import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Logger;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 public class JsonAssertTaskTest {
 
@@ -140,6 +146,7 @@ public class JsonAssertTaskTest {
     }
 
     @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("Assert json using placeholders")
     class AssertWithPlaceholders {
 
@@ -341,6 +348,61 @@ public class JsonAssertTaskTest {
 
             // Then
             assertThat(result.status).isEqualTo(Success);
+        }
+
+        @ParameterizedTest
+        @MethodSource("lenientEqual")
+        @DisplayName("lenientEqual")
+        public void should_assert_with_lenientEqual_placeholder(String doc, String expectedString, TaskExecutionResult.Status expectedStatus) {
+            Map<String, Object> expected = new HashMap<>();
+            expected.put("$", "$lenientEqual:" + ofNullable(expectedString).orElse(doc));
+
+            // When
+            JsonAssertTask jsonAssertTask = new JsonAssertTask(new TestLogger(), doc, expected);
+            TaskExecutionResult result = jsonAssertTask.execute();
+
+            // Then
+            assertThat(result.status).isEqualTo(expectedStatus);
+        }
+
+        Stream<Arguments> lenientEqual() {
+            return Stream.of(
+                // Classic equals
+                Arguments.of("{}", null, Success),
+                Arguments.of("[1, \"value\"]", null, Success),
+                Arguments.of("{\"string\": \"value\"}", null, Success),
+                Arguments.of("{\"number\": 666}", null, Success),
+                Arguments.of("{\"array\": [1, 2, 3]}", null, Success),
+                Arguments.of("{\"object\":{\"string\":\"value\"}}", null, Success),
+
+                // Extra attributes
+                Arguments.of("{\"number\": 666}", "{}", Success),
+                Arguments.of("{\"string\": \"val\"}", "{}", Success),
+                Arguments.of("{\"array\": [666, \"val\", {\"att\": \"val\"}]}", "{}", Success),
+                Arguments.of("{\"object\": {\"att\": \"val\"}}", "{}", Success),
+
+                Arguments.of("{\"string\": \"val\", \"extra_number\": 666}", "{\"string\": \"val\"}", Success),
+                Arguments.of("{\"string\": \"val\", \"extra_string\": \"value\"}", "{\"string\": \"val\"}", Success),
+                Arguments.of("{\"string\": \"val\", \"extra_array\": [666, \"val\", {\"att\": \"val\"}]}", "{\"string\": \"val\"}", Success),
+                Arguments.of("{\"string\": \"val\", \"extra_object\": {\"att\": \"val\"}}", "{\"string\": \"val\"}", Success),
+
+                Arguments.of("{\"object\": {\"att\": \"val\", \"extra_att\": \"extra_val\"}}", "{\"object\": {\"att\": \"val\"}}", Success),
+
+                Arguments.of("{\"string\": \"val\", \"extra_number_one\": 666}", "{\"string\": \"val\", \"extra_number_two\": 666}", Failure),
+                Arguments.of("{\"string\": \"val\", \"object\": {\"att\": \"val\", \"extra_att_one\": \"val\"}}", "{\"string\": \"val\", \"object\": {\"att\": \"val\", \"extra_att_two\": \"val\"}}", Failure),
+
+                // Array order
+                Arguments.of("[1, 2, 3]", "[2, 3, 1]", Success),
+                Arguments.of("[1, 2, 3, 1]", "[2, 3, 1]", Failure),
+                Arguments.of("{\"array\": [1, null, 3]}", "{\"array\": [null, 3, 1]}", Success),
+                Arguments.of("[null, 3]", "[null, 3, null]", Failure),
+
+                Arguments.of("[{\"att\": \"val\"}, 3]}", "[3, {\"att\": \"val\"}]", Success),
+                Arguments.of("{\"object\": {\"array\": [null, {\"att\": \"val\"}]}}", "{\"object\": {\"array\": [{\"att\": \"val\"}, null]}}", Success),
+                Arguments.of("[{\"att\": \"val\"}]", "[{\"att\": \"val\"}, null]", Failure),
+
+                Arguments.of("[1, [1, 2, 3], 3]", "[1, [3, 2, 1], 3]", Failure)
+            );
         }
     }
 }
