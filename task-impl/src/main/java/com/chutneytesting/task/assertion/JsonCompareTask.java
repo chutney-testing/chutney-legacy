@@ -1,5 +1,6 @@
 package com.chutneytesting.task.assertion;
 
+import static com.chutneytesting.task.assertion.utils.JsonUtils.lenientEqual;
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.enumValidation;
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
@@ -11,8 +12,6 @@ import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
-import com.google.common.collect.MapDifference;
-import com.google.common.collect.Maps;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.ReadContext;
@@ -59,13 +58,13 @@ public class JsonCompareTask implements Task {
         ReadContext doc1 = JsonPath.parse(JsonUtils.jsonStringify(document1));
         ReadContext doc2 = JsonPath.parse(JsonUtils.jsonStringify(document2));
         AtomicBoolean result = new AtomicBoolean(true);
-        paths.forEach((key, value) -> {
+        paths.forEach((path1, path2) -> {
             try {
-                Object read1 = doc1.read(key);
-                Object read2 = doc2.read(value);
+                Object read1 = doc1.read(path1);
+                Object read2 = doc2.read(path2);
                 if (!isEqual(read1, read2)) {
                     result.set(false);
-                    logger.error("Value [" + read1 + "] at path [" + key + "] is not equal to value [" + read2 + "] at path [" + value + "]");
+                    logger.error("Value [" + read1 + "] at path [" + path1 + "] is not equal to value [" + read2 + "] at path [" + path2 + "]");
                 } else {
                     logger.info(read1.toString());
                     logger.info(read2.toString());
@@ -89,32 +88,5 @@ public class JsonCompareTask implements Task {
                 return lenientEqual(read1, read2, null);
         }
         return false;
-    }
-
-    @SuppressWarnings("unchecked")
-    private boolean lenientEqual(Object read1, Object read2, Boolean leftContains) {
-        if (read1 instanceof Map && read2 instanceof Map) {
-            Map<Object, Object> map1 = (Map<Object, Object>) read1;
-            Map<Object, Object> map2 = (Map<Object, Object>) read2;
-            MapDifference<Object, Object> diff = Maps.difference(map1, map2);
-            if (diff.areEqual()) {
-                return true;
-            } else if ((leftContains == null || !leftContains) && diff.entriesOnlyOnLeft().isEmpty()) {
-                return diff.entriesDiffering().keySet().stream()
-                    .map(k -> lenientEqual(map1.get(k), map2.get(k), false))
-                    .reduce(Boolean::logicalAnd).orElse(true);
-            } else if ((leftContains == null || leftContains) && diff.entriesOnlyOnRight().isEmpty()) {
-                return diff.entriesDiffering().keySet().stream()
-                    .map(k -> lenientEqual(map1.get(k), map2.get(k), true))
-                    .reduce(Boolean::logicalAnd).orElse(true);
-            }
-            return false;
-        } else if (read1 instanceof List && read2 instanceof List) {
-            List<Object> list1 = (List<Object>) read1;
-            List<Object> list2 = (List<Object>) read2;
-            return list1.size() == list2.size() && list1.containsAll(list2);
-        } else {
-            return read1.equals(read2);
-        }
     }
 }
