@@ -37,7 +37,7 @@ class KafkaConsumerFactoryFactoryTest {
 
             Map<String, String> config = Map.of(BOOTSTRAP_SERVERS_CONFIG, "conf.host:9999");
 
-            ConsumerFactory<String, String> consumerFactoryFactory = new KafkaConsumerFactoryFactory().create(target, null, config);
+            ConsumerFactory<String, String> consumerFactoryFactory = new KafkaConsumerFactoryFactory().create(target, "", config);
 
             assertThat(consumerFactoryFactory.getConfigurationProperties())
                 .containsEntry(BOOTSTRAP_SERVERS_CONFIG, config.get(BOOTSTRAP_SERVERS_CONFIG));
@@ -51,7 +51,7 @@ class KafkaConsumerFactoryFactoryTest {
                 .withProperty(BOOTSTRAP_SERVERS_CONFIG, "target.host:6666")
                 .build();
 
-            ConsumerFactory<String, String> consumerFactoryFactory = new KafkaConsumerFactoryFactory().create(target, null, emptyMap());
+            ConsumerFactory<String, String> consumerFactoryFactory = new KafkaConsumerFactoryFactory().create(target, "", emptyMap());
 
             assertThat(consumerFactoryFactory.getConfigurationProperties())
                 .containsEntry(BOOTSTRAP_SERVERS_CONFIG, target.properties().get(BOOTSTRAP_SERVERS_CONFIG));
@@ -63,7 +63,7 @@ class KafkaConsumerFactoryFactoryTest {
         void should_use_target_authority_url_for_bootstrap_servers_kafka_client_configuration() {
             Target target = targetWithoutProperties.build();
 
-            ConsumerFactory<String, String> consumerFactoryFactory = new KafkaConsumerFactoryFactory().create(target, null, emptyMap());
+            ConsumerFactory<String, String> consumerFactoryFactory = new KafkaConsumerFactoryFactory().create(target, "", emptyMap());
 
             assertThat(consumerFactoryFactory.getConfigurationProperties())
                 .hasEntrySatisfying(BOOTSTRAP_SERVERS_CONFIG, (v) -> assertThat(v).isEqualTo("127.0.0.1:5555"));
@@ -77,7 +77,7 @@ class KafkaConsumerFactoryFactoryTest {
                 .withUrl("http:/a/path")
                 .build();
 
-            ConsumerFactory<String, String> consumerFactoryFactory = new KafkaConsumerFactoryFactory().create(target, null, emptyMap());
+            ConsumerFactory<String, String> consumerFactoryFactory = new KafkaConsumerFactoryFactory().create(target, "", emptyMap());
 
             assertThat(consumerFactoryFactory.getConfigurationProperties())
                 .hasEntrySatisfying(BOOTSTRAP_SERVERS_CONFIG, (v) -> assertThat(v).isEqualTo(target.url()));
@@ -88,7 +88,7 @@ class KafkaConsumerFactoryFactoryTest {
     void should_use_StringDeserializer_as_key_and_value_deserializer() {
         Target target = targetWithoutProperties.build();
 
-        ConsumerFactory<String, String> consumerFactoryFactory = new KafkaConsumerFactoryFactory().create(target, null, emptyMap());
+        ConsumerFactory<String, String> consumerFactoryFactory = new KafkaConsumerFactoryFactory().create(target, "", emptyMap());
         assertThat(consumerFactoryFactory.getKeyDeserializer())
             .isInstanceOf(StringDeserializer.class);
         assertThat(consumerFactoryFactory.getValueDeserializer())
