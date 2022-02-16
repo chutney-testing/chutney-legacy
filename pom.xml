@@ -107,7 +107,8 @@
         <jms.version>2.0.1</jms.version>
         <amqp-client.version>5.14.1</amqp-client.version>
         <qpid-broker.version>8.0.6</qpid-broker.version>
-        <mongodb.version>3.12.10</mongodb.version>
+        <mongodb-driver.version>3.12.10</mongodb-driver.version>
+        <mongodb.version>4.4.1</mongodb.version>
         <orientdb.version>3.2.4</orientdb.version>
         <selenium.version>4.1.2</selenium.version>
         <groovy.version>3.0.9</groovy.version>
@@ -443,7 +444,7 @@
             <dependency>
                 <groupId>org.mongodb</groupId>
                 <artifactId>mongodb-driver</artifactId>
-                <version>${mongodb.version}</version>
+                <version>${mongodb-driver.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.mongodb</groupId>
