@@ -84,8 +84,6 @@ Feature: Support testcase editions
             Do json-compare
                 With document1 ${#firstEdition}
                 With document2 ${#secondEdition}
-                With comparingPaths
-                | $ | $ |
 
     Scenario: End testcase edition
         Given paloma requests an edition on an existing testcase
