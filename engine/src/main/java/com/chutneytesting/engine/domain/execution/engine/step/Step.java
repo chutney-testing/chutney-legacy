@@ -162,6 +162,10 @@ public class Step {
         failure(ofNullable(e.getMessage()).orElse(e.toString()));
     }
 
+    public void failure(Error e) {
+        failure(ofNullable(e.getMessage()).orElse(e.toString()));
+    }
+
     public void failure(String... message) {
         state.errorOccurred(message);
     }
