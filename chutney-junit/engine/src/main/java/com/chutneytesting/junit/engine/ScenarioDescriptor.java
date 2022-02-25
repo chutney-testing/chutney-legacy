@@ -52,7 +52,7 @@ public class ScenarioDescriptor extends AbstractTestDescriptor implements Node<C
         LOGGER.info("status : {}", report.status);
         LOGGER.info(om.writerWithDefaultPrettyPrinter().writeValueAsString(report));
 
-        if (StatusDto.FAILURE.equals(report.status)) {
+        if (!StatusDto.SUCCESS.equals(report.status)) {
             StepExecutionReportDto failedStepReport = findFailedStep(report);
             throw new Exception(failedStepReport.name + ": " + failedStepReport.errors.stream().reduce((s, s2) -> String.join("\n", s, s2))
                 .orElse("Scenario " + stepDefinition.name + " FAILURE")
@@ -66,8 +66,8 @@ public class ScenarioDescriptor extends AbstractTestDescriptor implements Node<C
         }
 
         StepExecutionReportDto failedChild = rootReport.steps.stream()
-            .filter(r -> StatusDto.FAILURE.equals(r.status))
-            .findAny().get();
+            .filter(r -> !StatusDto.SUCCESS.equals(r.status))
+            .findFirst().get();
         return findFailedStep(failedChild);
     }
 }
