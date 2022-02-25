@@ -71,16 +71,12 @@ public class DefaultExecutionEngine implements ExecutionEngine {
 
                     final StepExecutionStrategy strategy = stepExecutionStrategies.buildStrategyFrom(rootStep.get());
                     strategy.execute(execution, rootStep.get(), scenarioContext, stepExecutionStrategies);
-                } catch (RuntimeException e ) {
+                }
+                catch (RuntimeException | NoClassDefFoundError e ) {
                     // Do not remove this fault barrier, the engine must not be stopped by external events
                     // (such as exceptions not raised by the engine)
                     rootStep.get().failure(e);
                     LOGGER.warn("Intercepted exception in root step execution !", e);
-                } catch (NoClassDefFoundError e) {
-                    // Do not remove this fault barrier, the engine must not be stopped by external events
-                    // (such as exceptions not raised by the engine)
-                    rootStep.get().failure(e);
-                    LOGGER.warn("Intercepted NoClassDefFoundError in root step execution !", e);
                 }
 
                 executeFinallyActions(execution, rootStep, scenarioContext);
