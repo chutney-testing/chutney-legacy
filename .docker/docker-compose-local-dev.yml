@@ -1,0 +1,16 @@
+version: '3.7'
+services:
+  server:
+    image: ghcr.io/chutney-testing/chutney/server:latest
+    container_name: server
+    ports:
+      - "8081:8443"
+    volumes:
+      - ../server/.chutney/:/.chutney
+    restart: unless-stopped
+  ui:
+    image: ghcr.io/chutney-testing/chutney/ui:latest
+    container_name: ui
+    ports:
+      - "80:80"
+      - "443:443"
