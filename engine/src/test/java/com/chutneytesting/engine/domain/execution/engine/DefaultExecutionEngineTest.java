@@ -68,10 +68,10 @@ public class DefaultExecutionEngineTest {
         Long executionId = engine.execute(stepDefinition, ScenarioExecution.createScenarioExecution(null));
         StepExecutionReport report = reporter.subscribeOnExecution(executionId).blockingLast();
 
-        Assertions.assertThat(executionId).isNotNull();
-        Assertions.assertThat(report).isNotNull();
-        Assertions.assertThat(report.errors).hasSize(1);
-        Assertions.assertThat(report.errors.get(0)).isEqualTo(throwableMessage);
+        assertThat(executionId).isNotNull();
+        assertThat(report).isNotNull();
+        assertThat(report.errors).hasSize(1);
+        assertThat(report.errors.get(0)).isEqualTo(throwableMessage);
     }
 
     @ParameterizedTest
