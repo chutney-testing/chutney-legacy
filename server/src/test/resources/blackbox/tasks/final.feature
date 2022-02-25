@@ -117,3 +117,72 @@ Feature: Final task for registering final actions for a testcase
                 | $.report.steps[1].steps[1].strategy | retry-with-timeout |
                 | $.report.steps[1].steps[2].type | context-put |
                 | $.report.steps[1].steps[2].status | SUCCESS |
+
+    Scenario: Register final task with validations on outputs
+        Given a target
+            Do http-post Create environment and target
+                On CHUTNEY_LOCAL
+                With uri /api/v2/environment
+                With headers
+                | Content-Type | application/json;charset=UTF-8 |
+                With body
+                """
+                {
+                    "name": "ENV_FINAL",
+                    "description": "",
+                    "targets": [
+                        {
+                            "name": "test_http",
+                            "url": "https://localhost:${T(System).getProperty('securePort')}",
+                            "keyStore": "${#escapeJson(#resourcePath("blackbox/keystores/client.jks"))}",
+                            "keyStorePassword": "client",
+                            "keyPassword": "client"
+
+                        }
+                    ]
+                }
+                """
+                Validate httpStatusCode_200 ${#status == 200}
+        And A scenario is saved
+            Do http-post Post scenario to Chutney instance
+                On CHUTNEY_LOCAL
+                With uri /api/scenario/v2
+                With headers
+                | Content-Type | application/json;charset=UTF-8 |
+                With body
+                """
+                {
+                    "title":"Final task success",
+                    "scenario":{
+                        "when":{
+                            "sentence":"Final task are registered",
+                            "subSteps":[
+                                {
+                                    "sentence":"Register task providing outputs",
+                                    "implementation":{
+                                        "target": "CHUTNEY_LOCAL",
+                                        "task":"{\n type: final \n target: test_http \n inputs: {\n type: http-get \n name: Get Home \n inputs: {\n uri: /home \n timeout: 5 sec \n} \n validations: { \n http_OK: \${ #status == 200 } \n} \n} \n}"
+                                    }
+                                }
+                            ]
+                        },
+                        "thens": []
+                    }
+                }
+                """
+                Take scenarioId ${#body}
+                Validate httpStatusCode_200 ${#status == 200}
+        When Last saved scenario is executed
+            Do http-post Post scenario execution to Chutney instance
+                On CHUTNEY_LOCAL
+                With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV_FINAL
+                With timeout 5 s
+                Take report ${#body}
+                Validate httpStatusCode_200 ${#status == 200}
+        Then The report contains the executions (in declaration reverse order) of all the final tasks action
+            Do json-assert
+                With document ${#report}
+                With expected
+                | $.report.steps[0].steps[0].evaluatedInputs.validations.http_OK | \${ #status == 200 } |
+                | $.report.steps[1].steps[0].type | http-get |
+                | $.report.steps[1].steps[0].status | SUCCESS |

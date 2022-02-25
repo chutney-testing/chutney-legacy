@@ -320,6 +320,31 @@ public class StepTest {
         assertThat(step.stepContext().getStepOutputs()).isEmpty();
     }
 
+    @Test
+    void should_not_evaluate_registred_final_task_inputs() {
+        // Given
+        String environment = "FakeTestEnvironment";
+
+        Map<String, Object> inputs = new HashMap<>();
+        inputs.put("currentEnvironment", "${#environment}");
+        inputs.put("validations", Map.of("validation_1", "${#validation}"));
+
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "final", null, inputs, null, null, null, environment);
+        Step step = new Step(dataEvaluator, fakeStepDefinition, Optional.of(fakeTarget), mock(StepExecutor.class), emptyList());
+
+        // When
+        step.execute(ScenarioExecution.createScenarioExecution(null), new ScenarioContextImpl());
+
+        // Then
+        StepContext context = step.stepContext();
+        assertThat(context.getEvaluatedInputs()).hasSize(2);
+        assertThat(context.getEvaluatedInputs().get("currentEnvironment")).isEqualTo("${#environment}");
+        assertThat(context.getEvaluatedInputs()).containsKeys("validations");
+        assertThat(((Map) context.getEvaluatedInputs().get("validations")).get("validation_1")).isEqualTo("${#validation}");
+
+    }
+
+
     private Status executeWithRemote(Status remoteStatus) {
 
         HttpClient mockHttpClient = mock(HttpClient.class);
