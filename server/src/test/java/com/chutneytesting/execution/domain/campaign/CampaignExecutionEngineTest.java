@@ -1,26 +1,5 @@
 package com.chutneytesting.execution.domain.campaign;
 
-import static com.chutneytesting.tools.WaitUtils.awaitDuring;
-import static java.util.Arrays.stream;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonList;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static java.util.stream.Collectors.toList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.entry;
-import static org.mockito.AdditionalMatchers.or;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.chutneytesting.design.domain.campaign.Campaign;
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
 import com.chutneytesting.design.domain.campaign.CampaignNotFoundException;
@@ -43,15 +22,6 @@ import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
 import com.chutneytesting.jira.api.ReportForJira;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.lang.reflect.Field;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicReference;
 import org.apache.groovy.util.Maps;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeAll;
@@ -63,6 +33,27 @@ import org.springframework.core.task.support.ExecutorServiceAdapter;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StopWatch;
+
+import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static com.chutneytesting.tools.WaitUtils.awaitDuring;
+import static java.util.Arrays.stream;
+import static java.util.Collections.*;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static java.util.stream.Collectors.toList;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.AdditionalMatchers.or;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 public class CampaignExecutionEngineTest {
 
@@ -108,13 +99,13 @@ public class CampaignExecutionEngineTest {
     }
 
     @Test
-    public void should_update_jira_xray(){
+    public void should_update_jira_xray() {
         // Given
         Campaign campaign = createCampaign(firstTestCase, secondTestCase);
         when(scenarioExecutionEngine.execute(any(ExecutionRequest.class))).thenReturn(mock(ScenarioExecutionReport.class));
 
         // When
-        CampaignExecutionReport campaignExecutionReport = sut.executeScenarioInCampaign(emptyList(), campaign, "user");
+        sut.executeScenarioInCampaign(emptyList(), campaign, "user");
 
         ArgumentCaptor<ReportForJira> reportForJiraCaptor = ArgumentCaptor.forClass(ReportForJira.class);
         verify(jiraXrayPlugin).updateTestExecution(eq(campaign.id), eq(firstTestCase.metadata.id), reportForJiraCaptor.capture());
@@ -399,7 +390,7 @@ public class CampaignExecutionEngineTest {
             .time(LocalDateTime.now())
             .duration(3L)
             .status(ServerReportStatus.SUCCESS)
-            .report("")
+            .report("{\"report\":{\"status\":\"SUCCESS\", \"steps\":[]}}")
             .environment("")
             .user("")
             .build();
@@ -412,7 +403,7 @@ public class CampaignExecutionEngineTest {
             .time(LocalDateTime.now())
             .duration(3L)
             .status(ServerReportStatus.FAILURE)
-            .report("")
+            .report("{\"report\":{\"status\":\"FAILURE\", \"steps\":[]}}")
             .environment("")
             .user("")
             .build();

@@ -31,7 +31,7 @@ public class JiraReportMapper {
     }
 
     private static ReportForJira.Step createStep(StepExecutionReportCore coreStep) {
-        return new ReportForJira.Step(coreStep.name, coreStep.errors, coreStep.steps.stream().map(s -> createStep(s)).collect(Collectors.toList()));
+        return new ReportForJira.Step(coreStep.name, coreStep.errors, coreStep.steps.stream().map(JiraReportMapper::createStep).collect(Collectors.toList()));
     }
 
 }
