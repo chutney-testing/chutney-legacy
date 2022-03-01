@@ -158,7 +158,7 @@ public class Step {
         state.addErrors(errors);
     }
 
-    public void failure(Exception e) {
+    public void failure(Throwable e) {
         failure(ofNullable(e.getMessage()).orElse(e.toString()));
     }
 
