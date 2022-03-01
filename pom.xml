@@ -82,7 +82,7 @@
 
         <!-- Runtime dependencies versions -->
 
-        <springboot.version>2.6.3</springboot.version>
+        <springboot.version>2.6.4</springboot.version>
         <spring.version>5.6.1</spring.version> <!-- Be careful to follow springboot version-->
         <jackson.version>2.13.1</jackson.version>
         <guava.version>31.0.1-jre</guava.version>
