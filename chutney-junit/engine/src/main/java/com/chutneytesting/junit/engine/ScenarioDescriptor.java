@@ -8,6 +8,7 @@ import com.chutneytesting.engine.api.execution.StepExecutionReportDto;
 import com.chutneytesting.junit.engine.jackson.ChutneyModule;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.function.Predicate;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
@@ -23,6 +24,7 @@ public class ScenarioDescriptor extends AbstractTestDescriptor implements Node<C
         .registerModule(new ChutneyModule())
         .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
         .configure(FAIL_ON_EMPTY_BEANS, false);
+    private static final Predicate<StepExecutionReportDto> isStepFailed = dto -> !StatusDto.SUCCESS.equals(dto.status);
 
     private final StepDefinitionDto stepDefinition;
     private StepExecutionReportDto report;
@@ -52,7 +54,7 @@ public class ScenarioDescriptor extends AbstractTestDescriptor implements Node<C
         LOGGER.info("status : {}", report.status);
         LOGGER.info(om.writerWithDefaultPrettyPrinter().writeValueAsString(report));
 
-        if (StatusDto.FAILURE.equals(report.status)) {
+        if (isStepFailed.test(report)) {
             StepExecutionReportDto failedStepReport = findFailedStep(report);
             throw new Exception(failedStepReport.name + ": " + failedStepReport.errors.stream().reduce((s, s2) -> String.join("\n", s, s2))
                 .orElse("Scenario " + stepDefinition.name + " FAILURE")
@@ -66,8 +68,8 @@ public class ScenarioDescriptor extends AbstractTestDescriptor implements Node<C
         }
 
         StepExecutionReportDto failedChild = rootReport.steps.stream()
-            .filter(r -> StatusDto.FAILURE.equals(r.status))
-            .findAny().get();
+            .filter(isStepFailed)
+            .findFirst().get();
         return findFailedStep(failedChild);
     }
 }
