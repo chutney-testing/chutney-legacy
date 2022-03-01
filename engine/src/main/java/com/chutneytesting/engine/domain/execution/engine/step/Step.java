@@ -158,10 +158,6 @@ public class Step {
         state.addErrors(errors);
     }
 
-    public void failure(Exception e ) {
-        failure(ofNullable(e.getMessage()).orElse(e.toString()));
-    }
-
     public void failure(Throwable e) {
         failure(ofNullable(e.getMessage()).orElse(e.toString()));
     }
@@ -242,11 +238,11 @@ public class Step {
     private void copyStepResultsToScenarioContext(StepContextImpl stepContext, ScenarioContext scenarioContext) {
         Map<String, Object> contextAndStepResults = stepContext.allEvaluatedVariables();
         Try.exec(() -> {
-            Map<String, Object> evaluatedOutputs = dataEvaluator.evaluateNamedDataWithContextVariables(definition.outputs, contextAndStepResults);
-            stepContext.stepOutputs.putAll(evaluatedOutputs);
-            scenarioContext.putAll(evaluatedOutputs);
-            return null;
-        })
+                Map<String, Object> evaluatedOutputs = dataEvaluator.evaluateNamedDataWithContextVariables(definition.outputs, contextAndStepResults);
+                stepContext.stepOutputs.putAll(evaluatedOutputs);
+                scenarioContext.putAll(evaluatedOutputs);
+                return null;
+            })
             .ifFailed(e -> failure("Cannot evaluate outputs."
                 + " - Exception: " + e.getClass() + " with message: \"" + e.getMessage() + "\""));
     }
@@ -254,18 +250,18 @@ public class Step {
     private void executeStepValidations(StepContextImpl stepContext) {
         Map<String, Object> contextAndStepResults = stepContext.allEvaluatedVariables();
         Try.exec(() -> {
-            Map<String, Object> evaluatedValidations = dataEvaluator.evaluateNamedDataWithContextVariables(definition.validations, contextAndStepResults);
-            evaluatedValidations.forEach((k, v) -> {
-                if (!(boolean) v) {
-                    failure("Validation [" + k + "] : KO (" + definition.validations.get(k).toString() + ")");
-                } else {
-                    state.addInformation("Validation [" + k + "] : OK");
-                }
-            });
-            return null;
-        })
-        .ifFailed(e -> failure("Step validation failed."
-            + " - Exception: " + e.getClass() + " with message: \"" + e.getMessage() + "\""));
+                Map<String, Object> evaluatedValidations = dataEvaluator.evaluateNamedDataWithContextVariables(definition.validations, contextAndStepResults);
+                evaluatedValidations.forEach((k, v) -> {
+                    if (!(boolean) v) {
+                        failure("Validation [" + k + "] : KO (" + definition.validations.get(k).toString() + ")");
+                    } else {
+                        state.addInformation("Validation [" + k + "] : OK");
+                    }
+                });
+                return null;
+            })
+            .ifFailed(e -> failure("Step validation failed."
+                + " - Exception: " + e.getClass() + " with message: \"" + e.getMessage() + "\""));
     }
 
     public void addStepExecution(Step step) {
