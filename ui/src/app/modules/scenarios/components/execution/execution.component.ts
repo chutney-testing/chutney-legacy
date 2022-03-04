@@ -6,7 +6,7 @@ import { debounceTime, delay, tap } from 'rxjs/internal/operators';
 
 import { EventManagerService } from '@shared/event-manager.service';
 
-import { Execution, GwtTestCase, ScenarioComponent, ScenarioExecutionReport, TestCase, Authorization } from '@model';
+import { Execution, GwtTestCase, ScenarioComponent, ScenarioExecutionReport, StepExecutionReport, TestCase, Authorization } from '@model';
 import { ComponentService, ScenarioExecutionService, ScenarioService } from '@core/services';
 
 @Component({
@@ -221,7 +221,11 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
             .pipe(debounceTime(500))
             .subscribe((scenarioExecutionReport: ScenarioExecutionReport) => {
                 this.toggleScenarioDetails = true;
-                this.scenarioExecutionReport = scenarioExecutionReport;
+                if (this.scenarioExecutionReport) {
+                    this.updateStepExecutionReport(this.scenarioExecutionReport.report, scenarioExecutionReport.report, []);
+                } else {
+                    this.scenarioExecutionReport = scenarioExecutionReport;
+                }
             }, (error) => {
                 if (error.status) {
                     this.executionError = error.status + ' ' + error.statusText + ' ' + error._body;
@@ -239,6 +243,26 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     private unsubscribeScenarioExecutionAsyncSubscription() {
         if (this.scenarioExecutionAsyncSubscription) {
             this.scenarioExecutionAsyncSubscription.unsubscribe();
+        }
+    }
+
+    private updateStepExecutionReport(oldStepExecutionReport: StepExecutionReport, newStepExecutionReport: StepExecutionReport, depths: Array<number>) {
+        if (oldStepExecutionReport.status != newStepExecutionReport.status) {
+            if (depths.length == 0) {
+                this.scenarioExecutionReport.report = newStepExecutionReport;
+            } else if (depths.length == 1) {
+                this.scenarioExecutionReport.report.steps[depths[0]] = newStepExecutionReport;
+            } else {
+                let stepReport = this.scenarioExecutionReport.report.steps[depths[0]];
+                for (var i = 1; i < depths.length-1; i++) {
+                    stepReport = stepReport.steps[depths[i]];
+                }
+                stepReport.steps[depths[depths.length-1]] = newStepExecutionReport;
+            }
+        } else {
+            for (var i = 0; i < oldStepExecutionReport.steps.length; i++) {
+                this.updateStepExecutionReport(oldStepExecutionReport.steps[i], newStepExecutionReport.steps[i], depths.concat(i));
+            }
         }
     }
 }
