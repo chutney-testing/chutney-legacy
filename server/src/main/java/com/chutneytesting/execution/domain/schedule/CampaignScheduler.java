@@ -39,7 +39,7 @@ public class CampaignScheduler {
         this.executor = executor;
     }
 
-    @Async
+    @Async("scheduleCampaignsExecutor")
     public void executeScheduledCampaigns() {
         try {
             executor.invokeAll(
