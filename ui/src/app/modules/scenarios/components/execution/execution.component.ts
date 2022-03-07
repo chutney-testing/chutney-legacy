@@ -247,20 +247,20 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     private updateStepExecutionReport(oldStepExecutionReport: StepExecutionReport, newStepExecutionReport: StepExecutionReport, depths: Array<number>) {
-        if (oldStepExecutionReport.status != newStepExecutionReport.status) {
-            if (depths.length == 0) {
+        if (oldStepExecutionReport.status !== newStepExecutionReport.status) {
+            if (depths.length === 0) {
                 this.scenarioExecutionReport.report = newStepExecutionReport;
-            } else if (depths.length == 1) {
+            } else if (depths.length === 1) {
                 this.scenarioExecutionReport.report.steps[depths[0]] = newStepExecutionReport;
             } else {
                 let stepReport = this.scenarioExecutionReport.report.steps[depths[0]];
-                for (var i = 1; i < depths.length-1; i++) {
+                for (let i = 1; i < depths.length-1; i++) {
                     stepReport = stepReport.steps[depths[i]];
                 }
                 stepReport.steps[depths[depths.length-1]] = newStepExecutionReport;
             }
         } else {
-            for (var i = 0; i < oldStepExecutionReport.steps.length; i++) {
+            for (let i = 0; i < oldStepExecutionReport.steps.length; i++) {
                 this.updateStepExecutionReport(oldStepExecutionReport.steps[i], newStepExecutionReport.steps[i], depths.concat(i));
             }
         }
