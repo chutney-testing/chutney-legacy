@@ -6,7 +6,7 @@ import { debounceTime, delay, tap } from 'rxjs/internal/operators';
 
 import { EventManagerService } from '@shared/event-manager.service';
 
-import { Execution, GwtTestCase, ScenarioComponent, ScenarioExecutionReport, TestCase, Authorization } from '@model';
+import { Execution, GwtTestCase, ScenarioComponent, ScenarioExecutionReport, StepExecutionReport, TestCase, Authorization } from '@model';
 import { ComponentService, ScenarioExecutionService, ScenarioService } from '@core/services';
 
 @Component({
@@ -221,7 +221,12 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
             .pipe(debounceTime(500))
             .subscribe((scenarioExecutionReport: ScenarioExecutionReport) => {
                 this.toggleScenarioDetails = true;
-                this.scenarioExecutionReport = scenarioExecutionReport;
+                if (this.scenarioExecutionReport) {
+                    this.scenarioExecutionReport.report.duration = scenarioExecutionReport.report.duration;
+                    this.updateStepExecutionReport(this.scenarioExecutionReport.report, scenarioExecutionReport.report, []);
+                } else {
+                    this.scenarioExecutionReport = scenarioExecutionReport;
+                }
             }, (error) => {
                 if (error.status) {
                     this.executionError = error.status + ' ' + error.statusText + ' ' + error._body;
@@ -239,6 +244,50 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     private unsubscribeScenarioExecutionAsyncSubscription() {
         if (this.scenarioExecutionAsyncSubscription) {
             this.scenarioExecutionAsyncSubscription.unsubscribe();
+        }
+    }
+
+    private updateStepExecutionReport(oldStepExecutionReport: StepExecutionReport, newStepExecutionReport: StepExecutionReport, depths: Array<number>) {
+        if (oldStepExecutionReport.status !== newStepExecutionReport.status) {
+            if (depths.length === 0) {
+                this.scenarioExecutionReport.report = newStepExecutionReport;
+            } else if (depths.length === 1) {
+                this.updateReport(this.scenarioExecutionReport.report.steps[depths[0]], newStepExecutionReport);
+            } else {
+                let stepReport = this.scenarioExecutionReport.report.steps[depths[0]];
+                for (let i = 1; i < depths.length-1; i++) {
+                    stepReport = stepReport.steps[depths[i]];
+                }
+                this.updateReport(stepReport.steps[depths[depths.length-1]], newStepExecutionReport);
+            }
+        } else {
+            for (let i = 0; i < oldStepExecutionReport.steps.length; i++) {
+                this.updateStepExecutionReport(oldStepExecutionReport.steps[i], newStepExecutionReport.steps[i], depths.concat(i));
+            }
+
+            if (newStepExecutionReport.steps.length > oldStepExecutionReport.steps.length) {
+                for (let i=oldStepExecutionReport.steps.length; i < newStepExecutionReport.steps.length; i++) {
+                    oldStepExecutionReport.steps.push(newStepExecutionReport.steps[i]);
+                }
+            }
+        }
+    }
+
+    private updateReport(oldReport: StepExecutionReport, report: StepExecutionReport) {
+        oldReport.name = report.name;
+        oldReport.duration = report.duration;
+        oldReport.status = report.status;
+        oldReport.startDate = report.startDate;
+        oldReport.errors = report.errors;
+        oldReport.type = report.type;
+        oldReport.strategy = report.strategy;
+        oldReport.targetName = report.targetName;
+        oldReport.targetUrl = report.targetUrl;
+        oldReport.evaluatedInputs = report.evaluatedInputs;
+        oldReport.stepOutputs = report.stepOutputs;
+
+        for (let i=0; i < oldReport.steps.length; i++) {
+            this.updateReport(oldReport.steps[i], report.steps[i]);
         }
     }
 }

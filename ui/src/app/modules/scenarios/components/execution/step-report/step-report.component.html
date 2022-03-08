@@ -63,7 +63,7 @@
                     </div>
                 </div>
 
-                <div *ngIf="step.steps && step.steps.length > 0" class="row" [ngbCollapse]="stepsCollapsed">
+                <div *ngIf="!stepsCollapsed && step.steps && step.steps.length > 0" class="row" [ngbCollapse]="stepsCollapsed">
                     <div class="col">
                         <chutney-scenario-step-report *ngFor="let s of step.steps; let i = index" [step]="s" [id]="id + '_' + i"></chutney-scenario-step-report>
                     </div>

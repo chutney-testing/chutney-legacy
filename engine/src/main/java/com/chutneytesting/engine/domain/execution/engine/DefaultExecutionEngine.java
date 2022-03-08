@@ -72,7 +72,7 @@ public class DefaultExecutionEngine implements ExecutionEngine {
                     final StepExecutionStrategy strategy = stepExecutionStrategies.buildStrategyFrom(rootStep.get());
                     strategy.execute(execution, rootStep.get(), scenarioContext, stepExecutionStrategies);
                 }
-                catch (RuntimeException | NoClassDefFoundError e ) {
+                catch (RuntimeException | LinkageError e ) {
                     // Do not remove this fault barrier, the engine must not be stopped by external events
                     // (such as exceptions not raised by the engine)
                     rootStep.get().failure(e);

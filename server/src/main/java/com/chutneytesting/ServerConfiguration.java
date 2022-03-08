@@ -44,6 +44,7 @@ import org.springframework.boot.autoconfigure.jms.activemq.ActiveMQAutoConfigura
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.core.task.support.ExecutorServiceAdapter;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
@@ -100,6 +101,11 @@ public class ServerConfiguration implements AsyncConfigurer {
         return (Throwable ex, Method method, Object... params) -> {
             LOGGER.error("Uncaught exception in async execution", ex);
         };
+    }
+
+    @Bean
+    public TaskExecutor scheduleCampaignsExecutor() {
+        return new SimpleAsyncTaskExecutor("schedule-campaigns-executor");
     }
 
     @Bean

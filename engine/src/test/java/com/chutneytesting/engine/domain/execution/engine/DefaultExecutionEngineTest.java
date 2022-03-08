@@ -33,7 +33,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -52,7 +51,7 @@ public class DefaultExecutionEngineTest {
 
     @ParameterizedTest(name = "{index}: {0}")
     @MethodSource("throwable_caught_by_fault_barrier")
-    public void no_class_def_found_error_and_runtime_exception_should_be_catch_by_fault_barrier(Supplier<Throwable> throwable) {
+    public void linkage_error_and_runtime_exception_should_be_catch_by_fault_barrier(Supplier<Throwable> throwable) {
         //Given
         StepExecutionStrategy strategy = mock(StepExecutionStrategy.class);
         when(stepExecutionStrategies.buildStrategyFrom(any())).thenReturn(strategy);
@@ -113,7 +112,7 @@ public class DefaultExecutionEngineTest {
 
     @ParameterizedTest(name = "{index}: {0}")
     @MethodSource("throwable_caught_by_fault_barrier")
-    public void should_execute_finally_actions_on_runtime_exception_or_no_class_def_found_error(Supplier<Throwable> throwable) {
+    public void should_execute_finally_actions_on_runtime_exception_or_linkage_error(Supplier<Throwable> throwable) {
         //Given
         StepExecutionStrategy strategy = mock(StepExecutionStrategy.class);
         when(stepExecutionStrategies.buildStrategyFrom(any())).thenReturn(strategy).thenReturn(DefaultStepExecutionStrategy.instance);
@@ -231,10 +230,11 @@ public class DefaultExecutionEngineTest {
         assertThat(rootStep.subSteps().get(0).definition().steps.get(0).name).isEqualTo(finallyAction.name());
     }
 
-    private static Stream<Arguments> throwable_caught_by_fault_barrier () {
-       return Stream.of(
+    private static Stream<Arguments> throwable_caught_by_fault_barrier() {
+        return Stream.of(
             Arguments.of(Named.of("RuntimeException", (Supplier<Throwable>) () -> new RuntimeException(throwableMessage))),
-            Arguments.of(Named.of("NoClassDefFoundError", (Supplier<Throwable>) () -> new NoClassDefFoundError(throwableMessage)))
-       );
+            Arguments.of(Named.of("NoClassDefFoundError", (Supplier<Throwable>) () -> new NoClassDefFoundError(throwableMessage))),
+            Arguments.of(Named.of("NoSuchMethodError", (Supplier<Throwable>) () -> new NoSuchMethodError(throwableMessage)))
+        );
     }
 }
