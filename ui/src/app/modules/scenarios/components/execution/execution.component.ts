@@ -264,6 +264,12 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
             for (let i = 0; i < oldStepExecutionReport.steps.length; i++) {
                 this.updateStepExecutionReport(oldStepExecutionReport.steps[i], newStepExecutionReport.steps[i], depths.concat(i));
             }
+
+            if (newStepExecutionReport.steps.length > oldStepExecutionReport.steps.length) {
+                for (let i=oldStepExecutionReport.steps.length; i < newStepExecutionReport.steps.length; i++) {
+                    oldStepExecutionReport.steps.push(newStepExecutionReport.steps[i]);
+                }
+            }
         }
     }
 
