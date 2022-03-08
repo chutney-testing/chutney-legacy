@@ -2,6 +2,7 @@ package com.chutneytesting.admin.infra.storage;
 
 import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
+import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.admin.domain.Backup;
 import com.chutneytesting.admin.domain.BackupNotFoundException;
@@ -32,9 +33,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -207,11 +210,16 @@ public class FileSystemBackupRepository implements BackupRepository {
     }
 
     private void backupJira(OutputStream outputStream) {
-        try (ZipOutputStream zipOutPut = new ZipOutputStream(new BufferedOutputStream(outputStream, 4096))) {
-            Path folderPath = jiraRepository.getFolderPath();
-            ZipUtils.compressDirectoryToZipfile(folderPath.getParent(), folderPath.getFileName(), zipOutPut);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+        Optional<Path> folderPath = ofNullable(jiraRepository.getFolderPath());
+        if (folderPath.isPresent()) {
+            Path fp = folderPath.get();
+            if (StringUtils.isNotBlank(fp.toString())) {
+                try (ZipOutputStream zipOutPut = new ZipOutputStream(new BufferedOutputStream(outputStream, 4096))) {
+                    ZipUtils.compressDirectoryToZipfile(fp.getParent(), fp.getFileName(), zipOutPut);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            }
         }
     }
 }
