@@ -19,6 +19,10 @@
         </dependency>
         <dependency>
             <groupId>com.chutneytesting</groupId>
+            <artifactId>task-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.chutneytesting</groupId>
             <artifactId>environment</artifactId>
         </dependency>
         <dependency>
@@ -206,6 +210,7 @@
         <dependency>
             <groupId>com.chutneytesting</groupId>
             <artifactId>chutney-junit-engine</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.chutneytesting</groupId>
@@ -264,16 +269,6 @@
         <dependency>
             <groupId>com.mockrunner</groupId>
             <artifactId>mockrunner-jms</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
