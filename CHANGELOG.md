@@ -1,5 +1,39 @@
 # Changelog
 
+## [1.4.6](https://github.com/chutney-testing/chutney/tree/1.4.6) (2022-03-11)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.4.5...1.4.6)
+
+**Fixed bugs:**
+
+- 🐛 | In chutney junit verify final status of an scenario [\#683](https://github.com/chutney-testing/chutney/issues/683)
+- 🐛 | Final task with validations on outputs doesn't work [\#678](https://github.com/chutney-testing/chutney/issues/678)
+- 🐛 | Do not refresh all the page during an execution [\#633](https://github.com/chutney-testing/chutney/issues/633)
+
+**Merged pull requests:**
+
+- chore\(\): Fix kafka test dependencies. Put chutney-junit-engine in test scope [\#697](https://github.com/chutney-testing/chutney/pull/697) ([boddissattva](https://github.com/boddissattva))
+- fix\(ui\): scenario execution - Refresh only report's parts that have changed [\#696](https://github.com/chutney-testing/chutney/pull/696) ([boddissattva](https://github.com/boddissattva))
+- chore\(\): clean tests [\#695](https://github.com/chutney-testing/chutney/pull/695) ([boddissattva](https://github.com/boddissattva))
+- chore\(deps-dev\): bump assertj-core from 3.21.0 to 3.22.0 [\#694](https://github.com/chutney-testing/chutney/pull/694) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump orientdb.version from 3.2.4 to 3.2.5 [\#693](https://github.com/chutney-testing/chutney/pull/693) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump maven-compiler-plugin from 3.8.1 to 3.10.0 [\#692](https://github.com/chutney-testing/chutney/pull/692) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump json-smart from 2.4.2 to 2.4.8 [\#691](https://github.com/chutney-testing/chutney/pull/691) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump tinyradius from 1.1.0 to 1.1.3 [\#690](https://github.com/chutney-testing/chutney/pull/690) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump postgresql from 42.3.1 to 42.3.3 [\#689](https://github.com/chutney-testing/chutney/pull/689) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump picocli from 4.6.2 to 4.6.3 [\#688](https://github.com/chutney-testing/chutney/pull/688) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump sl4j.api.version from 1.7.35 to 1.7.36 [\#687](https://github.com/chutney-testing/chutney/pull/687) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps-dev\): bump activemq.version from 5.16.3 to 5.16.4 [\#686](https://github.com/chutney-testing/chutney/pull/686) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump springboot.version from 2.6.3 to 2.6.4 [\#685](https://github.com/chutney-testing/chutney/pull/685) ([dependabot[bot]](https://github.com/apps/dependabot))
+- fix\(683\): check if report status is not SUCCESS instead of just FAILURE [\#684](https://github.com/chutney-testing/chutney/pull/684) ([KarimGl](https://github.com/KarimGl))
+- fix mongodb and kafka versions after springboot upgrade [\#682](https://github.com/chutney-testing/chutney/pull/682) ([KarimGl](https://github.com/KarimGl))
+- bugfix\(engine+server\): fix validations on registred final task [\#681](https://github.com/chutney-testing/chutney/pull/681) ([rbenyoussef](https://github.com/rbenyoussef))
+- feat\(spring\): upgrade spring boot version [\#680](https://github.com/chutney-testing/chutney/pull/680) ([KarimGl](https://github.com/KarimGl))
+- feat/json lenient compare & assert [\#677](https://github.com/chutney-testing/chutney/pull/677) ([boddissattva](https://github.com/boddissattva))
+- feat\(docker\): add docker packaging [\#676](https://github.com/chutney-testing/chutney/pull/676) ([KarimGl](https://github.com/KarimGl))
+- feat\(fun\): Generate a file with random content [\#675](https://github.com/chutney-testing/chutney/pull/675) ([bessonm](https://github.com/bessonm))
+
+
 ## [1.4.5](https://github.com/chutney-testing/chutney/tree/1.4.5) (2022-02-08)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.4.4...1.4.5)
