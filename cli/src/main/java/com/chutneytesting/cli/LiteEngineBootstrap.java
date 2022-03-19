@@ -11,6 +11,8 @@ import com.chutneytesting.engine.api.execution.TestEngine;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.google.common.base.Strings;
@@ -18,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
-import org.hjson.JsonValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
@@ -33,7 +34,8 @@ import picocli.CommandLine.Parameters;
 public class LiteEngineBootstrap implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LiteEngineBootstrap.class);
-    private static final ObjectMapper objectMapper = objectMapper();
+    private static final ObjectMapper objectMapper = objectMapper(new ObjectMapper());
+    private static final ObjectMapper yamlMapper = objectMapper(new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)));
 
     @Parameters(arity = "1..*", paramLabel = "FILE", description = "Scenario(s) to process.")
     private File[] scenarios;
@@ -59,8 +61,7 @@ public class LiteEngineBootstrap implements Runnable {
     private ImmutableScenarioContent getScenario(File filePath) {
         try {
             byte[] bytes = Files.readAllBytes(filePath.toPath());
-            String jsonContent = JsonValue.readHjson(new String(bytes)).toString();
-            return objectMapper.readValue(jsonContent, ImmutableScenarioContent.class);
+            return yamlMapper.readValue(new String(bytes), ImmutableScenarioContent.class);
         } catch (IOException e) {
             throw new CommandLine.ParameterException(new CommandLine(this), "Cannot read file at path [" + filePath.toPath() + "]");
         }
@@ -85,8 +86,7 @@ public class LiteEngineBootstrap implements Runnable {
         s.steps.stream().forEach(sub -> printStep(sub, indent + 1));
     }
 
-    private static ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
+    private static ObjectMapper objectMapper(ObjectMapper objectMapper) {
         objectMapper.registerModule(new Jdk8Module());
         objectMapper.registerModule(new GuavaModule());
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);

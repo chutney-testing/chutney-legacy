@@ -38,23 +38,15 @@
 Global variable can be user in your scenario or components with **global_variable_name**.
 You can defined variable in json in this file.
 For example :
-{{"{
-        key1: value1,
-        key2: {
-                subKey1: subValue1,
-                subKey2: subValue2
-        },
-        key3: [
-                {
-                alias: nico,
-                test:value
-                },
-                {
-                test:value
-                }
-        ]
-}"}}
-will generate keys :
+            {{"key1: value1,\n" +
+        "  key2:\n" +
+        "   subKey1: subValue1,\n" +
+        "   subKey2: subValue2\n" +
+        "  key3:\n" +
+        "   - alias: nico,\n" +
+        "     test: value\n" +
+        "   - test: value"}}
+            will generate keys :
         - subKey1
         - key2.subKey1
         - key2.subKey2

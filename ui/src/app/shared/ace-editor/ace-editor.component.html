@@ -1,14 +1,18 @@
 <div *ngIf="showConfiguration" class="configuration">
     <span class="text-danger"></span>
     <div class="row align-items-center justify-content-end small mr-3">
-        <label for="edition" class="form-control-label m-0 mr-2">{{ 'scenarios.edition.form.content.editor.mode' | translate }}</label>
-        <select class="form-control ace-combo" id="edition" name="editorMode" (change)="changingMode($event)">
-            <option *ngFor="let mode of editorModes" [value]="mode" [selected]="mode === editorMode">{{mode}}</option>
+        <label for="edition"
+               class="form-control-label m-0 mr-2">{{ 'scenarios.edition.form.content.editor.mode' | translate }}</label>
+        <select class="form-control ace-combo" id="edition" name="editorMode"
+                (change)="changingMode($event.target.value)">
+            <option *ngFor="let mode of modes" [value]="mode" [selected]="mode === currentMode">{{mode}}</option>
         </select>
-        <label for="theme" class="form-control-label m-0 ml-2 mr-2">{{ 'scenarios.edition.form.content.editor.theme' | translate }}</label>
-        <select class="form-control ace-combo" id="theme" (change)="changingTheme($event)" name="editorTheme">
-            <option *ngFor="let theme of editorThemes" [value]="theme"
-                    [selected]="theme === editorTheme">{{theme}}</option>
+        <label for="theme"
+               class="form-control-label m-0 ml-2 mr-2">{{ 'scenarios.edition.form.content.editor.theme' | translate }}</label>
+        <select class="form-control ace-combo" id="theme" (change)="changingTheme($event.target.value)"
+                name="editorTheme">
+            <option *ngFor="let theme of themes" [value]="theme"
+                    [selected]="theme === currentTheme">{{theme}}</option>
         </select>
     </div>
 </div>
@@ -17,6 +21,7 @@
         #editor
         [durationBeforeCallback]="50"
         (textChanged)="onContentChange($event)"
+        [mode]="'yaml'"
         class="w100 h100">
     </ace-editor>
 </div>

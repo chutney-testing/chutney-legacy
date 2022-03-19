@@ -4,8 +4,6 @@ import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.design.infra.storage.globalvar.FileGlobalVarRepository;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Set;
-import org.hjson.JsonValue;
-import org.hjson.Stringify;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -38,7 +36,7 @@ public class GlobalVarController {
     @PostMapping(path = "/{fileName}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public void save(@PathVariable("fileName") String fileName, @RequestBody TextDto textContent) {
         try {
-            globalVarRepository.saveFile(fileName, JsonValue.readHjson(textContent.getMessage()).toString(Stringify.HJSON));
+            globalVarRepository.saveFile(fileName, textContent.getMessage());
         } catch (Exception e) {
             throw new RuntimeException("Not valid hjson", e);
         }

@@ -12,14 +12,10 @@ import { MomentModule } from 'angular2-moment';
 import { AceEditorModule } from 'ng2-ace-editor';
 import { AlertService } from './alert.service';
 import { ErrorInterceptor } from './error-interceptor.service';
-import {
-    ComponentCardComponent,
-    EnvironmentComboComponent,
-    ExecutionBadgeComponent
-} from './components';
-import { ImplementationHostDirective, HasAuthorizationDirective } from './directives';
+import { ComponentCardComponent, EnvironmentComboComponent, ExecutionBadgeComponent } from './components';
+import { HasAuthorizationDirective, ImplementationHostDirective } from './directives';
 import { EventManagerService } from './event-manager.service';
-import { HjsonParserService } from './hjson-parser/hjson-parser.service';
+import { YamlParserService } from './hjson-parser/yaml-parser.service';
 import {
     ComponentSearchPipe,
     DataSetSearchPipe,
@@ -108,7 +104,7 @@ import { StateService } from './state/state.service';
         },
         AlertService,
         EventManagerService,
-        HjsonParserService,
+        YamlParserService,
         StateService]
 })
 export class SharedModule {

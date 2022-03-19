@@ -1,0 +1,9 @@
+givens:
+    -   description: step description
+        implementation:
+            type: success
+            inputs: { }
+            outputs: { }
+            validations: { }
+when: { }
+thens: [ ]

@@ -1,6 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="core_integration_tests" type="JUnit" factoryName="JUnit">
     <module name="server" />
+    <shortenClasspath name="ARGS_FILE" />
     <useClassPathOnly />
     <option name="PACKAGE_NAME" value="blackbox" />
     <option name="MAIN_CLASS_NAME" value="" />

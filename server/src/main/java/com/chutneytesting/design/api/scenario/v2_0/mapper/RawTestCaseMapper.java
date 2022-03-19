@@ -1,18 +1,15 @@
 package com.chutneytesting.design.api.scenario.v2_0.mapper;
 
-import static org.hjson.JsonValue.readHjson;
 
-import com.chutneytesting.tools.ui.KeyValue;
 import com.chutneytesting.design.api.scenario.v2_0.dto.ImmutableRawTestCaseDto;
 import com.chutneytesting.design.api.scenario.v2_0.dto.RawTestCaseDto;
-import com.chutneytesting.design.domain.scenario.ScenarioNotParsableException;
 import com.chutneytesting.design.domain.scenario.TestCase;
 import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.gwt.GwtScenario;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import com.chutneytesting.design.domain.scenario.raw.RawTestCase;
 import com.chutneytesting.execution.domain.compiler.GwtScenarioMarshaller;
-import org.hjson.Stringify;
+import com.chutneytesting.tools.ui.KeyValue;
 
 public class RawTestCaseMapper {
 
@@ -20,8 +17,7 @@ public class RawTestCaseMapper {
 
     // RawTestCase -> GwtTestCase
     public static GwtTestCase fromRaw(RawTestCase testCase) {
-        String jsonScenario = formatContentToJson(testCase.scenario);
-        GwtScenario gwtScenario = marshaller.deserialize(testCase.metadata().title(), testCase.metadata().description(), jsonScenario);
+        GwtScenario gwtScenario = marshaller.deserializeFromYaml(testCase.metadata().title(), testCase.metadata().description(), testCase.scenario);
         return GwtTestCase.builder()
             .withMetadata(TestCaseMetadataImpl.builder()
                 .withId(testCase.metadata().id())
@@ -41,8 +37,7 @@ public class RawTestCaseMapper {
 
     // DTO -> RawTestCase
     public static GwtTestCase fromDto(RawTestCaseDto dto) {
-        String jsonScenario = formatContentToJson(dto.scenario());
-        GwtScenario gwtScenario = marshaller.deserialize(dto.title(), dto.description().orElse(""), jsonScenario);
+        GwtScenario gwtScenario = marshaller.deserializeFromYaml(dto.title(), dto.description().orElse(""), dto.scenario());
         return GwtTestCase.builder()
             .withMetadata(TestCaseMetadataImpl.builder()
                 .withId(dto.id().orElse(null))
@@ -58,15 +53,6 @@ public class RawTestCaseMapper {
             .withScenario(gwtScenario)
             .withExecutionParameters(KeyValue.toMap(dto.parameters()))
             .build();
-    }
-
-    private static String formatContentToJson(String content) {
-        try {
-            return readHjson(content).toString();
-        }
-        catch (Exception e) {
-            throw new ScenarioNotParsableException("Malformed json or hjson format. ", e);
-        }
     }
 
     public static RawTestCaseDto toDto(TestCase testCase) {
@@ -87,7 +73,7 @@ public class RawTestCaseMapper {
             .id(testCase.metadata().id())
             .title(testCase.metadata().title())
             .description(testCase.metadata().description())
-            .scenario(readHjson(testCase.scenario).toString(Stringify.HJSON))
+            .scenario(testCase.scenario)
             .tags(testCase.metadata().tags())
             .creationDate(testCase.metadata().creationDate())
             .parameters(KeyValue.fromMap(testCase.executionParameters()))
@@ -102,7 +88,7 @@ public class RawTestCaseMapper {
             .id(testCase.metadata().id())
             .title(testCase.metadata().title())
             .description(testCase.metadata().description())
-            .scenario(readHjson(marshaller.serialize(testCase.scenario)).toString(Stringify.HJSON))
+            .scenario(marshaller.serializeToYaml(testCase.scenario))
             .tags(testCase.metadata().tags())
             .creationDate(testCase.metadata().creationDate())
             .parameters(KeyValue.fromMap(testCase.executionParameters))

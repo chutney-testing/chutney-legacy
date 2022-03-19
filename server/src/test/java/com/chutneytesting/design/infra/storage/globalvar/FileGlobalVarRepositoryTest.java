@@ -43,25 +43,15 @@ public class FileGlobalVarRepositoryTest {
             "%sNow you are half full.";
         String jsonPathValue = "//*[text()=\"${#spelRef}\"]//preceding::td[1]";
 
-        sut.saveFile(FILE_NAME, "{\n" +
-            "    key1: " + urlValue + "\n" +
-            "    key2: {\n" +
-            "        subKey1:\n" +
-            "          '''\n" +
-            String.format(mulitlineValuePattern, "          ", "          ", "          ") + "\n" +
-            "          '''\n" +
-            "        subKey2: \"subValue2\"\n" +
-            "    },\n" +
-            "    key3: [\n" +
-            "        {\n" +
-            "            test1: value\n" +
-            "            test2: \"value\"\n" +
-            "        },\n" +
-            "        {\n" +
-            "            test: '''" + jsonPathValue + "'''\n" +
-            "        }\n" +
-            "    ]\n" +
-            "}");
+        sut.saveFile(FILE_NAME, "key1: " + urlValue + "\n" +
+            "key2:\n" +
+            "  subKey1: '''" + String.format(mulitlineValuePattern, "          ", "          ", "          ") + "\n" +
+            "  subKey2: subValue2\n" +
+            "key3:\n" +
+            "- test1: value\n" +
+            "  test2: value\n" +
+            "- test: '''" + jsonPathValue + "'''" +
+            "");
 
         // W
         Map<String, String> result = sut.getFlatMap();
@@ -81,37 +71,21 @@ public class FileGlobalVarRepositoryTest {
     public void should_flat_keys_from_all_files() {
         // G
         sut = new FileGlobalVarRepository(STORE_PATH);
-        sut.saveFile(FILE_NAME, "{" +
-            "    key1: \"value1\"," +
-            "    key2: {" +
-            "        subKey: \"subValue\"" +
-            "    }," +
-            "    key3: [" +
-            "        {" +
-            "            test1: \"value\"," +
-            "            test2:\"value\"" +
-            "        }," +
-            "        {" +
-            "            test:\"value\"" +
-            "        }" +
-            "    ]" +
-            "}");
+        sut.saveFile(FILE_NAME, "key1: value1\n" +
+            "key2:\n" +
+            "  subKey: subValue\n" +
+            "key3:\n" +
+            "- test1: value\n" +
+            "  test2: value\n" +
+            "- test: value");
 
-        sut.saveFile("another_file", "{" +
-            "    keyA: \"valueA\"," +
-            "    keyB: {" +
-            "        subKey: \"subValue\"" +
-            "    }," +
-            "    keyC: [" +
-            "        {" +
-            "            test1: \"value\"," +
-            "            test2:\"value\"" +
-            "        }," +
-            "        {" +
-            "            test:\"value\"" +
-            "        }" +
-            "    ]" +
-            "}");
+        sut.saveFile("another_file", "keyA: valueA,\n" +
+            "keyB:\n" +
+            "  subKey: subValue\n" +
+            "keyC:\n" +
+            "- test1: value,\n" +
+            "  test2: value\n" +
+            "- test: value");
 
         // W
         Map<String, String> result = sut.getFlatMap();
@@ -135,13 +109,14 @@ public class FileGlobalVarRepositoryTest {
     public void aliasShouldOverrideKeyPath() {
         // G
         sut = new FileGlobalVarRepository(STORE_PATH);
-        sut.saveFile(FILE_NAME, "{menu: {" +
-            "    items: [" +
-            "        {id: \"Open\"}," +
-            "        {id: \"OpenNew\", label: \"Open New\"}," +
-            "        {alias: \"close\", id: \"Close\", label: \"Close Now\"}" +
-            "    ]" +
-            "}}");
+        sut.saveFile(FILE_NAME, "menu:\n" +
+            "  items:\n" +
+            "  - id: Open\n" +
+            "  - id: OpenNew\n" +
+            "    label: Open New\n" +
+            "  - alias: close\n" +
+            "    id: Close\n" +
+            "    label: Close Now");
 
         // W
         Map<String, String> result = sut.getFlatMap();
@@ -164,8 +139,8 @@ public class FileGlobalVarRepositoryTest {
         Files.deleteIfExists(backup);
 
         sut = new FileGlobalVarRepository(STORE_PATH);
-        sut.saveFile("a_file", "{\"keyA\": \"valueA\"}");
-        sut.saveFile("another_file", "{\"keyB\": \"valueB\"}");
+        sut.saveFile("a_file", "keyA: valueA");
+        sut.saveFile("another_file", "keyB: valueB");
 
         try (OutputStream outputStream = Files.newOutputStream(Files.createFile(backup))) {
             // When
@@ -176,8 +151,8 @@ public class FileGlobalVarRepositoryTest {
         ZipFile zipFile = new ZipFile(backup.toString());
         List<String> entriesNames = zipFile.stream().map(ZipEntry::getName).collect(Collectors.toList());
         assertThat(entriesNames).containsExactlyInAnyOrder(
-            ROOT_DIRECTORY_NAME.resolve("a_file.hjson").toString(),
-            ROOT_DIRECTORY_NAME.resolve("another_file.hjson").toString()
+            ROOT_DIRECTORY_NAME.resolve("a_file.yml").toString(),
+            ROOT_DIRECTORY_NAME.resolve("another_file.yml").toString()
         );
     }
 }

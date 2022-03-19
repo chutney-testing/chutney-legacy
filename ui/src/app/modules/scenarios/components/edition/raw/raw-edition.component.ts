@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { EventManagerService } from '@shared/event-manager.service';
 import { Subscription } from 'rxjs';
 import { TestCase } from '@model';
-import { HjsonParserService } from '@shared/hjson-parser/hjson-parser.service';
+import { YamlParserService } from '@shared/hjson-parser/yaml-parser.service';
 import { ScenarioService } from '@core/services';
 import { CanDeactivatePage } from '@core/guards';
 import { JiraPluginService } from '@core/services/jira-plugin.service';
@@ -23,34 +23,11 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
     modifiedContent = '';
     pluginsForm: FormGroup;
     saveErrorMessage: string;
-    defaultContent = '{\n' +
-        '  givens:\n' +
-        '  [\n' +
-        '    {\n' +
-        '      description: step description\n' +
-        '      implementation:\n' +
-        '      {\n' +
-        '        type: success\n' +
-        '        inputs:\n' +
-        '        {\n' +
-        '        }\n' +
-        '        outputs:\n' +
-        '        {\n' +
-        '        }\n' +
-        '        validations:\n' +
-        '        {\n' +
-        '        }\n' +
-        '      }\n' +
-        '    }\n' +
-        '  ]\n' +
-        '  when: {}\n' +
-        '  thens: []\n' +
-        '}';
     private routeParamsSubscription: Subscription;
 
     constructor(private eventManager: EventManagerService,
                 private formBuilder: FormBuilder,
-                private hjsonParser: HjsonParserService,
+                private yamlParserService: YamlParserService,
                 private jiraLinkService: JiraPluginService,
                 private route: ActivatedRoute,
                 private router: Router,
@@ -67,11 +44,7 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
     ngOnInit() {
         this.routeParamsSubscription = this.route.params.subscribe((params) => {
             const duplicate = this.route.snapshot.queryParamMap.get('duplicate');
-            if (duplicate) {
-                this.load(params['id'], true);
-            } else {
-                this.load(params['id'], false);
-            }
+            this.load(params['id'], !!duplicate);
         });
     }
 
@@ -84,7 +57,7 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
     }
 
     load(id, duplicate: boolean) {
-        if (id != null) {
+        if (id) {
             this.scenarioService.findRawTestCase(id).subscribe(
                 (rawScenario) => {
                     this.testCase = rawScenario;
@@ -108,18 +81,17 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
             );
             this.loadJiraLink(id);
         } else {
-            this.testCase.title = 'scenario title';
-            this.testCase.description = 'scenario description';
-            this.testCase.content = this.defaultContent;
-            this.modifiedContent = this.defaultContent;
-            this.previousTestCase = this.testCase.clone();
-
+            this.scenarioService.getEmptyRawTestCase().subscribe((testCase: TestCase) => {
+                this.testCase = testCase;
+                this.modifiedContent = this.testCase.content;
+                this.previousTestCase = this.testCase.clone();
+            });
         }
     }
 
     private checkParseError() {
         try {
-            this.hjsonParser.parse(this.modifiedContent);
+            this.yamlParserService.parse(this.modifiedContent);
             this.errorMessage = null;
         } catch (e) {
             this.errorMessage = e;

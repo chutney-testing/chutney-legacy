@@ -105,7 +105,7 @@
         <jsonpath.version>2.7.0</jsonpath.version>
         <sshj.version>0.32.0</sshj.version>
         <sshd.version>2.8.0</sshd.version>
-        <hjson.version>3.0.0</hjson.version>
+        <jackson-yaml.version>2.13.2</jackson-yaml.version>
         <jms.version>2.0.1</jms.version>
         <amqp-client.version>5.14.1</amqp-client.version>
         <qpid-broker.version>8.0.6</qpid-broker.version>
@@ -451,9 +451,9 @@
                 <version>${sshd.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.hjson</groupId>
-                <artifactId>hjson</artifactId>
-                <version>${hjson.version}</version>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-yaml</artifactId>
+                <version>${jackson-yaml.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.jms</groupId>

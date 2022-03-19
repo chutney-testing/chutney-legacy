@@ -46,7 +46,7 @@ spring:
       - db-h2
 
 chutney:
-  configuration-folder: .chutney/conf
+  configuration-folder: ../chutney-poc/.chutney/conf
   environment:
     configuration-folder: ${chutney.configuration-folder}
 #  db-server: (cf. application-db-[h2|pg].yml configuration files)

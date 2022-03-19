@@ -1,26 +1,26 @@
 package com.chutneytesting.design.api.scenario;
 
-import static com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY;
 import static com.chutneytesting.design.api.scenario.OldFormatAdapter.ScenarioV1.StepV1.GwtType.WHEN;
 import static com.chutneytesting.design.api.scenario.v2_0.mapper.GwtScenarioMapper.mapper;
+import static com.chutneytesting.design.api.scenario.v2_0.mapper.GwtScenarioMapper.yamlMapper;
+import static com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.chutneytesting.design.domain.scenario.ScenarioNotParsableException;
 import com.chutneytesting.design.domain.scenario.gwt.GwtScenario;
 import com.chutneytesting.design.domain.scenario.gwt.GwtStep;
 import com.chutneytesting.design.domain.scenario.gwt.GwtStepImplementation;
 import com.chutneytesting.design.domain.scenario.gwt.Strategy;
 import com.chutneytesting.execution.domain.compiler.ScenarioConversionException;
+import com.chutneytesting.tools.Streams;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.hjson.JsonValue;
-import com.chutneytesting.tools.Streams;
 
 public class OldFormatAdapter {
 
@@ -227,7 +227,7 @@ public class OldFormatAdapter {
 
             GwtStepImplementation toGwt() {
                 try {
-                    return mapper.readValue(JsonValue.readHjson(task).toString(), GwtStepImplementation.class);
+                    return yamlMapper.readValue(task, GwtStepImplementation.class);
                 } catch (IOException e) {
                     throw new ScenarioConversionException(e);
                 }

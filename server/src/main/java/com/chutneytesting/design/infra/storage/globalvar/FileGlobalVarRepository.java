@@ -3,9 +3,6 @@ package com.chutneytesting.design.infra.storage.globalvar;
 import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
 
-import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
-import com.chutneytesting.tools.ZipUtils;
-import com.chutneytesting.tools.file.FileUtils;
 import com.chutneytesting.design.domain.globalvar.GlobalVarNotFoundException;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.tools.ZipUtils;
@@ -17,6 +14,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -33,20 +32,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.zip.ZipOutputStream;
-import org.hjson.JsonValue;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class FileGlobalVarRepository implements GlobalvarRepository {
 
-    private static final String FILE_EXTENSION = ".hjson";
+    private static final String FILE_EXTENSION = ".yml";
 
     static final Path ROOT_DIRECTORY_NAME = Paths.get("global_var");
 
     private final Path storeFolderPath;
 
-    private final ObjectMapper objectMapper = new ObjectMapper()
+    private final ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER))
         .findAndRegisterModules()
         .enable(SerializationFeature.INDENT_OUTPUT)
         .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
@@ -74,18 +72,18 @@ public class FileGlobalVarRepository implements GlobalvarRepository {
         } catch (NoSuchFileException nsfe) {
             throw new GlobalVarNotFoundException(fileName);
         } catch (IOException e) {
-            throw new UnsupportedOperationException("Cannot read " + filePath.toUri().toString(), e);
+            throw new UnsupportedOperationException("Cannot read " + filePath.toUri(), e);
         }
     }
 
     @Override
-    public void saveFile(String fileName, String hjsonContent) {
+    public void saveFile(String fileName, String yamlContent) {
         Path filePath = this.storeFolderPath.resolve(fileName + FILE_EXTENSION);
         createFile(filePath);
         try {
-            Files.write(filePath, hjsonContent.getBytes());
+            Files.write(filePath, yamlContent.getBytes());
         } catch (IOException e) {
-            throw new UnsupportedOperationException("Cannot save " + filePath.toUri().toString(), e);
+            throw new UnsupportedOperationException("Cannot save " + filePath.toUri(), e);
         }
     }
 
@@ -118,7 +116,7 @@ public class FileGlobalVarRepository implements GlobalvarRepository {
         Map<Path, String> fileContents = get();
         fileContents.forEach((path, content) -> {
             try {
-                addKeys("", objectMapper.readTree(JsonValue.readHjson(content).toString()), map);
+                addKeys("", objectMapper.readTree(content), map);
             } catch (IOException e) {
                 throw new UnsupportedOperationException("Cannot deserialize global variable file: " + path, e);
             }

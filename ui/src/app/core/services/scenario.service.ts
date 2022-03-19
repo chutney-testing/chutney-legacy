@@ -46,6 +46,16 @@ export class ScenarioService {
         }));
     }
 
+    getEmptyRawTestCase(): Observable<TestCase> {
+        return this.httpClient.get('/assets/scenarios/default-content.yml', {responseType: 'text'}).pipe(map((content: string) => {
+            const testCase = new TestCase();
+            testCase.title = 'scenario title';
+            testCase.description = 'scenario description';
+            testCase.content = content;
+            return testCase;
+        }));
+    }
+
     createOrUpdateRawTestCase(testCase: TestCase): Observable<string> {
         if (testCase.id === undefined) {
             return this.createRawTestCase(testCase);
