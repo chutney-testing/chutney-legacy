@@ -14,8 +14,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -39,41 +39,31 @@ import org.springframework.stereotype.Component;
 public class FileGlobalVarRepository implements GlobalvarRepository {
 
     private static final String FILE_EXTENSION = ".yml";
+    private static final String OLD_FILE_EXTENSION = ".hjson";
 
     static final Path ROOT_DIRECTORY_NAME = Paths.get("global_var");
 
+
     private final Path storeFolderPath;
 
-    private final ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER))
+    private final ObjectMapper objectMapper = new YAMLMapper().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
         .findAndRegisterModules()
         .enable(SerializationFeature.INDENT_OUTPUT)
         .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
-    FileGlobalVarRepository(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) throws UncheckedIOException {
+    public FileGlobalVarRepository(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) throws UncheckedIOException {
         this.storeFolderPath = Paths.get(storeFolderPath).resolve(ROOT_DIRECTORY_NAME);
         initFolder(this.storeFolderPath);
     }
 
     @Override
     public Set<String> list() {
-        return FileUtils.doOnListFiles(storeFolderPath, (pathStream) ->
-            pathStream
-                .filter(Files::isRegularFile)
-                .map(FileUtils::getNameWithoutExtension)
-                .sorted(Comparator.naturalOrder())
-                .collect(Collectors.toCollection(LinkedHashSet::new)));
+        return list(FILE_EXTENSION);
     }
 
     @Override
     public String getFileContent(String fileName) {
-        Path filePath = this.storeFolderPath.resolve(fileName + FILE_EXTENSION);
-        try {
-            return new String(Files.readAllBytes(filePath));
-        } catch (NoSuchFileException nsfe) {
-            throw new GlobalVarNotFoundException(fileName);
-        } catch (IOException e) {
-            throw new UnsupportedOperationException("Cannot read " + filePath.toUri(), e);
-        }
+        return getFileContent(fileName, FILE_EXTENSION);
     }
 
     @Override
@@ -99,14 +89,7 @@ public class FileGlobalVarRepository implements GlobalvarRepository {
 
     @Override
     public void deleteFile(String fileName) {
-        Path filePath = this.storeFolderPath.resolve(fileName + FILE_EXTENSION);
-        try {
-            Files.delete(filePath);
-        } catch (NoSuchFileException nsfe) {
-            throw new GlobalVarNotFoundException(fileName);
-        } catch (IOException e) {
-            throw new UnsupportedOperationException("Cannot delete " + filePath.toUri().toString(), e);
-        }
+        deleteFile(fileName, FILE_EXTENSION);
     }
 
     @Override
@@ -145,6 +128,54 @@ public class FileGlobalVarRepository implements GlobalvarRepository {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    public String getOldFileContent(String fileName) {
+        return getFileContent(fileName, OLD_FILE_EXTENSION);
+    }
+
+    public void deleteOldFile(String fileName) {
+        deleteFile(fileName, OLD_FILE_EXTENSION);
+    }
+
+    private void deleteFile(String fileName, String extension) {
+        Path filePath = this.storeFolderPath.resolve(fileName + extension);
+        try {
+            Files.delete(filePath);
+        } catch (NoSuchFileException nsfe) {
+            throw new GlobalVarNotFoundException(fileName);
+        } catch (IOException e) {
+            throw new UnsupportedOperationException("Cannot delete " + filePath.toUri(), e);
+        }
+    }
+
+    private String getFileContent(String fileName, String extension) {
+        Path filePath = this.storeFolderPath.resolve(fileName + extension);
+        try {
+            return new String(Files.readAllBytes(filePath));
+        } catch (NoSuchFileException nsfe) {
+            throw new GlobalVarNotFoundException(fileName);
+        } catch (IOException e) {
+            throw new UnsupportedOperationException("Cannot read " + filePath.toUri(), e);
+        }
+    }
+
+    public Set<String> listOld() {
+        return list(OLD_FILE_EXTENSION);
+    }
+
+    public Path getStoreFolderPath() {
+        return storeFolderPath;
+    }
+
+    private Set<String> list(String fileExtension) {
+        return FileUtils.doOnListFiles(storeFolderPath, (pathStream) ->
+            pathStream
+                .filter(Files::isRegularFile)
+                .filter(path -> path.getFileName().toString().endsWith(fileExtension))
+                .map(FileUtils::getNameWithoutExtension)
+                .sorted(Comparator.naturalOrder())
+                .collect(Collectors.toCollection(LinkedHashSet::new)));
     }
 
     private void addKeys(String currentPath, JsonNode jsonNode, Map<String, String> accumulator) {

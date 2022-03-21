@@ -226,15 +226,15 @@ Feature: Support previous test case format
             | content_version | scenario                          | message                                                                                                                | env_id |
             | v0.0            | scenario_unknown_target.v0.hjson  | com.chutneytesting.environment.domain.exception.TargetNotFoundException: Target [UNKNOWN_TARGET] not found in environment | 1      |
 
-    Scenario Outline: Task implementation (<scenario>) is always HJSON readable
+    Scenario Outline: Task implementation (<scenario>) is always YAML readable
         When saving a test case with a <scenario> written with GWT form
-            Do http-post Post scenario to Chutney instance
-                On CHUTNEY_LOCAL
-                With uri /api/scenario/v2
-                With headers
-                | Content-Type | application/json;charset=UTF-8 |
-                With body
-                """
+    Do http-post Post scenario to Chutney instance
+    On CHUTNEY_LOCAL
+    With uri /api/scenario/v2
+    With headers
+    | Content-Type | application/json;charset=UTF-8 |
+    With body
+    """
                 {
                     "title":"Saved scenario",
                     "description":"contains a gwt scenario",
@@ -243,16 +243,16 @@ Feature: Support previous test case format
                 """
                 Take scenarioId ${#body}
                 Validate httpStatusCode_200 ${#status == 200}
-        Then the task implementation is HJSON readable
+        Then the task implementation is YAML readable
             retrieved as raw
                 Do http-get Request scenario from Chutney instance
                     On CHUTNEY_LOCAL
                     With uri /api/scenario/v2/raw/${#scenarioId}
                     Take retrievedRawScenario ${#body}
                 Do compare
-                    With actual ${#str_replace(#json(#retrievedRawScenario, "$.content"), "\s+", "")}
-                    With expected {type:fake_typetarget:FAKE_TARGETinputs:{fake_param:fake_value}}
-                    With mode contains
+    With actual ${#str_replace(#json(#retrievedRawScenario, "$.content"), "\s+", "")}
+    With expected type:"fake_type"target:"FAKE_TARGET"inputs:fake_param:"fake_value"
+    With mode contains
             retrieved as GWT
                 Do http-get Request scenario from Chutney instance
                     On CHUTNEY_LOCAL

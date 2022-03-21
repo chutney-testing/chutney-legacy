@@ -37,7 +37,7 @@ public class FileGlobalVarRepositoryTest {
         sut = new FileGlobalVarRepository(STORE_PATH);
 
         String urlValue = "http://host:port/path";
-        String mulitlineValuePattern = "" +
+        String multilineValuePattern = "" +
             "%sMy half empty glass,\n" +
             "%sI will fill your empty half.\n" +
             "%sNow you are half full.";
@@ -45,12 +45,12 @@ public class FileGlobalVarRepositoryTest {
 
         sut.saveFile(FILE_NAME, "key1: " + urlValue + "\n" +
             "key2:\n" +
-            "  subKey1: '''" + String.format(mulitlineValuePattern, "          ", "          ", "          ") + "\n" +
+            "  subKey1: |- " + String.format(multilineValuePattern, "\n          ", "          ", "          ") + "\n" +
             "  subKey2: subValue2\n" +
             "key3:\n" +
             "- test1: value\n" +
             "  test2: value\n" +
-            "- test: '''" + jsonPathValue + "'''" +
+            "- test: " + jsonPathValue + "" +
             "");
 
         // W
@@ -59,7 +59,7 @@ public class FileGlobalVarRepositoryTest {
         // T
         assertThat(result).containsOnly(
             entry("key1", urlValue),
-            entry("key2.subKey1", String.format(mulitlineValuePattern, "", "", "")),
+            entry("key2.subKey1", String.format(multilineValuePattern, "", "", "")),
             entry("key2.subKey2", "subValue2"),
             entry("key3[0].test1", "value"),
             entry("key3[0].test2", "value"),
@@ -79,11 +79,11 @@ public class FileGlobalVarRepositoryTest {
             "  test2: value\n" +
             "- test: value");
 
-        sut.saveFile("another_file", "keyA: valueA,\n" +
+        sut.saveFile("another_file", "keyA: valueA\n" +
             "keyB:\n" +
             "  subKey: subValue\n" +
             "keyC:\n" +
-            "- test1: value,\n" +
+            "- test1: value\n" +
             "  test2: value\n" +
             "- test: value");
 
@@ -154,5 +154,20 @@ public class FileGlobalVarRepositoryTest {
             ROOT_DIRECTORY_NAME.resolve("a_file.yml").toString(),
             ROOT_DIRECTORY_NAME.resolve("another_file.yml").toString()
         );
+    }
+
+    @Test
+    public void should_get_file_content() {
+        // Given
+        sut = new FileGlobalVarRepository(STORE_PATH);
+        String yamlContent = "keyA: valueA";
+        String globalVar = "a_file";
+        sut.saveFile(globalVar, yamlContent);
+
+        // When
+        String fileContent = sut.getFileContent(globalVar);
+
+        // Then
+        assertThat(fileContent).isEqualTo(yamlContent);
     }
 }

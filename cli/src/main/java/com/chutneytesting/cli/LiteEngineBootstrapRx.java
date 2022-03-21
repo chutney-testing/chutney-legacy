@@ -9,8 +9,8 @@ import com.chutneytesting.engine.api.execution.TestEngine;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import io.reactivex.Observable;
@@ -33,7 +33,7 @@ public class LiteEngineBootstrapRx implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LiteEngineBootstrapRx.class);
     private static final ObjectMapper objectMapper = objectMapper(new ObjectMapper());
-    private static final ObjectMapper yamlMapper = objectMapper(new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)));
+    private static final ObjectMapper yamlMapper = objectMapper(new YAMLMapper().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
 
     @Parameters(arity = "1..*", paramLabel = "FILE", description = "Scenario(s) to process.")
     private File[] scenarios;

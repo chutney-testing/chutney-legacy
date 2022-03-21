@@ -4,6 +4,7 @@ import static com.fasterxml.jackson.annotation.PropertyAccessor.CREATOR;
 import static com.fasterxml.jackson.annotation.PropertyAccessor.FIELD;
 import static com.fasterxml.jackson.annotation.PropertyAccessor.GETTER;
 import static com.fasterxml.jackson.annotation.PropertyAccessor.SETTER;
+import static org.hjson.JsonValue.readHjson;
 
 import com.chutneytesting.design.api.scenario.OldFormatAdapter;
 import com.chutneytesting.design.api.scenario.v2_0.dto.GwtScenarioDto;
@@ -28,44 +29,23 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
+import org.hjson.Stringify;
 import org.springframework.stereotype.Component;
 
 @Component
 public class GwtScenarioMapper implements GwtScenarioMarshaller {
     // TODO - Refactor mappers scattered everywhere :)
-    public static ObjectMapper mapper;
+    public static ObjectMapper mapper = configureMapper(new ObjectMapper());
 
-    public static ObjectMapper yamlMapper;
+    public static ObjectMapper yamlMapper = configureMapper(new YAMLMapper().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
 
-    public GwtScenarioMapper() {
-        mapper = configureMapper(new ObjectMapper());
-        yamlMapper = configureMapper(new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)));
-    }
-
-
-    private ObjectMapper configureMapper(ObjectMapper mapper) {
-        return mapper
-            .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
-            .configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
-            .findAndRegisterModules()
-            .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
-            .setVisibility(FIELD, JsonAutoDetect.Visibility.ANY)
-            .setVisibility(GETTER, JsonAutoDetect.Visibility.NONE)
-            .setVisibility(SETTER, JsonAutoDetect.Visibility.NONE)
-            .setVisibility(CREATOR, JsonAutoDetect.Visibility.NONE)
-            .addMixIn(GwtScenario.class, GwtScenarioMixin.class)
-            .addMixIn(GwtStep.class, GwtStepMixin.class)
-            .addMixIn(GwtStep.GwtStepBuilder.class, GwtStepBuilderMixin.class)
-            .addMixIn(GwtStepImplementation.class, GwtStepImplementationMixin.class)
-            .addMixIn(Strategy.class, StrategyMixin.class);
-    }
 
     @JsonDeserialize(builder = GwtScenario.GwtScenarioBuilder.class)
     private static class GwtScenarioMixin {
@@ -133,7 +113,7 @@ public class GwtScenarioMapper implements GwtScenarioMarshaller {
             return new GwtStepImplementation(dto.type(), dto.target(), dto.inputs(), dto.outputs(), dto.validations(), dto.xRef());
         } else {
             try {
-                return yamlMapper.readValue(dto.task(), GwtStepImplementation.class);
+                return mapper.readValue(readHjson(dto.task()).toString(), GwtStepImplementation.class);
             } catch (IOException e) {
                 throw new ScenarioConversionException(e);
             }
@@ -165,7 +145,7 @@ public class GwtScenarioMapper implements GwtScenarioMarshaller {
     private static GwtStepImplementationDto toDto(GwtStepImplementation implementation) {
         try {
             return ImmutableGwtStepImplementationDto.builder()
-                .task(yamlMapper.writeValueAsString(implementation))
+                .task(readHjson(mapper.writeValueAsString(implementation)).toString(Stringify.HJSON))
                 .type(implementation.type)
                 .target(implementation.target)
                 .xRef(implementation.xRef)
@@ -218,7 +198,33 @@ public class GwtScenarioMapper implements GwtScenarioMarshaller {
             return null;
         } catch (IOException e) {
             // gracefully fallback on previous versions
-            return OldFormatAdapter.from(title, description, yamlBlob);
+            String jsonScenario = formatContentToJson(yamlBlob);
+            return OldFormatAdapter.from(title, description, jsonScenario);
+        }
+    }
+
+    private static ObjectMapper configureMapper(ObjectMapper mapper) {
+        return mapper
+            .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
+            .configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
+            .findAndRegisterModules()
+            .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
+            .setVisibility(FIELD, JsonAutoDetect.Visibility.ANY)
+            .setVisibility(GETTER, JsonAutoDetect.Visibility.NONE)
+            .setVisibility(SETTER, JsonAutoDetect.Visibility.NONE)
+            .setVisibility(CREATOR, JsonAutoDetect.Visibility.NONE)
+            .addMixIn(GwtScenario.class, GwtScenarioMixin.class)
+            .addMixIn(GwtStep.class, GwtStepMixin.class)
+            .addMixIn(GwtStep.GwtStepBuilder.class, GwtStepBuilderMixin.class)
+            .addMixIn(GwtStepImplementation.class, GwtStepImplementationMixin.class)
+            .addMixIn(Strategy.class, StrategyMixin.class);
+    }
+
+    private static String formatContentToJson(String content) {
+        try {
+            return readHjson(content).toString();
+        } catch (Exception e) {
+            throw new ScenarioNotParsableException("Malformed json or hjson format. ", e);
         }
     }
 

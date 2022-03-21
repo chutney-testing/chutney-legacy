@@ -30,6 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import org.hjson.JsonValue;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -70,7 +71,7 @@ public class ExecutionRequestMapper {
     private StepDefinitionRequestDto convertRaw(ExecutionRequest executionRequest) {
         RawTestCase rawTestCase = (RawTestCase) executionRequest.testCase;
         try {
-            ScenarioContent scenarioContent = objectMapper.readValue(rawTestCase.scenario, ScenarioContent.class);
+            ScenarioContent scenarioContent = objectMapper.readValue(JsonValue.readHjson(rawTestCase.scenario).toString(), ScenarioContent.class);
             return getStepDefinitionRequestFromStepDef(scenarioContent.scenario, executionRequest.environment);
         } catch (IOException e) {
             throw new ScenarioConversionException(rawTestCase.metadata().id(), e);
