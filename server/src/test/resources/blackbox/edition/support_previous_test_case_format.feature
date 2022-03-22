@@ -228,13 +228,13 @@ Feature: Support previous test case format
 
     Scenario Outline: Task implementation (<scenario>) is always YAML readable
         When saving a test case with a <scenario> written with GWT form
-    Do http-post Post scenario to Chutney instance
-    On CHUTNEY_LOCAL
-    With uri /api/scenario/v2
-    With headers
-    | Content-Type | application/json;charset=UTF-8 |
-    With body
-    """
+            Do http-post Post scenario to Chutney instance
+                On CHUTNEY_LOCAL
+                With uri /api/scenario/v2
+                With headers
+                | Content-Type | application/json;charset=UTF-8 |
+                With body
+                """
                 {
                     "title":"Saved scenario",
                     "description":"contains a gwt scenario",
@@ -250,9 +250,9 @@ Feature: Support previous test case format
                     With uri /api/scenario/v2/raw/${#scenarioId}
                     Take retrievedRawScenario ${#body}
                 Do compare
-    With actual ${#str_replace(#json(#retrievedRawScenario, "$.content"), "\s+", "")}
-    With expected type:"fake_type"target:"FAKE_TARGET"inputs:fake_param:"fake_value"
-    With mode contains
+                    With actual ${#str_replace(#json(#retrievedRawScenario, "$.content"), "\s+", "")}
+                    With expected type:"fake_type"target:"FAKE_TARGET"inputs:fake_param:"fake_value"
+                    With mode contains
             retrieved as GWT
                 Do http-get Request scenario from Chutney instance
                     On CHUTNEY_LOCAL
