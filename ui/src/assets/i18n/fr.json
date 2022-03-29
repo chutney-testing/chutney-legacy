@@ -7,7 +7,6 @@
             "workers": "Agents",
             "plugins": "Plugins",
             "databaseAdmin": "BDD",
-            "storesAdmin": "Stores",
             "documentation": "Doc.",
             "component": "Composants",
             "backups": "Sauvegardes",

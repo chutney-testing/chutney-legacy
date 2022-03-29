@@ -9,7 +9,6 @@ import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableTestCaseRepository;
-import com.chutneytesting.design.infra.storage.scenario.git.GitScenarioRepositoryFactory;
 import com.chutneytesting.design.infra.storage.scenario.jdbc.DatabaseTestCaseRepository;
 import com.chutneytesting.design.infra.storage.scenario.jdbc.TestCaseData;
 import com.chutneytesting.design.infra.storage.scenario.jdbc.TestCaseDataMapper;
@@ -29,16 +28,13 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseRepositoryAggregator.class);
 
     private final DatabaseTestCaseRepository defaultRepository;
-    private final GitScenarioRepositoryFactory gitScenarioRepositoryFactory;
     private final ExamplesRepository examples;
     private final OrientComposableTestCaseRepository composableTestCaseRepository;
 
     public TestCaseRepositoryAggregator(DatabaseTestCaseRepository defaultRepository,
-                                        GitScenarioRepositoryFactory gitScenarioRepositoryFactory,
                                         ExamplesRepository examples,
                                         OrientComposableTestCaseRepository composableTestCaseRepository) {
         this.defaultRepository = defaultRepository;
-        this.gitScenarioRepositoryFactory = gitScenarioRepositoryFactory;
         this.examples = examples;
         this.composableTestCaseRepository = composableTestCaseRepository;
     }
@@ -66,10 +62,7 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
     }
 
     private Stream<DelegateScenarioRepository> repositories() {
-        return Stream.concat(
-            Stream.of(defaultRepository, examples),
-            gitScenarioRepositoryFactory.listGitRepo()
-        );
+        return Stream.of(defaultRepository, examples); //TODO REFACTO remove examples
     }
 
     @Override

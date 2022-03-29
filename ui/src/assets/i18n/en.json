@@ -7,7 +7,6 @@
             "workers": "Nodes",
             "plugins": "Plugins",
             "databaseAdmin": "DB",
-            "storesAdmin": "Stores",
             "documentation": "Doc.",
             "component": "Components",
             "backups": "Backups",

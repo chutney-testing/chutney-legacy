@@ -76,12 +76,6 @@ export const appRoutes: Routes = [
                 data: { 'authorizations': [ Authorization.ENVIRONMENT_ACCESS,Authorization.ADMIN_ACCESS ] }
             },
             {
-                path: 'storesAdmin',
-                loadChildren: './modules/stores-admin/stores-admin.module#StoresAdminModule',
-                canActivate: [AuthGuard],
-                data: { 'authorizations': [ Authorization.ADMIN_ACCESS ] }
-            },
-            {
                 path: 'backups',
                 loadChildren: './modules/backups/backups.module#BackupsModule',
                 canActivate: [AuthGuard],

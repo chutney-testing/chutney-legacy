@@ -12,7 +12,6 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.chutneytesting.design.infra.storage.scenario.git.GitClient;
 import com.chutneytesting.security.api.UserDto;
 import com.chutneytesting.tools.file.FileUtils;
 import java.io.File;
@@ -22,10 +21,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Answers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.GrantedAuthority;
@@ -43,9 +40,6 @@ public class SecuredControllerSpringBootIntegrationTest {
 
     @Autowired
     private WebApplicationContext context;
-
-    @MockBean(answer = Answers.RETURNS_DEEP_STUBS)
-    private GitClient gitClient;
 
     private MockMvc mvc;
 
@@ -80,9 +74,6 @@ public class SecuredControllerSpringBootIntegrationTest {
             {POST, "/api/v1/admin/database/execute/jdbc", "ADMIN_ACCESS", "select 1"},
             {POST, "/api/v1/admin/database/paginate/orient", "ADMIN_ACCESS", "{\"pageNumber\":1,\"elementPerPage\":1,\"wrappedRequest\":\"\"}"},
             {POST, "/api/v1/admin/database/paginate/jdbc", "ADMIN_ACCESS", "{\"pageNumber\":1,\"elementPerPage\":1,\"wrappedRequest\":\"\"}"},
-            {GET, "/api/source/git/v1", "ADMIN_ACCESS", null},
-            {POST, "/api/source/git/v1", "ADMIN_ACCESS", "{}"},
-            {DELETE, "/api/source/git/v1/666", "ADMIN_ACCESS", null},
             {POST, "/api/v1/agentnetwork/configuration", "ADMIN_ACCESS", "{}"},
             {GET, "/api/v1/description", "ADMIN_ACCESS", null},
             {POST, "/api/v1/agentnetwork/explore", "ADMIN_ACCESS", "{\"creationDate\":\"1235\"}"},
