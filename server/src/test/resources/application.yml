@@ -59,8 +59,6 @@ chutney:
 #    delegation:
 #      user:
 #      password:
-  examples:
-    active: true
   campaigns:
     thread: 20
   editions:

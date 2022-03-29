@@ -271,9 +271,6 @@
         "database": {
             "updated_rows": "updated row(s)"
         },
-        "documentation": {
-            "toggle.examples": "Activation des exemples"
-        },
         "backups": {
             "table": {
                 "time.title": "Date de création",

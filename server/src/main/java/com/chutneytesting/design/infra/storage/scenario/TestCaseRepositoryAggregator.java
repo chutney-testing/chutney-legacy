@@ -12,7 +12,6 @@ import com.chutneytesting.design.infra.storage.scenario.compose.OrientComposable
 import com.chutneytesting.design.infra.storage.scenario.jdbc.DatabaseTestCaseRepository;
 import com.chutneytesting.design.infra.storage.scenario.jdbc.TestCaseData;
 import com.chutneytesting.design.infra.storage.scenario.jdbc.TestCaseDataMapper;
-import com.chutneytesting.documentation.infra.ExamplesRepository;
 import com.orientechnologies.orient.core.id.ORecordId;
 import java.util.List;
 import java.util.Optional;
@@ -28,14 +27,11 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseRepositoryAggregator.class);
 
     private final DatabaseTestCaseRepository defaultRepository;
-    private final ExamplesRepository examples;
     private final OrientComposableTestCaseRepository composableTestCaseRepository;
 
     public TestCaseRepositoryAggregator(DatabaseTestCaseRepository defaultRepository,
-                                        ExamplesRepository examples,
                                         OrientComposableTestCaseRepository composableTestCaseRepository) {
         this.defaultRepository = defaultRepository;
-        this.examples = examples;
         this.composableTestCaseRepository = composableTestCaseRepository;
     }
 
@@ -62,7 +58,7 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
     }
 
     private Stream<DelegateScenarioRepository> repositories() {
-        return Stream.of(defaultRepository, examples); //TODO REFACTO remove examples
+        return Stream.of(defaultRepository);
     }
 
     @Override

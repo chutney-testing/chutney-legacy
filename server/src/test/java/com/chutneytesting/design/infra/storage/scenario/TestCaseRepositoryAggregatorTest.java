@@ -20,14 +20,12 @@ import com.chutneytesting.design.domain.scenario.gwt.GwtStep;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableTestCaseRepository;
 import com.chutneytesting.design.infra.storage.scenario.jdbc.DatabaseTestCaseRepository;
-import com.chutneytesting.documentation.infra.ExamplesRepository;
 import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class TestCaseRepositoryAggregatorTest {
 
-    private ExamplesRepository examples = mock(ExamplesRepository.class);
     private OrientComposableTestCaseRepository composableTestCaseRepository = mock(OrientComposableTestCaseRepository.class);
 
     @Test
@@ -36,10 +34,9 @@ public class TestCaseRepositoryAggregatorTest {
         final String REPO_SOURCE = "REPO_1";
         DatabaseTestCaseRepository repo1 = mock(DatabaseTestCaseRepository.class);
         when(repo1.alias()).thenReturn(REPO_SOURCE);
-        when(examples.alias()).thenReturn("examples");
         GwtTestCase testCase = defaultScenarioWithRepoSource(REPO_SOURCE);
 
-        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, examples, composableTestCaseRepository);
+        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, composableTestCaseRepository);
 
         // When
         assertThatThrownBy(() -> sut.save(testCase))
@@ -52,10 +49,9 @@ public class TestCaseRepositoryAggregatorTest {
         // Given
         DatabaseTestCaseRepository repo1 = mock(DatabaseTestCaseRepository.class);
         when(repo1.alias()).thenReturn(TestCaseRepository.DEFAULT_REPOSITORY_SOURCE);
-        when(examples.alias()).thenReturn("examples");
         GwtTestCase testCase = defaultScenarioWithRepoSource("UNKNOWN_REPO");
 
-        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, examples, composableTestCaseRepository);
+        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, composableTestCaseRepository);
 
         // When
         sut.save(testCase);
@@ -69,7 +65,7 @@ public class TestCaseRepositoryAggregatorTest {
         // Given
         DatabaseTestCaseRepository repo1 = mock(DatabaseTestCaseRepository.class);
 
-        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, examples, composableTestCaseRepository);
+        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, composableTestCaseRepository);
 
         final String scenarioId = "12345";
 
@@ -79,7 +75,6 @@ public class TestCaseRepositoryAggregatorTest {
 
         // Then
         verify(repo1).findById(scenarioId);
-        verify(examples).findById(scenarioId); // TODO REFACTO delete example
     }
 
     @Test
@@ -89,7 +84,7 @@ public class TestCaseRepositoryAggregatorTest {
         DelegateScenarioRepository repo2 = mock(DelegateScenarioRepository.class);
         DelegateScenarioRepository repo3 = mock(DelegateScenarioRepository.class);
 
-        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, examples, composableTestCaseRepository);
+        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, composableTestCaseRepository);
 
         final String scenarioId = "12345";
 
@@ -98,7 +93,6 @@ public class TestCaseRepositoryAggregatorTest {
 
         // Then
         verify(repo1).removeById(scenarioId);
-        verify(examples, times(0)).removeById(scenarioId);
         verify(repo2, times(0)).removeById(scenarioId);
         verify(repo3, times(0)).removeById(scenarioId);
     }
@@ -112,7 +106,7 @@ public class TestCaseRepositoryAggregatorTest {
         when(repo1.findAll()).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
         when(repo2.findAll()).thenReturn(singletonList(mock(TestCaseMetadata.class)));
 
-        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, examples, composableTestCaseRepository);
+        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, composableTestCaseRepository);
 
         // When
         final List<TestCaseMetadata> allScenario = sut.findAll();
@@ -132,7 +126,7 @@ public class TestCaseRepositoryAggregatorTest {
         when(repo2.findAll()).thenThrow(new RuntimeException("Error searching for scenarios !!!"));
         when(repo3.findAll()).thenReturn(singletonList(mock(TestCaseMetadata.class)));
 
-        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, examples, composableTestCaseRepository);
+        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, composableTestCaseRepository);
 
         // When
         final List<TestCaseMetadata> allScenario = sut.findAll();

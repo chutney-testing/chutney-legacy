@@ -72,8 +72,6 @@ chutney:
 #    delegation:
 #      user:
 #      password:
-  examples:
-    active: false
   campaigns:
     thread: 20
   scenarios:

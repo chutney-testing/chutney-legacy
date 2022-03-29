@@ -271,9 +271,6 @@
         "database": {
             "updated_rows": "ligne(s) mise(s) à jour"
         },
-        "documentation": {
-            "toggle.examples": "Toggle examples"
-        },
         "backups": {
             "table": {
                 "time.title": "Creation date",

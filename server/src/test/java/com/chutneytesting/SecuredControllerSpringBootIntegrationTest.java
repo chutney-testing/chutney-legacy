@@ -144,8 +144,6 @@ public class SecuredControllerSpringBootIntegrationTest {
             {DELETE, "/api/scenario/v2/testCaseId", "SCENARIO_WRITE", null},
             {POST, "/api/scenario/v2/raw", "SCENARIO_WRITE", "{\"title\":\"\",\"content\":\"\"}"},
             {GET, "/api/scenario/v2/raw/testCaseId", "SCENARIO_READ", null},
-            {GET, "/api/documentation", "ADMIN_ACCESS", null},
-            {POST, "/api/documentation", "ADMIN_ACCESS", null},
             {GET, "/api/ui/campaign/execution/v1/campaignName", "CAMPAIGN_EXECUTE", null},
             {GET, "/api/ui/campaign/execution/v1/campaignName/env", "CAMPAIGN_EXECUTE", null},
             {POST, "/api/ui/campaign/execution/v1/replay/666", "CAMPAIGN_EXECUTE", "{}"},
