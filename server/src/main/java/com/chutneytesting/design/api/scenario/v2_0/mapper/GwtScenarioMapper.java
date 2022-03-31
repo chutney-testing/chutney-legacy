@@ -1,9 +1,11 @@
 package com.chutneytesting.design.api.scenario.v2_0.mapper;
 
+import static com.chutneytesting.design.domain.scenario.gwt.GwtStep.NONE;
 import static com.fasterxml.jackson.annotation.PropertyAccessor.CREATOR;
 import static com.fasterxml.jackson.annotation.PropertyAccessor.FIELD;
 import static com.fasterxml.jackson.annotation.PropertyAccessor.GETTER;
 import static com.fasterxml.jackson.annotation.PropertyAccessor.SETTER;
+import static java.util.Collections.emptyList;
 import static org.hjson.JsonValue.readHjson;
 
 import com.chutneytesting.design.api.scenario.OldFormatAdapter;
@@ -32,6 +34,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -195,7 +198,7 @@ public class GwtScenarioMapper implements GwtScenarioMarshaller {
             if (StringUtils.isNotEmpty(yamlBlob)) {
                 return yamlMapper.readValue(yamlBlob, GwtScenario.class);
             }
-            return null;
+            return GwtScenario.builder().withTitle(title).withDescription(description).withWhen(NONE).build();
         } catch (IOException e) {
             // gracefully fallback on previous versions
             String jsonScenario = formatContentToJson(yamlBlob);

@@ -1,0 +1,16 @@
+---
+key: 1
+contains: "everything on this line"
+verylongline: "aaaaaaaaaaaaaaaaaaaaaa bbbbbbbbbbbbbbbbbbb ccccccccccccccccc dddddddddddddddddd eeeeeeeeeeeeeeeee ffffffffffffffffffff ggggggggggggggggggggggggggg"
+cool:
+  foo: 1
+  bar: 2
+list:
+- 1
+- 2
+realist: |-
+  My half empty glass,
+  I will fill your empty half.
+  Now you are half full.
+strange: |
+  {"embedded": "json", "object": {"aaa": "aaavalue", "bbb": "bbbvalue"}}

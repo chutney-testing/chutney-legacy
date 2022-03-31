@@ -10,3 +10,4 @@ com.chutneytesting.task.micrometer.MicrometerFunctions
 com.chutneytesting.task.function.NetworkFunctions
 com.chutneytesting.task.function.ClasspathFunctions
 com.chutneytesting.task.function.EscapeFunctions
+com.chutneytesting.task.function.YamlFunctions

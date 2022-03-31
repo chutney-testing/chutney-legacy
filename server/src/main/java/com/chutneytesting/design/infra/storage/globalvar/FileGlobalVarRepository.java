@@ -2,6 +2,10 @@ package com.chutneytesting.design.infra.storage.globalvar;
 
 import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
+import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS;
+import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.LITERAL_BLOCK_STYLE;
+import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.SPLIT_LINES;
+import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.WRITE_DOC_START_MARKER;
 
 import com.chutneytesting.design.domain.globalvar.GlobalVarNotFoundException;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
@@ -32,43 +36,50 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.zip.ZipOutputStream;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class FileGlobalVarRepository implements GlobalvarRepository {
 
-    private static final String FILE_EXTENSION = ".yml";
-    private static final String OLD_FILE_EXTENSION = ".hjson";
-
     static final Path ROOT_DIRECTORY_NAME = Paths.get("global_var");
 
-
     private final Path storeFolderPath;
+    private final String fileExtension;
 
-    private final ObjectMapper objectMapper = new YAMLMapper().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
+    private final ObjectMapper objectMapper = new YAMLMapper()
+        .enable(LITERAL_BLOCK_STYLE)
+        .enable(ALWAYS_QUOTE_NUMBERS_AS_STRINGS)
+        .disable(SPLIT_LINES)
         .findAndRegisterModules()
         .enable(SerializationFeature.INDENT_OUTPUT)
         .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
-    FileGlobalVarRepository(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) throws UncheckedIOException {
+    @Autowired
+    public FileGlobalVarRepository(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) throws UncheckedIOException {
+        this(storeFolderPath, ".yml");
+    }
+
+    public FileGlobalVarRepository(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath, String fileExtension) throws UncheckedIOException {
         this.storeFolderPath = Paths.get(storeFolderPath).resolve(ROOT_DIRECTORY_NAME);
+        this.fileExtension = fileExtension;
         initFolder(this.storeFolderPath);
     }
 
     @Override
     public Set<String> list() {
-        return list(FILE_EXTENSION);
+        return list(fileExtension);
     }
 
     @Override
     public String getFileContent(String fileName) {
-        return getFileContent(fileName, FILE_EXTENSION);
+        return getFileContent(fileName, fileExtension);
     }
 
     @Override
     public void saveFile(String fileName, String yamlContent) {
-        Path filePath = this.storeFolderPath.resolve(fileName + FILE_EXTENSION);
+        Path filePath = this.storeFolderPath.resolve(fileName + fileExtension);
         createFile(filePath);
         try {
             Files.write(filePath, yamlContent.getBytes());
@@ -89,7 +100,7 @@ public class FileGlobalVarRepository implements GlobalvarRepository {
 
     @Override
     public void deleteFile(String fileName) {
-        deleteFile(fileName, FILE_EXTENSION);
+        deleteFile(fileName, fileExtension);
     }
 
     @Override
@@ -130,14 +141,6 @@ public class FileGlobalVarRepository implements GlobalvarRepository {
         }
     }
 
-    public String getOldFileContent(String fileName) {
-        return getFileContent(fileName, OLD_FILE_EXTENSION);
-    }
-
-    public void deleteOldFile(String fileName) {
-        deleteFile(fileName, OLD_FILE_EXTENSION);
-    }
-
     private void deleteFile(String fileName, String extension) {
         Path filePath = this.storeFolderPath.resolve(fileName + extension);
         try {
@@ -158,14 +161,6 @@ public class FileGlobalVarRepository implements GlobalvarRepository {
         } catch (IOException e) {
             throw new UnsupportedOperationException("Cannot read " + filePath.toUri(), e);
         }
-    }
-
-    public Set<String> listOld() {
-        return list(OLD_FILE_EXTENSION);
-    }
-
-    public Path getStoreFolderPath() {
-        return storeFolderPath;
     }
 
     private Set<String> list(String fileExtension) {

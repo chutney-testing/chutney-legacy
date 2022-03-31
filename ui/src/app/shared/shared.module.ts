@@ -15,7 +15,7 @@ import { ErrorInterceptor } from './error-interceptor.service';
 import { ComponentCardComponent, EnvironmentComboComponent, ExecutionBadgeComponent } from './components';
 import { HasAuthorizationDirective, ImplementationHostDirective } from './directives';
 import { EventManagerService } from './event-manager.service';
-import { YamlParserService } from './hjson-parser/yaml-parser.service';
+import { YamlParserService } from './yaml-parser/yaml-parser.service';
 import {
     ComponentSearchPipe,
     DataSetSearchPipe,

@@ -1,6 +1,7 @@
 package com.chutneytesting;
 
 import com.chutneytesting.admin.domain.gitbackup.GitBackupService;
+import com.chutneytesting.changelog.GlobalVarFileChangelogExecutor;
 import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
 import com.orientechnologies.orient.core.Orient;
 import java.lang.reflect.Field;
@@ -25,6 +26,7 @@ public class ServerBootstrap {
         final ConfigurableApplicationContext context = start(args);
         cleanApplicationState(context);
         registerShutdownHooks(context);
+        migrationHjonToYaml(context);
     }
 
     public static ConfigurableApplicationContext start(String... args) {
@@ -33,6 +35,12 @@ public class ServerBootstrap {
             .bannerMode(Mode.OFF);
 
         return appBuilder.build().run(args);
+    }
+
+    private static void migrationHjonToYaml(ConfigurableApplicationContext context) {
+        LOGGER.info("Starting hjson migration to yaml");
+        int numberOfHjsonMigrate = context.getBean(GlobalVarFileChangelogExecutor.class).migrateHjsonFiles();
+        LOGGER.info("Finishing hjson migration to yaml: {} files migrated", numberOfHjsonMigrate);
     }
 
     private static void cleanApplicationState(ConfigurableApplicationContext context) {

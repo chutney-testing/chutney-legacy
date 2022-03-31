@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { EventManagerService } from '@shared/event-manager.service';
 import { Subscription } from 'rxjs';
 import { TestCase } from '@model';
-import { YamlParserService } from '@shared/hjson-parser/yaml-parser.service';
+import { YamlParserService } from '@shared/yaml-parser/yaml-parser.service';
 import { ScenarioService } from '@core/services';
 import { CanDeactivatePage } from '@core/guards';
 import { JiraPluginService } from '@core/services/jira-plugin.service';
