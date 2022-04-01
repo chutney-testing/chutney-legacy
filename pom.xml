@@ -133,7 +133,7 @@
         <otj-pg-embedded.version>0.13.4</otj-pg-embedded.version>
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
         <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
-        <awaitility.version>4.1.1</awaitility.version>
+        <awaitility.version>4.2.0</awaitility.version>
         <jqwik.version>1.6.2</jqwik.version>
     </properties>
 
