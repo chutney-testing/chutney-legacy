@@ -239,7 +239,7 @@ export class ScenariosComponent implements OnInit, OnDestroy {
             }
             return sce;
         });
-        this.viewedScenarios = filterOnTextContent(scenariosWithJiraId, this.textFilter, ['title', 'id', 'jiraId']);
+        this.viewedScenarios = filterOnTextContent(scenariosWithJiraId, this.textFilter, ['title', 'id', 'jiraId', 'tags']);
         this.viewedScenarios = this.filterOnAttributes();
         this.sortScenarios(this.orderBy, this.reverseOrder);
         this.applyFiltersToRoute();
