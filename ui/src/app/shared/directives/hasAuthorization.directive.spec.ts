@@ -134,7 +134,7 @@ class TestInject {
     template: `<span *hasAuthorization="authorizations()" #spanView>wtf</span>`
 })
 class HasAuthorizationsHostComponent {
-    @ViewChild('spanView') spanView: any;
+    @ViewChild('spanView', /* TODO: add static flag */ {}) spanView: any;
     constructor(private testInject: TestInject) {}
     authorizations() { return this.testInject.authorizations(); }
 }
