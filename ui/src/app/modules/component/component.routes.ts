@@ -5,13 +5,10 @@ import { AuthGuard } from '@core/guards';
 import { Authorization } from '@model';
 
 export const componentRoute: Routes = [
-    {
-        path: '',
-        pathMatch: 'full',
-        redirectTo: 'list',
-        canActivate: [AuthGuard],
-        data: { 'authorizations': [ Authorization.COMPONENT_READ,Authorization.COMPONENT_WRITE ] }
-    },
+    { path: '',
+    pathMatch: 'full',
+    redirectTo: 'list',
+    data: { 'authorizations': [Authorization.COMPONENT_READ, Authorization.COMPONENT_WRITE] } },
     {
         path: ':id',
         component: CreateComponent,
