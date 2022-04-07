@@ -1,4 +1,4 @@
-import { async, TestBed } from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -32,7 +32,7 @@ describe('ComponentEditionComponent', () => {
         [], null, 'id-1');
     const task2 = new ComponentTask('name 2', null, [], [], [], [], null, 'id-2');
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.resetTestingModule();
         activatedRouteStub.setParamMap({id: '42'});
         activatedRouteStub.setSnapshotQueryParamMap({duplicate: false});

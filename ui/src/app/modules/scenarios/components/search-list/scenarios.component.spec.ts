@@ -1,4 +1,4 @@
-import { async, TestBed } from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TranslateModule } from '@ngx-translate/core';
@@ -32,7 +32,7 @@ function sendInput(input: HTMLInputElement, value: string) {
 describe('ScenariosComponent', () => {
     let activatedRouteStub;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.resetTestingModule();
         const scenarioService = jasmine.createSpyObj('ScenarioService', ['findScenarios', 'search']);
         const jiraPluginService = jasmine.createSpyObj('JiraPluginService', ['findScenarios', 'findCampaigns']);
@@ -71,7 +71,7 @@ describe('ScenariosComponent', () => {
         }).compileComponents();
     }));
 
-    it('should create the component ScenariosComponent with three scenarios', async(() => {
+    it('should create the component ScenariosComponent with three scenarios', waitForAsync(() => {
         const fixture = TestBed.createComponent(ScenariosComponent);
         activatedRouteStub.setParamMap({orderBy: 'id'});
         fixture.detectChanges();
