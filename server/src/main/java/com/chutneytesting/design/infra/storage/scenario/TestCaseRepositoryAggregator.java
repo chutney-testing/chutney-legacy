@@ -13,6 +13,7 @@ import com.chutneytesting.design.infra.storage.scenario.jdbc.DatabaseTestCaseRep
 import com.chutneytesting.design.infra.storage.scenario.jdbc.TestCaseData;
 import com.chutneytesting.design.infra.storage.scenario.jdbc.TestCaseDataMapper;
 import com.orientechnologies.orient.core.id.ORecordId;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -145,18 +146,28 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
     }
 
     private List<TestCaseMetadata> findAllComposableTestCase() {
-        return composableTestCaseRepository.findAll().stream()
-            .map(testCaseMetadata -> TestCaseMetadataImpl.TestCaseMetadataBuilder.from(testCaseMetadata)
-                .withId(toFrontId(testCaseMetadata.id()))
-                .build())
-            .collect(Collectors.toList());
+        try {
+            return composableTestCaseRepository.findAll().stream()
+                .map(testCaseMetadata -> TestCaseMetadataImpl.TestCaseMetadataBuilder.from(testCaseMetadata)
+                    .withId(toFrontId(testCaseMetadata.id()))
+                    .build())
+                .collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            LOGGER.warn("Could not find scenarios from composable repository", e);
+            return Collections.emptyList();
+        }
     }
 
     private List<TestCaseMetadata> searchComposableTestCase(String textFilter) {
-        return composableTestCaseRepository.search(textFilter).stream()
-            .map(testCaseMetadata -> TestCaseMetadataImpl.TestCaseMetadataBuilder.from(testCaseMetadata)
-                .withId(toFrontId(testCaseMetadata.id()))
-                .build())
-            .collect(Collectors.toList());
+        try {
+            return composableTestCaseRepository.search(textFilter).stream()
+                .map(testCaseMetadata -> TestCaseMetadataImpl.TestCaseMetadataBuilder.from(testCaseMetadata)
+                    .withId(toFrontId(testCaseMetadata.id()))
+                    .build())
+                .collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            LOGGER.warn("Could not search scenarios from composable repository", e);
+            return Collections.emptyList();
+        }
     }
 }
