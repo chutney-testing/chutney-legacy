@@ -2,14 +2,14 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { MomentModule } from 'angular2-moment';
+import { MomentModule } from 'ngx-moment';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularMultiSelectModule } from 'angular2-multiselect-dropdown';
 import { DragulaModule } from 'ng2-dragula';
-import { ChartsModule } from 'ng2-charts';
+import { NgChartsModule } from 'ng2-charts';
 
 import { SharedModule } from '@shared/shared.module';
 import { CampaignRoute } from './campaign.routes';
@@ -35,7 +35,7 @@ const ROUTES = [
         TranslateModule,
         DragulaModule,
         AngularMultiSelectModule,
-        ChartsModule,
+        NgChartsModule,
         MoleculesModule
     ],
     declarations: [

@@ -4,9 +4,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { TranslateModule } from '@ngx-translate/core';
-import { MomentModule } from 'angular2-moment';
+import { MomentModule } from 'ngx-moment';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { ClickOutsideModule } from 'ng-click-outside';
+import { NgClickOutsideModule } from 'ng-click-outside2';
 
 import { AtomsModule } from '../atoms/atoms.module';
 import { SharedModule } from '@shared/shared.module';
@@ -32,7 +32,7 @@ import { ImportButtonComponent } from './forms/import-button/import-button.compo
 @NgModule({
     imports: [
         AtomsModule,
-        ClickOutsideModule,
+        NgClickOutsideModule,
         CommonModule,
         FormsModule,
         MomentModule,

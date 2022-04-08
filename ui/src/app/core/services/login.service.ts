@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, BehaviorSubject} from 'rxjs';
-import { tap, delay } from 'rxjs/internal/operators';
+import { tap, delay } from 'rxjs/operators';
 
 import { environment } from '@env/environment';
 import { User, Authorization } from '@model';

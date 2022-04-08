@@ -6,8 +6,7 @@ import { FileSaverService } from 'ngx-filesaver';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 
 import { combineLatest, Observable, Subscription, timer } from 'rxjs';
-import { ChartDataSets, ChartOptions } from 'chart.js';
-import { Color, Label } from 'ng2-charts';
+import { ChartConfiguration, ChartOptions } from 'chart.js';
 import * as JSZip from 'jszip';
 
 import {
@@ -70,12 +69,12 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
     private subscriptionLoadCampaign: Subscription;
 
 
-    public lineChartData: ChartDataSets[] = [];
-    public lineChartLabels: Label[] = [];
+    public lineChartData: ChartConfiguration['data'] = {datasets: []};
+    //TODO public lineChartLabels: Label[] = [];
     public lineChartOptions: (ChartOptions) = {
         responsive: true,
     };
-    public lineChartColors: Color[] = [
+   /* TODO public lineChartColors: Color[] = [
         {
             borderColor: 'green',
             backgroundColor: 'rgba(0,255,0,0.1)'
@@ -84,7 +83,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
             borderColor: 'red',
             backgroundColor: 'rgba(255,0,0,0.3)'
         },
-    ];
+    ];*/
     public lineChartLegend = false;
     public lineChartType = 'line';
     public lineChartPlugins = [];
@@ -219,8 +218,8 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
             .filter(s => s.status === 'SUCCESS').length).reverse();
         const scenarioKO = reports.filter(r => !r.partialExecution).map(r => r.scenarioExecutionReports
             .filter(s => s.status === 'FAILURE').length).reverse();
-        this.lineChartData = [{data: scenarioOK}, {data: scenarioKO}];
-        this.lineChartLabels = reports.filter(r => !r.partialExecution).map(r => '' + r.executionId).reverse();
+        this.lineChartData = { datasets: [{data: scenarioOK}, {data: scenarioKO}]};
+        //TODO this.lineChartLabels = reports.filter(r => !r.partialExecution).map(r => '' + r.executionId).reverse();
     }
 
     private getLastCompleteReport() {
