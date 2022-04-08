@@ -27,4 +27,11 @@ public class JsonFunctions {
     public static String jsonSerialize(Object obj) throws JsonProcessingException {
         return om.writeValueAsString(requireNonNull(obj));
     }
+
+    @SpelFunction
+    public static String jsonSet(Object document, String path, String value) {
+        return JsonPath.parse(JsonUtils.jsonStringify(document))
+            .set(path, value)
+            .jsonString();
+    }
 }
