@@ -7,7 +7,7 @@ import { SharedModule } from '@shared/shared.module';
 
 import { MoleculesModule } from '../../../../molecules/molecules.module';
 
-import { MomentModule } from 'angular2-moment';
+import { MomentModule } from 'ngx-moment';
 import { NgbModule, NgbPopoverConfig } from '@ng-bootstrap/ng-bootstrap';
 import { EMPTY, of } from 'rxjs';
 import { ScenarioIndex } from '@core/model';

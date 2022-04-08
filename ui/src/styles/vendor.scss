@@ -14,7 +14,15 @@ $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
 $danger: $labelko;
 
 @import 'node_modules/bootstrap/scss/bootstrap';
-@import 'node_modules/ngx-toastr/toastr-bs4-alert';
+
+// regular style toast
+@import '~ngx-toastr/toastr';
+
+// bootstrap style toast
+// or import a bootstrap 4 alert styled design (SASS ONLY)
+// should be after your bootstrap imports, it uses bs4 variables, mixins, functions
+// issue https://github.com/scttcper/ngx-toastr/issues/887 @import '~ngx-toastr/toastr-bs4-alert';
+
 
 @import "~@fortawesome/fontawesome-free/scss/fontawesome";
 @import "~@fortawesome/fontawesome-free/scss/brands";
@@ -23,5 +31,5 @@ $danger: $labelko;
 
 // Highlight.js themes
 // @import 'node_modules/highlight.js/styles/github-gist.css';
-@import 'node_modules/highlight.js/styles/foundation.css';
+@import '~highlight.js/styles/foundation.css';
 // @import 'node_modules/highlight.js/styles/default.css';

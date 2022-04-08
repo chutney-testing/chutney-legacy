@@ -1,14 +1,14 @@
 // Core
 import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 // External libs
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MissingTranslationHandler, TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { ModalModule } from 'ngx-bootstrap';
+
 import { ToastrModule } from 'ngx-toastr';
 import { DragulaModule } from 'ng2-dragula';
 // Internal common
@@ -17,6 +17,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { DefaultMissingTranslationHandler, HttpLoaderFactory } from './app.translate.factory';
 import { SharedModule } from '@shared/shared.module';
 import { CoreModule } from '@core/core.module';
+import { ModalModule, BsModalService  } from 'ngx-bootstrap/modal';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,6 @@ import { CoreModule } from '@core/core.module';
     FormsModule,
     HttpClientModule,
     DragulaModule.forRoot(),
-    NgbModule.forRoot(),
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -48,9 +48,16 @@ import { CoreModule } from '@core/core.module';
       preventDuplicates: true,
     }),
     ModalModule.forRoot(),
+    NgbModule,
     // Internal common
     SharedModule,
   ],
+  providers: [BsModalService],
   bootstrap: [AppComponent]
 })
 export class ChutneyAppModule { }
+
+
+
+
+

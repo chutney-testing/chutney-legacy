@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
-import { debounceTime, delay, tap } from 'rxjs/internal/operators';
+import { debounceTime, delay, tap } from 'rxjs/operators';
 
 import { EventManagerService } from '@shared/event-manager.service';
 

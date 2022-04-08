@@ -8,8 +8,8 @@ import { AceEditorComponent } from '@shared/ace-editor/ace-editor.component';
 import { DatasetSelectionComponent } from '@shared/components/dataset-selection/dataset-selection.component';
 import { InputFocusDirective } from '@shared/directives';
 import { ThumbnailPipe } from '@shared/pipes/thumbnail.pipe';
-import { MomentModule } from 'angular2-moment';
-import { AceEditorModule } from 'ng2-ace-editor';
+import { MomentModule } from 'ngx-moment';
+//TODO import { AceEditorModule } from 'ng2-ace-editor';
 import { AlertService } from './alert.service';
 import { ErrorInterceptor } from './error-interceptor.service';
 import {
@@ -40,7 +40,7 @@ import { StateService } from './state/state.service';
 
 @NgModule({
     imports: [
-        AceEditorModule,
+       //TODO  AceEditorModule,
         CommonModule,
         FormsModule,
         MomentModule,

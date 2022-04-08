@@ -12,11 +12,11 @@ import { User, Authorization } from '@model';
 })
 export class MainMenuComponent {
 
-  ICON_TESTS = require('../../../assets/icons/tests.png');
-  ICON_TESTS_SELECTED = require('../../../assets/icons/tests-selected.png');
+  ICON_TESTS = '';//require('../../../assets/icons/tests.png');
+  ICON_TESTS_SELECTED = '';//require('../../../assets/icons/tests-selected.png');
 
-  ICON_REPO = require('../../../assets/icons/repository.png');
-  ICON_REPO_SELECTED = require('../../../assets/icons/repository-selected.png');
+  ICON_REPO = '';//require('../../../assets/icons/repository.png');
+  ICON_REPO_SELECTED = '';//require('../../../assets/icons/repository-selected.png');
 
   user$: Observable<User>;
   Authorization = Authorization;

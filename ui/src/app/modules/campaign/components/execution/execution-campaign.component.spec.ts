@@ -2,7 +2,7 @@ import { TestBed} from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { MomentModule } from 'angular2-moment';
+import { MomentModule } from 'ngx-moment';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { of } from 'rxjs';
 
@@ -13,8 +13,8 @@ import { ActivatedRouteStub } from 'src/app/testing/activated-route-stub';
 import { Campaign, TestCase, CampaignExecutionReport, ScenarioExecutionReportOutline } from '@core/model';
 import { ScenarioService, CampaignService, EnvironmentAdminService } from '@core/services';
 import { TranslateTestingModule } from '../../../../testing/translate-testing.module';
-import { ChartsModule } from 'ng2-charts';
-import { BsModalService, ModalModule } from 'ngx-bootstrap';
+import { NgChartsModule } from 'ng2-charts';
+import { BsModalService, ModalModule } from 'ngx-bootstrap/modal';
 
 
 describe('CampaignExecutionComponent', () => {
@@ -46,8 +46,8 @@ describe('CampaignExecutionComponent', () => {
         MoleculesModule,
         SharedModule,
         MomentModule,
-        ChartsModule,
-        NgbModule.forRoot(),
+        NgChartsModule,
+        NgbModule,
         ],
       declarations: [
         CampaignExecutionComponent

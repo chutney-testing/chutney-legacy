@@ -12,6 +12,6 @@ export class HighLightJService {
 
   highlightElement(baseElement: Element, codeSelectorAll: string = 'pre code') {
       const codes = baseElement.querySelectorAll(codeSelectorAll);
-      codes.forEach(code => hljs.highlightBlock(code));
+      //TODO https://www.npmjs.com/package/ngx-highlightjs codes.forEach(code => hljs.highlightBlock(code));
   }
 }

@@ -3,7 +3,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { MomentModule } from 'angular2-moment';
+import { MomentModule } from 'ngx-moment';
 import { TranslateModule } from '@ngx-translate/core';
 import { DragulaModule, DragulaService } from 'ng2-dragula';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
