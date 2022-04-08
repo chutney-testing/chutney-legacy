@@ -92,6 +92,9 @@ export function pairwise<T>(list: Array<T>): Array<Array<T>> {
 }
 
 function normalize(value) {
+    if (Array.isArray(value)) {
+        value = value.toString();
+    }
     return value.toLowerCase ?
         value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') :
         '' + value;
