@@ -98,8 +98,6 @@ import { StateService } from './state/state.service';
         WithoutScenarioPipe,
         HasAuthorizationDirective,
     ],
-    entryComponents: [
-    ],
     providers: [
         {
             provide: HTTP_INTERCEPTORS,
@@ -109,7 +107,8 @@ import { StateService } from './state/state.service';
         AlertService,
         EventManagerService,
         HjsonParserService,
-        StateService]
+        StateService
+    ]
 })
 export class SharedModule {
 }
