@@ -6,7 +6,9 @@ import com.chutneytesting.task.assertion.utils.JsonUtils;
 import com.chutneytesting.task.spi.SpelFunction;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
+import java.util.Map;
 
 public class JsonFunctions {
 
@@ -33,5 +35,12 @@ public class JsonFunctions {
         return JsonPath.parse(JsonUtils.jsonStringify(document))
             .set(path, value)
             .jsonString();
+    }
+
+    @SpelFunction
+    public static Object jsonSetMany(Object document, Map<String, Object> map) {
+        DocumentContext jsonDocument = JsonPath.parse(JsonUtils.jsonStringify(document));
+        map.forEach(jsonDocument::set);
+        return jsonDocument.jsonString();
     }
 }

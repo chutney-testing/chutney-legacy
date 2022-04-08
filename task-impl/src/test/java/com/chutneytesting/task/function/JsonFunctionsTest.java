@@ -2,6 +2,8 @@ package com.chutneytesting.task.function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.json.JSONException;
@@ -47,5 +49,20 @@ public class JsonFunctionsTest {
         Object updatedJson = JsonFunctions.jsonSet(originalJson, path, value);
 
         assertThat(updatedJson).isEqualTo("{\"dev\":{\"name\":\"Batman\",\"needsCoffee\":false}}");
+    }
+
+    @Test
+    public void should_update_multiple_values_at_once_when_given_paths() {
+
+        String originalJson = "{\"dev\":{\"name\":\"Bruce\", \"needsCoffee\":false}}";
+
+        Map<String, Object> map = Map.of(
+            "$.dev.name", "Batman",
+            "$.dev.needsCoffee", true
+        );
+
+        Object updatedJson = JsonFunctions.jsonSetMany(originalJson, map);
+
+        assertThat(updatedJson).isEqualTo("{\"dev\":{\"name\":\"Batman\",\"needsCoffee\":true}}");
     }
 }
