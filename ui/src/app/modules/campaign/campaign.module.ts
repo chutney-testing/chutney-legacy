@@ -8,7 +8,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularMultiSelectModule } from 'angular2-multiselect-dropdown';
-import { DragulaModule } from 'ng2-dragula';
+//import { DragulaModule } from 'ng2-dragula';
 import { NgChartsModule } from 'ng2-charts';
 
 import { SharedModule } from '@shared/shared.module';
@@ -33,7 +33,7 @@ const ROUTES = [
         NgbModule,
         MomentModule,
         TranslateModule,
-        DragulaModule,
+    //    DragulaModule,
         AngularMultiSelectModule,
         NgChartsModule,
         MoleculesModule

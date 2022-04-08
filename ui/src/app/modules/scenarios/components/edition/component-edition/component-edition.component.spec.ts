@@ -5,7 +5,7 @@ import { FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MomentModule } from 'ngx-moment';
 import { TranslateModule } from '@ngx-translate/core';
-import { DragulaModule, DragulaService } from 'ng2-dragula';
+//import { DragulaModule, DragulaService } from 'ng2-dragula';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrModule } from 'ngx-toastr';
 import { of } from 'rxjs';
@@ -24,7 +24,7 @@ import { EditionInfoComponent } from '../edition-info/edition-info.component';
 describe('ComponentEditionComponent', () => {
 
     const componentService = jasmine.createSpyObj('ComponentService', ['findAllComponent', 'saveComponentTestCase', 'findComponentTestCase']);
-    const dragulaService = new DragulaService();
+ //   const dragulaService = new DragulaService();
     dragulaService.createGroup('FAKE', {});
     const activatedRouteStub = new ActivatedRouteStub();
 
@@ -49,8 +49,8 @@ describe('ComponentEditionComponent', () => {
                 FormsModule,
                 ReactiveFormsModule,
                 MomentModule,
-                DragulaModule,
-                NgbModule.forRoot(),
+               // DragulaModule,
+                NgbModule,
                 ToastrModule.forRoot()
             ],
             declarations: [
@@ -62,7 +62,7 @@ describe('ComponentEditionComponent', () => {
             providers: [
                 {provide: ActivatedRoute, useValue: activatedRouteStub},
                 {provide: ComponentService, useValue: componentService},
-                {provide: DragulaService, useValue: dragulaService}
+                //{provide: DragulaService, useValue: dragulaService}
             ]
         }).compileComponents();
     }));

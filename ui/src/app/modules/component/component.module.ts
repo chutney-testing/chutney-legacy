@@ -13,7 +13,7 @@ import { MoleculesModule } from 'src/app/molecules/molecules.module';
 
 import { componentRoute } from './component.routes';
 import { CreateComponent } from './components/create-component/create-component.component';
-import { DragulaModule } from 'ng2-dragula';
+//import { DragulaModule } from 'ng2-dragula';
 import { ActionEditComponent } from './components/action/action-edit.component';
 import { StrategyFormComponent } from '@modules/component/components/sub/strategy-form/strategy-form.component';
 
@@ -40,7 +40,7 @@ const ROUTES = [
         MomentModule,
         NgbModule,
         TranslateModule,
-        DragulaModule,
+     //   DragulaModule,
         // Internal common
         SharedModule,
         MoleculesModule

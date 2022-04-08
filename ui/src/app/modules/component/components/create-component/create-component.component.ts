@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { combineLatest, Observable, Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { DragulaService } from 'ng2-dragula';
+//import { DragulaService } from 'ng2-dragula';
 
 import {
     ComponentTask,
@@ -71,7 +71,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     constructor(
         private componentService: ComponentService,
         private formBuilder: FormBuilder,
-        private dragulaService: DragulaService,
+       // private dragulaService: DragulaService,
         private translate: TranslateService,
         private route: ActivatedRoute,
         private router: Router,
@@ -118,7 +118,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     private initDragAndDrop() {
         const userHasWritePermission = this.loginService.hasAuthorization([Authorization.COMPONENT_WRITE]);
-        this.dragulaService.createGroup('COPYABLE', {
+        /*this.dragulaService.createGroup('COPYABLE', {
             copy: (el, source) => {
                 return source.id === 'left';
             },
@@ -130,7 +130,7 @@ export class CreateComponent implements OnInit, OnDestroy {
                 return target.id !== 'left';
             },
             moves: (el, container, handle, sibling) => userHasWritePermission
-        });
+        });*/
     }
 
     private initAllTasksAndComponents(): Observable<any> {
@@ -160,7 +160,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.dragulaService.destroy('COPYABLE');
+       // this.dragulaService.destroy('COPYABLE');
         this.unsubscribe$.complete();
     }
 
