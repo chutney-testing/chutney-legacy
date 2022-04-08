@@ -1,17 +1,24 @@
 <div class="row">
-    <div class="components-list-container col-3 pl-3 pr-3 m-0 border-right">
-        <button type="button" class="btn btn-xs btn-default ml-2"
+    <div class="components-list-container m-0 border-right"
+         [ngClass]="{'col p-0 h100 component-list-container-minimize':componentMinimize, 'col-3 pl-3 pr-3':!componentMinimize}">
+        <button *ngIf="viewComponent && actionToEdit" type="button" class="btn btn-xs btn-default ml-2 float-right"
+                style="box-shadow: none;"
+                title="{{componentMinimize ? 'Show list' : 'Hide list'}}"
+                (click)="componentMinimize = !componentMinimize;">
+            <span class="fa fa-window-minimize" [ngClass]="{'fa-window-maximize':componentMinimize, 'fa-window-minimize':!componentMinimize}"></span>
+        </button>
+        <button *ngIf="!componentMinimize" type="button" class="btn btn-xs btn-default ml-2"
                 [ngClass]="{'selected':viewComponent, 'not-selected':!viewComponent}"
                 (click)="viewComponent = true; cancel();">
             <span class="fa fa-cubes"></span> {{'components.menu.components' | translate}}
         </button>
-        <button type="button" class="btn btn-xs btn-default"
+        <button *ngIf="!componentMinimize" type="button" class="btn btn-xs btn-default"
                 [ngClass]="{'selected':!viewComponent, 'not-selected':viewComponent}"
                 (click)="viewComponent = false; cancel();">
             <span class="fa fa-clone"></span> {{'components.menu.actions' | translate}}
         </button>
 
-        <div *ngIf="viewComponent" class="component-list">
+        <div *ngIf="viewComponent && !componentMinimize" class="component-list">
             <div class="mb-2">
                 <input name="search" type="text" class="form-control mb-2"
                        placeholder="{{'components.shared.list.filter.placeholder' | translate}}"
@@ -75,7 +82,8 @@
         </div>
     </div>
 
-    <div class="edition col-9" [formGroup]="componentForm">
+    <div class="edition" [formGroup]="componentForm"
+         [ngClass]="{'col pl-0 edition-component-minimize':componentMinimize, 'col-9':!componentMinimize}">
         <div class="text-center bg-info text-white"
              [ngClass]="'bg-' + messageType">
             <strong *ngIf="message">{{ message }}</strong>

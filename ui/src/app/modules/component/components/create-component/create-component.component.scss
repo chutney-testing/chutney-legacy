@@ -95,3 +95,11 @@ textarea.no-resize {
 .drop-zone-empty {
     padding: 2rem !important;
 }
+
+.component-list-container-minimize {
+    width: 70px;
+}
+
+.edition-component-minimize {
+    width: calc(100% - 70px /*component-list*/)
+}
