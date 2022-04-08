@@ -21,7 +21,7 @@ fieldset legend {
 }
 
 .edition-body {
-    height: calc(100vh - (50px /*menu*/+ 10px + 170px /*edition-header*/ + 10px + 10px));
+    height: calc(100vh - (50px + 10px + 170px + 10px + 10px));
     overflow-y: auto;
 }
 

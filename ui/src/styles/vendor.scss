@@ -13,7 +13,7 @@ eg $input-color: red;
 $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
 $danger: $labelko;
 
-@import 'node_modules/bootstrap/scss/bootstrap';
+@import "~bootstrap/scss/bootstrap";
 
 // regular style toast
 @import '~ngx-toastr/toastr';
