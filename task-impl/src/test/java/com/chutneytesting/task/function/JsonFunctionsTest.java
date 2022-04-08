@@ -61,8 +61,19 @@ public class JsonFunctionsTest {
             "$.dev.needsCoffee", true
         );
 
-        Object updatedJson = JsonFunctions.jsonSetMany(originalJson, map);
+        String updatedJson = JsonFunctions.jsonSetMany(originalJson, map);
 
         assertThat(updatedJson).isEqualTo("{\"dev\":{\"name\":\"Batman\",\"needsCoffee\":true}}");
+    }
+
+    @Test
+    public void should_merge_two_documents() {
+
+        String documentA = "{\"firstName\":\"Bruce\"}";
+        String documentB = "{\"lastName\":\"Wayne\"}";
+
+        String updatedJson = JsonFunctions.jsonMerge(documentA, documentB);
+
+        assertThat(updatedJson).isEqualTo("{\"firstName\":\"Bruce\",\"lastName\":\"Wayne\"}");
     }
 }

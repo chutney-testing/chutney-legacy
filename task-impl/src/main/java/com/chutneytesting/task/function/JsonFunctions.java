@@ -8,6 +8,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class JsonFunctions {
@@ -38,9 +40,20 @@ public class JsonFunctions {
     }
 
     @SpelFunction
-    public static Object jsonSetMany(Object document, Map<String, Object> map) {
+    public static String jsonSetMany(Object document, Map<String, Object> map) {
         DocumentContext jsonDocument = JsonPath.parse(JsonUtils.jsonStringify(document));
         map.forEach(jsonDocument::set);
         return jsonDocument.jsonString();
     }
+
+    @SpelFunction
+    public static String jsonMerge(Object documentA, Object documentB) {
+        LinkedHashMap jsonDocA = JsonPath.parse(JsonUtils.jsonStringify(documentA)).json();
+        LinkedHashMap jsonDocB = JsonPath.parse(JsonUtils.jsonStringify(documentB)).json();
+
+        jsonDocA.putAll(jsonDocB);
+
+        return JsonPath.parse(JsonUtils.jsonStringify(jsonDocA)).jsonString();
+    }
+
 }
