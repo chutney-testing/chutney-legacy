@@ -44,10 +44,7 @@ const ROUTES = [
         DatasetEditionComponent,
         FormsKeyValueComponent,
         FormsDataGridComponent
-    ],
-    entryComponents: [
-
-    ],
+    ]
 })
 export class DatasetModule {
 }

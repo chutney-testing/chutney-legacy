@@ -43,11 +43,7 @@ const ROUTES = [
         CampaignEditionComponent,
         CampaignExecutionComponent,
         CampaignSchedulingComponent
-    ],
-    entryComponents: [
-        CampaignEditionComponent,
-        CampaignExecutionComponent,
-    ],
+    ]
 })
 export class CampaignModule {
 }
