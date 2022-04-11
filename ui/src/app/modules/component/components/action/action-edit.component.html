@@ -55,7 +55,7 @@
         <div class="border-right"
              [ngClass]="{'col edition-action-minimize':rightPanelMinimize, 'col-7':!rightPanelMinimize}">
             <!-- Inputs -->
-            <div *ngIf="hasInputs()" class="mt-4 p-2">
+            <div *ngIf="hasInputs()" class="mt-4 pl-0 pr-0 pb-2 pt-2">
                 <legend class="pl-3 pr-3 ">
                     <span class="font-weight-bold cursor-default" (click)="switchCollapseInputs()">{{'components.shared.edition.blocks.inputs' | translate}}</span>
                     <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
@@ -120,9 +120,9 @@
                                                 <textarea class="ml-2 mr-2 form-control" formControlName="v"
                                                           placeholder="value" rows="1"></textarea>
                                             </div>
-                                            <div class="col-1 pl-1 pr-1 align-self-center text-center">
+                                            <div class="col-1 pl-1 pr-1 align-self-center text-right">
                                                 <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
-                                                        type="button" class="btn btn-outline-danger"
+                                                        type="button" class="btn btn-sm btn-outline-danger"
                                                         (click)="removeMapItem(i,j)"
                                                         title="{{'global.actions.delete' | translate}}">
                                                     <span class="fa fa-trash"></span>
@@ -165,9 +165,9 @@
                                                 <textarea class="mr-2 form-control" formControlName="l"
                                                           placeholder="value" rows="1"></textarea>
                                             </div>
-                                            <div class="col-1 pl-1 pr-1 align-self-center text-center">
+                                            <div class="col-1 pl-1 pr-1 align-self-center text-right">
                                                 <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
-                                                        type="button" class="btn btn-outline-danger"
+                                                        type="button" class="btn btn-sm btn-outline-danger"
                                                         (click)="removeListItem(i,j)"
                                                         title="{{'global.actions.delete' | translate}}">
                                                     <span class="fa fa-trash"></span>
@@ -210,9 +210,9 @@
                                 <textarea class="form-control mr-2" formControlName="value" rows="1"
                                       placeholder="value"></textarea>
                             </div>
-                            <div class="col-1 pl-1 pr-1 align-self-center text-center">
+                            <div class="col-1 pl-1 pr-1 align-self-center text-right">
                                 <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
-                                        type="button" class="btn btn-outline-danger"
+                                        type="button" class="btn btn-sm btn-outline-danger"
                                         (click)="removeValidation(i)"
                                         title="{{'global.actions.delete' | translate}}">
                                     <span class="fa fa-trash"></span>
@@ -251,9 +251,9 @@
                                 <textarea class="form-control mr-2" formControlName="value" rows="1"
                                           placeholder="value"></textarea>
                             </div>
-                            <div class="col-1 pl-1 pr-1 align-self-center text-center">
+                            <div class="col-1 pl-1 pr-1 align-self-center text-right">
                                 <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
-                                        type="button" class="btn btn-outline-danger"
+                                        type="button" class="btn btn-sm btn-outline-danger"
                                         (click)="removeOutput(i)"
                                         title="{{'global.actions.delete' | translate}}">
                                     <span class="fa fa-trash"></span>
@@ -265,10 +265,11 @@
             </fieldset>
         </div>
         <div [ngClass]="{'p-0 right-panel-minimize':rightPanelMinimize, 'col-5':!rightPanelMinimize}">
-            <button type="button" class="right-panel-minimize-btn btn btn-xs btn-default pt-0 shadow-none float-right"
-                    title="{{rightPanelMinimize ? 'Show' : 'Hide'}}"
+            <button type="button" class="right-panel-minimize-btn btn btn-xs pt-0 btn-default shadow-none"
+                    [ngClass]="{'p-0':!rightPanelMinimize}"
+                    title="{{(rightPanelMinimize ? 'global.actions.show' : 'global.actions.hide') | translate}}"
                     (click)="rightPanelMinimize = !rightPanelMinimize;">
-                <span class="fa fa-window-minimize" [ngClass]="{'fa-window-maximize':rightPanelMinimize, 'fa-window-minimize':!rightPanelMinimize}"></span>
+                <span class="fa" [ngClass]="{'fa-angle-double-left':rightPanelMinimize, 'fa-angle-double-right':!rightPanelMinimize}"></span>
             </button>
             <div class="right-panel-content" [ngClass]="{'d-none':rightPanelMinimize}">
                 <ng-container *ngIf="!executionResult">

@@ -31,6 +31,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     // global
     viewComponent = true;
     componentMinimize = false;
+    componentEditionRightPanelMinimize = false;
     actionToEdit: ComponentTask;
 
     // referential
@@ -230,7 +231,6 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     resetData() {
         this.actionSelected = null;
-        this.componentMinimize = false;
         this.actionToEdit = null;
         this.collapseScenario = false;
         this.executionResult = null;

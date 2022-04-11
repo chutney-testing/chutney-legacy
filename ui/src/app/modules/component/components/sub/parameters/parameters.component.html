@@ -24,10 +24,10 @@
                 <div class="col-7 pl-1 pl-1 pr-1">
                     <textarea class="form-control mr-2 small-text" formControlName="value" rows="1" placeholder="value"></textarea>
                 </div>
-                <div class="col-1 pl-1 pr-1 align-self-center text-center">
+                <div class="col-1 pl-1 pr-1 align-self-center text-right">
                     <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
                             type="button"
-                            class="btn btn-outline-danger delete-button-height"
+                            class="btn btn-sm btn-outline-danger delete-button-height"
                             (click)="removeParameters(i)"
                             title="{{'global.actions.delete' | translate}}">
                         <span class="fa fa-trash"></span>

@@ -103,3 +103,20 @@ textarea.no-resize {
 .edition-component-minimize {
     width: calc(100% - 70px /*component-list*/)
 }
+
+.right-panel-minimize {
+    width: 45px;
+}
+
+.edition-component-right-panel-minimize {
+    width: calc(100% - 45px/*right-panel*/);
+}
+
+.right-panel-minimize-btn {
+    position: fixed;
+    margin-left: -5px;
+}
+
+.right-panel-content {
+    margin-left: 15px;
+}

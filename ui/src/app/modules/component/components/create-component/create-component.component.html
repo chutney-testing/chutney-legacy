@@ -2,9 +2,9 @@
     <div class="components-list-container m-0 border-right"
          [ngClass]="{'col p-0 h100 component-list-container-minimize':componentMinimize, 'col-3 pl-3 pr-3':!componentMinimize}">
         <button type="button" class="btn btn-xs btn-default ml-2 shadow-none float-right"
-                title="{{componentMinimize ? 'Show component list' : 'Hide component list'}}"
+                title="{{(componentMinimize ? 'global.actions.show' : 'global.actions.hide') | translate}}"
                 (click)="componentMinimize = !componentMinimize;">
-            <span class="fa fa-window-minimize" [ngClass]="{'fa-window-maximize':componentMinimize, 'fa-window-minimize':!componentMinimize}"></span>
+            <span class="fa" [ngClass]="{'fa-angle-double-right':componentMinimize, 'fa-angle-double-left':!componentMinimize}"></span>
         </button>
         <button type="button" class="btn btn-xs btn-default ml-2"
                 [ngClass]="{'selected':viewComponent, 'not-selected':!viewComponent, 'd-none': componentMinimize}"
@@ -156,8 +156,8 @@
                 </ng-container>
             </div>
             <div class="edition-body row">
-                <div class="col-7">
-                    <ng-container *ngIf="editableComponent">
+                <div *ngIf="editableComponent" class="border-right"
+                     [ngClass]="{'col edition-component-right-panel-minimize':componentEditionRightPanelMinimize, 'col-7':!componentEditionRightPanelMinimize}">
                         <div class="pl-3 font-weight-bold">
                             <span class="legend-title">{{'components.component.edition.blocks.steps' | translate}}</span>
                         </div>
@@ -174,31 +174,26 @@
                                 </div>
                             </div>
                         </div>
-                    </ng-container>
                 </div>
-                <div class="col-5">
-                    <ng-container *ngIf="!executionResult">
-                        <div *ngIf="editableComponent">
-                            <chutney-strategy-form
-                                [strategy]="editableComponent.strategy"
-                                formControlName="strategy">
-                            </chutney-strategy-form>
-                            <chutney-parameters-component
-                                [parentForm]="componentForm"
-                                [editableComponent]="editableComponent">
-                            </chutney-parameters-component>
-                            <chutney-child-panel-component
-                                [parents]="parents"
-                                [show]="showChild">
-                            </chutney-child-panel-component>
-                        </div>
-                    </ng-container>
-                    <ng-container *ngIf="executionResult">
-                        <chutney-execution-panel-component
-                            [executionResult]="executionResult"
-                            (closeEvent)="closeExecutionPanel()">
-                        </chutney-execution-panel-component>
-                    </ng-container>
+                <div [ngClass]="{'p-0 right-panel-minimize':componentEditionRightPanelMinimize, 'col-5':!componentEditionRightPanelMinimize}">
+                    <button *ngIf="editableComponent" type="button" class="right-panel-minimize-btn btn btn-xs pt-0 btn-default shadow-none"
+                            [ngClass]="{'p-0':!componentEditionRightPanelMinimize}"
+                            title="{{(componentEditionRightPanelMinimize ? 'global.actions.show' : 'global.actions.hide') | translate}}"
+                            (click)="componentEditionRightPanelMinimize = !componentEditionRightPanelMinimize;">
+                        <span class="fa" [ngClass]="{'fa-angle-double-left':componentEditionRightPanelMinimize, 'fa-angle-double-right':!componentEditionRightPanelMinimize}"></span>
+                    </button>
+                    <div class="right-panel-content" [ngClass]="{'d-none':componentEditionRightPanelMinimize}">
+                        <ng-container *ngIf="!executionResult">
+                            <div *ngIf="editableComponent">
+                                <chutney-strategy-form [strategy]="editableComponent.strategy" formControlName="strategy"></chutney-strategy-form>
+                                <chutney-parameters-component [parentForm]="componentForm" [editableComponent]="editableComponent"></chutney-parameters-component>
+                                <chutney-child-panel-component [parents]="parents" [show]="showChild"></chutney-child-panel-component>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="executionResult">
+                            <chutney-execution-panel-component [executionResult]="executionResult" (closeEvent)="closeExecutionPanel()"></chutney-execution-panel-component>
+                        </ng-container>
+                    </div>
                 </div>
             </div>
         </ng-container>
@@ -207,6 +202,7 @@
         <ng-container *ngIf="viewComponent && actionToEdit">
             <chutney-action-edit-component
                 [editComponent]="actionToEdit"
+                [rightPanelMinimize]="componentEditionRightPanelMinimize"
                 (createEvent)="saveComponent($event)"
                 (deleteEvent)="deleteComponent($event)"
                 (cancelEvent)="cancel()"
@@ -221,6 +217,7 @@
             </div>
             <chutney-action-edit-component *ngIf="actionSelected"
                 [editComponent]="actionToEdit"
+                [rightPanelMinimize]="componentEditionRightPanelMinimize"
                 (createEvent)="saveComponent($event)"
                 (deleteEvent)="deleteComponent($event)"
                 (cancelEvent)="cancel()">

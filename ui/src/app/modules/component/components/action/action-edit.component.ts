@@ -23,6 +23,7 @@ import { newInstance } from '@shared/tools/array-utils';
 export class ActionEditComponent implements OnChanges {
 
     @Input() editComponent: ComponentTask;
+    @Input() rightPanelMinimize: boolean = false;
     @Output() createEvent = new EventEmitter();
     @Output() deleteEvent = new EventEmitter();
     @Output() cancelEvent = new EventEmitter();
@@ -35,7 +36,6 @@ export class ActionEditComponent implements OnChanges {
 
     executionResult: any;
 
-    rightPanelMinimize = false;
     collapseOutputs = true;
     collapseValidations = true;
     collapseInputs = false;
