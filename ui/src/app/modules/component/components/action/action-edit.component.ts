@@ -35,6 +35,7 @@ export class ActionEditComponent implements OnChanges {
 
     executionResult: any;
 
+    rightPanelMinimize = false;
     collapseOutputs = true;
     collapseValidations = true;
     collapseInputs = false;
