@@ -33,14 +33,14 @@ class GlobalVarFileChangelogExecutorTest {
         Path target = temporaryFolder.resolve("global_var").resolve("example.hjson");
 
         // Given
-        Files.copy(source,target);
+        Files.copy(source, target);
 
         // When
         globalVarFileChangelogExecutor.migrateHjsonFiles();
 
         // Then
         String expectedYaml = new String(getClass().getResourceAsStream(RESOURCE_FOLDER + "/expectedExample.yml").readAllBytes());
-        String actualYaml = Files.readString(temporaryFolder.resolve("global_var").resolve("example.yml") );
+        String actualYaml = Files.readString(temporaryFolder.resolve("global_var").resolve("example.yml"));
 
         assertThat(actualYaml).isEqualTo(expectedYaml);
     }
