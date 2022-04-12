@@ -6,7 +6,10 @@ import com.chutneytesting.task.assertion.utils.JsonUtils;
 import com.chutneytesting.task.spi.SpelFunction;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class JsonFunctions {
 
@@ -27,4 +30,29 @@ public class JsonFunctions {
     public static String jsonSerialize(Object obj) throws JsonProcessingException {
         return om.writeValueAsString(requireNonNull(obj));
     }
+
+    @SpelFunction
+    public static String jsonSet(Object document, String path, String value) {
+        return JsonPath.parse(JsonUtils.jsonStringify(document))
+            .set(path, value)
+            .jsonString();
+    }
+
+    @SpelFunction
+    public static String jsonSetMany(Object document, Map<String, Object> map) {
+        DocumentContext jsonDocument = JsonPath.parse(JsonUtils.jsonStringify(document));
+        map.forEach(jsonDocument::set);
+        return jsonDocument.jsonString();
+    }
+
+    @SpelFunction
+    public static String jsonMerge(Object documentA, Object documentB) {
+        LinkedHashMap jsonDocA = JsonPath.parse(JsonUtils.jsonStringify(documentA)).json();
+        LinkedHashMap jsonDocB = JsonPath.parse(JsonUtils.jsonStringify(documentB)).json();
+
+        jsonDocA.putAll(jsonDocB);
+
+        return JsonPath.parse(JsonUtils.jsonStringify(jsonDocA)).jsonString();
+    }
+
 }
