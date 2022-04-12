@@ -3,7 +3,7 @@
         <button type="button" class="btn btn-info" (click)="exportKeyValue()">
             <span class="fa fa-file-csv" aria-hidden="true"></span> {{ 'global.actions.export' | translate }}
         </button>
-        <div class="btn btn-info div-file ml-2">
+        <div class="btn btn-info div-file ms-2">
             <span class="fa fa-file-import" aria-hidden="true"></span> {{ 'global.actions.import' | translate }}
             <input class="input-file" type="file" name="file" multiple="false"
                    (change)="importKeyValue($event.target.files)"/>
@@ -23,7 +23,7 @@
                         title="{{'global.actions.add' | translate}}">
                     <span class="fa fa-plus"></span>
                 </button>
-                <button type="button" class="btn btn-outline-danger delete-button-height ml-1"
+                <button type="button" class="btn btn-outline-danger delete-button-height ms-1"
                         (click)="removeKeyValueLine(i)"
                         title="{{'global.actions.delete' | translate}}">
                     <span class="fa fa-times"></span>

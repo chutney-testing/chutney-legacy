@@ -1,4 +1,4 @@
-<div class="row ml-4">
+<div class="row ms-4">
     <div class="col-md-6">
         <button *hasAuthorization="[Authorization.CAMPAIGN_WRITE]"
                 type="button"
@@ -9,20 +9,20 @@
         </button>
         <button *hasAuthorization="[Authorization.CAMPAIGN_EXECUTE]"
                 type="button"
-                class="btn btn-sm btn-outline-secondary ml-2"
+                class="btn btn-sm btn-outline-secondary ms-2"
                 [routerLink]="['scheduling']"
         >
             <span class="fa fa-plus" aria-hidden="true"></span> {{ 'campaigns.scheduling.schedule' | translate }}
         </button>
     </div>
 </div>
-<div class="row ml-4">
-    <div class="col-md-6 pr-2">
+<div class="row ms-4">
+    <div class="col-md-6 pe-2">
         <div class="input-group mb-3">
             <input type="text" class="form-control" placeholder="{{ 'campaigns.search.placeholder' | translate }}"
                    [ngModel]="campaignFilter" (ngModelChange)="campaignFilterChange($event)">
         </div>
-        <div class="row ml-2">
+        <div class="row ms-2">
             <div style="min-width: 170px;">
                 <button *ngIf=" !isSelectAll()" type="button" class="btn btn-xs btn-default m-2" (click)="selectAll()">
                     <span class="fa fa-check"></span> {{ 'campaigns.search.selectAllText' | translate }}
@@ -32,7 +32,7 @@
                 </button>
             </div>
             <div class="d-flex flex-wrap">
-                <div class="border-right border-dark ml-2 mr-2"></div>
+                <div class="border-right border-dark ms-2 me-2"></div>
                 <div class="align-self-center">
                     <button class="chutney-tag"
                             [ngClass]="tagFilter.isNoTagSelected() ? 'chutney-tag-selected' : 'chutney-tag-unselected'"
@@ -40,7 +40,7 @@
                         NO_TAG
                     </button>
                 </div>
-                <div class="border-right border-dark ml-2 mr-2"></div>
+                <div class="border-right border-dark ms-2 me-2"></div>
                 <div *ngFor="let tag of tagFilter.all()" class="align-self-center">
                     <button
                         [ngClass]="tagFilter.isSelected(tag)? 'chutney-tag chutney-tag-selected' : 'chutney-tag chutney-tag-unselected'"
@@ -59,8 +59,8 @@
                         <a [routerLink]="['/campaign',campaign.id,'execution']"
                            title="{{ 'campaigns.list.item.title.link.title' | translate }} {{campaign.title}}">{{campaign.title}}</a>
                     </td>
-                    <td class="pl-0 w1">
-                        <a *ngIf="jiraMap.has(campaign.id.toString())" role="button" class="btn btn-sm btn-link mr-0"
+                    <td class="ps-0 w1">
+                        <a *ngIf="jiraMap.has(campaign.id.toString())" role="button" class="btn btn-sm btn-link me-0"
                            target="_blank" href="{{getJiraLink(campaign.id.toString())}}"
                            ngbPopover="{{jiraMap.get(campaign.id.toString())}}" placement="left"
                            (click)="$event.stopPropagation()"
@@ -69,7 +69,7 @@
                             </span>
                         </a>
                     </td>
-                    <td class="pl-0 w1">
+                    <td class="ps-0 w1">
                         <span *ngIf="campaign.tags.length <= 3">
                             <span *ngFor="let tag of campaign.tags"
                                   class="chutney-tag chutney-tag-selected">{{tag}}</span>
@@ -84,19 +84,19 @@
                             </button>
                         </span>
                     </td>
-                    <td class="pl-0 w1">
-                        <button type="button" class="btn btn-link mr-0"
+                    <td class="ps-0 w1">
+                        <button type="button" class="btn btn-link me-0"
                                 ngbPopover="{{campaign.description}}" placement="left"
                                 triggers="mouseenter:mouseleave">
                             <span class="fa fa-info-circle" aria-hidden="true"></span>
                         </button>
                     </td>
-                    <td class="pl-0 w2" *hasAuthorization="[Authorization.CAMPAIGN_WRITE]">
+                    <td class="ps-0 w2" *hasAuthorization="[Authorization.CAMPAIGN_WRITE]">
                         <button type="button" class="btn btn-light" (click)="editCampaign(campaign)">
                             <span class="fa fa-pencil-alt"></span>
                         </button>
                     </td>
-                    <td class="pl-0 w2" *hasAuthorization="[Authorization.CAMPAIGN_WRITE]">
+                    <td class="ps-0 w2" *hasAuthorization="[Authorization.CAMPAIGN_WRITE]">
                         <button type="button" class="btn btn-outline-danger"
                                 (click)="deleteCampaign(campaign.id, campaign.title)">
                             <span class="fa fa-trash"></span>
@@ -110,7 +110,7 @@
             <span>{{ 'campaigns.list.empty' | translate }}</span>
         </div>
     </div>
-    <div class="col-md-6 pl-2">
+    <div class="col-md-6 ps-2">
         <h2 *ngIf="scheduledCampaigns.length > 0">{{ 'campaigns.list.executions.next' | translate }}</h2>
         <div class="table-responsive" *ngIf="scheduledCampaigns.length > 0">
             <table class="table table-sm table-striped">
@@ -137,17 +137,17 @@
                 <tbody>
                 <tr *ngFor="let report of lastCampaignReports" class="small_text">
                     <td class="w25">{{ report.startDate | amDateFormat: 'DD MMM. YYYY HH:mm' }}</td>
-                    <td class="pl-0 w60">
+                    <td class="ps-0 w60">
                         <a class="table-link"
                            [routerLink]="['/campaign', campaignIdFromName(report.campaignName), 'execution', report.executionId]"
                            >
                             {{ report.campaignName }}
                         </a>
                     </td>
-                    <td class="pl-0 w5">
+                    <td class="ps-0 w5">
                         <chutney-execution-badge [status]="report.status" [spin]="true"></chutney-execution-badge>
                     </td>
-                    <td class="text-center pl-0 w10">{{ report.duration | duration:'short'}}</td>
+                    <td class="text-center ps-0 w10">{{ report.duration | duration:'short'}}</td>
                 </tr>
                 </tbody>
             </table>

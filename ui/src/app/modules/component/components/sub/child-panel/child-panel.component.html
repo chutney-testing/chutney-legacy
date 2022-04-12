@@ -10,7 +10,7 @@
 </div>
 <div *ngIf="show">
     <ng-container *ngIf="parents?.parentSteps.length > 0">
-        <span class="ml-2">{{'components.shared.edition.existInStep' | translate}}</span>
+        <span class="ms-2">{{'components.shared.edition.existInStep' | translate}}</span>
         <ul>
             <li *ngFor="let parentStep of parents?.parentSteps">
                 <a [routerLink]="['/component', parentStep.id]">{{parentStep.name}}</a>
@@ -18,7 +18,7 @@
         </ul>
     </ng-container>
     <ng-container *ngIf="parents?.parentScenario.length > 0">
-        <span class="ml-2"> {{'components.shared.edition.existInScenario' | translate}}</span>
+        <span class="ms-2"> {{'components.shared.edition.existInScenario' | translate}}</span>
         <ul *ngIf="parents?.parentScenario.length > 0">
             <li *ngFor="let parentScenario of parents?.parentScenario">
                 <ng-container *hasAuthorization="[Authorization.SCENARIO_READ]">

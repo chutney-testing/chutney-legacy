@@ -36,16 +36,16 @@
                         <h2 class="d-inline m-0">
                             <chutney-execution-badge [status]="scenarioExecutionReport.report.status" [spin]="true"></chutney-execution-badge>
                         </h2>
-                        <small class="text-muted ml-2">
+                        <small class="text-muted ms-2">
                             {{'global.time.in' | translate}} {{scenarioExecutionReport.report.duration | duration}}
                         </small>
-                        <small class="text-muted ml-2">
+                        <small class="text-muted ms-2">
                             {{'global.time.at' | translate}} {{scenarioExecutionReport.report.startDate | date:'medium'}}
                         </small>
-                        <small *ngIf="scenarioExecutionReport.user" class="text-muted ml-2">
+                        <small *ngIf="scenarioExecutionReport.user" class="text-muted ms-2">
                             {{'global.smallword.by' | translate}} : <b>{{scenarioExecutionReport.user}}</b>
                         </small>
-                        <small class="text-muted ml-2">
+                        <small class="text-muted ms-2">
                             -  {{'admin.targets.environment' | translate}} : <b>{{scenarioExecutionReport.environment}}</b>
                         </small>
                     </span>
@@ -58,7 +58,7 @@
                                 <span class="btn-label">{{'global.actions.stop' | translate}}</span>
                             </button>
 
-                            <button type="button" class="btn btn-secondary mr-1 ml-1" (click)="pauseScenario()"
+                            <button type="button" class="btn btn-secondary mx-1" (click)="pauseScenario()"
                                     [disabled]="scenarioExecutionReport.report.status != 'RUNNING'">
                                 <span class="fa fa-pause"></span>
                                 <span class="btn-label">{{'global.actions.pause' | translate}}</span>

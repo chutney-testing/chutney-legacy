@@ -3,11 +3,11 @@
         <div class="row step">
             <div class="col">
                 <div class="btn-toolbar">
-                    <div class="mr-4"><em >{{step.name}}</em></div>
-                    <div class="mr-4"><b class="mr-2">{{step.type}}</b> {{step.target}}</div>
+                    <div class="me-4"><em >{{step.name}}</em></div>
+                    <div class="me-4"><b class="me-2">{{step.type}}</b> {{step.target}}</div>
 
                     <div *ngIf="step.inputs" class="btn-group btn-group-sm">
-                        <button type="button" class="btn btn-outline-secondary mr-2" (click)="inputCollapsed = !inputCollapsed" [attr.aria-expanded]="!inputCollapsed">{{ 'scenarios.execution.step.actions.details' | translate }}</button>
+                        <button type="button" class="btn btn-outline-secondary me-2" (click)="inputCollapsed = !inputCollapsed" [attr.aria-expanded]="!inputCollapsed">{{ 'scenarios.execution.step.actions.details' | translate }}</button>
                     </div>
                 </div>
                 <div *ngIf="step.inputs" class="inputs">

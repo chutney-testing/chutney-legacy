@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="btn">
                     <span class="fa fa-clone"></span>
-                    <span class="ml-2 font-weight-bold text-capitalize">{{editComponent.implementation.identifier}}</span>
+                    <span class="ms-2 font-weight-bold text-capitalize">{{editComponent.implementation.identifier}}</span>
                 </div>
             </div>
             <div class="row">
@@ -55,8 +55,8 @@
         <div class="border-right"
              [ngClass]="{'col edition-action-minimize':rightPanelMinimize, 'col-7':!rightPanelMinimize}">
             <!-- Inputs -->
-            <div *ngIf="hasInputs()" class="mt-4 pl-0 pr-0 pb-2 pt-2">
-                <legend class="pl-3 pr-3 ">
+            <div *ngIf="hasInputs()" class="mt-4 px-0 pb-2 pt-2">
+                <legend class="px-3 ">
                     <span class="font-weight-bold cursor-default" (click)="switchCollapseInputs()">{{'components.shared.edition.blocks.inputs' | translate}}</span>
                     <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
                             (click)="switchCollapseInputs()"
@@ -67,15 +67,15 @@
                 <ng-container *ngIf="!collapseInputs">
                     <div formArrayName="inputs" *ngFor="let input of actionForm.get('inputs')?.controls; let i=index;">
                         <div [formGroupName]="i" class="form-group row">
-                            <div class="col-3 pl-1 pl-1 pr-1">
+                            <div class="col-3 px-1">
                                 <label for="input-{{i}}" class="col-form-label">{{input.value.key}}</label>
                             </div>
-                            <div class="col-8 pl-1 pr-1">
+                            <div class="col-8 px-1">
                                 <textarea class="form-control" id="input-{{i}}" rows="1"
                                           placeholder="{{input.value.placeholder}}" formControlName="value"></textarea>
                             </div>
                             <ng-container *hasAuthorization="[Authorization.COMPONENT_WRITE]">
-                                <div class="col-1 pl-1 pr-1 align-self-center text-center">
+                                <div class="col-1 px-1 align-self-center text-center">
                                     <button *ngIf="isVariableRef(i)" class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
                                             (click)="switchVariableRefToStruct(i)"
                                             title="{{'components.action.refvar.backTo.tooltip' | translate}}">
@@ -87,7 +87,7 @@
                     </div>
                     <div formArrayName="inputsMap" *ngFor="let input of actionForm.get('inputsMap')?.controls; let i=index;">
                         <div [formGroupName]="i" class="form-group">
-                            <label class="col-3 pl-1 col-form-label"
+                            <label class="col-3 ps-1 col-form-label"
                                    (click)="switchCollapseInputsMap(i)">{{input.value.keyMap}}</label>
                             <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
                                     (click)="switchCollapseInputsMap(i)"
@@ -95,13 +95,13 @@
                                 <span class="fa" [ngClass]="collapseInputsMap[i] ? 'fa-eye' : 'fa-eye-slash'"></span>
                             </button>
                             <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
-                                    class="btn btn-sm btn-light btn-outline-dark ml-sm-1 border-0"
+                                    class="btn btn-sm btn-light btn-outline-dark ms-sm-1 border-0"
                                     (click)="addMapItem(i);"
                                     title="{{'global.actions.add' | translate}}">
                                 <span class="fa fa-plus"></span>
                             </button>
                             <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
-                                    class="btn btn-sm btn-light btn-outline-dark ml-sm-1 border-0"
+                                    class="btn btn-sm btn-light btn-outline-dark ms-sm-1 border-0"
                                     (click)="switchMapToVariableRef(i);"
                                     title="{{'components.action.refvar.switchTo.tooltip' | translate}}">
                                 <span class="font-weight-bold">{{'components.action.refvar.label' | translate}}</span>
@@ -111,16 +111,16 @@
                                      *ngFor="let nestedMap of input.get('valueMap').controls; let j = index;">
                                     <div [formGroupName]="j">
                                         <div class="form-group row">
-                                            <div class="col-3 pl-1 pr-1">
+                                            <div class="col-3 px-1">
                                                 <input type="text" class="form-control" formControlName="k"
                                                        title="{{nestedMap.get('k').value}}"
                                                        placeholder="key"/>
                                             </div>
-                                            <div class="col-8 pl-1 pr-1">
-                                                <textarea class="ml-2 mr-2 form-control" formControlName="v"
+                                            <div class="col-8 px-1">
+                                                <textarea class="mx-2 form-control" formControlName="v"
                                                           placeholder="value" rows="1"></textarea>
                                             </div>
-                                            <div class="col-1 pl-1 pr-1 align-self-center text-right">
+                                            <div class="col-1 px-1 align-self-center text-right">
                                                 <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
                                                         type="button" class="btn btn-sm btn-outline-danger"
                                                         (click)="removeMapItem(i,j)"
@@ -137,7 +137,7 @@
                     <div formArrayName="inputsList"
                          *ngFor="let input of actionForm.get('inputsList')?.controls; let i=index;">
                         <div [formGroupName]="i" class="form-group">
-                            <label class="col-3 pl-1 col-form-label"
+                            <label class="col-3 ps-1 col-form-label"
                                    (click)="switchCollapseInputsList(i)">{{input.value.keyList}}</label>
                             <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
                                     (click)="switchCollapseInputsList(i)"
@@ -145,13 +145,13 @@
                                 <span class="fa" [ngClass]="collapseInputsList[i] ? 'fa-eye' : 'fa-eye-slash'"></span>
                             </button>
                             <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
-                                    class="btn btn-sm btn-light btn-outline-dark ml-sm-1 border-0"
+                                    class="btn btn-sm btn-light btn-outline-dark ms-sm-1 border-0"
                                     (click)="addListItem(i);"
                                     title="{{'global.actions.add' | translate}}">
                                 <span class="fa fa-plus"></span>
                             </button>
                             <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
-                                    class="btn btn-sm btn-light btn-outline-dark ml-sm-1 border-0"
+                                    class="btn btn-sm btn-light btn-outline-dark ms-sm-1 border-0"
                                     (click)="switchListToVariableRef(i);"
                                     title="{{'components.action.refvar.switchTo.tooltip' | translate}}">
                                 <span class="font-weight-bold">{{'components.action.refvar.label' | translate}}</span>
@@ -161,11 +161,11 @@
                                      *ngFor="let nestedList of input.get('valueList').controls; let j=index;">
                                     <div [formGroupName]="j">
                                         <div class="form-group row">
-                                            <div class="col-11 pl-1 pr-1">
-                                                <textarea class="mr-2 form-control" formControlName="l"
+                                            <div class="col-11 px-1">
+                                                <textarea class="me-2 form-control" formControlName="l"
                                                           placeholder="value" rows="1"></textarea>
                                             </div>
-                                            <div class="col-1 pl-1 pr-1 align-self-center text-right">
+                                            <div class="col-1 px-1 align-self-center text-right">
                                                 <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
                                                         type="button" class="btn btn-sm btn-outline-danger"
                                                         (click)="removeListItem(i,j)"
@@ -182,8 +182,8 @@
                 </ng-container>
             </div>
             <!-- Validations -->
-            <fieldset class="mt-4" [ngClass]="collapseValidations ? 'border-top pl-2' : 'border p-2'">
-                <legend class="pl-3 pr-3 font-weight-bold">
+            <fieldset class="mt-4" [ngClass]="collapseValidations ? 'border-top ps-2' : 'border p-2'">
+                <legend class="ps-3 pe-3 font-weight-bold">
                     <div class="legend-title" (click)="switchCollapseValidations()">{{'components.shared.edition.blocks.validations' | translate}}</div>
                     <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
                             (click)="switchCollapseValidations()"
@@ -191,7 +191,7 @@
                         <span class="fa" [ngClass]="collapseValidations ? 'fa-eye' : 'fa-eye-slash'"></span>
                     </button>
                     <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
-                            class="btn btn-sm btn-light btn-outline-dark border-0 ml-sm-1"
+                            class="btn btn-sm btn-light btn-outline-dark border-0 ms-sm-1"
                             (click)="addValidation();"
                             title="{{'global.actions.add' | translate}}">
                         <span class="fa fa-plus"></span>
@@ -201,16 +201,16 @@
                     <div class="row" formArrayName="validations"
                          *ngFor="let parameter of actionForm.get('validations')?.controls; let i=index;">
                         <ng-container [formGroupName]="i">
-                            <div class="col-3 pl-1 pr-1">
-                                <input type="text" class="form-control mr-2" formControlName="key"
+                            <div class="col-3 px-1">
+                                <input type="text" class="form-control me-2" formControlName="key"
                                        title="{{parameter.get('key').value}}"
                                        placeholder="key"/>
                             </div>
-                            <div class="col-8 pl-1 pr-1">
-                                <textarea class="form-control mr-2" formControlName="value" rows="1"
+                            <div class="col-8 px-1">
+                                <textarea class="form-control me-2" formControlName="value" rows="1"
                                       placeholder="value"></textarea>
                             </div>
-                            <div class="col-1 pl-1 pr-1 align-self-center text-right">
+                            <div class="col-1 px-1 align-self-center text-right">
                                 <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
                                         type="button" class="btn btn-sm btn-outline-danger"
                                         (click)="removeValidation(i)"
@@ -223,8 +223,8 @@
                 </ng-container>
             </fieldset>
             <!-- Outputs -->
-            <fieldset class="mt-4" [ngClass]="collapseOutputs ? 'border-top pl-2' : 'border p-2'">
-                <legend class="pl-3 pr-3 font-weight-bold">
+            <fieldset class="mt-4" [ngClass]="collapseOutputs ? 'border-top ps-2' : 'border p-2'">
+                <legend class="px-3 font-weight-bold">
                     <div class="legend-title" (click)="switchCollapseOutputs()">{{'components.shared.edition.blocks.outputs' | translate}}</div>
                     <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
                             (click)="switchCollapseOutputs()"
@@ -232,7 +232,7 @@
                         <span class="fa" [ngClass]="collapseOutputs ? 'fa-eye' : 'fa-eye-slash'"></span>
                     </button>
                     <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
-                            class="btn btn-sm btn-light btn-outline-dark border-0 ml-sm-1"
+                            class="btn btn-sm btn-light btn-outline-dark border-0 ms-sm-1"
                             (click)="addOutput();"
                             title="{{'global.actions.add' | translate}}">
                         <span class="fa fa-plus"></span>
@@ -242,16 +242,16 @@
                     <div class="row" formArrayName="outputs"
                          *ngFor="let parameter of actionForm.get('outputs')?.controls; let i=index;">
                         <ng-container [formGroupName]="i">
-                            <div class="col-3 pl-1 pr-1">
-                                <input type="text" class="form-control mr-2" formControlName="key"
+                            <div class="col-3 px-1">
+                                <input type="text" class="form-control me-2" formControlName="key"
                                        title="{{parameter.get('key').value}}"
                                        placeholder="key"/>
                             </div>
-                            <div class="col-8 pl-1 pr-1">
-                                <textarea class="form-control mr-2" formControlName="value" rows="1"
+                            <div class="col-8 px-1">
+                                <textarea class="form-control me-2" formControlName="value" rows="1"
                                           placeholder="value"></textarea>
                             </div>
-                            <div class="col-1 pl-1 pr-1 align-self-center text-right">
+                            <div class="col-1 px-1 align-self-center text-right">
                                 <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
                                         type="button" class="btn btn-sm btn-outline-danger"
                                         (click)="removeOutput(i)"

@@ -1,6 +1,6 @@
 <div>
     <fieldset class="w99 border p-2">
-        <legend class="w-auto pl-3 pr-3 mb-0">
+        <legend class="w-auto px-3 mb-0">
             <span>Navigation Patterns </span>
         </legend>
         <div [ngClass]="isErrorNotification ? 'bg-danger' : 'bg-info'" class="notification text-center text-white">
@@ -47,7 +47,7 @@
                 <td> {{ linkifier.pattern }} </td>
                 <td> {{ linkifier.link }} </td>
                 <td>
-                    <button type="button" class="btn btn-outline-danger delete-button-height ml-1"
+                    <button type="button" class="btn btn-outline-danger delete-button-height ms-1"
                             (click)="remove(linkifier, i)"
                             title="{{'global.actions.delete' | translate}}">
                         <span class="fa fa-trash"></span>

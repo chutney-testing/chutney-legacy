@@ -8,13 +8,13 @@
             <ng-container *ngIf="editions && editions.length > 0">
                 <div class="row mb-0 text-nowrap justify-content-center font-weight-bold">Editions concurrentes</div>
                 <div *ngFor="let e of editions" class="row m-0 mb-1 bg-warning text-white text-nowrap border border-white rounded font-weight-bold">
-                    <div class="col-4 p-0 pl-1 m-0 text-left">{{ e.editionUser }}</div>
-                    <div class="col-8 p-0 pr-1 m-0 text-right">{{ e.editionStartDate | amDateFormat:'YYYY-MM-DD HH:mm:ss' }}</div>
+                    <div class="col-4 p-0 ps-1 m-0 text-left">{{ e.editionUser }}</div>
+                    <div class="col-8 p-0 pe-1 m-0 text-right">{{ e.editionStartDate | amDateFormat:'YYYY-MM-DD HH:mm:ss' }}</div>
                 </div>
             </ng-container>
         </div>
     </ng-template>
-    <button type="button" class="btn mr-0"
+    <button type="button" class="btn me-0"
             [ngClass]="editions && editions.length > 0 ? 'btn-warning edition-btn-anim' : 'btn-info'"
             [ngbPopover]="editionsInfo" placement="bottom"
             triggers="mouseenter:mouseleave">
