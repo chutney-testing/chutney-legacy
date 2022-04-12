@@ -6,7 +6,6 @@ import static com.fasterxml.jackson.annotation.PropertyAccessor.GETTER;
 import static com.fasterxml.jackson.annotation.PropertyAccessor.SETTER;
 import static org.hjson.JsonValue.readHjson;
 
-import com.chutneytesting.design.api.scenario.OldFormatAdapter;
 import com.chutneytesting.design.api.scenario.v2_0.dto.GwtScenarioDto;
 import com.chutneytesting.design.api.scenario.v2_0.dto.GwtStepDto;
 import com.chutneytesting.design.api.scenario.v2_0.dto.GwtStepImplementationDto;
@@ -142,7 +141,7 @@ public class GwtScenarioMapper implements GwtScenarioMarshaller {
         builder.sentence(step.description);
         step.implementation.ifPresent(i -> builder.implementation(toDto(i)));
         step.strategy.ifPresent(s -> builder.strategy(toDto(s)));
-        step.xRef.ifPresent(x -> builder.xRef(x));
+        step.xRef.ifPresent(builder::xRef);
         builder.subSteps(toDto(step.subSteps));
         return builder.build();
     }
@@ -180,8 +179,7 @@ public class GwtScenarioMapper implements GwtScenarioMarshaller {
         try {
             return mapper.readValue(jsonScenario, GwtScenario.class);
         } catch (IOException e) {
-            // gracefully fallback on previous versions
-            return OldFormatAdapter.from(title, description, jsonScenario);
+            throw new ScenarioNotParsableException("Cannot deserialize scenario: ", e);
         }
     }
 

@@ -30,14 +30,14 @@ import org.springframework.jdbc.core.RowMapper;
 public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
 
     private static final TestCaseData.TestCaseDataBuilder TEST_CASE_DATA_BUILDER = TestCaseData.builder()
-        .withContentVersion("v1.0")
+        .withContentVersion("v2.1")
         .withId("0")
         .withTitle("")
         .withCreationDate(Instant.now().truncatedTo(MILLIS))
         .withDescription("")
         .withTags(Collections.emptyList())
         .withExecutionParameters(Collections.emptyMap())
-        .withRawScenario("raw scenario 'content'");
+        .withRawScenario("{\"when\": {}}");
 
     private final DatabaseTestCaseRepository repository = new DatabaseTestCaseRepository(namedParameterJdbcTemplate, new ObjectMapper());
 
@@ -142,23 +142,21 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
     }
 
     @Test
-    public void should_list_available_scenarios_metadata() {
+    public void should_not_find_removed_scenario_metadata_when_findAll() {
         // Given: 2 scenarios in the repository
         TestCaseData.TestCaseDataBuilder anotherScenario = TEST_CASE_DATA_BUILDER.withDescription("Will be kept").withTags(Collections.singletonList("T1"));
-        TestCaseData.TestCaseDataBuilder deletedScenario = TEST_CASE_DATA_BUILDER.withDescription("Will be deleted").withTags(Collections.singletonList("T2"));
-
         String anotherScenarioId = repository.save(anotherScenario.build());
+        TestCaseData.TestCaseDataBuilder deletedScenario = TEST_CASE_DATA_BUILDER.withId("2").withDescription("Will be deleted").withTags(Collections.singletonList("T2"));
         String deletedScenarioId = repository.save(deletedScenario.build());
 
-        // When: the repository content is listed
+        // When
         repository.removeById(deletedScenarioId);
 
-        // Then: the list contains all repository's scenarios
+        // Then
         List<TestCaseMetadata> allIndexes = repository.findAll();
 
-        assertThat(allIndexes)
-            .usingElementComparatorIgnoringFields("updateDate")
-            .containsExactlyInAnyOrder(TestCaseDataMapper.fromDto(anotherScenario.withId(anotherScenarioId).build()).metadata());
+        assertThat(allIndexes).hasSize(1);
+        assertThat(allIndexes.get(0).id()).isEqualTo(anotherScenarioId);
     }
 
     public static Object[] parametersForShould_update_scenario_fields() {
@@ -291,13 +289,13 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
         String scenarioID = repository.save(TEST_CASE_DATA_BUILDER.build());
 
         // When
-        List<TestCaseMetadata> raw = repository.search("raw 'content'");
+        List<TestCaseMetadata> raw = repository.search("when");
         // Then
         assertThat(raw).hasSize(1);
         assertThat(raw.get(0).id()).isEqualTo(scenarioID);
 
         // When
-        List<TestCaseMetadata> raw2 = repository.search("raw notincontent");
+        List<TestCaseMetadata> raw2 = repository.search("not in content");
         // Then
         assertThat(raw2).hasSize(0);
     }
