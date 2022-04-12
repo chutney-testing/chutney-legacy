@@ -13,8 +13,8 @@
     </div>
 </div>
 <div class="header-scenario">
-    <div class="row ml-5">
-        <div class="col-md-5 pr-1">
+    <div class="d-flex ms-4">
+        <div class="col-md-6 ms-5">
             <chutney-forms-search-field [id]="'scenario-search'"
                                         [placeholder]="'scenarios.search.placeholder' | translate"
                                         [searchInput]="textFilter"
@@ -26,28 +26,27 @@
                               'fa-minus' : fullTextSearch}"></span>
         </button>
     </div>
-    <div  *ngIf="fullTextSearch" class="row ml-5">
-        <div class="col-md-5">
+    <div  *ngIf="fullTextSearch" class="row ms-5">
+        <div class="col-md-6 ms-2">
             <chutney-forms-search-field [id]="'scenario-search-fulltext'"
                                         [placeholder]="'scenarios.search.placeholder-fulltext' | translate"
                                         [searchInput]="fullTextFilter"
                                         (searchInputEvent)="updateFullTextFilter($event)"></chutney-forms-search-field>
         </div>
     </div>
-    <div class="row ml-2">
+    <div class="row ms-2">
 
         <div class="d-flex flex-wrap">
             <span *ngFor="let scenarioType of SCENARIO_TYPES; let i=index"
                   class="scenario-type-filter align-self-center fa"
                   [ngClass]="{'scenario-type-filter-selected' : scenarioTypeFilter.isSelected(scenarioType),
                               'scenario-type-filter' : !scenarioTypeFilter.isSelected(scenarioType),
-                              'mr-2': i < SCENARIO_TYPES.length - 1,
+                              'me-2': i < SCENARIO_TYPES.length - 1,
                               'fa-pencil-alt': scenarioType === SCENARIO_TYPES[0],
                               'fa-cubes': scenarioType === SCENARIO_TYPES[1]}"
                   (click)="toggleScenarioTypeFilter(scenarioType)"></span>
-            <div class="border-right border-dark ml-2 mr-2"></div>
 
-            <div style="width:400px">
+            <div class="ms-2" style="width:400px">
                 <angular2-multiselect [data]="tags"
                                       [(ngModel)]="selectedTags"
                                       [settings]="settings"
@@ -62,8 +61,8 @@
 </div>
 
 <div class="row">
-    <span class="ml-3">{{viewedScenarios.length}} / {{scenarios.length}}</span>
-    <div class="table-responsive mb-3 ml-3 mr-3">
+    <span class="ms-3">{{viewedScenarios.length}} / {{scenarios.length}}</span>
+    <div class="table-responsive mb-3 mx-3">
         <table class="table table-sm table-striped table-hover">
             <thead>
             <tr>
@@ -126,7 +125,7 @@
                 <td [routerLink]="['/scenario', scenario.id, 'execution', 'last']" (click)="$event.stopPropagation()" class="scenario-title pointer">{{scenario.title}}</td>
 
                 <td>
-                    <a *ngIf="jiraMap.has(scenario.id)" role="button" class="btn btn-sm btn-link mr-0"
+                    <a *ngIf="jiraMap.has(scenario.id)" role="button" class="btn btn-sm btn-link me-0"
                         target="_blank" href="{{getJiraLink(scenario.id)}}"
                         ngbPopover="{{jiraMap.get(scenario.id)}}" placement="left" (click)="$event.stopPropagation()"
                         triggers="mouseenter:mouseleave">
@@ -135,7 +134,7 @@
                     </a>
                 </td>
                 <td>
-                    <button type="button" class="btn btn-sm btn-link mr-0"
+                    <button type="button" class="btn btn-sm btn-link me-0"
                             ngbPopover="{{scenario.description}}" placement="left"
                             triggers="mouseenter:mouseleave">
                         <span class="fa fa-info-circle" aria-hidden="true"></span>

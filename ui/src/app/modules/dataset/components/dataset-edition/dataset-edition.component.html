@@ -31,7 +31,7 @@
                 [disabled]="null"
                 (deleteEvent)="deleteDataset()">
             </chutney-delete-confirm-dialog>
-            <span class="ml-4">v{{dataset.version}} - {{ dataset.lastUpdated.toString() | amLocale:'fr' | amTimeAgo }}</span>
+            <span class="ms-4">v{{dataset.version}} - {{ dataset.lastUpdated.toString() | amLocale:'fr' | amTimeAgo }}</span>
         </div>
 
         <div>

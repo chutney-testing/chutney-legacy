@@ -1,6 +1,6 @@
 <ng-container [formGroup]="strategyForm">
     <div class="row">
-        <label class="col-4 mb-0 pl-0 align-self-center font-weight-bold" for="strategies">{{'components.shared.edition.fields.strategy.name' | translate}}</label>
+        <label class="col-4 mb-0 ps-0 align-self-center font-weight-bold" for="strategies">{{'components.shared.edition.fields.strategy.name' | translate}}</label>
         <div class="col-8">
             <select id="strategies" class="form-control" formControlName="type" (change)="setSelectedStrategy()">
                 <option *ngFor="let strategy of strategyDefinitions" [ngValue]="strategy.type">

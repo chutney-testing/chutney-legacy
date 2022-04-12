@@ -1,6 +1,6 @@
 <span class="badge"
-[ngClass]="{'badge-primary': status == 'SUCCESS',
-            'badge-danger':status == 'FAILURE',
+[ngClass]="{'bg-primary': status == 'SUCCESS',
+            'bg-danger':status == 'FAILURE',
             'badge-stopped': status == 'STOPPED',
             'badge-running': status == 'RUNNING' || status == 'PAUSED'}">
     {{ status_h }}

@@ -14,7 +14,7 @@
             <td>
                 <chutney-forms-input id="{{entry.key}} + '_value_input'" placeholder="Value" [(model)]="entry.value" [validate]="validationService.isNotEmpty"></chutney-forms-input>
             </td>
-            <td><button type="button" class="btn btn-light ml-3" (click)="deleteEntry(entry)"><span class="fa fa-trash" style="color: red;"></span></button></td>
+            <td><button type="button" class="btn btn-light ms-3" (click)="deleteEntry(entry)"><span class="fa fa-trash" style="color: red;"></span></button></td>
         </tr>
     </tbody>
 </table>

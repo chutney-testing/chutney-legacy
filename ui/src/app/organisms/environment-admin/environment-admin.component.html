@@ -7,11 +7,11 @@
             <form [formGroup]="envForm">
                 <div class="form-group row">
                     <label for="name" class="col-3 col-form-label">Name</label>
-                    <div class="col-9 pr-0">
+                    <div class="col-9 pe-0">
                         <input id="name" type="text" class="form-control" formControlName="name"/>
                     </div>
                     <label for="description" class="col-3 col-form-label">Description</label>
-                    <div class="col-9 pr-0">
+                    <div class="col-9 pe-0">
                             <input id="description" type="text" class="form-control" formControlName="description"/>
                     </div>
                 </div>
@@ -59,9 +59,9 @@
                 </div>
                 <div *ngIf="selectedTarget">
                     <div  class="col-md-10">
-                        <button type="button" class="btn btn-success mr-3" (click)="updateSelectedTarget()"> <span class="fa fa-check"></span> {{'global.actions.save' | translate}}</button>
-                        <button type="button" class="btn btn-success accept-spinner mr-3" (click)="exportTarget()"><span class="fa fa-download"> </span> {{'global.actions.export' | translate}}</button>
-                        <button type="button" class="btn btn-secondary mr-4" (click)="cancel()">{{'global.actions.cancel' | translate}}</button>
+                        <button type="button" class="btn btn-success me-3" (click)="updateSelectedTarget()"> <span class="fa fa-check"></span> {{'global.actions.save' | translate}}</button>
+                        <button type="button" class="btn btn-success accept-spinner me-3" (click)="exportTarget()"><span class="fa fa-download"> </span> {{'global.actions.export' | translate}}</button>
+                        <button type="button" class="btn btn-secondary me-4" (click)="cancel()">{{'global.actions.cancel' | translate}}</button>
                         <chutney-delete-confirm-dialog
                             [dialogMessage]="('global.confirm.question' | translate) + ' ' + ('global.actions.delete' | translate) + '\n' + selectedTarget.name"
                             [label]="'Delete Target'"

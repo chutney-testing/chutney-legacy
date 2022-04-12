@@ -1,166 +1,142 @@
-<nav class="navbar fixed-top navbar-expand-sm">
-    <ul class="navbar-nav menu-principal" *ngIf="(user$ | async) as user">
-        <chutney-menu-item *hasAuthorization="{
-                                authorizations: [
-                                    Authorization.SCENARIO_READ,
-                                    Authorization.SCENARIO_WRITE,
-                                    Authorization.SCENARIO_EXECUTE
-                                ],
-                                user: user
-                           }"
-                           [style]="''" [route]="'/scenario'"
-                           [label]="'menu.principal.scenarios' | translate"
-                           [img_src]="ICON_TESTS" [img_src_selected]="ICON_TESTS_SELECTED">
-        </chutney-menu-item>
-        <li class="separator"></li>
-        <chutney-menu-item *hasAuthorization="{
-                                authorizations: [
-                                    Authorization.CAMPAIGN_READ,
-                                    Authorization.CAMPAIGN_WRITE,
-                                    Authorization.CAMPAIGN_EXECUTE
-                                ],
-                                user: user
-                           }"
-                           [style]="'nav-link'" [route]="'/campaign'"
-                           [label]="'menu.principal.campaigns' | translate"
-                           [img_src]="ICON_TESTS" [img_src_selected]="ICON_TESTS_SELECTED">
-        </chutney-menu-item>
-        <li class="separator"></li>
-        <chutney-menu-item *hasAuthorization="{
-                                authorizations: [
-                                    Authorization.COMPONENT_READ,
-                                    Authorization.COMPONENT_WRITE
-                                ],
-                                user: user
-                           }"
-                           [style]="'nav-link'" [route]="'/component'"
-                           [label]="'menu.principal.component' | translate"
-                           [img_src]="ICON_REPO" [img_src_selected]="ICON_REPO_SELECTED">
-        </chutney-menu-item>
-        <chutney-menu-item *hasAuthorization="{
-                                authorizations: [
-                                    Authorization.GLOBAL_VAR_READ,
-                                    Authorization.GLOBAL_VAR_WRITE
-                                ],
-                                user: user
-                           }"
-                           [style]="'nav-link'" [route]="'/variable'"
-                           [label]="'menu.principal.variable' | translate"
-                           [img_src]="ICON_REPO" [img_src_selected]="ICON_REPO_SELECTED">
-        </chutney-menu-item>
-        <chutney-menu-item *hasAuthorization="{
-                                authorizations: [
-                                    Authorization.DATASET_READ,
-                                    Authorization.DATASET_WRITE
-                                ],
-                                user: user
-                           }"
-                           [style]="'nav-link'" [route]="'/dataset'"
-                           [label]="'menu.principal.dataset' | translate"
-                           [img_src]="ICON_REPO" [img_src_selected]="ICON_REPO_SELECTED">
-        </chutney-menu-item>
-        <ul class="navbar-nav ml-auto">
-            <chutney-menu-item [style]="'nav-link'" [route]="'/documentation'"
-                               [label]="'menu.principal.documentation' | translate"
-                               [icon_fa_class]="'fa-book'">
-            </chutney-menu-item>
-            <div class="dropdown"
-                 *hasAuthorization="{
-                        authorizations: [
-                            Authorization.ENVIRONMENT_ACCESS,
-                            Authorization.ADMIN_ACCESS
-                        ],
-                        user: user
-                   }"
-            >
-                <button class="dropbtn"><span class="fa fa-cog"></span>{{'menu.principal.admin' | translate}}</button>
-                <div class="dropdown-content">
-                    <chutney-menu-item *hasAuthorization="{
-                                            authorizations: [
-                                                Authorization.ENVIRONMENT_ACCESS
-                                            ],
-                                            user: user
-                                       }"
-                                       [style]="'nav-link'" [route]="'/environmentAdmin'"
-                                       [label]="'menu.principal.targets' | translate"
-                                       [icon_fa_class]="'fa-cogs'">
-                    </chutney-menu-item>
-                    <chutney-menu-item *hasAuthorization="{
-                                            authorizations: [
-                                                Authorization.ADMIN_ACCESS
-                                            ],
-                                            user: user
-                                       }"
-                                       [style]="'nav-link'" [route]="'/plugins'"
-                                       [label]="'menu.principal.plugins' | translate"
-                                       [icon_fa_class]="'fa-cog'">
-                    </chutney-menu-item>
-                    <chutney-menu-item *hasAuthorization="{
-                                            authorizations: [
-                                                Authorization.ADMIN_ACCESS
-                                            ],
-                                            user: user
-                                       }"
-                                       [style]="'nav-link'" [route]="'/backups'"
-                                       [label]="'menu.principal.backups' | translate"
-                                       [icon_fa_class]="'fa-archive'">
-                    </chutney-menu-item>
-                    <chutney-menu-item *hasAuthorization="{
-                                            authorizations: [
-                                                Authorization.ADMIN_ACCESS
-                                            ],
-                                            user: user
-                                       }"
-                                       [style]="'nav-link'" [route]="'/roles'"
-                                       [label]="'menu.principal.roles' | translate"
-                                       [icon_fa_class]="'fa-user-shield'">
-                    </chutney-menu-item>
-                    <chutney-menu-item *hasAuthorization="{
-                                            authorizations: [
-                                                Authorization.ADMIN_ACCESS
-                                            ],
-                                            user: user
-                                       }"
-                                       [style]="'nav-link'" [route]="'/databaseAdmin'"
-                                       [label]="'menu.principal.databaseAdmin' | translate"
-                                       [icon_fa_class]="'fa-database'">
-                    </chutney-menu-item>
-                    <chutney-menu-item *hasAuthorization="{
-                                            authorizations: [
-                                                Authorization.ADMIN_ACCESS
-                                            ],
-                                            user: user
-                                       }"
-                                       [style]="'nav-link'" [route]="'/configurationAgent'"
-                                       [label]="'menu.principal.workers' | translate"
-                                       [icon_fa_class]="'fa-bars'">
-                    </chutney-menu-item>
-                    <chutney-menu-item *hasAuthorization="{
-                                            authorizations: [
-                                                Authorization.ADMIN_ACCESS
-                                            ],
-                                            user: user
-                                       }"
-                                       [style]="'nav-link'" [route]="'/storesAdmin'"
-                                       [label]="'menu.principal.storesAdmin' | translate"
-                                       [icon_fa_class]="'fa-cubes'">
-                    </chutney-menu-item>
+<nav class="navbar navbar-expand-lg navbar-light fixed-top ms-3">
+    <div class="container-fluid py-0">
+        <div class="collapse navbar-collapse flex-grow-1 text-right">
+            <ul class="navbar-nav flex-nowrap" *ngIf="(user$ | async) as user">
+                <chutney-menu-item *hasAuthorization="{
+                authorizations: [
+                    Authorization.SCENARIO_READ,
+                    Authorization.SCENARIO_WRITE,
+                    Authorization.SCENARIO_EXECUTE
+                ],
+                user: user
+           }" [style]="''" [route]="'/scenario'" [label]="'menu.principal.scenarios' | translate"
+                    [img_src]="ICON_TESTS" [img_src_selected]="ICON_TESTS_SELECTED">
+                </chutney-menu-item>
+                <li class="separator"></li>
+                <chutney-menu-item *hasAuthorization="{
+                            authorizations: [
+                                Authorization.CAMPAIGN_READ,
+                                Authorization.CAMPAIGN_WRITE,
+                                Authorization.CAMPAIGN_EXECUTE
+                            ],
+                            user: user
+                    }" [style]="'nav-link'" [route]="'/campaign'" [label]="'menu.principal.campaigns' | translate"
+                    [img_src]="ICON_TESTS" [img_src_selected]="ICON_TESTS_SELECTED">
+                </chutney-menu-item>
+                <li class="separator"></li>
+                <chutney-menu-item *hasAuthorization="{
+                            authorizations: [
+                                Authorization.COMPONENT_READ,
+                                Authorization.COMPONENT_WRITE
+                            ],
+                            user: user
+                    }" [style]="'nav-link'" [route]="'/component'" [label]="'menu.principal.component' | translate"
+                    [img_src]="ICON_REPO" [img_src_selected]="ICON_REPO_SELECTED">
+                </chutney-menu-item>
+                <chutney-menu-item *hasAuthorization="{
+                            authorizations: [
+                                Authorization.GLOBAL_VAR_READ,
+                                Authorization.GLOBAL_VAR_WRITE
+                            ],
+                            user: user
+                    }" [style]="'nav-link'" [route]="'/variable'" [label]="'menu.principal.variable' | translate"
+                    [img_src]="ICON_REPO" [img_src_selected]="ICON_REPO_SELECTED">
+                </chutney-menu-item>
+                <chutney-menu-item *hasAuthorization="{
+                            authorizations: [
+                                Authorization.DATASET_READ,
+                                Authorization.DATASET_WRITE
+                            ],
+                            user: user
+                    }" [style]="'nav-link'" [route]="'/dataset'" [label]="'menu.principal.dataset' | translate"
+                    [img_src]="ICON_REPO" [img_src_selected]="ICON_REPO_SELECTED">
+                </chutney-menu-item>
+            </ul>
+            <ul class="navbar-nav ms-auto flex-nowrap" *ngIf="(user$ | async) as user">
+                <chutney-menu-item [style]="'nav-link'" [route]="'/documentation'"
+                    [label]="'menu.principal.documentation' | translate" [icon_fa_class]="'fa-book'">
+                </chutney-menu-item>
+                <div class="dropdown" *hasAuthorization="{
+                authorizations: [
+                    Authorization.ENVIRONMENT_ACCESS,
+                    Authorization.ADMIN_ACCESS
+                ],
+                user: user
+           }">
+                    <button class="dropbtn"><span class="fa fa-cog"></span>{{'menu.principal.admin' |
+                        translate}}</button>
+                    <div class="dropdown-content">
+                        <chutney-menu-item *hasAuthorization="{
+                                    authorizations: [
+                                        Authorization.ENVIRONMENT_ACCESS
+                                    ],
+                                    user: user
+                               }" [style]="'nav-link'" [route]="'/environmentAdmin'"
+                            [label]="'menu.principal.targets' | translate" [icon_fa_class]="'fa-cogs'">
+                        </chutney-menu-item>
+                        <chutney-menu-item *hasAuthorization="{
+                                    authorizations: [
+                                        Authorization.ADMIN_ACCESS
+                                    ],
+                                    user: user
+                               }" [style]="'nav-link'" [route]="'/plugins'"
+                            [label]="'menu.principal.plugins' | translate" [icon_fa_class]="'fa-cog'">
+                        </chutney-menu-item>
+                        <chutney-menu-item *hasAuthorization="{
+                                    authorizations: [
+                                        Authorization.ADMIN_ACCESS
+                                    ],
+                                    user: user
+                               }" [style]="'nav-link'" [route]="'/backups'"
+                            [label]="'menu.principal.backups' | translate" [icon_fa_class]="'fa-archive'">
+                        </chutney-menu-item>
+                        <chutney-menu-item *hasAuthorization="{
+                                    authorizations: [
+                                        Authorization.ADMIN_ACCESS
+                                    ],
+                                    user: user
+                               }" [style]="'nav-link'" [route]="'/roles'"
+                            [label]="'menu.principal.roles' | translate" [icon_fa_class]="'fa-user-shield'">
+                        </chutney-menu-item>
+                        <chutney-menu-item *hasAuthorization="{
+                                    authorizations: [
+                                        Authorization.ADMIN_ACCESS
+                                    ],
+                                    user: user
+                               }" [style]="'nav-link'" [route]="'/databaseAdmin'"
+                            [label]="'menu.principal.databaseAdmin' | translate" [icon_fa_class]="'fa-database'">
+                        </chutney-menu-item>
+                        <chutney-menu-item *hasAuthorization="{
+                                    authorizations: [
+                                        Authorization.ADMIN_ACCESS
+                                    ],
+                                    user: user
+                               }" [style]="'nav-link'" [route]="'/configurationAgent'"
+                            [label]="'menu.principal.workers' | translate" [icon_fa_class]="'fa-bars'">
+                        </chutney-menu-item>
+                        <chutney-menu-item *hasAuthorization="{
+                                    authorizations: [
+                                        Authorization.ADMIN_ACCESS
+                                    ],
+                                    user: user
+                               }" [style]="'nav-link'" [route]="'/storesAdmin'"
+                            [label]="'menu.principal.storesAdmin' | translate" [icon_fa_class]="'fa-cubes'">
+                        </chutney-menu-item>
+                    </div>
                 </div>
-            </div>
 
-            <div class="dropdown" *ngIf="user?.id">
-                <button class="dropbtn"><span class="fa fa-user"></span>{{user.id}}</button>
-                <div class="dropdown-content">
-                    <chutney-menu-item (clickEvent)="logout()"
-                                       [label]="'menu.principal.signOut' | translate"
-                                       [icon_fa_class]="'fa-sign-out-alt'">
-                    </chutney-menu-item>
+                <div class="dropdown" *ngIf="user?.id">
+                    <button class="dropbtn"><span class="fa fa-user"></span>{{user.id}}</button>
+                    <div class="dropdown-content">
+                        <chutney-menu-item (clickEvent)="logout()" [label]="'menu.principal.signOut' | translate"
+                            [icon_fa_class]="'fa-sign-out-alt'">
+                        </chutney-menu-item>
+                    </div>
                 </div>
-            </div>
-            <chutney-menu-item *ngIf="user?.id == ''" (clickEvent)="login()"
-                               [label]="'menu.principal.signIn' | translate"
-                               [icon_fa_class]="'fa-sign-in-alt'">
-            </chutney-menu-item>
-        </ul>
-    </ul>
+                <chutney-menu-item *ngIf="user?.id == ''" (clickEvent)="login()"
+                    [label]="'menu.principal.signIn' | translate" [icon_fa_class]="'fa-sign-in-alt'">
+                </chutney-menu-item>
+            </ul>
+        </div>
+    </div>
 </nav>

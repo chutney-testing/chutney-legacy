@@ -1,4 +1,4 @@
-<div *ngIf="campaign" class="row page-header m-4 pl-2">
+<div *ngIf="campaign" class="row page-header m-4 ps-2">
     <div class="col-md-5">
         <h4 [innerHTML]="campaign.title | linkify">
         </h4>
@@ -7,14 +7,14 @@
     <div class="col-md-2" *hasAuthorization="[Authorization.CAMPAIGN_EXECUTE]">
         <div class="btn-toolbar">
             <button *ngIf="this.currentCampaignExecutionReport?.status === 'RUNNING'" type="button" class="btn btn-dark m-2" (click)="stopScenario()" [disabled]="stopRequested ">
-                <span class="fa fa-stop mr-2"></span>
+                <span class="fa fa-stop me-2"></span>
                 <span class="btn-label">{{ 'global.actions.stop' | translate }}</span>
             </button>
             <div *ngIf="!running" ngbDropdown class="d-inline-block">
                 <button id="execute-campaign-btn" type="button" class="btn btn-success" ngbDropdownToggle
                         (click)="executeCampaignOnToggle()"
                         [disabled]="running || (scenarios && scenarios.length == 0)">
-                    <span class="fa fa-play mr-2" aria-hidden="true"></span>
+                    <span class="fa fa-play me-2" aria-hidden="true"></span>
                     <span class="btn-label">{{ 'global.actions.execute' | translate }}</span>
                 </button>
                 <div ngbDropdownMenu aria-labelledby="execute-campaign-btn">
@@ -27,24 +27,24 @@
     <div class="col-md-5">
         <div class="btn-toolbar" *hasAuthorization="[Authorization.CAMPAIGN_WRITE]">
             <button type="button" class="btn btn-light border" (click)="editCampaign(campaign)">
-                <span class="fa fa-pencil-alt mr-2"></span>
+                <span class="fa fa-pencil-alt me-2"></span>
                 <span class="btn-label">{{ 'global.actions.edit' | translate }}</span>
             </button>
             <button type="button" class="btn btn-outline-danger"
                     (click)="deleteCampaign(campaign.id, campaign.title)"
                     [disabled]="running">
-                <span class="fa fa-trash mr-2"></span>
+                <span class="fa fa-trash me-2"></span>
                 <span class="btn-label">{{ 'global.actions.delete' | translate }}</span>
             </button>
             <button type="button" class="btn btn-light border" (click)="exportScenarioByCampaign()">
-                <span class="fa fa-file-code mr-2"></span>
+                <span class="fa fa-file-code me-2"></span>
                 <span class="btn-label">{{ 'global.actions.export' | translate }}</span>
             </button>
         </div>
     </div>
 </div>
 <div class="row bg-danger" *ngIf="executionError">
-    <div class="col-2 pl-0">
+    <div class="col-2 ps-0">
         <button type="button" class="btn text-white" (click)="executionError = ''">
             <span class="fa fa-times"></span>
         </button>
@@ -53,7 +53,7 @@
 </div>
 
 <div class="row bg-danger" *ngIf="errorMessage">
-    <div class="col-2 pl-0">
+    <div class="col-2 pls0">
         <button type="button" class="btn text-white" (click)="errorMessage = ''">
             <span class="fa fa-times"></span>
         </button>
@@ -111,7 +111,7 @@
         </div>
     </div>
 
-    <div class="col-md-10 pl-4" *ngIf="currentCampaignExecutionReport">
+    <div class="col-md-10 ps-4" *ngIf="currentCampaignExecutionReport">
         <div *ngIf="current.hasFailure() || current.hasStopped()">
             <div class="d-inline-block mb-2">
                 <button *hasAuthorization="[Authorization.CAMPAIGN_EXECUTE]"
@@ -119,7 +119,7 @@
                         title="{{ 'campaigns.execution.replay' | translate }}"
                         [disabled]="running || (scenarios && scenarios.length == 0)"
                         (click)="replayFailed()">
-                    <span class="fa fa-play mr-2" aria-hidden="true"></span>
+                    <span class="fa fa-play me-2" aria-hidden="true"></span>
                     <span class="btn-label">{{ 'global.actions.replay' | translate }}</span>
                 </button>
             </div>
@@ -139,9 +139,9 @@
         <span *ngIf="current.hasNotExecuted()"> {{current.notexecuted}} {{ 'campaigns.execution.last.notexecuted' | translate }}</span>
         <span> {{ 'global.smallword.of' | translate }} {{current.total}}</span>
 
-        <small class="text-muted ml-2">{{ 'global.time.in' | translate }}
+        <small class="text-muted ms-2">{{ 'global.time.in' | translate }}
             {{currentCampaignExecutionReport.duration | duration}}</small>
-        <small class="text-muted ml-2">
+        <small class="text-muted ms-2">
             {{ 'global.time.at' | translate }}
             {{currentCampaignExecutionReport.startDate  | amDateFormat: 'DD MMM. YYYY HH:mm' }}
         </small>
@@ -204,7 +204,7 @@
                             </a>
                         </td>
                         <td *ngIf="testExecutionId && getJiraLink(scenarioReportOutline.scenarioId) !== null">
-                            <chutney-delete-confirm-dialog class="mr-2 mt-1"
+                            <chutney-delete-confirm-dialog class="me-2 mt-1"
                                 [dialogMessage]="('campaigns.execution.update.jira' | translate)"
                                 [label]=null
                                 [title]="('global.actions.update' | translate)"
@@ -224,7 +224,7 @@
             </table>
         </div>
     </div>
-    <div class="col-md-7  pl-4" *ngIf="!currentCampaignExecutionReport">
+    <div class="col-md-7  ps-4" *ngIf="!currentCampaignExecutionReport">
         <span class="font-weight-bold">{{ 'campaigns.execution.scenarios.title' | translate }} </span>({{ scenarios.length }})
         <div class="table-responsive">
             <table class="table table-sm table-striped table-hover">
