@@ -82,7 +82,6 @@ public class ServerConfiguration implements AsyncConfigurer {
     public static final String AGENTNETWORK_CONNECTION_CHECK_TIMEOUT_SPRING_VALUE = "${chutney.agentnetwork.connection-checker-timeout:1000}";
     public static final String LOCALAGENT_DEFAULTNAME_SPRING_VALUE = "${chutney.localAgent.defaultName:#{null}}";
     public static final String LOCALAGENT_DEFAULTHOSTNAME_SPRING_VALUE = "${chutney.localAgent.defaultHostName:#{null}}";
-    public static final String EXAMPLES_ACTIVE_SPRING_VALUE = "${chutney.examples.active:false}";
     public static final String EDITIONS_TTL_VALUE_SPRING_VALUE = "${chutney.editions.ttl.value:6}";
     public static final String EDITIONS_TTL_UNIT_SPRING_VALUE = "${chutney.editions.ttl.unit:HOURS}";
 

@@ -7,7 +7,6 @@
             "workers": "Nodes",
             "plugins": "Plugins",
             "databaseAdmin": "DB",
-            "storesAdmin": "Stores",
             "documentation": "Doc.",
             "component": "Components",
             "backups": "Backups",
@@ -271,9 +270,6 @@
         },
         "database": {
             "updated_rows": "ligne(s) mise(s) à jour"
-        },
-        "documentation": {
-            "toggle.examples": "Toggle examples"
         },
         "backups": {
             "table": {

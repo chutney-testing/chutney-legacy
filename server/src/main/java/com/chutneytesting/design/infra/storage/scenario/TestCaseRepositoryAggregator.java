@@ -9,12 +9,11 @@ import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.design.domain.scenario.TestCaseRepository;
 import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
 import com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableTestCaseRepository;
-import com.chutneytesting.design.infra.storage.scenario.git.GitScenarioRepositoryFactory;
 import com.chutneytesting.design.infra.storage.scenario.jdbc.DatabaseTestCaseRepository;
 import com.chutneytesting.design.infra.storage.scenario.jdbc.TestCaseData;
 import com.chutneytesting.design.infra.storage.scenario.jdbc.TestCaseDataMapper;
-import com.chutneytesting.documentation.infra.ExamplesRepository;
 import com.orientechnologies.orient.core.id.ORecordId;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,17 +28,11 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseRepositoryAggregator.class);
 
     private final DatabaseTestCaseRepository defaultRepository;
-    private final GitScenarioRepositoryFactory gitScenarioRepositoryFactory;
-    private final ExamplesRepository examples;
     private final OrientComposableTestCaseRepository composableTestCaseRepository;
 
     public TestCaseRepositoryAggregator(DatabaseTestCaseRepository defaultRepository,
-                                        GitScenarioRepositoryFactory gitScenarioRepositoryFactory,
-                                        ExamplesRepository examples,
                                         OrientComposableTestCaseRepository composableTestCaseRepository) {
         this.defaultRepository = defaultRepository;
-        this.gitScenarioRepositoryFactory = gitScenarioRepositoryFactory;
-        this.examples = examples;
         this.composableTestCaseRepository = composableTestCaseRepository;
     }
 
@@ -66,10 +59,7 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
     }
 
     private Stream<DelegateScenarioRepository> repositories() {
-        return Stream.concat(
-            Stream.of(defaultRepository, examples),
-            gitScenarioRepositoryFactory.listGitRepo()
-        );
+        return Stream.of(defaultRepository);
     }
 
     @Override
@@ -156,18 +146,28 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
     }
 
     private List<TestCaseMetadata> findAllComposableTestCase() {
-        return composableTestCaseRepository.findAll().stream()
-            .map(testCaseMetadata -> TestCaseMetadataImpl.TestCaseMetadataBuilder.from(testCaseMetadata)
-                .withId(toFrontId(testCaseMetadata.id()))
-                .build())
-            .collect(Collectors.toList());
+        try {
+            return composableTestCaseRepository.findAll().stream()
+                .map(testCaseMetadata -> TestCaseMetadataImpl.TestCaseMetadataBuilder.from(testCaseMetadata)
+                    .withId(toFrontId(testCaseMetadata.id()))
+                    .build())
+                .collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            LOGGER.warn("Could not find scenarios from composable repository", e);
+            return Collections.emptyList();
+        }
     }
 
     private List<TestCaseMetadata> searchComposableTestCase(String textFilter) {
-        return composableTestCaseRepository.search(textFilter).stream()
-            .map(testCaseMetadata -> TestCaseMetadataImpl.TestCaseMetadataBuilder.from(testCaseMetadata)
-                .withId(toFrontId(testCaseMetadata.id()))
-                .build())
-            .collect(Collectors.toList());
+        try {
+            return composableTestCaseRepository.search(textFilter).stream()
+                .map(testCaseMetadata -> TestCaseMetadataImpl.TestCaseMetadataBuilder.from(testCaseMetadata)
+                    .withId(toFrontId(testCaseMetadata.id()))
+                    .build())
+                .collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            LOGGER.warn("Could not search scenarios from composable repository", e);
+            return Collections.emptyList();
+        }
     }
 }
