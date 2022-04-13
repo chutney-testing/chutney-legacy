@@ -84,11 +84,11 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
     private setCurrentDataSet(res) {
         this.dataset = res;
         this.previousDataSet = this.dataset;
-        this.datasetForm.controls.name.patchValue(this.dataset.name);
-        this.datasetForm.controls.description.patchValue(this.dataset.description);
-        this.datasetForm.controls.tags.patchValue(this.dataset.tags.join(', '));
-        this.datasetForm.controls.keyValues.patchValue(this.dataset.uniqueValues);
-        this.datasetForm.controls.multiKeyValues.patchValue(this.dataset.multipleValues);
+        this.datasetForm.controls['name'].patchValue(this.dataset.name);
+        this.datasetForm.controls['description'].patchValue(this.dataset.description);
+        this.datasetForm.controls['tags'].patchValue(this.dataset.tags.join(', '));
+        this.datasetForm.controls['keyValues'].patchValue(this.dataset.uniqueValues);
+        this.datasetForm.controls['multiKeyValues'].patchValue(this.dataset.multipleValues);
     }
 
     isValid(): boolean {
@@ -141,10 +141,10 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
         const tags = this.datasetForm.value['tags'] ? this.datasetForm.value['tags'].split(',') : [];
         const date = new Date();
 
-        const kv = this.datasetForm.controls.keyValues as FormArray;
+        const kv = this.datasetForm.controls['keyValues'] as FormArray;
         const keyValues = kv.value ? kv.value.map((p) => new KeyValue(p.key, p.value)) : [];
 
-        const mkv = this.datasetForm.controls.multiKeyValues as FormArray;
+        const mkv = this.datasetForm.controls['multiKeyValues'] as FormArray;
         const multiKeyValues = mkv.value ? mkv.value.map(a => a.map((p) => new KeyValue(p.key, p.value))) : [];
 
         const version = this.dataset.id ? this.dataset.version : 0;

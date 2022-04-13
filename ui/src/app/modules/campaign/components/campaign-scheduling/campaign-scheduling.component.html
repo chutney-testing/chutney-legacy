@@ -29,7 +29,7 @@
                     </div>
                 </div>
 
-                <div class="error-message" *ngIf="submitted && f.date.errors?.required">
+                <div class="error-message" *ngIf="submitted && f['date'].errors['required']">
                     {{ 'campaigns.scheduling.required.date' | translate }}
                 </div>
             </div>
@@ -40,7 +40,7 @@
                     <ngb-timepicker formControlName="time"></ngb-timepicker>
                 </div>
 
-                <div class="error-message" *ngIf="submitted && f.time.errors?.required">
+                <div class="error-message" *ngIf="submitted && f['time'].errors['required']">
                     {{ 'campaigns.scheduling.required.time' | translate }}
                 </div>
             </div>

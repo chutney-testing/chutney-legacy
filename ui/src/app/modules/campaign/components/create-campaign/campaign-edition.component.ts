@@ -372,7 +372,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     }
 
     updateCampaignParameters() {
-        const params = this.campaignForm.controls.parameters as FormArray;
+        const params = this.campaignForm.controls['parameters'] as FormArray;
         const addedParams = new Set();
 
         while (params.length !== 0) {

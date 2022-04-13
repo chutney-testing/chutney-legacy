@@ -45,6 +45,7 @@ export class ScenarioExecutionService {
                 if (res != null && res !== '') {
                     return this.buildExecutionReport(res);
                 }
+                return null
             }));
     }
 

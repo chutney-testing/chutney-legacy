@@ -106,7 +106,7 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
 
     addParameters(): void {
         this.collapseParam = false;
-        (this.componentForm.controls.parameters as FormArray)
+        (this.componentForm.controls['parameters'] as FormArray)
             .push(this.formBuilder.group({
                 key: '',
                 value: ''
@@ -114,7 +114,7 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
     }
 
     removeParameter(index: number): void {
-        const parameters = this.componentForm.controls.parameters as FormArray;
+        const parameters = this.componentForm.controls['parameters'] as FormArray;
         parameters.removeAt(index);
         this.collapseParam = (parameters.length === 0);
     }
@@ -170,7 +170,7 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
     }
 
     private initFormComponentParameters() {
-        const parameters = this.componentForm.controls.parameters as FormArray;
+        const parameters = this.componentForm.controls['parameters'] as FormArray;
         this.scenarioComponent.parameters.forEach((keyValue) => {
             parameters.push(
                 this.formBuilder.group({
@@ -183,7 +183,7 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
 
     private updateScenarioParameters() {
         this.scenarioComponent.parameters = [];
-        const parameters = this.componentForm.controls.parameters as FormArray;
+        const parameters = this.componentForm.controls['parameters'] as FormArray;
         for (let i = 0; i < parameters.length; i++) {
             const parameter = parameters.get(i.toString()) as FormGroup;
             if (parameter.get('key').value !== '') {
@@ -234,7 +234,7 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
         }
 
         // Check scenario parameters
-        const parameters = this.componentForm.controls.parameters as FormArray;
+        const parameters = this.componentForm.controls['parameters'] as FormArray;
         if (this.scenarioComponent.parameters.length === parameters.length) {
             for (let i = 0; i < this.scenarioComponent.parameters.length; i++) {
                 const parameter = parameters.get(i.toString()) as FormGroup;

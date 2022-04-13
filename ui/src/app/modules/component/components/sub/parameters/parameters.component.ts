@@ -33,7 +33,7 @@ export class ParametersComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(): void {
-        const parameters = this.parentForm.controls.parameters as FormArray;
+        const parameters = this.parentForm.controls['parameters'] as FormArray;
         this.clearFormArray(parameters);
         this.editableComponent.parameters.forEach((keyValue) => {
             parameters.push(
@@ -49,7 +49,7 @@ export class ParametersComponent implements OnInit, OnChanges {
     }
 
     addParameters(): void {
-        (this.parentForm.controls.parameters as FormArray)
+        (this.parentForm.controls['parameters'] as FormArray)
             .push(this.formBuilder.group({
                 key: '',
                 value: ''
