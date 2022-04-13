@@ -90,3 +90,27 @@ chutney:
 #    defaultHostName:
   agentnetwork:
     connection-checker-timeout: 1000
+
+graphql:
+  tools:
+    introspection-enabled: false
+  servlet:
+    # Sets if GraphQL servlet should be created and exposed. If not specified defaults to "true".
+    enabled: true
+    # Sets the path where GraphQL servlet will be exposed. If not specified defaults to "/graphql"
+    mapping: /graphql
+  schema-strategy: annotations
+  annotations:
+    base-package: com.chutneytesting # required
+  playground:
+    mapping: /playground
+    endpoint: ${graphql.servlet.mapping}
+    subscriptionEndpoint: /subscriptions
+    enabled: true
+    pageTitle: Chutney Playground
+    headers:
+      headerFor: AllTabs
+    settings:
+      request:
+        credentials: include
+

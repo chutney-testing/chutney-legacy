@@ -2,6 +2,9 @@ package com.chutneytesting.execution.domain.history;
 
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import graphql.annotations.annotationTypes.GraphQLField;
+import graphql.annotations.annotationTypes.GraphQLTypeResolver;
+import graphql.kickstart.annotations.GraphQLInterfaceTypeResolver;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +20,6 @@ public interface ExecutionHistory {
 
     @Value.Parameter
     List<Execution> history();
-
     interface ExecutionProperties {
         LocalDateTime time();
         long duration();

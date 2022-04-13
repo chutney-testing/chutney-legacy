@@ -9,6 +9,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import graphql.annotations.annotationTypes.GraphQLField;
+import graphql.annotations.annotationTypes.GraphQLTypeResolver;
+import graphql.kickstart.annotations.GraphQLInterfaceTypeResolver;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -19,17 +22,23 @@ import org.immutables.value.Value;
 @JsonDeserialize(as = ImmutableRawTestCaseDto.class)
 @Value.Style(jdkOnly = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
+@GraphQLTypeResolver(GraphQLInterfaceTypeResolver.class)
 public interface RawTestCaseDto {
 
+    @GraphQLField
     @JsonProperty("content")
     String scenario();
 
+    @GraphQLField
     Optional<String> id();
 
+    @GraphQLField
     String title();
 
+    @GraphQLField
     Optional<String> description();
 
+    @GraphQLField
     List<String> tags();
 
     @Value.Default()

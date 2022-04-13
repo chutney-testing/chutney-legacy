@@ -22,6 +22,8 @@
     <logger name="org.apache.maven.surefire.booter" level="WARN"/>
     <logger name="org.mongodb.driver" level="WARN" />
     <logger name="com.orientechnologies.orient" level="WARN" />
+    <logger name="graphql" level="WARN" />
+    <logger name="notprivacysafe.graphql" level="WARN" />
 
     <root level="DEBUG">
         <appender-ref ref="STDOUT"/>

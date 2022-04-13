@@ -18,7 +18,7 @@ import { DefaultMissingTranslationHandler, HttpLoaderFactory } from './app.trans
 import { SharedModule } from '@shared/shared.module';
 import { CoreModule } from '@core/core.module';
 import { ModalModule, BsModalService  } from 'ngx-bootstrap/modal';
-
+import { GraphqlModule } from './graphql/graphql.module';
 @NgModule({
   declarations: [
     AppComponent
@@ -51,6 +51,7 @@ import { ModalModule, BsModalService  } from 'ngx-bootstrap/modal';
     NgbModule,
     // Internal common
     SharedModule,
+      GraphqlModule
   ],
   providers: [BsModalService],
   bootstrap: [AppComponent]

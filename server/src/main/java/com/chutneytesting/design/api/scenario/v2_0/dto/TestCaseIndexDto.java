@@ -6,6 +6,8 @@ import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.execution.api.ExecutionSummaryDto;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import graphql.annotations.annotationTypes.GraphQLDescription;
+import graphql.annotations.annotationTypes.GraphQLField;
 import java.util.List;
 import org.immutables.value.Value;
 
@@ -14,6 +16,7 @@ import org.immutables.value.Value;
 @JsonDeserialize(as = ImmutableTestCaseIndexDto.class)
 public interface TestCaseIndexDto {
 
+    @GraphQLField
     GwtTestCaseMetadataDto metadata();
 
     static TestCaseIndexDto from(TestCaseMetadata testCaseMetadata, List<ExecutionSummaryDto> executions) {

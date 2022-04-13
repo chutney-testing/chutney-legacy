@@ -1,9 +1,11 @@
 package com.chutneytesting.execution.domain.report;
 
 import com.google.common.collect.Ordering;
+import graphql.annotations.annotationTypes.GraphQLTypeResolver;
+import graphql.kickstart.annotations.GraphQLInterfaceTypeResolver;
+import graphql.schema.GraphQLEnumType;
 import java.util.Objects;
 import java.util.stream.StreamSupport;
-
 public enum ServerReportStatus {
     SUCCESS, WARN, FAILURE, NOT_EXECUTED, STOPPED, PAUSED, RUNNING, EXECUTED;
 

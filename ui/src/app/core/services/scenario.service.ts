@@ -5,6 +5,8 @@ import { map } from 'rxjs/operators';
 import { GwtTestCase, ScenarioIndex, TestCase } from '@model';
 import { environment } from '@env/environment';
 import { HttpClient } from '@angular/common/http';
+import { Apollo, gql } from 'apollo-angular';
+
 
 @Injectable({
     providedIn: 'root'
@@ -37,7 +39,8 @@ export class ScenarioService {
         }
     }
 
-    constructor(private httpClient: HttpClient) {
+    constructor(private httpClient: HttpClient,
+                private apollo: Apollo) {
     }
 
     findRawTestCase(id: string): Observable<TestCase> {
@@ -66,17 +69,33 @@ export class ScenarioService {
     }
 
     findScenarios(): Observable<Array<ScenarioIndex>> {
-        return this.httpClient.get<Array<ScenarioIndex>>(environment.backend + this.resourceUrlV2)
-        .pipe(map((res: Array<any>) => {
-            return this.mapJsonScenario(res);
-        }));
+        /* return this.httpClient.get<Array<ScenarioIndex>>(environment.backend + this.resourceUrlV2)
+         .pipe(map((res: Array<any>) => {
+             return this.mapJsonScenario(res);
+         }));*/
+        const listScenariosQuery = gql
+            `{
+                scenarios {
+                    metadata {
+                      id
+                      title
+                      description
+                      repositorySource
+                      tags
+                    }
+                }
+            }`;
+
+        return this.apollo
+            .query({query: listScenariosQuery})
+            .pipe(map(({data}) => this.mapJsonScenario(data['scenarios'])));
     }
 
     findScenarioMetadata(id: string): Observable<ScenarioIndex> {
         return this.httpClient.get<ScenarioIndex>(environment.backend + `${this.resourceUrlV2}/${id}/metadata`)
-        .pipe(map((res: any) => {
-            return this.mapJsonScenario([res])[0];
-        }));
+            .pipe(map((res: any) => {
+                return this.mapJsonScenario([res])[0];
+            }));
     }
 
     findTestCase(id: string): Observable<GwtTestCase> {
@@ -107,11 +126,27 @@ export class ScenarioService {
         return this.httpClient.delete(environment.backend + `${this.resourceUrlV2}/${id}`);
     }
 
-    search(textFilter: any): Observable<Array<ScenarioIndex>>  {
-        return this.httpClient.get<Array<ScenarioIndex>>(environment.backend + `${this.resourceUrlV2}?textFilter=${textFilter}`)
+    search(textFilter: any): Observable<Array<ScenarioIndex>> {
+        const listScenariosQuery = gql
+            `{
+                scenarios(keyword: "${textFilter}") {
+                    metadata {
+                      id
+                      title
+                      description
+                      repositorySource
+                      tags
+                    }
+                }
+            }`;
+
+        return this.apollo
+            .query({query: listScenariosQuery})
+            .pipe(map(({data}) => this.mapJsonScenario(data['scenarios'])));
+       /* return this.httpClient.get<Array<ScenarioIndex>>(environment.backend + `${this.resourceUrlV2}?textFilter=${textFilter}`)
             .pipe(map((res: Array<any>) => {
                 return this.mapJsonScenario(res);
-            }));
+            }));*/
     }
 
     private mapJsonScenario(res: Array<any>) {
