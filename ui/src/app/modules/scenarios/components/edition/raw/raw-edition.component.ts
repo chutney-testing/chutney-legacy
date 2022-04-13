@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { EventManagerService } from '@shared/event-manager.service';
 import { Subscription } from 'rxjs';
 import { TestCase } from '@model';
-import { HjsonParserService } from '@shared/hjson-parser/hjson-parser.service';
 import { ScenarioService } from '@core/services';
 import { CanDeactivatePage } from '@core/guards';
 import { JiraPluginService } from '@core/services/jira-plugin.service';
@@ -50,7 +49,6 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
 
     constructor(private eventManager: EventManagerService,
                 private formBuilder: FormBuilder,
-                private hjsonParser: HjsonParserService,
                 private jiraLinkService: JiraPluginService,
                 private route: ActivatedRoute,
                 private router: Router,
@@ -119,7 +117,7 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
 
     private checkParseError() {
         try {
-            this.hjsonParser.parse(this.modifiedContent);
+            //this.hjsonParser.parse(this.modifiedContent);
             this.errorMessage = null;
         } catch (e) {
             this.errorMessage = e;

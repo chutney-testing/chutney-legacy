@@ -2,7 +2,6 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {GlobalVariableService} from '@core/services/global-var.service';
 import {HttpErrorResponse} from '@angular/common/http';
 
-import {AceEditorComponent} from "@shared/ace-editor/ace-editor.component";
 import { Authorization } from '@model';
 
 @Component({
@@ -18,8 +17,6 @@ export class GlobalVariableEditionComponent implements OnInit {
     message: string;
 
     help = false;
-
-    @ViewChild('aceEditorGlobalVar') aceEditor: AceEditorComponent;
 
     Authorization = Authorization;
 
@@ -70,12 +67,12 @@ export class GlobalVariableEditionComponent implements OnInit {
     updateFileContent(selectedFileName: string) {
         if (selectedFileName === undefined) {
             this.data = '';
-            this.aceEditor.forceContentChange('');
+         //   this.aceEditor.forceContentChange('');
         } else {
             this.globalVariableService.get(selectedFileName).subscribe(
                 response => {
                     this.data = response;
-                    this.aceEditor.forceContentChange(response);
+                   // this.aceEditor.forceContentChange(response);
                 }
             );
         }

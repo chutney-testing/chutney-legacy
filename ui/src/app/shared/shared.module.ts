@@ -4,7 +4,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { AceEditorComponent } from '@shared/ace-editor/ace-editor.component';
 import { DatasetSelectionComponent } from '@shared/components/dataset-selection/dataset-selection.component';
 import { InputFocusDirective } from '@shared/directives';
 import { ThumbnailPipe } from '@shared/pipes/thumbnail.pipe';
@@ -19,7 +18,6 @@ import {
 } from './components';
 import { ImplementationHostDirective, HasAuthorizationDirective } from './directives';
 import { EventManagerService } from './event-manager.service';
-import { HjsonParserService } from './hjson-parser/hjson-parser.service';
 import {
     ComponentSearchPipe,
     DataSetSearchPipe,
@@ -49,7 +47,6 @@ import { StateService } from './state/state.service';
         TranslateModule,
     ],
     declarations: [
-        AceEditorComponent,
         ComponentCardComponent,
         ComponentSearchPipe,
         DataSetSearchPipe,
@@ -74,7 +71,6 @@ import { StateService } from './state/state.service';
         HasAuthorizationDirective,
     ],
     exports: [
-        AceEditorComponent,
         ComponentCardComponent,
         ComponentSearchPipe,
         DataSetSearchPipe,
@@ -106,7 +102,6 @@ import { StateService } from './state/state.service';
         },
         AlertService,
         EventManagerService,
-        HjsonParserService,
         StateService
     ]
 })
