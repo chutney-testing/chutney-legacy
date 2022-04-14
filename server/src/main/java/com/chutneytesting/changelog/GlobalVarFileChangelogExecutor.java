@@ -2,20 +2,18 @@ package com.chutneytesting.changelog;
 
 import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
 import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS;
-import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.LITERAL_BLOCK_STYLE;
+import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.INDENT_ARRAYS;
+import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR;
+import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.MINIMIZE_QUOTES;
 import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.SPLIT_LINES;
 
+import com.chutneytesting.changelog.hjsontoyaml.YAMLFactory;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.design.infra.storage.globalvar.FileGlobalVarRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeType;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 import org.hjson.JsonValue;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,8 +28,10 @@ public class GlobalVarFileChangelogExecutor {
     private final GlobalvarRepository yamlStoreRepository;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final YAMLMapper yamlMapper = new YAMLMapper()
-        .enable(LITERAL_BLOCK_STYLE)
+    private final YAMLMapper yamlMapper = new YAMLMapper(new YAMLFactory())
+        .enable(MINIMIZE_QUOTES)
+        .enable(INDENT_ARRAYS)
+        .enable(INDENT_ARRAYS_WITH_INDICATOR)
         .enable(ALWAYS_QUOTE_NUMBERS_AS_STRINGS)
         .disable(SPLIT_LINES);
 
@@ -55,27 +55,9 @@ public class GlobalVarFileChangelogExecutor {
         try {
             String json = JsonValue.readHjson(hjson).toString();
             JsonNode jsonNodeTree = objectMapper.readTree(json);
-            addLineBreakToSingleLineJsonText(jsonNodeTree);
             return yamlMapper.writeValueAsString(jsonNodeTree);
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException("Could not transform hjson to yaml");
-        }
-    }
-
-    private void addLineBreakToSingleLineJsonText(JsonNode jsonNodeTree) {
-        for (Iterator<Map.Entry<String, JsonNode>> it = jsonNodeTree.fields(); it.hasNext(); ) {
-            Map.Entry<String, JsonNode> node = it.next();
-            if (JsonNodeType.STRING.equals(node.getValue().getNodeType())) {
-                try {
-                    String textValue = node.getValue().textValue();
-                    if (textValue.lines().count() == 1 && objectMapper.readTree(textValue) != null) {
-                        ((ObjectNode) jsonNodeTree).set(node.getKey(), TextNode.valueOf(textValue + "\n"));
-                    }
-                } catch (JsonProcessingException e) { // Ignore non json string
-                }
-            } else {
-                addLineBreakToSingleLineJsonText(node.getValue());
-            }
         }
     }
 }

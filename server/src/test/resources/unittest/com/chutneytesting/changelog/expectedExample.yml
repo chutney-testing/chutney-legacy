@@ -1,16 +1,22 @@
 ---
-key: 1
-contains: "everything on this line"
-verylongline: "aaaaaaaaaaaaaaaaaaaaaa bbbbbbbbbbbbbbbbbbb ccccccccccccccccc dddddddddddddddddd eeeeeeeeeeeeeeeee ffffffffffffffffffff ggggggggggggggggggggggggggg"
-cool:
+number: 1
+string: hello
+line: everything on this line
+longLine: aaaaaaaaaaaaaaaaaaaaaa bbbbbbbbbbbbbbbbbbb ccccccccccccccccc dddddddddddddddddd eeeeeeeeeeeeeeeee ffffffffffffffffffff ggggggggggggggggggggggggggg
+lineWithSpecialChar: |-
+  special char line : { } \ " '
+object:
   foo: 1
   bar: 2
 list:
-- 1
-- 2
-realist: |-
+  - 1
+  - 2
+listLine:
+  - string
+  - 666
+docString: |-
   My half empty glass,
   I will fill your empty half.
   Now you are half full.
-strange: |
+docStringLineSpecialChar: |-
   {"embedded": "json", "object": {"aaa": "aaavalue", "bbb": "bbbvalue"}}
