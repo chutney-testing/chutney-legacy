@@ -16,15 +16,23 @@
         <div class="row" formArrayName="parameters"
              *ngFor="let parameter of parentForm.get('parameters')?.controls; let i = index;">
             <ng-container [formGroupName]="i">
-                <input type="text" class="col-4 form-control mr-2 small-text" formControlName="key" placeholder="key"/>
-                <textarea class="col-6 form-control mr-2 small-text" formControlName="value" rows="1" placeholder="value"></textarea>
-                <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
-                        type="button"
-                        class="btn btn-outline-danger delete-button-height"
-                        (click)="removeParameters(i)"
-                        title="{{'global.actions.delete' | translate}}">
-                    <span class="fa fa-trash"></span>
-                </button>
+                <div class="col-4 pl-1 pl-1 pr-1">
+                    <input type="text" class="form-control mr-2 small-text" formControlName="key"
+                           title="{{parameter.get('key').value}}"
+                           placeholder="key"/>
+                </div>
+                <div class="col-7 pl-1 pl-1 pr-1">
+                    <textarea class="form-control mr-2 small-text" formControlName="value" rows="1" placeholder="value"></textarea>
+                </div>
+                <div class="col-1 pl-1 pr-1 align-self-center text-right">
+                    <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
+                            type="button"
+                            class="btn btn-sm btn-outline-danger delete-button-height"
+                            (click)="removeParameters(i)"
+                            title="{{'global.actions.delete' | translate}}">
+                        <span class="fa fa-trash"></span>
+                    </button>
+                </div>
             </ng-container>
         </div>
     </ng-container>

@@ -30,6 +30,8 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     // global
     viewComponent = true;
+    componentMinimize = false;
+    componentEditionRightPanelMinimize = false;
     actionToEdit: ComponentTask;
 
     // referential

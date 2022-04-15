@@ -32,3 +32,20 @@ textarea.no-resize {
 .cursor-default {
     cursor: default;
 }
+
+.right-panel-minimize {
+    width: 45px;
+}
+
+.edition-action-minimize {
+    width: calc(100% - 45px/*right-panel*/);
+}
+
+.right-panel-minimize-btn {
+    position: fixed;
+    margin-left: -5px;
+}
+
+.right-panel-content {
+    margin-left: 15px;
+}
