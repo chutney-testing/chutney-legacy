@@ -5,7 +5,6 @@ import static com.fasterxml.jackson.annotation.PropertyAccessor.CREATOR;
 import static com.fasterxml.jackson.annotation.PropertyAccessor.FIELD;
 import static com.fasterxml.jackson.annotation.PropertyAccessor.GETTER;
 import static com.fasterxml.jackson.annotation.PropertyAccessor.SETTER;
-import static java.util.Collections.emptyList;
 import static org.hjson.JsonValue.readHjson;
 
 import com.chutneytesting.design.api.scenario.OldFormatAdapter;
@@ -34,7 +33,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -140,7 +138,7 @@ public class GwtScenarioMapper implements GwtScenarioMarshaller {
         builder.sentence(step.description);
         step.implementation.ifPresent(i -> builder.implementation(toDto(i)));
         step.strategy.ifPresent(s -> builder.strategy(toDto(s)));
-        step.xRef.ifPresent(x -> builder.xRef(x));
+        step.xRef.ifPresent(builder::xRef);
         builder.subSteps(toDto(step.subSteps));
         return builder.build();
     }

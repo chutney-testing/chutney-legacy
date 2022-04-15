@@ -3,7 +3,6 @@ package com.chutneytesting.design.api.globalvar;
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.design.infra.storage.globalvar.FileGlobalVarRepository;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import java.util.Set;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;

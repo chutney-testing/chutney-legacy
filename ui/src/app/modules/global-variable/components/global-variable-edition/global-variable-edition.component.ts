@@ -16,6 +16,7 @@ export class GlobalVariableEditionComponent implements OnInit {
     fileNames;
     currentFileName;
     message: string;
+    messageTypeStyle: string = 'info';
 
     help = false;
 
@@ -42,6 +43,7 @@ export class GlobalVariableEditionComponent implements OnInit {
 
     save() {
         (async () => {
+            this.setInfoMessageTypeStyle();
             this.message = 'Saving...';
             await this.delay(1000);
             this.globalVariableService.save(this.currentFileName, this.data).subscribe(
@@ -60,6 +62,7 @@ export class GlobalVariableEditionComponent implements OnInit {
     }
 
     private handleError(err: HttpErrorResponse) {
+        this.setErrorMessageTypeStyle();
         if (err.error instanceof ProgressEvent) {
             this.message = 'Back-end server not reachable';
         } else {
@@ -83,6 +86,7 @@ export class GlobalVariableEditionComponent implements OnInit {
 
     deleteFile() {
         (async () => {
+            this.setInfoMessageTypeStyle();
             this.message = 'Deleting...';
             await this.delay(1000);
             this.globalVariableService.delete(this.currentFileName).subscribe(
@@ -94,5 +98,13 @@ export class GlobalVariableEditionComponent implements OnInit {
                 },
                 error => this.handleError(error));
         })();
+    }
+
+    private setInfoMessageTypeStyle() {
+        this.messageTypeStyle = 'info';
+    }
+
+    private setErrorMessageTypeStyle() {
+        this.messageTypeStyle = 'danger';
     }
 }

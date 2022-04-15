@@ -1,40 +1,35 @@
-<div *ngIf="data !== null" class="ml-3 mt-3">
+<div class="container-fluid p-0">
+    <div *ngIf="data !== null" class="row">
+        <div class="col">
+            <div class="row justify-content-center form-group form-inline">
+                <button *hasAuthorization="[Authorization.GLOBAL_VAR_WRITE]"
+                        type="button" class="btn btn-success m-2" (click)="save()">
+                    Save
+                    <span class="fa fa-check"></span>
+                </button>
+                <select class="form-control m-2" [(ngModel)]="currentFileName" (ngModelChange)="updateFileContent($event)">
+                    <option [value]="fileName" *ngFor="let fileName of fileNames">{{fileName}}</option>
+                </select>
+                <input *hasAuthorization="[Authorization.GLOBAL_VAR_WRITE]"
+                       class="form-control m-2"
+                       id="filename" type="text" class="form-control" name="filename"
+                       placeholder="Add a new file" [(ngModel)]="currentFileName"/>
+                <chutney-delete-confirm-dialog *hasAuthorization="[Authorization.GLOBAL_VAR_WRITE]"
+                                               class="m-2"
+                                               [dialogMessage]="('global.confirm.question' | translate) + ' ' + ('global.actions.delete' | translate) + '\n' + currentFileName"
+                                               [label]="'Delete file'"
+                                               [disabled]="null"
+                                               (deleteEvent)="deleteFile()">
+                </chutney-delete-confirm-dialog>
+                <button type="button" class="btn btn-primary m-2" (click)="help = !help">
+                    Help <span class="fa fa-help"></span>
+                </button>
+            </div>
+            <div class="row p-2 text-white font-weight-bold rounded" *ngIf="message"
+                [ngClass]="'bg-'+messageTypeStyle">{{ message }}</div>
 
-    <div class="box2">
-        <button *hasAuthorization="[Authorization.GLOBAL_VAR_WRITE]"
-            type="button" class="btn btn-success m-2 box2" (click)="save()">
-            Save
-            <span class="fa fa-check"></span>
-        </button>
-    </div>
-    <div class="box2">
-        <select class="form-control" [(ngModel)]="currentFileName" (ngModelChange)="updateFileContent($event)">
-            <option [value]="fileName" *ngFor="let fileName of fileNames">{{fileName}}</option>
-        </select>
-    </div>
-    <div class="box2">
-        <input *hasAuthorization="[Authorization.GLOBAL_VAR_WRITE]"
-            id="filename" type="text" class="form-control" name="filename"
-            placeholder="Add a new file" [(ngModel)]="currentFileName"/>
-    </div>
-    <div class="box2">
-        <chutney-delete-confirm-dialog *hasAuthorization="[Authorization.GLOBAL_VAR_WRITE]"
-            [dialogMessage]="('global.confirm.question' | translate) + ' ' + ('global.actions.delete' | translate) + '\n' + currentFileName"
-            [label]="'Delete file'"
-            [disabled]="null"
-            (deleteEvent)="deleteFile()">
-        </chutney-delete-confirm-dialog>
-    </div>
-    <div class="box2">
-        <button type="button" class="btn btn-primary m-2 box2" (click)="help = !help">
-            Help
-            <span class="fa fa-help"></span>
-        </button>
-    </div>
-    <div class="box2" *ngIf="message"> {{ message }}</div>
-
-    <div *ngIf="help">
-        <pre>
+            <div class="row" *ngIf="help">
+                <pre class="w-100 p-1 text-white bg-info rounded">
 Global variable can be user in your scenario or components with **global_variable_name**.
 You can defined variable in json in this file.
 For example :
@@ -52,15 +47,16 @@ For example :
         - key2.subKey2
         - nico.test
         - key3[1].test
+                </pre>
+            </div>
 
-        </pre>
-    </div>
-
-    <div class="globalvar-editor">
-        <chutney-ace-editor #aceEditorGlobalVar
-            [hasError]="help"
-            [initialContent]="data"
-            (textChangeEvent)="callBackFunc($event)">
-        </chutney-ace-editor>
+            <div class="row">
+                <chutney-ace-editor #aceEditorGlobalVar
+                                    class="w-100 globalvar-editor"
+                                    [initialContent]="data"
+                                    (textChangeEvent)="callBackFunc($event)">
+                </chutney-ace-editor>
+            </div>
+        </div>
     </div>
 </div>
