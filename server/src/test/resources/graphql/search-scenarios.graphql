@@ -1,0 +1,11 @@
+query($keywordInput: String){
+  search(keyword : $keywordInput) {
+    metadata {
+      id
+      title
+      description
+      repositorySource
+      tags
+    }
+  }
+}

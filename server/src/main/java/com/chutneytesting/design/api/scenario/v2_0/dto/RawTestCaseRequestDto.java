@@ -37,7 +37,7 @@ public class RawTestCaseRequestDto {
     }
 
     @GraphQLConstructor
-    public RawTestCaseRequestDto(String scenario, String id, String title, String description, List<String> tags) {
+    public RawTestCaseRequestDto(String id, String scenario, String title, String description, List<String> tags) {
         this.scenario = scenario;
         this.id = id;
         this.title = title;

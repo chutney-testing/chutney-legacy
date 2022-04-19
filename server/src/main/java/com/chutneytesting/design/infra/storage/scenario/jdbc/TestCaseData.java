@@ -31,7 +31,17 @@ public class TestCaseData {
     public final Map<String, String> executionParameters;
     public final String rawScenario;
 
-    private TestCaseData(String contentVersion, String testCaseId, String title, String description, Instant creationDate, List<String> tags, Map<String, String> executionParameters, String rawScenario, Instant updateDate, String author, Integer version) {
+    private TestCaseData(String contentVersion,
+                         String testCaseId,
+                         String title,
+                         String description,
+                         Instant creationDate,
+                         List<String> tags,
+                         Map<String, String> executionParameters,
+                         String rawScenario,
+                         Instant updateDate,
+                         String author,
+                         Integer version) {
         this.contentVersion = contentVersion;
         this.id = testCaseId;
         this.title = title;

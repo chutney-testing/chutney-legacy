@@ -6,9 +6,9 @@ server:
     port: ${port:80}
     interface: 0.0.0.0
   ssl:
-    keyStore: 'classpath:blackbox/keystores/server.jks'
-    key-store-password: 'server'
-    key-password: 'server'
+    keyStore: 'classpath:blackbox/keystores/local.jks'
+    key-store-password: 'changeit'
+    key-password: 'changeit'
   undertow:
     io-threads: 1
     worker-threads: 8
@@ -72,3 +72,13 @@ chutney:
 #    defaultHostName:
   agentnetwork:
     connection-checker-timeout: 1000
+
+graphql:
+  servlet:
+    # Sets if GraphQL servlet should be created and exposed. If not specified defaults to "true".
+    enabled: true
+  schema-strategy: annotations
+  annotations:
+    base-package: com.chutneytesting # required
+  tools:
+    introspection-enabled:

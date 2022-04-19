@@ -26,7 +26,6 @@ public class ScenarioMutationResolver implements ApplicationContextAware {
     @GraphQLDescription("Save raw scenario")
     public static String save(final @GraphQLNonNull @GraphQLName("scenario") RawTestCaseRequestDto rawTestCaseDto) {
         return testCaseController.saveTestCase(ImmutableRawTestCaseDto.builder()
-            .id(rawTestCaseDto.getId())
             .description(rawTestCaseDto.getDescription())
             .title(rawTestCaseDto.getTitle())
             .tags(rawTestCaseDto.getTags())

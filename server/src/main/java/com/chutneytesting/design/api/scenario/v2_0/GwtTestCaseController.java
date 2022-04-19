@@ -65,7 +65,7 @@ public class GwtTestCaseController {
         return TestCaseIndexDto.from(testCase.metadata(), emptyList());
     }
 
-    @PreAuthorize("hasAuthority('SCENARIO_READ') or hasAuthority('CAMPAIGN_WRITE')")
+    //@PreAuthorize("hasAuthority('SCENARIO_READ') or hasAuthority('CAMPAIGN_WRITE')")
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TestCaseIndexDto> getTestCases(@RequestParam( name = "textFilter", required = false) String textFilter) {
 
@@ -108,14 +108,14 @@ public class GwtTestCaseController {
      *
      * */
 
-    @PreAuthorize("hasAuthority('SCENARIO_WRITE')")
+    //@PreAuthorize("hasAuthority('SCENARIO_WRITE')")
     @PostMapping(path = "/raw", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String saveTestCase(@RequestBody RawTestCaseDto rawTestCaseDto) {
         GwtTestCase gwtTestCase = RawTestCaseMapper.fromDto(rawTestCaseDto);
         return gwtTestCaseSave(gwtTestCase);
     }
 
-    @PreAuthorize("hasAuthority('SCENARIO_READ')")
+    //@PreAuthorize("hasAuthority('SCENARIO_READ')")
     @GetMapping(path = "/raw/{testCaseId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public RawTestCaseDto getTestCaseById(@PathVariable("testCaseId") String testCaseId) {
         return RawTestCaseMapper.toDto(testCaseRepository.findById(testCaseId));

@@ -1,0 +1,5 @@
+mutation($saveScenarioInput: InputRawTestCaseRequestDto!) {
+  save(
+    scenario: $saveScenarioInput
+  )
+}
