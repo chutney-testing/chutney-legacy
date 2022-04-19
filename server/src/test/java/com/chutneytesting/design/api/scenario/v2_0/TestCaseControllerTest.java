@@ -8,10 +8,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.chutneytesting.RestExceptionHandler;
 import com.chutneytesting.design.api.scenario.v2_0.dto.ImmutableRawTestCaseDto;
-import com.chutneytesting.design.api.scenario.v2_0.dto.RawTestCaseDto;
-import com.chutneytesting.design.domain.scenario.ScenarioNotParsableException;
-import com.chutneytesting.design.domain.scenario.TestCaseRepository;
-import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
+import com.chutneytesting.scenario.api.raw.dto.RawTestCaseDto;
+import com.chutneytesting.scenario.domain.ScenarioNotParsableException;
+import com.chutneytesting.scenario.domain.TestCaseRepository;
+import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
+import com.chutneytesting.scenario.api.GwtTestCaseController;
 import com.chutneytesting.security.api.UserDto;
 import com.chutneytesting.security.infra.SpringUserService;
 import com.fasterxml.jackson.databind.ObjectMapper;

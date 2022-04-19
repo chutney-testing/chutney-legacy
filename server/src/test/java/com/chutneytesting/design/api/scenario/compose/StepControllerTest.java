@@ -1,8 +1,8 @@
 package com.chutneytesting.design.api.scenario.compose;
 
-import static com.chutneytesting.design.api.scenario.compose.StepController.FIND_STEPS_LIMIT_DEFAULT_VALUE;
-import static com.chutneytesting.design.api.scenario.compose.StepController.FIND_STEPS_NAME_DEFAULT_VALUE;
-import static com.chutneytesting.design.api.scenario.compose.StepController.FIND_STEPS_START_DEFAULT_VALUE;
+import static com.chutneytesting.scenario.api.StepController.FIND_STEPS_LIMIT_DEFAULT_VALUE;
+import static com.chutneytesting.scenario.api.StepController.FIND_STEPS_NAME_DEFAULT_VALUE;
+import static com.chutneytesting.scenario.api.StepController.FIND_STEPS_START_DEFAULT_VALUE;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -17,11 +17,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.chutneytesting.RestExceptionHandler;
 import com.chutneytesting.WebConfiguration;
 import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableStepDto;
-import com.chutneytesting.design.api.scenario.compose.dto.ParentsStepDto;
-import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
-import com.chutneytesting.design.domain.scenario.compose.ComposableStepNotFoundException;
-import com.chutneytesting.design.domain.scenario.compose.ComposableStepRepository;
-import com.chutneytesting.design.domain.scenario.compose.ParentStepId;
+import com.chutneytesting.scenario.api.StepController;
+import com.chutneytesting.scenario.api.compose.dto.ParentsStepDto;
+import com.chutneytesting.scenario.domain.compose.ComposableStep;
+import com.chutneytesting.scenario.domain.compose.ComposableStepNotFoundException;
+import com.chutneytesting.scenario.domain.compose.ComposableStepRepository;
+import com.chutneytesting.scenario.domain.compose.ParentStepId;
 import com.chutneytesting.tools.ImmutablePaginatedDto;
 import com.chutneytesting.tools.ImmutablePaginationRequestParametersDto;
 import com.chutneytesting.tools.ImmutableSortRequestParametersDto;

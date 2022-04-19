@@ -1,12 +1,12 @@
 package com.chutneytesting.design.infra.storage.dataset;
 
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.DATASET_CLASS_PROPERTY_CREATIONDATE;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.DATASET_CLASS_PROPERTY_DESCRIPTION;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.DATASET_CLASS_PROPERTY_NAME;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.DATASET_CLASS_PROPERTY_TAGS;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.DATASET_HISTORY_CLASS_PROPERTY_DATASET_ID;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.DATASET_HISTORY_CLASS_PROPERTY_PATCH;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.DATASET_HISTORY_CLASS_PROPERTY_VERSION;
+import static com.chutneytesting.scenario.infra.compose.orient.OrientComponentDB.DATASET_CLASS_PROPERTY_CREATIONDATE;
+import static com.chutneytesting.scenario.infra.compose.orient.OrientComponentDB.DATASET_CLASS_PROPERTY_DESCRIPTION;
+import static com.chutneytesting.scenario.infra.compose.orient.OrientComponentDB.DATASET_CLASS_PROPERTY_NAME;
+import static com.chutneytesting.scenario.infra.compose.orient.OrientComponentDB.DATASET_CLASS_PROPERTY_TAGS;
+import static com.chutneytesting.scenario.infra.compose.orient.OrientComponentDB.DATASET_HISTORY_CLASS_PROPERTY_DATASET_ID;
+import static com.chutneytesting.scenario.infra.compose.orient.OrientComponentDB.DATASET_HISTORY_CLASS_PROPERTY_PATCH;
+import static com.chutneytesting.scenario.infra.compose.orient.OrientComponentDB.DATASET_HISTORY_CLASS_PROPERTY_VERSION;
 
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.OElement;

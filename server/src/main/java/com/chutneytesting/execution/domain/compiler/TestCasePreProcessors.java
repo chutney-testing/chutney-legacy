@@ -1,6 +1,6 @@
 package com.chutneytesting.execution.domain.compiler;
 
-import com.chutneytesting.design.domain.scenario.TestCase;
+import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import java.util.Collections;
 import java.util.List;

@@ -1,12 +1,12 @@
 package com.chutneytesting.design.api.scenario.compose.mapper;
 
-import static com.chutneytesting.design.api.scenario.compose.mapper.ComposableStepMapper.fromDto;
-import static com.chutneytesting.design.api.scenario.compose.mapper.ComposableStepMapper.toDto;
+import static com.chutneytesting.scenario.api.compose.mapper.ComposableStepMapper.fromDto;
+import static com.chutneytesting.scenario.api.compose.mapper.ComposableStepMapper.toDto;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.design.api.scenario.compose.dto.ComposableStepDto;
+import com.chutneytesting.scenario.api.compose.dto.ComposableStepDto;
 import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableStepDto;
-import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
+import com.chutneytesting.scenario.domain.compose.ComposableStep;
 import com.chutneytesting.tools.ui.KeyValue;
 import java.util.Arrays;
 import java.util.Collections;

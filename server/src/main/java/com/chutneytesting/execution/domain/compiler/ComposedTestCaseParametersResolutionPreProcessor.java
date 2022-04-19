@@ -7,9 +7,9 @@ import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
-import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
-import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
-import com.chutneytesting.design.domain.scenario.compose.Strategy;
+import com.chutneytesting.scenario.domain.TestCaseMetadata;
+import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
+import com.chutneytesting.scenario.domain.compose.Strategy;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedScenario;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;

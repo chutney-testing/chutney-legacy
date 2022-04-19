@@ -1,6 +1,6 @@
 package com.chutneytesting.execution.domain.compiler;
 
-import com.chutneytesting.design.domain.scenario.gwt.GwtScenario;
+import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 
 public interface GwtScenarioMarshaller {
 

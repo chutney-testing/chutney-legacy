@@ -1,20 +1,20 @@
 package com.chutneytesting.design.api.scenario.compose.mapper;
 
-import static com.chutneytesting.design.api.scenario.compose.mapper.ComposableTestCaseMapper.fromDto;
-import static com.chutneytesting.design.api.scenario.compose.mapper.ComposableTestCaseMapper.toDto;
+import static com.chutneytesting.scenario.api.compose.mapper.ComposableTestCaseMapper.fromDto;
+import static com.chutneytesting.scenario.api.compose.mapper.ComposableTestCaseMapper.toDto;
 import static com.chutneytesting.tools.orient.ComposableIdUtils.fromFrontId;
 import static com.chutneytesting.tools.orient.ComposableIdUtils.toFrontId;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.design.api.scenario.compose.dto.ComposableStepDto;
-import com.chutneytesting.design.api.scenario.compose.dto.ComposableTestCaseDto;
+import com.chutneytesting.scenario.api.compose.dto.ComposableStepDto;
+import com.chutneytesting.scenario.api.compose.dto.ComposableTestCaseDto;
 import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableScenarioDto;
 import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableTestCaseDto;
 import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableStepDto;
-import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
-import com.chutneytesting.design.domain.scenario.compose.ComposableScenario;
-import com.chutneytesting.design.domain.scenario.compose.ComposableTestCase;
-import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
+import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
+import com.chutneytesting.scenario.domain.compose.ComposableScenario;
+import com.chutneytesting.scenario.domain.compose.ComposableTestCase;
+import com.chutneytesting.scenario.domain.compose.ComposableStep;
 import com.chutneytesting.tools.ui.ImmutableKeyValue;
 import com.chutneytesting.tools.ui.KeyValue;
 import java.time.Instant;

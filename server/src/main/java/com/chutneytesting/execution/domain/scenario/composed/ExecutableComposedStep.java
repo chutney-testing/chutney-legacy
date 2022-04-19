@@ -8,7 +8,7 @@ import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toMap;
 
-import com.chutneytesting.design.domain.scenario.compose.Strategy;
+import com.chutneytesting.scenario.domain.compose.Strategy;
 import com.google.common.collect.Maps;
 import java.util.LinkedHashMap;
 import java.util.List;

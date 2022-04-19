@@ -4,7 +4,7 @@ import static java.time.LocalDateTime.now;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.design.domain.scenario.TestCase;
+import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;

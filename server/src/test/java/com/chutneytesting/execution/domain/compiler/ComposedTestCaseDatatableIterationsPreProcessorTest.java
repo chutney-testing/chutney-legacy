@@ -14,9 +14,9 @@ import static org.mockito.Mockito.when;
 
 import com.chutneytesting.design.domain.dataset.DataSet;
 import com.chutneytesting.design.domain.dataset.DataSetRepository;
-import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
-import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
-import com.chutneytesting.design.domain.scenario.compose.Strategy;
+import com.chutneytesting.scenario.domain.TestCaseMetadata;
+import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
+import com.chutneytesting.scenario.domain.compose.Strategy;
 import com.chutneytesting.engine.domain.execution.strategies.DataSetIterationsStrategy;
 import com.chutneytesting.engine.domain.execution.strategies.DefaultStepExecutionStrategy;
 import com.chutneytesting.engine.domain.execution.strategies.RetryWithTimeOutStrategy;
