@@ -91,9 +91,10 @@ public class DefaultExecutionEngine implements ExecutionEngine {
 
     private Optional<Step> initFinalRootStep(AtomicReference<Step> rootStep, List<FinallyAction> finallyActionsSnapshot) {
         try {
+            String environment = rootStep.get().definition().environment;
             Pair<List<StepDefinition>, List<Step>> finalStepsWithDefinitions = finallyActionsSnapshot.stream()
                 .map(fa -> {
-                    StepDefinition definition = new FinallyActionMapper().toStepDefinition(fa);
+                    StepDefinition definition = new FinallyActionMapper().toStepDefinition(fa, environment);
                     return Pair.of(singletonList(definition), singletonList(buildStep(definition)));
                 })
                 .reduce(Pair.of(new ArrayList<>(), new ArrayList<>()), (p1, p2) -> {
@@ -111,7 +112,7 @@ public class DefaultExecutionEngine implements ExecutionEngine {
                 finalStepsWithDefinitions.getLeft(),
                 emptyMap(),
                 emptyMap(),
-                rootStep.get().definition().environment
+                environment
             );
 
             return Optional.of(

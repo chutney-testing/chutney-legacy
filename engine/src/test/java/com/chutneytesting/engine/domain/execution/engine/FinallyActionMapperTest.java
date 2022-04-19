@@ -29,7 +29,7 @@ public class FinallyActionMapperTest {
             .withStrategyProperties(Map.of("param", "value"))
             .build();
 
-        StepDefinition stepDefinition = mapper.toStepDefinition(finallyAction);
+        StepDefinition stepDefinition = mapper.toStepDefinition(finallyAction, "env");
 
         assertThat(stepDefinition.type).isEqualTo("test-action");
         assertThat(stepDefinition.name).isEqualTo("task name");
@@ -45,5 +45,6 @@ public class FinallyActionMapperTest {
             assertThat(s.type).isEqualTo("strategyType");
             assertThat(s.strategyProperties).contains(entry("param", "value"));
         });
+        assertThat(stepDefinition.environment).isEqualTo("env");
     }
 }
