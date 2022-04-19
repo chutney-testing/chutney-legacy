@@ -1,9 +1,6 @@
-<div>
-    <div [hidden]="!errorMessage">
-        <p class="text-danger">
-            <b>Error: </b>
-            <br>
-        </p>
-        <div class="text-danger" [innerHTML]="errorMessage"></div>
+<div [hidden]="!errorMessage">
+    <div class="text-danger">
+        <b>Error: </b>
     </div>
+    <div class="text-danger" [innerHTML]="errorMessage"></div>
 </div>

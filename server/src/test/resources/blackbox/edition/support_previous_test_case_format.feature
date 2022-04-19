@@ -251,7 +251,7 @@ Feature: Support previous test case format
                     Take retrievedRawScenario ${#body}
                 Do compare
                     With actual ${#str_replace(#json(#retrievedRawScenario, "$.content"), "\s+", "")}
-                    With expected type:"fake_type"target:"FAKE_TARGET"inputs:fake_param:"fake_value"
+                    With expected type:fake_typetarget:FAKE_TARGETinputs:fake_param:fake_value
                     With mode contains
             retrieved as GWT
                 Do http-get Request scenario from Chutney instance

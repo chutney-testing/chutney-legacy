@@ -63,12 +63,13 @@
         </div>
     </form>
 </div>
-<div>
-    <chutney-error-panel [errorMessage]="errorMessage"></chutney-error-panel>
+<div class="row">
+    <div *ngIf="errorMessage" class="p-1 error-panel">
+        <chutney-error-panel [errorMessage]="errorMessage"></chutney-error-panel>
+    </div>
 
-    <div class="scenario-editor">
+    <div class="w-100 scenario-editor">
         <chutney-ace-editor
-            [hasError]="errorMessage"
             [initialContent]="testCase.content"
             (textChangeEvent)="onScenarioContentChanged($event)">
         </chutney-ace-editor>

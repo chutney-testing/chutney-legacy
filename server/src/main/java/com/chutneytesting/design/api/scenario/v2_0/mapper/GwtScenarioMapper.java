@@ -5,6 +5,10 @@ import static com.fasterxml.jackson.annotation.PropertyAccessor.CREATOR;
 import static com.fasterxml.jackson.annotation.PropertyAccessor.FIELD;
 import static com.fasterxml.jackson.annotation.PropertyAccessor.GETTER;
 import static com.fasterxml.jackson.annotation.PropertyAccessor.SETTER;
+import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.INDENT_ARRAYS;
+import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR;
+import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.MINIMIZE_QUOTES;
+import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.SPLIT_LINES;
 import static org.hjson.JsonValue.readHjson;
 
 import com.chutneytesting.design.api.scenario.OldFormatAdapter;
@@ -45,8 +49,13 @@ public class GwtScenarioMapper implements GwtScenarioMarshaller {
     // TODO - Refactor mappers scattered everywhere :)
     public static ObjectMapper mapper = configureMapper(new ObjectMapper());
 
-    public static ObjectMapper yamlMapper = configureMapper(new YAMLMapper().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
-
+    public static ObjectMapper yamlMapper = configureMapper(new YAMLMapper()
+        .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
+        .enable(MINIMIZE_QUOTES)
+        .enable(INDENT_ARRAYS)
+        .enable(INDENT_ARRAYS_WITH_INDICATOR)
+        .disable(SPLIT_LINES)
+    );
 
     @JsonDeserialize(builder = GwtScenario.GwtScenarioBuilder.class)
     private static class GwtScenarioMixin {
@@ -228,5 +237,4 @@ public class GwtScenarioMapper implements GwtScenarioMarshaller {
             throw new ScenarioNotParsableException("Malformed json or hjson format. ", e);
         }
     }
-
 }

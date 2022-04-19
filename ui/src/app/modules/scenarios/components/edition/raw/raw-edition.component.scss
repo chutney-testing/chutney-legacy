@@ -2,7 +2,6 @@
 
 .scenario-editor {
     height:calc(100vh - 260px);
-    width:99%;
 }
 
 .edition-header {
@@ -172,6 +171,11 @@
 
 .plugins {
     padding-top: calc(105px + 10px);
+}
+
+.error-panel {
+    height: 65px;
+    overflow: auto;
 }
 
 .campaigns-scenario {
