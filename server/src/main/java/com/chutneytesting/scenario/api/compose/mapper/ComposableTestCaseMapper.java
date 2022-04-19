@@ -6,8 +6,8 @@ import static com.chutneytesting.tools.orient.ComposableIdUtils.toFrontId;
 
 import com.chutneytesting.scenario.api.compose.dto.ComposableStepDto;
 import com.chutneytesting.scenario.api.compose.dto.ComposableTestCaseDto;
-import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableScenarioDto;
-import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableTestCaseDto;
+import com.chutneytesting.scenario.api.compose.dto.ImmutableComposableScenarioDto;
+import com.chutneytesting.scenario.api.compose.dto.ImmutableComposableTestCaseDto;
 import com.chutneytesting.tools.ui.KeyValue;
 import com.chutneytesting.scenario.domain.compose.ComposableScenario;
 import com.chutneytesting.scenario.domain.compose.ComposableTestCase;

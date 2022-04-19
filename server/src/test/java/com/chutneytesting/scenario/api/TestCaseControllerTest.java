@@ -1,4 +1,4 @@
-package com.chutneytesting.design.api.scenario.v2_0;
+package com.chutneytesting.scenario.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.chutneytesting.RestExceptionHandler;
-import com.chutneytesting.design.api.scenario.v2_0.dto.ImmutableRawTestCaseDto;
+import com.chutneytesting.scenario.api.raw.dto.ImmutableRawTestCaseDto;
 import com.chutneytesting.scenario.api.raw.dto.RawTestCaseDto;
 import com.chutneytesting.scenario.domain.ScenarioNotParsableException;
 import com.chutneytesting.scenario.domain.TestCaseRepository;

@@ -2,7 +2,6 @@ package com.chutneytesting.scenario.api.raw.dto;
 
 import static java.time.Instant.now;
 
-import com.chutneytesting.design.api.scenario.v2_0.dto.ImmutableGwtTestCaseDto;
 import com.chutneytesting.execution.api.ExecutionSummaryDto;
 import com.chutneytesting.security.domain.User;
 import com.fasterxml.jackson.annotation.JsonProperty;

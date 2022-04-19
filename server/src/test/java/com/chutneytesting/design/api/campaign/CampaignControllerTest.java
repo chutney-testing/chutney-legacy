@@ -18,7 +18,7 @@ import com.chutneytesting.RestExceptionHandler;
 import com.chutneytesting.WebConfiguration;
 import com.chutneytesting.design.api.campaign.dto.CampaignDto;
 import com.chutneytesting.design.api.campaign.dto.CampaignExecutionReportDto;
-import com.chutneytesting.design.api.scenario.v2_0.dto.ImmutableTestCaseIndexDto;
+import com.chutneytesting.scenario.api.raw.dto.ImmutableTestCaseIndexDto;
 import com.chutneytesting.scenario.api.raw.dto.TestCaseIndexDto;
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
 import com.chutneytesting.design.domain.campaign.ScenarioExecutionReportCampaign;

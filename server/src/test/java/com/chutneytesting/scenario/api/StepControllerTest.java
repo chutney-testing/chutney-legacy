@@ -1,4 +1,4 @@
-package com.chutneytesting.design.api.scenario.compose;
+package com.chutneytesting.scenario.api;
 
 import static com.chutneytesting.scenario.api.StepController.FIND_STEPS_LIMIT_DEFAULT_VALUE;
 import static com.chutneytesting.scenario.api.StepController.FIND_STEPS_NAME_DEFAULT_VALUE;
@@ -16,8 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.chutneytesting.RestExceptionHandler;
 import com.chutneytesting.WebConfiguration;
-import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableStepDto;
-import com.chutneytesting.scenario.api.StepController;
+import com.chutneytesting.scenario.api.compose.dto.ImmutableComposableStepDto;
 import com.chutneytesting.scenario.api.compose.dto.ParentsStepDto;
 import com.chutneytesting.scenario.domain.compose.ComposableStep;
 import com.chutneytesting.scenario.domain.compose.ComposableStepNotFoundException;
@@ -202,9 +201,9 @@ public class StepControllerTest {
 
         // When
         MvcResult mvcResult = mockMvc.perform(
-            post(StepController.BASE_URL, "")
-                .contentType(APPLICATION_JSON_VALUE)
-                .content(om.writeValueAsString(ImmutableComposableStepDto.builder().name("new component").build())))
+                post(StepController.BASE_URL, "")
+                    .contentType(APPLICATION_JSON_VALUE)
+                    .content(om.writeValueAsString(ImmutableComposableStepDto.builder().name("new component").build())))
             .andExpect(status().isOk())
             .andReturn();
 

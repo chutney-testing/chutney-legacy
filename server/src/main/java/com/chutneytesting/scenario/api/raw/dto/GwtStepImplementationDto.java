@@ -1,6 +1,5 @@
 package com.chutneytesting.scenario.api.raw.dto;
 
-import com.chutneytesting.design.api.scenario.v2_0.dto.ImmutableGwtStepImplementationDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

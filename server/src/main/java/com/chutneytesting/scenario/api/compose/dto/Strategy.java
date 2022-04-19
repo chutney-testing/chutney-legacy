@@ -1,6 +1,5 @@
 package com.chutneytesting.scenario.api.compose.dto;
 
-import com.chutneytesting.design.api.scenario.compose.dto.ImmutableStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.Map;

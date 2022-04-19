@@ -3,8 +3,6 @@ package com.chutneytesting.scenario.api.raw.dto;
 import static com.chutneytesting.tools.orient.ComposableIdUtils.toFrontId;
 
 
-import com.chutneytesting.design.api.scenario.v2_0.dto.ImmutableGwtTestCaseMetadataDto;
-import com.chutneytesting.design.api.scenario.v2_0.dto.ImmutableTestCaseIndexDto;
 import com.chutneytesting.scenario.domain.TestCaseMetadata;
 import com.chutneytesting.execution.api.ExecutionSummaryDto;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

@@ -1,4 +1,4 @@
-package com.chutneytesting.design.api.scenario.compose.mapper;
+package com.chutneytesting.scenario.api.compose.mapper;
 
 import static com.chutneytesting.scenario.api.compose.mapper.ComposableTestCaseMapper.fromDto;
 import static com.chutneytesting.scenario.api.compose.mapper.ComposableTestCaseMapper.toDto;
@@ -8,9 +8,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.scenario.api.compose.dto.ComposableStepDto;
 import com.chutneytesting.scenario.api.compose.dto.ComposableTestCaseDto;
-import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableScenarioDto;
-import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableTestCaseDto;
-import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableStepDto;
+import com.chutneytesting.scenario.api.compose.dto.ImmutableComposableScenarioDto;
+import com.chutneytesting.scenario.api.compose.dto.ImmutableComposableStepDto;
+import com.chutneytesting.scenario.api.compose.dto.ImmutableComposableTestCaseDto;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.compose.ComposableScenario;
 import com.chutneytesting.scenario.domain.compose.ComposableTestCase;

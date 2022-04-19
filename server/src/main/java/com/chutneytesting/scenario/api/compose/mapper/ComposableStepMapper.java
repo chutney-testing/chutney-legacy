@@ -5,8 +5,8 @@ import static com.chutneytesting.tools.orient.ComposableIdUtils.toFrontId;
 import static java.util.stream.Collectors.toList;
 
 import com.chutneytesting.scenario.api.compose.dto.ComposableStepDto;
-import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableStepDto;
-import com.chutneytesting.design.api.scenario.compose.dto.ImmutableStrategy;
+import com.chutneytesting.scenario.api.compose.dto.ImmutableComposableStepDto;
+import com.chutneytesting.scenario.api.compose.dto.ImmutableStrategy;
 import com.chutneytesting.scenario.domain.compose.ComposableStep;
 import com.chutneytesting.scenario.domain.compose.Strategy;
 import com.chutneytesting.tools.ui.KeyValue;

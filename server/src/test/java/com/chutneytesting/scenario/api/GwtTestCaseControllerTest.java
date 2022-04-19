@@ -1,4 +1,4 @@
-package com.chutneytesting.design.api.scenario.v2_0;
+package com.chutneytesting.scenario.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;

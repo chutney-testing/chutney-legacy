@@ -3,8 +3,6 @@ package com.chutneytesting.scenario.api.compose.dto;
 import static java.time.Instant.now;
 import static java.util.Collections.emptyList;
 
-import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableScenarioDto;
-import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableTestCaseDto;
 import com.chutneytesting.security.domain.User;
 import com.chutneytesting.tools.ui.KeyValue;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

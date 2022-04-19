@@ -1,7 +1,7 @@
 package com.chutneytesting.scenario.api.raw.mapper;
 
 import com.chutneytesting.scenario.api.raw.dto.GwtTestCaseDto;
-import com.chutneytesting.design.api.scenario.v2_0.dto.ImmutableGwtTestCaseDto;
+import com.chutneytesting.scenario.api.raw.dto.ImmutableGwtTestCaseDto;
 import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;

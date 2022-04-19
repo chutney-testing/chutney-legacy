@@ -1,7 +1,5 @@
 package com.chutneytesting.scenario.api.compose.dto;
 
-import com.chutneytesting.design.api.scenario.compose.dto.ImmutableComposableStepDto;
-import com.chutneytesting.design.api.scenario.compose.dto.ImmutableStrategy;
 import com.chutneytesting.tools.ui.KeyValue;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
