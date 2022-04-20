@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EventManagerService } from '@shared/event-manager.service';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { TestCase } from '@model';
 import { YamlParserService } from '@shared/yaml-parser/yaml-parser.service';
 import { ScenarioService } from '@core/services';
@@ -24,6 +25,7 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
     pluginsForm: FormGroup;
     saveErrorMessage: string;
     private routeParamsSubscription: Subscription;
+    private newContent$ = new Subject<string>();
 
     constructor(private eventManager: EventManagerService,
                 private formBuilder: FormBuilder,
@@ -46,6 +48,9 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
             const duplicate = this.route.snapshot.queryParamMap.get('duplicate');
             this.load(params['id'], !!duplicate);
         });
+        this.newContent$
+            .pipe(debounceTime(1000))
+            .subscribe((data) => { this.newContentHandler(data); });
     }
 
     ngOnDestroy() {
@@ -134,6 +139,10 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
     }
 
     onScenarioContentChanged(data) {
+        this.newContent$.next(data);
+    }
+
+    private newContentHandler(data) {
         this.modifiedContent = data;
         this.checkParseError();
     }
