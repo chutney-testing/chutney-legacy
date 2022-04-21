@@ -65,6 +65,10 @@ will generate keys :
     </div>
 
     <div class="globalvar-editor">
-
+        <chutney-editor
+            [language]="'yaml'"
+            [content]="data"
+            (onContentChange)="onContentVarChange($event)">
+        </chutney-editor>
     </div>
 </div>

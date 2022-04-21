@@ -67,6 +67,10 @@
     <chutney-error-panel [errorMessage]="errorMessage"></chutney-error-panel>
 
     <div class="scenario-editor">
-
+        <chutney-editor
+            [language]="'yaml'"
+            [content]="testCase.content"
+            (onContentChange)="onScenarioContentChanged($event)">
+        </chutney-editor>
     </div>
 </div>

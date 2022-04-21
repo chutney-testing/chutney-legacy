@@ -110,7 +110,6 @@
                             "show": "show editor configuration",
                             "hide": "Hide editor configuration"
                         },
-                        "mode": "Edition mode",
                         "theme": "Theme"
                     }
                 }

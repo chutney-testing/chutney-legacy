@@ -65,5 +65,12 @@
         {{ message }}
     </div>
     <div class="row editor">
+        <div class="scenario-editor">
+            <chutney-editor
+                [language]="'json'"
+                [content]="rolesContent"
+                (onContentChange)="onRoleContentChange($event)">
+            </chutney-editor>
+        </div>
     </div>
 </div>

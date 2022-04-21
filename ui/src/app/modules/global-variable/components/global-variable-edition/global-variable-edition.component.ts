@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {GlobalVariableService} from '@core/services/global-var.service';
 import {HttpErrorResponse} from '@angular/common/http';
 
@@ -33,10 +33,6 @@ export class GlobalVariableEditionComponent implements OnInit {
         );
     }
 
-    callBackFunc(data) {
-        this.data = data;
-    }
-
     save() {
         (async () => {
             this.message = 'Saving...';
@@ -67,12 +63,10 @@ export class GlobalVariableEditionComponent implements OnInit {
     updateFileContent(selectedFileName: string) {
         if (selectedFileName === undefined) {
             this.data = '';
-         //   this.aceEditor.forceContentChange('');
         } else {
             this.globalVariableService.get(selectedFileName).subscribe(
                 response => {
                     this.data = response;
-                   // this.aceEditor.forceContentChange(response);
                 }
             );
         }
@@ -91,5 +85,9 @@ export class GlobalVariableEditionComponent implements OnInit {
                 },
                 error => this.handleError(error));
         })();
+    }
+
+    onContentVarChange(content: string) {
+        this.data = content;
     }
 }

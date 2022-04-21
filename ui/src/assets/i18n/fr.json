@@ -110,7 +110,6 @@
                             "show": "Montrer la configuration de l'éditeur",
                             "hide": "Cacher la configuration de l'éditeur"
                         },
-                        "mode": "Mode Edition",
                         "theme": "Thème"
                     }
                 }

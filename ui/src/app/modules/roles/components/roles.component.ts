@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { RolesService } from '@core/services';
@@ -20,6 +20,7 @@ export class RolesComponent implements OnInit {
 
     private saving: string;
     private saved: string;
+    private modifiedRoles: string;
 
     constructor(
         private rolesService: RolesService,
@@ -39,7 +40,7 @@ export class RolesComponent implements OnInit {
 
     saveRoles() {
         try {
-            const content = '';//JSON.parse(this.rolesAceEditor.editor.value);
+            const content = JSON.parse(this.modifiedRoles);
             (async () => {
                 this.printMessage(this.saving);
                 await delay(1000);
@@ -56,6 +57,10 @@ export class RolesComponent implements OnInit {
         } catch(e) {
             this.printMessage(e, true);
         }
+    }
+
+    onRoleContentChange(data) {
+        this.modifiedRoles = data;
     }
 
     private loadRoles() {

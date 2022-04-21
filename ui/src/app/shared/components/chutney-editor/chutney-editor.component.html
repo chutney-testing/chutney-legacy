@@ -1,0 +1,11 @@
+<div class="configuration">
+    <span class="text-danger"></span>
+    <div class="configuration__theme small me-3">
+        <label for="theme" class="form-control-label m-0 mx-2">{{ 'scenarios.edition.form.content.editor.theme' | translate }}</label>
+        <select class="form-control" id="theme" (change)="changeTheme($event)" name="editorTheme">
+            <option *ngFor="let theme of themes" [value]="theme"
+                    [selected]="theme === currentTheme">{{theme}}</option>
+        </select>
+    </div>
+</div>
+<ngx-monaco-editor [options]="options" [(ngModel)]="content" (ngModelChange)="contentChange()"></ngx-monaco-editor>

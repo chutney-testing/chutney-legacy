@@ -8,7 +8,7 @@ import { DatasetSelectionComponent } from '@shared/components/dataset-selection/
 import { InputFocusDirective } from '@shared/directives';
 import { ThumbnailPipe } from '@shared/pipes/thumbnail.pipe';
 import { MomentModule } from 'ngx-moment';
-//TODO import { AceEditorModule } from 'ng2-ace-editor';
+import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
 import { AlertService } from './alert.service';
 import { ErrorInterceptor } from './error-interceptor.service';
 import {
@@ -35,10 +35,11 @@ import {
     WithoutScenarioPipe
 } from '@shared/pipes';
 import { StateService } from './state/state.service';
+import { ChutneyEditorComponent } from '@shared/components/chutney-editor/chutney-editor.component';
 
 @NgModule({
     imports: [
-       //TODO  AceEditorModule,
+        MonacoEditorModule,
         CommonModule,
         FormsModule,
         MomentModule,
@@ -69,6 +70,7 @@ import { StateService } from './state/state.service';
         TruncatePipe,
         WithoutScenarioPipe,
         HasAuthorizationDirective,
+        ChutneyEditorComponent
     ],
     exports: [
         ComponentCardComponent,
@@ -93,6 +95,7 @@ import { StateService } from './state/state.service';
         TruncatePipe,
         WithoutScenarioPipe,
         HasAuthorizationDirective,
+        ChutneyEditorComponent,
     ],
     providers: [
         {
