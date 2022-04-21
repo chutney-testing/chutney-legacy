@@ -41,6 +41,7 @@
     "monaco-editor": "^0.33.0",
     "ng-click-outside2": "^10.0.4",
     "ng2-charts": "^3.0.8",
+    "ng2-dragula": "^2.1.1",
     "ngx-bootstrap": "^8.0.0",
     "ngx-filesaver": "^13.0.0",
     "ngx-infinite-scroll": "^6.0.0",

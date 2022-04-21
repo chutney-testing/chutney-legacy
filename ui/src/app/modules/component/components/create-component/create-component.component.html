@@ -1,12 +1,12 @@
 <div class="row">
     <div class="components-list-container m-0 border-right"
-         [ngClass]="{'col p-0 h100 component-list-container-minimize':componentMinimize, 'col-3 pl-3 pr-3':!componentMinimize}">
-        <button type="button" class="btn btn-xs btn-default ml-2 shadow-none float-right"
+         [ngClass]="{'col p-0 h100 component-list-container-minimize':componentMinimize, 'col-3 px-3':!componentMinimize}">
+        <button type="button" class="btn btn-xs btn-default ms-2 shadow-none float-right"
                 title="{{(componentMinimize ? 'global.actions.show' : 'global.actions.hide') | translate}}"
                 (click)="componentMinimize = !componentMinimize;">
             <span class="fa" [ngClass]="{'fa-angle-double-right':componentMinimize, 'fa-angle-double-left':!componentMinimize}"></span>
         </button>
-        <button type="button" class="btn btn-xs btn-default ml-2"
+        <button type="button" class="btn btn-xs btn-default ms-2"
                 [ngClass]="{'selected':viewComponent, 'not-selected':!viewComponent, 'd-none': componentMinimize}"
                 (click)="viewComponent = true; cancel();">
             <span class="fa fa-cubes"></span> {{'components.menu.components' | translate}}
@@ -51,7 +51,7 @@
                 <table class="table table-sm table-striped table-hover">
                     <tbody dragula="COPYABLE" id="left"
                            [dragulaModel]="componentTasks |  componentSearch : tagData.selected() : tagData.isNoTagSelected() : tagData.isSelectAll() | searchTextPipe  : componentFilter : ['name']">
-                    <tr class="pointer d-flex mr-auto"
+                    <tr class="pointer d-flex me-auto"
                         *ngFor="let component of (componentTasks |  componentSearch : tagData.selected() : tagData.isNoTagSelected() : tagData.isSelectAll() | searchTextPipe  : componentFilter : ['name'])"
                         (click)="editComponentTask(component)"
                         [ngClass]="{'selected-component': editableComponent?.name === component.name || actionToEdit?.name === component.name}">
@@ -109,7 +109,7 @@
                         <div class="row">
                             <div class="btn">
                                 <span class="fa fa-cubes"></span>
-                                <span class="ml-2 font-weight-bold">{{'components.menu.components' | translate}}</span>
+                                <span class="ms-2 font-weight-bold">{{'components.menu.components' | translate}}</span>
                             </div>
                         </div>
                         <div class="row">
@@ -158,7 +158,7 @@
             <div class="edition-body row">
                 <div *ngIf="editableComponent" class="border-right"
                      [ngClass]="{'col edition-component-right-panel-minimize':componentEditionRightPanelMinimize, 'col-7':!componentEditionRightPanelMinimize}">
-                        <div class="pl-3 font-weight-bold">
+                        <div class="ps-3 font-weight-bold">
                             <span class="legend-title">{{'components.component.edition.blocks.steps' | translate}}</span>
                         </div>
                         <div class="bg-draggable mt-2 border"

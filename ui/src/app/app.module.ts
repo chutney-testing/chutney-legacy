@@ -10,7 +10,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MissingTranslationHandler, TranslateLoader, TranslateModule } from '@ngx-translate/core';
 
 import { ToastrModule } from 'ngx-toastr';
-//import { DragulaModule } from 'ng2-dragula';
+import { DragulaModule } from 'ng2-dragula';
 // Internal common
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -33,7 +33,7 @@ import { ModalModule, BsModalService  } from 'ngx-bootstrap/modal';
     // External libs
     FormsModule,
     HttpClientModule,
- //   DragulaModule.forRoot(),
+    DragulaModule.forRoot(),
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

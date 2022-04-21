@@ -1,5 +1,5 @@
 <div class="row m-5">
-    <div class="col-md-12 pl-0">
+    <div class="col-md-12 ps-0">
         <form [formGroup]="campaignForm" (ngSubmit)="saveCampaign()" autocomplete="off">
             <div class="row">
                 <h4 id="myCampaignLabel">
@@ -22,10 +22,10 @@
                 </div>
             </div>
             <div class="form-row">
-                <div class="form-group col-md-7" [class.errors-input]="submitted && f.title.errors?.required">
+                <div class="form-group col-md-7  pe-3" [class.errors-input]="submitted && f['title'].errors['required']">
                     <label for="title">{{ 'campaigns.edition.form.title.label' | translate }}</label>
                     <input type="text" id="title" class="form-control" formControlName="title">
-                    <div class="error-message" *ngIf="submitted && f.title.errors?.required">
+                    <div class="error-message" *ngIf="submitted && f['title'].errors['required']">
                         {{ 'campaigns.edition.form.title.required' | translate }}
                     </div>
                 </div>
@@ -36,13 +36,13 @@
                 </div>
             </div>
             <div class="form-row">
-                <div class="form-group col-md-2">
+                <div class="form-group col-md-2  pe-3">
                     <label>{{'menu.principal.jiraId' | translate}}</label>
-                    <input type="text" class="form-control mr-2 small-text"
+                    <input type="text" class="form-control me-2 small-text"
                            formControlName="jiraId" (change)="refreshJiraScenarios()"
                            placeholder="id jira"/>
                 </div>
-                <div class="form-group col-md-2">
+                <div class="form-group col-md-2  pe-3">
                     <label>{{'menu.principal.dataset' | translate}}</label>
                     <chutney-dataset-selection
                         [selectedDatasetId]="campaign.datasetId"
@@ -50,7 +50,7 @@
                     </chutney-dataset-selection>
                 </div>
 
-                <div *ngIf="environments" class="form-group col-md-2 ml-2">
+                <div *ngIf="environments" class="form-group col-md-2  pe-3">
                     <label>{{'admin.targets.environment' | translate}}</label>
                     <chutney-environment-combo [environments]="environments" [defaultValue]="campaign.environment"
                                                (selectionEvent)="setSelectedEnvironment($event)">
@@ -59,8 +59,8 @@
 
                 <div class="form-group col-md-2">
                     <label>{{'campaigns.edition.form.tags' | translate}}</label>
-                    <input type="text" class="form-control mr-2 small-text"
-                            formControlName="campaignTags" placeholder="tags"/>
+                    <input type="text" class="form-control me-2 small-text"
+                           formControlName="campaignTags" placeholder="tags"/>
                 </div>
                 <div class="col-md-6">
                     {{ 'campaigns.edition.options' | translate }} :
@@ -81,8 +81,8 @@
                 </div>
             </div>
             <div class="form-row" *ngIf="hasParam">
-                <fieldset class="mt-4" [ngClass]="collapseParam ? '' : 'border pl-2'">
-                    <legend class="pl-3 pr-3 font-weight-bold">
+                <fieldset class="mt-4" [ngClass]="collapseParam ? '' : 'border ps-2'">
+                    <legend class="px-3 font-weight-bold">
                         <span class="legend-title"
                               (click)="switchCollapseParam()">{{'components.shared.edition.blocks.parameters' | translate}}</span>
                         <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
@@ -96,9 +96,9 @@
                              *ngFor="let parameter of campaignForm.get('parameters')?.controls; let i = index;">
                             <ng-container [formGroupName]="i">
                                 <div class="col-2"></div>
-                                <input type="text" class="col-2 form-control mr-2" formControlName="key"
+                                <input type="text" class="col-2 form-control me-2" formControlName="key"
                                        placeholder="key" readonly/>
-                                <textarea class="col-6 form-control mr-2" formControlName="value" rows="1"
+                                <textarea class="col-6 form-control me-2" formControlName="value" rows="1"
                                           placeholder="value"></textarea>
                             </ng-container>
                         </div>
@@ -124,13 +124,13 @@
                                 <td class="text-nowrap">{{scenario?.id}}</td>
                                 <td class="scenario-title-cell">{{scenario?.title}}</td>
                                 <td class="p-0">
-                                    <span *ngIf="jiraMap.has(scenario.id) && !!getJiraLastExecutionStatus(scenario.id)"
-                                        [ngClass]="getJiraLastExecutionStatusClass(scenario.id)" class="badge">
+                                    <span *ngIf="jiraMap.has(scenario.id)"
+                                          [ngClass]="getJiraLastExecutionStatusClass(scenario.id)" class="badge">
                                         {{getJiraLastExecutionStatus(scenario.id)}}
                                     </span>
                                 </td>
                                 <td class="p-0">
-                                    <a  *ngIf="jiraMap.has(scenario.id)" role="button" class="btn btn-sm btn-link mr-0"
+                                    <a  *ngIf="jiraMap.has(scenario.id)" role="button" class="btn btn-sm btn-link me-0"
                                         target="_blank" href="{{getJiraLink(scenario.id)}}"
                                         ngbPopover="{{jiraMap.get(scenario.id)}}" placement="left" (click)="$event.stopPropagation()"
                                         triggers="mouseenter:mouseleave">
@@ -139,7 +139,7 @@
                                     </a>
                                 </td>
                                 <td class="p-0">
-                                    <button type="button" class="btn btn-link mr-0"
+                                    <button type="button" class="btn btn-link me-0"
                                             ngbPopover="{{scenario.description}}" placement="left"
                                             triggers="mouseenter:mouseleave">
                                         <span class="fa fa-info-circle" aria-hidden="true"></span>
@@ -160,8 +160,8 @@
                                     <span class="fab fa-jira"></span>
                                     {{ 'campaigns.edition.jiraLinkedTest' | translate }}
                                 </label>
-                                <input type="checkbox" id="jiraLinkTests" class="ml-2"
-                                        formControlName="onlyLinkedScenarios" (change)="jiraFilter()">
+                                <input type="checkbox" id="jiraLinkTests" class="ms-2"
+                                       formControlName="onlyLinkedScenarios" (change)="jiraFilter()">
                             </div>
                         </div>
                         <div class="col">
@@ -177,14 +177,14 @@
                             </angular2-multiselect>
                             <ng-container *ngIf="jiraScenarios.length > 0 && campaignForm.controls['onlyLinkedScenarios'].value === true">
                                 <div class="pt-2">
-                                <angular2-multiselect [data]="jiraItemList"
-                                                  [settings]="jirasettings"
-                                                  (onSelect)="onJiraItemSelect($event)"
-                                                  (onDeSelect)="OnJiraItemDeSelect($event)"
-                                                  (onDeSelectAll)="OnJiraItemDeSelectAll()"
-                                                  formControlName="jiratags">
-                                </angular2-multiselect>
-                            </div>
+                                    <angular2-multiselect [data]="jiraItemList"
+                                                          [settings]="jirasettings"
+                                                          (onSelect)="onJiraItemSelect($event)"
+                                                          (onDeSelect)="OnJiraItemDeSelect($event)"
+                                                          (onDeSelectAll)="OnJiraItemDeSelectAll()"
+                                                          formControlName="jiratags">
+                                    </angular2-multiselect>
+                                </div>
                             </ng-container>
                         </div>
                     </div>
@@ -208,21 +208,21 @@
                                 </td>
                                 <td class="p-0">
                                     <span *ngIf="jiraMap.has(scenario.id)"
-                                        [ngClass]="getJiraLastExecutionStatusClass(scenario.id)" class="badge">
+                                          [ngClass]="getJiraLastExecutionStatusClass(scenario.id)" class="badge">
                                         {{getJiraLastExecutionStatus(scenario.id)}}
                                     </span>
                                 </td>
                                 <td class="p-0">
-                                    <a *ngIf="jiraMap.has(scenario.id)" role="button" class="btn btn-sm btn-link mr-0"
-                                        target="_blank" href="{{getJiraLink(scenario.id)}}"
-                                        ngbPopover="{{jiraMap.get(scenario.id)}}" placement="left" (click)="$event.stopPropagation()"
-                                        triggers="mouseenter:mouseleave">
+                                    <a *ngIf="jiraMap.has(scenario.id)" role="button" class="btn btn-sm btn-link me-0"
+                                       target="_blank" href="{{getJiraLink(scenario.id)}}"
+                                       ngbPopover="{{jiraMap.get(scenario.id)}}" placement="left" (click)="$event.stopPropagation()"
+                                       triggers="mouseenter:mouseleave">
                                         <span class="fab fa-jira" aria-hidden="true">
                                         </span>
                                     </a>
                                 </td>
                                 <td class="w-2 p-0">
-                                    <button type="button" class="btn btn-link mr-0"
+                                    <button type="button" class="btn btn-link me-0"
                                             ngbPopover="{{scenario.description}}" placement="left"
                                             triggers="mouseenter:mouseleave">
                                         <span class="fa fa-info-circle" aria-hidden="true"></span>

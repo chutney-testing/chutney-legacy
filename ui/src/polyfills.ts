@@ -55,4 +55,5 @@ import '@angular/localize/init';
  /***************************************************************************************************
   * APPLICATION IMPORTS
   */
- 
+ // https://github.com/valor-software/ng2-dragula/issues/849#issuecomment-403022990
+  (window as any).global = window;

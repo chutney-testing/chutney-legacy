@@ -1,5 +1,5 @@
 @import "hljs-overide.scss";
-//@import "dragula.scss";
+@import "dragula.scss";
 @import 'colors';
 @import 'fonts';
 @import 'alias';
@@ -7,13 +7,14 @@
 $row-margin-up-down: 10px !default;
 
 body {
-    font-family: "Montserrat",Helvetica,Arial,sans-serif;
+    font-family: "Montserrat", Helvetica, Arial, sans-serif;
     line-height: 1.66666667;
     color: #363636;
     background-color: white;
 }
 
-h1, h2 {
+h1,
+h2 {
     font-weight: 300;
 }
 
@@ -40,7 +41,7 @@ a {
 }
 
 .tile-click:hover {
-    box-shadow: 0 2px 12px -1px rgba(0,0,0,.3),0 4px 5px 0 rgba(0,0,0,.11),0 1px 10px 0 rgba(0,0,0,.1);
+    box-shadow: 0 2px 12px -1px rgba(0, 0, 0, .3), 0 4px 5px 0 rgba(0, 0, 0, .11), 0 1px 10px 0 rgba(0, 0, 0, .1);
 }
 
 .tile.tile-project {
@@ -54,10 +55,10 @@ a {
 
 .tile {
     background: #fff;
-    box-shadow: 0 3px 1px -2px rgba(0,0,0,.15),0 2px 2px 0 rgba(0,0,0,.1),0 1px 5px 0 rgba(0,0,0,.09);
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .15), 0 2px 2px 0 rgba(0, 0, 0, .1), 0 1px 5px 0 rgba(0, 0, 0, .09);
     padding: 10px 20px;
     margin-bottom: 20px;
-    margin-top:20px;
+    margin-top: 20px;
     word-wrap: break-word;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -65,11 +66,12 @@ a {
     // overflow-x: hidden;
 }
 
-.tile, .tile-flex {
-    transition: .3s cubic-bezier(.25,.8,.25,1);
+.tile,
+.tile-flex {
+    transition: .3s cubic-bezier(.25, .8, .25, 1);
 }
 
-@media  (min-height: 801px) {
+@media (min-height: 801px) {
     .scenario-read-view {
         height: 670px;
     }
@@ -86,7 +88,7 @@ pre {
     margin-bottom: 0;
 }
 
-pre > code {
+pre>code {
     padding: 0;
 }
 
@@ -99,7 +101,7 @@ caption {
     margin: $row-margin-up-down 0 $row-margin-up-down 0;
 }
 
-div.alert.not-found{
+div.alert.not-found {
     text-align: center;
     vertical-align: middle;
     padding: 120px;
@@ -108,20 +110,22 @@ div.alert.not-found{
 
 // Buttons customs
 
-button.btn{
+button.btn {
     cursor: pointer;
-    &[disabled]{
+
+    &[disabled] {
         cursor: not-allowed;
     }
 }
 
-@media (min-width: 992px){
-    .scenario-modal{
+@media (min-width: 992px) {
+    .scenario-modal {
         .modal-dialog {
             max-width: 1200px;
         }
+
         .modal-content {
-          height: 90%;
+            height: 90%;
         }
     }
 
@@ -133,7 +137,7 @@ button.btn{
 
         .modal-content {
             border-radius: inherit;
-            background-color: rgba(255,255,255,.8);
+            background-color: rgba(255, 255, 255, .8);
         }
     }
 }
@@ -141,24 +145,28 @@ button.btn{
 // multi-select
 .custom-multiselect .selected-list .c-btn {
     color: black !important;
-    border:0 !important;
+    border: 0 !important;
     border-bottom: 1px solid $vert2 !important;
     box-shadow: unset !important;
     border-radius: 0 !important;
-    margin-left:30px;
+    margin-left: 30px;
 }
-.selected-list .fa-angle-down, .selected-list .fa-angle-up {
+
+.selected-list .fa-angle-down,
+.selected-list .fa-angle-up {
     color: $vert2 !important;
 }
 
-.custom-multiselect .c-token{
+.custom-multiselect .c-token {
     background: $vert2 !important;
 }
+
 .custom-multiselect .pure-checkbox label::before {
     border-color: $vert2 !important;
     background: $vert2 !important;
 }
-.custom-multiselect .pure-checkbox input[type="checkbox"]:checked + label[_ngcontent-c1]:before {
+
+.custom-multiselect .pure-checkbox input[type="checkbox"]:checked+label[_ngcontent-c1]:before {
     background: $vert2 !important;
 }
 
@@ -187,21 +195,21 @@ button.btn{
 /////// REMOVED IN BOOTSTRAP 5
 .form-group {
     margin-bottom: 1rem;
-  }
-  
-  .form-inline .form-control {
+}
+
+.form-inline .form-control {
     display: inline-block;
     width: auto;
     vertical-align: middle;
-  }
-  
-  .form-row {
+}
+
+.form-row {
     display: flex;
     flex-wrap: wrap;
     margin-right: -5px;
     margin-left: -5px;
-  }
-  
-  label {
+}
+
+label {
     margin-bottom: 0.5rem;
-  }
+}

@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormsModule, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-//import { DragulaModule, DragulaService } from 'ng2-dragula';
+import { DragulaModule, DragulaService } from 'ng2-dragula';
 
 import { ActivatedRouteStub } from '../../../../testing/activated-route-stub';
 
@@ -28,7 +28,7 @@ describe('CreateComponent...', () => {
         let fixture: ComponentFixture<CreateComponent>;
         let component: CreateComponent;
 
-        //const dragulaService = new DragulaService();
+        const dragulaService = new DragulaService();
 
         beforeEach(() => {
             TestBed.resetTestingModule();
@@ -41,7 +41,7 @@ describe('CreateComponent...', () => {
                     SharedModule,
                     FormsModule,
                     ReactiveFormsModule,
-                   // DragulaModule,
+                    DragulaModule,
                 ],
                 declarations: [
                     CreateComponent,
@@ -99,7 +99,7 @@ describe('CreateComponent...', () => {
                     {provide: ActivatedRoute, useValue: activatedRouteStub},
                     {provide: ComponentService, useValue: componentService},
                     {provide: FormBuilder, useValue: formBuilder},
-                   // {provide: DragulaService, useValue: dragulaService}
+                    {provide: DragulaService, useValue: dragulaService}
                 ],
                 schemas: [ NO_ERRORS_SCHEMA ]
             }).compileComponents();

@@ -26,7 +26,7 @@ import { ScenarioExecutionComponent } from './components/execution/execution.com
 import { MoleculesModule } from '../../molecules/molecules.module';
 import { RawEditionComponent } from './components/edition/raw/raw-edition.component';
 import { ComponentEditionComponent } from './components/edition/component-edition/component-edition.component';
-//import { DragulaModule } from 'ng2-dragula';
+import { DragulaModule } from 'ng2-dragula';
 import { ExecuteComponent } from './components/execute/execute.component';
 import { HeaderComponent } from './components/sub/header/header.component';
 import { ScenarioCampaignsComponent } from '@modules/scenarios/components/sub/scenario-campaigns/scenario-campaigns.component';
@@ -56,7 +56,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
         AngularMultiSelectModule,
         TranslateModule,
         PerfectScrollbarModule,
-       // DragulaModule,
+        DragulaModule,
         FileSaverModule,
         // Internal common
         SharedModule,

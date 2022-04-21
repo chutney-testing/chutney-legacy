@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { combineLatest, Subscription } from 'rxjs';
-//import { DragulaService } from 'ng2-dragula';
+import { DragulaService } from 'ng2-dragula';
 
 import { ComponentTask, KeyValue, ScenarioComponent } from '@model';
 import { ComponentService } from '@core/services';
@@ -33,7 +33,7 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
     errorMessage: string;
 
     constructor(private componentService: ComponentService,
-               // private dragulaService: DragulaService,
+                private dragulaService: DragulaService,
                 private formBuilder: FormBuilder,
                 private jiraLinkService: JiraPluginService,
                 private route: ActivatedRoute,
@@ -64,7 +64,7 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
 
     ngOnDestroy() {
         this.loadSubscription.unsubscribe();
-        //this.dragulaService.destroy('COPYABLE');
+        this.dragulaService.destroy('COPYABLE');
     }
 
     save() {
@@ -128,7 +128,7 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
     }
 
     private initDragAndDrop() {
-       /* this.dragulaService.createGroup('COPYABLE', {
+        this.dragulaService.createGroup('COPYABLE', {
             copy: (el, source) => {
                 return source.id === 'left';
             },
@@ -139,7 +139,7 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
                 // To avoid dragging from right to left container
                 return target.id !== 'left';
             }
-        });*/
+        });
     }
 
     private load(id, duplicate: boolean) {

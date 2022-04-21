@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
-//import { DragulaService } from 'ng2-dragula';
+import { DragulaService } from 'ng2-dragula';
 
 import {
     Campaign, JiraScenario,
@@ -39,7 +39,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     scenariosFilter: string;
     subscription = new Subscription();
 
-    hasParam = true;
+    hasParam = false;
     collapseParam = true;
 
     private routeParamsSubscription: Subscription;
@@ -71,7 +71,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         private formBuilder: FormBuilder,
         private router: Router,
         private route: ActivatedRoute,
-        //private dragulaService: DragulaService,
+        private dragulaService: DragulaService,
         private environmentAdminService: EnvironmentAdminService,
         private translate: TranslateService,
     ) {
@@ -152,7 +152,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.subscription.unsubscribe();
-     //   this.dragulaService.destroy(this.DRAGGABLE);
+        this.dragulaService.destroy(this.DRAGGABLE);
     }
 
     load(id) {
@@ -196,7 +196,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     private initTags() {
         const allTagsInScenario: string[] = distinct(flatMap(this.scenarios, (sc) => sc.tags)).sort();
 
-       allTagsInScenario.forEach((currentValue, index) => {
+        allTagsInScenario.forEach((currentValue, index) => {
             this.itemList.push( {'id': index, 'itemName': currentValue});
         });
     }
@@ -305,7 +305,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
                 if (this.jiraSelectedTags.length > 0) {
 
                     jiraTagFilter = (this.jiraScenarios.find(s => item.id === s.chutneyId &&
-                                    this.jiraSelectedTags.includes(s.executionStatus))) === undefined;
+                        this.jiraSelectedTags.includes(s.executionStatus))) === undefined;
                 }
                 return (!this.jiraScenarios.map(j => j.chutneyId).includes(item.id)) || jiraTagFilter;
             });
@@ -395,6 +395,9 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
                         });
                     });
             }
+        }
+        if(addedParams.size > 0) {
+            this.hasParam = true;
         }
     }
 
