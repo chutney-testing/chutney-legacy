@@ -47,14 +47,16 @@ public class CampaignExecutionReportMapper implements ResultSetExtractor<List<Ca
             boolean partialExecution = resultset.getBoolean("PARTIAL_EXECUTION");
             String executionEnvironment = resultset.getString("EXECUTION_ENVIRONMENT");
             String userId = resultset.getString("USER_ID");
+            String testCaseTitle = resultset.getString("TEST_CASE_TITLE");
             Long campaignId = resultset.getLong("CAMPAIGN_ID");
             String dataSetId = resultset.getString("EXECUTION_DATASET_ID");
             Integer dataSetVersion = ofNullable(resultset.getString("EXECUTION_DATASET_VERSION")).map(Integer::valueOf).orElse(null);
 
             try {
-                String scenarioName = repository.findById(scenarioId).metadata().title();
-
-                ScenarioExecutionReportCampaign scenarioExecutionReport = readScenarioExecutionReport(resultset, scenarioId, scenarioName);
+                if (testCaseTitle == null || testCaseTitle.isEmpty()) {
+                    testCaseTitle = repository.findById(scenarioId).metadata().title();
+                }
+                ScenarioExecutionReportCampaign scenarioExecutionReport = readScenarioExecutionReport(resultset, scenarioId, testCaseTitle);
                 scenarioByCampaignId.putIfAbsent(campaignExecutionId, Lists.newArrayList());
                 campaignExecutionReportByCampaignId.putIfAbsent(campaignExecutionId, new CampaignExecutionHolder(campaignExecutionId, title, partialExecution, executionEnvironment, userId, campaignId, dataSetId, dataSetVersion));
                 scenarioByCampaignId.get(campaignExecutionId).add(scenarioExecutionReport);
@@ -79,12 +81,12 @@ public class CampaignExecutionReportMapper implements ResultSetExtractor<List<Ca
             }).collect(Collectors.toList());
     }
 
-    private ScenarioExecutionReportCampaign readScenarioExecutionReport(ResultSet resultset, String scenarioId, String scenarioName) throws SQLException {
+    private ScenarioExecutionReportCampaign readScenarioExecutionReport(ResultSet resultset, String scenarioId, String testCaseTitle) throws SQLException {
         ExecutionHistory.ExecutionSummary execution;
         if (resultset.getLong("SCENARIO_EXECUTION_ID") == -1) {
             execution = ImmutableExecutionHistory.ExecutionSummary.builder()
                 .executionId(-1L)
-                .testCaseTitle(scenarioName)
+                .testCaseTitle(testCaseTitle)
                 .time(LocalDateTime.now())
                 .status(ServerReportStatus.NOT_EXECUTED)
                 .duration(0)
@@ -92,13 +94,14 @@ public class CampaignExecutionReportMapper implements ResultSetExtractor<List<Ca
                 .user("")
                 .build();
         } else {
-            execution = mapExecutionWithoutReport(resultset, scenarioName);
+            execution = mapExecutionWithoutReport(resultset, testCaseTitle);
         }
-        return new ScenarioExecutionReportCampaign(scenarioId, scenarioName, execution);
+        ScenarioExecutionReportCampaign scenarioExecutionReportCampaign = new ScenarioExecutionReportCampaign(scenarioId, testCaseTitle, execution);
+        return scenarioExecutionReportCampaign;
     }
 
 
-    private ExecutionHistory.ExecutionSummary mapExecutionWithoutReport(ResultSet rs, String scenarioName) throws SQLException {
+    private ExecutionHistory.ExecutionSummary mapExecutionWithoutReport(ResultSet rs, String testCaseTitle) throws SQLException {
         return ImmutableExecutionHistory.ExecutionSummary.builder()
             .executionId(rs.getLong("SCENARIO_EXECUTION_ID"))
             .time(Instant.ofEpochMilli(rs.getLong("EXECUTION_TIME")).atZone(ZoneId.systemDefault()).toLocalDateTime())
@@ -106,7 +109,7 @@ public class CampaignExecutionReportMapper implements ResultSetExtractor<List<Ca
             .status(ServerReportStatus.valueOf(rs.getString("STATUS")))
             .info(ofNullable(rs.getString("INFORMATION")))
             .error(ofNullable(rs.getString("ERROR")))
-            .testCaseTitle(scenarioName)
+            .testCaseTitle(testCaseTitle)
             .environment(rs.getString("ENVIRONMENT"))
             .datasetId(ofNullable(rs.getString("DATASET_ID")))
             .datasetVersion(ofNullable(rs.getString("DATASET_VERSION")).map(Integer::valueOf))
