@@ -68,7 +68,8 @@
 
     <div class="scenario-editor">
         <chutney-editor
-            [language]="'yaml'"
+            [modes]="['json', 'hjson']"
+            [mode]="'hjson'"
             [content]="testCase.content"
             (onContentChange)="onScenarioContentChanged($event)">
         </chutney-editor>

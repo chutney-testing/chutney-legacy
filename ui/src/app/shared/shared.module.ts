@@ -8,7 +8,6 @@ import { DatasetSelectionComponent } from '@shared/components/dataset-selection/
 import { InputFocusDirective } from '@shared/directives';
 import { ThumbnailPipe } from '@shared/pipes/thumbnail.pipe';
 import { MomentModule } from 'ngx-moment';
-import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
 import { AlertService } from './alert.service';
 import { ErrorInterceptor } from './error-interceptor.service';
 import {
@@ -36,10 +35,10 @@ import {
 } from '@shared/pipes';
 import { StateService } from './state/state.service';
 import { ChutneyEditorComponent } from '@shared/components/chutney-editor/chutney-editor.component';
+import { HjsonParserService } from '@shared/hjson-parser/hjson-parser.service';
 
 @NgModule({
     imports: [
-        MonacoEditorModule,
         CommonModule,
         FormsModule,
         MomentModule,
@@ -105,7 +104,8 @@ import { ChutneyEditorComponent } from '@shared/components/chutney-editor/chutne
         },
         AlertService,
         EventManagerService,
-        StateService
+        StateService,
+        HjsonParserService
     ]
 })
 export class SharedModule {

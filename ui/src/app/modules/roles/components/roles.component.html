@@ -67,7 +67,7 @@
     <div class="row editor">
         <div class="scenario-editor">
             <chutney-editor
-                [language]="'json'"
+                [modes]="['json']"
                 [content]="rolesContent"
                 (onContentChange)="onRoleContentChange($event)">
             </chutney-editor>

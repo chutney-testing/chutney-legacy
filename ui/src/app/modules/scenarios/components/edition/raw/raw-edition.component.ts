@@ -7,6 +7,8 @@ import { ScenarioService } from '@core/services';
 import { CanDeactivatePage } from '@core/guards';
 import { JiraPluginService } from '@core/services/jira-plugin.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { HjsonParserService } from '@shared/hjson-parser/hjson-parser.service';
+
 
 @Component({
     selector: 'chutney-raw-edition',
@@ -53,6 +55,7 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
                 private route: ActivatedRoute,
                 private router: Router,
                 private scenarioService: ScenarioService,
+                private hjsonParserService: HjsonParserService
     ) {
         super();
         this.testCase = new TestCase();
@@ -117,7 +120,7 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
 
     private checkParseError() {
         try {
-            //this.hjsonParser.parse(this.modifiedContent);
+            this.hjsonParserService.parse(this.modifiedContent);
             this.errorMessage = null;
         } catch (e) {
             this.errorMessage = e;

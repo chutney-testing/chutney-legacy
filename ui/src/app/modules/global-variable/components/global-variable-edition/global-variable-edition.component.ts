@@ -11,7 +11,8 @@ import { Authorization } from '@model';
 })
 export class GlobalVariableEditionComponent implements OnInit {
 
-    data = '';
+    globalVar = '';
+    editedGlobalVar = '';
     fileNames;
     currentFileName;
     message: string;
@@ -35,9 +36,10 @@ export class GlobalVariableEditionComponent implements OnInit {
 
     save() {
         (async () => {
+            this.globalVar = this.editedGlobalVar;
             this.message = 'Saving...';
             await this.delay(1000);
-            this.globalVariableService.save(this.currentFileName, this.data).subscribe(
+            this.globalVariableService.save(this.currentFileName, this.globalVar).subscribe(
                 res => {
                     this.message = 'Document saved';
                     if (this.fileNames.indexOf(this.currentFileName) === -1) {
@@ -62,11 +64,11 @@ export class GlobalVariableEditionComponent implements OnInit {
 
     updateFileContent(selectedFileName: string) {
         if (selectedFileName === undefined) {
-            this.data = '';
+            this.globalVar = '';
         } else {
             this.globalVariableService.get(selectedFileName).subscribe(
                 response => {
-                    this.data = response;
+                    this.globalVar = response;
                 }
             );
         }
@@ -88,6 +90,6 @@ export class GlobalVariableEditionComponent implements OnInit {
     }
 
     onContentVarChange(content: string) {
-        this.data = content;
+        this.editedGlobalVar = content;
     }
 }
