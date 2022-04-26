@@ -434,8 +434,8 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
         this.jiraLinkService.findByCampaignId(this.campaign.id).subscribe(
             (jiraId) => {
                 this.testExecutionId = jiraId;
-                if(jiraId !== ''){
-                    this.jiraLinkService.findTestExecScenarios( this.testExecutionId)
+                if(jiraId) {
+                    this.jiraLinkService.findTestExecScenarios(this.testExecutionId)
                     .subscribe(
                         (result) => {
                             this.jiraScenarios = result;

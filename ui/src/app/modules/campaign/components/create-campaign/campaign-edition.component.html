@@ -124,7 +124,7 @@
                                 <td class="text-nowrap">{{scenario?.id}}</td>
                                 <td class="scenario-title-cell">{{scenario?.title}}</td>
                                 <td class="p-0">
-                                    <span *ngIf="getJiraLastExecutionStatus(scenario.id) && jiraMap.has(scenario.id)" 
+                                    <span *ngIf="jiraMap.has(scenario.id) && !!getJiraLastExecutionStatus(scenario.id)"
                                         [ngClass]="getJiraLastExecutionStatusClass(scenario.id)" class="badge">
                                         {{getJiraLastExecutionStatus(scenario.id)}}
                                     </span>
@@ -207,7 +207,7 @@
                                         </span>
                                 </td>
                                 <td class="p-0">
-                                    <span *ngIf="jiraMap.has(scenario.id)" 
+                                    <span *ngIf="jiraMap.has(scenario.id)"
                                         [ngClass]="getJiraLastExecutionStatusClass(scenario.id)" class="badge">
                                         {{getJiraLastExecutionStatus(scenario.id)}}
                                     </span>
