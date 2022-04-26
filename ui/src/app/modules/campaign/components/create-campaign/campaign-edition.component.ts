@@ -281,13 +281,21 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
                             }
                         });
                         this.jiraFilter();
+                    },
+                    (error) => {
+                        this.errorMessage = error.error;
+                        this.clearJiraScenarios();
                     }
                 );
         } else {
-            this.jiraScenarios = [];
-            this.jiraScenariosToExclude = [];
-            this.campaignForm.controls['onlyLinkedScenarios'].setValue(false);
+            this.clearJiraScenarios();
         }
+    }
+
+    clearJiraScenarios(){
+        this.jiraScenarios = [];
+        this.jiraScenariosToExclude = [];
+        this.campaignForm.controls['onlyLinkedScenarios'].setValue(false);
     }
 
     jiraFilter() {
