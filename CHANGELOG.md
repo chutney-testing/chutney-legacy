@@ -1,5 +1,33 @@
 # Changelog
 
+## [1.4.7](https://github.com/chutney-testing/chutney/tree/1.4.7) (2022-04-26)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.4.6...1.4.7)
+
+**Implemented enhancements:**
+
+- 🚀 | Add some JSON modifications functions [\#698](https://github.com/chutney-testing/chutney/issues/698)
+
+**Merged pull requests:**
+
+- bugfix\(server\): Quickfix unoptimize code causing huge slowdown [\#717](https://github.com/chutney-testing/chutney/pull/717) ([bessonm](https://github.com/bessonm))
+- fix\(ui\): disable jira call without test exec id [\#716](https://github.com/chutney-testing/chutney/pull/716) ([rbenyoussef](https://github.com/rbenyoussef))
+- refactor\(\): Clean old scenario version support [\#714](https://github.com/chutney-testing/chutney/pull/714) ([nbrouand](https://github.com/nbrouand))
+- feat\(ui\) : Component edition space [\#713](https://github.com/chutney-testing/chutney/pull/713) ([boddissattva](https://github.com/boddissattva))
+- feat\(func\): Add JSON functions available in SpEL [\#712](https://github.com/chutney-testing/chutney/pull/712) ([bessonm](https://github.com/bessonm))
+- Chore/dette [\#711](https://github.com/chutney-testing/chutney/pull/711) ([nbrouand](https://github.com/nbrouand))
+- feat\(ui\): Add search on tags in text search [\#710](https://github.com/chutney-testing/chutney/pull/710) ([nbrouand](https://github.com/nbrouand))
+- chore\(deps-dev\): bump json-path from 2.6.0 to 2.7.0 [\#709](https://github.com/chutney-testing/chutney/pull/709) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump everit-json-schema from 1.14.0 to 1.14.1 [\#708](https://github.com/chutney-testing/chutney/pull/708) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump maven-javadoc-plugin from 3.3.1 to 3.3.2 [\#707](https://github.com/chutney-testing/chutney/pull/707) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps-dev\): bump mockito.version from 4.3.1 to 4.4.0 [\#706](https://github.com/chutney-testing/chutney/pull/706) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump caffeine from 3.0.5 to 3.0.6 [\#705](https://github.com/chutney-testing/chutney/pull/705) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump jackson.version from 2.13.1 to 2.13.2 [\#704](https://github.com/chutney-testing/chutney/pull/704) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps-dev\): bump spring-kafka-test from 2.8.2 to 2.8.4 [\#703](https://github.com/chutney-testing/chutney/pull/703) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump mongodb.version from 4.4.1 to 4.5.1 [\#702](https://github.com/chutney-testing/chutney/pull/702) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump selenium.version from 4.1.2 to 4.1.3 [\#701](https://github.com/chutney-testing/chutney/pull/701) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps-dev\): bump awaitility from 4.1.1 to 4.2.0 [\#700](https://github.com/chutney-testing/chutney/pull/700) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [1.4.6](https://github.com/chutney-testing/chutney/tree/1.4.6) (2022-03-11)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.4.5...1.4.6)
@@ -41,8 +69,22 @@
 **Fixed bugs:**
 - 🐛 | chore(jira): Remove infra dependency in JiraXrayService [\#673] (https://github.com/chutney-testing/chutney/pull/673)
 
-## [1.4.4](https://github.com/chutney-testing/chutney/tree/1.4.4) (2022-01-22)
+**Merged pull requests:**
 
+- chore\(jira\): Remove infra dependency in JiraXrayService [\#673](https://github.com/chutney-testing/chutney/pull/673) ([nbrouand](https://github.com/nbrouand))
+- bugfix\(jira+ui\): create jira service bugfix [\#672](https://github.com/chutney-testing/chutney/pull/672) ([nbrouand](https://github.com/nbrouand))
+- chore\(deps\): bump build-helper-maven-plugin from 3.2.0 to 3.3.0 [\#670](https://github.com/chutney-testing/chutney/pull/670) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump maven-jar-plugin from 3.2.0 to 3.2.2 [\#669](https://github.com/chutney-testing/chutney/pull/669) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump spring-boot-maven-plugin from 2.6.2 to 2.6.3 [\#666](https://github.com/chutney-testing/chutney/pull/666) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump amqp-client from 5.14.0 to 5.14.1 [\#665](https://github.com/chutney-testing/chutney/pull/665) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps-dev\): bump mockito.version from 4.1.0 to 4.3.1 [\#664](https://github.com/chutney-testing/chutney/pull/664) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump sl4j.api.version from 1.7.32 to 1.7.35 [\#663](https://github.com/chutney-testing/chutney/pull/663) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump selenium.version from 4.1.1 to 4.1.2 [\#662](https://github.com/chutney-testing/chutney/pull/662) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Feat/ftp task [\#661](https://github.com/chutney-testing/chutney/pull/661) ([bessonm](https://github.com/bessonm))
+- chore\(server\): Replace Guava cache by Caffeine [\#660](https://github.com/chutney-testing/chutney/pull/660) ([boddissattva](https://github.com/boddissattva))
+- fix build win [\#659](https://github.com/chutney-testing/chutney/pull/659) ([boddissattva](https://github.com/boddissattva))
+
+## [1.4.4](https://github.com/chutney-testing/chutney/tree/1.4.4) (2022-01-27)
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.4.3...1.4.4)
 
 **Implemented enhancements:**
@@ -322,7 +364,7 @@
 - 🐛 | SQL client change [\#470](https://github.com/chutney-testing/chutney/issues/470)
 - 🐛 | Regression in scenario execution [\#469](https://github.com/chutney-testing/chutney/issues/469)
 - 🐛 | Random classnotfound exeception [\#466](https://github.com/chutney-testing/chutney/issues/466)
-- 🚀 | Missing dataset data in git export [\#461](https://github.com/chutney-testing/chutney/issues/461)
+- 🐛 | Missing dataset data in git export [\#461](https://github.com/chutney-testing/chutney/issues/461)
 - 🐛 | Environment backup [\#457](https://github.com/chutney-testing/chutney/issues/457)
 - 🐛 | Navigation to scenario components is broken [\#434](https://github.com/chutney-testing/chutney/issues/434)
 
@@ -389,8 +431,7 @@
 
 - bugfix\(task-impl\): fix NPE on null sql result column [\#438](https://github.com/chutney-testing/chutney/pull/438) ([rbenyoussef](https://github.com/rbenyoussef))
 
-
-## [1.3.4](https://github.com/chutney-testing/chutney/tree/1.3.4)
+## [1.3.4](https://github.com/chutney-testing/chutney/tree/1.3.4) (2021-05-20)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.3...1.3.4)
 
@@ -408,8 +449,7 @@
 - chore: Add maven badge [\#432](https://github.com/chutney-testing/chutney/pull/432) ([nbrouand](https://github.com/nbrouand))
 - feat\(ui+server\): add tags for campaigns [\#431](https://github.com/chutney-testing/chutney/pull/431) ([rbenyoussef](https://github.com/rbenyoussef))
 
-
-## [1.3.3](https://github.com/chutney-testing/chutney/tree/1.3.3)
+## [1.3.3](https://github.com/chutney-testing/chutney/tree/1.3.3) (2021-05-19)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.2...1.3.3)
 
@@ -427,8 +467,7 @@
 - 🚀 feat\(tasks\): Pretty print SQL tasks results for execution reports [\#428](https://github.com/chutney-testing/chutney/pull/428) ([bessonm](https://github.com/bessonm))
 - feat\(server+ui\): Evaluate parameters for reading scenario [\#427](https://github.com/chutney-testing/chutney/pull/427) ([nbrouand](https://github.com/nbrouand))
 
-
-## [1.3.2](https://github.com/chutney-testing/chutney/tree/1.3.2)
+## [1.3.2](https://github.com/chutney-testing/chutney/tree/1.3.2) (2021-05-17)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.3.1...1.3.2)
 
@@ -489,8 +528,7 @@
 - feat: add campaign recurrent Planning per day, week and month [\#381](https://github.com/chutney-testing/chutney/pull/381) ([RedouaeElalami](https://github.com/RedouaeElalami))
 - feat\(server/ui/engine\): permit asserts declarations in tasks one [\#373](https://github.com/chutney-testing/chutney/pull/373) ([rbenyoussef](https://github.com/rbenyoussef))
 
-
-## [1.3.0](https://github.com/chutney-testing/chutney/tree/1.3.0)
+## [1.3.0](https://github.com/chutney-testing/chutney/tree/1.3.0) (2021-03-31)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.20...1.3.0)
 
@@ -506,8 +544,7 @@
 - Chore/fix test timeout [\#378](https://github.com/chutney-testing/chutney/pull/378) ([boddissattva](https://github.com/boddissattva))
 - refactor\(server\): Move parameters logic from infra to domain [\#327](https://github.com/chutney-testing/chutney/pull/327) ([bessonm](https://github.com/bessonm))
 
-
-## [1.2.20](https://github.com/chutney-testing/chutney/tree/1.2.20)
+## [1.2.20](https://github.com/chutney-testing/chutney/tree/1.2.20) (2021-03-22)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.19...1.2.20)
 
@@ -551,8 +588,7 @@
 
 - chore\(\): Upgrade to jdk11 [\#316](https://github.com/chutney-testing/chutney/pull/316) ([nbrouand](https://github.com/nbrouand))
 
-
-## [1.2.16](https://github.com/chutney-testing/chutney/tree/1.2.16)
+## [1.2.16](https://github.com/chutney-testing/chutney/tree/1.2.16) (2021-03-05)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.15...1.2.16)
 
@@ -579,8 +615,7 @@
 - feat\(ui\): preview scenario error on campaign report [\#356](https://github.com/chutney-testing/chutney/pull/356) ([rbenyoussef](https://github.com/rbenyoussef))
 - Added issue and PR template [\#350](https://github.com/chutney-testing/chutney/pull/350) ([96RadhikaJadhav](https://github.com/96RadhikaJadhav))
 
-
-## [1.2.15](https://github.com/chutney-testing/chutney/tree/1.2.15)
+## [1.2.15](https://github.com/chutney-testing/chutney/tree/1.2.15) (2021-02-26)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.14...1.2.15)
 
@@ -600,8 +635,7 @@
 - Feat/add jira feature [\#349](https://github.com/chutney-testing/chutney/pull/349) ([rbenyoussef](https://github.com/rbenyoussef))
 - bugfix\(ui\): Missing hash in URLs on scenario exec page [\#348](https://github.com/chutney-testing/chutney/pull/348) ([bessonm](https://github.com/bessonm))
 
-
-## [1.2.14](https://github.com/chutney-testing/chutney/tree/1.2.14)
+## [1.2.14](https://github.com/chutney-testing/chutney/tree/1.2.14) (2021-02-16)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.13...1.2.14)
 
@@ -628,7 +662,7 @@
 - feat: Use glacio lang [\#94](https://github.com/chutney-testing/chutney/pull/94) ([bessonm](https://github.com/bessonm))
 
 
-## [1.2.13](https://github.com/chutney-testing/chutney/tree/1.2.13)
+## [1.2.13](https://github.com/chutney-testing/chutney/tree/1.2.13) (2021-01-14)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.12...1.2.13)
 
@@ -658,7 +692,7 @@
 - Bugfix/dataset iterations [\#286](https://github.com/chutney-testing/chutney/pull/286) ([rbenyoussef](https://github.com/rbenyoussef))
 - bugfix\(ui\): Wrong linkifier label [\#281](https://github.com/chutney-testing/chutney/pull/281) ([bessonm](https://github.com/bessonm))
 
-## [1.2.12](https://github.com/chutney-testing/chutney/tree/1.2.12)
+## [1.2.12](https://github.com/chutney-testing/chutney/tree/1.2.12) (2020-12-23)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.11...1.2.12)
 
@@ -666,7 +700,7 @@
 
 - bugfix\(server\): wrong generated iteration [\#285](https://github.com/chutney-testing/chutney/pull/285) ([rbenyoussef](https://github.com/rbenyoussef))
 
-## [1.2.11](https://github.com/chutney-testing/chutney/tree/1.2.11)
+## [1.2.11](https://github.com/chutney-testing/chutney/tree/1.2.11) (2020-12-22)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.10...1.2.11)
 
@@ -674,8 +708,7 @@
 
 - bugfix\(server\): indexed output combined to external multivalues dataset for step iteration [\#284](https://github.com/chutney-testing/chutney/pull/284) ([rbenyoussef](https://github.com/rbenyoussef))
 
-
-## [1.2.10](https://github.com/chutney-testing/chutney/tree/1.2.10)
+## [1.2.10](https://github.com/chutney-testing/chutney/tree/1.2.10) (2020-12-21)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.9...1.2.10)
 
@@ -696,7 +729,7 @@
 - feat\(ui+server\): Schedule campaign on a specific time \#266 [\#277](https://github.com/chutney-testing/chutney/pull/277) ([nbrouand](https://github.com/nbrouand))
 - Raw implementation mapper thread safety [\#276](https://github.com/chutney-testing/chutney/pull/276) ([boddissattva](https://github.com/boddissattva))
 
-## [1.2.9](https://github.com/chutney-testing/chutney/tree/1.2.9)
+## [1.2.9](https://github.com/chutney-testing/chutney/tree/1.2.9) (2020-12-10)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.8...1.2.9)
 
@@ -708,7 +741,7 @@
 
 - feat\(server\): Step iteration [\#261](https://github.com/chutney-testing/chutney/pull/261) ([bessonm](https://github.com/bessonm))
 
-## [1.2.8](https://github.com/chutney-testing/chutney/tree/1.2.8)
+## [1.2.8](https://github.com/chutney-testing/chutney/tree/1.2.8) (2020-12-09)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.7...1.2.8)
 
@@ -731,8 +764,7 @@
 - Session management with and without anonymous user [\#260](https://github.com/chutney-testing/chutney/pull/260) ([boddissattva](https://github.com/boddissattva))
 - Refactor/split composable step repo [\#259](https://github.com/chutney-testing/chutney/pull/259) ([bessonm](https://github.com/bessonm))
 
-
-## [1.2.7](https://github.com/chutney-testing/chutney/tree/1.2.7)
+## [1.2.7](https://github.com/chutney-testing/chutney/tree/1.2.7) (2020-11-17)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.6...1.2.7)
 
@@ -743,7 +775,7 @@
 - Add edition information for concurrency edition check [\#256](https://github.com/chutney-testing/chutney/pull/256) ([boddissattva](https://github.com/boddissattva))
 - chore\(deps-dev\): Bump JUnitParams from 1.1.0 to 1.1.1 [\#251](https://github.com/chutney-testing/chutney/pull/251) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 
-## [1.2.6](https://github.com/chutney-testing/chutney/tree/1.2.6)
+## [1.2.6](https://github.com/chutney-testing/chutney/tree/1.2.6) (2020-10-28)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.5...1.2.6)
 
@@ -767,9 +799,7 @@
 - Micrometer tasks [\#241](https://github.com/chutney-testing/chutney/pull/241) ([boddissattva](https://github.com/boddissattva))
 - chore\(ui\): Update node version to v12.18.4 & provide IntelliJ run conf [\#238](https://github.com/chutney-testing/chutney/pull/238) ([bessonm](https://github.com/bessonm))
 
-
-
-## [1.2.5](https://github.com/chutney-testing/chutney/tree/1.2.5) (2020-09-01)
+## [1.2.5](https://github.com/chutney-testing/chutney/tree/1.2.5) (2020-10-01)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.2.4...1.2.5)
 
