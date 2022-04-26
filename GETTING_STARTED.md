@@ -39,7 +39,6 @@ Main class : com.chutneytesting.ServerBootstrap
 
 ### Modules
 
-* cli: First draft of a cli
 * engine: Execution engine which sole responsibility is to execute scenarios and provide a report for each execution
 * packaging: default packaging used to start Chutney
 * server: Main module that
