@@ -2,7 +2,7 @@ package com.chutneytesting.design.domain.editionlock;
 
 import static java.util.Objects.requireNonNull;
 
-import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
+import com.chutneytesting.scenario.domain.TestCaseMetadata;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.function.Predicate;

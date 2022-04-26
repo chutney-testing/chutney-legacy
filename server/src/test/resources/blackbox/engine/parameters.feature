@@ -17,34 +17,6 @@ Feature: Replace scenario parameters with data set or global var values
                 """
                 Validate httpStatusCode_200 ${#status == 200}
 
-    Scenario: Execute raw scenario with global vars
-        Given an existing testcase written in old format
-            Do sql
-                On CHUTNEY_DB
-                With statements
-                | SELECT nextval('SCENARIO_SEQ') |
-                Take scenarioId ${#recordResult.get(0).rows.get(0).get(0)}
-            Do sql
-                On CHUTNEY_DB
-                With statements
-                | INSERT INTO SCENARIO (CONTENT_VERSION, ID, TITLE, DESCRIPTION, CONTENT, TAGS, CREATION_DATE, DATASET, ACTIVATED, UPDATE_DATE, VERSION) VALUES ('v1.0', ${#scenarioId}, 'Raw testcase with parameters for global vars', null, '{ "scenario" : { "name": "Raw scenario with parameters for global vars", "gwtType": "ROOT_STEP", "steps": [{ "name": "Putting variables with sensitive characters in context", "gwtType": "WHEN", "steps": [{ "type": "context-put", "inputs": { "entries": { "slash": "**escape.slash**" }}}, { "type": "context-put", "inputs": { "entries": { "apostrophe": "**testcase parameter apostrophe**" }}}, { "type": "context-put", "inputs": { "entries": { "quote": "**testcase parameter quote**" }}}, { "type": "context-put", "inputs": { "entries": { "backslash": "**escape.backslash**" }}}]}, { "name": "Context contains correct value of those variables", "gwtType": "THEN", "steps": [{ "type": "compare", "inputs": { "mode": "equals", "actual": "\${#slash}", "expected": "line with slash as url http:\/\/host:port\/path" }}, { "type": "compare", "inputs": { "mode": "equals", "actual": "\${#apostrophe}", "expected": "line with apostrophe ''" }}, { "type": "compare", "inputs": { "mode": "equals", "actual": "\${#quote}", "expected": "line with quote \"" }}, { "type": "compare", "inputs": { "mode": "equals", "actual": "\${#backslash}", "expected": "line with backslash \\" }}]}]}}', null, CURRENT_TIMESTAMP(6), '{ "testcase parameter quote": "**escape.quote**", "testcase parameter apostrophe": "**escape.apostrophe**" }', TRUE, CURRENT_TIMESTAMP(6), 1)  |
-            Do compare Assert sql insert success
-                With actual ${T(Long).toString(#recordResult.get(0).affectedRows)}
-                With expected 1
-                With mode equals
-        When last saved scenario is executed
-            Do http-post Post scenario execution to Chutney instance
-                On CHUTNEY_LOCAL
-                With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
-                With timeout 5 s
-                Take report ${#body}
-                Validate httpStatusCode_200 ${#status == 200}
-        Then the report status is SUCCESS
-            Do compare
-                With actual ${#json(#report, "$.report.status")}
-                With expected SUCCESS
-                With mode equals
-
     Scenario: Execute gwt scenario with global vars
         Given a testcase written with GWT form
             Do http-post Post scenario to Chutney instance

@@ -9,10 +9,10 @@ import static org.mockito.Mockito.when;
 
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
 import com.chutneytesting.design.domain.campaign.ScenarioExecutionReportCampaign;
-import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
-import com.chutneytesting.design.domain.scenario.TestCase;
-import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
-import com.chutneytesting.design.domain.scenario.TestCaseRepository;
+import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
+import com.chutneytesting.scenario.domain.TestCase;
+import com.chutneytesting.scenario.domain.TestCaseMetadata;
+import com.chutneytesting.scenario.domain.TestCaseRepository;
 import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.tools.Try;

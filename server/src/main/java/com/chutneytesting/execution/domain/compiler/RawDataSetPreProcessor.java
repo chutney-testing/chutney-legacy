@@ -1,7 +1,7 @@
 package com.chutneytesting.execution.domain.compiler;
 
 import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
-import com.chutneytesting.design.domain.scenario.raw.RawTestCase;
+import com.chutneytesting.scenario.domain.raw.RawTestCase;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.stereotype.Component;

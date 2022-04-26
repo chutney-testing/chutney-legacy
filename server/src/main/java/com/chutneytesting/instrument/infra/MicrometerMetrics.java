@@ -8,7 +8,7 @@ import static java.util.stream.Collectors.groupingBy;
 
 import com.chutneytesting.design.domain.campaign.Campaign;
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
-import com.chutneytesting.design.domain.scenario.TestCase;
+import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.instrument.domain.ChutneyMetrics;

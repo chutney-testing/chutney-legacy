@@ -2,7 +2,7 @@ package com.chutneytesting.execution.domain;
 
 import static java.util.Objects.requireNonNull;
 
-import com.chutneytesting.design.domain.scenario.TestCase;
+import com.chutneytesting.scenario.domain.TestCase;
 import java.util.Map;
 
 public class ExecutionRequest {

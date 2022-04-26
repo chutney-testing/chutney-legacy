@@ -19,13 +19,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 public abstract class AbstractLocalDatabaseTest {
     private static final String DB_CHANGELOG_DB_CHANGELOG_MASTER_XML = "changelog/db.changelog-master.xml";
+    private static final Random rand = new Random();
 
     protected final DataSource localDataSource;
     protected final JdbcTemplate jdbcTemplate;
     protected final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     protected AbstractLocalDatabaseTest() {
-        Random rand = new Random();
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setMaximumPoolSize(2);
         hikariConfig.setJdbcUrl("jdbc:h2:mem:test_" + rand.nextInt(10000) + ";DB_CLOSE_DELAY=-1");

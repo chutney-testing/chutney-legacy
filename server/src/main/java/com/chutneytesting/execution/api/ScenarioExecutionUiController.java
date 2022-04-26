@@ -2,8 +2,8 @@ package com.chutneytesting.execution.api;
 
 import static com.chutneytesting.tools.orient.ComposableIdUtils.fromFrontId;
 
-import com.chutneytesting.design.domain.scenario.TestCase;
-import com.chutneytesting.design.domain.scenario.TestCaseRepository;
+import com.chutneytesting.scenario.domain.TestCase;
+import com.chutneytesting.scenario.domain.TestCaseRepository;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;

@@ -65,7 +65,6 @@
         <module>task-impl</module>
         <module>environment</module>
         <module>tools</module>
-        <module>cli</module>
         <module>packaging</module>
         <module>glacio-adapter</module>
         <module>chutney-junit</module>
@@ -221,11 +220,6 @@
             <dependency>
                 <groupId>com.chutneytesting</groupId>
                 <artifactId>engine</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.chutneytesting</groupId>
-                <artifactId>cli</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -10,10 +10,10 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.agent.domain.network.Agent;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
-import com.chutneytesting.design.domain.scenario.gwt.GwtStep;
-import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
-import com.chutneytesting.design.domain.scenario.gwt.Strategy;
-import com.chutneytesting.design.domain.scenario.raw.RawTestCase;
+import com.chutneytesting.scenario.domain.gwt.GwtStep;
+import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
+import com.chutneytesting.scenario.domain.gwt.Strategy;
+import com.chutneytesting.scenario.domain.raw.RawTestCase;
 import com.chutneytesting.engine.api.execution.CredentialExecutionDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
@@ -141,7 +141,7 @@ public class ExecutionRequestMapper {
         );
     }
 
-    private ExecutionRequestDto.StepStrategyDefinitionRequestDto mapStrategy(com.chutneytesting.design.domain.scenario.compose.Strategy strategy) {
+    private ExecutionRequestDto.StepStrategyDefinitionRequestDto mapStrategy(com.chutneytesting.scenario.domain.compose.Strategy strategy) {
         return new ExecutionRequestDto.StepStrategyDefinitionRequestDto(
             strategy.type,
             strategy.parameters

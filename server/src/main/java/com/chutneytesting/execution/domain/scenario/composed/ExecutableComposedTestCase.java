@@ -1,8 +1,8 @@
 package com.chutneytesting.execution.domain.scenario.composed;
 
-import com.chutneytesting.design.domain.scenario.TestCase;
-import com.chutneytesting.design.domain.scenario.TestCaseMetadata;
-import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.scenario.domain.TestCase;
+import com.chutneytesting.scenario.domain.TestCaseMetadata;
+import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;

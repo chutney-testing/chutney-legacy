@@ -1,12 +1,12 @@
 package com.chutneytesting.execution.domain.scenario;
 
-import com.chutneytesting.design.api.scenario.v2_0.mapper.GwtScenarioMapper;
-import com.chutneytesting.design.domain.scenario.ScenarioNotFoundException;
-import com.chutneytesting.design.domain.scenario.ScenarioNotParsableException;
-import com.chutneytesting.design.domain.scenario.TestCase;
-import com.chutneytesting.design.domain.scenario.TestCaseMetadataImpl;
-import com.chutneytesting.design.domain.scenario.gwt.GwtScenario;
-import com.chutneytesting.design.domain.scenario.gwt.GwtTestCase;
+import com.chutneytesting.scenario.api.raw.mapper.GwtScenarioMapper;
+import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
+import com.chutneytesting.scenario.domain.ScenarioNotParsableException;
+import com.chutneytesting.scenario.domain.TestCase;
+import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
+import com.chutneytesting.scenario.domain.gwt.GwtScenario;
+import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.compiler.GwtScenarioMarshaller;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;

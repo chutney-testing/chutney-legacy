@@ -11,7 +11,7 @@ import static java.util.stream.Collectors.toSet;
 
 import com.chutneytesting.design.domain.dataset.DataSet;
 import com.chutneytesting.design.domain.dataset.DataSetRepository;
-import com.chutneytesting.design.domain.scenario.compose.Strategy;
+import com.chutneytesting.scenario.domain.compose.Strategy;
 import com.chutneytesting.engine.domain.execution.strategies.DataSetIterationsStrategy;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedScenario;

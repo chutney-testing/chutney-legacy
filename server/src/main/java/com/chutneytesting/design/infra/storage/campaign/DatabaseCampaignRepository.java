@@ -7,7 +7,7 @@ import com.chutneytesting.design.domain.campaign.Campaign;
 import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
 import com.chutneytesting.design.domain.campaign.CampaignNotFoundException;
 import com.chutneytesting.design.domain.campaign.CampaignRepository;
-import com.chutneytesting.design.infra.storage.scenario.jdbc.TagListMapper;
+import com.chutneytesting.scenario.infra.raw.TagListMapper;
 import com.google.common.collect.ImmutableMap;
 import java.sql.ResultSet;
 import java.sql.SQLException;

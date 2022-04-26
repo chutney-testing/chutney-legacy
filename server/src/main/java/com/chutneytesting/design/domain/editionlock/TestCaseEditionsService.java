@@ -4,7 +4,7 @@ import static com.chutneytesting.design.domain.editionlock.TestCaseEdition.byEdi
 import static com.chutneytesting.design.domain.editionlock.TestCaseEdition.byId;
 import static java.time.Instant.now;
 
-import com.chutneytesting.design.domain.scenario.TestCaseRepository;
+import com.chutneytesting.scenario.domain.TestCaseRepository;
 import java.util.List;
 
 public class TestCaseEditionsService {

@@ -1,23 +1,23 @@
 package com.chutneytesting.tests;
 
-import static com.chutneytesting.design.infra.storage.scenario.compose.OrientComposableStepMapper.vertexToComposableStep;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS;
-import static com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_NAME;
+import static com.chutneytesting.scenario.infra.compose.OrientComposableStepMapper.vertexToComposableStep;
+import static com.chutneytesting.scenario.infra.compose.orient.OrientComponentDB.STEP_CLASS;
+import static com.chutneytesting.scenario.infra.compose.orient.OrientComponentDB.STEP_CLASS_PROPERTY_NAME;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.WebConfiguration;
-import com.chutneytesting.design.domain.scenario.compose.ComposableStep;
-import com.chutneytesting.design.domain.scenario.compose.ComposableStepRepository;
-import com.chutneytesting.design.domain.scenario.compose.Strategy;
-import com.chutneytesting.design.infra.storage.scenario.compose.ExecutableComposedStepMapper;
-import com.chutneytesting.design.infra.storage.scenario.compose.ExecutableComposedTestCaseMapper;
-import com.chutneytesting.design.infra.storage.scenario.compose.RawImplementationMapper;
-import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientComponentDB;
-import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientConfigurationProperties;
-import com.chutneytesting.design.infra.storage.scenario.compose.orient.OrientDBManager;
-import com.chutneytesting.design.infra.storage.scenario.compose.orient.changelog.OrientChangelogExecutor;
-import com.chutneytesting.design.infra.storage.scenario.compose.wrapper.StepVertex;
+import com.chutneytesting.scenario.domain.compose.ComposableStep;
+import com.chutneytesting.scenario.domain.compose.ComposableStepRepository;
+import com.chutneytesting.scenario.domain.compose.Strategy;
+import com.chutneytesting.scenario.infra.compose.ExecutableComposedStepMapper;
+import com.chutneytesting.scenario.infra.compose.ExecutableComposedTestCaseMapper;
+import com.chutneytesting.scenario.infra.compose.RawImplementationMapper;
+import com.chutneytesting.scenario.infra.compose.orient.OrientComponentDB;
+import com.chutneytesting.scenario.infra.compose.orient.OrientConfigurationProperties;
+import com.chutneytesting.scenario.infra.compose.orient.OrientDBManager;
+import com.chutneytesting.scenario.infra.compose.orient.changelog.OrientChangelogExecutor;
+import com.chutneytesting.scenario.infra.compose.wrapper.StepVertex;
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.db.ODatabaseType;
