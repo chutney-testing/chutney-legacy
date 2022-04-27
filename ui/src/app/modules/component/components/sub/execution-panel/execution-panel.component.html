@@ -3,21 +3,21 @@
         <span aria-hidden="true">&times;</span>
     </button>
 
-    <h5 class="font-weight-bold">Execution result</h5>
+    <h5 class="fw-bold">Execution result</h5>
 
     <ng-container *ngIf="executionResult.report">
-        <span class="font-weight-bold">Status:</span> {{executionResult.report.status}} <br />
-        <div *ngIf="executionResult.report.duration"> <span class="font-weight-bold">Duration:</span> {{executionResult.report.duration}} ms</div>
+        <span class="fw-bold">Status:</span> {{executionResult.report.status}} <br />
+        <div *ngIf="executionResult.report.duration"> <span class="fw-bold">Duration:</span> {{executionResult.report.duration}} ms</div>
 
-        <span *ngIf="info && info.length > 0" class="font-weight-bold">Logs:</span>
+        <span *ngIf="info && info.length > 0" class="fw-bold">Logs:</span>
         <pre *ngIf="info  && info.length > 0" [innerHTML]="info | prettyPrint: true | safe: 'html'"></pre>
 
-        <span *ngIf="errors  && errors.length > 0" class="font-weight-bold">Errors:</span>
+        <span *ngIf="errors  && errors.length > 0" class="fw-bold">Errors:</span>
         <pre *ngIf="errors  && errors.length > 0"
             [innerHTML]="errors | prettyPrint: true | safe: 'html'"></pre>
     </ng-container>
     <ng-container *ngIf="!executionResult.report">
-        <span class="font-weight-bold">Status:</span> KO <br />
+        <span class="fw-bold">Status:</span> KO <br />
         {{ executionResult.error }}
     </ng-container>
 </div>

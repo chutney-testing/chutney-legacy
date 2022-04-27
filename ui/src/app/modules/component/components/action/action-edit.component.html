@@ -2,9 +2,9 @@
     <div class="edition-header row mt-0">
         <div class="col-7">
             <div class="row">
-                <div class="btn">
+                <div>
                     <span class="fa fa-clone"></span>
-                    <span class="ms-2 font-weight-bold text-capitalize">{{editComponent.implementation.identifier}}</span>
+                    <span class="ms-2 fw-bold text-capitalize">{{editComponent.implementation.identifier}}</span>
                 </div>
             </div>
             <div class="row">
@@ -20,10 +20,12 @@
                 <div class="col-1"></div>
             </div>
             <div *ngIf="editComponent.implementation.hasTarget" class="row">
-                <label for="target" class="col-form-label col-3 font-weight-bold">{{'components.shared.edition.fields.target.name' | translate}}</label>
-                <select id="target" class="form-control col-8" formControlName="target">
-                    <option *ngFor="let target of availableTargets" [value]="target">{{target}}</option>
-                </select>
+                <label for="target" class="col-form-label col-3 fw-bold">{{'components.shared.edition.fields.target.name' | translate}}</label>
+                <div class="col-8">
+                    <select id="target" class="form-select" formControlName="target">
+                        <option *ngFor="let target of availableTargets" [value]="target">{{target}}</option>
+                    </select>
+                </div>
             </div>
         </div>
         <div class="col-5">
@@ -43,7 +45,7 @@
             </div>
             <div class="row">
                 <div class="p-0 align-self-center">
-                    <label class="form-control-label font-weight-bold" for="tags">{{ 'scenarios.edition.form.tags' | translate }}</label>
+                    <label class="form-control-label fw-bold" for="tags">{{ 'scenarios.edition.form.tags' | translate }}</label>
                 </div>
                 <div class="col">
                     <textarea formControlName="tags" type="text" class="form-control no-resize" name="tags" id="tags" rows="2"></textarea>
@@ -57,7 +59,7 @@
             <!-- Inputs -->
             <div *ngIf="hasInputs()" class="mt-4 px-0 pb-2 pt-2">
                 <legend class="px-3 ">
-                    <span class="font-weight-bold cursor-default" (click)="switchCollapseInputs()">{{'components.shared.edition.blocks.inputs' | translate}}</span>
+                    <span class="fw-bold cursor-default" (click)="switchCollapseInputs()">{{'components.shared.edition.blocks.inputs' | translate}}</span>
                     <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
                             (click)="switchCollapseInputs()"
                             title="{{(collapseInputs ? 'global.actions.show' : 'global.actions.hide') | translate}}">
@@ -67,7 +69,7 @@
                 <ng-container *ngIf="!collapseInputs">
                     <div formArrayName="inputs" *ngFor="let input of actionForm.get('inputs')?.controls; let i=index;">
                         <div [formGroupName]="i" class="form-group row">
-                            <div class="col-3 px-1">
+                            <div class="col-3 ps-3">
                                 <label for="input-{{i}}" class="col-form-label">{{input.value.key}}</label>
                             </div>
                             <div class="col-8 px-1">
@@ -79,7 +81,7 @@
                                     <button *ngIf="isVariableRef(i)" class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
                                             (click)="switchVariableRefToStruct(i)"
                                             title="{{'components.action.refvar.backTo.tooltip' | translate}}">
-                                        <span class="font-weight-bold" style="text-decoration: line-through;">{{'components.action.refvar.label' | translate}}</span>
+                                        <span class="fw-bold" style="text-decoration: line-through;">{{'components.action.refvar.label' | translate}}</span>
                                     </button>
                                 </div>
                             </ng-container>
@@ -87,7 +89,7 @@
                     </div>
                     <div formArrayName="inputsMap" *ngFor="let input of actionForm.get('inputsMap')?.controls; let i=index;">
                         <div [formGroupName]="i" class="form-group">
-                            <label class="col-3 ps-1 col-form-label"
+                            <label class="col-3 ps-3 col-form-label"
                                    (click)="switchCollapseInputsMap(i)">{{input.value.keyMap}}</label>
                             <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
                                     (click)="switchCollapseInputsMap(i)"
@@ -104,14 +106,14 @@
                                     class="btn btn-sm btn-light btn-outline-dark ms-sm-1 border-0"
                                     (click)="switchMapToVariableRef(i);"
                                     title="{{'components.action.refvar.switchTo.tooltip' | translate}}">
-                                <span class="font-weight-bold">{{'components.action.refvar.label' | translate}}</span>
+                                <span class="fw-bold">{{'components.action.refvar.label' | translate}}</span>
                             </button>
                             <ng-container *ngIf="!collapseInputsMap[i]">
                                 <div formArrayName="valueMap"
                                      *ngFor="let nestedMap of input.get('valueMap').controls; let j = index;">
                                     <div [formGroupName]="j">
                                         <div class="form-group row">
-                                            <div class="col-3 px-1">
+                                            <div class="col-3 ps-3">
                                                 <input type="text" class="form-control" formControlName="k"
                                                        title="{{nestedMap.get('k').value}}"
                                                        placeholder="key"/>
@@ -137,7 +139,7 @@
                     <div formArrayName="inputsList"
                          *ngFor="let input of actionForm.get('inputsList')?.controls; let i=index;">
                         <div [formGroupName]="i" class="form-group">
-                            <label class="col-3 ps-1 col-form-label"
+                            <label class="col-3 ps-3 col-form-label"
                                    (click)="switchCollapseInputsList(i)">{{input.value.keyList}}</label>
                             <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
                                     (click)="switchCollapseInputsList(i)"
@@ -154,14 +156,14 @@
                                     class="btn btn-sm btn-light btn-outline-dark ms-sm-1 border-0"
                                     (click)="switchListToVariableRef(i);"
                                     title="{{'components.action.refvar.switchTo.tooltip' | translate}}">
-                                <span class="font-weight-bold">{{'components.action.refvar.label' | translate}}</span>
+                                <span class="fw-bold">{{'components.action.refvar.label' | translate}}</span>
                             </button>
                             <ng-container *ngIf="!collapseInputsList[i]">
                                 <div formArrayName="valueList"
                                      *ngFor="let nestedList of input.get('valueList').controls; let j=index;">
                                     <div [formGroupName]="j">
                                         <div class="form-group row">
-                                            <div class="col-11 px-1">
+                                            <div class="col-11 ps-3">
                                                 <textarea class="me-2 form-control" formControlName="l"
                                                           placeholder="value" rows="1"></textarea>
                                             </div>
@@ -183,7 +185,7 @@
             </div>
             <!-- Validations -->
             <fieldset class="mt-4" [ngClass]="collapseValidations ? 'border-top ps-2' : 'border p-2'">
-                <legend class="ps-3 pe-3 font-weight-bold">
+                <legend class="ps-3 pe-3 fw-bold float-none">
                     <div class="legend-title" (click)="switchCollapseValidations()">{{'components.shared.edition.blocks.validations' | translate}}</div>
                     <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
                             (click)="switchCollapseValidations()"
@@ -224,7 +226,7 @@
             </fieldset>
             <!-- Outputs -->
             <fieldset class="mt-4" [ngClass]="collapseOutputs ? 'border-top ps-2' : 'border p-2'">
-                <legend class="px-3 font-weight-bold">
+                <legend class="px-3 fw-bold float-none">
                     <div class="legend-title" (click)="switchCollapseOutputs()">{{'components.shared.edition.blocks.outputs' | translate}}</div>
                     <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
                             (click)="switchCollapseOutputs()"

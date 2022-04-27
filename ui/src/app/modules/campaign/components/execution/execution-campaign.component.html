@@ -49,7 +49,7 @@
             <span class="fa fa-times"></span>
         </button>
     </div>
-    <em class="text-white font-weight-bold">{{executionError}}</em>
+    <em class="text-white fw-bold">{{executionError}}</em>
 </div>
 
 <div class="row bg-danger" *ngIf="errorMessage">
@@ -58,7 +58,7 @@
             <span class="fa fa-times"></span>
         </button>
     </div>
-    <em class="text-white font-weight-bold">{{errorMessage}}</em>
+    <em class="text-white fw-bold">{{errorMessage}}</em>
 </div>
 
 <div class="row">
@@ -173,7 +173,7 @@
                 <tbody>
                     <tr *ngFor="let scenarioReportOutline of currentScenariosReportsOutlines">
                         <td>
-                            <span class="font-weight-bold small_text">{{scenarioReportOutline.scenarioId}}</span>
+                            <span class="fw-bold small_text">{{scenarioReportOutline.scenarioId}}</span>
                         </td>
                         <td>
                             <chutney-execution-badge [status]="scenarioReportOutline.status"
@@ -225,7 +225,7 @@
         </div>
     </div>
     <div class="col-md-7  ps-4" *ngIf="!currentCampaignExecutionReport">
-        <span class="font-weight-bold">{{ 'campaigns.execution.scenarios.title' | translate }} </span>({{ scenarios.length }})
+        <span class="fw-bold">{{ 'campaigns.execution.scenarios.title' | translate }} </span>({{ scenarios.length }})
         <div class="table-responsive">
             <table class="table table-sm table-striped table-hover">
                 <thead>

@@ -22,7 +22,7 @@
         <div class="row">
             <form [formGroup]="componentForm" autocomplete="off" class="col text-center was-validated">
                 <fieldset class="form-group border p-2" formArrayName="parameters">
-                    <legend class="px-3"
+                    <legend class="px-3 float-none"
                             style="width: auto;">{{'scenarios.execution.dataset.title' | translate}}</legend>
                     <div class="row"
                          *ngFor="let parameter of componentForm.get('parameters')?.controls; let i=index">

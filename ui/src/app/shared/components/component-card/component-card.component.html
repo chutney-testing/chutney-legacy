@@ -1,5 +1,5 @@
 <div *ngIf="component" id="component-{{uid}}" class="card-body pointer p-2" [formGroup]="cardForm">
-    <div class="float-sm-right">
+    <div class="float-sm-end">
         <button *hasAuthorization="[Authorization.COMPONENT_WRITE, Authorization.SCENARIO_WRITE]"
             type="button" class="btn btn-sm btn-outline-danger"
             (click)="delete()"
@@ -17,12 +17,12 @@
         </ng-container>
     </span>
     <span *ngIf="component.implementation?.identifier"
-          class="scenario-components-identifier me-3 font-italic ps-3 float-right font-weight-bold">
+          class="scenario-components-identifier me-3 font-italic ps-3 float-end fw-bold">
         ({{component.implementation.identifier}})
     </span>
     <div *ngIf="component.computedParameters?.length > 0" class="scenario-components-parameters">
         <fieldset class="w-100" [ngClass]="collapseComponentsParameters ? 'border-top ps-2' : 'border p-2'">
-            <legend class="px-3 mb-0 font-weight-bold" (click)="switchCollapseComponentsParameter()">
+            <legend class="px-3 mb-0 fw-bold float-none" (click)="switchCollapseComponentsParameter()">
                 <span>
                     {{'components.shared.edition.blocks.parameters' | translate}}
                 </span>

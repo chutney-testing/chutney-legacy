@@ -42,7 +42,7 @@
                 </div>
                 <div class="row">
                     <div class="p-0 align-self-center">
-                        <label class="form-control-label font-weight-bold"
+                        <label class="form-control-label fw-bold"
                                for="tags">{{ 'scenarios.edition.form.tags' | translate }}</label>
                     </div>
                     <div class="col">
@@ -78,7 +78,7 @@
             <div class="testcase-edition col-9">
                 <div class="row mt-0">
                     <div class="col-8 border-right">
-                        <div class="row font-weight-bold">
+                        <div class="row fw-bold">
                             <span class="legend-title">{{'components.testcase.edition.blocks.steps' | translate}}</span>
                         </div>
                         <div class="p-2 border drop-zone" dragula="COPYABLE"
@@ -93,13 +93,13 @@
                         </div>
                     </div>
                     <div class="col-4">
-                        <div class="row font-weight-bold">
+                        <div class="row fw-bold">
                             <span class="mr-5">{{'menu.principal.jiraId' | translate}}</span>
                             <input type="text" class="form-control mr-2 small-text"
                                 formControlName="jiraId"
                                 placeholder="id jira"/>
                         </div>
-                        <div class="row font-weight-bold">
+                        <div class="row fw-bold">
                             <span class="mr-5">{{'menu.principal.dataset' | translate}}</span>
                             <chutney-dataset-selection
                                 [selectedDatasetId]="scenarioComponent.datasetId"
@@ -107,7 +107,7 @@
                             </chutney-dataset-selection>
 
                         </div>
-                        <div class="row font-weight-bold">
+                        <div class="row fw-bold">
                             <span class="mr-5 cursor-default"
                                   (click)="switchCollapseParam()">{{'components.shared.edition.blocks.parameters' | translate}}</span>
                             <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"

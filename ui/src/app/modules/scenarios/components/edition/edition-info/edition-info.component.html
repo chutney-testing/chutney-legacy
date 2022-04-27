@@ -2,12 +2,12 @@
     <ng-template #editionsInfo>
         <div>
             <div class="row m-0 text-nowrap justify-content-center">
-                <label class="form-control-label m-0 font-weight-bold">Edition depuis</label>
+                <label class="form-control-label m-0 fw-bold">Edition depuis</label>
                 <span class="form-control border-0 text-center">{{ edition.editionStartDate  | amDateFormat:'YYYY-MM-DD HH:mm:ss' }}</span>
             </div>
             <ng-container *ngIf="editions && editions.length > 0">
-                <div class="row mb-0 text-nowrap justify-content-center font-weight-bold">Editions concurrentes</div>
-                <div *ngFor="let e of editions" class="row m-0 mb-1 bg-warning text-white text-nowrap border border-white rounded font-weight-bold">
+                <div class="row mb-0 text-nowrap justify-content-center fw-bold">Editions concurrentes</div>
+                <div *ngFor="let e of editions" class="row m-0 mb-1 bg-warning text-white text-nowrap border border-white rounded fw-bold">
                     <div class="col-4 p-0 ps-1 m-0 text-left">{{ e.editionUser }}</div>
                     <div class="col-8 p-0 pe-1 m-0 text-right">{{ e.editionStartDate | amDateFormat:'YYYY-MM-DD HH:mm:ss' }}</div>
                 </div>
