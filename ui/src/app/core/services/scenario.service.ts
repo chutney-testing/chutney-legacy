@@ -74,21 +74,24 @@ export class ScenarioService {
              return this.mapJsonScenario(res);
          }));*/
         const listScenariosQuery = gql
-            `{
-                scenarios {
-                    metadata {
-                      id
-                      title
-                      description
-                      repositorySource
-                      tags
-                    }
-                }
-            }`;
+        `query($keywordInput: String){
+            search(keyword : $keywordInput) {
+              metadata {
+                id
+                title
+                description
+                repositorySource
+                tags
+              }
+            }
+          }
+          `;
 
         return this.apollo
-            .query({query: listScenariosQuery})
-            .pipe(map(({data}) => this.mapJsonScenario(data['scenarios'])));
+            .query({query: listScenariosQuery,  variables: {
+                keyword: ''
+              }})
+            .pipe(map(({data}) => this.mapJsonScenario(data['search'])));
     }
 
     findScenarioMetadata(id: string): Observable<ScenarioIndex> {
@@ -128,21 +131,24 @@ export class ScenarioService {
 
     search(textFilter: any): Observable<Array<ScenarioIndex>> {
         const listScenariosQuery = gql
-            `{
-                scenarios(keyword: "${textFilter}") {
-                    metadata {
-                      id
-                      title
-                      description
-                      repositorySource
-                      tags
-                    }
+            `query($keywordInput: String){
+                search(keyword : $keywordInput) {
+                  metadata {
+                    id
+                    title
+                    description
+                    repositorySource
+                    tags
+                  }
                 }
-            }`;
+              }
+              `;
 
         return this.apollo
-            .query({query: listScenariosQuery})
-            .pipe(map(({data}) => this.mapJsonScenario(data['scenarios'])));
+        .query({query: listScenariosQuery,  variables: {
+            keywordInput: textFilter
+          }})
+            .pipe(map(({data}) => this.mapJsonScenario(data['search'])));
        /* return this.httpClient.get<Array<ScenarioIndex>>(environment.backend + `${this.resourceUrlV2}?textFilter=${textFilter}`)
             .pipe(map((res: Array<any>) => {
                 return this.mapJsonScenario(res);
