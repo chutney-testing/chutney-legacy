@@ -34,14 +34,14 @@
                                 title="{{'global.actions.record' | translate}}">
                             <span class="fa fa-check"></span>
                         </button>
-                        <button type="button" class="btn btn-secondary ml-2" (click)="cancel()"
+                        <button type="button" class="btn btn-secondary ms-2" (click)="cancel()"
                                 title="{{'global.actions.cancel' | translate}}">
                             <span class="fa fa-times"></span>
                         </button>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="p-0 align-self-center">
+                    <div class="col-2 p-0 align-self-center">
                         <label class="form-control-label fw-bold"
                                for="tags">{{ 'scenarios.edition.form.tags' | translate }}</label>
                     </div>
@@ -94,13 +94,13 @@
                     </div>
                     <div class="col-4">
                         <div class="row fw-bold">
-                            <span class="mr-5">{{'menu.principal.jiraId' | translate}}</span>
-                            <input type="text" class="form-control mr-2 small-text"
+                            <span class="me-5">{{'menu.principal.jiraId' | translate}}</span>
+                            <input type="text" class="form-control me-2 small-text"
                                 formControlName="jiraId"
                                 placeholder="id jira"/>
                         </div>
                         <div class="row fw-bold">
-                            <span class="mr-5">{{'menu.principal.dataset' | translate}}</span>
+                            <span class="me-5">{{'menu.principal.dataset' | translate}}</span>
                             <chutney-dataset-selection
                                 [selectedDatasetId]="scenarioComponent.datasetId"
                                 (selectionEvent)="selectDataset($event)">
@@ -108,14 +108,14 @@
 
                         </div>
                         <div class="row fw-bold">
-                            <span class="mr-5 cursor-default"
+                            <span class="me-5 cursor-default"
                                   (click)="switchCollapseParam()">{{'components.shared.edition.blocks.parameters' | translate}}</span>
                             <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
                                     (click)="switchCollapseParam()"
                                     title="{{(collapseParam ? 'global.actions.show' : 'global.actions.hide') | translate}}">
                                 <span class="fa" [ngClass]="collapseParam ? 'fa-eye' : 'fa-eye-slash'"></span>
                             </button>
-                            <button id="addParameterBtn" class="btn btn-sm btn-light btn-outline-dark border-0 ml-sm-1"
+                            <button id="addParameterBtn" class="btn btn-sm btn-light btn-outline-dark border-0 ms-sm-1"
                                     (click)="addParameters()"
                                     title="{{'global.actions.add' | translate}}">
                                 <span class="fa fa-plus"></span>
@@ -127,7 +127,7 @@
                                 <ng-container [formGroupName]="i">
                                     <div class="row w-100 mb-1">
                                         <div class="col-9 pl-0">
-                                            <input type="text" class="form-control mr-2 small-text"
+                                            <input type="text" class="form-control me-2 small-text"
                                                    formControlName="key"
                                                    placeholder="key"/>
                                         </div>
@@ -140,7 +140,7 @@
                                         </div>
                                     </div>
                                     <div class="w-100 pl-4">
-                                        <textarea class="form-control mr-2 small-text" formControlName="value" rows="1"
+                                        <textarea class="form-control me-2 small-text" formControlName="value" rows="1"
                                                   placeholder="value"></textarea>
                                     </div>
                                 </ng-container>

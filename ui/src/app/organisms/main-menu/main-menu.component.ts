@@ -6,33 +6,26 @@ import { LoginService } from '@core/services';
 import { User, Authorization } from '@model';
 
 @Component({
-  selector: 'chutney-main-menu',
-  templateUrl: './main-menu.component.html',
-  styleUrls: ['./main-menu.component.scss']
+    selector: 'chutney-main-menu',
+    templateUrl: './main-menu.component.html',
+    styleUrls: ['./main-menu.component.scss']
 })
 export class MainMenuComponent {
+    user$: Observable<User>;
+    Authorization = Authorization;
 
-  ICON_TESTS = '';//require('../../../assets/icons/tests.png');
-  ICON_TESTS_SELECTED = '';//require('../../../assets/icons/tests-selected.png');
+    constructor(
+        private loginService: LoginService,
+        private router: Router
+    ) {
+        this.user$ = this.loginService.getUser();
+    }
 
-  ICON_REPO = '';//require('../../../assets/icons/repository.png');
-  ICON_REPO_SELECTED = '';//require('../../../assets/icons/repository-selected.png');
+    logout() {
+        this.loginService.logout();
+    }
 
-  user$: Observable<User>;
-  Authorization = Authorization;
-
-  constructor(
-    private loginService: LoginService,
-    private router: Router
-  ) {
-    this.user$ = this.loginService.getUser();
-  }
-
-  logout() {
-    this.loginService.logout();
-  }
-
-  login() {
-    this.router.navigate(['login']);
-  }
+    login() {
+        this.router.navigate(['login']);
+    }
 }

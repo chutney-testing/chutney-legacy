@@ -10,7 +10,7 @@
                 ],
                 user: user
            }" [style]="''" [route]="'/scenario'" [label]="'menu.principal.scenarios' | translate"
-                    [img_src]="ICON_TESTS" [img_src_selected]="ICON_TESTS_SELECTED">
+                    [img_src]="'/assets/icons/tests.png'" [img_src_selected]="'/assets/icons/tests-selected.png'">
                 </chutney-menu-item>
                 <li class="separator"></li>
                 <chutney-menu-item *hasAuthorization="{
@@ -21,7 +21,7 @@
                             ],
                             user: user
                     }" [style]="'nav-link'" [route]="'/campaign'" [label]="'menu.principal.campaigns' | translate"
-                    [img_src]="ICON_TESTS" [img_src_selected]="ICON_TESTS_SELECTED">
+                    [img_src]="'/assets/icons/tests.png'" [img_src_selected]="'/assets/icons/tests-selected.png'">
                 </chutney-menu-item>
                 <li class="separator"></li>
                 <chutney-menu-item *hasAuthorization="{
@@ -31,7 +31,7 @@
                             ],
                             user: user
                     }" [style]="'nav-link'" [route]="'/component'" [label]="'menu.principal.component' | translate"
-                    [img_src]="ICON_REPO" [img_src_selected]="ICON_REPO_SELECTED">
+                    [img_src]="'/assets/icons/repository.png'" [img_src_selected]="'/assets/icons/repository-selected.png'">
                 </chutney-menu-item>
                 <chutney-menu-item *hasAuthorization="{
                             authorizations: [
@@ -40,7 +40,7 @@
                             ],
                             user: user
                     }" [style]="'nav-link'" [route]="'/variable'" [label]="'menu.principal.variable' | translate"
-                    [img_src]="ICON_REPO" [img_src_selected]="ICON_REPO_SELECTED">
+                    [img_src]="'/assets/icons/repository.png'" [img_src_selected]="'/assets/icons/repository-selected.png'">
                 </chutney-menu-item>
                 <chutney-menu-item *hasAuthorization="{
                             authorizations: [
@@ -49,7 +49,7 @@
                             ],
                             user: user
                     }" [style]="'nav-link'" [route]="'/dataset'" [label]="'menu.principal.dataset' | translate"
-                    [img_src]="ICON_REPO" [img_src_selected]="ICON_REPO_SELECTED">
+                    [img_src]="'/assets/icons/repository.png'" [img_src_selected]="'/assets/icons/repository-selected.png'">
                 </chutney-menu-item>
             </ul>
             <ul class="navbar-nav ms-auto flex-nowrap" *ngIf="(user$ | async) as user">
