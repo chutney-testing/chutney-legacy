@@ -1,11 +1,12 @@
 <div class="configuration">
-    <span class="text-danger"></span>
-    <div class="configuration__theme small me-3">
+    <div class="small me-3">
         <label for="edition" class="form-control-label m-0 me-2">{{ 'scenarios.edition.form.content.editor.mode' | translate }}</label>
         <select class="form-control ace-combo" id="edition" name="editorMode" (change)="changeMode($event)">
             <option *ngFor="let mode of modes" [value]="mode" [selected]="mode === currentMode">{{mode}}</option>
         </select>
-        <label for="theme" class="form-control-label m-0 mx-2">{{ 'scenarios.edition.form.content.editor.theme' | translate }}</label>
+    </div>
+    <div class="small me-3">
+        <label for="theme" class="form-control-label m-0 me-2">{{ 'scenarios.edition.form.content.editor.theme' | translate }}</label>
         <select class="form-control" id="theme" (change)="changeTheme($event)" name="editorTheme">
             <option *ngFor="let theme of themes" [value]="theme"
                     [selected]="theme === currentTheme">{{theme}}</option>

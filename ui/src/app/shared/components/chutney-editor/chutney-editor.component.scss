@@ -1,8 +1,9 @@
 .configuration {
-    margin-bottom: 1rem;
     display: flex;
     justify-content: flex-end;
-    &__theme {
+    margin-bottom: 0.2rem;
+    white-space: nowrap;
+    div {
         display: flex;
         flex-direction: row;
         align-items: center;
