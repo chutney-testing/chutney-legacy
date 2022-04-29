@@ -1,17 +1,17 @@
 package com.chutneytesting.engine.domain.execution.engine.step;
 
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.Lists;
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Objects.isNull;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
+
 import com.chutneytesting.engine.domain.execution.report.Status;
+import com.google.common.base.Stopwatch;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -27,9 +27,9 @@ public class StepState {
     private final List<String> informations = new ArrayList<>();
 
     void beginExecution() {
-        if(!stopwatch.isRunning()) {
+        if (!stopwatch.isRunning()) {
             stopwatch.start();
-            if (Objects.isNull(startDate)) {
+            if (isNull(startDate)) {
                 startDate = Instant.now();
             }
             status = Status.RUNNING;
@@ -37,9 +37,9 @@ public class StepState {
     }
 
     void endExecution(boolean isParentStep) {
-        if(stopwatch.isRunning()) {
+        if (stopwatch.isRunning()) {
             stopwatch.stop();
-            if(isParentStep) {
+            if (isParentStep) {
                 status = Status.EXECUTED;
             }
         }
@@ -59,12 +59,12 @@ public class StepState {
 
     void errorOccurred(String... message) {
         status = Status.FAILURE;
-        errors.addAll(Arrays.stream(message).filter(StringUtils::isNotEmpty).collect(Collectors.toList()));
+        errors.addAll(newArrayList(message));
     }
 
     void successOccurred(String... message) {
         status = Status.SUCCESS;
-        informations.addAll(Lists.newArrayList(message));
+        informations.addAll(newArrayList(message));
     }
 
     void reset() {
@@ -74,23 +74,23 @@ public class StepState {
     }
 
     void startWatch() {
-        if(!stopwatch.isRunning()) {
+        if (!stopwatch.isRunning()) {
             stopwatch.start();
         }
     }
 
     void stopWatch() {
-        if(stopwatch.isRunning()) {
+        if (stopwatch.isRunning()) {
             stopwatch.stop();
         }
     }
 
     void addInformation(String... message) {
-        informations.addAll(Lists.newArrayList(message));
+        informations.addAll(newArrayList(message));
     }
 
     void addErrors(String... message) {
-        errors.addAll(Lists.newArrayList(message));
+        errors.addAll(newArrayList(message));
     }
 
     public Duration duration() {
@@ -102,16 +102,18 @@ public class StepState {
     }
 
     public List<String> errors() {
-        return Collections.unmodifiableList(errors);
+        return unmodifiableList(filterNullAndEmptyMessage(errors));
     }
 
     public List<String> informations() {
-        return Collections.unmodifiableList(informations);
+        return unmodifiableList(filterNullAndEmptyMessage(informations));
     }
 
     public Instant startDate() {
-        return Optional.ofNullable(startDate).orElse(Instant.now());
+        return ofNullable(startDate).orElse(Instant.now());
     }
 
-
+    private List<String> filterNullAndEmptyMessage(List<String> messages) {
+        return messages.stream().filter(StringUtils::isNotEmpty).collect(toList());
+    }
 }
