@@ -5,7 +5,6 @@ import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
-import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
@@ -17,6 +16,7 @@ import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.execution.domain.report.StepExecutionReportCore;
 import com.chutneytesting.execution.domain.state.ExecutionStateRepository;
 import com.chutneytesting.instrument.domain.ChutneyMetrics;
+import com.chutneytesting.scenario.domain.TestCase;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Ascii;
@@ -244,7 +244,7 @@ public class ScenarioExecutionEngineAsync {
     }
 
     private Optional<String> joinAndTruncateMessages(Iterable<String> messages) {
-        return Optional.of(Ascii.truncate(Joiner.on(", ").join(messages), 50, "...")).filter(s -> !s.isEmpty());
+        return Optional.of(Ascii.truncate(Joiner.on(", ").useForNull("null").join(messages), 50, "...")).filter(s -> !s.isEmpty());
     }
 
     private void notifyExecutionStart(long executionId, TestCase testCase) {
@@ -269,7 +269,7 @@ public class ScenarioExecutionEngineAsync {
         LOGGER.trace("Send metrics for execution {}", executionId);
         try {
             ExecutionHistory.Execution execution = executionHistoryRepository.getExecution(testCase.id(), executionId);
-            metrics.onScenarioExecutionEnded(testCase,execution);
+            metrics.onScenarioExecutionEnded(testCase, execution);
         } catch (Exception e) {
             LOGGER.error("Send metrics for execution {} failed", executionId, e);
         }
