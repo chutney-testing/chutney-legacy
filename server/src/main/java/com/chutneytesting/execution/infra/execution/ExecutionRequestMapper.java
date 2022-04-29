@@ -10,10 +10,6 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.agent.domain.network.Agent;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
-import com.chutneytesting.scenario.domain.gwt.GwtStep;
-import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
-import com.chutneytesting.scenario.domain.gwt.Strategy;
-import com.chutneytesting.scenario.domain.raw.RawTestCase;
 import com.chutneytesting.engine.api.execution.CredentialExecutionDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
@@ -26,6 +22,10 @@ import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.compiler.ScenarioConversionException;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
 import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
+import com.chutneytesting.scenario.domain.gwt.GwtStep;
+import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
+import com.chutneytesting.scenario.domain.gwt.Strategy;
+import com.chutneytesting.scenario.domain.raw.RawTestCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
@@ -48,7 +48,7 @@ public class ExecutionRequestMapper {
 
     public ExecutionRequestDto toDto(ExecutionRequest executionRequest) {
         final StepDefinitionRequestDto stepDefinitionRequestDto = convertToStepDef(executionRequest);
-        return new ExecutionRequestDto(stepDefinitionRequestDto);
+        return new ExecutionRequestDto(stepDefinitionRequestDto, executionRequest.environment);
     }
 
     private StepDefinitionRequestDto convertToStepDef(ExecutionRequest executionRequest) { // TODO - shameless green - might be refactored later
@@ -95,8 +95,7 @@ public class ExecutionRequestMapper {
             definition.inputs,
             steps,
             definition.outputs,
-            definition.validations,
-            env);
+            definition.validations);
     }
 
     private StepDefinitionRequestDto convertGwt(ExecutionRequest executionRequest) {
@@ -109,8 +108,7 @@ public class ExecutionRequestMapper {
             emptyMap(),
             convert(gwtTestCase.scenario.steps(), executionRequest.environment),
             emptyMap(),
-            emptyMap(),
-            executionRequest.environment
+            emptyMap()
         );
     }
 
@@ -129,8 +127,7 @@ public class ExecutionRequestMapper {
             step.implementation.map(i -> i.inputs).orElse(emptyMap()),
             convert(step.subSteps, env),
             step.implementation.map(i -> i.outputs).orElse(emptyMap()),
-            step.implementation.map(i -> i.validations).orElse(emptyMap()),
-            env
+            step.implementation.map(i -> i.validations).orElse(emptyMap())
         );
     }
 
@@ -192,8 +189,7 @@ public class ExecutionRequestMapper {
                 null,
                 convertComposedSteps(composedTestCase.composedScenario.composedSteps, executionRequest.environment),
                 null,
-                null,
-                executionRequest.environment
+                null
             );
         } catch (Exception e) {
             throw new ScenarioConversionException(composedTestCase.metadata().id(), e);
@@ -213,8 +209,7 @@ public class ExecutionRequestMapper {
             composedStep.stepImplementation.map(si -> si.inputs).orElse(emptyMap()),
             composedStep.steps.stream().map(f -> convert(f, env)).collect(toList()),
             composedStep.stepImplementation.map(si -> si.outputs).orElse(emptyMap()),
-            composedStep.stepImplementation.map(si -> si.validations).orElse(emptyMap()),
-            env
+            composedStep.stepImplementation.map(si -> si.validations).orElse(emptyMap())
         );
     }
 

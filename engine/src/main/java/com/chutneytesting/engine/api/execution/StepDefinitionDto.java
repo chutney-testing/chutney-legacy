@@ -39,8 +39,6 @@ public class StepDefinitionDto {
 
     public final Map<String, Object> validations;
 
-    public final String environment;
-
     public final StepStrategyDefinitionDto strategy;
 
     public StepDefinitionDto(String name,
@@ -50,8 +48,7 @@ public class StepDefinitionDto {
                              Map<String, Object> inputs,
                              List<StepDefinitionDto> steps,
                              Map<String, Object> outputs,
-                             Map<String, Object> validations,
-                             String environment) {
+                             Map<String, Object> validations) {
         this.name = name;
         this.target = target;
         this.type = type;
@@ -60,7 +57,6 @@ public class StepDefinitionDto {
         this.steps = steps != null ? Collections.unmodifiableList(steps) : Collections.emptyList();
         this.outputs = outputs != null ? Collections.unmodifiableMap(outputs) : Collections.emptyMap();
         this.validations = validations != null ? Collections.unmodifiableMap(validations) : Collections.emptyMap();
-        this.environment = environment;
     }
 
     public Optional<TargetExecutionDto> getTarget() {

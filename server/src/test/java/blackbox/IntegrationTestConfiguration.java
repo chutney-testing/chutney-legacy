@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Import;
 @Import({ServerConfiguration.class, DBConfiguration.class})
 public class IntegrationTestConfiguration {
 
-
     @Bean
     SSLContext sslContext() throws Exception {
         SSLContextBuilder sslCtxBuilder = new SSLContextBuilder();

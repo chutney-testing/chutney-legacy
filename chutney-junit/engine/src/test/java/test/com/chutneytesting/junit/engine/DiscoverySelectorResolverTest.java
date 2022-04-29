@@ -31,7 +31,7 @@ class DiscoverySelectorResolverTest {
         // Given
         GlacioAdapter glacioAdapter = mock(GlacioAdapter.class);
         List<StepDefinitionDto> stepDefinitions = buildFeatureResultParsing("scenario one", "scenario two");
-        when(glacioAdapter.toChutneyStepDefinition(any())).thenReturn(stepDefinitions);
+        when(glacioAdapter.toChutneyStepDefinition(any(), any())).thenReturn(stepDefinitions);
 
         EngineDiscoveryRequest discoveryRequest = mock(EngineDiscoveryRequest.class);
         String fileName = "success.feature";
@@ -42,7 +42,7 @@ class DiscoverySelectorResolverTest {
         ChutneyEngineDescriptor engineDescriptor = new ChutneyEngineDescriptor(engineUniqueId, "engineName", null);
 
         // When
-        DiscoverySelectorResolver sut = new DiscoverySelectorResolver(glacioAdapter);
+        DiscoverySelectorResolver sut = new DiscoverySelectorResolver(glacioAdapter, "env");
         sut.resolveSelectors(discoveryRequest, engineDescriptor);
 
         // Then
@@ -76,6 +76,6 @@ class DiscoverySelectorResolverTest {
     }
 
     private StepDefinitionDto buildStepDefinitionByName(String name) {
-        return new StepDefinitionDto(name, null, "", null, null, null, null, null, null);
+        return new StepDefinitionDto(name, null, "", null, null, null, null, null);
     }
 }

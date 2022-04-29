@@ -55,14 +55,14 @@ public class GlacioAdapter {
 
         List<StepDefinitionDto> scenarioSteps = example.getSteps().stream()
             .map(step -> this.stepFactory.toStepDefinition(lang, context, step))
-            .map(stepDefinition -> StepDefinitionMapper.toStepDefinitionDto(stepDefinition))
+            .map(StepDefinitionMapper::toStepDefinitionDto)
             .collect(Collectors.toList());
 
         return buildRootStep(scenarioSteps, context, name);
     }
 
     private StepDefinitionDto buildRootStep(List<StepDefinitionDto> subSteps, ParsingContext context, String text) {
-        return new StepDefinitionDto(text, null, "", null, emptyMap(), subSteps, emptyMap(), emptyMap(), context.values.get(ENVIRONMENT));
+        return new StepDefinitionDto(text, null, "", null, emptyMap(), subSteps, emptyMap(), emptyMap());
     }
 
     private Feature toGlacioModel(String text) {

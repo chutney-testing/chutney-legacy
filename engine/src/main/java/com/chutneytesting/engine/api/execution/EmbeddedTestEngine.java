@@ -30,7 +30,7 @@ public final class EmbeddedTestEngine implements TestEngine {
 
     @Override
     public Long executeAsync(ExecutionRequestDto request) {
-        StepDefinition stepDefinition = StepDefinitionMapper.toStepDefinition(request.scenario.definition);
+        StepDefinition stepDefinition = StepDefinitionMapper.toStepDefinition(request.scenario.definition, request.environment);
         return engine.execute(stepDefinition, ScenarioExecution.createScenarioExecution(tasksConfiguration));
     }
 

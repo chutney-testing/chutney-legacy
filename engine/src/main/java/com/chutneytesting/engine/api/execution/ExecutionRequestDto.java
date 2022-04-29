@@ -18,10 +18,12 @@ import java.util.stream.Collectors;
 public class ExecutionRequestDto {
 
     public final StepDefinitionRequestDto scenario;
+    public final String environment;
 
     @JsonCreator
-    public ExecutionRequestDto(StepDefinitionRequestDto scenario) {
+    public ExecutionRequestDto(StepDefinitionRequestDto scenario, String environment) {
         this.scenario = scenario;
+        this.environment = environment;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -49,7 +51,6 @@ public class ExecutionRequestDto {
         public final List<StepDefinitionRequestDto> steps;
         public final Map<String, Object> outputs;
         public final Map<String, Object> validations;
-        public final String environment;
 
         @JsonCreator
         public StepDefinitionRequestDto(
@@ -60,8 +61,7 @@ public class ExecutionRequestDto {
             Map<String, Object> inputs,
             List<StepDefinitionRequestDto> steps,
             Map<String, Object> outputs,
-            Map<String, Object> validations,
-            String environment) {
+            Map<String, Object> validations) {
 
             this.name = name;
             this.target = target;
@@ -70,7 +70,6 @@ public class ExecutionRequestDto {
             this.steps = steps;
             this.outputs = outputs;
             this.validations = validations;
-            this.environment = environment;
 
             this.definition = new StepDefinitionDto(
                 name,
@@ -80,8 +79,7 @@ public class ExecutionRequestDto {
                 inputs,
                 steps != null ? steps.stream().map(r -> r.definition).collect(Collectors.toList()) : Collections.emptyList(),
                 outputs,
-                validations,
-                environment
+                validations
             );
         }
     }
