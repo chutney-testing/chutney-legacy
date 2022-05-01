@@ -87,7 +87,7 @@
         <kafka.version>2.8.1</kafka.version> <!-- https://docs.spring.io/spring-kafka/docs/2.8.2/reference/html/#update-deps -->
         <jackson.version>2.13.2</jackson.version>
         <guava.version>31.0.1-jre</guava.version>
-        <immutables.version>2.8.8</immutables.version>
+        <immutables.version>2.9.0</immutables.version>
         <sl4j.api.version>1.7.36</sl4j.api.version>
         <commonslang3.version>3.12.0</commonslang3.version>
         <commonstext.version>1.9</commonstext.version>
