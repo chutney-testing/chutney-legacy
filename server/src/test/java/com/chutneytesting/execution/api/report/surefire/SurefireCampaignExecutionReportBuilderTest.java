@@ -133,7 +133,7 @@ public class SurefireCampaignExecutionReportBuilderTest {
         List<String> infos = ServerReportStatus.SUCCESS == status ? singletonList("test info") : emptyList();
         List<String> errors = ServerReportStatus.FAILURE == status ? singletonList("test error") : emptyList();
 
-        return new StepExecutionReportCore(0L,
+        return new StepExecutionReportCore(
             title,
             duration,
             Instant.now(),

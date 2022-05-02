@@ -8,7 +8,6 @@ import java.util.Map;
 
 public class StepExecutionReportCore implements ServerReportStatus.HavingStatus {
 
-    public final Long executionId;
     public final String name;
     public final Long duration;
     public final Instant startDate;
@@ -24,8 +23,7 @@ public class StepExecutionReportCore implements ServerReportStatus.HavingStatus 
     public final Map<String, Object> stepOutputs;
 
     @JsonCreator
-    public StepExecutionReportCore(Long executionId,
-                                   String name,
+    public StepExecutionReportCore(String name,
                                    Long duration,
                                    Instant startDate,
                                    ServerReportStatus status,
@@ -37,11 +35,10 @@ public class StepExecutionReportCore implements ServerReportStatus.HavingStatus 
                                    String targetUrl,
                                    String strategy
     ) {
-        this(executionId, name, duration, startDate, status, information, errors, steps, type, targetName, targetUrl, strategy, null, null);
+        this(name, duration, startDate, status, information, errors, steps, type, targetName, targetUrl, strategy, null, null);
     }
 
-    public StepExecutionReportCore(Long executionId,
-                                   String name,
+    public StepExecutionReportCore(String name,
                                    Long duration,
                                    Instant startDate,
                                    ServerReportStatus status,
@@ -55,7 +52,6 @@ public class StepExecutionReportCore implements ServerReportStatus.HavingStatus 
                                    Map<String, Object> evaluatedInputs,
                                    Map<String, Object> stepOutputs
     ) {
-        this.executionId = executionId;
         this.name = name;
         this.duration = duration;
         this.startDate = startDate;
