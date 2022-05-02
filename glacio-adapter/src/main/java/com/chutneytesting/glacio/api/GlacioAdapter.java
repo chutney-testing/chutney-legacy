@@ -58,10 +58,10 @@ public class GlacioAdapter {
             .map(StepDefinitionMapper::toStepDefinitionDto)
             .collect(Collectors.toList());
 
-        return buildRootStep(scenarioSteps, context, name);
+        return buildRootStep(scenarioSteps, name);
     }
 
-    private StepDefinitionDto buildRootStep(List<StepDefinitionDto> subSteps, ParsingContext context, String text) {
+    private StepDefinitionDto buildRootStep(List<StepDefinitionDto> subSteps, String text) {
         return new StepDefinitionDto(text, null, "", null, emptyMap(), subSteps, emptyMap(), emptyMap());
     }
 
