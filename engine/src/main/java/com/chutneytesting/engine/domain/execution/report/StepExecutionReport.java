@@ -12,6 +12,7 @@ public class StepExecutionReport implements Status.HavingStatus {
 
     public final Long executionId;
     public final String name;
+    public final String environment;
     public final Long duration;
     public final Instant startDate;
     public final Status status;
@@ -31,7 +32,8 @@ public class StepExecutionReport implements Status.HavingStatus {
 
     @JsonCreator
     public StepExecutionReport(Long executionId,
-                                String name,
+                               String name,
+                               String environment,
                                Long duration,
                                Instant startDate,
                                Status status,
@@ -43,11 +45,12 @@ public class StepExecutionReport implements Status.HavingStatus {
                                String targetUrl,
                                String strategy
     ) {
-        this(executionId, name, duration, startDate, status, information, errors, steps, type, targetName, targetUrl, strategy, null, null, null);
+        this(executionId, name, environment, duration, startDate, status, information, errors, steps, type, targetName, targetUrl, strategy, null, null, null);
     }
 
     public StepExecutionReport(Long executionId,
                                String name,
+                               String environment,
                                Long duration,
                                Instant startDate,
                                Status status,
@@ -64,6 +67,7 @@ public class StepExecutionReport implements Status.HavingStatus {
     ) {
         this.executionId = executionId;
         this.name = name;
+        this.environment = environment;
         this.duration = duration;
         this.startDate = startDate;
         this.status = status;

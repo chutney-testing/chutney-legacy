@@ -16,9 +16,16 @@ public class StepExecutionReportSerializer extends StdSerializer<StepExecutionRe
 
     @Override
     public void serialize(StepExecutionReportDto value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+        serialize(value, true, gen, provider);
+    }
+
+    public void serialize(StepExecutionReportDto value, boolean isRoot, JsonGenerator gen, SerializerProvider provider) throws IOException {
         gen.writeStartObject();
 
         gen.writeStringField("name", value.name);
+        if (isRoot) {
+            gen.writeStringField("environment", value.environment);
+        }
         gen.writeStringField("status", value.status.name());
 
         if (!value.context.evaluatedInputs.isEmpty()) {
@@ -40,7 +47,7 @@ public class StepExecutionReportSerializer extends StdSerializer<StepExecutionRe
 
         gen.writeArrayFieldStart("steps");
         for (StepExecutionReportDto step : value.steps) {
-            serialize(step, gen, provider);
+            serialize(step, false, gen, provider);
         }
         gen.writeEndArray();
 

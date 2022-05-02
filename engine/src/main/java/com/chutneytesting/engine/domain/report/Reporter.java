@@ -84,16 +84,16 @@ public class Reporter {
 
     private void publishReportAndCompletePublisher(Event event) {
         doIfPublisherExists(event.executionId(), (observer) -> {
-                publishLastReport(event);
-                completePublisher(event.executionId(), observer);
-            });
+            publishLastReport(event);
+            completePublisher(event.executionId(), observer);
+        });
     }
 
     private StepExecutionReport generateRunningReport(long executionId) {
         final Status calculatedRootStepStatus = rootSteps.get(executionId).status();
 
         final Status finalStatus;
-        if(!calculatedRootStepStatus.equals(RUNNING) && !calculatedRootStepStatus.equals(PAUSED)) {
+        if (!calculatedRootStepStatus.equals(RUNNING) && !calculatedRootStepStatus.equals(PAUSED)) {
             finalStatus = RUNNING;
         } else {
             finalStatus = calculatedRootStepStatus;
@@ -107,7 +107,9 @@ public class Reporter {
 
     StepExecutionReport generateReport(Step step, Function<Step, Status> statusSupplier) {
         Step.StepContextImpl stepContext = step.stepContext();
-        return new StepExecutionReportBuilder().setName(step.definition().name)
+        return new StepExecutionReportBuilder()
+            .setName(step.definition().name)
+            .setEnvironment(step.definition().environment)
             .setDuration(step.duration().toMillis())
             .setStartDate(step.startDate())
             .setStatus(statusSupplier.apply(step))

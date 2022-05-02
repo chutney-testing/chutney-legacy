@@ -109,6 +109,7 @@ public class HttpClientTest {
     private StepExecutionReportDto createStepExecutionReportDto() {
         return new StepExecutionReportDto(
             "name",
+            "environment",
             Instant.now(),
             1L,
             StatusDto.NOT_EXECUTED,

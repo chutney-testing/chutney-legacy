@@ -42,6 +42,7 @@ public class HttpTestEngineTest {
 
         StepExecutionReport report = new StepExecutionReportBuilder()
             .setName("test")
+            .setEnvironment("environment")
             .setDuration(2L)
             .setStartDate(Instant.now())
             .setStatus(Status.SUCCESS)
@@ -65,6 +66,8 @@ public class HttpTestEngineTest {
             )
             .andDo(result -> LOGGER.info(result.getResponse().getContentAsString()))
             .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.name", CoreMatchers.equalTo("test")))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.environment", CoreMatchers.equalTo("environment")))
             .andExpect(MockMvcResultMatchers.jsonPath("$.duration", CoreMatchers.equalTo(2)))
             .andExpect(MockMvcResultMatchers.jsonPath("$.status", CoreMatchers.equalTo(Status.SUCCESS.name())))
             .andExpect(MockMvcResultMatchers.jsonPath("$.type", CoreMatchers.equalTo("taskType")))
