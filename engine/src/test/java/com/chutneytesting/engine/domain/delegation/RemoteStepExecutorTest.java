@@ -1,5 +1,6 @@
 package com.chutneytesting.engine.domain.delegation;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -8,7 +9,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.google.common.collect.Lists;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.engine.StepExecutor;
@@ -18,9 +18,9 @@ import com.chutneytesting.engine.domain.execution.engine.step.StepContext;
 import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReportBuilder;
+import com.google.common.collect.Lists;
 import java.time.Instant;
 import java.util.Collections;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 public class RemoteStepExecutorTest {
@@ -39,7 +39,7 @@ public class RemoteStepExecutorTest {
 
         DelegationClient mockHttpClient = mock(DelegationClient.class);
         StepContext spyCurrentStepContext = spy(StepContext.class);
-        Step step = new Step(mock(StepDataEvaluator.class), mock(StepDefinition.class), Optional.empty(),mock(StepExecutor.class), Collections.EMPTY_LIST);
+        Step step = new Step(mock(StepDataEvaluator.class), mock(StepDefinition.class), mock(StepExecutor.class), emptyList());
         Step spyCurrentStep = spy(step);
         NamedHostAndPort mockDelegate = mock(NamedHostAndPort.class);
         when(mockHttpClient.handDown(any(), any()))
@@ -95,7 +95,7 @@ public class RemoteStepExecutorTest {
 
         DelegationClient mockHttpClient = mock(DelegationClient.class);
         StepContext spyCurrentStepContext = spy(StepContext.class);
-        Step step = new Step(mock(StepDataEvaluator.class), mock(StepDefinition.class), Optional.empty(),mock(StepExecutor.class), Collections.EMPTY_LIST);
+        Step step = new Step(mock(StepDataEvaluator.class), mock(StepDefinition.class), mock(StepExecutor.class), emptyList());
         Step spyCurrentStep = spy(step);
         NamedHostAndPort mockDelegate = mock(NamedHostAndPort.class);
         when(mockHttpClient.handDown(any(), any()))

@@ -25,7 +25,6 @@ import com.chutneytesting.task.spi.injectable.Target;
 import io.reactivex.observers.TestObserver;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -196,7 +195,7 @@ public class ReporterTest {
 
     private Step buildStep(StepDefinition definition) {
         final List<Step> steps = definition.steps.stream().map(this::buildStep).collect(Collectors.toUnmodifiableList());
-        return new Step(dataEvaluator, definition, Optional.empty(), null, steps);
+        return new Step(dataEvaluator, definition, null, steps);
     }
 
     private void executeFakeScenarioSuccess() {

@@ -1,5 +1,6 @@
 package com.chutneytesting.engine.domain.execution.engine.step;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Optional.ofNullable;
@@ -23,7 +24,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,10 +49,10 @@ public class Step {
 
     private StepContextImpl stepContext;
 
-    public Step(StepDataEvaluator dataEvaluator, StepDefinition definition, Optional<Target> target, StepExecutor executor, List<Step> steps) {
+    public Step(StepDataEvaluator dataEvaluator, StepDefinition definition, StepExecutor executor, List<Step> steps) {
         this.dataEvaluator = dataEvaluator;
         this.definition = definition;
-        this.target = target.orElse(TargetImpl.NONE);
+        this.target = definition.getTarget().orElse(TargetImpl.NONE);
         this.executor = executor;
         this.steps = steps;
         this.state = new StepState();
@@ -60,7 +60,7 @@ public class Step {
     }
 
     public static Step nonExecutable(StepDefinition definition) {
-        return new Step(null, definition, Optional.empty(), null, Collections.emptyList()); // TODO any - Type a NonExecutableStep, or a RootStep at least
+        return new Step(null, definition, null, emptyList()); // TODO any - Type a NonExecutableStep, or a RootStep at least
     }
 
     public Status execute(ScenarioExecution scenarioExecution, ScenarioContext scenarioContext) {
@@ -81,7 +81,7 @@ public class Step {
         beginExecution(scenarioExecution);
 
         try {
-            makeTargetAccessibleForInputEvaluation(scenarioContext, target);
+            makeTargetAccessibleForInputEvaluation(scenarioContext);
             makeEnvironmentAccessibleForInputEvaluation(scenarioContext);
             Map<String, Object> evaluatedInputs = definition.type.equals("final") ? definition.inputs : unmodifiableMap(dataEvaluator.evaluateNamedDataWithContextVariables(definition.inputs, scenarioContext));
 
@@ -227,7 +227,7 @@ public class Step {
         return !steps.isEmpty();
     }
 
-    private void makeTargetAccessibleForInputEvaluation(ScenarioContext scenarioContext, Target target) {
+    private void makeTargetAccessibleForInputEvaluation(ScenarioContext scenarioContext) {
         scenarioContext.put("target", target);
     }
 

@@ -102,7 +102,7 @@ public class Reporter {
     }
 
     private StepExecutionReport generateLastReport(long executionId) {
-        return generateReport(rootSteps.get(executionId), s -> s.status());
+        return generateReport(rootSteps.get(executionId), Step::status);
     }
 
     StepExecutionReport generateReport(Step step, Function<Step, Status> statusSupplier) {
@@ -113,7 +113,7 @@ public class Reporter {
             .setStatus(statusSupplier.apply(step))
             .setInformation(step.informations())
             .setErrors(step.errors())
-            .setSteps(step.subSteps().stream().map(subStep -> generateReport(subStep, s -> s.status())).collect(Collectors.toList()))
+            .setSteps(step.subSteps().stream().map(subStep -> generateReport(subStep, Step::status)).collect(Collectors.toList()))
             .setEvaluatedInputs(stepContext.getEvaluatedInputs())
             .setStepResults(stepContext.getStepOutputs())
             .setScenarioContext(stepContext.getScenarioContext())
