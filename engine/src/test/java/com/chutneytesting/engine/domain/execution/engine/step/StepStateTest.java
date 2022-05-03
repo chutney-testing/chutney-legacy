@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 public class StepStateTest {
 
     @Test
-    public void method_change_state() {
+    public void should_change_state() {
         StepState stepState = new StepState();
 
         stepState.successOccurred();
@@ -34,12 +34,23 @@ public class StepStateTest {
     }
 
     @Test
-    public void error_message_cannot_be_empty_or_null() {
+    public void should_handle_null_or_empty_errors() {
         StepState stepState = new StepState();
 
         stepState.errorOccurred(null, "");
+        stepState.addErrors(null, "");
         assertThat(stepState.status()).isEqualTo(Status.FAILURE);
         assertThat(stepState.errors()).isEmpty();
+    }
+
+    @Test
+    public void should_handle_null_or_empty_informations() {
+        StepState stepState = new StepState();
+
+        stepState.successOccurred(null, "");
+        stepState.addInformation(null, "");
+        assertThat(stepState.status()).isEqualTo(Status.SUCCESS);
+        assertThat(stepState.informations()).isEmpty();
     }
 
     @Test
@@ -68,7 +79,7 @@ public class StepStateTest {
     }
 
     @Test
-    public void should_manage_watch_indepedently_of_status() {
+    public void should_manage_watch_independently_of_status() {
         StepState stepState = new StepState();
         Status initialStatus = stepState.status();
 
@@ -106,9 +117,9 @@ public class StepStateTest {
         stepState.beginExecution();
         awaitDuring(100, MILLISECONDS);
 
-        Instant startdate = stepState.startDate();
+        Instant startDate = stepState.startDate();
         assertThat(stepState.status()).isEqualTo(Status.RUNNING);
-        assertThat(startdate).isNotNull();
+        assertThat(startDate).isNotNull();
         long elapse = stepState.duration().toMillis();
         assertThat(elapse).isPositive();
 
@@ -118,7 +129,7 @@ public class StepStateTest {
         stepState.beginExecution();
 
         assertThat(stepState.status()).isEqualTo(Status.RUNNING);
-        assertThat(stepState.startDate()).isEqualTo(startdate);
+        assertThat(stepState.startDate()).isEqualTo(startDate);
         assertThat(stepState.duration().toMillis()).isGreaterThan(elapse);
     }
 

@@ -11,8 +11,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
-import com.chutneytesting.scenario.domain.raw.RawTestCase;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
@@ -24,6 +22,8 @@ import com.chutneytesting.execution.domain.report.StepExecutionReportCore;
 import com.chutneytesting.execution.domain.report.StepExecutionReportCoreBuilder;
 import com.chutneytesting.execution.domain.state.ExecutionStateRepository;
 import com.chutneytesting.instrument.domain.ChutneyMetrics;
+import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
+import com.chutneytesting.scenario.domain.raw.RawTestCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.reactivex.Observable;
 import io.reactivex.observers.TestObserver;
@@ -43,12 +43,13 @@ import org.mockito.ArgumentCaptor;
 
 public class ScenarioExecutionEngineAsyncTest {
 
-    private ExecutionHistoryRepository executionHistoryRepository = mock(ExecutionHistoryRepository.class);
-    private ServerTestEngine executionEngine = mock(ServerTestEngine.class);
-    private ExecutionStateRepository executionStateRepository = mock(ExecutionStateRepository.class);
-    private ChutneyMetrics metrics = mock(ChutneyMetrics.class);
-    private TestCasePreProcessors testCasePreProcessors = mock(TestCasePreProcessors.class);
-    private DataSetHistoryRepository dataSetHistoryRepository = mock(DataSetHistoryRepository.class);
+    private final ObjectMapper om = new ObjectMapper().findAndRegisterModules();
+    private final ExecutionHistoryRepository executionHistoryRepository = mock(ExecutionHistoryRepository.class);
+    private final ServerTestEngine executionEngine = mock(ServerTestEngine.class);
+    private final ExecutionStateRepository executionStateRepository = mock(ExecutionStateRepository.class);
+    private final ChutneyMetrics metrics = mock(ChutneyMetrics.class);
+    private final TestCasePreProcessors testCasePreProcessors = mock(TestCasePreProcessors.class);
+    private final DataSetHistoryRepository dataSetHistoryRepository = mock(DataSetHistoryRepository.class);
 
     @AfterEach
     public void after() {
@@ -64,7 +65,7 @@ public class ScenarioExecutionEngineAsyncTest {
             executionStateRepository,
             metrics,
             testCasePreProcessors,
-            new ObjectMapper(),
+            om,
             dataSetHistoryRepository
         );
 
@@ -92,7 +93,7 @@ public class ScenarioExecutionEngineAsyncTest {
             executionStateRepository,
             metrics,
             testCasePreProcessors,
-            new ObjectMapper(),
+            om,
             dataSetHistoryRepository,
             0,
             0
@@ -133,7 +134,7 @@ public class ScenarioExecutionEngineAsyncTest {
             executionStateRepository,
             metrics,
             testCasePreProcessors,
-            new ObjectMapper(),
+            om,
             dataSetHistoryRepository
         );
         sut.setRetentionDelaySeconds(1);
@@ -191,7 +192,7 @@ public class ScenarioExecutionEngineAsyncTest {
             executionStateRepository,
             metrics,
             testCasePreProcessors,
-            new ObjectMapper(),
+            om,
             dataSetHistoryRepository,
             10,
             0
@@ -225,10 +226,11 @@ public class ScenarioExecutionEngineAsyncTest {
         assertThat(actual.report.name).isEqualTo(rootStepExecutionReportCore.name);
         assertThat(actual.report.status).isEqualTo(rootStepExecutionReportCore.status);
         assertThat(actual.report.executionId).isEqualTo(executionId);
-        assertThat(actual.report.steps).usingElementComparatorOnFields("executionId", "name", "status").containsExactlyElementsOf(rootStepExecutionReportCore.steps);
+        assertThat(actual.report.steps)
+            .usingRecursiveFieldByFieldElementComparatorIgnoringFields("executionId", "name", "status").containsExactlyElementsOf(rootStepExecutionReportCore.steps);
     }
 
-    private void assertTestObserverStateWithValues(TestObserver testObserver, int valuesCount, boolean terminated) {
+    private void assertTestObserverStateWithValues(TestObserver<ScenarioExecutionReport> testObserver, int valuesCount, boolean terminated) {
         if (terminated) {
             testObserver.assertTerminated();
         } else {
@@ -260,6 +262,8 @@ public class ScenarioExecutionEngineAsyncTest {
             .setStartDate(startDate)
             .setStatus(stepStatus)
             .setSteps(subStepsReports)
+            .setInformation(Arrays.asList("info", null, ""))
+            .setErrors(Arrays.asList("", "err", null))
             .createStepExecutionReport();
     }
 
