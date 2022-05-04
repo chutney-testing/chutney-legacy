@@ -257,9 +257,9 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     getJiraLastExecutionStatusClass(id: string) {
         const status = this.getJiraLastExecutionStatus(id);
         switch (status) {
-            case 'PASS' : return 'badge-success';
-            case 'FAIL' : return 'badge-danger';
-            default : return 'badge-secondary';
+            case 'PASS' : return 'bg-success';
+            case 'FAIL' : return 'bg-danger';
+            default : return 'bg-secondary';
         }
     }
 

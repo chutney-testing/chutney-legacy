@@ -1,7 +1,7 @@
-<select class="form-control dataset-combo" (change)="changingValue($event)">
+<select class="form-select dataset-combo" (change)="changingValue($event)">
     <option value=""></option>
     <option *ngFor="let dataset of datasets" [selected]="dataset.id === selectedDatasetId"
-    [title]="dataset.description" [value]="dataset.id">
+            [title]="dataset.description" [value]="dataset.id">
         {{ dataset.name }}
     </option>
 </select>

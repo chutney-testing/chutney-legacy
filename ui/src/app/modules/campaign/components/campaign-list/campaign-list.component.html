@@ -23,7 +23,7 @@
                    [ngModel]="campaignFilter" (ngModelChange)="campaignFilterChange($event)">
         </div>
         <div class="row ms-2">
-            <div style="min-width: 170px;">
+            <div class="w-auto" style="min-width: 170px;">
                 <button *ngIf=" !isSelectAll()" type="button" class="btn btn-xs btn-default m-2" (click)="selectAll()">
                     <span class="fa fa-check"></span> {{ 'campaigns.search.selectAllText' | translate }}
                 </button>
@@ -31,8 +31,8 @@
                     <span class="fa fa-times"></span> {{ 'campaigns.search.deselectAllText' | translate }}
                 </button>
             </div>
-            <div class="d-flex flex-wrap">
-                <div class="border-right border-dark ms-2 me-2"></div>
+            <div class="d-flex flex-wrap w-auto">
+                <div class="border-end border-dark ms-2 me-2"></div>
                 <div class="align-self-center">
                     <button class="chutney-tag"
                             [ngClass]="tagFilter.isNoTagSelected() ? 'chutney-tag-selected' : 'chutney-tag-unselected'"
@@ -40,7 +40,7 @@
                         NO_TAG
                     </button>
                 </div>
-                <div class="border-right border-dark ms-2 me-2"></div>
+                <div class="border-end border-dark ms-2 me-2"></div>
                 <div *ngFor="let tag of tagFilter.all()" class="align-self-center">
                     <button
                         [ngClass]="tagFilter.isSelected(tag)? 'chutney-tag chutney-tag-selected' : 'chutney-tag chutney-tag-unselected'"
@@ -114,21 +114,23 @@
         <h2 *ngIf="scheduledCampaigns.length > 0">{{ 'campaigns.list.executions.next' | translate }}</h2>
         <div class="table-responsive" *ngIf="scheduledCampaigns.length > 0">
             <table class="table table-sm table-striped">
+                <tbody>
                 <tr *ngFor="let scheduledCampaign of scheduledCampaigns">
-                    <td>#{{scheduledCampaign.campaignId}}
+                    <td class="w80">#{{scheduledCampaign.campaignId}}
                         <span data-toggle="tooltip" *ngIf="isFrequencyCampaign(scheduledCampaign)"
                               title="{{scheduledCampaign.frequency.toLowerCase()}}"
                               class="fa fa-spinner fa-spin running"
                               [ngStyle]="{
-                              'color':scheduledCampaign.frequency=== 'Daily'? 'green':
-                              scheduledCampaign.frequency==='Weekly'? 'orange':
-                              scheduledCampaign.frequency==='Monthly'? 'red': 'blue'
-                              }"
+                                'color':scheduledCampaign.frequency=== 'Daily'? 'green':
+                                scheduledCampaign.frequency==='Weekly'? 'orange':
+                                scheduledCampaign.frequency==='Monthly'? 'red': 'blue'
+                                }"
                               aria-hidden="true"></span>
                         - {{scheduledCampaign.campaignTitle}}
                     </td>
                     <td>{{scheduledCampaign.schedulingDate | amLocal | amDateFormat: 'YYYY-MM-DD HH:mm'}}</td>
                 </tr>
+                </tbody>
             </table>
         </div>
         <h2>{{ 'campaigns.list.executions.last' | translate }}</h2>
@@ -140,7 +142,7 @@
                     <td class="ps-0 w60">
                         <a class="table-link"
                            [routerLink]="['/campaign', campaignIdFromName(report.campaignName), 'execution', report.executionId]"
-                           >
+                        >
                             {{ report.campaignName }}
                         </a>
                     </td>
