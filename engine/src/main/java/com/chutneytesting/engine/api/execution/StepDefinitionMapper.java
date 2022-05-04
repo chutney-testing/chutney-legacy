@@ -15,7 +15,7 @@ class StepDefinitionMapper {
     private StepDefinitionMapper() {
     }
 
-    static StepDefinition toStepDefinition(StepDefinitionDto dto) {
+    static StepDefinition toStepDefinition(StepDefinitionDto dto, String environment) {
         StepStrategyDefinition strategy = null;
         if (dto.strategy != null) {
             StrategyProperties strategyProperties = new StrategyProperties(dto.strategy.strategyProperties);
@@ -26,7 +26,7 @@ class StepDefinitionMapper {
         }
 
         List<StepDefinition> steps = dto.steps.stream()
-            .map(StepDefinitionMapper::toStepDefinition)
+            .map(dto1 -> toStepDefinition(dto1, environment))
             .collect(toList());
 
         return new StepDefinition(
@@ -38,7 +38,7 @@ class StepDefinitionMapper {
             steps,
             dto.outputs,
             dto.validations,
-            dto.environment
+            environment
         );
     }
 

@@ -16,7 +16,7 @@ class ExecutionRequestMapper {
 
     static ExecutionRequestDto from(StepDefinition stepDefinition) {
         final StepDefinitionRequestDto stepDefinitionRequestDto = getStepDefinitionRequestFromStepDef(stepDefinition);
-        return new ExecutionRequestDto(stepDefinitionRequestDto);
+        return new ExecutionRequestDto(stepDefinitionRequestDto, stepDefinition.environment);
     }
 
     private static StepDefinitionRequestDto getStepDefinitionRequestFromStepDef(StepDefinition definition) {
@@ -38,18 +38,17 @@ class ExecutionRequestMapper {
             definition.inputs,
             steps,
             definition.outputs,
-            definition.validations,
-            definition.environment);
+            definition.validations);
     }
 
     private static TargetExecutionDto extractTarget(StepDefinition definition) {
         return definition.getTarget().map(t -> (TargetImpl) t).map(t -> new TargetExecutionDto(
-            t.name(),
-            t.url,
-            t.properties,
-            from(t.security),
-            t.agents
-        ))
+                t.name(),
+                t.url,
+                t.properties,
+                from(t.security),
+                t.agents
+            ))
             .orElse(null);
     }
 

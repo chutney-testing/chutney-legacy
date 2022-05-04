@@ -7,6 +7,7 @@ import java.util.Map;
 public class StepExecutionReportDto {
 
     public String name;
+    public String environment;
     public long duration;
     public Instant startDate;
     public StatusDto status;
@@ -23,6 +24,7 @@ public class StepExecutionReportDto {
     }
 
     public StepExecutionReportDto(String name,
+                                  String environment,
                                   Instant startDate,
                                   long duration,
                                   StatusDto status,
@@ -36,6 +38,7 @@ public class StepExecutionReportDto {
                                   String strategy
     ) {
         this.name = name;
+        this.environment = environment;
         this.startDate = startDate;
         this.duration = duration;
         this.status = status;
@@ -63,7 +66,5 @@ public class StepExecutionReportDto {
             this.evaluatedInputs = evaluatedInputs;
             this.stepResults = stepResults;
         }
-
     }
-
 }

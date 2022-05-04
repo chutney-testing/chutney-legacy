@@ -84,16 +84,16 @@ public class Reporter {
 
     private void publishReportAndCompletePublisher(Event event) {
         doIfPublisherExists(event.executionId(), (observer) -> {
-                publishLastReport(event);
-                completePublisher(event.executionId(), observer);
-            });
+            publishLastReport(event);
+            completePublisher(event.executionId(), observer);
+        });
     }
 
     private StepExecutionReport generateRunningReport(long executionId) {
         final Status calculatedRootStepStatus = rootSteps.get(executionId).status();
 
         final Status finalStatus;
-        if(!calculatedRootStepStatus.equals(RUNNING) && !calculatedRootStepStatus.equals(PAUSED)) {
+        if (!calculatedRootStepStatus.equals(RUNNING) && !calculatedRootStepStatus.equals(PAUSED)) {
             finalStatus = RUNNING;
         } else {
             finalStatus = calculatedRootStepStatus;
@@ -102,18 +102,20 @@ public class Reporter {
     }
 
     private StepExecutionReport generateLastReport(long executionId) {
-        return generateReport(rootSteps.get(executionId), s -> s.status());
+        return generateReport(rootSteps.get(executionId), Step::status);
     }
 
     StepExecutionReport generateReport(Step step, Function<Step, Status> statusSupplier) {
         Step.StepContextImpl stepContext = step.stepContext();
-        return new StepExecutionReportBuilder().setName(step.definition().name)
+        return new StepExecutionReportBuilder()
+            .setName(step.definition().name)
+            .setEnvironment(step.definition().environment)
             .setDuration(step.duration().toMillis())
             .setStartDate(step.startDate())
             .setStatus(statusSupplier.apply(step))
             .setInformation(step.informations())
             .setErrors(step.errors())
-            .setSteps(step.subSteps().stream().map(subStep -> generateReport(subStep, s -> s.status())).collect(Collectors.toList()))
+            .setSteps(step.subSteps().stream().map(subStep -> generateReport(subStep, Step::status)).collect(Collectors.toList()))
             .setEvaluatedInputs(stepContext.getEvaluatedInputs())
             .setStepResults(stepContext.getStepOutputs())
             .setScenarioContext(stepContext.getScenarioContext())

@@ -45,7 +45,7 @@ public class DefaultExecutionEngineTest {
     private final StepDataEvaluator dataEvaluator = mock(StepDataEvaluator.class);
     private final StepExecutionStrategies stepExecutionStrategies = mock(StepExecutionStrategies.class);
     private final DelegationService delegationService = mock(DelegationService.class);
-    private final String fakeEnvironment = "";
+    private final String fakeEnvironment = "env";
     private final Executor taskExecutor = Executors.newFixedThreadPool(1);
     private static final String throwableMessage = "Should be catch by fault barrier";
 
@@ -226,8 +226,10 @@ public class DefaultExecutionEngineTest {
         Step rootStep = endEvent.get().step;
         assertThat(rootStep.subSteps().size()).isEqualTo(1);
         assertThat(rootStep.subSteps().get(0).definition().name).isEqualTo("TearDown");
+        assertThat(rootStep.subSteps().get(0).definition().environment).isEqualTo(fakeEnvironment);
         assertThat(rootStep.subSteps().get(0).definition().steps.size()).isEqualTo(1);
         assertThat(rootStep.subSteps().get(0).definition().steps.get(0).name).isEqualTo(finallyAction.name());
+        assertThat(rootStep.subSteps().get(0).definition().steps.get(0).environment).isEqualTo(fakeEnvironment);
     }
 
     private static Stream<Arguments> throwable_caught_by_fault_barrier() {

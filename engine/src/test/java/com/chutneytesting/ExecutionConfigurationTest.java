@@ -24,13 +24,14 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class ExecutionConfigurationTest {
 
     private final ExecutionConfiguration sut = new ExecutionConfiguration();
+    private final String FAKE_ENV = "fakeEnv";
 
     @Test
     public void should_execute_scenario_async() {
         //G
         final TestEngine testEngine = sut.embeddedTestEngine();
         StepDefinitionRequestDto stepDefinition = createSucessStep();
-        ExecutionRequestDto requestDto = new ExecutionRequestDto(stepDefinition);
+        ExecutionRequestDto requestDto = new ExecutionRequestDto(stepDefinition, FAKE_ENV);
 
         //W
         Long executionId = testEngine.executeAsync(requestDto);
@@ -47,7 +48,7 @@ public class ExecutionConfigurationTest {
         //G
         final TestEngine testEngine = sut.embeddedTestEngine();
         StepDefinitionRequestDto stepDefinition = createSucessStep();
-        ExecutionRequestDto requestDto = new ExecutionRequestDto(stepDefinition);
+        ExecutionRequestDto requestDto = new ExecutionRequestDto(stepDefinition, FAKE_ENV);
 
         //W
         StepExecutionReportDto result = testEngine.execute(requestDto);
@@ -61,7 +62,7 @@ public class ExecutionConfigurationTest {
         //G
         final TestEngine testEngine = sut.embeddedTestEngine();
         StepDefinitionRequestDto stepDefinition = createScenarioForPause();
-        ExecutionRequestDto requestDto = new ExecutionRequestDto(stepDefinition);
+        ExecutionRequestDto requestDto = new ExecutionRequestDto(stepDefinition, FAKE_ENV);
 
         //W
         List<StepExecutionReportDto> results = new ArrayList<>();
@@ -106,10 +107,9 @@ public class ExecutionConfigurationTest {
             Collections.emptyMap(),
             Collections.emptyList(),
             Collections.emptyMap(),
-            Collections.emptyMap(),
-            ""
+            Collections.emptyMap()
         );
-        ExecutionRequestDto requestDto = new ExecutionRequestDto(stepDefinition);
+        ExecutionRequestDto requestDto = new ExecutionRequestDto(stepDefinition, FAKE_ENV);
 
         //W
         StepExecutionReportDto result = testEngine.execute(requestDto);
@@ -128,8 +128,7 @@ public class ExecutionConfigurationTest {
             Collections.emptyMap(),
             Collections.emptyList(),
             Collections.emptyMap(),
-            Collections.emptyMap(),
-            ""
+            Collections.emptyMap()
         );
     }
 
@@ -146,8 +145,7 @@ public class ExecutionConfigurationTest {
             Collections.emptyMap(),
             steps,
             Collections.emptyMap(),
-            Collections.emptyMap(),
-            ""
+            Collections.emptyMap()
         );
     }
 
@@ -160,8 +158,7 @@ public class ExecutionConfigurationTest {
             Maps.newHashMap("duration", "1 s"),
             null,
             Collections.emptyMap(),
-            Collections.emptyMap(),
-            ""
+            Collections.emptyMap()
         );
     }
 

@@ -3,6 +3,7 @@ package com.chutneytesting.engine.domain.execution.engine;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
+import static java.util.stream.Collectors.toList;
 
 import com.chutneytesting.engine.domain.delegation.DelegationService;
 import com.chutneytesting.engine.domain.execution.ExecutionEngine;
@@ -27,7 +28,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,8 +71,7 @@ public class DefaultExecutionEngine implements ExecutionEngine {
 
                     final StepExecutionStrategy strategy = stepExecutionStrategies.buildStrategyFrom(rootStep.get());
                     strategy.execute(execution, rootStep.get(), scenarioContext, stepExecutionStrategies);
-                }
-                catch (RuntimeException | LinkageError e ) {
+                } catch (RuntimeException | LinkageError e) {
                     // Do not remove this fault barrier, the engine must not be stopped by external events
                     // (such as exceptions not raised by the engine)
                     rootStep.get().failure(e);
@@ -91,9 +90,10 @@ public class DefaultExecutionEngine implements ExecutionEngine {
 
     private Optional<Step> initFinalRootStep(AtomicReference<Step> rootStep, List<FinallyAction> finallyActionsSnapshot) {
         try {
+            String environment = rootStep.get().definition().environment;
             Pair<List<StepDefinition>, List<Step>> finalStepsWithDefinitions = finallyActionsSnapshot.stream()
                 .map(fa -> {
-                    StepDefinition definition = new FinallyActionMapper().toStepDefinition(fa);
+                    StepDefinition definition = new FinallyActionMapper().toStepDefinition(fa, environment);
                     return Pair.of(singletonList(definition), singletonList(buildStep(definition)));
                 })
                 .reduce(Pair.of(new ArrayList<>(), new ArrayList<>()), (p1, p2) -> {
@@ -111,11 +111,11 @@ public class DefaultExecutionEngine implements ExecutionEngine {
                 finalStepsWithDefinitions.getLeft(),
                 emptyMap(),
                 emptyMap(),
-                rootStep.get().definition().environment
+                environment
             );
 
             return Optional.of(
-                new Step(dataEvaluator, finalRootStepDefinition, empty(), delegationService.findExecutor(empty()), finalStepsWithDefinitions.getRight())
+                new Step(dataEvaluator, finalRootStepDefinition, delegationService.findExecutor(empty()), finalStepsWithDefinitions.getRight())
             );
         } catch (RuntimeException e) {
             rootStep.get().failure(e);
@@ -148,8 +148,8 @@ public class DefaultExecutionEngine implements ExecutionEngine {
         LOGGER.debug("Build : " + definition);
         final Optional<Target> target = definition.getTarget();
         final StepExecutor executor = delegationService.findExecutor(target);
-        final List<Step> steps = definition.steps.stream().map(this::buildStep).collect(Collectors.toList());
+        final List<Step> steps = definition.steps.stream().map(this::buildStep).collect(toList());
 
-        return new Step(dataEvaluator, definition, target, executor, steps);
+        return new Step(dataEvaluator, definition, executor, steps);
     }
 }

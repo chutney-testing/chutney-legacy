@@ -125,7 +125,7 @@ public class ScenarioExecutionEngineAsyncTest {
         final Long executionId = 4L;
 
         stubHistoryExecution(scenarioId, executionId);
-        final Triple<Pair<Observable<StepExecutionReportCore>, Long>, List<StepExecutionReportCore>, TestScheduler> engineStub = stubEngineExecution(executionId, 100);
+        final Triple<Pair<Observable<StepExecutionReportCore>, Long>, List<StepExecutionReportCore>, TestScheduler> engineStub = stubEngineExecution(100);
         RxJavaPlugins.setIoSchedulerHandler(scheduler -> engineStub.getRight());
 
         final ScenarioExecutionEngineAsync sut = new ScenarioExecutionEngineAsync(
@@ -182,7 +182,7 @@ public class ScenarioExecutionEngineAsyncTest {
         when(testCasePreProcessors.apply(any())).thenReturn(testCase);
 
         stubHistoryExecution(scenarioId, executionId);
-        Triple<Pair<Observable<StepExecutionReportCore>, Long>, List<StepExecutionReportCore>, TestScheduler> engineStub = stubEngineExecution(executionId, 100);
+        Triple<Pair<Observable<StepExecutionReportCore>, Long>, List<StepExecutionReportCore>, TestScheduler> engineStub = stubEngineExecution(100);
         RxJavaPlugins.setIoSchedulerHandler(scheduler -> engineStub.getRight());
         final List<StepExecutionReportCore> reportsList = engineStub.getMiddle();
 
@@ -225,9 +225,9 @@ public class ScenarioExecutionEngineAsyncTest {
         assertThat(actual.executionId).isEqualTo(executionId);
         assertThat(actual.report.name).isEqualTo(rootStepExecutionReportCore.name);
         assertThat(actual.report.status).isEqualTo(rootStepExecutionReportCore.status);
-        assertThat(actual.report.executionId).isEqualTo(executionId);
         assertThat(actual.report.steps)
-            .usingRecursiveFieldByFieldElementComparatorIgnoringFields("executionId", "name", "status").containsExactlyElementsOf(rootStepExecutionReportCore.steps);
+            .usingRecursiveFieldByFieldElementComparatorOnFields("executionId", "name", "status")
+            .containsExactlyElementsOf(rootStepExecutionReportCore.steps);
     }
 
     private void assertTestObserverStateWithValues(TestObserver<ScenarioExecutionReport> testObserver, int valuesCount, boolean terminated) {
@@ -255,10 +255,9 @@ public class ScenarioExecutionEngineAsyncTest {
             .build();
     }
 
-    private StepExecutionReportCore stepExecution(String stepName, ServerReportStatus stepStatus, long executionId, List<StepExecutionReportCore> subStepsReports, Instant startDate) {
+    private StepExecutionReportCore stepExecution(String stepName, ServerReportStatus stepStatus, List<StepExecutionReportCore> subStepsReports, Instant startDate) {
         return new StepExecutionReportCoreBuilder()
             .setName(stepName)
-            .setExecutionId(executionId)
             .setStartDate(startDate)
             .setStatus(stepStatus)
             .setSteps(subStepsReports)
@@ -267,26 +266,26 @@ public class ScenarioExecutionEngineAsyncTest {
             .createStepExecutionReport();
     }
 
-    private Triple<Pair<Observable<StepExecutionReportCore>, Long>, List<StepExecutionReportCore>, TestScheduler> stubEngineExecution(long executionId, long delay) {
+    private Triple<Pair<Observable<StepExecutionReportCore>, Long>, List<StepExecutionReportCore>, TestScheduler> stubEngineExecution(long delay) {
         final List<String> stepNames = Arrays.asList("name", "sub 1", "sub 2");
         Instant startDate = Instant.now();
         final List<StepExecutionReportCore> reportsList = Arrays.asList(
-            stepExecution(stepNames.get(0), ServerReportStatus.NOT_EXECUTED, executionId,
+            stepExecution(stepNames.get(0), ServerReportStatus.NOT_EXECUTED,
                 Arrays.asList(
-                    stepExecution(stepNames.get(1), ServerReportStatus.NOT_EXECUTED, executionId, null, startDate),
-                    stepExecution(stepNames.get(2), ServerReportStatus.NOT_EXECUTED, executionId, null, startDate)), startDate),
-            stepExecution(stepNames.get(0), ServerReportStatus.RUNNING, executionId,
+                    stepExecution(stepNames.get(1), ServerReportStatus.NOT_EXECUTED, null, startDate),
+                    stepExecution(stepNames.get(2), ServerReportStatus.NOT_EXECUTED, null, startDate)), startDate),
+            stepExecution(stepNames.get(0), ServerReportStatus.RUNNING,
                 Arrays.asList(
-                    stepExecution(stepNames.get(1), ServerReportStatus.RUNNING, executionId, null, startDate),
-                    stepExecution(stepNames.get(2), ServerReportStatus.NOT_EXECUTED, executionId, null, startDate)), startDate),
-            stepExecution(stepNames.get(0), ServerReportStatus.RUNNING, executionId,
+                    stepExecution(stepNames.get(1), ServerReportStatus.RUNNING, null, startDate),
+                    stepExecution(stepNames.get(2), ServerReportStatus.NOT_EXECUTED, null, startDate)), startDate),
+            stepExecution(stepNames.get(0), ServerReportStatus.RUNNING,
                 Arrays.asList(
-                    stepExecution(stepNames.get(1), ServerReportStatus.SUCCESS, executionId, null, startDate),
-                    stepExecution(stepNames.get(2), ServerReportStatus.RUNNING, executionId, null, startDate)), startDate),
-            stepExecution(stepNames.get(0), ServerReportStatus.SUCCESS, executionId,
+                    stepExecution(stepNames.get(1), ServerReportStatus.SUCCESS, null, startDate),
+                    stepExecution(stepNames.get(2), ServerReportStatus.RUNNING, null, startDate)), startDate),
+            stepExecution(stepNames.get(0), ServerReportStatus.SUCCESS,
                 Arrays.asList(
-                    stepExecution(stepNames.get(1), ServerReportStatus.SUCCESS, executionId, null, startDate),
-                    stepExecution(stepNames.get(2), ServerReportStatus.SUCCESS, executionId, null, startDate)), startDate));
+                    stepExecution(stepNames.get(1), ServerReportStatus.SUCCESS, null, startDate),
+                    stepExecution(stepNames.get(2), ServerReportStatus.SUCCESS, null, startDate)), startDate));
 
         Observable<StepExecutionReportCore> observable = Observable.fromIterable(reportsList);
         TestScheduler testScheduler = null;

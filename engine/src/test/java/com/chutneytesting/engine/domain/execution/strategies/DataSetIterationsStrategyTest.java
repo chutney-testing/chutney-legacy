@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Consumer;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
@@ -139,11 +138,11 @@ public class DataSetIterationsStrategyTest {
     }
 
     private Step buildStep(String name, String type, StepExecutionStrategy strategy, Step... subSteps) {
-        return new Step(dataEvaluator, buildStepDef(name, type, strategy, new StrategyProperties()), Optional.empty(), stepExecutor, Arrays.asList(subSteps));
+        return new Step(dataEvaluator, buildStepDef(name, type, strategy, new StrategyProperties()), stepExecutor, Arrays.asList(subSteps));
     }
 
     private Step buildStep(String name, String type, StepExecutionStrategy strategy, StrategyProperties strategyProperties, Step... subSteps) {
-        return new Step(dataEvaluator, buildStepDef(name, type, strategy, strategyProperties), Optional.empty(), stepExecutor, Arrays.asList(subSteps));
+        return new Step(dataEvaluator, buildStepDef(name, type, strategy, strategyProperties), stepExecutor, Arrays.asList(subSteps));
     }
 
     private StepDefinition buildStepDef(String name, String type, StepExecutionStrategy strategy, StrategyProperties strategyProperties) {

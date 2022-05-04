@@ -8,9 +8,9 @@ import java.util.stream.Collectors;
 
 public class ExecutionRequestMapper {
 
-    public static ExecutionRequestDto toDto(StepDefinitionDto stepDefinitionDto) {
+    public static ExecutionRequestDto toDto(StepDefinitionDto stepDefinitionDto, String environment) {
         final StepDefinitionRequestDto stepDefinitionRequestDto = getStepDefinitionRequestFromStepDef(stepDefinitionDto);
-        return new ExecutionRequestDto(stepDefinitionRequestDto);
+        return new ExecutionRequestDto(stepDefinitionRequestDto, environment);
     }
 
     private static StepDefinitionRequestDto getStepDefinitionRequestFromStepDef(StepDefinitionDto definition) {
@@ -33,8 +33,8 @@ public class ExecutionRequestMapper {
             definition.inputs,
             steps,
             definition.outputs,
-            definition.validations,
-            definition.environment);
+            definition.validations
+        );
     }
 
 }

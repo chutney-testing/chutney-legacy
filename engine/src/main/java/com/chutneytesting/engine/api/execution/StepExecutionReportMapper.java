@@ -9,11 +9,13 @@ import java.util.stream.Collectors;
 
 class StepExecutionReportMapper {
 
-    private StepExecutionReportMapper(){}
+    private StepExecutionReportMapper() {
+    }
 
     static StepExecutionReportDto toDto(StepExecutionReport report) {
         return new StepExecutionReportDto(
             report.name,
+            report.environment,
             report.startDate,
             report.duration,
             StatusMapper.toDto(report.status),
@@ -31,7 +33,7 @@ class StepExecutionReportMapper {
     static class StepContextMapper {
 
         @SuppressWarnings("unchecked")
-        static StepExecutionReportDto.StepContextDto toDto(Map<String, Object> scenarioContext, Map<String, Object> evaluatedInput,Map<String, Object> stepResults) {
+        static StepExecutionReportDto.StepContextDto toDto(Map<String, Object> scenarioContext, Map<String, Object> evaluatedInput, Map<String, Object> stepResults) {
             return new StepExecutionReportDto.StepContextDto(
                 scenarioContext != null ? scenarioContext : EMPTY_MAP,
                 evaluatedInput != null ? evaluatedInput : EMPTY_MAP,

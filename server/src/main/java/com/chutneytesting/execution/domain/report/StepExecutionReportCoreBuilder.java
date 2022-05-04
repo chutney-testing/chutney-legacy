@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class StepExecutionReportCoreBuilder {
-    private long executionId;
+
     private String name;
     private long duration;
     private Instant startDate;
@@ -22,29 +22,7 @@ public class StepExecutionReportCoreBuilder {
     private String targetUrl = "";
     private String strategy = "sequential";
     private Map<String, Object> evaluatedInputs;
-    private Map<String, Object>  stepOutputs;
-
-    public StepExecutionReportCoreBuilder from(StepExecutionReportCore stepExecutionReport) {
-        setExecutionId(stepExecutionReport.executionId);
-        setName(stepExecutionReport.name);
-        setDuration(stepExecutionReport.duration);
-        setStartDate(stepExecutionReport.startDate);
-        setStatus(stepExecutionReport.status);
-        setInformation(stepExecutionReport.information);
-        setErrors(stepExecutionReport.errors);
-        setSteps(stepExecutionReport.steps);
-        setType(stepExecutionReport.type);
-        setTargetName(stepExecutionReport.targetName);
-        setTargetUrl(stepExecutionReport.targetUrl);
-        setStrategy(stepExecutionReport.strategy);
-        setStepOutputs(stepExecutionReport.stepOutputs);
-        return setEvaluatedInputs(stepExecutionReport.evaluatedInputs);
-    }
-
-    public StepExecutionReportCoreBuilder setExecutionId(long executionId) {
-        this.executionId = executionId;
-        return this;
-    }
+    private Map<String, Object> stepOutputs;
 
     public StepExecutionReportCoreBuilder setName(String name) {
         this.name = name;
@@ -125,7 +103,6 @@ public class StepExecutionReportCoreBuilder {
 
     public StepExecutionReportCore createStepExecutionReport() {
         return new StepExecutionReportCore(
-            executionId,
             name,
             duration,
             startDate,

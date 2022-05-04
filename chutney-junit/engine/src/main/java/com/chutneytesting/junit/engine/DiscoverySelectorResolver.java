@@ -48,9 +48,11 @@ public class DiscoverySelectorResolver {
     private final PathMatchingResourcePatternResolver pathResolver = new PathMatchingResourcePatternResolver();
     private final GlacioAdapter glacioAdapter;
     private boolean classMode;
+    private final String environmentName;
 
-    public DiscoverySelectorResolver(GlacioAdapter glacioAdapter) {
+    public DiscoverySelectorResolver(GlacioAdapter glacioAdapter, String environmentName) {
         this.glacioAdapter = glacioAdapter;
+        this.environmentName = environmentName;
     }
 
     public void resolveSelectors(EngineDiscoveryRequest engineDiscoveryRequest, ChutneyEngineDescriptor engineDescriptor) {
@@ -209,7 +211,7 @@ public class DiscoverySelectorResolver {
     }
 
     private List<StepDefinitionDto> parseFeature(String featureContent) {
-        return glacioAdapter.toChutneyStepDefinition(featureContent);
+        return glacioAdapter.toChutneyStepDefinition(featureContent, environmentName);
     }
 
     private String content(File file) {

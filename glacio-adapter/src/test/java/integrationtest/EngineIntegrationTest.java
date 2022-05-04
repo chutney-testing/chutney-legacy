@@ -207,7 +207,7 @@ public class EngineIntegrationTest {
     }
 
     private StepExecutionReportDto execute(StepDefinitionDto stepDefinitionDto) {
-        return glacioAdapterConfiguration.executionConfiguration().embeddedTestEngine().execute(ExecutionRequestMapper.toDto(stepDefinitionDto));
+        return glacioAdapterConfiguration.executionConfiguration().embeddedTestEngine().execute(ExecutionRequestMapper.toDto(stepDefinitionDto, ENVIRONMENT));
     }
 
     private String fileContent(String resourcePath) {

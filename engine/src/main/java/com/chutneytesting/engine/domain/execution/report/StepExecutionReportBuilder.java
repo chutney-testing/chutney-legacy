@@ -9,8 +9,10 @@ import java.util.Map;
 import java.util.Optional;
 
 public class StepExecutionReportBuilder {
+
     private long executionId;
     private String name;
+    private String environment;
     private long duration;
     private Instant startDate;
     private Status status;
@@ -28,6 +30,7 @@ public class StepExecutionReportBuilder {
     public StepExecutionReportBuilder from(StepExecutionReport stepExecutionReport) {
         setExecutionId(stepExecutionReport.executionId);
         setName(stepExecutionReport.name);
+        setEnvironment(stepExecutionReport.environment);
         setDuration(stepExecutionReport.duration);
         setStartDate(stepExecutionReport.startDate);
         setStatus(stepExecutionReport.status);
@@ -66,6 +69,11 @@ public class StepExecutionReportBuilder {
 
     public StepExecutionReportBuilder setName(String name) {
         this.name = name;
+        return this;
+    }
+
+    public StepExecutionReportBuilder setEnvironment(String environment) {
+        this.environment = environment;
         return this;
     }
 
@@ -133,6 +141,7 @@ public class StepExecutionReportBuilder {
         return new StepExecutionReport(
             executionId,
             name,
+            environment,
             duration,
             startDate,
             status,

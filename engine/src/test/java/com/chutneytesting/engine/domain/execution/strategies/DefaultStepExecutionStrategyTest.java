@@ -6,7 +6,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.google.common.collect.Sets;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.TestTaskTemplateLoader;
@@ -19,11 +18,11 @@ import com.chutneytesting.engine.domain.execution.evaluation.SpelFunctions;
 import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.task.domain.DefaultTaskTemplateRegistry;
 import com.chutneytesting.task.domain.TaskTemplateLoaders;
+import com.google.common.collect.Sets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Consumer;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
@@ -120,7 +119,7 @@ public class DefaultStepExecutionStrategyTest {
     }
 
     private Step buildStep(String name, String type, Step... subSteps) {
-        return new Step(dataEvaluator, buildStepDef(name, type), Optional.empty(), stepExecutor, Arrays.asList(subSteps));
+        return new Step(dataEvaluator, buildStepDef(name, type), stepExecutor, Arrays.asList(subSteps));
     }
 
     private StepDefinition buildStepDef(String name, String type) {
