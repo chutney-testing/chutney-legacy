@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.4.8](https://github.com/chutney-testing/chutney/tree/1.4.8)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.4.7...1.4.8)
+
+**Fixed bugs:**
+
+- 🐛 | NPE - Report info or error with null values [\#719](https://github.com/chutney-testing/chutney/issues/719)
+- 🐛 | Engine - Final task with environment null [\#718](https://github.com/chutney-testing/chutney/issues/718)
+
+**Merged pull requests:**
+
+- Final task environment null [\#731](https://github.com/chutney-testing/chutney/pull/731) ([boddissattva](https://github.com/boddissattva))
+- chore\(deps\): bump sshj from 0.32.0 to 0.33.0 [\#730](https://github.com/chutney-testing/chutney/pull/730) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump value from 2.8.8 to 2.9.0 [\#729](https://github.com/chutney-testing/chutney/pull/729) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump amqp-client from 5.14.1 to 5.14.2 [\#728](https://github.com/chutney-testing/chutney/pull/728) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump postgresql from 42.3.3 to 42.3.4 [\#727](https://github.com/chutney-testing/chutney/pull/727) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump guava from 31.0.1-jre to 31.1-jre [\#726](https://github.com/chutney-testing/chutney/pull/726) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump maven-compiler-plugin from 3.10.0 to 3.10.1 [\#724](https://github.com/chutney-testing/chutney/pull/724) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump spring-boot-maven-plugin from 2.6.3 to 2.6.7 [\#723](https://github.com/chutney-testing/chutney/pull/723) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump org.eclipse.jgit.ssh.jsch from 5.13.0.202109080827-r to 6.1.0.202203080745-r [\#721](https://github.com/chutney-testing/chutney/pull/721) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Report info or error null values [\#720](https://github.com/chutney-testing/chutney/pull/720) ([boddissattva](https://github.com/boddissattva))
+
+
+
 ## [1.4.7](https://github.com/chutney-testing/chutney/tree/1.4.7) (2022-04-26)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.4.6...1.4.7)

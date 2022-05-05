@@ -2,6 +2,7 @@
 .chutney/
 .env/
 /ui/coverage
+/ui/.angular
 
 ######################
 # Project Specific
