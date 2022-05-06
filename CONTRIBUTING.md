@@ -7,7 +7,7 @@
 * [Code convention](#code)
 * [Test convention](#test)
 * [Branch convention](#branch)
-* [Commit message](#commit)
+* [Commit changes](#commit)
 * [Dependency management](#dep)
 * [Build Process](#build)
 * [Release Management](#release)
@@ -119,8 +119,25 @@ Adding a new task capabilities should be packaged in a maven submodule named chu
 * **tech/** stable code, purely technical modification like refactoring, log level change or documentation
 
 
-## <a name="commit"></a> Commit message
+## <a name="commit"></a> Commit changes
 
+### Signature
+
+While not mandatory, we would like to have signed commits as much as possible.
+
+ * Install GPG according to your OS and distribution
+ * Create a GPG key following : https://docs.github.com/en/github/authenticating-to-github/generating-a-new-gpg-key
+ * Add the GPG key to your Github account : https://docs.github.com/en/github/authenticating-to-github/adding-a-new-gpg-key-to-your-github-account
+ * Configure git to use and sign your commit using your gpg key :
+   * ```git config --global user.signingkey KEY_ID```
+   * ```git config --global commit.gpgsign true```
+ * Configure a gpg agent to avoid typing your passphrase for every commit, for example on linux, you can edit ```~/.gnupg/gpg-agent.conf``` :
+   ```
+   default-cache-ttl 43200
+   max-cache-ttl 43200
+   ```
+
+### Commit message
 As a general rule, the style and formatting of commit messages should follow the guidelines in
 [How to Write a Git Commit Message](http://chris.beams.io/posts/git-commit/).
 
@@ -144,6 +161,125 @@ We use Github Actions to build and release Chutney.
 [![Build](https://github.com/chutney-testing/chutney/workflows/Build/badge.svg?branch=master)](https://github.com/chutney-testing/chutney/actions)
 
 ## <a name="release"></a> Release Management
+
+### Sign release artifacts
+
+We need a key to sign our artifacts.
+
+In order to do so :
+* We will create an organization 'master key', having one password and without expiration date.
+  * It is used only to create and manage subkeys
+  * It should never be shared outside the core team
+  * It should be kept preciously from being lost or stolen
+
+* We will create a 'signing subkey', with another password and with an expiration date.
+  * The 'subkey' will be used daily.
+  * If the 'subkey' is compromised, the 'master key' should still be safe
+
+* List secret keys
+  > gpg -K --with-keygrip --keyid-format LONG
+
+* List public keys
+  > gpg -k --with-keygrip --keyid-format LONG
+
+
+
+
+1. Create a master key : ```gpg --full-generate-key```
+2. Check created keys :  ```gpg -K --with-keygrip --keyid-format LONG ```
+   ```
+   sec   rsa4096/BA9185485BBC958B 2022-05-04 [SC]
+   809E390126D4C2139ADDAD97BA9185485BBC958B
+   Keygrip = BA28B56AFCAC6FD8C5249BBF3A8A7FF06E3831C5
+   uid                [  ultime ] Bruce Wayne <bruce.wayne@comics.dc>
+   ssb   rsa4096/84CF518A69BBA856 2022-05-04 [E]
+   Keygrip = 7E3B41B0931CE0AE8A8D331E62D51EE63329D202
+   ```
+
+3. Save the master key: ```gpg --export-secret-keys KEY_ID > you_master_key_file.pgp```
+   ```
+   gpg --export-secret-keys 809E390126D4C2139ADDAD97BA9185485BBC958B > batman_master_secret_key.pgp
+   ```
+
+4. Add a signin subkey valid 1 year : ```gpg --quick-addkey KEY_ID rsa4096 sign 1y```
+   ```
+   gpg --quick-addkey 809E390126D4C2139ADDAD97BA9185485BBC958B rsa4096 sign 1y
+   ```
+
+5. Check keys : ```gpg --list-keys --with-subkey-fingerprints```
+   ```
+   pub   rsa4096 2022-05-04 [SC]
+   809E390126D4C2139ADDAD97BA9185485BBC958B
+   uid          [  ultime ] Bruce Wayne <bruce.wayne@comics.dc>
+   sub   rsa4096 2022-05-04 [E]
+   8C4B21B825F81FA36BA6EF0684CF518A69BBA856
+   sub   rsa4096 2022-05-04 [S] [expire: 2023-05-04]
+   DB7568F90E8783C0A9B84BDCB268801F1D3F9DC7
+   ```
+6. Delete the master key : ```gpg --delete-secret-keys KEY_ID```
+   * Be carefull not to delete the subkey
+
+   ```
+   gpg --delete-secret-keys 809E390126D4C2139ADDAD97BA9185485BBC958B
+   ```
+
+7. Verify that only the master key is deleted : ```gpg -K```
+   * You should see a # following the secret key, indicating it is no longer available.
+   ```
+   sec#  rsa4096/BA9185485BBC958B 2022-05-04 [SC]
+   809E390126D4C2139ADDAD97BA9185485BBC958B
+   Keygrip = BA28B56AFCAC6FD8C5249BBF3A8A7FF06E3831C5
+   uid                [  ultime ] Bruce Wayne <bruce.wayne@comics.dc>
+   ssb   rsa4096/84CF518A69BBA856 2022-05-04 [E]
+   Keygrip = 7E3B41B0931CE0AE8A8D331E62D51EE63329D202
+   ssb   rsa4096/B268801F1D3F9DC7 2022-05-04 [S] [expire: 2023-05-04]
+   Keygrip = C3AED3B6A69C42F0F3BCD78E8F1408C8AA48F43
+   ```
+
+8. Change the passphrase for the subkey : ```gpg --edit-key KEY_ID```
+   ```
+   gpg --edit-key 809E390126D4C2139ADDAD97BA9185485BBC958B
+   ```
+   * On the prompt:
+     * ```passwd```
+       * (enter original passphrase. ie. the one from the master key)
+       * (enter twice the new passphrase you want for the subkey)
+     * ```save```
+
+9. You are done :)
+
+#### Extend the subkey expiration date
+
+1. Import the master key : ```gpg --import batman_master_secret_key.pgp```
+2. Edit the key : ```gpg --edit-key 809E390126D4C2139ADDAD97BA9185485BBC958B```
+3. In prompt:
+   * Select the subkey : ```key i``` (where i is the index of the listed keys)
+   * Change expiration : ```expire```
+   * save : ```save```
+4. Update the public subkey on servers
+5. Update the secret subkey on CI
+
+#### Export secret signin subkey in CI
+
+1. List keys : ```gpg -K --with-keygrip --keyid-format LONG```
+    ```
+      sec   rsa4096/BA9185485BBC958B 2022-05-04 [SC]
+      809E390126D4C2139ADDAD97BA9185485BBC958B
+      Keygrip = BA28B56AFCAC6FD8C5249BBF3A8A7FF06E3831C5
+      uid                [  ultime ] Bruce Wayne <bruce.wayne@comics.dc>
+      ssb   rsa4096/84CF518A69BBA856 2022-05-04 [E]
+      Keygrip = 7E3B41B0931CE0AE8A8D331E62D51EE63329D202
+      ssb   rsa4096/B268801F1D3F9DC7 2022-05-04 [S] [expire: 2022-05-05]
+      Keygrip = C3AED3B6A69C42F0F3BCD78E8F1408C8AA48F43C
+    ```
+
+2. Export to ascii armor format : ```gpg -a --export-secret-subkeys B268801F1D3F9DC7 > bruce_secret_signin_subkey.asc```
+3. Create organisation or project secret (ex. GPG_PRIVATE_KEY) and copy/paste ascii armor key content :
+    ```
+    -----BEGIN PGP PRIVATE KEY BLOCK-----
+    [...]
+    -----END PGP PRIVATE KEY BLOCK-----
+    ```
 
 ### Update Changelog file
 
