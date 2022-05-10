@@ -1,4 +1,4 @@
-package com.chutneytesting.design.domain.globalvar;
+package com.chutneytesting.globalvar.domain;
 
 import com.chutneytesting.admin.domain.Backupable;
 import java.util.Map;

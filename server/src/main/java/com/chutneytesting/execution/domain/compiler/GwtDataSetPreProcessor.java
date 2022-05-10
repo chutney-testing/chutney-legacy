@@ -1,9 +1,9 @@
 package com.chutneytesting.execution.domain.compiler;
 
-import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
+import com.chutneytesting.execution.domain.ExecutionRequest;
+import com.chutneytesting.globalvar.domain.GlobalvarRepository;
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
-import com.chutneytesting.execution.domain.ExecutionRequest;
 import java.util.Map;
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.stereotype.Component;

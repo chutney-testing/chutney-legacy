@@ -5,7 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContent;
-import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
+import com.chutneytesting.globalvar.domain.GlobalvarRepository;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;

@@ -1,6 +1,6 @@
-package com.chutneytesting.design.infra.storage.globalvar;
+package com.chutneytesting.globalvar.infra;
 
-import static com.chutneytesting.design.infra.storage.globalvar.FileGlobalVarRepository.ROOT_DIRECTORY_NAME;
+import static com.chutneytesting.globalvar.infra.FileGlobalVarRepository.ROOT_DIRECTORY_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 

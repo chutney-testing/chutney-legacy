@@ -1,4 +1,4 @@
-package com.chutneytesting.design.domain.globalvar;
+package com.chutneytesting.globalvar.domain;
 
 public class GlobalVarNotFoundException extends RuntimeException {
     public GlobalVarNotFoundException(String id) {

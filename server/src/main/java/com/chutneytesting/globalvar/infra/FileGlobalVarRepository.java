@@ -1,13 +1,10 @@
-package com.chutneytesting.design.infra.storage.globalvar;
+package com.chutneytesting.globalvar.infra;
 
 import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
 
-import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
-import com.chutneytesting.tools.ZipUtils;
-import com.chutneytesting.tools.file.FileUtils;
-import com.chutneytesting.design.domain.globalvar.GlobalVarNotFoundException;
-import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
+import com.chutneytesting.globalvar.domain.GlobalVarNotFoundException;
+import com.chutneytesting.globalvar.domain.GlobalvarRepository;
 import com.chutneytesting.tools.ZipUtils;
 import com.chutneytesting.tools.file.FileUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
