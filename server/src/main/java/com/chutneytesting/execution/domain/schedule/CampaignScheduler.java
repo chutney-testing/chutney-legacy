@@ -1,8 +1,8 @@
 package com.chutneytesting.execution.domain.schedule;
 
-import com.chutneytesting.design.domain.campaign.Frequency;
-import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaign;
-import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaignRepository;
+import com.chutneytesting.campaign.domain.Frequency;
+import com.chutneytesting.campaign.domain.PeriodicScheduledCampaign;
+import com.chutneytesting.campaign.domain.PeriodicScheduledCampaignRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import java.time.Clock;
 import java.time.LocalDateTime;

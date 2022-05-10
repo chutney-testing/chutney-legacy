@@ -6,8 +6,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
-import com.chutneytesting.design.domain.campaign.ScenarioExecutionReportCampaign;
+import com.chutneytesting.campaign.domain.CampaignExecutionReport;
+import com.chutneytesting.campaign.domain.ScenarioExecutionReportCampaign;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
 import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;

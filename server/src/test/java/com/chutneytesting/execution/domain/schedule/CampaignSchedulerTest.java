@@ -1,6 +1,6 @@
 package com.chutneytesting.execution.domain.schedule;
 
-import static com.chutneytesting.design.domain.campaign.Frequency.EMPTY;
+import static com.chutneytesting.campaign.domain.Frequency.EMPTY;
 import static com.chutneytesting.execution.domain.schedule.CampaignScheduler.SCHEDULER_EXECUTE_USER;
 import static java.time.LocalDateTime.now;
 import static java.util.Arrays.asList;
@@ -12,9 +12,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.design.domain.campaign.Frequency;
-import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaign;
-import com.chutneytesting.design.domain.campaign.PeriodicScheduledCampaignRepository;
+import com.chutneytesting.campaign.domain.Frequency;
+import com.chutneytesting.campaign.domain.PeriodicScheduledCampaign;
+import com.chutneytesting.campaign.domain.PeriodicScheduledCampaignRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import java.time.Clock;
 import java.util.List;
