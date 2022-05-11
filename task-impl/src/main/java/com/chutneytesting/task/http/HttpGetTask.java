@@ -49,7 +49,7 @@ public class HttpGetTask implements Task {
     public TaskExecutionResult execute() {
         HttpClient httpClient = new HttpClientFactory().create(target, String.class, (int) parseToMs(timeout));
         HttpHeaders httpHeaders = new HttpHeaders();
-        headers.forEach((key, value) -> httpHeaders.add(key, value));
+        headers.forEach(httpHeaders::add);
         Supplier<ResponseEntity<String>> caller = () -> httpClient.get(this.uri, httpHeaders);
         return HttpTask.httpCall(logger, caller);
     }
