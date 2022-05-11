@@ -106,7 +106,7 @@ public class HttpClientFactory {
     static void configureKeyStore(Map<String, String> properties, SecurityInfo securityInfo, SSLContextBuilder sslContextBuilder) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException {
         Optional<String> keystore = securityInfo.keyStore().or(() -> findProperty(properties, "keystore"));
         String keystorePassword = securityInfo.keyStorePassword().or(() -> findProperty(properties, "keystorePassword")).orElse("");
-        String keyPassword = securityInfo.keyPassword().or(() -> findProperty(properties, "keyPassword")).orElse("");
+        String keyPassword = securityInfo.keyPassword().or(() -> findProperty(properties, "keyPassword")).orElse(keystorePassword);
         if (keystore.isPresent()) {
             KeyStore store = KeyStore.getInstance(KeyStore.getDefaultType());
             store.load(Paths.get(keystore.get()).toUri().toURL().openStream(), keystorePassword.toCharArray());
