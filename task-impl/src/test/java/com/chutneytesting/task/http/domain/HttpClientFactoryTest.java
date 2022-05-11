@@ -1,12 +1,12 @@
 package com.chutneytesting.task.http.domain;
 
+import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.task.TestSecurityInfo;
 import com.chutneytesting.task.spi.injectable.SecurityInfo;
 import java.lang.reflect.Field;
 import java.security.PrivateKey;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -28,7 +28,7 @@ class HttpClientFactoryTest {
             .build();
 
         // When
-        HttpClientFactory.configureKeyStore(Collections.emptyMap(), security, context);
+        HttpClientFactory.configureKeyStore(emptyMap(), security, context);
 
         // Then
         PrivateKey actual = retrieveLoadedPrivateKey(context, "server");
@@ -46,6 +46,23 @@ class HttpClientFactoryTest {
 
         // When
         HttpClientFactory.configureKeyStore(properties, TestSecurityInfo.builder().build(), context);
+
+        // Then
+        PrivateKey actual = retrieveLoadedPrivateKey(context, "server");
+        assertThat(actual).isNotNull();
+    }
+
+    @Test
+    void should_use_keystorePassword_for_key_when_keyPassword_not_provided() throws Exception {
+        // Given
+        SSLContextBuilder context = new SSLContextBuilder();
+        TestSecurityInfo securityInfo = TestSecurityInfo.builder()
+            .withKeyStore("src/test/resources/security/server.jks")
+            .withKeyStorePassword("server")
+            .build();
+
+        // When
+        HttpClientFactory.configureKeyStore(emptyMap(), securityInfo, context);
 
         // Then
         PrivateKey actual = retrieveLoadedPrivateKey(context, "server");
