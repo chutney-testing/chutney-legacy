@@ -68,10 +68,10 @@ public class TargetDto {
             toEntryList(target.properties),
             ofNullable(target.security.credential).map(c -> c.username).orElse(null),
             ofNullable(target.security.credential).map(c -> c.password).orElse(null),
-            ofNullable(target.security.keyStore).orElse(null),
-            ofNullable(target.security.keyStorePassword).orElse(null),
-            ofNullable(target.security.keyPassword).orElse(null),
-            ofNullable(target.security.privateKey).orElse(null)
+            target.security.keyStore,
+            target.security.keyStorePassword,
+            target.security.keyPassword,
+            target.security.privateKey
         );
     }
 

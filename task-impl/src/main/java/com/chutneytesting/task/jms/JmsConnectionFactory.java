@@ -1,6 +1,5 @@
 package com.chutneytesting.task.jms;
 
-import static com.chutneytesting.tools.Entry.toEntryList;
 import static com.chutneytesting.tools.ThrowingSupplier.toUnchecked;
 
 import com.chutneytesting.task.jms.consumer.Consumer;
@@ -43,7 +42,7 @@ public class JmsConnectionFactory {
         return obtainCloseableResource(target, destinationName, (session, destination) -> {
             MessageProducer messageProducer = session.createProducer(destination);
 
-            return (MessageSender) (messageContent, headers) -> {
+            return (messageContent, headers) -> {
                 Message message = session.createTextMessage(messageContent);
                 for (Entry<String, String> headerEntry : headers.entrySet()) {
                     message.setStringProperty(headerEntry.getKey(), headerEntry.getValue());
@@ -103,7 +102,7 @@ public class JmsConnectionFactory {
         try {
             return optionalCredential
                 .map(ThrowingFunction.toUnchecked(credential -> connectionFactory.createConnection(credential.username(), credential.password())))
-                .orElseGet(toUnchecked(() -> connectionFactory.createConnection()));
+                .orElseGet(toUnchecked(connectionFactory::createConnection));
         } catch (UncheckedException e) {
             // Only JMSException can be unchecked in previous calls
             throw (JMSException) e.getCause();
@@ -115,14 +114,17 @@ public class JmsConnectionFactory {
         target.security().keyStorePassword().ifPresent(keyStorePassword -> environmentProperties.put("connection.ConnectionFactory.keyStorePassword", keyStorePassword));
 
         target.security().keyPassword()
-            .or(() -> toEntryList(target.properties()).stream()
-                .filter(e -> e.key.equalsIgnoreCase("keyPassword"))
-                .findFirst()
-                .map(e -> e.value)
-            ).ifPresent(keyStoreKeyPassword -> environmentProperties.put("connection.ConnectionFactory.keyStoreKeyPassword", keyStoreKeyPassword));
+            .or(() -> findProperty(target.properties(), "keyPassword"))
+            .ifPresent(keyStoreKeyPassword -> environmentProperties.put("connection.ConnectionFactory.keyStoreKeyPassword", keyStoreKeyPassword));
 
         target.security().trustStore().ifPresent(trustStore -> environmentProperties.put("connection.ConnectionFactory.trustStore", trustStore));
         target.security().trustStorePassword().ifPresent(trustStorePassword -> environmentProperties.put("connection.ConnectionFactory.trustStorePassword", trustStorePassword));
+    }
+
+    private static Optional<String> findProperty(Map<String, String> properties, String key) {
+        return properties.entrySet().stream()
+            .filter(e -> e.getKey().equalsIgnoreCase(key))
+            .findFirst().map(Map.Entry::getValue);
     }
 
     private interface JmsThrowingBiFunction<T1, T2, R> {
