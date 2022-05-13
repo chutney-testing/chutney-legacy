@@ -10,6 +10,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import javax.annotation.PreDestroy;
 import javax.sql.DataSource;
 import org.h2.tools.Server;
 import org.slf4j.Logger;
@@ -63,6 +64,17 @@ public class DBConfiguration {
             Server h2Server = Server.createTcpServer("-tcp", "-tcpPort", String.valueOf(dbServerPort), "-tcpAllowOthers", "-baseDir", baseDir).start();
             LOGGER.debug("Started H2 server " + h2Server.getURL());
             return h2Server;
+        }
+
+        @PreDestroy
+        public void onExit() {
+            LOGGER.info("Stopping H2 DB");
+            try {
+                Thread.sleep(30 * 1000);
+            } catch (InterruptedException e) {
+                LOGGER.error("", e);
+            }
+            LOGGER.info("STOP FROM THE LIFECYCLE");
         }
     }
 
