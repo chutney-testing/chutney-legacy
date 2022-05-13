@@ -33,7 +33,8 @@ const ROUTES = [
     ],
     declarations: [
         GlobalVariableEditionComponent
-    ]
+    ],
+    entryComponents: [],
 })
 export class GlobalVariableModule {
 }

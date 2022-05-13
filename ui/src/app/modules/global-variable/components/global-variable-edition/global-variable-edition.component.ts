@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {GlobalVariableService} from '@core/services/global-var.service';
 import {HttpErrorResponse} from '@angular/common/http';
 
@@ -11,8 +11,7 @@ import { Authorization } from '@model';
 })
 export class GlobalVariableEditionComponent implements OnInit {
 
-    globalVar = '';
-    editedGlobalVar = '';
+    data = '';
     fileNames;
     currentFileName;
     message: string;
@@ -34,12 +33,15 @@ export class GlobalVariableEditionComponent implements OnInit {
         );
     }
 
+    callBackFunc(data) {
+        this.data = data;
+    }
+
     save() {
         (async () => {
-            this.globalVar = this.editedGlobalVar;
             this.message = 'Saving...';
             await this.delay(1000);
-            this.globalVariableService.save(this.currentFileName, this.globalVar).subscribe(
+            this.globalVariableService.save(this.currentFileName, this.data).subscribe(
                 res => {
                     this.message = 'Document saved';
                     if (this.fileNames.indexOf(this.currentFileName) === -1) {
@@ -64,11 +66,13 @@ export class GlobalVariableEditionComponent implements OnInit {
 
     updateFileContent(selectedFileName: string) {
         if (selectedFileName === undefined) {
-            this.globalVar = '';
+            this.data = '';
+            this.data = '';
         } else {
             this.globalVariableService.get(selectedFileName).subscribe(
                 response => {
-                    this.globalVar = response;
+                    this.data = response;
+                    this.data = response;
                 }
             );
         }
@@ -87,9 +91,5 @@ export class GlobalVariableEditionComponent implements OnInit {
                 },
                 error => this.handleError(error));
         })();
-    }
-
-    onContentVarChange(content: string) {
-        this.editedGlobalVar = content;
     }
 }

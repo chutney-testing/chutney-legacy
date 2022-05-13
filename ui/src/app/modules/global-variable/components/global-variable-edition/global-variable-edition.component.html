@@ -1,4 +1,4 @@
-<div *ngIf="globalVar" class="ms-3 mt-3">
+<div *ngIf="data !== null" class="ml-3 mt-3">
 
     <div class="box2">
         <button *hasAuthorization="[Authorization.GLOBAL_VAR_WRITE]"
@@ -68,8 +68,8 @@ will generate keys :
         <chutney-editor
             [modes]="['json', 'hjson']"
             [mode]="'hjson'"
-            [content]="globalVar"
-            (onContentChange)="onContentVarChange($event)">
+            [content]="data"
+            (onContentChange)="callBackFunc($event)">
         </chutney-editor>
     </div>
 </div>
