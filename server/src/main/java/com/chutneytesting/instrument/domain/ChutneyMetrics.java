@@ -1,9 +1,9 @@
 package com.chutneytesting.instrument.domain;
 
-import com.chutneytesting.design.domain.campaign.Campaign;
-import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
-import com.chutneytesting.scenario.domain.TestCase;
+import com.chutneytesting.campaign.domain.Campaign;
+import com.chutneytesting.campaign.domain.CampaignExecutionReport;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
+import com.chutneytesting.scenario.domain.TestCase;
 
 public interface ChutneyMetrics {
 

@@ -1,8 +1,6 @@
 package com.chutneytesting.execution.api.report.surefire;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
-import com.chutneytesting.design.domain.campaign.ScenarioExecutionReportCampaign;
+import com.chutneytesting.campaign.domain.ScenarioExecutionReportCampaign;
 import com.chutneytesting.execution.api.report.surefire.Testsuite.Properties;
 import com.chutneytesting.execution.api.report.surefire.Testsuite.Testcase;
 import com.chutneytesting.execution.api.report.surefire.Testsuite.Testcase.Failure;
@@ -10,6 +8,8 @@ import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.execution.domain.report.StepExecutionReportCore;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Collection;

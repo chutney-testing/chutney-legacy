@@ -5,7 +5,7 @@ import static com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory.T
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContent;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentProvider;
-import com.chutneytesting.design.domain.globalvar.GlobalvarRepository;
+import com.chutneytesting.globalvar.domain.GlobalvarRepository;
 import com.chutneytesting.tools.file.FileUtils;
 import java.io.IOException;
 import java.nio.file.Files;

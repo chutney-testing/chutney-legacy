@@ -1,12 +1,12 @@
 package com.chutneytesting.execution.api;
 
-import static com.chutneytesting.design.api.campaign.dto.CampaignExecutionReportMapper.toDto;
+import static com.chutneytesting.campaign.api.dto.CampaignExecutionReportMapper.toDto;
 
-import com.chutneytesting.design.api.campaign.dto.CampaignExecutionReportDto;
-import com.chutneytesting.design.api.campaign.dto.CampaignExecutionReportMapper;
-import com.chutneytesting.design.domain.campaign.Campaign;
-import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
-import com.chutneytesting.design.domain.campaign.CampaignRepository;
+import com.chutneytesting.campaign.api.dto.CampaignExecutionReportDto;
+import com.chutneytesting.campaign.api.dto.CampaignExecutionReportMapper;
+import com.chutneytesting.campaign.domain.Campaign;
+import com.chutneytesting.campaign.domain.CampaignExecutionReport;
+import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.execution.api.report.surefire.SurefireCampaignExecutionReportBuilder;
 import com.chutneytesting.execution.api.report.surefire.SurefireScenarioExecutionReportBuilder;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;

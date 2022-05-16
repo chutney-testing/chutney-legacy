@@ -1,7 +1,7 @@
 package com.chutneytesting.execution.api.report.surefire;
 
-import com.chutneytesting.design.domain.campaign.CampaignExecutionReport;
-import com.chutneytesting.design.domain.campaign.ScenarioExecutionReportCampaign;
+import com.chutneytesting.campaign.domain.CampaignExecutionReport;
+import com.chutneytesting.campaign.domain.ScenarioExecutionReportCampaign;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
