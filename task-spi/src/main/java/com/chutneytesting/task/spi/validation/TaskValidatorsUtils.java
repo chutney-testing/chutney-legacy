@@ -25,7 +25,7 @@ public class TaskValidatorsUtils {
 
     public static Validator<Target> targetPropertiesNotBlankValidation(Target target, String... properties) {
         Validator<Target> targetValidator = of(target);
-        Arrays.stream(properties).forEach(p -> targetValidator.validate(t -> t.properties().get(p), StringUtils::isNotBlank, "Target property [" + p + "] is blank"));
+        Arrays.stream(properties).forEach(p -> targetValidator.validate(t -> t.property(p).orElse(""), StringUtils::isNotBlank, "Target property [" + p + "] is blank"));
         return targetValidator;
     }
 
