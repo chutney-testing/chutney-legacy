@@ -60,7 +60,7 @@ public class FakeServerSsh {
         }
         AbstractGeneratorHostKeyProvider hostKeyProvider = prepareKeyPairProvider();
         sshd.setKeyPairProvider(hostKeyProvider);
-        sshd.setPublickeyAuthenticator(getPublickeyAuthenticator(acceptAllPubKeys, authorizedKeys));
+        sshd.setPublickeyAuthenticator(getPublicKeyAuthenticator(acceptAllPubKeys, authorizedKeys));
         sshd.setPasswordAuthenticator(acceptAllPassword ? (username, password, session) -> USERNAME.equals(username) && PASSWORD.equals(password) : RejectAllPasswordAuthenticator.INSTANCE);
         sshd.setShellFactory(InteractiveProcessShellFactory.INSTANCE);
         sshd.setCommandFactory(ProcessShellCommandFactory.INSTANCE);
@@ -68,7 +68,7 @@ public class FakeServerSsh {
         return sshd;
     }
 
-    private static PublickeyAuthenticator getPublickeyAuthenticator(boolean acceptAllPubKeys, String authorizedKeys) {
+    private static PublickeyAuthenticator getPublicKeyAuthenticator(boolean acceptAllPubKeys, String authorizedKeys) {
         if (StringUtils.isNotBlank(authorizedKeys)) {
             return new AuthorizedKeysAuthenticator(Path.of(authorizedKeys));
         }

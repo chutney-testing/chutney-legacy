@@ -1,6 +1,5 @@
 package com.chutneytesting.task.ssh.fakes;
 
-import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
 
 import com.chutneytesting.task.spi.injectable.SecurityInfo;
@@ -15,20 +14,17 @@ public class HardcodedTarget implements Target {
 
     private final String host;
     private final int port;
-    private final SecurityInfo securityInfo;
     private final Map<String, String> properties;
 
-    public HardcodedTarget(SshServerMock sshServer, SecurityInfo securityInfo) {
+    public HardcodedTarget(SshServerMock sshServer, Map<String, String> properties) {
         this.host = sshServer.host();
         this.port = sshServer.port();
-        this.securityInfo = securityInfo;
-        this.properties = emptyMap();
+        this.properties = unmodifiableMap(properties);
     }
 
-    public HardcodedTarget(SshServer sshServer, SecurityInfo securityInfo, Map<String, String> properties) {
+    public HardcodedTarget(SshServer sshServer, Map<String, String> properties) {
         this.host = sshServer.getHost();
         this.port = sshServer.getPort();
-        this.securityInfo = securityInfo;
         this.properties = unmodifiableMap(properties);
     }
 
@@ -49,7 +45,7 @@ public class HardcodedTarget implements Target {
 
     @Override
     public SecurityInfo security() {
-        return securityInfo;
+        return null;
     }
 
     @Override
@@ -64,7 +60,8 @@ public class HardcodedTarget implements Target {
     @Override
     public String toString() {
         return "HardcodedTarget{" +
-            "securityInfo=" + securityInfo +
+            ", host=" + host +
+            ", port=" + port +
             ", properties=" + properties +
             '}';
     }

@@ -80,11 +80,9 @@ public class ScpTaskTest {
 
     public static List<Arguments> securedTargets() {
         return List.of(
-            Arguments.of(FakeTargetInfo.buildTargetWithCredentialUsernamePassword(credentialSshServer)),
-            Arguments.of(FakeTargetInfo.buildTargetWithPropertiesUsernamePassword(credentialSshServer)),
+            Arguments.of(FakeTargetInfo.buildTargetWithPassword(credentialSshServer)),
             Arguments.of(FakeTargetInfo.buildTargetWithPrivateKeyWithoutPassphrase(keySshServer)),
-            Arguments.of(FakeTargetInfo.buildTargetWithPrivateKeyWithPropertiesPassphrase(keySshServer)),
-            Arguments.of(FakeTargetInfo.buildTargetWithPrivateKeyWithCredentialPassphrase(keySshServer))
+            Arguments.of(FakeTargetInfo.buildTargetWithPrivateKeyWithPassphrase(keySshServer))
         );
     }
 

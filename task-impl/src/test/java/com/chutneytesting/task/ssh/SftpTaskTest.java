@@ -43,7 +43,7 @@ public class SftpTaskTest {
     @Test
     public void should_list_directory_files() {
         // Given
-        Target target = FakeTargetInfo.buildTargetWithCredentialUsernamePassword(sftpServer);
+        Target target = FakeTargetInfo.buildTargetWithPassword(sftpServer);
         String directory = SftpTaskTest.class.getResource("/security").getPath();
         List<String> expectedFiles = Lists.newArrayList(
             "client_rsa.pub",
@@ -69,7 +69,7 @@ public class SftpTaskTest {
     @Test
     public void should_get_file_attributes() {
         // Given
-        Target target = FakeTargetInfo.buildTargetWithCredentialUsernamePassword(sftpServer);
+        Target target = FakeTargetInfo.buildTargetWithPassword(sftpServer);
         String directory = SftpTaskTest.class.getResource("/security").getPath();
         String regularFile = SftpTaskTest.class.getResource("/security/authorized_keys").getPath();
         String[] expectedKeys = {"CreationDate", "lastAccess", "lastModification", "type", "owner:group"};
@@ -93,7 +93,7 @@ public class SftpTaskTest {
     @Test
     void should_upload_local_file_to_remote_destination() throws URISyntaxException, IOException {
         // Given
-        Target target = FakeTargetInfo.buildTargetWithCredentialUsernamePassword(sftpServer);
+        Target target = FakeTargetInfo.buildTargetWithPassword(sftpServer);
         Path srcFilePath = Paths.get(SftpTaskTest.class.getResource("/sftptest.file.txt").toURI());
         String srcFile = srcFilePath.toString();
 
@@ -116,7 +116,7 @@ public class SftpTaskTest {
     @Test
     void should_download_remote_file_to_local_destination() {
         // Given
-        Target target = FakeTargetInfo.buildTargetWithCredentialUsernamePassword(sftpServer);
+        Target target = FakeTargetInfo.buildTargetWithPassword(sftpServer);
         String srcFile = SftpTaskTest.class.getResource("/sftptest.file.txt").getPath();
         String dstFile = temporaryFolder.resolve("downloaded").resolve("toto.txt").toString();
         Path expectedFile = temporaryFolder.resolve("downloaded").resolve("toto.txt");

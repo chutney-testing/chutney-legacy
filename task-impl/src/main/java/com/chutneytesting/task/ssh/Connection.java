@@ -30,10 +30,10 @@ public class Connection {
 
         final String host = target.host();
         final int port = extractPort(target);
-        final String username = getUsername(target);
-        final String password = getPassword(target);
-        final String privateKey = getPrivateKey(target);
-        final String passphrase = getPassPhrase(target);
+        final String username = target.user().orElse(EMPTY);
+        final String password = target.userPassword().orElse(EMPTY);
+        final String privateKey = target.privateKey().orElse(EMPTY);
+        final String passphrase = target.privateKeyPassword().orElse(EMPTY);
 
         return new Connection(host, port, username, password, privateKey, passphrase);
     }
@@ -54,45 +54,5 @@ public class Connection {
     private static int extractPort(Target target) {
         int serverPort = target.port();
         return serverPort == -1 ? 22 : serverPort;
-    }
-
-    private static String getUsername(Target target) {
-        if (target.properties().containsKey("username")) {
-            return target.properties().get("username");
-        }
-        if (target.security().credential().isPresent()) {
-            return target.security().credential().get().username();
-        }
-        return EMPTY;
-    }
-
-    private static String getPassword(Target target) {
-        if (target.properties().containsKey("password")) {
-            return target.properties().get("password");
-        }
-        if (target.security().credential().isPresent()) {
-            return target.security().credential().get().password();
-        }
-        return EMPTY;
-    }
-
-    private static String getPrivateKey(Target target) {
-        if (target.properties().containsKey("privateKey")) {
-            return target.properties().get("privateKey");
-        }
-        if (target.security().privateKey().isPresent()) {
-            return target.security().privateKey().get();
-        }
-        return EMPTY;
-    }
-
-    private static String getPassPhrase(Target target) {
-        if (target.properties().containsKey("privateKeyPassphrase")) {
-            return target.properties().get("privateKeyPassphrase");
-        }
-        if (target.security().credential().isPresent()) {
-            return target.security().credential().get().password();
-        }
-        return EMPTY;
     }
 }
