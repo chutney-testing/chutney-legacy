@@ -2,6 +2,7 @@ package com.chutneytesting.task.spi.injectable;
 
 import java.util.Optional;
 
+@Deprecated
 public interface SecurityInfo {
 
     Optional<Credential> credential();
@@ -12,6 +13,7 @@ public interface SecurityInfo {
     Optional<String> keyPassword();
     Optional<String> privateKey();
 
+    @Deprecated
     interface Credential {
         String username();
         String password();
