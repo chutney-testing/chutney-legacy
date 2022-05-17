@@ -124,7 +124,7 @@ public class FileSystemBackupRepository implements BackupRepository {
         }
 
         if (backup.components) {
-            backup(orientComponentDB, backupPath.resolve(COMPONENTS_BACKUP_NAME), "orient");
+            backup(backupPath.resolve(COMPONENTS_BACKUP_NAME), "orient", this::backupOrient);
         }
 
         if (backup.jiraLinks) {
@@ -222,4 +222,9 @@ public class FileSystemBackupRepository implements BackupRepository {
             }
         }
     }
+
+    private void backupOrient(OutputStream outputStream) {
+        orientComponentDB.backup(outputStream);
+    }
+
 }

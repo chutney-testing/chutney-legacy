@@ -14,23 +14,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/admin/database")
 @CrossOrigin(origins = "*")
-public class DatabaseManagementController {
+public class OrientDatabaseManagementController {
 
-    private final DatabaseAdminService jdbcAdminService;
+    private final DatabaseAdminService orientAdminService;
 
-    DatabaseManagementController(DatabaseAdminService jdbcAdminService) {
-        this.jdbcAdminService = jdbcAdminService;
+    OrientDatabaseManagementController(DatabaseAdminService orientAdminService) {
+        this.orientAdminService = orientAdminService;
     }
 
     @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
-    @PostMapping("/execute/jdbc")
-    public SqlResult executeh2(@RequestBody String query) {
-        return jdbcAdminService.execute(query);
+    @PostMapping("/execute/orient")
+    public SqlResult executeOrient(@RequestBody String query) {
+        return orientAdminService.execute(query);
     }
 
+
     @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
-    @PostMapping("/paginate/jdbc")
-    public PaginatedDto<SqlResult> executeh2(@RequestBody PaginationRequestWrapperDto<String> paginationRequestWrapperDto) {
-        return jdbcAdminService.paginate(paginationRequestWrapperDto);
+    @PostMapping("/paginate/orient")
+    public PaginatedDto<SqlResult> executeOrient(@RequestBody PaginationRequestWrapperDto<String> paginationRequestWrapperDto) {
+        return orientAdminService.paginate(paginationRequestWrapperDto);
     }
+
 }

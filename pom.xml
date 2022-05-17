@@ -69,6 +69,8 @@
         <module>glacio-adapter</module>
         <module>chutney-junit</module>
         <module>jira</module>
+        <module>component</module>
+        <module>testcase-spi</module>
     </modules>
 
     <properties>
@@ -197,6 +199,16 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.chutneytesting</groupId>
+                <artifactId>testcase-spi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.chutneytesting</groupId>
+                <artifactId>component</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.chutneytesting</groupId>
                 <artifactId>environment</artifactId>

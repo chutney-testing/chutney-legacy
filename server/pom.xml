@@ -15,6 +15,14 @@
     <dependencies>
         <dependency>
             <groupId>com.chutneytesting</groupId>
+            <artifactId>testcase-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.chutneytesting</groupId>
+            <artifactId>component</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.chutneytesting</groupId>
             <artifactId>engine</artifactId>
         </dependency>
         <dependency>
@@ -168,18 +176,6 @@
         <dependency>
             <groupId>com.jcraft</groupId>
             <artifactId>jsch</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.orientechnologies</groupId>
-            <artifactId>orientdb-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.orientechnologies</groupId>
-            <artifactId>orientdb-lucene</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.github.java-diff-utils</groupId>
-            <artifactId>java-diff-utils</artifactId>
         </dependency>
         <dependency>
             <groupId>com.sun.activation</groupId>
