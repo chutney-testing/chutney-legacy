@@ -1,6 +1,5 @@
 package com.chutneytesting.task.http.domain;
 
-import com.chutneytesting.task.spi.injectable.SecurityInfo;
 import com.chutneytesting.task.spi.injectable.Target;
 import java.io.IOException;
 import java.net.ProxySelector;
@@ -12,7 +11,6 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -47,19 +45,19 @@ public class HttpClientFactory {
      * </ul>
      */
     public HttpClient create(Target target, ParameterizedTypeReference<String> responseType, int timeout) {
-        RestTemplate restTemplate = buildRestTemplate(target.properties(), target.security(), timeout);
+        RestTemplate restTemplate = buildRestTemplate(target, timeout);
 
         return (httpMethod, resource, input) -> restTemplate.exchange(target.url() + resource, httpMethod, input, responseType);
     }
 
     public HttpClient create(Target target, Class<String> responseType, int timeout) {
-        RestTemplate restTemplate = buildRestTemplate(target.properties(), target.security(), timeout);
+        RestTemplate restTemplate = buildRestTemplate(target, timeout);
 
         return (httpMethod, resource, input) -> restTemplate.exchange(target.url() + resource, httpMethod, input, responseType);
     }
 
-    private static RestTemplate buildRestTemplate(Map<String, String> properties, SecurityInfo securityInfo, int timeout) {
-        SSLContext sslContext = buildSslContext(properties, securityInfo);
+    private static RestTemplate buildRestTemplate(Target target, int timeout) {
+        SSLContext sslContext = buildSslContext(target);
 
         SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
 
@@ -75,16 +73,16 @@ public class HttpClientFactory {
         requestFactory.setConnectTimeout(timeout);
 
         RestTemplate restTemplate = new RestTemplate(requestFactory);
-        configureBasicAuth(securityInfo, restTemplate);
+        configureBasicAuth(target, restTemplate);
         removeErrorHandler(restTemplate);
         return restTemplate;
     }
 
-    private static SSLContext buildSslContext(Map<String, String> properties, SecurityInfo securityInfo) {
+    private static SSLContext buildSslContext(Target target) {
         try {
             SSLContextBuilder sslContextBuilder = new SSLContextBuilder();
-            configureTrustStore(properties, securityInfo, sslContextBuilder);
-            configureKeyStore(properties, securityInfo, sslContextBuilder);
+            configureTrustStore(target, sslContextBuilder);
+            configureKeyStore(target, sslContextBuilder);
             return sslContextBuilder.build();
         } catch (GeneralSecurityException | IOException e) {
             throw new IllegalArgumentException(e);
@@ -95,18 +93,20 @@ public class HttpClientFactory {
         restTemplate.setErrorHandler(new NoOpResponseErrorHandler());
     }
 
-    private static void configureBasicAuth(SecurityInfo securityInfo, RestTemplate restTemplate) {
-        if (securityInfo.credential().isPresent()) {
+    private static void configureBasicAuth(Target target, RestTemplate restTemplate) {
+        if (target.user().isPresent()) {
+            String user = target.user().get();
+            String password = target.userPassword().orElse("");
             restTemplate.getInterceptors().add(
-                new BasicAuthenticationInterceptor(securityInfo.credential().get().username(), securityInfo.credential().get().password(), StandardCharsets.UTF_8)
+                new BasicAuthenticationInterceptor(user, password, StandardCharsets.UTF_8)
             );
         }
     }
 
-    static void configureKeyStore(Map<String, String> properties, SecurityInfo securityInfo, SSLContextBuilder sslContextBuilder) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException {
-        Optional<String> keystore = securityInfo.keyStore().or(() -> findProperty(properties, "keystore"));
-        String keystorePassword = securityInfo.keyStorePassword().or(() -> findProperty(properties, "keystorePassword")).orElse("");
-        String keyPassword = securityInfo.keyPassword().or(() -> findProperty(properties, "keyPassword")).orElse(keystorePassword);
+    static void configureKeyStore(Target target, SSLContextBuilder sslContextBuilder) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException {
+        Optional<String> keystore = target.keyStore();
+        String keystorePassword = target.keyStorePassword().orElse("");
+        String keyPassword = target.keyPassword().orElse(keystorePassword);
         if (keystore.isPresent()) {
             KeyStore store = KeyStore.getInstance(KeyStore.getDefaultType());
             store.load(Paths.get(keystore.get()).toUri().toURL().openStream(), keystorePassword.toCharArray());
@@ -114,9 +114,9 @@ public class HttpClientFactory {
         }
     }
 
-    static void configureTrustStore(Map<String, String> properties, SecurityInfo securityInfo, SSLContextBuilder sslContextBuilder) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
-        Optional<String> truststore = securityInfo.trustStore().or(() -> findProperty(properties, "truststore"));
-        String truststorePassword = securityInfo.trustStorePassword().or(() -> findProperty(properties, "truststorePassword")).orElse("");
+    static void configureTrustStore(Target target, SSLContextBuilder sslContextBuilder) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
+        Optional<String> truststore = target.trustStore();
+        String truststorePassword = target.trustStorePassword().orElse("");
         if (truststore.isPresent()) {
             KeyStore trustMaterial = KeyStore.getInstance(KeyStore.getDefaultType());
             trustMaterial.load(Paths.get(truststore.get()).toUri().toURL().openStream(), truststorePassword.toCharArray());
@@ -124,12 +124,6 @@ public class HttpClientFactory {
         } else {
             sslContextBuilder.loadTrustMaterial(null, (chain, authType) -> true);
         }
-    }
-
-    private static Optional<String> findProperty(Map<String, String> properties, String key) {
-        return properties.entrySet().stream()
-            .filter(e -> e.getKey().equalsIgnoreCase(key))
-            .findFirst().map(Map.Entry::getValue);
     }
 
     private static Boolean isSystemProxySet() {
