@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 public class DefaultMongoDatabaseFactory implements MongoDatabaseFactory {
 
     public CloseableResource<MongoDatabase> create(Target target) throws IllegalArgumentException {
-        String databaseName = target.properties().get("databaseName");
+        String databaseName = target.property("databaseName").orElse("");
         if (StringUtils.isEmpty(databaseName)) {
             throw new IllegalArgumentException("Missing Target property 'databaseName'");
         }
@@ -24,10 +24,12 @@ public class DefaultMongoDatabaseFactory implements MongoDatabaseFactory {
         MongoClientSettings.Builder mongoClientSettings = MongoClientSettings.builder()
             .applyConnectionString(new ConnectionString(connectionString));
 
-        if (target.security().credential().isPresent()) {
-            MongoCredential credential = MongoCredential.createCredential(target.security().credential().get().username(), databaseName, target.security().credential().get().password().toCharArray());
-            mongoClientSettings
-                .credential(credential);
+        if (target.user().isPresent()) {
+            String user = target.user().get();
+            String password = target.userPassword().orElse("");
+            mongoClientSettings.credential(
+                MongoCredential.createCredential(user, databaseName, password.toCharArray())
+            );
         }
         mongoClient = MongoClients.create(mongoClientSettings.build());
         return CloseableResource.build(mongoClient.getDatabase(databaseName), mongoClient::close);

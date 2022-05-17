@@ -10,6 +10,6 @@ public class MongoTaskValidatorsUtils {
 
     public static Validator<Target> mongoTargetValidation(Target target) {
         return targetValidation(target)
-            .validate(t -> target.properties().get("databaseName"), StringUtils::isNotBlank, "Missing Target property 'databaseName'");
+            .validate(t -> target.property("databaseName").orElse(null), StringUtils::isNotBlank, "Missing Target property 'databaseName'");
     }
 }
