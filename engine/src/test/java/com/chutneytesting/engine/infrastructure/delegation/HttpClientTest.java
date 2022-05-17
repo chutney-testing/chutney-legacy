@@ -16,6 +16,7 @@ import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
 import com.chutneytesting.engine.domain.execution.strategies.StrategyProperties;
+import com.chutneytesting.tools.SocketUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,7 +41,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.util.SocketUtils;
 
 public class HttpClientTest {
 

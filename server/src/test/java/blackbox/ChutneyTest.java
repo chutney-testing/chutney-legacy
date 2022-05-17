@@ -17,6 +17,7 @@ import com.chutneytesting.security.domain.Authorizations;
 import com.chutneytesting.security.domain.Role;
 import com.chutneytesting.security.domain.User;
 import com.chutneytesting.security.domain.UserRoles;
+import com.chutneytesting.tools.SocketUtils;
 import com.chutneytesting.tools.file.FileUtils;
 import java.io.File;
 import java.util.Arrays;
@@ -25,7 +26,6 @@ import java.util.Random;
 import org.apache.groovy.util.Maps;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.util.SocketUtils;
 
 @Chutney
 public class ChutneyTest {

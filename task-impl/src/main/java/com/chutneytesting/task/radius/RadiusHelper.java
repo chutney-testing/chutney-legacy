@@ -1,7 +1,6 @@
 package com.chutneytesting.task.radius;
 
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.targetPropertiesNotBlankValidation;
-import static java.lang.Integer.parseInt;
 
 import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.task.spi.validation.Validator;
@@ -32,16 +31,16 @@ public final class RadiusHelper {
         Validator<Target> validator = Validator.of(target);
         for (String property : List.of(AUTH_PORT_TARGET_PROPERTY, ACC_PORT_TARGET_PROPERTY)) {
             validator
-                .validate(t -> parseInt(t.properties().get(property)), port -> port > 0, property + " is not a valid port number");
+                .validate(t -> target.numericProperty(property), port -> port.isPresent() && port.get().intValue() > 0, property + " is not a valid port number");
         }
         return validator;
     }
 
     public static RadiusClient createRadiusClient(Target target) {
         String hostname = target.host();
-        String sharedSecret = target.properties().get(SHARED_SECRET_TARGET_PROPERTY);
-        int authenticatePort = parseInt(target.properties().get(AUTH_PORT_TARGET_PROPERTY));
-        int accountingPort = parseInt(target.properties().get(ACC_PORT_TARGET_PROPERTY));
+        String sharedSecret = target.property(SHARED_SECRET_TARGET_PROPERTY).orElse("");
+        int authenticatePort = target.numericProperty(AUTH_PORT_TARGET_PROPERTY).orElse(0).intValue();
+        int accountingPort = target.numericProperty(ACC_PORT_TARGET_PROPERTY).orElse(0).intValue();
 
         RadiusClient client = new RadiusClient(hostname, sharedSecret);
         client.setAuthPort(authenticatePort);

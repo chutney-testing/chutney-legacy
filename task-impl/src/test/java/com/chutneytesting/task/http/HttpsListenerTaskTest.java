@@ -14,6 +14,7 @@ import com.chutneytesting.task.http.function.WireMockFunction;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Logger;
+import com.chutneytesting.tools.SocketUtils;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.verification.LoggedRequest;
 import java.util.List;
@@ -22,15 +23,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.util.SocketUtils;
 import org.springframework.web.client.RestTemplate;
 
 public class HttpsListenerTaskTest {
 
-    private int wireMockPort = SocketUtils.findAvailableTcpPort();
+    private final int wireMockPort = SocketUtils.findAvailableTcpPort();
 
-    private Logger logger = new TestLogger();
-    private WireMockServer server = new WireMockServer(wireMockConfig().port(wireMockPort));
+    private final Logger logger = new TestLogger();
+    private final WireMockServer server = new WireMockServer(wireMockConfig().port(wireMockPort));
 
     @BeforeEach
     public void setUp() {

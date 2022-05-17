@@ -2,15 +2,16 @@ package com.chutneytesting.task.radius;
 
 
 import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Success;
+import static com.chutneytesting.tools.SocketUtils.findAvailableTcpPort;
 import static java.lang.String.valueOf;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.util.SocketUtils.findAvailableTcpPort;
 
 import com.chutneytesting.task.TestLogger;
 import com.chutneytesting.task.TestTarget;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Target;
+import com.chutneytesting.tools.SocketUtils;
 import java.net.InetSocketAddress;
 import java.util.Random;
 import org.junit.jupiter.api.AfterAll;
@@ -18,7 +19,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.util.SocketUtils;
 import org.tinyradius.util.RadiusServer;
 
 class RadiusTasksTest {
