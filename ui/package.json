@@ -40,6 +40,7 @@
     "jszip": "^3.2.2",
     "moment": "^2.29.2",
     "ng-click-outside2": "^10.0.4",
+    "ng-zorro-antd": "^13.2.2",
     "ng2-charts": "^3.0.8",
     "ng2-dragula": "^2.1.1",
     "ngx-bootstrap": "^8.0.0",

@@ -3,6 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { LoginService } from '@core/services';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'chutney-login',
@@ -11,18 +13,20 @@ import { LoginService } from '@core/services';
 })
 export class LoginComponent implements OnDestroy {
 
-  username: string;
-  password: string;
   connectionError: string;
   action: string;
 
   private forwardUrl: string;
   private paramsSubscription: Subscription;
   private queryParamsSubscription: Subscription;
+  validateForm!: FormGroup;
+
 
   constructor(
     private loginService: LoginService,
     private route: ActivatedRoute,
+    private fb: FormBuilder,
+    private message: NzMessageService
   ) {
 
     this.paramsSubscription = this.route.params.subscribe(params => {
@@ -31,6 +35,29 @@ export class LoginComponent implements OnDestroy {
 
     this.queryParamsSubscription = this.route.queryParams.subscribe(params => {
       this.forwardUrl = params['url'];
+    });
+  }
+
+
+  submitForm(): void {
+    if (this.validateForm.valid) {
+      this.login();
+    } else {
+      Object.values(this.validateForm.controls).forEach(control => {
+        if (control.invalid) {
+          control.markAsDirty();
+          control.updateValueAndValidity({ onlySelf: true });
+        }
+      });
+    }
+  }
+
+
+  ngOnInit(): void {
+    this.validateForm = this.fb.group({
+      userName: [null, [Validators.required]],
+      password: [null, [Validators.required]],
+      remember: [true]
     });
   }
 
@@ -44,11 +71,14 @@ export class LoginComponent implements OnDestroy {
   }
 
   login() {
-    this.loginService.login(this.username, this.password)
+      const username = this.validateForm.controls['userName'].value;
+      const password = this.validateForm.controls['password'].value;
+    this.loginService.login(username, password)
       .subscribe(
-        user => this.loginService.navigateAfterLogin(this.forwardUrl),
+        next => this.loginService.navigateAfterLogin(this.forwardUrl),
         error => {
             this.connectionError = error.error.message;
+            this.message.error(this.connectionError);
             this.action = null;
         }
       );
