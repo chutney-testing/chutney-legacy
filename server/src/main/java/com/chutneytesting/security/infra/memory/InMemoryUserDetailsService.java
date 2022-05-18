@@ -7,6 +7,7 @@ import com.chutneytesting.security.api.UserDto;
 import com.chutneytesting.security.domain.AuthenticationService;
 import com.chutneytesting.security.domain.Authorization;
 import com.chutneytesting.security.domain.Role;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,7 +37,7 @@ public class InMemoryUserDetailsService implements UserDetailsService {
         UserDto dto = new UserDto(userDto);
 
         if (dto.getRoles().contains("ADMIN")) {
-            dto.grantAuthority(Authorization.ADMIN_ACCESS.name());
+            Arrays.stream(Authorization.values()).map(Authorization::name).forEach(dto::grantAuthority);
         }
 
         Role role = authenticationService.userRoleById(dto.getId());
