@@ -28,7 +28,7 @@ public class SqlTaskTest {
     private final Target sqlTarget = TestTarget.TestTargetBuilder.builder()
         .withTargetId("sql")
         .withUrl("jdbc:h2:mem:" + DB_NAME)
-        .withSecurity("sa", "")
+        .withProperty("user", "sa")
         .build();
 
     private final Logger logger = Mockito.mock(Logger.class);
@@ -59,8 +59,8 @@ public class SqlTaskTest {
         assertThat(result.status).isEqualTo(TaskExecutionResult.Status.Success);
         assertThat(Arrays.stream(recordResult.get(0).toMatrix()).toArray()).containsExactly(firstTuple, secondTuple, thirdTuple);
         verify(logger).info(eq("| ID | NAME    | EMAIL           |\n" +
-                                     "----------------------------------\n" +
-                                     "| 1  | laitue  | laitue@fake.com |\n" +
-                                     "| 2  | carotte | kakarot@fake.db |\n"));
+            "----------------------------------\n" +
+            "| 1  | laitue  | laitue@fake.com |\n" +
+            "| 2  | carotte | kakarot@fake.db |\n"));
     }
 }

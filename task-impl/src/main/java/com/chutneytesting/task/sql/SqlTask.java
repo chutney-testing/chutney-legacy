@@ -47,7 +47,7 @@ public class SqlTask implements Task {
     @Override
     public List<String> validateInputs() {
         Validator<Target> targetPropertiesValidation = of(target)
-            .validate(t -> target.properties().get("jdbcUrl"), StringUtils::isNotBlank, "Missing Target property 'jdbcUrl'");
+            .validate(t -> target.property("jdbcUrl").orElse(""), StringUtils::isNotBlank, "Missing Target property 'jdbcUrl'");
         return getErrorsFrom(
             targetPropertiesValidation,
             targetValidation(target),

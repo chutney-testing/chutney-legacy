@@ -1,7 +1,5 @@
 package com.chutneytesting.task.sql.core;
 
-import static java.util.Optional.ofNullable;
-
 import com.chutneytesting.task.spi.injectable.Target;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -19,13 +17,13 @@ public class DefaultSqlClientFactory implements SqlClientFactory {
     private SqlClient doCreate(Target target) {
         Properties props = new Properties();
         props.put("jdbcUrl", target.url());
-        target.security().credential().ifPresent(credential -> props.put("username", credential.username()));
-        target.security().credential().ifPresent(credential -> props.put("password", credential.password()));
+        target.user().ifPresent(user -> props.put("username", user));
+        target.userPassword().ifPresent(password -> props.put("password", password));
 
-        target.properties().forEach(props::put);
+        props.putAll(target.prefixedProperties("dataSource."));
         final HikariConfig config = new HikariConfig(props);
         final HikariDataSource ds = new HikariDataSource(config);
 
-        return new SqlClient(ds, ofNullable(target.properties().get("maxFetchSize")).map(Integer::getInteger).orElse(DEFAULT_MAX_FETCH_SIZE));
+        return new SqlClient(ds, target.numericProperty("maxFetchSize").map(Number::intValue).orElse(DEFAULT_MAX_FETCH_SIZE));
     }
 }
