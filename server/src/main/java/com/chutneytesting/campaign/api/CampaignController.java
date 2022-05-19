@@ -17,7 +17,7 @@ import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.chutneytesting.scenario.api.raw.dto.TestCaseIndexDto;
 import com.chutneytesting.scenario.domain.TestCaseRepository;
-import com.chutneytesting.scenario.domain.compose.ComposableTestCaseRepository;
+import com.chutneytesting.scenario.domain.ComposableTestCaseRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;

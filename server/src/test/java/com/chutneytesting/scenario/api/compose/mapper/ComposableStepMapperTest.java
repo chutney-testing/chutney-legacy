@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.scenario.api.compose.dto.ComposableStepDto;
 import com.chutneytesting.scenario.api.compose.dto.ImmutableComposableStepDto;
-import com.chutneytesting.scenario.domain.compose.ComposableStep;
+import com.chutneytesting.scenario.domain.ComposableStep;
 import com.chutneytesting.tools.ui.KeyValue;
 import java.util.Arrays;
 import java.util.Collections;

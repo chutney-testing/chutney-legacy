@@ -1,6 +1,6 @@
 package com.chutneytesting.scenario.api.compose.mapper;
 
-import static com.chutneytesting.scenario.domain.compose.ComposableTestCaseRepository.COMPOSABLE_TESTCASE_REPOSITORY_SOURCE;
+import static com.chutneytesting.scenario.domain.ComposableTestCaseRepository.COMPOSABLE_TESTCASE_REPOSITORY_SOURCE;
 import static com.chutneytesting.tools.orient.ComposableIdUtils.fromFrontId;
 import static com.chutneytesting.tools.orient.ComposableIdUtils.toFrontId;
 
@@ -8,11 +8,11 @@ import com.chutneytesting.scenario.api.compose.dto.ComposableStepDto;
 import com.chutneytesting.scenario.api.compose.dto.ComposableTestCaseDto;
 import com.chutneytesting.scenario.api.compose.dto.ImmutableComposableScenarioDto;
 import com.chutneytesting.scenario.api.compose.dto.ImmutableComposableTestCaseDto;
-import com.chutneytesting.tools.ui.KeyValue;
-import com.chutneytesting.scenario.domain.compose.ComposableScenario;
-import com.chutneytesting.scenario.domain.compose.ComposableTestCase;
+import com.chutneytesting.scenario.domain.ComposableScenario;
+import com.chutneytesting.scenario.domain.ComposableTestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadata;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
+import com.chutneytesting.tools.ui.KeyValue;
 import java.util.List;
 import java.util.stream.Collectors;
 

@@ -3,7 +3,6 @@ package com.chutneytesting.scenario.api.raw.mapper;
 import static org.hjson.JsonValue.readHjson;
 
 import com.chutneytesting.scenario.api.raw.dto.ImmutableRawTestCaseDto;
-import com.chutneytesting.tools.ui.KeyValue;
 import com.chutneytesting.scenario.api.raw.dto.RawTestCaseDto;
 import com.chutneytesting.scenario.domain.ScenarioNotParsableException;
 import com.chutneytesting.scenario.domain.TestCase;
@@ -11,7 +10,8 @@ import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.domain.raw.RawTestCase;
-import com.chutneytesting.execution.domain.compiler.GwtScenarioMarshaller;
+import com.chutneytesting.execution.domain.GwtScenarioMarshaller;
+import com.chutneytesting.tools.ui.KeyValue;
 import org.hjson.Stringify;
 
 public class RawTestCaseMapper {

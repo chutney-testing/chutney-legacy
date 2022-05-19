@@ -8,7 +8,6 @@ import com.chutneytesting.scenario.domain.TestCaseMetadata;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.TestCaseRepository;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
-import com.chutneytesting.scenario.infra.compose.OrientComposableTestCaseRepository;
 import com.chutneytesting.scenario.infra.raw.DatabaseTestCaseRepository;
 import com.chutneytesting.scenario.infra.raw.TestCaseData;
 import com.chutneytesting.scenario.infra.raw.TestCaseDataMapper;

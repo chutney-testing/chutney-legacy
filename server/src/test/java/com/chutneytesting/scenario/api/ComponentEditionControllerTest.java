@@ -11,17 +11,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.chutneytesting.RestExceptionHandler;
-import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;
-import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedScenario;
-import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
+import com.chutneytesting.execution.domain.TestCasePreProcessors;
+import com.chutneytesting.execution.domain.ExecutableComposedScenario;
+import com.chutneytesting.execution.domain.ExecutableComposedTestCase;
 import com.chutneytesting.scenario.api.compose.dto.ComposableTestCaseDto;
 import com.chutneytesting.scenario.api.compose.dto.ImmutableComposableScenarioDto;
 import com.chutneytesting.scenario.api.compose.dto.ImmutableComposableTestCaseDto;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.TestCaseRepository;
-import com.chutneytesting.scenario.domain.compose.ComposableScenario;
-import com.chutneytesting.scenario.domain.compose.ComposableTestCase;
-import com.chutneytesting.scenario.domain.compose.ComposableTestCaseRepository;
+import com.chutneytesting.scenario.domain.ComposableScenario;
+import com.chutneytesting.scenario.domain.ComposableTestCase;
+import com.chutneytesting.scenario.domain.ComposableTestCaseRepository;
 import com.chutneytesting.security.api.UserDto;
 import com.chutneytesting.security.infra.SpringUserService;
 import com.fasterxml.jackson.databind.ObjectMapper;

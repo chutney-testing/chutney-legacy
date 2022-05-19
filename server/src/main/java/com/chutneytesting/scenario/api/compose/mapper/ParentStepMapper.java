@@ -5,7 +5,7 @@ import static com.chutneytesting.tools.orient.ComposableIdUtils.toFrontId;
 import com.chutneytesting.scenario.api.compose.dto.ImmutableNameIdDto;
 import com.chutneytesting.scenario.api.compose.dto.ImmutableParentsStepDto;
 import com.chutneytesting.scenario.api.compose.dto.ParentsStepDto;
-import com.chutneytesting.scenario.domain.compose.ParentStepId;
+import com.chutneytesting.scenario.domain.ParentStepId;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;

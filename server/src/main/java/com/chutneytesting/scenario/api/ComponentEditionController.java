@@ -11,11 +11,11 @@ import com.chutneytesting.scenario.api.compose.mapper.ExecutableComposableTestCa
 import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.TestCaseRepository;
-import com.chutneytesting.scenario.domain.compose.ComposableTestCase;
-import com.chutneytesting.scenario.domain.compose.ComposableTestCaseRepository;
+import com.chutneytesting.scenario.domain.ComposableTestCase;
+import com.chutneytesting.scenario.domain.ComposableTestCaseRepository;
 import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;
-import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
+import com.chutneytesting.execution.domain.TestCasePreProcessors;
+import com.chutneytesting.execution.domain.ExecutableComposedTestCase;
 import com.chutneytesting.security.infra.SpringUserService;
 import com.chutneytesting.tools.ui.KeyValue;
 import java.util.List;

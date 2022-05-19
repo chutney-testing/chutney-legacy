@@ -4,7 +4,7 @@ package com.chutneytesting.admin.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.admin.infra.storage.JsonHomePageRepository;
+import com.chutneytesting.admin.infra.JsonHomePageRepository;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;

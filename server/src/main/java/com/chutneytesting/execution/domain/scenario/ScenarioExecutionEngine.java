@@ -8,13 +8,13 @@ import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.compiler.GwtScenarioMarshaller;
-import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;
+import com.chutneytesting.execution.domain.GwtScenarioMarshaller;
+import com.chutneytesting.execution.domain.TestCasePreProcessors;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.report.StepExecutionReportCore;
-import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedScenario;
-import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
-import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedTestCase;
+import com.chutneytesting.execution.domain.ExecutableComposedScenario;
+import com.chutneytesting.execution.domain.ExecutableComposedStep;
+import com.chutneytesting.execution.domain.ExecutableComposedTestCase;
 import java.util.Collections;
 import java.util.Map;
 
