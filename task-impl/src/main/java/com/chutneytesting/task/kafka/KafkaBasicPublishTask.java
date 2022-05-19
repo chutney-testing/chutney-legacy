@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.exec.util.MapUtils;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
@@ -45,7 +46,7 @@ public class KafkaBasicPublishTask implements Task {
         this.headers = headers != null ? headers : emptyMap();
         this.payload = payload;
         this.properties = ofNullable(
-            MapUtils.merge(ofNullable(target).map(Target::properties).orElse(emptyMap()), properties)
+            MapUtils.merge(extractProducerConfig(target), properties)
         ).orElse(new HashMap<>());
         this.logger = logger;
     }
@@ -95,4 +96,16 @@ public class KafkaBasicPublishTask implements Task {
         );
         return results;
     }
+
+    private Map<String, String> extractProducerConfig(Target target) {
+        if (target != null) {
+            Map<String, String> config = new HashMap<>();
+            ProducerConfig.configDef().configKeys().keySet().forEach(ck ->
+                target.property(ck).ifPresent(cv -> config.put(ck, cv))
+            );
+            return config;
+        }
+        return emptyMap();
+    }
+
 }

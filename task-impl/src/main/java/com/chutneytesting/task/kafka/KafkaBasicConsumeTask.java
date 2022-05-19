@@ -94,7 +94,7 @@ public class KafkaBasicConsumeTask implements Task {
         this.group = group;
         this.logger = logger;
         this.properties = ofNullable(
-            MapUtils.merge(ofNullable(target).map(Target::properties).orElse(emptyMap()), properties)
+            MapUtils.merge(extractConsumerConfig(target), properties)
         ).orElse(new HashMap<>());
         this.ackMode = ofNullable(ackMode)
             .or(() -> ofNullable(this.properties.get("ackMode")))
@@ -254,5 +254,16 @@ public class KafkaBasicConsumeTask implements Task {
         } catch (Exception e) {
             logger.error("Cannot retrieve content type from message received:  " + e.getMessage());
         }
+    }
+
+    private Map<String, String> extractConsumerConfig(Target target) {
+        if (target != null) {
+            Map<String, String> config = new HashMap<>();
+            ConsumerConfig.configDef().configKeys().keySet().forEach(ck ->
+                target.property(ck).ifPresent(cv -> config.put(ck, cv))
+            );
+            return config;
+        }
+        return emptyMap();
     }
 }

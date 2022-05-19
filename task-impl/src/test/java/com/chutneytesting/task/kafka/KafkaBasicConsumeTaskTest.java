@@ -9,6 +9,8 @@ import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Failure;
 import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Success;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.shuffle;
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -26,6 +28,7 @@ import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -133,21 +136,27 @@ public class KafkaBasicConsumeTaskTest {
     }
 
     @Test
-    void should_merge_target_properties_with_input_properties() {
+    void should_merge_kafka_consumer_target_properties_with_input_properties() {
+        List<String> consumerConfigKeys = new ArrayList<>(ConsumerConfig.configNames());
+        shuffle(consumerConfigKeys);
+        String targetProperty = consumerConfigKeys.get(0);
+        String propertyToOverride = consumerConfigKeys.get(1);
+        String inputProperty = consumerConfigKeys.get(2);
+
         Target target = TestTarget.TestTargetBuilder.builder()
-            .withProperty("a.target.property", "a value")
-            .withProperty("property.to.override", "a target value")
+            .withProperty(targetProperty, "a value")
+            .withProperty(propertyToOverride, "a target value")
             .build();
 
         Map<String, String> properties = Map.of(
-            "a.input.property", "a VALUE",
-            "property.to.override", "a property value"
+            inputProperty, "a VALUE",
+            propertyToOverride, "a property value"
         );
 
         Map<String, String> expectedConfig = Map.of(
-            "a.target.property", "a value",
-            "a.input.property", "a VALUE",
-            "property.to.override", "a property value"
+            targetProperty, "a value",
+            inputProperty, "a VALUE",
+            propertyToOverride, "a property value"
         );
 
         KafkaBasicConsumeTask defaultTask = new KafkaBasicConsumeTask(target, null, null, properties, null, null, null, null, null, null, null);
@@ -320,7 +329,7 @@ public class KafkaBasicConsumeTaskTest {
         assertThat(payload).isEqualTo(textMessageToSelect);
         final String xmlPayload = (String) body.get(1).get(OUTPUT_BODY_PAYLOAD_KEY);
         assertThat(xmlPayload).isEqualTo(xmlMessageToSelect);
-        final Map jsonPayload = (Map) body.get(2).get(OUTPUT_BODY_PAYLOAD_KEY);
+        final Map<String, String> jsonPayload = (Map<String, String>) body.get(2).get(OUTPUT_BODY_PAYLOAD_KEY);
         assertThat(jsonPayload.get("value")).isEqualTo(jsonMessageToSelect);
     }
 
@@ -371,7 +380,7 @@ public class KafkaBasicConsumeTaskTest {
 
         assertThat(logger.info).contains("Found content type header " + APPLICATION_JSON_VALUE);
 
-        final Map payload = (Map) body.get(0).get(OUTPUT_BODY_PAYLOAD_KEY);
+        final Map<String, String> payload = (Map<String, String>) body.get(0).get(OUTPUT_BODY_PAYLOAD_KEY);
         assertThat(payload)
             .containsEntry("value", "test message")
             .containsEntry("id", "1");
@@ -426,7 +435,7 @@ public class KafkaBasicConsumeTaskTest {
 
         ContainerProperties containerProperties = new ContainerProperties(TOPIC);
         containerProperties.setGroupId(GROUP);
-        containerProperties.setMessageListener(ReflectionTestUtils.invokeMethod(task, "createMessageListener"));
+        containerProperties.setMessageListener(requireNonNull(ReflectionTestUtils.invokeMethod(task, "createMessageListener")));
         ConcurrentMessageListenerContainer<String, String> messageListenerContainer = new ConcurrentMessageListenerContainer<>(cf, containerProperties);
 
         return (MessageListener<String, String>) messageListenerContainer.getContainerProperties().getMessageListener();
