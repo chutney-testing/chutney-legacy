@@ -1,10 +1,13 @@
 package com.chutneytesting.task.spi.injectable;
 
+import static java.util.Optional.ofNullable;
+
 import java.net.URI;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public interface Target {
 
@@ -18,7 +21,18 @@ public interface Target {
     Map<String, String> properties();
 
     default Optional<String> property(String key) {
-        return Optional.ofNullable(properties().get(key));
+        return ofNullable(properties().get(key));
+    }
+
+    default Map<String, String> prefixedProperties(String prefix) {
+        return prefixedProperties(prefix, false);
+    }
+
+    default Map<String, String> prefixedProperties(String prefix, boolean cutPrefix) {
+        return properties().entrySet().stream()
+            .filter(e -> e.getKey() != null)
+            .filter(e -> e.getKey().startsWith(prefix))
+            .collect(Collectors.toMap(e -> e.getKey().substring(cutPrefix ? prefix.length() : 0), Map.Entry::getValue));
     }
 
     default Optional<Number> numericProperty(String key) {
