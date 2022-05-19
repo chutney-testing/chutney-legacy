@@ -7,20 +7,20 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.result.DeleteResult;
-import com.mongodb.client.result.UpdateResult;
+import com.chutneytesting.task.TestLogger;
+import com.chutneytesting.task.TestTarget;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.TaskExecutionResult.Status;
 import com.chutneytesting.task.spi.injectable.Target;
-import com.chutneytesting.task.TestLogger;
-import com.chutneytesting.task.TestTarget;
+import com.chutneytesting.tools.CloseableResource;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.UpdateResult;
 import java.util.List;
 import java.util.function.Consumer;
 import org.bson.BsonDocument;
-import com.chutneytesting.tools.CloseableResource;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.OngoingStubbing;
@@ -31,10 +31,10 @@ public class MongoTasksTest {
     private final Target mongoTarget = TestTarget.TestTargetBuilder.builder()
         .withTargetId("mongo")
         .withUrl("mongodb://host1:27017")
-        .withSecurity("user", "pass")
+        .withProperty("user", "user")
+        .withProperty("password", "pass")
         .withProperty("databaseName", "lol")
         .build();
-
 
     private final TestLogger logger = new TestLogger();
 
@@ -65,8 +65,8 @@ public class MongoTasksTest {
 
     @Test
     public void findDocument() {
-        MongoCursor<String> iterable = mock(MongoCursor.class);
-        OngoingStubbing resultStubbing = Mockito.when(database.getCollection(any())
+        MongoCursor<Object> iterable = mock(MongoCursor.class);
+        OngoingStubbing<MongoCursor<Object>> resultStubbing = Mockito.when(database.getCollection(any())
             .find(any(BsonDocument.class))
             .limit(anyInt())
             .map(any())

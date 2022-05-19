@@ -29,6 +29,7 @@ import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 import wiremock.com.google.common.collect.ImmutableMap;
 
+@SuppressWarnings("unchecked")
 public class AmqpTasksTest {
 
     @Test
@@ -39,7 +40,8 @@ public class AmqpTasksTest {
         Target target = TestTarget.TestTargetBuilder.builder()
             .withTargetId("rabbit")
             .withUrl("amqp://non_host:1234")
-            .withSecurity("guest", "guest")
+            .withProperty("user", "guest")
+            .withProperty("password", "guest")
             .build();
 
         mockConnectionFactory.newConnection().createChannel().exchangeDeclare("test-ex", "fanout");

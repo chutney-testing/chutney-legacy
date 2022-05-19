@@ -12,13 +12,11 @@ public class TestTarget implements Target {
     private final String name;
     private final String url;
     private final Map<String, String> properties;
-    private final SecurityInfo security;
 
-    private TestTarget(String name, String url, Map<String, String> properties, SecurityInfo security) {
+    private TestTarget(String name, String url, Map<String, String> properties) {
         this.name = name;
         this.url = url;
         this.properties = (properties != null) ? properties : new HashMap<>();
-        this.security = security;
     }
 
     @Override
@@ -38,7 +36,7 @@ public class TestTarget implements Target {
 
     @Override
     public SecurityInfo security() {
-        return security;
+        throw new IllegalCallerException();
     }
 
     @Override
@@ -53,10 +51,10 @@ public class TestTarget implements Target {
     public static final class TestTargetBuilder {
         private String name;
         private String url;
-        private Map<String, String> properties = new HashMap<>();
-        private SecurityInfo security;
+        private final Map<String, String> properties = new HashMap<>();
 
-        private TestTargetBuilder() {}
+        private TestTargetBuilder() {
+        }
 
         public static TestTargetBuilder builder() {
             return new TestTargetBuilder();
@@ -77,18 +75,8 @@ public class TestTarget implements Target {
             return this;
         }
 
-        public TestTargetBuilder withSecurity(String user, String password) {
-            this.security = TestSecurityInfo.builder().withUsername(user).withPassword(password).build();
-            return this;
-        }
-
-        public TestTargetBuilder withSecurity(SecurityInfo security) {
-            this.security = security;
-            return this;
-        }
-
         public TestTarget build() {
-            return new TestTarget(name, url, properties, security);
+            return new TestTarget(name, url, properties);
         }
     }
 }
