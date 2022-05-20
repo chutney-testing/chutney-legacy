@@ -8,6 +8,7 @@ import static com.chutneytesting.scenario.infra.orient.OrientUtils.close;
 import static com.chutneytesting.scenario.infra.orient.OrientUtils.load;
 import static com.chutneytesting.scenario.infra.orient.OrientUtils.rollback;
 
+import com.chutneytesting.ComposableIdUtils;
 import com.chutneytesting.dataset.domain.DataSet;
 import com.chutneytesting.dataset.domain.DataSetNotFoundException;
 import com.chutneytesting.dataset.domain.DataSetRepository;
@@ -45,7 +46,8 @@ public class OrientDataSetRepository implements DataSetRepository {
             OElement savedDataSet = save(dataSet, dbSession);
             dbSession.commit();
             LOGGER.info("Save dataset : " + savedDataSet.toString());
-            return savedDataSet.getIdentity().toString(null).toString();
+            String externalId = ComposableIdUtils.toExternalId(savedDataSet.getIdentity().toString(null).toString());
+            return externalId;
         } catch (Exception e) {
             rollback(dbSession);
             throw new RuntimeException(e);
@@ -56,25 +58,27 @@ public class OrientDataSetRepository implements DataSetRepository {
 
     @Override
     public DataSet findById(String dataSetId) {
+        String internalId = ComposableIdUtils.toInternalId(dataSetId);
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
-            OElement element = load(dataSetId, dbSession)
-                .orElseThrow(() -> new DataSetNotFoundException(dataSetId));
+            OElement element = load(internalId, dbSession)
+                .orElseThrow(() -> new DataSetNotFoundException(internalId));
             return elementToDataSet(element);
         }
     }
 
     @Override
     public DataSet removeById(String dataSetId) {
+        String internalId = ComposableIdUtils.toInternalId(dataSetId);
         ODatabaseSession dbSession = null;
         try {
             dbSession = componentDBPool.acquire();
             dbSession.begin();
-            OElement removedODataSet = load(dataSetId, dbSession)
-                .orElseThrow(() -> new DataSetNotFoundException(dataSetId))
+            OElement removedODataSet = load(internalId, dbSession)
+                .orElseThrow(() -> new DataSetNotFoundException(internalId))
                 .delete();
             DataSet removedDataSet = elementToDataSet(removedODataSet);
             dbSession.commit();
-            LOGGER.info("Delete dataset : " + dataSetId);
+            LOGGER.info("Delete dataset : " + internalId);
             return removedDataSet;
         } finally {
             close(dbSession);
@@ -97,7 +101,8 @@ public class OrientDataSetRepository implements DataSetRepository {
     }
 
     private OElement save(DataSet dataSet, ODatabaseSession dbSession) {
-        Optional<OElement> dataSetRecord = load(dataSet.id, dbSession);
+        String internalId = ComposableIdUtils.toInternalId(dataSet.id);
+        Optional<OElement> dataSetRecord = load(internalId, dbSession);
         OElement oDataSet = dataSetRecord.orElse(dbSession.newInstance(DATASET_CLASS));
         dataSetToElement(dataSet, oDataSet);
         return oDataSet.save();

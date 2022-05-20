@@ -1,12 +1,11 @@
-package com.chutneytesting.scenario.api.compose.mapper;
+package com.chutneytesting.scenario.api;
 
-import static com.chutneytesting.tools.orient.ComposableIdUtils.fromFrontId;
-import static com.chutneytesting.tools.orient.ComposableIdUtils.toFrontId;
 import static java.util.stream.Collectors.toList;
 
-import com.chutneytesting.scenario.api.compose.dto.ComposableStepDto;
-import com.chutneytesting.scenario.api.compose.dto.ImmutableComposableStepDto;
-import com.chutneytesting.scenario.api.compose.dto.ImmutableStrategy;
+import com.chutneytesting.scenario.api.dto.ComposableStepDto;
+import com.chutneytesting.scenario.api.dto.ImmutableComposableStepDto;
+import com.chutneytesting.scenario.api.dto.ImmutableStrategyDto;
+import com.chutneytesting.scenario.api.dto.StrategyDto;
 import com.chutneytesting.scenario.domain.ComposableStep;
 import com.chutneytesting.scenario.domain.Strategy;
 import com.chutneytesting.tools.ui.KeyValue;
@@ -17,7 +16,7 @@ public class ComposableStepMapper {
 
     public static ComposableStepDto toDto(ComposableStep composableStep) {
         ImmutableComposableStepDto.Builder builder = ImmutableComposableStepDto.builder()
-            .id(toFrontId(composableStep.id))
+            .id(composableStep.id)
             .name(composableStep.name)
             .tags(composableStep.tags);
 
@@ -37,8 +36,8 @@ public class ComposableStepMapper {
         return builder.build();
     }
 
-    private static com.chutneytesting.scenario.api.compose.dto.Strategy toDto(Strategy strategy) {
-        return ImmutableStrategy.builder()
+    private static StrategyDto toDto(Strategy strategy) {
+        return ImmutableStrategyDto.builder()
             .type(ComposableStrategyType.fromEngineType(strategy.type).name)
             .putAllParameters(toDto(strategy.parameters))
             .build();
@@ -62,7 +61,7 @@ public class ComposableStepMapper {
 
     public static ComposableStep fromDto(ComposableStepDto dto) {
         return ComposableStep.builder()
-            .withId(fromFrontId(dto.id()))
+            .withId(dto.id().orElse(""))
             .withName(dto.name())
             .withStrategy(fromDto(dto.strategy()))
             .withImplementation(dto.task().orElse(""))
@@ -89,7 +88,7 @@ public class ComposableStepMapper {
         return parameters;
     }
 
-    private static Strategy fromDto(com.chutneytesting.scenario.api.compose.dto.Strategy strategyDto) {
+    private static Strategy fromDto(StrategyDto strategyDto) {
         return new Strategy(
             ComposableStrategyType.fromName(strategyDto.type()).engineType,
             fromDtoParameters(strategyDto.parameters())

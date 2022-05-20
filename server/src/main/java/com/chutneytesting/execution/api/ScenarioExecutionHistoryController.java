@@ -1,7 +1,5 @@
 package com.chutneytesting.execution.api;
 
-import static com.chutneytesting.tools.orient.ComposableIdUtils.fromFrontId;
-
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
 import java.util.List;
@@ -27,13 +25,12 @@ class ScenarioExecutionHistoryController {
     @GetMapping(path = "/api/ui/scenario/{scenarioId}/execution/v1", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ExecutionSummaryDto> listExecutions(@PathVariable("scenarioId") String scenarioId) {
         return ExecutionSummaryDto.toDto(
-            executionHistoryRepository.getExecutions(
-                fromFrontId(Optional.of(scenarioId))));
+            executionHistoryRepository.getExecutions(scenarioId));
     }
 
     @PreAuthorize("hasAuthority('SCENARIO_READ')")
     @GetMapping(path = "/api/ui/scenario/{scenarioId}/execution/{executionId}/v1", produces = MediaType.APPLICATION_JSON_VALUE)
     public ExecutionHistory.Execution getExecutionReport(@PathVariable("scenarioId") String scenarioId, @PathVariable("executionId") Long executionId) {
-        return executionHistoryRepository.getExecution(fromFrontId(Optional.of(scenarioId)), executionId);
+        return executionHistoryRepository.getExecution(scenarioId, executionId);
     }
 }

@@ -11,23 +11,22 @@ import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.WebConfiguration;
 import com.chutneytesting.dataset.domain.DataSet;
 import com.chutneytesting.dataset.domain.DataSetRepository;
 import com.chutneytesting.globalvar.domain.GlobalvarRepository;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.Strategy;
+import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
+import com.chutneytesting.tests.OrientDatabaseHelperTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.groovy.util.Maps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class ComposedTestCasePreProcessorTest {
 
-    private final ObjectMapper objectMapper = new WebConfiguration().objectMapper();
+    private final ObjectMapper objectMapper = OrientDatabaseHelperTest.objectMapper();
     private final String environment = "exec env";
     private final String userId = "exec user";
 
@@ -60,7 +59,7 @@ public class ComposedTestCasePreProcessorTest {
         String testCaseDescription = "test case description with parameter %1$s";
 
         Strategy retryStrategy =
-            new Strategy("retry", Maps.of("timeout", "10 s", "delay", "10 s"));
+            new Strategy("retry", Map.of("timeout", "10 s", "delay", "10 s"));
 
         ExecutableComposedStep action = ExecutableComposedStep.builder()
             .withName(format(actionName, "**target**"))
@@ -72,7 +71,7 @@ public class ComposedTestCasePreProcessorTest {
         ExecutableComposedStep step = ExecutableComposedStep.builder()
             .withName(format(stepName, "**step param**", "**step target**", "**target**"))
             .withParameters(
-                Maps.of(
+                Map.of(
                     "step param", "default step param",
                     "step target", "default step target"
                 )
@@ -89,7 +88,7 @@ public class ComposedTestCasePreProcessorTest {
             )
             .build();
 
-        Map<String, String> dataSet = Maps.of(
+        Map<String, String> dataSet = Map.of(
             "testcase title", "A part of testcase title",
             "testcase description", "A part of testcase description",
             "testcase param", "dataset testcase param",
@@ -114,7 +113,7 @@ public class ComposedTestCasePreProcessorTest {
                     )
                 )
                 .withParameters(
-                    Maps.of(
+                    Map.of(
                         "testcase title", "",
                         "testcase description", "default testcase description",
                         "testcase param", "",
@@ -176,15 +175,15 @@ public class ComposedTestCasePreProcessorTest {
         DataSet dataSet = DataSet.builder()
             .withId(dataSetId)
             .withConstants(
-                Maps.of(
+                Map.of(
                     "testcase param third", "dataset uv 1"
                 )
             )
             .withDatatable(
                 asList( // Note that first key has only two distinct values ...
-                    Maps.of("testcase param", "dataset mv 11", "testcase param second", "dataset mv 12"),
-                    Maps.of("testcase param", "dataset mv 11", "testcase param second", "dataset mv 22"),
-                    Maps.of("testcase param", "dataset mv 31", "testcase param second", "dataset mv 32")
+                    Map.of("testcase param", "dataset mv 11", "testcase param second", "dataset mv 12"),
+                    Map.of("testcase param", "dataset mv 11", "testcase param second", "dataset mv 22"),
+                    Map.of("testcase param", "dataset mv 31", "testcase param second", "dataset mv 32")
                 )
             )
             .build();
@@ -193,7 +192,7 @@ public class ComposedTestCasePreProcessorTest {
         );
         sut = new ComposedTestCasePreProcessor(objectMapper, globalvarRepository, dataSetRepository);
 
-        Map<String, String> executionParameters = Maps.of(
+        Map<String, String> executionParameters = Map.of(
             "testcase title param", "default title value",
             "testcase param", "",
             "testcase param second", "with default value",
@@ -216,13 +215,13 @@ public class ComposedTestCasePreProcessorTest {
                                     ExecutableComposedStep.builder()
                                         .withName("substep name with **testcase param third**")
                                         .withExecutionParameters(
-                                            Maps.of("testcase param third", "")
+                                            Map.of("testcase param third", "")
                                         )
                                         .build()
                                 )
                             )
                             .withExecutionParameters(
-                                Maps.of(
+                                Map.of(
                                     "first step param", "**testcase param**",
                                     "testcase param third", ""
                                 )
@@ -233,7 +232,7 @@ public class ComposedTestCasePreProcessorTest {
                             .withName("step do not iterate over me")
                             .withImplementation(of(new StepImplementation("http-get", "**step 2 param** and **testcase param**", emptyMap(), emptyMap(), emptyMap())))
                             .withExecutionParameters(
-                                Maps.of(
+                                Map.of(
                                     "step 2 param", "hard value 2",
                                     "testcase param", "another hard value 2"
                                 )
@@ -244,7 +243,7 @@ public class ComposedTestCasePreProcessorTest {
                             .withName("step with iteration over two dataset's keys **testcase param**")
                             .withImplementation(of(new StepImplementation("http-**global.key**", "**testcase param second** and **step 3 param**", emptyMap(), emptyMap(), emptyMap())))
                             .withExecutionParameters(
-                                Maps.of(
+                                Map.of(
                                     "testcase param", "",
                                     "testcase param second", "",
                                     "step 3 param", "hard value 3"
@@ -297,7 +296,7 @@ public class ComposedTestCasePreProcessorTest {
         return ExecutableComposedStep.builder()
             .from(action)
             .withExecutionParameters(
-                Maps.of(
+                Map.of(
                     "target", targetDataSetValue
                 )
             )
@@ -308,7 +307,7 @@ public class ComposedTestCasePreProcessorTest {
         return ExecutableComposedStep.builder()
             .from(step)
             .withExecutionParameters(
-                Maps.of(
+                Map.of(
                     "step param", stepParamDataSetValue,
                     "step target", stepTargetDataSetValue,
                     "target", targetDataSetValue

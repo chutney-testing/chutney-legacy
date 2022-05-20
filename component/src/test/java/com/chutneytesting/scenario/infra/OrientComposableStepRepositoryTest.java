@@ -76,12 +76,12 @@ public class OrientComposableStepRepositoryTest {
         ComposableStep foundFStep = sut.findById(fStep.id);
 
         // Then
-        Assertions.assertThat(foundFStep).isNotNull();
-        Assertions.assertThat(foundFStep.id).isEqualTo(fStep.id);
-        Assertions.assertThat(foundFStep.name).isEqualTo(fStep.name);
-        Assertions.assertThat(foundFStep.strategy.type).isEqualToIgnoringCase("retry-with-timeout");
-        Assertions.assertThat(foundFStep.strategy.parameters.get("retryDelay")).isEqualTo("10 s");
-        Assertions.assertThat(foundFStep.strategy.parameters.get("timeOut")).isEqualTo("10 s");
+        assertThat(foundFStep).isNotNull();
+        assertThat(foundFStep.id).isEqualTo(fStep.id);
+        assertThat(foundFStep.name).isEqualTo(fStep.name);
+        assertThat(foundFStep.strategy.type).isEqualToIgnoringCase("retry-with-timeout");
+        assertThat(foundFStep.strategy.parameters.get("retryDelay")).isEqualTo("10 s");
+        assertThat(foundFStep.strategy.parameters.get("timeOut")).isEqualTo("10 s");
     }
 
     @Test
@@ -99,17 +99,17 @@ public class OrientComposableStepRepositoryTest {
         ComposableStep foundFStep = sut.findById(fStep.id);
 
         // Then
-        Assertions.assertThat(foundFStep).isNotNull();
-        Assertions.assertThat(foundFStep.id).isEqualTo(fStep.id);
-        Assertions.assertThat(foundFStep.name).isEqualTo(fStep.name);
-        Assertions.assertThat(foundFStep.tags).isEqualTo(fStep.tags);
+        assertThat(foundFStep).isNotNull();
+        assertThat(foundFStep.id).isEqualTo(fStep.id);
+        assertThat(foundFStep.name).isEqualTo(fStep.name);
+        assertThat(foundFStep.tags).isEqualTo(fStep.tags);
     }
 
     @Test
     public void should_find_all_steps_when_findAll_called() {
         should_save_all_func_steps_with_multiple_step_types_when_save_scenario();
         List<ComposableStep> all = sut.findAll();
-        Assertions.assertThat(all).hasSize(7);
+        assertThat(all).hasSize(7);
     }
 
     @Test
@@ -176,8 +176,8 @@ public class OrientComposableStepRepositoryTest {
 
         // Then
         assertThat(fStepId).isEqualTo(updateFStepId);
-        Assertions.assertThat(updatedFStep.name).isEqualTo(newName);
-        Assertions.assertThat(updatedFStep.steps.get(0).implementation.get()).isEqualTo(newSubTechnicalContent);
+        assertThat(updatedFStep.name).isEqualTo(newName);
+        assertThat(updatedFStep.steps.get(0).implementation.get()).isEqualTo(newSubTechnicalContent);
     }
 
     @Test
@@ -221,7 +221,7 @@ public class OrientComposableStepRepositoryTest {
         assertThat(foundFStepsPage3.data().size()).isEqualTo(elementPerPage);
         assertThat(foundFStepsPage3.totalCount()).isEqualTo(fSteps.size());
         assertThat(foundFSteps.size()).isEqualTo(fSteps.size());
-        Assertions.assertThat(foundFSteps).containsExactlyInAnyOrderElementsOf(fSteps);
+        assertThat(foundFSteps).containsExactlyInAnyOrderElementsOf(fSteps);
     }
 
     @Test
@@ -243,10 +243,10 @@ public class OrientComposableStepRepositoryTest {
         PaginatedDto<ComposableStep> filteredFSteps = findWithFilters("thing", "name", "name");
 
         // Then
-        Assertions.assertThat(filteredByNameFSteps.data()).containsExactly(fStep_3);
-        Assertions.assertThat(sortedFSteps.data()).containsExactly(fStep_2, fStepRoot, fStep_1, fStep_3);
-        Assertions.assertThat(sortedDescendentFSteps.data()).containsExactly(fStep_3, fStep_1, fStepRoot, fStep_2);
-        Assertions.assertThat(filteredFSteps.data()).containsExactly(fStep_1, fStepRoot, fStep_2);
+        assertThat(filteredByNameFSteps.data()).containsExactly(fStep_3);
+        assertThat(sortedFSteps.data()).containsExactly(fStep_2, fStepRoot, fStep_1, fStep_3);
+        assertThat(sortedDescendentFSteps.data()).containsExactly(fStep_3, fStep_1, fStepRoot, fStep_2);
+        assertThat(filteredFSteps.data()).containsExactly(fStep_1, fStepRoot, fStep_2);
     }
 
     @Test
@@ -263,7 +263,7 @@ public class OrientComposableStepRepositoryTest {
         List<ParentStepId> parentsId = sut.findParents(fStep_11.id);
 
         // Then
-        Assertions.assertThat(parentsId)
+        assertThat(parentsId)
             .usingRecursiveFieldByFieldElementComparator()
             .containsExactlyInAnyOrder(
                 new ParentStepId(fStepRoot_1.id, fStepRoot_1.name, false),
@@ -377,24 +377,24 @@ public class OrientComposableStepRepositoryTest {
         ComposableStep foundParentFStep = sut.findById(parentStep.id);
 
         // Then
-        Assertions.assertThat(foundAction.defaultParameters).containsExactlyEntriesOf(actionParameters);
-        Assertions.assertThat(foundAction.executionParameters).containsExactlyEntriesOf(actionParameters);
+        assertThat(foundAction.defaultParameters).containsExactlyEntriesOf(actionParameters);
+        assertThat(foundAction.executionParameters).containsExactlyEntriesOf(actionParameters);
 
-        Assertions.assertThat(foundMiddleParentFStep.steps.get(0).defaultParameters).containsExactlyEntriesOf(actionParameters);
-        Assertions.assertThat(foundMiddleParentFStep.steps.get(0).executionParameters).containsExactlyEntriesOf(firstActionInstanceDataSet);
-        Assertions.assertThat(foundMiddleParentFStep.steps.get(1).defaultParameters).containsExactlyEntriesOf(actionParameters);
-        Assertions.assertThat(foundMiddleParentFStep.steps.get(1).executionParameters).containsExactlyEntriesOf(secondActionInstanceDataSet);
-        Assertions.assertThat(foundMiddleParentFStep.defaultParameters).containsExactlyEntriesOf(middleParentParameters);
-        Assertions.assertThat(foundMiddleParentFStep.executionParameters).containsExactlyInAnyOrderEntriesOf(middleParentExpectedDataSet); //TODO order with map ?
+        assertThat(foundMiddleParentFStep.steps.get(0).defaultParameters).containsExactlyEntriesOf(actionParameters);
+        assertThat(foundMiddleParentFStep.steps.get(0).executionParameters).containsExactlyEntriesOf(firstActionInstanceDataSet);
+        assertThat(foundMiddleParentFStep.steps.get(1).defaultParameters).containsExactlyEntriesOf(actionParameters);
+        assertThat(foundMiddleParentFStep.steps.get(1).executionParameters).containsExactlyEntriesOf(secondActionInstanceDataSet);
+        assertThat(foundMiddleParentFStep.defaultParameters).containsExactlyEntriesOf(middleParentParameters);
+        assertThat(foundMiddleParentFStep.executionParameters).containsExactlyInAnyOrderEntriesOf(middleParentExpectedDataSet); //TODO order with map ?
 
-        Assertions.assertThat(foundParentFStep.defaultParameters).containsExactlyEntriesOf(parentParameters);
-        Assertions.assertThat(foundParentFStep.executionParameters).containsExactlyInAnyOrderEntriesOf(parentExpectedDataSet); //TODO order with map ?
-        Assertions.assertThat(foundParentFStep.steps.get(0).defaultParameters).containsExactlyEntriesOf(middleParentParameters);
-        Assertions.assertThat(foundParentFStep.steps.get(0).executionParameters).containsExactlyInAnyOrderEntriesOf(firstMiddleParentInstanceDataSet); //TODO order with map ?
-        Assertions.assertThat(foundParentFStep.steps.get(1).defaultParameters).containsExactlyEntriesOf(actionParameters);
-        Assertions.assertThat(foundParentFStep.steps.get(1).executionParameters).containsExactlyEntriesOf(thirdActionInstanceDataSet);
-        Assertions.assertThat(foundParentFStep.steps.get(2).defaultParameters).containsExactlyEntriesOf(middleParentParameters);
-        Assertions.assertThat(foundParentFStep.steps.get(2).executionParameters).containsExactlyInAnyOrderEntriesOf(secondMiddleParentInstanceDataSet); //TODO order with map ?
+        assertThat(foundParentFStep.defaultParameters).containsExactlyEntriesOf(parentParameters);
+        assertThat(foundParentFStep.executionParameters).containsExactlyInAnyOrderEntriesOf(parentExpectedDataSet); //TODO order with map ?
+        assertThat(foundParentFStep.steps.get(0).defaultParameters).containsExactlyEntriesOf(middleParentParameters);
+        assertThat(foundParentFStep.steps.get(0).executionParameters).containsExactlyInAnyOrderEntriesOf(firstMiddleParentInstanceDataSet); //TODO order with map ?
+        assertThat(foundParentFStep.steps.get(1).defaultParameters).containsExactlyEntriesOf(actionParameters);
+        assertThat(foundParentFStep.steps.get(1).executionParameters).containsExactlyEntriesOf(thirdActionInstanceDataSet);
+        assertThat(foundParentFStep.steps.get(2).defaultParameters).containsExactlyEntriesOf(middleParentParameters);
+        assertThat(foundParentFStep.steps.get(2).executionParameters).containsExactlyInAnyOrderEntriesOf(secondMiddleParentInstanceDataSet); //TODO order with map ?
     }
 
     @Test
@@ -422,8 +422,8 @@ public class OrientComposableStepRepositoryTest {
         ComposableStep parentFoundStep = sut.findById(parentFStep.id);
 
         // Then
-        Assertions.assertThat(orientDatabaseHelperTest.loadById(step.id)).isNull();
-        Assertions.assertThat(parentFoundStep.steps).isEmpty();
+        assertThat(orientDatabaseHelperTest.loadById(step.id)).isNull();
+        assertThat(parentFoundStep.steps).isEmpty();
     }
 
     @Test
@@ -463,9 +463,9 @@ public class OrientComposableStepRepositoryTest {
 
         // T
         ComposableStep step1 = sut.findById(step.id);
-        Assertions.assertThat(step1.implementation.get()).doesNotContain("name\":\"action", "name\":\"value", "name\":\"switchType", "name\":\"menuItemSelector");
+        assertThat(step1.implementation.get()).doesNotContain("name\":\"action", "name\":\"value", "name\":\"switchType", "name\":\"menuItemSelector");
         ComposableStep stepO = sut.findById(stepOld.id);
-        Assertions.assertThat(stepO.implementation.get()).doesNotContain("action", "value", "switchType", "menuItemSelector");
+        assertThat(stepO.implementation.get()).doesNotContain("action", "value", "switchType", "menuItemSelector");
     }
 
     @Test
@@ -491,9 +491,9 @@ public class OrientComposableStepRepositoryTest {
 
         // T
         ComposableStep step1 = sut.findById(step.id);
-        Assertions.assertThat(step1.implementation.get()).contains("name\":\"nbLoggedRow\",\"value\":\"42\"");
+        assertThat(step1.implementation.get()).contains("name\":\"nbLoggedRow\",\"value\":\"42\"");
         ComposableStep stepO = sut.findById(stepOld.id);
-        Assertions.assertThat(stepO.implementation.get()).contains("name\":\"nbLoggedRow\",\"value\":\"\"");
+        assertThat(stepO.implementation.get()).contains("name\":\"nbLoggedRow\",\"value\":\"\"");
     }
 
     private ComposableStep saveAndReload(ComposableStep composableStep) {
@@ -505,7 +505,7 @@ public class OrientComposableStepRepositoryTest {
             .forEach(idx -> {
                 String rid = rids.get(idx);
                 ComposableStep fStep = sut.findById(rid);
-                Assertions.assertThat(fStep.id).isEqualTo(rid);
+                assertThat(fStep.id).isEqualTo(rid);
                 assertComposableStep(scenario.get(idx), fStep);
             });
     }
@@ -526,16 +526,16 @@ public class OrientComposableStepRepositoryTest {
     }
 
     private void assertComposableStep(ComposableStep step, String name, Optional<String> implementation, int functionalChildStepsSize) {
-        Assertions.assertThat(step).isInstanceOf(ComposableStep.class);
-        Assertions.assertThat(step.name).isEqualTo(name);
+        assertThat(step).isInstanceOf(ComposableStep.class);
+        assertThat(step.name).isEqualTo(name);
 
         if (implementation.isPresent()) {
-            Assertions.assertThat(step.implementation.orElseThrow(() -> new IllegalStateException("Implementation should be set"))).isEqualTo(implementation.get());
+            assertThat(step.implementation.orElseThrow(() -> new IllegalStateException("Implementation should be set"))).isEqualTo(implementation.get());
         } else {
-            Assertions.assertThat(step.implementation.isPresent()).isFalse();
+            assertThat(step.implementation.isPresent()).isFalse();
         }
-        Assertions.assertThat(step.id).isNotEmpty();
-        Assertions.assertThat(step.steps.size()).isEqualTo(functionalChildStepsSize);
+        assertThat(step.id).isNotEmpty();
+        assertThat(step.steps.size()).isEqualTo(functionalChildStepsSize);
     }
 
     private PaginatedDto<ComposableStep> findWithPagination(long startElementIdx, long limit) {
@@ -617,28 +617,28 @@ public class OrientComposableStepRepositoryTest {
         ComposableStep actualParent = sut.findById(parentStep.id);
 
         // Then
-        Assertions.assertThat(actualLeaf.defaultParameters).containsExactlyEntriesOf(leafDefaultParameters);
-        Assertions.assertThat(actualLeaf.executionParameters).containsExactlyEntriesOf(leafDefaultParameters);
+        assertThat(actualLeaf.defaultParameters).containsExactlyEntriesOf(leafDefaultParameters);
+        assertThat(actualLeaf.executionParameters).containsExactlyEntriesOf(leafDefaultParameters);
 
-        Assertions.assertThat(actualSubStep.steps.get(0).defaultParameters).containsExactlyEntriesOf(leafDefaultParameters);
-        Assertions.assertThat(actualSubStep.steps.get(0).executionParameters).containsExactlyEntriesOf(leafDefaultParameters);
-        Assertions.assertThat(actualSubStep.defaultParameters).containsExactlyEntriesOf(subStepDefaultParameters); //TODO order with map ?
-        Assertions.assertThat(actualSubStep.executionParameters).containsExactlyInAnyOrderEntriesOf(Map.of(
+        assertThat(actualSubStep.steps.get(0).defaultParameters).containsExactlyEntriesOf(leafDefaultParameters);
+        assertThat(actualSubStep.steps.get(0).executionParameters).containsExactlyEntriesOf(leafDefaultParameters);
+        assertThat(actualSubStep.defaultParameters).containsExactlyEntriesOf(subStepDefaultParameters); //TODO order with map ?
+        assertThat(actualSubStep.executionParameters).containsExactlyInAnyOrderEntriesOf(Map.of(
             "leaf empty param", "",
             "substep default param", "substep default value",
             "substep empty param", "",
             "substep second param", "substep second value"
         ));
 
-        Assertions.assertThat(actualParent.steps.get(0).defaultParameters).containsExactlyEntriesOf(subStepDefaultParameters);
-        Assertions.assertThat(actualParent.steps.get(0).executionParameters).containsExactlyInAnyOrderEntriesOf(Map.of( //TODO order with map ?
+        assertThat(actualParent.steps.get(0).defaultParameters).containsExactlyEntriesOf(subStepDefaultParameters);
+        assertThat(actualParent.steps.get(0).executionParameters).containsExactlyInAnyOrderEntriesOf(Map.of( //TODO order with map ?
             "leaf empty param", "",
             "substep default param", "substep default value",
             "substep empty param", "",
             "substep second param", "substep second value"
         ));
-        Assertions.assertThat(actualParent.defaultParameters).containsExactlyEntriesOf(parentDefaultParameters);
-        Assertions.assertThat(actualParent.executionParameters).containsExactlyInAnyOrderEntriesOf(Map.of( //TODO order with map ?
+        assertThat(actualParent.defaultParameters).containsExactlyEntriesOf(parentDefaultParameters);
+        assertThat(actualParent.executionParameters).containsExactlyInAnyOrderEntriesOf(Map.of( //TODO order with map ?
             "leaf empty param", "",
             "substep empty param", "",
             "parent default param", "parent default value"
@@ -689,13 +689,13 @@ public class OrientComposableStepRepositoryTest {
         ComposableStep actualParent = sut.findById(parent.id);
 
         // Then
-        Assertions.assertThat(actualLeaf.defaultParameters).containsExactlyEntriesOf(leafDefaultParameters);
-        Assertions.assertThat(actualLeaf.executionParameters).containsExactlyEntriesOf(leafDefaultParameters); // Because not in use under a parent step
+        assertThat(actualLeaf.defaultParameters).containsExactlyEntriesOf(leafDefaultParameters);
+        assertThat(actualLeaf.executionParameters).containsExactlyEntriesOf(leafDefaultParameters); // Because not in use under a parent step
 
-        Assertions.assertThat(actualParent.steps.get(0).defaultParameters).isEqualTo(leafDefaultParameters);
-        Assertions.assertThat(actualParent.steps.get(0).executionParameters).containsExactlyEntriesOf(leafExecutionParameters);
-        Assertions.assertThat(actualParent.defaultParameters).containsExactlyEntriesOf(parentDefaultParameters);
-        Assertions.assertThat(actualParent.executionParameters).containsExactlyInAnyOrderEntriesOf(Map.of( //TODO order with map ?
+        assertThat(actualParent.steps.get(0).defaultParameters).isEqualTo(leafDefaultParameters);
+        assertThat(actualParent.steps.get(0).executionParameters).containsExactlyEntriesOf(leafExecutionParameters);
+        assertThat(actualParent.defaultParameters).containsExactlyEntriesOf(parentDefaultParameters);
+        assertThat(actualParent.executionParameters).containsExactlyInAnyOrderEntriesOf(Map.of( //TODO order with map ?
             "leaf second param", "", /*value was removed*/
             "parent default param", "parent default value",
             "parent empty param", ""
@@ -735,16 +735,16 @@ public class OrientComposableStepRepositoryTest {
         // Verify everything is setup correctly before updating leaf default parameters
         ComposableStep actualParent = orientDatabaseHelperTest.findByName(parent.name);
         ComposableStep actualSubStep = orientDatabaseHelperTest.findByName(subStep.name);
-        Assertions.assertThat(actualParent.defaultParameters).isEqualTo(emptyMap());
-        Assertions.assertThat(actualParent.executionParameters).isEqualTo(emptyMap());
-        Assertions.assertThat(actualSubStep.defaultParameters).isEqualTo(emptyMap());
-        Assertions.assertThat(actualSubStep.executionParameters).isEqualTo(emptyMap());
-        Assertions.assertThat(actualSubStep.steps.get(0).defaultParameters).isEqualTo(Map.of(
+        assertThat(actualParent.defaultParameters).isEqualTo(emptyMap());
+        assertThat(actualParent.executionParameters).isEqualTo(emptyMap());
+        assertThat(actualSubStep.defaultParameters).isEqualTo(emptyMap());
+        assertThat(actualSubStep.executionParameters).isEqualTo(emptyMap());
+        assertThat(actualSubStep.steps.get(0).defaultParameters).isEqualTo(Map.of(
             "empty param", "",
             "default param", "default value",
             "second default param", "second default value")
         );
-        Assertions.assertThat(actualSubStep.steps.get(0).executionParameters).containsExactlyEntriesOf(Map.of(
+        assertThat(actualSubStep.steps.get(0).executionParameters).containsExactlyEntriesOf(Map.of(
             "empty param", "value is override",
             "default param", "value is override",
             "second default param", "second default value")
@@ -765,18 +765,18 @@ public class OrientComposableStepRepositoryTest {
         // Then
         ComposableStep actualParentAfterUpdate = orientDatabaseHelperTest.findByName(parent.name);
         ComposableStep actualSubStepAfterUpdate = orientDatabaseHelperTest.findByName(subStep.name);
-        Assertions.assertThat(actualParentAfterUpdate.defaultParameters).isEqualTo(emptyMap());
-        Assertions.assertThat(actualParentAfterUpdate.executionParameters).isEqualTo(Map.of("another empty param", ""));
-        Assertions.assertThat(actualSubStepAfterUpdate.defaultParameters).isEqualTo(emptyMap());
-        Assertions.assertThat(actualSubStepAfterUpdate.executionParameters).isEqualTo(Map.of("another empty param", ""));
-        Assertions.assertThat(actualSubStepAfterUpdate.steps.get(0).defaultParameters).isEqualTo(Map.of(
+        assertThat(actualParentAfterUpdate.defaultParameters).isEqualTo(emptyMap());
+        assertThat(actualParentAfterUpdate.executionParameters).isEqualTo(Map.of("another empty param", ""));
+        assertThat(actualSubStepAfterUpdate.defaultParameters).isEqualTo(emptyMap());
+        assertThat(actualSubStepAfterUpdate.executionParameters).isEqualTo(Map.of("another empty param", ""));
+        assertThat(actualSubStepAfterUpdate.steps.get(0).defaultParameters).isEqualTo(Map.of(
             "empty param", "has value",
             "another empty param", "",
             "toto param", "toto",
             "default param", "updated default value",
             "second default param", "updated second default value")
         );
-        Assertions.assertThat(actualSubStepAfterUpdate.steps.get(0).executionParameters).isEqualTo(Map.of(
+        assertThat(actualSubStepAfterUpdate.steps.get(0).executionParameters).isEqualTo(Map.of(
             "empty param", "value is override",
             "another empty param", "",
             "toto param", "toto",

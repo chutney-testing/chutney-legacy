@@ -1,16 +1,15 @@
-package com.chutneytesting.scenario.api.compose.mapper;
+package com.chutneytesting.scenario.api;
 
-import static com.chutneytesting.scenario.api.compose.mapper.ComposableStepMapper.fromDto;
-import static com.chutneytesting.scenario.api.compose.mapper.ComposableStepMapper.toDto;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.scenario.api.compose.dto.ComposableStepDto;
-import com.chutneytesting.scenario.api.compose.dto.ImmutableComposableStepDto;
+import com.chutneytesting.scenario.api.dto.ComposableStepDto;
+import com.chutneytesting.scenario.api.dto.ImmutableComposableStepDto;
 import com.chutneytesting.scenario.domain.ComposableStep;
 import com.chutneytesting.tools.ui.KeyValue;
 import java.util.Arrays;
 import java.util.Collections;
-import org.apache.groovy.util.Maps;
+import java.util.Map;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -19,7 +18,7 @@ public class ComposableStepMapperTest {
     @Test
     public void should_map_func_step_id_and_name_to_dto_when_toDto_called() {
         // Given
-        String FSTEPID = "#1:1";
+        String FSTEPID = "1-1";
         String FSTEP_NAME = "a functional step";
         ComposableStep fStep = ComposableStep.builder()
             .withId(FSTEPID)
@@ -27,11 +26,11 @@ public class ComposableStepMapperTest {
             .build();
 
         // When
-        ComposableStepDto composableStepDto = toDto(fStep);
+        ComposableStepDto composableStepDto = ComposableStepMapper.toDto(fStep);
 
         // Then
-        assertThat(composableStepDto.id().get()).isEqualTo("1-1");
-        assertThat(composableStepDto.name()).isEqualTo(FSTEP_NAME);
+        Assertions.assertThat(composableStepDto.id().get()).isEqualTo("1-1");
+        Assertions.assertThat(composableStepDto.name()).isEqualTo(FSTEP_NAME);
     }
 
     @Test
@@ -66,11 +65,11 @@ public class ComposableStepMapperTest {
             .build();
 
         // When
-        ComposableStepDto composableStepDto = toDto(fStep);
+        ComposableStepDto composableStepDto = ComposableStepMapper.toDto(fStep);
 
         // Then
-        assertThat(composableStepDto.steps().get(0).task().get()).isEqualTo(TECHNICAL_CONTENT);
-        assertThat(composableStepDto.steps().get(1).steps().get(0).task().get()).isEqualTo(TECHNICAL_CONTENT_B);
+        Assertions.assertThat(composableStepDto.steps().get(0).task().get()).isEqualTo(TECHNICAL_CONTENT);
+        Assertions.assertThat(composableStepDto.steps().get(1).steps().get(0).task().get()).isEqualTo(TECHNICAL_CONTENT_B);
     }
 
     @Test
@@ -103,12 +102,12 @@ public class ComposableStepMapperTest {
             .build();
 
         // When
-        ComposableStepDto composableStepDto = toDto(fStep);
+        ComposableStepDto composableStepDto = ComposableStepMapper.toDto(fStep);
 
         // Then
-        assertThat(composableStepDto.steps().get(0).name()).isEqualTo(FSTEP_NAME);
-        assertThat(composableStepDto.steps().get(0).steps().get(0).name()).isEqualTo(ANOTHER_FSTEP_NAME);
-        assertThat(composableStepDto.steps().get(1).name()).isEqualTo(ANOTHER_FSTEP_NAME);
+        Assertions.assertThat(composableStepDto.steps().get(0).name()).isEqualTo(FSTEP_NAME);
+        Assertions.assertThat(composableStepDto.steps().get(0).steps().get(0).name()).isEqualTo(ANOTHER_FSTEP_NAME);
+        Assertions.assertThat(composableStepDto.steps().get(1).name()).isEqualTo(ANOTHER_FSTEP_NAME);
     }
 
     @Test
@@ -118,13 +117,13 @@ public class ComposableStepMapperTest {
             .withId("#1:1")
             .withName("a functional step")
             .withDefaultParameters(
-                Maps.of(
+                Map.of(
                     "param1", "param1 value",
                     "param2", ""
                 )
             )
             .withExecutionParameters(
-                Maps.of(
+                Map.of(
                     "param1", "param1 value",
                     "param2", "",
                     "param3 from children", "",
@@ -134,11 +133,11 @@ public class ComposableStepMapperTest {
             .build();
 
         // When
-        ComposableStepDto composableStepDto = toDto(fStep);
+        ComposableStepDto composableStepDto = ComposableStepMapper.toDto(fStep);
 
         // Then
-        assertThat(composableStepDto.defaultParameters()).containsExactlyElementsOf(KeyValue.fromMap(fStep.defaultParameters));
-        assertThat(composableStepDto.executionParameters()).containsExactlyElementsOf(KeyValue.fromMap(fStep.executionParameters));
+        Assertions.assertThat(composableStepDto.defaultParameters()).containsExactlyElementsOf(KeyValue.fromMap(fStep.defaultParameters));
+        Assertions.assertThat(composableStepDto.executionParameters()).containsExactlyElementsOf(KeyValue.fromMap(fStep.executionParameters));
     }
 
     @Test
@@ -163,14 +162,14 @@ public class ComposableStepMapperTest {
             )
             .addAllDefaultParameters(
                 KeyValue.fromMap(
-                    Maps.of(
+                    Map.of(
                         "param1", "param1 value",
                         "param2", ""
                     )
                 ))
             .addAllExecutionParameters(
                 KeyValue.fromMap(
-                    Maps.of(
+                    Map.of(
                         "param1", "param1 value",
                         "param2", "",
                         "param3 from children", "",
@@ -181,7 +180,7 @@ public class ComposableStepMapperTest {
             .build();
 
         // When
-        ComposableStep step = fromDto(dto);
+        ComposableStep step = ComposableStepMapper.fromDto(dto);
 
         // Then
         assertThat(step.id).isEqualTo(dto.id().get());

@@ -1,9 +1,11 @@
 package com.chutneytesting.admin.infra;
 
+import static com.chutneytesting.ComposableIdUtils.toInternalId;
 import static com.chutneytesting.scenario.infra.orient.OrientComponentDB.GE_STEP_CLASS;
 import static com.chutneytesting.scenario.infra.orient.OrientComponentDB.STEP_CLASS;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.chutneytesting.ComposableIdUtils;
 import com.chutneytesting.admin.domain.DatabaseAdminService;
 import com.chutneytesting.admin.domain.SqlResult;
 import com.chutneytesting.scenario.domain.ComposableStep;
@@ -100,7 +102,7 @@ public class OrientAdminServiceTest {
             .withName("func step")
             .build();
 
-        String firstSavedRcordId = orientRepository.save(step);
+        String firstSavedRcordId = toInternalId(orientRepository.save(step));
 
         // When
         SqlResult result = sut.execute("UPDATE" + firstSavedRcordId + " SET unit_test_field = 'test content'");
@@ -181,7 +183,7 @@ public class OrientAdminServiceTest {
             .withName("func step")
             .build();
 
-        String firstSavedRcordId = orientRepository.save(step);
+        String firstSavedRcordId = toInternalId(orientRepository.save(step));
 
         final Integer ITEM_PER_PAGE = 10;
         PaginationRequestWrapperDto<String> updateRequest = ImmutablePaginationRequestWrapperDto.<String>builder()

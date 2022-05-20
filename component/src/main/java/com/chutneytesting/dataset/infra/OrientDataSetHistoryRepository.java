@@ -15,6 +15,7 @@ import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.empty;
 
+import com.chutneytesting.ComposableIdUtils;
 import com.chutneytesting.dataset.domain.DataSet;
 import com.chutneytesting.dataset.domain.DataSetHistoryRepository;
 import com.chutneytesting.dataset.domain.DataSetNotFoundException;
@@ -52,20 +53,22 @@ public class OrientDataSetHistoryRepository implements DataSetHistoryRepository 
 
     @Override
     public Integer lastVersion(String dataSetId) {
-        if (ORecordId.isA(dataSetId)) {
+        String internalId = ComposableIdUtils.toInternalId(dataSetId);
+        if (ORecordId.isA(internalId)) {
             try (ODatabaseSession dbSession = componentDBPool.acquire()) {
-                OResultSet lastVersion = dbSession.query(QUERY_LAST_VERSION, new ORecordId(dataSetId));
+                OResultSet lastVersion = dbSession.query(QUERY_LAST_VERSION, new ORecordId(internalId));
                 if (lastVersion.hasNext()) {
                     return lastVersion.next().getProperty("maxVersion");
                 }
             }
         }
-        throw new DataSetNotFoundException(dataSetId);
+        throw new DataSetNotFoundException(internalId);
     }
 
     @Override
     public Optional<Pair<String, Integer>> addVersion(DataSet newDataSet) {
-        if (!ORecordId.isA(newDataSet.id)) {
+        String internalId = ComposableIdUtils.toInternalId(newDataSet.id);
+        if (!ORecordId.isA(internalId)) {
             return empty();
         }
 
@@ -73,14 +76,14 @@ public class OrientDataSetHistoryRepository implements DataSetHistoryRepository 
         DataSet previousDataSet = null;
         try {
             // Retrieve last version
-            Integer nextVersion = nextVersion(newDataSet.id);
+            Integer nextVersion = nextVersion(internalId);
             if (nextVersion > 1) {
-                previousDataSet = version(newDataSet.id, nextVersion - 1);
+                previousDataSet = version(internalId, nextVersion - 1);
             }
             // Create patch
             DataSetPatch dataSetPatch = DataSetPatch.builder()
                 .fromDataSets(newDataSet, previousDataSet)
-                .withRefId(newDataSet.id)
+                .withRefId(internalId)
                 .withVersion(nextVersion)
                 .build();
 
@@ -109,20 +112,21 @@ public class OrientDataSetHistoryRepository implements DataSetHistoryRepository 
             " ORDER BY " + DATASET_HISTORY_CLASS_PROPERTY_VERSION;
 
     @Override
-    public Map<Integer, DataSet> allVersions(String dataSetId) {
-        if (!ORecordId.isA(dataSetId)) {
+    public Map<Integer, DataSet> allVersions(String externalDataSetId) {
+        String internalId = ComposableIdUtils.toInternalId(externalDataSetId);
+        if (!ORecordId.isA(internalId)) {
             return emptyMap();
         }
 
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
-            OResultSet allVersions = dbSession.query(QUERY_ALL_VERSIONS, dataSetId);
+            OResultSet allVersions = dbSession.query(QUERY_ALL_VERSIONS, internalId);
             Map<Integer, DataSet> allVersionsMap = new LinkedHashMap<>();
             while (allVersions.hasNext()) {
                 Optional<OElement> element = allVersions.next().getElement();
                 if (element.isPresent()) {
                     OElement oDataSet = element.get();
                     DataSet.DataSetBuilder dataSetBuilder = elementToDataSetMetaDataBuilder(oDataSet)
-                        .withId(dataSetId);
+                        .withId(externalDataSetId);
                     allVersionsMap.put(oDataSet.getProperty(DATASET_HISTORY_CLASS_PROPERTY_VERSION), dataSetBuilder.build());
                 }
             }
@@ -136,12 +140,13 @@ public class OrientDataSetHistoryRepository implements DataSetHistoryRepository 
         " ORDER BY " + DATASET_HISTORY_CLASS_PROPERTY_VERSION;
 
     @Override
-    public DataSet version(String dataSetId, Integer version) {
-        if (ORecordId.isA(dataSetId)) {
+    public DataSet version(String externalDataSetId, Integer version) {
+        String internalId = ComposableIdUtils.toInternalId(externalDataSetId);
+        if (ORecordId.isA(internalId)) {
             try (ODatabaseSession dbSession = componentDBPool.acquire()) {
-                OResultSet query = dbSession.query(QUERY_FIND_VERSION, dataSetId, version);
+                OResultSet query = dbSession.query(QUERY_FIND_VERSION, internalId, version);
                 if (query.hasNext()) {
-                    DataSet.DataSetBuilder dataSetBuilder = DataSet.builder().withId(dataSetId);
+                    DataSet.DataSetBuilder dataSetBuilder = DataSet.builder().withId(externalDataSetId);
                     String datasetValues = "";
                     for (OResult rs : Lists.newArrayList(query)) {
                         Optional<OElement> element = rs.getElement();
@@ -167,20 +172,21 @@ public class OrientDataSetHistoryRepository implements DataSetHistoryRepository 
                         .build();
                 }
             } catch (Exception e) {
-                LOGGER.error("Error finding dataset [{}] version {}", dataSetId, version, e);
+                LOGGER.error("Error finding dataset [{}] version {}", internalId, version, e);
                 throw new RuntimeException(e);
             }
         }
-        throw new DataSetNotFoundException(dataSetId);
+        throw new DataSetNotFoundException(internalId);
     }
 
     private static final String QUERY_DELETE_DATASET = "DELETE FROM " + DATASET_HISTORY_CLASS + " WHERE " + DATASET_HISTORY_CLASS_PROPERTY_DATASET_ID + " = ?";
 
     @Override
-    public void removeHistory(String dataSetId) {
+    public void removeHistory(String externalDataSetId) {
+        String internalId = ComposableIdUtils.toInternalId(externalDataSetId);
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
-            OResultSet rs = dbSession.command(QUERY_DELETE_DATASET, dataSetId);
-            LOGGER.info("Delete {} versions of DataSet {}", resultSetToCount(rs), dataSetId);
+            OResultSet rs = dbSession.command(QUERY_DELETE_DATASET, internalId);
+            LOGGER.info("Delete {} versions of DataSet {}", resultSetToCount(rs), internalId);
         }
     }
 

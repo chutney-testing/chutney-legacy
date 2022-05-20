@@ -1,12 +1,10 @@
-package com.chutneytesting.scenario.api.compose.mapper;
+package com.chutneytesting.scenario.api;
 
-import static com.chutneytesting.tools.orient.ComposableIdUtils.toFrontId;
-
-import com.chutneytesting.scenario.api.compose.dto.ComposableStepDto;
-import com.chutneytesting.scenario.api.compose.dto.ComposableTestCaseDto;
 import com.chutneytesting.execution.domain.ExecutableComposedTestCase;
-import com.chutneytesting.scenario.api.compose.dto.ImmutableComposableScenarioDto;
-import com.chutneytesting.scenario.api.compose.dto.ImmutableComposableTestCaseDto;
+import com.chutneytesting.scenario.api.dto.ComposableStepDto;
+import com.chutneytesting.scenario.api.dto.ComposableTestCaseDto;
+import com.chutneytesting.scenario.api.dto.ImmutableComposableScenarioDto;
+import com.chutneytesting.scenario.api.dto.ImmutableComposableTestCaseDto;
 import com.chutneytesting.tools.ui.KeyValue;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +16,7 @@ public class ExecutableComposableTestCaseMapper {
 
     public static ComposableTestCaseDto toDto(ExecutableComposedTestCase composableTestCase) {
         return ImmutableComposableTestCaseDto.builder()
-            .id(toFrontId(composableTestCase.id()))
+            .id(composableTestCase.id())
             .title(composableTestCase.metadata.title())
             .description(composableTestCase.metadata.description())
             .creationDate(composableTestCase.metadata.creationDate())
@@ -30,7 +28,7 @@ public class ExecutableComposableTestCaseMapper {
                     .build()
             )
             .tags(composableTestCase.metadata.tags())
-            .datasetId(toFrontId(composableTestCase.metadata.datasetId().orElse("")))
+            .datasetId(composableTestCase.metadata.datasetId().orElse(""))
             .author(composableTestCase.metadata.author())
             .updateDate(composableTestCase.metadata.updateDate())
             .version(composableTestCase.metadata.version())

@@ -1,8 +1,6 @@
-package com.chutneytesting.scenario.api.compose.dto;
+package com.chutneytesting.scenario.api.dto;
 
 
-import com.chutneytesting.scenario.api.compose.dto.ImmutableNameIdDto;
-import com.chutneytesting.scenario.api.compose.dto.ImmutableParentsStepDto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

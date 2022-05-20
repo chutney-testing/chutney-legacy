@@ -1,4 +1,4 @@
-package com.chutneytesting.scenario.api.compose.dto;
+package com.chutneytesting.scenario.api.dto;
 
 import com.chutneytesting.tools.ui.KeyValue;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -24,7 +24,7 @@ public interface ComposableStepDto {
     String name();
 
     @Value.Default()
-    default Strategy strategy() { return ImmutableStrategy.builder().build(); }
+    default StrategyDto strategy() { return ImmutableStrategyDto.builder().build(); }
 
     @Value.Default()
     default StepUsage usage() { return StepUsage.STEP; }

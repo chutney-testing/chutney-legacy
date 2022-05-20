@@ -11,7 +11,6 @@ import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.TestCaseRepository;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.tools.file.FileUtils;
-import com.chutneytesting.tools.orient.ComposableIdUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -46,7 +45,7 @@ public class ChutneyScenarioContent implements ChutneyContentProvider {
     @Override
     public Stream<ChutneyContent> getContent() {
         return repository.findAll().stream()
-            .filter(metadata -> !ComposableIdUtils.isComposableFrontId(metadata.id()))
+            .filter(metadata -> !isComposableFrontId(metadata.id()))
             .map(TestCaseMetadata::id)
             .map(repository::findById)
             .map(t -> {
@@ -64,6 +63,10 @@ public class ChutneyScenarioContent implements ChutneyContentProvider {
                 return builder.build();
 
             });
+    }
+
+    static boolean isComposableFrontId(String frontId) {
+        return frontId.contains("-");
     }
 
     @Override

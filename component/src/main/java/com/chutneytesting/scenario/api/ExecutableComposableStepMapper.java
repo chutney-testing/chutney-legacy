@@ -1,8 +1,9 @@
-package com.chutneytesting.scenario.api.compose.mapper;
+package com.chutneytesting.scenario.api;
 
-import com.chutneytesting.scenario.api.compose.dto.ComposableStepDto;
-import com.chutneytesting.scenario.api.compose.dto.ImmutableComposableStepDto;
-import com.chutneytesting.scenario.api.compose.dto.ImmutableStrategy;
+import com.chutneytesting.scenario.api.dto.ComposableStepDto;
+import com.chutneytesting.scenario.api.dto.ImmutableComposableStepDto;
+import com.chutneytesting.scenario.api.dto.ImmutableStrategyDto;
+import com.chutneytesting.scenario.api.dto.StrategyDto;
 import com.chutneytesting.scenario.domain.Strategy;
 import com.chutneytesting.execution.domain.ExecutableComposedStep;
 import com.chutneytesting.tools.ui.KeyValue;
@@ -40,8 +41,8 @@ public class ExecutableComposableStepMapper {
         return builder.build();
     }
 
-    private static com.chutneytesting.scenario.api.compose.dto.Strategy toDto(Strategy strategy) {
-        return ImmutableStrategy.builder()
+    private static StrategyDto toDto(Strategy strategy) {
+        return ImmutableStrategyDto.builder()
             .type(ComposableStrategyType.fromEngineType(strategy.type).name)
             .putAllParameters(ComposableStepMapper.fromDtoParameters(strategy.parameters))
             .build();

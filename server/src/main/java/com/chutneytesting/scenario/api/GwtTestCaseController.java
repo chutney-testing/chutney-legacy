@@ -1,6 +1,5 @@
 package com.chutneytesting.scenario.api;
 
-import static com.chutneytesting.tools.orient.ComposableIdUtils.fromFrontId;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.time.Instant.now;
 import static java.util.Collections.emptyList;
@@ -61,7 +60,7 @@ public class GwtTestCaseController {
     @PreAuthorize("hasAuthority('SCENARIO_READ')")
     @GetMapping(path = "/{testCaseId}/metadata", produces = MediaType.APPLICATION_JSON_VALUE)
     public TestCaseIndexDto testCaseMetaData(@PathVariable("testCaseId") String testCaseId) {
-        TestCase testCase = testCaseRepository.findById(fromFrontId(testCaseId));
+        TestCase testCase = testCaseRepository.findById(testCaseId);
         return TestCaseIndexDto.from(testCase.metadata(), emptyList());
     }
 
@@ -73,8 +72,7 @@ public class GwtTestCaseController {
         return testCases.stream()
             .map((tc) -> {
                 List<ExecutionSummaryDto> executions = ExecutionSummaryDto.toDto(
-                    executionHistoryRepository.getExecutions(
-                        fromFrontId(Optional.of(tc.id()))));
+                    executionHistoryRepository.getExecutions(tc.id()));
                 return TestCaseIndexDto.from(tc, executions);
             })
             .collect(Collectors.toList());

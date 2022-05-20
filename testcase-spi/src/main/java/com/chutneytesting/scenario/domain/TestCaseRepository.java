@@ -1,13 +1,12 @@
 package com.chutneytesting.scenario.domain;
 
-import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import java.util.List;
 
 public interface TestCaseRepository {
 
     String DEFAULT_REPOSITORY_SOURCE = "local";
 
-    String save(GwtTestCase testCase);
+    String save(TestCase testCase);
 
     TestCase findById(String scenarioId);
 

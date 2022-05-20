@@ -1,7 +1,5 @@
 package com.chutneytesting.scenario.infra;
 
-import static com.chutneytesting.tools.orient.ComposableIdUtils.toFrontId;
-
 import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
 import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadata;
@@ -11,7 +9,6 @@ import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.infra.raw.DatabaseTestCaseRepository;
 import com.chutneytesting.scenario.infra.raw.TestCaseData;
 import com.chutneytesting.scenario.infra.raw.TestCaseDataMapper;
-import com.orientechnologies.orient.core.id.ORecordId;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -36,11 +33,14 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
     }
 
     @Override
-    public String save(GwtTestCase testCase) {
-        DelegateScenarioRepository repository = findRepository(testCase.metadata.repositorySource);
+    public String save(TestCase testCase) {
+        DelegateScenarioRepository repository = findRepository(testCase.metadata().repositorySource());
 
         if (savingIsAllowed(repository)) {
-            return repository.save(TestCaseDataMapper.toDto(testCase));
+            if(testCase instanceof GwtTestCase) {
+                return repository.save(TestCaseDataMapper.toDto((GwtTestCase) testCase));
+            }
+            throw new IllegalArgumentException("Only GwtTestCase allow here");
         } else {
             throw new IllegalArgumentException("Saving to repository other than default local is not allowed");
         }
@@ -141,14 +141,14 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
 
 
     private boolean isComposableScenarioId(String scenarioId) {
-        return ORecordId.isA(scenarioId);
+        return scenarioId.contains("-");
     }
 
     private List<TestCaseMetadata> findAllComposableTestCase() {
         try {
             return composableTestCaseRepository.findAll().stream()
                 .map(testCaseMetadata -> TestCaseMetadataImpl.TestCaseMetadataBuilder.from(testCaseMetadata)
-                    .withId(toFrontId(testCaseMetadata.id()))
+                    .withId(testCaseMetadata.id())
                     .build())
                 .collect(Collectors.toList());
         } catch (RuntimeException e) {
@@ -161,7 +161,7 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
         try {
             return composableTestCaseRepository.search(textFilter).stream()
                 .map(testCaseMetadata -> TestCaseMetadataImpl.TestCaseMetadataBuilder.from(testCaseMetadata)
-                    .withId(toFrontId(testCaseMetadata.id()))
+                    .withId(testCaseMetadata.id())
                     .build())
                 .collect(Collectors.toList());
         } catch (RuntimeException e) {

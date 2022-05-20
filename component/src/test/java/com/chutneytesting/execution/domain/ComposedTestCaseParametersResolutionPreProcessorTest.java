@@ -10,22 +10,21 @@ import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.WebConfiguration;
 import com.chutneytesting.globalvar.domain.GlobalvarRepository;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.Strategy;
+import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
+import com.chutneytesting.tests.OrientDatabaseHelperTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import org.apache.groovy.util.Maps;
 import org.junit.jupiter.api.Test;
 
 public class ComposedTestCaseParametersResolutionPreProcessorTest {
 
-    private final ObjectMapper objectMapper = new WebConfiguration().objectMapper();
+    private final ObjectMapper objectMapper = OrientDatabaseHelperTest.objectMapper();
     private GlobalvarRepository globalvarRepository;
 
     @Test
@@ -42,7 +41,7 @@ public class ComposedTestCaseParametersResolutionPreProcessorTest {
         String environment = "exec env";
 
         Strategy retryStrategy =
-            new Strategy("retry", Maps.of("timeout", "10 s", "delay", "10 s"));
+            new Strategy("retry", Map.of("timeout", "10 s", "delay", "10 s"));
 
         ExecutableComposedStep action = ExecutableComposedStep.builder()
             .withName(format(actionName, "**target**"))
@@ -54,7 +53,7 @@ public class ComposedTestCaseParametersResolutionPreProcessorTest {
         ExecutableComposedStep step = ExecutableComposedStep.builder()
             .withName(format(stepName, "**step param**", "**step target**", "**target**"))
             .withParameters(
-                Maps.of(
+                Map.of(
                     "step param", "default step param",
                     "step target", "default step target"
                 )
@@ -71,7 +70,7 @@ public class ComposedTestCaseParametersResolutionPreProcessorTest {
             )
             .build();
 
-        Map<String, String> executionParameters = Maps.of(
+        Map<String, String> executionParameters = Map.of(
             "testcase title", "A part of testcase title",
             "testcase description", "A part of testcase description",
             "testcase param", "dataset testcase param",
@@ -96,7 +95,7 @@ public class ComposedTestCaseParametersResolutionPreProcessorTest {
                     )
                 )
                 .withParameters(
-                    Maps.of(
+                    Map.of(
                         "testcase title", "",
                         "testcase description", "default testcase description",
                         "testcase param", "",
@@ -152,7 +151,7 @@ public class ComposedTestCaseParametersResolutionPreProcessorTest {
         return ExecutableComposedStep.builder()
             .from(action)
             .withExecutionParameters(
-                Maps.of(
+                Map.of(
                     "target", targetDataSetValue
                 )
             )
@@ -163,7 +162,7 @@ public class ComposedTestCaseParametersResolutionPreProcessorTest {
         return ExecutableComposedStep.builder()
             .from(step)
             .withExecutionParameters(
-                Maps.of(
+                Map.of(
                     "step param", stepParamDataSetValue,
                     "step target", stepTargetDataSetValue,
                     "target", targetDataSetValue
@@ -226,7 +225,7 @@ public class ComposedTestCaseParametersResolutionPreProcessorTest {
         StepImplementation actionImplementation = new StepImplementation(
             "context-put",
             null,
-            Maps.of(
+            Map.of(
                 "direct", "**id-mail** **id** **id-lastname** **id-name**",
                 "directRef", "**DIRECT_REF**",
                 "directRefRef", "**DIRECT_REF_REF**",

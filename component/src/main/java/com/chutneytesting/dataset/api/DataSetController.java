@@ -2,7 +2,6 @@ package com.chutneytesting.dataset.api;
 
 import static com.chutneytesting.dataset.api.DataSetMapper.fromDto;
 import static com.chutneytesting.dataset.api.DataSetMapper.toDto;
-import static com.chutneytesting.tools.orient.ComposableIdUtils.fromFrontId;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.dataset.domain.DataSet;
@@ -79,16 +78,15 @@ public class DataSetController {
     @PreAuthorize("hasAuthority('DATASET_WRITE')")
     @DeleteMapping(path = "/{dataSetId}")
     public void deleteById(@PathVariable String dataSetId) {
-        String dataSetBackId = fromFrontId(dataSetId);
-        dataSetRepository.removeById(dataSetBackId);
-        dataSetHistoryRepository.removeHistory(dataSetBackId);
+        dataSetRepository.removeById(dataSetId);
+        dataSetHistoryRepository.removeHistory(dataSetId);
     }
 
     @PreAuthorize("hasAuthority('DATASET_READ')")
     @GetMapping(path = "/{dataSetId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public DataSetDto findById(@PathVariable String dataSetId) {
         return toDto(
-            dataSetRepository.findById(fromFrontId(dataSetId)),
+            dataSetRepository.findById(dataSetId),
             lastVersionNumber(dataSetId)
         );
     }
@@ -96,13 +94,13 @@ public class DataSetController {
     @PreAuthorize("hasAuthority('DATASET_READ')")
     @GetMapping(path = "/{dataSetId}/versions/last", produces = MediaType.APPLICATION_JSON_VALUE)
     public Integer lastVersionNumber(@PathVariable String dataSetId) {
-        return dataSetHistoryRepository.lastVersion(fromFrontId(dataSetId));
+        return dataSetHistoryRepository.lastVersion(dataSetId);
     }
 
     @PreAuthorize("hasAuthority('DATASET_READ')")
     @GetMapping(path = "/{dataSetId}/versions", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<DataSetDto> allVersionNumbers(@PathVariable String dataSetId) {
-        return dataSetHistoryRepository.allVersions(fromFrontId(dataSetId)).entrySet().stream()
+        return dataSetHistoryRepository.allVersions(dataSetId).entrySet().stream()
             .map(e -> toDto(e.getValue(), e.getKey()))
             .collect(Collectors.toList());
     }
@@ -110,6 +108,6 @@ public class DataSetController {
     @PreAuthorize("hasAuthority('DATASET_READ')")
     @GetMapping(path = {"/{dataSetId}/{version}", "/{dataSetId}/versions/{version}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public DataSetDto version(@PathVariable String dataSetId, @PathVariable Integer version) {
-        return toDto(dataSetHistoryRepository.version(fromFrontId(dataSetId), version), version);
+        return toDto(dataSetHistoryRepository.version(dataSetId, version), version);
     }
 }

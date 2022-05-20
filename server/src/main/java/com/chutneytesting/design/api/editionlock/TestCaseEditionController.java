@@ -1,7 +1,5 @@
 package com.chutneytesting.design.api.editionlock;
 
-import static com.chutneytesting.tools.orient.ComposableIdUtils.fromFrontId;
-import static com.chutneytesting.tools.orient.ComposableIdUtils.toFrontId;
 import static java.util.stream.Collectors.toList;
 
 import com.chutneytesting.design.domain.editionlock.TestCaseEdition;
@@ -36,7 +34,7 @@ public class TestCaseEditionController {
     @PreAuthorize("hasAuthority('SCENARIO_READ')")
     @GetMapping(path = "/{testCaseId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TestCaseEditionDto> testCasesEditions(@PathVariable("testCaseId") String testCaseId) {
-        return testCaseEditionsService.getTestCaseEditions(fromFrontId(testCaseId)).stream()
+        return testCaseEditionsService.getTestCaseEditions(testCaseId).stream()
             .map(TestCaseEditionController::toDto)
             .collect(toList());
     }
@@ -44,18 +42,18 @@ public class TestCaseEditionController {
     @PreAuthorize("hasAuthority('SCENARIO_WRITE')")
     @PostMapping(path = "/{testCaseId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public TestCaseEditionDto editTestCase(@PathVariable("testCaseId") String testCaseId) {
-        return toDto(testCaseEditionsService.editTestCase(fromFrontId(testCaseId), userService.currentUser().getId()));
+        return toDto(testCaseEditionsService.editTestCase(testCaseId, userService.currentUser().getId()));
     }
 
     @PreAuthorize("hasAuthority('SCENARIO_WRITE')")
     @DeleteMapping(path = "/{testCaseId}")
     public void endTestCaseEdition(@PathVariable("testCaseId") String testCaseId) {
-        testCaseEditionsService.endTestCaseEdition(fromFrontId(testCaseId), userService.currentUser().getId());
+        testCaseEditionsService.endTestCaseEdition(testCaseId, userService.currentUser().getId());
     }
 
     private static TestCaseEditionDto toDto(TestCaseEdition tcEdition) {
         return ImmutableTestCaseEditionDto.builder()
-            .testCaseId(toFrontId(tcEdition.testCaseMetadata.id()))
+            .testCaseId(tcEdition.testCaseMetadata.id())
             .testCaseVersion(tcEdition.testCaseMetadata.version())
             .editionUser(tcEdition.editor)
             .editionStartDate(tcEdition.startDate)

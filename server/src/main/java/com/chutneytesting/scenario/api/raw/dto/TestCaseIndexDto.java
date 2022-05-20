@@ -1,8 +1,5 @@
 package com.chutneytesting.scenario.api.raw.dto;
 
-import static com.chutneytesting.tools.orient.ComposableIdUtils.toFrontId;
-
-
 import com.chutneytesting.scenario.domain.TestCaseMetadata;
 import com.chutneytesting.execution.api.ExecutionSummaryDto;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -20,7 +17,7 @@ public interface TestCaseIndexDto {
     static TestCaseIndexDto from(TestCaseMetadata testCaseMetadata, List<ExecutionSummaryDto> executions) {
         return ImmutableTestCaseIndexDto.builder()
             .metadata(ImmutableGwtTestCaseMetadataDto.builder()
-                .id(toFrontId(testCaseMetadata.id()))
+                .id(testCaseMetadata.id())
                 .creationDate(testCaseMetadata.creationDate())
                 .title(testCaseMetadata.title())
                 .description(testCaseMetadata.description())

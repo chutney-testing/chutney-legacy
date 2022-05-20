@@ -14,14 +14,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.chutneytesting.RestExceptionHandler;
-import com.chutneytesting.WebConfiguration;
-import com.chutneytesting.scenario.api.compose.dto.ImmutableComposableStepDto;
-import com.chutneytesting.scenario.api.compose.dto.ParentsStepDto;
+import com.chutneytesting.ComponentRestExceptionHandler;
+import com.chutneytesting.scenario.api.dto.ImmutableComposableStepDto;
+import com.chutneytesting.scenario.api.dto.ParentsStepDto;
 import com.chutneytesting.scenario.domain.ComposableStep;
 import com.chutneytesting.scenario.domain.ComposableStepNotFoundException;
 import com.chutneytesting.scenario.domain.ComposableStepRepository;
 import com.chutneytesting.scenario.domain.ParentStepId;
+import com.chutneytesting.tests.OrientDatabaseHelperTest;
 import com.chutneytesting.tools.ImmutablePaginatedDto;
 import com.chutneytesting.tools.ImmutablePaginationRequestParametersDto;
 import com.chutneytesting.tools.ImmutableSortRequestParametersDto;
@@ -45,13 +45,13 @@ public class StepControllerTest {
     private final ComposableStepRepository composableStepRepository = mock(ComposableStepRepository.class);
 
     private MockMvc mockMvc;
-    private final ObjectMapper om = new WebConfiguration().objectMapper();
+    private final ObjectMapper om = OrientDatabaseHelperTest.objectMapper();
 
     @BeforeEach
     public void setUp() {
         StepController sut = new StepController(composableStepRepository);
         mockMvc = MockMvcBuilders.standaloneSetup(sut)
-            .setControllerAdvice(new RestExceptionHandler())
+            .setControllerAdvice(new ComponentRestExceptionHandler())
             .build();
 
         when(composableStepRepository.findById(any()))
@@ -196,7 +196,7 @@ public class StepControllerTest {
     @Test
     public void should_save_func_step() throws Exception {
         // Given
-        String newId = "#12:3";
+        String newId = "12-3";
         when(composableStepRepository.save(any())).thenReturn(newId);
 
         // When

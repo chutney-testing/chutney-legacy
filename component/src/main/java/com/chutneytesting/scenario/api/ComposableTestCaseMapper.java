@@ -1,13 +1,12 @@
-package com.chutneytesting.scenario.api.compose.mapper;
+package com.chutneytesting.scenario.api;
 
 import static com.chutneytesting.scenario.domain.ComposableTestCaseRepository.COMPOSABLE_TESTCASE_REPOSITORY_SOURCE;
-import static com.chutneytesting.tools.orient.ComposableIdUtils.fromFrontId;
-import static com.chutneytesting.tools.orient.ComposableIdUtils.toFrontId;
 
-import com.chutneytesting.scenario.api.compose.dto.ComposableStepDto;
-import com.chutneytesting.scenario.api.compose.dto.ComposableTestCaseDto;
-import com.chutneytesting.scenario.api.compose.dto.ImmutableComposableScenarioDto;
-import com.chutneytesting.scenario.api.compose.dto.ImmutableComposableTestCaseDto;
+
+import com.chutneytesting.scenario.api.dto.ComposableStepDto;
+import com.chutneytesting.scenario.api.dto.ComposableTestCaseDto;
+import com.chutneytesting.scenario.api.dto.ImmutableComposableScenarioDto;
+import com.chutneytesting.scenario.api.dto.ImmutableComposableTestCaseDto;
 import com.chutneytesting.scenario.domain.ComposableScenario;
 import com.chutneytesting.scenario.domain.ComposableTestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadata;
@@ -23,7 +22,7 @@ public class ComposableTestCaseMapper {
 
     public static ComposableTestCase fromDto(ComposableTestCaseDto composableTestCaseDto) {
         return new ComposableTestCase(
-            fromFrontId(composableTestCaseDto.id()),
+            composableTestCaseDto.id().orElse(""),
             testCaseMetadataFromDto(composableTestCaseDto),
             fromComposableStepsDto(composableTestCaseDto)
         );
@@ -31,7 +30,7 @@ public class ComposableTestCaseMapper {
 
     public static ComposableTestCaseDto toDto(ComposableTestCase composableTestCase) {
         return ImmutableComposableTestCaseDto.builder()
-            .id(toFrontId(composableTestCase.id))
+            .id(composableTestCase.id)
             .title(composableTestCase.metadata.title())
             .description(composableTestCase.metadata.description())
             .creationDate(composableTestCase.metadata.creationDate())
@@ -43,7 +42,7 @@ public class ComposableTestCaseMapper {
                     .build()
             )
             .tags(composableTestCase.metadata.tags())
-            .datasetId(toFrontId(composableTestCase.metadata.datasetId().orElse("")))
+            .datasetId(composableTestCase.metadata.datasetId().orElse(""))
             .author(composableTestCase.metadata.author())
             .updateDate(composableTestCase.metadata.updateDate())
             .version(composableTestCase.metadata.version())
@@ -57,7 +56,7 @@ public class ComposableTestCaseMapper {
             .withCreationDate(composableTestCaseDto.creationDate())
             .withRepositorySource(COMPOSABLE_TESTCASE_REPOSITORY_SOURCE)
             .withTags(composableTestCaseDto.tags())
-            .withDatasetId(fromFrontId(composableTestCaseDto.datasetId()))
+            .withDatasetId(composableTestCaseDto.datasetId().orElse(""))
             .withAuthor(composableTestCaseDto.author())
             .withUpdateDate(composableTestCaseDto.updateDate())
             .withVersion(composableTestCaseDto.version())

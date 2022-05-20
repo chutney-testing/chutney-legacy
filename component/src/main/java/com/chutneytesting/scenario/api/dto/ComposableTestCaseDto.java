@@ -1,4 +1,4 @@
-package com.chutneytesting.scenario.api.compose.dto;
+package com.chutneytesting.scenario.api.dto;
 
 import static java.time.Instant.now;
 import static java.util.Collections.emptyList;

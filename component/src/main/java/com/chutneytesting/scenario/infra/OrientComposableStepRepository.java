@@ -1,17 +1,19 @@
 package com.chutneytesting.scenario.infra;
 
-import static com.chutneytesting.scenario.infra.OrientComposableStepMapper.vertexToComposableStep;
+import static com.chutneytesting.ComposableIdUtils.toExternalId;
+import static com.chutneytesting.ComposableIdUtils.toInternalId;
 
+import com.chutneytesting.ComposableIdUtils;
+import com.chutneytesting.execution.domain.ExecutableComposedStep;
+import com.chutneytesting.execution.domain.ExecutableStepRepository;
 import com.chutneytesting.scenario.domain.AlreadyExistingComposableStepException;
 import com.chutneytesting.scenario.domain.ComposableStep;
 import com.chutneytesting.scenario.domain.ComposableStepNotFoundException;
 import com.chutneytesting.scenario.domain.ComposableStepRepository;
 import com.chutneytesting.scenario.domain.ParentStepId;
-import com.chutneytesting.scenario.infra.wrapper.StepVertex;
 import com.chutneytesting.scenario.infra.orient.OrientComponentDB;
 import com.chutneytesting.scenario.infra.orient.OrientUtils;
-import com.chutneytesting.execution.domain.ExecutableComposedStep;
-import com.chutneytesting.execution.domain.ExecutableStepRepository;
+import com.chutneytesting.scenario.infra.wrapper.StepVertex;
 import com.chutneytesting.tools.ImmutablePaginatedDto;
 import com.chutneytesting.tools.PaginatedDto;
 import com.chutneytesting.tools.PaginationRequestParametersDto;
@@ -58,7 +60,7 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
             OVertex savedFStep = save(composableStep, dbSession);
             dbSession.commit();
             LOGGER.debug("Saved component : " + savedFStep.toString());
-            return savedFStep.getIdentity().toString(null).toString();
+            return ComposableIdUtils.toExternalId(savedFStep.getIdentity().toString(null).toString());
         } catch (ORecordDuplicatedException e) {
             OrientUtils.rollback(dbSession);
             throw new AlreadyExistingComposableStepException(composableStep);
@@ -72,9 +74,10 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
 
     @Override
     public ComposableStep findById(final String recordId) {
+        String internalId = toInternalId(recordId);
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
-            OVertex element = (OVertex) OrientUtils.load(recordId, dbSession)
-                .orElseThrow(() -> new ComposableStepNotFoundException(recordId));
+            OVertex element = (OVertex) OrientUtils.load(internalId, dbSession)
+                .orElseThrow(() -> new ComposableStepNotFoundException(internalId));
             return OrientComposableStepMapper.vertexToComposableStep(StepVertex.builder().from(element).build());
         }
     }
@@ -87,13 +90,14 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
 
     @Override
     public void deleteById(String recordId) {
+        String internalId = toInternalId(recordId);
         ODatabaseSession dbSession = null;
         try {
             dbSession = componentDBPool.acquire();
             dbSession.begin();
-            OrientUtils.deleteVertex(recordId, dbSession);
+            OrientUtils.deleteVertex(internalId, dbSession);
             dbSession.commit();
-            LOGGER.debug("Removed component : " + recordId);
+            LOGGER.debug("Removed component : " + internalId);
         } catch (Exception e) {
             OrientUtils.rollback(dbSession);
             throw new RuntimeException(e);
@@ -145,8 +149,9 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
 
     @Override
     public List<ParentStepId> findParents(String stepId) {
+        String internalId = toInternalId(stepId);
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
-            Optional<OElement> stepRecord = OrientUtils.load(stepId, dbSession);
+            Optional<OElement> stepRecord = OrientUtils.load(internalId, dbSession);
 
             if (stepRecord.isPresent()) {
                 List<ParentStepId> funcStepIds = new ArrayList<>();
@@ -154,9 +159,9 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
                     while (rs.hasNext()) {
                         OResult res = rs.next();
                         if (res.getProperty("@class").equals(OrientComponentDB.STEP_CLASS)) {
-                            funcStepIds.add(new ParentStepId(res.getProperty("@rid").toString(), res.getProperty("name"), false));
+                            funcStepIds.add(new ParentStepId(toExternalId(res.getProperty("@rid").toString()), res.getProperty("name"), false));
                         } else {
-                            funcStepIds.add(new ParentStepId(res.getProperty("@rid").toString(), res.getProperty("title"), true));
+                            funcStepIds.add(new ParentStepId(toExternalId(res.getProperty("@rid").toString()), res.getProperty("title"), true));
                         }
                     }
                 }
@@ -167,7 +172,8 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
     }
 
     private OVertex save(ComposableStep composableStep, final ODatabaseSession dbSession) {
-        Optional<OElement> stepRecord = OrientUtils.load(composableStep.id, dbSession);
+        String internalId = toInternalId(composableStep.id);
+        Optional<OElement> stepRecord = OrientUtils.load(internalId, dbSession);
         OVertex oVertex = (OVertex) stepRecord.orElse(dbSession.newVertex(OrientComponentDB.STEP_CLASS));
 
         StepVertex stepVertex = OrientComposableStepMapper.composableStepToVertex(composableStep, oVertex, dbSession);

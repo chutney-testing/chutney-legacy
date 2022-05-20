@@ -2,8 +2,6 @@ package com.chutneytesting.dataset.api;
 
 import static com.chutneytesting.dataset.api.DataSetMapper.fromDto;
 import static com.chutneytesting.dataset.api.DataSetMapper.toDto;
-import static com.chutneytesting.tools.orient.ComposableIdUtils.fromFrontId;
-import static com.chutneytesting.tools.orient.ComposableIdUtils.toFrontId;
 import static java.util.List.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -13,6 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import com.chutneytesting.ComponentRestExceptionHandler;
 import com.chutneytesting.dataset.domain.DataSet;
 import com.chutneytesting.dataset.domain.DataSetHistoryRepository;
 import com.chutneytesting.dataset.domain.DataSetRepository;
@@ -51,7 +50,7 @@ public class DataSetControllerTest {
     public void setUp() {
         DataSetController sut = new DataSetController(dataSetRepository, dataSetHistoryRepository);
         mockMvc = MockMvcBuilders.standaloneSetup(sut)
-            // TODO ?? .setControllerAdvice(new RestExceptionHandler())
+            .setControllerAdvice(new ComponentRestExceptionHandler())
             .build();
     }
 
@@ -89,9 +88,9 @@ public class DataSetControllerTest {
         when(dataSetRepository.findAll())
             .thenReturn(
                 Lists.list(firstDataSet.getLeft(), secondDataSet.getLeft(), thirdDataSet.getLeft()));
-        when(dataSetHistoryRepository.lastVersion(eq(fromFrontId(firstDataSetFrontId)))).thenReturn(firstDataSetVersion);
-        when(dataSetHistoryRepository.lastVersion(eq(fromFrontId(secondDataSetFrontId)))).thenReturn(secondDataSetVersion);
-        when(dataSetHistoryRepository.lastVersion(eq(fromFrontId(thirdDataSetFrontId)))).thenReturn(thirdDataSetVersion);
+        when(dataSetHistoryRepository.lastVersion(eq(firstDataSetFrontId))).thenReturn(firstDataSetVersion);
+        when(dataSetHistoryRepository.lastVersion(eq(secondDataSetFrontId))).thenReturn(secondDataSetVersion);
+        when(dataSetHistoryRepository.lastVersion(eq(thirdDataSetFrontId))).thenReturn(thirdDataSetVersion);
 
         // When
         List<DataSetDto> dtos = new ArrayList<>();
@@ -122,7 +121,7 @@ public class DataSetControllerTest {
 
         // Then
         DataSetDto savedDataSetDto = om.readValue(mvcResult.getResponse().getContentAsString(), DataSetDto.class);
-        assertThat(savedDataSetDto).isEqualTo(ImmutableDataSetDto.builder().from(dataSetDto).id(toFrontId(newId)).version(1).build());
+        assertThat(savedDataSetDto).isEqualTo(ImmutableDataSetDto.builder().from(dataSetDto).id(newId).version(1).build());
     }
 
     @Test
@@ -130,7 +129,7 @@ public class DataSetControllerTest {
         // Given
         String id = "1-9";
         Pair<DataSet, DataSetDto> dataSet = dataSetMetaData(id, "name", 1);
-        when(dataSetRepository.save(any())).thenReturn(fromFrontId(id));
+        when(dataSetRepository.save(any())).thenReturn(id);
         when(dataSetHistoryRepository.addVersion(any())).thenReturn(Optional.of(Pair.of("#2:6", 2)));
 
         // When
@@ -158,8 +157,8 @@ public class DataSetControllerTest {
             .andReturn();
 
         // Then
-        verify(dataSetRepository).removeById(eq(fromFrontId(id)));
-        verify(dataSetHistoryRepository).removeHistory(eq(fromFrontId(id)));
+        verify(dataSetRepository).removeById(eq(id));
+        verify(dataSetHistoryRepository).removeHistory(eq(id));
         Assertions.assertThat(mvcResult.getResponse().getContentLength()).isZero();
     }
 
@@ -169,9 +168,9 @@ public class DataSetControllerTest {
         String id = "1-5";
         int version = 1;
         Pair<DataSet, DataSetDto> dataSet = dataSetMetaData(id, "name", version);
-        when(dataSetRepository.findById(eq(fromFrontId(id))))
-            .thenReturn(DataSet.builder().fromDataSet(dataSet.getLeft()).withId(fromFrontId(id)).build());
-        when(dataSetHistoryRepository.lastVersion(eq(fromFrontId(id)))).thenReturn(version);
+        when(dataSetRepository.findById(eq(id)))
+            .thenReturn(DataSet.builder().fromDataSet(dataSet.getLeft()).withId(id).build());
+        when(dataSetHistoryRepository.lastVersion(eq(id))).thenReturn(version);
 
         // When
         MvcResult mvcResult = mockMvc.perform(
@@ -188,7 +187,7 @@ public class DataSetControllerTest {
     public void should_find_dataset_last_version_number() throws Exception {
         // Given
         String id = "1-5";
-        when(dataSetHistoryRepository.lastVersion(eq(fromFrontId(id)))).thenReturn(5);
+        when(dataSetHistoryRepository.lastVersion(eq(id))).thenReturn(5);
 
         // When
         MvcResult mvcResult = mockMvc.perform(
@@ -207,7 +206,7 @@ public class DataSetControllerTest {
         Pair<DataSet, DataSetDto> one = dataSetMetaData(id, "one", 2);
         Pair<DataSet, DataSetDto> two = dataSetMetaData(id, "two", 3);
         Pair<DataSet, DataSetDto> three = dataSetMetaData(id, "three", 4);
-        when(dataSetHistoryRepository.allVersions(eq(fromFrontId(id))))
+        when(dataSetHistoryRepository.allVersions(eq(id)))
             .thenReturn(Map.of(
                 one.getRight().version(), one.getLeft(),
                 two.getRight().version(), two.getLeft(),
@@ -237,7 +236,7 @@ public class DataSetControllerTest {
         String id = "1-5";
         Integer version = 5;
         Pair<DataSet, DataSetDto> dataSet = dataSetMetaData(id, "name", version);
-        when(dataSetHistoryRepository.version(eq(fromFrontId(id)), eq(version)))
+        when(dataSetHistoryRepository.version(eq(id), eq(version)))
             .thenReturn(dataSet.getLeft());
 
         // When

@@ -1,5 +1,8 @@
 package com.chutneytesting.scenario.infra;
 
+import static com.chutneytesting.ComposableIdUtils.toInternalId;
+
+import com.chutneytesting.ComposableIdUtils;
 import com.chutneytesting.scenario.domain.ComposableStep;
 import com.chutneytesting.scenario.domain.Strategy;
 import com.chutneytesting.scenario.infra.wrapper.StepVertex;
@@ -23,16 +26,24 @@ public class OrientComposableStepMapper {
             .withStrategy(composableStep.strategy)
             .withDefaultParameters(composableStep.defaultParameters)
             .withExecutionParameters(composableStep.executionParameters)
-            .withSteps(composableStep.steps)
+            .withSteps(convertIds(composableStep.steps))
             .build();
     }
 
+    private static List<ComposableStep> convertIds(List<ComposableStep> composableSteps) {
+        return composableSteps.stream().map(cs -> ComposableStep.builder()
+            .from(cs)
+            .withId(ComposableIdUtils.toInternalId(cs.id))
+            .withSteps(convertIds(cs.steps))
+            .withExecutionParameters(cs.executionParameters)
+            .build()).collect(Collectors.toList());
+    }
     // GET
     public static ComposableStep vertexToComposableStep(final StepVertex vertex) {
         vertex.reloadIfDirty();
-
+        String externalId = ComposableIdUtils.toExternalId(vertex.id());
         ComposableStep.ComposableStepBuilder builder = ComposableStep.builder()
-            .withId(vertex.id())
+            .withId(externalId)
             .withName(vertex.name())
             .withTags(vertex.tags())
             .withImplementation(vertex.implementation())

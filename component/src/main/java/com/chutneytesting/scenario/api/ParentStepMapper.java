@@ -1,10 +1,8 @@
-package com.chutneytesting.scenario.api.compose.mapper;
+package com.chutneytesting.scenario.api;
 
-import static com.chutneytesting.tools.orient.ComposableIdUtils.toFrontId;
-
-import com.chutneytesting.scenario.api.compose.dto.ImmutableNameIdDto;
-import com.chutneytesting.scenario.api.compose.dto.ImmutableParentsStepDto;
-import com.chutneytesting.scenario.api.compose.dto.ParentsStepDto;
+import com.chutneytesting.scenario.api.dto.ImmutableNameIdDto;
+import com.chutneytesting.scenario.api.dto.ImmutableParentsStepDto;
+import com.chutneytesting.scenario.api.dto.ParentsStepDto;
 import com.chutneytesting.scenario.domain.ParentStepId;
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +18,7 @@ public class ParentStepMapper {
             .stream()
             .collect(
                 Collectors.groupingBy(p -> p.isScenario,
-                    Collectors.mapping(p -> ImmutableNameIdDto.builder().name(p.name).id(toFrontId(p.id)).build(), Collectors.toList())
+                    Collectors.mapping(p -> ImmutableNameIdDto.builder().name(p.name).id(p.id).build(), Collectors.toList())
                 )
             );
 

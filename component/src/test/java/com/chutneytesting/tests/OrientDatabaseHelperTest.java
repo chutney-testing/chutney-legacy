@@ -1,10 +1,12 @@
 package com.chutneytesting.tests;
 
+import static com.chutneytesting.ComposableIdUtils.toInternalId;
 import static com.chutneytesting.scenario.infra.orient.OrientComponentDB.STEP_CLASS;
 import static com.chutneytesting.scenario.infra.orient.OrientComponentDB.STEP_CLASS_PROPERTY_NAME;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.chutneytesting.ComposableIdUtils;
 import com.chutneytesting.scenario.domain.ComposableStep;
 import com.chutneytesting.scenario.domain.ComposableStepRepository;
 import com.chutneytesting.scenario.domain.Strategy;
@@ -106,7 +108,7 @@ public class OrientDatabaseHelperTest {
 
     public OElement loadById(String recordId) {
         try (ODatabaseSession dbSession = dbPool().acquire()) {
-            return dbSession.load(new ORecordId(recordId));
+            return dbSession.load(new ORecordId(toInternalId(recordId)));
         }
     }
 

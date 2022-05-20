@@ -1,13 +1,9 @@
 package com.chutneytesting.scenario.api;
 
-import static com.chutneytesting.scenario.api.compose.mapper.ComposableStepMapper.fromDto;
-import static com.chutneytesting.tools.orient.ComposableIdUtils.fromFrontId;
-import static com.chutneytesting.tools.orient.ComposableIdUtils.toFrontId;
+import static com.chutneytesting.scenario.api.ComposableStepMapper.fromDto;
 
-import com.chutneytesting.scenario.api.compose.dto.ComposableStepDto;
-import com.chutneytesting.scenario.api.compose.dto.ParentsStepDto;
-import com.chutneytesting.scenario.api.compose.mapper.ComposableStepMapper;
-import com.chutneytesting.scenario.api.compose.mapper.ParentStepMapper;
+import com.chutneytesting.scenario.api.dto.ComposableStepDto;
+import com.chutneytesting.scenario.api.dto.ParentsStepDto;
 import com.chutneytesting.scenario.domain.ComposableStep;
 import com.chutneytesting.scenario.domain.ComposableStepRepository;
 import com.chutneytesting.tools.ImmutablePaginatedDto;
@@ -44,13 +40,13 @@ public class StepController {
     @PreAuthorize("hasAuthority('COMPONENT_WRITE')")
     @PostMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public String save(@RequestBody ComposableStepDto step) {
-        return toFrontId(composableStepRepository.save(fromDto(step)));
+        return composableStepRepository.save(fromDto(step));
     }
 
     @PreAuthorize("hasAuthority('COMPONENT_WRITE')")
     @DeleteMapping(path = "/{stepId}")
     public void deleteById(@PathVariable String stepId) {
-        composableStepRepository.deleteById(fromFrontId(stepId));
+        composableStepRepository.deleteById(stepId);
     }
 
     @PreAuthorize("hasAuthority('COMPONENT_READ') or hasAuthority('SCENARIO_WRITE')")
@@ -66,7 +62,7 @@ public class StepController {
     @PreAuthorize("hasAuthority('COMPONENT_READ')")
     @GetMapping(path = "/{stepId}/parents", produces = MediaType.APPLICATION_JSON_VALUE)
     public ParentsStepDto findParents(@PathVariable String stepId) {
-        return ParentStepMapper.toDto(composableStepRepository.findParents(fromFrontId(stepId)));
+        return ParentStepMapper.toDto(composableStepRepository.findParents(stepId));
     }
 
     static final String FIND_STEPS_NAME_DEFAULT_VALUE = "";
@@ -112,7 +108,7 @@ public class StepController {
     @GetMapping(path = "/{stepId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ComposableStepDto findById(@PathVariable String stepId) {
         return ComposableStepMapper.toDto(
-            composableStepRepository.findById(fromFrontId(stepId))
+            composableStepRepository.findById(stepId)
         );
     }
 }

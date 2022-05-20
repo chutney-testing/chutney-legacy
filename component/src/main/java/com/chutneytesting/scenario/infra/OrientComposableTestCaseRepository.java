@@ -1,5 +1,7 @@
 package com.chutneytesting.scenario.infra;
 
+import static com.chutneytesting.ComposableIdUtils.toExternalId;
+import static com.chutneytesting.ComposableIdUtils.toInternalId;
 import static com.chutneytesting.scenario.infra.OrientComposableTestCaseMapper.testCaseToVertex;
 import static com.chutneytesting.scenario.infra.OrientComposableTestCaseMapper.vertexToTestCase;
 import static com.chutneytesting.scenario.infra.orient.OrientComponentDB.TESTCASE_CLASS;
@@ -8,6 +10,7 @@ import static com.chutneytesting.scenario.infra.orient.OrientUtils.deleteVertex;
 import static com.chutneytesting.scenario.infra.orient.OrientUtils.load;
 import static com.chutneytesting.scenario.infra.orient.OrientUtils.rollback;
 
+import com.chutneytesting.ComposableIdUtils;
 import com.chutneytesting.scenario.domain.AlreadyExistingScenarioException;
 import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
 import com.chutneytesting.scenario.domain.TestCaseMetadata;
@@ -58,7 +61,7 @@ public class OrientComposableTestCaseRepository implements ComposableTestCaseRep
             savedFStep = save(composableTestCase, dbSession);
             dbSession.commit();
             LOGGER.debug("Save scenario :" + savedFStep.toString());
-            return savedFStep.getIdentity().toString();
+            return toExternalId(savedFStep.getIdentity().toString());
         } catch (ORecordDuplicatedException e) {
             rollback(dbSession);
             throw new AlreadyExistingScenarioException(e.getMessage());
@@ -78,16 +81,18 @@ public class OrientComposableTestCaseRepository implements ComposableTestCaseRep
 
     @Override
     public ComposableTestCase findById(String composableTestCaseId) {
+        String internalId = toInternalId(composableTestCaseId);
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
-            OVertex element = (OVertex) load(composableTestCaseId, dbSession)
-                .orElseThrow(() -> new ScenarioNotFoundException(composableTestCaseId));
+            OVertex element = (OVertex) load(internalId, dbSession)
+                .orElseThrow(() -> new ScenarioNotFoundException(internalId));
             return vertexToTestCase(TestCaseVertex.builder().from(element).build());
         }
     }
 
     @Override
     public ExecutableComposedTestCase findExecutableById(String composableTestCaseId) {
-        ComposableTestCase composableTestCase = findById(composableTestCaseId);
+        String internalId = toInternalId(composableTestCaseId);
+        ComposableTestCase composableTestCase = findById(internalId);
         return testCaseMapper.composableToExecutable(composableTestCase);
     }
 
@@ -108,16 +113,18 @@ public class OrientComposableTestCaseRepository implements ComposableTestCaseRep
 
     @Override
     public void removeById(String testCaseId) {
+        String internalId = toInternalId(testCaseId);
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
-            deleteVertex(testCaseId, dbSession);
+            deleteVertex(internalId, dbSession);
         }
     }
 
     @Override
     public Integer lastVersion(String composableTestCaseId) {
+        String internalId = toInternalId(composableTestCaseId);
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
-            OVertex element = (OVertex) load(composableTestCaseId, dbSession)
-                .orElseThrow(() -> new ScenarioNotFoundException(composableTestCaseId));
+            OVertex element = (OVertex) load(internalId, dbSession)
+                .orElseThrow(() -> new ScenarioNotFoundException(internalId));
             return element.getVersion();
         }
     }
@@ -139,9 +146,10 @@ public class OrientComposableTestCaseRepository implements ComposableTestCaseRep
     }
 
     private OVertex save(ComposableTestCase composableTestCase, ODatabaseSession dbSession) {
-        Optional<OElement> stepRecord = load(composableTestCase.id, dbSession);
+        String internalId = toInternalId(composableTestCase.id);
+        Optional<OElement> stepRecord = load(internalId, dbSession);
         if (stepRecord.isPresent() && stepRecord.get().getVersion() != composableTestCase.metadata.version()) {
-            throw new ScenarioNotFoundException(composableTestCase.id, composableTestCase.metadata.version());
+            throw new ScenarioNotFoundException(internalId, composableTestCase.metadata.version());
         }
         OVertex testCase = (OVertex) stepRecord.orElseGet(() -> dbSession.newVertex(TESTCASE_CLASS));
         TestCaseVertex testCaseVertex = testCaseToVertex(composableTestCase, testCase);

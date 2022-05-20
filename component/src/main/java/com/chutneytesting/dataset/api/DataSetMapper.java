@@ -1,17 +1,15 @@
 package com.chutneytesting.dataset.api;
 
-import static com.chutneytesting.tools.orient.ComposableIdUtils.toFrontId;
 
 import com.chutneytesting.tools.ui.KeyValue;
 import com.chutneytesting.dataset.domain.DataSet;
-import com.chutneytesting.tools.orient.ComposableIdUtils;
 import java.util.stream.Collectors;
 
 public class DataSetMapper {
 
     public static DataSetDto toDto(DataSet dataSet, Integer version) {
         return ImmutableDataSetDto.builder()
-            .id(toFrontId(dataSet.id))
+            .id(dataSet.id)
             .name(dataSet.name)
             .version(version)
             .description(dataSet.description)
@@ -24,7 +22,7 @@ public class DataSetMapper {
 
     public static DataSet fromDto(DataSetDto dto) {
         return DataSet.builder()
-            .withId(dto.id().map(ComposableIdUtils::fromFrontId).orElse(null))
+            .withId(dto.id().orElse(null))
             .withName(dto.name())
             .withDescription(dto.description())
             .withCreationDate(dto.lastUpdated())

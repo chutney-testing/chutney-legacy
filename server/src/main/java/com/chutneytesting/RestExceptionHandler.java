@@ -9,19 +9,17 @@ import com.chutneytesting.environment.domain.exception.AlreadyExistingTargetExce
 import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
 import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
 import com.chutneytesting.environment.domain.exception.TargetNotFoundException;
+import com.chutneytesting.execution.domain.ScenarioConversionException;
 import com.chutneytesting.execution.domain.campaign.CampaignAlreadyRunningException;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionNotFoundException;
-import com.chutneytesting.execution.domain.ScenarioConversionException;
 import com.chutneytesting.execution.domain.history.ReportNotFoundException;
 import com.chutneytesting.execution.domain.scenario.FailedExecutionAttempt;
 import com.chutneytesting.execution.domain.scenario.ScenarioNotRunningException;
 import com.chutneytesting.globalvar.domain.GlobalVarNotFoundException;
 import com.chutneytesting.scenario.domain.AlreadyExistingScenarioException;
+import com.chutneytesting.scenario.domain.ComposableStepNotFoundException;
 import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
 import com.chutneytesting.scenario.domain.ScenarioNotParsableException;
-import com.chutneytesting.scenario.domain.AlreadyExistingComposableStepException;
-import com.chutneytesting.scenario.domain.ComposableStepCyclicDependencyException;
-import com.chutneytesting.scenario.domain.ComposableStepNotFoundException;
 import com.chutneytesting.security.domain.CurrentUserNotFoundException;
 import java.time.format.DateTimeParseException;
 import org.slf4j.Logger;
@@ -70,14 +68,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         CampaignNotFoundException.class,
         CampaignExecutionNotFoundException.class,
         EnvironmentNotFoundException.class,
-        ComposableStepNotFoundException.class,
         CurrentUserNotFoundException.class,
         BackupNotFoundException.class,
         DataSetNotFoundException.class,
         ScenarioNotRunningException.class,
         GlobalVarNotFoundException.class,
         ReportNotFoundException.class,
-        UnreachableRemoteException.class
+        UnreachableRemoteException.class,
+        ComposableStepNotFoundException.class // TODO should be in ComponentHandler
     })
     protected ResponseEntity<Object> notFound(RuntimeException ex, WebRequest request) {
         return handleExceptionInternalWithExceptionMessageAsBody(ex, HttpStatus.NOT_FOUND, request);
@@ -88,8 +86,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         AlreadyExistingEnvironmentException.class,
         CampaignAlreadyRunningException.class,
         AlreadyExistingScenarioException.class,
-        AlreadyExistingComposableStepException.class,
-        ComposableStepCyclicDependencyException.class
     })
     protected ResponseEntity<Object> conflict(RuntimeException ex, WebRequest request) {
         return handleExceptionInternalWithExceptionMessageAsBody(ex, HttpStatus.CONFLICT, request);

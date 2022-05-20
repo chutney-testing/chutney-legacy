@@ -4,17 +4,17 @@ import static java.time.temporal.ChronoUnit.MILLIS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
-import com.chutneytesting.scenario.domain.TestCaseMetadata;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
+import com.chutneytesting.ComposableIdUtils;
 import com.chutneytesting.scenario.domain.ComposableScenario;
 import com.chutneytesting.scenario.domain.ComposableStep;
 import com.chutneytesting.scenario.domain.ComposableStepRepository;
 import com.chutneytesting.scenario.domain.ComposableTestCase;
 import com.chutneytesting.scenario.domain.ComposableTestCaseRepository;
+import com.chutneytesting.scenario.domain.TestCaseMetadata;
+import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.infra.orient.OrientComponentDB;
 import com.chutneytesting.tests.OrientDatabaseHelperTest;
 import com.orientechnologies.common.log.OLogManager;
-import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.OElement;
 import java.time.Instant;
 import java.util.Arrays;
@@ -132,8 +132,7 @@ public class OrientComposableTestCaseRepositoryTest {
     @Test
     public void should_create_new_testCase_with_valid_unknown_id() {
         // Given
-        final String VALID_UNKNOWN_TESTCASE_ID = "#10:2";
-        assertThat(ORecordId.isA(VALID_UNKNOWN_TESTCASE_ID)).isTrue();
+        final String VALID_UNKNOWN_TESTCASE_ID = "10-2";
         ComposableTestCase composableTestCase =
             new ComposableTestCase(VALID_UNKNOWN_TESTCASE_ID,
                 TestCaseMetadataImpl.builder().build(),

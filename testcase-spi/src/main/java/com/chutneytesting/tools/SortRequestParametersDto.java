@@ -1,13 +1,11 @@
 package com.chutneytesting.tools;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.*;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import javax.annotation.Nullable;
 import org.immutables.value.Value;
 
 @Value.Immutable
@@ -16,12 +14,11 @@ import org.immutables.value.Value;
 @Value.Style(jdkOnly = true)
 public interface SortRequestParametersDto {
 
-    @JsonInclude(NON_NULL)
+    @Nullable
     String sort();
 
-    @JsonInclude(NON_NULL)
+    @Nullable
     String desc();
-
 
     @Value.Derived
     default List<String> sortParameters() {

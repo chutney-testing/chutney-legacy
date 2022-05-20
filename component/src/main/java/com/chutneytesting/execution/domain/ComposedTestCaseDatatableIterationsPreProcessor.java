@@ -12,7 +12,6 @@ import static java.util.stream.Collectors.toSet;
 import com.chutneytesting.dataset.domain.DataSet;
 import com.chutneytesting.dataset.domain.DataSetRepository;
 import com.chutneytesting.scenario.domain.Strategy;
-import com.chutneytesting.engine.domain.execution.strategies.DataSetIterationsStrategy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,6 +27,11 @@ import java.util.regex.Pattern;
 import org.apache.commons.text.StringEscapeUtils;
 
 public class ComposedTestCaseDatatableIterationsPreProcessor implements TestCasePreProcessor<ExecutableComposedTestCase> {
+
+    /**
+     * Duplicate of DataSetIterationsStrategy.TYPE in engine domain
+     */
+    public final static String DATASET_ITERATIONS_STRATEGY_TYPE = "dataset-iterations-strategy";
 
     private final DataSetRepository dataSetRepository;
 
@@ -120,7 +124,7 @@ public class ComposedTestCaseDatatableIterationsPreProcessor implements TestCase
         return ExecutableComposedStep.builder()
             .from(composedStep)
             .withImplementation(empty())
-            .withStrategy(new Strategy(DataSetIterationsStrategy.TYPE, emptyMap()))
+            .withStrategy(new Strategy(DATASET_ITERATIONS_STRATEGY_TYPE, emptyMap()))
             .withSteps(buildStepIterations(composedStep, dataset.datatable, executionParametersReferencingDatableHeadersInKey, executionParametersReferencingDatableHeadersInValue, iterationOutputs))
             .withExecutionParameters(buildExecutionParametersWithAliases(emptyExecutionParameters))
             .build();

@@ -1,13 +1,10 @@
 package com.chutneytesting.campaign.api.dto;
 
-import static com.chutneytesting.tools.orient.ComposableIdUtils.fromFrontId;
-import static com.chutneytesting.tools.orient.ComposableIdUtils.toFrontId;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 import com.chutneytesting.campaign.domain.Campaign;
 import com.chutneytesting.campaign.domain.CampaignExecutionReport;
-import com.chutneytesting.tools.orient.ComposableIdUtils;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,15 +15,13 @@ public class CampaignMapper {
             campaign.id,
             campaign.title,
             campaign.description,
-            campaign.scenarioIds.stream()
-                .map(ComposableIdUtils::toFrontId)
-                .collect(toList()),
+            campaign.scenarioIds,
             campaign.executionParameters,
             emptyList(),
             campaign.executionEnvironment(),
             campaign.parallelRun,
             campaign.retryAuto,
-            toFrontId(campaign.externalDatasetId),
+            campaign.externalDatasetId,
             campaign.tags);
     }
 
@@ -35,15 +30,13 @@ public class CampaignMapper {
             campaign.id,
             campaign.title,
             campaign.description,
-            campaign.scenarioIds.stream()
-                .map(ComposableIdUtils::toFrontId)
-                .collect(toList()),
+            campaign.scenarioIds,
             campaign.executionParameters,
             reportToDto(campaignExecutionReports),
             campaign.executionEnvironment(),
             campaign.parallelRun,
             campaign.retryAuto,
-            toFrontId(campaign.externalDatasetId),
+            campaign.externalDatasetId,
             campaign.tags);
     }
 
@@ -52,14 +45,12 @@ public class CampaignMapper {
             dto.getId(),
             dto.getTitle(),
             dto.getDescription(),
-            dto.getScenarioIds().stream()
-                .map(id -> fromFrontId(Optional.of(id)))
-                .collect(toList()),
+            dto.getScenarioIds(),
             dto.getExecutionParameters(),
             dto.getEnvironment(),
             dto.isParallelRun(),
             dto.isRetryAuto(),
-            fromFrontId(dto.getDatasetId()),
+            dto.getDatasetId(),
             dto.getTags().stream().map(String::trim).map(String::toUpperCase).collect(toList())
         );
     }
