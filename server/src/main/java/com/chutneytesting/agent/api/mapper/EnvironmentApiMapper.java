@@ -1,13 +1,8 @@
 package com.chutneytesting.agent.api.mapper;
 
-import static com.google.common.base.Strings.nullToEmpty;
-import static java.util.Optional.ofNullable;
-
 import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto.EnvironmentApiDto;
-import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto.SecurityApiDto;
 import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto.TargetsApiDto;
 import com.chutneytesting.environment.domain.Environment;
-import com.chutneytesting.environment.domain.SecurityInfo;
 import com.chutneytesting.environment.domain.Target;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -32,24 +27,7 @@ public class EnvironmentApiMapper {
             .withEnvironment(env)
             .withUrl(targetsApiDto.url)
             .withProperties(properties)
-            .withSecurity(fromDto(targetsApiDto.security))
             .build();
-    }
-
-    private SecurityInfo fromDto(SecurityApiDto security) {
-        SecurityInfo.SecurityInfoBuilder builder = SecurityInfo.builder();
-
-        if (security.username != null || security.password != null) {
-            builder.credential(SecurityInfo.Credential.of(nullToEmpty(security.username), nullToEmpty(security.password)));
-        }
-        ofNullable(security.keyStore).ifPresent(k -> builder.keyStore(k));
-        ofNullable(security.keyStorePassword).ifPresent(k -> builder.keyStorePassword(k));
-        ofNullable(security.trustStore).ifPresent(k -> builder.trustStore(k));
-        ofNullable(security.trustStorePassword).ifPresent(k -> builder.trustStorePassword(k));
-        ofNullable(security.keyPassword).ifPresent(k -> builder.keyPassword(k));
-        ofNullable(security.privateKey).ifPresent(k -> builder.privateKey(k));
-
-        return builder.build();
     }
 
     public EnvironmentApiDto toDto(Environment environment) {
@@ -58,18 +36,6 @@ public class EnvironmentApiMapper {
 
     private TargetsApiDto toDto(Target target) {
         Map<String, String> properties = new LinkedHashMap<>(target.properties);
-        return new TargetsApiDto(target.name, target.url, properties, toDto(target.security));
-    }
-
-    private SecurityApiDto toDto(SecurityInfo security) {
-        String username = ofNullable(security.credential).map(c -> c.username).orElse(null);
-        String password = ofNullable(security.credential).map(c -> c.password).orElse(null);
-        String keyStore = ofNullable(security.keyStore).orElse(null);
-        String keyStorePassword = ofNullable(security.keyStorePassword).orElse(null);
-        String trustStore = ofNullable(security.trustStore).orElse(null);
-        String trustStorePassword = ofNullable(security.trustStorePassword).orElse(null);
-        String keyPassword = ofNullable(security.keyPassword).orElse(null);
-        String privateKey = ofNullable(security.privateKey).orElse(null);
-        return new SecurityApiDto(username, password, keyStore, keyStorePassword, trustStore, trustStorePassword, keyPassword, privateKey);
+        return new TargetsApiDto(target.name, target.url, properties);
     }
 }

@@ -24,8 +24,6 @@ public class JiraFileRepository implements JiraRepository {
     private static final String CAMPAIGN_FILE = "campaign_link" + FILE_EXTENSION;
     private static final String CONFIGURATION_FILE = "jira_config" + FILE_EXTENSION;
 
-    private static final Path ROOT_DIRECTORY_NAME = Paths.get("jira");
-
     private final Path storeFolderPath;
 
     private final ObjectMapper objectMapper = new ObjectMapper()
@@ -34,7 +32,7 @@ public class JiraFileRepository implements JiraRepository {
         .setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
     public JiraFileRepository(String storeFolderPath) throws UncheckedIOException {
-        this.storeFolderPath = Paths.get(storeFolderPath).resolve(ROOT_DIRECTORY_NAME);
+        this.storeFolderPath = Paths.get(storeFolderPath);
         initFolder(this.storeFolderPath);
     }
 
@@ -128,7 +126,8 @@ public class JiraFileRepository implements JiraRepository {
         try {
             byte[] bytes = Files.readAllBytes(resolvedFilePath);
             try {
-                return objectMapper.readValue(bytes, new TypeReference<>() {});
+                return objectMapper.readValue(bytes, new TypeReference<>() {
+                });
             } catch (IOException e) {
                 throw new UnsupportedOperationException("Cannot deserialize configuration file: " + resolvedFilePath, e);
             }
@@ -144,7 +143,8 @@ public class JiraFileRepository implements JiraRepository {
 
             if (Files.exists(resolvedFilePath)) {
                 byte[] bytes = Files.readAllBytes(resolvedFilePath);
-                map.putAll(objectMapper.readValue(bytes, new TypeReference<Map<String, String>>() {}));
+                map.putAll(objectMapper.readValue(bytes, new TypeReference<Map<String, String>>() {
+                }));
             }
 
             if (jiraId.isEmpty())
@@ -179,7 +179,8 @@ public class JiraFileRepository implements JiraRepository {
 
             if (Files.exists(resolvedFilePath)) {
                 byte[] bytes = Files.readAllBytes(resolvedFilePath);
-                map.putAll(objectMapper.readValue(bytes, new TypeReference<Map<String, String>>() {}));
+                map.putAll(objectMapper.readValue(bytes, new TypeReference<Map<String, String>>() {
+                }));
             }
 
             map.remove(chutneyId);

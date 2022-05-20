@@ -7,7 +7,6 @@ import com.chutneytesting.agent.api.dto.AgentApiDto;
 import com.chutneytesting.agent.api.dto.AgentsGraphApiDto;
 import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto;
 import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto.EnvironmentApiDto;
-import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto.SecurityApiDto;
 import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto.TargetsApiDto;
 import com.chutneytesting.agent.api.dto.NetworkDescriptionApiDto;
 import com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration;
@@ -98,7 +97,7 @@ public class NetworkDescriptionApiMapperTest {
         dto.networkConfiguration.agentNetworkConfiguration = new HashSet<>();
         dto.networkConfiguration.agentNetworkConfiguration.add(agentInfoApiDto);
         dto.networkConfiguration.environmentsConfiguration = new HashSet<>();
-        dto.networkConfiguration.environmentsConfiguration.add(createtargetInfoApiDto("s1", "pro://host4:456/12"));
+        dto.networkConfiguration.environmentsConfiguration.add(createTargetInfoApiDto("s1", "pro://host4:456/12"));
 
 
         dto.agentsGraph = new AgentsGraphApiDto();
@@ -110,10 +109,8 @@ public class NetworkDescriptionApiMapperTest {
         assertThat(networkDescription.agentGraph().agents()).hasSize(1);
     }
 
-    private EnvironmentApiDto createtargetInfoApiDto(String name, String url) {
-        TargetsApiDto targetsApiDto = new TargetsApiDto(name, url, null,
-            new SecurityApiDto(null, null, null, null, null, null, null, null)
-        );
+    private EnvironmentApiDto createTargetInfoApiDto(String name, String url) {
+        TargetsApiDto targetsApiDto = new TargetsApiDto(name, url, null);
         Set<TargetsApiDto> targets = new HashSet<>();
         targets.add(targetsApiDto);
         return new EnvironmentApiDto("env", targets);

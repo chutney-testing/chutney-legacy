@@ -21,8 +21,10 @@ Feature: Micrometer Tasks test
                         {
                             "name": "chutney_local",
                             "url": "https://localhost:${T(System).getProperty('securePort')}",
-                            "username": "admin",
-                            "password": "admin"
+                            "properties": [
+                                { "key" : "user", "value": "admin" },
+                                { "key" : "password", "value": "admin" }
+                            ]
                         }
                     ]
                 }

@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 public class JsonFilesEnvironmentRepository implements EnvironmentRepository {
 
-    static final Path ROOT_DIRECTORY_NAME = Paths.get("environment");
     private static final String JSON_FILE_EXT = ".json";
 
     private final Path storeFolderPath;
@@ -32,7 +31,7 @@ public class JsonFilesEnvironmentRepository implements EnvironmentRepository {
         .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
     public JsonFilesEnvironmentRepository(String storeFolderPath) throws UncheckedIOException {
-        this.storeFolderPath = Paths.get(storeFolderPath).resolve(ROOT_DIRECTORY_NAME).toAbsolutePath();
+        this.storeFolderPath = Paths.get(storeFolderPath).toAbsolutePath();
         initFolder(this.storeFolderPath);
     }
 

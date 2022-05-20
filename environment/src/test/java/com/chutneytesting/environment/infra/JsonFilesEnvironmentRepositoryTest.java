@@ -1,12 +1,10 @@
 package com.chutneytesting.environment.infra;
 
-import static com.chutneytesting.environment.infra.JsonFilesEnvironmentRepository.ROOT_DIRECTORY_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.chutneytesting.environment.domain.Environment;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
-import com.chutneytesting.environment.domain.SecurityInfo;
 import com.chutneytesting.environment.domain.Target;
 import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
 import com.chutneytesting.tools.ThrowingConsumer;
@@ -27,7 +25,7 @@ public class JsonFilesEnvironmentRepositoryTest {
 
     @AfterEach
     public void after() {
-        try (Stream<Path> confStream = Files.list(CONFIGURATION_FOLDER.resolve(ROOT_DIRECTORY_NAME))) {
+        try (Stream<Path> confStream = Files.list(CONFIGURATION_FOLDER)) {
             confStream.forEach(ThrowingConsumer.toUnchecked(Files::delete));
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -36,7 +34,6 @@ public class JsonFilesEnvironmentRepositoryTest {
 
     @Test
     public void saved_configuration_is_readable() {
-
         // GIVEN
         final String url = "http://target1:8080";
         final Environment environment = Environment.builder()
@@ -48,13 +45,6 @@ public class JsonFilesEnvironmentRepositoryTest {
                         .withName("target1")
                         .withEnvironment("envName")
                         .withUrl(url)
-                        .withSecurity(SecurityInfo.builder()
-                            .keyStore("not_existing_keystore")
-                            .keyStorePassword("nek")
-                            .trustStore("not_existing_truststore")
-                            .trustStorePassword("net")
-                            .credential(SecurityInfo.Credential.of("username", "password"))
-                            .build())
                         .build()))
             .build();
 
@@ -63,7 +53,9 @@ public class JsonFilesEnvironmentRepositoryTest {
 
         // THEN
         assertThat(sut.findByName("TEST")).isNotNull();
-        assertThat(sut.findByName("TEST").targets.get(0).url).isEqualTo(url);
+        assertThat(sut.findByName("TEST").targets).containsExactly(
+            Target.builder().withName("target1").withUrl(url).withEnvironment("TEST").build()
+        );
     }
 
     @Test
@@ -100,5 +92,4 @@ public class JsonFilesEnvironmentRepositoryTest {
         assertThatThrownBy(() -> sut.findByName("MISSING_ENV"))
             .isInstanceOf(EnvironmentNotFoundException.class);
     }
-
 }

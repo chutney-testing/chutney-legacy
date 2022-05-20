@@ -12,7 +12,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
+import com.chutneytesting.engine.api.execution.StepDefinitionDto;
 import com.chutneytesting.glacio.domain.parser.StepFactory.EXECUTABLE_KEYWORD;
 import com.github.fridujo.glacio.model.Step;
 import com.google.common.collect.Sets;
@@ -31,7 +31,7 @@ public class StepFactoryTest {
 
     private final static Set<String> ENGLISH_EXECUTABLE_STEP_KEYWORD = Sets.newHashSet("Do", "Run");
     private static final ParsingContext CONTEXT = new ParsingContext();
-    private static final StepStrategyDefinition NO_STRATEGY_DEF = null;
+    private static final StepDefinitionDto.StepStrategyDefinitionDto NO_STRATEGY_DEF = null;
 
     private StepFactory sut;
     private IParseExecutableStep defaultExecutableStepParser;

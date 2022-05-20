@@ -10,10 +10,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.agent.domain.network.Agent;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
-import com.chutneytesting.engine.api.execution.CredentialExecutionDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
-import com.chutneytesting.engine.api.execution.SecurityInfoExecutionDto;
 import com.chutneytesting.engine.api.execution.TargetExecutionDto;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
 import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
@@ -153,29 +151,8 @@ public class ExecutionRequestMapper {
             targetDto.name,
             targetDto.url,
             targetDto.propertiesToMap(),
-            toSecurityInfoDto(targetDto),
             getAgents(targetDto, env)
         );
-    }
-
-    private static SecurityInfoExecutionDto toSecurityInfoDto(TargetDto targetDto) {
-        return new SecurityInfoExecutionDto(
-            toCredentialDto(targetDto),
-            null,
-            null,
-            targetDto.keyStore,
-            targetDto.keyStorePassword,
-            targetDto.keyPassword,
-            targetDto.privateKey
-        );
-    }
-
-    private static CredentialExecutionDto toCredentialDto(TargetDto targetDto) {
-        if (targetDto.hasCredential()) {
-            return new CredentialExecutionDto(targetDto.username, targetDto.password);
-        } else {
-            return null;
-        }
     }
 
     private StepDefinitionRequestDto convertComposed(ExecutionRequest executionRequest) {

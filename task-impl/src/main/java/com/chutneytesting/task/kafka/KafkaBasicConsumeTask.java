@@ -97,7 +97,7 @@ public class KafkaBasicConsumeTask implements Task {
             MapUtils.merge(extractConsumerConfig(target), properties)
         ).orElse(new HashMap<>());
         this.ackMode = ofNullable(ackMode)
-            .or(() -> ofNullable(this.properties.get("ackMode")))
+            .or(() -> ofNullable(target).flatMap(t -> t.property("ackMode")))
             .orElse(ContainerProperties.AckMode.BATCH.name());
     }
 
@@ -222,7 +222,7 @@ public class KafkaBasicConsumeTask implements Task {
         containerProperties.setAckMode(ContainerProperties.AckMode.valueOf(this.ackMode));
         ofNullable(properties.get(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG))
             .ifPresent(acims -> containerProperties.setAckTime(Long.parseLong(acims)));
-        ofNullable(properties.get(AUTO_COMMIT_COUNT_CONFIG))
+        target.property(AUTO_COMMIT_COUNT_CONFIG)
             .ifPresent(acc -> containerProperties.setAckCount(Integer.parseInt(acc)));
         return new ConcurrentMessageListenerContainer<>(
             kafkaConsumerFactoryFactory.create(target, group, properties),

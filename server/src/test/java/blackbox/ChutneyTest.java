@@ -5,7 +5,6 @@ import static java.util.stream.Collectors.toList;
 import com.chutneytesting.environment.api.dto.EnvironmentDto;
 import com.chutneytesting.environment.api.dto.TargetDto;
 import com.chutneytesting.environment.domain.Environment;
-import com.chutneytesting.environment.domain.SecurityInfo;
 import com.chutneytesting.environment.domain.Target;
 import com.chutneytesting.environment.domain.exception.AlreadyExistingEnvironmentException;
 import com.chutneytesting.junit.api.AfterAll;
@@ -98,11 +97,8 @@ public class ChutneyTest {
                 .withName("CHUTNEY_LOCAL")
                 .withEnvironment(TEST_ENV_NAME)
                 .withUrl("https://localhost:" + securePort)
-                .withSecurity(
-                    SecurityInfo.builder()
-                        .credential(SecurityInfo.Credential.of("admin", "admin"))
-                        .build()
-                )
+                .withProperty("username", "admin")
+                .withProperty("password", "admin")
                 .build())
         );
 

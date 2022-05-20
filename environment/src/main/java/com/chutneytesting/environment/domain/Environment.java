@@ -1,12 +1,11 @@
 package com.chutneytesting.environment.domain;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.emptySet;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.environment.domain.exception.AlreadyExistingTargetException;
 import com.chutneytesting.environment.domain.exception.TargetNotFoundException;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -17,9 +16,9 @@ public class Environment {
 
     public final String name;
     public final String description;
-    public final List<Target> targets; // TODO change to Set
+    public final Set<Target> targets;
 
-    private Environment(String name, String description, List<Target> targets) {
+    private Environment(String name, String description, Set<Target> targets) {
         this.name = name;
         this.description = description;
         this.targets = targets;
@@ -57,7 +56,7 @@ public class Environment {
             .findFirst();
 
         return targetToRemove
-            .map( t -> {
+            .map(t -> {
                 Set<Target> updatedTargets = new HashSet<>(targets);
                 updatedTargets.remove(t);
 
@@ -75,7 +74,7 @@ public class Environment {
             .findFirst();
 
         return previousTarget
-            .map( t -> {
+            .map(t -> {
                     if (previousTarget.get().equals(targetToUpdate)) {
                         return this;
                     }
@@ -96,15 +95,16 @@ public class Environment {
 
         private String name;
         private String description;
-        private List<Target> targets = new ArrayList<>();
+        private Set<Target> targets = new HashSet<>();
 
-        private EnvironmentBuilder() {}
+        private EnvironmentBuilder() {
+        }
 
         public Environment build() {
             return new Environment(
                 ofNullable(name).orElse(""),
                 ofNullable(description).orElse(""),
-                unmodifiableList(ofNullable(targets).orElse(emptyList()))
+                ofNullable(targets).map(Collections::unmodifiableSet).orElse(emptySet())
             );
         }
 
@@ -119,7 +119,7 @@ public class Environment {
         }
 
         public EnvironmentBuilder withTargets(Set<Target> targetSet) {
-            this.targets = new ArrayList<>(targetSet);
+            this.targets = new HashSet<>(targetSet);
             return this;
         }
 
@@ -136,7 +136,7 @@ public class Environment {
         public EnvironmentBuilder from(Environment environment) {
             this.name = environment.name;
             this.description = environment.description;
-            this.targets = new ArrayList<>(environment.targets);
+            this.targets = new HashSet<>(environment.targets);
             return this;
         }
 

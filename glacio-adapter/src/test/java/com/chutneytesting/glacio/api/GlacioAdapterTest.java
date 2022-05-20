@@ -10,7 +10,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.chutneytesting.engine.api.execution.StepDefinitionDto;
-import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.glacio.domain.parser.StepFactory;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -47,7 +46,7 @@ public class GlacioAdapterTest {
         String featureFilePath = s[1];
 
         String feature = fileContent(featureFilePath);
-        StepDefinition fakeStepDef = new StepDefinition("fake", null, "", null, Collections.emptyMap(), Collections.emptyList(), Collections.emptyMap(), Collections.emptyMap(), "");
+        StepDefinitionDto fakeStepDef = new StepDefinitionDto("fake", null, "", null, Collections.emptyMap(), Collections.emptyList(), Collections.emptyMap(), Collections.emptyMap());
         when(stepFactory.toStepDefinition(any(), any(), any())).thenReturn(fakeStepDef);
 
         List<StepDefinitionDto> stepDefinitions = sut.toChutneyStepDefinition(feature, null);
@@ -73,7 +72,7 @@ public class GlacioAdapterTest {
 
     @Test
     public void should_delegate_step_creation_for_all_first_level_steps() {
-        when(stepFactory.toStepDefinition(any(),any(), any())).thenReturn(new StepDefinition("fake", null, "", null, Collections.emptyMap(), Collections.emptyList(), Collections.emptyMap(), Collections.emptyMap(), ""));
+        when(stepFactory.toStepDefinition(any(), any(), any())).thenReturn(new StepDefinitionDto("fake", null, "", null, Collections.emptyMap(), Collections.emptyList(), Collections.emptyMap(), Collections.emptyMap()));
         String feature = fileContent("/unit/multiple_non_executable_steps.feature");
         sut.toChutneyStepDefinition(feature, ENVIRONMENT);
         verify(stepFactory, times(2)).toStepDefinition(eq(Locale.ENGLISH), any(), any());

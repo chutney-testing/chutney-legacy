@@ -1,11 +1,14 @@
 package com.chutneytesting.task;
 
-import com.chutneytesting.task.spi.injectable.SecurityInfo;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toMap;
+
 import com.chutneytesting.task.spi.injectable.Target;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class TestTarget implements Target {
 
@@ -30,22 +33,25 @@ public class TestTarget implements Target {
     }
 
     @Override
-    public Map<String, String> properties() {
-        return properties;
-    }
-
-    @Override
-    public SecurityInfo security() {
-        throw new IllegalCallerException();
-    }
-
-    @Override
     public URI uri() {
         try {
             return new URI(url);
         } catch (URISyntaxException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    @Override
+    public Optional<String> property(String key) {
+        return ofNullable(properties.get(key));
+    }
+
+    @Override
+    public Map<String, String> prefixedProperties(String prefix, boolean cutPrefix) {
+        return properties.entrySet().stream()
+            .filter(e -> e.getKey() != null)
+            .filter(e -> e.getKey().startsWith(prefix))
+            .collect(toMap(e -> e.getKey().substring(cutPrefix ? prefix.length() : 0), Map.Entry::getValue));
     }
 
     public static final class TestTargetBuilder {

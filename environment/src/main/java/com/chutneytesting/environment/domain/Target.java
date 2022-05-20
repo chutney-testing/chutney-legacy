@@ -10,18 +10,15 @@ import java.util.Objects;
 
 public class Target {
 
-
     public final String url;
     public final Map<String, String> properties;
-    public final SecurityInfo security;
     public final String name;
     public final String environment;
 
-    private Target(String environment, String url, Map<String, String> properties, SecurityInfo security, String name) {
+    private Target(String environment, String url, Map<String, String> properties, String name) {
         this.environment = environment;
         this.url = url;
         this.properties = properties;
-        this.security = security;
         this.name = name;
     }
 
@@ -33,8 +30,7 @@ public class Target {
         private String name;
         private String environment;
         private String url;
-        private Map<String, String> properties;
-        private SecurityInfo security;
+        private Map<String, String> properties = new HashMap<>();
 
         private TargetBuilder() {
         }
@@ -44,7 +40,6 @@ public class Target {
                 Objects.requireNonNull(environment, "environment"),
                 Objects.requireNonNull(url, "url"),
                 unmodifiableMap(ofNullable(properties).orElse(emptyMap())),
-                ofNullable(security).orElse(SecurityInfo.builder().build()),
                 Objects.requireNonNull(name, "name")
             );
         }
@@ -65,12 +60,17 @@ public class Target {
         }
 
         public TargetBuilder withProperties(Map<String, String> value) {
-            this.properties = new HashMap<>(value);
+            this.properties.putAll(value);
             return this;
         }
 
-        public TargetBuilder withSecurity(SecurityInfo security) {
-            this.security = Objects.requireNonNull(security, "security");
+        public TargetBuilder withProperty(String key, String value) {
+            this.properties.put(key, value);
+            return this;
+        }
+
+        public TargetBuilder withProperty(Map.Entry<String, String> entry) {
+            this.properties.put(entry.getKey(), entry.getValue());
             return this;
         }
 
@@ -79,13 +79,10 @@ public class Target {
             withName(target.name);
             withEnvironment(target.environment);
             withUrl(target.url);
-            withSecurity(target.security);
             withProperties(target.properties);
             return this;
         }
     }
-
-
 
     @Override
     public boolean equals(Object o) {
@@ -95,13 +92,12 @@ public class Target {
         return Objects.equals(environment, target.environment) &&
             Objects.equals(url, target.url) &&
             Objects.equals(properties, target.properties) &&
-            Objects.equals(security, target.security) &&
             Objects.equals(name, target.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(environment, url, properties, security, name);
+        return Objects.hash(environment, url, properties, name);
     }
 
     @Override
@@ -110,7 +106,6 @@ public class Target {
             "environment=" + environment +
             ", url='" + url + '\'' +
             ", properties=" + properties +
-            ", security=" + security +
             ", name='" + name + '\'' +
             '}';
     }

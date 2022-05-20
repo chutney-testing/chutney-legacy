@@ -1,15 +1,15 @@
 package com.chutneytesting.glacio.domain.parser.executable.specific;
 
-import static com.chutneytesting.glacio.domain.parser.ParsingContext.PARSING_CONTEXT_KEYS.ENVIRONMENT;
-import static org.apache.commons.lang3.StringUtils.capitalize;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.entry;
 import static com.chutneytesting.glacio.domain.parser.GlacioParserHelper.buildDataTableStepWithText;
 import static com.chutneytesting.glacio.domain.parser.GlacioParserHelper.buildSimpleStepWithText;
 import static com.chutneytesting.glacio.domain.parser.GlacioParserHelper.buildSubStepsStepWithText;
 import static com.chutneytesting.glacio.domain.parser.GlacioParserHelper.loopOverRandomString;
+import static com.chutneytesting.glacio.domain.parser.ParsingContext.PARSING_CONTEXT_KEYS.ENVIRONMENT;
+import static org.apache.commons.lang3.StringUtils.capitalize;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 
-import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
+import com.chutneytesting.engine.api.execution.StepDefinitionDto;
 import com.chutneytesting.glacio.domain.parser.ParsingContext;
 import java.util.Locale;
 import java.util.Map;
@@ -21,7 +21,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 public class GlacioContextPutParserTest {
 
     private static final ParsingContext CONTEXT = new ParsingContext();
-    private static final StepStrategyDefinition NO_STRATEGY_DEF = null;
+    private static final StepDefinitionDto.StepStrategyDefinitionDto NO_STRATEGY_DEF = null;
 
     private final GlacioContextPutParser sut = new GlacioContextPutParser();
 

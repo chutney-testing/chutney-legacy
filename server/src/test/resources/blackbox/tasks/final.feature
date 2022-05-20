@@ -134,10 +134,11 @@ Feature: Final task for registering final actions for a testcase
                         {
                             "name": "test_http",
                             "url": "https://localhost:${T(System).getProperty('securePort')}",
-                            "keyStore": "${#escapeJson(#resourcePath("blackbox/keystores/client.jks"))}",
-                            "keyStorePassword": "client",
-                            "keyPassword": "client"
-
+                            "properties": [
+                                { "key" : "keyStore", "value": "${#escapeJson(#resourcePath("blackbox/keystores/client.jks"))}" },
+                                { "key" : "keyStorePassword", "value": "client" },
+                                { "key" : "keyPassword", "value": "client" }
+                            ]
                         }
                     ]
                 }

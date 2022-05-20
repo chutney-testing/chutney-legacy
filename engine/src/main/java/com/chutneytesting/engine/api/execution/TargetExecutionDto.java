@@ -10,16 +10,14 @@ public class TargetExecutionDto {
     public final String id;
     public final String url;
     public final Map<String, String> properties;
-    public final SecurityInfoExecutionDto security;
     public final String name;
     public final List<NamedHostAndPort> agents;
 
-    public TargetExecutionDto(String id, String url, Map<String, String> properties, SecurityInfoExecutionDto security, List<NamedHostAndPort> agents) {
+    public TargetExecutionDto(String id, String url, Map<String, String> properties, List<NamedHostAndPort> agents) {
         this.id = id;
         this.name = id;
         this.url = url;
         this.properties = properties;
-        this.security = security;
         this.agents = agents;
     }
 
@@ -31,13 +29,12 @@ public class TargetExecutionDto {
         return id.equals(targetDto.id) &&
             url.equals(targetDto.url) &&
             properties.equals(targetDto.properties) &&
-            security.equals(targetDto.security) &&
             agents.equals(targetDto.agents);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, url, properties, security, agents);
+        return Objects.hash(id, url, properties, agents);
     }
 
     @Override
@@ -46,9 +43,7 @@ public class TargetExecutionDto {
             "id='" + id + '\'' +
             ", url='" + url + '\'' +
             ", properties=" + properties +
-            ", security=" + security +
             ", agents=" + agents +
             '}';
     }
-
 }

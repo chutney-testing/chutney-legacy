@@ -2,8 +2,6 @@ package com.chutneytesting.environment.infra;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.environment.infra.JsonEnvironment;
-import com.chutneytesting.environment.infra.JsonTarget;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import java.io.IOException;
@@ -33,9 +31,9 @@ public class EnvironmentRepositoryTest {
         // THEN
         assertThat(environmentDto.name).isEqualTo(ENV_NAME);
         assertThat(environmentDto.description).isEqualTo(ENV_DESCRIPTION);
-        assertThat(environmentDto.targets.get(0).name).isEqualTo(TARGET_NAME);
-        assertThat(environmentDto.targets.get(0).url).isEqualTo(TARGET_URL);
-        assertThat(environmentDto.targets.get(0).properties).isEmpty();
-        assertThat(environmentDto.targets.get(0).security.credential).isNull();
+        JsonTarget jsonTarget = (JsonTarget) environmentDto.targets.toArray()[0];
+        assertThat(jsonTarget.name).isEqualTo(TARGET_NAME);
+        assertThat(jsonTarget.url).isEqualTo(TARGET_URL);
+        assertThat(jsonTarget.properties).isEmpty();
     }
 }

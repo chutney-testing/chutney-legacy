@@ -2,12 +2,11 @@ package com.chutneytesting.glacio.domain.parser;
 
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.engine.domain.execution.StepDefinition;
-import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
+import com.chutneytesting.engine.api.execution.StepDefinitionDto;
 import com.chutneytesting.glacio.domain.parser.business.BusinessGlacioStepParser;
 import com.chutneytesting.glacio.domain.parser.business.IParseBusinessStep;
-import com.chutneytesting.glacio.domain.parser.strategy.StrategyParser;
 import com.chutneytesting.glacio.domain.parser.strategy.IParseStrategy;
+import com.chutneytesting.glacio.domain.parser.strategy.StrategyParser;
 import com.chutneytesting.glacio.domain.parser.strategy.StrategyRetryParser;
 import com.chutneytesting.glacio.domain.parser.strategy.StrategySoftAssertParser;
 import com.github.fridujo.glacio.model.Step;
@@ -54,11 +53,11 @@ public class StepFactory {
         return pattern.getRight().test(step.getText().trim());
     }
 
-    public StepDefinition toStepDefinition(Locale lang, ParsingContext context, Step step) {
-        Pair<Step, StepStrategyDefinition> result = buildStrategyDefinition(lang, step);
+    public StepDefinitionDto toStepDefinition(Locale lang, ParsingContext context, Step step) {
+        Pair<Step, StepDefinitionDto.StepStrategyDefinitionDto> result = buildStrategyDefinition(lang, step);
 
         Step stepWithoutStrategy = result.getLeft();
-        StepStrategyDefinition stepStrategyDefinition = result.getRight();
+        StepDefinitionDto.StepStrategyDefinitionDto stepStrategyDefinition = result.getRight();
 
         if (this.isExecutableStep(lang, step)) {
             return this.buildExecutableStep(lang, context, stepWithoutStrategy, stepStrategyDefinition);
@@ -67,8 +66,8 @@ public class StepFactory {
         }
     }
 
-    private Pair<Step, StepStrategyDefinition> buildStrategyDefinition(Locale lang, Step step) {
-        Pair<Step, List<StepStrategyDefinition>> result = defaultStrategyParser.parseStepAndStripStrategy(lang, step);
+    private Pair<Step, StepDefinitionDto.StepStrategyDefinitionDto> buildStrategyDefinition(Locale lang, Step step) {
+        Pair<Step, List<StepDefinitionDto.StepStrategyDefinitionDto>> result = defaultStrategyParser.parseStepAndStripStrategy(lang, step);
         if (result.getRight().size() > 0) {
             return Pair.of(result.getLeft(), result.getRight().get(0));
         }
@@ -76,7 +75,7 @@ public class StepFactory {
         return Pair.of(step, null);
     }
 
-    public StepDefinition buildExecutableStep(Locale lang, ParsingContext context, Step step, StepStrategyDefinition stepStrategyDefinition) {
+    public StepDefinitionDto buildExecutableStep(Locale lang, ParsingContext context, Step step, StepDefinitionDto.StepStrategyDefinitionDto stepStrategyDefinition) {
         Optional<Pair<Pattern, Predicate<String>>> pattern = ofNullable(executableStepTextPatternsCache.get(lang));
         if (pattern.isPresent()) {
             Matcher matcher = pattern.get().getLeft().matcher(step.getText().trim());
@@ -95,18 +94,18 @@ public class StepFactory {
         return new Step(step.isBackground(), step.getKeyword(), sentence, step.getArgument(), step.getSubsteps());
     }
 
-    private StepDefinition delegateStepParsing(Locale lang, String action, ParsingContext context, Step step, StepStrategyDefinition stepStrategyDefinition) {
+    private StepDefinitionDto delegateStepParsing(Locale lang, String action, ParsingContext context, Step step, StepDefinitionDto.StepStrategyDefinitionDto stepStrategyDefinition) {
         return Optional.ofNullable(glacioExecutableStepParsersLanguages.get(Pair.of(lang, action)))
             .orElse(defaultExecutableStepParser)
             .mapToStepDefinition(context, step, stepStrategyDefinition);
     }
 
-    private StepDefinition buildBusinessLevelStep(Locale lang, ParsingContext context, Step step, StepStrategyDefinition stepStrategyDefinition) {
-        List<StepDefinition> subSteps = buildSubSteps(lang, context, step);
+    private StepDefinitionDto buildBusinessLevelStep(Locale lang, ParsingContext context, Step step, StepDefinitionDto.StepStrategyDefinitionDto stepStrategyDefinition) {
+        List<StepDefinitionDto> subSteps = buildSubSteps(lang, context, step);
         return this.defaultBusinessStepParser.mapToStepDefinition(context, step, subSteps, stepStrategyDefinition);
     }
 
-    private List<StepDefinition> buildSubSteps(Locale lang, ParsingContext context, Step step) {
+    private List<StepDefinitionDto> buildSubSteps(Locale lang, ParsingContext context, Step step) {
         return step.getSubsteps().stream()
             .map(subStep -> toStepDefinition(lang, context, subStep))
             .collect(Collectors.toList());

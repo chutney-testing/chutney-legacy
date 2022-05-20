@@ -22,11 +22,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.chutneytesting.environment.domain.Environment;
-import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
 import com.chutneytesting.environment.domain.EnvironmentService;
-import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
 import com.chutneytesting.environment.domain.Target;
+import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
+import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -103,9 +103,9 @@ public class HttpEnvironmentApiTest {
     @Test
     public void createEnvironment_adds_it_to_repository() throws Exception {
         mockMvc.perform(
-            post(basePath)
-                .content("{\"name\": \"env_test\", \"description\": \"test description\"}")
-                .contentType(MediaType.APPLICATION_JSON))
+                post(basePath)
+                    .content("{\"name\": \"env_test\", \"description\": \"test description\"}")
+                    .contentType(MediaType.APPLICATION_JSON))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isOk());
 
@@ -122,9 +122,9 @@ public class HttpEnvironmentApiTest {
     public void createEnvironment_returns_400_when_name_is_invalid() throws Exception {
         doThrow(new InvalidEnvironmentNameException("message")).when(environmentRepository).save(any());
         mockMvc.perform(
-            post(basePath)
-                .content("{\"name\": \"env test\", \"description\": \"test description\"}")
-                .contentType(MediaType.APPLICATION_JSON))
+                post(basePath)
+                    .content("{\"name\": \"env test\", \"description\": \"test description\"}")
+                    .contentType(MediaType.APPLICATION_JSON))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isBadRequest());
     }
@@ -134,9 +134,9 @@ public class HttpEnvironmentApiTest {
         addAvailableEnvironment("env test");
 
         mockMvc.perform(
-            post(basePath)
-                .content("{\"name\": \"env test\", \"description\": \"test description\"}")
-                .contentType(MediaType.APPLICATION_JSON))
+                post(basePath)
+                    .content("{\"name\": \"env test\", \"description\": \"test description\"}")
+                    .contentType(MediaType.APPLICATION_JSON))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isConflict());
     }
@@ -164,9 +164,9 @@ public class HttpEnvironmentApiTest {
         when(environmentRepository.findByName(any())).thenThrow(new EnvironmentNotFoundException("message"));
 
         mockMvc.perform(
-            put(basePath + "/env test")
-                .content("{\"name\": \"env test\", \"description\": \"test description\"}")
-                .contentType(MediaType.APPLICATION_JSON))
+                put(basePath + "/env test")
+                    .content("{\"name\": \"env test\", \"description\": \"test description\"}")
+                    .contentType(MediaType.APPLICATION_JSON))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isNotFound());
     }
@@ -176,9 +176,9 @@ public class HttpEnvironmentApiTest {
         addAvailableEnvironment("env_test");
 
         mockMvc.perform(
-            put(basePath + "/env_test")
-                .content("{\"name\": \"env_test\", \"description\": \"test description\"}")
-                .contentType(MediaType.APPLICATION_JSON))
+                put(basePath + "/env_test")
+                    .content("{\"name\": \"env_test\", \"description\": \"test description\"}")
+                    .contentType(MediaType.APPLICATION_JSON))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isOk());
 
@@ -197,9 +197,9 @@ public class HttpEnvironmentApiTest {
         addAvailableEnvironment("env_test");
 
         mockMvc.perform(
-            put(basePath + "/env_test")
-                .content("{\"description\": \"test2 description\", \"name\": \"env_test_2\"}")
-                .contentType(MediaType.APPLICATION_JSON))
+                put(basePath + "/env_test")
+                    .content("{\"description\": \"test2 description\", \"name\": \"env_test_2\"}")
+                    .contentType(MediaType.APPLICATION_JSON))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isOk());
 
@@ -257,9 +257,9 @@ public class HttpEnvironmentApiTest {
         addAvailableEnvironment("env_test", "server 1");
 
         mockMvc.perform(
-            post(basePath + "/env_test/target")
-                .content("{\"name\": \"server 2\", \"url\": \"ssh://somehost:42\"}")
-                .contentType(MediaType.APPLICATION_JSON))
+                post(basePath + "/env_test/target")
+                    .content("{\"name\": \"server 2\", \"url\": \"ssh://somehost:42\"}")
+                    .contentType(MediaType.APPLICATION_JSON))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isOk());
 
@@ -269,8 +269,9 @@ public class HttpEnvironmentApiTest {
         Environment savedEnvironment = environmentArgumentCaptor.getValue();
         assertThat(savedEnvironment).isNotNull();
         assertThat(savedEnvironment.targets).hasSize(2);
-        assertThat(savedEnvironment.targets.get(1).name).isEqualTo("server 2");
-        assertThat(savedEnvironment.targets.get(1).url).isEqualTo("ssh://somehost:42");
+        assertThat(savedEnvironment.targets.toArray()).contains(
+            Target.builder().withName("server 2").withUrl("ssh://somehost:42").withEnvironment("env_test").build()
+        );
     }
 
     @Test
@@ -278,10 +279,10 @@ public class HttpEnvironmentApiTest {
         addAvailableEnvironment("env test", "server 1");
 
         mockMvc.perform(
-            post(basePath + "/env test/target")
-                .content("{\"name\": \"server 1\", \"url\": \"ssh://somehost:42\"}")
-                .contentType(MediaType.APPLICATION_JSON)
-        )
+                post(basePath + "/env test/target")
+                    .content("{\"name\": \"server 1\", \"url\": \"ssh://somehost:42\"}")
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isConflict());
     }
@@ -311,9 +312,9 @@ public class HttpEnvironmentApiTest {
         addAvailableEnvironment("env test", "server 1");
 
         mockMvc.perform(
-            put(basePath + "/env test/target/server 2")
-                .content("{\"name\": \"server 2\", \"url\": \"http://somehost2:42\"}")
-                .contentType(MediaType.APPLICATION_JSON))
+                put(basePath + "/env test/target/server 2")
+                    .content("{\"name\": \"server 2\", \"url\": \"http://somehost2:42\"}")
+                    .contentType(MediaType.APPLICATION_JSON))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isNotFound());
     }
@@ -323,10 +324,10 @@ public class HttpEnvironmentApiTest {
         addAvailableEnvironment("env_test", "server 1");
 
         mockMvc.perform(
-            put(basePath + "/env_test/target/server 1")
-                .content("{\"name\": \"server 1\", \"url\": \"http://somehost2:42\"}")
-                .contentType(MediaType.APPLICATION_JSON)
-        )
+                put(basePath + "/env_test/target/server 1")
+                    .content("{\"name\": \"server 1\", \"url\": \"http://somehost2:42\"}")
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isOk());
 
@@ -344,9 +345,9 @@ public class HttpEnvironmentApiTest {
         addAvailableEnvironment("env_test", "server 1");
 
         mockMvc.perform(
-            put(basePath + "/env_test/target/server 1")
-                .content("{\"name\": \"server 2\", \"url\": \"http://somehost2:42\"}")
-                .contentType(MediaType.APPLICATION_JSON))
+                put(basePath + "/env_test/target/server 1")
+                    .content("{\"name\": \"server 2\", \"url\": \"http://somehost2:42\"}")
+                    .contentType(MediaType.APPLICATION_JSON))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isOk());
 
@@ -365,7 +366,7 @@ public class HttpEnvironmentApiTest {
         String envName = "envTest";
         addAvailableEnvironment(envName, targetNames);
         ResultActions result = mockMvc.perform(
-            get(basePath + "/" + envName))
+                get(basePath + "/" + envName))
             .andDo(MockMvcResultHandlers.log())
             .andExpect(status().isOk()).andExpect(jsonPath("$.name", equalTo(envName)))
             .andExpect(jsonPath("$.description", equalTo(envName + " description")))
@@ -374,7 +375,7 @@ public class HttpEnvironmentApiTest {
         for (String targetName : targetNames) {
             result
                 .andExpect(jsonPath("$.targets[?(@.name == '" + targetName + "')].length()",
-                    equalTo(singletonList(9))))
+                    equalTo(singletonList(3))))
                 .andExpect(jsonPath("$.targets[?(@.name == '" + targetName + "')].properties.length()",
                     equalTo(singletonList(0))))
                 .andExpect(jsonPath("$.targets[?(@.name == '" + targetName + "')].security.credential.username",

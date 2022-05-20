@@ -6,11 +6,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.chutneytesting.engine.api.execution.TargetExecutionDto;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
 import com.chutneytesting.environment.api.dto.TargetDto;
 import com.chutneytesting.glacio.domain.parser.ParsingContext;
-import com.chutneytesting.task.spi.injectable.Target;
 import com.github.fridujo.glacio.model.Step;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ public class TargetStepParserTest {
 
     @Test
     public void should_build_target_from_step_by_name() {
-        TargetDto expectedTarget = new TargetDto("My target name","http://url:8080", null,null,null,null,null, null, null);
+        TargetDto expectedTarget = new TargetDto("My target name", "http://url:8080", null);
 
         Step stepParent = mock(Step.class);
         Step step = mock(Step.class);
@@ -41,13 +41,11 @@ public class TargetStepParserTest {
         when(environmentApplication.getTarget(ENV, expectedTarget.name))
             .thenReturn(expectedTarget);
 
-        Target targetFound = sut.parseGlacioStep(CONTEXT, stepParent);
+        TargetExecutionDto targetFound = sut.parseGlacioStep(CONTEXT, stepParent);
 
-        assertThat(targetFound).isInstanceOf(TargetImpl.class);
-        TargetImpl targetEngineFound = (TargetImpl) targetFound;
-        assertThat(targetEngineFound).isNotEqualTo(TargetImpl.NONE);
-        assertThat(targetEngineFound.name()).isEqualTo(expectedTarget.name);
-        assertThat(targetEngineFound.url()).isEqualTo(expectedTarget.url);
+        assertThat(targetFound).isNotEqualTo(TargetImpl.NONE);
+        assertThat(targetFound.name).isEqualTo(expectedTarget.name);
+        assertThat(targetFound.url).isEqualTo(expectedTarget.url);
     }
 
 }

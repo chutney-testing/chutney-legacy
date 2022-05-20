@@ -24,8 +24,10 @@ Feature: SSH Task test
                         {
                             "name": "test_ssh",
                             "url": "ssh://${#sshServer.host()}:${#sshServer.port()}",
-                            "username": "user",
-                            "password": "wrongpass"
+                            "properties": [
+                                { "key" : "username", "value": "user" },
+                                { "key" : "password", "value": "wrongpass" }
+                            ]
                         }
                     ]
                 }
@@ -85,8 +87,10 @@ Feature: SSH Task test
                         {
                             "name": "test_ssh",
                             "url": "ssh://${#sshServer.host()}:${#sshServer.port()}",
-                            "username": "test",
-                            "password": "test"
+                            "properties": [
+                                { "key" : "username", "value": "test" },
+                                { "key" : "password", "value": "test" }
+                            ]
                         }
                     ]
                 }

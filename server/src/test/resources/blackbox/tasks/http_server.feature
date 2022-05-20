@@ -18,10 +18,11 @@ Feature: HTTP server Task test
                         {
                             "name": "test_http",
                             "url": "https://localhost:8443",
-                            "keyStore": "${#escapeJson(#resourcePath("blackbox/keystores/client.jks"))}",
-                            "keyStorePassword": "client",
-                            "keyPassword": "client"
-
+                            "properties": [
+                                { "key" : "keyStore", "value": "${#escapeJson(#resourcePath("blackbox/keystores/client.jks"))}" },
+                                { "key" : "keyStorePassword", "value": "client" },
+                                { "key" : "keyPassword", "value": "client" }
+                            ]
                         }
                     ]
                 }

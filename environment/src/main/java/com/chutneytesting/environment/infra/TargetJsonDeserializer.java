@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class TargetJsonDeserializer extends JsonDeserializer<JsonTarget> {
 
@@ -29,48 +28,10 @@ public class TargetJsonDeserializer extends JsonDeserializer<JsonTarget> {
         }
         Map<String, String> properties = new HashMap<>();
         if (targetNode.hasNonNull("properties")) {
-           properties = mapper.readValue(targetNode.get("properties").toString(), new TypeReference<>() {
-           });
+            properties = mapper.readValue(targetNode.get("properties").toString(), new TypeReference<>() {
+            });
         }
-        JsonTarget.JsonSecurityInfo securityInfo = null;
-        if (targetNode.hasNonNull("security")) {
-            JsonNode security = targetNode.get("security");
-            String trustStore = null;
-            if (security.hasNonNull("trustStore")) {
-                trustStore = security.get("trustStore").textValue();
-            }
-            String trustStorePassword = null;
-            if (security.hasNonNull("trustStorePassword")) {
-                trustStorePassword = security.get("trustStorePassword").textValue();
-            }
-            String keyStore = null;
-            if (security.hasNonNull("keyStore")) {
-                keyStore = security.get("keyStore").textValue();
-            }
-            String keyStorePassword = null;
-            if (security.hasNonNull("keyStorePassword")) {
-                keyStorePassword = security.get("keyStorePassword").textValue();
-            }
-            String keyPassword = null;
-            if (security.hasNonNull("keyPassword")) {
-                keyPassword = security.get("keyPassword").textValue();
-            }
-            String privateKey = null;
-            if (security.hasNonNull("privateKey")) {
-                privateKey = security.get("privateKey").textValue();
-            }
-            JsonTarget.JsonCredential credential = null;
 
-            if (security.hasNonNull("credential")) {
-                JsonNode jsonCredential = security.get("credential");
-                if (jsonCredential.hasNonNull("username")) {
-                    String username = jsonCredential.get("username").textValue();
-                    String password = Optional.ofNullable(jsonCredential.get("password")).map(JsonNode::textValue).orElse("");
-                    credential = new JsonTarget.JsonCredential(username, password);
-                }
-            }
-            securityInfo = new JsonTarget.JsonSecurityInfo(credential, trustStore,trustStorePassword, keyStore, keyStorePassword, keyPassword, privateKey );
-        }
-        return new JsonTarget(url, properties, securityInfo, name);
+        return new JsonTarget(name, url, properties);
     }
 }

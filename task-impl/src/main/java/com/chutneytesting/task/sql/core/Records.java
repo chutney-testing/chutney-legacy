@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 public class Records {
 
     public final int affectedRows;
-    private final List<String> headers;
-    private final List<List<Object>> rows;
+    public final List<String> headers;
+    @Deprecated public final List<List<Object>> rows;
 
     public final List<Column> columns;
     public final List<Row> records;
