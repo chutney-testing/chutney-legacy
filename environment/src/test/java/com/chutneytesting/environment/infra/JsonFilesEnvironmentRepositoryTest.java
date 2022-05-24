@@ -33,8 +33,8 @@ public class JsonFilesEnvironmentRepositoryTest {
     }
 
     @Test
-    public void saved_configuration_is_readable() {
-        // GIVEN
+    void should_save_configuration_then_read_it() {
+        // Given
         final String url = "http://target1:8080";
         final Environment environment = Environment.builder()
             .withName("TEST")
@@ -48,18 +48,19 @@ public class JsonFilesEnvironmentRepositoryTest {
                         .build()))
             .build();
 
-        // WHEN
+        // When
         sut.save(environment);
 
-        // THEN
-        assertThat(sut.findByName("TEST")).isNotNull();
-        assertThat(sut.findByName("TEST").targets).containsExactly(
+        // Then
+        Environment testEnv = sut.findByName("TEST");
+        assertThat(testEnv).isNotNull();
+        assertThat(testEnv.targets).containsExactly(
             Target.builder().withName("target1").withUrl(url).withEnvironment("TEST").build()
         );
     }
 
     @Test
-    public void saving_configuration_twice_does_not_create_duplicate() {
+    void should_save_configuration_twice_without_creating_duplicate() {
         sut.save(Environment.builder().withName("TEST").withDescription("some description").build());
         assertThat(sut.findByName("TEST").description).isEqualTo("some description");
 
@@ -70,25 +71,22 @@ public class JsonFilesEnvironmentRepositoryTest {
     }
 
     @Test
-    public void delete_environment_removes_it_from_list() {
+    void should_list_existing_environments_names() {
         sut.save(Environment.builder().withName("TEST").withDescription("some description").build());
-
         assertThat(sut.listNames()).contains("TEST");
 
         sut.delete("TEST");
-
         assertThat(sut.listNames()).doesNotContain("TEST");
     }
 
-    @Test()
-    public void delete_missing_environment_throws() {
+    @Test
+    void should_throws_exception_when_delete_missing_environment() {
         assertThatThrownBy(() -> sut.delete("MISSING_ENV"))
             .isInstanceOf(EnvironmentNotFoundException.class);
     }
 
-    @Test()
-    public void find_missing_environment_return_default_environment() {
-        sut.listNames().forEach(sut::delete);
+    @Test
+    void should_throws_exception_when_find_missing_environment() {
         assertThatThrownBy(() -> sut.findByName("MISSING_ENV"))
             .isInstanceOf(EnvironmentNotFoundException.class);
     }

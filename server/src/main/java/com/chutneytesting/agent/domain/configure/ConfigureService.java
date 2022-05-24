@@ -6,25 +6,24 @@ import com.chutneytesting.agent.domain.explore.ExploreResult;
 import com.chutneytesting.agent.domain.network.AgentGraph;
 import com.chutneytesting.agent.domain.network.ImmutableNetworkDescription;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
-import com.chutneytesting.environment.domain.Environment;
-import com.chutneytesting.environment.domain.EnvironmentRepository;
-import java.util.HashSet;
+import com.chutneytesting.environment.api.EnvironmentApi;
+import com.chutneytesting.environment.api.dto.EnvironmentDto;
 
 public class ConfigureService {
 
     private final ExploreAgentsService exploreAgentsService;
     private final CurrentNetworkDescription currentNetworkDescription;
     private final LocalServerIdentifier localServerIdentifier;
-    private final EnvironmentRepository environmentRepository;
+    private final EnvironmentApi embeddedEnvironmentApi;
 
     public ConfigureService(ExploreAgentsService exploreAgentsService,
                             CurrentNetworkDescription currentNetworkDescription,
                             LocalServerIdentifier localServerIdentifier,
-                            EnvironmentRepository environmentRepository) {
+                            EnvironmentApi embeddedEnvironmentApi) {
         this.exploreAgentsService = exploreAgentsService;
         this.currentNetworkDescription = currentNetworkDescription;
         this.localServerIdentifier = localServerIdentifier;
-        this.environmentRepository = environmentRepository;
+        this.embeddedEnvironmentApi = embeddedEnvironmentApi;
     }
 
     public NetworkDescription configure(NetworkConfiguration networkConfiguration) {
@@ -50,12 +49,8 @@ public class ConfigureService {
 
     private void updateEnvironment(NetworkConfiguration.EnvironmentConfiguration environmentConfigurations) {
         environmentConfigurations.stream().forEach(env -> {
-            Environment environment = Environment.builder()
-                .withName(env.name)
-                .withDescription(env.description)
-                .withTargets(new HashSet<>(env.targets))
-                .build();
-            environmentRepository.save(environment);
+            EnvironmentDto environment = new EnvironmentDto(env.name, env.description, env.targets);
+            embeddedEnvironmentApi.createEnvironment(environment, true);
         });
     }
 }

@@ -26,7 +26,7 @@ public class NetworkConfigurationApiDto {
     public static class EnvironmentApiDto {
         public String name;
         @JsonProperty("targets")
-        public Set<TargetsApiDto> targetsConfiguration = new HashSet<>();
+        public Set<TargetsApiDto> targetsConfiguration;
 
         public EnvironmentApiDto(String name,
                                  Set<TargetsApiDto> targetsConfiguration) {

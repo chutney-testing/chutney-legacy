@@ -24,7 +24,7 @@ import com.chutneytesting.agent.domain.configure.ConfigureService;
 import com.chutneytesting.agent.domain.configure.GetCurrentNetworkDescriptionService;
 import com.chutneytesting.agent.domain.explore.ExploreAgentsService;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
-import com.chutneytesting.environment.domain.EnvironmentRepository;
+import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.util.Arrays;
@@ -50,7 +50,7 @@ public class NodeNetworkControllerTest {
     private final NetworkConfigurationApiMapper networkConfigurationApiMapper = mock(NetworkConfigurationApiMapper.class);
     //private CurrentNetworkDescription currentNetworkDescription = mock(CurrentNetworkDescription.class);
     private final GetCurrentNetworkDescriptionService getCurrentNetworkDescription = mock(GetCurrentNetworkDescriptionService.class);
-    private final EnvironmentRepository environmentRepository = mock(EnvironmentRepository.class);
+    private final EmbeddedEnvironmentApi environmentApi = mock(EmbeddedEnvironmentApi.class);
 
     private final ObjectMapper objectMapper = new WebConfiguration().objectMapper();
     private MockMvc mockMvc;
@@ -58,7 +58,7 @@ public class NodeNetworkControllerTest {
     @BeforeEach
     public void setUp() {
         NodeNetworkController sut = new NodeNetworkController(configureService, getCurrentNetworkDescription, exploreAgentsService,
-            environmentRepository, networkDescriptionApiMapper, exploreResultApiMapper, networkConfigurationApiMapper);
+            environmentApi, networkDescriptionApiMapper, exploreResultApiMapper, networkConfigurationApiMapper);
 
         mockMvc = MockMvcBuilders
             .standaloneSetup(sut)
@@ -105,8 +105,8 @@ public class NodeNetworkControllerTest {
         when(networkDescriptionApiMapper.toDto(networkDescription)).thenReturn(controllerInnerDto);
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post(CONFIGURE_URL)
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .content(objectMapper.writeValueAsString(dto)))
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(dto)))
             .andExpect(status().is2xxSuccessful())
             .andReturn().getResponse();
 
@@ -137,8 +137,8 @@ public class NodeNetworkControllerTest {
         NetworkDescriptionApiDto dto = new NetworkDescriptionApiDto();
 
         mockMvc.perform(MockMvcRequestBuilders.post(WRAP_UP_URL)
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .content(objectMapper.writeValueAsString(dto)))
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(dto)))
             .andExpect(status().is2xxSuccessful());
 
         verify(configureService).wrapUpConfiguration(any());

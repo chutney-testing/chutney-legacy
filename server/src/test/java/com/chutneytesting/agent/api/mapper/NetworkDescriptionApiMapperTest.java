@@ -1,6 +1,7 @@
 package com.chutneytesting.agent.api.mapper;
 
 import static com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration.AgentNetworkConfiguration.of;
+import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.agent.api.dto.AgentApiDto;
@@ -18,8 +19,8 @@ import com.chutneytesting.agent.domain.network.AgentGraph;
 import com.chutneytesting.agent.domain.network.ImmutableNetworkDescription;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.chutneytesting.environment.domain.Environment;
-import com.chutneytesting.environment.domain.Target;
+import com.chutneytesting.environment.api.dto.EnvironmentDto;
+import com.chutneytesting.environment.api.dto.TargetDto;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,12 +38,12 @@ public class NetworkDescriptionApiMapperTest {
 
     @Test
     public void toDto_basic_test() {
-        List<Target> targets = Arrays.asList(
+        List<TargetDto> targets = Arrays.asList(
             createTarget("s1", "proto://lol:75/truc"),
             createTarget("s2", "proto://lol3:75/truc")
         );
-        Environment environment = Environment.builder().withName("env").addAllTargets(targets).build();
-        Set<Environment> environments = new HashSet<>();
+        EnvironmentDto environment = new EnvironmentDto("env", null, targets);
+        Set<EnvironmentDto> environments = new HashSet<>();
         environments.add(environment);
 
         NetworkConfiguration networkConfiguration = ImmutableNetworkConfiguration.builder()
@@ -71,12 +72,8 @@ public class NetworkDescriptionApiMapperTest {
         assertThat(dto.agentsGraph.agents).hasSize(2);
     }
 
-    private Target createTarget(String name, String url) {
-        return Target.builder()
-            .withName(name)
-            .withEnvironment("env")
-            .withUrl(url)
-            .build();
+    private TargetDto createTarget(String name, String url) {
+        return new TargetDto(name, url, emptySet());
     }
 
     @Test

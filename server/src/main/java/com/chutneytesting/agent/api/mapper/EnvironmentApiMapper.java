@@ -1,41 +1,37 @@
 package com.chutneytesting.agent.api.mapper;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+
 import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto.EnvironmentApiDto;
 import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto.TargetsApiDto;
-import com.chutneytesting.environment.domain.Environment;
-import com.chutneytesting.environment.domain.Target;
+import com.chutneytesting.environment.api.dto.EnvironmentDto;
+import com.chutneytesting.environment.api.dto.TargetDto;
+import com.chutneytesting.tools.Entry;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 @Component
 public class EnvironmentApiMapper {
 
-    public Environment fromDto(EnvironmentApiDto environmentApiDto) {
-        return Environment.builder()
-            .withName(environmentApiDto.name)
-            .withTargets(environmentApiDto.targetsConfiguration.stream().map(t -> fromDto(t, environmentApiDto.name)).collect(Collectors.toSet()))
-            .build();
+    public EnvironmentDto fromDto(EnvironmentApiDto environmentApiDto) {
+        List<TargetDto> targets = environmentApiDto.targetsConfiguration.stream().map(this::fromDto).collect(toList());
+        return new EnvironmentDto(environmentApiDto.name, null, targets);
     }
 
-    private Target fromDto(TargetsApiDto targetsApiDto, String env) {
+    private TargetDto fromDto(TargetsApiDto targetsApiDto) {
         Map<String, String> properties = new LinkedHashMap<>(targetsApiDto.properties);
-
-        return Target.builder()
-            .withName(targetsApiDto.name)
-            .withEnvironment(env)
-            .withUrl(targetsApiDto.url)
-            .withProperties(properties)
-            .build();
+        return new TargetDto(targetsApiDto.name, targetsApiDto.url, Entry.toEntrySet(properties));
     }
 
-    public EnvironmentApiDto toDto(Environment environment) {
-        return new EnvironmentApiDto(environment.name, environment.targets.stream().map(t -> toDto(t)).collect(Collectors.toSet()));
+    public EnvironmentApiDto toDto(EnvironmentDto environment) {
+        return new EnvironmentApiDto(environment.name, environment.targets.stream().map(this::toDto).collect(toSet()));
     }
 
-    private TargetsApiDto toDto(Target target) {
-        Map<String, String> properties = new LinkedHashMap<>(target.properties);
+    private TargetsApiDto toDto(TargetDto target) {
+        Map<String, String> properties = Entry.toMap(target.properties);
         return new TargetsApiDto(target.name, target.url, properties);
     }
 }

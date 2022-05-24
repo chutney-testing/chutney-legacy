@@ -1,0 +1,44 @@
+{
+    "name": "TO_MIGRATE",
+    "targets": [
+        {
+            "name": "WITH_SECURITY_WITH_PROPERTIES",
+            "url": "url",
+            "properties": {
+                "key": "value"
+            },
+            "security": {
+                "credential": {
+                    "username": "a.user",
+                    "password": "user.password"
+                },
+                "trustStore": "path/to/truststore",
+                "trustStorePassword": "truststore.password",
+                "keyStore": "path/to/keystore",
+                "keyStorePassword": "keystore.password",
+                "privateKey": "path/to/privatekey",
+                "keyPassword": "privatekey.password"
+            }
+        },
+        {
+            "name": "WITH_SECURITY_WITHOUT_USER_PASS_WITHOUT_PROPERTIES",
+            "url": "url",
+            "security": {
+                "credential": {
+                    "username": "a.user"
+                },
+                "trustStore": "path/to/truststore",
+                "trustStorePassword": "truststore.password",
+                "keyStore": "path/to/keystore",
+                "keyStorePassword": "keystore.password"
+            }
+        },
+        {
+            "name": "WITHOUT_SECURITY",
+            "url": "url",
+            "properties": {
+                "key": "value"
+            }
+        }
+    ]
+}

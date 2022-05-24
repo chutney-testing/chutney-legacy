@@ -78,7 +78,7 @@ public class ChutneyTestEngine extends HierarchicalTestEngine<ChutneyEngineExecu
             try {
                 Constructor<?> constructor = aClass.getConstructor(EnvironmentService.class);
                 EnvironmentConfiguration environmentConfiguration = new EnvironmentConfiguration(storeFolderPath);
-                return constructor.newInstance(new EnvironmentServiceImpl(environmentConfiguration.getEnvironmentEmbeddedApplication()));
+                return constructor.newInstance(new EnvironmentServiceImpl(environmentConfiguration.getEmbeddedEnvironmentApi()));
             } catch (NoSuchMethodException nsme) {
                 return aClass.getConstructor().newInstance();
             }

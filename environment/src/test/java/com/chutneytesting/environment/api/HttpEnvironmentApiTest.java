@@ -55,7 +55,7 @@ public class HttpEnvironmentApiTest {
 
     private final EnvironmentRepository environmentRepository = mock(EnvironmentRepository.class);
     private final EnvironmentService environmentService = new EnvironmentService(environmentRepository);
-    private final EmbeddedEnvironmentApi embeddedApplication = new EmbeddedEnvironmentApi(environmentService);
+    private final EnvironmentApi embeddedApplication = new EmbeddedEnvironmentApi(environmentService);
     private final HttpEnvironmentApi environmentControllerV2 = new HttpEnvironmentApi(embeddedApplication);
 
     final Map<String, Environment> registeredEnvironments = new LinkedHashMap<>();

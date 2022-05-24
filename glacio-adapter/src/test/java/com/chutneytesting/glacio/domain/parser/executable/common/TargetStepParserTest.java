@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 
 import com.chutneytesting.engine.api.execution.TargetExecutionDto;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
-import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
+import com.chutneytesting.environment.api.EnvironmentApi;
 import com.chutneytesting.environment.api.dto.TargetDto;
 import com.chutneytesting.glacio.domain.parser.ParsingContext;
 import com.github.fridujo.glacio.model.Step;
@@ -19,14 +19,14 @@ public class TargetStepParserTest {
 
     private static final ParsingContext CONTEXT = new ParsingContext();
     public static final String ENV = "ENV";
-    private EmbeddedEnvironmentApi environmentApplication;
+    private EnvironmentApi environmentApplication;
 
     private TargetStepParser sut;
 
     @BeforeEach
     public void setUp() {
         CONTEXT.values.put(ENVIRONMENT, "ENV");
-        environmentApplication = mock(EmbeddedEnvironmentApi.class);
+        environmentApplication = mock(EnvironmentApi.class);
         sut = new TargetStepParser(environmentApplication, "On");
     }
 

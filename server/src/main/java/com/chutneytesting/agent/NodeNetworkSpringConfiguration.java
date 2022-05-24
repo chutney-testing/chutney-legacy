@@ -12,7 +12,7 @@ import com.chutneytesting.agent.domain.configure.LocalServerIdentifier;
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.agent.domain.explore.ExploreAgentsService;
 import com.chutneytesting.engine.domain.delegation.ConnectionChecker;
-import com.chutneytesting.environment.domain.EnvironmentRepository;
+import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
 import com.chutneytesting.tools.ui.MyMixInForIgnoreType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -81,8 +81,8 @@ public class NodeNetworkSpringConfiguration {
     ConfigureService configureService(ExploreAgentsService exploreAgentsService,
                                       CurrentNetworkDescription currentNetworkDescription,
                                       LocalServerIdentifier localServerIdentifier,
-                                      EnvironmentRepository environmentRepository) {
-        return new ConfigureService(exploreAgentsService, currentNetworkDescription, localServerIdentifier, environmentRepository);
+                                      EmbeddedEnvironmentApi environmentApi) {
+        return new ConfigureService(exploreAgentsService, currentNetworkDescription, localServerIdentifier, environmentApi);
     }
 
     @Bean

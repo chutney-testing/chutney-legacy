@@ -5,7 +5,8 @@ import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.agent.domain.network.Agent;
 import com.chutneytesting.agent.domain.network.ImmutableNetworkDescription;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
-import com.chutneytesting.environment.domain.EnvironmentRepository;
+import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
+import com.chutneytesting.environment.api.EnvironmentApi;
 import java.io.OutputStream;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class JsonFileCurrentNetworkDescription implements CurrentNetworkDescription {
 
-    private final EnvironmentRepository environmentRepository;
+    private final EnvironmentApi environmentApi;
     private final AgentNetworkMapperJsonFileMapper agentNetworkMapperJsonFileMapper;
     private final JsonFileAgentNetworkDao jsonFileAgentNetworkDao;
     private final LocalServerIdentifier localServerIdentifier;
@@ -21,10 +22,10 @@ public class JsonFileCurrentNetworkDescription implements CurrentNetworkDescript
     private Optional<NetworkDescription> networkDescription;
 
     public JsonFileCurrentNetworkDescription(
-        EnvironmentRepository environmentRepository,
+        EmbeddedEnvironmentApi environmentApi,
         AgentNetworkMapperJsonFileMapper agentNetworkMapperJsonFileMapper,
         JsonFileAgentNetworkDao jsonFileAgentNetworkDao, LocalServerIdentifier localServerIdentifier) {
-        this.environmentRepository = environmentRepository;
+        this.environmentApi = environmentApi;
         this.agentNetworkMapperJsonFileMapper = agentNetworkMapperJsonFileMapper;
         this.jsonFileAgentNetworkDao = jsonFileAgentNetworkDao;
         this.localServerIdentifier = localServerIdentifier;
@@ -52,7 +53,7 @@ public class JsonFileCurrentNetworkDescription implements CurrentNetworkDescript
 
     private Optional<NetworkDescription> getNetworkDescription() {
         Optional<NetworkDescription> newNetworkDescription = jsonFileAgentNetworkDao.read()
-            .map(dto -> agentNetworkMapperJsonFileMapper.fromDto(dto, environmentRepository.getEnvironments()));
+            .map(dto -> agentNetworkMapperJsonFileMapper.fromDto(dto, environmentApi.listEnvironments()));
 
         if (newNetworkDescription.isPresent()) {
             final Agent localAgent = localServerIdentifier.findLocalAgent(newNetworkDescription.get().agentGraph());
