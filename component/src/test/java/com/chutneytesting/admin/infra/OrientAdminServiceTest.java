@@ -5,7 +5,6 @@ import static com.chutneytesting.scenario.infra.orient.OrientComponentDB.GE_STEP
 import static com.chutneytesting.scenario.infra.orient.OrientComponentDB.STEP_CLASS;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.ComposableIdUtils;
 import com.chutneytesting.admin.domain.DatabaseAdminService;
 import com.chutneytesting.admin.domain.SqlResult;
 import com.chutneytesting.scenario.domain.ComposableStep;

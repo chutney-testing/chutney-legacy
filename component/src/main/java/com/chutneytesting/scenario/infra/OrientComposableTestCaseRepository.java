@@ -10,7 +10,6 @@ import static com.chutneytesting.scenario.infra.orient.OrientUtils.deleteVertex;
 import static com.chutneytesting.scenario.infra.orient.OrientUtils.load;
 import static com.chutneytesting.scenario.infra.orient.OrientUtils.rollback;
 
-import com.chutneytesting.ComposableIdUtils;
 import com.chutneytesting.scenario.domain.AlreadyExistingScenarioException;
 import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
 import com.chutneytesting.scenario.domain.TestCaseMetadata;

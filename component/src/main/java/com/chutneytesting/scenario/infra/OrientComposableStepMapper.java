@@ -1,7 +1,5 @@
 package com.chutneytesting.scenario.infra;
 
-import static com.chutneytesting.ComposableIdUtils.toInternalId;
-
 import com.chutneytesting.ComposableIdUtils;
 import com.chutneytesting.scenario.domain.ComposableStep;
 import com.chutneytesting.scenario.domain.Strategy;

@@ -4,7 +4,6 @@ import static java.time.temporal.ChronoUnit.MILLIS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
-import com.chutneytesting.ComposableIdUtils;
 import com.chutneytesting.scenario.domain.ComposableScenario;
 import com.chutneytesting.scenario.domain.ComposableStep;
 import com.chutneytesting.scenario.domain.ComposableStepRepository;

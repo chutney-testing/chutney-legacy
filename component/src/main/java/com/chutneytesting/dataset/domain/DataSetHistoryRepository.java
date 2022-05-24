@@ -38,7 +38,7 @@ public interface DataSetHistoryRepository {
     /**
      * Retrieve a specific dataset version
      *
-     * @param dataSetId The dataset id
+     * @param externalDataSetId The dataset id
      * @param version   The version number
      * @return The dataset version
      * @throws DataSetNotFoundException
@@ -48,7 +48,7 @@ public interface DataSetHistoryRepository {
     /**
      * Delete the version history of dataset with given id
      *
-     * @param dataSetId Teh dataset id
+     * @param externalDataSetId Teh dataset id
      */
     void removeHistory(String externalDataSetId);
 }

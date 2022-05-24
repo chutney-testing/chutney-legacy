@@ -14,11 +14,7 @@ public final class ComposableIdUtils {
     }
 
     public static String toInternalId(String id) {
-        return toInternalId(ofNullable(id));
-    }
-
-    public static String toInternalId(Optional<String> id) {
-        return id.map(s -> {
+        return ofNullable(id).map(s -> {
             if (isComposableFrontId(s)) {
                 return "#" + s.replace("-", ":");
             }

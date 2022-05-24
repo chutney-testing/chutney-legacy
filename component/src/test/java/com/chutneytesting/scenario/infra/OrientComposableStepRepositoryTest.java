@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -385,16 +384,16 @@ public class OrientComposableStepRepositoryTest {
         assertThat(foundMiddleParentFStep.steps.get(1).defaultParameters).containsExactlyEntriesOf(actionParameters);
         assertThat(foundMiddleParentFStep.steps.get(1).executionParameters).containsExactlyEntriesOf(secondActionInstanceDataSet);
         assertThat(foundMiddleParentFStep.defaultParameters).containsExactlyEntriesOf(middleParentParameters);
-        assertThat(foundMiddleParentFStep.executionParameters).containsExactlyInAnyOrderEntriesOf(middleParentExpectedDataSet); //TODO order with map ?
+        assertThat(foundMiddleParentFStep.executionParameters).containsExactlyInAnyOrderEntriesOf(middleParentExpectedDataSet);
 
         assertThat(foundParentFStep.defaultParameters).containsExactlyEntriesOf(parentParameters);
-        assertThat(foundParentFStep.executionParameters).containsExactlyInAnyOrderEntriesOf(parentExpectedDataSet); //TODO order with map ?
+        assertThat(foundParentFStep.executionParameters).containsExactlyInAnyOrderEntriesOf(parentExpectedDataSet);
         assertThat(foundParentFStep.steps.get(0).defaultParameters).containsExactlyEntriesOf(middleParentParameters);
-        assertThat(foundParentFStep.steps.get(0).executionParameters).containsExactlyInAnyOrderEntriesOf(firstMiddleParentInstanceDataSet); //TODO order with map ?
+        assertThat(foundParentFStep.steps.get(0).executionParameters).containsExactlyInAnyOrderEntriesOf(firstMiddleParentInstanceDataSet);
         assertThat(foundParentFStep.steps.get(1).defaultParameters).containsExactlyEntriesOf(actionParameters);
         assertThat(foundParentFStep.steps.get(1).executionParameters).containsExactlyEntriesOf(thirdActionInstanceDataSet);
         assertThat(foundParentFStep.steps.get(2).defaultParameters).containsExactlyEntriesOf(middleParentParameters);
-        assertThat(foundParentFStep.steps.get(2).executionParameters).containsExactlyInAnyOrderEntriesOf(secondMiddleParentInstanceDataSet); //TODO order with map ?
+        assertThat(foundParentFStep.steps.get(2).executionParameters).containsExactlyInAnyOrderEntriesOf(secondMiddleParentInstanceDataSet);
     }
 
     @Test
@@ -622,7 +621,7 @@ public class OrientComposableStepRepositoryTest {
 
         assertThat(actualSubStep.steps.get(0).defaultParameters).containsExactlyEntriesOf(leafDefaultParameters);
         assertThat(actualSubStep.steps.get(0).executionParameters).containsExactlyEntriesOf(leafDefaultParameters);
-        assertThat(actualSubStep.defaultParameters).containsExactlyEntriesOf(subStepDefaultParameters); //TODO order with map ?
+        assertThat(actualSubStep.defaultParameters).containsExactlyEntriesOf(subStepDefaultParameters);
         assertThat(actualSubStep.executionParameters).containsExactlyInAnyOrderEntriesOf(Map.of(
             "leaf empty param", "",
             "substep default param", "substep default value",
@@ -631,14 +630,14 @@ public class OrientComposableStepRepositoryTest {
         ));
 
         assertThat(actualParent.steps.get(0).defaultParameters).containsExactlyEntriesOf(subStepDefaultParameters);
-        assertThat(actualParent.steps.get(0).executionParameters).containsExactlyInAnyOrderEntriesOf(Map.of( //TODO order with map ?
+        assertThat(actualParent.steps.get(0).executionParameters).containsExactlyInAnyOrderEntriesOf(Map.of(
             "leaf empty param", "",
             "substep default param", "substep default value",
             "substep empty param", "",
             "substep second param", "substep second value"
         ));
         assertThat(actualParent.defaultParameters).containsExactlyEntriesOf(parentDefaultParameters);
-        assertThat(actualParent.executionParameters).containsExactlyInAnyOrderEntriesOf(Map.of( //TODO order with map ?
+        assertThat(actualParent.executionParameters).containsExactlyInAnyOrderEntriesOf(Map.of(
             "leaf empty param", "",
             "substep empty param", "",
             "parent default param", "parent default value"
@@ -695,7 +694,7 @@ public class OrientComposableStepRepositoryTest {
         assertThat(actualParent.steps.get(0).defaultParameters).isEqualTo(leafDefaultParameters);
         assertThat(actualParent.steps.get(0).executionParameters).containsExactlyEntriesOf(leafExecutionParameters);
         assertThat(actualParent.defaultParameters).containsExactlyEntriesOf(parentDefaultParameters);
-        assertThat(actualParent.executionParameters).containsExactlyInAnyOrderEntriesOf(Map.of( //TODO order with map ?
+        assertThat(actualParent.executionParameters).containsExactlyInAnyOrderEntriesOf(Map.of(
             "leaf second param", "", /*value was removed*/
             "parent default param", "parent default value",
             "parent empty param", ""

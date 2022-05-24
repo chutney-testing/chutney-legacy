@@ -46,8 +46,7 @@ public class OrientDataSetRepository implements DataSetRepository {
             OElement savedDataSet = save(dataSet, dbSession);
             dbSession.commit();
             LOGGER.info("Save dataset : " + savedDataSet.toString());
-            String externalId = ComposableIdUtils.toExternalId(savedDataSet.getIdentity().toString(null).toString());
-            return externalId;
+            return ComposableIdUtils.toExternalId(savedDataSet.getIdentity().toString(null).toString());
         } catch (Exception e) {
             rollback(dbSession);
             throw new RuntimeException(e);

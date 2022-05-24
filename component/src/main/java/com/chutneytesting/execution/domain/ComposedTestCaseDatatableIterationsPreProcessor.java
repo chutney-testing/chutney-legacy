@@ -421,7 +421,7 @@ public class ComposedTestCaseDatatableIterationsPreProcessor implements TestCase
         return unmodifiableMap(aliases);
     }
 
-    Pattern aliasPattern = Pattern.compile("^\\*\\*(.+)\\*\\*$");
+    final Pattern aliasPattern = Pattern.compile("^\\*\\*(.+)\\*\\*$");
     private boolean isAlias(String paramValue) {
         return aliasPattern.matcher(paramValue).matches();
     }

@@ -147,20 +147,5 @@ public class ComposableTestCaseMapperTest {
             .isEqualTo(composableTestCaseDto);
         Assertions.assertThat(ctcd.tags()).containsExactly("TAG1", "TAG2");
     }
-    /* TODO a deplacer
 
-    @Test
-    public void should_map_to_front_id() {
-        assertThat(toFrontId(DEFAULT_COMPOSABLE_TESTCASE_DB_ID)).isEqualTo(DEFAULT_COMPOSABLE_TESTCASE_ID);
-    }
-
-    @Test
-    public void should_map_from_front_id() {
-        assertThat(fromFrontId(Optional.of(DEFAULT_COMPOSABLE_TESTCASE_ID))).isEqualTo(DEFAULT_COMPOSABLE_TESTCASE_DB_ID);
-    }
-
-    @Test
-    public void should_map_empty_from_front_id() {
-        assertThat(fromFrontId(Optional.empty())).isEqualTo("");
-    }*/
 }

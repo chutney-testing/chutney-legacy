@@ -1,7 +1,6 @@
 package com.chutneytesting.scenario.infra;
 
 import static com.chutneytesting.scenario.domain.ComposableTestCaseRepository.COMPOSABLE_TESTCASE_REPOSITORY_SOURCE;
-import static com.chutneytesting.scenario.infra.OrientComposableStepMapper.vertexToComposableStep;
 import static java.time.Instant.now;
 
 import com.chutneytesting.ComposableIdUtils;

@@ -6,7 +6,6 @@ import static com.chutneytesting.scenario.infra.orient.OrientComponentDB.STEP_CL
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.ComposableIdUtils;
 import com.chutneytesting.scenario.domain.ComposableStep;
 import com.chutneytesting.scenario.domain.ComposableStepRepository;
 import com.chutneytesting.scenario.domain.Strategy;
