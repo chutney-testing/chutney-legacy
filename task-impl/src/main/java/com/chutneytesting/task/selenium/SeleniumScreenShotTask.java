@@ -19,7 +19,7 @@ public class SeleniumScreenShotTask extends SeleniumTask {
     @Override
     public TaskExecutionResult executeSeleniumTask() {
         String screenShot = ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BASE64);
-        logger.info("data:image/png;base64," + screenShot);
+        logger.reportOnly().info("data:image/png;base64," + screenShot);
 
         return TaskExecutionResult.ok();
     }

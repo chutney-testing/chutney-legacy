@@ -7,4 +7,6 @@ public interface Logger {
     void error(String message);
 
     void error(Throwable exception);
+
+    Logger reportOnly();
 }
