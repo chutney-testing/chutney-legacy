@@ -10,6 +10,7 @@ public class DelegateLogger implements Logger {
     private final Consumer<String> errorConsumer;
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(DelegateLogger.class);
+    private final Logger reportOnly = new ReportLogger();
 
     public DelegateLogger(Consumer<String> infoConsumer, Consumer<String> errorConsumer) {
         this.infoConsumer = infoConsumer;
@@ -32,5 +33,33 @@ public class DelegateLogger implements Logger {
     public void error(Throwable exception) {
         errorConsumer.accept(exception.getMessage());
         LOGGER.debug(exception.getMessage(), exception);
+    }
+
+    @Override
+    public Logger reportOnly() {
+        return reportOnly;
+    }
+
+    private class ReportLogger implements Logger {
+
+        @Override
+        public void info(String message) {
+            infoConsumer.accept(message);
+        }
+
+        @Override
+        public void error(String message) {
+            errorConsumer.accept(message);
+        }
+
+        @Override
+        public void error(Throwable exception) {
+            errorConsumer.accept(exception.getMessage());
+        }
+
+        @Override
+        public Logger reportOnly() {
+            return this;
+        }
     }
 }
