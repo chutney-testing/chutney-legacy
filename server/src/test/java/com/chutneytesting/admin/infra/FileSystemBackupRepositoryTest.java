@@ -190,8 +190,8 @@ public class FileSystemBackupRepositoryTest {
             ArrayList<? extends ZipEntry> list = Collections.list(zipFile.entries());
 
             assertThat(list).hasSize(2);
-            assertThat(list.get(0).getName()).isEqualTo("envA.json");
-            assertThat(list.get(1).getName()).isEqualTo("envB.json");
+            assertThat(list).extracting("name")
+                .containsExactlyInAnyOrder("envA.json", "envB.json");
         }
     }
 

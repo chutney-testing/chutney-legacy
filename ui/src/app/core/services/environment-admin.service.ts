@@ -32,6 +32,10 @@ export class EnvironmentAdminService {
         return this.http.post(server.backend + this.baseUrl, environment);
     }
 
+    deleteEnvironment(environmentName: string): Observable<Object> {
+        return this.http.delete(server.backend + this.baseUrl + '/' + environmentName);
+    }
+
     updateEnvironment(environmentName: string, environment: EnvironmentMetadata): Observable<Object> {
         return this.http.put(server.backend + this.baseUrl + '/' + environmentName, environment);
     }
