@@ -31,20 +31,22 @@ public class UrlSlicerTest {
     @ParameterizedTest
     @MethodSource("acceptedURLs")
     public void urlWrapper_parse_port(String url) {
-        int port = new UrlSlicer(url).port;
-        assertThat(port).as("port").isEqualTo(12);
+        UrlSlicer slicedUrl = new UrlSlicer(url);
+        assertThat(slicedUrl.host).as("host").isEqualTo("somehost");
+        assertThat(slicedUrl.port).as("port").isEqualTo(12);
     }
 
     @ParameterizedTest
     @MethodSource("acceptedURLsWithoutPorts")
     public void should_use_default_port_protocol(String url, Integer defaultPort) {
-        int port = new UrlSlicer(url).port;
-        assertThat(port).as("port").isEqualTo(defaultPort);
+        UrlSlicer slicedUrl = new UrlSlicer(url);
+        assertThat(slicedUrl.host).as("host").isEqualTo("somehost");
+        assertThat(slicedUrl.port).as("port").isEqualTo(defaultPort);
     }
 
     private static String[] acceptedURLs() {
         return new String[]{
-            "proto://somehost:12",
+            "proto://somehost:12/",
             "proto://somehost:12/path",
             "jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(host=somehost)(PORT=12))"
         };
@@ -52,12 +54,11 @@ public class UrlSlicerTest {
 
     private static Object[] acceptedURLsWithoutPorts() {
         return new Object[]{
-            new Object[]{"http://somehost", 80},
+            new Object[]{"http://somehost/", 80},
             new Object[]{"https://somehost", 443},
             new Object[]{"ssh://somehost", 22},
             new Object[]{"amqp://somehost", 5672},
             new Object[]{"amqps://somehost", 5671}
         };
     }
-
 }
