@@ -14,29 +14,6 @@ export class StepService {
   constructor(private http: HttpClient) {
   }
 
-  findAllSteps(start: number, limit: number, name: string, usage: string, sort: string): Observable<Object> {
-    let params = '?start=' + start + '&limit=' + limit;
-
-    if (!isNullOrBlankString(name)) {
-
-      params += '&name=' + encodeURIComponent(name);
-    }
-
-    if (usage != null && usage !== 'all') {
-      params += '&usage=' + usage;
-    }
-
-    if (sort != null) {
-      if (sort === 'desc') {
-        params += '&sort=name&desc=name';
-      } else {
-        params += '&sort=name';
-      }
-    }
-
-    return this.http.get(environment.backend + this.stepUrl + params);
-  }
-
   findById(stepId: string): Observable<Object> {
     return this.http.get(environment.backend + this.stepUrl + '/' + encodeURIComponent(stepId));
   }

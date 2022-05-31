@@ -14,11 +14,6 @@ import com.chutneytesting.scenario.domain.ParentStepId;
 import com.chutneytesting.scenario.infra.orient.OrientComponentDB;
 import com.chutneytesting.scenario.infra.orient.OrientUtils;
 import com.chutneytesting.scenario.infra.wrapper.StepVertex;
-import com.chutneytesting.tools.ImmutablePaginatedDto;
-import com.chutneytesting.tools.PaginatedDto;
-import com.chutneytesting.tools.PaginationRequestParametersDto;
-import com.chutneytesting.tools.SortRequestParametersDto;
-import com.chutneytesting.tools.SqlUtils;
 import com.google.common.collect.Lists;
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
@@ -32,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -121,30 +115,6 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
         }
     }
 
-    @Override
-    public PaginatedDto<ComposableStep> find(PaginationRequestParametersDto paginationParameters, SortRequestParametersDto sortParameters, ComposableStep filters) {
-        try (ODatabaseSession dbSession = componentDBPool.acquire()) {
-            String query = buildPaginatedQuery(filters, sortParameters);
-            // Count
-            long totalCount;
-            try (OResultSet rs = dbSession.query(SqlUtils.count(query))) {
-                totalCount = OrientUtils.resultSetToCount(rs);
-            }
-            // Execute
-            try (OResultSet rs = dbSession.query(OrientUtils.addPaginationParameters(query), paginationParameters.start() - 1, paginationParameters.limit())) {
-                List<ComposableStep> fSteps = Lists.newArrayList(rs)
-                    .stream()
-                    .filter(e -> e.getVertex().isPresent())
-                    .map(element -> OrientComposableStepMapper.vertexToComposableStep(StepVertex.builder().from(element.getVertex().get()).build()))
-                    .collect(Collectors.toList());
-                return ImmutablePaginatedDto.<ComposableStep>builder()
-                    .totalCount(totalCount)
-                    .addAllData(fSteps)
-                    .build();
-            }
-        }
-    }
-
     private static final String FIND_PARENTS_STEP = "select @rid, name, title, @class from (TRAVERSE in(" + OrientComponentDB.GE_STEP_CLASS + ") FROM ?) where $depth = 1";
 
     @Override
@@ -178,28 +148,5 @@ public class OrientComposableStepRepository implements ComposableStepRepository,
 
         StepVertex stepVertex = OrientComposableStepMapper.composableStepToVertex(composableStep, oVertex, dbSession);
         return stepVertex.save(dbSession);
-    }
-
-    private String buildPaginatedQuery(ComposableStep findParameters, SortRequestParametersDto sortParameters) {
-        StringBuilder query = new StringBuilder("SELECT FROM ")
-            .append(OrientComponentDB.STEP_CLASS)
-            .append(" WHERE 1=1");
-
-        // Name filter
-        if (StringUtils.isNotEmpty(findParameters.name)) {
-            query.append(" AND name CONTAINSTEXT '").append(findParameters.name).append("'");
-        }
-
-        // Sort
-        List<String> sortAttributes = sortParameters.sortParameters();
-        List<String> descAttributes = sortParameters.descParameters();
-        sortAttributes.forEach(sortAttribute -> {
-            query.append(" ORDER BY ").append(sortAttribute);
-            if (descAttributes.contains(sortAttribute)) {
-                query.append(" DESC");
-            }
-        });
-
-        return query.toString();
     }
 }

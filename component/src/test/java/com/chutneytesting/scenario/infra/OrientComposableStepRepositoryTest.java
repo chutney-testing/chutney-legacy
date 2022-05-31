@@ -14,14 +14,9 @@ import com.chutneytesting.scenario.domain.Strategy;
 import com.chutneytesting.scenario.infra.orient.OrientComponentDB;
 import com.chutneytesting.scenario.infra.orient.changelog.OrientChangelog;
 import com.chutneytesting.tests.OrientDatabaseHelperTest;
-import com.chutneytesting.tools.ImmutablePaginationRequestParametersDto;
-import com.chutneytesting.tools.ImmutableSortRequestParametersDto;
-import com.chutneytesting.tools.PaginatedDto;
 import com.orientechnologies.common.log.OLogManager;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -177,75 +172,6 @@ public class OrientComposableStepRepositoryTest {
         assertThat(fStepId).isEqualTo(updateFStepId);
         assertThat(updatedFStep.name).isEqualTo(newName);
         assertThat(updatedFStep.steps.get(0).implementation.get()).isEqualTo(newSubTechnicalContent);
-    }
-
-    @Test
-    public void should_find_saved_func_steps_by_page_when_find_called() {
-        // Given
-        final ComposableStep fStep_11 = saveAndReload(
-            orientDatabaseHelperTest.buildComposableStep("sub something happen 1.1"));
-        final ComposableStep fStep_12 = saveAndReload(
-            orientDatabaseHelperTest.buildComposableStep("sub something happen 1.2 with implementation", "{\"type\": \"debug\"}"));
-        final ComposableStep fStep_13 = saveAndReload(
-            orientDatabaseHelperTest.buildComposableStep("sub something happen 1.3"));
-        final ComposableStep fStep_1 = saveAndReload(
-            orientDatabaseHelperTest.buildComposableStep("sub something happen 1", fStep_11, fStep_12, fStep_13));
-        final ComposableStep fStep_2 = saveAndReload(
-            orientDatabaseHelperTest.buildComposableStep("another sub something 2 with implementation", "{\"type\": \"debug\"}"));
-        final ComposableStep fStep_3 = saveAndReload(
-            orientDatabaseHelperTest.buildComposableStep("sub something happen 3"));
-        final ComposableStep fStepRoot = saveAndReload(
-            orientDatabaseHelperTest.buildComposableStep("something happen", fStep_1, fStep_2, fStep_3));
-
-        List<ComposableStep> fSteps = Arrays.asList(fStepRoot, fStep_11, fStep_12, fStep_13, fStep_1, fStep_2, fStep_3);
-
-        // When
-        long elementPerPage = 2;
-        PaginatedDto<ComposableStep> foundFStepsPage1 = findWithPagination(1, elementPerPage);
-        PaginatedDto<ComposableStep> foundFStepsPage2 = findWithPagination(3, elementPerPage);
-        PaginatedDto<ComposableStep> foundFStepsPage3 = findWithPagination(5, elementPerPage);
-        PaginatedDto<ComposableStep> foundFStepsPage4 = findWithPagination(7, elementPerPage);
-
-        // Then
-        List<ComposableStep> foundFSteps = new ArrayList<>();
-        foundFSteps.addAll(foundFStepsPage1.data());
-        foundFSteps.addAll(foundFStepsPage2.data());
-        foundFSteps.addAll(foundFStepsPage3.data());
-        foundFSteps.addAll(foundFStepsPage4.data());
-
-        assertThat(foundFStepsPage1.data().size()).isEqualTo(elementPerPage);
-        assertThat(foundFStepsPage1.totalCount()).isEqualTo(fSteps.size());
-        assertThat(foundFStepsPage2.data().size()).isEqualTo(elementPerPage);
-        assertThat(foundFStepsPage2.totalCount()).isEqualTo(fSteps.size());
-        assertThat(foundFStepsPage3.data().size()).isEqualTo(elementPerPage);
-        assertThat(foundFStepsPage3.totalCount()).isEqualTo(fSteps.size());
-        assertThat(foundFSteps.size()).isEqualTo(fSteps.size());
-        assertThat(foundFSteps).containsExactlyInAnyOrderElementsOf(fSteps);
-    }
-
-    @Test
-    public void should_find_saved_func_steps_with_filter_when_find_called() {
-        // Given
-        final ComposableStep fStep_1 = saveAndReload(
-            orientDatabaseHelperTest.buildComposableStep("some thing is set"));
-        final ComposableStep fStep_2 = saveAndReload(
-            orientDatabaseHelperTest.buildComposableStep("another thing happens", "{\"type\": \"debug\"}"));
-        final ComposableStep fStep_3 = saveAndReload(
-            orientDatabaseHelperTest.buildComposableStep("the result is beauty"));
-        final ComposableStep fStepRoot = saveAndReload(
-            orientDatabaseHelperTest.buildComposableStep("big root thing", fStep_1, fStep_2, fStep_3));
-
-        // When
-        PaginatedDto<ComposableStep> filteredByNameFSteps = findWithFilters("beauty", null, null);
-        PaginatedDto<ComposableStep> sortedFSteps = findWithFilters("", "name", null);
-        PaginatedDto<ComposableStep> sortedDescendentFSteps = findWithFilters("", "name", "");
-        PaginatedDto<ComposableStep> filteredFSteps = findWithFilters("thing", "name", "name");
-
-        // Then
-        assertThat(filteredByNameFSteps.data()).containsExactly(fStep_3);
-        assertThat(sortedFSteps.data()).containsExactly(fStep_2, fStepRoot, fStep_1, fStep_3);
-        assertThat(sortedDescendentFSteps.data()).containsExactly(fStep_3, fStep_1, fStepRoot, fStep_2);
-        assertThat(filteredFSteps.data()).containsExactly(fStep_1, fStepRoot, fStep_2);
     }
 
     @Test
@@ -535,38 +461,6 @@ public class OrientComposableStepRepositoryTest {
         }
         assertThat(step.id).isNotEmpty();
         assertThat(step.steps.size()).isEqualTo(functionalChildStepsSize);
-    }
-
-    private PaginatedDto<ComposableStep> findWithPagination(long startElementIdx, long limit) {
-        return sut.find(
-            ImmutablePaginationRequestParametersDto.builder()
-                .start(startElementIdx)
-                .limit(limit)
-                .build(),
-            ImmutableSortRequestParametersDto.builder()
-                .build(),
-            ComposableStep.builder()
-                .withName("")
-                .withSteps(Collections.emptyList())
-                .build()
-        );
-    }
-
-    private PaginatedDto<ComposableStep> findWithFilters(String name, String sort, String desc) {
-        return sut.find(
-            ImmutablePaginationRequestParametersDto.builder()
-                .start(1L)
-                .limit(100L)
-                .build(),
-            ImmutableSortRequestParametersDto.builder()
-                .sort(sort)
-                .desc(desc)
-                .build(),
-            ComposableStep.builder()
-                .withName(name)
-                .withSteps(Collections.emptyList())
-                .build()
-        );
     }
 
     @Test

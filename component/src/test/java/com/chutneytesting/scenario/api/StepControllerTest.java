@@ -1,8 +1,5 @@
 package com.chutneytesting.scenario.api;
 
-import static com.chutneytesting.scenario.api.StepController.FIND_STEPS_LIMIT_DEFAULT_VALUE;
-import static com.chutneytesting.scenario.api.StepController.FIND_STEPS_NAME_DEFAULT_VALUE;
-import static com.chutneytesting.scenario.api.StepController.FIND_STEPS_START_DEFAULT_VALUE;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -22,17 +19,11 @@ import com.chutneytesting.scenario.domain.ComposableStepNotFoundException;
 import com.chutneytesting.scenario.domain.ComposableStepRepository;
 import com.chutneytesting.scenario.domain.ParentStepId;
 import com.chutneytesting.tests.OrientDatabaseHelperTest;
-import com.chutneytesting.tools.ImmutablePaginatedDto;
-import com.chutneytesting.tools.ImmutablePaginationRequestParametersDto;
-import com.chutneytesting.tools.ImmutableSortRequestParametersDto;
-import com.chutneytesting.tools.PaginationRequestParametersDto;
-import com.chutneytesting.tools.SortRequestParametersDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,64 +47,6 @@ public class StepControllerTest {
 
         when(composableStepRepository.findById(any()))
             .thenReturn(ComposableStep.builder().build());
-        when(composableStepRepository.find(any(), any(), any()))
-            .thenReturn(
-                ImmutablePaginatedDto.<ComposableStep>builder()
-                    .totalCount(0)
-                    .build());
-    }
-
-    @Test
-    public void should_call_step_repository_when_findSteps_called() throws Exception {
-        // When
-        mockMvc.perform(get(StepController.BASE_URL))
-            .andExpect(status().isOk());
-
-        // Then
-        verify(composableStepRepository).find(
-            buildDefaultPaginationRequestParametersDto(),
-            buildDefaultSortRequestParametersDto(),
-            buildDefaultComposableStep());
-    }
-
-    @Test
-    public void should_get_empty_response_when_findSteps_return_empty_list() throws Exception {
-        // When
-        final AtomicInteger resultContentLength = new AtomicInteger();
-        mockMvc.perform(get(StepController.BASE_URL))
-            .andDo(result -> resultContentLength.set(result.getResponse().getContentLength()))
-            .andExpect(status().isOk());
-
-        // Then
-        assertThat(resultContentLength.get()).isZero();
-    }
-
-    @Test
-    public void should_not_call_mapping_when_findSteps_return_empty_list() throws Exception {
-        // When
-        mockMvc.perform(get(StepController.BASE_URL))
-            .andExpect(status().isOk());
-    }
-
-    @Test
-    public void should_call_mapping_when_findSteps_return_func_steps() throws Exception {
-        // Given
-        String FSTEP_NAME = "a functional step";
-        final List<ComposableStep> fStepList = Arrays.asList(
-            ComposableStep.builder().withName(FSTEP_NAME).build(), ComposableStep.builder().withName(FSTEP_NAME).build());
-        when(composableStepRepository.find(
-            buildPaginationRequestParametersDto(1, 100),
-            buildSortRequestParametersDto("name", "name"),
-            buildComposableStep("my name")))
-            .thenReturn(
-                ImmutablePaginatedDto.<ComposableStep>builder()
-                    .totalCount(2)
-                    .addAllData(fStepList)
-                    .build());
-
-        // When
-        mockMvc.perform(get(StepController.BASE_URL + "?start=1&limit=100&name=my name&usage=GIVEN&sort=name&desc=name"))
-            .andExpect(status().isOk());
     }
 
     @Test
@@ -219,36 +152,10 @@ public class StepControllerTest {
         }
     }
 
-    private ComposableStep buildDefaultComposableStep() {
-        return buildComposableStep(FIND_STEPS_NAME_DEFAULT_VALUE);
-    }
-
     private ComposableStep buildComposableStep(String name) {
         return ComposableStep.builder()
             .withName(name)
             .withSteps(Collections.emptyList())
-            .build();
-    }
-
-    private PaginationRequestParametersDto buildDefaultPaginationRequestParametersDto() {
-        return buildPaginationRequestParametersDto(Long.parseLong(FIND_STEPS_START_DEFAULT_VALUE), Long.parseLong(FIND_STEPS_LIMIT_DEFAULT_VALUE));
-    }
-
-    private PaginationRequestParametersDto buildPaginationRequestParametersDto(long startElementIdx, long limit) {
-        return ImmutablePaginationRequestParametersDto.builder()
-            .start(startElementIdx)
-            .limit(limit)
-            .build();
-    }
-
-    private SortRequestParametersDto buildDefaultSortRequestParametersDto() {
-        return buildSortRequestParametersDto(null, null);
-    }
-
-    private SortRequestParametersDto buildSortRequestParametersDto(String sort, String desc) {
-        return ImmutableSortRequestParametersDto.builder()
-            .sort(sort)
-            .desc(desc)
             .build();
     }
 }

@@ -133,7 +133,6 @@ public class SecuredControllerSpringBootIntegrationTest {
             {GET, "/api/steps/v1/all", "COMPONENT_READ", null},
             {GET, "/api/steps/v1/all", "SCENARIO_WRITE", null},
             {GET, "/api/steps/v1/stepId/parents", "COMPONENT_READ", null},
-            {GET, "/api/steps/v1", "COMPONENT_READ", null},
             {GET, "/api/steps/v1/stepId", "COMPONENT_READ", null},
             {GET, "/api/scenario/v2/testCaseId", "SCENARIO_READ", null},
             {GET, "/api/scenario/v2/testCaseId/metadata", "SCENARIO_READ", null},
