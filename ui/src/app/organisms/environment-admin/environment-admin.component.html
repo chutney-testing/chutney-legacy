@@ -1,4 +1,4 @@
-<div class="row m-5" *ngIf="errorMessage">
+<div class="row m-5 pointer" *ngIf="errorMessage" (click)="errorMessage = null">
     <chutney-error-panel [errorMessage]="errorMessage"></chutney-error-panel>
 </div>
 <ng-container *ngIf="envForm">

@@ -166,6 +166,7 @@ export class EnvironmentAdminComponent implements OnInit {
     cancelSelectedTarget() {
         this.selectedTarget = null;
         this.selectedTargetName = null;
+        this.errorMessage = null;
     }
 
     scrollToTop() {
@@ -314,6 +315,7 @@ export class EnvironmentAdminComponent implements OnInit {
 
     cancelEnvironment() {
         this.envForm = null;
+        this.errorMessage = null;
     }
 
     changingValue(envName: string) {
