@@ -1,8 +1,6 @@
 package com.chutneytesting.jira.infra;
 
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
-import static com.chutneytesting.tools.orient.ComposableIdUtils.fromFrontId;
-import static com.chutneytesting.tools.orient.ComposableIdUtils.toFrontId;
 
 import com.chutneytesting.jira.domain.JiraRepository;
 import com.chutneytesting.jira.domain.JiraTargetConfiguration;
@@ -55,24 +53,22 @@ public class JiraFileRepository implements JiraRepository {
         return getAll(SCENARIO_FILE)
             .entrySet()
             .stream()
-            .collect(Collectors.toMap(entry -> toFrontId(entry.getKey()), Map.Entry::getValue));
+            .collect(Collectors.toMap(entry -> entry.getKey(), Map.Entry::getValue));
     }
 
     @Override
     public String getByScenarioId(String scenarioId) {
-        String scenarioIdFormatted = fromFrontId(scenarioId);
-        return getById(SCENARIO_FILE, scenarioIdFormatted);
+        return getById(SCENARIO_FILE, scenarioId);
     }
 
     @Override
-    public void saveForScenario(String scenarioFrontId, String jiraId) {
-        String scenarioId = fromFrontId(scenarioFrontId);
+    public void saveForScenario(String scenarioId, String jiraId) {
         save(SCENARIO_FILE, scenarioId, jiraId);
     }
 
     @Override
     public void removeForScenario(String scenarioId) {
-        remove(SCENARIO_FILE, fromFrontId(scenarioId));
+        remove(SCENARIO_FILE, scenarioId);
     }
 
     @Override

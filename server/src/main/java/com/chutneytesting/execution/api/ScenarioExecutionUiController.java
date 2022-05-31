@@ -1,15 +1,13 @@
 package com.chutneytesting.execution.api;
 
-import static com.chutneytesting.tools.orient.ComposableIdUtils.fromFrontId;
-
 import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseRepository;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngineAsync;
-import com.chutneytesting.execution.domain.scenario.composed.ExecutableComposedStep;
-import com.chutneytesting.execution.domain.scenario.composed.ExecutableStepRepository;
+import com.chutneytesting.execution.domain.ExecutableComposedStep;
+import com.chutneytesting.execution.domain.ExecutableStepRepository;
 import com.chutneytesting.security.infra.SpringUserService;
 import com.chutneytesting.tools.ui.KeyValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -79,7 +77,7 @@ public class ScenarioExecutionUiController {
     @PostMapping(path = "/api/ui/component/execution/v1/{componentId}/{env}")
     public String executeComponent(@PathVariable("componentId") String componentId, @PathVariable("env") String env) throws IOException {
         LOGGER.debug("executeComponent for componentId={{}] on env [{}]", componentId, env);
-        ExecutableComposedStep composedStep = stepRepository.findExecutableById(fromFrontId(Optional.of(componentId)));
+        ExecutableComposedStep composedStep = stepRepository.findExecutableById(componentId);
         String userId = userService.currentUser().getId();
         ScenarioExecutionReport report = executionEngine.execute(composedStep, env, userId);
         return reportObjectMapper.writeValueAsString(report);
@@ -98,7 +96,7 @@ public class ScenarioExecutionUiController {
     @PostMapping(path = "/api/ui/scenario/executionasync/v1/{scenarioId}/{env}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String executeScenarioAsyncWithExecutionParameters(@PathVariable("scenarioId") String scenarioId, @PathVariable("env") String env, @RequestBody List<KeyValue> executionParametersKV) {
         LOGGER.debug("execute async scenario '{}' using parameters '{}'", scenarioId, executionParametersKV);
-        TestCase testCase = testCaseRepository.findById(fromFrontId(Optional.of(scenarioId)));
+        TestCase testCase = testCaseRepository.findById(scenarioId);
         Map<String, String> executionParameters = KeyValue.toMap(executionParametersKV);
         String userId = userService.currentUser().getId();
         return executionEngineAsync.execute(new ExecutionRequest(testCase, env, executionParameters, userId)).toString();

@@ -6,10 +6,9 @@ import static java.util.stream.Collectors.toList;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContent;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentProvider;
-import com.chutneytesting.scenario.domain.compose.ComposableStep;
-import com.chutneytesting.scenario.domain.compose.ComposableStepRepository;
-import com.chutneytesting.scenario.domain.compose.Strategy;
-import com.chutneytesting.tools.orient.ComposableIdUtils;
+import com.chutneytesting.scenario.domain.ComposableStep;
+import com.chutneytesting.scenario.domain.ComposableStepRepository;
+import com.chutneytesting.scenario.domain.Strategy;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,13 +46,13 @@ public class ChutneyComposableStepContent implements ChutneyContentProvider {
     @Override
     public Stream<ChutneyContent> getContent() {
         return repository.findAll().stream()
-            .map(cs -> ComposableIdUtils.fromFrontId(cs.id))
+            .map(cs -> cs.id)
             .map(repository::findById)
             .map(cs -> {
                 ChutneyContent.ChutneyContentBuilder builder = ChutneyContent.builder()
                     .withProvider(provider())
                     .withCategory(category())
-                    .withName("[" + ComposableIdUtils.toFrontId(cs.id) + "]-" + cs.name);
+                    .withName("[" + cs.id + "]-" + cs.name);
                 try {
                     builder
                         .withContent(mapper.writeValueAsString(componentType(cs)))

@@ -27,9 +27,9 @@ import com.chutneytesting.scenario.api.raw.dto.ImmutableTestCaseIndexDto;
 import com.chutneytesting.scenario.api.raw.dto.TestCaseIndexDto;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.TestCaseRepository;
-import com.chutneytesting.scenario.domain.compose.ComposableScenario;
-import com.chutneytesting.scenario.domain.compose.ComposableTestCase;
-import com.chutneytesting.scenario.domain.compose.ComposableTestCaseRepository;
+import com.chutneytesting.scenario.domain.ComposableScenario;
+import com.chutneytesting.scenario.domain.ComposableTestCase;
+import com.chutneytesting.scenario.domain.ComposableTestCaseRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -124,7 +124,7 @@ public class CampaignControllerTest {
 
         // Then
         assertThat(receivedCampaign.getTitle()).isEqualTo(updatedTitle);
-        assertThat(receivedCampaign.getDatasetId()).isEmpty();
+        assertThat(receivedCampaign.getDatasetId()).isNull();
         assertThat(receivedCampaign).usingRecursiveComparison().ignoringFields("title", "datasetId").isEqualTo(existingCampaign);
     }
 
@@ -145,7 +145,7 @@ public class CampaignControllerTest {
 
         // Then
         assertThat(receivedCampaign.getScenarioIds()).isEqualTo(updatedScenarioIds);
-        assertThat(receivedCampaign.getDatasetId()).isEmpty();
+        assertThat(receivedCampaign.getDatasetId()).isNull();
         assertThat(receivedCampaign).usingRecursiveComparison().ignoringFields("scenarioIds", "datasetId").isEqualTo(existingCampaign);
     }
 
@@ -165,7 +165,7 @@ public class CampaignControllerTest {
 
         // Then
         assertThat(receivedCampaign.getTags()).containsExactly("TAG");
-        assertThat(receivedCampaign.getDatasetId()).isEmpty();
+        assertThat(receivedCampaign.getDatasetId()).isNull();
         assertThat(receivedCampaign).usingRecursiveComparison().ignoringFields("tags", "datasetId").isEqualTo(existingCampaign);
     }
 
@@ -348,7 +348,7 @@ public class CampaignControllerTest {
             emptyMap(), emptyList(), "env", false, false, null, null);
         insertCampaign(campaignToCreate);
 
-        when(composableTestCaseRepository.findById("#44:44")).thenReturn(new ComposableTestCase("#44:44", TestCaseMetadataImpl.builder().withId("#44:44").build(), ComposableScenario.builder()
+        when(composableTestCaseRepository.findById("44-44")).thenReturn(new ComposableTestCase("44-44", TestCaseMetadataImpl.builder().withId("44-44").build(), ComposableScenario.builder()
             .withComposableSteps(emptyList())
             .withParameters(emptyMap())
             .build()));

@@ -17,29 +17,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class DatabaseManagementController {
 
     private final DatabaseAdminService jdbcAdminService;
-    private final DatabaseAdminService orientAdminService;
 
-    DatabaseManagementController(DatabaseAdminService jdbcAdminService, DatabaseAdminService orientAdminService) {
+    DatabaseManagementController(DatabaseAdminService jdbcAdminService) {
         this.jdbcAdminService = jdbcAdminService;
-        this.orientAdminService = orientAdminService;
-    }
-
-    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
-    @PostMapping("/execute/orient")
-    public SqlResult executeOrient(@RequestBody String query) {
-        return orientAdminService.execute(query);
     }
 
     @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @PostMapping("/execute/jdbc")
     public SqlResult executeh2(@RequestBody String query) {
         return jdbcAdminService.execute(query);
-    }
-
-    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
-    @PostMapping("/paginate/orient")
-    public PaginatedDto<SqlResult> executeOrient(@RequestBody PaginationRequestWrapperDto<String> paginationRequestWrapperDto) {
-        return orientAdminService.paginate(paginationRequestWrapperDto);
     }
 
     @PreAuthorize("hasAuthority('ADMIN_ACCESS')")

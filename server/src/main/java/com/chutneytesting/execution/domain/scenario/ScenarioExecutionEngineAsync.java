@@ -4,9 +4,9 @@ import static io.reactivex.schedulers.Schedulers.io;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
+import com.chutneytesting.dataset.domain.DataSetHistoryRepository;
 import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;
+import com.chutneytesting.execution.domain.TestCasePreProcessors;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.history.ExecutionHistory.DetachedExecution;
 import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;

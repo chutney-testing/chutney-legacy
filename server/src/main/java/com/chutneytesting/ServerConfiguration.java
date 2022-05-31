@@ -3,13 +3,13 @@ package com.chutneytesting;
 import static com.chutneytesting.task.sql.SqlTask.CONFIGURABLE_NB_LOGGED_ROW;
 
 import com.chutneytesting.campaign.domain.CampaignRepository;
-import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
+import com.chutneytesting.dataset.domain.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditions;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditionsService;
 import com.chutneytesting.engine.api.execution.TestEngine;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
-import com.chutneytesting.execution.domain.compiler.TestCasePreProcessor;
-import com.chutneytesting.execution.domain.compiler.TestCasePreProcessors;
+import com.chutneytesting.execution.domain.TestCasePreProcessor;
+import com.chutneytesting.execution.domain.TestCasePreProcessors;
 import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngineAsync;

@@ -6,7 +6,7 @@ import com.chutneytesting.scenario.api.raw.mapper.GwtScenarioMapper;
 import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
-import com.chutneytesting.execution.domain.compiler.GwtScenarioMarshaller;
+import com.chutneytesting.execution.domain.GwtScenarioMarshaller;
 
 public class TestCaseDataMapper {
 

@@ -3,8 +3,6 @@ package com.chutneytesting.campaign.api;
 import static com.chutneytesting.campaign.api.dto.CampaignMapper.fromDto;
 import static com.chutneytesting.campaign.api.dto.CampaignMapper.toDto;
 import static com.chutneytesting.campaign.api.dto.CampaignMapper.toDtoWithoutReport;
-import static com.chutneytesting.tools.orient.ComposableIdUtils.fromFrontId;
-import static com.chutneytesting.tools.orient.ComposableIdUtils.isComposableDomainId;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import com.chutneytesting.campaign.api.dto.CampaignDto;
@@ -16,8 +14,8 @@ import com.chutneytesting.campaign.domain.CampaignExecutionReport;
 import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.chutneytesting.scenario.api.raw.dto.TestCaseIndexDto;
+import com.chutneytesting.scenario.domain.ComposableTestCaseRepository;
 import com.chutneytesting.scenario.domain.TestCaseRepository;
-import com.chutneytesting.scenario.domain.compose.ComposableTestCaseRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -101,6 +99,9 @@ public class CampaignController {
             .collect(Collectors.toList());
     }
 
+    static boolean isComposableDomainId(String testCaseId) {
+        return testCaseId.contains("-"); //return testCaseId.contains("#") && testCaseId.contains(":");
+    }
     @PreAuthorize("hasAuthority('CAMPAIGN_READ')")
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<CampaignDto> getAllCampaigns() {
@@ -128,7 +129,7 @@ public class CampaignController {
     @PreAuthorize("hasAuthority('SCENARIO_READ')")
     @GetMapping(path = "/scenario/{scenarioId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<CampaignDto> getCampaignsByScenarioId(@PathVariable("scenarioId") String scenarioId) {
-        return campaignRepository.findCampaignsByScenarioId(fromFrontId(scenarioId)).stream()
+        return campaignRepository.findCampaignsByScenarioId(scenarioId).stream()
             .map(CampaignMapper::toDtoWithoutReport)
             .collect(Collectors.toList());
     }

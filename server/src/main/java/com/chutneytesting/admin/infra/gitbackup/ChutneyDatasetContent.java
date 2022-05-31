@@ -5,9 +5,9 @@ import static com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory.T
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContent;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentProvider;
-import com.chutneytesting.design.domain.dataset.DataSet;
-import com.chutneytesting.design.domain.dataset.DataSetHistoryRepository;
-import com.chutneytesting.design.domain.dataset.DataSetRepository;
+import com.chutneytesting.dataset.domain.DataSet;
+import com.chutneytesting.dataset.domain.DataSetHistoryRepository;
+import com.chutneytesting.dataset.domain.DataSetRepository;
 import com.chutneytesting.tools.file.FileUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,9 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 

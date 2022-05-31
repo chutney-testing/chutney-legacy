@@ -17,7 +17,6 @@ import com.chutneytesting.scenario.domain.TestCaseRepository;
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtStep;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
-import com.chutneytesting.scenario.infra.compose.OrientComposableTestCaseRepository;
 import com.chutneytesting.scenario.infra.raw.DatabaseTestCaseRepository;
 import java.time.Instant;
 import java.util.List;
