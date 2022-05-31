@@ -1,8 +1,10 @@
 package com.chutneytesting.task.http.domain;
 
+import static com.chutneytesting.task.common.SecurityUtils.configureKeyStore;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.task.TestSecurityInfo;
+import com.chutneytesting.task.common.SecurityUtils;
 import com.chutneytesting.task.spi.injectable.SecurityInfo;
 import java.lang.reflect.Field;
 import java.security.PrivateKey;
@@ -28,7 +30,7 @@ class HttpClientFactoryTest {
             .build();
 
         // When
-        HttpClientFactory.configureKeyStore(Collections.emptyMap(), security, context);
+        configureKeyStore(Collections.emptyMap(), security, context);
 
         // Then
         PrivateKey actual = retrieveLoadedPrivateKey(context, "server");
@@ -45,7 +47,7 @@ class HttpClientFactoryTest {
         properties.put("keyPassword", "key_pwd");
 
         // When
-        HttpClientFactory.configureKeyStore(properties, TestSecurityInfo.builder().build(), context);
+        configureKeyStore(properties, TestSecurityInfo.builder().build(), context);
 
         // Then
         PrivateKey actual = retrieveLoadedPrivateKey(context, "server");
