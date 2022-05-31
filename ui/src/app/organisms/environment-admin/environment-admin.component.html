@@ -49,6 +49,7 @@
         <div class="left-panel">
             <input name="search" type="text" class="form-control mb-2" placeholder="Search target" [(ngModel)]="targetFilter"/>
             <table class="table table-striped table-hover">
+                <tbody>
                     <tr *ngFor="let target of targets | searchTextPipe: targetFilter:['name']" (click)="selectTarget(target)"  class="pointer" >
                         <td  style="width:325px;">
                             {{target.name}}
@@ -59,6 +60,7 @@
                             </small>
                         </td>
                     </tr>
+                </tbody>
             </table>
         </div>
         <div class="col">

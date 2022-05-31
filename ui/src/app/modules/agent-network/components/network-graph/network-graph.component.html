@@ -14,23 +14,24 @@
             <th scope="col">{{ 'admin.agents.graph.agents.reach' | translate }}</th>
         </tr>
         </thead>
-
-        <tr *ngFor="let agent of agentNodes">
-            <td>
-                {{ agent.info.name }}
-            </td>
-            <td>
-                {{ agent.info.host }} : {{ agent.info.port }}
-            </td>
-            <td>
-                <ng-container *ngIf="agent.reachableAgents.length > 0">
-                    <p *ngFor="let agentReachable of agent.reachableAgents">
-                        {{ agentReachable }}
-                    </p>
-                </ng-container>
-                <span *ngIf="agent.reachableAgents.length == 0">{{ 'admin.agents.graph.agents.noreach' | translate }}</span>
-            </td>
-        </tr>
+        <tbody>
+            <tr *ngFor="let agent of agentNodes">
+                <td>
+                    {{ agent.info.name }}
+                </td>
+                <td>
+                    {{ agent.info.host }} : {{ agent.info.port }}
+                </td>
+                <td>
+                    <ng-container *ngIf="agent.reachableAgents.length > 0">
+                        <p *ngFor="let agentReachable of agent.reachableAgents">
+                            {{ agentReachable }}
+                        </p>
+                    </ng-container>
+                    <span *ngIf="agent.reachableAgents.length == 0">{{ 'admin.agents.graph.agents.noreach' | translate }}</span>
+                </td>
+            </tr>
+        </tbody>
     </table>
 </fieldset>
 
