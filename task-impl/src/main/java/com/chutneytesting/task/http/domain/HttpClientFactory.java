@@ -1,27 +1,19 @@
 package com.chutneytesting.task.http.domain;
 
+import static com.chutneytesting.task.common.SecurityUtils.buildSslContext;
+
 import com.chutneytesting.task.spi.injectable.Target;
-import java.io.IOException;
 import java.net.ProxySelector;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Stream;
 import javax.net.ssl.SSLContext;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
-import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -57,7 +49,13 @@ public class HttpClientFactory {
     }
 
     private static RestTemplate buildRestTemplate(Target target, int timeout) {
-        SSLContext sslContext = buildSslContext(target);
+
+        SSLContext sslContext;
+        try {
+            sslContext = buildSslContext(target).build();
+        } catch (GeneralSecurityException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
 
         SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
 
@@ -78,17 +76,6 @@ public class HttpClientFactory {
         return restTemplate;
     }
 
-    private static SSLContext buildSslContext(Target target) {
-        try {
-            SSLContextBuilder sslContextBuilder = new SSLContextBuilder();
-            configureTrustStore(target, sslContextBuilder);
-            configureKeyStore(target, sslContextBuilder);
-            return sslContextBuilder.build();
-        } catch (GeneralSecurityException | IOException e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
-
     private static void removeErrorHandler(RestTemplate restTemplate) {
         restTemplate.setErrorHandler(new NoOpResponseErrorHandler());
     }
@@ -100,29 +87,6 @@ public class HttpClientFactory {
             restTemplate.getInterceptors().add(
                 new BasicAuthenticationInterceptor(user, password, StandardCharsets.UTF_8)
             );
-        }
-    }
-
-    static void configureKeyStore(Target target, SSLContextBuilder sslContextBuilder) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException {
-        Optional<String> keystore = target.keyStore();
-        String keystorePassword = target.keyStorePassword().orElse("");
-        String keyPassword = target.keyPassword().orElse(keystorePassword);
-        if (keystore.isPresent()) {
-            KeyStore store = KeyStore.getInstance(KeyStore.getDefaultType());
-            store.load(Paths.get(keystore.get()).toUri().toURL().openStream(), keystorePassword.toCharArray());
-            sslContextBuilder.loadKeyMaterial(store, keyPassword.toCharArray());
-        }
-    }
-
-    static void configureTrustStore(Target target, SSLContextBuilder sslContextBuilder) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
-        Optional<String> truststore = target.trustStore();
-        String truststorePassword = target.trustStorePassword().orElse("");
-        if (truststore.isPresent()) {
-            KeyStore trustMaterial = KeyStore.getInstance(KeyStore.getDefaultType());
-            trustMaterial.load(Paths.get(truststore.get()).toUri().toURL().openStream(), truststorePassword.toCharArray());
-            sslContextBuilder.loadTrustMaterial(trustMaterial, new TrustSelfSignedStrategy());
-        } else {
-            sslContextBuilder.loadTrustMaterial(null, (chain, authType) -> true);
         }
     }
 
