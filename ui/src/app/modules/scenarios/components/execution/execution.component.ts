@@ -248,7 +248,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     private updateStepExecutionReport(oldStepExecutionReport: StepExecutionReport, newStepExecutionReport: StepExecutionReport, depths: Array<number>) {
-        if (oldStepExecutionReport.status !== newStepExecutionReport.status) {
+        if (oldStepExecutionReport.status !== newStepExecutionReport.status || (newStepExecutionReport.status === 'FAILURE' && oldStepExecutionReport.strategy === 'retry-with-timeout')) {
             if (depths.length === 0) {
                 this.scenarioExecutionReport.report = newStepExecutionReport;
             } else if (depths.length === 1) {
@@ -278,6 +278,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
         oldReport.duration = report.duration;
         oldReport.status = report.status;
         oldReport.startDate = report.startDate;
+        oldReport.information = report.information;
         oldReport.errors = report.errors;
         oldReport.type = report.type;
         oldReport.strategy = report.strategy;
