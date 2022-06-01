@@ -31,7 +31,7 @@
         </div>
         <ng-container *ngIf="scenarioExecutionReport?.report">
             <div class="row steps">
-                <div class="badge-container w-100">
+                <div class="badge-container w-85">
                     <span>
                         <h2 class="d-inline m-0">
                             <chutney-execution-badge [status]="scenarioExecutionReport.report.status" [spin]="true"></chutney-execution-badge>
@@ -72,7 +72,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="btn-group float-right">
+                <div class="btn-group float-end w-15">
                     <button type="button" class="btn btn-sm btn-outline-info m-2" [ngClass]="!toggleScenarioInfo ? 'active' : ''" (click)="expandAllInfo()">
                         <span class="btn-label"> {{ 'scenarios.execution.step.actions.informations' | translate }}
                         </span>

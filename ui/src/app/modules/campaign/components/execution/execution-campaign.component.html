@@ -102,7 +102,7 @@
                         class="execution-id">#{{report.executionId}}</span></i>
                 </div>
                 <div class="col-lg-9 time">
-                    <span *ngIf="report.partialExecution" class="fa fa-sync float-right"></span>
+                    <span *ngIf="report.partialExecution" class="fa fa-sync float-end"></span>
                     <em *ngIf="!isOlderThan(report.startDate, 4)">{{report.startDate | amCalendar:{sameDay: '['.concat('scenarios.execution.history.time' | translate).concat('] h:mm')} }}</em>
                     <em *ngIf="isOlderThan(report.startDate, 4)">{{report.startDate | amDateFormat: 'DD MMM. YYYY HH:mm' }}</em>
                     <div><em>({{ 'global.time.in' | translate }} {{report.duration | amDuration:'ms' }})</em></div>

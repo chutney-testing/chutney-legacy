@@ -213,3 +213,11 @@ button.btn {
 label {
     margin-bottom: 0.5rem;
 }
+
+$width: 5;
+@while $width <= 100 {
+    .w-#{$width} {
+        width: $width * 1%;
+    }
+    $width: $width + 5;
+}

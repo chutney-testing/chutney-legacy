@@ -1,5 +1,8 @@
 <div class="mt-3">
-    <div class="float-right">
+    <button type="button" class="btn btn-info" (click)="insertNewKeyValue()">
+        {{ 'global.actions.add' | translate }} <span class="fa fa-grip-lines" aria-hidden="true"></span>
+    </button>
+    <div class="float-end">
         <button type="button" class="btn btn-info" (click)="exportKeyValue()">
             <span class="fa fa-file-csv" aria-hidden="true"></span> {{ 'global.actions.export' | translate }}
         </button>
@@ -8,11 +11,6 @@
             <input class="input-file" type="file" name="file" multiple="false"
                    (change)="importKeyValue($event.target.files)"/>
         </div>
-    </div>
-    <div class="row">
-        <button type="button" class="btn btn-info" (click)="insertNewKeyValue()">
-            {{ 'global.actions.add' | translate }} <span class="fa fa-grip-lines" aria-hidden="true"></span>
-        </button>
     </div>
 
     <div [formGroup]="keyValuesForm" *ngFor="let keyValue of keyValuesForm.controls; let i = index">
