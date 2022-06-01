@@ -15,6 +15,7 @@ public interface DelegateScenarioRepository {
      */
     String save(TestCaseData scenario);
 
+    // infra object in domain
     Optional<TestCaseData> findById(String scenarioId);
 
     List<TestCaseMetadata> findAll();

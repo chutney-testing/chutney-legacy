@@ -11,8 +11,6 @@ public interface ComposableStepRepository {
 
     ComposableStep findById(final String recordId);
 
-    PaginatedDto<ComposableStep> find(PaginationRequestParametersDto paginationParameters, SortRequestParametersDto sortParameters, ComposableStep filters);
-
     List<ParentStepId> findParents(String stepId);
 
     List<ComposableStep> findAll();

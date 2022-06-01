@@ -7,7 +7,7 @@ import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.execution.domain.GwtScenarioMarshaller;
-
+// call it in repo instead of repo aggregator
 public class TestCaseDataMapper {
 
     private static final GwtScenarioMarshaller marshaller = new GwtScenarioMapper();
