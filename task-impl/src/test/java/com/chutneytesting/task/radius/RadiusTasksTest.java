@@ -127,10 +127,10 @@ class RadiusTasksTest {
             .withProperty("accountingPort", valueOf(0))
             .build();
         return new Object[]{
-            new Object[]{"No target", null, "userName", "password", 10},
+            new Object[]{"No target", null, "userName", "password", 9},
             new Object[]{"No userName", testTarget, "", "password", 1},
             new Object[]{"No password", testTarget, "userName", "", 1},
-            new Object[]{"No url", noUrl, "userName", "password", 3},
+            new Object[]{"No url", noUrl, "userName", "password", 2},
             new Object[]{"No secret", noSecret, "userName", "password", 1},
             new Object[]{"No authenticatePort", noAuthenticatePort, "userName", "password", 2},
             new Object[]{"No accountingPort", noAccountingPort, "userName", "password", 2},
@@ -180,11 +180,11 @@ class RadiusTasksTest {
             .withProperty("accountingPort", valueOf(0))
             .build();
         return new Object[]{
-            new Object[]{"No target", null, "userName", 1, 10},
+            new Object[]{"No target", null, "userName", 1, 9},
             new Object[]{"No userName", testTarget, "", 1, 1},
             new Object[]{"No accountingType", testTarget, "userName", null, 1},
             new Object[]{"Invalid accountingType", testTarget, "userName", 16, 1},
-            new Object[]{"No url", noUrl, "userName", 1, 3},
+            new Object[]{"No url", noUrl, "userName", 1, 2},
             new Object[]{"No secret", noSecret, "userName", 1, 1},
             new Object[]{"No authenticatePort", noAuthenticatePort, "userName", 1, 2},
             new Object[]{"No accountingPort", noAccountingPort, "userName", 1, 2},

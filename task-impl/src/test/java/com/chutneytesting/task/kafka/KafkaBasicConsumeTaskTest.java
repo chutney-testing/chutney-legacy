@@ -95,7 +95,7 @@ public class KafkaBasicConsumeTaskTest {
         KafkaBasicConsumeTask defaultTask = new KafkaBasicConsumeTask(null, null, null, null, null, null, null, null, null, null, null);
         List<String> errors = defaultTask.validateInputs();
 
-        assertThat(errors.size()).isEqualTo(9);
+        assertThat(errors.size()).isEqualTo(8);
         SoftAssertions softly = new SoftAssertions();
 
         softly.assertThat(errors.get(0)).isEqualTo("No topic provided (String)");
@@ -106,9 +106,8 @@ public class KafkaBasicConsumeTaskTest {
 
         softly.assertThat(errors.get(4)).isEqualTo("No target provided");
         softly.assertThat(errors.get(5)).isEqualTo("[Target name is blank] not applied because of exception java.lang.NullPointerException(null)");
-        softly.assertThat(errors.get(6)).isEqualTo("[No url defined on the target] not applied because of exception java.lang.NullPointerException(null)");
-        softly.assertThat(errors.get(7)).isEqualTo("[Target url is not valid] not applied because of exception java.lang.NullPointerException(null)");
-        softly.assertThat(errors.get(8)).isEqualTo("[Target url has an undefined host] not applied because of exception java.lang.NullPointerException(null)");
+        softly.assertThat(errors.get(6)).isEqualTo("[Target url is not valid] not applied because of exception java.lang.NullPointerException(null)");
+        softly.assertThat(errors.get(7)).isEqualTo("[Target url has an undefined host] not applied because of exception java.lang.NullPointerException(null)");
 
         softly.assertAll();
     }

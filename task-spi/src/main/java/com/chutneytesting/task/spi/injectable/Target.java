@@ -10,8 +10,6 @@ public interface Target {
 
     String name();
 
-    String url();
-
     URI uri();
 
     Optional<String> property(String key);

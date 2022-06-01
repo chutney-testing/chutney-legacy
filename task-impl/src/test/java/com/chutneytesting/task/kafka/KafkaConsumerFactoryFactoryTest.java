@@ -80,7 +80,7 @@ class KafkaConsumerFactoryFactoryTest {
             ConsumerFactory<String, String> consumerFactoryFactory = new KafkaConsumerFactoryFactory().create(target, "", emptyMap());
 
             assertThat(consumerFactoryFactory.getConfigurationProperties())
-                .hasEntrySatisfying(BOOTSTRAP_SERVERS_CONFIG, (v) -> assertThat(v).isEqualTo(target.url()));
+                .hasEntrySatisfying(BOOTSTRAP_SERVERS_CONFIG, (v) -> assertThat(v).isEqualTo(target.uri().toString()));
         }
     }
 

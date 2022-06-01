@@ -27,7 +27,8 @@ public class SqlTaskTest {
 
     private final Target sqlTarget = TestTarget.TestTargetBuilder.builder()
         .withTargetId("sql")
-        .withUrl("jdbc:h2:mem:" + DB_NAME)
+        .withUrl("jdbc:h2:mem")
+        .withProperty("jdbcUrl", "jdbc:h2:mem:" + DB_NAME)
         .withProperty("user", "sa")
         .build();
 

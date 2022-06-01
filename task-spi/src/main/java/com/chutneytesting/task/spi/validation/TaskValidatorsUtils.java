@@ -18,7 +18,6 @@ public class TaskValidatorsUtils {
         return of(target)
             .validate(Objects::nonNull, "No target provided")
             .validate(Target::name, StringUtils::isNotBlank, "Target name is blank")
-            .validate(Target::url, StringUtils::isNotBlank, "No url defined on the target")
             .validate(Target::uri, noException -> true, "Target url is not valid")
             .validate(Target::host, host -> host != null && !host.isEmpty(), "Target url has an undefined host");
     }

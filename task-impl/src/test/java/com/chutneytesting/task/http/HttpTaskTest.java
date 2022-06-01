@@ -21,6 +21,7 @@ import com.chutneytesting.task.spi.injectable.Target;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
+import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -208,12 +209,11 @@ public class HttpTaskTest {
 
     private Target mockTarget(String targetUrl) {
         Target targetMock = mock(Target.class);
-        when(targetMock.url()).thenReturn(targetUrl);
+        when(targetMock.uri()).thenReturn(URI.create(targetUrl));
         when(targetMock.keyStore()).thenReturn(empty());
         when(targetMock.keyStorePassword()).thenReturn(empty());
         when(targetMock.trustStore()).thenReturn(empty());
         when(targetMock.trustStorePassword()).thenReturn(empty());
         return targetMock;
     }
-
 }

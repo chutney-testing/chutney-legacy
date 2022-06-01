@@ -16,7 +16,7 @@ public class DefaultSqlClientFactory implements SqlClientFactory {
 
     private SqlClient doCreate(Target target) {
         Properties props = new Properties();
-        props.put("jdbcUrl", target.property("jdbcUrl").orElse(target.url()));
+        props.put("jdbcUrl", target.property("jdbcUrl").orElse(target.uri().toString()));
         target.user().ifPresent(user -> props.put("username", user));
         target.userPassword().ifPresent(password -> props.put("password", password));
 

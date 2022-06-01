@@ -37,7 +37,7 @@ public class FinallyActionMapperTest {
         assertThat(stepDefinition.getTarget()).isPresent();
         Target targetCopy = stepDefinition.getTarget().get();
         assertThat(targetCopy.name()).isEqualTo("test-target");
-        assertThat(targetCopy.url()).isEqualTo("proto://host:12345");
+        assertThat(targetCopy.uri().toString()).isEqualTo("proto://host:12345");
         assertThat(targetCopy.user()).isEmpty();
         assertThat(targetCopy.userPassword()).isEmpty();
         assertThat(stepDefinition.getStrategy()).hasValueSatisfying(s -> {

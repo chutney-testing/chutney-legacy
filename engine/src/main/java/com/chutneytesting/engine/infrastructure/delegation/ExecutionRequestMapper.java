@@ -41,7 +41,7 @@ class ExecutionRequestMapper {
     private static TargetExecutionDto extractTarget(StepDefinition definition) {
         return definition.getTarget().map(t -> (TargetImpl) t).map(t -> new TargetExecutionDto(
                 t.name(),
-                t.url,
+                t.uri().toString(),
                 t.properties,
                 t.agents
             ))

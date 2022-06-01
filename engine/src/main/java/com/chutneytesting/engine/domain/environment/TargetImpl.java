@@ -18,14 +18,12 @@ public class TargetImpl implements Target {
     public static final TargetImpl NONE = TargetImpl.builder().build();
 
     public final String name;
-    public final String url;
     public final URI uri;
     public final Map<String, String> properties;
     public final List<NamedHostAndPort> agents;
 
     private TargetImpl(String name, String url, Map<String, String> properties, List<NamedHostAndPort> agents) {
         this.name = name;
-        this.url = url;
         this.uri = uriFrom(url);
         this.properties = properties;
         this.agents = agents;
@@ -38,11 +36,6 @@ public class TargetImpl implements Target {
     @Override
     public String name() {
         return name;
-    }
-
-    @Override
-    public String url() {
-        return url;
     }
 
     @Override
@@ -102,7 +95,7 @@ public class TargetImpl implements Target {
 
         public TargetBuilder copyOf(TargetImpl target) {
             this.name = target.name;
-            this.url = target.url;
+            this.url = target.uri().toString();
             this.properties = target.properties;
             this.agents = target.agents;
             return this;

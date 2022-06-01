@@ -56,7 +56,6 @@ public class JmsSenderTaskTest {
         when(targetMock.prefixedProperties(any())).thenReturn(props);
         when(targetMock.property("connectionFactoryName")).thenReturn(empty());
         when(targetMock.prefixedProperties(any(), anyBoolean())).thenReturn(emptyMap());
-        when(targetMock.url()).thenReturn("unused URL");
         when(targetMock.user()).thenReturn(empty());
     }
 

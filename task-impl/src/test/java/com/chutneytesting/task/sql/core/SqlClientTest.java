@@ -26,7 +26,8 @@ public class SqlClientTest {
     private static final String DB_NAME = "test_" + SqlClientTest.class;
     private final Target sqlTarget = TestTarget.TestTargetBuilder.builder()
         .withTargetId("sql")
-        .withUrl("jdbc:h2:mem:" + DB_NAME)
+        .withUrl("jdbc:h2:mem")
+        .withProperty("jdbcUrl", "jdbc:h2:mem:" + DB_NAME)
         .withProperty("user", "sa")
         .build();
 

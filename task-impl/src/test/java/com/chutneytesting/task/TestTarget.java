@@ -28,11 +28,6 @@ public class TestTarget implements Target {
     }
 
     @Override
-    public String url() {
-        return url;
-    }
-
-    @Override
     public URI uri() {
         try {
             return new URI(url);

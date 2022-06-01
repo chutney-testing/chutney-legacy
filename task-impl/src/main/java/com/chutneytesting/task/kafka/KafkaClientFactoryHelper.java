@@ -11,6 +11,6 @@ final class KafkaClientFactoryHelper {
     static String resolveBootStrapServerConfig(Target target) {
         return target.property(BOOTSTRAP_SERVERS_CONFIG)
             .or(() -> of(target.uri()).map(URI::getAuthority))
-            .orElseGet(target::url);
+            .orElseGet(() -> target.uri().toString());
     }
 }

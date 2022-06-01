@@ -47,13 +47,13 @@ public class HttpClientFactory {
     public HttpClient create(Target target, ParameterizedTypeReference<String> responseType, int timeout) {
         RestTemplate restTemplate = buildRestTemplate(target, timeout);
 
-        return (httpMethod, resource, input) -> restTemplate.exchange(target.url() + resource, httpMethod, input, responseType);
+        return (httpMethod, resource, input) -> restTemplate.exchange(target.uri().toString() + resource, httpMethod, input, responseType);
     }
 
     public HttpClient create(Target target, Class<String> responseType, int timeout) {
         RestTemplate restTemplate = buildRestTemplate(target, timeout);
 
-        return (httpMethod, resource, input) -> restTemplate.exchange(target.url() + resource, httpMethod, input, responseType);
+        return (httpMethod, resource, input) -> restTemplate.exchange(target.uri().toString() + resource, httpMethod, input, responseType);
     }
 
     private static RestTemplate buildRestTemplate(Target target, int timeout) {

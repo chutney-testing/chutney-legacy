@@ -36,14 +36,9 @@ public class HardcodedTarget implements Target {
     }
 
     @Override
-    public String url() {
-        return "ssh://" + host + ":" + port;
-    }
-
-    @Override
     public URI uri() {
         try {
-            return new URI(url());
+            return new URI("ssh://" + host + ":" + port);
         } catch (URISyntaxException e) {
             throw new IllegalStateException(e);
         }

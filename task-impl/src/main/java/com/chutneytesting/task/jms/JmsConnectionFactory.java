@@ -53,7 +53,7 @@ public class JmsConnectionFactory {
 
     private <T> CloseableResource<T> obtainCloseableResource(Target target, String destinationName, JmsThrowingBiFunction<Session, Destination, T> resourceBuilder) throws UncheckedJmsException {
         Hashtable<String, String> environmentProperties = new Hashtable<>();
-        environmentProperties.put(Context.PROVIDER_URL, target.url());
+        environmentProperties.put(Context.PROVIDER_URL, target.uri().toString());
         environmentProperties.putAll(target.prefixedProperties("java.naming."));
         environmentProperties.putAll(target.prefixedProperties("jndi.", true));
 
@@ -85,9 +85,9 @@ public class JmsConnectionFactory {
         } catch (InvalidSelectorException e) {
             throw new UncheckedJmsException("Cannot parse selector " + e.getMessage(), e);
         } catch (NameNotFoundException e) {
-            throw new UncheckedJmsException("Cannot find destination " + e.getMessage() + " on jms server " + target.name() + " (" + target.url() + ")", e);
+            throw new UncheckedJmsException("Cannot find destination " + e.getMessage() + " on jms server " + target.name() + " (" + target.uri().toString() + ")", e);
         } catch (NamingException | JMSException e) {
-            throw new UncheckedJmsException("Cannot connect to jms server " + target.name() + " (" + target.url() + "): " + e.getMessage(), e);
+            throw new UncheckedJmsException("Cannot connect to jms server " + target.name() + " (" + target.uri().toString() + "): " + e.getMessage(), e);
         }
     }
 
