@@ -18,7 +18,8 @@ import java.util.stream.Stream;
 
 public class FileUtils {
 
-    private FileUtils() {}
+    private FileUtils() {
+    }
 
     public static void initFolder(Path folderPath) throws UncheckedIOException {
         try {
@@ -26,10 +27,11 @@ public class FileUtils {
         } catch (IOException e) {
             throw new IllegalStateException("Cannot create directory: " + folderPath);
         }
-        Path testPath = folderPath.resolve("test");
+        int rand = (int) (Math.random() * 10000);
+        Path testPath = folderPath.resolve("test" + rand);
         if (!Files.exists(testPath)) {
             try {
-                Files.createFile(folderPath.resolve("test"));
+                Files.createFile(testPath);
             } catch (IOException e) {
                 throw new UncheckedIOException("Unable to write in directory: " + folderPath, e);
             }
