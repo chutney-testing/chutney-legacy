@@ -32,9 +32,6 @@
                             <fileset>
                                 <directory>${basedir}/dist</directory>
                             </fileset>
-                            <fileset>
-                                <directory>${basedir}/node</directory>
-                            </fileset>
                         </filesets>
                     </configuration>
                 </plugin>
