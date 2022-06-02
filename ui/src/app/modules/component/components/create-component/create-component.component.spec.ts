@@ -54,7 +54,7 @@ describe('CreateComponent...', () => {
                     ActionEditComponent
                 ],
                 providers: [
-                   // {provide: DragulaService, useValue: dragulaService}
+                    {provide: DragulaService, useValue: dragulaService}
                 ]
             }).compileComponents();
         });
