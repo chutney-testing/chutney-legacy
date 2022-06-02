@@ -13,27 +13,20 @@ public class ConnectionFactoryFactory {
     public ConnectionFactory create(Target target) {
         ConnectionFactory connectionFactory = new ConnectionFactory();
         try {
-            connectionFactory.setUri(target.uri());
-
-            if ("amqps".equalsIgnoreCase(target.uri().getScheme())) {
+            if ("amqps".equalsIgnoreCase(target.uri().getScheme()) && (target.keyStore().isPresent() || target.trustStore().isPresent())) {
                 SSLContext sslContext = buildSslContext(target).build();
                 connectionFactory.useSslProtocol(sslContext);
             }
 
-            target.property("sslProtocol")
-                .ifPresent(protocol -> {
-                    try {
-                        connectionFactory.useSslProtocol(protocol);
-                    } catch (GeneralSecurityException e) {
-                        throw new IllegalArgumentException(e.getMessage(), e);
-                    }
-                });
+            connectionFactory.setUri(target.uri());
 
         } catch (URISyntaxException | GeneralSecurityException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
+
         target.user().ifPresent(connectionFactory::setUsername);
         target.userPassword().ifPresent(connectionFactory::setPassword);
+
         return connectionFactory;
     }
 }

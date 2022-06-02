@@ -21,6 +21,7 @@ public class SecurityUtils {
     public static SSLContextBuilder buildSslContext(Target target) {
         try {
             SSLContextBuilder sslContextBuilder = new SSLContextBuilder();
+            target.property("sslProtocol").ifPresent(sslContextBuilder::setProtocol);
             configureTrustStore(target, sslContextBuilder);
             configureKeyStore(target, sslContextBuilder);
             return sslContextBuilder;
