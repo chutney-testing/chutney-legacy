@@ -65,7 +65,7 @@ public class JsonAssertTask implements Task {
                         // hack hjson : actualValue or expectedValue is a String and the other is a Number
                         result = new BigDecimal(expected.toString()).compareTo(new BigDecimal(actualValue.toString())) == 0;
                     } else {
-                        result = expected.equals(actualValue);
+                        result = expected.toString().equals(actualValue.toString());
                     }
                     if (!result) {
                         logger.error("On path [" + path + "], found [" + actualValue + "], expected was [" + expected + "]");

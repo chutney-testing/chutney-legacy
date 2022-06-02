@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 import com.chutneytesting.task.TestLogger;
+import com.chutneytesting.task.assertion.JsonCompareTask.COMPARE_MODE;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Logger;
 import java.util.HashMap;
@@ -120,6 +121,22 @@ public class JsonAssertTaskTest {
 
         // Given
         String fakeActualResult = "{\"something\":{\"value\":400.0}}";
+
+        // When
+        JsonAssertTask jsonAssertTask = new JsonAssertTask(mock(Logger.class), fakeActualResult, expected);
+        TaskExecutionResult result = jsonAssertTask.execute();
+
+        // Then
+        assertThat(result.status).isEqualTo(Success);
+    }
+
+    @Test
+    void should_assert_enum_as_string() {
+        Map<String, Object> expected = new HashMap<>();
+        expected.put("$.something.value", COMPARE_MODE.STRICT);
+
+        // Given
+        String fakeActualResult = "{\"something\":{\"value\":\"STRICT\"}}";
 
         // When
         JsonAssertTask jsonAssertTask = new JsonAssertTask(mock(Logger.class), fakeActualResult, expected);
