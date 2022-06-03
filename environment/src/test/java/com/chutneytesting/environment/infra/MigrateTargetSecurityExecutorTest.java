@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -15,11 +16,10 @@ import org.junit.jupiter.api.io.TempDir;
 public class MigrateTargetSecurityExecutorTest {
 
     @Test
-    void should_migrate_environment_targets_with_security_nodes_to_simple_properties(@TempDir Path envRootPath) throws Exception {
+    void should_migrate_environment_targets_with_security_nodes_to_simple_properties(@TempDir Path envRootPath) {
         // Given
-        Path envPath = envRootPath.resolve("TO_MIGRATE.json");
+        Path envPath = copyToMigrateEnvTo(envRootPath);
         JsonFilesEnvironmentRepository environmentRepository = new JsonFilesEnvironmentRepository(envRootPath.toString());
-        Files.copy(Path.of("target", "test-classes", "envs", "TO_MIGRATE.json"), envPath, StandardCopyOption.REPLACE_EXISTING);
 
         // When
         MigrateTargetSecurityExecutor sut = new MigrateTargetSecurityExecutor(environmentRepository);
@@ -29,8 +29,26 @@ public class MigrateTargetSecurityExecutorTest {
         assertThatEnvironmentTargetsHaveSecurityPropertiesCopiedInPropertiesNode(envPath);
     }
 
-    public static void assertThatEnvironmentTargetsHaveSecurityPropertiesCopiedInPropertiesNode(Path envPath) throws IOException {
-        JsonNode migratedEnvRootNode = new ObjectMapper().readTree(Files.readAllBytes(envPath));
+    public static Path copyToMigrateEnvTo(Path tmpPath) {
+        try {
+            String toMigrateEnv = "TO_MIGRATE.json";
+            Path envPath = tmpPath.resolve(toMigrateEnv);
+            Files.copy(Path.of("target", "test-classes", "envs", toMigrateEnv), envPath, StandardCopyOption.REPLACE_EXISTING);
+            return envPath;
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    public static void assertThatEnvironmentTargetsHaveSecurityPropertiesCopiedInPropertiesNode(Path envPath) {
+        JsonNode migratedEnvRootNode;
+        try {
+            migratedEnvRootNode = new ObjectMapper().readTree(Files.readAllBytes(envPath));
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+
+        assert migratedEnvRootNode != null;
         migratedEnvRootNode.get("targets").forEach(target -> {
             assertThat(target.get("url").textValue()).isEqualTo("url");
             assertThat(target.get("security")).isNull();

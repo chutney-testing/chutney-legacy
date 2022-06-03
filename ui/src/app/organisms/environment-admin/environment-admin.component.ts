@@ -26,6 +26,7 @@ export class EnvironmentAdminComponent implements OnInit {
     selectedEnvironment: EnvironmentMetadata;
     envForm: FormGroup;
     envUpdate = false;
+    help: boolean;
     private reloading = false;
 
     constructor(

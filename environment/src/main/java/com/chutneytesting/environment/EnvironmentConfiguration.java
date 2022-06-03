@@ -9,12 +9,11 @@ import com.chutneytesting.environment.infra.MigrateTargetSecurityExecutor;
 public class EnvironmentConfiguration {
 
     private final EnvironmentRepository environmentRepository;
-    private final EnvironmentService environmentService;
     private final EmbeddedEnvironmentApi environmentApi;
 
     public EnvironmentConfiguration(String storeFolderPath) {
         this.environmentRepository = createEnvironmentRepository(storeFolderPath);
-        this.environmentService = createEnvironmentService(environmentRepository);
+        EnvironmentService environmentService = createEnvironmentService(environmentRepository);
         this.environmentApi = new EmbeddedEnvironmentApi(environmentService);
 
         migrateTargetSecurity();
@@ -36,13 +35,5 @@ public class EnvironmentConfiguration {
 
     public EmbeddedEnvironmentApi getEmbeddedEnvironmentApi() {
         return environmentApi;
-    }
-
-    public EnvironmentRepository getEnvironmentRepository() {
-        return environmentRepository;
-    }
-
-    public EnvironmentService getEnvironmentService() {
-        return environmentService;
     }
 }

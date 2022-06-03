@@ -52,10 +52,12 @@ public class MigrateTargetSecurityExecutor {
             try {
                 byte[] bytes = Files.readAllBytes(environmentPath);
                 JsonNode envRootNode = om.readTree(bytes);
-                Iterator<JsonNode> targetsIter = envRootNode.get("targets").elements();
-                while (targetsIter.hasNext()) {
-                    if (targetsIter.next().hasNonNull("security")) {
-                        return true;
+                if (envRootNode.hasNonNull("targets")) {
+                    Iterator<JsonNode> targetsIter = envRootNode.get("targets").elements();
+                    while (targetsIter.hasNext()) {
+                        if (targetsIter.next().hasNonNull("security")) {
+                            return true;
+                        }
                     }
                 }
             } catch (IOException e) {

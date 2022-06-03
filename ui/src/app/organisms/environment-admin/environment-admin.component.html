@@ -82,6 +82,19 @@
 
                         <chutney-forms-input-line [id]="'targetUrl'" [label]="'Url'" [placeholder]="'protocol://server:port'" [(model)]="selectedTarget.url" [validate]="validationService.isValidUrl.bind(validationService)"></chutney-forms-input-line>
                         <div class="mt-2">
+                            <button class="btn btn-sm btn-info float-right ml-1" title="{{'global.actions.help' | translate}}" (click)="help = !help">
+                                {{'global.actions.help' | translate}} <span class="fa fa-info"></span>
+                            </button>
+                            <div *ngIf="help">
+                                <pre class="text-white bg-info rounded overflow-auto">
+
+  Some properties that could be defined :
+   - user / username / password / userPassword              : user id to be used and associated password
+   - trustStore / trustStorePassword                        : path to a truststore and associated password
+   - keyStore / keyStorePassword / keyPassword              : path to a keystore and associated passwords
+   - privateKey / privateKeyPassword / privateKeyPassphrase : path to a keystore and associated password
+                                </pre>
+                            </div>
                             <chutney-property-table-panel [entries]="selectedTarget.properties"></chutney-property-table-panel>
                         </div>
                     </div>
