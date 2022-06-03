@@ -278,11 +278,4 @@
             <span>{{ 'campaigns.execution.scenarios.empty' | translate }}</span>
         </div>
     </div>
-    <div *ngIf="!currentCampaignExecutionReport && lineChartData.datasets.length" class="col-md-3">
-        <canvas baseChart
-                [type]="'line'"
-                [data]="lineChartData"
-                [options]="lineChartOptions">
-      </canvas>
-    </div>
 </div>

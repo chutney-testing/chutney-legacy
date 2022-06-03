@@ -6,7 +6,6 @@ import { FileSaverService } from 'ngx-filesaver';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 
 import { combineLatest, Observable, Subscription, timer } from 'rxjs';
-import { ChartData, ChartOptions, ChartType } from 'chart.js';
 
 import * as JSZip from 'jszip';
 
@@ -68,28 +67,6 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
     errorMessage: any;
 
     private subscriptionLoadCampaign: Subscription;
-
-
-    lineChartData: ChartData<'line'> = {
-        labels: [],
-        datasets: []
-    };
-    lineChartOptions: ChartOptions<'line'> = {
-        responsive: true,
-    };
-    lineChartColors: any[] = [
-        {
-            borderColor: 'green',
-            backgroundColor: 'rgba(0,255,0,0.1)'
-        },
-        {
-            borderColor: 'red',
-            backgroundColor: 'rgba(255,0,0,0.3)'
-        },
-    ];
-    lineChartLegend = false;
-    chartType: ChartType = 'line';
-    public lineChartPlugins = [];
 
     Authorization = Authorization;
 
@@ -174,7 +151,6 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
                     }
                 );
             }
-            this.setChartData(campaign.campaignExecutionReports);
             this.last = this.getLastCompleteReport();
         }
     }
@@ -214,17 +190,6 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
                 this.errorMessage = error.error;
             }
         );
-    }
-
-    private setChartData(reports: Array<CampaignExecutionReport>) {
-        const scenarioOK = reports.filter(r => !r.partialExecution).map(r => r.scenarioExecutionReports
-            .filter(s => s.status === 'SUCCESS').length).reverse();
-        const scenarioKO = reports.filter(r => !r.partialExecution).map(r => r.scenarioExecutionReports
-            .filter(s => s.status === 'FAILURE').length).reverse();
-        this.lineChartData.datasets = [
-            {data: scenarioOK, label: 'OK', backgroundColor: 'rgba(0,255,0,0.1)', borderColor: 'green'},
-            {data: scenarioKO, label: 'KO', backgroundColor: 'rgba(255,0,0,0.3)', borderColor: 'red'}];
-        this.lineChartData.labels = reports.filter(r => !r.partialExecution).map(r => '' + r.executionId).reverse();
     }
 
     private getLastCompleteReport() {
