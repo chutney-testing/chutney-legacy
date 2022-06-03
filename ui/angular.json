@@ -36,7 +36,6 @@
               ]
             },
             "styles": [
-              "./node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
               "src/styles/vendor.scss",
               "src/styles/global.scss",
               "src/styles/forms.scss",
@@ -103,7 +102,6 @@
               ]
             },
             "styles": [
-              "./node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
               "src/styles/vendor.scss",
               "src/styles/global.scss",
               "src/styles/forms.scss",
