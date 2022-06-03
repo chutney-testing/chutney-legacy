@@ -1,6 +1,7 @@
 package com.chutneytesting.environment.infra;
 
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
+import static java.util.stream.Collectors.toList;
 
 import com.chutneytesting.environment.domain.Environment;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
@@ -18,11 +19,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class JsonFilesEnvironmentRepository implements EnvironmentRepository {
 
-    static final Path ROOT_DIRECTORY_NAME = Paths.get("environment");
     private static final String JSON_FILE_EXT = ".json";
 
     private final Path storeFolderPath;
@@ -32,7 +31,7 @@ public class JsonFilesEnvironmentRepository implements EnvironmentRepository {
         .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
     public JsonFilesEnvironmentRepository(String storeFolderPath) throws UncheckedIOException {
-        this.storeFolderPath = Paths.get(storeFolderPath).resolve(ROOT_DIRECTORY_NAME).toAbsolutePath();
+        this.storeFolderPath = Paths.get(storeFolderPath).toAbsolutePath();
         initFolder(this.storeFolderPath);
     }
 
@@ -66,7 +65,7 @@ public class JsonFilesEnvironmentRepository implements EnvironmentRepository {
                 .filter(Files::isRegularFile)
                 .filter(this::isJsonFile)
                 .map(FileUtils::getNameWithoutExtension)
-                .collect(Collectors.toList())
+                .collect(toList())
         );
     }
 
@@ -102,7 +101,7 @@ public class JsonFilesEnvironmentRepository implements EnvironmentRepository {
         }
     }
 
-    private Path getEnvironmentPath(String name) {
+    public Path getEnvironmentPath(String name) {
         return storeFolderPath.resolve(name + JSON_FILE_EXT);
     }
 }

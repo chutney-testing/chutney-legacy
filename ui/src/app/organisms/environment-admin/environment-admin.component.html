@@ -1,4 +1,4 @@
-<div class="row m-5" *ngIf="errorMessage">
+<div class="row m-5 pointer" *ngIf="errorMessage" (click)="errorMessage = null">
     <chutney-error-panel [errorMessage]="errorMessage"></chutney-error-panel>
 </div>
 <ng-container *ngIf="envForm">
@@ -28,10 +28,20 @@
             {{ 'admin.targets.environment' | translate }}:
             <chutney-environment-combo [environments]="environmentsNames" (selectionEvent)="changingValue($event)">
             </chutney-environment-combo>
-            <button type="button" class="btn btn-success m-3" (click)="initForUpdateEnvironment()">{{ 'global.actions.update' | translate }}</button>
-            <button type="button" class="btn btn-success m-3" (click)="initEnvironment()">{{ 'global.actions.add' | translate }}</button>
-            <button type="button" class="btn btn-success m-3" (click)="exportEnvironment()">{{ 'global.actions.export' | translate }}</button>
-            <chutney-import-button (submitEvent)="importEnvironment($event)"></chutney-import-button>
+            <div class="btn-group ml-3 mr-3" role="group">
+                <button type="button" class="btn btn-info" (click)="initForUpdateEnvironment()">{{ 'global.actions.update' | translate }}</button>
+                <button type="button" class="btn btn-info ml-1 mr-1" (click)="initEnvironment()">{{ 'global.actions.add' | translate }}</button>
+                <chutney-delete-confirm-dialog [dialogMessage]="('global.confirm.question' | translate) + ' ' + ('global.actions.delete' | translate) + '\n' + selectedEnvironment.name"
+                                               [label]="'Delete Environment'"
+                                               [disabled]="!selectedEnvironment"
+                                               (deleteEvent)="deleteEnvironment()"
+                                                class="align-self-center">
+                </chutney-delete-confirm-dialog>
+            </div>
+            <div class="btn-group ml-3" role="group">
+                <button type="button" class="btn btn-success ml-1 align-self-center" (click)="exportEnvironment()">{{ 'global.actions.export' | translate }}</button>
+                <chutney-import-button (submitEvent)="importEnvironment($event)"></chutney-import-button>
+            </div>
         </div>
     </div>
 
@@ -58,10 +68,10 @@
                     <chutney-import-file (importEvent)="importTarget($event)" [multiple]="true"></chutney-import-file>
                 </div>
                 <div *ngIf="selectedTarget">
-                    <div  class="col-md-10">
+                    <div  class="col-md-12">
                         <button type="button" class="btn btn-success mr-3" (click)="updateSelectedTarget()"> <span class="fa fa-check"></span> {{'global.actions.save' | translate}}</button>
                         <button type="button" class="btn btn-success accept-spinner mr-3" (click)="exportTarget()"><span class="fa fa-download"> </span> {{'global.actions.export' | translate}}</button>
-                        <button type="button" class="btn btn-secondary mr-4" (click)="cancel()">{{'global.actions.cancel' | translate}}</button>
+                        <button type="button" class="btn btn-secondary mr-4" (click)="cancelSelectedTarget()">{{'global.actions.cancel' | translate}}</button>
                         <chutney-delete-confirm-dialog
                             [dialogMessage]="('global.confirm.question' | translate) + ' ' + ('global.actions.delete' | translate) + '\n' + selectedTarget.name"
                             [label]="'Delete Target'"
@@ -72,18 +82,20 @@
 
                         <chutney-forms-input-line [id]="'targetUrl'" [label]="'Url'" [placeholder]="'protocol://server:port'" [(model)]="selectedTarget.url" [validate]="validationService.isValidUrl.bind(validationService)"></chutney-forms-input-line>
                         <div class="mt-2">
-                            <chutney-collapsible-panel [title]="'Properties'">
-                                <chutney-property-table-panel [entries]="selectedTarget.properties"></chutney-property-table-panel>
-                            </chutney-collapsible-panel>
-                        </div>
-                        <div class="mt-3">
-                            <chutney-collapsible-panel [title]="'Security'">
-                                <chutney-forms-input-line [id]="'targetUsername'" [label]="'Username'" [placeholder]="'Username'" [(model)]="selectedTarget.username"></chutney-forms-input-line>
-                                <chutney-forms-input-line [id]="'targetPassword'" [label]="'Password'" [placeholder]="'Password'" [(model)]="selectedTarget.password"></chutney-forms-input-line>
-                                <chutney-forms-input-line [id]="'targetKeystore'" [label]="'Keystore Path'" [placeholder]="'Keystore Path'" [(model)]="selectedTarget.keyStore"></chutney-forms-input-line>
-                                <chutney-forms-input-line [id]="'targetKeystorePassword'" [label]="'Keystore Password'" [placeholder]="'Keystore Password'" [(model)]="selectedTarget.keyStorePassword"></chutney-forms-input-line>
-                                <chutney-forms-input-line [id]="'targetPrivateKey'" [label]="'Private Key'" [placeholder]="'Private Key'" [(model)]="selectedTarget.privateKey"></chutney-forms-input-line>
-                            </chutney-collapsible-panel>
+                            <button class="btn btn-sm btn-info float-right ml-1" title="{{'global.actions.help' | translate}}" (click)="help = !help">
+                                {{'global.actions.help' | translate}} <span class="fa fa-info"></span>
+                            </button>
+                            <div *ngIf="help">
+                                <pre class="text-white bg-info rounded overflow-auto">
+
+  Some properties that could be defined :
+   - user / username / password / userPassword              : user id to be used and associated password
+   - trustStore / trustStorePassword                        : path to a truststore and associated password
+   - keyStore / keyStorePassword / keyPassword              : path to a keystore and associated passwords
+   - privateKey / privateKeyPassword / privateKeyPassphrase : path to a keystore and associated password
+                                </pre>
+                            </div>
+                            <chutney-property-table-panel [entries]="selectedTarget.properties"></chutney-property-table-panel>
                         </div>
                     </div>
                 </div>

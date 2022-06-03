@@ -55,7 +55,7 @@ public class GlacioAdapter {
 
         List<StepDefinitionDto> scenarioSteps = example.getSteps().stream()
             .map(step -> this.stepFactory.toStepDefinition(lang, context, step))
-            .map(StepDefinitionMapper::toStepDefinitionDto)
+            //.map(StepDefinitionMapper::toStepDefinitionDto)
             .collect(Collectors.toList());
 
         return buildRootStep(scenarioSteps, name);

@@ -2,15 +2,16 @@ package com.chutneytesting.task.radius;
 
 
 import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Success;
+import static com.chutneytesting.tools.SocketUtils.findAvailableTcpPort;
 import static java.lang.String.valueOf;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.util.SocketUtils.findAvailableTcpPort;
 
 import com.chutneytesting.task.TestLogger;
 import com.chutneytesting.task.TestTarget;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Target;
+import com.chutneytesting.tools.SocketUtils;
 import java.net.InetSocketAddress;
 import java.util.Random;
 import org.junit.jupiter.api.AfterAll;
@@ -18,7 +19,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.util.SocketUtils;
 import org.tinyradius.util.RadiusServer;
 
 class RadiusTasksTest {
@@ -127,10 +127,10 @@ class RadiusTasksTest {
             .withProperty("accountingPort", valueOf(0))
             .build();
         return new Object[]{
-            new Object[]{"No target", null, "userName", "password", 10},
+            new Object[]{"No target", null, "userName", "password", 9},
             new Object[]{"No userName", testTarget, "", "password", 1},
             new Object[]{"No password", testTarget, "userName", "", 1},
-            new Object[]{"No url", noUrl, "userName", "password", 3},
+            new Object[]{"No url", noUrl, "userName", "password", 2},
             new Object[]{"No secret", noSecret, "userName", "password", 1},
             new Object[]{"No authenticatePort", noAuthenticatePort, "userName", "password", 2},
             new Object[]{"No accountingPort", noAccountingPort, "userName", "password", 2},
@@ -180,11 +180,11 @@ class RadiusTasksTest {
             .withProperty("accountingPort", valueOf(0))
             .build();
         return new Object[]{
-            new Object[]{"No target", null, "userName", 1, 10},
+            new Object[]{"No target", null, "userName", 1, 9},
             new Object[]{"No userName", testTarget, "", 1, 1},
             new Object[]{"No accountingType", testTarget, "userName", null, 1},
             new Object[]{"Invalid accountingType", testTarget, "userName", 16, 1},
-            new Object[]{"No url", noUrl, "userName", 1, 3},
+            new Object[]{"No url", noUrl, "userName", 1, 2},
             new Object[]{"No secret", noSecret, "userName", 1, 1},
             new Object[]{"No authenticatePort", noAuthenticatePort, "userName", 1, 2},
             new Object[]{"No accountingPort", noAccountingPort, "userName", 1, 2},

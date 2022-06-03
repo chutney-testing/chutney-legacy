@@ -1,7 +1,10 @@
 package com.chutneytesting.task.jms;
 
+import static java.util.Collections.emptyMap;
+import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
@@ -9,15 +12,14 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.chutneytesting.task.spi.injectable.Logger;
+import com.chutneytesting.task.spi.injectable.Target;
 import com.mockrunner.jms.ConfigurationManager;
 import com.mockrunner.jms.DestinationManager;
 import com.mockrunner.mock.jms.MockConnectionFactory;
-import com.chutneytesting.task.spi.injectable.Logger;
-import com.chutneytesting.task.spi.injectable.Target;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.Optional;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
@@ -27,7 +29,7 @@ import org.mockito.ArgumentCaptor;
 public class JmsSenderTaskTest {
 
     @Test
-    public void should_send_jms_message_to_destination() throws NamingException {
+    public void should_send_jms_message_to_destination() {
 
         String body = "builder";
         String destination = "testD";
@@ -36,7 +38,7 @@ public class JmsSenderTaskTest {
         Target targetMock = mock(Target.class, RETURNS_DEEP_STUBS);
         configureServer(targetMock);
         Logger logger = mock(Logger.class);
-               JmsSenderTask task = new JmsSenderTask(targetMock, logger, destination, body, headers);
+        JmsSenderTask task = new JmsSenderTask(targetMock, logger, destination, body, headers);
 
         task.execute();
 
@@ -51,9 +53,10 @@ public class JmsSenderTaskTest {
     private void configureServer(Target targetMock) {
         Map<String, String> props = new HashMap<>();
         props.put(Context.INITIAL_CONTEXT_FACTORY, MockRunnerInitialContextFactory.class.getName());
-        when(targetMock.properties()).thenReturn(props);
-        when(targetMock.url()).thenReturn("unused URL");
-        when(targetMock.security().credential()).thenReturn(Optional.empty());
+        when(targetMock.prefixedProperties(any())).thenReturn(props);
+        when(targetMock.property("connectionFactoryName")).thenReturn(empty());
+        when(targetMock.prefixedProperties(any(), anyBoolean())).thenReturn(emptyMap());
+        when(targetMock.user()).thenReturn(empty());
     }
 
     public static final class MockRunnerInitialContextFactory implements InitialContextFactory {

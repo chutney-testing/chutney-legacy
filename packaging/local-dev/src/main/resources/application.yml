@@ -48,7 +48,9 @@ spring:
 chutney:
   configuration-folder: .chutney/conf
   environment:
-    configuration-folder: ${chutney.configuration-folder}
+    configuration-folder: ${chutney.configuration-folder}/environment
+  jira:
+    configuration-folder: ${chutney.configuration-folder}/jira
 #  db-server: (cf. application-db-[h2|pg].yml configuration files)
 #    port: 9360
 #    base-dir: ./.chutney

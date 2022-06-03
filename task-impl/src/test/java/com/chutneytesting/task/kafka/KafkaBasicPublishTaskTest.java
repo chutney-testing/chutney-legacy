@@ -3,6 +3,7 @@ package com.chutneytesting.task.kafka;
 import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Failure;
 import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Success;
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.shuffle;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -15,10 +16,12 @@ import com.chutneytesting.task.TestTarget;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Target;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
@@ -28,6 +31,7 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.concurrent.ListenableFuture;
 
+@SuppressWarnings("unchecked")
 public class KafkaBasicPublishTaskTest {
 
     private static final String TOPIC = "topic";
@@ -56,7 +60,7 @@ public class KafkaBasicPublishTaskTest {
         KafkaBasicPublishTask defaultTask = new KafkaBasicPublishTask(null, null, null, null, null, null);
         List<String> errors = defaultTask.validateInputs();
 
-        assertThat(errors.size()).isEqualTo(9);
+        assertThat(errors.size()).isEqualTo(8);
         SoftAssertions softly = new SoftAssertions();
 
         softly.assertThat(errors.get(0)).isEqualTo("No topic provided (String)");
@@ -67,29 +71,34 @@ public class KafkaBasicPublishTaskTest {
 
         softly.assertThat(errors.get(4)).isEqualTo("No target provided");
         softly.assertThat(errors.get(5)).isEqualTo("[Target name is blank] not applied because of exception java.lang.NullPointerException(null)");
-        softly.assertThat(errors.get(6)).isEqualTo("[No url defined on the target] not applied because of exception java.lang.NullPointerException(null)");
-        softly.assertThat(errors.get(7)).isEqualTo("[Target url is not valid] not applied because of exception java.lang.NullPointerException(null)");
-        softly.assertThat(errors.get(8)).isEqualTo("[Target url has an undefined host] not applied because of exception java.lang.NullPointerException(null)");
+        softly.assertThat(errors.get(6)).isEqualTo("[Target url is not valid] not applied because of exception java.lang.NullPointerException(null)");
+        softly.assertThat(errors.get(7)).isEqualTo("[Target url has an undefined host] not applied because of exception java.lang.NullPointerException(null)");
 
         softly.assertAll();
     }
 
     @Test
-    void should_merge_target_properties_with_input_properties() {
+    void should_merge_kafka_producer_target_properties_with_input_properties() {
+        List<String> producerConfigKeys = new ArrayList<>(ProducerConfig.configNames());
+        shuffle(producerConfigKeys);
+        String targetProperty = producerConfigKeys.get(0);
+        String propertyToOverride = producerConfigKeys.get(1);
+        String inputProperty = producerConfigKeys.get(2);
+
         Target target = TestTarget.TestTargetBuilder.builder()
-            .withProperty("a.target.property", "a value")
-            .withProperty("property.to.override", "a target value")
+            .withProperty(targetProperty, "a value")
+            .withProperty(propertyToOverride, "a target value")
             .build();
 
         Map<String, String> properties = Map.of(
-            "a.input.property", "a VALUE",
-            "property.to.override", "a property value"
+            inputProperty, "a VALUE",
+            propertyToOverride, "a property value"
         );
 
         Map<String, String> expectedConfig = Map.of(
-            "a.target.property", "a value",
-            "a.input.property", "a VALUE",
-            "property.to.override", "a property value"
+            targetProperty, "a value",
+            inputProperty, "a VALUE",
+            propertyToOverride, "a property value"
         );
 
         KafkaBasicPublishTask defaultTask = new KafkaBasicPublishTask(target, null, null, null, properties, null);
@@ -146,5 +155,4 @@ public class KafkaBasicPublishTaskTest {
         assertThat(taskExecutionResult.status).isEqualTo(Failure);
         assertThat(logger.errors).isNotEmpty();
     }
-
 }

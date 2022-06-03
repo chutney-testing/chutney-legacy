@@ -2,11 +2,9 @@ package com.chutneytesting.task.ssh;
 
 import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Failure;
 import static com.chutneytesting.task.ssh.fakes.FakeServerSsh.buildLocalSshServer;
-import static com.chutneytesting.task.ssh.fakes.FakeTargetInfo.buildTargetWithCredentialUsernamePassword;
-import static com.chutneytesting.task.ssh.fakes.FakeTargetInfo.buildTargetWithPrivateKeyWithCredentialPassphrase;
-import static com.chutneytesting.task.ssh.fakes.FakeTargetInfo.buildTargetWithPrivateKeyWithPropertiesPassphrase;
+import static com.chutneytesting.task.ssh.fakes.FakeTargetInfo.buildTargetWithPassword;
+import static com.chutneytesting.task.ssh.fakes.FakeTargetInfo.buildTargetWithPrivateKeyWithPassphrase;
 import static com.chutneytesting.task.ssh.fakes.FakeTargetInfo.buildTargetWithPrivateKeyWithoutPassphrase;
-import static com.chutneytesting.task.ssh.fakes.FakeTargetInfo.buildTargetWithPropertiesUsernamePassword;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -47,10 +45,10 @@ public class SshClientTaskTest {
         fakeSshServer.stop();
     }
 
-    @ParameterizedTest
-    @MethodSource("usernamePasswordTargets")
-    public void should_succeed_to_execute_a_command_with_password(Target targetMock) {
+    @Test
+    public void should_succeed_to_execute_a_command_with_password() {
         // Given
+        Target targetMock = buildTargetWithPassword(fakeSshServer);
         TestLogger logger = new TestLogger();
         List<CommandResult> expectedResults = new ArrayList<>();
         expectedResults.add(new CommandResult(new Command("echo Hello"), 0, "Hello\n", ""));
@@ -64,13 +62,6 @@ public class SshClientTaskTest {
         // Then
         assertThat(actualResult.outputs.get("results")).usingRecursiveComparison().isEqualTo(expectedResults);
         assertThat(logger.info.get(0)).startsWith("Authentication via username/password as ");
-    }
-
-    public static List<Arguments> usernamePasswordTargets() {
-        return List.of(
-            Arguments.of(buildTargetWithCredentialUsernamePassword(fakeSshServer)),
-            Arguments.of(buildTargetWithPropertiesUsernamePassword(fakeSshServer))
-        );
     }
 
     @ParameterizedTest
@@ -95,8 +86,7 @@ public class SshClientTaskTest {
     public static List<Arguments> usernamePrivateKeyTargets() {
         return List.of(
             Arguments.of(buildTargetWithPrivateKeyWithoutPassphrase(fakeSshServer)),
-            Arguments.of(buildTargetWithPrivateKeyWithCredentialPassphrase(fakeSshServer)),
-            Arguments.of(buildTargetWithPrivateKeyWithPropertiesPassphrase(fakeSshServer))
+            Arguments.of(buildTargetWithPrivateKeyWithPassphrase(fakeSshServer))
         );
     }
 
@@ -104,7 +94,7 @@ public class SshClientTaskTest {
     public void should_succeed_with_timed_out_result() {
         // Given
         Logger logger = mock(Logger.class);
-        Target target = buildTargetWithCredentialUsernamePassword(fakeSshServer);
+        Target target = buildTargetWithPassword(fakeSshServer);
 
         Map<String, String> command = new HashMap<>();
         command.put("command", OsUtils.isWin32() ? "START /WAIT TIMEOUT /T 1 /NOBREAK >NUL" : "sleep 1s");
@@ -123,7 +113,7 @@ public class SshClientTaskTest {
         // Given
         Logger logger = mock(Logger.class);
         fakeSshServer.stop();
-        Target target = buildTargetWithCredentialUsernamePassword(fakeSshServer);
+        Target target = buildTargetWithPassword(fakeSshServer);
         String command = "echo Hello";
 
         // when
@@ -139,15 +129,14 @@ public class SshClientTaskTest {
         SshClientTask sshClientTask = new SshClientTask(null, null, null, null);
         List<String> errors = sshClientTask.validateInputs();
 
-        assertThat(errors.size()).isEqualTo(7);
+        assertThat(errors.size()).isEqualTo(6);
         SoftAssertions softly = new SoftAssertions();
         softly.assertThat(errors.get(0)).isEqualTo("No target provided");
         softly.assertThat(errors.get(1)).isEqualTo("[Target name is blank] not applied because of exception java.lang.NullPointerException(null)");
-        softly.assertThat(errors.get(2)).isEqualTo("[No url defined on the target] not applied because of exception java.lang.NullPointerException(null)");
-        softly.assertThat(errors.get(3)).isEqualTo("[Target url is not valid] not applied because of exception java.lang.NullPointerException(null)");
-        softly.assertThat(errors.get(4)).isEqualTo("[Target url has an undefined host] not applied because of exception java.lang.NullPointerException(null)");
-        softly.assertThat(errors.get(5)).isEqualTo("No commands provided (List)");
-        softly.assertThat(errors.get(6)).isEqualTo("[commands should not be empty] not applied because of exception java.lang.NullPointerException(null)");
+        softly.assertThat(errors.get(2)).isEqualTo("[Target url is not valid] not applied because of exception java.lang.NullPointerException(null)");
+        softly.assertThat(errors.get(3)).isEqualTo("[Target url has an undefined host] not applied because of exception java.lang.NullPointerException(null)");
+        softly.assertThat(errors.get(4)).isEqualTo("No commands provided (List)");
+        softly.assertThat(errors.get(5)).isEqualTo("[commands should not be empty] not applied because of exception java.lang.NullPointerException(null)");
         softly.assertAll();
     }
 }

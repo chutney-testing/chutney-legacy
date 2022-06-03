@@ -12,11 +12,8 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -29,8 +26,9 @@ public class SqlClientTest {
     private static final String DB_NAME = "test_" + SqlClientTest.class;
     private final Target sqlTarget = TestTarget.TestTargetBuilder.builder()
         .withTargetId("sql")
-        .withUrl("jdbc:h2:mem:" + DB_NAME)
-        .withSecurity("sa", "")
+        .withUrl("jdbc:h2:mem")
+        .withProperty("jdbcUrl", "jdbc:h2:mem:" + DB_NAME)
+        .withProperty("user", "sa")
         .build();
 
     @BeforeEach
@@ -50,14 +48,14 @@ public class SqlClientTest {
         Column c1 = new Column("NAME", 1);
         Column c2 = new Column("EMAIL", 2);
 
-        Row firstTuple =  new Row(List.of(new Cell(c0, 1), new Cell(c1, "laitue"), new Cell(c2, "laitue@fake.com")));
+        Row firstTuple = new Row(List.of(new Cell(c0, 1), new Cell(c1, "laitue"), new Cell(c2, "laitue@fake.com")));
         Row secondTuple = new Row(List.of(new Cell(c0, 2), new Cell(c1, "carotte"), new Cell(c2, "kakarot@fake.db")));
-        Row thirdTuple =  new Row(List.of(new Cell(c0, 3), new Cell(c1, "tomate"), new Cell(c2, "null")));
+        Row thirdTuple = new Row(List.of(new Cell(c0, 3), new Cell(c1, "tomate"), new Cell(c2, "null")));
 
         SqlClient sqlClient = new DefaultSqlClientFactory().create(sqlTarget);
         Records actual = sqlClient.execute("select * from users");
 
-        assertThat(actual.headers).containsOnly("ID", "NAME", "EMAIL");
+        assertThat(actual.getHeaders()).containsOnly("ID", "NAME", "EMAIL");
         assertThat(actual.records).containsExactly(firstTuple, secondTuple, thirdTuple);
     }
 
@@ -71,42 +69,13 @@ public class SqlClientTest {
 
     @Test
     public void should_return_count_on_count_queries() throws SQLException {
-
         Column c0 = new Column("TOTAL", 0);
-        Row expectedTuple =  new Row(Collections.singletonList(new Cell(c0, 3L)));
+        Row expectedTuple = new Row(Collections.singletonList(new Cell(c0, 3L)));
 
         SqlClient sqlClient = new DefaultSqlClientFactory().create(sqlTarget);
         Records actual = sqlClient.execute("SELECT COUNT(*) as total FROM USERS");
 
         assertThat(actual.records).containsExactly(expectedTuple);
-    }
-
-    @Test
-    public void should_print_records_as_list_of_mapped_values() throws SQLException {
-        List<Map<String, Object>> listOfMaps = new ArrayList<>(2);
-        Map<String, Object> firstTuple = new LinkedHashMap<>();
-        firstTuple.put("ID", 1);
-        firstTuple.put("NAME", "laitue");
-        firstTuple.put("EMAIL", "laitue@fake.com");
-
-        Map<String, Object> secondTuple = new LinkedHashMap<>();
-        secondTuple.put("ID", 2);
-        secondTuple.put("NAME", "carotte");
-        secondTuple.put("EMAIL", "kakarot@fake.db");
-
-        Map<String, Object> thirdTuple = new LinkedHashMap<>();
-        thirdTuple.put("ID", 3);
-        thirdTuple.put("NAME", "tomate");
-        thirdTuple.put("EMAIL", "null");
-
-        listOfMaps.add(firstTuple);
-        listOfMaps.add(secondTuple);
-        listOfMaps.add(thirdTuple);
-
-        SqlClient sqlClient = new DefaultSqlClientFactory().create(sqlTarget);
-        Records records = sqlClient.execute("select * from users");
-
-        assertThat(records.toListOfMaps()).containsExactlyElementsOf(listOfMaps);
     }
 
     @Test
@@ -157,7 +126,7 @@ public class SqlClientTest {
     }
 
     @Test
-    public void should_prevent_out_of_memory(){
+    public void should_prevent_out_of_memory() {
         try (MockedStatic<ChutneyMemoryInfo> chutneyMemoryInfoMockedStatic = Mockito.mockStatic(ChutneyMemoryInfo.class);) {
             chutneyMemoryInfoMockedStatic.when(ChutneyMemoryInfo::hasEnoughAvailableMemory).thenReturn(true, true, false);
             chutneyMemoryInfoMockedStatic.when(ChutneyMemoryInfo::usedMemory).thenReturn(42L * 1024 * 1024);
@@ -168,9 +137,9 @@ public class SqlClientTest {
             Exception exception = assertThrows(NotEnoughMemoryException.class, () -> {
                 sqlClient.execute("select * from users");
             });
-            assertThat(exception.getMessage()).isEqualTo( "Running step was stopped to prevent application crash.42MB memory used of 1337MB max.\n" +
-                                                          "Current step may not be the cause.\n" +
-                                                          "Query fetched 2 rows");
+            assertThat(exception.getMessage()).isEqualTo("Running step was stopped to prevent application crash.42MB memory used of 1337MB max.\n" +
+                "Current step may not be the cause.\n" +
+                "Query fetched 2 rows");
         }
     }
 }

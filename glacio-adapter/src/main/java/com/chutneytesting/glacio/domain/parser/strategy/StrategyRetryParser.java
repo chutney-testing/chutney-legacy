@@ -2,8 +2,7 @@ package com.chutneytesting.glacio.domain.parser.strategy;
 
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
-import com.chutneytesting.engine.domain.execution.strategies.StrategyProperties;
+import com.chutneytesting.engine.api.execution.StepDefinitionDto;
 import com.chutneytesting.task.spi.time.DurationUnit;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,22 +37,22 @@ public class StrategyRetryParser extends StrategyParser {
     }
 
     @Override
-    public StepStrategyDefinition toStrategyDef(Locale lang, String parameters) {
-        return new StepStrategyDefinition("retry-with-timeout", parseProperties(lang, parameters));
+    public StepDefinitionDto.StepStrategyDefinitionDto toStrategyDef(Locale lang, String parameters) {
+        return new StepDefinitionDto.StepStrategyDefinitionDto("retry-with-timeout", parseProperties(lang, parameters));
     }
 
     @Override
-    public StrategyProperties parseProperties(Locale lang, String parameters) {
+    public StepDefinitionDto.StrategyPropertiesDto parseProperties(Locale lang, String parameters) {
         Map<String, Object> params = new HashMap<>(2);
         Pattern pattern = patterns.get(lang);
         Matcher matcher = pattern.matcher(parameters.trim().replaceAll("\\s+", " "));
 
-        while(matcher.find()) {
-            ofNullable(matcher.group("timeout")).ifPresent( t -> params.put("timeOut", DurationParser.parseDurationValue(matcher.group("tval"))) );
-            ofNullable(matcher.group("delay")).ifPresent( t ->  params.put("retryDelay", DurationParser.parseDurationValue(matcher.group("dval"))) );
+        while (matcher.find()) {
+            ofNullable(matcher.group("timeout")).ifPresent(t -> params.put("timeOut", DurationParser.parseDurationValue(matcher.group("tval"))));
+            ofNullable(matcher.group("delay")).ifPresent(t -> params.put("retryDelay", DurationParser.parseDurationValue(matcher.group("dval"))));
         }
 
-        return new StrategyProperties(params);
+        return new StepDefinitionDto.StrategyPropertiesDto(params);
     }
 
     static class DurationParser {
@@ -69,5 +68,4 @@ public class StrategyRetryParser extends StrategyParser {
             return "";
         }
     }
-
 }

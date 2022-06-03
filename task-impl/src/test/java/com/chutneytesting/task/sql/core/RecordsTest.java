@@ -12,10 +12,8 @@ import org.junit.jupiter.api.Test;
 
 public class RecordsTest {
 
-
     @Test
     void getHeaders() {
-
         Column c0 = new Column("Test", 0);
         Column c1 = new Column("Letter", 1);
         Column c2 = new Column("Letter", 2);
@@ -24,7 +22,7 @@ public class RecordsTest {
 
         Records actual = new Records(-1, List.of(c0, c1, c2, c3, c4), emptyList());
 
-        assertThat(actual.headers).isEqualTo(List.of("Test", "Letter", "Letter", "Number", "Number"));
+        assertThat(actual.getHeaders()).isEqualTo(List.of("Test", "Letter", "Letter", "Number", "Number"));
     }
 
     @Test
@@ -38,77 +36,12 @@ public class RecordsTest {
 
         Records actual = new Records(-1, emptyList(), records);
 
-        assertThat(actual.rows.get(0)).isEqualTo(List.of("A", "B"));
-        assertThat(actual.rows.get(1)).isEqualTo(List.of("AA", "BB"));
-
-    }
-
-    @Test
-    void toListOfMaps_should_return_all_rows() {
-
-        Column c0 = new Column("First Name", 0);
-        Column c1 = new Column("Name", 1);
-        Column c2 = new Column("Address", 2);
-
-        List<Row> records = List.of(
-            new Row(List.of(new Cell(c0, "Henri"), new Cell(c1, "Martin"), new Cell(c2, "Paris"))),
-            new Row(List.of(new Cell(c0, "Jean"), new Cell(c1, "Dupont"), new Cell(c2, "Bordeaux"))),
-            new Row(List.of(new Cell(c0, "Charles"), new Cell(c1, "Magne"), new Cell(c2, "Chartres")))
-        );
-
-        Records sut = new Records(-1, List.of(c0, c1, c2), records);
-
-        List<Map<String, Object>> actual = sut.toListOfMaps();
-
-        assertThat(actual).hasSize(3);
-        assertThat(actual.get(1).get("Name")).isEqualTo("Dupont");
-        assertThat(actual.get(2).get("Address")).isEqualTo("Chartres");
-
-    }
-
-    @Test
-    void toListOfMaps_should_return_limited_number_of_rows() {
-
-        Column c0 = new Column("First Name", 0);
-        Column c1 = new Column("Name", 1);
-        Column c2 = new Column("Address", 2);
-
-        List<Row> records = List.of(
-            new Row(List.of(new Cell(c0, "Henri"), new Cell(c1, "Martin"), new Cell(c2, "Paris"))),
-            new Row(List.of(new Cell(c0, "Jean"), new Cell(c1, "Dupont"), new Cell(c2, "Bordeaux"))),
-            new Row(List.of(new Cell(c0, "Charles"), new Cell(c1, "Magne"), new Cell(c2, "Chartres")))
-        );
-
-        Records sut = new Records(-1, List.of(c0, c1, c2), records);
-
-        List<Map<String, Object>> actual = sut.toListOfMaps(2);
-
-        assertThat(actual).hasSize(2);
-
-    }
-
-    @Test
-    void toListOfMaps_should_not_out_bound() {
-
-        Column c0 = new Column("First Name", 0);
-        Column c1 = new Column("Name", 1);
-        Column c2 = new Column("Address", 2);
-
-        List<Row> records = List.of(
-            new Row(List.of(new Cell(c0, "Henri"), new Cell(c1, "Martin"), new Cell(c2, "Paris")))
-        );
-
-        Records sut = new Records(-1, List.of(c0, c1, c2), records);
-
-        List<Map<String, Object>> actual = sut.toListOfMaps(2);
-
-        assertThat(actual).hasSize(1);
-
+        assertThat(actual.getRows().get(0)).isEqualTo(List.of("A", "B"));
+        assertThat(actual.getRows().get(1)).isEqualTo(List.of("AA", "BB"));
     }
 
     @Test
     void toMatrix() {
-
         Column c0 = new Column("First Name", 0);
         Column c1 = new Column("Name", 1);
         Column c2 = new Column("Address", 2);
@@ -125,7 +58,6 @@ public class RecordsTest {
 
         assertThat(actual[1][1]).isEqualTo("Dupont");
         assertThat(actual[2][2]).isEqualTo("Chartres");
-
     }
 
     @Test
@@ -135,7 +67,6 @@ public class RecordsTest {
         assertThat(actual).isEmpty();
     }
 
-
     @Test
     void column_length_should_equal_header_or_value_max_length() {
         Column c0 = new Column("lengthOf11", 0);
@@ -143,7 +74,7 @@ public class RecordsTest {
         Column c2 = new Column("7", 2);
 
         List<Column> headers = asList(c0, c1, c2);
-        List<Row> rows = singletonList(new Row(List.of(new Cell(c0, "12345678910"), new Cell(c1,"16"), new Cell(c2,"1234567"))));
+        List<Row> rows = singletonList(new Row(List.of(new Cell(c0, "12345678910"), new Cell(c1, "16"), new Cell(c2, "1234567"))));
 
         Records sut = new Records(-1, headers, rows);
 
@@ -163,8 +94,8 @@ public class RecordsTest {
 
         List<Column> headers = asList(c0, c1, c2, c3);
         List<Row> rows = asList(
-            new Row(List.of(new Cell(c0, "12345678910"), new Cell(c1,"16"), new Cell(c2,"123"), new Cell(c3, "ABC"))),
-            new Row(List.of(new Cell(c0, "veryveryvery long value"), new Cell(c1,"42"), new Cell(c2,"123"), new Cell(c3, "ABC")))
+            new Row(List.of(new Cell(c0, "12345678910"), new Cell(c1, "16"), new Cell(c2, "123"), new Cell(c3, "ABC"))),
+            new Row(List.of(new Cell(c0, "veryveryvery long value"), new Cell(c1, "42"), new Cell(c2, "123"), new Cell(c3, "ABC")))
         );
 
         Records sut = new Records(-1, headers, rows);
@@ -183,14 +114,14 @@ public class RecordsTest {
         Column c2 = new Column("7", 2);
 
         List<Column> headers = asList(c0, c1, c2);
-        List<Row> rows = singletonList(new Row(List.of(new Cell(c0, "12345678910"), new Cell(c1,"12"), new Cell(c2,"1234567"))));
+        List<Row> rows = singletonList(new Row(List.of(new Cell(c0, "12345678910"), new Cell(c1, "12"), new Cell(c2, "1234567"))));
         Records sut = new Records(-1, headers, rows);
 
         String actual = sut.tableHeaders(sut.maximumColumnLength(1));
 
         assertThat(actual).isEqualTo(
             "| lengthOf11  | 2  | 7       |\n" +
-            "------------------------------\n"
+                "------------------------------\n"
         );
     }
 
@@ -202,7 +133,7 @@ public class RecordsTest {
 
         List<Column> headers = asList(c0, c1, c2);
 
-        List<Row> rows = singletonList(new Row(List.of(new Cell(c0, "12345678910"), new Cell(c1,"42"), new Cell(c2,"1234567"))));
+        List<Row> rows = singletonList(new Row(List.of(new Cell(c0, "12345678910"), new Cell(c1, "42"), new Cell(c2, "1234567"))));
         Map<String, Integer> maxLength = Maps.of(
             "lengthOf11", 11,
             "Header is longer", 16,
@@ -229,17 +160,17 @@ public class RecordsTest {
         Column c2 = new Column("X", 2);
 
         Records records = new Records(-1, List.of(c0, c1, c2), List.of(
-            new Row(List.of(new Cell(c0, "A"), new Cell(c1,"B"), new Cell(c2,"C"))),
-            new Row(List.of(new Cell(c0, "D"), new Cell(c1,"E"), new Cell(c2,"F")))
+            new Row(List.of(new Cell(c0, "A"), new Cell(c1, "B"), new Cell(c2, "C"))),
+            new Row(List.of(new Cell(c0, "D"), new Cell(c1, "E"), new Cell(c2, "F")))
         ));
 
         String actual = records.printable(2);
 
         assertThat(actual).isEqualTo(
             "| X | X | X |\n" +
-            "-------------\n" +
-            "| A | B | C |\n" +
-            "| D | E | F |\n"
+                "-------------\n" +
+                "| A | B | C |\n" +
+                "| D | E | F |\n"
         );
     }
 }

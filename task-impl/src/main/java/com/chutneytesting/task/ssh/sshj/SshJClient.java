@@ -2,7 +2,7 @@ package com.chutneytesting.task.ssh.sshj;
 
 import static java.util.Collections.emptyList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.springframework.util.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.ssh.Connection;
@@ -67,7 +67,7 @@ public class SshJClient implements SshClient {
     }
 
     private void authenticate(SSHClient client, Connection connection) throws IOException {
-        if (isEmpty(connection.privateKey)) {
+        if (isBlank(connection.privateKey)) {
             logger.info("Authentication via username/password as " + connection.username);
             loginWithPassword(client, connection.username, connection.password);
         } else {

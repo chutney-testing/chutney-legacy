@@ -7,7 +7,7 @@ import static org.apache.commons.lang3.StringUtils.capitalize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
-import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
+import com.chutneytesting.engine.api.execution.StepDefinitionDto;
 import com.chutneytesting.glacio.domain.parser.ParsingContext;
 import java.util.Locale;
 import org.junit.jupiter.api.BeforeAll;
@@ -19,7 +19,7 @@ public class GlacioSleepParserTest {
 
     private static final ParsingContext CONTEXT = new ParsingContext();
 
-    private static final StepStrategyDefinition NO_STRATEGY_DEF = null;
+    private static final StepDefinitionDto.StepStrategyDefinitionDto NO_STRATEGY_DEF = null;
 
     private final GlacioSleepParser sut = new GlacioSleepParser();
 

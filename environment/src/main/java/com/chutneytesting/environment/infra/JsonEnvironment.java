@@ -1,29 +1,29 @@
 package com.chutneytesting.environment.infra;
 
-import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toSet;
 
 import com.chutneytesting.environment.domain.Environment;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 public class JsonEnvironment {
 
     public String name;
     public String description;
-    public List<JsonTarget> targets;
+    public Set<JsonTarget> targets;
 
     public JsonEnvironment() {
     }
 
-    public JsonEnvironment(String name, String description, List<JsonTarget> targets) {
+    private JsonEnvironment(String name, String description, Set<JsonTarget> targets) {
         this.name = name;
         this.description = description;
         this.targets = targets;
     }
 
     public static JsonEnvironment from(Environment environment) {
-        List<JsonTarget> targets = environment.targets.stream().map(JsonTarget::from).collect(Collectors.toList());
+        Set<JsonTarget> targets = environment.targets.stream().map(JsonTarget::from).collect(toSet());
         return new JsonEnvironment(environment.name, environment.description, targets);
     }
 
@@ -32,7 +32,7 @@ public class JsonEnvironment {
         return Environment.builder()
             .withName(name)
             .withDescription(description)
-            .withTargets(ofNullable(targets).orElse(emptyList()).stream().map(t -> t.toTarget(name)).collect(Collectors.toSet()))
+            .withTargets(ofNullable(targets).orElse(emptySet()).stream().map(t -> t.toTarget(name)).collect(toSet()))
             .build();
     }
 }

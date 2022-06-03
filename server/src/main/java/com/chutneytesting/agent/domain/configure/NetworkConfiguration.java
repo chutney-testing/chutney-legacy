@@ -1,6 +1,7 @@
 package com.chutneytesting.agent.domain.configure;
 
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
+import com.chutneytesting.environment.api.dto.EnvironmentDto;
 import com.chutneytesting.environment.domain.Environment;
 import java.time.Instant;
 import java.util.Set;
@@ -45,9 +46,9 @@ public interface NetworkConfiguration {
     interface EnvironmentConfiguration {
 
         @Value.Parameter
-        Set<Environment> environments();
+        Set<EnvironmentDto> environments();
 
-        default Stream<Environment> stream() {
+        default Stream<EnvironmentDto> stream() {
             return environments().stream();
         }
     }

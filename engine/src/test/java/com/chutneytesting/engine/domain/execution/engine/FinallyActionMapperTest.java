@@ -3,7 +3,6 @@ package com.chutneytesting.engine.domain.execution.engine;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
-import com.chutneytesting.engine.domain.environment.SecurityInfoImpl;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.task.spi.FinallyAction;
@@ -38,9 +37,9 @@ public class FinallyActionMapperTest {
         assertThat(stepDefinition.getTarget()).isPresent();
         Target targetCopy = stepDefinition.getTarget().get();
         assertThat(targetCopy.name()).isEqualTo("test-target");
-        assertThat(targetCopy.url()).isEqualTo("proto://host:12345");
-        assertThat(((SecurityInfoImpl) targetCopy.security()).hasCredential()).isFalse();
-        assertThat(targetCopy.security().credential()).isEmpty();
+        assertThat(targetCopy.uri().toString()).isEqualTo("proto://host:12345");
+        assertThat(targetCopy.user()).isEmpty();
+        assertThat(targetCopy.userPassword()).isEmpty();
         assertThat(stepDefinition.getStrategy()).hasValueSatisfying(s -> {
             assertThat(s.type).isEqualTo("strategyType");
             assertThat(s.strategyProperties).contains(entry("param", "value"));

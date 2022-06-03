@@ -24,12 +24,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import wiremock.com.google.common.collect.ImmutableMap;
 
+@SuppressWarnings("unchecked")
 public class AmqpBasicConsumeTaskTest {
 
     private final Target target = TestTarget.TestTargetBuilder.builder()
         .withTargetId("rabbit")
         .withUrl("amqp://non_host:1234")
-        .withSecurity("guest", "guest")
+        .withProperty("user", "guest")
+        .withProperty("password", "guest")
         .build();
     private TestLogger logger1;
     private TestLogger logger2;

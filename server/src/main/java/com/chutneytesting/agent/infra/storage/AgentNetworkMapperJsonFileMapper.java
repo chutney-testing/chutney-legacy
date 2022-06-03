@@ -10,13 +10,14 @@ import com.chutneytesting.agent.domain.network.AgentGraph;
 import com.chutneytesting.agent.domain.network.ImmutableNetworkDescription;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.chutneytesting.environment.domain.Environment;
+import com.chutneytesting.environment.api.dto.EnvironmentDto;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
@@ -53,7 +54,7 @@ public class AgentNetworkMapperJsonFileMapper {
         return dto;
     }
 
-    NetworkDescription fromDto(AgentNetworkForJsonFile dto, List<Environment> environment) {
+    NetworkDescription fromDto(AgentNetworkForJsonFile dto, Set<EnvironmentDto> environment) {
         List<Agent> agents = ofNullable(dto.agents)
             .map(this::fromDto)
             .orElse(Collections.emptyList());

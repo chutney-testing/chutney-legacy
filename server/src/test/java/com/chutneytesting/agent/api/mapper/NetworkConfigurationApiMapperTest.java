@@ -2,25 +2,25 @@ package com.chutneytesting.agent.api.mapper;
 
 import static com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration.AgentNetworkConfiguration.builder;
 import static com.chutneytesting.tools.WaitUtils.awaitDuring;
+import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
+import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto;
 import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto.EnvironmentApiDto;
-import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto.SecurityApiDto;
 import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto.TargetsApiDto;
 import com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration;
 import com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration.AgentNetworkConfiguration;
 import com.chutneytesting.agent.domain.configure.NetworkConfiguration;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.chutneytesting.environment.domain.Environment;
-import com.chutneytesting.environment.domain.SecurityInfo;
-import com.chutneytesting.environment.domain.Target;
+import com.chutneytesting.environment.api.dto.EnvironmentDto;
+import com.chutneytesting.environment.api.dto.TargetDto;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,17 +32,16 @@ public class NetworkConfigurationApiMapperTest {
     private final NetworkConfigurationApiMapper networkConfigurationApiMapper = new NetworkConfigurationApiMapper(new AgentInfoApiMapper(), new EnvironmentApiMapper());
 
     @Test
-    public void fromdto() {
+    public void fromDto() {
         NetworkConfigurationApiDto dto = new NetworkConfigurationApiDto();
         dto.creationDate = Instant.now();
         NetworkConfigurationApiDto.AgentInfoApiDto agentInfoApiDto = new NetworkConfigurationApiDto.AgentInfoApiDto();
         agentInfoApiDto.name = "name";
         agentInfoApiDto.host = "host";
         agentInfoApiDto.port = 1000;
-        dto.agentNetworkConfiguration = new LinkedHashSet<>(Collections.singletonList(agentInfoApiDto));
+        dto.agentNetworkConfiguration = new LinkedHashSet<>(singletonList(agentInfoApiDto));
 
-        SecurityApiDto security = new SecurityApiDto("user1", null, null, null, null, null, null, null);
-        TargetsApiDto targetsApiDto = new TargetsApiDto("s1", "proto://host:12/lol", null, security);
+        TargetsApiDto targetsApiDto = new TargetsApiDto("s1", "proto://host:12/lol", null);
 
         LinkedHashSet<TargetsApiDto> targetSet = new LinkedHashSet<>();
         targetSet.add(targetsApiDto);
@@ -50,7 +49,7 @@ public class NetworkConfigurationApiMapperTest {
         LinkedHashSet<EnvironmentApiDto> envSet = new LinkedHashSet<>();
         envSet.add(envDto);
         dto.environmentsConfiguration = envSet;
-        new LinkedHashSet<>(Collections.singletonList(targetsApiDto));
+        new LinkedHashSet<>(singletonList(targetsApiDto));
 
         NetworkConfiguration networkConfiguration = networkConfigurationApiMapper.fromDto(dto);
 
@@ -61,34 +60,32 @@ public class NetworkConfigurationApiMapperTest {
         assertThat(agentInfos).haveExactly(1, new Condition<>(agentInfo -> "host".equals(agentInfo.host()), "agent with host"));
         assertThat(agentInfos).haveExactly(1, new Condition<>(agentInfo -> agentInfo.port() == 1000, "agent with port 1000"));
 
-        Set<Environment> env = networkConfiguration.environmentConfiguration().environments();
+        Set<EnvironmentDto> env = networkConfiguration.environmentConfiguration().environments();
         assertThat(env).hasSize(1);
-        Environment environment = env.iterator().next();
+        EnvironmentDto environment = env.iterator().next();
 
-        List<Target> targets = environment.targets;
+        List<TargetDto> targets = environment.targets;
         assertThat(targets).hasSize(1);
 
-        Target singleValue = targets.iterator().next();
+        TargetDto singleValue = targets.iterator().next();
         assertThat(singleValue.name).as("target name").isEqualTo("s1");
         assertThat(singleValue.url).as("target url").isEqualTo("proto://host:12/lol");
         assertThat(singleValue.properties).as("target properties").isEmpty();
-        assertThat(singleValue.security.credential).as("target security").isEqualTo(SecurityInfo.Credential.of("user1", ""));
     }
 
     @Test
-    public void fromdtoAtNow_use_another_instant() {
+    public void fromDtoAtNow_use_another_instant() {
         NetworkConfigurationApiDto dto = new NetworkConfigurationApiDto();
         dto.creationDate = Instant.now();
         NetworkConfigurationApiDto.AgentInfoApiDto agentInfoApiDto = new NetworkConfigurationApiDto.AgentInfoApiDto();
         agentInfoApiDto.name = "name";
         agentInfoApiDto.host = "host";
         agentInfoApiDto.port = 1000;
-        dto.agentNetworkConfiguration = new LinkedHashSet<>(Collections.singletonList(agentInfoApiDto));
+        dto.agentNetworkConfiguration = new LinkedHashSet<>(singletonList(agentInfoApiDto));
 
-        SecurityApiDto securityApiDto = new SecurityApiDto("sa", "", null, null, null, null, null, null);
-        TargetsApiDto targetsApiDto = new TargetsApiDto("s1", "proto://host:1/lol", new HashMap<>(), securityApiDto);
+        TargetsApiDto targetsApiDto = new TargetsApiDto("s1", "proto://host:1/lol", new HashMap<>());
         EnvironmentApiDto envApiDto = new EnvironmentApiDto("envName", singleton(targetsApiDto));
-        dto.environmentsConfiguration = new LinkedHashSet(Collections.singletonList(envApiDto));
+        dto.environmentsConfiguration = new LinkedHashSet<>(singletonList(envApiDto));
 
         awaitDuring(1, MILLISECONDS);
         NetworkConfiguration networkConfiguration = networkConfigurationApiMapper.fromDtoAtNow(dto);
@@ -99,14 +96,10 @@ public class NetworkConfigurationApiMapperTest {
     @Test
     public void toDTO_basic_test() {
 
-        Set<Target> targets = new LinkedHashSet<>();
-        targets.add(Target.builder()
-            .withName("s2")
-            .withEnvironment("env")
-            .withUrl("pro://host2:45/lol")
-            .build());
+        List<TargetDto> targets = new ArrayList<>();
+        targets.add(new TargetDto("s2", "pro://host2:45/lol", emptySet()));
 
-        Environment env = Environment.builder().withName("name").withTargets(targets).build();
+        EnvironmentDto env = new EnvironmentDto("name", null, targets);
 
         ImmutableNetworkConfiguration networkConfiguration = ImmutableNetworkConfiguration.builder()
             .creationDate(Instant.now())
@@ -135,13 +128,12 @@ public class NetworkConfigurationApiMapperTest {
         assertThat(targetsApiDto.name).as("DTO target name").isEqualTo("s2");
         assertThat(targetsApiDto.url).as("DTO target url").isEqualTo("pro://host2:45/lol");
         assertThat(targetsApiDto.properties).as("DTO target properties").isEmpty();
-        assertThat(targetsApiDto.security).as("DTO target security").isNotNull();
     }
 
     @Test
     public void enhanceWithEnvironment_basic_test() {
 
-        Environment env = Environment.builder().withName("env_name").build();
+        EnvironmentDto env = new EnvironmentDto("env_name");
 
         NetworkConfiguration networkConfiguration = ImmutableNetworkConfiguration.builder()
             .creationDate(Instant.now())
@@ -152,14 +144,10 @@ public class NetworkConfigurationApiMapperTest {
                 .addEnvironments(env).build())
             .build();
 
-        Set<Target> targets = new LinkedHashSet<>();
-        targets.add(Target.builder()
-            .withName("APP_1")
-            .withEnvironment("env_name")
-            .withUrl("https://host_of_app:443/api")
-            .build());
-        Environment newEnv = Environment.builder().withName("env_name").withTargets(targets).build();
-        List<Environment> newEnvs = new ArrayList<>();
+        List<TargetDto> targets = new ArrayList<>();
+        targets.add(new TargetDto("APP_1", "https://host_of_app:443/api", emptySet()));
+        EnvironmentDto newEnv = new EnvironmentDto("env_name", null, targets);
+        Set<EnvironmentDto> newEnvs = new HashSet<>();
         newEnvs.add(newEnv);
         NetworkConfiguration enhancedNetworkConfiguration = networkConfigurationApiMapper.enhanceWithEnvironment(networkConfiguration, newEnvs);
 
@@ -168,7 +156,7 @@ public class NetworkConfigurationApiMapperTest {
             .hasSize(1);
 
         assertThat(enhancedNetworkConfiguration.environmentConfiguration().environments()).hasSize(1);
-        Environment environment = enhancedNetworkConfiguration.environmentConfiguration().environments().iterator().next();
+        EnvironmentDto environment = enhancedNetworkConfiguration.environmentConfiguration().environments().iterator().next();
         assertThat(environment.targets)
             .as("Target infos")
             .hasSize(1)

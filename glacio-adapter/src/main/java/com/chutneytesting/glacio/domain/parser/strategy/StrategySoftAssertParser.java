@@ -1,6 +1,6 @@
 package com.chutneytesting.glacio.domain.parser.strategy;
 
-import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
+import com.chutneytesting.engine.api.execution.StepDefinitionDto;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,8 +25,8 @@ public class StrategySoftAssertParser extends StrategyParser {
     }
 
     @Override
-    public StepStrategyDefinition toStrategyDef(Locale lang, String parameters) {
-        return new StepStrategyDefinition("soft-assert", parseProperties(lang, parameters));
+    public StepDefinitionDto.StepStrategyDefinitionDto toStrategyDef(Locale lang, String parameters) {
+        return new StepDefinitionDto.StepStrategyDefinitionDto("soft-assert", parseProperties(lang, parameters));
     }
 
 }

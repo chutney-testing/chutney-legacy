@@ -1,13 +1,15 @@
 package com.chutneytesting.task.function;
 
+import static com.chutneytesting.tools.SocketUtils.findAvailableTcpPort;
+import static com.chutneytesting.tools.SocketUtils.findAvailableTcpPorts;
+import static com.chutneytesting.tools.SocketUtils.findAvailableUdpPort;
+import static com.chutneytesting.tools.SocketUtils.findAvailableUdpPorts;
 import static java.util.Collections.list;
-import static org.springframework.util.SocketUtils.findAvailableTcpPort;
-import static org.springframework.util.SocketUtils.findAvailableTcpPorts;
-import static org.springframework.util.SocketUtils.findAvailableUdpPort;
-import static org.springframework.util.SocketUtils.findAvailableUdpPorts;
 
 import com.chutneytesting.task.spi.SpelFunction;
-
+import com.chutneytesting.tools.SocketUtils;
+import com.chutneytesting.tools.ThrowingFunction;
+import com.chutneytesting.tools.ThrowingPredicate;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Random;
@@ -16,10 +18,6 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-
-import com.chutneytesting.tools.ThrowingFunction;
-import com.chutneytesting.tools.ThrowingPredicate;
-import org.springframework.util.SocketUtils;
 
 public class NetworkFunctions {
 
@@ -129,7 +127,7 @@ public class NetworkFunctions {
             .flatMap(addresses -> list(addresses).stream())
             .flatMap(address -> Stream.of(address.getCanonicalHostName(), address.getHostAddress()))
             .distinct()
-            .filter( ip -> matches(regex, ip))
+            .filter(ip -> matches(regex, ip))
             .findFirst()
             .orElse(InetAddress.getLocalHost().getHostAddress());
     }

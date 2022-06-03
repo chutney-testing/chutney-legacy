@@ -4,15 +4,25 @@ import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
 import com.chutneytesting.environment.domain.EnvironmentService;
 import com.chutneytesting.environment.infra.JsonFilesEnvironmentRepository;
+import com.chutneytesting.environment.infra.MigrateTargetSecurityExecutor;
 
 public class EnvironmentConfiguration {
 
-    private final EmbeddedEnvironmentApi environmentEmbeddedApplication;
+    private final EnvironmentRepository environmentRepository;
+    private final EmbeddedEnvironmentApi environmentApi;
 
     public EnvironmentConfiguration(String storeFolderPath) {
-        EnvironmentRepository environmentRepository = createEnvironmentRepository(storeFolderPath);
+        this.environmentRepository = createEnvironmentRepository(storeFolderPath);
         EnvironmentService environmentService = createEnvironmentService(environmentRepository);
-        this.environmentEmbeddedApplication = new EmbeddedEnvironmentApi(environmentService);
+        this.environmentApi = new EmbeddedEnvironmentApi(environmentService);
+
+        migrateTargetSecurity();
+    }
+
+    private void migrateTargetSecurity() {
+        if (environmentRepository instanceof JsonFilesEnvironmentRepository) {
+            new MigrateTargetSecurityExecutor((JsonFilesEnvironmentRepository) environmentRepository).execute();
+        }
     }
 
     private EnvironmentRepository createEnvironmentRepository(String storeFolderPath) {
@@ -23,7 +33,7 @@ public class EnvironmentConfiguration {
         return new EnvironmentService(environmentRepository);
     }
 
-    public EmbeddedEnvironmentApi getEnvironmentEmbeddedApplication() {
-        return environmentEmbeddedApplication;
+    public EmbeddedEnvironmentApi getEmbeddedEnvironmentApi() {
+        return environmentApi;
     }
 }

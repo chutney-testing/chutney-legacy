@@ -19,8 +19,10 @@ Feature: Amqp Task test
                         {
                             "name": "test_amqp",
                             "url": "amqp://localhost:5672",
-                            "username": "guest",
-                            "password": "guest"
+                            "properties": [
+                                { "key" : "user", "value": "guest" },
+                                { "key" : "password", "value": "guest" }
+                            ]
                         }
                     ]
                 }

@@ -4,21 +4,19 @@ import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import com.chutneytesting.task.TestFinallyActionRegistry;
 import com.chutneytesting.task.TestLogger;
 import com.chutneytesting.task.spi.FinallyAction;
 import com.chutneytesting.task.spi.TaskExecutionResult;
-import com.chutneytesting.task.spi.injectable.SecurityInfo;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.task.ssh.fakes.HardcodedTarget;
 import com.chutneytesting.task.ssh.sshd.SshServerMock;
 import com.chutneytesting.task.ssh.sshj.CommandResult;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -120,13 +118,9 @@ class SshServerTaskTest {
     }
 
     private Target buildInfoWithPasswordFor(SshServerMock sshServer) {
-        SecurityInfo.Credential credential = mock(SecurityInfo.Credential.class);
-        when(credential.username()).thenReturn("test");
-        when(credential.password()).thenReturn("test");
-
-        SecurityInfo securityInfoMock = mock(SecurityInfo.class);
-        when(securityInfoMock.credential()).thenReturn(Optional.of(credential));
-
-        return new HardcodedTarget(sshServer, securityInfoMock);
+        Map<String, String> properties = new HashMap<>();
+        properties.put("username", "test");
+        properties.put("password", "test");
+        return new HardcodedTarget(sshServer, properties);
     }
 }

@@ -14,11 +14,12 @@ import com.chutneytesting.agent.domain.network.NetworkDescription;
 import com.chutneytesting.engine.domain.delegation.ConnectionChecker;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
 import com.chutneytesting.engine.domain.delegation.UrlSlicer;
-import com.chutneytesting.environment.domain.Target;
+import com.chutneytesting.environment.api.dto.TargetDto;
 import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,8 +67,6 @@ public class ExploreAgentsService {
 
     /**
      * Propagate final {@link NetworkDescription} recursively to all reachable agents.
-     *
-     * @param networkDescription
      */
     public void wrapUp(NetworkDescription networkDescription) {
         if (explorations.changeStateToIfPossible(networkDescription.configuration(), ConfigurationState.WRAPING_UP)) {
@@ -89,11 +88,11 @@ public class ExploreAgentsService {
     }
 
     private ExploreResult detectAvailableTargets(String localName, NetworkConfiguration networkConfiguration) {
-
         Set<Link<AgentId, TargetId>> targetLinks = networkConfiguration.environmentConfiguration().stream()
-            .flatMap(env -> env.targets.stream()
-                .filter(target -> connectionChecker.canConnectTo(namedHostAndPortFromTarget(target)))
-                .map(t -> TargetId.of(t.name, t.environment))
+            .flatMap(e -> e.targets.stream()
+                .map(t -> Pair.of(e.name, t))
+                .filter(p -> connectionChecker.canConnectTo(namedHostAndPortFromTarget(p.getRight())))
+                .map(p -> TargetId.of(p.getRight().name, p.getLeft()))
                 .map(targetIdentifier -> Link.of(AgentId.of(localName), targetIdentifier))
             ).collect(Collectors.toSet());
         return ImmutableExploreResult.of(Links.empty(), ImmutableExploreResult.Links.of(targetLinks));
@@ -121,11 +120,11 @@ public class ExploreAgentsService {
         String localName = localServerIdentifier.getLocalName(networkDescription.configuration());
 
         networkDescription.configuration().agentNetworkConfiguration().stream()
-            .filter(agentinfo -> !localName.equals(agentinfo.name()))
+            .filter(agentInfo -> !localName.equals(agentInfo.name()))
             .forEach(agentInfo -> agentClient.wrapUp(agentInfo, networkDescription));
     }
 
-    private NamedHostAndPort namedHostAndPortFromTarget(Target target) {
+    private NamedHostAndPort namedHostAndPortFromTarget(TargetDto target) {
         UrlSlicer urlSlicer = new UrlSlicer(target.url);
         return new NamedHostAndPort(target.name, urlSlicer.host, urlSlicer.port);
     }

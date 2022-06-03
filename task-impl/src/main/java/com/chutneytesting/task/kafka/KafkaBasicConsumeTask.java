@@ -94,10 +94,10 @@ public class KafkaBasicConsumeTask implements Task {
         this.group = group;
         this.logger = logger;
         this.properties = ofNullable(
-            MapUtils.merge(ofNullable(target).map(Target::properties).orElse(emptyMap()), properties)
+            MapUtils.merge(extractConsumerConfig(target), properties)
         ).orElse(new HashMap<>());
         this.ackMode = ofNullable(ackMode)
-            .or(() -> ofNullable(this.properties.get("ackMode")))
+            .or(() -> ofNullable(target).flatMap(t -> t.property("ackMode")))
             .orElse(ContainerProperties.AckMode.BATCH.name());
     }
 
@@ -222,7 +222,7 @@ public class KafkaBasicConsumeTask implements Task {
         containerProperties.setAckMode(ContainerProperties.AckMode.valueOf(this.ackMode));
         ofNullable(properties.get(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG))
             .ifPresent(acims -> containerProperties.setAckTime(Long.parseLong(acims)));
-        ofNullable(properties.get(AUTO_COMMIT_COUNT_CONFIG))
+        target.property(AUTO_COMMIT_COUNT_CONFIG)
             .ifPresent(acc -> containerProperties.setAckCount(Integer.parseInt(acc)));
         return new ConcurrentMessageListenerContainer<>(
             kafkaConsumerFactoryFactory.create(target, group, properties),
@@ -254,5 +254,16 @@ public class KafkaBasicConsumeTask implements Task {
         } catch (Exception e) {
             logger.error("Cannot retrieve content type from message received:  " + e.getMessage());
         }
+    }
+
+    private Map<String, String> extractConsumerConfig(Target target) {
+        if (target != null) {
+            Map<String, String> config = new HashMap<>();
+            ConsumerConfig.configDef().configKeys().keySet().forEach(ck ->
+                target.property(ck).ifPresent(cv -> config.put(ck, cv))
+            );
+            return config;
+        }
+        return emptyMap();
     }
 }

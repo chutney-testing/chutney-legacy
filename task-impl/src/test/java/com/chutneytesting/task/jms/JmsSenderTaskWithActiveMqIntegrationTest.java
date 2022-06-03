@@ -3,9 +3,8 @@ package com.chutneytesting.task.jms;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-import com.chutneytesting.task.spi.injectable.Logger;
-import com.chutneytesting.task.TestSecurityInfo;
 import com.chutneytesting.task.TestTarget;
+import com.chutneytesting.task.spi.injectable.Logger;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -19,17 +18,12 @@ public class JmsSenderTaskWithActiveMqIntegrationTest extends ActiveMQTestSuppor
         String destination = "dynamicQueues/testD";
         Map<String, String> headers = new HashMap<>();
 
-
-        TestSecurityInfo security = TestSecurityInfo.builder()
-            .withTrustStore("security/truststore.jks")
-            .withTrustStorePassword("truststore")
-            .build();
-
         TestTarget target = TestTarget.TestTargetBuilder.builder()
             .withTargetId("id")
             .withUrl(needClientAuthConnector.getPublishableConnectString())
-            .withSecurity(security)
             .withProperty("java.naming.factory.initial", "org.apache.activemq.jndi.ActiveMQSslInitialContextFactory")
+            .withProperty("trustStore", "security/truststore.jks")
+            .withProperty("trustStorePassword", "truststore")
             .build();
 
         Logger logger = mock(Logger.class);
@@ -39,6 +33,4 @@ public class JmsSenderTaskWithActiveMqIntegrationTest extends ActiveMQTestSuppor
 
         assertThat(needClientAuthConnector.getBrokerService().getTotalConnections()).isEqualTo(expectedTotalConnections.get());
     }
-
-
 }

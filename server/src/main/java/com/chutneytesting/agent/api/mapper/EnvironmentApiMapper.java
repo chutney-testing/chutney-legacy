@@ -1,75 +1,37 @@
 package com.chutneytesting.agent.api.mapper;
 
-import static com.google.common.base.Strings.nullToEmpty;
-import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto.EnvironmentApiDto;
-import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto.SecurityApiDto;
 import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto.TargetsApiDto;
-import com.chutneytesting.environment.domain.Environment;
-import com.chutneytesting.environment.domain.SecurityInfo;
-import com.chutneytesting.environment.domain.Target;
+import com.chutneytesting.environment.api.dto.EnvironmentDto;
+import com.chutneytesting.environment.api.dto.TargetDto;
+import com.chutneytesting.tools.Entry;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 @Component
 public class EnvironmentApiMapper {
 
-    public Environment fromDto(EnvironmentApiDto environmentApiDto) {
-        return Environment.builder()
-            .withName(environmentApiDto.name)
-            .withTargets(environmentApiDto.targetsConfiguration.stream().map(t -> fromDto(t, environmentApiDto.name)).collect(Collectors.toSet()))
-            .build();
+    public EnvironmentDto fromDto(EnvironmentApiDto environmentApiDto) {
+        List<TargetDto> targets = environmentApiDto.targetsConfiguration.stream().map(this::fromDto).collect(toList());
+        return new EnvironmentDto(environmentApiDto.name, null, targets);
     }
 
-    private Target fromDto(TargetsApiDto targetsApiDto, String env) {
+    private TargetDto fromDto(TargetsApiDto targetsApiDto) {
         Map<String, String> properties = new LinkedHashMap<>(targetsApiDto.properties);
-
-        return Target.builder()
-            .withName(targetsApiDto.name)
-            .withEnvironment(env)
-            .withUrl(targetsApiDto.url)
-            .withProperties(properties)
-            .withSecurity(fromDto(targetsApiDto.security))
-            .build();
+        return new TargetDto(targetsApiDto.name, targetsApiDto.url, Entry.toEntrySet(properties));
     }
 
-    private SecurityInfo fromDto(SecurityApiDto security) {
-        SecurityInfo.SecurityInfoBuilder builder = SecurityInfo.builder();
-
-        if (security.username != null || security.password != null) {
-            builder.credential(SecurityInfo.Credential.of(nullToEmpty(security.username), nullToEmpty(security.password)));
-        }
-        ofNullable(security.keyStore).ifPresent(k -> builder.keyStore(k));
-        ofNullable(security.keyStorePassword).ifPresent(k -> builder.keyStorePassword(k));
-        ofNullable(security.trustStore).ifPresent(k -> builder.trustStore(k));
-        ofNullable(security.trustStorePassword).ifPresent(k -> builder.trustStorePassword(k));
-        ofNullable(security.keyPassword).ifPresent(k -> builder.keyPassword(k));
-        ofNullable(security.privateKey).ifPresent(k -> builder.privateKey(k));
-
-        return builder.build();
+    public EnvironmentApiDto toDto(EnvironmentDto environment) {
+        return new EnvironmentApiDto(environment.name, environment.targets.stream().map(this::toDto).collect(toSet()));
     }
 
-    public EnvironmentApiDto toDto(Environment environment) {
-        return new EnvironmentApiDto(environment.name, environment.targets.stream().map(t -> toDto(t)).collect(Collectors.toSet()));
-    }
-
-    private TargetsApiDto toDto(Target target) {
-        Map<String, String> properties = new LinkedHashMap<>(target.properties);
-        return new TargetsApiDto(target.name, target.url, properties, toDto(target.security));
-    }
-
-    private SecurityApiDto toDto(SecurityInfo security) {
-        String username = ofNullable(security.credential).map(c -> c.username).orElse(null);
-        String password = ofNullable(security.credential).map(c -> c.password).orElse(null);
-        String keyStore = ofNullable(security.keyStore).orElse(null);
-        String keyStorePassword = ofNullable(security.keyStorePassword).orElse(null);
-        String trustStore = ofNullable(security.trustStore).orElse(null);
-        String trustStorePassword = ofNullable(security.trustStorePassword).orElse(null);
-        String keyPassword = ofNullable(security.keyPassword).orElse(null);
-        String privateKey = ofNullable(security.privateKey).orElse(null);
-        return new SecurityApiDto(username, password, keyStore, keyStorePassword, trustStore, trustStorePassword, keyPassword, privateKey);
+    private TargetsApiDto toDto(TargetDto target) {
+        Map<String, String> properties = Entry.toMap(target.properties);
+        return new TargetsApiDto(target.name, target.url, properties);
     }
 }

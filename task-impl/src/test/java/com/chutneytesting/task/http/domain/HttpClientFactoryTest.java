@@ -2,13 +2,9 @@ package com.chutneytesting.task.http.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.task.TestSecurityInfo;
-import com.chutneytesting.task.spi.injectable.SecurityInfo;
+import com.chutneytesting.task.TestTarget;
 import java.lang.reflect.Field;
 import java.security.PrivateKey;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.X509KeyManager;
@@ -21,14 +17,14 @@ class HttpClientFactoryTest {
     void should_load_private_key_with_password() throws Exception {
         // Given
         SSLContextBuilder context = new SSLContextBuilder();
-        SecurityInfo security = TestSecurityInfo.builder()
-            .withKeyStore("src/test/resources/security/keystore-with-keypwd.jks")
-            .withKeyStorePassword("server")
-            .withKeyPassword("key_pwd")
+        TestTarget target = TestTarget.TestTargetBuilder.builder()
+            .withProperty("keyStore", "src/test/resources/security/keystore-with-keypwd.jks")
+            .withProperty("keyStorePassword", "server")
+            .withProperty("keyPassword", "key_pwd")
             .build();
 
         // When
-        HttpClientFactory.configureKeyStore(Collections.emptyMap(), security, context);
+        HttpClientFactory.configureKeyStore(target, context);
 
         // Then
         PrivateKey actual = retrieveLoadedPrivateKey(context, "server");
@@ -36,16 +32,16 @@ class HttpClientFactoryTest {
     }
 
     @Test
-    void should_load_private_key_from_properties() throws Exception {
+    void should_use_keystorePassword_for_key_when_keyPassword_not_provided() throws Exception {
         // Given
         SSLContextBuilder context = new SSLContextBuilder();
-        Map<String, String> properties = new HashMap<>(3);
-        properties.put("keyStore", "src/test/resources/security/keystore-with-keypwd.jks");
-        properties.put("keyStorePassWord", "server");
-        properties.put("keyPassword", "key_pwd");
+        TestTarget target = TestTarget.TestTargetBuilder.builder()
+            .withProperty("keyStore", "src/test/resources/security/server.jks")
+            .withProperty("keyStorePassword", "server")
+            .build();
 
         // When
-        HttpClientFactory.configureKeyStore(properties, TestSecurityInfo.builder().build(), context);
+        HttpClientFactory.configureKeyStore(target, context);
 
         // Then
         PrivateKey actual = retrieveLoadedPrivateKey(context, "server");

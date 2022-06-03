@@ -1,0 +1,147 @@
+{
+    "executionId": "5",
+    "scenarioName": "kafka client sender",
+    "environment": "KAFKA_ENV_RECORD",
+    "user": "admin",
+    "report": {
+        "name": "kafka client sender",
+        "duration": "3150",
+        "startDate": "2022-05-20T18:56:21.516527100Z",
+        "status": "FAILURE",
+        "information": [],
+        "errors": [],
+        "steps": [
+            {
+                "name": "Publish to broker",
+                "duration": "11",
+                "startDate": "2022-05-20T18:56:21.516527100Z",
+                "status": "SUCCESS",
+                "information": [
+                    "sending message to topic=a-topic",
+                    "Published Kafka Message on topic a-topic"
+                ],
+                "errors": [],
+                "steps": [],
+                "type": "kafka-basic-publish",
+                "targetName": "test_kafka",
+                "targetUrl": "tcp://127.0.0.1:53347",
+                "strategy": "sequential",
+                "evaluatedInputs": {
+                    "topic": "a-topic",
+                    "payload": "bodybuilder",
+                    "headers": {
+                        "X-API-VERSION": "1.0"
+                    }
+                },
+                "stepOutputs": {
+                    "headers": "[X-API-VERSION=1.0]",
+                    "payload": "bodybuilder"
+                }
+            },
+            {
+                "name": "Consume from broker",
+                "duration": "129",
+                "startDate": "2022-05-20T18:56:21.527527300Z",
+                "status": "SUCCESS",
+                "information": [
+                    "Consuming message from topic a-topic",
+                    "Received a message, however cannot read it as Json fallback as String.",
+                    "Consumed [1] Kafka Messages from topic a-topic"
+                ],
+                "errors": [],
+                "steps": [],
+                "type": "kafka-basic-consume",
+                "targetName": "test_kafka",
+                "targetUrl": "tcp://127.0.0.1:53347",
+                "strategy": "sequential",
+                "evaluatedInputs": {
+                    "topic": "a-topic",
+                    "group": "chutney"
+                },
+                "stepOutputs": {
+                    "headers": [
+                        {
+                            "X-API-VERSION": "1.0"
+                        }
+                    ],
+                    "payloads": [
+                        "bodybuilder"
+                    ],
+                    "body": [
+                        {
+                            "headers": {
+                                "X-API-VERSION": "1.0"
+                            },
+                            "payload": "bodybuilder"
+                        }
+                    ],
+                    "payload": "bodybuilder"
+                }
+            },
+            {
+                "name": "Check payload",
+                "duration": "0",
+                "startDate": "2022-05-20T18:56:21.657646800Z",
+                "status": "SUCCESS",
+                "information": [
+                    "Found expected value [bodybuilder] - Task string-assert is deprecated. Use assert-true instead."
+                ],
+                "errors": [],
+                "steps": [],
+                "type": "string-assert",
+                "targetName": "",
+                "targetUrl": "",
+                "strategy": "sequential",
+                "evaluatedInputs": {
+                    "document": "bodybuilder",
+                    "expected": "bodybuilder"
+                },
+                "stepOutputs": {}
+            },
+            {
+                "name": "Consume from broker the same message again",
+                "duration": "3008",
+                "startDate": "2022-05-20T18:56:21.657646800Z",
+                "status": "FAILURE",
+                "information": [
+                    "Consuming message from topic a-topic"
+                ],
+                "errors": [
+                    "Unable to get the expected number of messages [1] during 3 s from topic a-topic."
+                ],
+                "steps": [],
+                "type": "kafka-basic-consume",
+                "targetName": "test_kafka",
+                "targetUrl": "tcp://127.0.0.1:53347",
+                "strategy": "sequential",
+                "evaluatedInputs": {
+                    "topic": "a-topic",
+                    "group": "chutney",
+                    "timeout": "3 s"
+                },
+                "stepOutputs": {}
+            },
+            {
+                "name": "Check payload",
+                "duration": "0",
+                "startDate": "2022-05-20T18:56:24.666792900Z",
+                "status": "NOT_EXECUTED",
+                "information": [],
+                "errors": [],
+                "steps": [],
+                "type": "string-assert",
+                "targetName": "",
+                "targetUrl": "",
+                "strategy": "sequential",
+                "evaluatedInputs": {},
+                "stepOutputs": {}
+            }
+        ],
+        "type": "",
+        "targetName": "",
+        "targetUrl": "",
+        "strategy": "sequential",
+        "evaluatedInputs": {},
+        "stepOutputs": {}
+    }
+}

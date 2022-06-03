@@ -1,5 +1,6 @@
 package com.chutneytesting.agent;
 
+import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 
 import com.chutneytesting.agent.domain.TargetId;
@@ -9,8 +10,8 @@ import com.chutneytesting.agent.domain.explore.AgentId;
 import com.chutneytesting.agent.domain.explore.ExploreResult;
 import com.chutneytesting.agent.domain.explore.ImmutableExploreResult;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.chutneytesting.environment.domain.Environment;
-import com.chutneytesting.environment.domain.Target;
+import com.chutneytesting.environment.api.dto.EnvironmentDto;
+import com.chutneytesting.environment.api.dto.TargetDto;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
@@ -48,12 +49,12 @@ public class AgentNetworkTestUtils {
 
         builder.agentNetworkConfiguration(ImmutableNetworkConfiguration.AgentNetworkConfiguration.of(agentInfos));
 
-        List<Target> targets = Stream.of(agentOrTargetDescription)
+        List<TargetDto> targets = Stream.of(agentOrTargetDescription)
             .map(aotd -> createTarget(ENV_NAME, aotd))
             .filter(Optional::isPresent)
             .map(Optional::get)
             .collect(Collectors.toList());
-        Environment env = Environment.builder().withName(ENV_NAME).addAllTargets(targets).build();
+        EnvironmentDto env = new EnvironmentDto(ENV_NAME, null, targets);
         builder.environmentConfiguration(ImmutableNetworkConfiguration.EnvironmentConfiguration.of(singleton(env)));
 
         return builder;
@@ -68,14 +69,12 @@ public class AgentNetworkTestUtils {
             Integer.parseInt(matcher.group("port"))));
     }
 
-    public static Optional<Target> createTarget(String envName, String s) {
+    public static Optional<TargetDto> createTarget(String envName, String s) {
         Matcher matcher = TARGET_INFO_PATTERN.matcher(s);
         if (!matcher.find()) return Optional.empty();
-        return Optional.of(Target.builder()
-            .withName(matcher.group("name"))
-            .withEnvironment(envName)
-            .withUrl("proto://" + matcher.group("host") + ":" + matcher.group("port"))
-            .build());
+        return Optional.of(
+            new TargetDto(matcher.group("name"), "proto://" + matcher.group("host") + ":" + matcher.group("port"), emptySet())
+        );
     }
 
     /**

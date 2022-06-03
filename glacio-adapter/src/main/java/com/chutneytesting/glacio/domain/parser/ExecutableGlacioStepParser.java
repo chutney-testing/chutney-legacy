@@ -1,22 +1,20 @@
 package com.chutneytesting.glacio.domain.parser;
 
-import static com.chutneytesting.glacio.domain.parser.ParsingContext.PARSING_CONTEXT_KEYS.ENVIRONMENT;
 import static java.util.Collections.emptyList;
 
-import com.chutneytesting.engine.domain.execution.StepDefinition;
-import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
-import com.chutneytesting.task.spi.injectable.Target;
+import com.chutneytesting.engine.api.execution.StepDefinitionDto;
+import com.chutneytesting.engine.api.execution.TargetExecutionDto;
 import com.github.fridujo.glacio.model.Step;
 import java.util.Map;
 
 public abstract class ExecutableGlacioStepParser implements IParseExecutableStep {
 
-    protected final GlacioStepParser<Target> targetParser;
+    protected final GlacioStepParser<TargetExecutionDto> targetParser;
     protected final GlacioStepParser<Map<String, Object>> inputsParser;
     protected final GlacioStepParser<Map<String, Object>> outputsParser;
     protected final GlacioStepParser<Map<String, Object>> validationsParser;
 
-    public ExecutableGlacioStepParser(GlacioStepParser<Target> targetParser,
+    public ExecutableGlacioStepParser(GlacioStepParser<TargetExecutionDto> targetParser,
                                       GlacioStepParser<Map<String, Object>> inputsParser,
                                       GlacioStepParser<Map<String, Object>> outputsParser,
                                       GlacioStepParser<Map<String, Object>> validationsParser) {
@@ -29,8 +27,8 @@ public abstract class ExecutableGlacioStepParser implements IParseExecutableStep
     public abstract String parseTaskType(Step step);
 
     @Override
-    public final StepDefinition mapToStepDefinition(ParsingContext context, Step step, StepStrategyDefinition stepStrategyDefinition) {
-        return new StepDefinition(
+    public final StepDefinitionDto mapToStepDefinition(ParsingContext context, Step step, StepDefinitionDto.StepStrategyDefinitionDto stepStrategyDefinition) {
+        return new StepDefinitionDto(
             parseStepName(step),
             parseStepTarget(context, step),
             parseTaskType(step),
@@ -38,8 +36,7 @@ public abstract class ExecutableGlacioStepParser implements IParseExecutableStep
             parseTaskInputs(context, step),
             emptyList(),
             parseTaskOutputs(context, step),
-            parseTaskValidations(context, step),
-            context.values.get(ENVIRONMENT)
+            parseTaskValidations(context, step)
         );
     }
 
@@ -59,7 +56,7 @@ public abstract class ExecutableGlacioStepParser implements IParseExecutableStep
         return validationsParser.parseGlacioStep(context, step);
     }
 
-    private Target parseStepTarget(ParsingContext context, Step step) {
+    private TargetExecutionDto parseStepTarget(ParsingContext context, Step step) {
         return targetParser.parseGlacioStep(context, step);
     }
 

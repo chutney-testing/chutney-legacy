@@ -5,6 +5,7 @@ import static com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory.C
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContent;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentProvider;
+import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
 import com.chutneytesting.environment.api.EnvironmentApi;
 import com.chutneytesting.environment.api.dto.EnvironmentDto;
 import com.chutneytesting.tools.file.FileUtils;
@@ -24,7 +25,7 @@ public class ChutneyEnvironmentContent implements ChutneyContentProvider {
     private final EnvironmentApi environmentApi;
     private final ObjectMapper mapper;
 
-    public ChutneyEnvironmentContent(@Qualifier("environmentEmbeddedApplication") EnvironmentApi environmentApi, @Qualifier("gitObjectMapper") ObjectMapper mapper) {
+    public ChutneyEnvironmentContent(@Qualifier("environmentEmbeddedApplication") EmbeddedEnvironmentApi environmentApi, @Qualifier("gitObjectMapper") ObjectMapper mapper) {
         this.environmentApi = environmentApi;
         this.mapper = mapper;
     }

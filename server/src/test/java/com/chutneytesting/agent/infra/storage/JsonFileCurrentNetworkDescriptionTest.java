@@ -11,7 +11,7 @@ import com.chutneytesting.agent.domain.network.Agent;
 import com.chutneytesting.agent.domain.network.AgentGraph;
 import com.chutneytesting.agent.domain.network.ImmutableNetworkDescription;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
-import com.chutneytesting.environment.domain.EnvironmentRepository;
+import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -19,7 +19,7 @@ public class JsonFileCurrentNetworkDescriptionTest {
 
     JsonFileCurrentNetworkDescription underTest;
 
-    EnvironmentRepository environmentRepository = mock(EnvironmentRepository.class);
+    EmbeddedEnvironmentApi environmentApi = mock(EmbeddedEnvironmentApi.class);
     AgentNetworkMapperJsonFileMapper agentNetworkMapperJsonFileMapper = mock(AgentNetworkMapperJsonFileMapper.class);
     JsonFileAgentNetworkDao jsonFileAgentNetworkDao = mock(JsonFileAgentNetworkDao.class);
     LocalServerIdentifier localServerIdentifier = mock(LocalServerIdentifier.class);
@@ -29,7 +29,7 @@ public class JsonFileCurrentNetworkDescriptionTest {
 
     @BeforeEach
     public void setUp() {
-        reset(environmentRepository, agentNetworkMapperJsonFileMapper, jsonFileAgentNetworkDao, localServerIdentifier);
+        reset(environmentApi, agentNetworkMapperJsonFileMapper, jsonFileAgentNetworkDao, localServerIdentifier);
 
         originalNetworkDescription = createNetworkDescription();
         NetworkDescription anotherNetworkDescription = createNetworkDescription();
@@ -39,7 +39,7 @@ public class JsonFileCurrentNetworkDescriptionTest {
         when(localServerIdentifier.findLocalAgent(any())).thenReturn(originalLocalAgent);
 
         underTest = new JsonFileCurrentNetworkDescription(
-            environmentRepository,
+            environmentApi,
             agentNetworkMapperJsonFileMapper,
             jsonFileAgentNetworkDao,
             localServerIdentifier);

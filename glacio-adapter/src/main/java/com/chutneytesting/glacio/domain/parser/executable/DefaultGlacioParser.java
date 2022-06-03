@@ -2,8 +2,8 @@ package com.chutneytesting.glacio.domain.parser.executable;
 
 import static java.util.Optional.ofNullable;
 
+import com.chutneytesting.environment.api.EnvironmentApi;
 import com.chutneytesting.glacio.domain.parser.ExecutableGlacioStepParser;
-import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
 import com.chutneytesting.glacio.domain.parser.executable.common.EntryStepParser;
 import com.chutneytesting.glacio.domain.parser.executable.common.FilteredByKeywordsSubStepMapStepParser;
 import com.chutneytesting.glacio.domain.parser.executable.common.TargetStepParser;
@@ -21,7 +21,7 @@ public class DefaultGlacioParser extends ExecutableGlacioStepParser {
 
     private final TaskTemplateRegistry taskTemplateRegistry;
 
-    public DefaultGlacioParser(TaskTemplateRegistry taskTemplateRegistry, EmbeddedEnvironmentApi environmentApplication) {
+    public DefaultGlacioParser(TaskTemplateRegistry taskTemplateRegistry, EnvironmentApi environmentApplication) {
         super(new TargetStepParser(environmentApplication, "On"),
             new FilteredByKeywordsSubStepMapStepParser(new EntryStepParser(), "With"),
             new FilteredByKeywordsSubStepMapStepParser(new EntryStepParser(), "Take", "Keep"),
@@ -47,5 +47,4 @@ public class DefaultGlacioParser extends ExecutableGlacioStepParser {
     public Map<Locale, Set<String>> keywords() {
         throw new UnsupportedOperationException();
     }
-
 }

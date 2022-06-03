@@ -18,14 +18,13 @@ public class TaskValidatorsUtils {
         return of(target)
             .validate(Objects::nonNull, "No target provided")
             .validate(Target::name, StringUtils::isNotBlank, "Target name is blank")
-            .validate(Target::url, StringUtils::isNotBlank, "No url defined on the target")
             .validate(Target::uri, noException -> true, "Target url is not valid")
             .validate(Target::host, host -> host != null && !host.isEmpty(), "Target url has an undefined host");
     }
 
     public static Validator<Target> targetPropertiesNotBlankValidation(Target target, String... properties) {
         Validator<Target> targetValidator = of(target);
-        Arrays.stream(properties).forEach(p -> targetValidator.validate(t -> t.properties().get(p), StringUtils::isNotBlank, "Target property [" + p + "] is blank"));
+        Arrays.stream(properties).forEach(p -> targetValidator.validate(t -> t.property(p).orElse(""), StringUtils::isNotBlank, "Target property [" + p + "] is blank"));
         return targetValidator;
     }
 

@@ -26,6 +26,7 @@
     <logger name="wiremock.org.eclipse.jetty.util.thread.QueuedThreadPool" level="ERROR"/>
     <logger name="javax.management.mbeanserver" level="WARN"/>
     <logger name="kafka" level="WARN"/>
+    <logger name="com.chutneytesting.environment" level="WARN"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>

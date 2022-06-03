@@ -26,6 +26,8 @@ export class EnvironmentAdminComponent implements OnInit {
     selectedEnvironment: EnvironmentMetadata;
     envForm: FormGroup;
     envUpdate = false;
+    help: boolean;
+    private reloading = false;
 
     constructor(
         private environmentAdminService: EnvironmentAdminService,
@@ -46,19 +48,22 @@ export class EnvironmentAdminComponent implements OnInit {
                 this.environmentsNames = res.map(e => e.name);
                 this.loadTarget();
             },
-            (error) => {this.errorMessage = error.error; }
+            (error) => { this.errorMessage = error.error; },
+            () => { this.reloading = false; }
         );
     }
 
     loadTarget() {
-        this.environmentAdminService.listTargets(this.selectedEnvironment.name).subscribe(
-            (res) => {
-                this.targets = res.sort((t1, t2) =>  t1.name.toUpperCase() > t2.name.toUpperCase() ? 1 : 0);
-            },
-            (error) => { console.log(error); this.errorMessage = error.error; }
-        );
-        this.selectedTarget = null;
-        this.selectedTargetName = null;
+        if (this.selectedEnvironment) {
+            this.environmentAdminService.listTargets(this.selectedEnvironment.name).subscribe(
+                (res) => {
+                    this.targets = res.sort((t1, t2) =>  t1.name.toUpperCase() > t2.name.toUpperCase() ? 1 : 0);
+                },
+                (error) => { console.log(error); this.errorMessage = error.error; }
+            );
+            this.selectedTarget = null;
+            this.selectedTargetName = null;
+        }
     }
 
     selectTarget(target: Target) {
@@ -159,9 +164,10 @@ export class EnvironmentAdminComponent implements OnInit {
         return this.targets.filter(t => Object.is(t.name, target.name));
     }
 
-    cancel() {
+    cancelSelectedTarget() {
         this.selectedTarget = null;
         this.selectedTargetName = null;
+        this.errorMessage = null;
     }
 
     scrollToTop() {
@@ -173,7 +179,15 @@ export class EnvironmentAdminComponent implements OnInit {
             && this.validationService.isValidUrl(target.url);
     }
 
+    deleteEnvironment() {
+        this.environmentAdminService.deleteEnvironment(this.selectedEnvironment.name).subscribe(
+            (res) => { this.reload(); },
+            (error) => { this.errorMessage = error.error; }
+        );
+    }
+
     initEnvironment() {
+        this.cancelSelectedTarget();
         this.envForm = this.formBuilder.group({
             name: ['', Validators.required],
             description: ''
@@ -181,6 +195,7 @@ export class EnvironmentAdminComponent implements OnInit {
     }
 
     initForUpdateEnvironment() {
+        this.cancelSelectedTarget();
         this.envForm = this.formBuilder.group({
             name: [this.selectedEnvironment.name, Validators.required],
             description: this.selectedEnvironment.description
@@ -284,8 +299,10 @@ export class EnvironmentAdminComponent implements OnInit {
     // Import/Export Env------------------------------------------------
 
     reload() {
+        this.reloading = true;
         (async () => {
             await this.delay(500);
+            this.errorMessage = null;
             this.envUpdate = null;
             this.envForm = null;
             this.loadEnvironment();
@@ -299,10 +316,14 @@ export class EnvironmentAdminComponent implements OnInit {
 
     cancelEnvironment() {
         this.envForm = null;
+        this.errorMessage = null;
     }
 
     changingValue(envName: string) {
-        this.selectedEnvironment = this.environments.filter(e => e.name === envName)[0];
-        this.loadTarget();
+        if (!this.reloading) {
+            this.errorMessage = null;
+            this.selectedEnvironment = this.environments.filter(e => e.name === envName)[0];
+            this.loadTarget();
+        }
     }
 }

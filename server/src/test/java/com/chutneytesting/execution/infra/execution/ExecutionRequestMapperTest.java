@@ -9,18 +9,17 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
-import com.chutneytesting.scenario.domain.raw.RawTestCase;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
-import com.chutneytesting.engine.api.execution.SecurityInfoExecutionDto;
 import com.chutneytesting.engine.api.execution.TargetExecutionDto;
 import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
 import com.chutneytesting.environment.api.dto.TargetDto;
-import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.ExecutableComposedScenario;
 import com.chutneytesting.execution.domain.ExecutableComposedStep;
 import com.chutneytesting.execution.domain.ExecutableComposedTestCase;
+import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.StepImplementation;
+import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
+import com.chutneytesting.scenario.domain.raw.RawTestCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -35,6 +34,7 @@ import org.apache.groovy.util.Maps;
 import org.assertj.core.util.Files;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("unchecked")
 public class ExecutionRequestMapperTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
@@ -66,8 +66,7 @@ public class ExecutionRequestMapperTest {
         // Given
         String expectedType = "task-id";
         String expectedTargetId = "target name";
-        SecurityInfoExecutionDto securityDto = new SecurityInfoExecutionDto(null, null, null, null, null, null, null);
-        TargetExecutionDto expectedTarget = new TargetExecutionDto(expectedTargetId, "", emptyMap(), securityDto, emptyList());
+        TargetExecutionDto expectedTarget = new TargetExecutionDto(expectedTargetId, "", emptyMap(), emptyList());
 
         LinkedHashMap<String, Object> expectedOutputs = new LinkedHashMap<>(Maps.of(
             "output1", "value1",
@@ -131,7 +130,7 @@ public class ExecutionRequestMapperTest {
         );
 
         when(environmentApplication.getTarget(any(), eq(expectedTargetId)))
-            .thenReturn(new TargetDto(expectedTargetId, "", null, null, null, null, null, null, null));
+            .thenReturn(new TargetDto(expectedTargetId, "", null));
 
         // When
         ExecutionRequest request = new ExecutionRequest(testCase, "", "");
@@ -161,13 +160,11 @@ public class ExecutionRequestMapperTest {
     }
 
     private void assertRootStepDefinitionRequestDto(ExecutionRequestDto.StepDefinitionRequestDto stepDefinitionRequestDto, String name) {
-        SecurityInfoExecutionDto securityDto = new SecurityInfoExecutionDto(null, null, null, null, null, null, null);
-
         assertThat(stepDefinitionRequestDto).isNotNull();
         assertThat(stepDefinitionRequestDto.name).isEqualTo(name);
         assertThat(stepDefinitionRequestDto.type).isNullOrEmpty();
         assertThat(stepDefinitionRequestDto.target).isEqualTo(
-            new TargetExecutionDto("", "", emptyMap(), securityDto, emptyList())
+            new TargetExecutionDto("", "", emptyMap(), emptyList())
         );
         assertThat(stepDefinitionRequestDto.inputs).isNullOrEmpty();
         assertThat(stepDefinitionRequestDto.outputs).isNullOrEmpty();
@@ -188,9 +185,9 @@ public class ExecutionRequestMapperTest {
             if (v instanceof String) {
                 assertThat(stepDefinitionRequestDto.inputs).containsEntry(k, v);
             } else if (v instanceof List) {
-                assertThat((List) v).containsExactlyElementsOf((List) stepDefinitionRequestDto.inputs.get(k));
+                assertThat((List<Object>) v).containsExactlyElementsOf((List<Object>) stepDefinitionRequestDto.inputs.get(k));
             } else if (v instanceof Map) {
-                assertThat((Map) v).containsExactlyEntriesOf((Map) stepDefinitionRequestDto.inputs.get(k));
+                assertThat((Map<String, Object>) v).containsExactlyEntriesOf((Map<String, Object>) stepDefinitionRequestDto.inputs.get(k));
             }
         });
         assertThat(implementationOuputs).containsExactlyEntriesOf(stepDefinitionRequestDto.outputs);

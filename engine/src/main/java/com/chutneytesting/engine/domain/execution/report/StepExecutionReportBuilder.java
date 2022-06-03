@@ -62,9 +62,8 @@ public class StepExecutionReportBuilder {
         return this;
     }
 
-    private StepExecutionReportBuilder setExecutionId(long executionId) {
+    private void setExecutionId(long executionId) {
         this.executionId = executionId;
-        return this;
     }
 
     public StepExecutionReportBuilder setName(String name) {
@@ -115,7 +114,7 @@ public class StepExecutionReportBuilder {
     public StepExecutionReportBuilder setTarget(Target target) {
         if (target != null) {
             this.targetName = target.name();
-            this.targetUrl = target.url();
+            this.targetUrl = target.uri().toString();
         }
         return this;
     }

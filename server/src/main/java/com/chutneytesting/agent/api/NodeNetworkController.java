@@ -12,7 +12,8 @@ import com.chutneytesting.agent.domain.configure.NetworkConfiguration;
 import com.chutneytesting.agent.domain.explore.ExploreAgentsService;
 import com.chutneytesting.agent.domain.explore.ExploreResult;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
-import com.chutneytesting.environment.domain.EnvironmentRepository;
+import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
+import com.chutneytesting.environment.api.EnvironmentApi;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +27,7 @@ public class NodeNetworkController {
     private final ConfigureService configureService;
     private final GetCurrentNetworkDescriptionService getCurrentNetworkDescription;
     private final ExploreAgentsService exploreAgentsService;
-    private final EnvironmentRepository environmentRepository;
+    private final EnvironmentApi embeddedEnvironmentApi;
 
     private final NetworkConfigurationApiMapper networkConfigurationApiMapper;
     private final NetworkDescriptionApiMapper networkDescriptionApiMapper;
@@ -35,13 +36,14 @@ public class NodeNetworkController {
     public NodeNetworkController(ConfigureService configureService,
                                  GetCurrentNetworkDescriptionService getCurrentNetworkDescription,
                                  ExploreAgentsService exploreAgentsService,
-                                 EnvironmentRepository environmentRepository, NetworkDescriptionApiMapper networkDescriptionApiMapper,
+                                 EmbeddedEnvironmentApi embeddedEnvironmentApi,
+                                 NetworkDescriptionApiMapper networkDescriptionApiMapper,
                                  ExploreResultApiMapper exploreResultApiMapper,
                                  NetworkConfigurationApiMapper networkConfigurationApiMapper) {
         this.configureService = configureService;
         this.getCurrentNetworkDescription = getCurrentNetworkDescription;
         this.exploreAgentsService = exploreAgentsService;
-        this.environmentRepository = environmentRepository;
+        this.embeddedEnvironmentApi = embeddedEnvironmentApi;
         this.networkDescriptionApiMapper = networkDescriptionApiMapper;
         this.exploreResultApiMapper = exploreResultApiMapper;
         this.networkConfigurationApiMapper = networkConfigurationApiMapper;
@@ -53,7 +55,7 @@ public class NodeNetworkController {
     @PostMapping(CONFIGURE_URL)
     public NetworkDescriptionApiDto configure(@RequestBody NetworkConfigurationApiDto networkConfigurationApi) {
         NetworkConfiguration networkConfiguration = networkConfigurationApiMapper.fromDtoAtNow(networkConfigurationApi);
-        NetworkConfiguration enhancedWithEnvironmentNetworkConfiguration = networkConfigurationApiMapper.enhanceWithEnvironment(networkConfiguration, environmentRepository.getEnvironments());
+        NetworkConfiguration enhancedWithEnvironmentNetworkConfiguration = networkConfigurationApiMapper.enhanceWithEnvironment(networkConfiguration, embeddedEnvironmentApi.listEnvironments());
         NetworkDescription networkDescription = configureService.configure(enhancedWithEnvironmentNetworkConfiguration);
         return networkDescriptionApiMapper.toDto(networkDescription);
     }

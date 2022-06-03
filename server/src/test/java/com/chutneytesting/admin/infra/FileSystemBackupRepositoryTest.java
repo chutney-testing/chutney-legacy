@@ -1,7 +1,6 @@
 package com.chutneytesting.admin.infra;
 
 import static com.chutneytesting.admin.infra.FileSystemBackupRepository.ROOT_DIRECTORY_NAME;
-import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -15,8 +14,8 @@ import com.chutneytesting.admin.domain.BackupNotFoundException;
 import com.chutneytesting.admin.domain.BackupRepository;
 import com.chutneytesting.admin.domain.HomePageRepository;
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
-import com.chutneytesting.environment.domain.Environment;
-import com.chutneytesting.environment.domain.EnvironmentRepository;
+import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
+import com.chutneytesting.environment.api.dto.EnvironmentDto;
 import com.chutneytesting.globalvar.domain.GlobalvarRepository;
 import com.chutneytesting.jira.domain.JiraRepository;
 import com.chutneytesting.scenario.infra.orient.OrientComponentDB;
@@ -30,12 +29,12 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.util.FileSystemUtils;
@@ -47,7 +46,7 @@ public class FileSystemBackupRepositoryTest {
 
     private final OrientComponentDB orientComponentDB = mock(OrientComponentDB.class);
     private final HomePageRepository homePageRepository = mock(HomePageRepository.class);
-    private final EnvironmentRepository environmentRepository = mock(EnvironmentRepository.class);
+    private final EmbeddedEnvironmentApi environmentApi = mock(EmbeddedEnvironmentApi.class);
     private final GlobalvarRepository globalvarRepository = mock(GlobalvarRepository.class);
     private final CurrentNetworkDescription currentNetworkDescription = mock(CurrentNetworkDescription.class);
     private final JiraRepository jiraRepository = mock(JiraRepository.class);
@@ -55,7 +54,7 @@ public class FileSystemBackupRepositoryTest {
     @BeforeEach
     public void before() {
         backupsRootPath = Try.exec(() -> Files.createTempDirectory(Paths.get("target"), "backups")).runtime();
-        sut = new FileSystemBackupRepository(backupsRootPath.toString(), orientComponentDB, homePageRepository, environmentRepository, globalvarRepository, currentNetworkDescription, jiraRepository);
+        sut = new FileSystemBackupRepository(backupsRootPath.toString(), orientComponentDB, homePageRepository, environmentApi, globalvarRepository, currentNetworkDescription, jiraRepository);
     }
 
     @AfterEach
@@ -69,7 +68,7 @@ public class FileSystemBackupRepositoryTest {
         Files.deleteIfExists(backupsRootPath.resolve(ROOT_DIRECTORY_NAME));
         backupsRootPath = Files.createTempDirectory(Paths.get("target"), "freshNewBackups");
         // When
-        sut = new FileSystemBackupRepository(backupsRootPath.toString(), orientComponentDB, homePageRepository, environmentRepository, globalvarRepository, currentNetworkDescription, jiraRepository);
+        sut = new FileSystemBackupRepository(backupsRootPath.toString(), orientComponentDB, homePageRepository, environmentApi, globalvarRepository, currentNetworkDescription, jiraRepository);
         // Then
         assertThat(backupsRootPath.resolve(ROOT_DIRECTORY_NAME).toFile().exists()).isTrue();
     }
@@ -143,7 +142,7 @@ public class FileSystemBackupRepositoryTest {
         // Then
         verify(homePageRepository, times(oneIfTrue(homePage))).backup(any());
         verify(currentNetworkDescription, times(oneIfTrue(agentsNetwork))).backup(any());
-        verify(environmentRepository, times(oneIfTrue(environments))).getEnvironments();
+        verify(environmentApi, times(oneIfTrue(environments))).listEnvironments();
         verify(orientComponentDB, times(oneIfTrue(components))).backup(any());
         verify(globalvarRepository, times(oneIfTrue(globalVars))).backup(any());
         verify(jiraRepository, times(oneIfTrue(jiraLinks))).getFolderPath();
@@ -168,12 +167,12 @@ public class FileSystemBackupRepositoryTest {
     }
 
     @Test()
-    public void should_backup_all_environments(@TempDir Path tmp) throws IOException {
+    public void should_backup_all_environments() throws IOException {
         // G
-        when(environmentRepository.getEnvironments())
-            .thenReturn(asList(
-                Environment.builder().withName("envA").build(),
-                Environment.builder().withName("envB").build()
+        when(environmentApi.listEnvironments())
+            .thenReturn(Set.of(
+                new EnvironmentDto("envA"),
+                new EnvironmentDto("envB")
             ));
 
         Backup backup = new Backup(false, false, true, false, false, false);
@@ -191,8 +190,8 @@ public class FileSystemBackupRepositoryTest {
             ArrayList<? extends ZipEntry> list = Collections.list(zipFile.entries());
 
             assertThat(list).hasSize(2);
-            assertThat(list.get(0).getName()).isEqualTo("envA.json");
-            assertThat(list.get(1).getName()).isEqualTo("envB.json");
+            assertThat(list).extracting("name")
+                .containsExactlyInAnyOrder("envA.json", "envB.json");
         }
     }
 

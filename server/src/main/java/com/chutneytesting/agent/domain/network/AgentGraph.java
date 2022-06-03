@@ -1,11 +1,13 @@
 package com.chutneytesting.agent.domain.network;
 
+import static java.util.stream.Collectors.toMap;
+
 import com.chutneytesting.agent.domain.TargetId;
 import com.chutneytesting.agent.domain.configure.NetworkConfiguration;
 import com.chutneytesting.agent.domain.explore.AgentId;
 import com.chutneytesting.agent.domain.explore.ExploreResult;
 import com.chutneytesting.agent.domain.explore.ExploreResult.Link;
-import com.chutneytesting.environment.domain.Target;
+import com.chutneytesting.environment.api.dto.TargetDto;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -13,7 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class AgentGraph {
 
@@ -34,18 +36,18 @@ public class AgentGraph {
             sourceAgent.addReachable(destAgent);
         }
 
-        Map<TargetId, Target> targetById = networkConfiguration.environmentConfiguration().stream()
-            .flatMap( e -> e.targets.stream())
-            .collect(Collectors.toMap(t -> TargetId.of(t.name, t.environment), Function.identity()));
+        Map<TargetId, Pair<String, TargetDto>> targetById = networkConfiguration.environmentConfiguration().stream()
+            .flatMap(e -> e.targets.stream().map(t -> Pair.of(e.name, t)))
+            .collect(toMap(p -> TargetId.of(p.getRight().name, p.getLeft()), Function.identity()));
 
-        for(Link<AgentId, TargetId> targetLink : exploreResult.targetLinks()) {
+        for (Link<AgentId, TargetId> targetLink : exploreResult.targetLinks()) {
             Agent sourceAgent = agentsByName.get(targetLink.source().name());
-            Target destTarget = targetById.get(targetLink.destination());
+            Pair<String, TargetDto> destTarget = targetById.get(targetLink.destination());
             if (sourceAgent == null)
                 throw new IllegalStateException(String.format("the agent [%s] is declared as source but does not exist in configuration", targetLink.source()));
             if (destTarget == null)
                 throw new IllegalStateException(String.format("the target [%s] is declared as destination but does not exist in configuration", targetLink.destination()));
-            sourceAgent.addReachable(TargetId.of(destTarget.name, destTarget.environment));
+            sourceAgent.addReachable(TargetId.of(destTarget.getRight().name, destTarget.getLeft()));
         }
 
         return new AgentGraph(new HashSet<>(agentsByName.values()));
@@ -58,7 +60,7 @@ public class AgentGraph {
     private static Map<String, Agent> indexAgents(NetworkConfiguration networkConfiguration, Function<Agent, String> indexFunction) {
         return networkConfiguration.agentNetworkConfiguration().stream()
             .map(Agent::new)
-            .collect(Collectors.toMap(indexFunction, Function.identity()));
+            .collect(toMap(indexFunction, Function.identity()));
     }
 
     private final Set<Agent> agents;
@@ -76,5 +78,4 @@ public class AgentGraph {
             .filter(agent -> agent.agentInfo.name().equals(agentId.name()))
             .findFirst();
     }
-
 }

@@ -1,9 +1,8 @@
 package com.chutneytesting.glacio.domain.parser.executable.common;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static com.chutneytesting.glacio.domain.parser.GlacioParserHelper.buildSimpleStepWithText;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.glacio.domain.parser.ParsingContext;
 import com.github.fridujo.glacio.model.Step;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,7 @@ public class EmptyParserTest {
 
     @Test
     public void should_give_static_access_to_no_target_step_parser() {
-        assertThat(EmptyParser.noTargetParser.parseGlacioStep(parsingContext, step)).isEqualTo(TargetImpl.NONE);
+        assertThat(EmptyParser.noTargetParser.parseGlacioStep(parsingContext, step)).isNull();
     }
 
     @Test

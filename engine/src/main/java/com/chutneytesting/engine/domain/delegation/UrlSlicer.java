@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 //TODO: look at https://github.com/jnr/jnr-netdb to replace ?
 public class UrlSlicer {
 
-    private static final String URL_REGEX = "^(?<protocol>.*)://(?<host>[^:]*)(?<port>:\\d{1,5})?(?<path>/.*)?$";
+    private static final String URL_REGEX = "^(?<protocol>.*)://(?<host>[^:/]*)(?<port>:\\d{1,5})?(?<path>/.*)?$";
     private static final String JDBC_ORACLE_REGEX = "(?i)^jdbc:oracle:thin:@.*(\\(HOST=(?<host>.*?)\\)|\\(PORT=(?<port>.*?)\\)(.*?)){2}.*$";
 
     private static final Map<String, Integer> portByProtocols = new HashMap<>();

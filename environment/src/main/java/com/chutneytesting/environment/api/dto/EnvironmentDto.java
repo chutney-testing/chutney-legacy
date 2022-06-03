@@ -2,23 +2,34 @@ package com.chutneytesting.environment.api.dto;
 
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 
 import com.chutneytesting.environment.domain.Environment;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class EnvironmentDto {
 
-    public String name;
-    public String description;
-    public List<TargetDto> targets;
+    public final String name;
+    public final String description;
+    public final List<TargetDto> targets;
+
+    public EnvironmentDto(String name) {
+        this.name = name;
+        this.description = null;
+        this.targets = emptyList();
+    }
+
+    public EnvironmentDto(String name, String description, List<TargetDto> targets) {
+        this.name = name;
+        this.description = description;
+        this.targets = ofNullable(targets).map(Collections::unmodifiableList).orElse(emptyList());
+    }
 
     public static EnvironmentDto from(Environment environment) {
-        EnvironmentDto environmentMetadataDto = new EnvironmentDto();
-        environmentMetadataDto.name = environment.name;
-        environmentMetadataDto.description = environment.description;
-        environmentMetadataDto.targets = environment.targets.stream().map(TargetDto::from).collect(Collectors.toList());
-        return environmentMetadataDto;
+        List<TargetDto> targets = environment.targets.stream().map(TargetDto::from).collect(toList());
+        return new EnvironmentDto(environment.name, environment.description, targets);
     }
 
     public Environment toEnvironment() {

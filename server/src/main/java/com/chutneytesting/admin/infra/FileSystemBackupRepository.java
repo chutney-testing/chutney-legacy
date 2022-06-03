@@ -10,8 +10,9 @@ import com.chutneytesting.admin.domain.BackupRepository;
 import com.chutneytesting.admin.domain.Backupable;
 import com.chutneytesting.admin.domain.HomePageRepository;
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
-import com.chutneytesting.environment.domain.Environment;
-import com.chutneytesting.environment.domain.EnvironmentRepository;
+import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
+import com.chutneytesting.environment.api.EnvironmentApi;
+import com.chutneytesting.environment.api.dto.EnvironmentDto;
 import com.chutneytesting.globalvar.domain.GlobalvarRepository;
 import com.chutneytesting.jira.domain.JiraRepository;
 import com.chutneytesting.scenario.infra.orient.OrientComponentDB;
@@ -61,7 +62,7 @@ public class FileSystemBackupRepository implements BackupRepository {
 
     private final OrientComponentDB orientComponentDB;
     private final HomePageRepository homePageRepository;
-    private final EnvironmentRepository environmentRepository;
+    private final EnvironmentApi embeddedEnvironmentApi;
     private final GlobalvarRepository globalvarRepository;
     private final CurrentNetworkDescription currentNetworkDescription;
     private final JiraRepository jiraRepository;
@@ -75,7 +76,7 @@ public class FileSystemBackupRepository implements BackupRepository {
     public FileSystemBackupRepository(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String backupsRootPath,
                                       OrientComponentDB orientComponentDB,
                                       HomePageRepository homePageRepository,
-                                      EnvironmentRepository environmentRepository,
+                                      EmbeddedEnvironmentApi embeddedEnvironmentApi,
                                       GlobalvarRepository globalvarRepository,
                                       CurrentNetworkDescription currentNetworkDescription, JiraRepository jiraRepository) {
         this.backupsRootPath = Paths.get(backupsRootPath).resolve(ROOT_DIRECTORY_NAME).toAbsolutePath();
@@ -83,7 +84,7 @@ public class FileSystemBackupRepository implements BackupRepository {
 
         this.orientComponentDB = orientComponentDB;
         this.homePageRepository = homePageRepository;
-        this.environmentRepository = environmentRepository;
+        this.embeddedEnvironmentApi = embeddedEnvironmentApi;
         this.globalvarRepository = globalvarRepository;
         this.currentNetworkDescription = currentNetworkDescription;
         this.jiraRepository = jiraRepository;
@@ -199,8 +200,7 @@ public class FileSystemBackupRepository implements BackupRepository {
 
     private void backupEnvironments(OutputStream outputStream) {
         try (ZipOutputStream zipOutPut = new ZipOutputStream(new BufferedOutputStream(outputStream, 4096))) {
-            //TODO remove infra dependency to the model
-            for (Environment env : environmentRepository.getEnvironments()) {
+            for (EnvironmentDto env : embeddedEnvironmentApi.listEnvironments()) {
                 zipOutPut.putNextEntry(new ZipEntry(env.name + ".json"));
                 om.writeValue(zipOutPut, env);
             }

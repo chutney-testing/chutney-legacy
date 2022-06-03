@@ -1,7 +1,7 @@
 package com.chutneytesting.task.amqp;
 
-import com.rabbitmq.client.ConnectionFactory;
 import com.chutneytesting.task.spi.injectable.Target;
+import com.rabbitmq.client.ConnectionFactory;
 import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 
@@ -14,11 +14,8 @@ public class ConnectionFactoryFactory {
         } catch (URISyntaxException | GeneralSecurityException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
-        target.security().credential().ifPresent(cred -> {
-                connectionFactory.setUsername(cred.username());
-                connectionFactory.setPassword(cred.password());
-            }
-        );
+        target.user().ifPresent(connectionFactory::setUsername);
+        target.userPassword().ifPresent(connectionFactory::setPassword);
         return connectionFactory;
     }
 }

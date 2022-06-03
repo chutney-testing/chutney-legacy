@@ -9,6 +9,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -16,15 +17,14 @@ import static org.mockito.Mockito.when;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Logger;
-import com.chutneytesting.task.spi.injectable.SecurityInfo;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
+import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,7 +62,7 @@ public class HttpTaskTest {
 
         stubFor(get(urlEqualTo(uri))
             .willReturn(aResponse().withStatus(expectedStatus)
-                                   .withBody(expectedBody))
+                .withBody(expectedBody))
         );
 
         Logger logger = mock(Logger.class);
@@ -76,7 +76,7 @@ public class HttpTaskTest {
         assertThat(executionResult.status).isEqualTo(TaskExecutionResult.Status.Success);
         assertThat((Integer) executionResult.outputs.get("status")).isEqualTo(expectedStatus);
         assertThat((String) executionResult.outputs.get("body")).isEqualTo(expectedBody);
-        assertThat((HttpHeaders)executionResult.outputs.get("headers")).containsAllEntriesOf(expectedHeaders);
+        assertThat((HttpHeaders) executionResult.outputs.get("headers")).containsAllEntriesOf(expectedHeaders);
     }
 
     @Test
@@ -93,7 +93,7 @@ public class HttpTaskTest {
         Target targetMock = mockTarget("http://127.0.0.1:" + wireMockServer.port());
 
         // when
-        Task httpPostTask = new HttpPostTask(targetMock, logger, uri,"some body", null, "1000 ms");
+        Task httpPostTask = new HttpPostTask(targetMock, logger, uri, "some body", null, "1000 ms");
         TaskExecutionResult executionResult = httpPostTask.execute();
 
         // then
@@ -165,7 +165,7 @@ public class HttpTaskTest {
         int expectedStatus = 200;
 
         stubFor(put(urlEqualTo(uri)).withHeader("CustomHeader", new EqualToPattern("toto"))
-                                    .willReturn(aResponse().withStatus(expectedStatus))
+            .willReturn(aResponse().withStatus(expectedStatus))
         );
 
         Logger logger = mock(Logger.class);
@@ -175,7 +175,7 @@ public class HttpTaskTest {
         Map<String, String> headers = new HashMap<>();
         headers.put("CustomHeader", "toto");
 
-        Task httpPutTask = new HttpPutTask(targetMock, logger, uri, "somebody",headers, "1000 ms");
+        Task httpPutTask = new HttpPutTask(targetMock, logger, uri, "somebody", headers, "1000 ms");
         TaskExecutionResult executionResult = httpPutTask.execute();
 
         // then
@@ -199,7 +199,7 @@ public class HttpTaskTest {
         Map<String, String> headers = new HashMap<>();
         headers.put("CustomHeader", "toto");
 
-        Task httpPutTask = new HttpPatchTask(targetMock, logger, uri, "somebody",headers, "1000 ms");
+        Task httpPutTask = new HttpPatchTask(targetMock, logger, uri, "somebody", headers, "1000 ms");
         TaskExecutionResult executionResult = httpPutTask.execute();
 
         // then
@@ -208,15 +208,12 @@ public class HttpTaskTest {
     }
 
     private Target mockTarget(String targetUrl) {
-        SecurityInfo securityInfoMock = mock(SecurityInfo.class);
-        when(securityInfoMock.keyStore()).thenReturn(Optional.empty());
-        when(securityInfoMock.keyStorePassword()).thenReturn(Optional.empty());
-        when(securityInfoMock.trustStore()).thenReturn(Optional.empty());
-        when(securityInfoMock.trustStorePassword()).thenReturn(Optional.empty());
         Target targetMock = mock(Target.class);
-        when(targetMock.url()).thenReturn(targetUrl);
-        when(targetMock.security()).thenReturn(securityInfoMock);
+        when(targetMock.uri()).thenReturn(URI.create(targetUrl));
+        when(targetMock.keyStore()).thenReturn(empty());
+        when(targetMock.keyStorePassword()).thenReturn(empty());
+        when(targetMock.trustStore()).thenReturn(empty());
+        when(targetMock.trustStorePassword()).thenReturn(empty());
         return targetMock;
     }
-
 }

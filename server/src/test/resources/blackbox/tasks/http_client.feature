@@ -95,9 +95,11 @@ Feature: HTTP Task test
                         {
                             "name": "test_http",
                             "url": "${#appServer.baseUrl()}",
-                            "keyStore": "${#escapeJson(#resourcePath("blackbox/keystores/client.jks"))}",
-                            "keyStorePassword": "client",
-                            "keyPassword": "client"
+                            "properties": [
+                                { "key" : "keyStore", "value": "${#escapeJson(#resourcePath("blackbox/keystores/client.jks"))}" },
+                                { "key" : "keyStorePassword", "value": "client" },
+                                { "key" : "keyPassword", "value": "client" }
+                            ]
                         }
                     ]
                 }

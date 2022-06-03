@@ -48,7 +48,7 @@ public class JmsSenderTask implements Task {
     public TaskExecutionResult execute() {
         try (CloseableResource<JmsConnectionFactory.MessageSender> producer = jmsConnectionFactory.getMessageProducer(target, destination)) {
             producer.getResource().send(body, headers);
-            logger.info("Successfully sent message on " + destination + " to " + target.name() + " (" + target.url() + ")");
+            logger.info("Successfully sent message on " + destination + " to " + target.name() + " (" + target.uri().toString() + ")");
             return TaskExecutionResult.ok();
         } catch (JMSException | UncheckedJmsException e) {
             logger.error(e);

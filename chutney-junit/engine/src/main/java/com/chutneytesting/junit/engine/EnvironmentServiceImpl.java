@@ -1,15 +1,15 @@
 package com.chutneytesting.junit.engine;
 
-import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
+import com.chutneytesting.environment.api.EnvironmentApi;
 import com.chutneytesting.environment.api.dto.EnvironmentDto;
 import com.chutneytesting.environment.api.dto.TargetDto;
 import com.chutneytesting.junit.api.EnvironmentService;
 
 public class EnvironmentServiceImpl implements EnvironmentService {
 
-    private final EmbeddedEnvironmentApi delegate;
+    private final EnvironmentApi delegate;
 
-    public EnvironmentServiceImpl(EmbeddedEnvironmentApi delegate) {
+    public EnvironmentServiceImpl(EnvironmentApi delegate) {
         this.delegate = delegate;
     }
 

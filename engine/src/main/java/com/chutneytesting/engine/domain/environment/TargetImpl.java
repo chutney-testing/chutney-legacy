@@ -2,33 +2,30 @@ package com.chutneytesting.engine.domain.environment;
 
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toMap;
 
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.chutneytesting.task.spi.injectable.SecurityInfo;
 import com.chutneytesting.task.spi.injectable.Target;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class TargetImpl implements Target {
 
-    public static final Target NONE = TargetImpl.builder().build();
+    public static final TargetImpl NONE = TargetImpl.builder().build();
 
     public final String name;
-    public final String url;
     public final URI uri;
     public final Map<String, String> properties;
-    public final SecurityInfoImpl security;
     public final List<NamedHostAndPort> agents;
 
-    private TargetImpl(String name, String url, Map<String, String> properties, SecurityInfoImpl security, List<NamedHostAndPort> agents) {
+    private TargetImpl(String name, String url, Map<String, String> properties, List<NamedHostAndPort> agents) {
         this.name = name;
-        this.url = url;
         this.uri = uriFrom(url);
         this.properties = properties;
-        this.security = security;
         this.agents = agents;
     }
 
@@ -42,23 +39,25 @@ public class TargetImpl implements Target {
     }
 
     @Override
-    public String url() {
-        return url;
-    }
-
-    @Override
-    public Map<String, String> properties() {
-        return properties;
-    }
-
-    @Override
-    public SecurityInfo security() {
-        return security;
-    }
-
-    @Override
     public URI uri() {
         return uri;
+    }
+
+    @Override
+    public Optional<String> property(String key) {
+        return ofNullable(properties.get(key));
+    }
+
+    @Override
+    public Map<String, String> prefixedProperties(String prefix, boolean cutPrefix) {
+        return properties.entrySet().stream()
+            .filter(e -> e.getKey() != null)
+            .filter(e -> e.getKey().startsWith(prefix))
+            .collect(toMap(e -> e.getKey().substring(cutPrefix ? prefix.length() : 0), Map.Entry::getValue));
+    }
+
+    public Map<String, String> properties() {
+        return properties;
     }
 
     public static class TargetBuilder {
@@ -66,16 +65,15 @@ public class TargetImpl implements Target {
         private String url;
         private Map<String, String> properties;
         private List<NamedHostAndPort> agents;
-        private SecurityInfoImpl security;
 
-        private TargetBuilder() {}
+        private TargetBuilder() {
+        }
 
         public TargetImpl build() {
             return new TargetImpl(
                 ofNullable(name).orElse(""),
                 ofNullable(url).orElse(""),
                 ofNullable(properties).orElse(Collections.emptyMap()),
-                ofNullable(security).orElse(SecurityInfoImpl.builder().build()),
                 ofNullable(agents).orElse(emptyList())
             );
         }
@@ -97,15 +95,9 @@ public class TargetImpl implements Target {
 
         public TargetBuilder copyOf(TargetImpl target) {
             this.name = target.name;
-            this.url = target.url;
+            this.url = target.uri().toString();
             this.properties = target.properties;
             this.agents = target.agents;
-            this.security = target.security;
-            return this;
-        }
-
-        public TargetBuilder withSecurity(SecurityInfoImpl securityInfo) {
-            this.security = securityInfo;
             return this;
         }
 
@@ -122,5 +114,4 @@ public class TargetImpl implements Target {
             throw new IllegalStateException(e);
         }
     }
-
 }

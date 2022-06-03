@@ -1,5 +1,6 @@
 package com.chutneytesting.glacio.domain.parser.strategy;
 
+import com.chutneytesting.engine.api.execution.StepDefinitionDto;
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
 import com.github.fridujo.glacio.model.Step;
 import java.util.List;
@@ -12,11 +13,11 @@ public interface IParseStrategy {
 
     Map<Locale, Set<String>> keywords();
 
-    List<StepStrategyDefinition> parseGlacioStep(Locale lang, Step step);
+    List<StepDefinitionDto.StepStrategyDefinitionDto> parseGlacioStep(Locale lang, Step step);
 
-    Pair<Step, List<StepStrategyDefinition>> parseStepAndStripStrategy(Locale lang, Step step);
+    Pair<Step, List<StepDefinitionDto.StepStrategyDefinitionDto>> parseStepAndStripStrategy(Locale lang, Step step);
 
-    default List<StepStrategyDefinition> parseGlacioStep(Step step) {
+    default List<StepDefinitionDto.StepStrategyDefinitionDto> parseGlacioStep(Step step) {
         return parseGlacioStep(Locale.ENGLISH, step);
     }
 

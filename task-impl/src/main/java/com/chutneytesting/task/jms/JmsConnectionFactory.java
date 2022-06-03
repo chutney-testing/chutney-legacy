@@ -1,15 +1,13 @@
 package com.chutneytesting.task.jms;
 
-import static com.chutneytesting.tools.Entry.toEntryList;
+import static com.chutneytesting.tools.ThrowingFunction.toUnchecked;
 import static com.chutneytesting.tools.ThrowingSupplier.toUnchecked;
 
 import com.chutneytesting.task.jms.consumer.Consumer;
 import com.chutneytesting.task.jms.consumer.ConsumerFactory;
 import com.chutneytesting.task.jms.consumer.JmsListenerParameters;
-import com.chutneytesting.task.spi.injectable.SecurityInfo;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.tools.CloseableResource;
-import com.chutneytesting.tools.ThrowingFunction;
 import com.chutneytesting.tools.UncheckedException;
 import java.util.Hashtable;
 import java.util.Map;
@@ -43,7 +41,7 @@ public class JmsConnectionFactory {
         return obtainCloseableResource(target, destinationName, (session, destination) -> {
             MessageProducer messageProducer = session.createProducer(destination);
 
-            return (MessageSender) (messageContent, headers) -> {
+            return (messageContent, headers) -> {
                 Message message = session.createTextMessage(messageContent);
                 for (Entry<String, String> headerEntry : headers.entrySet()) {
                     message.setStringProperty(headerEntry.getKey(), headerEntry.getValue());
@@ -55,19 +53,20 @@ public class JmsConnectionFactory {
 
     private <T> CloseableResource<T> obtainCloseableResource(Target target, String destinationName, JmsThrowingBiFunction<Session, Destination, T> resourceBuilder) throws UncheckedJmsException {
         Hashtable<String, String> environmentProperties = new Hashtable<>();
-        environmentProperties.put(Context.PROVIDER_URL, target.url());
-        environmentProperties.putAll(target.properties());
+        environmentProperties.put(Context.PROVIDER_URL, target.uri().toString());
+        environmentProperties.putAll(target.prefixedProperties("java.naming."));
+        environmentProperties.putAll(target.prefixedProperties("jndi.", true));
 
         configureSsl(target, environmentProperties);
 
-        String connectionFactoryName = target.properties().getOrDefault("connectionFactoryName", "ConnectionFactory");
+        String connectionFactoryName = target.property("connectionFactoryName").orElse("ConnectionFactory");
 
         try {
             debugClassLoader();
             Context context = new InitialContext(environmentProperties);
             ConnectionFactory connectionFactory = (ConnectionFactory) context.lookup(connectionFactoryName);
 
-            Connection connection = createConnection(connectionFactory, target.security().credential());
+            Connection connection = createConnection(connectionFactory, target);
             connection.start();
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             Destination destination = (Destination) context.lookup(destinationName);
@@ -86,9 +85,9 @@ public class JmsConnectionFactory {
         } catch (InvalidSelectorException e) {
             throw new UncheckedJmsException("Cannot parse selector " + e.getMessage(), e);
         } catch (NameNotFoundException e) {
-            throw new UncheckedJmsException("Cannot find destination " + e.getMessage() + " on jms server " + target.name() + " (" + target.url() + ")", e);
+            throw new UncheckedJmsException("Cannot find destination " + e.getMessage() + " on jms server " + target.name() + " (" + target.uri().toString() + ")", e);
         } catch (NamingException | JMSException e) {
-            throw new UncheckedJmsException("Cannot connect to jms server " + target.name() + " (" + target.url() + "): " + e.getMessage(), e);
+            throw new UncheckedJmsException("Cannot connect to jms server " + target.name() + " (" + target.uri().toString() + "): " + e.getMessage(), e);
         }
     }
 
@@ -99,30 +98,27 @@ public class JmsConnectionFactory {
         LOGGER.debug("ClassLoader.getSystemClassLoader(): " + systemClassLoader);
     }
 
-    private Connection createConnection(ConnectionFactory connectionFactory, Optional<SecurityInfo.Credential> optionalCredential) throws JMSException {
+    private Connection createConnection(ConnectionFactory connectionFactory, Target target) throws JMSException {
         try {
-            return optionalCredential
-                .map(ThrowingFunction.toUnchecked(credential -> connectionFactory.createConnection(credential.username(), credential.password())))
-                .orElseGet(toUnchecked(() -> connectionFactory.createConnection()));
+            return target.user()
+                .map(toUnchecked(user -> connectionFactory.createConnection(user, target.userPassword().orElse(""))))
+                .orElseGet(toUnchecked(connectionFactory::createConnection));
         } catch (UncheckedException e) {
             // Only JMSException can be unchecked in previous calls
             throw (JMSException) e.getCause();
         }
     }
 
-    private void configureSsl(Target target, Hashtable<String, String> environmentProperties) {
-        target.security().keyStore().ifPresent(keyStore -> environmentProperties.put("connection.ConnectionFactory.keyStore", keyStore));
-        target.security().keyStorePassword().ifPresent(keyStorePassword -> environmentProperties.put("connection.ConnectionFactory.keyStorePassword", keyStorePassword));
+    private void configureSsl(Target target, Map<String, String> environmentProperties) {
+        putInMapIfPresent("connection.ConnectionFactory.keyStore", target.keyStore(), environmentProperties);
+        putInMapIfPresent("connection.ConnectionFactory.keyStorePassword", target.keyStorePassword(), environmentProperties);
+        putInMapIfPresent("connection.ConnectionFactory.keyStoreKeyPassword", target.keyPassword(), environmentProperties);
+        putInMapIfPresent("connection.ConnectionFactory.trustStore", target.trustStore(), environmentProperties);
+        putInMapIfPresent("connection.ConnectionFactory.trustStorePassword", target.trustStorePassword(), environmentProperties);
+    }
 
-        target.security().keyPassword()
-            .or(() -> toEntryList(target.properties()).stream()
-                .filter(e -> e.key.equalsIgnoreCase("keyPassword"))
-                .findFirst()
-                .map(e -> e.value)
-            ).ifPresent(keyStoreKeyPassword -> environmentProperties.put("connection.ConnectionFactory.keyStoreKeyPassword", keyStoreKeyPassword));
-
-        target.security().trustStore().ifPresent(trustStore -> environmentProperties.put("connection.ConnectionFactory.trustStore", trustStore));
-        target.security().trustStorePassword().ifPresent(trustStorePassword -> environmentProperties.put("connection.ConnectionFactory.trustStorePassword", trustStorePassword));
+    private void putInMapIfPresent(String key, Optional<String> optionalValue, Map<String, String> map) {
+        optionalValue.ifPresent(s -> map.put(key, s));
     }
 
     private interface JmsThrowingBiFunction<T1, T2, R> {
@@ -133,4 +129,3 @@ public class JmsConnectionFactory {
         void send(String message, Map<String, String> headers) throws JMSException;
     }
 }
-

@@ -1,6 +1,7 @@
 package com.chutneytesting.agent.infra.storage;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -12,8 +13,8 @@ import com.chutneytesting.agent.domain.network.AgentGraph;
 import com.chutneytesting.agent.domain.network.ImmutableNetworkDescription;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.chutneytesting.environment.domain.Environment;
-import com.chutneytesting.environment.domain.Target;
+import com.chutneytesting.environment.api.dto.EnvironmentDto;
+import com.chutneytesting.environment.api.dto.TargetDto;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,12 +30,8 @@ public class AgentNetworkMapperJsonFileMapperTest {
     public void toDto_should_map_every_information() {
         Agent agent = new Agent(new NamedHostAndPort("name", "host", 42));
         Agent reachableAgent = new Agent(new NamedHostAndPort("reachable", "host2", 42));
-        Target target = Target.builder()
-            .withName("targetName")
-            .withEnvironment("env")
-            .withUrl("prot://me:42")
-            .build();
-        Environment environment = Environment.builder().withName("env").addTarget(target).build();
+        TargetDto target = new TargetDto("targetName", "prot://me:42", emptySet());
+        EnvironmentDto environment = new EnvironmentDto("env", null, singletonList(target));
         TargetId targetId = TargetId.of("targetName", "env");
         agent.addReachable(reachableAgent);
         reachableAgent.addReachable(targetId);
@@ -79,17 +76,11 @@ public class AgentNetworkMapperJsonFileMapperTest {
         AgentForJsonFile agent2Json = createAgentJson("agent2", "host2", emptyList(), singletonList(target));
         networkJson.agents = Arrays.asList(agent1Json, agent2Json);
 
-        List<Target> targets = new ArrayList<>();
-        targets.add(
-            Target.builder()
-                .withName(targetName)
-                .withEnvironment("env")
-                .withUrl("http://s1:90")
-                .build()
-        );
-        Environment environment = Environment.builder().withName("env").addAllTargets(targets).build();
+        List<TargetDto> targets = new ArrayList<>();
+        targets.add(new TargetDto(targetName, "http://s1:90", emptySet()));
+        EnvironmentDto environment = new EnvironmentDto("env", null, targets);
 
-        NetworkDescription description = mapper.fromDto(networkJson, singletonList(environment));
+        NetworkDescription description = mapper.fromDto(networkJson, singleton(environment));
 
         assertThat(description.agentGraph().agents()).hasSize(2);
         assertThat(description.agentGraph().agents()).haveAtLeastOne(agentThatMatch(agent1Json));
