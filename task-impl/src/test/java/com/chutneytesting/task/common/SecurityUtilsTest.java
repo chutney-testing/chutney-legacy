@@ -1,5 +1,6 @@
-package com.chutneytesting.task.http.domain;
+package com.chutneytesting.task.common;
 
+import static com.chutneytesting.task.common.SecurityUtils.configureKeyStore;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.task.TestTarget;
@@ -11,7 +12,7 @@ import javax.net.ssl.X509KeyManager;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.junit.jupiter.api.Test;
 
-class HttpClientFactoryTest {
+class SecurityUtilsTest {
 
     @Test
     void should_load_private_key_with_password() throws Exception {
@@ -24,7 +25,7 @@ class HttpClientFactoryTest {
             .build();
 
         // When
-        HttpClientFactory.configureKeyStore(target, context);
+        configureKeyStore(target, context);
 
         // Then
         PrivateKey actual = retrieveLoadedPrivateKey(context, "server");
@@ -41,7 +42,7 @@ class HttpClientFactoryTest {
             .build();
 
         // When
-        HttpClientFactory.configureKeyStore(target, context);
+        configureKeyStore(target, context);
 
         // Then
         PrivateKey actual = retrieveLoadedPrivateKey(context, "server");
