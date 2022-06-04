@@ -125,7 +125,8 @@
         <junit5.version>5.8.2</junit5.version>
         <junit-jupiter.version>${junit5.version}</junit-jupiter.version>
         <assertj.version>3.22.0</assertj.version>
-        <mockito.version>4.6.0</mockito.version>
+        <mockito.version>4.6.1</mockito.version>
+        <byte-buddy.version>1.12.10</byte-buddy.version><!-- Be careful to follow required version by mockito core-->
         <mockrunner-jms.version>1.1.2</mockrunner-jms.version>
         <eddsa.version>0.2.0</eddsa.version>
         <activemq.version>5.16.4</activemq.version>
@@ -648,6 +649,16 @@
                 <artifactId>jqwik</artifactId>
                 <version>${jqwik.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy</artifactId>
+                <version>${byte-buddy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy-agent</artifactId>
+                <version>${byte-buddy.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
