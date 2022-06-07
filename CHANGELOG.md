@@ -1,5 +1,44 @@
 # Changelog
 
+## [1.4.9](https://github.com/chutney-testing/chutney/tree/HEAD)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.4.8...1.4.9)
+
+**Implemented enhancements:**
+
+- 🚀 | Allow to report only in scenario reports without logfile [\#741](https://github.com/chutney-testing/chutney/issues/741)
+- 🚀 | Delete an environment [\#157](https://github.com/chutney-testing/chutney/issues/157)
+
+**Fixed bugs:**
+
+- 🐛 | FileUtils - initFolder method parallel problem [\#746](https://github.com/chutney-testing/chutney/issues/746)
+- 🐛 | Scenario execution - retry step is not updated. Informations are not updated. [\#745](https://github.com/chutney-testing/chutney/issues/745)
+- 🐛 | HTTP tasks - Cannot recover Key error when no target keyPassword given [\#744](https://github.com/chutney-testing/chutney/issues/744)
+- 🐛 | Target import does not work [\#634](https://github.com/chutney-testing/chutney/issues/634)
+- 🐛 | Error message don't disappear from screen  [\#163](https://github.com/chutney-testing/chutney/issues/163)
+
+**Merged pull requests:**
+
+- chore\(\): Bump to rxJava 3 [\#764](https://github.com/chutney-testing/chutney/pull/764) ([boddissattva](https://github.com/boddissattva))
+- feat\(task\): add configurable ssl context to amqp task [\#763](https://github.com/chutney-testing/chutney/pull/763) ([nbrouand](https://github.com/nbrouand))
+- feat\(task-impl\): should assert enum as string in jsonassert [\#762](https://github.com/chutney-testing/chutney/pull/762) ([nbrouand](https://github.com/nbrouand))
+- chore\(deps\): bump groovy from 3.0.9 to 3.0.11 [\#759](https://github.com/chutney-testing/chutney/pull/759) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump spring-boot-maven-plugin from 2.6.7 to 2.7.0 [\#757](https://github.com/chutney-testing/chutney/pull/757) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump mongodb.version from 4.5.1 to 4.6.0 [\#755](https://github.com/chutney-testing/chutney/pull/755) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump jackson.version from 2.13.2 to 2.13.3 [\#753](https://github.com/chutney-testing/chutney/pull/753) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps-dev\): bump mockito.version from 4.4.0 to 4.6.0 [\#752](https://github.com/chutney-testing/chutney/pull/752) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps-dev\): bump jqwik from 1.6.2 to 1.6.5 [\#751](https://github.com/chutney-testing/chutney/pull/751) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps-dev\): bump activemq.version from 5.16.4 to 5.17.1 [\#750](https://github.com/chutney-testing/chutney/pull/750) ([dependabot[bot]](https://github.com/apps/dependabot))
+- fix\(tools\): init folder parallel execution support. [\#747](https://github.com/chutney-testing/chutney/pull/747) ([boddissattva](https://github.com/boddissattva))
+- refacto\(components\): remove pagination [\#743](https://github.com/chutney-testing/chutney/pull/743) ([KarimGl](https://github.com/KarimGl))
+- feat: Allow to log only for scenario reports but not logfiles [\#742](https://github.com/chutney-testing/chutney/pull/742) ([bessonm](https://github.com/bessonm))
+- feat\(security\): grant full access to admin [\#739](https://github.com/chutney-testing/chutney/pull/739) ([KarimGl](https://github.com/KarimGl))
+- Create specific module for component/dataset/orient [\#738](https://github.com/chutney-testing/chutney/pull/738) ([nbrouand](https://github.com/nbrouand))
+- SPI Target simplification [\#737](https://github.com/chutney-testing/chutney/pull/737) ([boddissattva](https://github.com/boddissattva))
+- tech\(server\): Move campaign & globalvar to own pkg [\#733](https://github.com/chutney-testing/chutney/pull/733) ([bessonm](https://github.com/bessonm))
+- doc: Document how to sign commits and release artifacts [\#732](https://github.com/chutney-testing/chutney/pull/732) ([bessonm](https://github.com/bessonm))
+
+
 ## [1.4.8](https://github.com/chutney-testing/chutney/tree/1.4.8)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.4.7...1.4.8)

@@ -1,0 +1,65 @@
+{
+    "title": "Envoi d'une consigne IRVE non recevable - date dépassée",
+    "description": "Envoi d'une consigne IRVE non recevable - date dépassée",
+    "givens": [
+        {
+            "description": "Given un prm PMEPMI",
+            "implementation": {
+                "type": "context-put",
+                "inputs": {
+                    "entries": {
+                        "idPrm": "30001610125952",
+                        "adsBoitier": "0219DA01772307"
+                    }
+                }
+            }
+        },
+        {
+            "description": "Et les variables suivantes",
+            "implementation": {
+                "type": "context-put",
+                "inputs": {
+                    "entries": {
+                        "maCorrelationId": "${#generate().uuid()}",
+                        "idDemande": "PXR_ICOEUR_30002210740627_1591881109755",
+                        "dateLimiteExecution": "2000-12-31T12:00:00+01:00",
+                        "dateDebut": "2021-03-29T12:00:00.000+01:00"
+                    }
+                }
+            }
+        },
+        {
+            "description": "And la déclaration des queues",
+            "implementation": {
+                "type": "context-put",
+                "inputs": {
+                    "entries": {
+                        "icoeurQueueCrPixr": "icoeur.queue.cr.pixr"
+                    }
+                }
+            }
+        }
+    ],
+    "when": {
+        "description": "And la déclaration des queues",
+        "implementation": {
+            "type": "context-put",
+            "inputs": {
+                "entries": {
+                    "icoeurQueueCrPixr": "icoeur.queue.cr.pixr"
+                }
+            }
+        }
+    },
+    "thens": [
+        {
+            "description": "Validation du format de la notification de consigne IRVE non recevable",
+            "implementation": {
+                "type": "success",
+                "inputs": {
+                    "fake_param": "fake_value"
+                }
+            }
+        }
+    ]
+}
