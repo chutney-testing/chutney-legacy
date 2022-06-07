@@ -94,7 +94,7 @@
         <commonslang3.version>3.12.0</commonslang3.version>
         <commonstext.version>1.9</commonstext.version>
         <commonsio.version>2.11.0</commonsio.version>
-        <rxjava.version>2.2.20</rxjava.version>
+        <rxjava.version>3.1.5</rxjava.version>
         <jgit-jsch.version>6.1.0.202203080745-r</jgit-jsch.version>
         <jsch.version>0.1.55</jsch.version>
         <org.everit.json.schema.version>1.14.1</org.everit.json.schema.version>
@@ -360,7 +360,7 @@
 
             <!-- External dependencies -->
             <dependency>
-                <groupId>io.reactivex.rxjava2</groupId>
+                <groupId>io.reactivex.rxjava3</groupId>
                 <artifactId>rxjava</artifactId>
                 <version>${rxjava.version}</version>
             </dependency>
