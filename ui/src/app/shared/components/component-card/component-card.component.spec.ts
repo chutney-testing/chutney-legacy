@@ -209,8 +209,8 @@ describe('ComponentCardComponent...', () => {
             });
 
             [
-                {expectedReadValue: oldValue, waitMs: 240},
-                {expectedReadValue: newValue, waitMs: 260}
+                {expectedReadValue: oldValue, waitMs: 300},
+                {expectedReadValue: newValue, waitMs: 320}
             ]
                 .forEach(data => {
                     it(`should be equals to "${data.expectedReadValue}" after update when read after ${data.waitMs}ms`, () => {
