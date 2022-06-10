@@ -106,8 +106,8 @@ public class SqlClientTest {
 
         Row onlyRecord = actual.records.get(0);
         assertThat(onlyRecord.get("COL_BOOLEAN").value).isInstanceOf(Boolean.class);
-        assertThat(onlyRecord.get("COL_TINYINT").value).isInstanceOf(Byte.class);
-        assertThat(onlyRecord.get("COL_SMALLINT").value).isInstanceOf(Short.class);
+        assertThat(onlyRecord.get("COL_TINYINT").value).isInstanceOf(Integer.class);
+        assertThat(onlyRecord.get("COL_SMALLINT").value).isInstanceOf(Integer.class);
         assertThat(onlyRecord.get("COL_MEDIUMINT").value).isInstanceOf(Integer.class);
         assertThat(onlyRecord.get("COL_INTEGER").value).isInstanceOf(Integer.class);
         assertThat(onlyRecord.get("COL_BIGINT").value).isInstanceOf(Long.class);

@@ -534,4 +534,11 @@
         <comment>Remove SCHEDULE_TIME column</comment>
         <dropColumn tableName="CAMPAIGN" columnName="SCHEDULE_TIME"></dropColumn>
     </changeSet>
+    <changeSet id="20220607-change-campaign-parameter-value-column" author="ICG">
+        <preConditions onFail="MARK_RAN">
+            <columnExists columnName="VALUE" tableName="CAMPAIGN_PARAMETER"/>
+        </preConditions>
+        <comment>Rename VALUE column</comment>
+        <renameColumn tableName="CAMPAIGN_PARAMETER" oldColumnName="VALUE" newColumnName="PARAMETER_VALUE"></renameColumn>
+    </changeSet>
 </databaseChangeLog>
