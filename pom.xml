@@ -87,59 +87,53 @@
 
         <!-- Runtime dependencies versions -->
 
-        <springboot.version>2.6.4</springboot.version>
-        <spring.version>5.6.1</spring.version> <!-- Be careful to follow springboot version-->
-        <spring-kafka.version>2.8.4</spring-kafka.version> <!-- Be careful to follow springboot version-->
-        <kafka.version>2.8.1</kafka.version> <!-- https://docs.spring.io/spring-kafka/docs/2.8.2/reference/html/#update-deps -->
-        <jackson.version>2.13.3</jackson.version>
+        <springboot.version>2.7.0</springboot.version>
+        <spring-security-test.version>5.7.1</spring-security-test.version> <!-- Be careful to follow spring-security-core version-->
+        <spring-kafka-test.version>2.8.6</spring-kafka-test.version> <!-- Be careful to follow springboot version-->
+        <kafka.version>3.1.1</kafka.version> <!-- == spring boot version-->
+        <jackson.version>2.13.3</jackson.version> <!-- == spring boot version-->
         <guava.version>31.1-jre</guava.version>
         <immutables.version>2.9.0</immutables.version>
         <sl4j.api.version>1.7.36</sl4j.api.version>
         <commonslang3.version>3.12.0</commonslang3.version>
         <commonstext.version>1.9</commonstext.version>
         <commonsio.version>2.11.0</commonsio.version>
-        <rxjava.version>3.1.5</rxjava.version>
+        <rxjava.version>3.1.5</rxjava.version> <!-- override spring boot version 2.2.21  -->
         <jgit-jsch.version>6.1.0.202203080745-r</jgit-jsch.version>
         <jsch.version>0.1.55</jsch.version>
         <org.everit.json.schema.version>1.14.1</org.everit.json.schema.version>
         <glacio.version>0.0.1</glacio.version>
-        <caffeine.version>3.0.6</caffeine.version>
+        <caffeine.version>3.0.6</caffeine.version> <!-- override spring boot version 2.9.3  -->
 
         <!-- task impl -->
-        <jdom2.version>2.0.6</jdom2.version>
-        <jsonpath.version>2.7.0</jsonpath.version>
+        <jsonpath.version>2.7.0</jsonpath.version> <!-- == spring boot version-->
         <sshj.version>0.33.0</sshj.version>
         <sshd.version>2.8.0</sshd.version>
         <hjson.version>3.0.0</hjson.version>
-        <jms.version>2.0.1</jms.version>
-        <amqp-client.version>5.14.2</amqp-client.version>
         <qpid-broker.version>8.0.6</qpid-broker.version>
-        <mongodb-driver.version>3.12.10</mongodb-driver.version>
-        <mongodb.version>4.6.0</mongodb.version>
         <orientdb.version>3.2.5</orientdb.version>
-        <selenium.version>4.1.3</selenium.version>
-        <groovy.version>3.0.11</groovy.version>
+        <groovy.version>3.0.11</groovy.version> <!-- override spring boot version 3.0.10  -->
         <radius.version>1.1.3</radius.version>
 
         <!-- jdk11 -->
         <javax.activation.version>1.2.0</javax.activation.version>
-        <jaxb.api.version>2.3.0</jaxb.api.version>
+        <jaxb.api.version>2.3.0</jaxb.api.version>  <!--  override spring boot version 2.3.1  -->
 
         <!-- Test dependencies versions -->
-        <junit5.version>5.8.2</junit5.version>
+        <junit5.version>5.8.2</junit5.version>  <!--  == spring boot version  -->
         <junit-jupiter.version>${junit5.version}</junit-jupiter.version>
-        <assertj.version>3.22.0</assertj.version>
-        <mockito.version>4.6.1</mockito.version>
-        <byte-buddy.version>1.12.10</byte-buddy.version><!-- Be careful to follow required version by mockito core-->
+        <assertj.version>3.22.0</assertj.version> <!--  == spring boot version  -->
+        <mockito.version>4.6.1</mockito.version> <!-- Override spring boot version 4.5.1-->
+        <byte-buddy.version>1.12.10</byte-buddy.version><!-- Be careful to follow required version by mockito core--> <!--  == spring boot version  -->
         <mockrunner-jms.version>1.1.2</mockrunner-jms.version>
         <eddsa.version>0.2.0</eddsa.version>
-        <activemq.version>5.17.1</activemq.version>
+        <activemq.version>5.17.1</activemq.version> <!-- override spring boot version 5.16.5  -->
         <rabbitmq-mock.version>1.1.1</rabbitmq-mock.version>
         <wire-mock.version>2.27.2</wire-mock.version>
         <otj-pg-embedded.version>0.13.4</otj-pg-embedded.version>
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
         <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
-        <awaitility.version>4.2.0</awaitility.version>
+        <awaitility.version>4.2.0</awaitility.version> <!--  == spring boot version  -->
         <jqwik.version>1.6.5</jqwik.version>
     </properties>
 
@@ -329,7 +323,7 @@
             <dependency>
                 <groupId>org.springframework.kafka</groupId>
                 <artifactId>spring-kafka-test</artifactId>
-                <version>${spring-kafka.version}</version>
+                <version>${spring-kafka-test.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>junit</groupId>
@@ -345,12 +339,14 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <!-- pull by spring boot why we need to add it ??-->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-clients</artifactId>
                 <version>${kafka.version}</version>
             </dependency>
 
+            <!-- We need to exclude jackson-module-scala_2.13 because we use .findAndRegisterModules() in our code -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka_2.13</artifactId>
@@ -427,11 +423,6 @@
                 <version>${jsch.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jdom</groupId>
-                <artifactId>jdom2</artifactId>
-                <version>${jdom2.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.jayway.jsonpath</groupId>
                 <artifactId>json-path</artifactId>
                 <version>${jsonpath.version}</version>
@@ -466,16 +457,6 @@
                 <artifactId>hjson</artifactId>
                 <version>${hjson.version}</version>
             </dependency>
-            <dependency>
-                <groupId>javax.jms</groupId>
-                <artifactId>javax.jms-api</artifactId>
-                <version>${jms.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.rabbitmq</groupId>
-                <artifactId>amqp-client</artifactId>
-                <version>${amqp-client.version}</version>
-            </dependency>
             <dependency> <!-- Note that the below is qpid-broker-core and *not* qpid-broker. -->
                 <groupId>org.apache.qpid</groupId>
                 <artifactId>qpid-broker-core</artifactId>
@@ -490,16 +471,6 @@
                 <groupId>org.apache.qpid</groupId>
                 <artifactId>qpid-broker-plugins-memory-store</artifactId>
                 <version>${qpid-broker.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mongodb</groupId>
-                <artifactId>mongodb-driver-sync</artifactId>
-                <version>${mongodb.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mongodb</groupId>
-                <artifactId>bson</artifactId>
-                <version>${mongodb.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.orientechnologies</groupId>
@@ -530,36 +501,6 @@
                         <artifactId>chromeinspector</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-firefox-driver</artifactId>
-                <version>${selenium.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-ie-driver</artifactId>
-                <version>${selenium.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-chrome-driver</artifactId>
-                <version>${selenium.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-support</artifactId>
-                <version>${selenium.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-api</artifactId>
-                <version>${selenium.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-remote-driver</artifactId>
-                <version>${selenium.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.java-diff-utils</groupId>
@@ -644,7 +585,7 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-test</artifactId>
-                <version>${spring.version}</version>
+                <version>${spring-security-test.version}</version>
                 <scope>test</scope>
             </dependency>
             <!-- Property Based Testing -->

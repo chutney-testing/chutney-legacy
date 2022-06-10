@@ -26,7 +26,7 @@ class CampaignParameterRepository {
     }
 
     private static final String QUERY_FIND_CAMPAIGN_PARAMETERS =
-        "SELECT CAMPAIGN_ID, PARAMETER, VALUE "
+        "SELECT CAMPAIGN_ID, PARAMETER, PARAMETER_VALUE "
             + "FROM CAMPAIGN_PARAMETER "
             + "WHERE CAMPAIGN_ID = :campaignId "
             + "ORDER BY ID DESC";
@@ -38,7 +38,7 @@ class CampaignParameterRepository {
     }
 
     private static final String QUERY_SAVE_CAMPAIGN_PARAMETER =
-        "INSERT INTO CAMPAIGN_PARAMETER(ID, CAMPAIGN_ID, PARAMETER, VALUE) "
+        "INSERT INTO CAMPAIGN_PARAMETER(ID, CAMPAIGN_ID, PARAMETER, PARAMETER_VALUE) "
             + "VALUES (:id, :campaignId, :parameter, :value)";
 
     public void updateCampaignParameter(Long campaignId, Map<String,String> data) {

@@ -42,7 +42,7 @@ public class DatabaseAdminServiceImplTest extends AbstractLocalDatabaseTest {
 
     @Test
     public void should_limit_result_to_20_records_when_execute_select_query() {
-        String selectFragment = "SELECT 3 AS FIRST, 'test' as SECOND ";
+        String selectFragment = "SELECT 3 AS FIRST, 'test' as SECONDD ";
         String sql = selectFragment
             + String.join("", Collections.nCopies(25, "UNION ALL " + selectFragment));
 
@@ -51,7 +51,7 @@ public class DatabaseAdminServiceImplTest extends AbstractLocalDatabaseTest {
         assertThat(sqlResult.error).isEmpty();
         assertThat(sqlResult.updatedRows).isEmpty();
         assertThat(sqlResult.table).isPresent();
-        assertThat(sqlResult.table.get().columnNames).containsExactlyInAnyOrder("FIRST", "SECOND");
+        assertThat(sqlResult.table.get().columnNames).containsExactlyInAnyOrder("FIRST", "SECONDD");
         assertThat(sqlResult.table.get().rows).hasSize(20);
         assertThat(sqlResult.table.get().rows.get(0).values).containsExactlyInAnyOrder("3", "test");
     }
