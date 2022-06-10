@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
@@ -17,7 +17,7 @@ import { Dataset, KeyValue } from '@model';
     templateUrl: './dataset-edition.component.html',
     styleUrls: ['./dataset-edition.component.scss']
 })
-export class DatasetEditionComponent extends CanDeactivatePage implements OnInit, OnDestroy {
+export class DatasetEditionComponent extends CanDeactivatePage implements OnInit, OnDestroy, AfterViewInit {
 
     dataset: Dataset = new Dataset('', '', [], new Date(), [], [], 0);
 
@@ -59,6 +59,10 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
 
     }
 
+    ngAfterViewInit(): void {
+        this.dataSetNameFocus();
+    }
+
     private initTranslation() {
         this.translate.get('global.actions.done.saved').subscribe((res: string) => {
             this.savedMessage = res;
@@ -76,8 +80,6 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
                     this.setCurrentDataSet(res);
                 }
             );
-        } else {
-            this.dataSetNameFocus();
         }
     }
 

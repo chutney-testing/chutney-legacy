@@ -28,9 +28,9 @@
             {{ 'admin.targets.environment' | translate }}:
             <chutney-environment-combo [environments]="environmentsNames" (selectionEvent)="changingValue($event)">
             </chutney-environment-combo>
-            <div class="btn-group ml-3 mr-3" role="group">
+            <div class="btn-group mx-3" role="group">
                 <button type="button" class="btn btn-info" (click)="initForUpdateEnvironment()">{{ 'global.actions.update' | translate }}</button>
-                <button type="button" class="btn btn-info ml-1 mr-1" (click)="initEnvironment()">{{ 'global.actions.add' | translate }}</button>
+                <button type="button" class="btn btn-info mx-1" (click)="initEnvironment()">{{ 'global.actions.add' | translate }}</button>
                 <chutney-delete-confirm-dialog [dialogMessage]="('global.confirm.question' | translate) + ' ' + ('global.actions.delete' | translate) + '\n' + selectedEnvironment.name"
                                                [label]="'Delete Environment'"
                                                [disabled]="!selectedEnvironment"
@@ -38,8 +38,8 @@
                                                 class="align-self-center">
                 </chutney-delete-confirm-dialog>
             </div>
-            <div class="btn-group ml-3" role="group">
-                <button type="button" class="btn btn-success ml-1 align-self-center" (click)="exportEnvironment()">{{ 'global.actions.export' | translate }}</button>
+            <div class="btn-group ms-3" role="group">
+                <button type="button" class="btn btn-success ms-1 align-self-center" (click)="exportEnvironment()">{{ 'global.actions.export' | translate }}</button>
                 <chutney-import-button (submitEvent)="importEnvironment($event)"></chutney-import-button>
             </div>
         </div>
@@ -72,7 +72,7 @@
                 <div *ngIf="selectedTarget">
                     <div  class="col-md-12">
                         <button type="button" class="btn btn-success me-3" (click)="updateSelectedTarget()"> <span class="fa fa-check"></span> {{'global.actions.save' | translate}}</button>
-                        <button type="button" class="btn btn-success accept-spinner mr-3" (click)="exportTarget()"><span class="fa fa-download"> </span> {{'global.actions.export' | translate}}</button>
+                        <button type="button" class="btn btn-success accept-spinner me-3" (click)="exportTarget()"><span class="fa fa-download"> </span> {{'global.actions.export' | translate}}</button>
                         <button type="button" class="btn btn-secondary me-4" (click)="cancelSelectedTarget()">{{'global.actions.cancel' | translate}}</button>
                         <chutney-delete-confirm-dialog
                             [dialogMessage]="('global.confirm.question' | translate) + ' ' + ('global.actions.delete' | translate) + '\n' + selectedTarget.name"
@@ -84,7 +84,7 @@
 
                         <chutney-forms-input-line [id]="'targetUrl'" [label]="'Url'" [placeholder]="'protocol://server:port'" [(model)]="selectedTarget.url" [validate]="validationService.isValidUrl.bind(validationService)"></chutney-forms-input-line>
                         <div class="mt-2">
-                            <button class="btn btn-sm btn-info float-right ml-1" title="{{'global.actions.help' | translate}}" (click)="help = !help">
+                            <button class="btn btn-sm btn-info float-right ms-1" title="{{'global.actions.help' | translate}}" (click)="help = !help">
                                 {{'global.actions.help' | translate}} <span class="fa fa-info"></span>
                             </button>
                             <div *ngIf="help">

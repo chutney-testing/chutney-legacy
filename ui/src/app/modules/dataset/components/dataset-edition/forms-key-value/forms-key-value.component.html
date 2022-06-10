@@ -15,7 +15,7 @@
 
     <div [formGroup]="keyValuesForm" *ngFor="let keyValue of keyValuesForm.controls; let i = index">
         <div [formGroupName]="i" class="row">
-            <div style="flex: 0 0 100px;">
+            <div style="flex: 0 0 110px;">
                 <button type="button" class="btn btn-outline-info delete-button-height"
                         (click)="insertNewKeyValue(i)"
                         title="{{'global.actions.add' | translate}}">
