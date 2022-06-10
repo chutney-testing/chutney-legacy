@@ -1,31 +1,15 @@
-@import 'colors';
-
-.login{
-    background-color: $bleu2;
-    height: 100%;
+.divider:after,
+.divider:before {
+content: "";
+flex: 1;
+height: 1px;
+background: #eee;
 }
-
-.form-login {
-    width:350px;
-    padding-top: 25vh;
+.h-custom {
+height: calc(100% - 73px);
 }
-
-.login-button {
-    background-color:$bleu4;
-    color: white;
+@media (max-width: 450px) {
+.h-custom {
+height: 100%;
 }
-
-.form-control{
-    color: black;
-    border-color: black ;
-    background-color: white  ;
-    &:focus {
-        box-shadow: 0 0 0 0.3rem rgba(black, 0.25);
-    }
-}
-
-.label {
-    display: inline-block;
-    max-width:100%;
-    margin-bottom: 10px;
 }

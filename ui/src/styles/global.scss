@@ -3,6 +3,10 @@
 @import 'colors';
 @import 'fonts';
 @import 'alias';
+@import 'variables';
+@import "~bootstrap/scss/bootstrap";
+@import 'bootswatch';
+
 
 $row-margin-up-down: 10px !default;
 
