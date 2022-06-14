@@ -34,30 +34,10 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
 
     @Override
     public String save(TestCase testCase) {
-        DelegateScenarioRepository repository = findRepository(testCase.metadata().repositorySource());
-
-        if (savingIsAllowed(repository)) {
-            if(testCase instanceof GwtTestCase) {
-                return repository.save(TestCaseDataMapper.toDto((GwtTestCase) testCase));
-            }
-            throw new IllegalArgumentException("Only GwtTestCase allow here");
-        } else {
-            throw new IllegalArgumentException("Saving to repository other than default local is not allowed");
-        }
+        return defaultRepository.save(TestCaseDataMapper.toDto((GwtTestCase) testCase));
     }
 
-    private boolean savingIsAllowed(DelegateScenarioRepository repository) {
-        return repository.alias().equals(DEFAULT_REPOSITORY_SOURCE);
-    }
-
-    private DelegateScenarioRepository findRepository(String source) {
-        return repositories()
-            .filter(repo -> repo.alias().equals(source))
-            .findFirst()
-            .orElse(defaultRepository);
-    }
-
-    private Stream<DelegateScenarioRepository> repositories() {
+    private Stream<RawScenarioRepository> repositories() {
         return Stream.of(defaultRepository);
     }
 
@@ -121,7 +101,7 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
         return testCases;
     }
 
-    private Stream<? extends TestCaseMetadata> findAllRepositoryStream(DelegateScenarioRepository repository) {
+    private Stream<? extends TestCaseMetadata> findAllRepositoryStream(RawScenarioRepository repository) {
         try {
             return repository.findAll().stream();
         } catch (RuntimeException e) {
@@ -130,7 +110,7 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
         }
     }
 
-    private Stream<? extends TestCaseMetadata> searchAllRepositoryStream(DelegateScenarioRepository repository, String textFilter) {
+    private Stream<? extends TestCaseMetadata> searchAllRepositoryStream(RawScenarioRepository repository, String textFilter) {
         try {
             return repository.search(textFilter).stream();
         } catch (RuntimeException e) {
@@ -138,7 +118,6 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
             return Stream.empty();
         }
     }
-
 
     private boolean isComposableScenarioId(String scenarioId) {
         return scenarioId.contains("-");

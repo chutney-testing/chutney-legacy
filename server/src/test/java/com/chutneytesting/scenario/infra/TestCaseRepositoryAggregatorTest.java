@@ -27,22 +27,6 @@ public class TestCaseRepositoryAggregatorTest {
     private final OrientComposableTestCaseRepository composableTestCaseRepository = mock(OrientComposableTestCaseRepository.class);
 
     @Test
-    public void should_throw_exception_when_try_to_save_to_repo_other_than_default() {
-        // Given
-        final String REPO_SOURCE = "REPO_1";
-        DatabaseTestCaseRepository repo1 = mock(DatabaseTestCaseRepository.class);
-        when(repo1.alias()).thenReturn(REPO_SOURCE);
-        GwtTestCase testCase = defaultScenarioWithRepoSource(REPO_SOURCE);
-
-        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, composableTestCaseRepository);
-
-        // When
-        assertThatThrownBy(() -> sut.save(testCase))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("Saving to repository other than default local is not allowed");
-    }
-
-    @Test
     public void should_save_in_default_repo_when_source_is_unknown() {
         // Given
         DatabaseTestCaseRepository repo1 = mock(DatabaseTestCaseRepository.class);
@@ -165,7 +149,6 @@ public class TestCaseRepositoryAggregatorTest {
         return GwtTestCase.builder()
             .withMetadata(TestCaseMetadataImpl.builder()
                 .withCreationDate(Instant.now())
-                .withRepositorySource(repositorySource)
                 .build())
             .withScenario(GwtScenario.builder().withWhen(GwtStep.NONE).build())
             .build();

@@ -18,8 +18,6 @@ public interface TestCaseMetadata {
 
     List<String> tags();
 
-    String repositorySource(); // TODO - to delete
-
     String author();
 
     Instant updateDate();

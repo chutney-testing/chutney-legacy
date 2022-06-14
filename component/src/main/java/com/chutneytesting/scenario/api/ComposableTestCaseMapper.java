@@ -1,8 +1,5 @@
 package com.chutneytesting.scenario.api;
 
-import static com.chutneytesting.scenario.domain.ComposableTestCaseRepository.COMPOSABLE_TESTCASE_REPOSITORY_SOURCE;
-
-
 import com.chutneytesting.scenario.api.dto.ComposableStepDto;
 import com.chutneytesting.scenario.api.dto.ComposableTestCaseDto;
 import com.chutneytesting.scenario.api.dto.ImmutableComposableScenarioDto;
@@ -54,7 +51,6 @@ public class ComposableTestCaseMapper {
             .withTitle(composableTestCaseDto.title())
             .withDescription(composableTestCaseDto.description().orElse(""))
             .withCreationDate(composableTestCaseDto.creationDate())
-            .withRepositorySource(COMPOSABLE_TESTCASE_REPOSITORY_SOURCE)
             .withTags(composableTestCaseDto.tags())
             .withDatasetId(composableTestCaseDto.datasetId().orElse(""))
             .withAuthor(composableTestCaseDto.author())

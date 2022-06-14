@@ -22,15 +22,15 @@
                             </button>
                             <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
                                 <button *ngFor="let env of environments" class="dropdown-item"
-                                        (click)="executeScenario(env)">{{ env }}</button>
+                                        (click)="executeScenario(env)">{{ env }}
+                                </button>
                             </div>
                         </div>
                     </ng-container>
                     <ng-container *hasAuthorization="[Authorization.SCENARIO_WRITE]">
                         <div class="btn-group">
                             <button type="button" class="btn btn-light"
-                                routerLink="{{isComposed(testCaseId) ? '/scenario/' + testCaseId + '/component-edition' : '/scenario/' + testCaseId + '/raw-edition'}}"
-                                [attr.disabled]="isNotEditable()">
+                                    routerLink="{{isComposed(testCaseId) ? '/scenario/' + testCaseId + '/component-edition' : '/scenario/' + testCaseId + '/raw-edition'}}">
                                 <span class="fa fa-pencil-alt"></span>
                                 <span class="btn-label">{{'global.actions.edit' | translate}}</span>
                             </button>
@@ -39,14 +39,17 @@
                 </div>
                 <div class="col-6 p-0">
                     <ng-container *hasAuthorization="[Authorization.SCENARIO_WRITE]">
-                        <chutney-delete-confirm-dialog class="align-items-end" [dialogMessage]="'scenarios.execution.actions.remove' | translate"
-                            (deleteEvent)="deleteScenario(testCaseId)" [disabled]="isNotEditable()">
+                        <chutney-delete-confirm-dialog class="align-items-end"
+                                                       [dialogMessage]="'scenarios.execution.actions.remove' | translate"
+                                                       (deleteEvent)="deleteScenario(testCaseId)">
                         </chutney-delete-confirm-dialog>
-                        <button type="button" class="btn btn-success accept-spinner align-items-end" (click)="duplicateScenario()">
+                        <button type="button" class="btn btn-success accept-spinner align-items-end"
+                                (click)="duplicateScenario()">
                             <span class="fa fa-clone"></span>
                             <span class="btn-label">{{'global.actions.clone' | translate}}</span>
                         </button>
-                        <button *ngIf="isNotComposed()" type="button" class="btn btn-success accept-spinner align-items-end" (click)="exportScenario()">
+                        <button *ngIf="isNotComposed()" type="button"
+                                class="btn btn-success accept-spinner align-items-end" (click)="exportScenario()">
                             <span class="fa fa-file-code"></span>
                             <span class="btn-label">{{'global.actions.export' | translate}}</span>
                         </button>

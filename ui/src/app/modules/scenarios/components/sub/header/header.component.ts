@@ -91,17 +91,8 @@ export class HeaderComponent implements OnInit {
         });
     }
 
-    isNotEditable() {
-        return disabledBoolean(this.isNotLocalSource());
-    }
-
     isNotComposed() {
         return !TestCase.isComposed(this.testCaseId);
-    }
-
-    private isNotLocalSource(): boolean {
-        const source = this.testCaseMetadata.repositorySource;
-        return !((source == 'local') || (source == 'ComposableTestCase'));
     }
 
     private removeJiraLink(id: string) {

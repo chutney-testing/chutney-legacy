@@ -19,18 +19,16 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
     public final List<String> tags;
     public final Instant creationDate;
     public final Optional<String> datasetId;
-    public final String repositorySource;
     public final Instant updateDate;
     public final String author;
     public final Integer version;
 
-    private TestCaseMetadataImpl(String id, String title, String description, List<String> tags, Instant creationDate, String repositorySource, String datasetId, Instant updateDate, String author, Integer version) {
+    private TestCaseMetadataImpl(String id, String title, String description, List<String> tags, Instant creationDate, String datasetId, Instant updateDate, String author, Integer version) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.tags = tags;
         this.creationDate = creationDate;
-        this.repositorySource = repositorySource;
         this.datasetId = ofNullable(datasetId);
         this.updateDate = updateDate;
         this.author = author;
@@ -69,11 +67,6 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
     }
 
     @Override
-    public String repositorySource() {
-        return repositorySource;
-    }
-
-    @Override
     public String author() {
         return author;
     }
@@ -96,7 +89,6 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
             ", description='" + description + '\'' +
             ", tags=" + tags +
             ", creationDate=" + creationDate +
-            ", repositorySource=" + repositorySource +
             ", author=" + author +
             ", updateDate=" + updateDate +
             ", version=" + version +
@@ -113,7 +105,6 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
             description.equals(that.description) &&
             tags.equals(that.tags) &&
             creationDate.equals(that.creationDate) &&
-            repositorySource.equals(that.repositorySource) &&
             author.equals(that.author) &&
             updateDate.equals(that.updateDate) &&
             version.equals(that.version);
@@ -121,7 +112,7 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, tags, creationDate, repositorySource, author, updateDate, version);
+        return Objects.hash(id, title, description, tags, creationDate, author, updateDate, version);
     }
 
     public static TestCaseMetadataBuilder builder() {
@@ -134,7 +125,6 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
         private String description;
         private List<String> tags;
         private Instant creationDate;
-        private String repositorySource;
         private String datasetId;
         private Instant updateDate;
         private String author;
@@ -151,8 +141,7 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
                 ofNullable(description).orElse(""),
                 ofNullable(tags).stream().flatMap(Collection::stream).filter(StringUtils::isNotBlank).map(String::toUpperCase).map(String::trim).collect(Collectors.toList()),
                 creationDate,
-                ofNullable(repositorySource).orElse("local"), //TODO link to TestCaseRepository.DEFAULT_REPOSITORY_SOURCE) ?
-                ofNullable(datasetId).orElse(null),
+                datasetId,
                 ofNullable(updateDate).orElse(creationDate),
                 ofNullable(author).orElseGet(() -> User.ANONYMOUS.id),
                 ofNullable(version).orElse(1));
@@ -188,11 +177,6 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
             return this;
         }
 
-        public TestCaseMetadataBuilder withRepositorySource(String repositorySource) {
-            this.repositorySource = repositorySource;
-            return this;
-        }
-
         public TestCaseMetadataBuilder withUpdateDate(Instant updateDate) {
             this.updateDate = updateDate;
             return this;
@@ -215,7 +199,6 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
                 .withDescription(testCaseMetadata.description())
                 .withCreationDate(testCaseMetadata.creationDate())
                 .withTags(testCaseMetadata.tags())
-                .withRepositorySource(testCaseMetadata.repositorySource())
                 .withDatasetId(testCaseMetadata.datasetId().orElse(null))
                 .withUpdateDate(testCaseMetadata.updateDate())
                 .withAuthor(testCaseMetadata.author())

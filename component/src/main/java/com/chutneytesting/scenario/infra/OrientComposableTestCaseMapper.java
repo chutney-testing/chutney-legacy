@@ -1,14 +1,13 @@
 package com.chutneytesting.scenario.infra;
 
-import static com.chutneytesting.scenario.domain.ComposableTestCaseRepository.COMPOSABLE_TESTCASE_REPOSITORY_SOURCE;
 import static java.time.Instant.now;
 
 import com.chutneytesting.ComposableIdUtils;
+import com.chutneytesting.scenario.domain.ComposableScenario;
 import com.chutneytesting.scenario.domain.ComposableStep;
+import com.chutneytesting.scenario.domain.ComposableTestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadata;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
-import com.chutneytesting.scenario.domain.ComposableScenario;
-import com.chutneytesting.scenario.domain.ComposableTestCase;
 import com.chutneytesting.scenario.infra.wrapper.TestCaseVertex;
 import com.orientechnologies.orient.core.record.OVertex;
 import java.util.Date;
@@ -52,7 +51,6 @@ class OrientComposableTestCaseMapper {
             .withTitle(testCaseVertex.title())
             .withDescription(testCaseVertex.description())
             .withCreationDate(testCaseVertex.creationDate())
-            .withRepositorySource(COMPOSABLE_TESTCASE_REPOSITORY_SOURCE)
             .withTags(testCaseVertex.tags())
             .withDatasetId(testCaseVertex.datasetId())
             .withUpdateDate(testCaseVertex.updateDate())

@@ -8,7 +8,7 @@ import static java.util.Optional.empty;
 import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
 import com.chutneytesting.scenario.domain.TestCaseMetadata;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
-import com.chutneytesting.scenario.infra.DelegateScenarioRepository;
+import com.chutneytesting.scenario.infra.RawScenarioRepository;
 import com.chutneytesting.security.domain.User;
 import com.chutneytesting.tools.Try;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -33,7 +33,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class DatabaseTestCaseRepository implements DelegateScenarioRepository {
+public class DatabaseTestCaseRepository implements RawScenarioRepository {
 
     private static final ScenarioMetadataRowMapper SCENARIO_INDEX_ROW_MAPPER = new ScenarioMetadataRowMapper();
     private final ScenarioRowMapper scenario_row_mapper;

@@ -1,12 +1,11 @@
 package com.chutneytesting.scenario.infra.raw;
 
-import static com.chutneytesting.scenario.domain.TestCaseRepository.DEFAULT_REPOSITORY_SOURCE;
-
+import com.chutneytesting.execution.domain.GwtScenarioMarshaller;
 import com.chutneytesting.scenario.api.raw.mapper.GwtScenarioMapper;
 import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
-import com.chutneytesting.execution.domain.GwtScenarioMarshaller;
+
 // call it in repo instead of repo aggregator
 public class TestCaseDataMapper {
 
@@ -44,7 +43,6 @@ public class TestCaseDataMapper {
                 .withTitle(dto.title)
                 .withDescription(dto.description)
                 .withCreationDate(dto.creationDate)
-                .withRepositorySource(DEFAULT_REPOSITORY_SOURCE)
                 .withTags(dto.tags)
                 .withAuthor(dto.author)
                 .withUpdateDate(dto.updateDate)
