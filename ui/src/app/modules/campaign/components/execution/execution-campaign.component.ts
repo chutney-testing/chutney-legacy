@@ -6,8 +6,7 @@ import { FileSaverService } from 'ngx-filesaver';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 
 import { combineLatest, Observable, Subscription, timer } from 'rxjs';
-import { ChartDataSets, ChartOptions } from 'chart.js';
-import { Color, Label } from 'ng2-charts';
+
 import * as JSZip from 'jszip';
 
 import {
@@ -68,26 +67,6 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
     errorMessage: any;
 
     private subscriptionLoadCampaign: Subscription;
-
-
-    public lineChartData: ChartDataSets[] = [];
-    public lineChartLabels: Label[] = [];
-    public lineChartOptions: (ChartOptions) = {
-        responsive: true,
-    };
-    public lineChartColors: Color[] = [
-        {
-            borderColor: 'green',
-            backgroundColor: 'rgba(0,255,0,0.1)'
-        },
-        {
-            borderColor: 'red',
-            backgroundColor: 'rgba(255,0,0,0.3)'
-        },
-    ];
-    public lineChartLegend = false;
-    public lineChartType = 'line';
-    public lineChartPlugins = [];
 
     Authorization = Authorization;
 
@@ -172,7 +151,6 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
                     }
                 );
             }
-            this.setChartData(campaign.campaignExecutionReports);
             this.last = this.getLastCompleteReport();
         }
     }
@@ -212,15 +190,6 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
                 this.errorMessage = error.error;
             }
         );
-    }
-
-    private setChartData(reports: Array<CampaignExecutionReport>) {
-        const scenarioOK = reports.filter(r => !r.partialExecution).map(r => r.scenarioExecutionReports
-            .filter(s => s.status === 'SUCCESS').length).reverse();
-        const scenarioKO = reports.filter(r => !r.partialExecution).map(r => r.scenarioExecutionReports
-            .filter(s => s.status === 'FAILURE').length).reverse();
-        this.lineChartData = [{data: scenarioOK}, {data: scenarioKO}];
-        this.lineChartLabels = reports.filter(r => !r.partialExecution).map(r => '' + r.executionId).reverse();
     }
 
     private getLastCompleteReport() {

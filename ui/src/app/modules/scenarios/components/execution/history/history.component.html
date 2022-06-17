@@ -11,13 +11,13 @@
             <i class="fa fa-circle" aria-hidden="true" [ngClass]="{'circle-ok': execution.status == 'SUCCESS', 'circle-ko': execution.status == 'FAILURE'}"><span class="exection-id">#{{execution.executionId}}</span></i>
         </div>
         <div class="col-lg-9 time">
-            <div *ngIf="selectedExecutionId === execution.executionId" class="fas fa-arrow-left float-right"></div>
+            <div *ngIf="selectedExecutionId === execution.executionId" class="fas fa-arrow-left float-end"></div>
             <em *ngIf="!isOlderThan(execution.time, 4)">{{execution.time | amCalendar:{sameDay:'['.concat('scenarios.execution.history.time' | translate).concat('] h:mm')} }}</em>
             <em *ngIf="isOlderThan(execution.time, 4)">{{execution.time | amDateFormat: 'DD MMM. YYYY HH:mm' }}</em>
             <div><em>({{ 'global.time.in' | translate }} {{execution.duration | amDuration:'ms' }})</em></div>
         </div>
         <div *ngIf="execution.error" class="col-lg-12 error">{{execution.error}}</div>
-        
+
     </div>
 </div>
 

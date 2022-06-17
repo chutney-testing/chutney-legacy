@@ -1,5 +1,6 @@
-import { HostListener } from '@angular/core';
+import { HostListener, Injectable } from '@angular/core';
 
+@Injectable()
 export abstract class CanDeactivatePage {
   abstract canDeactivatePage(): boolean;
 

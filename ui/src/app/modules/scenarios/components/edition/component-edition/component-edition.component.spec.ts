@@ -1,9 +1,9 @@
-import { async, TestBed } from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { MomentModule } from 'angular2-moment';
+import { MomentModule } from 'ngx-moment';
 import { TranslateModule } from '@ngx-translate/core';
 import { DragulaModule, DragulaService } from 'ng2-dragula';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -32,7 +32,7 @@ describe('ComponentEditionComponent', () => {
         [], null, 'id-1');
     const task2 = new ComponentTask('name 2', null, [], [], [], [], null, 'id-2');
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.resetTestingModule();
         activatedRouteStub.setParamMap({id: '42'});
         activatedRouteStub.setSnapshotQueryParamMap({duplicate: false});
@@ -50,7 +50,7 @@ describe('ComponentEditionComponent', () => {
                 ReactiveFormsModule,
                 MomentModule,
                 DragulaModule,
-                NgbModule.forRoot(),
+                NgbModule,
                 ToastrModule.forRoot()
             ],
             declarations: [

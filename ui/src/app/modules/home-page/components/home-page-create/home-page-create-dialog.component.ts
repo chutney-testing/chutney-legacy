@@ -14,6 +14,7 @@ import { HomePageService } from '@core/services';
 export class HomePageCreateDialogComponent implements OnInit {
 
   homePage: HomePage;
+  homePageDraftContent: string;
   isSaving: boolean;
 
   private resizeInit = 0;
@@ -42,12 +43,13 @@ export class HomePageCreateDialogComponent implements OnInit {
 
   save() {
     this.isSaving = true;
+    this.homePage.content = this.homePageDraftContent;
     this.subscribeToSaveResponse(
       this.homePageService.save(this.homePage));
   }
 
   onHomePageContentChanged(data: string): void {
-    this.homePage.content = data;
+    this.homePageDraftContent = data;
   }
 
   private subscribeToSaveResponse(result: Observable<HomePage>) {

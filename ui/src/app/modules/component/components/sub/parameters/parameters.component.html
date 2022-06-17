@@ -1,5 +1,5 @@
 <div [formGroup]="parentForm" class="mt-3">
-    <span class="font-weight-bold cursor-default"
+    <span class="fw-bold cursor-default"
           (click)="switchCollapseParam()">{{'components.shared.edition.blocks.parameters' | translate}}</span>
     <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
             (click)="switchCollapseParam()"
@@ -7,7 +7,7 @@
         <span class="fa" [ngClass]="collapseParam ? 'fa-eye' : 'fa-eye-slash'"></span>
     </button>
     <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
-            class="btn btn-sm btn-light btn-outline-dark border-0 ml-sm-1"
+            class="btn btn-sm btn-light btn-outline-dark border-0 ms-sm-1"
             (click)="collapseParam = false; addParameters();"
             title="{{'global.actions.add' | translate}}">
         <span class="fa fa-plus"></span>
@@ -16,15 +16,15 @@
         <div class="row" formArrayName="parameters"
              *ngFor="let parameter of parentForm.get('parameters')?.controls; let i = index;">
             <ng-container [formGroupName]="i">
-                <div class="col-4 pl-1 pl-1 pr-1">
-                    <input type="text" class="form-control mr-2 small-text" formControlName="key"
+                <div class="col-4 px-1">
+                    <input type="text" class="form-control me-2 small-text" formControlName="key"
                            title="{{parameter.get('key').value}}"
                            placeholder="key"/>
                 </div>
-                <div class="col-7 pl-1 pl-1 pr-1">
-                    <textarea class="form-control mr-2 small-text" formControlName="value" rows="1" placeholder="value"></textarea>
+                <div class="col-7 px-1">
+                    <textarea class="form-control me-2 small-text" formControlName="value" rows="1" placeholder="value"></textarea>
                 </div>
-                <div class="col-1 pl-1 pr-1 align-self-center text-right">
+                <div class="col-1 px-1 align-self-center text-right">
                     <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
                             type="button"
                             class="btn btn-sm btn-outline-danger delete-button-height"

@@ -48,9 +48,9 @@ export class JiraComponent implements OnInit {
         this.configurationService.get().subscribe(
             (config: JiraPluginConfiguration) => {
                 this.configuration = config;
-                this.configurationForm.controls.url.patchValue(config.url);
-                this.configurationForm.controls.username.patchValue(config.username);
-                this.configurationForm.controls.password.patchValue(config.password);
+                this.configurationForm.controls['url'].patchValue(config.url);
+                this.configurationForm.controls['username'].patchValue(config.username);
+                this.configurationForm.controls['password'].patchValue(config.password);
             },
             (error) => {
                 this.notify(error.error, true);

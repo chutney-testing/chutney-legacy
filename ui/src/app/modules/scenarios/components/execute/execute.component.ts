@@ -82,7 +82,7 @@ export class ExecuteComponent implements OnInit, OnDestroy {
             parameters: this.formBuilder.array([])
         });
 
-        const parameters = this.componentForm.controls.parameters as FormArray;
+        const parameters = this.componentForm.controls['parameters'] as FormArray;
         computedParams.forEach((keyValue) => {
             parameters.push(
                 this.formBuilder.control(keyValue.value, Validators.required)
@@ -92,7 +92,7 @@ export class ExecuteComponent implements OnInit, OnDestroy {
 
     private buildDataSetFromForm(): Array<KeyValue> {
         const computedParameters: Array<KeyValue> = [];
-        const parameters = this.componentForm.controls.parameters as FormArray;
+        const parameters = this.componentForm.controls['parameters'] as FormArray;
         parameters.controls.forEach((ctlr, i) => {
             computedParameters.push(new KeyValue(this.computedParameters[i].key, ctlr.value));
         });

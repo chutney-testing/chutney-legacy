@@ -1,8 +1,8 @@
 <div class="col">
     <div class="row justify-content-center">
-        <div class="btn-group btn-group-sm">
+        <div class="btn-group btn-group-sm w-25">
             <button
-                class="btn btn-sm btn-success mr-2"
+                class="btn btn-sm btn-success me-2"
                 title="{{'global.actions.save' | translate}}"
                 (click)="saveRoles()"
             >
@@ -58,17 +58,19 @@
         </pre>
     </div>
     <div *ngIf="message"
-         class="row p-2 pointer text-white font-weight-bold"
+         class="row p-2 pointer text-white fw-bold"
          [ngClass]="error ? 'bg-danger' : 'bg-success'"
          (click)="message = null"
     >
         {{ message }}
     </div>
     <div class="row editor">
-        <chutney-ace-editor #rolesAceEditor
-                            class="w-100"
-                            [modes]="['json']"
-                            [initialContent]="rolesContent">
-        </chutney-ace-editor>
+        <div class="scenario-editor">
+            <chutney-editor
+                [modes]="['json']"
+                [content]="rolesContent"
+                (onContentChange)="onRoleContentChange($event)">
+            </chutney-editor>
+        </div>
     </div>
 </div>

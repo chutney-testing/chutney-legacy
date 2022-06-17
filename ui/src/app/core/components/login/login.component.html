@@ -1,6 +1,6 @@
 <div class="login m-0">
-    <form name="form" class="container form-login" (ngSubmit)="login()" novalidate>
-        <div class="form-row justify-content-center mb-3">
+    <form name="form" class="container form-login " (ngSubmit)="login()" novalidate>
+        <div class="form-row d-flex justify-content-center mb-3">
             <img src="../../../assets/logo/logo-circle.png"/>
         </div>
 
@@ -14,15 +14,15 @@
                    placeholder="{{ 'login.password' | translate }}" [(ngModel)]="password"/>
         </div>
 
-        <div class="form-row justify-content-center">
-            <button type="submit" class="btn mr-2 login-button">
+        <div class="form-row d-flex justify-content-center">
+            <button type="submit" class="btn me-2 login-button">
                 <span>{{ 'global.actions.login' | translate }}</span>
             </button>
         </div>
     </form>
     <div class="container col-md-6">
-        <div *ngIf="connectionError" class="row text-danger justify-content-center"><b>{{ connectionError }}</b></div>
-        <div *ngIf="action" class="row text-info justify-content-center">
+        <div *ngIf="connectionError" class="row text-danger d-flex justify-content-center"><b>{{ connectionError }}</b></div>
+        <div *ngIf="action" class="row text-info d-flex justify-content-center">
             <b>{{ 'login.'+action | translate }}</b>
         </div>
     </div>

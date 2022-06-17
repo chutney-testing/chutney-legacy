@@ -1,8 +1,8 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
+    "allowSyntheticDefaultImports":true,
     "outDir": "../out-tsc/spec",
-    "module": "commonjs",
     "types": [
       "jasmine",
       "node"

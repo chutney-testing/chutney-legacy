@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
@@ -17,7 +17,7 @@ import { Dataset, KeyValue } from '@model';
     templateUrl: './dataset-edition.component.html',
     styleUrls: ['./dataset-edition.component.scss']
 })
-export class DatasetEditionComponent extends CanDeactivatePage implements OnInit, OnDestroy {
+export class DatasetEditionComponent extends CanDeactivatePage implements OnInit, OnDestroy, AfterViewInit {
 
     dataset: Dataset = new Dataset('', '', [], new Date(), [], [], 0);
 
@@ -59,6 +59,10 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
 
     }
 
+    ngAfterViewInit(): void {
+        this.dataSetNameFocus();
+    }
+
     private initTranslation() {
         this.translate.get('global.actions.done.saved').subscribe((res: string) => {
             this.savedMessage = res;
@@ -76,19 +80,17 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
                     this.setCurrentDataSet(res);
                 }
             );
-        } else {
-            this.dataSetNameFocus();
         }
     }
 
     private setCurrentDataSet(res) {
         this.dataset = res;
         this.previousDataSet = this.dataset;
-        this.datasetForm.controls.name.patchValue(this.dataset.name);
-        this.datasetForm.controls.description.patchValue(this.dataset.description);
-        this.datasetForm.controls.tags.patchValue(this.dataset.tags.join(', '));
-        this.datasetForm.controls.keyValues.patchValue(this.dataset.uniqueValues);
-        this.datasetForm.controls.multiKeyValues.patchValue(this.dataset.multipleValues);
+        this.datasetForm.controls['name'].patchValue(this.dataset.name);
+        this.datasetForm.controls['description'].patchValue(this.dataset.description);
+        this.datasetForm.controls['tags'].patchValue(this.dataset.tags.join(', '));
+        this.datasetForm.controls['keyValues'].patchValue(this.dataset.uniqueValues);
+        this.datasetForm.controls['multiKeyValues'].patchValue(this.dataset.multipleValues);
     }
 
     isValid(): boolean {
@@ -141,10 +143,10 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
         const tags = this.datasetForm.value['tags'] ? this.datasetForm.value['tags'].split(',') : [];
         const date = new Date();
 
-        const kv = this.datasetForm.controls.keyValues as FormArray;
+        const kv = this.datasetForm.controls['keyValues'] as FormArray;
         const keyValues = kv.value ? kv.value.map((p) => new KeyValue(p.key, p.value)) : [];
 
-        const mkv = this.datasetForm.controls.multiKeyValues as FormArray;
+        const mkv = this.datasetForm.controls['multiKeyValues'] as FormArray;
         const multiKeyValues = mkv.value ? mkv.value.map(a => a.map((p) => new KeyValue(p.key, p.value))) : [];
 
         const version = this.dataset.id ? this.dataset.version : 0;

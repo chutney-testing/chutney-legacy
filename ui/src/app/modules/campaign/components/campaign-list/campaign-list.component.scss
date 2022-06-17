@@ -14,9 +14,7 @@
         border: 0;
         border-radius: 0.5rem;
 
-        .arrow {
-            margin-top: -8px !important;
-
+        .popover-arrow {
             &::after {
                 border-left-color: $bleu1;
             }
@@ -27,5 +25,6 @@
         background-color: $bleu1;
         color: $blanc;
         border-radius: 0.5rem;
+        padding: 0.5rem;
     }
 }

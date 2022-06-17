@@ -11,7 +11,6 @@ import { HomePageCreateDialogComponent } from './components/home-page-create/hom
 import { HomePageComponent } from './components/home-page/home-page.component';
 
 @NgModule({
-
     imports: [
         RouterModule.forChild(homePageRoute),
         CommonModule,
@@ -27,9 +26,6 @@ import { HomePageComponent } from './components/home-page/home-page.component';
     declarations: [
         HomePageComponent,
         HomePageCreateDialogComponent
-    ],
-    entryComponents: [
-        HomePageCreateDialogComponent
-    ],
+    ]
 })
 export class HomePageModule { }

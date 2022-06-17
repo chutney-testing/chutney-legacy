@@ -1,11 +1,11 @@
-import { async, TestBed } from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedModule } from '@shared/shared.module';
 
 import { MoleculesModule } from '../../../../molecules/molecules.module';
 
-import { MomentModule } from 'angular2-moment';
+import { MomentModule } from 'ngx-moment';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { DatasetEditionComponent } from './dataset-edition.component';
@@ -21,7 +21,7 @@ describe('DatasetEditionComponent', () => {
 
     const dataSetService = jasmine.createSpyObj('DataSetService', ['findAll']);
     dataSetService.findAll.and.returnValue(of([]));
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.resetTestingModule();
         TestBed.configureTestingModule({
             imports: [

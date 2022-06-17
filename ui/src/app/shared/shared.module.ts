@@ -4,12 +4,10 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { AceEditorComponent } from '@shared/ace-editor/ace-editor.component';
 import { DatasetSelectionComponent } from '@shared/components/dataset-selection/dataset-selection.component';
 import { InputFocusDirective } from '@shared/directives';
 import { ThumbnailPipe } from '@shared/pipes/thumbnail.pipe';
-import { MomentModule } from 'angular2-moment';
-import { AceEditorModule } from 'ng2-ace-editor';
+import { MomentModule } from 'ngx-moment';
 import { AlertService } from './alert.service';
 import { ErrorInterceptor } from './error-interceptor.service';
 import {
@@ -19,7 +17,6 @@ import {
 } from './components';
 import { ImplementationHostDirective, HasAuthorizationDirective } from './directives';
 import { EventManagerService } from './event-manager.service';
-import { HjsonParserService } from './hjson-parser/hjson-parser.service';
 import {
     ComponentSearchPipe,
     DataSetSearchPipe,
@@ -37,10 +34,11 @@ import {
     WithoutScenarioPipe
 } from '@shared/pipes';
 import { StateService } from './state/state.service';
+import { ChutneyEditorComponent } from '@shared/components/chutney-editor/chutney-editor.component';
+import { HjsonParserService } from '@shared/hjson-parser/hjson-parser.service';
 
 @NgModule({
     imports: [
-        AceEditorModule,
         CommonModule,
         FormsModule,
         MomentModule,
@@ -49,7 +47,6 @@ import { StateService } from './state/state.service';
         TranslateModule,
     ],
     declarations: [
-        AceEditorComponent,
         ComponentCardComponent,
         ComponentSearchPipe,
         DataSetSearchPipe,
@@ -72,9 +69,9 @@ import { StateService } from './state/state.service';
         TruncatePipe,
         WithoutScenarioPipe,
         HasAuthorizationDirective,
+        ChutneyEditorComponent
     ],
     exports: [
-        AceEditorComponent,
         ComponentCardComponent,
         ComponentSearchPipe,
         DataSetSearchPipe,
@@ -97,8 +94,7 @@ import { StateService } from './state/state.service';
         TruncatePipe,
         WithoutScenarioPipe,
         HasAuthorizationDirective,
-    ],
-    entryComponents: [
+        ChutneyEditorComponent,
     ],
     providers: [
         {
@@ -108,8 +104,9 @@ import { StateService } from './state/state.service';
         },
         AlertService,
         EventManagerService,
-        HjsonParserService,
-        StateService]
+        StateService,
+        HjsonParserService
+    ]
 })
 export class SharedModule {
 }

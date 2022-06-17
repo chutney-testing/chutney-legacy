@@ -34,15 +34,15 @@
                                 title="{{'global.actions.record' | translate}}">
                             <span class="fa fa-check"></span>
                         </button>
-                        <button type="button" class="btn btn-secondary ml-2" (click)="cancel()"
+                        <button type="button" class="btn btn-secondary ms-2" (click)="cancel()"
                                 title="{{'global.actions.cancel' | translate}}">
                             <span class="fa fa-times"></span>
                         </button>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="p-0 align-self-center">
-                        <label class="form-control-label font-weight-bold"
+                    <div class="col-2 p-0 align-self-center">
+                        <label class="form-control-label fw-bold"
                                for="tags">{{ 'scenarios.edition.form.tags' | translate }}</label>
                     </div>
                     <div class="col">
@@ -78,7 +78,7 @@
             <div class="testcase-edition col-9">
                 <div class="row mt-0">
                     <div class="col-8 border-right">
-                        <div class="row font-weight-bold">
+                        <div class="row fw-bold">
                             <span class="legend-title">{{'components.testcase.edition.blocks.steps' | translate}}</span>
                         </div>
                         <div class="p-2 border drop-zone" dragula="COPYABLE"
@@ -93,29 +93,29 @@
                         </div>
                     </div>
                     <div class="col-4">
-                        <div class="row font-weight-bold">
-                            <span class="mr-5">{{'menu.principal.jiraId' | translate}}</span>
-                            <input type="text" class="form-control mr-2 small-text"
+                        <div class="row fw-bold">
+                            <span class="me-5">{{'menu.principal.jiraId' | translate}}</span>
+                            <input type="text" class="form-control me-2 small-text"
                                 formControlName="jiraId"
                                 placeholder="id jira"/>
                         </div>
-                        <div class="row font-weight-bold">
-                            <span class="mr-5">{{'menu.principal.dataset' | translate}}</span>
+                        <div class="row fw-bold">
+                            <span class="me-5">{{'menu.principal.dataset' | translate}}</span>
                             <chutney-dataset-selection
                                 [selectedDatasetId]="scenarioComponent.datasetId"
                                 (selectionEvent)="selectDataset($event)">
                             </chutney-dataset-selection>
 
                         </div>
-                        <div class="row font-weight-bold">
-                            <span class="mr-5 cursor-default"
+                        <div class="row fw-bold">
+                            <span class="me-5 cursor-default w-30"
                                   (click)="switchCollapseParam()">{{'components.shared.edition.blocks.parameters' | translate}}</span>
-                            <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
+                            <button class="btn btn-sm btn-light btn-outline-dark border-0 w-10" type="button"
                                     (click)="switchCollapseParam()"
                                     title="{{(collapseParam ? 'global.actions.show' : 'global.actions.hide') | translate}}">
                                 <span class="fa" [ngClass]="collapseParam ? 'fa-eye' : 'fa-eye-slash'"></span>
                             </button>
-                            <button id="addParameterBtn" class="btn btn-sm btn-light btn-outline-dark border-0 ml-sm-1"
+                            <button id="addParameterBtn" class="btn btn-sm btn-light btn-outline-dark border-0 ms-sm-1 w-10"
                                     (click)="addParameters()"
                                     title="{{'global.actions.add' | translate}}">
                                 <span class="fa fa-plus"></span>
@@ -126,21 +126,21 @@
                                  *ngFor="let parameter of componentForm.get('parameters')?.controls; let i = index;">
                                 <ng-container [formGroupName]="i">
                                     <div class="row w-100 mb-1">
-                                        <div class="col-9 pl-0">
-                                            <input type="text" class="form-control mr-2 small-text"
+                                        <div class="col-9 ps-0">
+                                            <input type="text" class="form-control me-2 small-text"
                                                    formControlName="key"
                                                    placeholder="key"/>
                                         </div>
-                                        <div class="col pr-0">
+                                        <div class="col pe-0">
                                             <button type="button"
-                                                    class="btn btn-outline-danger delete-button-height float-right"
+                                                    class="btn btn-outline-danger delete-button-height float-end"
                                                     (click)="removeParameter(i)">
                                                 <span class="fa fa-trash"></span>
                                             </button>
                                         </div>
                                     </div>
-                                    <div class="w-100 pl-4">
-                                        <textarea class="form-control mr-2 small-text" formControlName="value" rows="1"
+                                    <div class="w-100 ps-4">
+                                        <textarea class="form-control me-2 small-text" formControlName="value" rows="1"
                                                   placeholder="value"></textarea>
                                     </div>
                                 </ng-container>

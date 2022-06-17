@@ -1,40 +1,11 @@
-@import 'colors';
-@import 'menu';
-
-.menu-item {
-    height: $nav-height;
-    padding: 10px 0;
-    font-size: 15px;
-    border: none;
-    cursor: pointer;
+.nav-item {
     white-space: nowrap;
-
-    a {
-        color: $grisclair1;
-    }
-
+}
+.nav-link {
     img {
-        margin-right: 3px;
-        width: 18px;
-        height: 18px;
-    }
-
-    span {
-        margin-right: 5px;
+        height: 1rem;
     }
 }
-
-.menu-item--active {
-    font-size: 16px;
+.nav-link.active {
     font-weight: bold;
-    height: $nav-height;
-
-    a {
-        color: $grisfonce;
-    }
-
-    img {
-        width: 16px;
-        height: 16px;
-    }
 }

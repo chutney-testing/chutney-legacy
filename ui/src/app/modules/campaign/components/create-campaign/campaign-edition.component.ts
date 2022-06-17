@@ -39,7 +39,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     scenariosFilter: string;
     subscription = new Subscription();
 
-    hasParam = true;
+    hasParam = false;
     collapseParam = true;
 
     private routeParamsSubscription: Subscription;
@@ -196,7 +196,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     private initTags() {
         const allTagsInScenario: string[] = distinct(flatMap(this.scenarios, (sc) => sc.tags)).sort();
 
-       allTagsInScenario.forEach((currentValue, index) => {
+        allTagsInScenario.forEach((currentValue, index) => {
             this.itemList.push( {'id': index, 'itemName': currentValue});
         });
     }
@@ -257,9 +257,9 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     getJiraLastExecutionStatusClass(id: string) {
         const status = this.getJiraLastExecutionStatus(id);
         switch (status) {
-            case 'PASS' : return 'badge-success';
-            case 'FAIL' : return 'badge-danger';
-            default : return 'badge-secondary';
+            case 'PASS' : return 'bg-success';
+            case 'FAIL' : return 'bg-danger';
+            default : return 'bg-secondary';
         }
     }
 
@@ -305,7 +305,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
                 if (this.jiraSelectedTags.length > 0) {
 
                     jiraTagFilter = (this.jiraScenarios.find(s => item.id === s.chutneyId &&
-                                    this.jiraSelectedTags.includes(s.executionStatus))) === undefined;
+                        this.jiraSelectedTags.includes(s.executionStatus))) === undefined;
                 }
                 return (!this.jiraScenarios.map(j => j.chutneyId).includes(item.id)) || jiraTagFilter;
             });
@@ -372,7 +372,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     }
 
     updateCampaignParameters() {
-        const params = this.campaignForm.controls.parameters as FormArray;
+        const params = this.campaignForm.controls['parameters'] as FormArray;
         const addedParams = new Set();
 
         while (params.length !== 0) {
@@ -395,6 +395,9 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
                         });
                     });
             }
+        }
+        if(addedParams.size > 0) {
+            this.hasParam = true;
         }
     }
 

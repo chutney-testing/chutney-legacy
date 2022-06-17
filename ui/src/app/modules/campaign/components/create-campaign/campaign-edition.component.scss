@@ -61,8 +61,7 @@ fieldset legend {
         border: 0;
         border-radius: 0.5rem;
 
-        .arrow {
-            margin-top: -8px !important;
+        .popover-arrow {
 
             &::after {
                 border-left-color: $bleu1;
@@ -74,6 +73,7 @@ fieldset legend {
         background-color: $bleu1;
         color: $blanc;
         border-radius: 0.5rem;
+        padding: 0.5rem;
     }
 }
 
@@ -89,5 +89,5 @@ fieldset legend {
 
 .jira-link span {
     cursor: pointer;
-    color: var(--blue);
+    color: var(--bs-blue);
 }

@@ -1,8 +1,10 @@
 <span class="badge"
-[ngClass]="{'badge-primary': status == 'SUCCESS',
-            'badge-danger':status == 'FAILURE',
+[ngClass]="{'bg-primary': status == 'SUCCESS',
+            'bg-danger':status == 'FAILURE',
             'badge-stopped': status == 'STOPPED',
-            'badge-running': status == 'RUNNING' || status == 'PAUSED'}">
+            'badge-running': status == 'RUNNING' || status == 'PAUSED',
+            'badge-not-executed': status == 'NOT_EXECUTED'
+      }">
     {{ status_h }}
     <span *ngIf="spin" [hidden]="!(status == 'RUNNING')"
           class="fa fa-spinner fa-pulse running"
