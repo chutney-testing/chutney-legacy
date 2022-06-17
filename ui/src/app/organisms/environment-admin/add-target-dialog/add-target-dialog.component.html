@@ -5,7 +5,7 @@
     <chutney-forms-input-line [id]="'creationTargetName'" [label]="'Name *'" [placeholder]="'Name'" [(model)]="target.name" [validate]="validationService.isNotEmpty"></chutney-forms-input-line>
     <chutney-forms-input-line [id]="'creationTargetUrl'" [label]="'URL *'" [placeholder]="'protocol://server:port'" [(model)]="target.url" [validate]="validationService.isValidUrl.bind(validationService)"></chutney-forms-input-line>
 
-    <chutney-button class="float-right" [disabled]="!isValid()" [iconClass]="'fa-check'" [model]="'Save'" (click)="confirm()"></chutney-button>
-    <chutney-link class="float-right mt-2 mr-4" [model]="'Cancel'" (click)="decline()"></chutney-link>
+    <chutney-button class="float-end" [disabled]="!isValid()" [iconClass]="'fa-check'" [model]="'Save'" (click)="confirm()"></chutney-button>
+    <chutney-link class="float-end mt-2 me-4" [model]="'Cancel'" (click)="decline()"></chutney-link>
   </div>
 </ng-template>

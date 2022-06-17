@@ -29,8 +29,8 @@
             </div>
         </div>
         <div class="row form-group">
-            <div class="p-0 align-self-center">
-                <label class="form-control-label font-weight-bold" for="tags">{{ 'scenarios.edition.form.tags' | translate }}</label>
+            <div class="col-2 p-0 align-self-center">
+                <label class="form-control-label fw-bold" for="tags">{{ 'scenarios.edition.form.tags' | translate }}</label>
             </div>
             <div class="col">
                 <textarea type="text" class="form-control tag-input no-resize" name="tags"
@@ -49,7 +49,7 @@
         <div class="row mb-0 small">
             <div class="col-7">
                 <div class="form-inline">
-                    <label class="form-control-label font-weight-bold mr-5" for="jiraId">{{'menu.principal.jiraId' | translate}}</label>
+                    <label class="form-control-label fw-bold me-5" for="jiraId">{{'menu.principal.jiraId' | translate}}</label>
                     <input type="text" class="form-control form-control-sm" id="jiraId"
                            formControlName="jiraId"
                            placeholder="ex. LK-42"/>
@@ -67,10 +67,11 @@
     <chutney-error-panel [errorMessage]="errorMessage"></chutney-error-panel>
 
     <div class="scenario-editor">
-        <chutney-ace-editor
-            [hasError]="errorMessage"
-            [initialContent]="testCase.content"
-            (textChangeEvent)="onScenarioContentChanged($event)">
-        </chutney-ace-editor>
+        <chutney-editor
+            [modes]="['json', 'hjson']"
+            [mode]="'hjson'"
+            [content]="testCase.content"
+            (onContentChange)="onScenarioContentChanged($event)">
+        </chutney-editor>
     </div>
 </div>

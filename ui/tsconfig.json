@@ -3,43 +3,33 @@
     "compilerOptions": {
         "baseUrl": "./",
         "outDir": "./dist/out-tsc",
+        "forceConsistentCasingInFileNames": true,
+        "strict": false,
+        "noImplicitOverride": true,
+        "noPropertyAccessFromIndexSignature": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
         "sourceMap": true,
         "declaration": false,
-        "moduleResolution": "node",
-        "emitDecoratorMetadata": true,
+		"downlevelIteration": true,
         "experimentalDecorators": true,
-        "target": "es2015",
-        "typeRoots": [
-            "node_modules/@types"
-        ],
+        "moduleResolution": "node",
+		"importHelpers": true,
+        "target": "es2017",
+        "module": "es2020",
         "lib": [
-            "es2018",
-            "dom",
-            "dom.iterable",
-            "scripthost"
+          "es2020",
+          "dom"
         ],
         "paths": {
-            "@env/*": [
-                "src/environments/*"
-            ],
-            "@core/*": [
-                "src/app/core/*"
-            ],
-            "@model": [
-                "src/app/core/model/index"
-            ],
-            "@shared": [
-                "src/app/shared/index"
-            ],
-            "@shared/*": [
-                "src/app/shared/*"
-            ],
-            "@modules/*": [
-                "src/app/modules/*"
-            ],
-            "os": [
-                "node_modules/os-browserify/main.js"
-            ]
+            "@env/*": ["src/environments/*"],
+            "@core/*": ["src/app/core/*"],
+            "@model": ["src/app/core/model/index"],
+            "@shared": ["src/app/shared/index"],
+            "@shared/*": ["src/app/shared/*"],
+            "@modules/*": ["src/app/modules/*"],
+            "os": ["node_modules/os-browserify/main.js"],
+            "dragula": ["../node_modules/dragula/dist/dragula.min.js"]
         }
     }
 }

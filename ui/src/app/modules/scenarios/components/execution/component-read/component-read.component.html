@@ -1,11 +1,11 @@
-<div class="ml-3 mb-2 mt-2">
-    <span *ngIf="step.implementation" class="mr-2 fa eye-color pointer"  [ngClass]="showImplementation ? 'fa-angle-down' : 'fa-angle-right'" (click)="showImplementation = !showImplementation"></span>
+<div class="ms-3 mb-2 mt-2">
+    <span *ngIf="step.implementation" class="me-2 fa eye-color pointer"  [ngClass]="showImplementation ? 'fa-angle-down' : 'fa-angle-right'" (click)="showImplementation = !showImplementation"></span>
     <span class="step-name">{{ step.name }} </span> <small *ngIf="step.implementation"> ({{ step.implementation.type }})</small>
     <span class="small" *ngIf="step.strategy !== null && step.strategy.type === 'Retry'">
-        <span class="ml-2 fa fa-sm fa-redo " title="{{ step.strategy.parameters | stringify}}"></span>
+        <span class="ms-2 fa fa-sm fa-redo " title="{{ step.strategy.parameters | stringify}}"></span>
     </span>
-    <div *ngIf="step.implementation" class="ml-2 implementation">
-        <div class="ml-2" *ngIf="showImplementation">
+    <div *ngIf="step.implementation" class="ms-2 implementation">
+        <div class="ms-2" *ngIf="showImplementation">
             <span *ngIf="step.implementation.target"> {{'global.smallword.On' | translate}} {{ step.implementation.target }} </span>
             <div *ngIf="step.implementation.inputs && isNotEmpty(step.implementation.inputs)"> inputs :
 <pre>{{step.implementation.inputs | json }}</pre>

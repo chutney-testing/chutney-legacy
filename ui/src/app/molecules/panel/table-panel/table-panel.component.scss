@@ -4,7 +4,7 @@
   text-align: center;
 }
 
-.table-pagination-controls /deep/ .ngx-pagination {
+.table-pagination-controls ::ng-deep .ngx-pagination {
   font-size: 0.8rem;
 
   .current {

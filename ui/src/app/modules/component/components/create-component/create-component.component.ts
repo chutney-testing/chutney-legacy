@@ -217,7 +217,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     duplicateComponent() {
         this.editableComponent = Object.assign({}, this.editableComponent);
         this.editableComponent.id = null;
-        this.componentForm.controls.name.patchValue('--COPY-- ' + this.editableComponent.name);
+        this.componentForm.controls['name'].patchValue('--COPY-- ' + this.editableComponent.name);
         this.router.navigateByUrl(`/component/list`);
     }
 
@@ -300,18 +300,18 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.componentForm.reset();
 
         if (selectedComponent === undefined) {
-            this.componentForm.controls.name.reset();
-            this.componentForm.controls.strategy.reset();
-            this.componentForm.controls.tags.reset();
+            this.componentForm.controls['name'].reset();
+            this.componentForm.controls['strategy'].reset();
+            this.componentForm.controls ['tags'].reset();
         } else {
             this.editableComponent = selectedComponent;
             this.componentTasksCreated = this.editableComponent.children;
 
-            this.componentForm.controls.name.patchValue(this.editableComponent.name);
-            (this.componentForm.controls.tags as FormControl).patchValue(this.editableComponent.tags.join(', '));
+            this.componentForm.controls['name'].patchValue(this.editableComponent.name);
+            (this.componentForm.controls['tags'] as FormControl).patchValue(this.editableComponent.tags.join(', '));
         }
 
-        this.clearFormArray(this.componentForm.controls.parameters as FormArray);
+        this.clearFormArray(this.componentForm.controls['parameters'] as FormArray);
     }
 
     clearFormArray(formArray: FormArray) {

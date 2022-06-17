@@ -4,15 +4,15 @@
     </div>
     <div class="m-2">
         <ng-container *ngIf="homePage">
-            <chutney-ace-editor
-                [initialContent]="homePage.content"
+            <chutney-editor
+                [content]="homePage.content"
                 [modes]="['asciidoc']"
-                (textChangeEvent)="onHomePageContentChanged($event)">
-            </chutney-ace-editor>
+                (onContentChange)="onHomePageContentChanged($event)">
+            </chutney-editor>
         </ng-container>
     </div>
-    <div class="m-2 float-right">
-        <button type="submit" class="btn btn-outline-success mr-2">
+    <div class="m-2 float-end">
+        <button type="submit" class="btn btn-outline-success me-2">
             <span class="fa fa-check"></span>&nbsp;<span>{{ 'global.actions.record' | translate }}</span>
         </button>
         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" (click)="clear()">

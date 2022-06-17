@@ -9,6 +9,7 @@ export function getStepParamRegExp(stepParamName: string, no_suffix: string = ''
   if (stepParamName != null) {
     return new RegExp('\\*\\*' + escapeRegExp(stepParamName) + '\\*\\*'+(no_suffix.length > 0 ? '(?!'+escapeRegExp(no_suffix)+')' : ''), 'ig');
   }
+  return null;
 }
 
 export function exampleParamsExistStepParams(exampleParamsSerialized: any, stepParams: Array<string>): boolean {

@@ -5,7 +5,7 @@ import * as hjson from 'hjson';
 @Injectable()
 export class HjsonParserService {
 
-  parse(content: string): string {
-    return JSON.stringify(hjson.parse(content));
-  }
+    parse(content: string): string {
+        return JSON.stringify(hjson.parse(content));
+    }
 }

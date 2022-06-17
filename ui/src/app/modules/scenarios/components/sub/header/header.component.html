@@ -2,7 +2,7 @@
     <div class="header-left">
         <div class="title" [innerHTML]="testCaseMetadata.title | linkify"></div>
         <div class="description" [innerHTML]="testCaseMetadata.description | linkify"></div>
-        <div class="btn-group ml-4 header-tag">
+        <div class="btn-group ms-4 header-tag">
             <span *ngFor="let tag of testCaseMetadata.tags">
                 <span class="chutney-tag chutney-tag-selected">{{tag}}</span>
             </span>

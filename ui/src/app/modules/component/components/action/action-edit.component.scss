@@ -21,7 +21,7 @@ fieldset legend {
 }
 
 .edition-body {
-    height: calc(100vh - (50px /*menu*/+ 10px + 170px /*edition-header*/ + 10px + 10px));
+    height: calc(100vh - (50px + 10px + 170px + 10px + 10px));
     overflow-y: auto;
 }
 
@@ -44,6 +44,11 @@ textarea.no-resize {
 .right-panel-minimize-btn {
     position: fixed;
     margin-left: -5px;
+    height: calc(80vh);
+}
+
+.right-panel-minimize-btn:hover {
+    background-color: lightgray;
 }
 
 .right-panel-content {

@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { RolesService } from '@core/services';
-import {AceEditorComponent} from "@shared/ace-editor/ace-editor.component";
+
 import { delay } from '@shared/tools';
 
 @Component({
@@ -16,10 +16,11 @@ export class RolesComponent implements OnInit {
     message: string;
     help: boolean;
     error: boolean;
-    @ViewChild('rolesAceEditor') rolesAceEditor: AceEditorComponent;
+
 
     private saving: string;
     private saved: string;
+    private modifiedRoles: string;
 
     constructor(
         private rolesService: RolesService,
@@ -39,7 +40,7 @@ export class RolesComponent implements OnInit {
 
     saveRoles() {
         try {
-            const content = JSON.parse(this.rolesAceEditor.editor.value);
+            const content = JSON.parse(this.modifiedRoles);
             (async () => {
                 this.printMessage(this.saving);
                 await delay(1000);
@@ -58,11 +59,15 @@ export class RolesComponent implements OnInit {
         }
     }
 
+    onRoleContentChange(data) {
+        this.modifiedRoles = data;
+    }
+
     private loadRoles() {
         this.rolesService.read().subscribe(
             (res) => {
                 this.rolesContent = JSON.stringify(res, undefined, '\t');
-                this.rolesAceEditor && this.rolesAceEditor.forceContentChange(this.rolesContent);
+                //this.rolesAceEditor && this.rolesAceEditor.forceContentChange(this.rolesContent);
             },
             (err) => {
                 this.printMessage(err.error || `${err.status} ${err.statusText}`, true);

@@ -1,5 +1,5 @@
 <div *ngIf="component" id="component-{{uid}}" class="card-body pointer p-2" [formGroup]="cardForm">
-    <div class="float-sm-right">
+    <div class="float-sm-end">
         <button *hasAuthorization="[Authorization.COMPONENT_WRITE, Authorization.SCENARIO_WRITE]"
             type="button" class="btn btn-sm btn-outline-danger"
             (click)="delete()"
@@ -8,7 +8,7 @@
         </button>
     </div>
     <span class="fa" [ngClass]="component.implementation ? 'fa-clone' : 'fa-cubes'"></span>
-    <span class="ml-2">
+    <span class="ms-2">
         <ng-container *hasAuthorization="[Authorization.COMPONENT_READ]">
             <a [routerLink]="['/component', component.id]">{{component.name}}</a>
         </ng-container>
@@ -17,16 +17,16 @@
         </ng-container>
     </span>
     <span *ngIf="component.implementation?.identifier"
-          class="scenario-components-identifier mr-3 font-italic pl-3 float-right font-weight-bold">
+          class="scenario-components-identifier me-3 font-italic ps-3 float-end fw-bold">
         ({{component.implementation.identifier}})
     </span>
     <div *ngIf="component.computedParameters?.length > 0" class="scenario-components-parameters">
-        <fieldset class="w-100" [ngClass]="collapseComponentsParameters ? 'border-top pl-2' : 'border p-2'">
-            <legend class="pl-3 pr-3 mb-0 font-weight-bold" (click)="switchCollapseComponentsParameter()">
+        <fieldset class="w-100" [ngClass]="collapseComponentsParameters ? 'border-top ps-2' : 'border p-2'">
+            <legend class="px-3 mb-0 fw-bold float-none" (click)="switchCollapseComponentsParameter()">
                 <span>
                     {{'components.shared.edition.blocks.parameters' | translate}}
                 </span>
-                <button class="btn btn-sm btn-light btn-outline-dark ml-sm-1 border-0" type="button"
+                <button class="btn btn-sm btn-light btn-outline-dark ms-sm-1 border-0" type="button"
                         title="{{(collapseComponentsParameters ? 'global.actions.show' : 'global.actions.hide') | translate}}">
                     <span class="fa" [ngClass]="collapseComponentsParameters ? 'fa-eye' : 'fa-eye-slash'"></span>
                 </button>

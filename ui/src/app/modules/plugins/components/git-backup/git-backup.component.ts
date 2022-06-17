@@ -41,11 +41,11 @@ export class GitBackupComponent implements OnInit {
             (remotes: Array<GitRemoteConfig>) => {
                 this.remotes = remotes;
                 if (this.remotes.length > 0) {
-                    this.remoteConfigForm.controls.name.patchValue(remotes[0].name);
-                    this.remoteConfigForm.controls.url.patchValue(remotes[0].url);
-                    this.remoteConfigForm.controls.branch.patchValue(remotes[0].branch);
-                    this.remoteConfigForm.controls.privateKeyPath.patchValue(remotes[0].privateKeyPath);
-                    this.remoteConfigForm.controls.passphrase.patchValue(remotes[0].privateKeyPassphrase);
+                    this.remoteConfigForm.controls['name'].patchValue(remotes[0].name);
+                    this.remoteConfigForm.controls['url'].patchValue(remotes[0].url);
+                    this.remoteConfigForm.controls['branch'].patchValue(remotes[0].branch);
+                    this.remoteConfigForm.controls['privateKeyPath'].patchValue(remotes[0].privateKeyPath);
+                    this.remoteConfigForm.controls['passphrase'].patchValue(remotes[0].privateKeyPassphrase);
                 }
             },
             (error) => {
@@ -80,11 +80,11 @@ export class GitBackupComponent implements OnInit {
     }
 
     edit(remote: GitRemoteConfig) {
-        this.remoteConfigForm.controls.name.patchValue(remote.name);
-        this.remoteConfigForm.controls.url.patchValue(remote.url);
-        this.remoteConfigForm.controls.branch.patchValue(remote.branch);
-        this.remoteConfigForm.controls.privateKeyPath.patchValue(remote.privateKeyPath);
-        this.remoteConfigForm.controls.passphrase.patchValue(remote.privateKeyPassphrase);
+        this.remoteConfigForm.controls['name'].patchValue(remote.name);
+        this.remoteConfigForm.controls['url'].patchValue(remote.url);
+        this.remoteConfigForm.controls['branch'].patchValue(remote.branch);
+        this.remoteConfigForm.controls['privateKeyPath'].patchValue(remote.privateKeyPath);
+        this.remoteConfigForm.controls['passphrase'].patchValue(remote.privateKeyPassphrase);
     }
 
     export(remote: GitRemoteConfig) {

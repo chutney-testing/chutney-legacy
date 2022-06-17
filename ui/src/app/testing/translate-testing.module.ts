@@ -1,5 +1,5 @@
 import { TranslateModule, TranslateLoader, TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { NgModule, PipeTransform, Pipe, Injectable } from '@angular/core';
+import { NgModule, PipeTransform, Pipe, Injectable, EventEmitter } from '@angular/core';
 import { Observable, of } from 'rxjs';
 
 const TRANSLATIONS_EN = require('src/assets/i18n/en.json');
@@ -26,6 +26,9 @@ export class TranslateServiceStub {
     public get(key: string): Observable<string> {
         return of(fromKey(key));
     }
+    public onLangChange: EventEmitter<any> = new EventEmitter();
+    public onTranslationChange: EventEmitter<any> = new EventEmitter();
+    public onDefaultLangChange: EventEmitter<any> = new EventEmitter();
 }
 
 function fromKey(key: string): string {

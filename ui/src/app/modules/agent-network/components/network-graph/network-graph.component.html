@@ -2,7 +2,7 @@
     {{ message }}
 </div>
 <fieldset class="border p-2 mt-4">
-    <legend class="pl-3 pr-3 font-weight-bold fieldset-legend">
+    <legend class="px-3 fw-bold fieldset-legend">
         <span class="legend-title">{{ 'admin.agents.graph.agents.title' | translate }}</span>
     </legend>
 
@@ -14,28 +14,29 @@
             <th scope="col">{{ 'admin.agents.graph.agents.reach' | translate }}</th>
         </tr>
         </thead>
-
-        <tr *ngFor="let agent of agentNodes">
-            <td>
-                {{ agent.info.name }}
-            </td>
-            <td>
-                {{ agent.info.host }} : {{ agent.info.port }}
-            </td>
-            <td>
-                <ng-container *ngIf="agent.reachableAgents.length > 0">
-                    <p *ngFor="let agentReachable of agent.reachableAgents">
-                        {{ agentReachable }}
-                    </p>
-                </ng-container>
-                <span *ngIf="agent.reachableAgents.length == 0">{{ 'admin.agents.graph.agents.noreach' | translate }}</span>
-            </td>
-        </tr>
+        <tbody>
+            <tr *ngFor="let agent of agentNodes">
+                <td>
+                    {{ agent.info.name }}
+                </td>
+                <td>
+                    {{ agent.info.host }} : {{ agent.info.port }}
+                </td>
+                <td>
+                    <ng-container *ngIf="agent.reachableAgents.length > 0">
+                        <p *ngFor="let agentReachable of agent.reachableAgents">
+                            {{ agentReachable }}
+                        </p>
+                    </ng-container>
+                    <span *ngIf="agent.reachableAgents.length == 0">{{ 'admin.agents.graph.agents.noreach' | translate }}</span>
+                </td>
+            </tr>
+        </tbody>
     </table>
 </fieldset>
 
 <fieldset class="border p-2 mt-4">
-    <legend class="pl-3 pr-3 font-weight-bold fieldset-legend">
+    <legend class="px-3 fw-bold fieldset-legend">
         <span class="legend-title">{{ 'admin.agents.graph.targets.title' | translate }}</span>
     </legend>
     <input name="search" type="text" class="form-control mb-2" placeholder="{{ 'admin.agents.graph.targets.search' | translate }}" [(ngModel)]="targetFilter"/>

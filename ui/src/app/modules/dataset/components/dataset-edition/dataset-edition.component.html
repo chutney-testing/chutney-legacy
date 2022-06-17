@@ -24,14 +24,14 @@
             </button>
         </div>
 
-        <div *ngIf="dataset.name" class="box2 float-right">
+        <div *ngIf="dataset.name" class="box2 float-end">
             <chutney-delete-confirm-dialog
                 [dialogMessage]="('global.confirm.question' | translate) + ' ' + ('global.actions.delete' | translate) + '\n' + dataset.name"
                 [label]="'Delete dataset'"
                 [disabled]="null"
                 (deleteEvent)="deleteDataset()">
             </chutney-delete-confirm-dialog>
-            <span class="ml-4">v{{dataset.version}} - {{ dataset.lastUpdated.toString() | amLocale:'fr' | amTimeAgo }}</span>
+            <span class="ms-4">v{{dataset.version}} - {{ dataset.lastUpdated.toString() | amLocale:'fr' | amTimeAgo }}</span>
         </div>
 
         <div>

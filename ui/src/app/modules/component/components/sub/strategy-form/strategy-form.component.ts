@@ -70,7 +70,7 @@ export class StrategyFormComponent implements OnChanges, ControlValueAccessor {
         }
 
         // patch with initial value
-        this.strategyForm.controls.type.patchValue(this.strategy.type);
+        this.strategyForm.controls['type'].patchValue(this.strategy.type);
         this.setSelectedStrategy();
     }
 
