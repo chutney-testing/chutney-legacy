@@ -46,7 +46,7 @@ public class AmqpUnbindQueueTask implements Task {
 
     @Override
     public TaskExecutionResult execute() {
-        try (Connection connection = connectionFactoryFactory.create(target).newConnection();
+        try (Connection connection = connectionFactoryFactory.newConnection(target);
              Channel channel = connection.createChannel()) {
 
             channel.queueUnbind(queueName, exchangeName, routingKey);

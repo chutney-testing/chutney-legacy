@@ -18,6 +18,7 @@
     <logger name="org.eclipse" level="WARN"/>
     <logger name="org.hibernate" level="WARN"/>
     <logger name="org.jboss" level="WARN"/>
+    <logger name="qpid" level="WARN"/>
     <logger name="org.springframework" level="WARN" />
     <logger name="org.springframework.test.web.servlet.result" level="DEBUG" />
     <logger name="org.xnio" level="WARN"/>

@@ -44,7 +44,7 @@ public class AmqpCleanQueuesTask implements Task {
 
     @Override
     public TaskExecutionResult execute() {
-        try (Connection connection = connectionFactoryFactory.create(target).newConnection();
+        try (Connection connection = connectionFactoryFactory.newConnection(target);
              Channel channel = connection.createChannel()) {
             for (String queueName : queueNames) {
                 PurgeOk purgeOk = channel.queuePurge(queueName);
