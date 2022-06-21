@@ -8,11 +8,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
 
 import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
+import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadata;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
+import com.chutneytesting.scenario.domain.TestCaseMetadataImpl.TestCaseMetadataBuilder;
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtStep;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
+import com.chutneytesting.scenario.domain.gwt.GwtTestCase.GwtTestCaseBuilder;
 import com.chutneytesting.security.domain.User;
 import com.chutneytesting.tests.AbstractLocalDatabaseTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,15 +32,12 @@ import org.springframework.jdbc.core.RowMapper;
 
 public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
 
-    private static final TestCaseData.TestCaseDataBuilder TEST_CASE_DATA_BUILDER = TestCaseData.builder()
-        .withContentVersion("v2.1")
-        .withId("0")
-        .withTitle("")
-        .withCreationDate(Instant.now().truncatedTo(MILLIS))
-        .withDescription("")
-        .withTags(Collections.emptyList())
+    private static final GwtTestCaseBuilder TEST_CASE_DATA_BUILDER = GwtTestCase.builder()
+        .withMetadata(TestCaseMetadataImpl.builder().build())
         .withExecutionParameters(Collections.emptyMap())
-        .withRawScenario("{\"when\": {}}");
+        .withScenario(
+            GwtScenario.builder().build()
+        );
 
     private final DatabaseTestCaseRepository repository = new DatabaseTestCaseRepository(namedParameterJdbcTemplate, new ObjectMapper());
 
@@ -57,7 +57,7 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
 
 
         // When: we look for that scenarioTemplate
-        Optional<TestCaseData> optScena = repository.findById(scenarioID);
+        Optional<TestCase> optScena = repository.findById(scenarioID);
 
         // Then: the scenarioTemplate is found
         assertThat(optScena).isPresent();
@@ -67,7 +67,7 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
     public void should_retrieve_all_data_of_saved_testCase() {
         // Given: a scenarioTemplate in the repository
         Instant creationTime = Instant.now().truncatedTo(MILLIS);
-        TestCaseData aTestCase = TestCaseDataMapper.toDto(GwtTestCase.builder()
+        TestCase aTestCase = GwtTestCase.builder()
             .withMetadata(TestCaseMetadataImpl.builder()
                 .withTitle("A Purpose")
                 .withDescription("Description")
@@ -77,34 +77,33 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
                 .build())
             .withScenario(GwtScenario.builder().withWhen(GwtStep.NONE).build())
             .withExecutionParameters(Collections.singletonMap("aKey", "aValue"))
-            .build()
-        );
+            .build();
 
         String scenarioID = repository.save(aTestCase);
 
         // When: we look for that scenarioTemplate
-        Optional<TestCaseData> optScena = repository.findById(scenarioID);
+        Optional<TestCase> optScena = repository.findById(scenarioID);
 
         // Then: the scenarioTemplate is found
         assertThat(optScena).isPresent();
 
 
-        TestCaseData testCaseData = optScena.get();
-        assertThat(testCaseData.title).isEqualTo("A Purpose");
-        assertThat(testCaseData.description).isEqualTo("Description");
-        assertThat(testCaseData.tags).containsExactly("TAG");
-        assertThat(testCaseData.creationDate).isEqualTo(creationTime);
-        assertThat(testCaseData.rawScenario).isEqualTo("{\"when\":{}}");
-        assertThat(testCaseData.executionParameters).containsOnly(entry("aKey", "aValue"));
-        assertThat(testCaseData.author).isEqualTo("author");
-        assertThat(testCaseData.updateDate).isEqualTo(creationTime);
-        assertThat(testCaseData.version).isEqualTo(1);
+        GwtTestCase testCase = (GwtTestCase) optScena.get();
+        assertThat(testCase.metadata().title()).isEqualTo("A Purpose");
+        assertThat(testCase.metadata().description()).isEqualTo("Description");
+        assertThat(testCase.metadata().tags()).containsExactly("TAG");
+        assertThat(testCase.metadata().creationDate()).isEqualTo(creationTime);
+        assertThat(testCase.scenario.when.implementation).isEmpty();
+        assertThat(testCase.executionParameters()).containsOnly(entry("aKey", "aValue"));
+        assertThat(testCase.metadata().author()).isEqualTo("author");
+        assertThat(testCase.metadata().updateDate()).isEqualTo(creationTime);
+        assertThat(testCase.metadata().version()).isEqualTo(1);
     }
 
     @Test
     public void should_not_find_scenario_if_id_is_not_present() {
         // When: we look for a not existed scenarioTemplate
-        Optional<TestCaseData> optScenario = repository.findById("0");
+        Optional<TestCase> optScenario = repository.findById("0");
 
         // Then: the scenarioTemplate is not found
         assertThat(optScenario).isEmpty();
@@ -119,7 +118,7 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
         repository.removeById(scenarioID);
 
         // Then: the scenarioTemplate is not found in the repository
-        Optional<TestCaseData> optScena = repository.findById(scenarioID);
+        Optional<TestCase> optScena = repository.findById(scenarioID);
         assertThat(optScena).isEmpty();
 
         RowMapper<String> rowMapper = (rs, rowNum) -> rs.getString("ID");
@@ -137,16 +136,29 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
         repository.removeById(scenarioID);
 
         // Then: the scenarioTemplate is not found in the repository
-        Optional<TestCaseData> optScena = repository.findById(scenarioID);
+        Optional<TestCase> optScena = repository.findById(scenarioID);
         assertThat(optScena).isEmpty();
     }
 
     @Test
     public void should_not_find_removed_scenario_metadata_when_findAll() {
         // Given: 2 scenarios in the repository
-        TestCaseData.TestCaseDataBuilder anotherScenario = TEST_CASE_DATA_BUILDER.withDescription("Will be kept").withTags(Collections.singletonList("T1"));
+        GwtTestCaseBuilder anotherScenario = TEST_CASE_DATA_BUILDER
+            .withMetadata(
+                TestCaseMetadataImpl.builder()
+                    .withDescription("Will be kept")
+                    .withTags(Collections.singletonList("T1"))
+                    .build()
+            );
         String anotherScenarioId = repository.save(anotherScenario.build());
-        TestCaseData.TestCaseDataBuilder deletedScenario = TEST_CASE_DATA_BUILDER.withId("2").withDescription("Will be deleted").withTags(Collections.singletonList("T2"));
+        GwtTestCaseBuilder deletedScenario = TEST_CASE_DATA_BUILDER
+            .withMetadata(
+                TestCaseMetadataImpl.builder()
+                    .withId("2")
+                    .withDescription("Will be deleted")
+                    .withTags(Collections.singletonList("T2"))
+                    .build()
+            );
         String deletedScenarioId = repository.save(deletedScenario.build());
 
         // When
@@ -160,28 +172,41 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
     }
 
     public static Object[] parametersForShould_update_scenario_fields() {
+        TestCaseMetadataBuilder metaBuilder = TestCaseMetadataImpl.builder();
         return new Object[]{
-            new Object[]{"Modified title", TEST_CASE_DATA_BUILDER.withTitle("New Title")},
-            new Object[]{"Modified content", TEST_CASE_DATA_BUILDER.withRawScenario("New content")},
-            new Object[]{"Modified description", TEST_CASE_DATA_BUILDER.withDescription("New desc")},
-            new Object[]{"Modified tags", TEST_CASE_DATA_BUILDER.withTags(Arrays.asList("Modif T1", "Modif T2"))},
-            new Object[]{"Modified dataSet", TEST_CASE_DATA_BUILDER.withExecutionParameters(Collections.singletonMap("aKey", "aValue"))},
-            new Object[]{"Modified dataSet", TEST_CASE_DATA_BUILDER.withAuthor("newAuthor")}
+            new Object[]{
+                "Modified title", metaBuilder.withTitle("New Title").build()
+            },
+            new Object[]{
+                "Modified content", TEST_CASE_DATA_BUILDER.withScenario(GwtScenario.builder().withWhen(GwtStep.NONE).build())
+            },
+            new Object[]{
+                "Modified description", metaBuilder.withTitle("New desc").build()
+            },
+            new Object[]{
+                "Modified tags", metaBuilder.withTags(Arrays.asList("Modif T1", "Modif T2")).build()
+            },
+            new Object[]{
+                "Modified dataSet", TEST_CASE_DATA_BUILDER.withExecutionParameters(Collections.singletonMap("aKey", "aValue"))
+            },
+            new Object[]{
+                "Modified dataSet", metaBuilder.withAuthor("newAuthor").build()
+            }
         };
     }
 
     @ParameterizedTest
     @MethodSource("parametersForShould_update_scenario_fields")
-    public void should_update_scenario_fields(String testName, TestCaseData.TestCaseDataBuilder builder) {
+    public void should_update_scenario_fields(String testName, TestCaseMetadataBuilder metadataBuilder) {
         // Given: an existing scenarioTemplate in the repository
         final String scenarioId = repository.save(TEST_CASE_DATA_BUILDER.build());
-        TestCaseData modifiedScenario = builder.withId(scenarioId).build();
+        TestCase modifiedScenario = TEST_CASE_DATA_BUILDER.withMetadata(metadataBuilder.withId(scenarioId).build()).build();
 
         // When: the scenarioTemplate is updated in the repository
         repository.save(modifiedScenario);
 
         // Then: the modified scenarioTemplate is found in the repository
-        TestCaseData repositoryScenario = repository.findById(scenarioId).get();
+        TestCase repositoryScenario = repository.findById(scenarioId).get();
 
         assertThat(modifiedScenario)
             .as(testName)
@@ -192,7 +217,7 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
     @Test
     public void should_throw_exception_when_updating_wrong_scenario_version() {
         // Given
-        final TestCaseData testCase = TEST_CASE_DATA_BUILDER.build();
+        final TestCase testCase = TEST_CASE_DATA_BUILDER.build();
         final String scenarioId = repository.save(testCase);
         final Integer newVersion = 4;
         TestCaseData newTestCase = TestCaseData.TestCaseDataBuilder.from(testCase)

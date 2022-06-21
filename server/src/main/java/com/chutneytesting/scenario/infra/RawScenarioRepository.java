@@ -1,8 +1,8 @@
 package com.chutneytesting.scenario.infra;
 
 
+import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadata;
-import com.chutneytesting.scenario.infra.raw.TestCaseData;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,10 +13,9 @@ public interface RawScenarioRepository {
     /**
      * @return the id of the scenario
      */
-    String save(TestCaseData scenario);
+    String save(TestCase scenario);
 
-    // infra object in domain
-    Optional<TestCaseData> findById(String scenarioId);
+    Optional<TestCase> findById(String scenarioId);
 
     List<TestCaseMetadata> findAll();
 

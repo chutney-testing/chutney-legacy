@@ -6,8 +6,10 @@ import static java.util.Collections.emptyMap;
 import static java.util.Optional.empty;
 
 import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
+import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadata;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
+import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.infra.RawScenarioRepository;
 import com.chutneytesting.security.domain.User;
 import com.chutneytesting.tools.Try;
@@ -55,17 +57,19 @@ public class DatabaseTestCaseRepository implements RawScenarioRepository {
     }
 
     @Override
-    public String save(TestCaseData scenario) {
-        if (isNewScenario(scenario)) {
-            return doSave(scenario);
+    public String save(TestCase testCase) {
+        TestCaseData testCaseData = TestCaseDataMapper.toDto((GwtTestCase) testCase);
+        if (isNewScenario(testCaseData)) {
+            return doSave(testCaseData);
         }
-        return doUpdate(scenario);
+        return doUpdate(testCaseData);
     }
 
     @Override
-    public Optional<TestCaseData> findById(String scenarioId) {
+    public Optional<TestCase> findById(String scenarioId) {
         try {
-            return Optional.of(uiNamedParameterJdbcTemplate.queryForObject("SELECT * FROM SCENARIO WHERE ID = :id and ACTIVATED = TRUE", buildIdParameterMap(scenarioId), scenario_row_mapper));
+            TestCaseData testCaseData = uiNamedParameterJdbcTemplate.queryForObject("SELECT * FROM SCENARIO WHERE ID = :id and ACTIVATED = TRUE", buildIdParameterMap(scenarioId), scenario_row_mapper);
+            return Optional.ofNullable(testCaseData).map(TestCaseDataMapper::fromDto);
         } catch (IncorrectResultSizeDataAccessException e) {
             return empty();
         }
@@ -95,8 +99,8 @@ public class DatabaseTestCaseRepository implements RawScenarioRepository {
 
     @Override
     public List<TestCaseMetadata> search(String textFilter) {
-        if(!textFilter.isEmpty()) {
-            String[] words =  StringEscapeUtils.escapeSql(textFilter).split("\\s");
+        if (!textFilter.isEmpty()) {
+            String[] words = StringEscapeUtils.escapeSql(textFilter).split("\\s");
             String sqlSearch = Arrays.stream(words).map(w -> " CONTENT LIKE '%" + w + "%' ").collect(Collectors.joining(" AND "));
             return uiNamedParameterJdbcTemplate.query(
                 "SELECT ID, TITLE, DESCRIPTION, TAGS, CREATION_DATE, USER_ID, UPDATE_DATE, VERSION " +

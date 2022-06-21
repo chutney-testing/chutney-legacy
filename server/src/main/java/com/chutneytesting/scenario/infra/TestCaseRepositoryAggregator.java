@@ -5,10 +5,7 @@ import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadata;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.TestCaseRepository;
-import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.infra.raw.DatabaseTestCaseRepository;
-import com.chutneytesting.scenario.infra.raw.TestCaseData;
-import com.chutneytesting.scenario.infra.raw.TestCaseDataMapper;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -34,7 +31,7 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
 
     @Override
     public String save(TestCase testCase) {
-        return defaultRepository.save(TestCaseDataMapper.toDto((GwtTestCase) testCase));
+        return defaultRepository.save(testCase);
     }
 
     private Stream<RawScenarioRepository> repositories() {
@@ -46,14 +43,12 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
         if (isComposableScenarioId(scenarioId)) { // TODO - Composable testcase repo should be able to be taken as others testcase repo
             return composableTestCaseRepository.findExecutableById(scenarioId);
         } else {
-            TestCaseData testCaseData = repositories()
+            return repositories()
                 .map(repo -> repo.findById(scenarioId))
                 .filter(Optional::isPresent)
                 .findFirst()
-                .flatMap(tc -> tc)
+                .get()
                 .orElseThrow(() -> new ScenarioNotFoundException(scenarioId));
-
-            return TestCaseDataMapper.fromDto(testCaseData);
         }
     }
 
