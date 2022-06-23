@@ -60,7 +60,7 @@ public class DBConfiguration {
         Server dbServer(
             @Value(DBSERVER_PORT_SPRING_VALUE) int dbServerPort,
             @Value(DBSERVER_H2_BASEDIR_SPRING_VALUE) String baseDir) throws SQLException {
-            Server h2Server = Server.createTcpServer("-tcp", "-tcpPort", String.valueOf(dbServerPort), "-tcpAllowOthers", "-baseDir", baseDir).start();
+            Server h2Server = Server.createTcpServer("-tcp", "-tcpPort", String.valueOf(dbServerPort), "-tcpAllowOthers", "-baseDir", baseDir, "-ifNotExists").start();
             LOGGER.debug("Started H2 server " + h2Server.getURL());
             return h2Server;
         }
