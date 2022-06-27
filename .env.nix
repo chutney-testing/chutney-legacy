@@ -7,7 +7,7 @@ in
 mkShell {
 
   buildInputs = [
-    nodejs-12_x
+    nodejs-16_x
     chromium
     geckodriver
     jdk
