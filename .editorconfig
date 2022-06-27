@@ -1,3 +1,4 @@
+# Editor configuration, see http://editorconfig.org
 root = true
 
 [*]
@@ -10,8 +11,11 @@ insert_final_newline = true
 max_line_length = 120
 
 [*.{diff,md}]
-indent_size = 4
 trim_trailing_whitespace = false
+max_line_length = off
 
 [*.{yaml,yml,gradle}]
 indent_size = 2
+
+[*.ts]
+quote_type = single
