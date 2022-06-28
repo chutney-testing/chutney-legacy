@@ -1,6 +1,7 @@
 package com.chutneytesting.task.amqp;
 
 import static com.chutneytesting.task.common.SecurityUtils.buildSslContext;
+import static java.util.function.Predicate.not;
 
 import com.chutneytesting.task.spi.injectable.Target;
 import com.rabbitmq.client.Address;
@@ -48,7 +49,7 @@ public class ConnectionFactoryFactory {
             }
             return connectionFactory.newConnection();
         } else {
-            Address[] adresses = Address.parseAddresses(amqpAddresses.orElseGet(() -> target.uri().getAuthority()));
+            Address[] adresses = Address.parseAddresses(amqpAddresses.filter(not(String::isBlank)).orElseGet(() -> target.uri().getAuthority()));
             return connectionFactory.newConnection(adresses);
         }
     }

@@ -13,7 +13,6 @@ import com.chutneytesting.task.spi.injectable.Target;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import org.apache.qpid.server.SystemLauncher;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -23,60 +22,44 @@ public class MultiHostsAmqpTaskTest {
 
     @Test
     void should_consume_produce_on_multi_hosts_target_url(@TempDir Path tmpDir) throws Exception {
-        SystemLauncher server_5672 = null;
         SystemLauncher server_7654 = null;
 
         try {
             String queue = "test";
 
-            server_5672 = startAMQPServer(5672, tmpDir);
             server_7654 = startAMQPServer(7654, tmpDir);
 
             Target multiTarget = buildAMQPServerTarget("amqp://localhost:5672,localhost:7654");
-            Target target_5672 = buildAMQPServerTarget("amqp://localhost:5672");
             Target target_7654 = buildAMQPServerTarget("amqp://localhost:7654");
 
-            List.of(target_5672, target_7654).forEach(t -> {
-                createTempQueue(t, queue);
-                publishBlankMessage(t, queue);
-            });
-            consumeMessage(target_5672, queue);
-            server_5672.shutdown();
+            createTempQueue(target_7654, queue);
+            publishBlankMessage(target_7654, queue);
 
             consumeMessage(multiTarget, queue);
             publishBlankMessage(multiTarget, queue);
         } finally {
-            ofNullable(server_5672).ifPresent(SystemLauncher::shutdown);
             ofNullable(server_7654).ifPresent(SystemLauncher::shutdown);
         }
     }
 
     @Test
     void should_consume_produce_on_multi_hosts_target_addresses_property(@TempDir Path tmpDir) throws Exception {
-        SystemLauncher server_5672 = null;
         SystemLauncher server_7654 = null;
 
         try {
             String queue = "test";
 
-            server_5672 = startAMQPServer(5672, tmpDir);
             server_7654 = startAMQPServer(7654, tmpDir);
 
             Target multiTarget = buildAMQPServerTarget("amqp://localhost:666", "addresses", "localhost:5672,localhost:7654");
-            Target target_5672 = buildAMQPServerTarget("amqp://localhost:5672");
             Target target_7654 = buildAMQPServerTarget("amqp://localhost:7654");
 
-            List.of(target_5672, target_7654).forEach(t -> {
-                createTempQueue(t, queue);
-                publishBlankMessage(t, queue);
-            });
-            consumeMessage(target_5672, queue);
-            server_5672.shutdown();
+            createTempQueue(target_7654, queue);
+            publishBlankMessage(target_7654, queue);
 
             consumeMessage(multiTarget, queue);
             publishBlankMessage(multiTarget, queue);
         } finally {
-            ofNullable(server_5672).ifPresent(SystemLauncher::shutdown);
             ofNullable(server_7654).ifPresent(SystemLauncher::shutdown);
         }
     }
