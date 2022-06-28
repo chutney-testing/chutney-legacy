@@ -1,11 +1,6 @@
-package com.chutneytesting.scenario.infra;
+package com.chutneytesting.scenario.domain;
 
-import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
-import com.chutneytesting.scenario.domain.TestCase;
-import com.chutneytesting.scenario.domain.TestCaseMetadata;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
-import com.chutneytesting.scenario.domain.TestCaseRepository;
-import com.chutneytesting.scenario.infra.raw.DatabaseTestCaseRepository;
+import com.chutneytesting.scenario.infra.RawScenarioRepository;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -20,36 +15,30 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseRepositoryAggregator.class);
 
-    private final DatabaseTestCaseRepository defaultRepository;
-    private final OrientComposableTestCaseRepository composableTestCaseRepository;
+    private final List<AggregatedRepository> aggregatedRepositories;
 
-    public TestCaseRepositoryAggregator(DatabaseTestCaseRepository defaultRepository,
-                                        OrientComposableTestCaseRepository composableTestCaseRepository) {
-        this.defaultRepository = defaultRepository;
-        this.composableTestCaseRepository = composableTestCaseRepository;
+    public TestCaseRepositoryAggregator(List<AggregatedRepository> aggregatedRepositories) {
+        this.aggregatedRepositories = aggregatedRepositories;
     }
 
+
     @Override
+    //TODO
     public String save(TestCase testCase) {
-        return defaultRepository.save(testCase);
-    }
-
-    private Stream<RawScenarioRepository> repositories() {
-        return Stream.of(defaultRepository);
+        //return defaultRepository.save(testCase);
+        return null;
     }
 
     @Override
+    //TODO
     public TestCase findById(String scenarioId) {
-        if (isComposableScenarioId(scenarioId)) { // TODO - Composable testcase repo should be able to be taken as others testcase repo
-            return composableTestCaseRepository.findExecutableById(scenarioId);
-        } else {
-            return repositories()
-                .map(repo -> repo.findById(scenarioId))
+            return aggregatedRepositories
+                .stream()
+                .map(repo -> Optional.ofNullable(repo.findById(scenarioId)))
                 .filter(Optional::isPresent)
                 .findFirst()
                 .get()
                 .orElseThrow(() -> new ScenarioNotFoundException(scenarioId));
-        }
     }
 
     @Override
