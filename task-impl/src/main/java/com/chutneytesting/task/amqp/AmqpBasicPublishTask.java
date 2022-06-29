@@ -62,8 +62,8 @@ public class AmqpBasicPublishTask implements Task {
 
     @Override
     public TaskExecutionResult execute() {
-        try (Connection connection = connectionFactoryFactory.create(target).newConnection();
-            Channel channel = connection.createChannel()) {
+        try (Connection connection = connectionFactoryFactory.newConnection(target);
+             Channel channel = connection.createChannel()) {
 
             BasicProperties basicProperties = buildProperties();
             channel.basicPublish(exchangeName, routingKey, basicProperties, payload.getBytes());

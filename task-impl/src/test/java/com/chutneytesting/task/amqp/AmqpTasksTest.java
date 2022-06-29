@@ -2,7 +2,7 @@ package com.chutneytesting.task.amqp;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
-import static org.mockito.ArgumentMatchers.any;
+import static org.assertj.core.api.Assertions.fail;
 
 import com.chutneytesting.task.TestFinallyActionRegistry;
 import com.chutneytesting.task.TestLogger;
@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 import wiremock.com.google.common.collect.ImmutableMap;
 
@@ -200,7 +199,6 @@ public class AmqpTasksTest {
             logger
         ), mockConnectionFactory);
 
-
         TaskExecutionResult amqpCleanQueueResult = amqpCleanQueuesTask.execute();
         assertThat(amqpCleanQueueResult.status).isEqualTo(Status.Success);
         assertThat(amqpCleanQueueResult.outputs).hasSize(0);
@@ -208,11 +206,13 @@ public class AmqpTasksTest {
         assertThat(logger.info.get(logger.info.size() - 2)).isEqualTo("Purge queue " + queueName.get(0) + ". 2 messages deleted");
     }
 
-
     static <T extends Task> T mockConnectionFactory(T task, ConnectionFactory connectionFactory) {
-        ConnectionFactoryFactory mock = Mockito.mock(ConnectionFactoryFactory.class);
-        Mockito.when(mock.create(any())).thenReturn(connectionFactory);
-        ReflectionTestUtils.setField(task, "connectionFactoryFactory", mock);
+        try {
+            ConnectionFactoryFactory cff = new ConnectionFactoryFactory(connectionFactory);
+            ReflectionTestUtils.setField(task, "connectionFactoryFactory", cff);
+        } catch (Exception e) {
+            fail(e.getMessage(), e);
+        }
         return task;
     }
 }

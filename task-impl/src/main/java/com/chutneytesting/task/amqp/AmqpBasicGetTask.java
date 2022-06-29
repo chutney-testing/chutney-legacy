@@ -1,8 +1,8 @@
 package com.chutneytesting.task.amqp;
 
+import static com.chutneytesting.task.amqp.utils.AmqpUtils.convertMapLongStringToString;
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.targetValidation;
-import static com.chutneytesting.task.amqp.utils.AmqpUtils.convertMapLongStringToString;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 
 import com.chutneytesting.task.spi.Task;
@@ -45,7 +45,7 @@ public class AmqpBasicGetTask implements Task {
 
     @Override
     public TaskExecutionResult execute() {
-        try (Connection connection = connectionFactoryFactory.create(target).newConnection();
+        try (Connection connection = connectionFactoryFactory.newConnection(target);
              Channel channel = connection.createChannel()) {
 
             GetResponse getResponse = channel.basicGet(queueName, true);

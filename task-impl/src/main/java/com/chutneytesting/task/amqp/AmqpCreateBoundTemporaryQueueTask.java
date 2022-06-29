@@ -55,7 +55,7 @@ public class AmqpCreateBoundTemporaryQueueTask implements Task {
 
     @Override
     public TaskExecutionResult execute() {
-        try (Connection connection = connectionFactoryFactory.create(target).newConnection();
+        try (Connection connection = connectionFactoryFactory.newConnection(target);
              Channel channel = connection.createChannel()) {
             createQueue(queueName, channel);
             bindQueue(channel, queueName);
