@@ -75,7 +75,7 @@ public class AmqpBasicConsumeTask implements Task {
                 return TaskExecutionResult.ko();
             }
 
-            connection = connectionFactoryFactory.create(target).newConnection();
+            connection = connectionFactoryFactory.newConnection(target);
             channel = connection.createChannel();
 
             long consumingDuration = waitingResult.getRight();
