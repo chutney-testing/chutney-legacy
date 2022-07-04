@@ -33,10 +33,10 @@ public class MultiHostsAmqpTaskTest {
             Target target_7654 = buildAMQPServerTarget("amqp://localhost:7654");
 
             createTempQueue(target_7654, queue);
-            publishBlankMessage(target_7654, queue);
+            publishBlankMessage(target_7654);
 
             consumeMessage(multiTarget, queue);
-            publishBlankMessage(multiTarget, queue);
+            publishBlankMessage(multiTarget);
         } finally {
             ofNullable(server_7654).ifPresent(SystemLauncher::shutdown);
         }
@@ -55,10 +55,10 @@ public class MultiHostsAmqpTaskTest {
             Target target_7654 = buildAMQPServerTarget("amqp://localhost:7654");
 
             createTempQueue(target_7654, queue);
-            publishBlankMessage(target_7654, queue);
+            publishBlankMessage(target_7654);
 
             consumeMessage(multiTarget, queue);
-            publishBlankMessage(multiTarget, queue);
+            publishBlankMessage(multiTarget);
         } finally {
             ofNullable(server_7654).ifPresent(SystemLauncher::shutdown);
         }
@@ -101,17 +101,7 @@ public class MultiHostsAmqpTaskTest {
         assertThat(createTmpQueue.status).isEqualTo(Success);
     }
 
-    private void publishBlankMessage(Target target, String queue) {
-        TaskExecutionResult createTmpQueue = new AmqpCreateBoundTemporaryQueueTask(
-            target,
-            "amq.direct",
-            "routemeplease",
-            queue,
-            new TestLogger(),
-            new TestFinallyActionRegistry()
-        ).execute();
-        assertThat(createTmpQueue.status).isEqualTo(Success);
-
+    private void publishBlankMessage(Target target) {
         TaskExecutionResult publish = new AmqpBasicPublishTask(
             target,
             "amq.direct",
