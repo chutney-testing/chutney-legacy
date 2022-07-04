@@ -130,7 +130,7 @@ public class MultiHostsAmqpTaskTest {
             queue,
             1,
             null,
-            "1 s",
+            "5 s",
             true,
             new TestLogger()
         ).execute();
