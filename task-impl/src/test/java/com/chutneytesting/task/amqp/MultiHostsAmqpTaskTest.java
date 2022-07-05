@@ -14,57 +14,46 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.apache.qpid.server.SystemLauncher;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.springframework.core.io.ClassPathResource;
 
 public class MultiHostsAmqpTaskTest {
 
-    @Test
-    void should_consume_produce_on_multi_hosts_target_url(@TempDir Path tmpDir) throws Exception {
-        SystemLauncher server_7654 = null;
+    static SystemLauncher server_7654;
 
-        try {
-            String queue = "test";
+    static Target target_7654 = buildAMQPServerTarget("amqp://localhost:7654");
 
-            server_7654 = startAMQPServer(7654, tmpDir);
+    static String queue = "test";
 
-            Target multiTarget = buildAMQPServerTarget("amqp://localhost:5672,localhost:7654");
-            Target target_7654 = buildAMQPServerTarget("amqp://localhost:7654");
+    @BeforeAll
+    public static void setUp(@TempDir Path tmpDir) throws Exception {
+        server_7654 = startAMQPServer(7654, tmpDir);
+        createTempQueue(target_7654, queue);
+    }
 
-            createTempQueue(target_7654, queue);
-            publishBlankMessage(target_7654);
-
-            consumeMessage(multiTarget, queue);
-            publishBlankMessage(multiTarget);
-        } finally {
-            ofNullable(server_7654).ifPresent(SystemLauncher::shutdown);
-        }
+    @AfterAll
+    public static void tearDown() {
+        ofNullable(server_7654).ifPresent(SystemLauncher::shutdown);
     }
 
     @Test
-    void should_consume_produce_on_multi_hosts_target_addresses_property(@TempDir Path tmpDir) throws Exception {
-        SystemLauncher server_7654 = null;
-
-        try {
-            String queue = "test";
-
-            server_7654 = startAMQPServer(7654, tmpDir);
-
-            Target multiTarget = buildAMQPServerTarget("amqp://localhost:666", "addresses", "localhost:5672,localhost:7654");
-            Target target_7654 = buildAMQPServerTarget("amqp://localhost:7654");
-
-            createTempQueue(target_7654, queue);
-            publishBlankMessage(target_7654);
-
-            consumeMessage(multiTarget, queue);
-            publishBlankMessage(multiTarget);
-        } finally {
-            ofNullable(server_7654).ifPresent(SystemLauncher::shutdown);
-        }
+    void should_consume_produce_on_multi_hosts_target_url() {
+        Target multiTarget = buildAMQPServerTarget("amqp://localhost:5672,localhost:7654");
+        publishBlankMessage(multiTarget);
+        consumeMessage(multiTarget, queue);
     }
 
-    private SystemLauncher startAMQPServer(int port, Path initConfigTmpDir) throws IOException {
+    @Test
+    void should_consume_produce_on_multi_hosts_target_addresses_property() {
+        Target multiTarget = buildAMQPServerTarget("amqp://localhost:666", "addresses", "localhost:5672,localhost:7654");
+        publishBlankMessage(multiTarget);
+        consumeMessage(multiTarget, queue);
+    }
+
+    private static SystemLauncher startAMQPServer(int port, Path initConfigTmpDir) throws IOException {
         String memory_config = Files.readString(
             new ClassPathResource("com/chutneytesting/task/amqp/default_qpid.json").getFile().toPath()
         );
@@ -76,7 +65,7 @@ public class MultiHostsAmqpTaskTest {
         return (SystemLauncher) firstResult.outputs.get("qpidLauncher");
     }
 
-    private Target buildAMQPServerTarget(String url, String... properties) {
+    private static Target buildAMQPServerTarget(String url, String... properties) {
         TestTarget.TestTargetBuilder targetBuilder = TestTarget.TestTargetBuilder.builder()
             .withUrl(url)
             .withProperty("user", "guest")
@@ -89,7 +78,7 @@ public class MultiHostsAmqpTaskTest {
         return targetBuilder.build();
     }
 
-    private void createTempQueue(Target target, String queue) {
+    private static void createTempQueue(Target target, String queue) {
         TaskExecutionResult createTmpQueue = new AmqpCreateBoundTemporaryQueueTask(
             target,
             "amq.direct",
