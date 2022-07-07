@@ -13,23 +13,31 @@ class QpidServerStartTaskTest {
 
     @Test
     void should_start_with_default_configuration() {
-        TestLogger logger = new TestLogger();
-        TestFinallyActionRegistry finallyActionRegistry = new TestFinallyActionRegistry();
-        QpidServerStartTask sut = new QpidServerStartTask(logger, finallyActionRegistry, null);
+        TaskExecutionResult executionResult = null;
+        try {
+            TestLogger logger = new TestLogger();
+            TestFinallyActionRegistry finallyActionRegistry = new TestFinallyActionRegistry();
+            QpidServerStartTask sut = new QpidServerStartTask(logger, finallyActionRegistry, null);
 
-        TaskExecutionResult executionResult = sut.execute();
+            executionResult = sut.execute();
 
-        assertThat(executionResult.status).isEqualTo(TaskExecutionResult.Status.Success);
-        assertThat(executionResult.outputs)
-            .hasSize(1)
-            .extractingByKey("qpidLauncher").isInstanceOf(SystemLauncher.class);
-        assertThat(logger.info).hasSize(2);
-        assertThat(finallyActionRegistry.finallyActions)
-            .hasSize(1)
-            .hasOnlyElementsOfType(FinallyAction.class);
+            assertThat(executionResult.status).isEqualTo(TaskExecutionResult.Status.Success);
+            assertThat(executionResult.outputs)
+                .hasSize(1)
+                .extractingByKey("qpidLauncher").isInstanceOf(SystemLauncher.class);
+            assertThat(logger.info).hasSize(2);
+            assertThat(finallyActionRegistry.finallyActions)
+                .hasSize(1)
+                .hasOnlyElementsOfType(FinallyAction.class);
 
-        assertThat(finallyActionRegistry.finallyActions.get(0).type())
-            .isEqualTo("qpid-server-stop");
+            assertThat(finallyActionRegistry.finallyActions.get(0).type())
+                .isEqualTo("qpid-server-stop");
+        } finally {
+            if (executionResult != null) {
+                SystemLauncher qpidServer = (SystemLauncher) executionResult.outputs.get("qpidLauncher");
+                qpidServer.shutdown();
+            }
+        }
     }
 
 }
