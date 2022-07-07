@@ -87,7 +87,7 @@
 
         <!-- Runtime dependencies versions -->
 
-        <springboot.version>2.7.0</springboot.version>
+        <springboot.version>2.7.1</springboot.version>
         <spring-security-test.version>5.7.1</spring-security-test.version> <!-- Be careful to follow spring-security-core version-->
         <spring-kafka-test.version>2.8.6</spring-kafka-test.version> <!-- Be careful to follow springboot version-->
         <kafka.version>3.1.1</kafka.version> <!-- == spring boot version-->
