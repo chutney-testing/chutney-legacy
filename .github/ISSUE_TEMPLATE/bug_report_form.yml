@@ -1,0 +1,71 @@
+name: Bug Report
+description: File a bug report
+title: "🐛 |  "
+labels: ["bug", "triage"]
+assignees:
+  - octocat
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+        
+        🙌 Please, make sure your bug report is unique 🦄 ! 
+        Did you search issues labeled with Bug ? If you find anything relevant to you, up-vote 👍 or add a comment 💬 !
+        
+        For more information, please visit our [contribute section](https://github.com/chutney-testing/chutney/blob/master/CONTRIBUTING.md)
+  - type: input
+    id: contact
+    attributes:
+      label: Contact Details
+      description: How can we get in touch with you if we need more info?
+      placeholder: ex. email@example.com
+    validations:
+      required: false
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the bug - What is the current behavior?
+      placeholder: A clear and concise description of what actually happens
+    validations:
+      required: true
+  - type: textarea
+    id: relevant-logs
+    attributes:
+      label: Relevant logs and/or screenshots/GIFs
+      description: If applicable, paste any relevant logs
+      render: shell
+      placeholder: Please use code blocks (```) to format console output, logs, and code, as it is very hard to read otherwise
+    validations:
+      required: true
+  - type: dropdown
+    id: version
+    attributes:
+      label: Version
+      description: What version of our software are you running?
+      options:
+        - 1.4.9 (Default)
+        - 1.4.10 (Edge)
+    validations:
+      required: true
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: What browsers are you seeing the problem on?
+      multiple: true
+      options:
+        - Firefox
+        - Chrome
+        - Safari
+        - Microsoft Edge
+  - type: dropdown
+    id: os
+    attributes:
+      label: What OS did you use?
+      multiple: true
+      options:
+        - Mac OS
+        - Windows
+        - Linux
+      
