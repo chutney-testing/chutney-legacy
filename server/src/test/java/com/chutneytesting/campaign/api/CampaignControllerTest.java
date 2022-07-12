@@ -27,12 +27,11 @@ import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import com.chutneytesting.scenario.api.raw.dto.ImmutableTestCaseIndexDto;
 import com.chutneytesting.scenario.api.raw.dto.TestCaseIndexDto;
-import com.chutneytesting.scenario.domain.TestCase;
+import com.chutneytesting.scenario.domain.AggregatedRepository;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
-import com.chutneytesting.scenario.domain.TestCaseRepository;
 import com.chutneytesting.scenario.domain.ComposableScenario;
 import com.chutneytesting.scenario.domain.ComposableTestCase;
-import com.chutneytesting.scenario.domain.ComposableTestCaseRepository;
+import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -64,8 +63,8 @@ public class CampaignControllerTest {
     private static final String urlTemplate = "/api/ui/campaign/v1/";
 
     private final FakeCampaignRepository repository = new FakeCampaignRepository();
-    private ComposableTestCaseRepository composableTestCaseRepository;
-    private TestCaseRepository testCaseRepository;
+    private AggregatedRepository<ComposableTestCase> composableTestCaseRepository;
+    private AggregatedRepository<GwtTestCase> gwtTestCaseRepository;
 
     private final CampaignExecutionEngine campaignExecutionEngine = mock(CampaignExecutionEngine.class);
     private MockMvc mockMvc;
@@ -77,9 +76,9 @@ public class CampaignControllerTest {
     public void setUp() throws Exception {
         resultExtractor = new ResultExtractor();
 
-        composableTestCaseRepository = mock(ComposableTestCaseRepository.class);
-        testCaseRepository = mock(TestCaseRepository.class);
-        CampaignController campaignController = new CampaignController(testCaseRepository, composableTestCaseRepository, repository, campaignExecutionEngine);
+        composableTestCaseRepository = mock(AggregatedRepository.class);
+        gwtTestCaseRepository = mock(AggregatedRepository.class);
+        CampaignController campaignController = new CampaignController(gwtTestCaseRepository, composableTestCaseRepository, repository, campaignExecutionEngine);
         mockMvc = MockMvcBuilders.standaloneSetup(campaignController)
             .setControllerAdvice(new RestExceptionHandler(Mockito.mock(ChutneyMetrics.class)))
             .build();
@@ -353,11 +352,11 @@ public class CampaignControllerTest {
             emptyMap(), emptyList(), "env", false, false, null, null);
         insertCampaign(campaignToCreate);
 
-        when(composableTestCaseRepository.findById("44-44")).thenReturn(new ComposableTestCase("44-44", TestCaseMetadataImpl.builder().withId("44-44").build(), ComposableScenario.builder()
+        when(composableTestCaseRepository.findById("44-44")).thenReturn(Optional.of(new ComposableTestCase("44-44", TestCaseMetadataImpl.builder().withId("44-44").build(), ComposableScenario.builder()
             .withComposableSteps(emptyList())
             .withParameters(emptyMap())
-            .build()));
-        when(testCaseRepository.findMetadataById("55")).thenReturn(TestCaseMetadataImpl.builder().withId("55").build());
+            .build())));
+        when(gwtTestCaseRepository.findMetadataById("55")).thenReturn(Optional.of(TestCaseMetadataImpl.builder().withId("55").build()));
 
         // When
         execute(MockMvcRequestBuilders.get(urlTemplate + "2" + "/scenarios"))

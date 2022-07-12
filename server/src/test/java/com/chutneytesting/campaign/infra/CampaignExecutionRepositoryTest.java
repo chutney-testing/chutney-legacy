@@ -3,6 +3,7 @@ package com.chutneytesting.campaign.infra;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
+import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -17,11 +18,13 @@ import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadata;
 import com.chutneytesting.scenario.domain.TestCaseRepository;
+import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.tests.AbstractLocalDatabaseTest;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -34,13 +37,13 @@ public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
     @BeforeEach
     public void setUp() {
         scenarioExecutions = new HashMap<>();
-        TestCaseRepository testCaseRepositoryMock = mock(TestCaseRepository.class);
+        TestCaseRepositoryAggregator testCaseRepositoryMock = mock(TestCaseRepositoryAggregator.class);
         CampaignExecutionReportMapper campaignExecutionReportMapper = new CampaignExecutionReportMapper(testCaseRepositoryMock);
         TestCase mockTestCase = mock(TestCase.class);
         TestCaseMetadata mockTestCaseMetadata = mock(TestCaseMetadata.class);
         when(mockTestCaseMetadata.title()).thenReturn("scenario title");
         when(mockTestCase.metadata()).thenReturn(mockTestCaseMetadata);
-        when(testCaseRepositoryMock.findById(any())).thenReturn(mockTestCase);
+        when(testCaseRepositoryMock.findById(any())).thenReturn(of(mockTestCase));
         sut = new CampaignExecutionRepository(namedParameterJdbcTemplate, campaignExecutionReportMapper);
     }
 

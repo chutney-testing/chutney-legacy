@@ -13,6 +13,7 @@ import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import com.chutneytesting.scenario.api.raw.dto.ImmutableRawTestCaseDto;
 import com.chutneytesting.scenario.api.raw.dto.RawTestCaseDto;
+import com.chutneytesting.scenario.domain.AggregatedRepository;
 import com.chutneytesting.scenario.domain.ScenarioNotParsableException;
 import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseRepository;
@@ -46,7 +47,7 @@ public class TestCaseControllerTest {
         .build();
 
     private MockMvc mockMvc;
-    private final TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
+    private final AggregatedRepository<GwtTestCase> testCaseRepository = mock(AggregatedRepository.class);
     private final SpringUserService userService = mock(SpringUserService.class);
     private final UserDto currentUser = new UserDto();
 

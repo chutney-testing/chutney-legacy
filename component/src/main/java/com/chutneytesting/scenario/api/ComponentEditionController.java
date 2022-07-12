@@ -4,15 +4,15 @@ import static com.chutneytesting.scenario.api.ComposableTestCaseMapper.fromDto;
 import static com.chutneytesting.scenario.api.ComposableTestCaseMapper.toDto;
 import static java.time.Instant.now;
 
+import com.chutneytesting.execution.domain.ExecutableComposedTestCase;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.TestCasePreProcessors;
 import com.chutneytesting.scenario.api.dto.ComposableTestCaseDto;
+import com.chutneytesting.scenario.domain.AggregatedRepository;
+import com.chutneytesting.scenario.domain.ComposableTestCase;
+import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
 import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
-import com.chutneytesting.scenario.domain.ComposableTestCase;
-import com.chutneytesting.scenario.domain.ComposableTestCaseRepository;
-import com.chutneytesting.execution.domain.ExecutableComposedTestCase;
-import com.chutneytesting.scenario.domain.TestCaseRepository;
 import com.chutneytesting.security.domain.UserService;
 import com.chutneytesting.tools.ui.KeyValue;
 import java.util.List;
@@ -34,14 +34,12 @@ public class ComponentEditionController {
 
     static final String BASE_URL = "/api/scenario/component-edition";
 
-    private final ComposableTestCaseRepository composableTestCaseRepository;
-    private final TestCaseRepository testCaseRepository;
+    private final AggregatedRepository<ComposableTestCase> composableTestCaseRepository;
     private final UserService userService;
     private final TestCasePreProcessors testCasePreProcessors;
 
-    public ComponentEditionController(ComposableTestCaseRepository composableTestCaseRepository, TestCaseRepository testCaseRepository, UserService userService, TestCasePreProcessors testCasePreProcessors) {
+    public ComponentEditionController(AggregatedRepository<ComposableTestCase> composableTestCaseRepository, UserService userService, TestCasePreProcessors testCasePreProcessors) {
         this.composableTestCaseRepository = composableTestCaseRepository;
-        this.testCaseRepository = testCaseRepository;
         this.userService = userService;
         this.testCasePreProcessors = testCasePreProcessors;
     }
@@ -64,19 +62,20 @@ public class ComponentEditionController {
     @PreAuthorize("hasAuthority('SCENARIO_READ')")
     @GetMapping(path = "/{testCaseId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ComposableTestCaseDto getTestCase(@PathVariable("testCaseId") String testCaseId) {
-        return toDto(composableTestCaseRepository.findById(testCaseId));
+        ComposableTestCase composableTestCase = composableTestCaseRepository.findById(testCaseId).orElseThrow(() -> new ScenarioNotFoundException(testCaseId));
+        return toDto(composableTestCase);
     }
 
     @PreAuthorize("hasAuthority('CAMPAIGN_WRITE')")
     @GetMapping(path = "/{testCaseId}/executable/parameters", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<KeyValue> getTestCaseExecutionParameters(@PathVariable("testCaseId") String testCaseId) {
-        return toDto(composableTestCaseRepository.findById(testCaseId)).executionParameters();
+        return toDto(composableTestCaseRepository.findById(testCaseId).orElseThrow(() -> new ScenarioNotFoundException(testCaseId))).executionParameters();
     }
 
     @PreAuthorize("hasAuthority('SCENARIO_READ')")
     @GetMapping(path = "/{testCaseId}/executable", produces = MediaType.APPLICATION_JSON_VALUE)
     public ComposableTestCaseDto getExecutableTestCase(@PathVariable("testCaseId") String testCaseId) {
-        TestCase testCase = testCaseRepository.findById(testCaseId);
+        TestCase testCase = composableTestCaseRepository.findById(testCaseId).orElseThrow(() -> new ScenarioNotFoundException(testCaseId));
         ExecutableComposedTestCase result = testCasePreProcessors.apply(new ExecutionRequest(testCase, "env", "userId"));
 
         return ExecutableComposableTestCaseMapper.toDto(result);
@@ -85,8 +84,9 @@ public class ComponentEditionController {
     @PreAuthorize("hasAuthority('SCENARIO_WRITE')")
     @DeleteMapping(path = "/{testCaseId}")
     public void removeScenarioById(@PathVariable("testCaseId") String testCaseId) {
-        // TODO - Use Campaignrepository to delete potential association and executions
-        testCaseRepository.removeById(testCaseId);
+        // TODO dependency to the database to delete execution in this table :
+        // CAMPAIGN_EXECUTION_HISTORY
+        // CAMPAIGN_SCENARIOS
         composableTestCaseRepository.removeById(testCaseId);
     }
 }

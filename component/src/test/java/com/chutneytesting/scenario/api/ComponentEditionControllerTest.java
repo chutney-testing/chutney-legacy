@@ -1,5 +1,6 @@
 package com.chutneytesting.scenario.api;
 
+import static java.util.Optional.of;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -17,9 +18,9 @@ import com.chutneytesting.execution.domain.TestCasePreProcessors;
 import com.chutneytesting.scenario.api.dto.ComposableTestCaseDto;
 import com.chutneytesting.scenario.api.dto.ImmutableComposableScenarioDto;
 import com.chutneytesting.scenario.api.dto.ImmutableComposableTestCaseDto;
+import com.chutneytesting.scenario.domain.AggregatedRepository;
 import com.chutneytesting.scenario.domain.ComposableScenario;
 import com.chutneytesting.scenario.domain.ComposableTestCase;
-import com.chutneytesting.scenario.domain.ComposableTestCaseRepository;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.TestCaseRepository;
 import com.chutneytesting.security.domain.UserService;
@@ -43,8 +44,7 @@ public class ComponentEditionControllerTest {
             )
             .build();
 
-    private final ComposableTestCaseRepository composableTestCaseRepository = mock(ComposableTestCaseRepository.class);
-    private final TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
+    private final AggregatedRepository<ComposableTestCase> composableTestCaseRepository = mock(AggregatedRepository.class);
     private final UserService userService = mock(UserService.class);
     private final TestCasePreProcessors testCasePreProcessors  = mock(TestCasePreProcessors.class);
 
@@ -52,14 +52,14 @@ public class ComponentEditionControllerTest {
 
     @BeforeEach
     public void setUp() {
-        ComponentEditionController sut = new ComponentEditionController(composableTestCaseRepository, testCaseRepository, userService, testCasePreProcessors);
+        ComponentEditionController sut = new ComponentEditionController(composableTestCaseRepository, userService, testCasePreProcessors);
 
         mockMvc = MockMvcBuilders.standaloneSetup(sut)
             .setControllerAdvice(new ComponentRestExceptionHandler())
             .build();
 
         when(composableTestCaseRepository.findById(any()))
-            .thenReturn(new ComposableTestCase(DEFAULT_COMPOSABLE_TESTCASE_ID, TestCaseMetadataImpl.builder().build(), ComposableScenario.builder().build()));
+            .thenReturn(of(new ComposableTestCase(DEFAULT_COMPOSABLE_TESTCASE_ID, TestCaseMetadataImpl.builder().build(), ComposableScenario.builder().build())));
 
         when(composableTestCaseRepository.save(any()))
             .thenReturn(DEFAULT_COMPOSABLE_TESTCASE_ID);
@@ -102,7 +102,7 @@ public class ComponentEditionControllerTest {
         mockMvc.perform(get(ComponentEditionController.BASE_URL + "/" + DEFAULT_COMPOSABLE_TESTCASE_ID + "/executable" ));
 
         // Then
-        verify(testCaseRepository).findById(DEFAULT_COMPOSABLE_TESTCASE_ID);
+        verify(composableTestCaseRepository).findById(DEFAULT_COMPOSABLE_TESTCASE_ID);
         verify(testCasePreProcessors).apply(any());
     }
 
@@ -113,6 +113,6 @@ public class ComponentEditionControllerTest {
 
         // Then
         verify(composableTestCaseRepository).removeById(DEFAULT_COMPOSABLE_TESTCASE_ID);
-        verify(testCaseRepository).removeById(DEFAULT_COMPOSABLE_TESTCASE_ID);
+        //TODO verify(testCaseRepository).removeById(DEFAULT_COMPOSABLE_TESTCASE_ID);
     }
 }

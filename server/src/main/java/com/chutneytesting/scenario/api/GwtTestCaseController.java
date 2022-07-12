@@ -9,6 +9,8 @@ import com.chutneytesting.scenario.api.raw.dto.RawTestCaseDto;
 import com.chutneytesting.scenario.api.raw.dto.TestCaseIndexDto;
 import com.chutneytesting.scenario.api.raw.mapper.GwtTestCaseMapper;
 import com.chutneytesting.scenario.api.raw.mapper.RawTestCaseMapper;
+import com.chutneytesting.scenario.domain.AggregatedRepository;
+import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
 import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadata;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
@@ -38,12 +40,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/scenario/v2")
 public class GwtTestCaseController {
 
-    private final TestCaseRepository testCaseRepository;
+    private final AggregatedRepository<GwtTestCase> testCaseRepository;
 
     private final ExecutionHistoryRepository executionHistoryRepository;
     private final SpringUserService userService;
 
-    public GwtTestCaseController(TestCaseRepository testCaseRepository,
+    public GwtTestCaseController(AggregatedRepository<GwtTestCase> testCaseRepository,
                                  ExecutionHistoryRepository executionHistoryRepository,
                                  SpringUserService userService) {
         this.testCaseRepository = testCaseRepository;
@@ -54,13 +56,13 @@ public class GwtTestCaseController {
     @PreAuthorize("hasAuthority('SCENARIO_READ')")
     @GetMapping(path = "/{testCaseId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public GwtTestCaseDto getTestCase(@PathVariable("testCaseId") String testCaseId) {
-        return GwtTestCaseMapper.toDto(testCaseRepository.findById(testCaseId));
+        return GwtTestCaseMapper.toDto(testCaseRepository.findById(testCaseId).orElseThrow(() -> new ScenarioNotFoundException(testCaseId)));
     }
 
     @PreAuthorize("hasAuthority('SCENARIO_READ')")
     @GetMapping(path = "/{testCaseId}/metadata", produces = MediaType.APPLICATION_JSON_VALUE)
     public TestCaseIndexDto testCaseMetaData(@PathVariable("testCaseId") String testCaseId) {
-        TestCase testCase = testCaseRepository.findById(testCaseId);
+        TestCase testCase = testCaseRepository.findById(testCaseId).orElseThrow(() -> new ScenarioNotFoundException(testCaseId));
         return TestCaseIndexDto.from(testCase.metadata(), emptyList());
     }
 
@@ -116,7 +118,7 @@ public class GwtTestCaseController {
     @PreAuthorize("hasAuthority('SCENARIO_READ')")
     @GetMapping(path = "/raw/{testCaseId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public RawTestCaseDto getTestCaseById(@PathVariable("testCaseId") String testCaseId) {
-        return RawTestCaseMapper.toDto(testCaseRepository.findById(testCaseId));
+        return RawTestCaseMapper.toDto(testCaseRepository.findById(testCaseId).orElseThrow(() -> new ScenarioNotFoundException(testCaseId)));
     }
 
     private String gwtTestCaseSave(GwtTestCase gwtTestCase) {

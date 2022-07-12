@@ -12,8 +12,10 @@ import com.chutneytesting.environment.domain.exception.AlreadyExistingTargetExce
 import com.chutneytesting.execution.domain.ScenarioConversionException;
 import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import com.chutneytesting.scenario.api.GwtTestCaseController;
+import com.chutneytesting.scenario.domain.AggregatedRepository;
 import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
 import com.chutneytesting.scenario.domain.TestCaseRepository;
+import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -30,7 +32,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 class RestExceptionHandlerTest {
 
     private MockMvc mockMvc;
-    private TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
+    private AggregatedRepository<GwtTestCase> testCaseRepository = mock(AggregatedRepository.class);
     private ChutneyMetrics mockedMetrics = mock(ChutneyMetrics.class);
 
     @BeforeEach

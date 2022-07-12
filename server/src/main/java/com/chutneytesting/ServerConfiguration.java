@@ -19,7 +19,10 @@ import com.chutneytesting.execution.infra.execution.ExecutionRequestMapper;
 import com.chutneytesting.execution.infra.execution.ServerTestEngineJavaImpl;
 import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
+import com.chutneytesting.scenario.domain.AggregatedRepository;
 import com.chutneytesting.scenario.domain.TestCaseRepository;
+import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
+import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.task.api.EmbeddedTaskEngine;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.Method;
@@ -203,7 +206,7 @@ public class ServerConfiguration implements AsyncConfigurer {
     CampaignExecutionEngine campaignExecutionEngine(CampaignRepository campaignRepository,
                                                     ScenarioExecutionEngine scenarioExecutionEngine,
                                                     ExecutionHistoryRepository executionHistoryRepository,
-                                                    TestCaseRepository testCaseRepository,
+                                                    TestCaseRepositoryAggregator testCaseRepository,
                                                     DataSetHistoryRepository dataSetHistoryRepository,
                                                     JiraXrayEmbeddedApi jiraXrayEmbeddedApi,
                                                     ChutneyMetrics metrics,
@@ -223,7 +226,7 @@ public class ServerConfiguration implements AsyncConfigurer {
     }
 
     @Bean
-    TestCaseEditionsService testCaseEditionsService(TestCaseEditions testCaseEditions, TestCaseRepository testCaseRepository) {
+    TestCaseEditionsService testCaseEditionsService(TestCaseEditions testCaseEditions, AggregatedRepository<GwtTestCase> testCaseRepository) {
         return new TestCaseEditionsService(testCaseEditions, testCaseRepository);
     }
 

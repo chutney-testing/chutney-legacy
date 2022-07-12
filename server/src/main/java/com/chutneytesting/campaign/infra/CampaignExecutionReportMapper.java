@@ -7,8 +7,11 @@ import com.chutneytesting.campaign.domain.ScenarioExecutionReportCampaign;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
 import com.chutneytesting.execution.domain.report.ServerReportStatus;
+import com.chutneytesting.scenario.domain.AggregatedRepository;
 import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
 import com.chutneytesting.scenario.domain.TestCaseRepository;
+import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
+import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.google.common.collect.Lists;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,9 +32,9 @@ import org.springframework.stereotype.Component;
 public class CampaignExecutionReportMapper implements ResultSetExtractor<List<CampaignExecutionReport>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(CampaignExecutionReportMapper.class);
 
-    private final TestCaseRepository repository;
+    private final TestCaseRepositoryAggregator repository;
 
-    CampaignExecutionReportMapper(TestCaseRepository repository) {
+    CampaignExecutionReportMapper(TestCaseRepositoryAggregator repository) {
         this.repository = repository;
     }
 
@@ -54,7 +57,7 @@ public class CampaignExecutionReportMapper implements ResultSetExtractor<List<Ca
 
             try {
                 if (testCaseTitle == null || testCaseTitle.isEmpty()) {
-                    testCaseTitle = repository.findById(scenarioId).metadata().title();
+                    testCaseTitle = repository.findById(scenarioId).orElseThrow(() -> new ScenarioNotFoundException(scenarioId)).metadata().title();
                 }
                 ScenarioExecutionReportCampaign scenarioExecutionReport = readScenarioExecutionReport(resultset, scenarioId, testCaseTitle);
                 scenarioByCampaignId.putIfAbsent(campaignExecutionId, Lists.newArrayList());

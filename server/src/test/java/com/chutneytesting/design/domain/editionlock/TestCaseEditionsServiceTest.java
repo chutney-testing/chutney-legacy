@@ -2,6 +2,7 @@ package com.chutneytesting.design.domain.editionlock;
 
 import static java.time.Instant.now;
 import static java.util.Collections.emptyList;
+import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -9,13 +10,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.chutneytesting.scenario.domain.AggregatedRepository;
 import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadata;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.TestCaseRepository;
+import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +29,7 @@ public class TestCaseEditionsServiceTest {
     private TestCaseEditionsService sut;
 
     private final TestCaseEditions testCaseEditions = mock(TestCaseEditions.class);
-    private final TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
+    private final AggregatedRepository testCaseRepository = mock(AggregatedRepository.class);
 
     @BeforeEach
     public void before() {
@@ -99,7 +103,7 @@ public class TestCaseEditionsServiceTest {
         TestCaseMetadata metadataEditionToAdd = buildMetadataForEdition(testCaseId, 4);
         when(testCaseEditions.findAll()).thenReturn(emptyList());
         when(testCaseRepository.findById(testCaseId)).thenReturn(
-            testCaseFromMetadata(metadataEditionToAdd)
+            of(testCaseFromMetadata(metadataEditionToAdd))
         );
         when(testCaseEditions.add(any())).thenReturn(true);
 
@@ -118,7 +122,7 @@ public class TestCaseEditionsServiceTest {
         String testCaseId = "testCaseId";
         when(testCaseEditions.findAll()).thenReturn(emptyList());
         when(testCaseRepository.findById(testCaseId)).thenReturn(
-            testCaseFromMetadata(buildMetadataForEdition(testCaseId, 4))
+            of(testCaseFromMetadata(buildMetadataForEdition(testCaseId, 4)))
         );
         when(testCaseEditions.add(any())).thenReturn(false);
 

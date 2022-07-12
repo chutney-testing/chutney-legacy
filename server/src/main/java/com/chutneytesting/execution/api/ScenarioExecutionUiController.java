@@ -1,5 +1,6 @@
 package com.chutneytesting.execution.api;
 
+import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
 import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseRepository;
 import com.chutneytesting.execution.domain.ExecutionRequest;
@@ -8,6 +9,7 @@ import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngineAsync;
 import com.chutneytesting.execution.domain.ExecutableComposedStep;
 import com.chutneytesting.execution.domain.ExecutableStepRepository;
+import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.security.infra.SpringUserService;
 import com.chutneytesting.tools.ui.KeyValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,7 +41,7 @@ public class ScenarioExecutionUiController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScenarioExecutionUiController.class);
     private final ScenarioExecutionEngine executionEngine;
     private final ScenarioExecutionEngineAsync executionEngineAsync;
-    private final TestCaseRepository testCaseRepository;
+    private final TestCaseRepositoryAggregator testCaseRepository;
     private final ObjectMapper objectMapper;
     private final ObjectMapper reportObjectMapper;
     private final ExecutableStepRepository stepRepository;
@@ -48,7 +50,7 @@ public class ScenarioExecutionUiController {
     ScenarioExecutionUiController(
         ScenarioExecutionEngine executionEngine,
         ScenarioExecutionEngineAsync executionEngineAsync,
-        TestCaseRepository testCaseRepository,
+        TestCaseRepositoryAggregator testCaseRepository,
         ObjectMapper objectMapper,
         @Qualifier("reportObjectMapper") ObjectMapper reportObjectMapper,
         ExecutableStepRepository stepRepository,
@@ -67,7 +69,7 @@ public class ScenarioExecutionUiController {
     @PostMapping(path = "/api/ui/scenario/execution/v1/{scenarioId}/{env}")
     public String executeScenario(@PathVariable("scenarioId") String scenarioId, @PathVariable("env") String env) throws IOException {
         LOGGER.debug("executeScenario for scenarioId='{}'", scenarioId);
-        TestCase testCase = testCaseRepository.findById(scenarioId);
+        TestCase testCase = testCaseRepository.findById(scenarioId).orElseThrow(() -> new ScenarioNotFoundException(scenarioId));
         String userId = userService.currentUser().getId();
         ScenarioExecutionReport report = executionEngine.execute(new ExecutionRequest(testCase, env, userId));
         return reportObjectMapper.writeValueAsString(report);
@@ -96,7 +98,7 @@ public class ScenarioExecutionUiController {
     @PostMapping(path = "/api/ui/scenario/executionasync/v1/{scenarioId}/{env}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String executeScenarioAsyncWithExecutionParameters(@PathVariable("scenarioId") String scenarioId, @PathVariable("env") String env, @RequestBody List<KeyValue> executionParametersKV) {
         LOGGER.debug("execute async scenario '{}' using parameters '{}'", scenarioId, executionParametersKV);
-        TestCase testCase = testCaseRepository.findById(scenarioId);
+        TestCase testCase = testCaseRepository.findById(scenarioId).orElseThrow(() -> new ScenarioNotFoundException(scenarioId));
         Map<String, String> executionParameters = KeyValue.toMap(executionParametersKV);
         String userId = userService.currentUser().getId();
         return executionEngineAsync.execute(new ExecutionRequest(testCase, env, executionParameters, userId)).toString();

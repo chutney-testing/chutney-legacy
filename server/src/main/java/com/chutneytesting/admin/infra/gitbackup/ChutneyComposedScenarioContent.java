@@ -5,10 +5,12 @@ import static com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory.S
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContent;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentProvider;
-import com.chutneytesting.scenario.domain.ComposableTestCaseRepository;
+import com.chutneytesting.scenario.domain.AggregatedRepository;
+import com.chutneytesting.scenario.domain.ComposableTestCase;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -16,10 +18,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class ChutneyComposedScenarioContent implements ChutneyContentProvider {
 
-    private final ComposableTestCaseRepository repository;
+    private final AggregatedRepository<ComposableTestCase> repository;
     private final ObjectMapper mapper;
 
-    public ChutneyComposedScenarioContent(ComposableTestCaseRepository repository,
+    public ChutneyComposedScenarioContent(AggregatedRepository<ComposableTestCase> repository,
                                           @Qualifier("gitObjectMapper") ObjectMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
@@ -40,6 +42,8 @@ public class ChutneyComposedScenarioContent implements ChutneyContentProvider {
         return repository.findAll().stream()
             .map(tcm -> tcm.id())
             .map(repository::findById)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
             .map(t -> {
                 ChutneyContent.ChutneyContentBuilder builder = ChutneyContent.builder()
                     .withProvider(provider())

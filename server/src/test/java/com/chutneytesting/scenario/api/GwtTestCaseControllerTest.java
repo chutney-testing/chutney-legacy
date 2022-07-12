@@ -11,6 +11,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.chutneytesting.scenario.domain.AggregatedRepository;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.TestCaseRepository;
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
@@ -39,7 +40,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 public class GwtTestCaseControllerTest {
 
     private MockMvc mockMvc;
-    private final TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
+    private final AggregatedRepository<GwtTestCase> testCaseRepository = mock(AggregatedRepository.class);
     private final ExecutionHistoryRepository executionHistoryRepository = mock(ExecutionHistoryRepository.class);
     private final SpringUserService userService = mock(SpringUserService.class);
     private final UserDto currentUser = new UserDto();

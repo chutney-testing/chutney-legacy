@@ -23,6 +23,7 @@ import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
 import com.chutneytesting.scenario.domain.ScenarioNotParsableException;
 import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseRepository;
+import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.tools.Try;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
@@ -55,7 +56,7 @@ public class CampaignExecutionEngine {
     private final CampaignRepository campaignRepository;
     private final ScenarioExecutionEngine scenarioExecutionEngine;
     private final ExecutionHistoryRepository executionHistoryRepository;
-    private final TestCaseRepository testCaseRepository;
+    private final TestCaseRepositoryAggregator testCaseRepository;
     private final DataSetHistoryRepository dataSetHistoryRepository;
     private final JiraXrayEmbeddedApi jiraXrayEmbeddedApi;
     private final ChutneyMetrics metrics;
@@ -67,7 +68,7 @@ public class CampaignExecutionEngine {
     public CampaignExecutionEngine(CampaignRepository campaignRepository,
                                    ScenarioExecutionEngine scenarioExecutionEngine,
                                    ExecutionHistoryRepository executionHistoryRepository,
-                                   TestCaseRepository testCaseRepository,
+                                   TestCaseRepositoryAggregator testCaseRepository,
                                    DataSetHistoryRepository dataSetHistoryRepository,
                                    JiraXrayEmbeddedApi jiraXrayEmbeddedApi,
                                    ChutneyMetrics metrics,
@@ -169,7 +170,8 @@ public class CampaignExecutionEngine {
         LOGGER.trace("Execute campaign {} : {}", campaign.id, campaign.title);
         List<TestCase> testCases = scenariosToExecute.stream()
             .map(testCaseRepository::findById)
-            .filter(Objects::nonNull)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
             .collect(Collectors.toList());
 
         campaignExecutionReport.initExecution(testCases, campaign.executionEnvironment(), campaignExecutionReport.userId);

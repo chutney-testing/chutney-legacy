@@ -27,7 +27,7 @@ public class TestCaseDataMapper {
             .build();
     }
 
-    public static TestCase fromDto(TestCaseData testCaseData) {
+    public static GwtTestCase fromDto(TestCaseData testCaseData) {
         switch (testCaseData.contentVersion) {
             case "v2.1":
                 return fromV2_1(testCaseData);
@@ -36,7 +36,7 @@ public class TestCaseDataMapper {
         }
     }
 
-    private static TestCase fromV2_1(TestCaseData dto) {
+    private static GwtTestCase fromV2_1(TestCaseData dto) {
         return GwtTestCase.builder()
             .withMetadata(TestCaseMetadataImpl.builder()
                 .withId(dto.id)

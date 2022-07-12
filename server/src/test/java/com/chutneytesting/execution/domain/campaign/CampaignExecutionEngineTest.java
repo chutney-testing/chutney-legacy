@@ -5,6 +5,7 @@ import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
+import static java.util.Optional.of;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
@@ -41,6 +42,7 @@ import com.chutneytesting.jira.api.ReportForJira;
 import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.TestCaseRepository;
+import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.Field;
@@ -73,7 +75,7 @@ public class CampaignExecutionEngineTest {
     private final CampaignRepository campaignRepository = mock(CampaignRepository.class);
     private final ScenarioExecutionEngine scenarioExecutionEngine = mock(ScenarioExecutionEngine.class);
     private final ExecutionHistoryRepository executionHistoryRepository = mock(ExecutionHistoryRepository.class);
-    private final TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
+    private final TestCaseRepositoryAggregator testCaseRepository = mock(TestCaseRepositoryAggregator.class);
     private final DataSetHistoryRepository dataSetHistoryRepository = mock(DataSetHistoryRepository.class);
     private final JiraXrayEmbeddedApi jiraXrayPlugin = mock(JiraXrayEmbeddedApi.class);
     private final ChutneyMetrics metrics = mock(ChutneyMetrics.class);
@@ -99,8 +101,8 @@ public class CampaignExecutionEngineTest {
         sut = new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository, jiraXrayPlugin, metrics, executorService, objectMapper);
         firstTestCase = createGwtTestCase("1");
         secondTestCase = createGwtTestCase("2");
-        when(testCaseRepository.findById(firstTestCase.id())).thenReturn(firstTestCase);
-        when(testCaseRepository.findById(secondTestCase.id())).thenReturn(secondTestCase);
+        when(testCaseRepository.findById(firstTestCase.id())).thenReturn(of(firstTestCase));
+        when(testCaseRepository.findById(secondTestCase.id())).thenReturn(of(secondTestCase));
         when(executionHistoryRepository.getExecution(eq(firstTestCase.id()), or(eq(0L), eq(10L))))
             .thenReturn(executionWithId(firstScenarioExecutionId));
         when(executionHistoryRepository.getExecution(eq(secondTestCase.id()), or(eq(0L), eq(20L))))
@@ -364,8 +366,8 @@ public class CampaignExecutionEngineTest {
         Campaign campaign = createCampaign(campaignDataSet, "campaignDataSetId", gwtTestCase, composedTestCase);
 
         when(campaignRepository.findById(campaign.id)).thenReturn(campaign);
-        when(testCaseRepository.findById(gwtTestCase.id())).thenReturn(gwtTestCase);
-        when(testCaseRepository.findById(composedTestCase.id())).thenReturn(composedTestCase);
+        when(testCaseRepository.findById(gwtTestCase.id())).thenReturn(of(gwtTestCase));
+        when(testCaseRepository.findById(composedTestCase.id())).thenReturn(of(composedTestCase));
         when(scenarioExecutionEngine.execute(any(ExecutionRequest.class))).thenReturn(mock(ScenarioExecutionReport.class));
         when(executionHistoryRepository.getExecution(any(), any())).thenReturn(executionWithId(42L));
 

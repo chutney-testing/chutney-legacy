@@ -3,9 +3,10 @@ package com.chutneytesting.scenario.domain;
 import java.util.List;
 import java.util.Optional;
 
-public interface TestCaseRepository {
+public interface AggregatedRepository<T extends TestCase> {
+    String save(T scenario);
 
-    Optional<TestCase> findById(String testCaseId);
+    Optional<T> findById(String testCaseId);
 
     Optional<TestCaseMetadata> findMetadataById(String testCaseId);
 
@@ -13,7 +14,7 @@ public interface TestCaseRepository {
 
     void removeById(String testCaseId);
 
-    Integer lastVersion(String testCaseId); // not used
+    Optional<Integer> lastVersion(String testCaseId);
 
     List<TestCaseMetadata> search(String textFilter);
 }

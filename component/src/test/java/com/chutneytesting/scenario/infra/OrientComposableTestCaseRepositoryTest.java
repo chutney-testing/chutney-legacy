@@ -4,11 +4,11 @@ import static java.time.temporal.ChronoUnit.MILLIS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
+import com.chutneytesting.scenario.domain.AggregatedRepository;
 import com.chutneytesting.scenario.domain.ComposableScenario;
 import com.chutneytesting.scenario.domain.ComposableStep;
 import com.chutneytesting.scenario.domain.ComposableStepRepository;
 import com.chutneytesting.scenario.domain.ComposableTestCase;
-import com.chutneytesting.scenario.domain.ComposableTestCaseRepository;
 import com.chutneytesting.scenario.domain.TestCaseMetadata;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.infra.orient.OrientComponentDB;
@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -41,7 +42,7 @@ public class OrientComposableTestCaseRepositoryTest {
         "parent parameter with scenario overload", "parent value to be overloaded"
     );
 
-    private static ComposableTestCaseRepository sut;
+    private static AggregatedRepository<ComposableTestCase> sut;
     private static ComposableStep FUNC_STEP_REF;
     private static ComposableStep FUNC_STEP_PARENT_REF;
 
@@ -157,7 +158,7 @@ public class OrientComposableTestCaseRepositoryTest {
         composableTestCase = new ComposableTestCase(composableTestCase.id,
             TestCaseMetadataImpl.TestCaseMetadataBuilder.from(composableTestCase.metadata).withTitle(new_title).build(),
             composableTestCase.composableScenario);
-        ComposableTestCase composableTestCaseUpdated = sut.findById(sut.save(composableTestCase));
+        ComposableTestCase composableTestCaseUpdated = sut.findById(sut.save(composableTestCase)).get();
 
         // Then
         Assertions.assertThat(composableTestCaseUpdated.id).isEqualTo(composableTestCase.id);
@@ -216,7 +217,7 @@ public class OrientComposableTestCaseRepositoryTest {
         String testCaseId = sut.save(composableTestCase);
 
         // When
-        final ComposableTestCase composableTestCaseFound = sut.findById(testCaseId);
+        final ComposableTestCase composableTestCaseFound = sut.findById(testCaseId).get();
 
         // Then
         TestCaseMetadata metadata = composableTestCaseFound.metadata;
@@ -283,6 +284,6 @@ public class OrientComposableTestCaseRepositoryTest {
             TestCaseMetadataImpl.builder().withTitle(title).build(),
             ComposableScenario.builder().build());
         return sut.findById(
-            sut.save(composableTestCase));
+            sut.save(composableTestCase)).get();
     }
 }

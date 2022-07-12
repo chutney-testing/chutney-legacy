@@ -14,8 +14,11 @@ import com.chutneytesting.campaign.domain.CampaignExecutionReport;
 import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.chutneytesting.scenario.api.raw.dto.TestCaseIndexDto;
-import com.chutneytesting.scenario.domain.ComposableTestCaseRepository;
+import com.chutneytesting.scenario.domain.AggregatedRepository;
+import com.chutneytesting.scenario.domain.ComposableTestCase;
+import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
 import com.chutneytesting.scenario.domain.TestCaseRepository;
+import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -38,13 +41,13 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "*")
 public class CampaignController {
 
-    private final TestCaseRepository testCaseRepository;
-    private final ComposableTestCaseRepository composableTestCaseRepository;
+    private final AggregatedRepository<GwtTestCase> testCaseRepository;
+    private final AggregatedRepository<ComposableTestCase> composableTestCaseRepository;
     private final CampaignRepository campaignRepository;
     private final CampaignExecutionEngine campaignExecutionEngine;
 
-    public CampaignController(TestCaseRepository testCaseRepository,
-                              ComposableTestCaseRepository composableTestCaseRepository,
+    public CampaignController(AggregatedRepository<GwtTestCase> testCaseRepository,
+                              AggregatedRepository<ComposableTestCase> composableTestCaseRepository,
                               CampaignRepository campaignRepository,
                               CampaignExecutionEngine campaignExecutionEngine) {
         this.testCaseRepository = testCaseRepository;
@@ -90,9 +93,9 @@ public class CampaignController {
         return campaignRepository.findScenariosIds(campaignId).stream()
             .map(id -> {
                 if (isComposableDomainId(id)) {
-                    return composableTestCaseRepository.findById(id).metadata();
+                    return composableTestCaseRepository.findById(id).orElseThrow(() -> new ScenarioNotFoundException(id)).metadata();
                 } else {
-                    return testCaseRepository.findMetadataById(id);
+                    return testCaseRepository.findMetadataById(id).orElseThrow(() -> new ScenarioNotFoundException(id));
                 }
             })
             .map(meta -> TestCaseIndexDto.from(meta, Collections.emptyList()))

@@ -9,16 +9,17 @@ import static com.chutneytesting.scenario.infra.orient.OrientUtils.close;
 import static com.chutneytesting.scenario.infra.orient.OrientUtils.deleteVertex;
 import static com.chutneytesting.scenario.infra.orient.OrientUtils.load;
 import static com.chutneytesting.scenario.infra.orient.OrientUtils.rollback;
+import static java.util.Optional.of;
 
-import com.chutneytesting.scenario.domain.AlreadyExistingScenarioException;
-import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
-import com.chutneytesting.scenario.domain.TestCaseMetadata;
-import com.chutneytesting.scenario.domain.ComposableTestCase;
-import com.chutneytesting.scenario.domain.ComposableTestCaseRepository;
-import com.chutneytesting.scenario.infra.orient.OrientComponentDB;
-import com.chutneytesting.scenario.infra.wrapper.TestCaseVertex;
 import com.chutneytesting.execution.domain.ExecutableComposedTestCase;
 import com.chutneytesting.execution.domain.ExecutableComposedTestCaseRepository;
+import com.chutneytesting.scenario.domain.AggregatedRepository;
+import com.chutneytesting.scenario.domain.AlreadyExistingScenarioException;
+import com.chutneytesting.scenario.domain.ComposableTestCase;
+import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
+import com.chutneytesting.scenario.domain.TestCaseMetadata;
+import com.chutneytesting.scenario.infra.orient.OrientComponentDB;
+import com.chutneytesting.scenario.infra.wrapper.TestCaseVertex;
 import com.google.common.collect.Lists;
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
@@ -38,7 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class OrientComposableTestCaseRepository implements ComposableTestCaseRepository, ExecutableComposedTestCaseRepository {
+public class OrientComposableTestCaseRepository implements AggregatedRepository<ComposableTestCase>, ExecutableComposedTestCaseRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrientComposableTestCaseRepository.class);
 
@@ -79,20 +80,31 @@ public class OrientComposableTestCaseRepository implements ComposableTestCaseRep
     }
 
     @Override
-    public ComposableTestCase findById(String composableTestCaseId) {
+    public Optional<ComposableTestCase> findById(String composableTestCaseId) {
         String internalId = toInternalId(composableTestCaseId);
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
             OVertex element = (OVertex) load(internalId, dbSession)
                 .orElseThrow(() -> new ScenarioNotFoundException(internalId));
-            return vertexToTestCase(TestCaseVertex.builder().from(element).build());
+            return Optional.ofNullable(vertexToTestCase(TestCaseVertex.builder().from(element).build()));
         }
+    }
+
+    @Override
+    //TODO
+    public Optional<TestCaseMetadata> findMetadataById(String testCaseId) {
+        return Optional.empty();
     }
 
     @Override
     public ExecutableComposedTestCase findExecutableById(String composableTestCaseId) {
         String internalId = toInternalId(composableTestCaseId);
-        ComposableTestCase composableTestCase = findById(internalId);
-        return testCaseMapper.composableToExecutable(composableTestCase);
+        Optional<ComposableTestCase> composableTestCase = findById(internalId);
+        if(composableTestCase.isPresent()) {
+            return testCaseMapper.composableToExecutable((ComposableTestCase) composableTestCase.get());
+        } else {
+            throw new ScenarioNotFoundException(composableTestCaseId);
+        }
+
     }
 
     private static final String QUERY_SELECT_ALL = "SELECT @rid FROM " + TESTCASE_CLASS + "";
@@ -119,12 +131,12 @@ public class OrientComposableTestCaseRepository implements ComposableTestCaseRep
     }
 
     @Override
-    public Integer lastVersion(String composableTestCaseId) {
+    public Optional<Integer> lastVersion(String composableTestCaseId) {
         String internalId = toInternalId(composableTestCaseId);
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
             OVertex element = (OVertex) load(internalId, dbSession)
                 .orElseThrow(() -> new ScenarioNotFoundException(internalId));
-            return element.getVersion();
+            return of(element.getVersion());
         }
     }
 

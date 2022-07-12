@@ -1,10 +1,11 @@
 package com.chutneytesting.scenario.infra.raw;
 
-import static com.chutneytesting.scenario.domain.TestCaseRepository.DEFAULT_REPOSITORY_SOURCE;
 import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.empty;
+import static java.util.Optional.of;
 
+import com.chutneytesting.scenario.domain.AggregatedRepository;
 import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
 import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadata;
@@ -35,7 +36,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class DatabaseTestCaseRepository implements RawScenarioRepository {
+public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestCase> {
 
     private static final ScenarioMetadataRowMapper SCENARIO_INDEX_ROW_MAPPER = new ScenarioMetadataRowMapper();
     private final ScenarioRowMapper scenario_row_mapper;
@@ -52,13 +53,8 @@ public class DatabaseTestCaseRepository implements RawScenarioRepository {
     }
 
     @Override
-    public String alias() {
-        return DEFAULT_REPOSITORY_SOURCE;
-    }
-
-    @Override
-    public String save(TestCase testCase) {
-        TestCaseData testCaseData = TestCaseDataMapper.toDto((GwtTestCase) testCase);
+    public String save(GwtTestCase testCase) {
+        TestCaseData testCaseData = TestCaseDataMapper.toDto( testCase);
         if (isNewScenario(testCaseData)) {
             return doSave(testCaseData);
         }
@@ -66,13 +62,19 @@ public class DatabaseTestCaseRepository implements RawScenarioRepository {
     }
 
     @Override
-    public Optional<TestCase> findById(String scenarioId) {
+    public Optional<GwtTestCase> findById(String scenarioId) {
         try {
             TestCaseData testCaseData = uiNamedParameterJdbcTemplate.queryForObject("SELECT * FROM SCENARIO WHERE ID = :id and ACTIVATED = TRUE", buildIdParameterMap(scenarioId), scenario_row_mapper);
             return Optional.ofNullable(testCaseData).map(TestCaseDataMapper::fromDto);
         } catch (IncorrectResultSizeDataAccessException e) {
             return empty();
         }
+    }
+
+    // TODO
+    @Override
+    public Optional<TestCaseMetadata> findMetadataById(String testCaseId) {
+        return empty();
     }
 
     @Override
@@ -91,7 +93,7 @@ public class DatabaseTestCaseRepository implements RawScenarioRepository {
     @Override
     public Optional<Integer> lastVersion(String scenarioId) {
         try {
-            return Optional.of(uiNamedParameterJdbcTemplate.queryForObject("SELECT VERSION FROM SCENARIO WHERE ID = :id", buildIdParameterMap(scenarioId), Integer.class));
+            return of(uiNamedParameterJdbcTemplate.queryForObject("SELECT VERSION FROM SCENARIO WHERE ID = :id", buildIdParameterMap(scenarioId), Integer.class));
         } catch (IncorrectResultSizeDataAccessException e) {
             return empty();
         }

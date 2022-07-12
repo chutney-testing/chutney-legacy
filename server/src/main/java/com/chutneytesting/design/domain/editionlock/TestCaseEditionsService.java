@@ -4,15 +4,18 @@ import static com.chutneytesting.design.domain.editionlock.TestCaseEdition.byEdi
 import static com.chutneytesting.design.domain.editionlock.TestCaseEdition.byId;
 import static java.time.Instant.now;
 
+import com.chutneytesting.scenario.domain.AggregatedRepository;
+import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
 import com.chutneytesting.scenario.domain.TestCaseRepository;
+import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import java.util.List;
 
 public class TestCaseEditionsService {
 
     private final TestCaseEditions testCaseEditions;
-    private final TestCaseRepository testCaseRepository;
+    private final AggregatedRepository<GwtTestCase> testCaseRepository;
 
-    public TestCaseEditionsService(TestCaseEditions testCaseEditions, TestCaseRepository testCaseRepository) {
+    public TestCaseEditionsService(TestCaseEditions testCaseEditions, AggregatedRepository<GwtTestCase> testCaseRepository) {
         this.testCaseEditions = testCaseEditions;
         this.testCaseRepository = testCaseRepository;
     }
@@ -28,7 +31,7 @@ public class TestCaseEditionsService {
         }
 
         TestCaseEdition testCaseEdition = new TestCaseEdition(
-            testCaseRepository.findById(testCaseId).metadata(),
+            testCaseRepository.findById(testCaseId).orElseThrow(() -> new ScenarioNotFoundException(testCaseId)).metadata(),
             now(),
             user
         );
