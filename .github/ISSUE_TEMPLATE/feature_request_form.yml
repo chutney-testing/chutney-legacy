@@ -8,8 +8,6 @@ body:
       value: |
         🙌  Please, make sure your feature request is unique 🦄 !
         Did you search issues labeled with Enhancement ? If you find anything relevant to you, up-vote 👍 or add a comment 💬 !
-        
-        For more information, please visit our [contribute section](https://github.com/chutney-testing/chutney/blob/master/CONTRIBUTING.md)
   - type: textarea
     id: use-case
     attributes:
@@ -35,8 +33,7 @@ body:
     id: examples
     attributes:
       label: Link to examples
-      description: Is there other software that has the behavior you're interested in? 
+      description: Is there other software that has the behavior you're interested in?
       placeholder: What is it, and how does it work? Are there any relevant existing standards or conventions?
     validations:
       required: false
-      
