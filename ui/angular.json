@@ -117,7 +117,20 @@
               "src/favicon.ico"
             ]
           }
-        }
+        },
+          "storybook": {
+              "builder": "@storybook/angular:start-storybook",
+              "options": {
+                  "browserTarget": "chutney:build",
+                  "port": 6006
+              }
+          },
+          "build-storybook": {
+              "builder": "@storybook/angular:build-storybook",
+              "options": {
+                  "browserTarget": "chutney:build"
+              }
+          }
       }
     }
   },
