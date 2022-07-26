@@ -2,6 +2,7 @@ package com.chutneytesting.execution.domain;
 
 import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.nCopies;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static java.util.Optional.of;
@@ -15,11 +16,15 @@ import com.chutneytesting.scenario.domain.Strategy;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.tests.OrientDatabaseHelperTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import net.jqwik.api.Arbitraries;
+import net.jqwik.api.Arbitrary;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 public class ComposedTestCaseParametersResolutionPreProcessorTest {
@@ -272,5 +277,49 @@ public class ComposedTestCaseParametersResolutionPreProcessorTest {
             entry("parentDirectRef", expectedInputsValue),
             entry("parentDirectParentRef", expectedInputsValue)
         );
+    }
+
+    @Test
+    void should_preprocess_in_acceptable_time() {
+        // Given
+        Arbitrary<String> keys = Arbitraries.strings().ascii().ofLength(15);
+        Arbitrary<String> values = Arbitraries.strings().ascii().ofLength(500);
+        Map<String, String> globalVars = Arbitraries.maps(keys, values).ofSize(1000).sample();
+        globalvarRepository = mock(GlobalvarRepository.class);
+        when(globalvarRepository.getFlatMap()).thenReturn(globalVars);
+
+        Map<String, String> parameters = Map.of("param1", "val1", "param2", "val2", "param3", "val3");
+        Strategy strategyWithParameters = new Strategy("strategy", Map.of("param1", "val1", "param2", "val2"));
+        StepImplementation simpleImplementation = new StepImplementation("type", "target", emptyMap(), emptyMap(), emptyMap());
+        ExecutableComposedStep actionStep = ExecutableComposedStep.builder()
+            .withName("step action")
+            .withStrategy(strategyWithParameters)
+            .withParameters(parameters)
+            .withImplementation(of(simpleImplementation))
+            .build();
+        ExecutableComposedStep stepWithActions = ExecutableComposedStep.builder()
+            .withName("step with actions")
+            .withStrategy(strategyWithParameters)
+            .withParameters(parameters)
+            .withSteps(nCopies(3, actionStep))
+            .build();
+        ExecutableComposedStep stepWithSteps = ExecutableComposedStep.builder()
+            .withName("step with higher steps")
+            .withParameters(parameters)
+            .withStrategy(strategyWithParameters)
+            .withSteps(nCopies(3, stepWithActions))
+            .build();
+
+        ExecutableComposedTestCase composedTestCase = new ExecutableComposedTestCase(
+            TestCaseMetadataImpl.builder().withCreationDate(Instant.now()).withTitle("title").withDescription("description").build(),
+            ExecutableComposedScenario.builder().withComposedSteps(nCopies(20, stepWithSteps)).withParameters(parameters).build(),
+            emptyMap());
+
+        ComposedTestCaseParametersResolutionPreProcessor sut = new ComposedTestCaseParametersResolutionPreProcessor(globalvarRepository, objectMapper);
+        // When / Then
+        Awaitility.await().atMost(Duration.ofSeconds(2)).untilAsserted(
+            () -> sut.apply(
+                new ExecutionRequest(composedTestCase, "exec env", "user")
+            ));
     }
 }
