@@ -6,16 +6,15 @@ import static java.time.Instant.now;
 
 import com.chutneytesting.scenario.domain.AggregatedRepository;
 import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
-import com.chutneytesting.scenario.domain.TestCaseRepository;
-import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
+import com.chutneytesting.scenario.domain.TestCase;
 import java.util.List;
 
 public class TestCaseEditionsService {
 
     private final TestCaseEditions testCaseEditions;
-    private final AggregatedRepository<GwtTestCase> testCaseRepository;
+    private final AggregatedRepository<? extends TestCase> testCaseRepository;
 
-    public TestCaseEditionsService(TestCaseEditions testCaseEditions, AggregatedRepository<GwtTestCase> testCaseRepository) {
+    public TestCaseEditionsService(TestCaseEditions testCaseEditions, AggregatedRepository<? extends TestCase> testCaseRepository) {
         this.testCaseEditions = testCaseEditions;
         this.testCaseRepository = testCaseRepository;
     }

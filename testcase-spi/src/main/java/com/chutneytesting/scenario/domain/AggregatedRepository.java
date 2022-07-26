@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AggregatedRepository<T extends TestCase> {
+
     String save(T scenario);
 
     Optional<T> findById(String testCaseId);
@@ -17,4 +18,5 @@ public interface AggregatedRepository<T extends TestCase> {
     Optional<Integer> lastVersion(String testCaseId);
 
     List<TestCaseMetadata> search(String textFilter);
+
 }

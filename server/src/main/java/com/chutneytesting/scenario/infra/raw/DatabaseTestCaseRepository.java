@@ -7,11 +7,9 @@ import static java.util.Optional.of;
 
 import com.chutneytesting.scenario.domain.AggregatedRepository;
 import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
-import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadata;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
-import com.chutneytesting.scenario.infra.RawScenarioRepository;
 import com.chutneytesting.security.domain.User;
 import com.chutneytesting.tools.Try;
 import com.fasterxml.jackson.core.type.TypeReference;

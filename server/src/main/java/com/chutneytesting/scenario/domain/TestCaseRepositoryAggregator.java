@@ -2,16 +2,26 @@ package com.chutneytesting.scenario.domain;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class TestCaseRepositoryAggregator implements TestCaseRepository {
 
-    private final List<AggregatedRepository> aggregatedRepositories;
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseRepositoryAggregator.class);
+    private final List<AggregatedRepository<? extends TestCase>> aggregatedRepositories;
 
-    public TestCaseRepositoryAggregator(List<AggregatedRepository> aggregatedRepositories) {
+    public TestCaseRepositoryAggregator(List<AggregatedRepository<? extends TestCase>> aggregatedRepositories) {
         this.aggregatedRepositories = aggregatedRepositories;
+    }
+
+    @Override
+    public String save(TestCase scenario) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -36,15 +46,17 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
         return (List<TestCaseMetadata>) aggregatedRepositories
             .stream()
             .parallel()
-            .flatMap(repo -> repo.findAll().stream())
+            .flatMap(r ->
+                getTestCaseMetadataStream(r::findAll, r.getClass().getSimpleName())
+            )
             .collect(Collectors.toList());
     }
 
     @Override
     public void removeById(String testCaseId) {
-        Optional<AggregatedRepository> repository = aggregatedRepositories
+        Optional<AggregatedRepository<? extends TestCase>> repository = aggregatedRepositories
             .stream()
-            .filter(repo -> repo.findById(testCaseId).isPresent())
+            .filter(r -> r.findById(testCaseId).isPresent())
             .findFirst();
         if (repository.isPresent()) {
             repository.get().removeById(testCaseId);
@@ -54,13 +66,13 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
     }
 
     @Override
-    public Integer lastVersion(String testCaseId) {
-        Optional<AggregatedRepository> repository = aggregatedRepositories
+    public Optional<Integer> lastVersion(String testCaseId) {
+        Optional<AggregatedRepository<? extends TestCase>> repository = aggregatedRepositories
             .stream()
             .filter(repo -> repo.findById(testCaseId).isPresent())
             .findFirst();
         if (repository.isPresent()) {
-            return (Integer) repository.get().lastVersion(testCaseId).get();//TODO ugly
+            return repository.get().lastVersion(testCaseId);
         } else {
             throw new ScenarioNotFoundException(testCaseId);
         }
@@ -70,7 +82,18 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
     public List<TestCaseMetadata> search(String textFilter) {
         return (List<TestCaseMetadata>) aggregatedRepositories.stream()
             .parallel()
-            .flatMap(r -> r.search(textFilter).stream())
+            .flatMap(r -> getTestCaseMetadataStream(
+                () -> r.search(textFilter), r.getClass().getSimpleName())
+            )
             .collect(Collectors.toList());
+    }
+
+    private Stream<TestCaseMetadata> getTestCaseMetadataStream(Supplier<List<TestCaseMetadata>> sup, String repoName) {
+        try {
+            return sup.get().stream();
+        } catch (RuntimeException e) {
+            LOGGER.warn("Could not search scenarios from repository {}", repoName, e);
+            return Stream.empty();
+        }
     }
 }

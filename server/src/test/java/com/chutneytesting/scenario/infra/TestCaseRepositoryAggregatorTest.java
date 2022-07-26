@@ -2,21 +2,14 @@ package com.chutneytesting.scenario.infra;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.chutneytesting.scenario.domain.AggregatedRepository;
 import com.chutneytesting.scenario.domain.ComposableTestCase;
-import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
 import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadata;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
-import com.chutneytesting.scenario.domain.TestCaseRepository;
 import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtStep;
@@ -29,6 +22,8 @@ import org.junit.jupiter.api.Test;
 public class TestCaseRepositoryAggregatorTest {
 
     private final AggregatedRepository<ComposableTestCase> composableTestCaseRepository = mock(OrientComposableTestCaseRepository.class);
+
+    // TODO
 
     /*TODO no more save
     @Test
@@ -88,7 +83,7 @@ public class TestCaseRepositoryAggregatorTest {
         when(repo1.findAll()).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
         when(composableTestCaseRepository.findAll()).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
 
-        List<AggregatedRepository> repos = List.of(repo1, composableTestCaseRepository);
+        List<AggregatedRepository<? extends TestCase>> repos = List.of(repo1, composableTestCaseRepository);
         TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repos);
 
         // When
@@ -106,7 +101,7 @@ public class TestCaseRepositoryAggregatorTest {
         when(repo1.findAll()).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
         when(composableTestCaseRepository.findAll()).thenThrow(new RuntimeException("Error searching for scenarios !!!"));
 
-        List<AggregatedRepository> repos = List.of(repo1, composableTestCaseRepository);
+        List<AggregatedRepository<? extends TestCase>> repos = List.of(repo1, composableTestCaseRepository);
         TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repos);
 
         // When
@@ -125,7 +120,7 @@ public class TestCaseRepositoryAggregatorTest {
         when(repo1.search(filter)).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
         when(composableTestCaseRepository.search(filter)).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
 
-        List<AggregatedRepository> repos = List.of(repo1, composableTestCaseRepository);
+        List<AggregatedRepository<? extends TestCase>> repos = List.of(repo1, composableTestCaseRepository);
         TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repos);
 
         // When
@@ -144,7 +139,7 @@ public class TestCaseRepositoryAggregatorTest {
         when(repo1.search(filter)).thenThrow(new RuntimeException("Error searching for scenarios !!!"));
         when(composableTestCaseRepository.search(filter)).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
 
-        List<AggregatedRepository> repos = List.of(repo1, composableTestCaseRepository);
+        List<AggregatedRepository<? extends TestCase>> repos = List.of(repo1, composableTestCaseRepository);
         TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repos);
 
         // When
