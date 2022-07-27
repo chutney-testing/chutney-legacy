@@ -85,6 +85,7 @@ public class OrientComposableTestCaseRepository implements AggregatedRepository<
         try (ODatabaseSession dbSession = componentDBPool.acquire()) {
             OVertex element = (OVertex) load(internalId, dbSession)
                 .orElseThrow(() -> new ScenarioNotFoundException(internalId));
+
             return Optional.ofNullable(vertexToTestCase(TestCaseVertex.builder().from(element).build()));
         }
     }

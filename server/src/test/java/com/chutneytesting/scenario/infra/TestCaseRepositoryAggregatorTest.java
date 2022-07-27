@@ -2,7 +2,9 @@ package com.chutneytesting.scenario.infra;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.chutneytesting.scenario.domain.AggregatedRepository;
@@ -17,16 +19,15 @@ import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.infra.raw.DatabaseTestCaseRepository;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 public class TestCaseRepositoryAggregatorTest {
 
     private final AggregatedRepository<ComposableTestCase> composableTestCaseRepository = mock(OrientComposableTestCaseRepository.class);
 
-    // TODO
 
-    /*TODO no more save
-    @Test
+/*    @Test
     public void should_save_in_default_repo_when_source_is_unknown() {
         // Given
         DatabaseTestCaseRepository repo1 = mock(DatabaseTestCaseRepository.class);
@@ -42,29 +43,38 @@ public class TestCaseRepositoryAggregatorTest {
         verify(repo1).save(any());
         verify(composableTestCaseRepository, times(0)).save(any());
     }*/
-/* TODO call good repository
+
     @Test
-    public void should_call_default_repo_when_search_not_existing_scenario() {
+    public void should_call_findById_on_all_repos_even_if_one_fails() {
         // Given
-        AggregatedRepository<GwtTestCase> repo1 = mock(AggregatedRepository.class);
-        List<AggregatedRepository> repos = List.of(repo1);
-        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repos);
+        AggregatedRepository repo1 = mock(AggregatedRepository.class);
+        AggregatedRepository repo2 = mock(AggregatedRepository.class);
+
+        when(repo1.findById(any())).thenThrow(RuntimeException.class);
+
+        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(List.of(repo1, repo2));
+
         final String scenarioId = "12345";
 
         // When
-        assertThat(sut.findById(scenarioId)).isEmpty();
+        Optional<TestCase> actual = sut.findById(scenarioId);
 
         // Then
+        assertThat(actual).isEmpty();
         verify(repo1).findById(scenarioId);
-        verify(composableTestCaseRepository, times(0)).findById(scenarioId);
+        verify(repo2).findById(scenarioId);
     }
 
     @Test
-    public void should_call_default_repo_when_remove() {
+    public void should_call_removeById_on_all_repos_even_if_one_fails() {
         // Given
-        DatabaseTestCaseRepository repo1 = mock(DatabaseTestCaseRepository.class);
-        List<AggregatedRepository> repos = List.of(repo1, composableTestCaseRepository);
-        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repos);
+        AggregatedRepository repo1 = mock(AggregatedRepository.class);
+        AggregatedRepository repo2 = mock(AggregatedRepository.class);
+
+        when(repo1.findById(any())).thenThrow(RuntimeException.class);
+
+        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(List.of(repo1, repo2));
+
         final String scenarioId = "12345";
 
         // When
@@ -72,8 +82,8 @@ public class TestCaseRepositoryAggregatorTest {
 
         // Then
         verify(repo1).removeById(scenarioId);
-        verify(composableTestCaseRepository, times(0)).removeById(scenarioId);
-    }*/
+        verify(repo2).removeById(scenarioId);
+    }
 
     @Test
     public void should_aggregate_all_repos_scenarios_when_findAll() {
