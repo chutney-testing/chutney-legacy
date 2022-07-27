@@ -1,6 +1,7 @@
 package com.chutneytesting.scenario.infra;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -11,38 +12,28 @@ import com.chutneytesting.scenario.domain.AggregatedRepository;
 import com.chutneytesting.scenario.domain.ComposableTestCase;
 import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadata;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
-import com.chutneytesting.scenario.domain.gwt.GwtScenario;
-import com.chutneytesting.scenario.domain.gwt.GwtStep;
-import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.infra.raw.DatabaseTestCaseRepository;
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class TestCaseRepositoryAggregatorTest {
 
     private final AggregatedRepository<ComposableTestCase> composableTestCaseRepository = mock(OrientComposableTestCaseRepository.class);
 
-
-/*    @Test
-    public void should_save_in_default_repo_when_source_is_unknown() {
+    @Test
+    public void should_not_support_save_operation() {
         // Given
-        DatabaseTestCaseRepository repo1 = mock(DatabaseTestCaseRepository.class);
-        when(repo1.alias()).thenReturn(TestCaseRepository.DEFAULT_REPOSITORY_SOURCE);
-        GwtTestCase testCase = defaultScenarioWithRepoSource("UNKNOWN_REPO");
-
-        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, composableTestCaseRepository);
+        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(emptyList());
 
         // When
-        sut.save(testCase);
+        Throwable exception = Assertions.catchThrowable(() -> sut.save(mock(TestCase.class)));
 
         // Then
-        verify(repo1).save(any());
-        verify(composableTestCaseRepository, times(0)).save(any());
-    }*/
+        assertThat(exception).isInstanceOf(UnsupportedOperationException.class);
+    }
 
     @Test
     public void should_call_findById_on_all_repos_even_if_one_fails() {
@@ -159,12 +150,4 @@ public class TestCaseRepositoryAggregatorTest {
         assertThat(allScenario).hasSize(2);
     }
 
-    private GwtTestCase defaultScenarioWithRepoSource(String repositorySource) {
-        return GwtTestCase.builder()
-            .withMetadata(TestCaseMetadataImpl.builder()
-                .withCreationDate(Instant.now())
-                .build())
-            .withScenario(GwtScenario.builder().withWhen(GwtStep.NONE).build())
-            .build();
-    }
 }
