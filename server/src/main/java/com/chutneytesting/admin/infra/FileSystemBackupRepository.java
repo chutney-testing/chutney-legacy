@@ -15,7 +15,7 @@ import com.chutneytesting.environment.api.EnvironmentApi;
 import com.chutneytesting.environment.api.dto.EnvironmentDto;
 import com.chutneytesting.globalvar.domain.GlobalvarRepository;
 import com.chutneytesting.jira.domain.JiraRepository;
-import com.chutneytesting.scenario.infra.orient.OrientComponentDB;
+import com.chutneytesting.component.scenario.infra.orient.OrientComponentDB;
 import com.chutneytesting.tools.Try;
 import com.chutneytesting.tools.ZipUtils;
 import com.chutneytesting.tools.file.FileUtils;

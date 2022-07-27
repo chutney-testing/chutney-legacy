@@ -4,6 +4,8 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.chutneytesting.component.scenario.domain.ComposableStep;
+import com.chutneytesting.component.scenario.domain.ComposableStepCyclicDependencyException;
 import org.apache.groovy.util.Maps;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

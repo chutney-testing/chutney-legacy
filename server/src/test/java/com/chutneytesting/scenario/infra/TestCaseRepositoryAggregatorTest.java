@@ -8,8 +8,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.chutneytesting.component.scenario.infra.OrientComposableTestCaseRepository;
 import com.chutneytesting.scenario.domain.AggregatedRepository;
-import com.chutneytesting.scenario.domain.ComposableTestCase;
+import com.chutneytesting.component.scenario.domain.ComposableTestCase;
 import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadata;
 import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;

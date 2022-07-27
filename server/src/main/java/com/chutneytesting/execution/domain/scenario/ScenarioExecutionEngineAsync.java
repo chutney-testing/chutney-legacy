@@ -4,7 +4,7 @@ import static io.reactivex.schedulers.Schedulers.io;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.dataset.domain.DataSetHistoryRepository;
+import com.chutneytesting.component.dataset.domain.DataSetHistoryRepository;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.TestCasePreProcessors;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
