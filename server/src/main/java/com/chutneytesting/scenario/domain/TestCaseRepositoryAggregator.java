@@ -44,7 +44,7 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
     @Override
     public Optional<TestCaseMetadata> findMetadataById(String testCaseId) {
         Optional<TestCase> testCase = findById(testCaseId);
-        return Optional.ofNullable(testCase.map(TestCase::metadata).orElse(null));
+        return testCase.map(TestCase::metadata);
     }
 
     @Override
