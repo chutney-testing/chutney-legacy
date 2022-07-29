@@ -1,5 +1,6 @@
 package com.chutneytesting.component;
 
+import com.chutneytesting.component.dataset.domain.DataSetNotFoundException;
 import com.chutneytesting.component.scenario.domain.AlreadyExistingComposableStepException;
 import com.chutneytesting.component.scenario.domain.ComposableStepCyclicDependencyException;
 import com.chutneytesting.component.scenario.domain.ComposableStepNotFoundException;
@@ -44,6 +45,7 @@ public class ComponentRestExceptionHandler extends ResponseEntityExceptionHandle
 
     @ExceptionHandler({
         ComposableStepNotFoundException.class,
+        DataSetNotFoundException.class
     })
     protected ResponseEntity<Object> notFound(RuntimeException ex, WebRequest request) {
         String bodyOfResponse = ex.getMessage();
