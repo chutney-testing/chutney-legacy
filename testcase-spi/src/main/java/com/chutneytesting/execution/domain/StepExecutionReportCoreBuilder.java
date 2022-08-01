@@ -1,8 +1,7 @@
-package com.chutneytesting.execution.domain.report;
+package com.chutneytesting.execution.domain;
 
 import static java.util.Collections.emptyList;
 
-import com.chutneytesting.environment.domain.Target;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -61,15 +60,6 @@ public class StepExecutionReportCoreBuilder {
 
     public StepExecutionReportCoreBuilder setType(String type) {
         this.type = type;
-        return this;
-    }
-
-    public StepExecutionReportCoreBuilder setTarget(Target target) {
-        if (target != null) {
-            this.targetName = target.name;
-            this.targetUrl = target.url;
-        }
-
         return this;
     }
 

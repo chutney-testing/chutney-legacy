@@ -1,4 +1,4 @@
-package com.chutneytesting.execution.domain.report;
+package com.chutneytesting.execution.domain;
 
 public class ScenarioExecutionReport {
     public final long executionId;

@@ -1,4 +1,4 @@
-package com.chutneytesting.execution.domain.report;
+package com.chutneytesting.execution.domain;
 
 import com.google.common.collect.Ordering;
 import java.util.Objects;

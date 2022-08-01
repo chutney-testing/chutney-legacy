@@ -1,5 +1,10 @@
 package com.chutneytesting.execution.domain.scenario;
 
+import com.chutneytesting.execution.domain.ExecutionRequest;
+import com.chutneytesting.execution.domain.GwtScenarioMarshaller;
+import com.chutneytesting.execution.domain.ScenarioExecutionReport;
+import com.chutneytesting.execution.domain.StepExecutionReportCore;
+import com.chutneytesting.execution.domain.TestCasePreProcessors;
 import com.chutneytesting.scenario.api.raw.mapper.GwtScenarioMapper;
 import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
 import com.chutneytesting.scenario.domain.ScenarioNotParsableException;
@@ -7,15 +12,6 @@ import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
-import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.GwtScenarioMarshaller;
-import com.chutneytesting.execution.domain.TestCasePreProcessors;
-import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
-import com.chutneytesting.execution.domain.report.StepExecutionReportCore;
-import com.chutneytesting.component.execution.domain.ExecutableComposedScenario;
-import com.chutneytesting.component.execution.domain.ExecutableComposedStep;
-import com.chutneytesting.component.execution.domain.ExecutableComposedTestCase;
-import java.util.Collections;
 import java.util.Map;
 
 
@@ -59,21 +55,6 @@ public class ScenarioExecutionEngine {
             .withScenario(gwtScenario)
             .withExecutionParameters(dataSet)
             .build();
-        return simpleSyncExecution(
-            new ExecutionRequest(testCase, environment, userId)
-        );
-    }
-
-    public ScenarioExecutionReport execute(ExecutableComposedStep composedStep, String environment, String userId) throws ScenarioNotFoundException, ScenarioNotParsableException {
-        TestCase testCase = new ExecutableComposedTestCase(
-            TestCaseMetadataImpl.builder()
-                .withDescription(composedStep.name)
-                .withTitle(composedStep.name)
-                .build(),
-            ExecutableComposedScenario.builder()
-                .withComposedSteps(Collections.singletonList(composedStep))
-                .build());
-
         return simpleSyncExecution(
             new ExecutionRequest(testCase, environment, userId)
         );

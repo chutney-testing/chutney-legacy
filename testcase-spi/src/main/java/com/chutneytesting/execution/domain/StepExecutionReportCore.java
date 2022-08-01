@@ -1,4 +1,4 @@
-package com.chutneytesting.execution.domain.report;
+package com.chutneytesting.execution.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;

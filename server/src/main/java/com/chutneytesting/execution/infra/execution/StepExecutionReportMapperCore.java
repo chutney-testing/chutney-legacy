@@ -4,9 +4,9 @@ import static java.util.Collections.EMPTY_MAP;
 
 import com.chutneytesting.engine.api.execution.StatusDto;
 import com.chutneytesting.engine.api.execution.StepExecutionReportDto;
-import com.chutneytesting.execution.domain.report.ServerReportStatus;
-import com.chutneytesting.execution.domain.report.StepExecutionReportCore;
-import com.chutneytesting.execution.domain.report.StepExecutionReportCoreBuilder;
+import com.chutneytesting.execution.domain.ServerReportStatus;
+import com.chutneytesting.execution.domain.StepExecutionReportCore;
+import com.chutneytesting.execution.domain.StepExecutionReportCoreBuilder;
 import java.util.stream.Collectors;
 
 class StepExecutionReportMapperCore {

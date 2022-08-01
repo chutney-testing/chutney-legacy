@@ -1,13 +1,11 @@
 package com.chutneytesting.execution.api;
 
-import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
-import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
+import com.chutneytesting.execution.domain.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngineAsync;
-import com.chutneytesting.component.execution.domain.ExecutableComposedStep;
-import com.chutneytesting.component.execution.domain.ExecutableStepRepository;
+import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
+import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.security.infra.SpringUserService;
 import com.chutneytesting.tools.ui.KeyValue;
@@ -42,7 +40,6 @@ public class ScenarioExecutionUiController {
     private final TestCaseRepositoryAggregator testCaseRepository;
     private final ObjectMapper objectMapper;
     private final ObjectMapper reportObjectMapper;
-    private final ExecutableStepRepository stepRepository;
     private final SpringUserService userService;
 
     ScenarioExecutionUiController(
@@ -51,7 +48,6 @@ public class ScenarioExecutionUiController {
         TestCaseRepositoryAggregator testCaseRepository,
         ObjectMapper objectMapper,
         @Qualifier("reportObjectMapper") ObjectMapper reportObjectMapper,
-        ExecutableStepRepository stepRepository,
         SpringUserService userService
     ) {
         this.executionEngine = executionEngine;
@@ -59,28 +55,7 @@ public class ScenarioExecutionUiController {
         this.testCaseRepository = testCaseRepository;
         this.objectMapper = objectMapper;
         this.reportObjectMapper = reportObjectMapper;
-        this.stepRepository = stepRepository;
         this.userService = userService;
-    }
-
-    @PreAuthorize("hasAuthority('SCENARIO_EXECUTE')")
-    @PostMapping(path = "/api/ui/scenario/execution/v1/{scenarioId}/{env}")
-    public String executeScenario(@PathVariable("scenarioId") String scenarioId, @PathVariable("env") String env) throws IOException {
-        LOGGER.debug("executeScenario for scenarioId='{}'", scenarioId);
-        TestCase testCase = testCaseRepository.findById(scenarioId).orElseThrow(() -> new ScenarioNotFoundException(scenarioId));
-        String userId = userService.currentUser().getId();
-        ScenarioExecutionReport report = executionEngine.execute(new ExecutionRequest(testCase, env, userId));
-        return reportObjectMapper.writeValueAsString(report);
-    }
-
-    @PreAuthorize("hasAuthority('COMPONENT_WRITE')")
-    @PostMapping(path = "/api/ui/component/execution/v1/{componentId}/{env}")
-    public String executeComponent(@PathVariable("componentId") String componentId, @PathVariable("env") String env) throws IOException {
-        LOGGER.debug("executeComponent for componentId={{}] on env [{}]", componentId, env);
-        ExecutableComposedStep composedStep = stepRepository.findExecutableById(componentId);
-        String userId = userService.currentUser().getId();
-        ScenarioExecutionReport report = executionEngine.execute(composedStep, env, userId);
-        return reportObjectMapper.writeValueAsString(report);
     }
 
     @PreAuthorize("hasAuthority('SCENARIO_EXECUTE')")

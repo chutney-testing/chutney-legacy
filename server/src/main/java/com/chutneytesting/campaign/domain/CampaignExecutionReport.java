@@ -4,9 +4,9 @@ import static java.time.LocalDateTime.now;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Optional.ofNullable;
 
+import com.chutneytesting.execution.domain.ServerReportStatus;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
-import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.chutneytesting.scenario.domain.TestCase;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;

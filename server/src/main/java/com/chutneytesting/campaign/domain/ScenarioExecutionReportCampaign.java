@@ -1,7 +1,7 @@
 package com.chutneytesting.campaign.domain;
 
+import com.chutneytesting.execution.domain.ServerReportStatus;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
-import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import java.util.Comparator;
 import java.util.Objects;
 

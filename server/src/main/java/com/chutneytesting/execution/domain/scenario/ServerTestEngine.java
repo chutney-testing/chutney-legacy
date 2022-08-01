@@ -1,7 +1,7 @@
 package com.chutneytesting.execution.domain.scenario;
 
 import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.report.StepExecutionReportCore;
+import com.chutneytesting.execution.domain.StepExecutionReportCore;
 import io.reactivex.Observable;
 import org.apache.commons.lang3.tuple.Pair;
 

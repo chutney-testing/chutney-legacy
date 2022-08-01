@@ -1,12 +1,12 @@
 package com.chutneytesting.execution.infra.storage;
 
+import com.chutneytesting.execution.domain.ServerReportStatus;
 import com.chutneytesting.execution.domain.history.ExecutionHistory.DetachedExecution;
 import com.chutneytesting.execution.domain.history.ExecutionHistory.Execution;
 import com.chutneytesting.execution.domain.history.ExecutionHistory.ExecutionSummary;
 import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
 import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
 import com.chutneytesting.execution.domain.history.ReportNotFoundException;
-import com.chutneytesting.execution.domain.report.ServerReportStatus;
 import com.google.common.collect.ImmutableMap;
 import java.time.ZoneId;
 import java.util.Collections;

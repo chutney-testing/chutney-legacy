@@ -1,6 +1,6 @@
 package com.chutneytesting.execution.domain.history;
 
-import com.chutneytesting.execution.domain.report.ServerReportStatus;
+import com.chutneytesting.execution.domain.ServerReportStatus;
 import java.util.List;
 
 /**
@@ -10,6 +10,7 @@ public interface ExecutionHistoryRepository {
 
     /**
      * Add a report for a given scenario.
+     *
      * @return execution ID
      * @throws IllegalStateException when storage for scenario cannot be created
      **/

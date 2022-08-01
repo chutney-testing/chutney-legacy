@@ -4,14 +4,11 @@ import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.campaign.domain.CampaignExecutionReport;
 import com.chutneytesting.campaign.domain.ScenarioExecutionReportCampaign;
+import com.chutneytesting.execution.domain.ServerReportStatus;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
-import com.chutneytesting.execution.domain.report.ServerReportStatus;
-import com.chutneytesting.scenario.domain.AggregatedRepository;
 import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
-import com.chutneytesting.scenario.domain.TestCaseRepository;
 import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
-import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.google.common.collect.Lists;
 import java.sql.ResultSet;
 import java.sql.SQLException;
