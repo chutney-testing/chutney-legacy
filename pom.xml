@@ -108,7 +108,7 @@
         <!-- task impl -->
         <jsonpath.version>2.7.0</jsonpath.version> <!-- == spring boot version-->
         <sshj.version>0.33.0</sshj.version>
-        <sshd.version>2.8.0</sshd.version>
+        <sshd.version>2.9.0</sshd.version>
         <hjson.version>3.0.0</hjson.version>
         <qpid-broker.version>8.0.6</qpid-broker.version>
         <orientdb.version>3.2.5</orientdb.version>
