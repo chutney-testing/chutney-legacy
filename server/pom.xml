@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>com.chutneytesting</groupId>
-            <artifactId>testcase-spi</artifactId>
+            <artifactId>server-core</artifactId>
         </dependency>
         <dependency>
             <groupId>com.chutneytesting</groupId>
