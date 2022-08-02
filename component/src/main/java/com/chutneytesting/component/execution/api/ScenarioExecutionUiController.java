@@ -6,7 +6,6 @@ import com.chutneytesting.component.execution.domain.ExecutableComposedTestCase;
 import com.chutneytesting.component.execution.domain.ExecutableStepRepository;
 import com.chutneytesting.component.scenario.domain.ComposableTestCase;
 import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.ScenarioExecutionEngine;
 import com.chutneytesting.execution.domain.ScenarioExecutionReport;
 import com.chutneytesting.scenario.domain.AggregatedRepository;
 import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
@@ -38,7 +37,7 @@ public class ScenarioExecutionUiController {
     private final UserService userService;
 
     ScenarioExecutionUiController(
-        ScenarioExecutionEngine executionEngine, // TODO mettre dans le "server-domain-SPI"
+        ScenarioExecutionEngine executionEngine,
         @Qualifier("reportObjectMapper") ObjectMapper reportObjectMapper,
         AggregatedRepository<ComposableTestCase> testCaseRepository, ExecutableStepRepository stepRepository,
         UserService userService

@@ -1,12 +1,17 @@
 package com.chutneytesting.execution.api;
 
 import com.chutneytesting.execution.domain.ExecutionRequest;
+import com.chutneytesting.execution.domain.GwtScenarioMarshaller;
 import com.chutneytesting.execution.domain.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
 import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngineAsync;
+import com.chutneytesting.scenario.api.raw.mapper.GwtScenarioMapper;
 import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
 import com.chutneytesting.scenario.domain.TestCase;
+import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
+import com.chutneytesting.scenario.domain.gwt.GwtScenario;
+import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.security.infra.SpringUserService;
 import com.chutneytesting.tools.ui.KeyValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,6 +40,8 @@ import reactor.core.publisher.Flux;
 @RestController
 public class ScenarioExecutionUiController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScenarioExecutionUiController.class);
+    private static final GwtScenarioMarshaller marshaller = new GwtScenarioMapper();
+
     private final ScenarioExecutionEngine executionEngine;
     private final ScenarioExecutionEngineAsync executionEngineAsync;
     private final TestCaseRepositoryAggregator testCaseRepository;
@@ -63,7 +70,22 @@ public class ScenarioExecutionUiController {
     public String executeScenarioWitRawContent(@RequestBody IdeaRequest ideaRequest, @PathVariable("env") String env) throws IOException {
         LOGGER.debug("execute Scenario v2 for content='{}' with parameters '{}'", ideaRequest.getContent(), ideaRequest.getParams());
         String userId = userService.currentUser().getId();
-        ScenarioExecutionReport report = executionEngine.execute(ideaRequest.getContent(), ideaRequest.getParams(), env, userId);
+
+        GwtScenario gwtScenario = marshaller.deserialize("test title for idea", "test description for idea", ideaRequest.getContent());
+
+        TestCase testCase = GwtTestCase.builder()
+            .withMetadata(TestCaseMetadataImpl.builder()
+                .withDescription("test description for idea")
+                .withTitle("test title for idea")
+                .build())
+            .withScenario(gwtScenario)
+            .withExecutionParameters(ideaRequest.getParams())
+            .build();
+
+        ScenarioExecutionReport report = executionEngine.simpleSyncExecution(
+            new ExecutionRequest(testCase, env, userId)
+        );
+
         return objectMapper.writeValueAsString(report);
     }
 

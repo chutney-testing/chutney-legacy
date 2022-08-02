@@ -1,18 +1,11 @@
 package com.chutneytesting.execution.domain.scenario;
 
 import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.GwtScenarioMarshaller;
 import com.chutneytesting.execution.domain.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.StepExecutionReportCore;
 import com.chutneytesting.execution.domain.TestCasePreProcessors;
-import com.chutneytesting.scenario.api.raw.mapper.GwtScenarioMapper;
 import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
 import com.chutneytesting.scenario.domain.ScenarioNotParsableException;
-import com.chutneytesting.scenario.domain.TestCase;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
-import com.chutneytesting.scenario.domain.gwt.GwtScenario;
-import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
-import java.util.Map;
 
 
 public class ScenarioExecutionEngine {
@@ -20,7 +13,7 @@ public class ScenarioExecutionEngine {
     private final ServerTestEngine executionEngine;
     private final TestCasePreProcessors testCasePreProcessors;
     private final ScenarioExecutionEngineAsync executionEngineAsync;
-    private static final GwtScenarioMarshaller marshaller = new GwtScenarioMapper();
+
 
     public ScenarioExecutionEngine(ServerTestEngine executionEngine,
                                    TestCasePreProcessors testCasePreProcessors,
@@ -40,27 +33,7 @@ public class ScenarioExecutionEngine {
         return executionEngineAsync.followExecution(executionRequest.testCase.id(), executionEngineAsync.execute(executionRequest)).blockingLast();
     }
 
-    /**
-     * @param content the scenario content to be executed
-     * @param dataSet the scenario variables
-     * @return an execution report
-     */
-    public ScenarioExecutionReport execute(String content, Map<String, String> dataSet, String environment, String userId) {
-        GwtScenario gwtScenario = marshaller.deserialize("test title for idea", "test description for idea", content);
-        TestCase testCase = GwtTestCase.builder()
-            .withMetadata(TestCaseMetadataImpl.builder()
-                .withDescription("test description for idea")
-                .withTitle("test title for idea")
-                .build())
-            .withScenario(gwtScenario)
-            .withExecutionParameters(dataSet)
-            .build();
-        return simpleSyncExecution(
-            new ExecutionRequest(testCase, environment, userId)
-        );
-    }
-
-    private ScenarioExecutionReport simpleSyncExecution(ExecutionRequest executionRequest) {
+    public ScenarioExecutionReport simpleSyncExecution(ExecutionRequest executionRequest) {
         ExecutionRequest processedExecutionRequest = new ExecutionRequest(testCasePreProcessors.apply(executionRequest), executionRequest.environment, executionRequest.userId);
 
         StepExecutionReportCore finalStepReport = executionEngine.execute(processedExecutionRequest);
