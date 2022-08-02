@@ -19,10 +19,10 @@ import com.chutneytesting.component.scenario.api.dto.ImmutableComposableScenario
 import com.chutneytesting.component.scenario.api.dto.ImmutableComposableTestCaseDto;
 import com.chutneytesting.component.scenario.domain.ComposableScenario;
 import com.chutneytesting.component.scenario.domain.ComposableTestCase;
-import com.chutneytesting.execution.domain.TestCasePreProcessors;
-import com.chutneytesting.scenario.domain.AggregatedRepository;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
-import com.chutneytesting.security.domain.UserService;
+import com.chutneytesting.server.core.execution.processor.TestCasePreProcessors;
+import com.chutneytesting.server.core.scenario.AggregatedRepository;
+import com.chutneytesting.server.core.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.server.core.security.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

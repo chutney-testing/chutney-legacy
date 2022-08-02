@@ -12,9 +12,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.chutneytesting.component.scenario.domain.Strategy;
-import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.globalvar.domain.GlobalvarRepository;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
+import com.chutneytesting.server.core.execution.ExecutionRequest;
+import com.chutneytesting.server.core.globalvar.GlobalvarRepository;
+import com.chutneytesting.server.core.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.tests.OrientDatabaseHelperTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Duration;

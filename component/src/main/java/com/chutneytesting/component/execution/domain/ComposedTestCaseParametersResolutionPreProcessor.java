@@ -7,11 +7,11 @@ import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import com.chutneytesting.component.scenario.domain.Strategy;
-import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.TestCasePreProcessor;
-import com.chutneytesting.globalvar.domain.GlobalvarRepository;
-import com.chutneytesting.scenario.domain.TestCaseMetadata;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
+import com.chutneytesting.server.core.execution.ExecutionRequest;
+import com.chutneytesting.server.core.execution.processor.TestCasePreProcessor;
+import com.chutneytesting.server.core.globalvar.GlobalvarRepository;
+import com.chutneytesting.server.core.scenario.TestCaseMetadata;
+import com.chutneytesting.server.core.scenario.TestCaseMetadataImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.HashMap;

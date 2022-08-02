@@ -1,6 +1,6 @@
 package com.chutneytesting.component.scenario.api.dto;
 
-import com.chutneytesting.tools.ui.KeyValue;
+import com.chutneytesting.server.core.tools.ui.KeyValue;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

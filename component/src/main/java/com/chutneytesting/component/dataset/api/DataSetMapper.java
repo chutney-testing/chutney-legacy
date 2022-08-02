@@ -2,7 +2,7 @@ package com.chutneytesting.component.dataset.api;
 
 
 import com.chutneytesting.component.dataset.domain.DataSet;
-import com.chutneytesting.tools.ui.KeyValue;
+import com.chutneytesting.server.core.tools.ui.KeyValue;
 import java.util.stream.Collectors;
 
 public class DataSetMapper {

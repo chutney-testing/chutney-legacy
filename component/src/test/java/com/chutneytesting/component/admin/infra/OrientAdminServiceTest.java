@@ -5,15 +5,15 @@ import static com.chutneytesting.component.scenario.infra.orient.OrientComponent
 import static com.chutneytesting.component.scenario.infra.orient.OrientComponentDB.STEP_CLASS;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.admin.domain.DatabaseAdminService;
-import com.chutneytesting.admin.domain.SqlResult;
 import com.chutneytesting.component.scenario.domain.ComposableStep;
 import com.chutneytesting.component.scenario.domain.ComposableStepRepository;
 import com.chutneytesting.component.scenario.infra.OrientComposableStepRepository;
+import com.chutneytesting.server.core.admin.DatabaseAdminService;
+import com.chutneytesting.server.core.admin.SqlResult;
+import com.chutneytesting.server.core.tools.ImmutablePaginationRequestWrapperDto;
+import com.chutneytesting.server.core.tools.PaginatedDto;
+import com.chutneytesting.server.core.tools.PaginationRequestWrapperDto;
 import com.chutneytesting.tests.OrientDatabaseHelperTest;
-import com.chutneytesting.tools.ImmutablePaginationRequestWrapperDto;
-import com.chutneytesting.tools.PaginatedDto;
-import com.chutneytesting.tools.PaginationRequestWrapperDto;
 import com.orientechnologies.common.log.OLogManager;
 import java.util.ArrayList;
 import java.util.Optional;

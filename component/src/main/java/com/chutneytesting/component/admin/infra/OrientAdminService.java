@@ -1,15 +1,15 @@
 package com.chutneytesting.component.admin.infra;
 
-import com.chutneytesting.admin.domain.DatabaseAdminService;
-import com.chutneytesting.admin.domain.SqlResult;
-import com.chutneytesting.admin.domain.SqlResult.Row;
-import com.chutneytesting.admin.domain.SqlResult.Table;
 import com.chutneytesting.component.scenario.infra.orient.OrientComponentDB;
 import com.chutneytesting.component.scenario.infra.orient.OrientUtils;
-import com.chutneytesting.tools.ImmutablePaginatedDto;
-import com.chutneytesting.tools.PaginatedDto;
-import com.chutneytesting.tools.PaginationRequestWrapperDto;
-import com.chutneytesting.tools.SqlUtils;
+import com.chutneytesting.server.core.admin.DatabaseAdminService;
+import com.chutneytesting.server.core.admin.SqlResult;
+import com.chutneytesting.server.core.admin.SqlResult.Row;
+import com.chutneytesting.server.core.admin.SqlResult.Table;
+import com.chutneytesting.server.core.tools.ImmutablePaginatedDto;
+import com.chutneytesting.server.core.tools.PaginatedDto;
+import com.chutneytesting.server.core.tools.PaginationRequestWrapperDto;
+import com.chutneytesting.server.core.tools.SqlUtils;
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.exception.OCoreException;

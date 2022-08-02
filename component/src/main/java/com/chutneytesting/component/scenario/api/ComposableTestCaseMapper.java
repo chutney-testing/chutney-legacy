@@ -6,9 +6,9 @@ import com.chutneytesting.component.scenario.api.dto.ImmutableComposableScenario
 import com.chutneytesting.component.scenario.api.dto.ImmutableComposableTestCaseDto;
 import com.chutneytesting.component.scenario.domain.ComposableScenario;
 import com.chutneytesting.component.scenario.domain.ComposableTestCase;
-import com.chutneytesting.scenario.domain.TestCaseMetadata;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
-import com.chutneytesting.tools.ui.KeyValue;
+import com.chutneytesting.server.core.scenario.TestCaseMetadata;
+import com.chutneytesting.server.core.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.server.core.tools.ui.KeyValue;
 import java.util.List;
 import java.util.stream.Collectors;
 
