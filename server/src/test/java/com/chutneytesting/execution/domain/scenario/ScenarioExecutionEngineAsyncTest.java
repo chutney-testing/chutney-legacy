@@ -12,14 +12,14 @@ import static org.mockito.Mockito.when;
 
 import com.chutneytesting.component.dataset.domain.DataSetHistoryRepository;
 import com.chutneytesting.execution.domain.ExecutionRequest;
+import com.chutneytesting.execution.domain.ScenarioExecutionReport;
+import com.chutneytesting.execution.domain.ServerReportStatus;
+import com.chutneytesting.execution.domain.StepExecutionReportCore;
+import com.chutneytesting.execution.domain.StepExecutionReportCoreBuilder;
 import com.chutneytesting.execution.domain.TestCasePreProcessors;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
 import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
-import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
-import com.chutneytesting.execution.domain.report.ServerReportStatus;
-import com.chutneytesting.execution.domain.report.StepExecutionReportCore;
-import com.chutneytesting.execution.domain.report.StepExecutionReportCoreBuilder;
 import com.chutneytesting.execution.domain.state.ExecutionStateRepository;
 import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
