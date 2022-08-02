@@ -4,7 +4,6 @@ import static io.reactivex.schedulers.Schedulers.io;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.component.dataset.domain.DataSetHistoryRepository;
 import com.chutneytesting.execution.domain.ExecutionRequest;
 import com.chutneytesting.execution.domain.ScenarioExecutionReport;
 import com.chutneytesting.execution.domain.ServerReportStatus;
@@ -48,7 +47,6 @@ public class ScenarioExecutionEngineAsync {
     private final ExecutionStateRepository executionStateRepository;
     private final ChutneyMetrics metrics;
     private final TestCasePreProcessors testCasePreProcessors;
-    private final DataSetHistoryRepository dataSetHistoryRepository;
 
     private final Map<Long, Pair<Observable<ScenarioExecutionReport>, Long>> scenarioExecutions = new ConcurrentHashMap<>();
     private long retentionDelaySeconds;
@@ -59,9 +57,8 @@ public class ScenarioExecutionEngineAsync {
                                         ExecutionStateRepository executionStateRepository,
                                         ChutneyMetrics metrics,
                                         TestCasePreProcessors testCasePreProcessors,
-                                        ObjectMapper objectMapper,
-                                        DataSetHistoryRepository dataSetHistoryRepository) {
-        this(executionHistoryRepository, executionEngine, executionStateRepository, metrics, testCasePreProcessors, objectMapper, dataSetHistoryRepository, DEFAULT_RETENTION_DELAY_SECONDS, DEFAULT_DEBOUNCE_MILLISECONDS);
+                                        ObjectMapper objectMapper) {
+        this(executionHistoryRepository, executionEngine, executionStateRepository, metrics, testCasePreProcessors, objectMapper, DEFAULT_RETENTION_DELAY_SECONDS, DEFAULT_DEBOUNCE_MILLISECONDS);
     }
 
     public ScenarioExecutionEngineAsync(ExecutionHistoryRepository executionHistoryRepository,
@@ -70,7 +67,6 @@ public class ScenarioExecutionEngineAsync {
                                         ChutneyMetrics metrics,
                                         TestCasePreProcessors testCasePreProcessors,
                                         ObjectMapper objectMapper,
-                                        DataSetHistoryRepository dataSetHistoryRepository,
                                         long retentionDelaySeconds,
                                         long debounceMilliSeconds) {
         this.executionHistoryRepository = executionHistoryRepository;
@@ -79,9 +75,12 @@ public class ScenarioExecutionEngineAsync {
         this.metrics = metrics;
         this.testCasePreProcessors = testCasePreProcessors;
         this.objectMapper = objectMapper;
-        this.dataSetHistoryRepository = dataSetHistoryRepository;
         this.retentionDelaySeconds = retentionDelaySeconds;
         this.debounceMilliSeconds = debounceMilliSeconds;
+    }
+
+    public Long execute(ExecutionRequest executionRequest) {
+        return execute(executionRequest, empty());
     }
 
     /**
@@ -90,11 +89,11 @@ public class ScenarioExecutionEngineAsync {
      * @param executionRequest with the test case to execute and the environment chosen
      * @return execution id.
      */
-    public Long execute(ExecutionRequest executionRequest) {
+    public Long execute(ExecutionRequest executionRequest, Optional<Pair<String, Integer>> executionDataSet) {
         // Compile testcase for execution
         ExecutionRequest executionRequestProcessed = new ExecutionRequest(testCasePreProcessors.apply(executionRequest), executionRequest.environment, executionRequest.withExternalDataset, executionRequest.userId);
         // Initialize execution history
-        ExecutionHistory.Execution storedExecution = storeInitialReport(executionRequestProcessed);
+        ExecutionHistory.Execution storedExecution = storeInitialReport(executionRequestProcessed, executionDataSet);
         // Start engine execution
         Pair<Observable<StepExecutionReportCore>, Long> followResult = callEngineExecution(executionRequestProcessed, storedExecution);
         // Build execution observable
@@ -107,6 +106,24 @@ public class ScenarioExecutionEngineAsync {
         executionObservable.subscribeOn(io()).subscribe();
         // Return execution id
         return storedExecution.executionId();
+    }
+
+    private ExecutionHistory.Execution storeInitialReport(ExecutionRequest executionRequest, Optional<Pair<String, Integer>> executionDataSet) {
+        DetachedExecution detachedExecution = ImmutableExecutionHistory.DetachedExecution.builder()
+            .time(LocalDateTime.now())
+            .duration(0L)
+            .status(ServerReportStatus.RUNNING)
+            .info("")
+            .error("")
+            .report("")
+            .testCaseTitle(executionRequest.testCase.metadata().title())
+            .environment(executionRequest.environment)
+            .datasetId(executionDataSet.map(Pair::getLeft))
+            .datasetVersion(executionDataSet.map(Pair::getRight))
+            .user(executionRequest.userId)
+            .build();
+
+        return executionHistoryRepository.store(executionRequest.testCase.id(), detachedExecution);
     }
 
     private Pair<Observable<StepExecutionReportCore>, Long> callEngineExecution(ExecutionRequest executionRequest, ExecutionHistory.Execution storedExecution) {
@@ -156,24 +173,7 @@ public class ScenarioExecutionEngineAsync {
         executionHistoryRepository.update(scenarioId, execution);
     }
 
-    private ExecutionHistory.Execution storeInitialReport(ExecutionRequest executionRequest) {
-        Optional<Pair<String, Integer>> executionDataSet = findExecutionDataset(executionRequest);
-        DetachedExecution detachedExecution = ImmutableExecutionHistory.DetachedExecution.builder()
-            .time(LocalDateTime.now())
-            .duration(0L)
-            .status(ServerReportStatus.RUNNING)
-            .info("")
-            .error("")
-            .report("")
-            .testCaseTitle(executionRequest.testCase.metadata().title())
-            .environment(executionRequest.environment)
-            .datasetId(executionDataSet.map(Pair::getLeft))
-            .datasetVersion(executionDataSet.map(Pair::getRight))
-            .user(executionRequest.userId)
-            .build();
 
-        return executionHistoryRepository.store(executionRequest.testCase.id(), detachedExecution);
-    }
 
     public Observable<ScenarioExecutionReport> followExecution(String scenarioId, Long executionId) {
         if (scenarioExecutions.containsKey(executionId)) {
@@ -311,11 +311,5 @@ public class ScenarioExecutionEngineAsync {
         }
     }
 
-    private Optional<Pair<String, Integer>> findExecutionDataset(ExecutionRequest executionRequest) {
-        if (executionRequest.withExternalDataset) {
-            return executionRequest.testCase.metadata().datasetId()
-                .map(datasetId -> Pair.of(datasetId, dataSetHistoryRepository.lastVersion(datasetId)));
-        }
-        return empty();
-    }
+
 }
