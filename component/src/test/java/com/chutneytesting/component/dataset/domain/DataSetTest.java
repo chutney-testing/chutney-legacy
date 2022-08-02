@@ -1,12 +1,10 @@
-package com.chutneytesting.design.domain.dataset;
+package com.chutneytesting.component.dataset.domain;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-import com.chutneytesting.component.dataset.domain.DataSet;
 import java.util.Map;
-import org.apache.groovy.util.Maps;
 import org.junit.jupiter.api.Test;
 
 public class DataSetTest {
@@ -22,11 +20,11 @@ public class DataSetTest {
         // Edge case
         DataSet dataSet = DataSet.builder()
             .withConstants(
-                Maps.of("", "")
+                Map.of("", "")
             )
             .withDatatable(asList(
-                Maps.of("", ""),
-                Maps.of("", "value")
+                Map.of("", ""),
+                Map.of("", "value")
             ))
             .build();
 
@@ -34,15 +32,15 @@ public class DataSetTest {
         assertThat(dataSet.datatable).isEmpty();
 
         // Normal case
-        Map<String, String> expectedMap = Maps.of("key1", "value", "key2", "value");
+        Map<String, String> expectedMap = Map.of("key1", "value", "key2", "value");
         dataSet = DataSet.builder()
             .withConstants(
-                Maps.of("key1", "value", "", "value", "key2", "value")
+                Map.of("key1", "value", "", "value", "key2", "value")
             )
             .withDatatable(asList(
-                Maps.of("key1", "value", "", "", "key2", "value"),
-                Maps.of("key1", "", "", "", "key2", ""),
-                Maps.of("key1", "value", "", "value", "key2", "value")
+                Map.of("key1", "value", "", "", "key2", "value"),
+                Map.of("key1", "", "", "", "key2", ""),
+                Map.of("key1", "value", "", "value", "key2", "value")
             ))
             .build();
 
@@ -52,15 +50,15 @@ public class DataSetTest {
 
     @Test
     public void should_remove_space_in_extremity_of_keys_and_values() {
-        Map<String, String> expectedMap = Maps.of("key1", "value", "key2", "value");
+        Map<String, String> expectedMap = Map.of("key1", "value", "key2", "value");
         DataSet dataSet = DataSet.builder()
             .withConstants(
-                Maps.of("key1 ", "value ", "", "value", " key2   ", "value")
+                Map.of("key1 ", "value ", "", "value", " key2   ", "value")
             )
             .withDatatable(asList(
-                Maps.of("key1", " value", "", "", "key2     ", "value"),
-                Maps.of("key1", "", "", "", "key2  ", ""),
-                Maps.of("key1 ", "value", "", " value", "key2", "value")
+                Map.of("key1", " value", "", "", "key2     ", "value"),
+                Map.of("key1", "", "", "", "key2  ", ""),
+                Map.of("key1 ", "value", "", " value", "key2", "value")
             ))
             .build();
 
