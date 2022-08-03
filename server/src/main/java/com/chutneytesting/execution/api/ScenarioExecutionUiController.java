@@ -99,6 +99,16 @@ public class ScenarioExecutionUiController {
         return executionEngineAsync.execute(new ExecutionRequest(testCase, env, executionParameters, userId)).toString();
     }
 
+    @PreAuthorize("hasAuthority('SCENARIO_EXECUTE')")
+    @PostMapping(path = "/api/ui/scenario/execution/v1/{scenarioId}/{env}")
+    public String executeScenario(@PathVariable("scenarioId") String scenarioId, @PathVariable("env") String env) throws IOException {
+        LOGGER.debug("executeScenario for scenarioId='{}'", scenarioId);
+        TestCase testCase = testCaseRepository.findById(scenarioId).orElseThrow(() -> new ScenarioNotFoundException(scenarioId));
+        String userId = userService.currentUserId();
+        ScenarioExecutionReport report = executionEngine.simpleSyncExecution(new ExecutionRequest(testCase, env, userId));
+        return reportObjectMapper.writeValueAsString(report);
+    }
+
     @PreAuthorize("hasAuthority('SCENARIO_READ')")
     @GetMapping(path = "/api/ui/scenario/executionasync/v1/{scenarioId}/execution/{executionId}")
     public Flux<ServerSentEvent<String>> followScenarioExecution(@PathVariable("scenarioId") String scenarioId, @PathVariable("executionId") Long executionId) {

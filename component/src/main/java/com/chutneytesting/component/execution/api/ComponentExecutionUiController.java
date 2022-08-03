@@ -61,7 +61,7 @@ public class ComponentExecutionUiController {
     }
 
     @PreAuthorize("hasAuthority('SCENARIO_EXECUTE')")
-    @PostMapping(path = "/api/ui/scenario/execution/v1/{scenarioId}/{env}")
+    @PostMapping(path = "/api/ui/component/execution/v1/{scenarioId}/{env}")
     public String executeScenario(@PathVariable("scenarioId") String scenarioId, @PathVariable("env") String env) throws IOException {
         LOGGER.debug("executeScenario for scenarioId='{}'", scenarioId);
         TestCase testCase = testCaseRepository.findById(scenarioId).orElseThrow(() -> new ScenarioNotFoundException(scenarioId));
