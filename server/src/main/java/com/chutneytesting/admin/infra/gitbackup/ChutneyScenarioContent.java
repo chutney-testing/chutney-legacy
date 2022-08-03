@@ -5,12 +5,11 @@ import static com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory.S
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContent;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentProvider;
-import com.chutneytesting.scenario.domain.AggregatedRepository;
-import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
-import com.chutneytesting.scenario.domain.TestCaseMetadata;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
-import com.chutneytesting.scenario.domain.TestCaseRepository;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
+import com.chutneytesting.server.core.scenario.AggregatedRepository;
+import com.chutneytesting.server.core.scenario.ScenarioNotFoundException;
+import com.chutneytesting.server.core.scenario.TestCaseMetadata;
+import com.chutneytesting.server.core.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.tools.file.FileUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

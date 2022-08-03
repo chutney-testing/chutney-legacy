@@ -7,16 +7,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
 
-import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
-import com.chutneytesting.scenario.domain.TestCase;
-import com.chutneytesting.scenario.domain.TestCaseMetadata;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl.TestCaseMetadataBuilder;
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtStep;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase.GwtTestCaseBuilder;
-import com.chutneytesting.security.domain.User;
+import com.chutneytesting.server.core.scenario.ScenarioNotFoundException;
+import com.chutneytesting.server.core.scenario.TestCase;
+import com.chutneytesting.server.core.scenario.TestCaseMetadata;
+import com.chutneytesting.server.core.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.server.core.scenario.TestCaseMetadataImpl.TestCaseMetadataBuilder;
+import com.chutneytesting.server.core.security.User;
 import com.chutneytesting.tests.AbstractLocalDatabaseTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
@@ -172,7 +172,7 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
     }
 
     public static Object[] parametersForShould_update_scenario_fields() {
-        TestCaseMetadataBuilder metaBuilder = TestCaseMetadataImpl.builder();
+        TestCaseMetadataImpl.TestCaseMetadataBuilder metaBuilder = TestCaseMetadataImpl.builder();
 
         return new Object[]{
             new Object[]{

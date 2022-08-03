@@ -7,21 +7,21 @@ import com.chutneytesting.component.dataset.domain.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditions;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditionsService;
 import com.chutneytesting.engine.api.execution.TestEngine;
-import com.chutneytesting.execution.domain.TestCasePreProcessor;
-import com.chutneytesting.execution.domain.TestCasePreProcessors;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
-import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
-import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
-import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngineAsync;
-import com.chutneytesting.execution.domain.scenario.ServerTestEngine;
-import com.chutneytesting.execution.domain.state.ExecutionStateRepository;
 import com.chutneytesting.execution.infra.execution.ExecutionRequestMapper;
 import com.chutneytesting.execution.infra.execution.ServerTestEngineJavaImpl;
-import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
-import com.chutneytesting.scenario.domain.AggregatedRepository;
 import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
+import com.chutneytesting.server.core.execution.ScenarioExecutionEngine;
+import com.chutneytesting.server.core.execution.ScenarioExecutionEngineAsync;
+import com.chutneytesting.server.core.execution.ServerTestEngine;
+import com.chutneytesting.server.core.execution.history.ExecutionHistoryRepository;
+import com.chutneytesting.server.core.execution.processor.TestCasePreProcessor;
+import com.chutneytesting.server.core.execution.processor.TestCasePreProcessors;
+import com.chutneytesting.server.core.execution.state.ExecutionStateRepository;
+import com.chutneytesting.server.core.instrument.ChutneyMetrics;
+import com.chutneytesting.server.core.scenario.AggregatedRepository;
 import com.chutneytesting.task.api.EmbeddedTaskEngine;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.Method;
@@ -181,7 +181,6 @@ public class ServerConfiguration implements AsyncConfigurer {
                                                               ChutneyMetrics metrics,
                                                               TestCasePreProcessors testCasePreProcessors,
                                                               @Qualifier("reportObjectMapper") ObjectMapper objectMapper,
-                                                              DataSetHistoryRepository dataSetHistoryRepository,
                                                               @Value(EXECUTION_ASYNC_PUBLISHER_TTL_SPRING_VALUE) long replayerRetention,
                                                               @Value(EXECUTION_ASYNC_PUBLISHER_DEBOUNCE_SPRING_VALUE) long debounceMilliSeconds) {
         return new ScenarioExecutionEngineAsync(
@@ -191,7 +190,6 @@ public class ServerConfiguration implements AsyncConfigurer {
             metrics,
             testCasePreProcessors,
             objectMapper,
-            dataSetHistoryRepository,
             replayerRetention,
             debounceMilliSeconds);
     }

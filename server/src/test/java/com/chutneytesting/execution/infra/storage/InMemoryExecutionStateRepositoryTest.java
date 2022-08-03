@@ -2,8 +2,8 @@ package com.chutneytesting.execution.infra.storage;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.execution.domain.state.ExecutionStateRepository;
-import com.chutneytesting.execution.domain.state.RunningScenarioState;
+import com.chutneytesting.server.core.execution.state.ExecutionStateRepository;
+import com.chutneytesting.server.core.execution.state.RunningScenarioState;
 import org.junit.jupiter.api.Test;
 
 public class InMemoryExecutionStateRepositoryTest {

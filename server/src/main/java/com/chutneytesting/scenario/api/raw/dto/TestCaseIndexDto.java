@@ -1,7 +1,7 @@
 package com.chutneytesting.scenario.api.raw.dto;
 
 import com.chutneytesting.execution.api.ExecutionSummaryDto;
-import com.chutneytesting.scenario.domain.TestCaseMetadata;
+import com.chutneytesting.server.core.scenario.TestCaseMetadata;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.List;

@@ -1,13 +1,15 @@
 package com.chutneytesting.admin.infra;
 
-import com.chutneytesting.admin.domain.DatabaseAdminService;
-import com.chutneytesting.admin.domain.SqlResult;
-import com.chutneytesting.admin.domain.SqlResult.Row;
-import com.chutneytesting.admin.domain.SqlResult.Table;
-import com.chutneytesting.tools.ImmutablePaginatedDto;
-import com.chutneytesting.tools.PaginatedDto;
-import com.chutneytesting.tools.PaginationRequestWrapperDto;
-import com.chutneytesting.tools.SqlUtils;
+
+import static com.chutneytesting.server.core.admin.SqlResult.*;
+
+import com.chutneytesting.server.core.admin.DatabaseAdminService;
+import com.chutneytesting.server.core.admin.SqlResult;
+import com.chutneytesting.server.core.admin.SqlResult.Table;
+import com.chutneytesting.server.core.tools.ImmutablePaginatedDto;
+import com.chutneytesting.server.core.tools.PaginatedDto;
+import com.chutneytesting.server.core.tools.PaginationRequestWrapperDto;
+import com.chutneytesting.server.core.tools.SqlUtils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -62,7 +64,7 @@ class DatabaseAdminServiceImpl implements DatabaseAdminService {
                     }
                 }
             } catch (SQLException e) {
-                result = SqlResult.error("Unable to execute statement[" + countQuery + "]: " + e.getMessage());
+                result = error("Unable to execute statement[" + countQuery + "]: " + e.getMessage());
                 return ImmutablePaginatedDto.<SqlResult>builder()
                     .totalCount(totalCount)
                     .addData(result)
@@ -98,13 +100,13 @@ class DatabaseAdminServiceImpl implements DatabaseAdminService {
             boolean dataSelected = statement.execute();
             if (dataSelected) {
                 try (ResultSet rs = statement.getResultSet()) {
-                    result = SqlResult.data(resultSetToTable(rs));
+                    result = data(resultSetToTable(rs));
                 }
             } else {
-                result = SqlResult.updatedRows(statement.getUpdateCount());
+                result = updatedRows(statement.getUpdateCount());
             }
         } catch (SQLException e) {
-            result = SqlResult.error("Unable to execute statement[" + query + "]: " + e.getMessage());
+            result = error("Unable to execute statement[" + query + "]: " + e.getMessage());
         }
         return result;
     }

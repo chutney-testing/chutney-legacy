@@ -25,7 +25,7 @@ public class ComposedTestCasePreProcessor implements TestCasePreProcessor<Execut
 
         // Process scenario default dataset if requested
         ExecutableComposedTestCase testCase = (ExecutableComposedTestCase) executionRequest.testCase;
-        if (executionRequest.withExternalDataset) {
+        if (testCase.metadata.datasetId().isPresent()) {
             testCase = dataSetPreProcessor.apply(
                 new ExecutionRequest(testCase, environment, userId)
             );

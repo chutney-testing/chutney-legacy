@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.chutneytesting.security.PropertyBasedTestingUtils;
+import com.chutneytesting.server.core.security.Role;
+import com.chutneytesting.server.core.security.User;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;

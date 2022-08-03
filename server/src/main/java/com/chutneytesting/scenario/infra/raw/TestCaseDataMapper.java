@@ -2,9 +2,8 @@ package com.chutneytesting.scenario.infra.raw;
 
 import com.chutneytesting.execution.domain.GwtScenarioMarshaller;
 import com.chutneytesting.scenario.api.raw.mapper.GwtScenarioMapper;
-import com.chutneytesting.scenario.domain.TestCase;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
+import com.chutneytesting.server.core.scenario.TestCaseMetadataImpl;
 
 // call it in repo instead of repo aggregator
 public class TestCaseDataMapper {

@@ -10,10 +10,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.scenario.domain.AggregatedRepository;
-import com.chutneytesting.scenario.domain.TestCase;
-import com.chutneytesting.scenario.domain.TestCaseMetadata;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
+import com.chutneytesting.server.core.scenario.AggregatedRepository;
+import com.chutneytesting.server.core.scenario.TestCase;
+import com.chutneytesting.server.core.scenario.TestCaseMetadata;
+import com.chutneytesting.server.core.scenario.TestCaseMetadataImpl;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;

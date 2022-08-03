@@ -6,7 +6,7 @@ import static java.util.Collections.unmodifiableMap;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.collections.ListUtils.unmodifiableList;
 
-import com.chutneytesting.security.domain.User;
+import com.chutneytesting.server.core.security.User;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import java.time.Instant;

@@ -8,8 +8,8 @@ import static net.jqwik.api.Arbitraries.just;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.security.PropertyBasedTestingUtils;
-import com.chutneytesting.security.domain.Role;
 import com.chutneytesting.security.domain.UserRoles;
+import com.chutneytesting.server.core.security.Role;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.List;

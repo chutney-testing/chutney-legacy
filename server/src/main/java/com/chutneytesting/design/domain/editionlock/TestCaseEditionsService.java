@@ -4,9 +4,9 @@ import static com.chutneytesting.design.domain.editionlock.TestCaseEdition.byEdi
 import static com.chutneytesting.design.domain.editionlock.TestCaseEdition.byId;
 import static java.time.Instant.now;
 
-import com.chutneytesting.scenario.domain.AggregatedRepository;
-import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
-import com.chutneytesting.scenario.domain.TestCase;
+import com.chutneytesting.server.core.scenario.AggregatedRepository;
+import com.chutneytesting.server.core.scenario.ScenarioNotFoundException;
+import com.chutneytesting.server.core.scenario.TestCase;
 import java.util.List;
 
 public class TestCaseEditionsService {

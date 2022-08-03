@@ -1,7 +1,7 @@
 package com.chutneytesting;
 
 import com.chutneytesting.admin.domain.gitbackup.GitBackupService;
-import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
+import com.chutneytesting.server.core.execution.history.ExecutionHistoryRepository;
 import com.orientechnologies.orient.core.Orient;
 import java.lang.reflect.Field;
 import java.util.HashMap;

@@ -1,6 +1,8 @@
 package com.chutneytesting.campaign.domain;
 
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
+import com.chutneytesting.server.core.scenario.campaign.Campaign;
+import com.chutneytesting.server.core.scenario.campaign.CampaignExecutionReport;
 import java.util.List;
 
 /**

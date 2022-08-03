@@ -3,26 +3,26 @@ package com.chutneytesting.execution.domain.campaign;
 import static java.util.Collections.singleton;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-import com.chutneytesting.campaign.domain.Campaign;
-import com.chutneytesting.campaign.domain.CampaignExecutionReport;
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
 import com.chutneytesting.campaign.domain.CampaignRepository;
-import com.chutneytesting.campaign.domain.ScenarioExecutionReportCampaign;
 import com.chutneytesting.component.dataset.domain.DataSetHistoryRepository;
 import com.chutneytesting.component.execution.domain.ExecutableComposedTestCase;
-import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.ScenarioExecutionReport;
-import com.chutneytesting.execution.domain.ServerReportStatus;
-import com.chutneytesting.execution.domain.history.ExecutionHistory;
-import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
-import com.chutneytesting.execution.domain.scenario.FailedExecutionAttempt;
-import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
-import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
-import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
-import com.chutneytesting.scenario.domain.ScenarioNotParsableException;
-import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
+import com.chutneytesting.server.core.execution.ExecutionRequest;
+import com.chutneytesting.server.core.execution.FailedExecutionAttempt;
+import com.chutneytesting.server.core.execution.ScenarioExecutionEngine;
+import com.chutneytesting.server.core.execution.history.ExecutionHistory;
+import com.chutneytesting.server.core.execution.history.ExecutionHistoryRepository;
+import com.chutneytesting.server.core.execution.report.ScenarioExecutionReport;
+import com.chutneytesting.server.core.execution.report.ServerReportStatus;
+import com.chutneytesting.server.core.instrument.ChutneyMetrics;
+import com.chutneytesting.server.core.scenario.ScenarioNotFoundException;
+import com.chutneytesting.server.core.scenario.ScenarioNotParsableException;
+import com.chutneytesting.server.core.scenario.TestCase;
+import com.chutneytesting.server.core.scenario.campaign.Campaign;
+import com.chutneytesting.server.core.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.scenario.campaign.ScenarioExecutionReportCampaign;
 import com.chutneytesting.tools.Try;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
@@ -223,7 +223,7 @@ public class CampaignExecutionEngine {
         try {
             LOGGER.trace("Execute scenario {} for campaign {}", testCase.id(), campaign.id);
             ExecutionRequest executionRequest = buildExecutionRequest(campaign, testCase, userId);
-            ScenarioExecutionReport scenarioExecutionReport = scenarioExecutionEngine.execute(executionRequest);
+            ScenarioExecutionReport scenarioExecutionReport = scenarioExecutionEngine.execute(executionRequest, Optional.empty()); // todo
             executionId = scenarioExecutionReport.executionId;
             scenarioName = scenarioExecutionReport.scenarioName;
         } catch (FailedExecutionAttempt e) {
@@ -253,7 +253,6 @@ public class CampaignExecutionEngine {
         return new ExecutionRequest(
             ((ExecutableComposedTestCase) testCase).withDataSetId(campaign.externalDatasetId),
             campaign.executionEnvironment(),
-            true,
             userId
         );
     }

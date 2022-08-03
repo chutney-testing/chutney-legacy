@@ -8,13 +8,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.component.scenario.infra.OrientComposableTestCaseRepository;
-import com.chutneytesting.scenario.domain.AggregatedRepository;
 import com.chutneytesting.component.scenario.domain.ComposableTestCase;
-import com.chutneytesting.scenario.domain.TestCase;
-import com.chutneytesting.scenario.domain.TestCaseMetadata;
+import com.chutneytesting.component.scenario.infra.OrientComposableTestCaseRepository;
 import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.scenario.infra.raw.DatabaseTestCaseRepository;
+import com.chutneytesting.server.core.scenario.AggregatedRepository;
+import com.chutneytesting.server.core.scenario.TestCase;
+import com.chutneytesting.server.core.scenario.TestCaseMetadata;
 import java.util.List;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;

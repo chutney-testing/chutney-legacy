@@ -1,11 +1,12 @@
 package com.chutneytesting.scenario.api.raw.mapper;
 
 import com.chutneytesting.scenario.api.raw.dto.GwtTestCaseDto;
+
 import com.chutneytesting.scenario.api.raw.dto.ImmutableGwtTestCaseDto;
-import com.chutneytesting.scenario.domain.TestCase;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.domain.raw.RawTestCase;
+import com.chutneytesting.server.core.scenario.TestCase;
+import com.chutneytesting.server.core.scenario.TestCaseMetadataImpl;
 import java.util.Collections;
 
 // TODO test me

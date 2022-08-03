@@ -24,6 +24,10 @@ public class ScenarioExecutionEngine {
         this.testCasePreProcessors = testCasePreProcessors;
     }
 
+    public ScenarioExecutionReport execute(ExecutionRequest executionRequest) throws ScenarioNotFoundException, ScenarioNotParsableException {
+        return execute(executionRequest, Optional.empty());
+    }
+
     /**
      * Retrieves a scenario from it's ID, executes it on  ExecutionEngine and store StepExecutionReport.
      *

@@ -1,6 +1,6 @@
 package com.chutneytesting.security.domain;
 
-import static com.chutneytesting.security.domain.User.userByRoleNamePredicate;
+import static com.chutneytesting.server.core.security.User.userByRoleNamePredicate;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toList;
@@ -8,6 +8,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.chutneytesting.security.PropertyBasedTestingUtils;
+import com.chutneytesting.server.core.security.Authorization;
+import com.chutneytesting.server.core.security.Role;
+import com.chutneytesting.server.core.security.User;
 import java.util.List;
 import java.util.Set;
 import net.jqwik.api.ForAll;

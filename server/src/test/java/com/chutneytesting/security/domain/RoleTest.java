@@ -6,6 +6,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.chutneytesting.security.PropertyBasedTestingUtils;
+import com.chutneytesting.server.core.security.Authorization;
+import com.chutneytesting.server.core.security.Role;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;

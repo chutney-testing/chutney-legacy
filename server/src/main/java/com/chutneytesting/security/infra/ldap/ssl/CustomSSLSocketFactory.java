@@ -3,7 +3,6 @@ package com.chutneytesting.security.infra.ldap.ssl;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLParameters;

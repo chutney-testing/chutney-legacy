@@ -3,10 +3,10 @@ package com.chutneytesting.security;
 import static java.util.stream.Collectors.toSet;
 import static net.jqwik.api.Arbitraries.strings;
 
-import com.chutneytesting.security.domain.Authorization;
-import com.chutneytesting.security.domain.Role;
-import com.chutneytesting.security.domain.User;
 import com.chutneytesting.security.domain.UserRoles;
+import com.chutneytesting.server.core.security.Authorization;
+import com.chutneytesting.server.core.security.Role;
+import com.chutneytesting.server.core.security.User;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;

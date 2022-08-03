@@ -5,8 +5,8 @@ import static java.util.stream.Collectors.toUnmodifiableMap;
 
 import com.chutneytesting.security.api.UserDto;
 import com.chutneytesting.security.domain.AuthenticationService;
-import com.chutneytesting.security.domain.Authorization;
-import com.chutneytesting.security.domain.Role;
+import com.chutneytesting.server.core.security.Authorization;
+import com.chutneytesting.server.core.security.Role;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;

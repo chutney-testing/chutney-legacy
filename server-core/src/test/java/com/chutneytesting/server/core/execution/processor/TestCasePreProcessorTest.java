@@ -1,4 +1,4 @@
-package com.chutneytesting.execution.domain;
+package com.chutneytesting.server.core.execution.processor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;

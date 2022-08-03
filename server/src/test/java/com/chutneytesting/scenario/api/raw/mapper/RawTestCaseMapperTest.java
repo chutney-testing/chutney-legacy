@@ -3,13 +3,12 @@ package com.chutneytesting.scenario.api.raw.mapper;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.chutneytesting.scenario.api.raw.dto.ImmutableRawTestCaseDto;
-import com.chutneytesting.scenario.api.raw.mapper.RawTestCaseMapper;
-import com.chutneytesting.scenario.domain.ScenarioNotParsableException;
+import com.chutneytesting.server.core.scenario.ScenarioNotParsableException;
 import org.junit.jupiter.api.Test;
 
 public class RawTestCaseMapperTest {
 
-    private ImmutableRawTestCaseDto invalid_dto = ImmutableRawTestCaseDto.builder()
+    private final ImmutableRawTestCaseDto invalid_dto = ImmutableRawTestCaseDto.builder()
         .title("Test mapping")
         .scenario(" I am invalid\n {").build();
 

@@ -5,12 +5,12 @@ import static java.util.Collections.emptyMap;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
-import com.chutneytesting.scenario.domain.AggregatedRepository;
-import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
-import com.chutneytesting.scenario.domain.TestCaseMetadata;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
-import com.chutneytesting.security.domain.User;
+import com.chutneytesting.server.core.scenario.AggregatedRepository;
+import com.chutneytesting.server.core.scenario.ScenarioNotFoundException;
+import com.chutneytesting.server.core.scenario.TestCaseMetadata;
+import com.chutneytesting.server.core.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.server.core.security.User;
 import com.chutneytesting.tools.Try;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

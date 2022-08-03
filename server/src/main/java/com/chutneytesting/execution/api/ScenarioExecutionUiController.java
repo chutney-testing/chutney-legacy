@@ -1,19 +1,19 @@
 package com.chutneytesting.execution.api;
 
-import com.chutneytesting.execution.domain.ExecutionRequest;
+import com.chutneytesting.server.core.execution.ExecutionRequest;
 import com.chutneytesting.execution.domain.GwtScenarioMarshaller;
-import com.chutneytesting.execution.domain.ScenarioExecutionReport;
-import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
-import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngineAsync;
+import com.chutneytesting.server.core.execution.report.ScenarioExecutionReport;
+import com.chutneytesting.server.core.execution.ScenarioExecutionEngine;
+import com.chutneytesting.server.core.execution.ScenarioExecutionEngineAsync;
 import com.chutneytesting.scenario.api.raw.mapper.GwtScenarioMapper;
-import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
-import com.chutneytesting.scenario.domain.TestCase;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
+import com.chutneytesting.server.core.scenario.ScenarioNotFoundException;
+import com.chutneytesting.server.core.scenario.TestCase;
+import com.chutneytesting.server.core.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.security.infra.SpringUserService;
-import com.chutneytesting.tools.ui.KeyValue;
+import com.chutneytesting.server.core.tools.ui.KeyValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Observable;

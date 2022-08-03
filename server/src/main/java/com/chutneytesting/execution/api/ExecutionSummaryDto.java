@@ -1,11 +1,11 @@
 package com.chutneytesting.execution.api;
 
+import com.chutneytesting.server.core.execution.history.ExecutionHistory.Attached;
+import com.chutneytesting.server.core.execution.history.ExecutionHistory.ExecutionProperties;
+import com.chutneytesting.server.core.execution.history.ExecutionHistory.ExecutionSummary;
+import com.chutneytesting.server.core.execution.history.ImmutableExecutionHistory;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.chutneytesting.execution.domain.history.ExecutionHistory.Attached;
-import com.chutneytesting.execution.domain.history.ExecutionHistory.ExecutionProperties;
-import com.chutneytesting.execution.domain.history.ExecutionHistory.ExecutionSummary;
-import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;

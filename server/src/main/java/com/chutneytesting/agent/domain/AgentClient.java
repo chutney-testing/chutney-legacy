@@ -1,10 +1,10 @@
 package com.chutneytesting.agent.domain;
 
+import com.chutneytesting.agent.domain.configure.ConfigurationState;
 import com.chutneytesting.agent.domain.configure.NetworkConfiguration;
 import com.chutneytesting.agent.domain.explore.ExploreResult;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.chutneytesting.agent.domain.configure.ConfigurationState;
 
 /**
  * Used to communicate from the current local agent to a remote one.

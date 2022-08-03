@@ -4,13 +4,13 @@ import static com.chutneytesting.campaign.api.dto.CampaignExecutionReportMapper.
 
 import com.chutneytesting.campaign.api.dto.CampaignExecutionReportDto;
 import com.chutneytesting.campaign.api.dto.CampaignExecutionReportMapper;
-import com.chutneytesting.campaign.domain.Campaign;
-import com.chutneytesting.campaign.domain.CampaignExecutionReport;
+import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
+import com.chutneytesting.server.core.scenario.campaign.Campaign;
+import com.chutneytesting.server.core.scenario.campaign.CampaignExecutionReport;
 import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.execution.api.report.surefire.SurefireCampaignExecutionReportBuilder;
 import com.chutneytesting.execution.api.report.surefire.SurefireScenarioExecutionReportBuilder;
-import com.chutneytesting.execution.domain.ServerReportStatus;
-import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
+import com.chutneytesting.server.core.execution.report.ServerReportStatus;
 import com.chutneytesting.security.infra.SpringUserService;
 import java.util.List;
 import java.util.Optional;
