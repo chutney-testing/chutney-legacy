@@ -28,8 +28,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @CrossOrigin(origins = "*")
 @RestController
-public class ScenarioExecutionUiController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScenarioExecutionUiController.class);
+public class ComponentExecutionUiController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComponentExecutionUiController.class);
     private final ScenarioExecutionEngine executionEngine;
     private final ObjectMapper reportObjectMapper;
 
@@ -37,7 +37,7 @@ public class ScenarioExecutionUiController {
     private final ExecutableStepRepository stepRepository;
     private final UserService userService;
 
-    ScenarioExecutionUiController(
+    ComponentExecutionUiController(
         ScenarioExecutionEngine executionEngine,
         @Qualifier("reportObjectMapper") ObjectMapper reportObjectMapper,
         AggregatedRepository<ComposableTestCase> testCaseRepository, ExecutableStepRepository stepRepository,
