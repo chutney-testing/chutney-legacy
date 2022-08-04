@@ -3,9 +3,11 @@ package com.chutneytesting.server.core.security;
 import static java.util.Collections.emptySet;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toList;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -25,6 +27,12 @@ public class Role {
 
     public static Predicate<Role> roleByNamePredicate(String roleName) {
         return role -> role.name.equals(roleName);
+    }
+
+    public static List<Authorization> authorizations(List<Role> userRoles) {
+        return userRoles.stream()
+            .flatMap(r -> r.authorizations.stream())
+            .collect(toList());
     }
 
     public static Role.RoleBuilder builder() {

@@ -133,8 +133,8 @@ public class UserRolesTest {
 
         Assertions.assertThat(sut.roles()).containsExactlyElementsOf(orderedRoles);
 
-        assertThat(authorizationsFromRoles(List.copyOf(sut.roles())))
-            .containsExactlyElementsOf(authorizationsFromRoles(orderedRoles));
+        assertThat(Role.authorizations(List.copyOf(sut.roles())))
+            .containsExactlyElementsOf(Role.authorizations(orderedRoles));
 
         sut.roles().forEach(role -> {
             List<User> usersForRole = orderedUsers.stream().filter(userByRoleNamePredicate(role.name)).collect(toList());
@@ -148,9 +148,4 @@ public class UserRolesTest {
         return PropertyBasedTestingUtils.validRole().set().ofMinSize(1).ofMaxSize(10);
     }
 
-    public static List<Authorization> authorizationsFromRoles(List<Role> userRoles) {
-        return userRoles.stream()
-            .flatMap(r -> r.authorizations.stream())
-            .collect(toList());
-    }
 }

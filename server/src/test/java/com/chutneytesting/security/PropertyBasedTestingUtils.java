@@ -1,7 +1,11 @@
-package com.chutneytesting.server.core.security;
+package com.chutneytesting.security;
 
 import static java.util.stream.Collectors.toSet;
 
+import com.chutneytesting.server.core.security.Authorization;
+import com.chutneytesting.server.core.security.Role;
+import com.chutneytesting.server.core.security.User;
+import com.chutneytesting.server.core.security.UserRoles;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
