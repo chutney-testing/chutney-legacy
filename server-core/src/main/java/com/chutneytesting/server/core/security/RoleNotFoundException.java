@@ -1,4 +1,4 @@
-package com.chutneytesting.security.domain;
+package com.chutneytesting.server.core.security;
 
 public class RoleNotFoundException extends RuntimeException {
     public RoleNotFoundException(String roleName) {

@@ -1,4 +1,4 @@
-package com.chutneytesting.security.domain;
+package com.chutneytesting.server.core.security;
 
 import static com.chutneytesting.server.core.security.User.userByRoleNamePredicate;
 import static java.util.Collections.emptySet;
@@ -7,16 +7,13 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.chutneytesting.security.PropertyBasedTestingUtils;
-import com.chutneytesting.server.core.security.Authorization;
-import com.chutneytesting.server.core.security.Role;
-import com.chutneytesting.server.core.security.User;
 import java.util.List;
 import java.util.Set;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
 import net.jqwik.api.Provide;
 import net.jqwik.api.arbitraries.SetArbitrary;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class UserRolesTest {
@@ -28,8 +25,8 @@ public class UserRolesTest {
         UserRoles emptyBuild = UserRoles.builder().withUsers(emptySet()).withRoles(emptySet()).build();
 
         for (UserRoles userRole : List.of(defaultBuild, nullBuild, emptyBuild)) {
-            assertThat(userRole.roles()).containsExactly(Role.DEFAULT);
-            assertThat(userRole.users()).isEmpty();
+            Assertions.assertThat(userRole.roles()).containsExactly(Role.DEFAULT);
+            Assertions.assertThat(userRole.users()).isEmpty();
         }
     }
 
@@ -64,7 +61,7 @@ public class UserRolesTest {
             ))
             .build();
 
-        assertThat(sut.users())
+        Assertions.assertThat(sut.users())
             .hasSize(1)
             .first()
             .hasFieldOrPropertyWithValue("id", "id")
@@ -78,8 +75,8 @@ public class UserRolesTest {
             .withUsers(List.of(User.builder().withId("user1").build(), user2))
             .build();
 
-        assertThat(sut.userById("user2")).hasValue(user2);
-        assertThat(sut.userById("userX")).isEmpty();
+        Assertions.assertThat(sut.userById("user2")).hasValue(user2);
+        Assertions.assertThat(sut.userById("userX")).isEmpty();
     }
 
     @Test
@@ -92,8 +89,8 @@ public class UserRolesTest {
             .withUsers(List.of(User.builder().withId("user1").build(), user2))
             .build();
 
-        assertThat(sut.usersByRole(role2)).containsExactly(user2);
-        assertThat(sut.usersByRole(unknown_role)).isEmpty();
+        Assertions.assertThat(sut.usersByRole(role2)).containsExactly(user2);
+        Assertions.assertThat(sut.usersByRole(unknown_role)).isEmpty();
     }
 
     @Test
@@ -103,7 +100,7 @@ public class UserRolesTest {
             .withRoles(List.of(Role.DEFAULT, Role.builder().withName("role1").build(), role2))
             .build();
 
-        assertThat(sut.roleByName("role2")).isEqualTo(role2);
+        Assertions.assertThat(sut.roleByName("role2")).isEqualTo(role2);
         assertThatThrownBy(() ->
             sut.roleByName("roleX")
         ).isInstanceOf(RoleNotFoundException.class);
@@ -118,7 +115,7 @@ public class UserRolesTest {
         User newUser = sut.addNewUser("new-user");
 
         assertThat(newUser.id).isEqualTo("new-user");
-        assertThat(sut.users()).contains(newUser);
+        Assertions.assertThat(sut.users()).contains(newUser);
     }
 
     @Property
@@ -134,14 +131,14 @@ public class UserRolesTest {
             .withUsers(users)
             .build();
 
-        assertThat(sut.roles()).containsExactlyElementsOf(orderedRoles);
+        Assertions.assertThat(sut.roles()).containsExactlyElementsOf(orderedRoles);
 
         assertThat(authorizationsFromRoles(List.copyOf(sut.roles())))
             .containsExactlyElementsOf(authorizationsFromRoles(orderedRoles));
 
         sut.roles().forEach(role -> {
             List<User> usersForRole = orderedUsers.stream().filter(userByRoleNamePredicate(role.name)).collect(toList());
-            assertThat(sut.usersByRole(role)).containsExactlyElementsOf(usersForRole);
+            Assertions.assertThat(sut.usersByRole(role)).containsExactlyElementsOf(usersForRole);
         });
     }
 

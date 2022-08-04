@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContent;
 import com.chutneytesting.security.PropertyBasedTestingUtils;
 import com.chutneytesting.security.api.AuthorizationsDto;
-import com.chutneytesting.security.domain.UserRoles;
+import com.chutneytesting.server.core.security.UserRoles;
 import com.chutneytesting.security.infra.JsonFileAuthorizations;
 import com.chutneytesting.server.core.security.Role;
 import com.fasterxml.jackson.databind.ObjectMapper;

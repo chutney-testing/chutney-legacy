@@ -8,8 +8,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.component.scenario.domain.ComposableTestCase;
-import com.chutneytesting.component.scenario.infra.OrientComposableTestCaseRepository;
 import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.scenario.infra.raw.DatabaseTestCaseRepository;
 import com.chutneytesting.server.core.scenario.AggregatedRepository;
@@ -21,8 +19,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class TestCaseRepositoryAggregatorTest {
-
-    private final AggregatedRepository<ComposableTestCase> composableTestCaseRepository = mock(OrientComposableTestCaseRepository.class);
 
     @Test
     public void should_not_support_save_operation() {
@@ -39,8 +35,8 @@ public class TestCaseRepositoryAggregatorTest {
     @Test
     public void should_call_findById_on_all_repos_even_if_one_fails() {
         // Given
-        AggregatedRepository repo1 = mock(AggregatedRepository.class);
-        AggregatedRepository repo2 = mock(AggregatedRepository.class);
+        AggregatedRepository<? extends TestCase> repo1 = (AggregatedRepository<? extends TestCase>) mock(AggregatedRepository.class);
+        AggregatedRepository<? extends TestCase> repo2 = (AggregatedRepository<? extends TestCase>) mock(AggregatedRepository.class);
 
         when(repo1.findById(any())).thenThrow(RuntimeException.class);
 
@@ -60,8 +56,8 @@ public class TestCaseRepositoryAggregatorTest {
     @Test
     public void should_call_removeById_on_all_repos_even_if_one_fails() {
         // Given
-        AggregatedRepository repo1 = mock(AggregatedRepository.class);
-        AggregatedRepository repo2 = mock(AggregatedRepository.class);
+        AggregatedRepository<? extends TestCase> repo1 = (AggregatedRepository<? extends TestCase>) mock(AggregatedRepository.class);
+        AggregatedRepository<? extends TestCase> repo2 = (AggregatedRepository<? extends TestCase>) mock(AggregatedRepository.class);
 
         when(repo1.findById(any())).thenThrow(RuntimeException.class);
 
@@ -81,11 +77,12 @@ public class TestCaseRepositoryAggregatorTest {
     public void should_aggregate_all_repos_scenarios_when_findAll() {
         // Given
         DatabaseTestCaseRepository repo1 = mock(DatabaseTestCaseRepository.class);
+        final AggregatedRepository<? extends TestCase> externalTestCaseRepository = (AggregatedRepository<? extends TestCase>) mock(AggregatedRepository.class);
 
         when(repo1.findAll()).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
-        when(composableTestCaseRepository.findAll()).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
+        when(externalTestCaseRepository.findAll()).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
 
-        List<AggregatedRepository<? extends TestCase>> repos = List.of(repo1, composableTestCaseRepository);
+        List<AggregatedRepository<? extends TestCase>> repos = List.of(repo1, externalTestCaseRepository);
         TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repos);
 
         // When
@@ -99,11 +96,12 @@ public class TestCaseRepositoryAggregatorTest {
     public void should_aggregate_all_repos_available_scenarios_when_findAll_with_one_repo_failed() {
         // Given
         DatabaseTestCaseRepository repo1 = mock(DatabaseTestCaseRepository.class);
+        final AggregatedRepository<? extends TestCase> externalTestCaseRepository = (AggregatedRepository<? extends TestCase>) mock(AggregatedRepository.class);
 
         when(repo1.findAll()).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
-        when(composableTestCaseRepository.findAll()).thenThrow(new RuntimeException("Error searching for scenarios !!!"));
+        when(externalTestCaseRepository.findAll()).thenThrow(new RuntimeException("Error searching for scenarios !!!"));
 
-        List<AggregatedRepository<? extends TestCase>> repos = List.of(repo1, composableTestCaseRepository);
+        List<AggregatedRepository<? extends TestCase>> repos = List.of(repo1, externalTestCaseRepository);
         TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repos);
 
         // When
@@ -118,11 +116,12 @@ public class TestCaseRepositoryAggregatorTest {
         // Given
         final String filter = "filter";
         DatabaseTestCaseRepository repo1 = mock(DatabaseTestCaseRepository.class);
+        final AggregatedRepository<? extends TestCase> externalTestCaseRepository = (AggregatedRepository<? extends TestCase>) mock(AggregatedRepository.class);
 
         when(repo1.search(filter)).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
-        when(composableTestCaseRepository.search(filter)).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
+        when(externalTestCaseRepository.search(filter)).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
 
-        List<AggregatedRepository<? extends TestCase>> repos = List.of(repo1, composableTestCaseRepository);
+        List<AggregatedRepository<? extends TestCase>> repos = List.of(repo1, externalTestCaseRepository);
         TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repos);
 
         // When
@@ -137,11 +136,12 @@ public class TestCaseRepositoryAggregatorTest {
         // Given
         String filter = "filter";
         DatabaseTestCaseRepository repo1 = mock(DatabaseTestCaseRepository.class);
+        final AggregatedRepository<? extends TestCase> externalTestCaseRepository = (AggregatedRepository<? extends TestCase>) mock(AggregatedRepository.class);
 
         when(repo1.search(filter)).thenThrow(new RuntimeException("Error searching for scenarios !!!"));
-        when(composableTestCaseRepository.search(filter)).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
+        when(externalTestCaseRepository.search(filter)).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
 
-        List<AggregatedRepository<? extends TestCase>> repos = List.of(repo1, composableTestCaseRepository);
+        List<AggregatedRepository<? extends TestCase>> repos = List.of(repo1, externalTestCaseRepository);
         TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repos);
 
         // When

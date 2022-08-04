@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import com.chutneytesting.server.core.security.Authorization;
 import com.chutneytesting.server.core.security.Role;
 import com.chutneytesting.server.core.security.User;
+import com.chutneytesting.server.core.security.UserRoles;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

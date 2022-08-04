@@ -1,4 +1,4 @@
-package com.chutneytesting.security.domain;
+package com.chutneytesting.server.core.security;
 
 import static com.chutneytesting.server.core.security.Role.roleByNamePredicate;
 import static com.chutneytesting.server.core.security.User.userByIdPredicate;
@@ -8,8 +8,6 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
 
-import com.chutneytesting.server.core.security.Role;
-import com.chutneytesting.server.core.security.User;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;

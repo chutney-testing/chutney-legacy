@@ -5,7 +5,7 @@ import static java.util.Collections.singleton;
 import com.chutneytesting.security.api.UserController;
 import com.chutneytesting.security.api.UserDto;
 import com.chutneytesting.security.domain.Authorizations;
-import com.chutneytesting.security.domain.UserRoles;
+import com.chutneytesting.server.core.security.UserRoles;
 import com.chutneytesting.security.infra.handlers.Http401FailureHandler;
 import com.chutneytesting.security.infra.handlers.HttpEmptyLogoutSuccessHandler;
 import com.chutneytesting.security.infra.handlers.HttpStatusInvalidSessionStrategy;

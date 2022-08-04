@@ -7,7 +7,7 @@ import com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentProvider;
 import com.chutneytesting.security.api.AuthorizationMapper;
 import com.chutneytesting.security.api.AuthorizationsDto;
-import com.chutneytesting.security.domain.UserRoles;
+import com.chutneytesting.server.core.security.UserRoles;
 import com.chutneytesting.security.infra.JsonFileAuthorizations;
 import com.chutneytesting.tools.Try;
 import com.fasterxml.jackson.databind.ObjectMapper;

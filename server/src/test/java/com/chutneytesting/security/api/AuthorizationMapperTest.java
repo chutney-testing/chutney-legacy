@@ -3,12 +3,12 @@ package com.chutneytesting.security.api;
 import static com.chutneytesting.security.PropertyBasedTestingUtils.validRights;
 import static com.chutneytesting.security.PropertyBasedTestingUtils.validRoleNameWithoutDefault;
 import static com.chutneytesting.security.PropertyBasedTestingUtils.validUserId;
-import static com.chutneytesting.security.domain.UserRolesTest.authorizationsFromRoles;
+import static com.chutneytesting.server.core.security.UserRolesTest.authorizationsFromRoles;
 import static net.jqwik.api.Arbitraries.just;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.security.PropertyBasedTestingUtils;
-import com.chutneytesting.security.domain.UserRoles;
+import com.chutneytesting.server.core.security.UserRoles;
 import com.chutneytesting.server.core.security.Role;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;

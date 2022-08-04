@@ -15,12 +15,13 @@
 
     </properties>
     <dependencies>
+        <!-- Engine -->
         <dependency>
             <groupId>io.reactivex.rxjava2</groupId>
             <artifactId>rxjava</artifactId>
         </dependency>
 
-        <!-- For DTOs -->
+        <!-- DTOs -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatypes-collections</artifactId>
@@ -38,6 +39,7 @@
             <groupId>org.immutables</groupId>
             <artifactId>value</artifactId>
         </dependency>
+
         <!-- Other -->
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -56,5 +58,12 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
+
+        <!-- Test -->
+        <dependency>
+            <groupId>net.jqwik</groupId>
+            <artifactId>jqwik</artifactId>
+        </dependency>
+
     </dependencies>
 </project>

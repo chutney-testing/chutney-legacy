@@ -2,6 +2,7 @@ package com.chutneytesting.security.domain;
 
 import com.chutneytesting.server.core.security.Role;
 import com.chutneytesting.server.core.security.User;
+import com.chutneytesting.server.core.security.UserRoles;
 
 public class AuthenticationService {
 

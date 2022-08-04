@@ -12,7 +12,7 @@ import com.chutneytesting.junit.api.BeforeAll;
 import com.chutneytesting.junit.api.Chutney;
 import com.chutneytesting.junit.api.EnvironmentService;
 import com.chutneytesting.security.domain.Authorizations;
-import com.chutneytesting.security.domain.UserRoles;
+import com.chutneytesting.server.core.security.UserRoles;
 import com.chutneytesting.server.core.security.Authorization;
 import com.chutneytesting.server.core.security.Role;
 import com.chutneytesting.server.core.security.User;

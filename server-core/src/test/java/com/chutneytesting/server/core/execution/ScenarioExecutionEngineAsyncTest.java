@@ -1,4 +1,5 @@
-package com.chutneytesting.execution.domain.scenario;
+/*
+package com.chutneytesting.server.core.execution;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -316,3 +317,4 @@ public class ScenarioExecutionEngineAsyncTest {
         return storedExecution;
     }
 }
+*/

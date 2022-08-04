@@ -1,13 +1,10 @@
-package com.chutneytesting.security.domain;
+package com.chutneytesting.server.core.security;
 
 import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.chutneytesting.security.PropertyBasedTestingUtils;
-import com.chutneytesting.server.core.security.Authorization;
-import com.chutneytesting.server.core.security.Role;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;

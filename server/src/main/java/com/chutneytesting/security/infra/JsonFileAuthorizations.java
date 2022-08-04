@@ -6,7 +6,7 @@ import static com.chutneytesting.tools.file.FileUtils.initFolder;
 import com.chutneytesting.security.api.AuthorizationMapper;
 import com.chutneytesting.security.api.AuthorizationsDto;
 import com.chutneytesting.security.domain.Authorizations;
-import com.chutneytesting.security.domain.UserRoles;
+import com.chutneytesting.server.core.security.UserRoles;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

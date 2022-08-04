@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.util.Files.newTemporaryFolder;
 
 import com.chutneytesting.security.PropertyBasedTestingUtils;
-import com.chutneytesting.security.domain.UserRoles;
+import com.chutneytesting.server.core.security.UserRoles;
 import com.chutneytesting.server.core.security.Role;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.ForAll;
