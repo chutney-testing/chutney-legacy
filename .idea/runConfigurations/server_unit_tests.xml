@@ -1,6 +1,10 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="core_unit_tests" type="JUnit" factoryName="JUnit">
+  <configuration default="false" name="server_unit_tests" type="JUnit" factoryName="JUnit">
     <module name="server" />
+    <extension name="com.fapiko.jetbrains.plugins.better_direnv.runconfigs.IdeaRunConfigurationExtension">
+      <option name="DIRENV_ENABLED" value="false" />
+      <option name="DIRENV_TRUSTED" value="false" />
+    </extension>
     <option name="PACKAGE_NAME" value="com.chutneytesting" />
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
