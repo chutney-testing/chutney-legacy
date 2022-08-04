@@ -95,7 +95,7 @@ public class OrientComposableTestCaseRepository implements AggregatedRepository<
         String internalId = toInternalId(composableTestCaseId);
         Optional<ComposableTestCase> composableTestCase = findById(internalId);
         if(composableTestCase.isPresent()) {
-            return testCaseMapper.composableToExecutable((ComposableTestCase) composableTestCase.get());
+            return testCaseMapper.composableToExecutable(composableTestCase.get());
         } else {
             throw new ScenarioNotFoundException(composableTestCaseId);
         }

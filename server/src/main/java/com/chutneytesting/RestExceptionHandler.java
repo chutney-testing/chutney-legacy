@@ -3,6 +3,8 @@ package com.chutneytesting;
 import com.chutneytesting.admin.domain.BackupNotFoundException;
 import com.chutneytesting.admin.domain.gitbackup.UnreachableRemoteException;
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
+import com.chutneytesting.component.dataset.domain.DataSetNotFoundException;
+import com.chutneytesting.component.scenario.domain.ComposableStepNotFoundException;
 import com.chutneytesting.environment.domain.exception.AlreadyExistingEnvironmentException;
 import com.chutneytesting.environment.domain.exception.AlreadyExistingTargetException;
 import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
@@ -60,8 +62,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({
-        RuntimeException.class,
-        FailedExecutionAttempt.class
+        FailedExecutionAttempt.class,
+        RuntimeException.class
     })
     public ResponseEntity<Object> _500(RuntimeException ex, WebRequest request) {
         LOGGER.error("Controller global exception handler", ex);
@@ -69,16 +71,18 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({
-        TargetNotFoundException.class,
-        ScenarioNotFoundException.class,
-        CampaignNotFoundException.class,
-        CampaignExecutionNotFoundException.class,
-        EnvironmentNotFoundException.class,
-        CurrentUserNotFoundException.class,
         BackupNotFoundException.class,
-        ScenarioNotRunningException.class,
+        CampaignExecutionNotFoundException.class,
+        CampaignNotFoundException.class,
+        ComposableStepNotFoundException.class,
+        CurrentUserNotFoundException.class,
+        DataSetNotFoundException.class,
+        EnvironmentNotFoundException.class,
         GlobalVarNotFoundException.class,
         ReportNotFoundException.class,
+        ScenarioNotFoundException.class,
+        ScenarioNotRunningException.class,
+        TargetNotFoundException.class,
         UnreachableRemoteException.class
     })
     protected ResponseEntity<Object> notFound(RuntimeException ex, WebRequest request) {
@@ -88,10 +92,10 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({
-        AlreadyExistingTargetException.class,
         AlreadyExistingEnvironmentException.class,
-        CampaignAlreadyRunningException.class,
         AlreadyExistingScenarioException.class,
+        AlreadyExistingTargetException.class,
+        CampaignAlreadyRunningException.class
     })
     protected ResponseEntity<Object> conflict(RuntimeException ex, WebRequest request) {
         LOGGER.warn("Conflict >> " + ex.getMessage());
@@ -111,8 +115,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({
         DateTimeParseException.class,
-        InvalidEnvironmentNameException.class,
-        HttpMessageConversionException.class
+        HttpMessageConversionException.class,
+        InvalidEnvironmentNameException.class
     })
     protected ResponseEntity<Object> badRequest(RuntimeException ex, WebRequest request) {
         LOGGER.warn("Bad Request >> " + ex.getMessage());
@@ -121,8 +125,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({
-        IllegalArgumentException.class,
-        AccessDeniedException.class
+        AccessDeniedException.class,
+        IllegalArgumentException.class
     })
     protected ResponseEntity<Object> forbidden(RuntimeException ex, WebRequest request) {
         LOGGER.warn("Forbidden >> " + ex.getMessage());

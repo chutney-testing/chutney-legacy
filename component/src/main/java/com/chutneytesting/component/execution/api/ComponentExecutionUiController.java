@@ -4,11 +4,10 @@ import com.chutneytesting.component.execution.domain.ExecutableComposedScenario;
 import com.chutneytesting.component.execution.domain.ExecutableComposedStep;
 import com.chutneytesting.component.execution.domain.ExecutableComposedTestCase;
 import com.chutneytesting.component.execution.domain.ExecutableStepRepository;
-import com.chutneytesting.component.scenario.domain.ComposableTestCase;
+import com.chutneytesting.component.scenario.infra.OrientComposableTestCaseRepository;
 import com.chutneytesting.server.core.execution.ExecutionRequest;
 import com.chutneytesting.server.core.execution.ScenarioExecutionEngine;
 import com.chutneytesting.server.core.execution.report.ScenarioExecutionReport;
-import com.chutneytesting.server.core.scenario.AggregatedRepository;
 import com.chutneytesting.server.core.scenario.ScenarioNotFoundException;
 import com.chutneytesting.server.core.scenario.ScenarioNotParsableException;
 import com.chutneytesting.server.core.scenario.TestCase;
@@ -33,14 +32,16 @@ public class ComponentExecutionUiController {
     private final ScenarioExecutionEngine executionEngine;
     private final ObjectMapper reportObjectMapper;
 
-    private final AggregatedRepository<ComposableTestCase> testCaseRepository;
+    private final OrientComposableTestCaseRepository testCaseRepository;
+
     private final ExecutableStepRepository stepRepository;
     private final UserService userService;
 
     ComponentExecutionUiController(
         ScenarioExecutionEngine executionEngine,
         @Qualifier("reportObjectMapper") ObjectMapper reportObjectMapper,
-        AggregatedRepository<ComposableTestCase> testCaseRepository, ExecutableStepRepository stepRepository,
+        OrientComposableTestCaseRepository testCaseRepository,
+        ExecutableStepRepository stepRepository,
         UserService userService
     ) {
         this.executionEngine = executionEngine;
@@ -64,7 +65,7 @@ public class ComponentExecutionUiController {
     @PostMapping(path = "/api/ui/component/execution/v1/{scenarioId}/{env}")
     public String executeScenario(@PathVariable("scenarioId") String scenarioId, @PathVariable("env") String env) throws IOException {
         LOGGER.debug("executeScenario for scenarioId='{}'", scenarioId);
-        TestCase testCase = testCaseRepository.findById(scenarioId).orElseThrow(() -> new ScenarioNotFoundException(scenarioId));
+        TestCase testCase = testCaseRepository.findExecutableById(scenarioId);
         String userId = userService.currentUserId();
         ScenarioExecutionReport report = executionEngine.simpleSyncExecution(new ExecutionRequest(testCase, env, userId));
         return reportObjectMapper.writeValueAsString(report);
