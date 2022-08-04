@@ -44,7 +44,7 @@ public class DataSetTest {
             ))
             .build();
 
-        assertThat(dataSet.constants).containsExactlyEntriesOf(expectedMap);
+        assertThat(dataSet.constants).containsExactlyInAnyOrderEntriesOf(expectedMap);
         assertThat(dataSet.datatable).containsExactly(expectedMap, expectedMap);
     }
 
@@ -62,7 +62,7 @@ public class DataSetTest {
             ))
             .build();
 
-        assertThat(dataSet.constants).containsExactlyEntriesOf(expectedMap);
+        assertThat(dataSet.constants).containsExactlyInAnyOrderEntriesOf(expectedMap);
         assertThat(dataSet.datatable).containsExactly(expectedMap, expectedMap);
     }
 }
