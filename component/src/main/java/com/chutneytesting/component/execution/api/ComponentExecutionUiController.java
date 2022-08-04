@@ -51,7 +51,7 @@ public class ComponentExecutionUiController {
     }
 
     @PreAuthorize("hasAuthority('COMPONENT_WRITE')")
-    @PostMapping(path = "/api/ui/component/execution/v1/{componentId}/{env}")
+    @PostMapping(path = "/api/ui/componentstep/execution/v1/{componentId}/{env}")
     public String executeComponent(@PathVariable("componentId") String componentId, @PathVariable("env") String env) throws IOException {
         LOGGER.debug("executeComponent for componentId={{}] on env [{}]", componentId, env);
         ExecutableComposedStep composedStep = stepRepository.findExecutableById(componentId);
