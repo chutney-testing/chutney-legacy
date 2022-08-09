@@ -280,7 +280,7 @@ public class ComposedTestCaseParametersResolutionPreProcessorTest {
     }
 
     @Test
-    void should_preprocess_in_acceptable_time() {
+    void should_apply_preprocess_in_a_reasonable_timeframe_when_there_are_lots_of_globalvars() {
         // Given
         Arbitrary<String> keys = Arbitraries.strings().ascii().ofLength(15);
         Arbitrary<String> values = Arbitraries.strings().ascii().ofLength(500);
@@ -297,16 +297,12 @@ public class ComposedTestCaseParametersResolutionPreProcessorTest {
             .withParameters(parameters)
             .withImplementation(of(simpleImplementation))
             .build();
-        ExecutableComposedStep stepWithActions = ExecutableComposedStep.builder()
+        ExecutableComposedStep stepWithActions = ExecutableComposedStep.builder().from(actionStep)
             .withName("step with actions")
-            .withStrategy(strategyWithParameters)
-            .withParameters(parameters)
             .withSteps(nCopies(3, actionStep))
             .build();
-        ExecutableComposedStep stepWithSteps = ExecutableComposedStep.builder()
+        ExecutableComposedStep stepWithSteps = ExecutableComposedStep.builder().from(actionStep)
             .withName("step with higher steps")
-            .withParameters(parameters)
-            .withStrategy(strategyWithParameters)
             .withSteps(nCopies(3, stepWithActions))
             .build();
 
