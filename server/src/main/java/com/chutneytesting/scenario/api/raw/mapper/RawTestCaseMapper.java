@@ -8,10 +8,10 @@ import com.chutneytesting.scenario.api.raw.dto.RawTestCaseDto;
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.domain.raw.RawTestCase;
-import com.chutneytesting.server.core.scenario.ScenarioNotParsableException;
-import com.chutneytesting.server.core.scenario.TestCase;
-import com.chutneytesting.server.core.scenario.TestCaseMetadataImpl;
-import com.chutneytesting.server.core.tools.ui.KeyValue;
+import com.chutneytesting.server.core.domain.scenario.ScenarioNotParsableException;
+import com.chutneytesting.server.core.domain.scenario.TestCase;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.server.core.domain.tools.ui.KeyValue;
 import org.hjson.Stringify;
 
 public class RawTestCaseMapper {

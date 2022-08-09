@@ -5,8 +5,8 @@ import com.chutneytesting.scenario.api.raw.dto.GwtTestCaseDto;
 import com.chutneytesting.scenario.api.raw.dto.ImmutableGwtTestCaseDto;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.domain.raw.RawTestCase;
-import com.chutneytesting.server.core.scenario.TestCase;
-import com.chutneytesting.server.core.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.server.core.domain.scenario.TestCase;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import java.util.Collections;
 
 // TODO test me

@@ -1,7 +1,7 @@
 package com.chutneytesting.execution.infra.storage;
 
-import com.chutneytesting.server.core.execution.state.ExecutionStateRepository;
-import com.chutneytesting.server.core.execution.state.RunningScenarioState;
+import com.chutneytesting.server.core.domain.execution.state.ExecutionStateRepository;
+import com.chutneytesting.server.core.domain.execution.state.RunningScenarioState;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;

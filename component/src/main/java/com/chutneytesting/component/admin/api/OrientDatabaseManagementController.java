@@ -1,9 +1,9 @@
 package com.chutneytesting.component.admin.api;
 
-import com.chutneytesting.server.core.admin.DatabaseAdminService;
-import com.chutneytesting.server.core.admin.SqlResult;
-import com.chutneytesting.server.core.tools.PaginatedDto;
-import com.chutneytesting.server.core.tools.PaginationRequestWrapperDto;
+import com.chutneytesting.server.core.domain.admin.DatabaseAdminService;
+import com.chutneytesting.server.core.domain.admin.SqlResult;
+import com.chutneytesting.server.core.domain.tools.PaginatedDto;
+import com.chutneytesting.server.core.domain.tools.PaginationRequestWrapperDto;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;

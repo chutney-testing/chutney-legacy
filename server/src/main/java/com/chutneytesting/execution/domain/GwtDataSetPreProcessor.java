@@ -2,9 +2,9 @@ package com.chutneytesting.execution.domain;
 
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
-import com.chutneytesting.server.core.execution.ExecutionRequest;
-import com.chutneytesting.server.core.execution.processor.TestCasePreProcessor;
-import com.chutneytesting.server.core.globalvar.GlobalvarRepository;
+import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
+import com.chutneytesting.server.core.domain.execution.processor.TestCasePreProcessor;
+import com.chutneytesting.server.core.domain.globalvar.GlobalvarRepository;
 import java.util.Map;
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.stereotype.Component;

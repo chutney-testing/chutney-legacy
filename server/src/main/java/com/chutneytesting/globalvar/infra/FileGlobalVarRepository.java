@@ -3,8 +3,8 @@ package com.chutneytesting.globalvar.infra;
 import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
 
-import com.chutneytesting.server.core.globalvar.GlobalVarNotFoundException;
-import com.chutneytesting.server.core.globalvar.GlobalvarRepository;
+import com.chutneytesting.server.core.domain.globalvar.GlobalVarNotFoundException;
+import com.chutneytesting.server.core.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.tools.ZipUtils;
 import com.chutneytesting.tools.file.FileUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;

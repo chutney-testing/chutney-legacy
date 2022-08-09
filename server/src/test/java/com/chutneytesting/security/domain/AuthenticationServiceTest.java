@@ -6,10 +6,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.server.core.security.Authorization;
-import com.chutneytesting.server.core.security.Role;
-import com.chutneytesting.server.core.security.User;
-import com.chutneytesting.server.core.security.UserRoles;
+import com.chutneytesting.server.core.domain.security.Authorization;
+import com.chutneytesting.server.core.domain.security.Role;
+import com.chutneytesting.server.core.domain.security.User;
+import com.chutneytesting.server.core.domain.security.UserRoles;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

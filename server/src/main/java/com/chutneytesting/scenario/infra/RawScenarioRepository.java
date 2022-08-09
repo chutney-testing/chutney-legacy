@@ -3,7 +3,7 @@ package com.chutneytesting.scenario.infra;
 
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.domain.raw.RawTestCase;
-import com.chutneytesting.server.core.scenario.AggregatedRepository;
+import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
 
 public interface RawScenarioRepository extends AggregatedRepository<RawTestCase> {
 

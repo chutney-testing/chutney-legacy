@@ -1,8 +1,8 @@
 package com.chutneytesting.component.execution.domain;
 
-import com.chutneytesting.server.core.scenario.TestCase;
-import com.chutneytesting.server.core.scenario.TestCaseMetadata;
-import com.chutneytesting.server.core.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.server.core.domain.scenario.TestCase;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;

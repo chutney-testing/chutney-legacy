@@ -1,9 +1,9 @@
 package com.chutneytesting.component.execution.domain;
 
 import com.chutneytesting.component.dataset.domain.DataSetRepository;
-import com.chutneytesting.server.core.execution.ExecutionRequest;
-import com.chutneytesting.server.core.execution.processor.TestCasePreProcessor;
-import com.chutneytesting.server.core.globalvar.GlobalvarRepository;
+import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
+import com.chutneytesting.server.core.domain.execution.processor.TestCasePreProcessor;
+import com.chutneytesting.server.core.domain.globalvar.GlobalvarRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 

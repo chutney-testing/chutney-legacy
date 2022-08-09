@@ -1,15 +1,15 @@
 package com.chutneytesting.admin.infra;
 
 
-import static com.chutneytesting.server.core.admin.SqlResult.*;
+import static com.chutneytesting.server.core.domain.admin.SqlResult.*;
 
-import com.chutneytesting.server.core.admin.DatabaseAdminService;
-import com.chutneytesting.server.core.admin.SqlResult;
-import com.chutneytesting.server.core.admin.SqlResult.Table;
-import com.chutneytesting.server.core.tools.ImmutablePaginatedDto;
-import com.chutneytesting.server.core.tools.PaginatedDto;
-import com.chutneytesting.server.core.tools.PaginationRequestWrapperDto;
-import com.chutneytesting.server.core.tools.SqlUtils;
+import com.chutneytesting.server.core.domain.admin.DatabaseAdminService;
+import com.chutneytesting.server.core.domain.admin.SqlResult;
+import com.chutneytesting.server.core.domain.admin.SqlResult.Table;
+import com.chutneytesting.server.core.domain.tools.ImmutablePaginatedDto;
+import com.chutneytesting.server.core.domain.tools.PaginatedDto;
+import com.chutneytesting.server.core.domain.tools.PaginationRequestWrapperDto;
+import com.chutneytesting.server.core.domain.tools.SqlUtils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

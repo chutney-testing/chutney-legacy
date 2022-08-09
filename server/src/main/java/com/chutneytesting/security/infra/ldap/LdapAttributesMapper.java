@@ -2,8 +2,8 @@ package com.chutneytesting.security.infra.ldap;
 
 import com.chutneytesting.security.api.UserDto;
 import com.chutneytesting.security.domain.AuthenticationService;
-import com.chutneytesting.server.core.security.Authorization;
-import com.chutneytesting.server.core.security.Role;
+import com.chutneytesting.server.core.domain.security.Authorization;
+import com.chutneytesting.server.core.domain.security.Role;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

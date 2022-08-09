@@ -4,11 +4,11 @@ import com.chutneytesting.execution.api.report.surefire.Testsuite.Properties;
 import com.chutneytesting.execution.api.report.surefire.Testsuite.Testcase;
 import com.chutneytesting.execution.api.report.surefire.Testsuite.Testcase.Failure;
 
-import com.chutneytesting.server.core.execution.history.ExecutionHistoryRepository;
-import com.chutneytesting.server.core.execution.report.ScenarioExecutionReport;
-import com.chutneytesting.server.core.execution.report.ServerReportStatus;
-import com.chutneytesting.server.core.execution.report.StepExecutionReportCore;
-import com.chutneytesting.server.core.scenario.campaign.ScenarioExecutionReportCampaign;
+import com.chutneytesting.server.core.domain.execution.history.ExecutionHistoryRepository;
+import com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport;
+import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
+import com.chutneytesting.server.core.domain.execution.report.StepExecutionReportCore;
+import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import java.io.IOException;

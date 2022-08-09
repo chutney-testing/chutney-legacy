@@ -6,11 +6,11 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
-import com.chutneytesting.server.core.scenario.AggregatedRepository;
-import com.chutneytesting.server.core.scenario.ScenarioNotFoundException;
-import com.chutneytesting.server.core.scenario.TestCaseMetadata;
-import com.chutneytesting.server.core.scenario.TestCaseMetadataImpl;
-import com.chutneytesting.server.core.security.User;
+import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
+import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.server.core.domain.security.User;
 import com.chutneytesting.tools.Try;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

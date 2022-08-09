@@ -10,9 +10,9 @@ import static org.mockito.Mockito.when;
 
 import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.scenario.infra.raw.DatabaseTestCaseRepository;
-import com.chutneytesting.server.core.scenario.AggregatedRepository;
-import com.chutneytesting.server.core.scenario.TestCase;
-import com.chutneytesting.server.core.scenario.TestCaseMetadata;
+import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
+import com.chutneytesting.server.core.domain.scenario.TestCase;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import java.util.List;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;

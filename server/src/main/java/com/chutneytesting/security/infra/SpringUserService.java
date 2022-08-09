@@ -2,7 +2,7 @@ package com.chutneytesting.security.infra;
 
 import com.chutneytesting.security.api.UserDto;
 import com.chutneytesting.security.domain.CurrentUserNotFoundException;
-import com.chutneytesting.server.core.security.UserService;
+import com.chutneytesting.server.core.domain.security.UserService;
 import java.util.Optional;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

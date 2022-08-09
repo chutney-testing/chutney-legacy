@@ -1,6 +1,6 @@
 package com.chutneytesting.security.domain;
 
-import com.chutneytesting.server.core.security.UserRoles;
+import com.chutneytesting.server.core.domain.security.UserRoles;
 
 public interface Authorizations {
 

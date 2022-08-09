@@ -2,9 +2,9 @@ package com.chutneytesting.execution.infra.storage;
 
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.server.core.execution.report.ServerReportStatus;
-import com.chutneytesting.server.core.execution.history.ExecutionHistory.ExecutionSummary;
-import com.chutneytesting.server.core.execution.history.ImmutableExecutionHistory;
+import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
+import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.ExecutionSummary;
+import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;

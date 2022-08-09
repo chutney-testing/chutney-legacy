@@ -1,10 +1,10 @@
 package com.chutneytesting.scenario.domain;
 
-import com.chutneytesting.server.core.scenario.AggregatedRepository;
-import com.chutneytesting.server.core.scenario.ScenarioNotFoundException;
-import com.chutneytesting.server.core.scenario.TestCase;
-import com.chutneytesting.server.core.scenario.TestCaseMetadata;
-import com.chutneytesting.server.core.scenario.TestCaseRepository;
+import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
+import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
+import com.chutneytesting.server.core.domain.scenario.TestCase;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
+import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;

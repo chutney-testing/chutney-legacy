@@ -1,6 +1,6 @@
 package com.chutneytesting.campaign.api.dto;
 
-import com.chutneytesting.server.core.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import java.util.stream.Collectors;
 
 public class CampaignExecutionReportMapper {

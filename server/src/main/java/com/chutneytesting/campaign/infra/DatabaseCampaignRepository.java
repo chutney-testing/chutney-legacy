@@ -3,8 +3,8 @@ package com.chutneytesting.campaign.infra;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.server.core.scenario.campaign.Campaign;
-import com.chutneytesting.server.core.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
 import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.scenario.infra.raw.TagListMapper;

@@ -7,8 +7,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import com.chutneytesting.campaign.domain.CampaignRepository;
-import com.chutneytesting.server.core.scenario.campaign.Campaign;
-import com.chutneytesting.server.core.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import com.chutneytesting.tests.AbstractLocalDatabaseTest;
 import java.util.HashMap;
 import java.util.List;

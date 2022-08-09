@@ -3,9 +3,9 @@ package com.chutneytesting.scenario.domain.raw;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
 
-import com.chutneytesting.server.core.scenario.TestCase;
-import com.chutneytesting.server.core.scenario.TestCaseMetadata;
-import com.chutneytesting.server.core.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.server.core.domain.scenario.TestCase;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;

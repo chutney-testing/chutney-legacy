@@ -1,7 +1,7 @@
 package com.chutneytesting.campaign.api.dto;
 
-import com.chutneytesting.server.core.execution.report.ServerReportStatus;
-import com.chutneytesting.server.core.execution.history.ExecutionHistory;
+import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
+import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
 

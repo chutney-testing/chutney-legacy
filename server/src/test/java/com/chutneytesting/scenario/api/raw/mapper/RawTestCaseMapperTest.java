@@ -3,7 +3,7 @@ package com.chutneytesting.scenario.api.raw.mapper;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.chutneytesting.scenario.api.raw.dto.ImmutableRawTestCaseDto;
-import com.chutneytesting.server.core.scenario.ScenarioNotParsableException;
+import com.chutneytesting.server.core.domain.scenario.ScenarioNotParsableException;
 import org.junit.jupiter.api.Test;
 
 public class RawTestCaseMapperTest {

@@ -1,7 +1,7 @@
 package com.chutneytesting.component.scenario.infra;
 
 import com.chutneytesting.component.execution.domain.StepImplementation;
-import com.chutneytesting.server.core.execution.ScenarioConversionException;
+import com.chutneytesting.server.core.domain.execution.ScenarioConversionException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;

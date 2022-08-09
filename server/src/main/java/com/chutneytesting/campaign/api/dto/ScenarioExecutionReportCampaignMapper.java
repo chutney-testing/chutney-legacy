@@ -1,7 +1,7 @@
 package com.chutneytesting.campaign.api.dto;
 
 
-import com.chutneytesting.server.core.scenario.campaign.ScenarioExecutionReportCampaign;
+import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
 
 public class ScenarioExecutionReportCampaignMapper {
 
