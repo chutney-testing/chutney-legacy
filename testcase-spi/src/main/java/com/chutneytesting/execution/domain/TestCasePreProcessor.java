@@ -1,7 +1,6 @@
 package com.chutneytesting.execution.domain;
 
 import com.chutneytesting.scenario.domain.TestCase;
-import com.chutneytesting.execution.domain.ExecutionRequest;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -29,7 +28,10 @@ public interface TestCasePreProcessor<T extends TestCase> {
     default String replaceParams(Map<String, String> dataSet, String concreteString, Function<String, String> escapeValueFunction) {
         String stringReplaced = concreteString;
         for (Map.Entry<String, String> entry : dataSet.entrySet()) {
-            stringReplaced = stringReplaced.replace("**" + entry.getKey() + "**", escapeValueFunction.apply(entry.getValue()));
+            String stringToReplace = "**" + entry.getKey() + "**";
+            if (stringReplaced.contains(stringToReplace)) {
+                stringReplaced = stringReplaced.replace(stringToReplace, escapeValueFunction.apply(entry.getValue()));
+            }
         }
         return stringReplaced;
     }
