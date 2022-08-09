@@ -88,7 +88,7 @@
         <!-- Runtime dependencies versions -->
 
         <springboot.version>2.7.0</springboot.version>
-        <spring-security-test.version>5.7.1</spring-security-test.version> <!-- Be careful to follow spring-security-core version-->
+        <spring-security-test.version>5.7.2</spring-security-test.version> <!-- Be careful to follow spring-security-core version-->
         <spring-kafka-test.version>2.8.6</spring-kafka-test.version> <!-- Be careful to follow springboot version-->
         <kafka.version>3.1.1</kafka.version> <!-- == spring boot version-->
         <jackson.version>2.13.3</jackson.version> <!-- == spring boot version-->
@@ -99,7 +99,7 @@
         <commonstext.version>1.9</commonstext.version>
         <commonsio.version>2.11.0</commonsio.version>
         <rxjava.version>3.1.5</rxjava.version> <!-- override spring boot version 2.2.21  -->
-        <jgit-jsch.version>6.1.0.202203080745-r</jgit-jsch.version>
+        <jgit-jsch.version>6.2.0.202206071550-r</jgit-jsch.version>
         <jsch.version>0.1.55</jsch.version>
         <org.everit.json.schema.version>1.14.1</org.everit.json.schema.version>
         <glacio.version>0.0.1</glacio.version>
