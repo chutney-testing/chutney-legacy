@@ -99,7 +99,7 @@
         <commonstext.version>1.9</commonstext.version>
         <commonsio.version>2.11.0</commonsio.version>
         <rxjava.version>3.1.5</rxjava.version> <!-- override spring boot version 2.2.21  -->
-        <jgit-jsch.version>6.1.0.202203080745-r</jgit-jsch.version>
+        <jgit-jsch.version>6.2.0.202206071550-r</jgit-jsch.version>
         <jsch.version>0.1.55</jsch.version>
         <org.everit.json.schema.version>1.14.1</org.everit.json.schema.version>
         <glacio.version>0.0.1</glacio.version>
