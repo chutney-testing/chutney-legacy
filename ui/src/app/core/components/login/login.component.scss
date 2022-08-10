@@ -1,4 +1,4 @@
-//@import "variables";
+@import "themes/flatly/variables";
 
 .divider:after,
 .divider:before {
@@ -13,11 +13,11 @@
 }
 
 .bg-login {
-    //background: linear-gradient(to left, $secondary 50%, $white 50%);
+   // background: linear-gradient(to left, $white 50%, $primary 50%);
 }
 
 @media screen and (max-width: 992px) {
     .bg-login {
-      //  background: $white;
+        //background: $white;
     }
 }
