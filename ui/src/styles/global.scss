@@ -3,9 +3,9 @@
 @import 'colors';
 @import 'fonts';
 @import 'alias';
-@import 'variables';
+@import 'themes/flatly/variables';
 @import "~bootstrap/scss/bootstrap";
-@import 'bootswatch';
+@import 'themes/flatly/bootswatch';
 
 
 $row-margin-up-down: 10px !default;
