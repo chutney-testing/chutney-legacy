@@ -1,51 +1,45 @@
 <section>
   <div class="container-fluid bg-login min-vh-100">
     <div class="row d-flex justify-content-center pb-4">
-      <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1 pt-5">
-        <form name="form" (ngSubmit)="login()">
-          <div class="form-floating mb-5">
-            <h3>Login</h3>
-          </div>
+      <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1 pt-5 ">
+        <div class="shadow p-5 mb-5 pb-4" style="background-color: #f8f9fa; border-radius: 20px;">
+          <form name="form" (ngSubmit)="login()">
+            <div class="form-floating mb-5">
+              <h3>Logo</h3>
+            </div>
 
-          <div *ngIf="connectionError" class="alert alert-dismissible alert-danger">
+            <div class="form-floating mb-4">
+              <input type="text" id="username" class="form-control form-control-lg" placeholder="Enter a user name"
+                [(ngModel)]="username" [ngModelOptions]="{standalone: true}" />
+              <label class="form-label" for="username">User name</label>
+            </div>
+
+            <div class="form-floating mb-3">
+              <input type="password" id="password" class="form-control form-control-lg" placeholder="Enter password"
+                [(ngModel)]="password" [ngModelOptions]="{standalone: true}" />
+              <label class="form-label" for="password">Password</label>
+            </div>
+
+            <div class="text-center text-lg-start mt-4 pt-2">
+              <button type="submit" class="btn btn-primary btn-lg w-100">Login</button>
+            </div>
+
+          </form>
+
+          <div *ngIf="connectionError" class="alert alert-dismissible alert-danger mt-4">
             <button type="button" class="btn-close" data-bs-dismiss="alert" (click)="connectionError = null"></button>
             {{ connectionError }}
           </div>
-
-          <div *ngIf="connectionError" class="divider d-flex align-items-center my-4">
-          </div>
-
-          <div class="form-floating mb-4">
-            <input type="text" id="username" class="form-control form-control-lg" placeholder="Enter a user name"
-              [(ngModel)]="username" [ngModelOptions]="{standalone: true}" />
-            <label class="form-label" for="username">User name</label>
-          </div>
-
-          <div class="form-floating mb-3">
-            <input type="password" id="password" class="form-control form-control-lg" placeholder="Enter password"
-              [(ngModel)]="password" [ngModelOptions]="{standalone: true}" />
-            <label class="form-label" for="password">Password</label>
-          </div>
-
-          <div class="text-center text-lg-start mt-4 pt-2">
-            <button type="submit" class="btn btn-primary btn-lg w-100">Login</button>
-          </div>
-
-        </form>
+        </div>
       </div>
-      <div class="col-md-9 col-lg-6 col-xl-5 order-lg-first">
-        <div class="d-flex justify-content-center fs-3">
-          Instance TITLE
+      <!-- background-image: url('../../../assets/img/sunrise.jpg'); background-size: 100%;"> -->
+      <div class="col-md-9 col-lg-6 col-xl-5 order-lg-first" style="color:black;">
+        <div class="d-flex justify-content-center fs-3 mb-4">
+          Instance DEV
         </div>
-        <div class="my-3">
-          description instance - Lorem ipsum dolor sit amet. A quod voluptatem sed officia mollitia cum exercitationem
-          repellendus eos praesentium autem a repellat illo. Est sint pariatur et quia galisum qui velit expedita sit
-          repellat quisquam. Et dolorem modi qui ipsa voluptas ex sunt consequatur aut aliquam delectus At quisquam
-          repellat hic necessitatibus et dignissimos tempore!
-        </div>
-        <span>
-          quelques chiffres
-        </span>
+          <div  class="d-flex justify-content-center">
+            <img src="../../../assets/img/sunrise.jpg" class="img-fluid w-60" alt="homepage image">
+          </div>
       </div>
     </div>
   </div>
