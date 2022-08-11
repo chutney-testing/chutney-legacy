@@ -1,4 +1,4 @@
-/*
+
 package com.chutneytesting.server.core.domain.execution;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,6 +21,7 @@ import com.chutneytesting.server.core.domain.execution.report.StepExecutionRepor
 import com.chutneytesting.server.core.domain.execution.report.StepExecutionReportCoreBuilder;
 import com.chutneytesting.server.core.domain.execution.state.ExecutionStateRepository;
 import com.chutneytesting.server.core.domain.instrument.ChutneyMetrics;
+import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.reactivex.Observable;
@@ -74,7 +75,7 @@ public class ScenarioExecutionEngineAsyncTest {
     @Test
     public void should_store_initial_report_and_notify_start_end_execution_and_metrics_when_execute_empty_scenario() {
         // Given
-        final RawTestCase testCase = emptyTestCase();
+        final TestCase testCase = emptyTestCase();
         final String scenarioId = testCase.id();
         final long executionId = 3L;
 
@@ -115,7 +116,7 @@ public class ScenarioExecutionEngineAsyncTest {
     @Test
     public void should_send_reports_and_update_history_and_send_metrics_and_notify_startend_when_observe_engine_execution() {
         // Given
-        final RawTestCase testCase = emptyTestCase();
+        final TestCase testCase = emptyTestCase();
         final String scenarioId = testCase.id();
         final Long executionId = 4L;
 
@@ -135,8 +136,7 @@ public class ScenarioExecutionEngineAsyncTest {
         sut.setDebounceMilliSeconds(0);
 
         // When
-        TestObserver<ScenarioExecutionReport> testObserver =
-            null;//sut.buildScenarioExecutionReportObservable(new ExecutionRequest(emptyTestCase(), "", ""), executionId, engineStub.getLeft()).test();
+        TestObserver<ScenarioExecutionReport> testObserver = sut.buildScenarioExecutionReportObservable(new ExecutionRequest(emptyTestCase(), "", ""), executionId, engineStub.getLeft()).test();
 
         // Then
         assertTestObserverStateWithValues(testObserver, 0, false);
@@ -170,7 +170,7 @@ public class ScenarioExecutionEngineAsyncTest {
         // Given
         final String scenarioId = "1";
         final long executionId = 5L;
-        final RawTestCase testCase = emptyTestCase();
+        final TestCase testCase = emptyTestCase();
 
         when(executionStateRepository.runningState(scenarioId)).thenReturn(Optional.empty());
         when(testCasePreProcessors.apply(any())).thenReturn(testCase);
@@ -237,15 +237,12 @@ public class ScenarioExecutionEngineAsyncTest {
 
     private static final String EMPTY_TESTCASE_NAME = "empty test case";
 
-    private RawTestCase emptyTestCase() {
-        return RawTestCase.builder()
-            .withMetadata(TestCaseMetadataImpl.builder()
-                .withId("1")
-                .withCreationDate(Instant.now())
-                .withTitle(EMPTY_TESTCASE_NAME)
-                .build())
-            .withScenario("")
-            .build();
+    private TestCase emptyTestCase() {
+        TestCase mockedTestCase = mock(TestCase.class);
+        when(mockedTestCase.id()).thenReturn("1");
+        TestCaseMetadataImpl metadata = TestCaseMetadataImpl.builder().withTitle(EMPTY_TESTCASE_NAME).build();
+        when(mockedTestCase.metadata()).thenReturn(metadata);
+        return mockedTestCase;
     }
 
     private StepExecutionReportCore stepExecution(String stepName, ServerReportStatus stepStatus, List<StepExecutionReportCore> subStepsReports, Instant startDate) {
@@ -312,4 +309,3 @@ public class ScenarioExecutionEngineAsyncTest {
         return storedExecution;
     }
 }
-*/
