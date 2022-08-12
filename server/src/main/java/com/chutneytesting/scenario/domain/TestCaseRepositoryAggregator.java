@@ -47,6 +47,23 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
     }
 
     @Override
+    public Optional<TestCase> findExecutableById(String testCaseId) {
+        return aggregatedRepositories
+            .stream()
+            .map(repo -> {
+                try {
+                    return repo.findExecutableById(testCaseId);
+                } catch (Exception e) {
+                    return Optional.empty();
+                }
+            })
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .map(opt -> (TestCase) opt)
+            .findFirst();
+    }
+
+    @Override
     public Optional<TestCaseMetadata> findMetadataById(String testCaseId) {
         Optional<TestCase> testCase = findById(testCaseId);
         return testCase.map(TestCase::metadata);
@@ -96,6 +113,7 @@ public class TestCaseRepositoryAggregator implements TestCaseRepository {
             )
             .collect(Collectors.toList());
     }
+
 
     private Stream<TestCaseMetadata> getTestCaseMetadataStream(Supplier<List<TestCaseMetadata>> sup, String repoName) {
         try {

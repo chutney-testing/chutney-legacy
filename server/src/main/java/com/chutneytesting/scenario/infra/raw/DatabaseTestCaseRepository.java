@@ -8,6 +8,7 @@ import static java.util.Optional.of;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
+import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.server.core.domain.security.User;
@@ -52,7 +53,7 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
 
     @Override
     public String save(GwtTestCase testCase) {
-        TestCaseData testCaseData = TestCaseDataMapper.toDto( testCase);
+        TestCaseData testCaseData = TestCaseDataMapper.toDto(testCase);
         if (isNewScenario(testCaseData)) {
             return doSave(testCaseData);
         }
@@ -65,6 +66,16 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
             TestCaseData testCaseData = uiNamedParameterJdbcTemplate.queryForObject("SELECT * FROM SCENARIO WHERE ID = :id and ACTIVATED = TRUE", buildIdParameterMap(scenarioId), scenario_row_mapper);
             return Optional.ofNullable(testCaseData).map(TestCaseDataMapper::fromDto);
         } catch (IncorrectResultSizeDataAccessException e) {
+            return empty();
+        }
+    }
+
+    @Override
+    public Optional<TestCase> findExecutableById(String id) {
+        Optional<GwtTestCase> byId = findById(id);
+        if (byId.isPresent()) {
+            return of(byId.get());
+        } else {
             return empty();
         }
     }

@@ -53,7 +53,7 @@ public class TestCaseControllerTest {
         currentUser.setId("currentUser");
         when(userService.currentUser()).thenReturn(currentUser);
 
-        GwtTestCaseController testCaseController = new GwtTestCaseController(testCaseRepository, null, userService);
+        GwtTestCaseController testCaseController = new GwtTestCaseController(testCaseRepository, userService);
         mockMvc = MockMvcBuilders.standaloneSetup(testCaseController)
             .setControllerAdvice(new RestExceptionHandler(Mockito.mock(ChutneyMetrics.class)))
             .build();

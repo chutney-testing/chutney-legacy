@@ -16,6 +16,7 @@ import com.chutneytesting.server.core.domain.security.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -65,10 +66,14 @@ public class ComponentExecutionUiController {
     @PostMapping(path = "/api/ui/component/execution/v1/{scenarioId}/{env}")
     public String executeScenario(@PathVariable("scenarioId") String scenarioId, @PathVariable("env") String env) throws IOException {
         LOGGER.debug("executeScenario for scenarioId='{}'", scenarioId);
-        TestCase testCase = testCaseRepository.findExecutableById(scenarioId);
-        String userId = userService.currentUserId();
-        ScenarioExecutionReport report = executionEngine.simpleSyncExecution(new ExecutionRequest(testCase, env, userId));
-        return reportObjectMapper.writeValueAsString(report);
+        Optional<TestCase> executableByTestCase = testCaseRepository.findExecutableById(scenarioId);
+        if (executableByTestCase.isPresent()) {
+            String userId = userService.currentUserId();
+            ScenarioExecutionReport report = executionEngine.simpleSyncExecution(new ExecutionRequest(executableByTestCase.get(), env, userId));
+            return reportObjectMapper.writeValueAsString(report);
+        } else {
+            throw new ScenarioNotFoundException(scenarioId);
+        }
     }
 
     public ScenarioExecutionReport execute(ExecutableComposedStep composedStep, String environment, String userId) throws ScenarioNotFoundException, ScenarioNotParsableException {

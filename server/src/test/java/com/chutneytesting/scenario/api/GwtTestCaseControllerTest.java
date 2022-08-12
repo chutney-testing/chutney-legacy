@@ -39,7 +39,6 @@ public class GwtTestCaseControllerTest {
 
     private MockMvc mockMvc;
     private final AggregatedRepository<GwtTestCase> testCaseRepository = mock(AggregatedRepository.class);
-    private final ExecutionHistoryRepository executionHistoryRepository = mock(ExecutionHistoryRepository.class);
     private final SpringUserService userService = mock(SpringUserService.class);
     private final UserDto currentUser = new UserDto();
 
@@ -47,19 +46,11 @@ public class GwtTestCaseControllerTest {
     public void setUp() {
         currentUser.setId("currentUser");
         when(userService.currentUser()).thenReturn(currentUser);
-        GwtTestCaseController testCaseController = new GwtTestCaseController(testCaseRepository, executionHistoryRepository, userService);
+        GwtTestCaseController testCaseController = new GwtTestCaseController(testCaseRepository, userService);
         mockMvc = MockMvcBuilders.standaloneSetup(testCaseController).build();
 
         // Default stubbing
         when(testCaseRepository.save(any(GwtTestCase.class))).thenReturn("1");
-    }
-
-    @Test
-    public void should_delete_scenario_with_repository_when_delete_scenario() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/scenario/v2/1")
-            .accept(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(MockMvcResultMatchers.status().isOk());
-        verify(testCaseRepository).removeById(eq("1"));
     }
 
     @Test

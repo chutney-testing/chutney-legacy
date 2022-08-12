@@ -19,6 +19,7 @@ import com.chutneytesting.component.scenario.api.dto.ImmutableComposableScenario
 import com.chutneytesting.component.scenario.api.dto.ImmutableComposableTestCaseDto;
 import com.chutneytesting.component.scenario.domain.ComposableScenario;
 import com.chutneytesting.component.scenario.domain.ComposableTestCase;
+import com.chutneytesting.component.scenario.infra.OrientComposableTestCaseRepository;
 import com.chutneytesting.server.core.domain.execution.processor.TestCasePreProcessors;
 import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
@@ -43,7 +44,7 @@ public class ComponentEditionControllerTest {
             )
             .build();
 
-    private final AggregatedRepository<ComposableTestCase> composableTestCaseRepository = mock(AggregatedRepository.class);
+    private final OrientComposableTestCaseRepository composableTestCaseRepository = mock(OrientComposableTestCaseRepository.class);
     private final UserService userService = mock(UserService.class);
     private final TestCasePreProcessors testCasePreProcessors  = mock(TestCasePreProcessors.class);
 
@@ -101,7 +102,7 @@ public class ComponentEditionControllerTest {
         mockMvc.perform(get(ComponentEditionController.BASE_URL + "/" + DEFAULT_COMPOSABLE_TESTCASE_ID + "/executable" ));
 
         // Then
-        verify(composableTestCaseRepository).findById(DEFAULT_COMPOSABLE_TESTCASE_ID);
+        verify(composableTestCaseRepository).findExecutableById(DEFAULT_COMPOSABLE_TESTCASE_ID);
         verify(testCasePreProcessors).apply(any());
     }
 

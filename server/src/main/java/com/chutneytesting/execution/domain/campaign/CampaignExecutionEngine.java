@@ -167,7 +167,7 @@ public class CampaignExecutionEngine {
     private CampaignExecutionReport execute(Campaign campaign, CampaignExecutionReport campaignExecutionReport, List<String> scenariosToExecute) {
         LOGGER.trace("Execute campaign {} : {}", campaign.id, campaign.title);
         List<TestCase> testCases = scenariosToExecute.stream()
-            .map(testCaseRepository::findById)
+            .map(testCaseRepository::findExecutableById)
             .filter(Optional::isPresent)
             .map(Optional::get)
             .collect(Collectors.toList());

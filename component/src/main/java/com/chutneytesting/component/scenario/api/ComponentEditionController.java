@@ -7,15 +7,16 @@ import static java.time.Instant.now;
 import com.chutneytesting.component.execution.domain.ExecutableComposedTestCase;
 import com.chutneytesting.component.scenario.api.dto.ComposableTestCaseDto;
 import com.chutneytesting.component.scenario.domain.ComposableTestCase;
+import com.chutneytesting.component.scenario.infra.OrientComposableTestCaseRepository;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
 import com.chutneytesting.server.core.domain.execution.processor.TestCasePreProcessors;
-import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.server.core.domain.security.UserService;
 import com.chutneytesting.server.core.domain.tools.ui.KeyValue;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -34,12 +35,12 @@ public class ComponentEditionController {
 
     static final String BASE_URL = "/api/scenario/component-edition";
 
-    private final AggregatedRepository<ComposableTestCase> composableTestCaseRepository;
+    private final OrientComposableTestCaseRepository composableTestCaseRepository;
     private final UserService userService;
     private final TestCasePreProcessors testCasePreProcessors;
 
-    public ComponentEditionController(AggregatedRepository<ComposableTestCase> composableTestCaseRepository, UserService userService, TestCasePreProcessors testCasePreProcessors) {
-        this.composableTestCaseRepository = composableTestCaseRepository;
+    public ComponentEditionController(OrientComposableTestCaseRepository orientComposableTestCaseRepository, UserService userService, TestCasePreProcessors testCasePreProcessors) {
+        this.composableTestCaseRepository = orientComposableTestCaseRepository;
         this.userService = userService;
         this.testCasePreProcessors = testCasePreProcessors;
     }
@@ -75,10 +76,13 @@ public class ComponentEditionController {
     @PreAuthorize("hasAuthority('SCENARIO_READ')")
     @GetMapping(path = "/{testCaseId}/executable", produces = MediaType.APPLICATION_JSON_VALUE)
     public ComposableTestCaseDto getExecutableTestCase(@PathVariable("testCaseId") String testCaseId) {
-        TestCase testCase = composableTestCaseRepository.findById(testCaseId).orElseThrow(() -> new ScenarioNotFoundException(testCaseId));
-        ExecutableComposedTestCase result = testCasePreProcessors.apply(new ExecutionRequest(testCase, "env", "userId"));
-
-        return ExecutableComposableTestCaseMapper.toDto(result);
+        Optional<TestCase> testCase = composableTestCaseRepository.findExecutableById(testCaseId);
+        if (testCase.isPresent()) {
+            ExecutableComposedTestCase result = testCasePreProcessors.apply(new ExecutionRequest(testCase.get(), "env", "userId"));
+            return ExecutableComposableTestCaseMapper.toDto(result);
+        } else {
+            throw new ScenarioNotFoundException(testCaseId);
+        }
     }
 
     @PreAuthorize("hasAuthority('SCENARIO_WRITE')")

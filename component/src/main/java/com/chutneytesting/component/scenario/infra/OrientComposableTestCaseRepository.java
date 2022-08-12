@@ -13,6 +13,7 @@ import com.chutneytesting.component.scenario.infra.wrapper.TestCaseVertex;
 import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
 import com.chutneytesting.server.core.domain.scenario.AlreadyExistingScenarioException;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
+import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import com.google.common.collect.Lists;
 import com.orientechnologies.orient.core.db.ODatabasePool;
@@ -33,7 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class OrientComposableTestCaseRepository implements AggregatedRepository<ComposableTestCase>, ExecutableComposedTestCaseRepository {
+public class OrientComposableTestCaseRepository implements AggregatedRepository<ComposableTestCase> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrientComposableTestCaseRepository.class);
 
@@ -85,21 +86,15 @@ public class OrientComposableTestCaseRepository implements AggregatedRepository<
     }
 
     @Override
-    //TODO
     public Optional<TestCaseMetadata> findMetadataById(String testCaseId) {
-        return Optional.empty();
+        return findById(testCaseId).map(tc -> tc.metadata);
     }
 
     @Override
-    public ExecutableComposedTestCase findExecutableById(String composableTestCaseId) {
+    public Optional<TestCase> findExecutableById(String composableTestCaseId) {
         String internalId = toInternalId(composableTestCaseId);
         Optional<ComposableTestCase> composableTestCase = findById(internalId);
-        if(composableTestCase.isPresent()) {
-            return testCaseMapper.composableToExecutable(composableTestCase.get());
-        } else {
-            throw new ScenarioNotFoundException(composableTestCaseId);
-        }
-
+        return composableTestCase.map(ctc -> testCaseMapper.composableToExecutable(ctc));
     }
 
     private static final String QUERY_SELECT_ALL = "SELECT @rid FROM " + OrientComponentDB.TESTCASE_CLASS + "";

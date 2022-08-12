@@ -19,4 +19,5 @@ public interface AggregatedRepository<T extends TestCase> {
 
     List<TestCaseMetadata> search(String textFilter);
 
+    Optional<TestCase> findExecutableById(String testCaseId);
 }
