@@ -7,9 +7,14 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.chutneytesting.RestExceptionHandler;
+import com.chutneytesting.campaign.domain.Campaign;
+import com.chutneytesting.campaign.domain.CampaignExecutionReport;
+import com.chutneytesting.execution.domain.history.ExecutionHistory;
+import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import com.chutneytesting.scenario.api.raw.dto.ImmutableRawTestCaseDto;
 import com.chutneytesting.scenario.api.raw.dto.RawTestCaseDto;
 import com.chutneytesting.scenario.domain.ScenarioNotParsableException;
+import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseRepository;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.api.GwtTestCaseController;
@@ -22,6 +27,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -42,6 +48,16 @@ public class TestCaseControllerTest {
     private final TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
     private final SpringUserService userService = mock(SpringUserService.class);
     private final UserDto currentUser = new UserDto();
+    private final ChutneyMetrics metrics = new ChutneyMetrics() {
+        @Override
+        public void onScenarioExecutionEnded(TestCase testCase, ExecutionHistory.Execution execution) {}
+
+        @Override
+        public void onCampaignExecutionEnded(Campaign campaign, CampaignExecutionReport campaignExecutionReport) {}
+
+        @Override
+        public void onHttpError(HttpStatus status) {}
+    };
 
     @BeforeEach
     public void setUp() {
@@ -50,7 +66,7 @@ public class TestCaseControllerTest {
 
         GwtTestCaseController testCaseController = new GwtTestCaseController(testCaseRepository, null, userService);
         mockMvc = MockMvcBuilders.standaloneSetup(testCaseController)
-            .setControllerAdvice(new RestExceptionHandler())
+            .setControllerAdvice(new RestExceptionHandler(metrics))
             .build();
     }
 
