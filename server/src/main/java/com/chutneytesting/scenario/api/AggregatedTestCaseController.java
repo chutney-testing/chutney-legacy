@@ -45,7 +45,6 @@ public class AggregatedTestCaseController {
     @PreAuthorize("hasAuthority('SCENARIO_READ') or hasAuthority('CAMPAIGN_WRITE')")
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TestCaseIndexDto> getTestCases(@RequestParam( name = "textFilter", required = false) String textFilter) {
-
         List<TestCaseMetadata> testCases = isNullOrEmpty(textFilter) ? testCaseRepository.findAll() : testCaseRepository.search(textFilter);
         return testCases.stream()
             .map((tc) -> {

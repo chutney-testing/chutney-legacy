@@ -80,10 +80,9 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
         }
     }
 
-    // TODO //
     @Override
     public Optional<TestCaseMetadata> findMetadataById(String testCaseId) {
-        return empty();
+        return findById(testCaseId).map(t -> t.metadata());
     }
 
     @Override

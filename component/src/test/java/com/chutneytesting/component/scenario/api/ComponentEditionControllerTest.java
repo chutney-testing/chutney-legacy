@@ -61,6 +61,9 @@ public class ComponentEditionControllerTest {
         when(composableTestCaseRepository.findById(any()))
             .thenReturn(of(new ComposableTestCase(DEFAULT_COMPOSABLE_TESTCASE_ID, TestCaseMetadataImpl.builder().build(), ComposableScenario.builder().build())));
 
+        when(composableTestCaseRepository.findExecutableById(any()))
+            .thenReturn(of(new ComposableTestCase(DEFAULT_COMPOSABLE_TESTCASE_ID, TestCaseMetadataImpl.builder().build(), ComposableScenario.builder().build())));
+
         when(composableTestCaseRepository.save(any()))
             .thenReturn(DEFAULT_COMPOSABLE_TESTCASE_ID);
 

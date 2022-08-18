@@ -100,8 +100,8 @@ public class CampaignExecutionEngineTest {
         sut = new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository, jiraXrayPlugin, metrics, executorService, objectMapper);
         firstTestCase = createGwtTestCase("1");
         secondTestCase = createGwtTestCase("2");
-        when(testCaseRepository.findById(firstTestCase.id())).thenReturn(of(firstTestCase));
-        when(testCaseRepository.findById(secondTestCase.id())).thenReturn(of(secondTestCase));
+        when(testCaseRepository.findExecutableById(firstTestCase.id())).thenReturn(of(firstTestCase));
+        when(testCaseRepository.findExecutableById(secondTestCase.id())).thenReturn(of(secondTestCase));
         when(executionHistoryRepository.getExecution(eq(firstTestCase.id()), or(eq(0L), eq(10L))))
             .thenReturn(executionWithId(firstScenarioExecutionId));
         when(executionHistoryRepository.getExecution(eq(secondTestCase.id()), or(eq(0L), eq(20L))))
@@ -135,7 +135,7 @@ public class CampaignExecutionEngineTest {
         CampaignExecutionReport campaignExecutionReport = sut.executeScenarioInCampaign(emptyList(), campaign, "user");
 
         // Then
-        verify(testCaseRepository, times(2)).findById(anyString());
+        verify(testCaseRepository, times(2)).findExecutableById(anyString());
         verify(scenarioExecutionEngine, times(2)).execute(any(ExecutionRequest.class), any());
         verify(executionHistoryRepository, times(4)).getExecution(anyString(), anyLong());
 
@@ -161,7 +161,7 @@ public class CampaignExecutionEngineTest {
         CampaignExecutionReport campaignExecutionReport = sut.executeScenarioInCampaign(singletonList("2"), campaign, "user");
 
         // Then
-        verify(testCaseRepository, times(1)).findById(anyString());
+        verify(testCaseRepository, times(1)).findExecutableById(anyString());
         verify(scenarioExecutionEngine, times(1)).execute(any(ExecutionRequest.class), any());
         verify(executionHistoryRepository, times(2)).getExecution(anyString(), anyLong());
 
@@ -365,8 +365,8 @@ public class CampaignExecutionEngineTest {
         Campaign campaign = createCampaign(campaignDataSet, "campaignDataSetId", gwtTestCase, composedTestCase);
 
         when(campaignRepository.findById(campaign.id)).thenReturn(campaign);
-        when(testCaseRepository.findById(gwtTestCase.id())).thenReturn(of(gwtTestCase));
-        when(testCaseRepository.findById(composedTestCase.id())).thenReturn(of(composedTestCase));
+        when(testCaseRepository.findExecutableById(gwtTestCase.id())).thenReturn(of(gwtTestCase));
+        when(testCaseRepository.findExecutableById(composedTestCase.id())).thenReturn(of(composedTestCase));
         when(scenarioExecutionEngine.execute(any(ExecutionRequest.class), any())).thenReturn(mock(ScenarioExecutionReport.class));
         when(executionHistoryRepository.getExecution(any(), any())).thenReturn(executionWithId(42L));
 
