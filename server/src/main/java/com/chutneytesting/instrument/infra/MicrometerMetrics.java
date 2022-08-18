@@ -56,29 +56,23 @@ class MicrometerMetrics implements ChutneyMetrics {
     @Override
     public void onCampaignExecutionEnded(Campaign campaign, CampaignExecutionReport campaignExecutionReport) {
         final String campaignId = campaign.id.toString();
-        final Map<ServerReportStatus, Long> scenarioCountByStatus = campaignExecutionReport.scenarioExecutionReports().stream().collect(groupingBy(s -> s.execution.status(), counting()));
+        final Map<ServerReportStatus, Long> campaignCountByStatus = campaignExecutionReport.scenarioExecutionReports().stream().collect(groupingBy(s -> s.execution.status(), counting()));
         final ServerReportStatus status = campaignExecutionReport.status();
         final long campaignDuration = campaignExecutionReport.getDuration();
 
-        final Counter scenarioExecutionCount = this.meterRegistry.counter("campaign_execution_count", asList(of("campaignId", campaignId), of("campaignTitle", campaign.title), of("status", status.name())));
-        scenarioExecutionCount.increment();
+        final Counter campaignExecutionCount = this.meterRegistry.counter("campaign_execution_count", asList(of("campaignId", campaignId), of("campaignTitle", campaign.title), of("status", status.name())));
+        campaignExecutionCount.increment();
 
-        final Timer scenarioExecutionTimer = this.meterRegistry.timer("campaign_execution_timer", singleton(of("campaignId", campaignId)));
-        scenarioExecutionTimer.record(campaignDuration, TimeUnit.MILLISECONDS);
+        final Timer campaignExecutionTimer = this.meterRegistry.timer("campaign_execution_timer", singleton(of("campaignId", campaignId)));
+        campaignExecutionTimer.record(campaignDuration, TimeUnit.MILLISECONDS);
 
         final Map<ServerReportStatus, AtomicLong> cachedMetrics = getMetricsInCache(campaignId);
-        updateMetrics(scenarioCountByStatus, cachedMetrics);
+        updateMetrics(campaignCountByStatus, cachedMetrics);
     }
 
     @Override
-    public void onError(String metricName, RuntimeException ex, WebRequest request) {
-        final Counter errorCount = this.meterRegistry.counter(metricName, asList(of("Message", ex.getMessage()), of("Request infos", request.getContextPath())));
-        errorCount.increment();
-    }
-
-    @Override
-    public void onHttpError(String metricName, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        final Counter httpErrorCount = this.meterRegistry.counter(metricName, asList(of("Header", headers.toString()), of("Status", status.toString()), of("Request infos", request.getContextPath())));
+    public void onHttpError(HttpStatus status) {
+        final Counter httpErrorCount = this.meterRegistry.counter("http_error", asList(of("status", String.valueOf(status.value()))));
         httpErrorCount.increment();
     }
 

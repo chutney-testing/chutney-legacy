@@ -15,7 +15,5 @@ public interface ChutneyMetrics {
 
     void onCampaignExecutionEnded(Campaign campaign, CampaignExecutionReport campaignExecutionReport);
 
-    void onError(String metricName, RuntimeException ex, WebRequest request);
-
-    void onHttpError(String metricName, HttpHeaders headers, HttpStatus status, WebRequest request);
+    void onHttpError(HttpStatus status);
 }
