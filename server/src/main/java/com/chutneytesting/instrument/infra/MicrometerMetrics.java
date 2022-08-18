@@ -23,7 +23,10 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.WebRequest;
 
 @Component
 class MicrometerMetrics implements ChutneyMetrics {
@@ -65,6 +68,18 @@ class MicrometerMetrics implements ChutneyMetrics {
 
         final Map<ServerReportStatus, AtomicLong> cachedMetrics = getMetricsInCache(campaignId);
         updateMetrics(scenarioCountByStatus, cachedMetrics);
+    }
+
+    @Override
+    public void onError(String metricName, RuntimeException ex, WebRequest request) {
+        final Counter errorCount = this.meterRegistry.counter(metricName, asList(of("Message", ex.getMessage()), of("Request infos", request.getContextPath())));
+        errorCount.increment();
+    }
+
+    @Override
+    public void onHttpError(String metricName, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        final Counter httpErrorCount = this.meterRegistry.counter(metricName, asList(of("Header", headers.toString()), of("Status", status.toString()), of("Request infos", request.getContextPath())));
+        httpErrorCount.increment();
     }
 
     private void updateMetrics(Map<ServerReportStatus, Long> scenarioCountByStatus, Map<ServerReportStatus, AtomicLong> cachedMetrics) {

@@ -50,12 +50,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         LOGGER.warn(ex.getMessage());
+        metrics.onHttpError("Http message not readable", headers, status, request);
         return super.handleHttpMessageNotReadable(ex, headers, status, request);
     }
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotWritable(HttpMessageNotWritableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         LOGGER.warn(ex.getMessage());
+        metrics.onHttpError("Http message not writable", headers, status, request);
         return super.handleHttpMessageNotWritable(ex, headers, status, request);
     }
 
@@ -85,6 +87,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     })
     protected ResponseEntity<Object> notFound(RuntimeException ex, WebRequest request) {
         LOGGER.warn("Not found >> " + ex.getMessage());
+        metrics.onError("Not found", ex, request);
         return handleExceptionInternalWithExceptionMessageAsBody(ex, HttpStatus.NOT_FOUND, request);
     }
 
@@ -96,6 +99,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     })
     protected ResponseEntity<Object> conflict(RuntimeException ex, WebRequest request) {
         LOGGER.warn("Conflict >> " + ex.getMessage());
+        metrics.onError("Conflict", ex, request);
         return handleExceptionInternalWithExceptionMessageAsBody(ex, HttpStatus.CONFLICT, request);
     }
 
@@ -105,6 +109,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     })
     protected ResponseEntity<Object> unprocessableEntity(RuntimeException ex, WebRequest request) {
         LOGGER.warn("Unprocessable Entity >> " + ex.getMessage());
+        metrics.onError("Unprocessable Entity", ex, request);
         return handleExceptionInternalWithExceptionMessageAsBody(ex, HttpStatus.UNPROCESSABLE_ENTITY, request);
     }
 
@@ -115,6 +120,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     })
     protected ResponseEntity<Object> badRequest(RuntimeException ex, WebRequest request) {
         LOGGER.warn("Bad Request >> " + ex.getMessage());
+        metrics.onError("Bad request", ex, request);
         return handleExceptionInternalWithExceptionMessageAsBody(ex, HttpStatus.BAD_REQUEST, request);
     }
 
@@ -124,6 +130,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     })
     protected ResponseEntity<Object> forbidden(RuntimeException ex, WebRequest request) {
         LOGGER.warn("Forbidden >> " + ex.getMessage());
+        metrics.onError("Forbidden", ex, request);
         return handleExceptionInternalWithExceptionMessageAsBody(ex, HttpStatus.FORBIDDEN, request);
     }
 

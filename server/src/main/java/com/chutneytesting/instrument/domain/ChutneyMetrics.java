@@ -4,6 +4,10 @@ import com.chutneytesting.campaign.domain.Campaign;
 import com.chutneytesting.campaign.domain.CampaignExecutionReport;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
 import com.chutneytesting.scenario.domain.TestCase;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.context.request.WebRequest;
 
 public interface ChutneyMetrics {
 
@@ -11,4 +15,7 @@ public interface ChutneyMetrics {
 
     void onCampaignExecutionEnded(Campaign campaign, CampaignExecutionReport campaignExecutionReport);
 
+    void onError(String metricName, RuntimeException ex, WebRequest request);
+
+    void onHttpError(String metricName, HttpHeaders headers, HttpStatus status, WebRequest request);
 }
