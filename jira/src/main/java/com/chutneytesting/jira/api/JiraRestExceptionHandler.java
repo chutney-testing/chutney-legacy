@@ -45,6 +45,7 @@ public class JiraRestExceptionHandler extends ResponseEntityExceptionHandler {
     })
     protected ResponseEntity<Object> notFound(RuntimeException ex, WebRequest request) {
         String bodyOfResponse = ex.getMessage();
+        LOGGER.warn("Not found >> " + bodyOfResponse);
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
@@ -53,6 +54,7 @@ public class JiraRestExceptionHandler extends ResponseEntityExceptionHandler {
     })
     protected ResponseEntity<Object> badRequest(RuntimeException ex, WebRequest request) {
         String bodyOfResponse = ex.getMessage();
+        LOGGER.warn("Bad request >> " + bodyOfResponse);
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
@@ -61,6 +63,7 @@ public class JiraRestExceptionHandler extends ResponseEntityExceptionHandler {
     })
     protected ResponseEntity<Object> forbidden(RuntimeException ex, WebRequest request) {
         String bodyOfResponse = ex.getMessage();
+        LOGGER.warn("Forbidden >> " + bodyOfResponse);
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 }
