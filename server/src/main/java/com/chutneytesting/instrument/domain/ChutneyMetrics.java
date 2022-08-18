@@ -10,4 +10,5 @@ public interface ChutneyMetrics {
     void onScenarioExecutionEnded(TestCase testCase, ExecutionHistory.Execution execution);
 
     void onCampaignExecutionEnded(Campaign campaign, CampaignExecutionReport campaignExecutionReport);
+
 }
