@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -48,16 +49,6 @@ public class TestCaseControllerTest {
     private final TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
     private final SpringUserService userService = mock(SpringUserService.class);
     private final UserDto currentUser = new UserDto();
-    private final ChutneyMetrics metrics = new ChutneyMetrics() {
-        @Override
-        public void onScenarioExecutionEnded(TestCase testCase, ExecutionHistory.Execution execution) {}
-
-        @Override
-        public void onCampaignExecutionEnded(Campaign campaign, CampaignExecutionReport campaignExecutionReport) {}
-
-        @Override
-        public void onHttpError(HttpStatus status) {}
-    };
 
     @BeforeEach
     public void setUp() {
@@ -66,7 +57,7 @@ public class TestCaseControllerTest {
 
         GwtTestCaseController testCaseController = new GwtTestCaseController(testCaseRepository, null, userService);
         mockMvc = MockMvcBuilders.standaloneSetup(testCaseController)
-            .setControllerAdvice(new RestExceptionHandler(metrics))
+            .setControllerAdvice(new RestExceptionHandler(Mockito.mock(ChutneyMetrics.class)))
             .build();
     }
 

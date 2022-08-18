@@ -47,6 +47,7 @@ import org.assertj.core.api.Assertions;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -71,16 +72,6 @@ public class CampaignControllerTest {
     private ResultExtractor resultExtractor;
     private CampaignDto existingCampaign;
     private final ObjectMapper om = new WebConfiguration().objectMapper();
-    private final ChutneyMetrics metrics = new ChutneyMetrics() {
-        @Override
-        public void onScenarioExecutionEnded(TestCase testCase, ExecutionHistory.Execution execution) {}
-
-        @Override
-        public void onCampaignExecutionEnded(Campaign campaign, CampaignExecutionReport campaignExecutionReport) {}
-
-        @Override
-        public void onHttpError(HttpStatus status) {}
-    };
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -90,7 +81,7 @@ public class CampaignControllerTest {
         testCaseRepository = mock(TestCaseRepository.class);
         CampaignController campaignController = new CampaignController(testCaseRepository, composableTestCaseRepository, repository, campaignExecutionEngine);
         mockMvc = MockMvcBuilders.standaloneSetup(campaignController)
-            .setControllerAdvice(new RestExceptionHandler(metrics))
+            .setControllerAdvice(new RestExceptionHandler(Mockito.mock(ChutneyMetrics.class)))
             .build();
 
         createExistingCampaign();

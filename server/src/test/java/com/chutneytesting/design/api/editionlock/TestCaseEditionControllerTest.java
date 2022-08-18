@@ -31,6 +31,7 @@ import java.util.List;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -43,23 +44,13 @@ public class TestCaseEditionControllerTest {
     private MockMvc mockMvc;
     private final ObjectMapper om = new WebConfiguration().objectMapper();
     private final UserDto currentUser = new UserDto();
-    private final ChutneyMetrics metrics = new ChutneyMetrics() {
-        @Override
-        public void onScenarioExecutionEnded(TestCase testCase, ExecutionHistory.Execution execution) {}
-
-        @Override
-        public void onCampaignExecutionEnded(Campaign campaign, CampaignExecutionReport campaignExecutionReport) {}
-
-        @Override
-        public void onHttpError(HttpStatus status) {}
-    };
 
     @BeforeEach
     public void before() {
         TestCaseEditionController sut = new TestCaseEditionController(testCaseEditionService, userService);
 
         mockMvc = MockMvcBuilders.standaloneSetup(sut)
-            .setControllerAdvice(new RestExceptionHandler(metrics))
+            .setControllerAdvice(new RestExceptionHandler(Mockito.mock(ChutneyMetrics.class)))
             .build();
 
         currentUser.setId("currentUser");
