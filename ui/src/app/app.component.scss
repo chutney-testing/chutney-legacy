@@ -1,0 +1,10 @@
+.body {
+    flex: 1 1 0;
+    display: flex;
+    height: calc(100% - 3rem);
+
+    .content {
+        flex: 1 1 0;
+        height: auto;
+    }
+}

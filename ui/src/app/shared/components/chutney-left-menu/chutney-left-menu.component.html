@@ -1,0 +1,17 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-white" [class.collapsed]="isCollapsed">
+
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button"  (click)="toggleExpand()" data-bs-toggle="collapse"  data-bs-target="#navbar"  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse nav-items" id="navbar" [class.show]="!isCollapsed">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li *ngFor="let item of  menuItems"
+                        routerLinkActive="active" routerLink="{{item.link}}" aria-current="page" class="nav-item">
+                        <i [ngClass]="item.iconClass"></i>
+                        <span class="nav-item_label">{{item.label | translate}}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>

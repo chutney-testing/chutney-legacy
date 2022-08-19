@@ -16,7 +16,10 @@
             "roles": "Roles",
             "admin": "Admin",
             "signIn": "Sign In",
-            "signOut": "Sign Out"
+            "signOut": "Sign Out",
+            "darkMode": "Dark mode",
+            "lightMode": "Light mode",
+            "feedback": "Feedback"
         }
     },
     "home": {

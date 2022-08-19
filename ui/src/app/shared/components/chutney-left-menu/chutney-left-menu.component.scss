@@ -1,0 +1,73 @@
+@import 'colors';
+    .navbar .container-fluid,
+    .navbar-expand-lg .navbar-collapse,
+    .navbar-expand-lg .navbar-nav{
+        flex-direction: column;
+        align-items: flex-start;
+    }
+.navbar {
+    padding-top: 0;
+}
+.container-fluid {
+    padding: 0;
+    button {
+        margin-left: auto;
+    }
+    .nav-items {
+        padding-left: 1rem;
+        width: 100%;
+        ul {
+            width: 100%;
+        }
+        .nav-item {
+            width: 100%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            height: 3rem;
+            border-bottom: 1px solid #edf1f7;
+
+            > span {
+                margin-left: 0.5rem;
+                transition: font-size 0.5s ease-in;
+            }
+
+            &.active, &:hover {
+                outline: none;
+                color: $bleu1;
+                border-right: .8rem solid $bleu1;
+            }
+        }
+    }
+}
+
+@media (min-width: 992px) {
+    .navbar {
+        width: 14rem;
+        height: 100vh;
+        align-items: flex-start;
+        &.collapsed {
+            width: 4rem;
+            .nav-item_label {
+                display: none!important;
+            }
+        }
+    }
+    .navbar-toggler {
+        display: block;
+    }
+}
+
+@media (max-width: 991px) {
+    .navbar.collapsed:not(.show), .navbar.collapsed {
+        .nav-items {
+            display: none!important;
+        }
+    }
+    .navbar:not(.collapsed) {
+        .nav-items {
+            display: block!important;
+        }
+    }
+}
+

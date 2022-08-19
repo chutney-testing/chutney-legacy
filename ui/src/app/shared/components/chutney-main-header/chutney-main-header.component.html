@@ -1,0 +1,31 @@
+<div class="main-header">
+    <a class="logo" routerLink="/home">
+        <img src="../../../../assets/logo/logo-circle.png" />
+    </a>
+    <!--  TODO use chutney-menu-item ?  -->
+    <div class="tools">
+        <div class="tools_item" routerLink="/documentation" [title]="'menu.principal.documentation' | translate">
+            <i class="fa fa-book"></i>
+        </div>
+        <div class="tools_item" [title]="'menu.principal.feedback' | translate">
+            <i class="fa fa-lightbulb"></i>
+        </div>
+        <div class="tools_item">
+            <i class="fa fa-bell"></i>
+        </div>
+        <div class="tools_item" *ngIf="!darkMode" (click)="toggleDarkMode()" [title]="'menu.principal.darkMode' | translate">
+            <i class="fa fa-moon"></i>
+        </div>
+        <div class="tools_item" *ngIf="darkMode" (click)="toggleDarkMode()" [title]="'menu.principal.lightMode' | translate">
+            <i class="fa fa-sun"></i>
+        </div>
+        <ng-container *ngIf="(user$ | async) as user">
+            <div class="tools_item" (click)="logout()" *ngIf="user?.id">
+                <i class="fa fa-sign-out-alt" [title]="'menu.principal.signOut' | translate"></i>
+            </div>
+        </ng-container>
+    </div>
+
+
+
+</div>
