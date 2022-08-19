@@ -66,7 +66,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         FailedExecutionAttempt.class
     })
     public ResponseEntity<Object> _500(RuntimeException ex, WebRequest request) {
-        LOGGER.error("controller_global_exception_handler", ex);
+        LOGGER.error("Controller global exception handler", ex);
         return handleExceptionInternalWithExceptionMessageAsBody(ex, HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
