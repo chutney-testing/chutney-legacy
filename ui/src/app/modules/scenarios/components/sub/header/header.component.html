@@ -1,5 +1,5 @@
 <div *ngIf="testCaseMetadata" class="row edition-header">
-    <div class="header-left">
+    <div class="col-md-6 header-left">
         <div class="title" [innerHTML]="testCaseMetadata.title | linkify"></div>
         <div class="description" [innerHTML]="testCaseMetadata.description | linkify"></div>
         <div class="btn-group ms-4 header-tag">
@@ -8,7 +8,7 @@
             </span>
         </div>
     </div>
-    <div class="header-right triangle-left">
+    <div class="col-md-6 header-right triangle-left">
         <div class="row">
             <div class="col-sm-12 btn-toolbar p-0">
                 <div class="col-6 p-0">

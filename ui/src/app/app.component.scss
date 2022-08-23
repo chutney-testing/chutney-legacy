@@ -2,6 +2,8 @@
     flex: 1 1 0;
     display: flex;
     height: calc(100% - 3rem);
+    overflow-y: hidden;
+    overflow-x: hidden;
 
     .content {
         flex: 1 1 0;

@@ -1,27 +1,38 @@
-<div class="main-header">
+<div class="main-header bg-primary">
     <a class="logo" routerLink="/home">
         <img src="../../../../assets/logo/logo-circle.png" />
     </a>
-    <!--  TODO use chutney-menu-item ?  -->
-    <div class="tools">
-        <div class="tools_item" routerLink="/documentation" [title]="'menu.principal.documentation' | translate">
-            <i class="fa fa-book"></i>
+    <div class="nav">
+        <div class="nav-item" routerLink="/documentation" [title]="'menu.principal.documentation' | translate">
+            <span class="nav-link">
+                <i class="fa fa-book"></i>
+            </span>
         </div>
-        <div class="tools_item" [title]="'menu.principal.feedback' | translate">
+        <div class="nav-item" [title]="'menu.principal.feedback' | translate">
+            <span class="nav-link pointer">
             <i class="fa fa-lightbulb"></i>
+            </span>
         </div>
-        <div class="tools_item">
+        <div class="nav-item">
+            <span class="nav-link">
             <i class="fa fa-bell"></i>
+            </span>
         </div>
-        <div class="tools_item" *ngIf="!darkMode" (click)="toggleDarkMode()" [title]="'menu.principal.darkMode' | translate">
+        <div class="nav-item" *ngIf="isCurrentTheme(Theme.FLATLY)" (click)="switchTheme(Theme.QUARTZ)" [title]="'menu.principal.darkMode' | translate">
+            <span class="nav-link">
             <i class="fa fa-moon"></i>
+            </span>
         </div>
-        <div class="tools_item" *ngIf="darkMode" (click)="toggleDarkMode()" [title]="'menu.principal.lightMode' | translate">
-            <i class="fa fa-sun"></i>
+        <div class="nav-item" *ngIf="isCurrentTheme(Theme.QUARTZ)" (click)="switchTheme(Theme.FLATLY)" [title]="'menu.principal.lightMode' | translate">
+            <span class="nav-link">
+            <i class="fa fa-sun nav-item"></i>
+            </span>
         </div>
         <ng-container *ngIf="(user$ | async) as user">
-            <div class="tools_item" (click)="logout()" *ngIf="user?.id">
+            <div class="nav-item" (click)="logout()" *ngIf="user?.id">
+                <span class="nav-link">
                 <i class="fa fa-sign-out-alt" [title]="'menu.principal.signOut' | translate"></i>
+                </span>
             </div>
         </ng-container>
     </div>

@@ -1,4 +1,3 @@
-@import 'colors';
 
 .chutney-tag {
     cursor: pointer;
@@ -17,10 +16,11 @@
     margin: 3px;
 }
 
+// TODO use variable or move this to theme scss
 .chutney-tag-selected {
-    background-color: $bleu6;
+    background-color: #2997A3;
 }
 
 .chutney-tag-unselected {
-    background-color: $grisclair1;
+    background-color: #B2BAC4;
 }

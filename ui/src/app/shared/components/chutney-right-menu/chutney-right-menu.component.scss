@@ -1,10 +1,9 @@
-@import 'colors';
+@import "~bootstrap/scss/bootstrap";
 .right-menu {
     height: 100%;
     width: 12rem;
     display: flex;
     flex-direction: column;
-    //color: $white;
     padding: 2rem 0 2rem 2rem;
     box-shadow: .5rem 0 1rem rgba(0, 0, 0, 0.15);
 
@@ -25,8 +24,8 @@
 
             &.active, &:hover {
                 outline: none;
-                color: $bleu1;
-                border-right: .8rem solid $bleu1;
+                color: $teal-100;
+                border-right: .8rem solid $teal-100;
             }
         }
     }

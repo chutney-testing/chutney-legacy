@@ -1,25 +1,25 @@
-@import 'colors';
+@import "~bootstrap/scss/bootstrap";
 
 input {
-    border: solid 1px $grisclair1;
-    background-color: $blanc;
+    border: solid 1px $light;
+    background-color: $white;
     border-radius: 0;
-    caret-color: $bleu1;
+    caret-color: $teal-100;
     font-family: Ubuntu;
     font-size: 16px;
 
     &::placeholder {
-        color: $grisclair1;
+        color: $light;
         opacity: 1; /* Firefox */
     }
     &:focus {
-        border-color: $bleu1;
+        border-color: $teal-100;
     }
     &.invalid {
-        border-color: $labelko;
-        color: $labelko;
+        border-color: $warning;
+        color: $warning;
         &::placeholder {
-            color: $labelko;
+            color: $warning;
         }
     }
 }

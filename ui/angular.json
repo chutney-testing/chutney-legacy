@@ -36,11 +36,17 @@
               ]
             },
             "styles": [
-              "src/styles/vendor.scss",
-              "src/styles/global.scss",
-              "src/styles/forms.scss",
-              "src/styles/tags.scss",
-              "src/styles/themes/default.theme.scss"
+              "src/styles/style.scss",
+                {
+                    "input": "src/styles/theme.flatly.scss",
+                    "bundleName": "flatly",
+                    "inject": true
+                },
+                {
+                    "input": "src/styles/theme.quartz.scss",
+                    "bundleName": "quartz",
+                    "inject": false
+                }
             ],
             "scripts": [
               "node_modules/asciidoctor.js/dist/asciidoctor.min.js"
@@ -102,11 +108,7 @@
               ]
             },
             "styles": [
-              "src/styles/vendor.scss",
-              "src/styles/global.scss",
-              "src/styles/forms.scss",
-              "src/styles/tags.scss",
-              "src/styles/themes/default.theme.scss"
+              "src/styles/style.scss"
             ],
             "scripts": [
               "node_modules/asciidoctor.js/dist/asciidoctor.min.js"

@@ -1,13 +1,7 @@
-@import 'colors';
-@import 'menu';
-@import 'bootstrap-variables';
 .main-header {
     height: 3rem;
     display: flex;
     align-items: center;
-    padding: 1rem;
-    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.15);
-    font-family: "Montserrat",Helvetica,Arial,sans-serif;
 
     .logo {
        // margin-top: 3rem;
@@ -18,41 +12,11 @@
         }
     }
 
-    .tools {
-        display: flex;
-        align-items: center;
+    .nav {
         margin-left: auto;
-        &_item {
-            margin-right: .5rem;
+        .nav-link {
             cursor: pointer;
         }
-    }
-
-
-    .dropdown {
-        position: relative;
-        display: inline-block;
-
-        &__btn {
-            background-color: white;
-            font-size: 14px;
-            border: none;
-            cursor: pointer;
-        }
-
-        &__content {
-            display: none;
-            position: absolute;
-            right: 0;
-            background-color: rgba(255, 255, 255, 0.9);
-            min-width: 100px;
-            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-        }
-    }
-
-    .dropdown:hover .dropdown__content {
-        display: block;
     }
 
 }

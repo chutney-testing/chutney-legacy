@@ -1,4 +1,4 @@
-@import 'colors';
+@import "~bootstrap/scss/bootstrap";;
 
 button span:not(:first-child) {
     display: block;
@@ -34,7 +34,7 @@ div.steps {
 }
 
 .error {
-    color: $labelko;
+    color: $warning;
     margin-bottom: 30px;
 }
 

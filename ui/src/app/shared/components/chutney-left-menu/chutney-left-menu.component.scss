@@ -1,4 +1,3 @@
-@import 'colors';
     .navbar .container-fluid,
     .navbar-expand-lg .navbar-collapse,
     .navbar-expand-lg .navbar-nav{
@@ -14,28 +13,14 @@
         margin-left: auto;
     }
     .nav-items {
-        padding-left: 1rem;
-        width: 100%;
-        ul {
-            width: 100%;
-        }
+        padding-left: 0.5rem;
         .nav-item {
-            width: 100%;
-            cursor: pointer;
             display: flex;
             align-items: center;
             height: 3rem;
-            border-bottom: 1px solid #edf1f7;
 
-            > span {
+            .nav-item_label {
                 margin-left: 0.5rem;
-                transition: font-size 0.5s ease-in;
-            }
-
-            &.active, &:hover {
-                outline: none;
-                color: $bleu1;
-                border-right: .8rem solid $bleu1;
             }
         }
     }
