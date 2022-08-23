@@ -1,8 +1,8 @@
 package com.chutneytesting;
 
 
-import static com.chutneytesting.ComposableIdUtils.toExternalId;
-import static com.chutneytesting.ComposableIdUtils.toInternalId;
+import static com.chutneytesting.component.ComposableIdUtils.toExternalId;
+import static com.chutneytesting.component.ComposableIdUtils.toInternalId;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;

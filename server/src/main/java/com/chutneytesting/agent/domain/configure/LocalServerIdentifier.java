@@ -3,9 +3,11 @@ package com.chutneytesting.agent.domain.configure;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.list;
 
-import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
 import com.chutneytesting.agent.domain.network.Agent;
 import com.chutneytesting.agent.domain.network.AgentGraph;
+import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
+import com.chutneytesting.tools.ThrowingFunction;
+import com.chutneytesting.tools.ThrowingPredicate;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -14,8 +16,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import com.chutneytesting.tools.ThrowingFunction;
-import com.chutneytesting.tools.ThrowingPredicate;
 
 public class LocalServerIdentifier {
     private final int port;

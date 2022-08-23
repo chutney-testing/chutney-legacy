@@ -5,9 +5,9 @@ import static com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory.T
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContent;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentProvider;
-import com.chutneytesting.dataset.domain.DataSet;
-import com.chutneytesting.dataset.domain.DataSetHistoryRepository;
-import com.chutneytesting.dataset.domain.DataSetRepository;
+import com.chutneytesting.component.dataset.domain.DataSet;
+import com.chutneytesting.component.dataset.domain.DataSetHistoryRepository;
+import com.chutneytesting.component.dataset.domain.DataSetRepository;
 import com.chutneytesting.tools.file.FileUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

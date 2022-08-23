@@ -1,13 +1,14 @@
 package com.chutneytesting.admin.infra;
 
+
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.admin.domain.DatabaseAdminService;
-import com.chutneytesting.admin.domain.SqlResult;
+import com.chutneytesting.server.core.domain.admin.DatabaseAdminService;
+import com.chutneytesting.server.core.domain.admin.SqlResult;
+import com.chutneytesting.server.core.domain.tools.ImmutablePaginationRequestWrapperDto;
+import com.chutneytesting.server.core.domain.tools.PaginatedDto;
+import com.chutneytesting.server.core.domain.tools.PaginationRequestWrapperDto;
 import com.chutneytesting.tests.AbstractLocalDatabaseTest;
-import com.chutneytesting.tools.ImmutablePaginationRequestWrapperDto;
-import com.chutneytesting.tools.PaginatedDto;
-import com.chutneytesting.tools.PaginationRequestWrapperDto;
 import java.util.Collections;
 import java.util.Optional;
 import org.assertj.core.api.Condition;

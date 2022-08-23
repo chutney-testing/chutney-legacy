@@ -2,8 +2,8 @@ package com.chutneytesting.scenario.api.raw.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.execution.domain.GwtScenarioMarshaller;
+import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import org.assertj.core.util.Files;

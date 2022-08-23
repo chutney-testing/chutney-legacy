@@ -3,13 +3,13 @@ package com.chutneytesting.admin.api;
 
 import static com.chutneytesting.tools.loader.ExtensionLoaders.Sources.classpath;
 
+import com.chutneytesting.tools.loader.ExtensionLoader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
-import com.chutneytesting.tools.loader.ExtensionLoader;
 import org.springframework.boot.actuate.info.Info.Builder;
 import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.stereotype.Component;

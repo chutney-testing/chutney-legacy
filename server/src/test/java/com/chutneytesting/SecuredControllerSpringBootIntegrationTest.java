@@ -154,7 +154,7 @@ public class SecuredControllerSpringBootIntegrationTest {
             {GET, "/api/ui/scenario/scenarioId/execution/v1", "SCENARIO_READ", null},
             {GET, "/api/ui/scenario/scenarioId/execution/666/v1", "SCENARIO_READ", null},
             {POST, "/api/ui/scenario/execution/v1/scenarioId/env", "SCENARIO_EXECUTE", null},
-            {POST, "/api/ui/component/execution/v1/componentId/env", "COMPONENT_WRITE", null},
+            {POST, "/api/ui/componentstep/execution/v1/componentId/env", "COMPONENT_WRITE", null},
             {POST, "/api/idea/scenario/execution/env", "SCENARIO_EXECUTE", "{\"content\":\"{\\\"when\\\":{}}\",\"params\":{}} "},
             {POST, "/api/ui/scenario/executionasync/v1/scenarioId/env", "SCENARIO_EXECUTE", "[]"},
             {GET, "/api/ui/scenario/executionasync/v1/scenarioId/execution/666", "SCENARIO_READ", null},

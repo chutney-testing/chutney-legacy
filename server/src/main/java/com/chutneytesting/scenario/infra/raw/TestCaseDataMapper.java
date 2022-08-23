@@ -1,12 +1,10 @@
 package com.chutneytesting.scenario.infra.raw;
 
-import static com.chutneytesting.scenario.domain.TestCaseRepository.DEFAULT_REPOSITORY_SOURCE;
-
-import com.chutneytesting.scenario.api.raw.mapper.GwtScenarioMapper;
-import com.chutneytesting.scenario.domain.TestCase;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
-import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.execution.domain.GwtScenarioMarshaller;
+import com.chutneytesting.scenario.api.raw.mapper.GwtScenarioMapper;
+import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
+
 // call it in repo instead of repo aggregator
 public class TestCaseDataMapper {
 
@@ -28,7 +26,7 @@ public class TestCaseDataMapper {
             .build();
     }
 
-    public static TestCase fromDto(TestCaseData testCaseData) {
+    public static GwtTestCase fromDto(TestCaseData testCaseData) {
         switch (testCaseData.contentVersion) {
             case "v2.1":
                 return fromV2_1(testCaseData);
@@ -37,14 +35,13 @@ public class TestCaseDataMapper {
         }
     }
 
-    private static TestCase fromV2_1(TestCaseData dto) {
+    private static GwtTestCase fromV2_1(TestCaseData dto) {
         return GwtTestCase.builder()
             .withMetadata(TestCaseMetadataImpl.builder()
                 .withId(dto.id)
                 .withTitle(dto.title)
                 .withDescription(dto.description)
                 .withCreationDate(dto.creationDate)
-                .withRepositorySource(DEFAULT_REPOSITORY_SOURCE)
                 .withTags(dto.tags)
                 .withAuthor(dto.author)
                 .withUpdateDate(dto.updateDate)

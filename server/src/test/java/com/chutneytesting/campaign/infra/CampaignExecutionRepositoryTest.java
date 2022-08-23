@@ -3,20 +3,21 @@ package com.chutneytesting.campaign.infra;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
+import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.campaign.domain.Campaign;
-import com.chutneytesting.campaign.domain.CampaignExecutionReport;
-import com.chutneytesting.campaign.domain.ScenarioExecutionReportCampaign;
-import com.chutneytesting.execution.domain.history.ExecutionHistory;
-import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
-import com.chutneytesting.execution.domain.report.ServerReportStatus;
-import com.chutneytesting.scenario.domain.TestCase;
-import com.chutneytesting.scenario.domain.TestCaseMetadata;
-import com.chutneytesting.scenario.domain.TestCaseRepository;
+import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
+import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
+import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory;
+import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
+import com.chutneytesting.server.core.domain.scenario.TestCase;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
+import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
 import com.chutneytesting.tests.AbstractLocalDatabaseTest;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -34,13 +35,13 @@ public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
     @BeforeEach
     public void setUp() {
         scenarioExecutions = new HashMap<>();
-        TestCaseRepository testCaseRepositoryMock = mock(TestCaseRepository.class);
+        TestCaseRepositoryAggregator testCaseRepositoryMock = mock(TestCaseRepositoryAggregator.class);
         CampaignExecutionReportMapper campaignExecutionReportMapper = new CampaignExecutionReportMapper(testCaseRepositoryMock);
         TestCase mockTestCase = mock(TestCase.class);
         TestCaseMetadata mockTestCaseMetadata = mock(TestCaseMetadata.class);
         when(mockTestCaseMetadata.title()).thenReturn("scenario title");
         when(mockTestCase.metadata()).thenReturn(mockTestCaseMetadata);
-        when(testCaseRepositoryMock.findById(any())).thenReturn(mockTestCase);
+        when(testCaseRepositoryMock.findById(any())).thenReturn(of(mockTestCase));
         sut = new CampaignExecutionRepository(namedParameterJdbcTemplate, campaignExecutionReportMapper);
     }
 

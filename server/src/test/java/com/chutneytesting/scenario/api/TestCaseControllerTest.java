@@ -7,19 +7,14 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.chutneytesting.RestExceptionHandler;
-import com.chutneytesting.campaign.domain.Campaign;
-import com.chutneytesting.campaign.domain.CampaignExecutionReport;
-import com.chutneytesting.execution.domain.history.ExecutionHistory;
-import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import com.chutneytesting.scenario.api.raw.dto.ImmutableRawTestCaseDto;
 import com.chutneytesting.scenario.api.raw.dto.RawTestCaseDto;
-import com.chutneytesting.scenario.domain.ScenarioNotParsableException;
-import com.chutneytesting.scenario.domain.TestCase;
-import com.chutneytesting.scenario.domain.TestCaseRepository;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
-import com.chutneytesting.scenario.api.GwtTestCaseController;
 import com.chutneytesting.security.api.UserDto;
 import com.chutneytesting.security.infra.SpringUserService;
+import com.chutneytesting.server.core.domain.instrument.ChutneyMetrics;
+import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
+import com.chutneytesting.server.core.domain.scenario.ScenarioNotParsableException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,7 +23,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -46,7 +40,7 @@ public class TestCaseControllerTest {
         .build();
 
     private MockMvc mockMvc;
-    private final TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
+    private final AggregatedRepository<GwtTestCase> testCaseRepository = mock(AggregatedRepository.class);
     private final SpringUserService userService = mock(SpringUserService.class);
     private final UserDto currentUser = new UserDto();
 
@@ -55,7 +49,7 @@ public class TestCaseControllerTest {
         currentUser.setId("currentUser");
         when(userService.currentUser()).thenReturn(currentUser);
 
-        GwtTestCaseController testCaseController = new GwtTestCaseController(testCaseRepository, null, userService);
+        GwtTestCaseController testCaseController = new GwtTestCaseController(testCaseRepository, userService);
         mockMvc = MockMvcBuilders.standaloneSetup(testCaseController)
             .setControllerAdvice(new RestExceptionHandler(Mockito.mock(ChutneyMetrics.class)))
             .build();

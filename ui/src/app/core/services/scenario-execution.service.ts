@@ -23,13 +23,6 @@ export class ScenarioExecutionService {
             }));
     }
 
-    executeScenario(scenarioId: string): Observable<ScenarioExecutionReport> {
-        return this.http.post<ScenarioExecutionReport>(environment.backend + `${this.resourceUrl}/execution/v1/${scenarioId}`, {})
-            .pipe(map((res: ScenarioExecutionReport) => {
-                return this.buildExecutionReport(res);
-            }));
-    }
-
     executeScenarioAsync(scenarioId: string, computedParameters: Array<KeyValue> = [], env: string): Observable<string> {
         return this.http.post<string>(environment.backend + `${this.resourceUrl}/executionasync/v1/${scenarioId}/${env}`, computedParameters);
     }

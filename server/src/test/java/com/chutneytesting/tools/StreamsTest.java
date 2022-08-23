@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Arrays;
 import java.util.Vector;
 import java.util.stream.Stream;
-import com.chutneytesting.tools.Streams;
 import org.junit.jupiter.api.Test;
 
 public class StreamsTest {

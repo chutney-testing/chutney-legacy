@@ -1,15 +1,17 @@
 package com.chutneytesting.scenario.infra.raw;
 
-import static com.chutneytesting.scenario.domain.TestCaseRepository.DEFAULT_REPOSITORY_SOURCE;
 import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.empty;
+import static java.util.Optional.of;
 
-import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
-import com.chutneytesting.scenario.domain.TestCaseMetadata;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
-import com.chutneytesting.scenario.infra.DelegateScenarioRepository;
-import com.chutneytesting.security.domain.User;
+import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
+import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
+import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
+import com.chutneytesting.server.core.domain.scenario.TestCase;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.server.core.domain.security.User;
 import com.chutneytesting.tools.Try;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,7 +35,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class DatabaseTestCaseRepository implements DelegateScenarioRepository {
+public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestCase> {
 
     private static final ScenarioMetadataRowMapper SCENARIO_INDEX_ROW_MAPPER = new ScenarioMetadataRowMapper();
     private final ScenarioRowMapper scenario_row_mapper;
@@ -50,25 +52,37 @@ public class DatabaseTestCaseRepository implements DelegateScenarioRepository {
     }
 
     @Override
-    public String alias() {
-        return DEFAULT_REPOSITORY_SOURCE;
-    }
-
-    @Override
-    public String save(TestCaseData scenario) {
-        if (isNewScenario(scenario)) {
-            return doSave(scenario);
+    public String save(GwtTestCase testCase) {
+        TestCaseData testCaseData = TestCaseDataMapper.toDto(testCase);
+        if (isNewScenario(testCaseData)) {
+            return doSave(testCaseData);
         }
-        return doUpdate(scenario);
+        return doUpdate(testCaseData);
     }
 
     @Override
-    public Optional<TestCaseData> findById(String scenarioId) {
+    public Optional<GwtTestCase> findById(String scenarioId) {
         try {
-            return Optional.of(uiNamedParameterJdbcTemplate.queryForObject("SELECT * FROM SCENARIO WHERE ID = :id and ACTIVATED = TRUE", buildIdParameterMap(scenarioId), scenario_row_mapper));
+            TestCaseData testCaseData = uiNamedParameterJdbcTemplate.queryForObject("SELECT * FROM SCENARIO WHERE ID = :id and ACTIVATED = TRUE", buildIdParameterMap(scenarioId), scenario_row_mapper);
+            return Optional.ofNullable(testCaseData).map(TestCaseDataMapper::fromDto);
         } catch (IncorrectResultSizeDataAccessException e) {
             return empty();
         }
+    }
+
+    @Override
+    public Optional<TestCase> findExecutableById(String id) {
+        Optional<GwtTestCase> byId = findById(id);
+        if (byId.isPresent()) {
+            return of(byId.get());
+        } else {
+            return empty();
+        }
+    }
+
+    @Override
+    public Optional<TestCaseMetadata> findMetadataById(String testCaseId) {
+        return findById(testCaseId).map(t -> t.metadata());
     }
 
     @Override
@@ -87,7 +101,7 @@ public class DatabaseTestCaseRepository implements DelegateScenarioRepository {
     @Override
     public Optional<Integer> lastVersion(String scenarioId) {
         try {
-            return Optional.of(uiNamedParameterJdbcTemplate.queryForObject("SELECT VERSION FROM SCENARIO WHERE ID = :id", buildIdParameterMap(scenarioId), Integer.class));
+            return of(uiNamedParameterJdbcTemplate.queryForObject("SELECT VERSION FROM SCENARIO WHERE ID = :id", buildIdParameterMap(scenarioId), Integer.class));
         } catch (IncorrectResultSizeDataAccessException e) {
             return empty();
         }
@@ -95,8 +109,8 @@ public class DatabaseTestCaseRepository implements DelegateScenarioRepository {
 
     @Override
     public List<TestCaseMetadata> search(String textFilter) {
-        if(!textFilter.isEmpty()) {
-            String[] words =  StringEscapeUtils.escapeSql(textFilter).split("\\s");
+        if (!textFilter.isEmpty()) {
+            String[] words = StringEscapeUtils.escapeSql(textFilter).split("\\s");
             String sqlSearch = Arrays.stream(words).map(w -> " CONTENT LIKE '%" + w + "%' ").collect(Collectors.joining(" AND "));
             return uiNamedParameterJdbcTemplate.query(
                 "SELECT ID, TITLE, DESCRIPTION, TAGS, CREATION_DATE, USER_ID, UPDATE_DATE, VERSION " +

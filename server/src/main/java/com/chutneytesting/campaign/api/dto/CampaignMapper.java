@@ -3,10 +3,9 @@ package com.chutneytesting.campaign.api.dto;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
-import com.chutneytesting.campaign.domain.Campaign;
-import com.chutneytesting.campaign.domain.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import java.util.List;
-import java.util.Optional;
 
 public class CampaignMapper {
 

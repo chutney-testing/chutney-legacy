@@ -1,23 +1,23 @@
 package com.chutneytesting.tests;
 
-import static com.chutneytesting.ComposableIdUtils.toInternalId;
-import static com.chutneytesting.scenario.infra.orient.OrientComponentDB.STEP_CLASS;
-import static com.chutneytesting.scenario.infra.orient.OrientComponentDB.STEP_CLASS_PROPERTY_NAME;
+import static com.chutneytesting.component.ComposableIdUtils.toInternalId;
+import static com.chutneytesting.component.scenario.infra.orient.OrientComponentDB.STEP_CLASS;
+import static com.chutneytesting.component.scenario.infra.orient.OrientComponentDB.STEP_CLASS_PROPERTY_NAME;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.scenario.domain.ComposableStep;
-import com.chutneytesting.scenario.domain.ComposableStepRepository;
-import com.chutneytesting.scenario.domain.Strategy;
-import com.chutneytesting.scenario.infra.ExecutableComposedStepMapper;
-import com.chutneytesting.scenario.infra.ExecutableComposedTestCaseMapper;
-import com.chutneytesting.scenario.infra.OrientComposableStepMapper;
-import com.chutneytesting.scenario.infra.RawImplementationMapper;
-import com.chutneytesting.scenario.infra.orient.OrientComponentDB;
-import com.chutneytesting.scenario.infra.orient.OrientConfigurationProperties;
-import com.chutneytesting.scenario.infra.orient.OrientDBManager;
-import com.chutneytesting.scenario.infra.orient.changelog.OrientChangelogExecutor;
-import com.chutneytesting.scenario.infra.wrapper.StepVertex;
+import com.chutneytesting.component.scenario.domain.ComposableStep;
+import com.chutneytesting.component.scenario.domain.ComposableStepRepository;
+import com.chutneytesting.component.scenario.domain.Strategy;
+import com.chutneytesting.component.scenario.infra.ExecutableComposedStepMapper;
+import com.chutneytesting.component.scenario.infra.ExecutableComposedTestCaseMapper;
+import com.chutneytesting.component.scenario.infra.OrientComposableStepMapper;
+import com.chutneytesting.component.scenario.infra.RawImplementationMapper;
+import com.chutneytesting.component.scenario.infra.orient.OrientComponentDB;
+import com.chutneytesting.component.scenario.infra.orient.OrientConfigurationProperties;
+import com.chutneytesting.component.scenario.infra.orient.OrientDBManager;
+import com.chutneytesting.component.scenario.infra.orient.changelog.OrientChangelogExecutor;
+import com.chutneytesting.component.scenario.infra.wrapper.StepVertex;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

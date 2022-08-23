@@ -3,10 +3,10 @@ package com.chutneytesting.campaign.infra;
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.util.Lists.newArrayList;
 
-import com.chutneytesting.campaign.domain.Campaign;
-import com.chutneytesting.campaign.domain.CampaignExecutionReport;
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
 import com.chutneytesting.campaign.domain.CampaignRepository;
+import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import java.util.Comparator;

@@ -2,16 +2,16 @@ package com.chutneytesting.scenario.api.raw.mapper;
 
 import static org.hjson.JsonValue.readHjson;
 
+import com.chutneytesting.execution.domain.GwtScenarioMarshaller;
 import com.chutneytesting.scenario.api.raw.dto.ImmutableRawTestCaseDto;
 import com.chutneytesting.scenario.api.raw.dto.RawTestCaseDto;
-import com.chutneytesting.scenario.domain.ScenarioNotParsableException;
-import com.chutneytesting.scenario.domain.TestCase;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.domain.raw.RawTestCase;
-import com.chutneytesting.execution.domain.GwtScenarioMarshaller;
-import com.chutneytesting.tools.ui.KeyValue;
+import com.chutneytesting.server.core.domain.scenario.ScenarioNotParsableException;
+import com.chutneytesting.server.core.domain.scenario.TestCase;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.server.core.domain.tools.ui.KeyValue;
 import org.hjson.Stringify;
 
 public class RawTestCaseMapper {
@@ -29,7 +29,6 @@ public class RawTestCaseMapper {
                 .withDescription(testCase.metadata().description())
                 .withTags(testCase.metadata().tags())
                 .withCreationDate(testCase.metadata().creationDate())
-                .withRepositorySource(testCase.metadata().repositorySource())
                 .withAuthor(testCase.metadata.author)
                 .withUpdateDate(testCase.metadata.updateDate)
                 .withVersion(testCase.metadata.version)
@@ -50,7 +49,6 @@ public class RawTestCaseMapper {
                 .withDescription(dto.description().orElse(null))
                 .withTags(dto.tags())
                 .withCreationDate(dto.creationDate())
-                .withRepositorySource(null)
                 .withAuthor(dto.author())
                 .withUpdateDate(dto.updateDate())
                 .withVersion(dto.version())
@@ -63,8 +61,7 @@ public class RawTestCaseMapper {
     private static String formatContentToJson(String content) {
         try {
             return readHjson(content).toString();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new ScenarioNotParsableException("Malformed json or hjson format. ", e);
         }
     }

@@ -5,6 +5,10 @@
     <option name="MAIN_CLASS_NAME" value="com.chutneytesting.ServerBootstrap" />
     <module name="local-dev" />
     <shortenClasspath name="ARGS_FILE" />
+    <extension name="com.fapiko.jetbrains.plugins.better_direnv.runconfigs.IdeaRunConfigurationExtension">
+      <option name="DIRENV_ENABLED" value="false" />
+      <option name="DIRENV_TRUSTED" value="false" />
+    </extension>
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

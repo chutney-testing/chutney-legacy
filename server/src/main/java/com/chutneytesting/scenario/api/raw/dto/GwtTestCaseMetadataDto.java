@@ -1,8 +1,8 @@
 package com.chutneytesting.scenario.api.raw.dto;
 
+import com.chutneytesting.execution.api.ExecutionSummaryDto;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.chutneytesting.execution.api.ExecutionSummaryDto;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;

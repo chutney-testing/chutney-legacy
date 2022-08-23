@@ -1,9 +1,8 @@
 package com.chutneytesting.execution.api;
 
-import com.chutneytesting.execution.domain.history.ExecutionHistory;
-import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
+import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
+import com.chutneytesting.server.core.domain.execution.history.ExecutionHistoryRepository;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;

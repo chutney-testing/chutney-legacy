@@ -10,6 +10,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.agent.domain.network.Agent;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
+import com.chutneytesting.component.execution.domain.ExecutableComposedStep;
+import com.chutneytesting.component.execution.domain.ExecutableComposedTestCase;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
 import com.chutneytesting.engine.api.execution.TargetExecutionDto;
@@ -17,10 +19,8 @@ import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
 import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
 import com.chutneytesting.environment.api.EnvironmentApi;
 import com.chutneytesting.environment.api.dto.TargetDto;
-import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.ScenarioConversionException;
-import com.chutneytesting.execution.domain.ExecutableComposedStep;
-import com.chutneytesting.execution.domain.ExecutableComposedTestCase;
+import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
+import com.chutneytesting.server.core.domain.execution.ScenarioConversionException;
 import com.chutneytesting.scenario.domain.gwt.GwtStep;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.domain.gwt.Strategy;
@@ -137,7 +137,7 @@ public class ExecutionRequestMapper {
         );
     }
 
-    private ExecutionRequestDto.StepStrategyDefinitionRequestDto mapStrategy(com.chutneytesting.scenario.domain.Strategy strategy) {
+    private ExecutionRequestDto.StepStrategyDefinitionRequestDto mapStrategy(com.chutneytesting.component.scenario.domain.Strategy strategy) {
         return new ExecutionRequestDto.StepStrategyDefinitionRequestDto(
             strategy.type,
             strategy.parameters

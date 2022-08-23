@@ -1,5 +1,9 @@
 package com.chutneytesting.security.domain;
 
+import com.chutneytesting.server.core.domain.security.Role;
+import com.chutneytesting.server.core.domain.security.User;
+import com.chutneytesting.server.core.domain.security.UserRoles;
+
 public class AuthenticationService {
 
     private final Authorizations authorizations;

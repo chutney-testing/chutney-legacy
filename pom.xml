@@ -63,6 +63,7 @@
 
     <modules>
         <module>server</module>
+        <module>server-core</module>
         <module>ui</module>
         <module>engine</module>
         <module>task-spi</module>
@@ -74,7 +75,6 @@
         <module>chutney-junit</module>
         <module>jira</module>
         <module>component</module>
-        <module>testcase-spi</module>
     </modules>
 
     <properties>
@@ -200,7 +200,7 @@
         <dependencies>
             <dependency>
                 <groupId>com.chutneytesting</groupId>
-                <artifactId>testcase-spi</artifactId>
+                <artifactId>server-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -7,7 +7,7 @@ import static org.awaitility.Awaitility.await;
 
 import com.chutneytesting.design.domain.editionlock.TestCaseEdition;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditions;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

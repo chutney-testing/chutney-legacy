@@ -18,21 +18,16 @@ import com.chutneytesting.RestExceptionHandler;
 import com.chutneytesting.WebConfiguration;
 import com.chutneytesting.campaign.api.dto.CampaignDto;
 import com.chutneytesting.campaign.api.dto.CampaignExecutionReportDto;
-import com.chutneytesting.campaign.domain.Campaign;
-import com.chutneytesting.campaign.domain.CampaignExecutionReport;
-import com.chutneytesting.campaign.domain.ScenarioExecutionReportCampaign;
 import com.chutneytesting.campaign.infra.FakeCampaignRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
-import com.chutneytesting.execution.domain.history.ExecutionHistory;
-import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import com.chutneytesting.scenario.api.raw.dto.ImmutableTestCaseIndexDto;
 import com.chutneytesting.scenario.api.raw.dto.TestCaseIndexDto;
-import com.chutneytesting.scenario.domain.TestCase;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
-import com.chutneytesting.scenario.domain.TestCaseRepository;
-import com.chutneytesting.scenario.domain.ComposableScenario;
-import com.chutneytesting.scenario.domain.ComposableTestCase;
-import com.chutneytesting.scenario.domain.ComposableTestCaseRepository;
+import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
+import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
+import com.chutneytesting.server.core.domain.instrument.ChutneyMetrics;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -48,7 +43,6 @@ import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -64,8 +58,7 @@ public class CampaignControllerTest {
     private static final String urlTemplate = "/api/ui/campaign/v1/";
 
     private final FakeCampaignRepository repository = new FakeCampaignRepository();
-    private ComposableTestCaseRepository composableTestCaseRepository;
-    private TestCaseRepository testCaseRepository;
+    private TestCaseRepositoryAggregator repositoryAggregator;
 
     private final CampaignExecutionEngine campaignExecutionEngine = mock(CampaignExecutionEngine.class);
     private MockMvc mockMvc;
@@ -77,9 +70,8 @@ public class CampaignControllerTest {
     public void setUp() throws Exception {
         resultExtractor = new ResultExtractor();
 
-        composableTestCaseRepository = mock(ComposableTestCaseRepository.class);
-        testCaseRepository = mock(TestCaseRepository.class);
-        CampaignController campaignController = new CampaignController(testCaseRepository, composableTestCaseRepository, repository, campaignExecutionEngine);
+        repositoryAggregator = mock(TestCaseRepositoryAggregator.class);
+        CampaignController campaignController = new CampaignController(repositoryAggregator, repository, campaignExecutionEngine);
         mockMvc = MockMvcBuilders.standaloneSetup(campaignController)
             .setControllerAdvice(new RestExceptionHandler(Mockito.mock(ChutneyMetrics.class)))
             .build();
@@ -353,11 +345,11 @@ public class CampaignControllerTest {
             emptyMap(), emptyList(), "env", false, false, null, null);
         insertCampaign(campaignToCreate);
 
-        when(composableTestCaseRepository.findById("44-44")).thenReturn(new ComposableTestCase("44-44", TestCaseMetadataImpl.builder().withId("44-44").build(), ComposableScenario.builder()
-            .withComposableSteps(emptyList())
-            .withParameters(emptyMap())
-            .build()));
-        when(testCaseRepository.findMetadataById("55")).thenReturn(TestCaseMetadataImpl.builder().withId("55").build());
+        when(repositoryAggregator.findMetadataById("44-44"))
+            .thenReturn(Optional.of(
+                TestCaseMetadataImpl.builder().withId("44-44").build()
+            ));
+        when(repositoryAggregator.findMetadataById("55")).thenReturn(Optional.of(TestCaseMetadataImpl.builder().withId("55").build()));
 
         // When
         execute(MockMvcRequestBuilders.get(urlTemplate + "2" + "/scenarios"))

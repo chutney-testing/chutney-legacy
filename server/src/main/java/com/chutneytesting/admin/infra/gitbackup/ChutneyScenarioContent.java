@@ -5,11 +5,11 @@ import static com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory.S
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContent;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentCategory;
 import com.chutneytesting.admin.domain.gitbackup.ChutneyContentProvider;
-import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
-import com.chutneytesting.scenario.domain.TestCaseMetadata;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
-import com.chutneytesting.scenario.domain.TestCaseRepository;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
+import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
+import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.tools.file.FileUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -25,9 +26,9 @@ import org.springframework.stereotype.Component;
 public class ChutneyScenarioContent implements ChutneyContentProvider {
 
     private final ObjectMapper mapper;
-    private final TestCaseRepository repository;
+    private final AggregatedRepository<GwtTestCase> repository;
 
-    public ChutneyScenarioContent(TestCaseRepository repository, @Qualifier("gitObjectMapper") ObjectMapper mapper) {
+    public ChutneyScenarioContent(AggregatedRepository<GwtTestCase> repository, @Qualifier("gitObjectMapper") ObjectMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }
@@ -45,9 +46,10 @@ public class ChutneyScenarioContent implements ChutneyContentProvider {
     @Override
     public Stream<ChutneyContent> getContent() {
         return repository.findAll().stream()
-            .filter(metadata -> !isComposableFrontId(metadata.id()))
             .map(TestCaseMetadata::id)
             .map(repository::findById)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
             .map(t -> {
                 ChutneyContent.ChutneyContentBuilder builder = ChutneyContent.builder()
                     .withProvider(provider())
@@ -99,7 +101,7 @@ public class ChutneyScenarioContent implements ChutneyContentProvider {
     private GwtTestCase manageVersionConsistency(GwtTestCase testCase) {
         Integer lastVersion = 1;
         try {
-            lastVersion = repository.lastVersion(testCase.id());
+            lastVersion = repository.lastVersion(testCase.id()).get();// TODO ugly
         }
         catch (ScenarioNotFoundException e) {
             // lastVersion = 1;

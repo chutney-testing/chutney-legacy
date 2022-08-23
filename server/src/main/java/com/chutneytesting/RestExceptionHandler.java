@@ -3,25 +3,25 @@ package com.chutneytesting;
 import com.chutneytesting.admin.domain.BackupNotFoundException;
 import com.chutneytesting.admin.domain.gitbackup.UnreachableRemoteException;
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
-import com.chutneytesting.dataset.domain.DataSetNotFoundException;
+import com.chutneytesting.component.dataset.domain.DataSetNotFoundException;
+import com.chutneytesting.component.scenario.domain.ComposableStepNotFoundException;
 import com.chutneytesting.environment.domain.exception.AlreadyExistingEnvironmentException;
 import com.chutneytesting.environment.domain.exception.AlreadyExistingTargetException;
 import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
 import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
 import com.chutneytesting.environment.domain.exception.TargetNotFoundException;
-import com.chutneytesting.execution.domain.ScenarioConversionException;
 import com.chutneytesting.execution.domain.campaign.CampaignAlreadyRunningException;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionNotFoundException;
-import com.chutneytesting.execution.domain.history.ReportNotFoundException;
-import com.chutneytesting.execution.domain.scenario.FailedExecutionAttempt;
-import com.chutneytesting.execution.domain.scenario.ScenarioNotRunningException;
-import com.chutneytesting.globalvar.domain.GlobalVarNotFoundException;
-import com.chutneytesting.instrument.domain.ChutneyMetrics;
-import com.chutneytesting.scenario.domain.AlreadyExistingScenarioException;
-import com.chutneytesting.scenario.domain.ComposableStepNotFoundException;
-import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
-import com.chutneytesting.scenario.domain.ScenarioNotParsableException;
 import com.chutneytesting.security.domain.CurrentUserNotFoundException;
+import com.chutneytesting.server.core.domain.execution.FailedExecutionAttempt;
+import com.chutneytesting.server.core.domain.execution.ScenarioConversionException;
+import com.chutneytesting.server.core.domain.execution.ScenarioNotRunningException;
+import com.chutneytesting.server.core.domain.execution.report.ReportNotFoundException;
+import com.chutneytesting.server.core.domain.globalvar.GlobalVarNotFoundException;
+import com.chutneytesting.server.core.domain.instrument.ChutneyMetrics;
+import com.chutneytesting.server.core.domain.scenario.AlreadyExistingScenarioException;
+import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
+import com.chutneytesting.server.core.domain.scenario.ScenarioNotParsableException;
 import java.time.format.DateTimeParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,8 +62,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({
-        RuntimeException.class,
-        FailedExecutionAttempt.class
+        FailedExecutionAttempt.class,
+        RuntimeException.class
     })
     public ResponseEntity<Object> _500(RuntimeException ex, WebRequest request) {
         LOGGER.error("Controller global exception handler", ex);
@@ -71,19 +71,19 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({
-        TargetNotFoundException.class,
-        ScenarioNotFoundException.class,
-        CampaignNotFoundException.class,
-        CampaignExecutionNotFoundException.class,
-        EnvironmentNotFoundException.class,
-        CurrentUserNotFoundException.class,
         BackupNotFoundException.class,
+        CampaignExecutionNotFoundException.class,
+        CampaignNotFoundException.class,
+        ComposableStepNotFoundException.class,
+        CurrentUserNotFoundException.class,
         DataSetNotFoundException.class,
-        ScenarioNotRunningException.class,
+        EnvironmentNotFoundException.class,
         GlobalVarNotFoundException.class,
         ReportNotFoundException.class,
-        UnreachableRemoteException.class,
-        ComposableStepNotFoundException.class // TODO should be in ComponentHandler
+        ScenarioNotFoundException.class,
+        ScenarioNotRunningException.class,
+        TargetNotFoundException.class,
+        UnreachableRemoteException.class
     })
     protected ResponseEntity<Object> notFound(RuntimeException ex, WebRequest request) {
         LOGGER.warn("Not found >> " + ex.getMessage());
@@ -92,10 +92,10 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({
-        AlreadyExistingTargetException.class,
         AlreadyExistingEnvironmentException.class,
-        CampaignAlreadyRunningException.class,
         AlreadyExistingScenarioException.class,
+        AlreadyExistingTargetException.class,
+        CampaignAlreadyRunningException.class
     })
     protected ResponseEntity<Object> conflict(RuntimeException ex, WebRequest request) {
         LOGGER.warn("Conflict >> " + ex.getMessage());
@@ -115,8 +115,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({
         DateTimeParseException.class,
-        InvalidEnvironmentNameException.class,
-        HttpMessageConversionException.class
+        HttpMessageConversionException.class,
+        InvalidEnvironmentNameException.class
     })
     protected ResponseEntity<Object> badRequest(RuntimeException ex, WebRequest request) {
         LOGGER.warn("Bad Request >> " + ex.getMessage());
@@ -125,8 +125,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({
-        IllegalArgumentException.class,
-        AccessDeniedException.class
+        AccessDeniedException.class,
+        IllegalArgumentException.class
     })
     protected ResponseEntity<Object> forbidden(RuntimeException ex, WebRequest request) {
         LOGGER.warn("Forbidden >> " + ex.getMessage());

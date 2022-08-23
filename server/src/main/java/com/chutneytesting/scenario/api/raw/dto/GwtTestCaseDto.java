@@ -3,7 +3,7 @@ package com.chutneytesting.scenario.api.raw.dto;
 import static java.time.Instant.now;
 
 import com.chutneytesting.execution.api.ExecutionSummaryDto;
-import com.chutneytesting.security.domain.User;
+import com.chutneytesting.server.core.domain.security.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

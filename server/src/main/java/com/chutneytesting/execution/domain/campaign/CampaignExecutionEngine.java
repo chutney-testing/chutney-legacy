@@ -3,26 +3,26 @@ package com.chutneytesting.execution.domain.campaign;
 import static java.util.Collections.singleton;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-import com.chutneytesting.campaign.domain.Campaign;
-import com.chutneytesting.campaign.domain.CampaignExecutionReport;
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
 import com.chutneytesting.campaign.domain.CampaignRepository;
-import com.chutneytesting.campaign.domain.ScenarioExecutionReportCampaign;
-import com.chutneytesting.dataset.domain.DataSetHistoryRepository;
-import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.history.ExecutionHistory;
-import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
-import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
-import com.chutneytesting.execution.domain.report.ServerReportStatus;
-import com.chutneytesting.execution.domain.scenario.FailedExecutionAttempt;
-import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
-import com.chutneytesting.execution.domain.ExecutableComposedTestCase;
-import com.chutneytesting.instrument.domain.ChutneyMetrics;
+import com.chutneytesting.component.dataset.domain.DataSetHistoryRepository;
+import com.chutneytesting.component.execution.domain.ExecutableComposedTestCase;
 import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
-import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
-import com.chutneytesting.scenario.domain.ScenarioNotParsableException;
-import com.chutneytesting.scenario.domain.TestCase;
-import com.chutneytesting.scenario.domain.TestCaseRepository;
+import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
+import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
+import com.chutneytesting.server.core.domain.execution.FailedExecutionAttempt;
+import com.chutneytesting.server.core.domain.execution.ScenarioExecutionEngine;
+import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
+import com.chutneytesting.server.core.domain.execution.history.ExecutionHistoryRepository;
+import com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport;
+import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
+import com.chutneytesting.server.core.domain.instrument.ChutneyMetrics;
+import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
+import com.chutneytesting.server.core.domain.scenario.ScenarioNotParsableException;
+import com.chutneytesting.server.core.domain.scenario.TestCase;
+import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
 import com.chutneytesting.tools.Try;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -55,7 +54,7 @@ public class CampaignExecutionEngine {
     private final CampaignRepository campaignRepository;
     private final ScenarioExecutionEngine scenarioExecutionEngine;
     private final ExecutionHistoryRepository executionHistoryRepository;
-    private final TestCaseRepository testCaseRepository;
+    private final TestCaseRepositoryAggregator testCaseRepository;
     private final DataSetHistoryRepository dataSetHistoryRepository;
     private final JiraXrayEmbeddedApi jiraXrayEmbeddedApi;
     private final ChutneyMetrics metrics;
@@ -67,7 +66,7 @@ public class CampaignExecutionEngine {
     public CampaignExecutionEngine(CampaignRepository campaignRepository,
                                    ScenarioExecutionEngine scenarioExecutionEngine,
                                    ExecutionHistoryRepository executionHistoryRepository,
-                                   TestCaseRepository testCaseRepository,
+                                   TestCaseRepositoryAggregator testCaseRepository,
                                    DataSetHistoryRepository dataSetHistoryRepository,
                                    JiraXrayEmbeddedApi jiraXrayEmbeddedApi,
                                    ChutneyMetrics metrics,
@@ -168,8 +167,9 @@ public class CampaignExecutionEngine {
     private CampaignExecutionReport execute(Campaign campaign, CampaignExecutionReport campaignExecutionReport, List<String> scenariosToExecute) {
         LOGGER.trace("Execute campaign {} : {}", campaign.id, campaign.title);
         List<TestCase> testCases = scenariosToExecute.stream()
-            .map(testCaseRepository::findById)
-            .filter(Objects::nonNull)
+            .map(testCaseRepository::findExecutableById)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
             .collect(Collectors.toList());
 
         campaignExecutionReport.initExecution(testCases, campaign.executionEnvironment(), campaignExecutionReport.userId);
@@ -223,7 +223,7 @@ public class CampaignExecutionEngine {
         try {
             LOGGER.trace("Execute scenario {} for campaign {}", testCase.id(), campaign.id);
             ExecutionRequest executionRequest = buildExecutionRequest(campaign, testCase, userId);
-            ScenarioExecutionReport scenarioExecutionReport = scenarioExecutionEngine.execute(executionRequest);
+            ScenarioExecutionReport scenarioExecutionReport = scenarioExecutionEngine.execute(executionRequest, Optional.empty()); // todo
             executionId = scenarioExecutionReport.executionId;
             scenarioName = scenarioExecutionReport.scenarioName;
         } catch (FailedExecutionAttempt e) {
@@ -253,7 +253,6 @@ public class CampaignExecutionEngine {
         return new ExecutionRequest(
             ((ExecutableComposedTestCase) testCase).withDataSetId(campaign.externalDatasetId),
             campaign.executionEnvironment(),
-            true,
             userId
         );
     }

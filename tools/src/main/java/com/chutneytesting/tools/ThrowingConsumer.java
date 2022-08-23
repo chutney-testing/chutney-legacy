@@ -7,7 +7,7 @@ public interface ThrowingConsumer<T> {
     void accept(T var1) throws Exception;
 
     /**
-     * @throws UncheckedException if given ThrowingFunction throws
+     * @throws UncheckedException if given {@link ThrowingFunction} throws
      */
     static <T> Consumer<T> toUnchecked(ThrowingConsumer<T> throwingConsumer) throws UncheckedException {
         return silence(throwingConsumer, e -> {

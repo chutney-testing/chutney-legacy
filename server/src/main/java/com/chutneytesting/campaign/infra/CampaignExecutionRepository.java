@@ -4,9 +4,9 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 
-import com.chutneytesting.campaign.domain.CampaignExecutionReport;
-import com.chutneytesting.campaign.domain.ScenarioExecutionReportCampaign;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionNotFoundException;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.util.HashMap;

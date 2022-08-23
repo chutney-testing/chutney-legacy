@@ -2,19 +2,20 @@ package com.chutneytesting.campaign.infra;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.campaign.domain.CampaignExecutionReport;
-import com.chutneytesting.campaign.domain.ScenarioExecutionReportCampaign;
-import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
-import com.chutneytesting.execution.domain.report.ServerReportStatus;
-import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
-import com.chutneytesting.scenario.domain.TestCase;
-import com.chutneytesting.scenario.domain.TestCaseMetadata;
-import com.chutneytesting.scenario.domain.TestCaseRepository;
+import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
+import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory;
+import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
+import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
+import com.chutneytesting.server.core.domain.scenario.TestCase;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
 import com.chutneytesting.tools.Try;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,11 +29,11 @@ import org.mockito.stubbing.OngoingStubbing;
 public class CampaignExecutionReportMapperTest {
 
     private CampaignExecutionReportMapper sut;
-    private TestCaseRepository testCaseRepositoryMock;
+    private TestCaseRepositoryAggregator testCaseRepositoryMock;
 
     @BeforeEach
     public void setUp() {
-        testCaseRepositoryMock = mock(TestCaseRepository.class);
+        testCaseRepositoryMock = mock(TestCaseRepositoryAggregator.class);
         sut = new CampaignExecutionReportMapper(testCaseRepositoryMock);
     }
 
@@ -56,7 +57,7 @@ public class CampaignExecutionReportMapperTest {
         TestCaseMetadata mockTestCaseMetadata = mock(TestCaseMetadata.class);
         when(mockTestCaseMetadata.title()).thenReturn(scenarioExecutionReport.scenarioName);
         when(mockTestCase.metadata()).thenReturn(mockTestCaseMetadata);
-        when(testCaseRepositoryMock.findById(any())).thenReturn(mockTestCase);
+        when(testCaseRepositoryMock.findById(any())).thenReturn(of(mockTestCase));
 
         List<CampaignExecutionReport> campaignExecutionReports = sut.extractData(resultSet);
 
@@ -107,7 +108,7 @@ public class CampaignExecutionReportMapperTest {
         TestCaseMetadata mockTestCaseMetadata = mock(TestCaseMetadata.class);
         when(mockTestCaseMetadata.title()).thenReturn(scenarioExecutionReport.scenarioName);
         when(mockTestCase.metadata()).thenReturn(mockTestCaseMetadata);
-        when(testCaseRepositoryMock.findById(scenarioExecutionReport.scenarioId)).thenReturn(mockTestCase);
+        when(testCaseRepositoryMock.findById(scenarioExecutionReport.scenarioId)).thenReturn(of(mockTestCase));
 
         List<CampaignExecutionReport> campaignExecutionReports = sut.extractData(resultSet);
 

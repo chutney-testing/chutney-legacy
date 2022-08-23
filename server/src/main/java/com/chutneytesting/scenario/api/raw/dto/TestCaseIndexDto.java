@@ -1,7 +1,7 @@
 package com.chutneytesting.scenario.api.raw.dto;
 
-import com.chutneytesting.scenario.domain.TestCaseMetadata;
 import com.chutneytesting.execution.api.ExecutionSummaryDto;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.List;
@@ -21,7 +21,6 @@ public interface TestCaseIndexDto {
                 .creationDate(testCaseMetadata.creationDate())
                 .title(testCaseMetadata.title())
                 .description(testCaseMetadata.description())
-                .repositorySource(testCaseMetadata.repositorySource())
                 .tags(testCaseMetadata.tags())
                 .executions(executions)
                 .build()
