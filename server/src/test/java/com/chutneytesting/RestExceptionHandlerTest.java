@@ -5,17 +5,20 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.chutneytesting.environment.domain.exception.AlreadyExistingTargetException;
-import com.chutneytesting.execution.domain.ScenarioConversionException;
-import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import com.chutneytesting.scenario.api.GwtTestCaseController;
-import com.chutneytesting.scenario.domain.AggregatedRepository;
-import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
-import com.chutneytesting.scenario.domain.TestCaseRepository;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
+import com.chutneytesting.server.core.domain.execution.ScenarioConversionException;
+import com.chutneytesting.server.core.domain.instrument.ChutneyMetrics;
+import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
+import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -37,7 +40,7 @@ class RestExceptionHandlerTest {
 
     @BeforeEach
     public void setup() {
-        GwtTestCaseController testCaseController = new GwtTestCaseController(testCaseRepository, null, null);
+        GwtTestCaseController testCaseController = new GwtTestCaseController(testCaseRepository, null);
 
         mockMvc = MockMvcBuilders
             .standaloneSetup(testCaseController)
@@ -66,6 +69,6 @@ class RestExceptionHandlerTest {
                 .andExpect(statusMatcher);
 
         //Then
-        verify(mockedMetrics).onHttpError(eq(status));
+            verify(mockedMetrics).onHttpError(eq(status));
     }
 }

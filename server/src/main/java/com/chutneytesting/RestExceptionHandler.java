@@ -18,6 +18,7 @@ import com.chutneytesting.server.core.domain.execution.ScenarioConversionExcepti
 import com.chutneytesting.server.core.domain.execution.ScenarioNotRunningException;
 import com.chutneytesting.server.core.domain.execution.report.ReportNotFoundException;
 import com.chutneytesting.server.core.domain.globalvar.GlobalVarNotFoundException;
+import com.chutneytesting.server.core.domain.instrument.ChutneyMetrics;
 import com.chutneytesting.server.core.domain.scenario.AlreadyExistingScenarioException;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotParsableException;

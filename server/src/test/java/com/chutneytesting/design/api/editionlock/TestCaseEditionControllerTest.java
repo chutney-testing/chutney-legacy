@@ -13,12 +13,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.chutneytesting.RestExceptionHandler;
 import com.chutneytesting.WebConfiguration;
-import com.chutneytesting.campaign.domain.Campaign;
-import com.chutneytesting.campaign.domain.CampaignExecutionReport;
 import com.chutneytesting.design.domain.editionlock.TestCaseEdition;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditionsService;
 import com.chutneytesting.security.api.UserDto;
 import com.chutneytesting.security.infra.SpringUserService;
+import com.chutneytesting.server.core.domain.instrument.ChutneyMetrics;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -29,7 +28,6 @@ import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
