@@ -18,13 +18,16 @@ import com.chutneytesting.RestExceptionHandler;
 import com.chutneytesting.WebConfiguration;
 import com.chutneytesting.campaign.api.dto.CampaignDto;
 import com.chutneytesting.campaign.api.dto.CampaignExecutionReportDto;
+import com.chutneytesting.campaign.domain.Campaign;
 import com.chutneytesting.campaign.domain.CampaignExecutionReport;
 import com.chutneytesting.campaign.domain.ScenarioExecutionReportCampaign;
 import com.chutneytesting.campaign.infra.FakeCampaignRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.chutneytesting.execution.domain.history.ExecutionHistory;
+import com.chutneytesting.instrument.domain.ChutneyMetrics;
 import com.chutneytesting.scenario.api.raw.dto.ImmutableTestCaseIndexDto;
 import com.chutneytesting.scenario.api.raw.dto.TestCaseIndexDto;
+import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.TestCaseRepository;
 import com.chutneytesting.scenario.domain.ComposableScenario;
@@ -44,6 +47,8 @@ import org.assertj.core.api.Assertions;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -76,7 +81,7 @@ public class CampaignControllerTest {
         testCaseRepository = mock(TestCaseRepository.class);
         CampaignController campaignController = new CampaignController(testCaseRepository, composableTestCaseRepository, repository, campaignExecutionEngine);
         mockMvc = MockMvcBuilders.standaloneSetup(campaignController)
-            .setControllerAdvice(new RestExceptionHandler())
+            .setControllerAdvice(new RestExceptionHandler(Mockito.mock(ChutneyMetrics.class)))
             .build();
 
         createExistingCampaign();

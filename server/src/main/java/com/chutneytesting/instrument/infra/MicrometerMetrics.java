@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -53,18 +54,24 @@ class MicrometerMetrics implements ChutneyMetrics {
     @Override
     public void onCampaignExecutionEnded(Campaign campaign, CampaignExecutionReport campaignExecutionReport) {
         final String campaignId = campaign.id.toString();
-        final Map<ServerReportStatus, Long> scenarioCountByStatus = campaignExecutionReport.scenarioExecutionReports().stream().collect(groupingBy(s -> s.execution.status(), counting()));
+        final Map<ServerReportStatus, Long> campaignCountByStatus = campaignExecutionReport.scenarioExecutionReports().stream().collect(groupingBy(s -> s.execution.status(), counting()));
         final ServerReportStatus status = campaignExecutionReport.status();
         final long campaignDuration = campaignExecutionReport.getDuration();
 
-        final Counter scenarioExecutionCount = this.meterRegistry.counter("campaign_execution_count", asList(of("campaignId", campaignId), of("campaignTitle", campaign.title), of("status", status.name())));
-        scenarioExecutionCount.increment();
+        final Counter campaignExecutionCount = this.meterRegistry.counter("campaign_execution_count", asList(of("campaignId", campaignId), of("campaignTitle", campaign.title), of("status", status.name())));
+        campaignExecutionCount.increment();
 
-        final Timer scenarioExecutionTimer = this.meterRegistry.timer("campaign_execution_timer", singleton(of("campaignId", campaignId)));
-        scenarioExecutionTimer.record(campaignDuration, TimeUnit.MILLISECONDS);
+        final Timer campaignExecutionTimer = this.meterRegistry.timer("campaign_execution_timer", singleton(of("campaignId", campaignId)));
+        campaignExecutionTimer.record(campaignDuration, TimeUnit.MILLISECONDS);
 
         final Map<ServerReportStatus, AtomicLong> cachedMetrics = getMetricsInCache(campaignId);
-        updateMetrics(scenarioCountByStatus, cachedMetrics);
+        updateMetrics(campaignCountByStatus, cachedMetrics);
+    }
+
+    @Override
+    public void onHttpError(HttpStatus status) {
+        final Counter httpErrorCount = this.meterRegistry.counter("http_error", asList(of("status", String.valueOf(status.value()))));
+        httpErrorCount.increment();
     }
 
     private void updateMetrics(Map<ServerReportStatus, Long> scenarioCountByStatus, Map<ServerReportStatus, AtomicLong> cachedMetrics) {

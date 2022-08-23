@@ -117,7 +117,11 @@
         </createTable>
         <createSequence sequenceName="SCENARIO_SEQ" startValue="1" incrementBy="1"/>
     </changeSet>
-
+    <!-- If not doing that we have : current value of sequence SCENARIO_SEQ is not yet defined in this session-->
+    <changeSet id="init_scenario_seq" author="ICG" runAlways="true">
+        <comment>Init sequence in session</comment>
+        <sql>select nextval('SCENARIO_SEQ') from SCENARIO</sql>
+    </changeSet>
     <changeSet id="20190719-003-h2" author="ICG" dbms="h2">
         <preConditions onFail="CONTINUE">
             <not>
@@ -162,6 +166,11 @@
         <createSequence sequenceName="CAMPAIGN_SEQ" startValue="1" incrementBy="1"/>
     </changeSet>
 
+    <!-- If not doing that we have : current value of sequence SCENARIO_SEQ is not yet defined in this session-->
+    <changeSet id="init_campaign_seq" author="ICG" runAlways="true">
+        <comment>Init sequence in session</comment>
+        <sql>select nextval('CAMPAIGN_SEQ') from CAMPAIGN</sql>
+    </changeSet>
     <changeSet id="20190719-005-h2" author="ICG" dbms="h2">
         <preConditions onFail="CONTINUE">
             <not>
@@ -214,6 +223,11 @@
         </createIndex>
     </changeSet>
 
+    <!-- If not doing that we have : current value of sequence SCENARIO_SEQ is not yet defined in this session-->
+    <changeSet id="init_execution_history_seq" author="ICG" runAlways="true">
+        <comment>Init sequence in session</comment>
+        <sql>select nextval('SCENARIO_EXECUTION_HISTORY_SEQ') from SCENARIO_EXECUTION_HISTORY</sql>
+    </changeSet>
     <changeSet id="20190719-007-h2" author="ICG" dbms="h2">
         <preConditions onFail="CONTINUE">
             <not>
@@ -280,6 +294,11 @@
         </createIndex>
     </changeSet>
 
+    <!-- If not doing that we have : current value of sequence SCENARIO_SEQ is not yet defined in this session-->
+    <changeSet id="init_campaign_execution_history_seq" author="ICG" runAlways="true">
+        <comment>Init sequence in session</comment>
+        <sql>select nextval('CAMPAIGN_EXECUTION_SEQ') from CAMPAIGN_EXECUTION_HISTORY</sql>
+    </changeSet>
     <changeSet id="20190719-011-h2" author="ICG" dbms="h2">
         <preConditions onFail="CONTINUE">
             <not>
@@ -541,4 +560,5 @@
         <comment>Rename VALUE column</comment>
         <renameColumn tableName="CAMPAIGN_PARAMETER" oldColumnName="VALUE" newColumnName="PARAMETER_VALUE"></renameColumn>
     </changeSet>
+
 </databaseChangeLog>

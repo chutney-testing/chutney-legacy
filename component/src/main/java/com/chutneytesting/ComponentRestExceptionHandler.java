@@ -47,6 +47,7 @@ public class ComponentRestExceptionHandler extends ResponseEntityExceptionHandle
     })
     protected ResponseEntity<Object> notFound(RuntimeException ex, WebRequest request) {
         String bodyOfResponse = ex.getMessage();
+        LOGGER.warn("Not found >> " + ex.getMessage());
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
@@ -56,6 +57,7 @@ public class ComponentRestExceptionHandler extends ResponseEntityExceptionHandle
     })
     protected ResponseEntity<Object> conflict(RuntimeException ex, WebRequest request) {
         String bodyOfResponse = ex.getMessage();
+        LOGGER.warn("Conflict >> " + ex.getMessage());
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
 
@@ -64,6 +66,7 @@ public class ComponentRestExceptionHandler extends ResponseEntityExceptionHandle
     })
     protected ResponseEntity<Object> badRequest(RuntimeException ex, WebRequest request) {
         String bodyOfResponse = ex.getMessage();
+        LOGGER.warn("Bad request >> " + ex.getMessage());
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
@@ -72,6 +75,7 @@ public class ComponentRestExceptionHandler extends ResponseEntityExceptionHandle
     })
     protected ResponseEntity<Object> forbidden(RuntimeException ex, WebRequest request) {
         String bodyOfResponse = ex.getMessage();
+        LOGGER.warn("Forbidden >> " + ex.getMessage());
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 }
