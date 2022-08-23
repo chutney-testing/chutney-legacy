@@ -4,15 +4,16 @@ import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.globalvar.domain.GlobalvarRepository;
 import com.chutneytesting.scenario.api.raw.mapper.GwtScenarioMapper;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtStep;
 import com.chutneytesting.scenario.domain.gwt.GwtStepImplementation;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.domain.gwt.Strategy;
 import com.chutneytesting.scenario.domain.raw.RawTestCase;
+import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
+import com.chutneytesting.server.core.domain.globalvar.GlobalvarRepository;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;

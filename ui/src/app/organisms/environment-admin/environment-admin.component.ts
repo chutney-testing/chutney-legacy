@@ -44,7 +44,9 @@ export class EnvironmentAdminComponent implements OnInit {
         this.environmentAdminService.listEnvironments().subscribe(
             (res) => {
                 this.environments = res;
-                this.selectedEnvironment = this.environments[0];
+                if (this.environments && this.environments.length > 0) {
+                    this.selectedEnvironment = this.environments[0];
+                }
                 this.environmentsNames = res.map(e => e.name);
                 this.loadTarget();
             },

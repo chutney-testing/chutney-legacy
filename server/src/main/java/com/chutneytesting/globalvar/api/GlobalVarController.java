@@ -1,7 +1,7 @@
 package com.chutneytesting.globalvar.api;
 
-import com.chutneytesting.globalvar.domain.GlobalvarRepository;
 import com.chutneytesting.globalvar.infra.FileGlobalVarRepository;
+import com.chutneytesting.server.core.domain.globalvar.GlobalvarRepository;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Set;
 import org.hjson.JsonValue;

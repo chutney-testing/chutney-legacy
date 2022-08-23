@@ -5,6 +5,7 @@ import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
+import static java.util.Optional.of;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
@@ -21,27 +22,27 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.campaign.domain.Campaign;
-import com.chutneytesting.campaign.domain.CampaignExecutionReport;
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
 import com.chutneytesting.campaign.domain.CampaignRepository;
-import com.chutneytesting.dataset.domain.DataSetHistoryRepository;
-import com.chutneytesting.execution.domain.ExecutionRequest;
-import com.chutneytesting.execution.domain.history.ExecutionHistory;
-import com.chutneytesting.execution.domain.history.ExecutionHistoryRepository;
-import com.chutneytesting.execution.domain.history.ImmutableExecutionHistory;
-import com.chutneytesting.execution.domain.report.ScenarioExecutionReport;
-import com.chutneytesting.execution.domain.report.ServerReportStatus;
-import com.chutneytesting.execution.domain.scenario.ScenarioExecutionEngine;
-import com.chutneytesting.execution.domain.ExecutableComposedScenario;
-import com.chutneytesting.execution.domain.ExecutableComposedTestCase;
-import com.chutneytesting.instrument.domain.ChutneyMetrics;
+import com.chutneytesting.component.dataset.domain.DataSetHistoryRepository;
+import com.chutneytesting.component.execution.domain.ExecutableComposedScenario;
+import com.chutneytesting.component.execution.domain.ExecutableComposedTestCase;
 import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
 import com.chutneytesting.jira.api.ReportForJira;
-import com.chutneytesting.scenario.domain.TestCase;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
-import com.chutneytesting.scenario.domain.TestCaseRepository;
+import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
+import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
+import com.chutneytesting.server.core.domain.execution.ScenarioExecutionEngine;
+import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
+import com.chutneytesting.server.core.domain.execution.history.ExecutionHistoryRepository;
+import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory;
+import com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport;
+import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
+import com.chutneytesting.server.core.domain.instrument.ChutneyMetrics;
+import com.chutneytesting.server.core.domain.scenario.TestCase;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
@@ -73,7 +74,7 @@ public class CampaignExecutionEngineTest {
     private final CampaignRepository campaignRepository = mock(CampaignRepository.class);
     private final ScenarioExecutionEngine scenarioExecutionEngine = mock(ScenarioExecutionEngine.class);
     private final ExecutionHistoryRepository executionHistoryRepository = mock(ExecutionHistoryRepository.class);
-    private final TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
+    private final TestCaseRepositoryAggregator testCaseRepository = mock(TestCaseRepositoryAggregator.class);
     private final DataSetHistoryRepository dataSetHistoryRepository = mock(DataSetHistoryRepository.class);
     private final JiraXrayEmbeddedApi jiraXrayPlugin = mock(JiraXrayEmbeddedApi.class);
     private final ChutneyMetrics metrics = mock(ChutneyMetrics.class);
@@ -99,8 +100,8 @@ public class CampaignExecutionEngineTest {
         sut = new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository, jiraXrayPlugin, metrics, executorService, objectMapper);
         firstTestCase = createGwtTestCase("1");
         secondTestCase = createGwtTestCase("2");
-        when(testCaseRepository.findById(firstTestCase.id())).thenReturn(firstTestCase);
-        when(testCaseRepository.findById(secondTestCase.id())).thenReturn(secondTestCase);
+        when(testCaseRepository.findExecutableById(firstTestCase.id())).thenReturn(of(firstTestCase));
+        when(testCaseRepository.findExecutableById(secondTestCase.id())).thenReturn(of(secondTestCase));
         when(executionHistoryRepository.getExecution(eq(firstTestCase.id()), or(eq(0L), eq(10L))))
             .thenReturn(executionWithId(firstScenarioExecutionId));
         when(executionHistoryRepository.getExecution(eq(secondTestCase.id()), or(eq(0L), eq(20L))))
@@ -111,7 +112,7 @@ public class CampaignExecutionEngineTest {
     public void should_update_jira_xray() {
         // Given
         Campaign campaign = createCampaign(firstTestCase, secondTestCase);
-        when(scenarioExecutionEngine.execute(any(ExecutionRequest.class))).thenReturn(mock(ScenarioExecutionReport.class));
+        when(scenarioExecutionEngine.execute(any(ExecutionRequest.class), any())).thenReturn(mock(ScenarioExecutionReport.class));
 
         // When
         sut.executeScenarioInCampaign(emptyList(), campaign, "user");
@@ -128,14 +129,14 @@ public class CampaignExecutionEngineTest {
         // Given
         Campaign campaign = createCampaign(firstTestCase, secondTestCase);
 
-        when(scenarioExecutionEngine.execute(any(ExecutionRequest.class))).thenReturn(mock(ScenarioExecutionReport.class));
+        when(scenarioExecutionEngine.execute(any(ExecutionRequest.class), any())).thenReturn(mock(ScenarioExecutionReport.class));
 
         // When
         CampaignExecutionReport campaignExecutionReport = sut.executeScenarioInCampaign(emptyList(), campaign, "user");
 
         // Then
-        verify(testCaseRepository, times(2)).findById(anyString());
-        verify(scenarioExecutionEngine, times(2)).execute(any(ExecutionRequest.class));
+        verify(testCaseRepository, times(2)).findExecutableById(anyString());
+        verify(scenarioExecutionEngine, times(2)).execute(any(ExecutionRequest.class), any());
         verify(executionHistoryRepository, times(4)).getExecution(anyString(), anyLong());
 
         assertThat(campaignExecutionReport.scenarioExecutionReports()).hasSize(campaign.scenarioIds.size());
@@ -154,14 +155,14 @@ public class CampaignExecutionEngineTest {
         // Given
         Campaign campaign = createCampaign(createGwtTestCase("not executed test case"), secondTestCase);
 
-        when(scenarioExecutionEngine.execute(any(ExecutionRequest.class))).thenReturn(mock(ScenarioExecutionReport.class));
+        when(scenarioExecutionEngine.execute(any(ExecutionRequest.class), any())).thenReturn(mock(ScenarioExecutionReport.class));
 
         // When
         CampaignExecutionReport campaignExecutionReport = sut.executeScenarioInCampaign(singletonList("2"), campaign, "user");
 
         // Then
-        verify(testCaseRepository, times(1)).findById(anyString());
-        verify(scenarioExecutionEngine, times(1)).execute(any(ExecutionRequest.class));
+        verify(testCaseRepository, times(1)).findExecutableById(anyString());
+        verify(scenarioExecutionEngine, times(1)).execute(any(ExecutionRequest.class), any());
         verify(executionHistoryRepository, times(2)).getExecution(anyString(), anyLong());
 
         assertThat(campaignExecutionReport.scenarioExecutionReports()).hasSize(1);
@@ -175,7 +176,7 @@ public class CampaignExecutionEngineTest {
         // Given
         Campaign campaign = createCampaign(firstTestCase, secondTestCase);
 
-        when(scenarioExecutionEngine.execute(any(ExecutionRequest.class))).then((Answer<ScenarioExecutionReport>) invocationOnMock -> {
+        when(scenarioExecutionEngine.execute(any(ExecutionRequest.class), any())).then((Answer<ScenarioExecutionReport>) invocationOnMock -> {
             awaitDuring(1, SECONDS);
             return mock(ScenarioExecutionReport.class);
         });
@@ -194,7 +195,7 @@ public class CampaignExecutionEngineTest {
         awaitDuring(1, SECONDS);
 
         // Then
-        verify(scenarioExecutionEngine).execute(any(ExecutionRequest.class));
+        verify(scenarioExecutionEngine).execute(any(ExecutionRequest.class), any());
         verify(executionHistoryRepository, times(2)).getExecution(anyString(), anyLong());
 
         assertThat(campaignExecutionReport.get().status()).isEqualTo(ServerReportStatus.STOPPED);
@@ -211,7 +212,7 @@ public class CampaignExecutionEngineTest {
         // Given
         Campaign campaign = createCampaign(firstTestCase, secondTestCase, true);
 
-        when(scenarioExecutionEngine.execute(any(ExecutionRequest.class))).thenReturn(mock(ScenarioExecutionReport.class));
+        when(scenarioExecutionEngine.execute(any(ExecutionRequest.class), any())).thenReturn(mock(ScenarioExecutionReport.class));
         when(executionHistoryRepository.getExecution(eq(firstTestCase.id()), or(eq(0L), eq(10L)))).thenReturn(failedExecutionWithId(10L));
         when(executionHistoryRepository.getExecution(eq(secondTestCase.id()), or(eq(0L), eq(20L)))).thenReturn(failedExecutionWithId(20L));
 
@@ -219,7 +220,7 @@ public class CampaignExecutionEngineTest {
         sut.executeScenarioInCampaign(emptyList(), campaign, "user");
 
         // Then
-        verify(scenarioExecutionEngine, times(4)).execute(any(ExecutionRequest.class));
+        verify(scenarioExecutionEngine, times(4)).execute(any(ExecutionRequest.class), any());
     }
 
     @Test
@@ -227,7 +228,7 @@ public class CampaignExecutionEngineTest {
         // Given
         Campaign campaign = createCampaign(firstTestCase, secondTestCase, true, false);
 
-        when(scenarioExecutionEngine.execute(any(ExecutionRequest.class))).then((Answer<ScenarioExecutionReport>) invocationOnMock -> {
+        when(scenarioExecutionEngine.execute(any(ExecutionRequest.class), any())).then((Answer<ScenarioExecutionReport>) invocationOnMock -> {
             awaitDuring(1, SECONDS);
             return mock(ScenarioExecutionReport.class);
         });
@@ -241,7 +242,7 @@ public class CampaignExecutionEngineTest {
         watch.stop();
 
         // Then
-        verify(scenarioExecutionEngine, times(2)).execute(any(ExecutionRequest.class));
+        verify(scenarioExecutionEngine, times(2)).execute(any(ExecutionRequest.class), any());
         assertThat(watch.getTotalTimeSeconds()).isLessThan(1.9);
     }
 
@@ -364,9 +365,9 @@ public class CampaignExecutionEngineTest {
         Campaign campaign = createCampaign(campaignDataSet, "campaignDataSetId", gwtTestCase, composedTestCase);
 
         when(campaignRepository.findById(campaign.id)).thenReturn(campaign);
-        when(testCaseRepository.findById(gwtTestCase.id())).thenReturn(gwtTestCase);
-        when(testCaseRepository.findById(composedTestCase.id())).thenReturn(composedTestCase);
-        when(scenarioExecutionEngine.execute(any(ExecutionRequest.class))).thenReturn(mock(ScenarioExecutionReport.class));
+        when(testCaseRepository.findExecutableById(gwtTestCase.id())).thenReturn(of(gwtTestCase));
+        when(testCaseRepository.findExecutableById(composedTestCase.id())).thenReturn(of(composedTestCase));
+        when(scenarioExecutionEngine.execute(any(ExecutionRequest.class), any())).thenReturn(mock(ScenarioExecutionReport.class));
         when(executionHistoryRepository.getExecution(any(), any())).thenReturn(executionWithId(42L));
 
         // When
@@ -374,7 +375,7 @@ public class CampaignExecutionEngineTest {
 
         // Then
         ArgumentCaptor<ExecutionRequest> argumentCaptor = ArgumentCaptor.forClass(ExecutionRequest.class);
-        verify(scenarioExecutionEngine, times(2)).execute(argumentCaptor.capture());
+        verify(scenarioExecutionEngine, times(2)).execute(argumentCaptor.capture(), any());
         List<ExecutionRequest> executionRequests = argumentCaptor.getAllValues();
         assertThat(executionRequests).hasSize(2);
         assertThat(((GwtTestCase) executionRequests.get(0).testCase).executionParameters).containsOnly(

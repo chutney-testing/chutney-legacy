@@ -9,13 +9,13 @@ import com.chutneytesting.campaign.api.dto.CampaignDto;
 import com.chutneytesting.campaign.api.dto.CampaignExecutionReportDto;
 import com.chutneytesting.campaign.api.dto.CampaignExecutionReportMapper;
 import com.chutneytesting.campaign.api.dto.CampaignMapper;
-import com.chutneytesting.campaign.domain.Campaign;
-import com.chutneytesting.campaign.domain.CampaignExecutionReport;
 import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.chutneytesting.scenario.api.raw.dto.TestCaseIndexDto;
-import com.chutneytesting.scenario.domain.ComposableTestCaseRepository;
-import com.chutneytesting.scenario.domain.TestCaseRepository;
+import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
+import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
+import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -38,17 +38,15 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "*")
 public class CampaignController {
 
-    private final TestCaseRepository testCaseRepository;
-    private final ComposableTestCaseRepository composableTestCaseRepository;
+    private final TestCaseRepositoryAggregator repositoryAggregator;
     private final CampaignRepository campaignRepository;
     private final CampaignExecutionEngine campaignExecutionEngine;
 
-    public CampaignController(TestCaseRepository testCaseRepository,
-                              ComposableTestCaseRepository composableTestCaseRepository,
+    public CampaignController(TestCaseRepositoryAggregator repositoryAggregator,
                               CampaignRepository campaignRepository,
                               CampaignExecutionEngine campaignExecutionEngine) {
-        this.testCaseRepository = testCaseRepository;
-        this.composableTestCaseRepository = composableTestCaseRepository;
+
+        this.repositoryAggregator = repositoryAggregator;
         this.campaignRepository = campaignRepository;
         this.campaignExecutionEngine = campaignExecutionEngine;
     }
@@ -88,20 +86,11 @@ public class CampaignController {
     @GetMapping(path = "/{campaignId}/scenarios", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TestCaseIndexDto> getCampaignScenarios(@PathVariable("campaignId") Long campaignId) {
         return campaignRepository.findScenariosIds(campaignId).stream()
-            .map(id -> {
-                if (isComposableDomainId(id)) {
-                    return composableTestCaseRepository.findById(id).metadata();
-                } else {
-                    return testCaseRepository.findMetadataById(id);
-                }
-            })
+            .map(id -> repositoryAggregator.findMetadataById(id).orElseThrow(() -> new ScenarioNotFoundException(id)))
             .map(meta -> TestCaseIndexDto.from(meta, Collections.emptyList()))
             .collect(Collectors.toList());
     }
 
-    static boolean isComposableDomainId(String testCaseId) {
-        return testCaseId.contains("-"); //return testCaseId.contains("#") && testCaseId.contains(":");
-    }
     @PreAuthorize("hasAuthority('CAMPAIGN_READ')")
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<CampaignDto> getAllCampaigns() {

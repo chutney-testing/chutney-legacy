@@ -1,12 +1,11 @@
 package com.chutneytesting.security;
 
 import static java.util.stream.Collectors.toSet;
-import static net.jqwik.api.Arbitraries.strings;
 
-import com.chutneytesting.security.domain.Authorization;
-import com.chutneytesting.security.domain.Role;
-import com.chutneytesting.security.domain.User;
-import com.chutneytesting.security.domain.UserRoles;
+import com.chutneytesting.server.core.domain.security.Authorization;
+import com.chutneytesting.server.core.domain.security.Role;
+import com.chutneytesting.server.core.domain.security.User;
+import com.chutneytesting.server.core.domain.security.UserRoles;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -51,24 +50,24 @@ public final class PropertyBasedTestingUtils {
     }
 
     public static Arbitrary<String> validRoleNameWithoutDefault() {
-        return strings()
+        return Arbitraries.strings()
             .alpha().numeric().withChars('_')
             .ofMinLength(1).ofMaxLength(20)
             .filter(s -> !Role.DEFAULT.name.equals(s));
     }
 
     public static Arbitrary<String> invalidRoleName() {
-        return strings().withChars(" &~#\"'{([|-`\\^@°)]=}+^¨£$¤%ùµ*!§:/;.,?<>").ofMinLength(1);
+        return Arbitraries.strings().withChars(" &~#\"'{([|-`\\^@°)]=}+^¨£$¤%ùµ*!§:/;.,?<>").ofMinLength(1);
     }
 
     public static Arbitrary<String> validUserId() {
-        return strings()
+        return Arbitraries.strings()
             .alpha().numeric().withChars("_-")
             .ofMinLength(1).ofMaxLength(10);
     }
 
     public static Arbitrary<String> invalidUserId() {
-        return strings().withChars(" &~#\"'{([|`\\^@°)]=}+^¨£$¤%ùµ*!§:/;.,?<>").ofMinLength(1);
+        return Arbitraries.strings().withChars(" &~#\"'{([|`\\^@°)]=}+^¨£$¤%ùµ*!§:/;.,?<>").ofMinLength(1);
     }
 
     public static SetArbitrary<String> validRights() {

@@ -3,13 +3,12 @@ package com.chutneytesting.security.api;
 import static com.chutneytesting.security.PropertyBasedTestingUtils.validRights;
 import static com.chutneytesting.security.PropertyBasedTestingUtils.validRoleNameWithoutDefault;
 import static com.chutneytesting.security.PropertyBasedTestingUtils.validUserId;
-import static com.chutneytesting.security.domain.UserRolesTest.authorizationsFromRoles;
 import static net.jqwik.api.Arbitraries.just;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.security.PropertyBasedTestingUtils;
-import com.chutneytesting.security.domain.Role;
-import com.chutneytesting.security.domain.UserRoles;
+import com.chutneytesting.server.core.domain.security.Role;
+import com.chutneytesting.server.core.domain.security.UserRoles;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +35,8 @@ class AuthorizationMapperTest {
         assertThat(mapUserRoles).isEqualTo(userRoles);
 
         List<Role> mapRoles = List.copyOf(mapUserRoles.roles());
-        assertThat(authorizationsFromRoles(mapRoles))
-            .containsExactlyElementsOf(authorizationsFromRoles(List.copyOf(userRoles.roles())));
+        assertThat(Role.authorizations(mapRoles))
+            .containsExactlyElementsOf(Role.authorizations(List.copyOf(userRoles.roles())));
 
         userRoles.roles().forEach(role ->
             assertThat(mapUserRoles.usersByRole(role)).containsExactlyElementsOf(userRoles.usersByRole(role))

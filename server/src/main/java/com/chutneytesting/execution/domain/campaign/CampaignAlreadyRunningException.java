@@ -1,6 +1,6 @@
 package com.chutneytesting.execution.domain.campaign;
 
-import com.chutneytesting.campaign.domain.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import java.time.format.DateTimeFormatter;
 
 @SuppressWarnings("serial")

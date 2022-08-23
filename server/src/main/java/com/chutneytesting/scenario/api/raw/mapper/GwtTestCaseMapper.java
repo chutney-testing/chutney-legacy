@@ -1,11 +1,12 @@
 package com.chutneytesting.scenario.api.raw.mapper;
 
 import com.chutneytesting.scenario.api.raw.dto.GwtTestCaseDto;
+
 import com.chutneytesting.scenario.api.raw.dto.ImmutableGwtTestCaseDto;
-import com.chutneytesting.scenario.domain.TestCase;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.domain.raw.RawTestCase;
+import com.chutneytesting.server.core.domain.scenario.TestCase;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import java.util.Collections;
 
 // TODO test me
@@ -20,7 +21,6 @@ public class GwtTestCaseMapper {
                 .withDescription(dto.description().orElse(null))
                 .withTags(dto.tags())
                 .withCreationDate(dto.creationDate().orElse(null))
-                .withRepositorySource(dto.repositorySource().orElse(null))
                 .withAuthor(dto.author())
                 .withUpdateDate(dto.updateDate())
                 .withVersion(dto.version())
@@ -49,7 +49,6 @@ public class GwtTestCaseMapper {
             .id(testCase.metadata().id())
             .title(testCase.metadata().title())
             .description(testCase.metadata().description())
-            .repositorySource(testCase.metadata().repositorySource())
             .tags(testCase.metadata().tags())
             .executions(Collections.emptyList())
             .creationDate(testCase.metadata().creationDate())

@@ -60,6 +60,9 @@ public class ScpTaskTest {
         assertThat(Files.exists(expectedFile)).isTrue();
     }
 
+    /**
+     * Failed if launched in git bash
+     */
     @ParameterizedTest
     @MethodSource("securedTargets")
     void should_download_remote_file_to_local_destination(Target target) {

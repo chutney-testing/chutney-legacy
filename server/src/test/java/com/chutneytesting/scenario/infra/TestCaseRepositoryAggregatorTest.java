@@ -1,86 +1,68 @@
 package com.chutneytesting.scenario.infra;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.scenario.domain.ScenarioNotFoundException;
-import com.chutneytesting.scenario.domain.TestCaseMetadata;
-import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
-import com.chutneytesting.scenario.domain.TestCaseRepository;
-import com.chutneytesting.scenario.domain.gwt.GwtScenario;
-import com.chutneytesting.scenario.domain.gwt.GwtStep;
-import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
+import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.scenario.infra.raw.DatabaseTestCaseRepository;
-import java.time.Instant;
+import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
+import com.chutneytesting.server.core.domain.scenario.TestCase;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import java.util.List;
+import java.util.Optional;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class TestCaseRepositoryAggregatorTest {
 
-    private final OrientComposableTestCaseRepository composableTestCaseRepository = mock(OrientComposableTestCaseRepository.class);
-
     @Test
-    public void should_throw_exception_when_try_to_save_to_repo_other_than_default() {
+    public void should_not_support_save_operation() {
         // Given
-        final String REPO_SOURCE = "REPO_1";
-        DatabaseTestCaseRepository repo1 = mock(DatabaseTestCaseRepository.class);
-        when(repo1.alias()).thenReturn(REPO_SOURCE);
-        GwtTestCase testCase = defaultScenarioWithRepoSource(REPO_SOURCE);
-
-        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, composableTestCaseRepository);
+        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(emptyList());
 
         // When
-        assertThatThrownBy(() -> sut.save(testCase))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("Saving to repository other than default local is not allowed");
-    }
-
-    @Test
-    public void should_save_in_default_repo_when_source_is_unknown() {
-        // Given
-        DatabaseTestCaseRepository repo1 = mock(DatabaseTestCaseRepository.class);
-        when(repo1.alias()).thenReturn(TestCaseRepository.DEFAULT_REPOSITORY_SOURCE);
-        GwtTestCase testCase = defaultScenarioWithRepoSource("UNKNOWN_REPO");
-
-        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, composableTestCaseRepository);
-
-        // When
-        sut.save(testCase);
+        Throwable exception = Assertions.catchThrowable(() -> sut.save(mock(TestCase.class)));
 
         // Then
-        verify(repo1).save(any());
-        verify(composableTestCaseRepository, times(0)).save(any());
+        assertThat(exception).isInstanceOf(UnsupportedOperationException.class);
     }
 
     @Test
-    public void should_call_default_repo_when_search_not_existing_scenario() {
+    public void should_call_findById_on_all_repos_even_if_one_fails() {
         // Given
-        DatabaseTestCaseRepository repo1 = mock(DatabaseTestCaseRepository.class);
+        AggregatedRepository<? extends TestCase> repo1 = (AggregatedRepository<? extends TestCase>) mock(AggregatedRepository.class);
+        AggregatedRepository<? extends TestCase> repo2 = (AggregatedRepository<? extends TestCase>) mock(AggregatedRepository.class);
 
-        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, composableTestCaseRepository);
+        when(repo1.findById(any())).thenThrow(RuntimeException.class);
+
+        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(List.of(repo1, repo2));
+
         final String scenarioId = "12345";
 
         // When
-        assertThatExceptionOfType(ScenarioNotFoundException.class)
-            .isThrownBy(() -> sut.findById(scenarioId));
+        Optional<TestCase> actual = sut.findById(scenarioId);
 
         // Then
+        assertThat(actual).isEmpty();
         verify(repo1).findById(scenarioId);
-        verify(composableTestCaseRepository, times(0)).findById(scenarioId);
+        verify(repo2).findById(scenarioId);
     }
 
     @Test
-    public void should_call_default_repo_when_remove() {
+    public void should_call_removeById_on_all_repos_even_if_one_fails() {
         // Given
-        DatabaseTestCaseRepository repo1 = mock(DatabaseTestCaseRepository.class);
-        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, composableTestCaseRepository);
+        AggregatedRepository<? extends TestCase> repo1 = (AggregatedRepository<? extends TestCase>) mock(AggregatedRepository.class);
+        AggregatedRepository<? extends TestCase> repo2 = (AggregatedRepository<? extends TestCase>) mock(AggregatedRepository.class);
+
+        when(repo1.findById(any())).thenThrow(RuntimeException.class);
+
+        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(List.of(repo1, repo2));
+
         final String scenarioId = "12345";
 
         // When
@@ -88,18 +70,20 @@ public class TestCaseRepositoryAggregatorTest {
 
         // Then
         verify(repo1).removeById(scenarioId);
-        verify(composableTestCaseRepository, times(0)).removeById(scenarioId);
+        verify(repo2).removeById(scenarioId);
     }
 
     @Test
     public void should_aggregate_all_repos_scenarios_when_findAll() {
         // Given
         DatabaseTestCaseRepository repo1 = mock(DatabaseTestCaseRepository.class);
+        final AggregatedRepository<? extends TestCase> externalTestCaseRepository = (AggregatedRepository<? extends TestCase>) mock(AggregatedRepository.class);
 
         when(repo1.findAll()).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
-        when(composableTestCaseRepository.findAll()).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
+        when(externalTestCaseRepository.findAll()).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
 
-        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, composableTestCaseRepository);
+        List<AggregatedRepository<? extends TestCase>> repos = List.of(repo1, externalTestCaseRepository);
+        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repos);
 
         // When
         final List<TestCaseMetadata> allScenario = sut.findAll();
@@ -112,11 +96,13 @@ public class TestCaseRepositoryAggregatorTest {
     public void should_aggregate_all_repos_available_scenarios_when_findAll_with_one_repo_failed() {
         // Given
         DatabaseTestCaseRepository repo1 = mock(DatabaseTestCaseRepository.class);
+        final AggregatedRepository<? extends TestCase> externalTestCaseRepository = (AggregatedRepository<? extends TestCase>) mock(AggregatedRepository.class);
 
         when(repo1.findAll()).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
-        when(composableTestCaseRepository.findAll()).thenThrow(new RuntimeException("Error searching for scenarios !!!"));
+        when(externalTestCaseRepository.findAll()).thenThrow(new RuntimeException("Error searching for scenarios !!!"));
 
-        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, composableTestCaseRepository);
+        List<AggregatedRepository<? extends TestCase>> repos = List.of(repo1, externalTestCaseRepository);
+        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repos);
 
         // When
         final List<TestCaseMetadata> allScenario = sut.findAll();
@@ -130,11 +116,13 @@ public class TestCaseRepositoryAggregatorTest {
         // Given
         final String filter = "filter";
         DatabaseTestCaseRepository repo1 = mock(DatabaseTestCaseRepository.class);
+        final AggregatedRepository<? extends TestCase> externalTestCaseRepository = (AggregatedRepository<? extends TestCase>) mock(AggregatedRepository.class);
 
         when(repo1.search(filter)).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
-        when(composableTestCaseRepository.search(filter)).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
+        when(externalTestCaseRepository.search(filter)).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
 
-        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, composableTestCaseRepository);
+        List<AggregatedRepository<? extends TestCase>> repos = List.of(repo1, externalTestCaseRepository);
+        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repos);
 
         // When
         final List<TestCaseMetadata> allScenario = sut.search(filter);
@@ -148,11 +136,13 @@ public class TestCaseRepositoryAggregatorTest {
         // Given
         String filter = "filter";
         DatabaseTestCaseRepository repo1 = mock(DatabaseTestCaseRepository.class);
+        final AggregatedRepository<? extends TestCase> externalTestCaseRepository = (AggregatedRepository<? extends TestCase>) mock(AggregatedRepository.class);
 
         when(repo1.search(filter)).thenThrow(new RuntimeException("Error searching for scenarios !!!"));
-        when(composableTestCaseRepository.search(filter)).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
+        when(externalTestCaseRepository.search(filter)).thenReturn(asList(mock(TestCaseMetadata.class), mock(TestCaseMetadata.class)));
 
-        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repo1, composableTestCaseRepository);
+        List<AggregatedRepository<? extends TestCase>> repos = List.of(repo1, externalTestCaseRepository);
+        TestCaseRepositoryAggregator sut = new TestCaseRepositoryAggregator(repos);
 
         // When
         final List<TestCaseMetadata> allScenario = sut.search(filter);
@@ -161,13 +151,4 @@ public class TestCaseRepositoryAggregatorTest {
         assertThat(allScenario).hasSize(2);
     }
 
-    private GwtTestCase defaultScenarioWithRepoSource(String repositorySource) {
-        return GwtTestCase.builder()
-            .withMetadata(TestCaseMetadataImpl.builder()
-                .withCreationDate(Instant.now())
-                .withRepositorySource(repositorySource)
-                .build())
-            .withScenario(GwtScenario.builder().withWhen(GwtStep.NONE).build())
-            .build();
-    }
 }
