@@ -4,8 +4,6 @@ import static com.chutneytesting.component.ComposableIdUtils.toExternalId;
 import static com.chutneytesting.component.ComposableIdUtils.toInternalId;
 import static java.util.Optional.of;
 
-import com.chutneytesting.component.execution.domain.ExecutableComposedTestCase;
-import com.chutneytesting.component.execution.domain.ExecutableComposedTestCaseRepository;
 import com.chutneytesting.component.scenario.domain.ComposableTestCase;
 import com.chutneytesting.component.scenario.infra.orient.OrientComponentDB;
 import com.chutneytesting.component.scenario.infra.orient.OrientUtils;

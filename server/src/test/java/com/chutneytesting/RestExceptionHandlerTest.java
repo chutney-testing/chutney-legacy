@@ -69,6 +69,6 @@ class RestExceptionHandlerTest {
                 .andExpect(statusMatcher);
 
         //Then
-            verify(mockedMetrics).onHttpError(eq(status));
+        verify(mockedMetrics).onHttpError(eq(status));
     }
 }
