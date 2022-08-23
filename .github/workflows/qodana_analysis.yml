@@ -14,6 +14,25 @@ jobs:
           fetch-depth: 0
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2022.1.1
+      include:
+        - name: ConvertLambdaToReference
+        - name: EqualsReplaceableByObjectsCall
+        - name: GroovyMethodWithMoreThanThreeNegations
+        - name: GroovyMultipleReturnPointsPerMethod
+        - name: MavenDuplicateDependenciesInspection
+        - name: MavenDuplicatePluginInspection
+        - name: MavenModelInspection
+        - name: MavenParentMissedVersionInspection
+        - name: MavenRedundantGroupId
+        - name: MayBeConstant
+        - name: MethodWithMultipleLoops
+        - name: NonCommentSourceStatements
+        - name: ReplaceGetOrSet
+        - name: ReplaceJavaStaticMethodWithKotlinAnalog
+        - name: ReplaceToStringWithStringTemplate
+        - name: ReturnNull
+        - name: SimplifyAssertNotNull
+        - name: ThrownExceptionsPerMethod
       - uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: ${{ runner.temp }}/qodana/results/qodana.sarif.json
