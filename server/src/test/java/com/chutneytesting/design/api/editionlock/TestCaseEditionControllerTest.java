@@ -13,8 +13,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.chutneytesting.RestExceptionHandler;
 import com.chutneytesting.WebConfiguration;
+import com.chutneytesting.campaign.domain.Campaign;
+import com.chutneytesting.campaign.domain.CampaignExecutionReport;
 import com.chutneytesting.design.domain.editionlock.TestCaseEdition;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditionsService;
+import com.chutneytesting.execution.domain.history.ExecutionHistory;
+import com.chutneytesting.instrument.domain.ChutneyMetrics;
+import com.chutneytesting.scenario.domain.TestCase;
 import com.chutneytesting.scenario.domain.TestCaseMetadata;
 import com.chutneytesting.scenario.domain.TestCaseMetadataImpl;
 import com.chutneytesting.security.api.UserDto;
@@ -26,6 +31,8 @@ import java.util.List;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -43,7 +50,7 @@ public class TestCaseEditionControllerTest {
         TestCaseEditionController sut = new TestCaseEditionController(testCaseEditionService, userService);
 
         mockMvc = MockMvcBuilders.standaloneSetup(sut)
-            .setControllerAdvice(new RestExceptionHandler())
+            .setControllerAdvice(new RestExceptionHandler(Mockito.mock(ChutneyMetrics.class)))
             .build();
 
         currentUser.setId("currentUser");
