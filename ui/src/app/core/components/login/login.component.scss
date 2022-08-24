@@ -1,23 +1,28 @@
 @import "themes/flatly/variables";
 
-.divider:after,
-.divider:before {
-    content: "";
-    flex: 1;
-    height: 1px;
-    background: #eee;
-}
-
-.fs-7 {
+.fs-75 {
     font-size: 0.75rem !important;
 }
 
-.bg-login {
-   // background: linear-gradient(to left, $white 50%, $primary 50%);
+.logo {
+    width: 50px;
+    margin: 0;
+    padding: 0;
 }
 
-@media screen and (max-width: 992px) {
-    .bg-login {
-        //background: $white;
+.small-logo {
+    width: 30px;
+    margin: 0;
+    padding: 0;
+}
+
+.custom-class {
+    display: none;
+}
+
+@media (min-width: 992px) {
+    .custom-class {
+        display: block;
     }
 }
+  
