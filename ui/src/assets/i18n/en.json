@@ -19,7 +19,8 @@
             "signOut": "Sign Out",
             "darkMode": "Dark mode",
             "lightMode": "Light mode",
-            "feedback": "Feedback"
+            "feedback": "Feedback",
+            "notif": "Notifications"
         }
     },
     "home": {

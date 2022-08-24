@@ -3,17 +3,17 @@
         <img src="../../../../assets/logo/logo-circle.png" />
     </a>
     <div class="nav">
-        <div class="nav-item" routerLink="/documentation" [title]="'menu.principal.documentation' | translate">
-            <span class="nav-link">
+        <div class="nav-item" [title]="'menu.principal.documentation' | translate">
+            <a class="nav-link" href="http://www.chutney-testing.com/install/" target="_blank">
                 <i class="fa fa-book"></i>
-            </span>
+            </a>
         </div>
         <div class="nav-item" [title]="'menu.principal.feedback' | translate">
             <span class="nav-link pointer">
             <i class="fa fa-lightbulb"></i>
             </span>
         </div>
-        <div class="nav-item">
+        <div class="nav-item" [title]="'menu.principal.notif' | translate">
             <span class="nav-link">
             <i class="fa fa-bell"></i>
             </span>

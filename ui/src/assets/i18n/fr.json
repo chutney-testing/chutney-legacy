@@ -19,7 +19,8 @@
             "signOut": "Déconnexion",
             "darkMode": "Thème sombre",
             "lightMode": "Thème clair",
-            "feedback": "Donner un avis"
+            "feedback": "Donner un avis",
+            "notif": "Notifications"
         }
     },
     "home": {
