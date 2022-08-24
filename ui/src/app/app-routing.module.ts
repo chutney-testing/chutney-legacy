@@ -12,11 +12,7 @@ export const appRoutes: Routes = [
     {
         path: '', component: ParentComponent,
         children: [
-            { path: '', redirectTo: '/home', pathMatch: 'full' },
-            {
-                path: 'home',
-                loadChildren: () => import('./modules/home-page/home-page.module').then(m => m.HomePageModule)
-            },
+            { path: '', redirectTo: '/login', pathMatch: 'full' },
             {
                 path: 'scenario',
                 loadChildren: () => import('./modules/scenarios/scenario.module').then(m => m.ScenarioModule),
