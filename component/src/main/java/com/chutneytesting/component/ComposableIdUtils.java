@@ -6,6 +6,7 @@ public final class ComposableIdUtils {
 
     public static String toExternalId(String id) {
         if (isComposableDomainId(ofNullable(id).orElse(""))) {
+            assert id != null;
             return id.replace("#", "").replace(":", "-");
         }
         return id;

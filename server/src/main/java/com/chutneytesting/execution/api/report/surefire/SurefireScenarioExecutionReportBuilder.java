@@ -104,6 +104,6 @@ public class SurefireScenarioExecutionReportBuilder {
     }
 
     private String toSurefireLabel(Collection<String> labels) {
-        return labels.stream().collect(Collectors.joining(", "));
+        return String.join(", ", labels);
     }
 }

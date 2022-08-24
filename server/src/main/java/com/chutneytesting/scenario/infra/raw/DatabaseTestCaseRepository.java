@@ -82,7 +82,7 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
 
     @Override
     public Optional<TestCaseMetadata> findMetadataById(String testCaseId) {
-        return findById(testCaseId).map(t -> t.metadata());
+        return findById(testCaseId).map(GwtTestCase::metadata);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
     @Override
     public Optional<Integer> lastVersion(String scenarioId) {
         try {
-            return of(uiNamedParameterJdbcTemplate.queryForObject("SELECT VERSION FROM SCENARIO WHERE ID = :id", buildIdParameterMap(scenarioId), Integer.class));
+            return Optional.ofNullable(uiNamedParameterJdbcTemplate.queryForObject("SELECT VERSION FROM SCENARIO WHERE ID = :id", buildIdParameterMap(scenarioId), Integer.class));
         } catch (IncorrectResultSizeDataAccessException e) {
             return empty();
         }

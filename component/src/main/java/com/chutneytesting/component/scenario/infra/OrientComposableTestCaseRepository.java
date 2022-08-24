@@ -60,6 +60,7 @@ public class OrientComposableTestCaseRepository implements AggregatedRepository<
             throw new AlreadyExistingScenarioException(e.getMessage());
         } catch (OConcurrentModificationException e) {
             OrientUtils.rollback(dbSession);
+            assert savedFStep != null;
             throw new ScenarioNotFoundException(composableTestCase.id, savedFStep.getVersion());
         } catch (ScenarioNotFoundException e) {
             OrientUtils.rollback(dbSession);
@@ -79,7 +80,7 @@ public class OrientComposableTestCaseRepository implements AggregatedRepository<
             OVertex element = (OVertex) OrientUtils.load(internalId, dbSession)
                 .orElseThrow(() -> new ScenarioNotFoundException(internalId));
 
-            return Optional.ofNullable(OrientComposableTestCaseMapper.vertexToTestCase(TestCaseVertex.builder().from(element).build()));
+            return Optional.of(OrientComposableTestCaseMapper.vertexToTestCase(TestCaseVertex.builder().from(element).build()));
         }
     }
 
@@ -92,7 +93,7 @@ public class OrientComposableTestCaseRepository implements AggregatedRepository<
     public Optional<TestCase> findExecutableById(String composableTestCaseId) {
         String internalId = toInternalId(composableTestCaseId);
         Optional<ComposableTestCase> composableTestCase = findById(internalId);
-        return composableTestCase.map(ctc -> testCaseMapper.composableToExecutable(ctc));
+        return composableTestCase.map(testCaseMapper::composableToExecutable);
     }
 
     private static final String QUERY_SELECT_ALL = "SELECT @rid FROM " + OrientComponentDB.TESTCASE_CLASS + "";
