@@ -1,21 +1,5 @@
 version: "1.0"
 linter: jetbrains/qodana-jvm-community:2022.1
-include:
-  - name: ConvertLambdaToReference
-  - name: EqualsReplaceableByObjectsCall
-  - name: GroovyMethodWithMoreThanThreeNegations
-  - name: GroovyMultipleReturnPointsPerMethod
-  - name: MavenDuplicateDependenciesInspection
-  - name: MavenDuplicatePluginInspection
-  - name: MavenModelInspection
-  - name: MavenParentMissedVersionInspection
-  - name: MavenRedundantGroupId
-  - name: MayBeConstant
-  - name: MethodWithMultipleLoops
-  - name: NonCommentSourceStatements
-  - name: ReplaceGetOrSet
-  - name: ReplaceJavaStaticMethodWithKotlinAnalog
-  - name: ReplaceToStringWithStringTemplate
-  - name: ReturnNull
-  - name: SimplifyAssertNotNull
-  - name: ThrownExceptionsPerMethod
+profile:
+  name: qodana.recommended
+
