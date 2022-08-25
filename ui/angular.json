@@ -32,18 +32,18 @@
             ],
             "stylePreprocessorOptions": {
               "includePaths": [
-                "src/styles"
+                "src/assets/style"
               ]
             },
             "styles": [
-              "src/styles/style.scss",
+              "src/assets/style/style.scss",
                 {
-                    "input": "src/styles/theme.flatly.scss",
+                    "input": "src/assets/style/themes/theme.flatly.scss",
                     "bundleName": "flatly",
                     "inject": true
                 },
                 {
-                    "input": "src/styles/theme.quartz.scss",
+                    "input": "src/assets/style/themes/theme.quartz.scss",
                     "bundleName": "quartz",
                     "inject": false
                 }
@@ -105,11 +105,11 @@
             "karmaConfig": "src/karma.conf.js",
             "stylePreprocessorOptions": {
               "includePaths": [
-                "src/styles"
+                "src/assets/style"
               ]
             },
             "styles": [
-              "src/styles/style.scss"
+              "src/assets/style/style.scss"
             ],
             "scripts": [
               "node_modules/asciidoctor.js/dist/asciidoctor.min.js"

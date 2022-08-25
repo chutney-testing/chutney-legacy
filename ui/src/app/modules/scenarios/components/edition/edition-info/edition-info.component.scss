@@ -1,6 +1,6 @@
 @import '~bootstrap/scss/bootstrap';
-@import 'mixins';
-@import 'animations';
+@import 'global/mixins';
+@import 'global/animations';
 
 :host ::ng-deep {
 

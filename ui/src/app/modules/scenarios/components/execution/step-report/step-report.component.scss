@@ -1,5 +1,5 @@
-@import 'mixins';
-@import 'animations';
+@import 'global/mixins';
+@import 'global/animations';
 
 @include border-animation(
     $animation_name: running-report-step-border-anim,

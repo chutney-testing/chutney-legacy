@@ -4,6 +4,7 @@ import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 import { LinkifierService, LoginService } from '@core/services';
 import { Subscription } from 'rxjs';
+import { ThemeOptions } from './theme-options';
 
 @Component({
   selector: 'chutney-main',
@@ -16,7 +17,8 @@ export class AppComponent implements OnDestroy{
 
   constructor(private translate: TranslateService,
               private linkifierService: LinkifierService,
-              private loginService: LoginService) {
+              private loginService: LoginService,
+              public globals: ThemeOptions) {
     // this language will be used as a fallback when a translation isn't found in the current language
     translate.setDefaultLang('en');
     // // the lang to use, if the lang isn't available, it will use the current loader to get them
@@ -37,5 +39,9 @@ export class AppComponent implements OnDestroy{
         if (this.linkifierSubscription) {
             this.linkifierSubscription.unsubscribe();
         }
+    }
+
+    toggleSidebarMobile() {
+        this.globals.toggleSidebarMobile = !this.globals.toggleSidebarMobile;
     }
 }

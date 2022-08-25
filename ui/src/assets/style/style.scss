@@ -1,7 +1,7 @@
-@import "hljs-overide.scss";
-@import "dragula.scss";
-@import 'alias';
-@import 'tags';
+@import "global/hljs-overide.scss";
+@import "global/dragula.scss";
+@import 'global/alias';
+@import 'global/tags';
 
 @import '~ngx-toastr/toastr';
 $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
@@ -10,3 +10,5 @@ $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
 @import "~@fortawesome/fontawesome-free/scss/regular";
 @import "~@fortawesome/fontawesome-free/scss/solid";
 @import '~highlight.js/styles/foundation.css';
+@import "~hamburgers/_sass/hamburgers/hamburgers";
+@import "layout/layout";

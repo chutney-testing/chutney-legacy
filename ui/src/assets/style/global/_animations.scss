@@ -1,4 +1,4 @@
-@import 'mixins';
+@import 'global/mixins';
 
 @mixin box-shadow-animation($animation_name: none,
                             $fromOffsetX: 0,

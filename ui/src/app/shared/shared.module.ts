@@ -39,7 +39,7 @@ import { HjsonParserService } from '@shared/hjson-parser/hjson-parser.service';
 import { ChutneyMainHeaderComponent } from './components/chutney-main-header/chutney-main-header.component';
 import { ChutneyLeftMenuComponent } from './components/chutney-left-menu/chutney-left-menu.component';
 import { ChutneyRightMenuComponent } from './components/chutney-right-menu/chutney-right-menu.component';
-import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
+import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 
 @NgModule({
     imports: [
@@ -49,7 +49,7 @@ import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
         ReactiveFormsModule,
         RouterModule,
         TranslateModule,
-        NgbCollapseModule,
+        PerfectScrollbarModule
     ],
     declarations: [
         ComponentCardComponent,

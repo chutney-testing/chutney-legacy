@@ -1,18 +1,33 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary" [class.collapsed]="isCollapsed">
-
-        <div class="container-fluid">
-            <button class="navbar-toggler" type="button"  (click)="toggleExpand()" data-bs-toggle="collapse"  data-bs-target="#navbar"  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+<div class="app-sidebar sidebar-shadow bg-primary" (mouseover)="sidebarHover()"
+     (mouseout)="sidebarHover()">
+    <div class="app-header__logo">
+        <div class="logo-src"></div>
+        <div class="header__pane ms-auto">
+            <button type="button" class="hamburger close-sidebar-btn hamburger--elastic"
+                    [ngClass]="{'is-active' : globals.toggleSidebar}" (click)="toggleSidebar()">
+                <span class="hamburger-box">
+                    <span class="hamburger-inner"></span>
+                </span>
             </button>
-            <div class="collapse navbar-collapse nav-items" id="navbar" [class.show]="!isCollapsed">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li *ngFor="let item of  menuItems" class="nav-item">
-                        <a class="nav-link" routerLink="{{item.link}}" routerLinkActive="active">
-                            <i [ngClass]="item.iconClass"></i>
-                            <span class="nav-item_label">{{item.label | translate}}</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
         </div>
-    </nav>
+    </div>
+    <div class="app-sidebar-content">
+        <div class="app-sidebar-scroll">
+            <perfect-scrollbar [autoPropagation]="true">
+                <div class="sidebar-menu">
+                    <div class="menu-list">
+                        <ng-container *ngFor="let item of  menuItems">
+                            <div class="menu-header">{{item.label}}</div>
+                            <div class="menu-item nav-item" *ngFor="let subItem of item.children">
+                                <a [routerLink]="subItem.link" routerLinkActive="active" class="menu-link nav-link">
+                                    <i class="menu-icon" [ngClass]="subItem.iconClass"></i>
+                                    <span class="menu-title">{{subItem.label | translate}}</span>
+                                </a>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </perfect-scrollbar>
+        </div>
+    </div>
+</div>

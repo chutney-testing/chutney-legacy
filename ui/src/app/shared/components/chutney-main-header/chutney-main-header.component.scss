@@ -1,22 +1,12 @@
-.main-header {
-    height: 3rem;
-    display: flex;
-    align-items: center;
+@import "~bootstrap/scss/bootstrap";
 
-    .logo {
-       // margin-top: 3rem;
-        z-index: 1000;
-        img {
-            position: relative;
-            width: 2rem;
-        }
+.nav-link, {
+    cursor: pointer;
+    border-radius: .25rem;
+    &:hover {
+        background: $dropdown-link-hover-bg;
     }
-
-    .nav {
-        margin-left: auto;
-        .nav-link {
-            cursor: pointer;
-        }
+    &:not(:hover) {
+        color: $white !important;
     }
-
 }
