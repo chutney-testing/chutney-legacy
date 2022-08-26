@@ -42,12 +42,9 @@
         </div>
     </div>
     <div class="app-header__mobile-menu">
-        <button type="button" class="hamburger close-sidebar-btn hamburger--elastic"
-                [ngClass]="{'is-active' : globals.toggleSidebarMobile}" (click)="toggleSidebarMobile()">
-        <span class="hamburger-box">
-            <span class="hamburger-inner"></span>
-        </span>
-        </button>
+        <div class="close-sidebar-btn" (click)="toggleSidebarMobile()">
+            <i class="fa fa-bars"></i>
+        </div>
     </div>
 
 </div>

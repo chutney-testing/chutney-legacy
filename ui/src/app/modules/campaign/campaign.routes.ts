@@ -11,9 +11,6 @@ import { ChutneyLeftMenuComponent } from '@shared/components/chutney-left-menu/c
 import { ChutneyRightMenuComponent } from '@shared/components/chutney-right-menu/chutney-right-menu.component';
 
 export const CampaignRoute: Routes = [
-    { path: '', component: ChutneyMainHeaderComponent, outlet: 'header' },
-    { path: '', component: ChutneyLeftMenuComponent, outlet: 'left-side-bar' },
-    { path: '', component: ChutneyRightMenuComponent, outlet: 'right-side-bar' },
     {
         path: '',
         component: CampaignListComponent,

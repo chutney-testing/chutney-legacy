@@ -2,7 +2,8 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { LoginService } from '@core/services';
 import { allMenuItems, MenuItem } from '@shared/components/chutney-left-menu/chutney-left-menu.items';
 import { ActivatedRoute } from '@angular/router';
-import { ThemeOptions } from '../../../theme-options';
+import { LayoutOptions } from '../../../layout-options.service';
+import { lookupService } from 'dns';
 
 @Component({
     selector: 'chutney-chutney-left-menu',
@@ -10,37 +11,38 @@ import { ThemeOptions } from '../../../theme-options';
     styleUrls: ['./chutney-left-menu.component.scss']
 })
 export class ChutneyLeftMenuComponent implements OnInit {
-    public isCollapsed = false;
     public menuItems = allMenuItems;
-    public extraParameter: any;
+    private newInnerWidth: number;
+    private innerWidth: number;
 
-    constructor(private loginService: LoginService,
-                public globals: ThemeOptions, private activatedRoute: ActivatedRoute) {
+    constructor(public layoutOptions: LayoutOptions,
+                private loginService: LoginService) {
     }
 
     ngOnInit(): void {
-        //this.menuItems = allMenuItems.filter(item => this.loginService.hasAuthorization(item.authorizations))
         setTimeout(() => {
             this.innerWidth = window.innerWidth;
             if (this.innerWidth < 1200) {
-                this.globals.toggleSidebar = true;
+                this.layoutOptions.toggleSidebar = true;
             }
         });
-
-        //this.extraParameter = this.activatedRoute.snapshot.firstChild.data['extraParameter'];
-        this.extraParameter = '';
     }
 
-    private newInnerWidth: number;
-    private innerWidth: number;
-    activeId = 'dashboardsMenu';
+    canViewMenuGroup(item: MenuItem): boolean {
+        return !!item.children.find(subItem => this.canViewMenuItem(subItem));
+
+    }
+
+    canViewMenuItem(item: MenuItem): boolean {
+        return this.loginService.hasAuthorization(item.authorizations);
+    }
 
     toggleSidebar() {
-        this.globals.toggleSidebar = !this.globals.toggleSidebar;
+        this.layoutOptions.toggleSidebar = !this.layoutOptions.toggleSidebar;
     }
 
     sidebarHover() {
-        this.globals.sidebarHover = !this.globals.sidebarHover;
+        this.layoutOptions.sidebarHover = !this.layoutOptions.sidebarHover;
     }
 
     @HostListener('window:resize', ['$event'])
@@ -48,9 +50,9 @@ export class ChutneyLeftMenuComponent implements OnInit {
         this.newInnerWidth = event.target.innerWidth;
 
         if (this.newInnerWidth < 1200) {
-            this.globals.toggleSidebar = true;
+            this.layoutOptions.toggleSidebar = true;
         } else {
-            this.globals.toggleSidebar = false;
+            this.layoutOptions.toggleSidebar = false;
         }
 
     }

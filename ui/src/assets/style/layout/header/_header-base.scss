@@ -31,6 +31,12 @@
       padding: 0 $layout-spacer-x 0 0;
     }
   }
+
+}
+.close-sidebar-btn {
+    cursor: pointer;
+    color: $white;
+    font-size: larger;
 }
 
 .app-header__menu,
@@ -39,6 +45,9 @@
   padding: 0 $layout-spacer-x;
   height: $app-header-height;
   align-items: center;
+    .close-sidebar-btn{
+        font-size: xx-large;
+    }
 }
 
 .hamburger-inner,

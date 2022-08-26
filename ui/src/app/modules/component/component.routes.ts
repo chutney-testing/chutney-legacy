@@ -8,8 +8,6 @@ import { ChutneyRightMenuComponent } from '@shared/components/chutney-right-menu
 import { ChutneyMainHeaderComponent } from '@shared/components/chutney-main-header/chutney-main-header.component';
 
 export const componentRoute: Routes = [
-    { path: '', component: ChutneyMainHeaderComponent, outlet: 'header' },
-    { path: '', component: ChutneyLeftMenuComponent, outlet: 'left-side-bar' },
     { path: '',
     pathMatch: 'full',
     redirectTo: 'list',

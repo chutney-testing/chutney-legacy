@@ -7,10 +7,12 @@ import { LoginComponent } from './components/login/login.component';
 import { CommonModule } from '@angular/common';
 import { OrganismsModule } from '../organisms/organisms.module';
 import { TranslateModule } from '@ngx-translate/core';
+import { ParentComponent } from './components/parent/parent.component';
 
 @NgModule({
     declarations: [
         LoginComponent,
+        ParentComponent,
     ],
     imports: [
         CommonModule,

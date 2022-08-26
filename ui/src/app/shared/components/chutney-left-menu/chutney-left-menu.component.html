@@ -1,14 +1,12 @@
-<div class="app-sidebar sidebar-shadow bg-primary" (mouseover)="sidebarHover()"
+<div class="app-sidebar sidebar-shadow bg-light" (mouseover)="sidebarHover()"
      (mouseout)="sidebarHover()">
-    <div class="app-header__logo">
+    <div class="app-header__logo bg-primary">
         <div class="logo-src"></div>
         <div class="header__pane ms-auto">
-            <button type="button" class="hamburger close-sidebar-btn hamburger--elastic"
-                    [ngClass]="{'is-active' : globals.toggleSidebar}" (click)="toggleSidebar()">
-                <span class="hamburger-box">
-                    <span class="hamburger-inner"></span>
-                </span>
-            </button>
+            <span class="close-sidebar-btn" (click)="toggleSidebar()">
+                <i [ngClass]="layoutOptions.toggleSidebar ? 'fa fa-thumb-tack' : 'fa fa-angle-double-left'"></i>
+            </span>
+
         </div>
     </div>
     <div class="app-sidebar-content">
@@ -17,13 +15,17 @@
                 <div class="sidebar-menu">
                     <div class="menu-list">
                         <ng-container *ngFor="let item of  menuItems">
-                            <div class="menu-header">{{item.label}}</div>
-                            <div class="menu-item nav-item" *ngFor="let subItem of item.children">
-                                <a [routerLink]="subItem.link" routerLinkActive="active" class="menu-link nav-link">
-                                    <i class="menu-icon" [ngClass]="subItem.iconClass"></i>
-                                    <span class="menu-title">{{subItem.label | translate}}</span>
-                                </a>
-                            </div>
+                            <ng-container *ngIf="canViewMenuGroup(item)">
+                                <div class="menu-header">{{item.label}}</div>
+                                <ng-container *ngFor="let subItem of item.children">
+                                    <div class="menu-item nav-item" *ngIf="canViewMenuItem(subItem)">
+                                        <a [routerLink]="subItem.link" routerLinkActive="active" class="menu-link nav-link">
+                                            <i class="menu-icon" [ngClass]="subItem.iconClass"></i>
+                                            <span class="menu-title">{{subItem.label | translate}}</span>
+                                        </a>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
                         </ng-container>
                     </div>
                 </div>

@@ -8,8 +8,6 @@ import { ChutneyLeftMenuComponent } from '@shared/components/chutney-left-menu/c
 import { ChutneyMainHeaderComponent } from '@shared/components/chutney-main-header/chutney-main-header.component';
 
 export const DatasetRoute: Routes = [
-    { path: '', component: ChutneyMainHeaderComponent, outlet: 'header' },
-    { path: '', component: ChutneyLeftMenuComponent, outlet: 'left-side-bar' },
     {
         path: '',
         component: DatasetListComponent,

@@ -10,8 +10,7 @@ import { ChutneyMainHeaderComponent } from '@shared/components/chutney-main-head
 import { ChutneyLeftMenuComponent } from '@shared/components/chutney-left-menu/chutney-left-menu.component';
 
 export const scenarioRoute: Routes = [
-    { path: '', component: ChutneyMainHeaderComponent, outlet: 'header' },
-    { path: '', component: ChutneyLeftMenuComponent, outlet: 'left-side-bar' },
+
     {
         path: '',
         component: ScenariosComponent,

@@ -16,7 +16,6 @@
   transition: all .3s ease;
 
   .app-header__logo {
-    padding: 0 $layout-spacer-x;
     height: $app-header-height;
     width: $app-sidebar-width;
     display: flex;
@@ -83,7 +82,6 @@
     padding: 0 1.5rem 0 45px;
     position: relative;
     border-radius: .25rem;
-    color: $white;
     white-space: nowrap;
     transition: all .2s;
     text-decoration: none;
@@ -154,43 +152,10 @@
 
   }
 
-  & .menu-dropdown {
-    position: relative;
-
-    &::before {
-      content: '';
-      height: 100%;
-      opacity: 1;
-      width: 3px;
-      position: absolute;
-      left: 20px;
-      top: 0;
-      border-radius: 15px;
-    }
-
-    .menu-list {
-      padding: ($layout-spacer-x / 2) 0 ($layout-spacer-x / 2) $layout-spacer-x * 1.5;
-    }
-
-    .menu-item {
-      .menu-link {
-        padding: 0 ($layout-spacer-x / 1.5);
-        height: 1.9rem;
-        line-height: 1.9rem;
-        font-weight: normal;
-
-        &.active-item {
-          font-weight: 600;
-        }
-      }
-    }
-  }
-
   & .menu-header {
     text-transform: uppercase;
     margin: ($layout-spacer-x / 2) 0;
     font-weight: bold;
-    color: $white;
     white-space: nowrap;
     position: relative;
   }

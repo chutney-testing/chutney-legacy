@@ -2,16 +2,18 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { LoginComponent } from '@core/components/login/login.component';
-import { ParentComponent } from '@core/components/parent/parent.component';
 import { AuthGuard } from '@core/guards';
 import { Authorization } from '@model';
+import { ParentComponent } from '@core/components/parent/parent.component';
+import { ChutneyMainHeaderComponent } from '@shared/components/chutney-main-header/chutney-main-header.component';
+import { ChutneyLeftMenuComponent } from '@shared/components/chutney-left-menu/chutney-left-menu.component';
 
 export const appRoutes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'login/:action', component: LoginComponent },
-    {
-        path: '', component: ParentComponent,
-        children: [
+    { path: '', component: ParentComponent, children: [
+            { path: '', component: ChutneyMainHeaderComponent, outlet: 'header' },
+            { path: '', component: ChutneyLeftMenuComponent, outlet: 'left-side-bar' },
             { path: '', redirectTo: '/login', pathMatch: 'full' },
             {
                 path: 'scenario',
@@ -42,10 +44,6 @@ export const appRoutes: Routes = [
                 loadChildren: () => import('./modules/dataset/dataset.module').then(m => m.DatasetModule),
                 canActivate: [AuthGuard],
                 data: { 'authorizations': [ Authorization.DATASET_READ,Authorization.DATASET_WRITE ] }
-            },
-            {
-                path: 'documentation',
-                loadChildren: () => import('./organisms/documentation/documentation.module').then(m => m.DocumentationModule)
             },
             {
                 path: 'configurationAgent',
@@ -82,9 +80,9 @@ export const appRoutes: Routes = [
                 loadChildren: () => import('./modules/roles/roles.module').then(m => m.RolesModule),
                 canActivate: [AuthGuard],
                 data: { 'authorizations': [ Authorization.ADMIN_ACCESS ] }
-            },
-        ]
-    }
+            }
+        ] },
+
 ];
 
 @NgModule({
