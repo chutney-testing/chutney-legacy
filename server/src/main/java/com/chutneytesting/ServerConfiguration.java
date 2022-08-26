@@ -60,6 +60,7 @@ public class ServerConfiguration implements AsyncConfigurer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerConfiguration.class);
 
     public static final String SERVER_PORT_SPRING_VALUE = "${server.port}";
+    public static final String SERVER_INSTANCE_NAME_VALUE = "${server.instance-name:''}";
     public static final String SERVER_HTTP_PORT_SPRING_VALUE = "${server.http.port}";
     public static final String SERVER_HTTP_INTERFACE_SPRING_VALUE = "${server.http.interface}";
 
