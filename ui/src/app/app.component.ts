@@ -1,17 +1,20 @@
-import { Component, } from '@angular/core';
+import { Component, OnDestroy, } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
+import { LinkifierService, LoginService } from '@core/services';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'chutney-main',
-  template: `
-    <router-outlet></router-outlet>
-`
+  templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent{
 
-  constructor(translate: TranslateService) {
+
+
+  constructor(private translate: TranslateService) {
     // this language will be used as a fallback when a translation isn't found in the current language
     translate.setDefaultLang('en');
     // // the lang to use, if the lang isn't available, it will use the current loader to get them

@@ -1,11 +1,11 @@
-@import 'colors';
+@import "~bootstrap/scss/bootstrap";;
 
 :host {
   width: 100%;
 }
 
 div.collapsible-title {
-    color: $bleu1;
+    color: $teal-100;
     cursor: pointer;
     overflow: hidden;
 
@@ -21,7 +21,7 @@ div.collapsible-title {
         left: 0;
         right: 0;
         height: 0.4em;
-        border-top: 1px solid $bleu1;
+        border-top: 1px solid $teal-100;
         z-index: -1;
         margin-left: 10px;
     }

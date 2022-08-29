@@ -1,14 +1,14 @@
-@import 'colors';
+@import "~bootstrap/scss/bootstrap";;
 
 a.chutney-link {
     text-decoration: none !important;
-    color: $liens !important;
+    color: $primary !important;
     font-family: Ubuntu;
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
 
     &:hover {
-        color: $bleu2 !important;
+        color: $primary !important;
     }
 }

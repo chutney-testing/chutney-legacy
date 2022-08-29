@@ -1,4 +1,4 @@
-@import 'colors';
+@import "~bootstrap/scss/bootstrap";;
 
 .campaign-title {
     height: 50px;
@@ -10,14 +10,14 @@
 
 input.search-field {
     border: none;
-    border-bottom: 1px solid $vert2;
+    border-bottom: 1px solid $primary;
     width: 100%;
 }
 
 span.search-field {
     border: none;
-    color: $vert2;
-    border-bottom: 1px solid $vert2;
+    color: $primary;
+    border-bottom: 1px solid $primary;
 }
 
 .cursor {
@@ -64,14 +64,14 @@ fieldset legend {
         .popover-arrow {
 
             &::after {
-                border-left-color: $bleu1;
+                border-left-color: $teal-100;
             }
         }
     }
 
     .popover-body {
-        background-color: $bleu1;
-        color: $blanc;
+        background-color: $teal-100;
+        color: $white;
         border-radius: 0.5rem;
         padding: 0.5rem;
     }
