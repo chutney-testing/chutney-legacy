@@ -1,6 +1,6 @@
-<div class="row">
-    <div class="components-list-container m-0 border-right"
-         [ngClass]="{'col p-0 h100 component-list-container-minimize':componentMinimize, 'col-3 px-3':!componentMinimize}">
+<div class="">
+    <div class="components-list-container m-0"
+         [ngClass]="{'col-6 p-0 h100 component-list-container-minimize':componentMinimize, 'col-3 px-3':!componentMinimize}">
         <button type="button" class="left-panel-minimize-btn btn btn-xs btn-default ms-2 shadow-none p-0"
                 title="{{(componentMinimize ? 'global.actions.show' : 'global.actions.hide') | translate}}"
                 (click)="componentMinimize = !componentMinimize;">
@@ -19,8 +19,8 @@
 
         <div *ngIf="viewComponent" class="component-list"
              [ngClass]="{'d-none': componentMinimize}">
-            <div class="mb-2">
-                <input name="search" type="text" class="form-control mb-2"
+            <div>
+                <input name="search" type="text" class="form-control"
                        placeholder="{{'components.shared.list.filter.placeholder' | translate}}"
                        [(ngModel)]="componentFilter"/>
                 <button *ngIf=" !isSelectAll()" type="button" class="btn btn-xs btn-default small-font"
@@ -83,18 +83,18 @@
         </div>
     </div>
 
-    <div class="edition" [formGroup]="componentForm"
-         [ngClass]="{'col edition-component-minimize':componentMinimize, 'col-9':!componentMinimize}">
+    <div class="edition me-5 w-50" [formGroup]="componentForm"
+         [ngClass]="{'col-6 edition-component-minimize':componentMinimize, 'col-9':!componentMinimize}">
         <div class="text-center bg-info text-white"
              [ngClass]="'bg-' + messageType">
             <strong *ngIf="message">{{ message }}</strong>
         </div>
 
         <!-- Component panel -->
-        <ng-container *ngIf="viewComponent && !actionToEdit">
-            <div class="edition-header row mt-0">
+        <ng-container *ngIf="viewComponent && !actionToEdit" class="">
+            <div class="">
                 <ng-container *ngIf="!executionResult && !editableComponent">
-                    <div class="col text-center">
+                    <div class="">
                         <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
                                 type="button"
                                 class="btn btn-success"
@@ -105,28 +105,8 @@
                     </div>
                 </ng-container>
                 <ng-container *ngIf="editableComponent">
-                    <div class="col-7">
-                        <div class="row">
-                            <div>
-                                <span class="fa fa-cubes"></span>
-                                <span class="ms-2 fw-bold">{{'components.menu.components' | translate}}</span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-1"></div>
-                            <textarea formControlName="name" rows="2"
-                                      class="col form-control no-resize"
-                                      [ngClass]="{
-                                        'is-valid': componentForm.get('name').valid && componentForm.get('name').enabled,
-                                        'is-invalid': !componentForm.get('name').valid && componentForm.get('name').enabled
-                                      }"
-                                      placeholder="{{'components.shared.edition.fields.intention.placeholder' | translate}}">
-                            </textarea>
-                            <div class="col-1"></div>
-                        </div>
-                    </div>
-                    <div class="col-5">
-                        <div class="row">
+                    <div class="">
+                        <div class="">
                             <div class="col text-center">
                                 <ng-container *hasAuthorization="[Authorization.COMPONENT_WRITE]">
                                     <chutney-toolbar-component
@@ -142,8 +122,8 @@
                                 </ng-container>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="p-0 align-self-center">
+                        <div class="">
+                            <div class="">
                                 <label class="form-control-label fw-bold"
                                        for="tags">{{ 'scenarios.edition.form.tags' | translate }}</label>
                             </div>
@@ -153,15 +133,35 @@
                             </div>
                         </div>
                     </div>
+                    <div class="">
+                        <div class="">
+                            <div>
+                                <span class="fa fa-cubes"></span>
+                                <span class="ms-2 fw-bold">{{'components.menu.components' | translate}}</span>
+                            </div>
+                        </div>
+                        <div class="">
+                            <div class=""></div>
+                            <textarea formControlName="name" rows="2"
+                                      class="col form-control no-resize"
+                                      [ngClass]="{
+                                        'is-valid': componentForm.get('name').valid && componentForm.get('name').enabled,
+                                        'is-invalid': !componentForm.get('name').valid && componentForm.get('name').enabled
+                                      }"
+                                      placeholder="{{'components.shared.edition.fields.intention.placeholder' | translate}}">
+                            </textarea>
+                            <div class=""></div>
+                        </div>
+                    </div>
                 </ng-container>
             </div>
-            <div class="edition-body row">
-                <div *ngIf="editableComponent" class="border-right"
+            <div class="">
+                <div *ngIf="editableComponent" class=""
                      [ngClass]="{'col edition-component-right-panel-minimize':componentEditionRightPanelMinimize, 'col-7':!componentEditionRightPanelMinimize}">
-                        <div class="ps-3 fw-bold">
+                        <div class="">
                             <span class="legend-title">{{'components.component.edition.blocks.steps' | translate}}</span>
                         </div>
-                        <div class="bg-draggable mt-2 border"
+                        <div class="bg-draggable"
                              title="{{'components.shared.edition.draganddrop' | translate}}">
                             <div [ngClass]="componentTasksCreated.length > 0 ? 'drop-zone' : 'drop-zone-empty'"
                                  dragula="COPYABLE"
