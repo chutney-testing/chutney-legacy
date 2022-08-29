@@ -85,7 +85,7 @@
 
     <div class="edition me-5 w-50" [formGroup]="componentForm"
          [ngClass]="{'col-6 edition-component-minimize':componentMinimize, 'col-9':!componentMinimize}">
-        <div class="text-center bg-info text-white"
+        <div class="text-center bg-info text-white mt-4 mb-4 "
              [ngClass]="'bg-' + messageType">
             <strong *ngIf="message">{{ message }}</strong>
         </div>
@@ -122,27 +122,14 @@
                                 </ng-container>
                             </div>
                         </div>
-                        <div class="">
-                            <div class="">
-                                <label class="form-control-label fw-bold"
-                                       for="tags">{{ 'scenarios.edition.form.tags' | translate }}</label>
-                            </div>
-                            <div class="col">
-                                <textarea formControlName="tags" type="text" class="form-control no-resize" name="tags"
-                                          id="tags" rows="2"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="">
-                        <div class="">
+                        <div class="mt-4">
                             <div>
                                 <span class="fa fa-cubes"></span>
                                 <span class="ms-2 fw-bold">{{'components.menu.components' | translate}}</span>
                             </div>
                         </div>
-                        <div class="">
-                            <div class=""></div>
-                            <textarea formControlName="name" rows="2"
+                        <div class="mt-1">
+                            <textarea formControlName="name" rows="3"
                                       class="col form-control no-resize"
                                       [ngClass]="{
                                         'is-valid': componentForm.get('name').valid && componentForm.get('name').enabled,
@@ -150,13 +137,22 @@
                                       }"
                                       placeholder="{{'components.shared.edition.fields.intention.placeholder' | translate}}">
                             </textarea>
-                            <div class=""></div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="">
+                                <label class="form-control-label fw-bold"
+                                       for="tags">{{ 'scenarios.edition.form.tags' | translate }}</label>
+                            </div>
+                            <div class="mt-1">
+                                <textarea formControlName="tags" type="text" class="form-control no-resize" name="tags"
+                                          id="tags" rows="2"></textarea>
+                            </div>
                         </div>
                     </div>
                 </ng-container>
             </div>
             <div class="">
-                <div *ngIf="editableComponent" class=""
+                <div *ngIf="editableComponent" class="mt-4"
                      [ngClass]="{'col edition-component-right-panel-minimize':componentEditionRightPanelMinimize, 'col-7':!componentEditionRightPanelMinimize}">
                         <div class="">
                             <span class="legend-title">{{'components.component.edition.blocks.steps' | translate}}</span>
@@ -184,7 +180,7 @@
                     </button>
                     <div class="right-panel-content mt-4" [ngClass]="{'d-none':componentEditionRightPanelMinimize}">
                         <ng-container *ngIf="!executionResult">
-                            <div *ngIf="editableComponent">
+                            <div *ngIf="editableComponent" class="border border-danger">
                                 <chutney-strategy-form [strategy]="editableComponent.strategy" formControlName="strategy"></chutney-strategy-form>
                                 <chutney-parameters-component [parentForm]="componentForm" [editableComponent]="editableComponent"></chutney-parameters-component>
                                 <chutney-child-panel-component [parents]="parents" [show]="showChild"></chutney-child-panel-component>
