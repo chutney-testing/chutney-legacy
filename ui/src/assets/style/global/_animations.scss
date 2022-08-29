@@ -1,0 +1,47 @@
+@import 'global/mixins';
+
+@mixin box-shadow-animation($animation_name: none,
+                            $fromOffsetX: 0,
+                            $fromOffsetY: 0,
+                            $fromBlur: 0,
+                            $fromSpread: 0,
+                            $fromColor: rgba(0, 0, 0, 0),
+                            $fromInset: false,
+                            $toOffsetX: 0,
+                            $toOffsetY: 0,
+                            $toBlur: 0,
+                            $toSpread: 0,
+                            $toColor: rgba(0, 0, 0, 0),
+                            $toInset: false) {
+  @include keyframe($animation_name) {
+    0% {
+      @include box-shadow($fromOffsetX, $fromOffsetY, $fromBlur, $fromSpread, $fromColor, $fromInset);
+    }
+
+    100% {
+      @include box-shadow($toOffsetX, $toOffsetY, $toBlur, $toSpread, $toColor, $toInset);
+    }
+  }
+}
+
+@mixin border-animation($animation_name: none,
+                        $fromWidth: medium,
+                        $fromStyle: none,
+                        $fromColor: currentcolor,
+                        $toWidth: medium,
+                        $toStyle: none,
+                        $toColor: currentcolor) {
+  @include keyframe($animation_name) {
+    0% {
+      border-width: $fromWidth;
+      border-style: $fromStyle;
+      border-color: $fromColor;
+    }
+
+    100% {
+      border-width: $toWidth;
+      border-style: $toStyle;
+      border-color: $toColor;
+    }
+  }
+}
