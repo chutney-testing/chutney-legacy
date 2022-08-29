@@ -1,11 +1,11 @@
 <div class="p-3">
-    <div class="row">
-        <div class="col-md-5">
+    <div class="row ms-1">
+        <div class="col w-50">
             <chutney-forms-search-field [id]="'dataset-search'" [placeholder]="'global.actions.search' | translate"
                                         (searchInputEvent)="filterSearchChange($event)">
             </chutney-forms-search-field>
         </div>
-        <div class="col-md-4">
+        <div class="col">
             <button *hasAuthorization="[Authorization.DATASET_WRITE]"
                 type="button" class="btn btn-outline-primary" [routerLink]="['/dataset', 'edition']"
             >
@@ -13,8 +13,8 @@
             </button>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-3">
+    <div class="row mt-3 ms-3">
+        <div class="w-25 border border-secondary rounded">
             <angular2-multiselect [data]="itemList"
                                   [settings]="settings"
                                   (onSelect)="onItemSelect($event)"
@@ -26,11 +26,11 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row mt-3">
         <div [ngClass]="preview ? 'col-md-8' : 'col'">
             <table class="table table-sm table-striped table-hover">
                 <thead>
-                <tr>
+                <tr class="mb-1">
                     <th scope="col" class="w10">&nbsp;</th>
                     <th scope="col" class="w25">Name</th>
                     <th scope="col" class="w10">Tags</th>
@@ -43,7 +43,7 @@
                     (click)="showPreview(dataset)"
                     style="cursor: pointer">
 
-                    <td>
+                    <td class="align-items-center">
                         <button *hasAuthorization="[Authorization.DATASET_WRITE]"
                                 type="button" class="btn btn-outline-primary btn-sm"
                                 [routerLink]="['/dataset', dataset.id, 'edition']">
@@ -51,9 +51,9 @@
                                   aria-hidden="true"></span> {{ 'global.actions.edit' | translate }}
                         </button>
                     </td>
-                    <td><span>{{dataset.name}}</span></td>
+                    <td class="pt-2"><span>{{dataset.name}}</span></td>
 
-                    <td>
+                    <td class="pt-2">
                         <span *ngIf="dataset.tags.length <= 3">
                             <span *ngFor="let tag of dataset.tags"
                                   class="chutney-tag chutney-tag-selected">{{tag}}</span>
@@ -68,8 +68,8 @@
                             </button>
                         </span>
                     </td>
-                    <td><span>{{dataset.description}}</span></td>
-                    <td><span>{{dataset.lastUpdated | amDateFormat: 'YYYY-MM-DD HH:mm'}}</span></td>
+                    <td class="pt-2"><span>{{dataset.description}}</span></td>
+                    <td class="pt-2"><span>{{dataset.lastUpdated | amDateFormat: 'YYYY-MM-DD HH:mm'}}</span></td>
                 </tr>
                 </tbody>
             </table>
