@@ -1,7 +1,7 @@
 <div class="">
     <div class="components-list-container m-0"
-         [ngClass]="{'p-0 h100 component-list-container-minimize':componentMinimize, 'col-3 px-3':!componentMinimize}">
-        <button type="button" class="left-panel-minimize-btn btn btn-xs btn-default ms-2 shadow-none p-0"
+         [ngClass]="{'p-0 h100 component-list-container-minimize':componentMinimize, 'w-25':!componentMinimize}">
+        <button type="button" class="left-panel-minimize-btn btn btn-xs btn-default shadow-none p-0"
                 title="{{(componentMinimize ? 'global.actions.show' : 'global.actions.hide') | translate}}"
                 (click)="componentMinimize = !componentMinimize;">
             <span class="fa" [ngClass]="{'fa-angle-double-right':componentMinimize, 'fa-angle-double-left':!componentMinimize}"></span>
@@ -20,7 +20,7 @@
         <div *ngIf="viewComponent" class="component-list"
              [ngClass]="{'d-none': componentMinimize}">
             <div class="mt-2">
-                <input name="search" type="text" class="form-control"
+                <input name="search" type="text" class="form-control mb-2"
                        placeholder="{{'components.shared.list.filter.placeholder' | translate}}"
                        [(ngModel)]="componentFilter"/>
                 <button *ngIf=" !isSelectAll()" type="button" class="btn btn-xs btn-default small-font"
@@ -31,13 +31,13 @@
                         (click)="unSelectAll()">
                     <span class="fa fa-times"></span> Tout désélectionner
                 </button>
-                <button class="chutney-tag"
+                <button class="chutney-tag small-font"
                         [ngClass]="tagData.isNoTagSelected() ? 'chutney-tag-selected' : 'chutney-tag-unselected'"
                         (click)="toggleNoTag()">
                     NO_TAG
                 </button>
-                <div class="tags-scroll d-flex flex-wrap align-content-start">
-                    <div *ngFor="let tag of tagData.all()">
+                <div class="tags-scroll d-flex flex-wrap align-content-start small-font">
+                    <div *ngFor="let tag of tagData.all()" class="me-2 mt-1">
                         <button
                             [ngClass]="tagData.isSelected(tag)? 'chutney-tag chutney-tag-selected' : 'chutney-tag chutney-tag-unselected'"
                             (click)="toggleTagSelect(tag)">
@@ -83,9 +83,9 @@
         </div>
     </div>
 
-    <div class="edition me-5 w-50" [formGroup]="componentForm"
-         [ngClass]="{'col-6 edition-component-minimize':componentMinimize, 'col-9':!componentMinimize}">
-        <div class="text-center bg-info text-white mt-4 mb-4 "
+    <div class="edition" [formGroup]="componentForm"
+         [ngClass]="{'w-75 edition-component-minimize':componentMinimize, 'w-50':!componentMinimize}">
+        <div class="text-center bg-info text-white mt-4 mb-4"
              [ngClass]="'bg-' + messageType">
             <strong *ngIf="message">{{ message }}</strong>
         </div>
@@ -105,9 +105,23 @@
                     </div>
                 </ng-container>
                 <ng-container *ngIf="editableComponent">
-                    <div class="">
-                        <div class="">
-                            <div class="col text-center">
+                    <div class="row">
+                        <div class="col">
+                            <div class="mt-4 pt-2">
+                                <span class="fa fa-cubes"></span>
+                                <span class="fw-bold">{{'components.menu.components' | translate}}</span>
+                            </div>
+                            <textarea formControlName="name" rows="2"
+                                      class="col form-control no-resize"
+                                      [ngClass]="{
+                                        'is-valid': componentForm.get('name').valid && componentForm.get('name').enabled,
+                                        'is-invalid': !componentForm.get('name').valid && componentForm.get('name').enabled
+                                      }"
+                                      placeholder="{{'components.shared.edition.fields.intention.placeholder' | translate}}">
+                            </textarea>
+                        </div>
+                        <div class="col">
+                            <div class="">
                                 <ng-container *hasAuthorization="[Authorization.COMPONENT_WRITE]">
                                     <chutney-toolbar-component
                                         (editEvent)="save()"
@@ -121,29 +135,11 @@
                                     </chutney-toolbar-component>
                                 </ng-container>
                             </div>
-                        </div>
-                        <div class="mt-4">
-                            <div>
-                                <span class="fa fa-cubes"></span>
-                                <span class="ms-2 fw-bold">{{'components.menu.components' | translate}}</span>
-                            </div>
-                        </div>
-                        <div class="mt-1">
-                            <textarea formControlName="name" rows="3"
-                                      class="col form-control no-resize"
-                                      [ngClass]="{
-                                        'is-valid': componentForm.get('name').valid && componentForm.get('name').enabled,
-                                        'is-invalid': !componentForm.get('name').valid && componentForm.get('name').enabled
-                                      }"
-                                      placeholder="{{'components.shared.edition.fields.intention.placeholder' | translate}}">
-                            </textarea>
-                        </div>
-                        <div class="mt-4">
-                            <div class="">
+                            <div class="pt-1">
                                 <label class="form-control-label fw-bold"
                                        for="tags">{{ 'scenarios.edition.form.tags' | translate }}</label>
                             </div>
-                            <div class="mt-1">
+                            <div class="">
                                 <textarea formControlName="tags" type="text" class="form-control no-resize" name="tags"
                                           id="tags" rows="2"></textarea>
                             </div>
@@ -151,13 +147,13 @@
                     </div>
                 </ng-container>
             </div>
-            <div class="">
-                <div *ngIf="editableComponent" class="mt-4"
+            <div class="row mt-3">
+                <div *ngIf="editableComponent" class="w-50"
                      [ngClass]="{'col edition-component-right-panel-minimize':componentEditionRightPanelMinimize, 'col-7':!componentEditionRightPanelMinimize}">
                         <div class="">
                             <span class="legend-title">{{'components.component.edition.blocks.steps' | translate}}</span>
                         </div>
-                        <div class="bg-draggable"
+                        <div class="bg-draggable pb-1 rounded"
                              title="{{'components.shared.edition.draganddrop' | translate}}">
                             <div [ngClass]="componentTasksCreated.length > 0 ? 'drop-zone' : 'drop-zone-empty'"
                                  dragula="COPYABLE"
@@ -171,7 +167,7 @@
                             </div>
                         </div>
                 </div>
-                <div [ngClass]="{'p-0 right-panel-minimize':componentEditionRightPanelMinimize, 'col-5':!componentEditionRightPanelMinimize}">
+                <div class="w-50" [ngClass]="{'p-0 right-panel-minimize':componentEditionRightPanelMinimize, 'col-5':!componentEditionRightPanelMinimize}">
                     <button *ngIf="editableComponent" type="button" class="right-panel-minimize-btn btn btn-xs mt-4 btn-default shadow-none"
                             [ngClass]="{'p-0':!componentEditionRightPanelMinimize}"
                             title="{{(componentEditionRightPanelMinimize ? 'global.actions.show' : 'global.actions.hide') | translate}}"
@@ -180,7 +176,7 @@
                     </button>
                     <div class="right-panel-content mt-4" [ngClass]="{'d-none':componentEditionRightPanelMinimize}">
                         <ng-container *ngIf="!executionResult">
-                            <div *ngIf="editableComponent" class="border border-danger">
+                            <div *ngIf="editableComponent" class="">
                                 <chutney-strategy-form [strategy]="editableComponent.strategy" formControlName="strategy"></chutney-strategy-form>
                                 <chutney-parameters-component [parentForm]="componentForm" [editableComponent]="editableComponent"></chutney-parameters-component>
                                 <chutney-child-panel-component [parents]="parents" [show]="showChild"></chutney-child-panel-component>

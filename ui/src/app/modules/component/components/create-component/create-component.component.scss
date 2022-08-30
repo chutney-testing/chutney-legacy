@@ -67,7 +67,7 @@
 
 .edition {
     position: absolute;
-    right: 0;
+    right: 10vw;
 
     .edition-header {
         height: 140px;
@@ -116,12 +116,14 @@ textarea.no-resize {
     position: fixed;
     margin-left: -5px;
     height: calc(80vh);
+    border: none;
 }
 
 .left-panel-minimize-btn {
     position: absolute;
     right: 5px;
     height: calc(100vh);
+    border: none;
 }
 
 .right-panel-minimize-btn:hover, .left-panel-minimize-btn:hover {
