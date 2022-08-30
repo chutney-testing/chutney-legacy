@@ -1,6 +1,14 @@
+.login-container {
+    display: grid; 
+    grid-template-columns: 1fr; 
+    grid-template-rows: 1fr; 
+    gap: 0px 0px; 
+    justify-items: center; 
+    align-items: center; 
+}
 
-.fs-75 {
-    font-size: 0.75rem !important;
+.login-background {
+    background-color: #f8f9fa;
 }
 
 .logo {
@@ -9,12 +17,9 @@
     padding: 0;
 }
 
-.small-logo {
-    width: 30px;
-    margin: 0;
-    padding: 0;
+.title {
+    font-size: 2em;
 }
-
 .custom-class {
     display: none;
 }
@@ -22,5 +27,13 @@
 @media (min-width: 992px) {
     .custom-class {
         display: block;
+    }
+    .login-container {
+        display: grid; 
+        grid-template-columns: 1fr 1fr; 
+        grid-template-rows: 1fr; 
+        gap: 0px 0px; 
+        justify-items: center; 
+        align-items: center; 
     }
 }
