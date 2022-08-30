@@ -8,7 +8,8 @@
   z-index: 8;
   padding: $app-header-height 0 0 $app-sidebar-width;
   transition: all .2s;
-  overflow-x: hidden
+  overflow-x: hidden;
+  height: 100%;
 }
 
 .app-main__inner {

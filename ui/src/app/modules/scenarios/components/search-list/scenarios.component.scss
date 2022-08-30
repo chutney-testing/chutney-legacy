@@ -1,10 +1,8 @@
-@import "~bootstrap/scss/bootstrap";
 .create-scenario-wrapper {
     float: right;
 }
 
 .create-scenario {
-    background: $primary;
     border: none;
     height: 85px;
     font-size: 11px;
@@ -12,11 +10,11 @@
     width: 50px;
 
     button {
-        color: $light;
+        color: var(--bs-white);
         text-align: center;
 
         &:hover {
-            color: $white;
+            color: var(--bs-white);
         }
 
         &:focus {
@@ -39,16 +37,7 @@
 }
 
 .label-success {
-    background-color: $primary;
-}
-
-.scenario-type-filter {
-    cursor: pointer;
-}
-
-.scenario-type-filter-selected {
-    cursor: pointer;
-    color: $primary;
+    background-color: var(--bs-primary);
 }
 
 .table-link {
@@ -78,14 +67,14 @@
             margin-top: -8px !important;
 
             &::after {
-                border-left-color: $primary;
+                border-left-color: var(--bs-primary);
             }
         }
     }
 
     .popover-body {
-        background-color: $primary;
-        color: $white;
+        background-color: var(--bs-primary);
+        color: var(--bs-white);
         border-radius: 0.5rem;
     }
 }

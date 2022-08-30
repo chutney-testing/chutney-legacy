@@ -16,11 +16,10 @@
     margin: 3px;
 }
 
-// TODO use variable or move this to theme scss
 .chutney-tag-selected {
-    background-color: #2997A3;
+    background-color: var(--bs-primary);
 }
 
 .chutney-tag-unselected {
-    background-color: #B2BAC4;
+    background-color: var(--bs-dark);
 }

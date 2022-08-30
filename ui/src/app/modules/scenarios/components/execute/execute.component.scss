@@ -44,17 +44,4 @@
         position: relative;
         padding-left: 20px;
     }
-
-    .triangle-left:before {
-        content: '';
-        display: block;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 0;
-        height: 0;
-        border-color: transparent transparent transparent $teal-100;
-        border-style: solid;
-        border-width: 60px 0 60px 20px;
-    }
 }
