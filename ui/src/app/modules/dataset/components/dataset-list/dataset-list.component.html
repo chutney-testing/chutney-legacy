@@ -1,20 +1,20 @@
-<div class="p-3">
-    <div class="row ms-1">
-        <div class="col w-50">
+<div class="p-3 container">
+    <div class="row">
+        <div class="col">
             <chutney-forms-search-field [id]="'dataset-search'" [placeholder]="'global.actions.search' | translate"
                                         (searchInputEvent)="filterSearchChange($event)">
             </chutney-forms-search-field>
         </div>
         <div class="col">
             <button *hasAuthorization="[Authorization.DATASET_WRITE]"
-                type="button" class="btn btn-outline-primary" [routerLink]="['/dataset', 'edition']"
+                    type="button" class="btn btn-outline-primary" [routerLink]="['/dataset', 'edition']"
             >
                 <span class="fa fa-plus" aria-hidden="true"></span> {{ 'global.actions.create' | translate }}
             </button>
         </div>
     </div>
-    <div class="row mt-3 ms-3">
-        <div class="w-25 border border-secondary rounded">
+    <div class="mt-3 w-25">
+        <div class="border border-secondary rounded">
             <angular2-multiselect [data]="itemList"
                                   [settings]="settings"
                                   (onSelect)="onItemSelect($event)"
@@ -51,9 +51,9 @@
                                   aria-hidden="true"></span> {{ 'global.actions.edit' | translate }}
                         </button>
                     </td>
-                    <td class="pt-2"><span>{{dataset.name}}</span></td>
+                    <td><span>{{dataset.name}}</span></td>
 
-                    <td class="pt-2">
+                    <td>
                         <span *ngIf="dataset.tags.length <= 3">
                             <span *ngFor="let tag of dataset.tags"
                                   class="chutney-tag chutney-tag-selected">{{tag}}</span>
@@ -68,8 +68,8 @@
                             </button>
                         </span>
                     </td>
-                    <td class="pt-2"><span>{{dataset.description}}</span></td>
-                    <td class="pt-2"><span>{{dataset.lastUpdated | amDateFormat: 'YYYY-MM-DD HH:mm'}}</span></td>
+                    <td><span>{{dataset.description}}</span></td>
+                    <td><span>{{dataset.lastUpdated | amDateFormat: 'YYYY-MM-DD HH:mm'}}</span></td>
                 </tr>
                 </tbody>
             </table>
