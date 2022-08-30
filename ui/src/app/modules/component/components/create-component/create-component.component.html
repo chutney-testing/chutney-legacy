@@ -1,6 +1,6 @@
 <div class="">
     <div class="components-list-container m-0"
-         [ngClass]="{'col-6 p-0 h100 component-list-container-minimize':componentMinimize, 'col-3 px-3':!componentMinimize}">
+         [ngClass]="{'p-0 h100 component-list-container-minimize':componentMinimize, 'col-3 px-3':!componentMinimize}">
         <button type="button" class="left-panel-minimize-btn btn btn-xs btn-default ms-2 shadow-none p-0"
                 title="{{(componentMinimize ? 'global.actions.show' : 'global.actions.hide') | translate}}"
                 (click)="componentMinimize = !componentMinimize;">
@@ -19,7 +19,7 @@
 
         <div *ngIf="viewComponent" class="component-list"
              [ngClass]="{'d-none': componentMinimize}">
-            <div>
+            <div class="mt-2">
                 <input name="search" type="text" class="form-control"
                        placeholder="{{'components.shared.list.filter.placeholder' | translate}}"
                        [(ngModel)]="componentFilter"/>
