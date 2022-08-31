@@ -61,6 +61,11 @@
     margin-left: auto;
 }
 
+.btn-display-form {
+    background-color: var(--bs-success);
+    color: white;
+}
+
 .components-list-container {
     position: fixed;
 }
@@ -133,4 +138,8 @@ textarea.no-resize {
 
 .right-panel-content {
     margin-left: 15px;
+}
+
+.chutney-tag {
+    background-color: var(--bs-info);
 }
