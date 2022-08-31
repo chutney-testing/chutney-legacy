@@ -19,7 +19,7 @@
                                 <div class="menu-header">{{item.label}}</div>
                                 <ng-container *ngFor="let subItem of item.children">
                                     <div class="menu-item nav-item" *ngIf="canViewMenuItem(subItem)">
-                                        <a [routerLink]="subItem.link" routerLinkActive="active" class="menu-link nav-link">
+                                        <a [routerLink]="subItem.link" routerLinkActive="active-item" class="menu-link">
                                             <i class="menu-icon" [ngClass]="subItem.iconClass"></i>
                                             <span class="menu-title">{{subItem.label | translate}}</span>
                                         </a>

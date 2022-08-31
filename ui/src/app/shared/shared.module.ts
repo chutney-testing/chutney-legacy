@@ -40,6 +40,7 @@ import { ChutneyMainHeaderComponent } from './components/chutney-main-header/chu
 import { ChutneyLeftMenuComponent } from './components/chutney-left-menu/chutney-left-menu.component';
 import { ChutneyRightMenuComponent } from './components/chutney-right-menu/chutney-right-menu.component';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
     imports: [
@@ -49,7 +50,8 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
         ReactiveFormsModule,
         RouterModule,
         TranslateModule,
-        PerfectScrollbarModule
+        PerfectScrollbarModule,
+        NgbTooltipModule
     ],
     declarations: [
         ComponentCardComponent,
