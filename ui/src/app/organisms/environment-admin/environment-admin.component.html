@@ -1,6 +1,8 @@
-<div class="row m-5 pointer" *ngIf="errorMessage" (click)="errorMessage = null">
+<div class="container m-0">
+<div class="row pointer" *ngIf="errorMessage" (click)="errorMessage = null">
     <chutney-error-panel [errorMessage]="errorMessage"></chutney-error-panel>
 </div>
+
 <ng-container *ngIf="envForm">
     <div class="row m-3">
         <div class="col-md-6">
@@ -24,6 +26,7 @@
 </ng-container>
 
 <ng-container *ngIf="!envForm">
+
     <div class="row m-3" >
         <div class="col" *ngIf="environments">
             {{ 'admin.targets.environment' | translate }}:
@@ -46,8 +49,8 @@
         </div>
     </div>
 
-    <div class="ml-5 row m-3 w-25">
-        <div class="left-panel">
+    <div class="row">
+        <div class="col">
             <input name="search" type="text" class="form-control mb-2" placeholder="Search target" [(ngModel)]="targetFilter"/>
             <table class="table table-striped table-hover">
                 <tbody>
@@ -64,7 +67,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="col ps-4">
+        <div class="col">
             <div class="sticky-top-admin">
                 <div *ngIf="!selectedTarget">
                     <chutney-add-target-dialog (onSave)="addTarget($event)"></chutney-add-target-dialog>
@@ -92,7 +95,7 @@
 
                     </div>
                     <div class="mt-2">
-                        <button class="btn btn-sm btn-info float-right ms-1 mb-2" title="{{'global.actions.help' | translate}}" (click)="help = !help">
+                        <button class="btn btn-sm btn-info float-right ms-1 mb-2 text-white" title="{{'global.actions.help' | translate}}" (click)="help = !help">
                             {{'global.actions.help' | translate}} <span class="fa fa-info"></span>
                         </button>
                         <div *ngIf="help">
@@ -113,3 +116,4 @@
         </div>
     </div>
 </ng-container>
+</div>
