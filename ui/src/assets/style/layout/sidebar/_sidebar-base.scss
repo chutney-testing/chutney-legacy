@@ -1,5 +1,4 @@
 // Sidebar Base
-@import "~bootstrap/scss/bootstrap";
 @import "../layout-variables";
 
 
@@ -71,8 +70,12 @@
   padding: 0 $layout-spacer-x $layout-spacer-x;
 
   %side-link-hover {
-    background: $dropdown-link-hover-bg;
-    // $primary;
+      font-weight: bolder;
+      font-size: large;
+      color: var(--bs-primary);
+      .menu-icon{
+          font-size: 1.5rem;
+      }
   }
 
   & .menu-link {
@@ -90,7 +93,8 @@
     width: 100%;
     text-align: left;
     cursor: pointer;
-    font-weight: 600;
+      font-weight: lighter;
+      color: var(--bs-dark);
 
 
     &:hover {
@@ -98,7 +102,6 @@
     }
 
     &.active-item {
-      font-weight: 600;
       @extend %side-link-hover;
     }
 
@@ -107,14 +110,6 @@
       pointer-events: none;
     }
 
-    &.collapsed {
-      font-weight: normal;
-
-      .menu-arrow {
-        transform: rotate(0deg);
-        font-weight: bold;
-      }
-    }
   }
 
   & .menu-title {
@@ -131,7 +126,7 @@
     left: 5px;
     top: 50%;
     margin-top: -17px;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     transition: color 300ms;
   }
 
@@ -158,6 +153,7 @@
     font-weight: bold;
     white-space: nowrap;
     position: relative;
+      color: var(--bs-primary);
   }
 
   & .collapse-btn {
@@ -176,16 +172,6 @@
   .collapse.show {
     transform: scaleY(1);
     max-height: 600px;
-  }
-
-  .menu-list > .menu-item {
-    .menu-link {
-      font-weight: lighter;
-
-      &.active-item {
-        font-weight: bold;
-      }
-    }
   }
 }
 
