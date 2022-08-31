@@ -1,10 +1,10 @@
 <div class="">
-    <div class="components-list-container m-0"
+    <div class="components-list-container m-0 ms-3 border-end"
          [ngClass]="{'p-0 h100 component-list-container-minimize':componentMinimize, 'w-25':!componentMinimize}">
         <button type="button" class="left-panel-minimize-btn btn btn-xs btn-default shadow-none p-0"
                 title="{{(componentMinimize ? 'global.actions.show' : 'global.actions.hide') | translate}}"
                 (click)="componentMinimize = !componentMinimize;">
-            <span class="fa" [ngClass]="{'fa-angle-double-right':componentMinimize, 'fa-angle-double-left':!componentMinimize}"></span>
+            <span class="fa pe-3" [ngClass]="{'fa-angle-double-right':componentMinimize, 'fa-angle-double-left':!componentMinimize}"></span>
         </button>
         <button type="button" class="btn btn-xs btn-default ms-2"
                 [ngClass]="{'selected':viewComponent, 'not-selected':!viewComponent, 'd-none': componentMinimize}"
@@ -17,7 +17,7 @@
             <span class="fa fa-clone"></span> {{'components.menu.actions' | translate}}
         </button>
 
-        <div *ngIf="viewComponent" class="component-list"
+        <div *ngIf="viewComponent" class="component-list me-5"
              [ngClass]="{'d-none': componentMinimize}">
             <div class="mt-2">
                 <input name="search" type="text" class="form-control mb-2"
@@ -64,7 +64,7 @@
                 </table>
             </div>
         </div>
-        <div *ngIf="!viewComponent" class="component-list"
+        <div *ngIf="!viewComponent" class="component-list me-5"
              [ngClass]="{'d-none': componentMinimize}">
             <input name="search" type="text" class="sticky-content form-control mb-2"
                    placeholder="{{'components.action.list.filter.placeholder' | translate}}"
@@ -84,7 +84,7 @@
     </div>
 
     <div class="edition" [formGroup]="componentForm"
-         [ngClass]="{'w-75 edition-component-minimize':componentMinimize, 'w-50':!componentMinimize}">
+         [ngClass]="{'w-75 edition-component-minimize':componentMinimize, '':!componentMinimize}">
         <div class="text-center bg-info text-white mt-4 mb-4"
              [ngClass]="'bg-' + messageType">
             <strong *ngIf="message">{{ message }}</strong>
@@ -148,8 +148,8 @@
                 </ng-container>
             </div>
             <div class="row mt-3">
-                <div *ngIf="editableComponent" class="w-50"
-                     [ngClass]="{'col edition-component-right-panel-minimize':componentEditionRightPanelMinimize, 'col-7':!componentEditionRightPanelMinimize}">
+                <div *ngIf="editableComponent"
+                     [ngClass]="{'w-75 edition-component-right-panel-minimize':componentEditionRightPanelMinimize, 'w-50':!componentEditionRightPanelMinimize}">
                         <div class="">
                             <span class="legend-title">{{'components.component.edition.blocks.steps' | translate}}</span>
                         </div>
@@ -167,9 +167,9 @@
                             </div>
                         </div>
                 </div>
-                <div class="w-50" [ngClass]="{'p-0 right-panel-minimize':componentEditionRightPanelMinimize, 'col-5':!componentEditionRightPanelMinimize}">
-                    <button *ngIf="editableComponent" type="button" class="right-panel-minimize-btn btn btn-xs mt-4 btn-default shadow-none"
-                            [ngClass]="{'p-0':!componentEditionRightPanelMinimize}"
+                <div [ngClass]="{'w-25 p-0 right-panel-minimize':componentEditionRightPanelMinimize, 'w-50':!componentEditionRightPanelMinimize}">
+                    <button *ngIf="editableComponent" type="button" class="right-panel-minimize-btn btn btn-xs mt-4 btn-default shadow-none border-start"
+                            [ngClass]="{'position-absolute end-0':componentEditionRightPanelMinimize, '':!componentEditionRightPanelMinimize}"
                             title="{{(componentEditionRightPanelMinimize ? 'global.actions.show' : 'global.actions.hide') | translate}}"
                             (click)="componentEditionRightPanelMinimize = !componentEditionRightPanelMinimize;">
                         <span class="fa" [ngClass]="{'fa-angle-double-left':componentEditionRightPanelMinimize, 'fa-angle-double-right':!componentEditionRightPanelMinimize}"></span>
