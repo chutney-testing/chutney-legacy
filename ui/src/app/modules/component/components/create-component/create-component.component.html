@@ -11,7 +11,7 @@
                 (click)="viewComponent = true; cancel();">
             <span class="fa fa-cubes"></span> {{'components.menu.components' | translate}}
         </button>
-        <button type="button" class="btn btn-xs btn-default"
+        <button type="button" class="btn btn-xs btn-default ms-2"
                 [ngClass]="{'selected':!viewComponent, 'not-selected':viewComponent, 'd-none': componentMinimize}"
                 (click)="viewComponent = false; cancel();">
             <span class="fa fa-clone"></span> {{'components.menu.actions' | translate}}
