@@ -26,9 +26,9 @@
         </div>
     </div>
 
-    <div class="row mt-5">
-        <div [ngClass]="preview ? 'col-md-8' : 'col'">
-            <table class="table table-sm table-striped table-hover">
+    <div class="d-flex flex-row mt-5">
+        <div [ngClass]="preview ? 'w-75' : 'w-100'">
+            <table class="table table-sm table-striped table-hover rounded">
                 <thead>
                 <tr class="mb-1">
                     <th scope="col" class="w10">&nbsp;</th>
@@ -51,9 +51,9 @@
                                   aria-hidden="true"></span> {{ 'global.actions.edit' | translate }}
                         </button>
                     </td>
-                    <td><span>{{dataset.name}}</span></td>
+                    <td class="pt-2"><span>{{dataset.name}}</span></td>
 
-                    <td>
+                    <td class="pt-2">
                         <span *ngIf="dataset.tags.length <= 3">
                             <span *ngFor="let tag of dataset.tags"
                                   class="chutney-tag chutney-tag-selected">{{tag}}</span>
@@ -68,20 +68,20 @@
                             </button>
                         </span>
                     </td>
-                    <td><span>{{dataset.description}}</span></td>
-                    <td><span>{{dataset.lastUpdated | amDateFormat: 'YYYY-MM-DD HH:mm'}}</span></td>
+                    <td class="pt-2"><span>{{dataset.description}}</span></td>
+                    <td class="pt-2"><span>{{dataset.lastUpdated | amDateFormat: 'YYYY-MM-DD HH:mm'}}</span></td>
                 </tr>
                 </tbody>
             </table>
         </div>
-        <div *ngIf="preview" class="col-md-4 border pt-2 ps-3 pe-2" style="overflow-y: auto;overflow-x: auto;">
+        <div *ngIf="preview" class="w-25 border pt-2 ps-3 pe-2 ms-3" style="overflow-y: auto;overflow-x: auto;">
             <button type="button" class="btn-close float-end" aria-label="Close" (click)="preview = null">
             </button>
-            <span>{{preview.name}}</span>
+            <span class="fw-bold"><u>{{preview.name}}</u></span>
             <div *ngFor="let uniqueValue of preview.uniqueValues">
-                <span>{{uniqueValue.key}}: {{uniqueValue.value}}</span>
+                <span class="fst-italic">{{uniqueValue.key}}: {{uniqueValue.value}}</span>
             </div>
-            <div class="row">
+            <div class="row mt-2">
                 <table class="table table-sm table-striped table-hover">
                     <thead>
                     <tr>
