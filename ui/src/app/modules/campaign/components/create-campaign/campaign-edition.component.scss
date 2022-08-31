@@ -1,4 +1,14 @@
-@import "~bootstrap/scss/bootstrap";;
+.create-campaign-container {
+    display: grid; 
+    grid-template-columns: 1fr; 
+    grid-template-rows: auto auto 1fr; 
+    gap: 0px 0px; 
+    grid-template-areas: 
+      "."; 
+    justify-items: start; 
+    align-items: start; 
+}
+
 
 .campaign-title {
     height: 50px;
@@ -10,14 +20,14 @@
 
 input.search-field {
     border: none;
-    border-bottom: 1px solid $primary;
+    //border-bottom: 1px solid $primary;
     width: 100%;
 }
 
 span.search-field {
     border: none;
-    color: $primary;
-    border-bottom: 1px solid $primary;
+    color: var(--bs-primary);
+   ///border-bottom: 1px solid $primary;
 }
 
 .cursor {
@@ -64,14 +74,14 @@ fieldset legend {
         .popover-arrow {
 
             &::after {
-                border-left-color: $teal-100;
+                //border-left-color: $teal-100;
             }
         }
     }
 
     .popover-body {
-        background-color: $teal-100;
-        color: $white;
+       // background-color: $teal-100;
+        //color: $white;
         border-radius: 0.5rem;
         padding: 0.5rem;
     }

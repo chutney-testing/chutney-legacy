@@ -1,6 +1,15 @@
-@import "~bootstrap/scss/bootstrap";;
+.scheduling-campaign-container {
+    display: grid; 
+    grid-template-columns: 1fr; 
+    grid-template-rows: auto auto 1fr; 
+    gap: 0px 0px; 
+    grid-template-areas: 
+      "."; 
+    justify-items: start; 
+    align-items: start; 
+}
 
 .error-message{
-    color:$warning;
+    color:var(--bs-warning);
     font-size: 0.8em;
 }
