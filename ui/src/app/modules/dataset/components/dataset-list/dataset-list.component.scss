@@ -25,3 +25,20 @@
         border-radius: 0.5rem;
     }
 }
+
+.btn-outline-primary {
+    color: white;
+    background-color: var(--bs-dark);
+    border-color: var(--bs-dark);
+}
+
+.btn-outline-primary:hover {
+    color: var(--bs-dark);
+    background-color: white;
+    border-color: var(--bs-dark);
+}
+
+.border-secondary {
+    border-color: var(--bs-light);
+    color: var(--bs-dark);
+}
