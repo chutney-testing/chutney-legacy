@@ -1,4 +1,3 @@
-@import "~bootstrap/scss/bootstrap";;
 
 :host ::ng-deep {
 
@@ -12,33 +11,10 @@
 
         .arrow {
             margin-top: -8px !important;
-
-            &::after {
-                border-left-color: $teal-100;
-            }
         }
     }
 
     .popover-body {
-        background-color: $teal-100;
-        color: $white;
         border-radius: 0.5rem;
     }
-}
-
-.btn-outline-primary {
-    color: white;
-    background-color: var(--bs-success);
-    border-color: var(--bs-success);
-}
-
-.btn-outline-primary:hover {
-    color: var(--bs-primary);
-    background-color: white;
-    border-color: var(--bs-primary);
-}
-
-.border-secondary {
-    border-color: var(--bs-light);
-    color: var(--bs-dark);
 }

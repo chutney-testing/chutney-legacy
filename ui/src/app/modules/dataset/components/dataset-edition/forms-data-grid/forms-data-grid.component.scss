@@ -1,5 +1,3 @@
-@import "~bootstrap/scss/bootstrap";;
-
 table {
     overflow: hidden;
     display: block;
@@ -19,7 +17,7 @@ td, th {
 .removeBtn:hover::after {
     content: "";
     position: absolute;
-    background-color: $light;
+    // background-color: $light;
     left: 0;
     top: -5000px;
     height: 10000px;
