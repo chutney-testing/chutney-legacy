@@ -23,11 +23,11 @@
                 <input name="search" type="text" class="form-control mb-2"
                        placeholder="{{'components.shared.list.filter.placeholder' | translate}}"
                        [(ngModel)]="componentFilter"/>
-                <button *ngIf=" !isSelectAll()" type="button" class="btn btn-xs btn-default small-font"
+                <button *ngIf=" !isSelectAll()" type="button" class="btn btn-xs btn-default small-font me-3"
                         (click)="selectAll()">
                     <span class="fa fa-check"></span> Tout sélectionner
                 </button>
-                <button *ngIf="isSelectAll()" type="button" class="btn btn-xs btn-default small-font"
+                <button *ngIf="isSelectAll()" type="button" class="btn btn-xs btn-default small-font me-3"
                         (click)="unSelectAll()">
                     <span class="fa fa-times"></span> Tout désélectionner
                 </button>
@@ -66,7 +66,7 @@
         </div>
         <div *ngIf="!viewComponent" class="component-list me-5"
              [ngClass]="{'d-none': componentMinimize}">
-            <input name="search" type="text" class="sticky-content form-control mb-2"
+            <input name="search" type="text" class="sticky-content form-control my-2"
                    placeholder="{{'components.action.list.filter.placeholder' | translate}}"
                    [(ngModel)]="taskFilter"/>
             <div class="table-scroll">
