@@ -1,5 +1,5 @@
 <ng-container [formGroup]="strategyForm">
-    <div class="row">
+    <div class="row mt-2">
         <label class="ms-4 col-2 mb-0 ps-0 align-self-center fw-bold" for="strategies">{{'components.shared.edition.fields.strategy.name' | translate}}</label>
         <div class="col-6">
             <select id="strategies" class="form-select" formControlName="type" (change)="setSelectedStrategy()">
