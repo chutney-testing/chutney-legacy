@@ -28,14 +28,14 @@
 
 .btn-outline-primary {
     color: white;
-    background-color: var(--bs-dark);
-    border-color: var(--bs-dark);
+    background-color: var(--bs-success);
+    border-color: var(--bs-success);
 }
 
 .btn-outline-primary:hover {
-    color: var(--bs-dark);
+    color: var(--bs-primary);
     background-color: white;
-    border-color: var(--bs-dark);
+    border-color: var(--bs-primary);
 }
 
 .border-secondary {
