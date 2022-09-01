@@ -1,4 +1,3 @@
-@import '~bootstrap/scss/bootstrap';
 @import 'global/mixins';
 @import 'global/animations';
 
@@ -14,14 +13,14 @@
 
         .arrow {
             &::after {
-                border-bottom-color: $primary;
+                border-bottom-color: var(--bs-primary);
             }
         }
     }
 
     .popover-body {
-        background-color: $primary;
-        color: $secondary;
+        background-color: var(--bs-primary);
+        color: var(--bs-white);
         border-radius: 0.5rem;
     }
 }
@@ -32,12 +31,12 @@
   $fromOffsetY: 4px,
   $fromBlur: 8px,
   $fromSpread: 0,
-  $fromColor: rgba($warning, 30),
+  $fromColor: rgba(var(--bs-warning), 30),
   $toOffsetX: 8px,
   $toOffsetY: 8px,
   $toBlur: 16px,
   $toSpread: 0,
-  $toColor: rgba($danger, 30)
+  $toColor: rgba(var(--bs-danger), 30)
 );
 
 .edition-btn-anim {

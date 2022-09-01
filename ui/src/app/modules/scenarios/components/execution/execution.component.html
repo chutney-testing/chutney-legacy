@@ -31,11 +31,9 @@
         </div>
         <ng-container *ngIf="scenarioExecutionReport?.report">
             <div class="row steps">
-                <div class="badge-container w-85">
+                <div class="badge-container col-md-6">
                     <span>
-                        <h2 class="d-inline m-0">
-                            <chutney-execution-badge [status]="scenarioExecutionReport.report.status" [spin]="true"></chutney-execution-badge>
-                        </h2>
+                       <chutney-execution-badge [status]="scenarioExecutionReport.report.status" [spin]="true"></chutney-execution-badge>
                         <small class="text-muted ms-2">
                             {{'global.time.in' | translate}} {{scenarioExecutionReport.report.duration | duration}}
                         </small>
@@ -72,7 +70,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="btn-group float-end w-15">
+                <div class="btn-group float-end col-md-3">
                     <button type="button" class="btn btn-sm btn-outline-info m-2" [ngClass]="!toggleScenarioInfo ? 'active' : ''" (click)="expandAllInfo()">
                         <span class="btn-label"> {{ 'scenarios.execution.step.actions.informations' | translate }}
                         </span>
