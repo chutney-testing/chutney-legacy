@@ -12,7 +12,6 @@ button span:not(:first-child) {
 
     .header-left {
         height: 120px;
-        background-color: var(--bs-light);
         width: 45%;
         float: left;
 
@@ -41,7 +40,6 @@ button span:not(:first-child) {
     }
 
     .header-right {
-        background-color: var(--bs-dark);
         width:55%;
         height: 120px;
         float: left;

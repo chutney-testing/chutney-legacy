@@ -1,239 +1,239 @@
-<div class="row m-5">
-    <div class="col-md-12 ps-0">
-        <form [formGroup]="campaignForm" (ngSubmit)="saveCampaign()" autocomplete="off">
-            <div class="row">
+<div class="create-campaign-container min-vh-100">
+    <form [formGroup]="campaignForm" (ngSubmit)="saveCampaign()" autocomplete="off" class="w-100">
+        <div class ="d-flex flex-md-row justify-content-between">
+            <div>
                 <h4 id="myCampaignLabel">
                     {{campaign.id ? ('campaigns.edition.title.update' | translate) : (('campaigns.edition.title.create' | translate))}}
                 </h4>
-                <div class="w-100" *ngIf="errorMessage">
-                    <p class="text-danger">{{ errorMessage}}</p>
+            </div>
+            <div>
+                <button type="submit" [disabled]="submitted && campaignForm.invalid" class="btn btn-success m-2">
+                    <span class="fa fa-check"></span>&nbsp;
+                    <span>{{ 'global.actions.record' | translate }}</span>
+                </button>
+                <button type="button" class="btn btn-secondary m-2" (click)="clear()">
+                    <span class="fa fa-times"></span>&nbsp;
+                    <span>{{ 'global.actions.cancel' | translate }}</span>
+                </button>
+            </div>
+        </div>
+        <div *ngIf="errorMessage" class="alert alert-dismissible alert-danger mt-4">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" (click)="errorMessage = null"></button>
+            {{ errorMessage }}
+        </div>
+        
+        <div class="row row-cols-lg-auto g-3">
+            <div class="col-sm-7" [class.errors-input]="submitted && f['title'].errors['required']">
+                <label for="title">{{ 'campaigns.edition.form.title.label' | translate }}</label>
+                <input type="text" id="title" class="form-control" formControlName="title">
+                <div class="error-message" *ngIf="submitted && f['title'].errors['required']">
+                    {{ 'campaigns.edition.form.title.required' | translate }}
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <button type="submit" [disabled]="submitted && campaignForm.invalid" class="btn btn-success m-2">
-                        <span class="fa fa-check"></span>&nbsp;
-                        <span>{{ 'global.actions.record' | translate }}</span>
+
+            <div class="col-sm">
+                <label for="description">{{ 'campaigns.edition.form.description' | translate }}</label>
+                <input type="text" id="description" class="form-control" formControlName="description">
+            </div>
+        </div>
+        <div class="row row-cols-lg-auto g-3">
+            <div class="col-12">
+                <label>{{'menu.principal.jiraId' | translate}}</label>
+                <input type="text" class="form-control me-2 small-text"
+                        formControlName="jiraId" (change)="refreshJiraScenarios()"
+                        placeholder="id jira"/>
+            </div>
+            <div class="col-12">
+                <label>{{'menu.principal.dataset' | translate}}</label>
+                <chutney-dataset-selection
+                    [selectedDatasetId]="campaign.datasetId"
+                    (selectionEvent)="selectDataset($event)">
+                </chutney-dataset-selection>
+            </div>
+
+            <div *ngIf="environments" class="col-12">
+                <label>{{'admin.targets.environment' | translate}}</label>
+                <chutney-environment-combo [environments]="environments" [defaultValue]="campaign.environment"
+                                            (selectionEvent)="setSelectedEnvironment($event)">
+                </chutney-environment-combo>
+            </div>
+
+            <div class="col-12">
+                <label>{{'campaigns.edition.form.tags' | translate}}</label>
+                <input type="text" class="form-control me-2 small-text"
+                        formControlName="campaignTags" placeholder="tags"/>
+            </div>
+            <div class="col-12">
+                {{ 'campaigns.edition.options' | translate }} :
+                <div class="ms-4">
+                    <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="parallelCheck"
+                                formControlName="parallelRun">
+                        <label class="form-check-label"
+                                for="parallelCheck">{{ 'campaigns.edition.parallelRun' | translate }}</label>
+                    </div>
+                    <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="retryAutoCheck"
+                                formControlName="retryAuto">
+                        <label class="form-check-label"
+                                for="retryAutoCheck">{{ 'campaigns.edition.retryAuto' | translate }}</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row row-cols-lg-auto g-3" *ngIf="hasParam">
+            <fieldset class="mt-4" [ngClass]="collapseParam ? '' : 'border ps-2'">
+                <legend class="px-3 fw-bold float-none">
+                    <span class="legend-title"
+                            (click)="switchCollapseParam()">{{'components.shared.edition.blocks.parameters' | translate}}</span>
+                    <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
+                            (click)="switchCollapseParam()"
+                            title="{{(collapseParam ? 'global.actions.show' : 'global.actions.hide') | translate}}">
+                        <span class="fa" [ngClass]="collapseParam ? 'fa-eye' : 'fa-eye-slash'"></span>
                     </button>
-                    <button type="button" class="btn btn-secondary m-2" (click)="clear()">
-                        <span class="fa fa-times"></span>&nbsp;
-                        <span>{{ 'global.actions.cancel' | translate }}</span>
-                    </button>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-7  pe-3" [class.errors-input]="submitted && f['title'].errors['required']">
-                    <label for="title">{{ 'campaigns.edition.form.title.label' | translate }}</label>
-                    <input type="text" id="title" class="form-control" formControlName="title">
-                    <div class="error-message" *ngIf="submitted && f['title'].errors['required']">
-                        {{ 'campaigns.edition.form.title.required' | translate }}
+                </legend>
+                <ng-container *ngIf="!collapseParam">
+                    <div class="row" formArrayName="parameters"
+                            *ngFor="let parameter of campaignForm.get('parameters')?.controls; let i = index;">
+                        <ng-container [formGroupName]="i">
+                            <div class="col-2"></div>
+                            <input type="text" class="col-2 form-control me-2" formControlName="key"
+                                    placeholder="key" readonly/>
+                            <textarea class="col-6 form-control me-2" formControlName="value" rows="1"
+                                        placeholder="value"></textarea>
+                        </ng-container>
                     </div>
+                </ng-container>
+            </fieldset>
+        </div>
+        <div class="row">
+            <!-- Left side -->
+            <div class="col-md-6">
+                <div class="row campaign-title mt-2">
+                    <h4>{{ 'campaigns.edition.scenarios.title' | translate }}</h4>
                 </div>
-
-                <div class="form-group col-md-5">
-                    <label for="description">{{ 'campaigns.edition.form.description' | translate }}</label>
-                    <input type="text" id="description" class="form-control" formControlName="description">
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-2  pe-3">
-                    <label>{{'menu.principal.jiraId' | translate}}</label>
-                    <input type="text" class="form-control me-2 small-text"
-                           formControlName="jiraId" (change)="refreshJiraScenarios()"
-                           placeholder="id jira"/>
-                </div>
-                <div class="form-group col-md-2  pe-3">
-                    <label>{{'menu.principal.dataset' | translate}}</label>
-                    <chutney-dataset-selection
-                        [selectedDatasetId]="campaign.datasetId"
-                        (selectionEvent)="selectDataset($event)">
-                    </chutney-dataset-selection>
-                </div>
-
-                <div *ngIf="environments" class="form-group col-md-2  pe-3">
-                    <label>{{'admin.targets.environment' | translate}}</label>
-                    <chutney-environment-combo [environments]="environments" [defaultValue]="campaign.environment"
-                                               (selectionEvent)="setSelectedEnvironment($event)">
-                    </chutney-environment-combo>
-                </div>
-
-                <div class="form-group col-md-2">
-                    <label>{{'campaigns.edition.form.tags' | translate}}</label>
-                    <input type="text" class="form-control me-2 small-text"
-                           formControlName="campaignTags" placeholder="tags"/>
-                </div>
-                <div class="col-md-6">
-                    {{ 'campaigns.edition.options' | translate }} :
-                    <div class="ms-4">
-                        <div class="form-group form-check">
-                            <input type="checkbox" class="form-check-input" id="parallelCheck"
-                                   formControlName="parallelRun">
-                            <label class="form-check-label"
-                                   for="parallelCheck">{{ 'campaigns.edition.parallelRun' | translate }}</label>
-                        </div>
-                        <div class="form-group form-check">
-                            <input type="checkbox" class="form-check-input" id="retryAutoCheck"
-                                   formControlName="retryAuto">
-                            <label class="form-check-label"
-                                   for="retryAutoCheck">{{ 'campaigns.edition.retryAuto' | translate }}</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="form-row" *ngIf="hasParam">
-                <fieldset class="mt-4" [ngClass]="collapseParam ? '' : 'border ps-2'">
-                    <legend class="px-3 fw-bold float-none">
-                        <span class="legend-title"
-                              (click)="switchCollapseParam()">{{'components.shared.edition.blocks.parameters' | translate}}</span>
-                        <button class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
-                                (click)="switchCollapseParam()"
-                                title="{{(collapseParam ? 'global.actions.show' : 'global.actions.hide') | translate}}">
-                            <span class="fa" [ngClass]="collapseParam ? 'fa-eye' : 'fa-eye-slash'"></span>
-                        </button>
-                    </legend>
-                    <ng-container *ngIf="!collapseParam">
-                        <div class="row" formArrayName="parameters"
-                             *ngFor="let parameter of campaignForm.get('parameters')?.controls; let i = index;">
-                            <ng-container [formGroupName]="i">
-                                <div class="col-2"></div>
-                                <input type="text" class="col-2 form-control me-2" formControlName="key"
-                                       placeholder="key" readonly/>
-                                <textarea class="col-6 form-control me-2" formControlName="value" rows="1"
-                                          placeholder="value"></textarea>
-                            </ng-container>
-                        </div>
-                    </ng-container>
-                </fieldset>
-            </div>
-            <div class="row">
-                <!-- Left side -->
-                <div class="col-md-6">
-                    <div class="row campaign-title mt-2">
-                        <h4>{{ 'campaigns.edition.scenarios.title' | translate }}</h4>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover">
-                            <tbody dragula="DRAGGABLE" [(dragulaModel)]="scenariosToAdd">
-                            <tr *ngFor="let scenario of scenariosToAdd" class="cursor">
-                                <td>
-                                    <button type="button" class="btn btn-outline-primary btn-sm"
-                                            (click)="removeScenario(scenario)">
-                                        <span class="fa fa-arrow-circle-right"></span>
-                                    </button>
-                                </td>
-                                <td class="text-nowrap">{{scenario?.id}}</td>
-                                <td class="scenario-title-cell">{{scenario?.title}}</td>
-                                <td class="p-0">
-                                    <span *ngIf="jiraMap.has(scenario.id)"
-                                          [ngClass]="getJiraLastExecutionStatusClass(scenario.id)" class="badge">
-                                        {{getJiraLastExecutionStatus(scenario.id)}}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <tbody dragula="DRAGGABLE" [(dragulaModel)]="scenariosToAdd">
+                        <tr *ngFor="let scenario of scenariosToAdd" class="cursor">
+                            <td>
+                                <button type="button" class="btn btn-outline-primary btn-sm"
+                                        (click)="removeScenario(scenario)">
+                                    <span class="fa fa-arrow-circle-right"></span>
+                                </button>
+                            </td>
+                            <td class="text-nowrap">{{scenario?.id}}</td>
+                            <td class="scenario-title-cell">{{scenario?.title}}</td>
+                            <td class="p-0">
+                                <span *ngIf="jiraMap.has(scenario.id)"
+                                        [ngClass]="getJiraLastExecutionStatusClass(scenario.id)" class="badge">
+                                    {{getJiraLastExecutionStatus(scenario.id)}}
+                                </span>
+                            </td>
+                            <td class="p-0">
+                                <a  *ngIf="jiraMap.has(scenario.id)" role="button" class="btn btn-sm btn-link me-0"
+                                    target="_blank" href="{{getJiraLink(scenario.id)}}"
+                                    ngbPopover="{{jiraMap.get(scenario.id)}}" placement="left" (click)="$event.stopPropagation()"
+                                    triggers="mouseenter:mouseleave">
+                                    <span class="fab fa-jira" aria-hidden="true">
                                     </span>
-                                </td>
-                                <td class="p-0">
-                                    <a  *ngIf="jiraMap.has(scenario.id)" role="button" class="btn btn-sm btn-link me-0"
-                                        target="_blank" href="{{getJiraLink(scenario.id)}}"
-                                        ngbPopover="{{jiraMap.get(scenario.id)}}" placement="left" (click)="$event.stopPropagation()"
+                                </a>
+                            </td>
+                            <td class="p-0">
+                                <button type="button" class="btn btn-link me-0"
+                                        ngbPopover="{{scenario.description}}" placement="left"
                                         triggers="mouseenter:mouseleave">
-                                        <span class="fab fa-jira" aria-hidden="true">
-                                        </span>
-                                    </a>
-                                </td>
-                                <td class="p-0">
-                                    <button type="button" class="btn btn-link me-0"
-                                            ngbPopover="{{scenario.description}}" placement="left"
-                                            triggers="mouseenter:mouseleave">
-                                        <span class="fa fa-info-circle" aria-hidden="true"></span>
-                                    </button>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <!-- Right side -->
-                <div class="col-md-6">
-                    <div class="row">
-                        <div class="col campaign-title">
-                            <h4>{{ 'campaigns.edition.scenarios.pick.title' | translate }}</h4>
-                            <div *ngIf="hasJiraId()" class="jira-link" >
-                                <label for="jiraLinkTests">
-                                    <span class="fab fa-jira"></span>
-                                    {{ 'campaigns.edition.jiraLinkedTest' | translate }}
-                                </label>
-                                <input type="checkbox" id="jiraLinkTests" class="ms-2"
-                                       formControlName="onlyLinkedScenarios" (change)="jiraFilter()">
-                            </div>
-                        </div>
-                        <div class="col">
-                            <input name="search" type="text" class="form-control search-field mb-2" id="scenarioIds"
-                                   formControlName="scenarioIds" placeholder="Filtrer scénarios"
-                                   [(ngModel)]="scenariosFilter"/>
-                            <angular2-multiselect [data]="itemList"
-                                                  [settings]="settings"
-                                                  (onSelect)="onItemSelect($event)"
-                                                  (onDeSelect)="OnItemDeSelect($event)"
-                                                  (onDeSelectAll)="OnItemDeSelectAll()"
-                                                  formControlName="tags">
-                            </angular2-multiselect>
-                            <ng-container *ngIf="jiraScenarios.length > 0 && campaignForm.controls['onlyLinkedScenarios'].value === true">
-                                <div class="pt-2">
-                                    <angular2-multiselect [data]="jiraItemList"
-                                                          [settings]="jirasettings"
-                                                          (onSelect)="onJiraItemSelect($event)"
-                                                          (onDeSelect)="OnJiraItemDeSelect($event)"
-                                                          (onDeSelectAll)="OnJiraItemDeSelectAll()"
-                                                          formControlName="jiratags">
-                                    </angular2-multiselect>
-                                </div>
-                            </ng-container>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover">
-                            <tbody>
-                            <tr
-                                *ngFor="let scenario of scenarios |  scenarioCampaignSearch : selectedTags | searchTextPipe  : scenariosFilter : ['title', 'id'] | withoutScenario:scenariosToAdd | withoutScenario:jiraScenariosToExclude">
-                                <td class="w-3">
-                                    <button type="button" class="btn btn-outline-success btn-sm"
-                                            (click)="addScenario(scenario)">
-                                        <span class="fa fa-arrow-circle-left"></span>
-                                    </button>
-                                </td>
-                                <td class="text-nowrap w-10">{{scenario?.id}}</td>
-                                <td class="scenario-title-cell w-70">{{scenario?.title}}</td>
-                                <td class="w-15">
-                                        <span *ngFor="let tag of scenario.tags">
-                                            <span class="chutney-tag chutney-tag-selected">{{tag}}</span>
-                                        </span>
-                                </td>
-                                <td class="p-0">
-                                    <span *ngIf="jiraMap.has(scenario.id)"
-                                          [ngClass]="getJiraLastExecutionStatusClass(scenario.id)" class="badge">
-                                        {{getJiraLastExecutionStatus(scenario.id)}}
-                                    </span>
-                                </td>
-                                <td class="p-0">
-                                    <a *ngIf="jiraMap.has(scenario.id)" role="button" class="btn btn-sm btn-link me-0"
-                                       target="_blank" href="{{getJiraLink(scenario.id)}}"
-                                       ngbPopover="{{jiraMap.get(scenario.id)}}" placement="left" (click)="$event.stopPropagation()"
-                                       triggers="mouseenter:mouseleave">
-                                        <span class="fab fa-jira" aria-hidden="true">
-                                        </span>
-                                    </a>
-                                </td>
-                                <td class="w-2 p-0">
-                                    <button type="button" class="btn btn-link me-0"
-                                            ngbPopover="{{scenario.description}}" placement="left"
-                                            triggers="mouseenter:mouseleave">
-                                        <span class="fa fa-info-circle" aria-hidden="true"></span>
-                                    </button>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                                    <span class="fa fa-info-circle" aria-hidden="true"></span>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </form>
-    </div>
+            <!-- Right side -->
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col campaign-title">
+                        <h4>{{ 'campaigns.edition.scenarios.pick.title' | translate }}</h4>
+                        <div *ngIf="hasJiraId()" class="jira-link" >
+                            <label for="jiraLinkTests">
+                                <span class="fab fa-jira"></span>
+                                {{ 'campaigns.edition.jiraLinkedTest' | translate }}
+                            </label>
+                            <input type="checkbox" id="jiraLinkTests" class="ms-2"
+                                    formControlName="onlyLinkedScenarios" (change)="jiraFilter()">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <input name="search" type="text" class="form-control search-field mb-2" id="scenarioIds"
+                                formControlName="scenarioIds" placeholder="Filtrer scénarios"
+                                [(ngModel)]="scenariosFilter"/>
+                        <angular2-multiselect [data]="itemList"
+                                                [settings]="settings"
+                                                (onSelect)="onItemSelect($event)"
+                                                (onDeSelect)="OnItemDeSelect($event)"
+                                                (onDeSelectAll)="OnItemDeSelectAll()"
+                                                formControlName="tags">
+                        </angular2-multiselect>
+                        <ng-container *ngIf="jiraScenarios.length > 0 && campaignForm.controls['onlyLinkedScenarios'].value === true">
+                            <div class="pt-2">
+                                <angular2-multiselect [data]="jiraItemList"
+                                                        [settings]="jirasettings"
+                                                        (onSelect)="onJiraItemSelect($event)"
+                                                        (onDeSelect)="OnJiraItemDeSelect($event)"
+                                                        (onDeSelectAll)="OnJiraItemDeSelectAll()"
+                                                        formControlName="jiratags">
+                                </angular2-multiselect>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <tbody>
+                        <tr
+                            *ngFor="let scenario of scenarios |  scenarioCampaignSearch : selectedTags | searchTextPipe  : scenariosFilter : ['title', 'id'] | withoutScenario:scenariosToAdd | withoutScenario:jiraScenariosToExclude">
+                            <td class="w-3">
+                                <button type="button" class="btn btn-outline-success btn-sm"
+                                        (click)="addScenario(scenario)">
+                                    <span class="fa fa-arrow-circle-left"></span>
+                                </button>
+                            </td>
+                            <td class="text-nowrap w-10">{{scenario?.id}}</td>
+                            <td class="scenario-title-cell w-70">{{scenario?.title}}</td>
+                            <td class="w-15">
+                                    <span *ngFor="let tag of scenario.tags">
+                                        <span class="chutney-tag chutney-tag-selected">{{tag}}</span>
+                                    </span>
+                            </td>
+                            <td class="p-0">
+                                <span *ngIf="jiraMap.has(scenario.id)"
+                                        [ngClass]="getJiraLastExecutionStatusClass(scenario.id)" class="badge">
+                                    {{getJiraLastExecutionStatus(scenario.id)}}
+                                </span>
+                            </td>
+                            <td class="p-0">
+                                <a *ngIf="jiraMap.has(scenario.id)" role="button" class="btn btn-sm btn-link me-0"
+                                    target="_blank" href="{{getJiraLink(scenario.id)}}"
+                                    ngbPopover="{{jiraMap.get(scenario.id)}}" placement="left" (click)="$event.stopPropagation()"
+                                    triggers="mouseenter:mouseleave">
+                                    <span class="fab fa-jira" aria-hidden="true">
+                                    </span>
+                                </a>
+                            </td>
+                            <td class="w-2 p-0">
+                                <button type="button" class="btn btn-link me-0"
+                                        ngbPopover="{{scenario.description}}" placement="left"
+                                        triggers="mouseenter:mouseleave">
+                                    <span class="fa fa-info-circle" aria-hidden="true"></span>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
