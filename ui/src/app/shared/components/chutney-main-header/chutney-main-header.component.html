@@ -6,27 +6,29 @@
         </div>
         <div class="app-header-right">
             <div class="nav">
-                <div class="nav-item" [title]="'menu.principal.documentation' | translate">
+                <div class="nav-item" placement="bottom" ngbTooltip="{{'menu.principal.documentation' | translate}}">
                     <a class="nav-link" href="http://www.chutney-testing.com/install/" target="_blank">
                         <i class="fa fa-book"></i>
                     </a>
                 </div>
-                <div class="nav-item" [title]="'menu.principal.feedback' | translate">
+                <div class="nav-item" placement="bottom"  ngbTooltip="{{'menu.principal.feedback' | translate}}">
             <span class="nav-link pointer">
             <i class="fa fa-lightbulb"></i>
             </span>
                 </div>
-                <div class="nav-item" [title]="'menu.principal.notif' | translate">
+                <div class="nav-item" placement="bottom"  ngbTooltip="{{'menu.principal.notif' | translate}}">
             <span class="nav-link">
             <i class="fa fa-bell"></i>
             </span>
                 </div>
-                <div class="nav-item" *ngIf="isCurrentTheme(Theme.FLATLY)" (click)="switchTheme(Theme.QUARTZ)" [title]="'menu.principal.darkMode' | translate">
+                <div class="nav-item" *ngIf="isCurrentTheme(Theme.FLATLY)" (click)="switchTheme(Theme.QUARTZ)"
+                     placement="bottom"  ngbTooltip="{{'menu.principal.darkMode' | translate}}">
             <span class="nav-link">
             <i class="fa fa-moon"></i>
             </span>
                 </div>
-                <div class="nav-item" *ngIf="isCurrentTheme(Theme.QUARTZ)" (click)="switchTheme(Theme.FLATLY)" [title]="'menu.principal.lightMode' | translate">
+                <div class="nav-item" *ngIf="isCurrentTheme(Theme.QUARTZ)" (click)="switchTheme(Theme.FLATLY)"
+                     placement="bottom"  ngbTooltip="{{'menu.principal.lightMode' | translate}}">
             <span class="nav-link">
             <i class="fa fa-sun nav-item"></i>
             </span>
@@ -34,7 +36,7 @@
                 <ng-container *ngIf="(user$ | async) as user">
                     <div class="nav-item" (click)="logout()" *ngIf="user?.id">
                 <span class="nav-link">
-                <i class="fa fa-sign-out-alt" [title]="'menu.principal.signOut' | translate"></i>
+                <i class="fa fa-sign-out-alt" placement="bottom"  ngbTooltip="{{'menu.principal.signOut' | translate}}"></i>
                 </span>
                     </div>
                 </ng-container>
