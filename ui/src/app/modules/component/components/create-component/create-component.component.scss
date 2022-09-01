@@ -1,4 +1,4 @@
-@import "~bootstrap/scss/bootstrap";;
+@import 'colors';
 
 .small-font {
     font-size: 0.7em;
@@ -49,7 +49,7 @@
 }
 
 .selected-component {
-    background-color: $light !important;
+    background-color: $grisclair1 !important;
 }
 
 .btn-toolbar {

@@ -6,11 +6,8 @@ import { ComponentEditionComponent } from './components/edition/component-editio
 import { ExecuteComponent } from './components/execute/execute.component';
 import { CanDeactivateGuard, AuthGuard } from '@core/guards';
 import { Authorization } from '@model';
-import { ChutneyMainHeaderComponent } from '@shared/components/chutney-main-header/chutney-main-header.component';
-import { ChutneyLeftMenuComponent } from '@shared/components/chutney-left-menu/chutney-left-menu.component';
 
 export const scenarioRoute: Routes = [
-
     {
         path: '',
         component: ScenariosComponent,

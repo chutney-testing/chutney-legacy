@@ -1,42 +1,33 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { LayoutOptions } from '../../../layout-options.service';
+import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
+
 import { LinkifierService, LoginService } from '@core/services';
 
 @Component({
   selector: 'chutney-parent',
   templateUrl: './parent.component.html',
-  styleUrls: ['./parent.component.scss']
+  styleUrls: ['./parent.style.scss'],
 })
-export class ParentComponent implements OnInit, OnDestroy {
+export class ParentComponent {
 
-    private linkifierSubscription: Subscription;
+  private linkifierSubscription: Subscription;
 
-  constructor(public layoutOptions: LayoutOptions,
+  constructor(
     private linkifierService: LinkifierService,
-    private loginService: LoginService) {
-      this.linkifierSubscription = this.loginService.getUser().subscribe(
-          user => {
-              if (this.loginService.isAuthenticated()) {
-                  this.linkifierService.loadLinkifiers().subscribe(); // needed to fetch linkifiers into sessionStorage
-              }
-          }
-      );
-  }
-
-  ngOnInit(): void {
-  }
-
-  toggleSidebarMobile() {
-        this.layoutOptions.toggleSidebarMobile = !this.layoutOptions.toggleSidebarMobile;
-  }
-
-    ngOnDestroy() {
-        if (this.linkifierSubscription) {
-            this.linkifierSubscription.unsubscribe();
+    private loginService: LoginService
+  ) {
+    this.linkifierSubscription = this.loginService.getUser().subscribe(
+        user => {
+            if (this.loginService.isAuthenticated()) {
+                this.linkifierService.loadLinkifiers().subscribe(); // needed to fetch linkifiers into sessionStorage
+            }
         }
+    );
+  }
+
+  ngOnDestroy() {
+    if (this.linkifierSubscription) {
+        this.linkifierSubscription.unsubscribe();
     }
-
-
-
+  }
 }

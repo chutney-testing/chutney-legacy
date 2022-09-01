@@ -1,14 +1,15 @@
-@import 'global/mixins';
-@import 'global/animations';
+@import 'colors';
+@import 'mixins';
+@import 'animations';
 
 @include border-animation(
     $animation_name: running-report-step-border-anim,
     $fromWidth: 0 0 0 3px,
     $fromStyle: solid,
-    $fromColor: rgba(#686C71, 0),
+    $fromColor: rgba($grisfonce2, 0),
     $toWidth: 0 0 0 5px,
     $toStyle: solid,
-    $toColor: rgba(#686C71, 50)
+    $toColor: rgba($grisfonce2, 50)
 );
 
 div.step-container-wrapper {

@@ -16,11 +16,7 @@
             "roles": "Roles",
             "admin": "Admin",
             "signIn": "Sign In",
-            "signOut": "Sign Out",
-            "darkMode": "Dark mode",
-            "lightMode": "Light mode",
-            "feedback": "Feedback",
-            "notif": "Notifications"
+            "signOut": "Sign Out"
         }
     },
     "home": {

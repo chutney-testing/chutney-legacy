@@ -2,7 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { InfoService, LoginService } from '@core/services';
+import { LoginService } from '@core/services';
 
 @Component({
   selector: 'chutney-login',
@@ -19,25 +19,18 @@ export class LoginComponent implements OnDestroy {
   private forwardUrl: string;
   private paramsSubscription: Subscription;
   private queryParamsSubscription: Subscription;
-  version = '';
-  applicationName = '';
 
   constructor(
     private loginService: LoginService,
-    private infoService: InfoService,
     private route: ActivatedRoute,
   ) {
+
     this.paramsSubscription = this.route.params.subscribe(params => {
       this.action = params['action'];
     });
+
     this.queryParamsSubscription = this.route.queryParams.subscribe(params => {
       this.forwardUrl = params['url'];
-    });
-    this.infoService.getVersion().subscribe(result => {
-      this.version = result;
-    });
-    this.infoService.getApplicationName().subscribe(result => {
-      this.applicationName = result;
     });
   }
 

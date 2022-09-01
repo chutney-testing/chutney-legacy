@@ -1,4 +1,4 @@
-@import "~bootstrap/scss/bootstrap";;
+@import 'colors';
 
 table {
     overflow: hidden;
@@ -19,7 +19,7 @@ td, th {
 .removeBtn:hover::after {
     content: "";
     position: absolute;
-    background-color: $light;
+    background-color: $grisclair1;
     left: 0;
     top: -5000px;
     height: 10000px;
