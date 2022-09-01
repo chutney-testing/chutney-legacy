@@ -1,6 +1,6 @@
-@import 'colors';
+@import "~bootstrap/scss/bootstrap";;
 
 .error-message{
-    color:$labelko;
+    color:$warning;
     font-size: 0.8em;
 }

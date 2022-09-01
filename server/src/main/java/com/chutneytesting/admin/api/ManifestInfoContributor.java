@@ -28,7 +28,7 @@ public class ManifestInfoContributor implements InfoContributor {
         .forEach(manifestMap -> builder.withDetail(manifestMap.get("Implementation-Title"), manifestMap));
     }
 
-    private static Map<String, String> toMap(String manifestAsString) {
+    static Map<String, String> toMap(String manifestAsString) {
         Manifest manifest;
         try {
             manifest = new Manifest(new ByteArrayInputStream(manifestAsString.getBytes()));
