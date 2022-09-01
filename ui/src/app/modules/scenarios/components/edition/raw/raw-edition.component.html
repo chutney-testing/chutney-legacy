@@ -20,7 +20,7 @@
         </div>
     </div>
     <div class="header-right triangle-left col-md-4">
-        <div class="row">
+        <div class="row mb-1">
             <div class="col-2">
                 <chutney-authoring-info [testCase]="testCase"></chutney-authoring-info>
             </div>
@@ -39,15 +39,16 @@
         </div>
     </div>
     <div class="action-pane">
-        <button class="save-button" data-toggle="tooltip" title="Sauvegarder" [disabled]="errorMessage"
+        <button class="save-button btn btn-primary" data-toggle="tooltip" title="Sauvegarder" [disabled]="errorMessage"
             (click)="saveScenario()">
+            {{'global.actions.save' | translate}}
         </button>
     </div>
 </div>
 <div class="plugins">
     <form [formGroup]="pluginsForm" autocomplete="off" class="mb-0">
         <div class="row mb-0 small">
-            <div class="col-7">
+            <div class="col-2">
                 <div class="form-inline">
                     <label class="form-control-label fw-bold me-5" for="jiraId">{{'menu.principal.jiraId' | translate}}</label>
                     <input type="text" class="form-control form-control-sm" id="jiraId"

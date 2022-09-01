@@ -1,7 +1,7 @@
 <div *hasAuthorization="[Authorization.SCENARIO_WRITE]"
      class="create-scenario-wrapper"
 >
-    <div class="create-scenario">
+    <div class="create-scenario bg-primary">
         <button type="button" class="btn btn-xs" title="{{ 'scenarios.search.create.form' | translate }}"
                 (click)="createNewScenario(false)">
             <span class="fa fa-pencil-alt fa-2x"></span>
@@ -13,49 +13,53 @@
     </div>
 </div>
 <div class="header-scenario">
-    <div class="d-flex ms-4">
-        <div class="col-md-6 ms-5">
+    <div class="row">
+        <div class="col-2"></div>
+        <div class="col-4">
             <chutney-forms-search-field [id]="'scenario-search'"
                                         [placeholder]="'scenarios.search.placeholder' | translate"
                                         [searchInput]="textFilter"
                                         (searchInputEvent)="updateTextFilter($event)"></chutney-forms-search-field>
         </div>
-        <button type="button" class="btn"
-                (click)="fullTextSearch = !fullTextSearch">
+        <div class="col-2">
+            <button type="button" class="btn btn-outline-primary"
+                    (click)="fullTextSearch = !fullTextSearch">
             <span  class="fa" [ngClass]="{'fa-plus' : !fullTextSearch,
                               'fa-minus' : fullTextSearch}"></span>
-        </button>
+            </button>
+        </div>
     </div>
-    <div  *ngIf="fullTextSearch" class="row ms-5">
-        <div class="col-md-6 ms-2">
+    <div  *ngIf="fullTextSearch" class="row my-2">
+        <div class="col-2"></div>
+        <div class="col-4">
             <chutney-forms-search-field [id]="'scenario-search-fulltext'"
                                         [placeholder]="'scenarios.search.placeholder-fulltext' | translate"
                                         [searchInput]="fullTextFilter"
                                         (searchInputEvent)="updateFullTextFilter($event)"></chutney-forms-search-field>
         </div>
     </div>
-    <div class="row ms-2">
+    <div class="row my-2">
 
-        <div class="d-flex flex-wrap">
-            <span *ngFor="let scenarioType of SCENARIO_TYPES; let i=index"
-                  class="scenario-type-filter align-self-center fa"
-                  [ngClass]="{'scenario-type-filter-selected' : scenarioTypeFilter.isSelected(scenarioType),
-                              'scenario-type-filter' : !scenarioTypeFilter.isSelected(scenarioType),
-                              'me-2': i < SCENARIO_TYPES.length - 1,
-                              'fa-pencil-alt': scenarioType === SCENARIO_TYPES[0],
-                              'fa-cubes': scenarioType === SCENARIO_TYPES[1]}"
-                  (click)="toggleScenarioTypeFilter(scenarioType)"></span>
+        <div class="col-2">
+            <button *ngFor="let scenarioType of SCENARIO_TYPES; let i=index"
+                  class="btn align-self-center"
+                  [ngClass]="{'btn-primary' : scenarioTypeFilter.isSelected(scenarioType),
+                              'me-2': i < SCENARIO_TYPES.length - 1
+                              }"
+                  (click)="toggleScenarioTypeFilter(scenarioType)">
+                <i class="fa " [ngClass]="scenarioType === SCENARIO_TYPES[0] ? 'fa-pencil-alt' : 'fa-cubes'"></i>
+            </button>
+        </div>
 
-            <div class="ms-2" style="width:400px">
-                <angular2-multiselect [data]="tags"
-                                      [(ngModel)]="selectedTags"
-                                      [settings]="settings"
-                                      (onSelect)="onItemSelect()"
-                                      (onDeSelect)="OnItemDeSelect()"
-                                      (onDeSelectAll)="OnItemDeSelectAll()"
-                >
-                </angular2-multiselect>
-            </div>
+        <div class="col-4">
+            <angular2-multiselect [data]="tags"
+                                  [(ngModel)]="selectedTags"
+                                  [settings]="settings"
+                                  (onSelect)="onItemSelect()"
+                                  (onDeSelect)="OnItemDeSelect()"
+                                  (onDeSelectAll)="OnItemDeSelectAll()"
+            >
+            </angular2-multiselect>
         </div>
     </div>
 </div>

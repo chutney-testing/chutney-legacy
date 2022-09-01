@@ -1,4 +1,3 @@
-@import '~bootstrap/scss/bootstrap';
 
 .scenario-editor {
     height:calc(100vh - 260px);
@@ -6,21 +5,17 @@
 }
 
 .edition-header {
-    position: fixed;
-    width: 100%;
     margin-top: 0;
     margin-bottom: 0;
     z-index: 100;
 
     .header-left {
         height: 120px;
-        background-color: $primary;
         padding: 20px 20px 20px 0;
     }
 
     .header-right {
         position: relative;
-        background-color: $secondary;
         height: 120px;
         text-align: center;
         padding: 10px 60px 10px 30px;
@@ -34,39 +29,22 @@
         }
     }
 
-    .triangle-left:before {
-        content: '';
-        display: block;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 0;
-        height: 0;
-        border-color: transparent transparent transparent $light;
-        border-style: solid;
-        border-width: 60px 0 60px 20px;
-    }
-
     .header-left {
 
         a {
             position: absolute;
             top: 100px;
             text-transform: lowercase;
-            font-family: Ubuntu;
             font-size: 11px;
-            color: #4a4a4a;
         }
 
         .title {
             margin-left: 40px;
-            background-color: $secondary;
             overflow: hidden;
         }
 
         .description{
             margin-top: 10px;
-            background-color: $secondary;
             margin-left: 40px;
             overflow: hidden;
         }
@@ -77,32 +55,8 @@
             position: absolute;
             top: calc(120px - 64px / 2);
             left: calc(66px + 20px + 32px + (100% - 66px - 20px - 32px - 64px - 64px) / 2);
-            width: 64px;
-            height: 64px;
             -webkit-transition: all .2s ease-in-out;
             transition: all .2s ease-in-out;
-            border-radius: 50%;
-            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            background-color: $light;
-            color: $light;
-            background-image: url('../../../../../../assets/icons/btn/save.png');
-            background-repeat: no-repeat;
-            background-size: 100% 100%;
-            border: none;
-        }
-
-        .save-button:hover {
-            box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
-            background-image: url('../../../../../../assets/icons/btn/save_hover.png');
-        }
-
-        .save-button:active {
-            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.4);
-            background-image: url('../../../../../../assets/icons/btn/save_active.png');
-        }
-
-        .save-button:disabled {
-          cursor: not-allowed;
         }
 
         .save-button-with-extended-menu {
@@ -136,7 +90,6 @@
     }
 
     .input-lbl {
-        color: white;
         font-size: 22px;
         line-height: 22px;
         font-weight: bold;
@@ -171,9 +124,7 @@
     }
 }
 
-.plugins {
-    padding-top: calc(105px + 10px);
-}
+
 
 .campaigns-scenario {
     position: absolute;

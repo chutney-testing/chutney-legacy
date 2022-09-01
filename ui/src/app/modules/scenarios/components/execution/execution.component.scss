@@ -1,4 +1,3 @@
-@import "~bootstrap/scss/bootstrap";;
 
 button span:not(:first-child) {
     display: block;
@@ -34,7 +33,7 @@ div.steps {
 }
 
 .error {
-    color: $warning;
+    color: var(--bs-warning);
     margin-bottom: 30px;
 }
 
