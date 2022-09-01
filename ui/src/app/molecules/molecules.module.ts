@@ -19,6 +19,7 @@ import { TablePanelComponent } from './panel/table-panel/table-panel.component';
 import { EditableLabelComponent } from './forms/editable-label/editable-label.component';
 import { InputLineComponent } from './forms/input-line/input-line.component';
 import { SearchFieldComponent } from './forms/search-field/search-field.component';
+import { MenuItemComponent } from './navigation/primary/menu-item/menu-item.component';
 import { ValidationService } from './validation/validation.service';
 import { EditableTextAreaComponent } from './forms/editable-text-area/editable-text-area.component';
 import { EditableBadgeComponent } from './forms/editable-badge/editable-badge.component';
@@ -51,7 +52,7 @@ import { ImportButtonComponent } from './forms/import-button/import-button.compo
         ImportButtonComponent,
         ImportFileComponent,
         InputLineComponent,
-        //MenuItemComponent,
+        MenuItemComponent,
         PropertyTablePanelComponent,
         SearchFieldComponent,
         TablePanelComponent,
@@ -68,7 +69,7 @@ import { ImportButtonComponent } from './forms/import-button/import-button.compo
         ImportButtonComponent,
         ImportFileComponent,
         InputLineComponent,
-       //MenuItemComponent,
+        MenuItemComponent,
         PropertyTablePanelComponent,
         SearchFieldComponent,
         TablePanelComponent,

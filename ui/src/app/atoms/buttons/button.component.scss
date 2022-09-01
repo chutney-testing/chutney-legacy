@@ -1,4 +1,4 @@
-@import "~bootstrap/scss/bootstrap";;
+@import 'colors';
 
 @mixin baseButton($text-color, $background-color, $border-color) {
     font-family: 'Montserrat';
@@ -34,12 +34,12 @@
 }
 
 .first {
-    @include baseButton($light, $primary, $primary);
-    @include hoverButton($light, $primary, $primary);
-    @include disabledButton($white, $warning, $warning);
+    @include baseButton($grisfonce1, $vert2, $vert2);
+    @include hoverButton($grisfonce1, $vert4, $vert4);
+    @include disabledButton($blanc, $labelko, $labelko);
 }
 
 .second {
-    @include baseButton($primary, $white, $primary);
-    @include hoverButton($primary, $primary, $white);
+    @include baseButton($vert2, $blanc, $vert2);
+    @include hoverButton($vert1, $vert3, $blanc);
 }

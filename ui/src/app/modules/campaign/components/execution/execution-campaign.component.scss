@@ -1,6 +1,6 @@
-@import "~bootstrap/scss/bootstrap";;
-@import 'global/mixins';
-@import 'global/animations';
+@import 'colors';
+@import 'mixins';
+@import 'animations';
 
 @include box-shadow-animation(
     $animation_name: history-tile-running-anim,
@@ -8,12 +8,12 @@
     $fromOffsetY: 4px,
     $fromBlur: 8px,
     $fromSpread: 0,
-    $fromColor: rgba($light, 30),
+    $fromColor: rgba($grisfonce2, 30),
     $toOffsetX: 8px,
     $toOffsetY: 8px,
     $toBlur: 16px,
     $toSpread: 0,
-    $toColor: rgba($light, 30)
+    $toColor: rgba($grisfonce2, 30)
 );
 
 .small_text {
@@ -117,15 +117,15 @@ h3 {
     }
 
     .tile-ok {
-        background-color: $primary;
+        background-color: $liens;
     }
 
     .tile-ko {
-        background-color: $warning;
+        background-color: $labelko;
     }
 
     .tile-stop {
-        background-color: $light;
+        background-color: $grisfonce2;
     }
 
     .tile-selected {
@@ -133,7 +133,7 @@ h3 {
     }
 
     .tile-running {
-        background-color: $light;
+        background-color: $grisclair1;
         @include animation(
             $animation_name: history-tile-running-anim,
             $animation_duration: 750ms,
@@ -157,7 +157,7 @@ h3 {
     }
 
     .circle-stop {
-        color: $light;
+        color: $grisfonce1;
     }
 }
 

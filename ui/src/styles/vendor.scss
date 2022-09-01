@@ -1,0 +1,35 @@
+/*
+ *  After changing this file you should run one of the following command :
+ *    - npm run build
+ *    - yarn run webpack:build
+ */
+
+@import 'colors';
+
+/***************************
+put Sass variables here:
+eg $input-color: red;
+****************************/
+$fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
+$danger: $labelko;
+
+@import "~bootstrap/scss/bootstrap";
+
+// regular style toast
+@import '~ngx-toastr/toastr';
+
+// bootstrap style toast
+// or import a bootstrap 4 alert styled design (SASS ONLY)
+// should be after your bootstrap imports, it uses bs4 variables, mixins, functions
+// issue https://github.com/scttcper/ngx-toastr/issues/887 @import '~ngx-toastr/toastr-bs4-alert';
+
+
+@import "~@fortawesome/fontawesome-free/scss/fontawesome";
+@import "~@fortawesome/fontawesome-free/scss/brands";
+@import "~@fortawesome/fontawesome-free/scss/regular";
+@import "~@fortawesome/fontawesome-free/scss/solid";
+
+// Highlight.js themes
+// @import 'node_modules/highlight.js/styles/github-gist.css';
+@import '~highlight.js/styles/foundation.css';
+// @import 'node_modules/highlight.js/styles/default.css';

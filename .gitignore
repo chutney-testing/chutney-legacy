@@ -21,7 +21,6 @@ node_modules/
 npm-debug.log.*
 **/dist
 .angular
-storybook-static
 
 ######################
 # ESLint

@@ -1,4 +1,4 @@
-@import '~bootstrap/scss/bootstrap';
+@import 'colors';
 
 .scenario-editor {
     height:calc(100vh - 260px);
@@ -14,13 +14,13 @@
 
     .header-left {
         height: 120px;
-        background-color: $primary;
+        background-color: $vert2;
         padding: 20px 20px 20px 0;
     }
 
     .header-right {
         position: relative;
-        background-color: $secondary;
+        background-color: $vert3;
         height: 120px;
         text-align: center;
         padding: 10px 60px 10px 30px;
@@ -42,7 +42,7 @@
         left: 0;
         width: 0;
         height: 0;
-        border-color: transparent transparent transparent $light;
+        border-color: transparent transparent transparent $vert2;
         border-style: solid;
         border-width: 60px 0 60px 20px;
     }
@@ -60,13 +60,13 @@
 
         .title {
             margin-left: 40px;
-            background-color: $secondary;
+            background-color: $vert2;
             overflow: hidden;
         }
 
         .description{
             margin-top: 10px;
-            background-color: $secondary;
+            background-color: $vert2;
             margin-left: 40px;
             overflow: hidden;
         }
@@ -83,8 +83,8 @@
             transition: all .2s ease-in-out;
             border-radius: 50%;
             box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            background-color: $light;
-            color: $light;
+            background-color: $blanc;
+            color: $grisfonce2;
             background-image: url('../../../../../../assets/icons/btn/save.png');
             background-repeat: no-repeat;
             background-size: 100% 100%;

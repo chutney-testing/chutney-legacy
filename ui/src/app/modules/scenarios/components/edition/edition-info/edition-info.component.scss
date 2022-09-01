@@ -1,6 +1,7 @@
-@import '~bootstrap/scss/bootstrap';
-@import 'global/mixins';
-@import 'global/animations';
+@import 'node_modules/bootstrap/scss/bootstrap';
+@import 'colors';
+@import 'mixins';
+@import 'animations';
 
 :host ::ng-deep {
 
@@ -14,14 +15,14 @@
 
         .arrow {
             &::after {
-                border-bottom-color: $primary;
+                border-bottom-color: $bleu1;
             }
         }
     }
 
     .popover-body {
-        background-color: $primary;
-        color: $secondary;
+        background-color: $bleu1;
+        color: $blanc;
         border-radius: 0.5rem;
     }
 }

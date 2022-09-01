@@ -1,4 +1,4 @@
-@import "~bootstrap/scss/bootstrap";;
+@import 'colors';
 
 .small_text {
     font-size:0.8em;
@@ -16,14 +16,14 @@
 
         .popover-arrow {
             &::after {
-                border-left-color: $teal-100;
+                border-left-color: $bleu1;
             }
         }
     }
 
     .popover-body {
-        background-color: $teal-100;
-        color: $white;
+        background-color: $bleu1;
+        color: $blanc;
         border-radius: 0.5rem;
         padding: 0.5rem;
     }

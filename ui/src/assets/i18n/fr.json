@@ -16,11 +16,7 @@
             "roles": "Roles",
             "admin": "Admin",
             "signIn": "Connexion",
-            "signOut": "Déconnexion",
-            "darkMode": "Thème sombre",
-            "lightMode": "Thème clair",
-            "feedback": "Donner un avis",
-            "notif": "Notifications"
+            "signOut": "Déconnexion"
         }
     },
     "home": {
