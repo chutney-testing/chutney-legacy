@@ -1,9 +1,6 @@
-@import "~bootstrap/scss/bootstrap";
 
 .nav-link, {
     cursor: pointer;
     border-radius: .25rem;
-    &:hover {
-        background: $dropdown-link-hover-bg;
-    }
+    color: var(--bs-white);
 }
