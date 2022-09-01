@@ -1,4 +1,4 @@
-@import "~bootstrap/scss/bootstrap";;
+@import 'colors';
 
 button span:not(:first-child) {
     display: block;
@@ -34,7 +34,7 @@ div.steps {
 }
 
 .error {
-    color: $warning;
+    color: $labelko;
     margin-bottom: 30px;
 }
 
@@ -70,8 +70,8 @@ div.steps {
 }
 
 .gwt::before {
-    //background: $neutral;
-    //color: $grisfonce;
+    background: $neutral;
+    color: $grisfonce;
     font-size: 9px;
     font-weight: bold;
     padding: 3px 5px;

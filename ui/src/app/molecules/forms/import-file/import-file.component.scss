@@ -1,4 +1,4 @@
-@import "~bootstrap/scss/bootstrap";;
+@import 'colors';
 
 .drop-box {
 
@@ -29,10 +29,10 @@
         align-items: center;
 
         overflow: hidden;
-        background-image: linear-gradient(to bottom, $teal-100 50%, $white 50%);
+        background-image: linear-gradient(to bottom, $bleu1 50%, $blanc 50%);
         background-size: 100% 200%;
         transition: all 1s;
-        color: $white;
+        color: $blanc;
         font-size: 30px;
 
         input[type='file'] {
@@ -47,12 +47,12 @@
 
         &:hover {
             background-position: 0 -100%;
-            color: $teal-100;
+            color: $bleu1;
         }
 
     }
 }
 
 .hover {
-    border: 2px solid $primary;
+    border: 2px solid $vert1;
 }

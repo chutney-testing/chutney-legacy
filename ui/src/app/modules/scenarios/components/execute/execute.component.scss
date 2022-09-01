@@ -1,18 +1,19 @@
-@import '~bootstrap/scss/bootstrap';
+@import 'colors';
+
 .edition-header {
     margin-top: 0;
     margin-bottom: 0;
 
     .header-left {
         height: 120px;
-        background-color: $teal-100;
+        background-color: $vert2;
         width: 50%;
         float: left;
 
         .title {
             margin-top: 20px;
             margin-left: 40px;
-            background-color: $teal-100;
+            background-color: $vert2;
             color: white;
             font-size: 22px;
             line-height: 22px;
@@ -22,7 +23,7 @@
 
         .description{
             margin-top: 10px;
-            background-color: $teal-100;
+            background-color: $vert2;
             font-size: 13px;
             font-weight: 300;
             font-style: normal;
@@ -36,7 +37,7 @@
     }
 
     .header-right {
-        background-color: $teal-100;
+        background-color: $vert3;
         width:50%;
         height: 120px;
         float: left;
@@ -53,7 +54,7 @@
         left: 0;
         width: 0;
         height: 0;
-        border-color: transparent transparent transparent $teal-100;
+        border-color: transparent transparent transparent $vert2;
         border-style: solid;
         border-width: 60px 0 60px 20px;
     }

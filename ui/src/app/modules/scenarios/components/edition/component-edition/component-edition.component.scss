@@ -1,4 +1,4 @@
-@import "~bootstrap/scss/bootstrap";;
+@import 'colors';
 
 .component-edition-content {
     position: fixed;
@@ -11,13 +11,13 @@
 
     .header-left {
         height: 120px;
-        background-color: $primary;
+        background-color: $vert2;
         padding: 20px 20px 20px 0;
     }
 
     .header-right {
         position: relative;
-        background-color: $primary;
+        background-color: $vert3;
         height: 120px;
         text-align: center;
         padding: 10px 20px 10px 30px;
@@ -31,7 +31,7 @@
         left: 0;
         width: 0;
         height: 0;
-        border-color: transparent transparent transparent $primary;
+        border-color: transparent transparent transparent $vert2;
         border-style: solid;
         border-width: 60px 0 60px 20px;
     }
@@ -48,13 +48,13 @@
 
         .title {
             margin-left: 40px;
-            background-color: $primary;
+            background-color: $vert2;
             overflow: hidden;
         }
 
         .description {
             margin-top: 10px;
-            background-color: $primary;
+            background-color: $vert2;
             margin-left: 40px;
             overflow: hidden;
         }

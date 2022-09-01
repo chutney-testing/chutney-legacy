@@ -1,4 +1,4 @@
-@import "~bootstrap/scss/bootstrap";;
+@import 'colors';
 
 .table-pagination-controls {
   text-align: center;
@@ -8,6 +8,6 @@
   font-size: 0.8rem;
 
   .current {
-    background: $primary;
+    background: $bleu2;
   }
 }
