@@ -1,5 +1,17 @@
-<chutney-main-menu></chutney-main-menu>
-<chutney-profile-menu></chutney-profile-menu>
-<div class="main-content">
-    <router-outlet></router-outlet>
+<div [ngClass]="{
+'closed-sidebar' : layoutOptions.toggleSidebar,
+'closed-sidebar-md' : layoutOptions.toggleSidebarMobile,
+'closed-sidebar-open': layoutOptions.sidebarHover || layoutOptions.toggleSidebarMobile
+}" [class]="'app-container'">
+    <router-outlet name="header"></router-outlet>
+    <router-outlet name="left-side-bar"></router-outlet>
+    <div class="app-main__outer">
+        <div class="app-main__inner bg-white">
+            <div>
+                <router-outlet></router-outlet>
+                <router-outlet name="right-side-bar"></router-outlet>
+            </div>
+        </div>
+    </div>
+    <div class="sidebar-menu-overlay" (click)="toggleSidebarMobile()"></div>
 </div>

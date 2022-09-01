@@ -1,31 +1,26 @@
-@import 'colors';
 
-.login{
-    background-color: $bleu2;
-    height: 100%;
+.fs-75 {
+    font-size: 0.75rem !important;
 }
 
-.form-login {
-    width:350px;
-    padding-top: 25vh;
+.logo {
+    width: 50px;
+    margin: 0;
+    padding: 0;
 }
 
-.login-button {
-    background-color:$bleu4;
-    color: white;
+.small-logo {
+    width: 30px;
+    margin: 0;
+    padding: 0;
 }
 
-.form-control{
-    color: black;
-    border-color: black ;
-    background-color: white  ;
-    &:focus {
-        box-shadow: 0 0 0 0.3rem rgba(black, 0.25);
+.custom-class {
+    display: none;
+}
+
+@media (min-width: 992px) {
+    .custom-class {
+        display: block;
     }
-}
-
-.label {
-    display: inline-block;
-    max-width:100%;
-    margin-bottom: 10px;
 }

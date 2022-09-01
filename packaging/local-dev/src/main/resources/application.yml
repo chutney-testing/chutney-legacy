@@ -1,5 +1,6 @@
 agent-name: chutney-server-agent-0
 server:
+  instance-name: Local instance
   port: 8443
   http:
     port: 9350
