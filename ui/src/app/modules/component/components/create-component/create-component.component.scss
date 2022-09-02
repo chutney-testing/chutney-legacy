@@ -1,3 +1,7 @@
+.container {
+    max-width: 1800px !important;
+}
+
 .small-font {
     font-size: 0.7em;
 }
@@ -46,10 +50,6 @@
     cursor: pointer;
 }
 
-.selected-component {
-    //background-color: $light !important;
-}
-
 .btn-toolbar {
     align-items: center;
     justify-content: center;
@@ -57,15 +57,6 @@
     top: -28px;
     margin-bottom: -28px;
     margin-left: auto;
-}
-
-.btn-display-form {
-    background-color: var(--bs-success);
-    color: white;
-}
-
-.components-list-container {
-    position: fixed;
 }
 
 .edition {
@@ -99,39 +90,29 @@ textarea.no-resize {
 }
 
 .component-list-container-minimize {
-    // width: 70px;
-}
-
-.edition-component-minimize {
-    // width: calc(100% - 70px /*component-list*/)
-}
-
-.right-panel-minimize {
     width: 45px;
 }
 
 .edition-component-right-panel-minimize {
-    width: calc(100% - 45px/*right-panel*/);
+    width: 85%;
+}
+
+.right-panel-minimize-btn {
+    width: 45px;
 }
 
 .right-panel-minimize-btn {
     position: absolute;
-    margin-left: -5px;
     height: calc(80vh);
     border: none;
 }
 
 .left-panel-minimize-btn {
     position: absolute;
-    right: 5px;
     height: calc(100vh);
     border: none;
 }
 
-.right-panel-minimize-btn:hover, .left-panel-minimize-btn:hover {
-    background-color: var(primary);
-}
-
 .right-panel-content {
-    margin-left: 15px;
+    //margin-left: 15px;
 }
