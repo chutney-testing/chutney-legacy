@@ -45,10 +45,7 @@ textarea.no-resize {
     position: fixed;
     margin-left: -5px;
     height: calc(80vh);
-}
-
-.right-panel-minimize-btn:hover {
-    background-color: lightgray;
+    border: none;
 }
 
 .right-panel-content {
