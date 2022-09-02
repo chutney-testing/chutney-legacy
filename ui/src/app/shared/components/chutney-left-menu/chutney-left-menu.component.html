@@ -3,13 +3,16 @@
     <div class="app-header__logo bg-primary">
         <div class="logo-src"></div>
         <div class="header__pane ms-auto">
-            <span class="close-sidebar-btn" (click)="toggleSidebar()">
-                <i [ngClass]="layoutOptions.toggleSidebar ? 'fa fa-thumb-tack' : 'fa fa-angle-double-left'"></i>
-            </span>
+
 
         </div>
     </div>
     <div class="app-sidebar-content">
+        <div class="py-1">
+            <span class="close-sidebar-btn" (click)="toggleSidebar()">
+                <i [ngClass]="layoutOptions.toggleSidebar ? 'fa fa-thumb-tack' : 'fa fa-angle-double-left'"></i>
+            </span>
+        </div>
         <div class="app-sidebar-scroll">
             <perfect-scrollbar [autoPropagation]="true">
                 <div class="sidebar-menu">

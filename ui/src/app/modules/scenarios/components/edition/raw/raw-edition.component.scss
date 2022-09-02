@@ -19,6 +19,7 @@
         height: 120px;
         text-align: center;
         padding: 10px 60px 10px 30px;
+        margin-left: auto;
 
         textarea.no-resize {
             resize: none;
@@ -40,13 +41,11 @@
 
         .title {
             margin-left: 40px;
-            overflow: hidden;
         }
 
         .description{
             margin-top: 10px;
             margin-left: 40px;
-            overflow: hidden;
         }
     }
 

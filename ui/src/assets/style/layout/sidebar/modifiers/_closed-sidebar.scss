@@ -21,6 +21,9 @@
       display: none;
     }
 
+    .close-sidebar-btn{
+          display: none;
+    }
     .sidebar-menu {
       padding: 0 ($layout-spacer-x / 3);
 
@@ -85,11 +88,13 @@
       .header__pane {
         display: block;
       }
+      .close-sidebar-btn{
+            display: block;
+      }
 
       .sidebar-menu {
         padding: 0 $layout-spacer-x $layout-spacer-x;
 
-        .menu-arrow,
         .menu-title {
           display: block;
         }

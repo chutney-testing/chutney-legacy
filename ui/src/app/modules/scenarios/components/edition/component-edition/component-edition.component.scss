@@ -21,6 +21,7 @@
         height: 120px;
         text-align: center;
         padding: 10px 20px 10px 30px;
+        margin-left: auto;
     }
 
 
@@ -36,15 +37,11 @@
 
         .title {
             margin-left: 40px;
-            background-color: $primary;
-            overflow: hidden;
         }
 
         .description {
             margin-top: 10px;
-            background-color: $primary;
             margin-left: 40px;
-            overflow: hidden;
         }
     }
 }
