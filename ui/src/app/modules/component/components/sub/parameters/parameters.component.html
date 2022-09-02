@@ -13,7 +13,7 @@
         <span class="fa fa-plus"></span>
     </button>
     <ng-container *ngIf="!collapseParam">
-        <div class="row mt-3" formArrayName="parameters"
+        <div class="row mt-3 ms-3" formArrayName="parameters"
              *ngFor="let parameter of parentForm.get('parameters')?.controls; let i = index;">
             <ng-container [formGroupName]="i">
                 <div class="col-4 px-1">

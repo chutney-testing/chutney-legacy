@@ -49,7 +49,7 @@
                     </div>
                 </div>
                 <hr/>
-                <div class="table-scroll-with-tags-filter">
+                <div class="table-scroll-with-tags-filter me-2">
                     <table class="table table-sm table-striped table-hover">
                         <tbody dragula="COPYABLE" id="left"
                                [dragulaModel]="componentTasks |  componentSearch : tagData.selected() : tagData.isNoTagSelected() : tagData.isSelectAll() | searchTextPipe  : componentFilter : ['name']">
