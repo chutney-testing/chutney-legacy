@@ -71,7 +71,7 @@
                 <input name="search" type="text" class="sticky-content form-control my-2"
                        placeholder="{{'components.action.list.filter.placeholder' | translate}}"
                        [(ngModel)]="taskFilter"/>
-                <div class="table-scroll">
+                <div class="table-scroll me-2">
                     <table class="table table-sm table-striped table-hover">
                         <tbody>
                         <tr *ngFor="let task of tasks | searchTextPipe: taskFilter:['identifier']"
