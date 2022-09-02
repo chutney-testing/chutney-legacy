@@ -1,6 +1,8 @@
-<div class="row m-5 pointer" *ngIf="errorMessage" (click)="errorMessage = null">
+<div class="container m-0">
+<div class="row pointer" *ngIf="errorMessage" (click)="errorMessage = null">
     <chutney-error-panel [errorMessage]="errorMessage"></chutney-error-panel>
 </div>
+
 <ng-container *ngIf="envForm">
     <div class="row m-3">
         <div class="col-md-6">
@@ -10,9 +12,9 @@
                     <div class="col-9 pe-0">
                         <input id="name" type="text" class="form-control" formControlName="name"/>
                     </div>
-                    <label for="description" class="col-3 col-form-label">Description</label>
+                    <label for="description" class="col-3 col-form-label mt-3">Description</label>
                     <div class="col-9 pe-0">
-                            <input id="description" type="text" class="form-control" formControlName="description"/>
+                            <input id="description" type="text" class="form-control mt-3" formControlName="description"/>
                     </div>
                 </div>
                 <button *ngIf="!envUpdate" type="button" class="btn btn-success m-3" (click)="updateEnvironment()">{{ 'global.actions.create' | translate }}</button>
@@ -22,16 +24,18 @@
         </div>
     </div>
 </ng-container>
+
 <ng-container *ngIf="!envForm">
+
     <div class="row m-3" >
         <div class="col" *ngIf="environments">
             {{ 'admin.targets.environment' | translate }}:
             <chutney-environment-combo [environments]="environmentsNames" (selectionEvent)="changingValue($event)">
             </chutney-environment-combo>
             <div class="btn-group mx-3" role="group">
-                <button type="button" class="btn btn-info" (click)="initForUpdateEnvironment()">{{ 'global.actions.update' | translate }}</button>
-                <button type="button" class="btn btn-info mx-1" (click)="initEnvironment()">{{ 'global.actions.add' | translate }}</button>
-                <chutney-delete-confirm-dialog *ngIf="selectedEnvironment" [dialogMessage]="('global.confirm.question' | translate) + ' ' + ('global.actions.delete' | translate) + '\n' + selectedEnvironment.name"
+                <button type="button" class="btn btn-info rounded text-white" (click)="initForUpdateEnvironment()">{{ 'global.actions.update' | translate }}</button>
+                <button type="button" class="btn btn-info mx-3 rounded text-white" (click)="initEnvironment()">{{ 'global.actions.add' | translate }}</button>
+                    <chutney-delete-confirm-dialog *ngIf="selectedEnvironment" [dialogMessage]="('global.confirm.question' | translate) + ' ' + ('global.actions.delete' | translate) + '\n' + selectedEnvironment.name"
                                                [label]="'Delete Environment'"
                                                [disabled]="!selectedEnvironment"
                                                (deleteEvent)="deleteEnvironment()"
@@ -39,14 +43,14 @@
                 </chutney-delete-confirm-dialog>
             </div>
             <div class="btn-group ms-3" role="group">
-                <button type="button" class="btn btn-success ms-1 align-self-center" (click)="exportEnvironment()">{{ 'global.actions.export' | translate }}</button>
+                <button type="button" class="btn btn-success ms-1 align-self-center rounded" (click)="exportEnvironment()">{{ 'global.actions.export' | translate }}</button>
                 <chutney-import-button (submitEvent)="importEnvironment($event)"></chutney-import-button>
             </div>
         </div>
     </div>
 
-    <div class="row m-3">
-        <div class="left-panel">
+    <div class="row">
+        <div class="col">
             <input name="search" type="text" class="form-control mb-2" placeholder="Search target" [(ngModel)]="targetFilter"/>
             <table class="table table-striped table-hover">
                 <tbody>
@@ -63,31 +67,38 @@
                 </tbody>
             </table>
         </div>
-        <div class="col ps-4">
+        <div class="col">
             <div class="sticky-top-admin">
                 <div *ngIf="!selectedTarget">
                     <chutney-add-target-dialog (onSave)="addTarget($event)"></chutney-add-target-dialog>
                     <chutney-import-file (importEvent)="importTarget($event)" [multiple]="true"></chutney-import-file>
                 </div>
                 <div *ngIf="selectedTarget">
-                    <div  class="col-md-12">
-                        <button type="button" class="btn btn-success me-3" (click)="updateSelectedTarget()"> <span class="fa fa-check"></span> {{'global.actions.save' | translate}}</button>
-                        <button type="button" class="btn btn-success accept-spinner me-3" (click)="exportTarget()"><span class="fa fa-download"> </span> {{'global.actions.export' | translate}}</button>
-                        <button type="button" class="btn btn-secondary me-4" (click)="cancelSelectedTarget()">{{'global.actions.cancel' | translate}}</button>
+                    <div class="col-md-12">
+                        <div class="btn-group mb-3">
+                        <button type="button" class="btn btn-success me-3  rounded" (click)="updateSelectedTarget()"> <span class="fa fa-check"></span> {{'global.actions.save' | translate}}</button>
+                        <button type="button" class="btn btn-success  rounded accept-spinner me-3" (click)="exportTarget()"><span class="fa fa-download"> </span> {{'global.actions.export' | translate}}</button>
+                        <button type="button" class="btn btn-secondary  rounded me-4" (click)="cancelSelectedTarget()">{{'global.actions.cancel' | translate}}</button>
                         <chutney-delete-confirm-dialog
                             [dialogMessage]="('global.confirm.question' | translate) + ' ' + ('global.actions.delete' | translate) + '\n' + selectedTarget.name"
                             [label]="'Delete Target'"
                             [disabled]="null"
                             (deleteEvent)="deleteTarget(selectedTarget)">
-                        </chutney-delete-confirm-dialog>
-                        <chutney-forms-editable-label style="min-width: 70%;" [id]="'targetName'" [placeholder]="'Name'" [(model)]="selectedTarget.name" [type]="'form-title'"></chutney-forms-editable-label>
 
+                        </chutney-delete-confirm-dialog>
+                        </div>
+                        <chutney-forms-editable-label style="min-width: 70%;" [id]="'targetName'" [placeholder]="'Name'" [(model)]="selectedTarget.name" [type]="'form-title'"></chutney-forms-editable-label>
+                        <div class="mt-3">
                         <chutney-forms-input-line [id]="'targetUrl'" [label]="'Url'" [placeholder]="'protocol://server:port'" [(model)]="selectedTarget.url" [validate]="validationService.isValidUrl.bind(validationService)"></chutney-forms-input-line>
-                        <div class="mt-2">
-                            <button class="btn btn-sm btn-info float-right ms-1" title="{{'global.actions.help' | translate}}" (click)="help = !help">
-                                {{'global.actions.help' | translate}} <span class="fa fa-info"></span>
-                            </button>
-                            <div *ngIf="help">
+                        <chutney-property-table-panel [entries]="selectedTarget.properties"></chutney-property-table-panel>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <button class="btn btn-sm btn-info float-right ms-1 mb-2 text-white" title="{{'global.actions.help' | translate}}" (click)="help = !help">
+                            {{'global.actions.help' | translate}} <span class="fa fa-info"></span>
+                        </button>
+                        <div *ngIf="help">
+                            <div class="ml-3">
                                 <pre class="text-white bg-info rounded overflow-auto">
 
   Some properties that could be defined :
@@ -97,7 +108,6 @@
    - privateKey / privateKeyPassword / privateKeyPassphrase : path to a keystore and associated password
                                 </pre>
                             </div>
-                            <chutney-property-table-panel [entries]="selectedTarget.properties"></chutney-property-table-panel>
                         </div>
                     </div>
                 </div>
@@ -105,3 +115,4 @@
         </div>
     </div>
 </ng-container>
+</div>

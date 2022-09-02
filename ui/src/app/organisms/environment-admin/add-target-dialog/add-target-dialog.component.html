@@ -3,9 +3,10 @@
   <div class="modal-body text-center">
     <p>Add a Target</p>
     <chutney-forms-input-line [id]="'creationTargetName'" [label]="'Name *'" [placeholder]="'Name'" [(model)]="target.name" [validate]="validationService.isNotEmpty"></chutney-forms-input-line>
+      <div class="mt-2 mb-2">
     <chutney-forms-input-line [id]="'creationTargetUrl'" [label]="'URL *'" [placeholder]="'protocol://server:port'" [(model)]="target.url" [validate]="validationService.isValidUrl.bind(validationService)"></chutney-forms-input-line>
-
-    <chutney-button class="float-end" [disabled]="!isValid()" [iconClass]="'fa-check'" [model]="'Save'" (click)="confirm()"></chutney-button>
+  </div>
+    <chutney-button class="float-end" [disabled]="!isValid()" [iconClass]="'fa-check'" [model]="'SAVE'" (click)="confirm()"></chutney-button>
     <chutney-link class="float-end mt-2 me-4" [model]="'Cancel'" (click)="decline()"></chutney-link>
   </div>
 </ng-template>
