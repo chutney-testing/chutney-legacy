@@ -1,4 +1,3 @@
-@import "~bootstrap/scss/bootstrap";;
 
 :host ::ng-deep {
 
@@ -12,16 +11,10 @@
 
         .arrow {
             margin-top: -8px !important;
-
-            &::after {
-                border-left-color: $teal-100;
-            }
         }
     }
 
     .popover-body {
-        background-color: $teal-100;
-        color: $white;
         border-radius: 0.5rem;
     }
 }
