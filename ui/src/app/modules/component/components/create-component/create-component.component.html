@@ -124,7 +124,7 @@
                             </textarea>
                             </div>
                             <div class="col">
-                                <div class="">
+                                <div>
                                     <ng-container *hasAuthorization="[Authorization.COMPONENT_WRITE]">
                                         <chutney-toolbar-component
                                             (editEvent)="save()"
@@ -142,7 +142,7 @@
                                     <label class="form-control-label fw-bold"
                                            for="tags">{{ 'scenarios.edition.form.tags' | translate }}</label>
                                 </div>
-                                <div class="">
+                                <div>
                                 <textarea formControlName="tags" type="text" class="form-control no-resize" name="tags"
                                           id="tags" rows="2"></textarea>
                                 </div>
@@ -154,7 +154,7 @@
                     <div class="row mt-3 position-relative">
                         <div *ngIf="editableComponent"
                              [ngClass]="{'edition-component-right-panel-minimize col-11 pe-0':componentEditionRightPanelMinimize, 'col-6':!componentEditionRightPanelMinimize}">
-                            <div class="">
+                            <div>
                             <span
                                 class="legend-title">{{'components.component.edition.blocks.steps' | translate}}</span>
                             </div>
@@ -175,7 +175,7 @@
                         <div
                             [ngClass]="{'col-1 ms-0 p-0':componentEditionRightPanelMinimize, 'col-6':!componentEditionRightPanelMinimize}">
                             <button *ngIf="editableComponent" type="button"
-                                    class="right-panel-minimize-btn btn btn-xs mt-4 btn-default shadow-none border-start ps-1"
+                                    class="right-panel-minimize-btn btn btn-xs mt-4 btn-default shadow-none border-start rounded-0 ps-1"
                                     [ngClass]="{'position-absolute end-0':componentEditionRightPanelMinimize, '':!componentEditionRightPanelMinimize}"
                                     title="{{(componentEditionRightPanelMinimize ? 'global.actions.show' : 'global.actions.hide') | translate}}"
                                     (click)="componentEditionRightPanelMinimize = !componentEditionRightPanelMinimize;">

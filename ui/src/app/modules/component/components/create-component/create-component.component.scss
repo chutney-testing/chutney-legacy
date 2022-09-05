@@ -1,5 +1,5 @@
 .container {
-    max-width: 1800px !important;
+    max-width: 100% !important;
 }
 
 .small-font {
@@ -111,8 +111,4 @@ textarea.no-resize {
     position: absolute;
     height: calc(100vh);
     border: none;
-}
-
-.right-panel-content {
-    //margin-left: 15px;
 }
