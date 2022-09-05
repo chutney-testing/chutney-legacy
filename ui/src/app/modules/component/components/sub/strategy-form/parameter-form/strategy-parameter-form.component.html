@@ -1,10 +1,10 @@
 <div class="mt-3" *ngIf="parameters.length > 0" [formGroup]="parameterForm">
-    <div *ngFor="let parameter of parameters"  class="row">
-        <label for="strategy-{{parameter.name}}" class="col-3 mb-0 text-center align-self-center">
+    <div *ngFor="let parameter of parameters"  class="row ms-3">
+        <label for="strategy-{{parameter.name}}" class="col-3 mb-0 ms-1">
             {{parameter.name}}
         </label>
         <input id="strategy-{{parameter.name}}" type="text" autocomplete="off"
-               class="col-9 ms-3 form-control w-75"
+               class="col-9 ms-3 mb-2 form-control w-75"
                [ngClass]="{
                 'is-valid': parameterForm.get(parameter.name).valid && parameterForm.get(parameter.name).enabled,
                 'is-invalid': !parameterForm.get(parameter.name).valid && parameterForm.get(parameter.name).enabled
