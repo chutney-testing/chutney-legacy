@@ -43,8 +43,8 @@
                     "inject": true
                 },
                 {
-                    "input": "src/assets/style/themes/theme.quartz.scss",
-                    "bundleName": "quartz",
+                    "input": "src/assets/style/themes/theme.darkly.scss",
+                    "bundleName": "darkly",
                     "inject": false
                 }
             ],

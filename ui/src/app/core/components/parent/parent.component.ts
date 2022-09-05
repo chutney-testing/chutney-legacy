@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { LayoutOptions } from '../../../layout-options.service';
 import { Subscription } from 'rxjs';
 import { LinkifierService, LoginService } from '@core/services';
+import { LayoutOptions } from '@core/layout/layout-options.service';
 
 @Component({
   selector: 'chutney-parent',

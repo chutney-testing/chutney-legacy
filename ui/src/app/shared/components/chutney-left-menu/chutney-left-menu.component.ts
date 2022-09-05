@@ -1,9 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { LoginService } from '@core/services';
 import { allMenuItems, MenuItem } from '@shared/components/chutney-left-menu/chutney-left-menu.items';
-import { ActivatedRoute } from '@angular/router';
-import { LayoutOptions } from '../../../layout-options.service';
-import { lookupService } from 'dns';
+import { LayoutOptions } from '@core/layout/layout-options.service';
 
 @Component({
     selector: 'chutney-chutney-left-menu',
