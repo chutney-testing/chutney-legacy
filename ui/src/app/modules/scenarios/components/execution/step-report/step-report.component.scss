@@ -19,7 +19,6 @@ div.step-container-wrapper {
 
 div.step-container {
     margin: 5px 0 5px 0;
-    width: 100%;
     border-radius: 4px;
     box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
     background-color: white;
@@ -46,8 +45,6 @@ div.result-header {
     div.step-name {
         margin-top: 0;
         margin-bottom: 0;
-        padding-top: 4px;
-        padding-bottom: 4px;
 
         span {
             flex: auto;
@@ -103,7 +100,6 @@ div.step {
     height: 100%;
 
     .inputs {
-        padding: 10px;
         font-size: 12px;
     }
 }
@@ -121,7 +117,6 @@ button.btn-link {
     color: #d9534f;
     font-weight: bold;
     font-size: 12px;
-    padding: 10px;
 
     pre {
         color: #d9534f;
@@ -138,7 +133,6 @@ button.btn-link {
     color: #58c69f;
     font-weight: bold;
     font-size: 12px;
-    padding: 10px;
 
     button {
         color: #58c69f;
@@ -150,7 +144,7 @@ pre {
     background-color: white;
 }
 
-.btn-toolbar {
+.btn-group {
     margin-right: 20px;
 
     button {
@@ -172,7 +166,7 @@ pre {
 
     .steps-btn {
         position: absolute;
-        right: 10px;
+        right: -12px;
 
         button {
             background-color: transparent;
