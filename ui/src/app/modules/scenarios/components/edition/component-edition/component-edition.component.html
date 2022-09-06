@@ -3,40 +3,37 @@
 </div>
 
 <form [formGroup]="componentForm" autocomplete="off">
-    <div class="scenario-component-edition-container min-vh-90">
-        <div class="sub-container-left">
-            <div class="div1">
-                <div>
-                    <span for="title">Title</span>
-                    <input type="text" id="title" class="form-control" [(ngModel)]="scenarioComponent.title" [ngModelOptions]="{standalone: true}" />
-                </div>
-                <div>
-                    <span for="description">Description</span>
-                    <input type="text" id="description" class="form-control" [(ngModel)]="scenarioComponent.description" [ngModelOptions]="{standalone: true}" />
-                </div>
-                <!--div4-->
-                <input name="search" type="text" class="form-control mb-2"
-                        placeholder="{{'components.shared.list.filter.placeholder' | translate}}"
-                        [(ngModel)]="componentFilter" [ngModelOptions]="{standalone: true}"/>
-                <div class="table-scroll">
-                    <table class="table table-sm table-striped table-hover">
-                        <tbody dragula="COPYABLE" id="left"
-                                [dragulaModel]="componentRefTasksArray | searchTextPipe: componentFilter:['name']">
-                        <tr *ngFor="let component of componentRefTasksArray | searchTextPipe: componentFilter:['name']"
-                            class="pointer">
-                            <td>
-                                <span class="fa" [ngClass]="component.implementation ? 'fa-clone' : 'fa-cubes'"></span>
-                                {{component.name}}
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+    <div class="row">
+        <div class="component-list" style="width:21%">
+            <div>
+                <span for="title">Title</span>
+                <input type="text" id="title" class="form-control" [(ngModel)]="scenarioComponent.title" [ngModelOptions]="{standalone: true}" />
+            </div>
+            <div>
+                <span for="description">Description</span>
+                <input type="text" id="description" class="form-control" [(ngModel)]="scenarioComponent.description" [ngModelOptions]="{standalone: true}" />
+            </div>
+            <input name="search" type="text" class="form-control my-2"
+                    placeholder="{{'components.shared.list.filter.placeholder' | translate}}"
+                    [(ngModel)]="componentFilter" [ngModelOptions]="{standalone: true}"/>
+            <div class="table-scroll">
+                <table class="table table-sm table-striped table-hover">
+                    <tbody dragula="COPYABLE" id="left"
+                            [dragulaModel]="componentRefTasksArray | searchTextPipe: componentFilter:['name']">
+                    <tr *ngFor="let component of componentRefTasksArray | searchTextPipe: componentFilter:['name']"
+                        class="pointer">
+                        <td>
+                            <span class="fa" [ngClass]="component.implementation ? 'fa-clone' : 'fa-cubes'"></span>
+                            {{component.name}}
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
-        <div class="sub-container-right">
-            <div class="div2">
-                <div class="d-flex justify-content-center">
+        <div class="component-right-content col-md-9 offset-md-3">
+            <div class="row">
+                <div class="col-md-6">
                     <chutney-authoring-info *ngIf="scenarioComponent" [testCase]="scenarioComponent"></chutney-authoring-info>
 
                     <chutney-edition-info class="ms-3" *ngIf="scenarioComponent" [testCase]="scenarioComponent"></chutney-edition-info>
@@ -50,94 +47,87 @@
                             title="{{'global.actions.cancel' | translate}}">
                         {{ 'campaigns.scheduling.back' | translate }}
                     </button>
-                </div>
-                <!-- div5-->
-                <div class="row fw-bold">
-                    <span class="legend-title">{{'components.testcase.edition.blocks.steps' | translate}}</span>
-                </div>
-                <div class="p-2 border drop-zone" dragula="COPYABLE"
-                    [(dragulaModel)]="componentTasksCreated" id="right"
-                    title="{{'components.shared.edition.draganddrop' | translate}}">
-                    <div *ngFor="let component of componentTasksCreated; let i=index" class="card">
-                        <chutney-component-card
-                            [component]="component"
-                            (deleteEvent)="removeComponent(i)">
-                        </chutney-component-card>
+                
+                    <!-- div5-->
+                    <div class="row fw-bold">
+                        <span class="legend-title">{{'components.testcase.edition.blocks.steps' | translate}}</span>
+                    </div>
+                    <div class="p-2 border drop-zone" dragula="COPYABLE"
+                        [(dragulaModel)]="componentTasksCreated" id="right"
+                        title="{{'components.shared.edition.draganddrop' | translate}}">
+                        <div *ngFor="let component of componentTasksCreated; let i=index" class="card">
+                            <chutney-component-card
+                                [component]="component"
+                                (deleteEvent)="removeComponent(i)">
+                            </chutney-component-card>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="div3">
-                <label class="form-control-label fw-bold"
-                        for="tags">{{ 'scenarios.edition.form.tags' | translate }}</label>
-                <textarea type="text" class="form-control tag-input no-resize" name="tags" id="tags"
-                            formControlName="tags" rows="2"></textarea>
-                <div *ngIf="scenarioComponent">
-                <chutney-scenario-campaigns
-                    [idScenario]="scenarioComponent.id"></chutney-scenario-campaigns>
-                </div>
-                <!-- div6-->
-                <div>
-                    <span class="me-5">{{'menu.principal.jiraId' | translate}}</span>
-                    <input type="text" class="form-control me-2 small-text"
-                        formControlName="jiraId"
-                        placeholder="id jira"/>
-                </div>
-                <div>
-                    <span class="me-5">{{'menu.principal.dataset' | translate}}</span>
-                    <chutney-dataset-selection
-                        [selectedDatasetId]="scenarioComponent.datasetId"
-                        (selectionEvent)="selectDataset($event)">
-                    </chutney-dataset-selection>
+                <div class="col-md-3">
+                    <label class="form-control-label fw-bold"
+                            for="tags">{{ 'scenarios.edition.form.tags' | translate }}</label>
+                    <textarea type="text" class="form-control tag-input no-resize" name="tags" id="tags"
+                                formControlName="tags" rows="2"></textarea>
+                    <div *ngIf="scenarioComponent">
+                    <chutney-scenario-campaigns
+                        [idScenario]="scenarioComponent.id"></chutney-scenario-campaigns>
+                    </div>
+                    <!-- div6-->
+                    <div class="my-1">
+                        <span class="me-5">{{'menu.principal.jiraId' | translate}}</span>
+                        <input type="text" class="form-control me-2 small-text"
+                            formControlName="jiraId"
+                            placeholder="id jira"/>
+                    </div>
+                    <div class="my-1">
+                        <span class="me-5">{{'menu.principal.dataset' | translate}}</span>
+                        <chutney-dataset-selection
+                            [selectedDatasetId]="scenarioComponent.datasetId"
+                            (selectionEvent)="selectDataset($event)">
+                        </chutney-dataset-selection>
 
-                </div>
-                <div>
-                    <span class="me-5 cursor-default w-30"
-                        (click)="switchCollapseParam()">{{'components.shared.edition.blocks.parameters' | translate}}</span>
-                    <button class="btn btn-sm btn-light btn-outline-dark border-0 w-10" type="button"
-                            (click)="switchCollapseParam()"
-                            title="{{(collapseParam ? 'global.actions.show' : 'global.actions.hide') | translate}}">
-                        <span class="fa" [ngClass]="collapseParam ? 'fa-eye' : 'fa-eye-slash'"></span>
-                    </button>
-                    <button id="addParameterBtn" class="btn btn-sm btn-light btn-outline-dark border-0 ms-sm-1 w-10"
-                            (click)="addParameters()"
-                            title="{{'global.actions.add' | translate}}">
-                        <span class="fa fa-plus"></span>
-                    </button>
-                </div>
-                <ng-container *ngIf="!collapseParam">
-                    <div class="row" formArrayName="parameters"
-                        *ngFor="let parameter of componentForm.get('parameters')?.controls; let i = index;">
-                        <ng-container [formGroupName]="i">
-                            <div class="row w-100 mb-1">
-                                <div class="col-9 ps-0">
-                                    <input type="text" class="form-control me-2 small-text"
-                                        formControlName="key"
-                                        placeholder="key"/>
-                                </div>
-                                <div class="col pe-0">
-                                    <button type="button"
-                                            class="btn btn-outline-danger delete-button-height float-end"
-                                            (click)="removeParameter(i)">
-                                        <span class="fa fa-trash"></span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="w-100 ps-4">
-                                <textarea class="form-control me-2 small-text" formControlName="value" rows="1"
-                                        placeholder="value"></textarea>
-                            </div>
-                        </ng-container>
                     </div>
-                </ng-container>
+                    <div>
+                        <span class="me-5 cursor-default w-30"
+                            (click)="switchCollapseParam()">{{'components.shared.edition.blocks.parameters' | translate}}</span>
+                        <button class="btn btn-sm btn-light btn-outline-dark border-0 w-10" type="button"
+                                (click)="switchCollapseParam()"
+                                title="{{(collapseParam ? 'global.actions.show' : 'global.actions.hide') | translate}}">
+                            <span class="fa" [ngClass]="collapseParam ? 'fa-eye' : 'fa-eye-slash'"></span>
+                        </button>
+                        <button id="addParameterBtn" class="btn btn-sm btn-light btn-outline-dark border-0 ms-sm-1 w-10"
+                                (click)="addParameters()"
+                                title="{{'global.actions.add' | translate}}">
+                            <span class="fa fa-plus"></span>
+                        </button>
+                    </div>
+                    <ng-container *ngIf="!collapseParam">
+                        <div class="row" formArrayName="parameters"
+                            *ngFor="let parameter of componentForm.get('parameters')?.controls; let i = index;">
+                            <ng-container [formGroupName]="i">
+                                <div class="row w-100 my-2">
+                                    <div class="col-9 ps-0">
+                                        <input type="text" class="form-control me-2 small-text"
+                                            formControlName="key"
+                                            placeholder="key"/>
+                                    </div>
+                                    <div class="col pe-0">
+                                        <button type="button"
+                                                class="btn btn-outline-danger delete-button-height float-end"
+                                                (click)="removeParameter(i)">
+                                            <span class="fa fa-trash"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="w-100 ps-4">
+                                    <textarea class="form-control me-2 small-text" formControlName="value" rows="1"
+                                            placeholder="value"></textarea>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </ng-container>
+                </div>
             </div>
         </div>
-
-
-
-
-
-
-
-
     </div>
 </form>

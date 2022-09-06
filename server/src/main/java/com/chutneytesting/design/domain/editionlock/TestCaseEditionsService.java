@@ -4,6 +4,7 @@ import static com.chutneytesting.design.domain.editionlock.TestCaseEdition.byEdi
 import static com.chutneytesting.design.domain.editionlock.TestCaseEdition.byId;
 import static java.time.Instant.now;
 
+import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
@@ -12,9 +13,9 @@ import java.util.List;
 public class TestCaseEditionsService {
 
     private final TestCaseEditions testCaseEditions;
-    private final AggregatedRepository<? extends TestCase> testCaseRepository;
+    private final TestCaseRepositoryAggregator testCaseRepository;
 
-    public TestCaseEditionsService(TestCaseEditions testCaseEditions, AggregatedRepository<? extends TestCase> testCaseRepository) {
+    public TestCaseEditionsService(TestCaseEditions testCaseEditions, TestCaseRepositoryAggregator testCaseRepository) {
         this.testCaseEditions = testCaseEditions;
         this.testCaseRepository = testCaseRepository;
     }
