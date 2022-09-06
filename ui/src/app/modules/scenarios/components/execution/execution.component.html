@@ -88,7 +88,7 @@
                                               [step]="report"></chutney-scenario-step-report>
             </div>
         </ng-container>
-        <div *ngIf="!scenarioExecutionReport" class="border background-white">
+        <div *ngIf="!scenarioExecutionReport" class="border">
             <ng-container *ngIf="(scenarioComponent$ | async) as scenarioComponent">
                 <div *ngFor="let step of scenarioComponent.componentSteps">
                     <chutney-component-read [step]=step></chutney-component-read>
