@@ -31,6 +31,7 @@
         background-size: 100% 200%;
         transition: all 1s;
         color: var(--bs-white);
+        background-color: var(--bs-info);
         font-size: 30px;
 
         input[type='file'] {
@@ -45,7 +46,7 @@
 
         &:hover {
             background-position: 0 -100%;
-            color: var(--bs-teal-100);
+            color: var(--bs-primary);
         }
 
     }
