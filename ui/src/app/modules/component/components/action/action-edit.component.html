@@ -1,6 +1,6 @@
 <div [formGroup]="actionForm">
     <div class="edition-header row mt-0">
-        <div class="w-50">
+        <div class="w-50 mt-2">
             <div>
                 <div class="mt-4 pt-2">
                     <span class="fa fa-clone"></span>
@@ -265,13 +265,13 @@
             </fieldset>
         </div>
         <div [ngClass]="{'w-25 p-0 right-panel-minimize':rightPanelMinimize, 'w-50':!rightPanelMinimize}">
-            <button type="button" class="right-panel-minimize-btn btn btn-xs pt-0 ps-3 btn-default shadow-none border-start"
+            <button type="button" class="right-panel-minimize-btn btn btn-xs pt-0 ps-2 btn-default shadow-none border-start rounded-0"
                     [ngClass]="{'position-absolute end-0': rightPanelMinimize,'':!rightPanelMinimize}"
                     title="{{(rightPanelMinimize ? 'global.actions.show' : 'global.actions.hide') | translate}}"
                     (click)="rightPanelMinimize = !rightPanelMinimize;">
                 <span class="fa" [ngClass]="{'fa-angle-double-left':rightPanelMinimize, 'fa-angle-double-right':!rightPanelMinimize}"></span>
             </button>
-            <div class="right-panel-content ms-4" [ngClass]="{'d-none':rightPanelMinimize}">
+            <div class="right-panel-content" [ngClass]="{'d-none':rightPanelMinimize}">
                 <ng-container *ngIf="!executionResult">
                         <chutney-strategy-form [strategy]="editComponent.strategy" formControlName="strategy"></chutney-strategy-form>
                         <chutney-parameters-component [parentForm]="actionForm" [editableComponent]="editComponent"></chutney-parameters-component>
