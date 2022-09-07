@@ -1,0 +1,13 @@
+@import "~bootswatch/dist/darkly/variables";
+$nav-link-padding-x: 1rem;
+$link-color: $info;
+@import "~bootstrap/scss/bootstrap";
+@import "~bootswatch/dist/darkly/bootswatch";
+
+
+
+angular2-multiselect {
+    .cuppa-dropdown {
+        background-color: var(--bs-white);
+    }
+}

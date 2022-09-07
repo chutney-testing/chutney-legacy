@@ -44,6 +44,12 @@
     .app-header__mobile-menu {
       display: flex;
       order: 1;
+        .close-sidebar-btn__mobile {
+            font-size: xx-large;
+            color: var(--bs-white);
+            z-index: 10;
+        }
+
     }
 
     .app-header__menu {

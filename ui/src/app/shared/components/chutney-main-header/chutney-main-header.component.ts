@@ -4,7 +4,7 @@ import { User } from '@model';
 import { LoginService } from '@core/services';
 import { ThemeService } from '@core/theme/theme.service';
 import { Theme } from '@core/theme/theme';
-import { LayoutOptions } from '../../../layout-options.service';
+import { LayoutOptions } from '@core/layout/layout-options.service';
 
 @Component({
   selector: 'chutney-chutney-main-header',

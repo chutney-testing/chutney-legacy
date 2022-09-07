@@ -35,8 +35,9 @@
 }
 .close-sidebar-btn {
     cursor: pointer;
-    color: $white;
+    color: var(--bs-primary);
     font-size: larger;
+    padding-right: 1rem;
 }
 
 .app-header__menu,
@@ -45,9 +46,6 @@
   padding: 0 $layout-spacer-x;
   height: $app-header-height;
   align-items: center;
-    .close-sidebar-btn{
-        font-size: xx-large;
-    }
 }
 
 .hamburger-inner,
