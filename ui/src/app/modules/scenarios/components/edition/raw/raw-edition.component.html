@@ -1,10 +1,10 @@
 <div class="row edition-header">
     <div class="header-left col-md-4">
         <div class="title">
-            <input type="text" class="form-control" [ngModel]="testCase.title"/>
+            <input type="text" class="form-control" [ngModel]="testCase.title" (ngModelChange)="updateTitle($event)"/>
         </div>
         <div class="description">
-            <input type="text" class="form-control" [ngModel]="testCase.description"/>
+            <input type="text" class="form-control" [ngModel]="testCase.description" (ngModelChange)="updateDescription($event)"/>
         </div>
     </div>
     <div class="header-right triangle-left col-md-4">
