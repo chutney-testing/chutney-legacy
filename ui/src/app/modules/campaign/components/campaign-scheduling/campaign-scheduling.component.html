@@ -17,6 +17,7 @@
         <form [formGroup]="form" autocomplete="off" class="w-100">
             <div class="row row-cols-lg-auto g-3 my-1">
                 <div class="col-12" *ngIf="campaigns.length > 0">
+                    <label for="campaign" class="form-label">{{ 'campaigns.scheduling.campaign' | translate }}</label>
                     <select id="campaign" class="form-select" formControlName="campaign">
                         <option *ngFor="let c of campaigns" [ngValue]="c">{{c.title}}</option>
                     </select>
@@ -28,25 +29,25 @@
             </div>
             <div class="row row-cols-lg-auto g-3  my-1">
                 <div class="col-12">
+                    <label for="calendar" class="form-label">{{ 'campaigns.scheduling.schedulingDate' | translate }}</label>
                     <div class="input-group">
-                        <input class="form-control" placeholder="yyyy-mm-dd"
+                        <input id="calendar" class="form-control" placeholder="yyyy-mm-dd"
                             name="dp" formControlName="date" ngbDatepicker #d="ngbDatepicker">
                         <button class="btn btn-outline-secondary bi bi-calendar-event" (click)="d.toggle()"
                                 type="button"></button>
                     </div>
 
-                    <div class="error-message" *ngIf="submitted && f['date'].errors['required']">
+                    <div class="error-message" *ngIf="submitted && f['date'].errors">
                         {{ 'campaigns.scheduling.required.date' | translate }}
                     </div>
                 </div>
             </div>
             <div class="row row-cols-lg-auto g-3  my-1">
                 <div class="col-12">
-                    <div class="input-group">
-                        <ngb-timepicker formControlName="time"></ngb-timepicker>
-                    </div>
+                    <label for="time" class="form-label">{{ 'campaigns.scheduling.required.time' | translate }}</label>
+                    <ngb-timepicker id="time" formControlName="time"></ngb-timepicker>
 
-                    <div class="error-message" *ngIf="submitted && f['time'].errors['required']">
+                    <div class="error-message" *ngIf="submitted && f['time'].errors">
                         {{ 'campaigns.scheduling.required.time' | translate }}
                     </div>
                 </div>
@@ -54,6 +55,7 @@
 
             <div class="row row-cols-lg-auto g-3 my-1">
                 <div class="col-12">
+                    <label for="frequency" class="form-label">{{ 'campaigns.scheduling.frequency' | translate }}</label>
                     <select id="frequency" class="form-select col-8" formControlName="frequency">
                         <option *ngFor="let freq of frequencies" [ngValue]="freq">{{freq}}</option>
                     </select>

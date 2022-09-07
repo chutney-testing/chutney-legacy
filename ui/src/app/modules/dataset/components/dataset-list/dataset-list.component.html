@@ -75,7 +75,8 @@
             </table>
         </div>
         <div *ngIf="preview" class="w-25 border pt-2 ps-3 pe-2 ms-3" style="overflow-y: auto;overflow-x: auto;">
-            <button type="button" class="btn-close float-end" aria-label="Close" (click)="preview = null">
+            <button type="button" class="btn float-end border" aria-label="Close" (click)="preview = null">
+                <span class="fa fa-times"></span>
             </button>
             <span class="fw-bold"><u>{{preview.name}}</u></span>
             <div *ngFor="let uniqueValue of preview.uniqueValues">

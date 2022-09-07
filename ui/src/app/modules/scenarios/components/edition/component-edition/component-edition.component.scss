@@ -1,51 +1,20 @@
-@import "~bootstrap/scss/bootstrap";;
-
-.component-edition-content {
+.component-list {
     position: fixed;
-    top: 50px;
-    width: calc(100vw - 50px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 90vh;
+    table {
+        table-layout: fixed;
+    }
+    scrollbar-width: thin;
 }
 
-.edition-header {
-    height: 120px;
-
-    .header-left {
-        height: 120px;
-        background-color: $primary;
-        padding: 20px 20px 20px 0;
-    }
-
-    .header-right {
-        position: relative;
-        background-color: $primary;
-        height: 120px;
-        text-align: center;
-        padding: 10px 20px 10px 30px;
-        margin-left: auto;
-    }
-
-
-    .header-left {
-        a {
-            position: absolute;
-            top: 100px;
-            text-transform: lowercase;
-            font-family: Ubuntu;
-            font-size: 11px;
-            color: #4a4a4a;
-        }
-
-        .title {
-            margin-left: 40px;
-        }
-
-        .description {
-            margin-top: 10px;
-            margin-left: 40px;
-        }
-    }
+.component-right-content{
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100%;
+    width: 100%;
 }
-
 .edition-body {
     .drop-zone {
         background-color: lightgray;
@@ -54,103 +23,3 @@
     }
 }
 
-.component-list {
-    position: fixed;
-
-    table {
-        table-layout: fixed;
-    }
-
-    .table-sm {
-        font-size: 12px;
-    }
-}
-
-.testcase-edition {
-    position: absolute;
-    right: 0;
-    max-height: calc(100vh - (50px + 120px + 10px));
-    overflow-y: auto;
-}
-
-fieldset legend {
-    width: auto;
-    font-size: 1rem;
-}
-
-.legend-title {
-    cursor: default;
-    display: inline-block;
-    width: 150px;
-}
-
-:host ::ng-deep chutney-forms-editable-label {
-    .row {
-        margin: 0;
-    }
-
-    .input-lbl {
-        color: white;
-        font-size: 22px;
-        line-height: 22px;
-        font-weight: bold;
-    }
-
-    .overlay-icon {
-        font-size: 18px !important;
-        padding: 2px 5px 2px 5px !important;
-        margin-left: 10px;
-    }
-}
-
-:host ::ng-deep chutney-forms-editable-text-area {
-    .row {
-        margin: 0;
-    }
-
-    .input-lbl {
-        font-size: 13px;
-        font-weight: 300;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: normal;
-        letter-spacing: normal;
-        color: #333333;
-    }
-
-    .overlay-icon {
-        font-size: 18px !important;
-        padding: 2px 5px 2px 5px !important;
-        margin-left: 10px;
-    }
-}
-
-.pointer {
-    cursor: pointer;
-}
-
-.tag-input {
-    height: 50px;
-}
-
-.table-scroll {
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: calc(100vh - (50px /*menu*/ + (120px + 10px) /*header*/ + (1.5em + 0.75rem + 2px + 0.5rem + 2px) /*search*/ + 1rem /*inner table margin*/ + 0px));
-}
-
-.small-text {
-    font-size: 0.75em;
-}
-
-.delete-button-height {
-    height: 30px;
-}
-
-textarea.no-resize {
-    resize: none;
-}
-
-.cursor-default {
-    cursor: default;
-}

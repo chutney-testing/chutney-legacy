@@ -221,7 +221,7 @@
             "back": "Retour",
             "campaign" : "Campagne",
             "schedulingDate": "Date planifiée",
-            "frequency": "frequence",
+            "frequency": "Frequence",
             "required": {
                 "campaign": "Sélectionner une campagne",
                 "time": "Saisir un horaire",

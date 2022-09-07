@@ -224,7 +224,7 @@ public class ServerConfiguration implements AsyncConfigurer {
     }
 
     @Bean
-    TestCaseEditionsService testCaseEditionsService(TestCaseEditions testCaseEditions, AggregatedRepository<GwtTestCase> testCaseRepository) {
+    TestCaseEditionsService testCaseEditionsService(TestCaseEditions testCaseEditions, TestCaseRepositoryAggregator testCaseRepository) {
         return new TestCaseEditionsService(testCaseEditions, testCaseRepository);
     }
 

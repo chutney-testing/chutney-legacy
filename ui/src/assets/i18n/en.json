@@ -221,7 +221,7 @@
             "back": "Back",
             "campaign" : "Campaign",
             "schedulingDate": "Scheduling date",
-            "frequency": "frequency",
+            "frequency": "Frequency",
             "required": {
                 "campaign": "Campaign required",
                 "time": "Time required",
