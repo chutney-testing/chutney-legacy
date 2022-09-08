@@ -6,7 +6,6 @@ export class ValidationService {
 
     private urlRegex = new RegExp('^[a-z]+:\/\/[^:]+(:[0-9]+)?.*$');
     private environmentNameRegex = new RegExp('^[A-Z0-9_-]{3,20}$');
-    private patternRegex = new RegExp('^(?:(?:[\\w\\-#_= /:]*|[+]|[!])(\\(\\?<\\w+>.+\\)))+$');
 
     constructor() { }
 
@@ -19,10 +18,15 @@ export class ValidationService {
     }
 
     isValidEnvironmentName(text: string): boolean {
-      return this.environmentNameRegex.test(text);
+        return this.environmentNameRegex.test(text);
     }
 
     isValidPattern(text: string) {
-        return this.patternRegex.test(text);
+        try {
+            new RegExp(text);
+        } catch {
+            return false;
+        }
+        return true;
     }
 }
