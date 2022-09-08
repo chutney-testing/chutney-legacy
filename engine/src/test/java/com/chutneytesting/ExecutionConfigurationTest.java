@@ -7,11 +7,11 @@ import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitio
 import com.chutneytesting.engine.api.execution.StatusDto;
 import com.chutneytesting.engine.api.execution.StepExecutionReportDto;
 import com.chutneytesting.engine.api.execution.TestEngine;
-import com.chutneytesting.task.domain.TaskTemplate;
-import com.chutneytesting.task.domain.TaskTemplateParserV2;
-import com.chutneytesting.task.domain.TaskTemplateRegistry;
-import com.chutneytesting.task.spi.Task;
-import com.chutneytesting.task.spi.TaskExecutionResult;
+import com.chutneytesting.action.domain.ActionTemplate;
+import com.chutneytesting.action.domain.ActionTemplateParserV2;
+import com.chutneytesting.action.domain.ActionTemplateRegistry;
+import com.chutneytesting.action.spi.Action;
+import com.chutneytesting.action.spi.ActionExecutionResult;
 import io.reactivex.Observable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -94,10 +94,10 @@ public class ExecutionConfigurationTest {
     public void should_catch_exception_in_fault_barrier_engine() {
         //G
         final TestEngine testEngine = sut.embeddedTestEngine();
-        final TaskTemplateRegistry taskTemplateRegistry = sut.taskTemplateRegistry();
-        TaskTemplate taskTemplate = new TaskTemplateParserV2().parse(ErrorTask.class).result();
-        Map<String, TaskTemplate> taskTemplatesByType = (Map<String, TaskTemplate>) ReflectionTestUtils.getField(taskTemplateRegistry, "taskTemplatesByType");
-        taskTemplatesByType.put("error", taskTemplate);
+        final ActionTemplateRegistry actionTemplateRegistry = sut.actionTemplateRegistry();
+        ActionTemplate actionTemplate = new ActionTemplateParserV2().parse(ErrorAction.class).result();
+        Map<String, ActionTemplate> actionTemplatesByType = (Map<String, ActionTemplate>) ReflectionTestUtils.getField(actionTemplateRegistry, "actionTemplatesByType");
+        actionTemplatesByType.put("error", actionTemplate);
 
         StepDefinitionRequestDto stepDefinition = new StepDefinitionRequestDto(
             "throw runtime exception step",
@@ -116,7 +116,7 @@ public class ExecutionConfigurationTest {
 
         //T
         assertThat(result).hasFieldOrPropertyWithValue("status", StatusDto.FAILURE);
-        assertThat(result.errors.get(0)).isEqualTo("Task [error] failed: Should be catch by fault barrier");
+        assertThat(result.errors.get(0)).isEqualTo("Action [error] failed: Should be catch by fault barrier");
     }
 
     private StepDefinitionRequestDto createSucessStep() {
@@ -162,13 +162,13 @@ public class ExecutionConfigurationTest {
         );
     }
 
-    public static class ErrorTask implements Task {
+    public static class ErrorAction implements Action {
 
-        public ErrorTask() {
+        public ErrorAction() {
         }
 
         @Override
-        public TaskExecutionResult execute() {
+        public ActionExecutionResult execute() {
             throw new RuntimeException("Should be catch by fault barrier");
         }
     }

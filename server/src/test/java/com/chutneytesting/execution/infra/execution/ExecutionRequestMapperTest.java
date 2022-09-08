@@ -64,7 +64,7 @@ public class ExecutionRequestMapperTest {
     @Test
     public void should_map_composed_test_case_to_execution_request() {
         // Given
-        String expectedType = "task-id";
+        String expectedType = "action-id";
         String expectedTargetId = "target name";
         TargetExecutionDto expectedTarget = new TargetExecutionDto(expectedTargetId, "", emptyMap(), emptyList());
 

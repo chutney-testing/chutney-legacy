@@ -14,6 +14,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.chutneytesting.action.spi.ActionExecutionResult;
+import com.chutneytesting.action.spi.injectable.Target;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
 import com.chutneytesting.engine.domain.delegation.RemoteStepExecutor;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
@@ -32,8 +34,6 @@ import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReportBuilder;
 import com.chutneytesting.engine.infrastructure.delegation.HttpClient;
-import com.chutneytesting.task.spi.TaskExecutionResult;
-import com.chutneytesting.task.spi.injectable.Target;
 import io.reactivex.schedulers.Schedulers;
 import java.time.Instant;
 import java.util.HashMap;
@@ -96,13 +96,13 @@ public class StepTest {
     @Test
     public void should_have_output_of_step_store_in_step_result() {
         // Given
-        StepExecutor stepExecutor = new FakeStepExecutor(TaskExecutionResult.ok());
+        StepExecutor stepExecutor = new FakeStepExecutor(ActionExecutionResult.ok());
 
         Map<String, Object> outputs = new HashMap<>();
         outputs.put("aValue", "42");
         outputs.put("anotherValue", "43");
 
-        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, outputs, null, environment);
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "actionType", null, null, null, outputs, null, environment);
         Step step = new Step(dataEvaluator, fakeStepDefinition, stepExecutor, emptyList());
         ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
 
@@ -118,13 +118,13 @@ public class StepTest {
     @Test
     public void validations_should_inform_ok_ko_in_step_result() {
         // Given
-        StepExecutor stepExecutor = new FakeStepExecutor(TaskExecutionResult.ok());
+        StepExecutor stepExecutor = new FakeStepExecutor(ActionExecutionResult.ok());
 
         Map<String, Object> validations = new HashMap<>();
         validations.put("first assert", "${false}");
         validations.put("second assert", "${true}");
 
-        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, null, validations, environment);
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "actionType", null, null, null, null, validations, environment);
         Step step = new Step(dataEvaluator, fakeStepDefinition, stepExecutor, emptyList());
         ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
 
@@ -142,13 +142,13 @@ public class StepTest {
     @Test
     public void validations_should_set_failure_state() {
         // Given
-        StepExecutor stepExecutor = new FakeStepExecutor(TaskExecutionResult.ok());
+        StepExecutor stepExecutor = new FakeStepExecutor(ActionExecutionResult.ok());
 
         Map<String, Object> validations = new HashMap<>();
         validations.put("first assert", "${false}");
         validations.put("second assert", "${true}");
 
-        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, null, validations, environment);
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "actionType", null, null, null, null, validations, environment);
         Step step = new Step(dataEvaluator, fakeStepDefinition, stepExecutor, emptyList());
         ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
 
@@ -166,14 +166,14 @@ public class StepTest {
         existingResult.put("aValueToEvaluate", 500);
         existingResult.put("anotherValueToEvaluate", "{ new value }");
 
-        StepExecutor stepExecutor = new FakeStepExecutor(TaskExecutionResult.ok(existingResult));
+        StepExecutor stepExecutor = new FakeStepExecutor(ActionExecutionResult.ok(existingResult));
 
         /* These outputs should override existing values in scenario context */
         Map<String, Object> outputs = new HashMap<>();
         outputs.put("aValue", "${#aValueToEvaluate}");
         outputs.put("anotherValue", "${#anotherValueToEvaluate}");
 
-        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, outputs, null, environment);
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "actionType", null, null, null, outputs, null, environment);
         Step step = new Step(dataEvaluator, fakeStepDefinition, stepExecutor, emptyList());
         ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
 
@@ -193,8 +193,8 @@ public class StepTest {
 
         // Given
         Map<String, Object> fakeStepResults = new HashMap<>();
-        fakeStepResults.put("aResultKeySetByATask", 4242);
-        fakeStepResults.put("anotherResultKeySetByATask", "{ a value as string }");
+        fakeStepResults.put("aResultKeySetByAAction", 4242);
+        fakeStepResults.put("anotherResultKeySetByAAction", "{ a value as string }");
 
         //  This scenario will be executed by a faked delegate agent which returns stepResults
         HttpClient mockHttpClient = mock(HttpClient.class);
@@ -211,10 +211,10 @@ public class StepTest {
 
         // These outputs should override existing values in scenario context
         Map<String, Object> outputs = new HashMap<>();
-        outputs.put("anAliasForReuse", "${#aResultKeySetByATask}");
-        outputs.put("anotherAliasForReuse", "${#anotherResultKeySetByATask}");
+        outputs.put("anAliasForReuse", "${#aResultKeySetByAAction}");
+        outputs.put("anotherAliasForReuse", "${#anotherResultKeySetByAAction}");
 
-        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, outputs, null, environment);
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "actionType", null, null, null, outputs, null, environment);
         Step step = new Step(dataEvaluator, fakeStepDefinition, fakeRemoteStepExecutor, emptyList());
         ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
 
@@ -240,7 +240,7 @@ public class StepTest {
         inputs.put("targetName", "${#target.name}");
         inputs.put("currentEnvironment", "${#environment}");
 
-        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, inputs, null, null, null, environment);
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "actionType", null, inputs, null, null, null, environment);
         Step step = new Step(dataEvaluator, fakeStepDefinition, mock(StepExecutor.class), emptyList());
 
         // When
@@ -294,7 +294,7 @@ public class StepTest {
 
     @Test
     public void should_not_compute_substeps_status_if_current_status_is_failure() {
-        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, null, null, environment);
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "actionType", null, null, null, null, null, environment);
         Step step = new Step(dataEvaluator, fakeStepDefinition, mock(StepExecutor.class), Lists.list(mock(Step.class), mock(Step.class)));
         step.failure("...");
         assertThat(step.status()).isEqualTo(Status.FAILURE);
@@ -307,15 +307,15 @@ public class StepTest {
     }
 
     @Test
-    void should_not_run_validations_nor_evaluate_outputs_when_task_fails() {
+    void should_not_run_validations_nor_evaluate_outputs_when_action_fails() {
         // Given
-        StepExecutor stepExecutor = new FakeStepExecutor(TaskExecutionResult.ko());
+        StepExecutor stepExecutor = new FakeStepExecutor(ActionExecutionResult.ko());
 
         Map<String, Object> outputs = new HashMap<>();
         outputs.put("aValue", "${#validation_error}");
         outputs.put("anotherValue", "42");
 
-        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, outputs, null, environment);
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "actionType", null, null, null, outputs, null, environment);
         Step step = new Step(dataEvaluator, fakeStepDefinition, stepExecutor, emptyList());
         ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
 
@@ -329,7 +329,7 @@ public class StepTest {
     }
 
     @Test
-    void should_not_evaluate_registred_final_task_inputs() {
+    void should_not_evaluate_registred_final_action_inputs() {
         // Given
         String environment = "FakeTestEnvironment";
 
@@ -387,7 +387,7 @@ public class StepTest {
 
     @ParameterizedTest
     @MethodSource("executionResults")
-    void should_notify_execution_end_with_correct_state(TaskExecutionResult ter) {
+    void should_notify_execution_end_with_correct_state(ActionExecutionResult ter) {
         StepExecutor stepExecutor = new FakeStepExecutor(ter);
         Step step = buildEmptyStep(stepExecutor);
 
@@ -409,8 +409,8 @@ public class StepTest {
 
     private static Stream<Arguments> executionResults() {
         return Stream.of(
-            Arguments.of(TaskExecutionResult.ok()),
-            Arguments.of(TaskExecutionResult.ko())
+            Arguments.of(ActionExecutionResult.ok()),
+            Arguments.of(ActionExecutionResult.ko())
         );
     }
 
@@ -435,15 +435,15 @@ public class StepTest {
     }
 
     private Step buildEmptyStep(StepExecutor stepExecutor) {
-        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, null, null, null, environment);
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "actionType", null, null, null, null, null, environment);
         return new Step(dataEvaluator, fakeStepDefinition, stepExecutor, emptyList());
     }
 
     private static class FakeStepExecutor implements StepExecutor {
 
-        TaskExecutionResult executionResult;
+        ActionExecutionResult executionResult;
 
-        public FakeStepExecutor(TaskExecutionResult fakeResult) {
+        public FakeStepExecutor(ActionExecutionResult fakeResult) {
             this.executionResult = fakeResult;
         }
 
@@ -453,20 +453,20 @@ public class StepTest {
         }
 
         public void execute(StepContext stepContext, Step step) {
-            updateStepFromTaskResult(step, executionResult);
-            updateStepContextFromTaskResult(stepContext, executionResult);
+            updateStepFromActionResult(step, executionResult);
+            updateStepContextFromActionResult(stepContext, executionResult);
 
         }
 
-        private void updateStepContextFromTaskResult(StepContext stepContext, TaskExecutionResult executionResult) {
-            if (executionResult.status == TaskExecutionResult.Status.Success) {
+        private void updateStepContextFromActionResult(StepContext stepContext, ActionExecutionResult executionResult) {
+            if (executionResult.status == ActionExecutionResult.Status.Success) {
                 stepContext.addStepOutputs(executionResult.outputs);
                 stepContext.getScenarioContext().putAll(executionResult.outputs);
             }
         }
 
-        private void updateStepFromTaskResult(Step step, TaskExecutionResult executionResult) {
-            if (executionResult.status == TaskExecutionResult.Status.Success) {
+        private void updateStepFromActionResult(Step step, ActionExecutionResult executionResult) {
+            if (executionResult.status == ActionExecutionResult.Status.Success) {
                 step.success();
             } else {
                 step.failure();

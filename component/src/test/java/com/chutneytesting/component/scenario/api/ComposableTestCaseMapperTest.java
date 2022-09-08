@@ -37,7 +37,7 @@ public class ComposableTestCaseMapperTest {
                         ImmutableComposableStepDto.builder()
                             .id("30-10")
                             .name("First default functional ref")
-                            .task("{ \"type\": \"default-identifier\" }")
+                            .action("{ \"type\": \"default-identifier\" }")
                             .defaultParameters(Arrays.asList(
                                 ImmutableKeyValue.builder().key("key valued").value("value").build(),
                                 ImmutableKeyValue.builder().key("empty key").value("").build()))

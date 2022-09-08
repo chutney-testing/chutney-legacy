@@ -18,7 +18,7 @@ public class RawImplementationMapperTest {
         String paramRefString = "**param**";
         String implementation = new StringBuilder()
             .append("{")
-            .append("\"identifier\": \"task-id\"")
+            .append("\"identifier\": \"action-id\"")
             .append(",")
             .append("\"target\": \"\"")
             .append(",")

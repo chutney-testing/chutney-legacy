@@ -43,21 +43,21 @@ Feature: SQL Task test
                             {
                                 "sentence":"Create users table",
                                 "implementation":{
-                                    "task":"{\n type: sql \n target: test_sql \n inputs: {\n statements: [\n CREATE TABLE users ( id INTEGER PRIMARY KEY, name VARCHAR(30), email VARCHAR(50) ) \n] \n}\n}"
+                                    "action":"{\n type: sql \n target: test_sql \n inputs: {\n statements: [\n CREATE TABLE users ( id INTEGER PRIMARY KEY, name VARCHAR(30), email VARCHAR(50) ) \n] \n}\n}"
                                 }
                             }
                         ],
                         "when":{
                             "sentence":"Insert users",
                             "implementation":{
-                                "task":"{\n type: sql \n target: test_sql \n inputs: {\n statements: [\n INSERT INTO users VALUES (1, 'laitue', 'laitue@fake.com') \n INSERT INTO users VALUES (2, 'carotte', 'kakarot@fake.db') \n] \n} \n}"
+                                "action":"{\n type: sql \n target: test_sql \n inputs: {\n statements: [\n INSERT INTO users VALUES (1, 'laitue', 'laitue@fake.com') \n INSERT INTO users VALUES (2, 'carotte', 'kakarot@fake.db') \n] \n} \n}"
                             }
                         },
                         "thens":[
                             {
                                 "sentence":"Select all users",
                                 "implementation":{
-                                    "task":"{\n type: sql \n target: test_sql \n inputs: {\n statements: [\n SELECT * FROM users \n] \n} \n}"
+                                    "action":"{\n type: sql \n target: test_sql \n inputs: {\n statements: [\n SELECT * FROM users \n] \n} \n}"
                                 }
                             }
                         ]
@@ -124,7 +124,7 @@ Feature: SQL Task test
                         "when":{
                             "sentence":"select unknown table",
                             "implementation":{
-                                "task":"{\n type: sql \n target: test_sql \n inputs: {\n statements: [\n SELECT * FROM unknownTable \n] \n} \n}"
+                                "action":"{\n type: sql \n target: test_sql \n inputs: {\n statements: [\n SELECT * FROM unknownTable \n] \n} \n}"
                             }
                         },
                         "thens":[]

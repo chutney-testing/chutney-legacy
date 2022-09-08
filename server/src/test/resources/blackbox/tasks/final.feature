@@ -1,8 +1,8 @@
 # language: en
 
-Feature: Final task for registering final actions for a testcase
+Feature: Final action for registering final actions for a testcase
 
-    Scenario: Register simple success task
+    Scenario: Register simple success action
         Given A simple scenario is saved
             Do http-post Post scenario to Chutney instance
                 On CHUTNEY_LOCAL
@@ -12,12 +12,12 @@ Feature: Final task for registering final actions for a testcase
                 With body
                 """
                 {
-                    "title":"Final task success",
+                    "title":"Final action success",
                     "scenario":{
                         "when":{
-                            "sentence":"Final task is registered",
+                            "sentence":"Final action is registered",
                             "implementation":{
-                                "task":"{\n type: final \n inputs: {\n type: success \n name: Testing final task... \n} \n}"
+                                "action":"{\n type: final \n inputs: {\n type: success \n name: Testing final action... \n} \n}"
                             }
                         },
                         "thens": []
@@ -48,11 +48,11 @@ Feature: Final task for registering final actions for a testcase
             Do json-assert
                 With document ${#report}
                 With expected
-                | $.report.steps[1].steps[0].name | Testing final task... |
+                | $.report.steps[1].steps[0].name | Testing final action... |
                 | $.report.steps[1].steps[0].type | success |
                 | $.report.steps[1].steps[1] | $isNull |
 
-    Scenario: Register multiple tasks with one complex, i.e. with inputs and strategy
+    Scenario: Register multiple actions with one complex, i.e. with inputs and strategy
         Given A complex scenario is saved
             Do http-post Post scenario to Chutney instance
                 On CHUTNEY_LOCAL
@@ -62,28 +62,28 @@ Feature: Final task for registering final actions for a testcase
                 With body
                 """
                 {
-                    "title":"Final task success",
+                    "title":"Final action success",
                     "scenario":{
                         "when":{
-                            "sentence":"Final tasks are registered",
+                            "sentence":"Final actions are registered",
                             "subSteps":[
                                 {
                                     "sentence":"Register an assertion",
                                     "implementation":{
-                                        "task":"{\n type: final \n inputs: {\n type: compare \n name: An assertion \n inputs: {\n actual: aValue \n expected: aValue \n mode: equals \n} \n} \n}"
+                                        "action":"{\n type: final \n inputs: {\n type: compare \n name: An assertion \n inputs: {\n actual: aValue \n expected: aValue \n mode: equals \n} \n} \n}"
                                     }
                                 },
                                 {
                                     "sentence":"Register a fail with retry",
                                     "implementation":{
-                                        "task":"{\n type: final \n inputs: {\n type: fail \n name: I'm no good \n strategy-type: retry-with-timeout \n strategy-properties: {\n timeOut: 1500 ms \n retryDelay: 1 s \n} \n} \n}"
+                                        "action":"{\n type: final \n inputs: {\n type: fail \n name: I'm no good \n strategy-type: retry-with-timeout \n strategy-properties: {\n timeOut: 1500 ms \n retryDelay: 1 s \n} \n} \n}"
                                     }
                                 },
                                 {
                                     "sentence":"Register variable in context",
                                     "implementation":{
                                         "target": "CHUTNEY_LOCAL",
-                                        "task":"{\n type: final \n inputs: {\n type: context-put \n name: Put myKey \n inputs: {\n entries: {\n myKey: myValue \n} \n} validations: {\n putOk: \${#myKey == 'myValue'} \n} \n} \n}"
+                                        "action":"{\n type: final \n inputs: {\n type: context-put \n name: Put myKey \n inputs: {\n entries: {\n myKey: myValue \n} \n} validations: {\n putOk: \${#myKey == 'myValue'} \n} \n} \n}"
                                     }
                                 }
                             ]
@@ -106,7 +106,7 @@ Feature: Final task for registering final actions for a testcase
                 With actual ${#json(#report, "$.report.status")}
                 With expected FAILURE
                 With mode equals
-        And The report contains the executions (in declaration reverse order) of all the final tasks action
+        And The report contains the executions (in declaration reverse order) of all the final actions action
             Do json-assert
                 With document ${#report}
                 With expected
@@ -118,7 +118,7 @@ Feature: Final task for registering final actions for a testcase
                 | $.report.steps[1].steps[2].type | context-put |
                 | $.report.steps[1].steps[2].status | SUCCESS |
 
-    Scenario: Register final task with validations on outputs
+    Scenario: Register final action with validations on outputs
         Given a target
             Do http-post Create environment and target
                 On CHUTNEY_LOCAL
@@ -155,13 +155,13 @@ Feature: Final task for registering final actions for a testcase
                 With body
                 """
                 {
-                    "title":"Final task success",
+                    "title":"Final action success",
                     "scenario":{
                         "when":{
-                            "sentence":"Final task are registered",
+                            "sentence":"Final action are registered",
                             "subSteps":[
                                 {
-                                    "sentence":"Register task providing outputs",
+                                    "sentence":"Register action providing outputs",
                                     "implementation":{
                                         "target": "CHUTNEY_LOCAL",
                                         "task":"{\n type: final \n target: test_http \n inputs: {\n type: http-get \n name: Get user \n inputs: {\n uri: /api/v1/user \n timeout: 5 sec \n} \n validations: { \n http_OK: \${ #status == 200 } \n} \n} \n}"
@@ -182,7 +182,7 @@ Feature: Final task for registering final actions for a testcase
                 With timeout 5 s
                 Take report ${#body}
                 Validate httpStatusCode_200 ${#status == 200}
-        Then The report contains the executions (in declaration reverse order) of all the final tasks action
+        Then The report contains the executions (in declaration reverse order) of all the final actions action
             Do json-assert
                 With document ${#report}
                 With expected

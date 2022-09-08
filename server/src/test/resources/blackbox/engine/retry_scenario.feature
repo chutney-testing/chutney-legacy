@@ -16,7 +16,7 @@ Scenario: Retry should stop after success assertion
                     "when":{
                         "sentence":"Set stop date",
                         "implementation":{
-                            "task":"{\n type: context-put \n inputs: {\n entries: {\n dateTimeFormat: ss \n secondsPlus5: \${#dateFormatter(#dateTimeFormat).format(#now().plusSeconds(5))} \n} \n} \n}"
+                            "action":"{\n type: context-put \n inputs: {\n entries: {\n dateTimeFormat: ss \n secondsPlus5: \${#dateFormatter(#dateTimeFormat).format(#now().plusSeconds(5))} \n} \n} \n}"
                         }
                     },
                     "thens":[
@@ -33,13 +33,13 @@ Scenario: Retry should stop after success assertion
                                 {
                                     "sentence":"Set current date",
                                     "implementation":{
-                                        "task":"{\n type: context-put \n inputs: {\n entries: {\n currentSeconds: \${#dateFormatter(#dateTimeFormat).format(#now())} \n} \n} \n}"
+                                        "action":"{\n type: context-put \n inputs: {\n entries: {\n currentSeconds: \${#dateFormatter(#dateTimeFormat).format(#now())} \n} \n} \n}"
                                     }
                                 },
                                 {
                                     "sentence":"Check current date get to stop date",
                                     "implementation":{
-                                        "task":"{\n type: string-assert \n inputs: {\n document: \${#secondsPlus5} \n expected: \${T(java.lang.String).format('%02d', new Integer(#currentSeconds) + 1)} \n} \n}"
+                                        "action":"{\n type: string-assert \n inputs: {\n document: \${#secondsPlus5} \n expected: \${T(java.lang.String).format('%02d', new Integer(#currentSeconds) + 1)} \n} \n}"
                                     }
                                 }
                             ]

@@ -24,19 +24,19 @@ public abstract class ExecutableGlacioStepParser implements IParseExecutableStep
         this.validationsParser = validationsParser;
     }
 
-    public abstract String parseTaskType(Step step);
+    public abstract String parseActionType(Step step);
 
     @Override
     public final StepDefinitionDto mapToStepDefinition(ParsingContext context, Step step, StepDefinitionDto.StepStrategyDefinitionDto stepStrategyDefinition) {
         return new StepDefinitionDto(
             parseStepName(step),
             parseStepTarget(context, step),
-            parseTaskType(step),
+            parseActionType(step),
             stepStrategyDefinition,
-            parseTaskInputs(context, step),
+            parseActionInputs(context, step),
             emptyList(),
-            parseTaskOutputs(context, step),
-            parseTaskValidations(context, step)
+            parseActionOutputs(context, step),
+            parseActionValidations(context, step)
         );
     }
 
@@ -44,15 +44,15 @@ public abstract class ExecutableGlacioStepParser implements IParseExecutableStep
         return step.getText();
     }
 
-    private Map<String, Object> parseTaskInputs(ParsingContext context, Step step) {
+    private Map<String, Object> parseActionInputs(ParsingContext context, Step step) {
         return inputsParser.parseGlacioStep(context, step);
     }
 
-    private Map<String, Object> parseTaskOutputs(ParsingContext context, Step step) {
+    private Map<String, Object> parseActionOutputs(ParsingContext context, Step step) {
         return outputsParser.parseGlacioStep(context, step);
     }
 
-    private Map<String, Object> parseTaskValidations(ParsingContext context, Step step) {
+    private Map<String, Object> parseActionValidations(ParsingContext context, Step step) {
         return validationsParser.parseGlacioStep(context, step);
     }
 

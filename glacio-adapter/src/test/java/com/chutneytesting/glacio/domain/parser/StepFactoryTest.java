@@ -53,11 +53,11 @@ public class StepFactoryTest {
     public void should_qualify_step_as_executable_when_start_with_given_keywords(String executableKeyword) {
         // Given
         boolean executable = ENGLISH_EXECUTABLE_STEP_KEYWORD.contains(executableKeyword);
-        String stepTextWithTaskHint = executableKeyword + " a fantastic thing";
+        String stepTextWithActionHint = executableKeyword + " a fantastic thing";
 
         // When / Then
         assertThat(
-            sut.isExecutableStep(ENGLISH, buildSimpleStepWithText(stepTextWithTaskHint))
+            sut.isExecutableStep(ENGLISH, buildSimpleStepWithText(stepTextWithActionHint))
         ).isEqualTo(executable);
     }
 

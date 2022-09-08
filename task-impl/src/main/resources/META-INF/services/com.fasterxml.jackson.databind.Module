@@ -1,4 +1,4 @@
-com.chutneytesting.task.selenium.jackson.SeleniumModule
-com.chutneytesting.task.http.jackson.WiremockModule
-com.chutneytesting.task.jms.jackson.ActiveMQModule
-com.chutneytesting.task.kafka.jackson.KafkaModule
+com.chutneytesting.action.selenium.jackson.SeleniumModule
+com.chutneytesting.action.http.jackson.WiremockModule
+com.chutneytesting.action.jms.jackson.ActiveMQModule
+com.chutneytesting.action.kafka.jackson.KafkaModule

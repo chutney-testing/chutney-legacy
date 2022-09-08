@@ -20,7 +20,7 @@ import com.chutneytesting.engine.domain.execution.event.EndStepExecutionEvent;
 import com.chutneytesting.engine.domain.execution.event.PauseStepExecutionEvent;
 import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
-import com.chutneytesting.task.spi.injectable.Target;
+import com.chutneytesting.action.spi.injectable.Target;
 import com.chutneytesting.tools.Try;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

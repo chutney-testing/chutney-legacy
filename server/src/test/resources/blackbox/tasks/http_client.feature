@@ -37,14 +37,14 @@ Feature: HTTP Task test
                         "when":{
                             "sentence":"Make failed <verb> request",
                             "implementation":{
-                                "task":"{\n type: http-${'<verb>'.toLowerCase()} \n target: test_http \n inputs: {\n <task_inputs> \n timeout: 500 ms \n} \n}"
+                                "action":"{\n type: http-${'<verb>'.toLowerCase()} \n target: test_http \n inputs: {\n <action_inputs> \n timeout: 500 ms \n} \n}"
                             }
                         },
                         "thens":[
                             {
                                 "sentence":"Assert http status",
                                 "implementation":{
-                                    "task":"{\n type: compare \n inputs: {\n actual: \${#status} \n expected: 200 \n mode: not equals \n} \n}"
+                                    "action":"{\n type: compare \n inputs: {\n actual: \${#status} \n expected: 200 \n mode: not equals \n} \n}"
                                 }
                             }
                         ]
@@ -67,7 +67,7 @@ Feature: HTTP Task test
                 With mode equals
 
         Examples:
-            | verb    | task_inputs                       |
+            | verb    | action_inputs                       |
             | GET     | uri: /notused                     |
             | DELETE  | uri: /notused                     |
             | POST    | uri: /notused \n body: cool buddy |
@@ -119,14 +119,14 @@ Feature: HTTP Task test
                         "when":{
                             "sentence":"Make <verb> request",
                             "implementation":{
-                                "task":"{\n type: http-${'<verb>'.toLowerCase()} \n target: test_http \n inputs: {\n <task_inputs> \n timeout: 5000 ms \n} \n}"
+                                "action":"{\n type: http-${'<verb>'.toLowerCase()} \n target: test_http \n inputs: {\n <action_inputs> \n timeout: 5000 ms \n} \n}"
                             }
                         },
                         "thens":[
                             {
                                 "sentence":"Assert http status",
                                 "implementation":{
-                                    "task":"{\n type: compare \n inputs: {\n actual: \${#status} \n expected: \"200\" \n mode: equals \n} \n}"
+                                    "action":"{\n type: compare \n inputs: {\n actual: \${#status} \n expected: \"200\" \n mode: equals \n} \n}"
                                 }
                             }
                         ]
@@ -149,7 +149,7 @@ Feature: HTTP Task test
                 With mode equals
 
         Examples:
-            | verb    | task_inputs                         |
+            | verb    | action_inputs                         |
             | GET     | uri: /mock/get                      |
             | DELETE  | uri: /mock/delete                   |
             | POST    | uri: /mock/post \n body: cool buddy |

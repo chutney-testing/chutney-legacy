@@ -1,6 +1,6 @@
 package com.chutneytesting.engine.domain.execution.evaluation;
 
-import com.chutneytesting.task.spi.SpelFunction;
+import com.chutneytesting.action.spi.SpelFunction;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;

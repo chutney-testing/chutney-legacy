@@ -42,12 +42,12 @@ public class GlacioContextPutParserTest {
     }
 
     @Test
-    public void should_parse_only_context_put_task() {
-        String sleepTaskType = "context-put";
+    public void should_parse_only_context_put_action() {
+        String sleepActionType = "context-put";
         loopOverRandomString(10, 30, 30, (randomString) ->
             assertThat(
-                sut.parseTaskType(buildSimpleStepWithText(randomString)))
-                .isEqualTo(sleepTaskType)
+                sut.parseActionType(buildSimpleStepWithText(randomString)))
+                .isEqualTo(sleepActionType)
         );
     }
 

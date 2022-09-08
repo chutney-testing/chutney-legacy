@@ -3,7 +3,7 @@ package com.chutneytesting.glacio.domain.parser.strategy;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.engine.api.execution.StepDefinitionDto;
-import com.chutneytesting.task.spi.time.DurationUnit;
+import com.chutneytesting.action.spi.time.DurationUnit;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;

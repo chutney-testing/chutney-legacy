@@ -4,7 +4,7 @@ import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.engine.scenario.ScenarioContext;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.report.Status;
-import com.chutneytesting.task.spi.time.Duration;
+import com.chutneytesting.action.spi.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -128,7 +128,7 @@ public class RetryWithTimeOutStrategy implements StepExecutionStrategy {
  * Specific:
  * - https://crondev.wordpress.com/2017/01/23/timeouts-with-java-8-completablefuture-youre-probably-doing-it-wrong/
  * - http://www.nurkiewicz.com/2015/03/completablefuture-cant-be-interrupted.html
- * - https://stackoverflow.com/questions/11751329/java-execute-task-with-a-number-of-retries-and-a-timeout/
+ * - https://stackoverflow.com/questions/11751329/java-execute-action-with-a-number-of-retries-and-a-timeout/
  *
  * Implementation:
  * - https://github.com/jhalterman/failsafe

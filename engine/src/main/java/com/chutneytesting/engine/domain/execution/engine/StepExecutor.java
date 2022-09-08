@@ -3,7 +3,7 @@ package com.chutneytesting.engine.domain.execution.engine;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.engine.step.StepContext;
-import com.chutneytesting.task.spi.injectable.Target;
+import com.chutneytesting.action.spi.injectable.Target;
 
 public interface StepExecutor {
 

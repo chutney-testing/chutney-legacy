@@ -10,15 +10,15 @@ import com.chutneytesting.engine.domain.execution.engine.parameterResolver.Input
 import com.chutneytesting.engine.domain.execution.engine.parameterResolver.TypedValueParameterResolver;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.engine.step.StepContext;
-import com.chutneytesting.task.domain.TaskTemplate;
-import com.chutneytesting.task.domain.TaskTemplateRegistry;
-import com.chutneytesting.task.domain.parameter.ParameterResolver;
-import com.chutneytesting.task.spi.Task;
-import com.chutneytesting.task.spi.TaskExecutionResult;
-import com.chutneytesting.task.spi.injectable.FinallyActionRegistry;
-import com.chutneytesting.task.spi.injectable.Logger;
-import com.chutneytesting.task.spi.injectable.Target;
-import com.chutneytesting.task.spi.injectable.TasksConfiguration;
+import com.chutneytesting.action.domain.ActionTemplate;
+import com.chutneytesting.action.domain.ActionTemplateRegistry;
+import com.chutneytesting.action.domain.parameter.ParameterResolver;
+import com.chutneytesting.action.spi.Action;
+import com.chutneytesting.action.spi.ActionExecutionResult;
+import com.chutneytesting.action.spi.injectable.FinallyActionRegistry;
+import com.chutneytesting.action.spi.injectable.Logger;
+import com.chutneytesting.action.spi.injectable.Target;
+import com.chutneytesting.action.spi.injectable.ActionsConfiguration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,53 +28,53 @@ public class DefaultStepExecutor implements StepExecutor {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(DefaultStepExecutor.class);
 
-    private final TaskTemplateRegistry taskTemplateRegistry;
+    private final ActionTemplateRegistry actionTemplateRegistry;
 
-    public DefaultStepExecutor(TaskTemplateRegistry taskTemplateRegistry) {
-        this.taskTemplateRegistry = taskTemplateRegistry;
+    public DefaultStepExecutor(ActionTemplateRegistry actionTemplateRegistry) {
+        this.actionTemplateRegistry = actionTemplateRegistry;
     }
 
     @Override
     public void execute(ScenarioExecution scenarioExecution, StepContext stepContext, Target targetServer, Step step) {
         String type = step.type();
 
-        Optional<TaskTemplate> matchedTask = taskTemplateRegistry.getByIdentifier(type);
+        Optional<ActionTemplate> matchedAction = actionTemplateRegistry.getByIdentifier(type);
 
-        if (matchedTask.isPresent()) {
+        if (matchedAction.isPresent()) {
             List<ParameterResolver> parameterResolvers = gatherResolvers(scenarioExecution, stepContext, targetServer, step);
 
-            TaskExecutionResult executionResult;
+            ActionExecutionResult executionResult;
             try {
-                Task task = matchedTask.get().create(parameterResolvers);
-                List<String> errors = task.validateInputs();
+                Action action = matchedAction.get().create(parameterResolvers);
+                List<String> errors = action.validateInputs();
                 if (errors.isEmpty()) {
-                    executionResult = task.execute();
-                    updateStepFromTaskResult(step, executionResult);
-                    updateStepContextFromTaskResult(stepContext, executionResult);
+                    executionResult = action.execute();
+                    updateStepFromActionResult(step, executionResult);
+                    updateStepContextFromActionResult(stepContext, executionResult);
                 } else {
                     step.failure(errors.toArray(new String[0]));
                 }
             } catch (Exception e) {
                 LOGGER.error("Cannot execute step: ", e);
-                step.failure("Task [" + type + "] failed: " + ofNullable(e.getMessage()).orElse(e.toString()));
+                step.failure("Action [" + type + "] failed: " + ofNullable(e.getMessage()).orElse(e.toString()));
             }
         } else if (type.isEmpty()) {
             step.success();
         } else {
-            step.failure("Task [" + type + "] not found");
+            step.failure("Action [" + type + "] not found");
         }
 
     }
 
-    private void updateStepContextFromTaskResult(StepContext stepContext, TaskExecutionResult executionResult) {
-        if (executionResult.status == TaskExecutionResult.Status.Success) {
+    private void updateStepContextFromActionResult(StepContext stepContext, ActionExecutionResult executionResult) {
+        if (executionResult.status == ActionExecutionResult.Status.Success) {
             stepContext.addStepOutputs(executionResult.outputs);
             stepContext.getScenarioContext().putAll(executionResult.outputs);
         }
     }
 
-    private void updateStepFromTaskResult(Step step, TaskExecutionResult executionResult) {
-        if (executionResult.status == TaskExecutionResult.Status.Success) {
+    private void updateStepFromActionResult(Step step, ActionExecutionResult executionResult) {
+        if (executionResult.status == ActionExecutionResult.Status.Success) {
             step.success();
         } else {
             step.failure();
@@ -88,7 +88,7 @@ public class DefaultStepExecutor implements StepExecutor {
         parameterResolvers.add(new TypedValueParameterResolver<>(Logger.class, new DelegateLogger(step::addInformation, step::failure)));
         parameterResolvers.add(new TypedValueParameterResolver<>(StepDefinition.class, step.definition()));
         parameterResolvers.add(new TypedValueParameterResolver<>(FinallyActionRegistry.class, scenarioExecution::registerFinallyAction));
-        parameterResolvers.add(new TypedValueParameterResolver<>(TasksConfiguration.class, scenarioExecution.getTasksConfiguration()));
+        parameterResolvers.add(new TypedValueParameterResolver<>(ActionsConfiguration.class, scenarioExecution.getActionsConfiguration()));
         parameterResolvers.add(new ContextParameterResolver(stepContext.getScenarioContext()));
         return parameterResolvers;
     }

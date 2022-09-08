@@ -17,7 +17,7 @@ Scenario: Step of a type self registering as Finally Action does not create an i
                     "when":{
                         "sentence":"Do something to register finally action",
                         "implementation":{
-                            "task":"{\n type: self-registering-finally \n }"
+                            "action":"{\n type: self-registering-finally \n }"
                         }
                     },
                     "thens":[]

@@ -1,6 +1,6 @@
 # language: en
 
-Feature: Execution success task
+Feature: Execution success action
 
     Scenario: Task instantiation and execution of a success scenario
         Given this scenario is saved
@@ -17,7 +17,7 @@ Feature: Execution success task
                         "when":{
                             "sentence":"Success scenario",
                             "implementation":{
-                                "task":"{\n type: success \n }"
+                                "action":"{\n type: success \n }"
                             }
                         },
                         "thens":[]
@@ -53,7 +53,7 @@ Feature: Execution success task
                         "when":{
                             "sentence":"Step fail",
                             "implementation":{
-                                "task":"{\n type: fail \n }"
+                                "action":"{\n type: fail \n }"
                             }
                         },
                         "thens":[]
@@ -89,7 +89,7 @@ Feature: Execution success task
                         "when":{
                             "sentence":"Step sleep",
                             "implementation":{
-                                "task":"{\n type: sleep \n inputs: {\n duration: 20 ms \n} \n}"
+                                "action":"{\n type: sleep \n inputs: {\n duration: 20 ms \n} \n}"
                             }
                         },
                         "thens":[]
@@ -125,13 +125,13 @@ Feature: Execution success task
                         "when":{
                             "sentence":"Put value in context",
                             "implementation":{
-                                "task":"{\n type: context-put \n inputs: {\n entries: {\n \"test key\": valeur \n} \n} \n}"
+                                "action":"{\n type: context-put \n inputs: {\n entries: {\n \"test key\": valeur \n} \n} \n}"
                             }
                         },
                         "thens":[
                             {
                                 "implementation":{
-                                    "task":"{\n type: debug \n}"
+                                    "action":"{\n type: debug \n}"
                                 }
                             }
                         ]

@@ -18,14 +18,14 @@ import com.chutneytesting.engine.domain.execution.strategies.StepExecutionStrate
 import com.chutneytesting.engine.domain.execution.strategies.StepExecutionStrategy;
 import com.chutneytesting.engine.domain.report.Reporter;
 import com.chutneytesting.engine.infrastructure.delegation.HttpClient;
-import com.chutneytesting.task.domain.DefaultTaskTemplateRegistry;
-import com.chutneytesting.task.domain.TaskTemplateLoader;
-import com.chutneytesting.task.domain.TaskTemplateLoaders;
-import com.chutneytesting.task.domain.TaskTemplateParserV2;
-import com.chutneytesting.task.domain.TaskTemplateRegistry;
-import com.chutneytesting.task.infra.DefaultTaskTemplateLoader;
-import com.chutneytesting.task.spi.Task;
-import com.chutneytesting.task.spi.injectable.TasksConfiguration;
+import com.chutneytesting.action.domain.DefaultActionTemplateRegistry;
+import com.chutneytesting.action.domain.ActionTemplateLoader;
+import com.chutneytesting.action.domain.ActionTemplateLoaders;
+import com.chutneytesting.action.domain.ActionTemplateParserV2;
+import com.chutneytesting.action.domain.ActionTemplateRegistry;
+import com.chutneytesting.action.infra.DefaultActionTemplateLoader;
+import com.chutneytesting.action.spi.Action;
+import com.chutneytesting.action.spi.injectable.ActionsConfiguration;
 import com.chutneytesting.tools.ThrowingFunction;
 import com.chutneytesting.tools.loader.ExtensionLoaders;
 import java.lang.reflect.InvocationTargetException;
@@ -42,7 +42,7 @@ public class ExecutionConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionConfiguration.class);
 
-    private final TaskTemplateRegistry taskTemplateRegistry;
+    private final ActionTemplateRegistry actionTemplateRegistry;
     private final Reporter reporter;
     private final ExecutionEngine executionEngine;
     private final TestEngine embeddedTestEngine;
@@ -56,21 +56,21 @@ public class ExecutionConfiguration {
         this(5L, Executors.newFixedThreadPool(10), emptyMap(), null, null);
     }
 
-    public ExecutionConfiguration(Long reporterTTL, Executor taskExecutor, Map<String,String> tasksConfiguration, String user, String password) {
+    public ExecutionConfiguration(Long reporterTTL, Executor actionExecutor, Map<String,String> actionsConfiguration, String user, String password) {
         this.reporterTTL = reporterTTL;
 
-        TaskTemplateLoader taskTemplateLoaderV2 = createTaskTemplateLoaderV2();
+        ActionTemplateLoader actionTemplateLoaderV2 = createActionTemplateLoaderV2();
         spelFunctions = createSpelFunctions();
         stepExecutionStrategies = createStepExecutionStrategies();
 
-        taskTemplateRegistry = new DefaultTaskTemplateRegistry(new TaskTemplateLoaders(singletonList(taskTemplateLoaderV2)));
+        actionTemplateRegistry = new DefaultActionTemplateRegistry(new ActionTemplateLoaders(singletonList(actionTemplateLoaderV2)));
         reporter = createReporter();
-        executionEngine = createExecutionEngine(taskExecutor, user, password);
-        embeddedTestEngine = createEmbeddedTestEngine(new EngineTasksConfiguration(tasksConfiguration));
+        executionEngine = createExecutionEngine(actionExecutor, user, password);
+        embeddedTestEngine = createEmbeddedTestEngine(new EngineActionsConfiguration(actionsConfiguration));
     }
 
-    public TaskTemplateRegistry taskTemplateRegistry() {
-        return taskTemplateRegistry;
+    public ActionTemplateRegistry actionTemplateRegistry() {
+        return actionTemplateRegistry;
     }
 
     public TestEngine embeddedTestEngine() {
@@ -89,11 +89,11 @@ public class ExecutionConfiguration {
         return executionEngine;
     }
 
-    private TaskTemplateLoader createTaskTemplateLoaderV2() {
-        return new DefaultTaskTemplateLoader<>(
-            "chutney.tasks",
-            Task.class,
-            new TaskTemplateParserV2());
+    private ActionTemplateLoader createActionTemplateLoaderV2() {
+        return new DefaultActionTemplateLoader<>(
+            "chutney.actions",
+            Action.class,
+            new ActionTemplateParserV2());
     }
 
     private SpelFunctions createSpelFunctions() {
@@ -119,17 +119,17 @@ public class ExecutionConfiguration {
         return new Reporter(reporterTTL);
     }
 
-    private ExecutionEngine createExecutionEngine(Executor taskExecutor, String user, String password) {
+    private ExecutionEngine createExecutionEngine(Executor actionExecutor, String user, String password) {
         return new DefaultExecutionEngine(
             new StepDataEvaluator(spelFunctions),
             new StepExecutionStrategies(stepExecutionStrategies),
-            new DelegationService(new DefaultStepExecutor(taskTemplateRegistry), new HttpClient(user, password)),
+            new DelegationService(new DefaultStepExecutor(actionTemplateRegistry), new HttpClient(user, password)),
             reporter,
-            taskExecutor);
+            actionExecutor);
     }
 
-    private TestEngine createEmbeddedTestEngine(TasksConfiguration tasksConfiguration) {
-        return new EmbeddedTestEngine(executionEngine, reporter, new ExecutionManager(), tasksConfiguration);
+    private TestEngine createEmbeddedTestEngine(ActionsConfiguration actionsConfiguration) {
+        return new EmbeddedTestEngine(executionEngine, reporter, new ExecutionManager(), actionsConfiguration);
     }
 
     @SuppressWarnings("unchecked")

@@ -16,14 +16,14 @@ Feature: Execution with jsonPath function
                         "when":{
                             "sentence":"Put JSON value in context",
                             "implementation":{
-                                "task":"{\n type: context-put \n inputs: {\n entries: {\n content: {\n field1: value1 \n} \n} \n} \n}"
+                                "action":"{\n type: context-put \n inputs: {\n entries: {\n content: {\n field1: value1 \n} \n} \n} \n}"
                             }
                         },
                         "thens":[
                             {
                                 "sentence":"Put value in context with JSON extraction",
                                 "implementation":{
-                                    "task":"{\n type: context-put \n inputs: {\n entries: {\n extracted: \"\${#json(#content, '$.field1')}\" \n} \n} \n}"
+                                    "action":"{\n type: context-put \n inputs: {\n entries: {\n extracted: \"\${#json(#content, '$.field1')}\" \n} \n} \n}"
                                 }
                             }
                         ]
@@ -59,14 +59,14 @@ Feature: Execution with jsonPath function
                         "when":{
                             "sentence":"Put JSON value in context",
                             "implementation":{
-                                "task":"{\n type: context-put \n inputs: {\n entries: {\n content: {\n field1: value1 \n field2: {\n field1: value1 \n} \n} \n} \n} \n}"
+                                "action":"{\n type: context-put \n inputs: {\n entries: {\n content: {\n field1: value1 \n field2: {\n field1: value1 \n} \n} \n} \n} \n}"
                             }
                         },
                         "thens":[
                             {
                                 "sentence":"Put value in context with JSON extraction",
                                 "implementation":{
-                                    "task":"{\n type: context-put \n inputs: {\n entries: {\n extracted: \"\${#json(#content, '$..field1')}\" \n} \n} \n}"
+                                    "action":"{\n type: context-put \n inputs: {\n entries: {\n extracted: \"\${#json(#content, '$..field1')}\" \n} \n} \n}"
                                 }
                             }
                         ]
@@ -102,14 +102,14 @@ Feature: Execution with jsonPath function
                         "when":{
                             "sentence":"Put JSON value in context",
                             "implementation":{
-                                "task":"{\n type: context-put \n inputs: {\n entries: {\n content: {\n field1: value1 \n} \n} \n} \n}"
+                                "action":"{\n type: context-put \n inputs: {\n entries: {\n content: {\n field1: value1 \n} \n} \n} \n}"
                             }
                         },
                         "thens":[
                             {
                                 "sentence":"Put value in context with JSON extraction",
                                 "implementation":{
-                                    "task":"{\n type: context-put \n inputs: {\n entries: {\n extracted: \"\${#json(#content, '$')}\" \n} \n} \n}"
+                                    "action":"{\n type: context-put \n inputs: {\n entries: {\n extracted: \"\${#json(#content, '$')}\" \n} \n} \n}"
                                 }
                             }
                         ]

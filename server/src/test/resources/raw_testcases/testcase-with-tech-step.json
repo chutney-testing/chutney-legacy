@@ -9,19 +9,19 @@
                 {
                     "sentence": "executable step in json",
                     "implementation": {
-                        "task": "{\"type\": \"debug\"}"
+                        "action": "{\"type\": \"debug\"}"
                     }
                 },
                 {
                     "sentence": "executable step with trailing spaces & without root braces",
                     "implementation": {
-                        "task": "  \"type\": \"debug\"  "
+                        "action": "  \"type\": \"debug\"  "
                     }
                 },
                 {
                     "sentence": "executable step in hjson with comment & no quotes",
                     "implementation": {
-                        "task": "  type: debug  \n /* Comment \n otherField: value */"
+                        "action": "  type: debug  \n /* Comment \n otherField: value */"
                     }
                 }
             ]
@@ -33,7 +33,7 @@
                     {
                         "sentence": "executable step with trailing spaces, root braces & \\r",
                         "implementation": {
-                            "task": " {\r\"type\": \"debug\"\r} "
+                            "action": " {\r\"type\": \"debug\"\r} "
                         }
                     }
                 ]
@@ -44,7 +44,7 @@
                     {
                         "sentence": "executable step with docString ''' ",
                         "implementation": {
-                            "task": "{\n target: COCO\n type: sql\n inputs: {\n statements: [\n \"DELETE FROM COCO WHERE ID = 'MOMO'\"\n DELETE FROM CUCU WHERE ID = 'MIMI'\n '''\n INSERT INTO CECE ('ID') VALUES ('MEME')\n '''\n]\n}\n}"
+                            "action": "{\n target: COCO\n type: sql\n inputs: {\n statements: [\n \"DELETE FROM COCO WHERE ID = 'MOMO'\"\n DELETE FROM CUCU WHERE ID = 'MIMI'\n '''\n INSERT INTO CECE ('ID') VALUES ('MEME')\n '''\n]\n}\n}"
                         }
                     }
                 ]

@@ -2,7 +2,7 @@
 @Jms
 Feature: Jms Task test
 
-    Scenario Outline: Jms <jms-task-id> wrong url
+    Scenario Outline: Jms <jms-action-id> wrong url
         Given A target pointing to an unknown service
             Do http-post Create environment and target
                 On CHUTNEY_LOCAL
@@ -12,7 +12,7 @@ Feature: Jms Task test
                 With body
                 """
                 {
-                    "name": "JMS_${'<jms-task-id>'.toUpperCase()}_KO",
+                    "name": "JMS_${'<jms-action-id>'.toUpperCase()}_KO",
                     "description": "",
                     "targets": [
                         {
@@ -38,19 +38,19 @@ Feature: Jms Task test
                 With body
                 """
                 {
-                    "title":"jms client failure <jms-task-id>",
+                    "title":"jms client failure <jms-action-id>",
                     "scenario":{
                         "when":{
                             "sentence":"Make failed jms request",
                             "implementation":{
-                                "task":"{\n type: jms-<jms-task-id> \n target: test_jms \n inputs: {\n <task_inputs> \n} \n}"
+                                "action":"{\n type: jms-<jms-action-id> \n target: test_jms \n inputs: {\n <action_inputs> \n} \n}"
                             }
                         },
                         "thens":[
                             {
                                 "sentence":"Assert http status",
                                 "implementation":{
-                                    "task":"{\n type: compare \n inputs: {\n actual: \${#status} \n expected: 200 \n mode: not equals \n} \n}"
+                                    "action":"{\n type: compare \n inputs: {\n actual: \${#status} \n expected: 200 \n mode: not equals \n} \n}"
                                 }
                             }
                         ]
@@ -62,7 +62,7 @@ Feature: Jms Task test
         When last saved scenario is executed
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
-                With uri /api/ui/scenario/execution/v1/${#scenarioId}/JMS_${'<jms-task-id>'.toUpperCase()}_KO
+                With uri /api/ui/scenario/execution/v1/${#scenarioId}/JMS_${'<jms-action-id>'.toUpperCase()}_KO
                 With timeout 5 s
                 Take report ${#body}
                 Validate httpStatusCode_200 ${#status == 200}
@@ -73,7 +73,7 @@ Feature: Jms Task test
                 With mode equals
 
         Examples:
-            | jms-task-id | task_inputs                                 |
+            | jms-action-id | action_inputs                                 |
             | sender      | destination: test \n body: something        |
             | clean-queue | destination: test \n bodySelector: selector |
             | listener    | destination: test \n bodySelector: selector |
@@ -117,37 +117,37 @@ Feature: Jms Task test
                 With body
                 """
                 {
-                    "title":"jms tasks scenario",
+                    "title":"jms actions scenario",
                     "scenario":{
                         "when":{
                             "sentence":"Send JMS Message",
                             "implementation":{
-                                "task":"{\n type: jms-sender \n target: test_jms \n inputs: {\n destination: dynamicQueues/test \n body: something \n} \n}"
+                                "action":"{\n type: jms-sender \n target: test_jms \n inputs: {\n destination: dynamicQueues/test \n body: something \n} \n}"
                             }
                         },
                         "thens":[
                             {
                                 "sentence":"Clean queue",
                                 "implementation":{
-                                    "task":"{\n type: jms-clean-queue \n target: test_jms \n inputs: {\n destination: dynamicQueues/test \n} \n}"
+                                    "action":"{\n type: jms-clean-queue \n target: test_jms \n inputs: {\n destination: dynamicQueues/test \n} \n}"
                                 }
                             },
                             {
                                 "sentence":"Send JMS Message",
                                 "implementation":{
-                                    "task":"{\n type: jms-sender \n target: test_jms \n inputs: {\n destination: dynamicQueues/test \n body: message to catch \n} \n}"
+                                    "action":"{\n type: jms-sender \n target: test_jms \n inputs: {\n destination: dynamicQueues/test \n body: message to catch \n} \n}"
                                 }
                             },
                             {
                                 "sentence":"Listen to queue",
                                 "implementation":{
-                                    "task":"{\n type: jms-listener \n target: test_jms \n inputs: {\n destination: dynamicQueues/test \n} \n}"
+                                    "action":"{\n type: jms-listener \n target: test_jms \n inputs: {\n destination: dynamicQueues/test \n} \n}"
                                 }
                             },
                             {
                                 "sentence":"Check JMS message",
                                 "implementation":{
-                                    "task":"{\n type: string-assert \n inputs: {\n document: \${#textMessage} \n expected: message to catch \n} \n}"
+                                    "action":"{\n type: string-assert \n inputs: {\n document: \${#textMessage} \n expected: message to catch \n} \n}"
                                 }
                             }
                         ]

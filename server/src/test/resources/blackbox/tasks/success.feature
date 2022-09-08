@@ -1,6 +1,6 @@
 # language: en
 Feature: Success feature
-    Could execute success task
+    Could execute success action
 
     Scenario: Direct Success
         When Run debug direct success

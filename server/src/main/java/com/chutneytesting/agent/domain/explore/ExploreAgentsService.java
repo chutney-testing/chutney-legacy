@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Service to explore agents from the current one, given a {@link NetworkConfiguration}.<br>
- * Exploration performs two tasks in once :
+ * Exploration performs two actions in once :
  * <ul>
  * <li>propagate a {@link NetworkConfiguration} recursively to all reachable agents</li>
  * <li>aggregate discovered agentLinks between agents</li>

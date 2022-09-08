@@ -8,7 +8,7 @@ import com.chutneytesting.engine.domain.execution.report.Status;
 /**
  * Strategy of step execution.
  * <p>From "execution strategy point of view" a step is an action. When executed, that action produces a status.
- * StepExecutionStrategy interface defines step execution behaviour (e.g: sequential or parallel tasks
+ * StepExecutionStrategy interface defines step execution behaviour (e.g: sequential or parallel actions
  * execution, retry on error, etc).</p>
  */
 public interface StepExecutionStrategy {

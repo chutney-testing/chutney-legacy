@@ -1,7 +1,7 @@
 # language: en
 
 Feature: HTTP feature
-    Could execute http task as glacio feature
+    Could execute http action as glacio feature
 
     Scenario: Simple http get
         When Do http-get Request chutney-testing github page

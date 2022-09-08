@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
-import com.chutneytesting.engine.domain.execution.TestTaskTemplateLoader;
+import com.chutneytesting.engine.domain.execution.TestActionTemplateLoader;
 import com.chutneytesting.engine.domain.execution.engine.DefaultStepExecutor;
 import com.chutneytesting.engine.domain.execution.engine.StepExecutor;
 import com.chutneytesting.engine.domain.execution.engine.evaluation.StepDataEvaluator;
@@ -16,8 +16,8 @@ import com.chutneytesting.engine.domain.execution.engine.scenario.ScenarioContex
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.evaluation.SpelFunctions;
 import com.chutneytesting.engine.domain.execution.report.Status;
-import com.chutneytesting.task.domain.DefaultTaskTemplateRegistry;
-import com.chutneytesting.task.domain.TaskTemplateLoaders;
+import com.chutneytesting.action.domain.DefaultActionTemplateRegistry;
+import com.chutneytesting.action.domain.ActionTemplateLoaders;
 import com.google.common.collect.Sets;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,7 +34,7 @@ public class DefaultStepExecutionStrategyTest {
 
     private DefaultStepExecutionStrategy strategy = DefaultStepExecutionStrategy.instance;
     private StepDataEvaluator dataEvaluator = new StepDataEvaluator(new SpelFunctions());
-    private StepExecutor stepExecutor = new DefaultStepExecutor(new DefaultTaskTemplateRegistry(new TaskTemplateLoaders(Collections.singletonList(new TestTaskTemplateLoader()))));
+    private StepExecutor stepExecutor = new DefaultStepExecutor(new DefaultActionTemplateRegistry(new ActionTemplateLoaders(Collections.singletonList(new TestActionTemplateLoader()))));
 
     @Test
     public void should_execute_the_step() {

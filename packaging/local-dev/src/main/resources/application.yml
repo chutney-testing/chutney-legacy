@@ -83,7 +83,7 @@ chutney:
     ttl:
       value: 2
       unit: SECONDS
-  tasks:
+  actions:
     sql:
       nbLoggedRow: 30
 #  localAgent:

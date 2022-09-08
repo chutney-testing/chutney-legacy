@@ -5,7 +5,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toMap;
 
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.chutneytesting.task.spi.injectable.Target;
+import com.chutneytesting.action.spi.injectable.Target;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;

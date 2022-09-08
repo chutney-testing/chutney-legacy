@@ -63,12 +63,12 @@ public class OrientChangelog {
         /* nothing to see */
     }
 
-    @ChangelogOrder(order = 5, uuid = "20190828-update-selenium-task-parameters")
-    public static void updateSeleniumTaskParameters(ODatabaseSession dbSession) {
+    @ChangelogOrder(order = 5, uuid = "20190828-update-selenium-action-parameters")
+    public static void updateSeleniumActionParameters(ODatabaseSession dbSession) {
     }
 
-    @ChangelogOrder(order = 6, uuid = "20191127-update-selenium-task-parameters")
-    public static void updateSeleniumTaskParametersRight(ODatabaseSession dbSession) {
+    @ChangelogOrder(order = 6, uuid = "20191127-update-selenium-action-parameters")
+    public static void updateSeleniumActionParametersRight(ODatabaseSession dbSession) {
 
         String QUERY_FSTEPS_IMPLEMENTATION_ID =
             "SELECT @rid, " + OrientComponentDB.STEP_CLASS_PROPERTY_IMPLEMENTATION +
@@ -110,7 +110,7 @@ public class OrientChangelog {
                     LOGGER.error("Cannot read/write implementation", e);
                 }
             });
-        LOGGER.info(countUpdated.get() + " selenium tasks updated");
+        LOGGER.info(countUpdated.get() + " selenium actions updated");
     }
 
     @ChangelogOrder(order = 7, uuid = "2020127-update-component-strategies")
@@ -210,8 +210,8 @@ public class OrientChangelog {
         LOGGER.info("20210608-testcase-content-index changelog pass");
     }
 
-    @ChangelogOrder(order = 12, uuid = "20210616-add-input-to-sql-task")
-    public static void addInputToSqlTask(ODatabaseSession dbSession) {
+    @ChangelogOrder(order = 12, uuid = "20210616-add-input-to-sql-action")
+    public static void addInputToSqlAction(ODatabaseSession dbSession) {
 
         String QUERY_FSTEPS_IMPLEMENTATION_ID =
             "SELECT @rid, " + OrientComponentDB.STEP_CLASS_PROPERTY_IMPLEMENTATION +
@@ -240,7 +240,7 @@ public class OrientChangelog {
                     LOGGER.error("Cannot read/write implementation", e);
                 }
             });
-        LOGGER.info(countUpdated.get() + " sql tasks updated");
+        LOGGER.info(countUpdated.get() + " sql actions updated");
     }
 
     private static void removeInputsByName(JsonNode node, String... inputsNames) {
