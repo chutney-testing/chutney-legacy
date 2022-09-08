@@ -68,15 +68,11 @@
 
 .sidebar-menu {
   width: auto !important;
-  padding: 0 $layout-spacer-x $layout-spacer-x;
+  padding: 0 .5rem $layout-spacer-x;
 
   %side-link-hover {
-      font-weight: bolder;
-      font-size: large;
+      font-weight: bold;
       color: var(--bs-primary);
-      .menu-icon{
-          font-size: 1.5rem;
-      }
   }
 
   & .menu-link {
@@ -159,27 +155,7 @@
   }
 }
 
-.sidebar-menu-overlay {
-  position: fixed;
-  height: 0%;
-  width: 0%;
-  z-index: 12;
-  display: block;
-  content: '';
-  left: 0;
-  top: 0;
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity .2s;
-}
-
 .closed-sidebar-md.closed-sidebar-open {
-  .sidebar-menu-overlay {
-    visibility: visible;
-    opacity: 1;
-    height: 100%;
-    width: 100%;
-  }
     .close-sidebar-btn {
         display: none!important;
     }

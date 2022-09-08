@@ -41,7 +41,7 @@
                     <span class="btn-label">{{ 'global.actions.export' | translate }}</span>
                 </button>
             </ng-container>
-           
+
         </div>
     </div>
 
@@ -177,7 +177,7 @@
                         </td>
                         <td>
                             <ng-container *hasAuthorization="[Authorization.SCENARIO_READ]">
-                                <a class="table-link"
+                                <a
                                    [routerLink]="['/scenario', scenarioReportOutline.scenarioId, 'execution', scenarioReportOutline.executionId != -1 ? scenarioReportOutline.executionId : 'last']"
                                     title="{{ 'campaigns.execution.scenarios.item.executions.link' | translate }} {{scenarioReportOutline.scenarioName}}">
                                     {{scenarioReportOutline.scenarioName}}
@@ -250,7 +250,7 @@
                     </td>
                     <td>
                         <ng-container *hasAuthorization="[Authorization.SCENARIO_READ]">
-                            <a class="table-link" [routerLink]="['/scenario', scenario.id,'execution', 'last']"
+                            <a [routerLink]="['/scenario', scenario.id,'execution', 'last']"
                                title="{{ 'campaigns.execution.scenarios.item.title' | translate }} {{scenario.title}}">{{scenario.title}}</a>
                         </ng-container>
                         <ng-container *hasAuthorization="{not: true, authorizations: [Authorization.SCENARIO_READ]}">
