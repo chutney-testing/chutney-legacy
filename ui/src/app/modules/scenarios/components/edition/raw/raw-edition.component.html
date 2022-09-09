@@ -1,10 +1,10 @@
 <div class="row edition-header">
     <div class="header-left col-md-4">
         <div class="title">
-            <input type="text" class="form-control" [ngModel]="testCase.title"/>
+            <textarea type="text" class="form-control title-description-textarea" [(ngModel)]="testCase.title"></textarea>
         </div>
         <div class="description">
-            <input type="text" class="form-control" [ngModel]="testCase.description"/>
+            <textarea type="text" class="form-control title-description-textarea" [(ngModel)]="testCase.description"></textarea>
         </div>
     </div>
     <div class="header-right triangle-left col-md-4">
@@ -33,7 +33,7 @@
         </button>
     </div>
 </div>
-<div class="plugins">
+<div class="plugins mt-5">
     <form [formGroup]="pluginsForm" autocomplete="off" class="mb-0">
         <div class="row mb-0 small">
             <div class="col-2">

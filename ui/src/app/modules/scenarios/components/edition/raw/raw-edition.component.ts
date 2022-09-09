@@ -9,14 +9,15 @@ import { JiraPluginService } from '@core/services/jira-plugin.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { HjsonParserService } from '@shared/hjson-parser/hjson-parser.service';
 
-
 @Component({
     selector: 'chutney-raw-edition',
     templateUrl: './raw-edition.component.html',
-    styleUrls: ['./raw-edition.component.scss']
+    styleUrls: ['./raw-edition.component.scss'],
 })
-export class RawEditionComponent extends CanDeactivatePage implements OnInit, OnDestroy {
-
+export class RawEditionComponent
+    extends CanDeactivatePage
+    implements OnInit, OnDestroy
+{
     previousTestCase: TestCase;
     testCase: TestCase;
     modificationsSaved = false;
@@ -24,7 +25,8 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
     modifiedContent = '';
     pluginsForm: FormGroup;
     saveErrorMessage: string;
-    defaultContent = '{\n' +
+    defaultContent =
+        '{\n' +
         '  givens:\n' +
         '  [\n' +
         '    {\n' +
@@ -49,25 +51,27 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
         '}';
     private routeParamsSubscription: Subscription;
 
-    constructor(private eventManager: EventManagerService,
-                private formBuilder: FormBuilder,
-                private jiraLinkService: JiraPluginService,
-                private route: ActivatedRoute,
-                private router: Router,
-                private scenarioService: ScenarioService,
-                private hjsonParserService: HjsonParserService
+    constructor(
+        private eventManager: EventManagerService,
+        private formBuilder: FormBuilder,
+        private jiraLinkService: JiraPluginService,
+        private route: ActivatedRoute,
+        private router: Router,
+        private scenarioService: ScenarioService,
+        private hjsonParserService: HjsonParserService
     ) {
         super();
         this.testCase = new TestCase();
         this.previousTestCase = this.testCase.clone();
         this.pluginsForm = this.formBuilder.group({
-            jiraId: ''
+            jiraId: '',
         });
     }
 
     ngOnInit() {
         this.routeParamsSubscription = this.route.params.subscribe((params) => {
-            const duplicate = this.route.snapshot.queryParamMap.get('duplicate');
+            const duplicate =
+                this.route.snapshot.queryParamMap.get('duplicate');
             if (duplicate) {
                 this.load(params['id'], true);
             } else {
@@ -81,7 +85,10 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
     }
 
     canDeactivatePage(): boolean {
-        return this.modificationsSaved || this.testCase.equals(this.previousTestCase);
+        return (
+            this.modificationsSaved ||
+            this.testCase.equals(this.previousTestCase)
+        );
     }
 
     load(id, duplicate: boolean) {
@@ -99,7 +106,8 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
                         this.testCase.updateDate = null;
                         this.testCase.author = null;
                         this.testCase.title = '--COPY-- ' + this.testCase.title;
-                        this.previousTestCase.title = '--COPY-- ' + this.previousTestCase.title;
+                        this.previousTestCase.title =
+                            '--COPY-- ' + this.previousTestCase.title;
                     }
                 },
                 (error) => {
@@ -114,7 +122,6 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
             this.testCase.content = this.defaultContent;
             this.modifiedContent = this.defaultContent;
             this.previousTestCase = this.testCase.clone();
-
         }
     }
 
@@ -132,7 +139,9 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
             (jiraId) => {
                 this.pluginsForm.controls['jiraId'].setValue(jiraId);
             },
-            (error) => { console.log(error); }
+            (error) => {
+                console.log(error);
+            }
         );
     }
 
@@ -142,11 +151,17 @@ export class RawEditionComponent extends CanDeactivatePage implements OnInit, On
         this.scenarioService.createOrUpdateRawTestCase(this.testCase).subscribe(
             (response) => {
                 this.modificationsSaved = true;
-                this.jiraLinkService.saveForScenario(response, jiraId).subscribe(
-                    () => {},
-                    (error) => { console.log(error); }
+                this.jiraLinkService
+                    .saveForScenario(response, jiraId)
+                    .subscribe(
+                        () => {},
+                        (error) => {
+                            console.log(error);
+                        }
+                    );
+                this.router.navigateByUrl(
+                    '/scenario/' + response + '/execution/last'
                 );
-                this.router.navigateByUrl('/scenario/' + response + '/execution/last');
             },
             (error) => {
                 console.log(error);
