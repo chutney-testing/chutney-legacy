@@ -1,10 +1,17 @@
+.wrapper {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(auto, 105px) auto minmax(auto, 80px);
+    min-height: 100vh;
+}
+
 .login-container {
-    display: grid; 
-    grid-template-columns: 1fr; 
-    grid-template-rows: 1fr; 
-    gap: 0px 0px; 
-    justify-items: center; 
-    align-items: center; 
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    gap: 0px 0px;
+    justify-items: center;
+    align-items: center;
 }
 
 .login-background {
@@ -29,11 +36,11 @@
         display: block;
     }
     .login-container {
-        display: grid; 
-        grid-template-columns: 1fr 1fr; 
-        grid-template-rows: 1fr; 
-        gap: 0px 0px; 
-        justify-items: center; 
-        align-items: center; 
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr;
+        gap: 0px 0px;
+        justify-items: center;
+        align-items: center;
     }
 }
