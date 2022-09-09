@@ -1,6 +1,6 @@
 <button type="button" class="btn btn-info mb-2" (click)="openModal(template)">{{'global.actions.add' | translate}}</button>
 <ng-template #template>
-  <div class="modal-body text-center">
+  <div class="modal-body text-center px-5">
     <p>Add a Target</p>
     <chutney-forms-input-line [id]="'creationTargetName'" [label]="'Name *'" [placeholder]="'Name'" [(model)]="target.name" [validate]="validationService.isNotEmpty"></chutney-forms-input-line>
       <div class="mt-2 mb-2">
