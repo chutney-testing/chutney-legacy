@@ -1,14 +1,14 @@
 
 .campaign-container {
-    display: grid; 
-    grid-template-columns: 1fr 1fr; 
-    grid-template-rows: auto auto 1fr 1fr; 
-    gap: 0px 30px; 
-    grid-template-areas: 
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto 1fr 1fr;
+    gap: 0px 30px;
+    grid-template-areas:
       "campaign-1 campaign-2"
-      "campaign-3 campaign-4"; 
-    justify-items: start; 
-    align-items: start; 
+      "campaign-3 campaign-4";
+    justify-items: start;
+    align-items: start;
 }
 
 .campaign-1 {
@@ -37,17 +37,9 @@ font-size:0.8em;
         width: -webkit-max-content; /* Chrome */
         border: 0;
         border-radius: 0.5rem;
-
-        .popover-arrow {
-            &::after {
-               // border-left-color: $teal-100;
-            }
-        }
     }
 
     .popover-body {
-      //  background-color: $teal-100;
-      //  color: $white;
         border-radius: 0.5rem;
         padding: 0.5rem;
     }

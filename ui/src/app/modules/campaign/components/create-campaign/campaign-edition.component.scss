@@ -1,12 +1,12 @@
 .create-campaign-container {
-    display: grid; 
-    grid-template-columns: 1fr; 
-    grid-template-rows: auto auto 1fr; 
-    gap: 0px 0px; 
-    grid-template-areas: 
-      "."; 
-    justify-items: start; 
-    align-items: start; 
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr;
+    gap: 0px 0px;
+    grid-template-areas:
+      ".";
+    justify-items: start;
+    align-items: start;
 }
 
 
@@ -27,7 +27,6 @@ input.search-field {
 span.search-field {
     border: none;
     color: var(--bs-primary);
-   ///border-bottom: 1px solid $primary;
 }
 
 .cursor {
@@ -70,18 +69,9 @@ fieldset legend {
         width: -webkit-max-content; /* Chrome */
         border: 0;
         border-radius: 0.5rem;
-
-        .popover-arrow {
-
-            &::after {
-                //border-left-color: $teal-100;
-            }
-        }
     }
 
     .popover-body {
-       // background-color: $teal-100;
-        //color: $white;
         border-radius: 0.5rem;
         padding: 0.5rem;
     }
