@@ -2,14 +2,14 @@
 @import 'global/animations';
 
 .execute-campaign-container {
-    display: grid; 
-    grid-template-columns: 1fr; 
-    grid-template-rows: auto auto 1fr; 
-    gap: 0px 0px; 
-    grid-template-areas: 
-      "."; 
-    justify-items: start; 
-    align-items: start; 
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr;
+    gap: 0px 0px;
+    grid-template-areas:
+      ".";
+    justify-items: start;
+    align-items: start;
 }
 
 @include box-shadow-animation(
@@ -151,16 +151,6 @@ h3 {
             $animation_iteration-count: infinite,
             $animation_direction: alternate);
     }
-
-    .fa-circle {
-        background-color: white;
-        padding: 5px;
-        border-radius: 4px;
-    }
-}
-
-.table-link {
-    color: #212529; // Bootstrap table default color
 }
 
 .scenario-summary {

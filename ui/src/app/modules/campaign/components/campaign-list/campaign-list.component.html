@@ -39,7 +39,7 @@
             <span class="fa fa-plus" aria-hidden="true"></span> {{ 'campaigns.scheduling.schedule' | translate }}
         </button>
     </div>
-    
+
     <div class="campaign-3 w-100">
         <div class="table-responsive" *ngIf="viewedCampaigns.length > 0">
             <table class="table table-sm table-striped table-hover">
@@ -128,7 +128,7 @@
                 <tr *ngFor="let report of lastCampaignReports" class="small_text">
                     <td class="w25">{{ report.startDate | amDateFormat: 'DD MMM. YYYY HH:mm' }}</td>
                     <td class="ps-0 w60">
-                        <a class="table-link"
+                        <a
                            [routerLink]="['/campaign', campaignIdFromName(report.campaignName), 'execution', report.executionId]"
                         >
                             {{ report.campaignName }}

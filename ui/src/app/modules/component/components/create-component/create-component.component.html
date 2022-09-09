@@ -1,8 +1,8 @@
 <div class="container">
     <div class="row">
-        <div class="ps-0 m-0 border-end position-relative"
+        <div class="ps-0 m-0 position-relative"
              [ngClass]="{'col-1 p-0 h100 component-list-container-minimize':componentMinimize, 'col-3':!componentMinimize}">
-            <button type="button" class="left-panel-minimize-btn btn btn-xs btn-default shadow-none p-0 end-0 px-1"
+            <button type="button" class="left-panel-minimize-btn btn btn-xs btn-default shadow-none p-0 end-0 px-1 border-end rounded-0"
                     title="{{(componentMinimize ? 'global.actions.show' : 'global.actions.hide') | translate}}"
                     (click)="componentMinimize = !componentMinimize;">
                 <span class="fa p-1"
