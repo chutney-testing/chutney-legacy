@@ -177,14 +177,6 @@ export class RawEditionComponent
         this.testCase.tags = event.split(',');
     }
 
-    updateDescription(event: string) {
-        this.testCase.description = event;
-    }
-
-    updateTitle(event: string) {
-        this.testCase.title = event;
-    }
-
     onScenarioContentChanged(data) {
         this.modifiedContent = data;
         this.checkParseError();
