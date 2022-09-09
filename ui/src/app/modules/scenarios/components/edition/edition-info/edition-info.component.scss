@@ -10,11 +10,11 @@
         width: -webkit-max-content; /* Chrome */
         border: 0;
         border-radius: 0.5rem;
+    }
 
-        .arrow {
-            &::after {
-                border-bottom-color: var(--bs-primary);
-            }
+    .popover-arrow {
+        &::after {
+            border-bottom-color: var(--bs-primary);
         }
     }
 
