@@ -32,6 +32,11 @@ public class EnvironmentService {
     }
 
     public Set<Environment> listEnvironments() {
+
+        if (environmentRepository.listNames().isEmpty()) {
+            createEnvironment(Environment.builder().withName("DEFAULT").build());
+        }
+
         return environmentRepository
             .listNames()
             .stream()
