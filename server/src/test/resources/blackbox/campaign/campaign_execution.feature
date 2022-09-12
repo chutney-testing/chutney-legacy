@@ -17,7 +17,7 @@ Feature:  Campaign execution
                         "when":{
                             "sentence":"Just a success step",
                             "implementation":{
-                                "action":"{\n type: success \n }"
+                                "task":"{\n type: success \n }"
                             }
                         },
                         "thens":[]
@@ -40,7 +40,7 @@ Feature:  Campaign execution
                         "when":{
                             "sentence":"Just a success step",
                             "implementation":{
-                                "action":"{\n type: success \n }"
+                                "task":"{\n type: success \n }"
                             }
                         },
                         "thens":[]

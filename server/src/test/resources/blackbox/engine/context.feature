@@ -17,7 +17,7 @@ Feature: Execution success action
                         "when":{
                             "sentence":"Success scenario",
                             "implementation":{
-                                "action":"{\n type: success \n }"
+                                "task":"{\n type: success \n }"
                             }
                         },
                         "thens":[]
@@ -53,7 +53,7 @@ Feature: Execution success action
                         "when":{
                             "sentence":"Step fail",
                             "implementation":{
-                                "action":"{\n type: fail \n }"
+                                "task":"{\n type: fail \n }"
                             }
                         },
                         "thens":[]
@@ -89,7 +89,7 @@ Feature: Execution success action
                         "when":{
                             "sentence":"Step sleep",
                             "implementation":{
-                                "action":"{\n type: sleep \n inputs: {\n duration: 20 ms \n} \n}"
+                                "task":"{\n type: sleep \n inputs: {\n duration: 20 ms \n} \n}"
                             }
                         },
                         "thens":[]
@@ -125,13 +125,13 @@ Feature: Execution success action
                         "when":{
                             "sentence":"Put value in context",
                             "implementation":{
-                                "action":"{\n type: context-put \n inputs: {\n entries: {\n \"test key\": valeur \n} \n} \n}"
+                                "task":"{\n type: context-put \n inputs: {\n entries: {\n \"test key\": valeur \n} \n} \n}"
                             }
                         },
                         "thens":[
                             {
                                 "implementation":{
-                                    "action":"{\n type: debug \n}"
+                                    "task":"{\n type: debug \n}"
                                 }
                             }
                         ]

@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * A action parameter description.
+ * An action parameter description.
  */
 public class Parameter {
 

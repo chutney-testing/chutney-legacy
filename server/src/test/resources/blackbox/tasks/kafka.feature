@@ -37,7 +37,7 @@ Feature: Kafka all Tasks test
                         "when":{
                             "sentence":"Publish to broker",
                             "implementation":{
-                                "action":"{\n type: kafka-basic-publish \n target: test_kafka \n inputs: {\n topic: a-topic \n payload: bodybuilder \n} \n}"
+                                "task":"{\n type: kafka-basic-publish \n target: test_kafka \n inputs: {\n topic: a-topic \n payload: bodybuilder \n} \n}"
                             }
                         },
                         "thens":[]
@@ -98,20 +98,20 @@ Feature: Kafka all Tasks test
                         "when":{
                             "sentence":"Publish to broker",
                             "implementation":{
-                                "action":"{\n type: kafka-basic-publish \n target: test_kafka \n inputs: {\n topic: a-topic \n payload: bodybuilder \n headers: {\n X-API-VERSION: \"1.0\" \n} \n} \n}"
+                                "task":"{\n type: kafka-basic-publish \n target: test_kafka \n inputs: {\n topic: a-topic \n payload: bodybuilder \n headers: {\n X-API-VERSION: \"1.0\" \n} \n} \n}"
                             }
                         },
                         "thens":[
                             {
                                 "sentence":"Consume from broker",
                                 "implementation":{
-                                    "action":"{\n type: kafka-basic-consume \n target: test_kafka \n inputs: {\n topic: a-topic \n group: chutney \n ackMode: BATCH \n properties: {\n auto.offset.reset: earliest \n} \n} \n outputs: {\n payload : \${#payloads[0]} \n} \n}"
+                                    "task":"{\n type: kafka-basic-consume \n target: test_kafka \n inputs: {\n topic: a-topic \n group: chutney \n ackMode: BATCH \n properties: {\n auto.offset.reset: earliest \n} \n} \n outputs: {\n payload : \${#payloads[0]} \n} \n}"
                                 }
                             },
                             {
                                 "sentence":"Check payload",
                                 "implementation":{
-                                    "action":"{\n type: string-assert \n inputs: {\n document: \${#payload} \n expected: bodybuilder \n} \n}"
+                                    "task":"{\n type: string-assert \n inputs: {\n document: \${#payload} \n expected: bodybuilder \n} \n}"
                                 }
                             }
                         ]
@@ -177,32 +177,32 @@ Feature: Kafka all Tasks test
                         "when":{
                             "sentence":"Publish to broker",
                             "implementation":{
-                                "action":"{\n type: kafka-basic-publish \n target: test_kafka \n inputs: {\n topic: a-topic \n payload: bodybuilder \n headers: {\n X-API-VERSION: \"1.0\" \n} \n} \n}"
+                                "task":"{\n type: kafka-basic-publish \n target: test_kafka \n inputs: {\n topic: a-topic \n payload: bodybuilder \n headers: {\n X-API-VERSION: \"1.0\" \n} \n} \n}"
                             }
                         },
                         "thens":[
                             {
                                 "sentence":"Consume from broker",
                                 "implementation":{
-                                    "action":"{\n type: kafka-basic-consume \n target: test_kafka \n inputs: {\n topic: a-topic \n group: chutney \n} \n outputs: {\n payload : \${#payloads[0]} \n} \n}"
+                                    "task":"{\n type: kafka-basic-consume \n target: test_kafka \n inputs: {\n topic: a-topic \n group: chutney \n} \n outputs: {\n payload : \${#payloads[0]} \n} \n}"
                                 }
                             },
                             {
                                 "sentence":"Check payload",
                                 "implementation":{
-                                    "action":"{\n type: string-assert \n inputs: {\n document: \${#payload} \n expected: bodybuilder \n} \n}"
+                                    "task":"{\n type: string-assert \n inputs: {\n document: \${#payload} \n expected: bodybuilder \n} \n}"
                                 }
                             },
                             {
                                 "sentence":"Consume from broker the same message again",
                                 "implementation":{
-                                    "action":"{\n type: kafka-basic-consume \n target: test_kafka \n inputs: {\n topic: a-topic \n group: chutney \n timeout: 3 s \n} \n outputs: {\n payloadBis : \${#payloads[0]} \n} \n}"
+                                    "task":"{\n type: kafka-basic-consume \n target: test_kafka \n inputs: {\n topic: a-topic \n group: chutney \n timeout: 3 s \n} \n outputs: {\n payloadBis : \${#payloads[0]} \n} \n}"
                                 }
                             },
                             {
                                 "sentence":"Check payload",
                                 "implementation":{
-                                    "action":"{\n type: string-assert \n inputs: {\n document: \${#payloadBis} \n expected: bodybuilder \n} \n}"
+                                    "task":"{\n type: string-assert \n inputs: {\n document: \${#payloadBis} \n expected: bodybuilder \n} \n}"
                                 }
                             }
                         ]

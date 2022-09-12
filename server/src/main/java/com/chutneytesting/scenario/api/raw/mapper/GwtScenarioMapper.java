@@ -113,11 +113,11 @@ public class GwtScenarioMapper implements GwtScenarioMarshaller {
 
     // DTO -> Implementation
     private static GwtStepImplementation fromDto(GwtStepImplementationDto dto) {
-        if (dto.action().isEmpty()) {
+        if (dto.task().isEmpty()) {
             return new GwtStepImplementation(dto.type(), dto.target(), dto.inputs(), dto.outputs(), dto.validations(), dto.xRef());
         } else {
             try {
-                return mapper.readValue(readHjson(dto.action()).toString(), GwtStepImplementation.class);
+                return mapper.readValue(readHjson(dto.task()).toString(), GwtStepImplementation.class);
             } catch (IOException e) {
                 throw new ScenarioConversionException(e);
             }
@@ -149,7 +149,7 @@ public class GwtScenarioMapper implements GwtScenarioMarshaller {
     private static GwtStepImplementationDto toDto(GwtStepImplementation implementation) {
         try {
             return ImmutableGwtStepImplementationDto.builder()
-                .action(readHjson(mapper.writeValueAsString(implementation)).toString(Stringify.HJSON))
+                .task(readHjson(mapper.writeValueAsString(implementation)).toString(Stringify.HJSON))
                 .type(implementation.type)
                 .target(implementation.target)
                 .xRef(implementation.xRef)

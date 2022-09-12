@@ -42,38 +42,38 @@ Feature: Amqp Task test
                         "when":{
                             "sentence":"Create queue",
                             "implementation":{
-                                "action":"{\n type: amqp-create-bound-temporary-queue \n target: test_amqp \n inputs: {\n exchange-name: amq.direct \n routing-key: routemeplease \n queue-name: test \n} \n}"
+                                "task":"{\n type: amqp-create-bound-temporary-queue \n target: test_amqp \n inputs: {\n exchange-name: amq.direct \n routing-key: routemeplease \n queue-name: test \n} \n}"
                             }
                         },
                         "thens":[
                             {
                                 "sentence":"Publish message 1",
                                 "implementation":{
-                                    "action":"{\n type: amqp-basic-publish \n target: test_amqp \n inputs: {\n exchange-name: amq.direct \n routing-key: routemeplease \n payload: bodybuilder \n} \n}"
+                                    "task":"{\n type: amqp-basic-publish \n target: test_amqp \n inputs: {\n exchange-name: amq.direct \n routing-key: routemeplease \n payload: bodybuilder \n} \n}"
                                 }
                             },
                             {
                                 "sentence":"Publish message 2",
                                 "implementation":{
-                                    "action":"{\n type: amqp-basic-publish \n target: test_amqp \n inputs: {\n exchange-name: amq.direct \n routing-key: routemeplease \n payload: bodybuilder2 \n} \n}"
+                                    "task":"{\n type: amqp-basic-publish \n target: test_amqp \n inputs: {\n exchange-name: amq.direct \n routing-key: routemeplease \n payload: bodybuilder2 \n} \n}"
                                 }
                             },
                             {
                                 "sentence":"Get messages",
                                 "implementation":{
-                                    "action":"{\n type: amqp-basic-get \n target: test_amqp \n inputs: {\n queue-name: test \n} \n}"
+                                    "task":"{\n type: amqp-basic-get \n target: test_amqp \n inputs: {\n queue-name: test \n} \n}"
                                 }
                             },
                             {
                                 "sentence":"Check message 1",
                                 "implementation":{
-                                    "action":"{\n type: string-assert \n inputs: {\n document: \${#body} \n expected: bodybuilder \n} \n}"
+                                    "task":"{\n type: string-assert \n inputs: {\n document: \${#body} \n expected: bodybuilder \n} \n}"
                                 }
                             },
                             {
                                 "sentence":"Clean queue",
                                 "implementation":{
-                                    "action":"{\n type: amqp-clean-queues \n target: test_amqp \n inputs: {\n queue-names: [\n test \n] \n} \n}"
+                                    "task":"{\n type: amqp-clean-queues \n target: test_amqp \n inputs: {\n queue-names: [\n test \n] \n} \n}"
                                 }
                             }
                         ]

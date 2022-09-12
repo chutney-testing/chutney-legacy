@@ -22,9 +22,9 @@ public class ExecutableComposableStepMapper {
         composableStep.stepImplementation.ifPresent(
             implementation -> {
                 try {
-                    builder.action(objectMapper.writeValueAsString(implementation));
+                    builder.task(objectMapper.writeValueAsString(implementation));
                 } catch (JsonProcessingException e) {
-                    builder.action("Cannot deserialize implementation because " + e.getMessage());
+                    builder.task("Cannot deserialize implementation because " + e.getMessage());
                 }
             }
         );

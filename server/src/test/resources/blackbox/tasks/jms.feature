@@ -43,14 +43,14 @@ Feature: Jms Task test
                         "when":{
                             "sentence":"Make failed jms request",
                             "implementation":{
-                                "action":"{\n type: jms-<jms-action-id> \n target: test_jms \n inputs: {\n <action_inputs> \n} \n}"
+                                "task":"{\n type: jms-<jms-action-id> \n target: test_jms \n inputs: {\n <action_inputs> \n} \n}"
                             }
                         },
                         "thens":[
                             {
                                 "sentence":"Assert http status",
                                 "implementation":{
-                                    "action":"{\n type: compare \n inputs: {\n actual: \${#status} \n expected: 200 \n mode: not equals \n} \n}"
+                                    "task":"{\n type: compare \n inputs: {\n actual: \${#status} \n expected: 200 \n mode: not equals \n} \n}"
                                 }
                             }
                         ]
@@ -122,32 +122,32 @@ Feature: Jms Task test
                         "when":{
                             "sentence":"Send JMS Message",
                             "implementation":{
-                                "action":"{\n type: jms-sender \n target: test_jms \n inputs: {\n destination: dynamicQueues/test \n body: something \n} \n}"
+                                "task":"{\n type: jms-sender \n target: test_jms \n inputs: {\n destination: dynamicQueues/test \n body: something \n} \n}"
                             }
                         },
                         "thens":[
                             {
                                 "sentence":"Clean queue",
                                 "implementation":{
-                                    "action":"{\n type: jms-clean-queue \n target: test_jms \n inputs: {\n destination: dynamicQueues/test \n} \n}"
+                                    "task":"{\n type: jms-clean-queue \n target: test_jms \n inputs: {\n destination: dynamicQueues/test \n} \n}"
                                 }
                             },
                             {
                                 "sentence":"Send JMS Message",
                                 "implementation":{
-                                    "action":"{\n type: jms-sender \n target: test_jms \n inputs: {\n destination: dynamicQueues/test \n body: message to catch \n} \n}"
+                                    "task":"{\n type: jms-sender \n target: test_jms \n inputs: {\n destination: dynamicQueues/test \n body: message to catch \n} \n}"
                                 }
                             },
                             {
                                 "sentence":"Listen to queue",
                                 "implementation":{
-                                    "action":"{\n type: jms-listener \n target: test_jms \n inputs: {\n destination: dynamicQueues/test \n} \n}"
+                                    "task":"{\n type: jms-listener \n target: test_jms \n inputs: {\n destination: dynamicQueues/test \n} \n}"
                                 }
                             },
                             {
                                 "sentence":"Check JMS message",
                                 "implementation":{
-                                    "action":"{\n type: string-assert \n inputs: {\n document: \${#textMessage} \n expected: message to catch \n} \n}"
+                                    "task":"{\n type: string-assert \n inputs: {\n document: \${#textMessage} \n expected: message to catch \n} \n}"
                                 }
                             }
                         ]

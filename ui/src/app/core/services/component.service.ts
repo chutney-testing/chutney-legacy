@@ -20,7 +20,7 @@ import {
 })
 export class ComponentService {
 
-    private resourceUrl = '/api/task/v1';
+    private resourceUrl = '/api/action/v1';
     private stepUrl = '/api/steps/v1';
     private componentUrl = '/api/scenario/component-edition';
     private stepExecutionUrl = '/api/ui/componentstep/execution/v1';

@@ -17,7 +17,7 @@ Feature: Final action for registering final actions for a testcase
                         "when":{
                             "sentence":"Final action is registered",
                             "implementation":{
-                                "action":"{\n type: final \n inputs: {\n type: success \n name: Testing final action... \n} \n}"
+                                "task":"{\n type: final \n inputs: {\n type: success \n name: Testing final action... \n} \n}"
                             }
                         },
                         "thens": []
@@ -70,20 +70,20 @@ Feature: Final action for registering final actions for a testcase
                                 {
                                     "sentence":"Register an assertion",
                                     "implementation":{
-                                        "action":"{\n type: final \n inputs: {\n type: compare \n name: An assertion \n inputs: {\n actual: aValue \n expected: aValue \n mode: equals \n} \n} \n}"
+                                        "task":"{\n type: final \n inputs: {\n type: compare \n name: An assertion \n inputs: {\n actual: aValue \n expected: aValue \n mode: equals \n} \n} \n}"
                                     }
                                 },
                                 {
                                     "sentence":"Register a fail with retry",
                                     "implementation":{
-                                        "action":"{\n type: final \n inputs: {\n type: fail \n name: I'm no good \n strategy-type: retry-with-timeout \n strategy-properties: {\n timeOut: 1500 ms \n retryDelay: 1 s \n} \n} \n}"
+                                        "task":"{\n type: final \n inputs: {\n type: fail \n name: I'm no good \n strategy-type: retry-with-timeout \n strategy-properties: {\n timeOut: 1500 ms \n retryDelay: 1 s \n} \n} \n}"
                                     }
                                 },
                                 {
                                     "sentence":"Register variable in context",
                                     "implementation":{
                                         "target": "CHUTNEY_LOCAL",
-                                        "action":"{\n type: final \n inputs: {\n type: context-put \n name: Put myKey \n inputs: {\n entries: {\n myKey: myValue \n} \n} validations: {\n putOk: \${#myKey == 'myValue'} \n} \n} \n}"
+                                        "task":"{\n type: final \n inputs: {\n type: context-put \n name: Put myKey \n inputs: {\n entries: {\n myKey: myValue \n} \n} validations: {\n putOk: \${#myKey == 'myValue'} \n} \n} \n}"
                                     }
                                 }
                             ]

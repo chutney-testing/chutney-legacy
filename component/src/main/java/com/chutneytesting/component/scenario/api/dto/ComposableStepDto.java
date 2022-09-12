@@ -29,7 +29,7 @@ public interface ComposableStepDto {
     @Value.Default()
     default StepUsage usage() { return StepUsage.STEP; }
 
-    Optional<String> action();
+    Optional<String> task();
 
     @Value.Default()
     default List<ComposableStepDto> steps() { return Collections.emptyList(); }

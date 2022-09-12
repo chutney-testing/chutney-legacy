@@ -43,21 +43,21 @@ Feature: HTTP server Task test
                             {
                                 "sentence":"Start HTTPS server",
                                 "implementation":{
-                                    "action":"{\n type: https-server-start \n inputs: {\n port: \"8443\" \n truststore-path: \${#resourcePath('blackbox/keystores/truststore.jks')} \n truststore-password: truststore \n}\n}"
+                                    "task":"{\n type: https-server-start \n inputs: {\n port: \"8443\" \n truststore-path: \${#resourcePath('blackbox/keystores/truststore.jks')} \n truststore-password: truststore \n}\n}"
                                 }
                             }
                         ],
                         "when":{
                             "sentence":"Make POST request",
                             "implementation":{
-                                "action":"{\n type: http-post \n target: test_http \n inputs: {\n uri: /test \n body: cool buddy \n} \n}"
+                                "task":"{\n type: http-post \n target: test_http \n inputs: {\n uri: /test \n body: cool buddy \n} \n}"
                             }
                         },
                         "thens":[
                             {
                                 "sentence":"Listens to POST requests",
                                 "implementation":{
-                                    "action":"{\n type: https-listener \n inputs: {\n https-server: \${#httpsServer} \n uri: /test \n verb: POST \n expected-message-count: \"1\" \n} \n}"
+                                    "task":"{\n type: https-listener \n inputs: {\n https-server: \${#httpsServer} \n uri: /test \n verb: POST \n expected-message-count: \"1\" \n} \n}"
                                 }
                             }
                         ]

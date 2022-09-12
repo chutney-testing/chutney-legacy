@@ -37,14 +37,14 @@ Feature: HTTP Task test
                         "when":{
                             "sentence":"Make failed <verb> request",
                             "implementation":{
-                                "action":"{\n type: http-${'<verb>'.toLowerCase()} \n target: test_http \n inputs: {\n <action_inputs> \n timeout: 500 ms \n} \n}"
+                                "task":"{\n type: http-${'<verb>'.toLowerCase()} \n target: test_http \n inputs: {\n <action_inputs> \n timeout: 500 ms \n} \n}"
                             }
                         },
                         "thens":[
                             {
                                 "sentence":"Assert http status",
                                 "implementation":{
-                                    "action":"{\n type: compare \n inputs: {\n actual: \${#status} \n expected: 200 \n mode: not equals \n} \n}"
+                                    "task":"{\n type: compare \n inputs: {\n actual: \${#status} \n expected: 200 \n mode: not equals \n} \n}"
                                 }
                             }
                         ]
@@ -119,14 +119,14 @@ Feature: HTTP Task test
                         "when":{
                             "sentence":"Make <verb> request",
                             "implementation":{
-                                "action":"{\n type: http-${'<verb>'.toLowerCase()} \n target: test_http \n inputs: {\n <action_inputs> \n timeout: 5000 ms \n} \n}"
+                                "task":"{\n type: http-${'<verb>'.toLowerCase()} \n target: test_http \n inputs: {\n <action_inputs> \n timeout: 5000 ms \n} \n}"
                             }
                         },
                         "thens":[
                             {
                                 "sentence":"Assert http status",
                                 "implementation":{
-                                    "action":"{\n type: compare \n inputs: {\n actual: \${#status} \n expected: \"200\" \n mode: equals \n} \n}"
+                                    "task":"{\n type: compare \n inputs: {\n actual: \${#status} \n expected: \"200\" \n mode: equals \n} \n}"
                                 }
                             }
                         ]

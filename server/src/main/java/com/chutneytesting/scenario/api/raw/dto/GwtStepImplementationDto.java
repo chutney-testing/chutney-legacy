@@ -13,7 +13,7 @@ import org.immutables.value.Value;
 public interface GwtStepImplementationDto {
 
     @Value.Default
-    default String action() {
+    default String task() {
         return "";
     }
 

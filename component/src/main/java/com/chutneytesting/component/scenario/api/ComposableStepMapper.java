@@ -21,7 +21,7 @@ public class ComposableStepMapper {
             .tags(composableStep.tags);
 
         composableStep.implementation.ifPresent(
-            builder::action
+            builder::task
         );
 
         composableStep.steps
@@ -64,7 +64,7 @@ public class ComposableStepMapper {
             .withId(dto.id().orElse(""))
             .withName(dto.name())
             .withStrategy(fromDto(dto.strategy()))
-            .withImplementation(dto.action().orElse(""))
+            .withImplementation(dto.task().orElse(""))
             .withSteps(dto.steps().stream().map(ComposableStepMapper::fromDto).collect(toList()))
             .withDefaultParameters(KeyValue.toMap(dto.defaultParameters()))
             .withExecutionParameters(KeyValue.toMap(dto.executionParameters()))

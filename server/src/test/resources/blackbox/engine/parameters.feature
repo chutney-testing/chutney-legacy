@@ -156,7 +156,7 @@ Feature: Replace scenario parameters with data set or global var values
                 {
                     "name": "put entry [**key** -- **value**] in context",
                     "usage": null,
-                    "action": "{\"identifier\":\"context-put\",\"target\":\"\",\"hasTarget\":false,\"mapInputs\":[{\"name\":\"entries\",\"values\":[{\"key\":\"**key**\",\"value\":\"**value**\"}]}],\"listInputs\":[],\"inputs\":[],\"outputs\":[]}",
+                    "task": "{\"identifier\":\"context-put\",\"target\":\"\",\"hasTarget\":false,\"mapInputs\":[{\"name\":\"entries\",\"values\":[{\"key\":\"**key**\",\"value\":\"**value**\"}]}],\"listInputs\":[],\"inputs\":[],\"outputs\":[]}",
                     "steps": [],
                     "parameters": [
                         {
@@ -190,7 +190,7 @@ Feature: Replace scenario parameters with data set or global var values
                 {
                     "name": "Asssert [**actual**] equals [**expected**]",
                     "usage": null,
-                    "action": "{\"identifier\":\"compare\",\"target\":\"\",\"hasTarget\":false,\"mapInputs\":[],\"listInputs\":[],\"inputs\":[{\"name\":\"actual\",\"value\":\"**actual**\"},{\"name\":\"expected\",\"value\":\"**expected**\"},{\"name\":\"mode\",\"value\":\"equals\"}],\"outputs\":[]}",
+                    "task": "{\"identifier\":\"compare\",\"target\":\"\",\"hasTarget\":false,\"mapInputs\":[],\"listInputs\":[],\"inputs\":[{\"name\":\"actual\",\"value\":\"**actual**\"},{\"name\":\"expected\",\"value\":\"**expected**\"},{\"name\":\"mode\",\"value\":\"equals\"}],\"outputs\":[]}",
                     "steps": [],
                     "parameters": [
                         {
@@ -240,7 +240,7 @@ Feature: Replace scenario parameters with data set or global var values
                                 "id": "${#contextPutWrapperComponentId}",
                                 "name": "put entry [**key** -- **value**] in context",
                                 "usage": null,
-                                "action": null,
+                                "task": null,
                                 "steps": [],
                                 "parameters": [
                                     {
@@ -273,7 +273,7 @@ Feature: Replace scenario parameters with data set or global var values
                                 "id": "${#assertEqualsWrapperComponentId}",
                                 "name": "Asssert [**actual**] equals [**expected**]",
                                 "usage": null,
-                                "action": null,
+                                "task": null,
                                 "steps": [],
                                 "parameters": [
                                     {
@@ -306,7 +306,7 @@ Feature: Replace scenario parameters with data set or global var values
                                 "id": "${#contextPutWrapperComponentId}",
                                 "name": "put entry [**key** -- **value**] in context",
                                 "usage": null,
-                                "action": null,
+                                "task": null,
                                 "steps": [],
                                 "parameters": [
                                     {
@@ -339,7 +339,7 @@ Feature: Replace scenario parameters with data set or global var values
                                 "id": "${#assertEqualsWrapperComponentId}",
                                 "name": "Asssert [**actual**] equals [**expected**]",
                                 "usage": null,
-                                "action": null,
+                                "task": null,
                                 "steps": [],
                                 "parameters": [
                                     {
@@ -372,7 +372,7 @@ Feature: Replace scenario parameters with data set or global var values
                                 "id": "${#contextPutWrapperComponentId}",
                                 "name": "put entry [**key** -- **value**] in context",
                                 "usage": null,
-                                "action": null,
+                                "task": null,
                                 "steps": [],
                                 "parameters": [
                                     {
@@ -405,7 +405,7 @@ Feature: Replace scenario parameters with data set or global var values
                                 "id": "${#assertEqualsWrapperComponentId}",
                                 "name": "Asssert [**actual**] equals [**expected**]",
                                 "usage": null,
-                                "action": null,
+                                "task": null,
                                 "steps": [],
                                 "parameters": [
                                     {
@@ -438,7 +438,7 @@ Feature: Replace scenario parameters with data set or global var values
                                 "id": "${#contextPutWrapperComponentId}",
                                 "name": "put entry [**key** -- **value**] in context",
                                 "usage": null,
-                                "action": null,
+                                "task": null,
                                 "steps": [],
                                 "parameters": [
                                     {
@@ -471,7 +471,7 @@ Feature: Replace scenario parameters with data set or global var values
                                 "id": "${#assertEqualsWrapperComponentId}",
                                 "name": "Asssert [**actual**] equals [**expected**]",
                                 "usage": null,
-                                "action": null,
+                                "task": null,
                                 "steps": [],
                                 "parameters": [
                                     {

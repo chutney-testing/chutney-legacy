@@ -68,8 +68,8 @@ public class ComposableStepMapperTest {
         ComposableStepDto composableStepDto = ComposableStepMapper.toDto(fStep);
 
         // Then
-        Assertions.assertThat(composableStepDto.steps().get(0).action().get()).isEqualTo(TECHNICAL_CONTENT);
-        Assertions.assertThat(composableStepDto.steps().get(1).steps().get(0).action().get()).isEqualTo(TECHNICAL_CONTENT_B);
+        Assertions.assertThat(composableStepDto.steps().get(0).task().get()).isEqualTo(TECHNICAL_CONTENT);
+        Assertions.assertThat(composableStepDto.steps().get(1).steps().get(0).task().get()).isEqualTo(TECHNICAL_CONTENT_B);
     }
 
     @Test
@@ -152,7 +152,7 @@ public class ComposableStepMapperTest {
             .addSteps(
                 ImmutableComposableStepDto.builder()
                     .name("sub step 1")
-                    .action(TECHNICAL_CONTENT)
+                    .task(TECHNICAL_CONTENT)
                     .build()
             )
             .addSteps(

@@ -47,7 +47,7 @@ Feature: SSH Task test
                         "when":{
                             "sentence":"Execute commands",
                             "implementation":{
-                                "action":"{\n type: ssh-client \n target: test_ssh \n inputs: {\n commands: [\n echo test \n] \n} \n}"
+                                "task":"{\n type: ssh-client \n target: test_ssh \n inputs: {\n commands: [\n echo test \n] \n} \n}"
                             }
                         },
                         "thens":[]
@@ -110,7 +110,7 @@ Feature: SSH Task test
                         "when":{
                             "sentence":"Execute commands",
                             "implementation":{
-                                "action":"{\n type: ssh-client \n target: test_ssh \n inputs: {\n commands: [\n {\n command: echo test \n timeout: 500 ms \n},{\n command: echo testbis \n} \n] \n} \n}"
+                                "task":"{\n type: ssh-client \n target: test_ssh \n inputs: {\n commands: [\n {\n command: echo test \n timeout: 500 ms \n},{\n command: echo testbis \n} \n] \n} \n}"
                             }
                         },
                         "thens":[
@@ -120,61 +120,61 @@ Feature: SSH Task test
                                     {
                                         "sentence": "Assert first command",
                                         "implementation":{
-                                            "action":"{\n type: compare \n inputs: {\n actual: \${#results.get(0).command.command} \n expected: echo test \n mode: equals \n} \n}"
+                                            "task":"{\n type: compare \n inputs: {\n actual: \${#results.get(0).command.command} \n expected: echo test \n mode: equals \n} \n}"
                                         }
                                     },
                                     {
                                         "sentence": "Assert first command timeout",
                                         "implementation":{
-                                            "action":"{\n type: compare \n inputs: {\n actual: \${#results.get(0).command.timeout.toString()} \n expected: 500 ms \n mode: equals \n} \n}"
+                                            "task":"{\n type: compare \n inputs: {\n actual: \${#results.get(0).command.timeout.toString()} \n expected: 500 ms \n mode: equals \n} \n}"
                                         }
                                     },
                                     {
                                         "sentence": "Assert first command exit code",
                                         "implementation":{
-                                            "action":"{\n type: compare \n inputs: {\n actual: \${T(Integer).toString(#results.get(0).exitCode)} \n expected: \"0\" \n mode: equals \n} \n}"
+                                            "task":"{\n type: compare \n inputs: {\n actual: \${T(Integer).toString(#results.get(0).exitCode)} \n expected: \"0\" \n mode: equals \n} \n}"
                                         }
                                     },
                                     {
                                         "sentence": "Assert first command stdout",
                                         "implementation":{
-                                            "action":"{\n type: compare \n inputs: {\n actual: \${#results.get(0).stdout} \n expected: \"\" \n mode: equals \n} \n}"
+                                            "task":"{\n type: compare \n inputs: {\n actual: \${#results.get(0).stdout} \n expected: \"\" \n mode: equals \n} \n}"
                                         }
                                     },
                                     {
                                         "sentence": "Assert first command sterr",
                                         "implementation":{
-                                            "action":"{\n type: compare \n inputs: {\n actual: \${#results.get(0).stderr} \n expected: \"\" \n mode: equals \n} \n}"
+                                            "task":"{\n type: compare \n inputs: {\n actual: \${#results.get(0).stderr} \n expected: \"\" \n mode: equals \n} \n}"
                                         }
                                     },
                                     {
                                         "sentence": "Assert second command",
                                         "implementation":{
-                                            "action":"{\n type: compare \n inputs: {\n actual: \${#results.get(1).command.command} \n expected: echo testbis \n mode: equals \n} \n}"
+                                            "task":"{\n type: compare \n inputs: {\n actual: \${#results.get(1).command.command} \n expected: echo testbis \n mode: equals \n} \n}"
                                         }
                                     },
                                     {
                                         "sentence": "Assert second command timeout",
                                         "implementation":{
-                                            "action":"{\n type: compare \n inputs: {\n actual: \${#results.get(1).command.timeout.toString()} \n expected: 5000 ms \n mode: equals \n} \n}"
+                                            "task":"{\n type: compare \n inputs: {\n actual: \${#results.get(1).command.timeout.toString()} \n expected: 5000 ms \n mode: equals \n} \n}"
                                         }
                                     },
                                     {
                                         "sentence": "Assert second command exit code",
                                         "implementation":{
-                                            "action":"{\n type: compare \n inputs: {\n actual: \${T(Integer).toString(#results.get(1).exitCode)} \n expected: \"0\" \n mode: equals \n} \n}"
+                                            "task":"{\n type: compare \n inputs: {\n actual: \${T(Integer).toString(#results.get(1).exitCode)} \n expected: \"0\" \n mode: equals \n} \n}"
                                         }
                                     },
                                     {
                                         "sentence": "Assert second command stdout",
                                         "implementation":{
-                                            "action":"{\n type: compare \n inputs: {\n actual: \${#results.get(1).stdout} \n expected: \"\" \n mode: equals \n} \n}"
+                                            "task":"{\n type: compare \n inputs: {\n actual: \${#results.get(1).stdout} \n expected: \"\" \n mode: equals \n} \n}"
                                         }
                                     },
                                     {
                                         "sentence": "Assert second command sterr",
                                         "implementation":{
-                                            "action":"{\n type: compare \n inputs: {\n actual: \${#results.get(1).stderr} \n expected: \"\" \n mode: equals \n} \n}"
+                                            "task":"{\n type: compare \n inputs: {\n actual: \${#results.get(1).stderr} \n expected: \"\" \n mode: equals \n} \n}"
                                         }
                                     }
                                 ]
