@@ -60,9 +60,7 @@
         border: 0;
         border-radius: 0.5rem;
 
-        .arrow {
-            margin-top: -8px !important;
-
+        .popover-arrow {
             &::after {
                 border-left-color: var(--bs-primary);
             }
