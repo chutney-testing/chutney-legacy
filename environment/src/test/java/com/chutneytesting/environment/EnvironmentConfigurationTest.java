@@ -3,10 +3,14 @@ package com.chutneytesting.environment;
 import static com.chutneytesting.environment.infra.MigrateTargetSecurityExecutorTest.copyToMigrateEnvTo;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.chutneytesting.environment.domain.Environment;
+import com.chutneytesting.environment.domain.EnvironmentRepository;
+import com.chutneytesting.environment.domain.EnvironmentService;
 import com.chutneytesting.environment.infra.MigrateTargetSecurityExecutorTest;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.Mockito;
 
 class EnvironmentConfigurationTest {
 
@@ -28,5 +32,14 @@ class EnvironmentConfigurationTest {
 
         // Then
         MigrateTargetSecurityExecutorTest.assertThatEnvironmentTargetsHaveSecurityPropertiesCopiedInPropertiesNode(envPath);
+    }
+
+    @Test
+    void should_create_default_environment_when_instantiated(@TempDir Path tempPath) {
+        // When
+        EnvironmentConfiguration environmentConfiguration = new EnvironmentConfiguration(tempPath.toString());
+        Environment expected = Environment.builder().withName("DEFAULT").build();
+        // Then
+        assertThat(environmentConfiguration.getEnvironmentRepository().getEnvironments().get(0)).isEqualTo(expected);
     }
 }
