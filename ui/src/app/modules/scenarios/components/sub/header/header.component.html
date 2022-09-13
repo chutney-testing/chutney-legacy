@@ -1,14 +1,14 @@
-<div *ngIf="testCaseMetadata" class="row edition-header">
+<div *ngIf="testCaseMetadata" class="row edition-header mb-2">
     <div class="col-md-6 header-left">
-        <div class="title" [innerHTML]="testCaseMetadata.title | linkify"></div>
-        <div class="description" [innerHTML]="testCaseMetadata.description | linkify"></div>
+        <div class="title mt-2 mb-1" [innerHTML]="testCaseMetadata.title | linkify"></div>
+        <div class="description p-1 border rounded" [innerHTML]="testCaseMetadata.description | linkify"></div>
         <div class="btn-group header-tag">
             <span *ngFor="let tag of testCaseMetadata.tags">
                 <span class="chutney-tag chutney-tag-selected">{{tag}}</span>
             </span>
         </div>
     </div>
-    <div class="col-md-6 header-right triangle-left">
+    <div class="col-md-6 header-right align-self-center">
         <div class="row">
             <div class="col-sm-12 btn-toolbar p-0">
                 <div class="col-6 p-0">

@@ -11,16 +11,11 @@ button span:not(:first-child) {
     margin-bottom: 0;
 
     .header-left {
-        height: 120px;
-        width: 45%;
-        float: left;
-
         .title {
-            margin-top: 15px;
             font-size: 18px;
             line-height: 18px;
             overflow: hidden;
-            height:45px;
+            min-height: 45px;
         }
 
         .description{
@@ -34,21 +29,16 @@ button span:not(:first-child) {
         }
 
         .header-tag {
-            height:25px;
             overflow: hidden;
         }
     }
 
     .header-right {
-        width:55%;
-        height: 120px;
-        float: left;
         text-align: center;
         position: relative;
         padding-left: 20px;
 
         .btn-toolbar {
-            height: 100px;
 
             display: -ms-flexbox;
             display: -webkit-flex;

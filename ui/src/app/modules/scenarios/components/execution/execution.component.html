@@ -1,9 +1,7 @@
-<ng-container>
-    <chutney-header [testCaseId]="currentScenarioId"
-                    [canExecute]="parseError"
-                    (executeEvent)="executeScenario($event)">
-    </chutney-header>
-</ng-container>
+<chutney-header [testCaseId]="currentScenarioId"
+                [canExecute]="parseError"
+                (executeEvent)="executeScenario($event)">
+</chutney-header>
 
 <div class="row">
     <div class="col-sm-3half">
@@ -71,11 +69,11 @@
                     </div>
                 </div>
                 <div class="btn-group float-end col-md-3">
-                    <button type="button" class="btn btn-sm btn-outline-info m-2" [ngClass]="!toggleScenarioInfo ? 'active' : ''" (click)="expandAllInfo()">
+                    <button type="button" class="btn btn-sm btn-outline-info m-2 rounded" [ngClass]="!toggleScenarioInfo ? 'active' : ''" (click)="expandAllInfo()">
                         <span class="btn-label"> {{ 'scenarios.execution.step.actions.informations' | translate }}
                         </span>
                     </button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary m-2" [ngClass]="!toggleScenarioDetails ? 'active' : ''" (click)="expandAllDetails()">
+                    <button type="button" class="btn btn-sm btn-outline-secondary m-2 rounded" [ngClass]="!toggleScenarioDetails ? 'active' : ''" (click)="expandAllDetails()">
                         <span class="btn-label">
                             {{toggleScenarioDetails ? ('scenarios.execution.actions.details.show' | translate) : ('scenarios.execution.actions.details.hide' | translate)}}
                         </span>
