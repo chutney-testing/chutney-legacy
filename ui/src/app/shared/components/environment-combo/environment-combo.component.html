@@ -1,3 +1,3 @@
-<select class="form-select env-combo" (change)="changingValue($event)">
+<select class="form-select env-combo ms-2" (change)="changingValue($event)">
     <option *ngFor="let env of environments" [selected]="env === selectedEnvironment">{{ env }}</option>
 </select>
