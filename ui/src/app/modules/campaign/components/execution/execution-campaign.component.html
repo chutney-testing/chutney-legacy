@@ -26,11 +26,11 @@
                 </div>
             </ng-container>
             <ng-container *hasAuthorization="[Authorization.CAMPAIGN_WRITE]">
-                <button type="button" class="btn btn-light border" (click)="editCampaign(campaign)">
+                <button type="button" class="btn btn-light border me-2" (click)="editCampaign(campaign)">
                     <span class="fa fa-pencil-alt me-2"></span>
                     <span class="btn-label">{{ 'global.actions.edit' | translate }}</span>
                 </button>
-                <button type="button" class="btn btn-outline-danger"
+                <button type="button" class="btn btn-outline-danger me-2"
                         (click)="deleteCampaign(campaign.id, campaign.title)"
                         [disabled]="running">
                     <span class="fa fa-trash me-2"></span>
