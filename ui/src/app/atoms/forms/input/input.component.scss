@@ -1,18 +1,4 @@
 input {
-    border: solid 1px var(--bs-white);
-    background-color: var(--bs-white);
-    border-radius: 0;
-    caret-color: var(--bs-light);
-    font-family: Ubuntu;
-    font-size: 16px;
-
-    &::placeholder {
-        color: var(--bs-light);
-        opacity: 1; /* Firefox */
-    }
-    &:focus {
-        border-color: var(--bs-white);
-    }
     &.invalid {
         border-color: var(--bs-danger);
         color: var(--bs-danger);
