@@ -81,7 +81,7 @@ Feature: Jms Task test
     Scenario: Jms sender then clean then send and listen it on embedded broker
         Given a jms endpoint
             Do jms-broker-start
-            With config-uri broker:(tcp://localhost:${#tcpPort()})?useJmx=false&persistent=false
+                With config-uri broker:(tcp://localhost:${#tcpPort()})?useJmx=false&persistent=false
         And an associated target
             Do http-post Create environment and target
                 On CHUTNEY_LOCAL
@@ -96,7 +96,7 @@ Feature: Jms Task test
                     "targets": [
                         {
                             "name": "test_jms",
-                            "url": "vm://localhost",
+                            "url": "vm://localhost:61616",
                             "properties": [
                                 {
                                     "key": "java.naming.factory.initial",
