@@ -3,7 +3,7 @@ package com.chutneytesting.environment;
 import static com.chutneytesting.environment.infra.MigrateTargetSecurityExecutorTest.copyToMigrateEnvTo;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.environment.domain.Environment;
+import com.chutneytesting.environment.api.dto.EnvironmentDto;
 import com.chutneytesting.environment.infra.MigrateTargetSecurityExecutorTest;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
@@ -32,11 +32,13 @@ class EnvironmentConfigurationTest {
     }
 
     @Test
-    void should_create_default_environment_when_instantiated(@TempDir Path tempPath) {
+    void should_create_default_environment_at_started_when_environment_list_is_empty(@TempDir Path tempPath) {
         // When
         EnvironmentConfiguration environmentConfiguration = new EnvironmentConfiguration(tempPath.toString());
-        Environment expected = Environment.builder().withName("DEFAULT").build();
+
         // Then
-        assertThat(environmentConfiguration.getEnvironmentRepository().getEnvironments().get(0)).isEqualTo(expected);
+        EnvironmentDto expected = new EnvironmentDto("DEFAULT");
+        assertThat(environmentConfiguration.getEmbeddedEnvironmentApi().listEnvironments().size()).isEqualTo(1);
+        assertThat(environmentConfiguration.getEmbeddedEnvironmentApi().getEnvironment("DEFAULT")).isEqualTo(expected);
     }
 }

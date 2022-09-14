@@ -18,10 +18,14 @@ public class EnvironmentConfiguration {
         this.environmentApi = new EmbeddedEnvironmentApi(environmentService);
 
         if (environmentRepository.listNames().isEmpty()) {
-            environmentService.createEnvironment(Environment.builder().withName("DEFAULT").build());
+            createDefaultEnvironment(environmentService);
         }
 
         migrateTargetSecurity();
+    }
+
+    private void createDefaultEnvironment(EnvironmentService environmentService) {
+        environmentService.createEnvironment(Environment.builder().withName("DEFAULT").build());
     }
 
     private void migrateTargetSecurity() {
@@ -40,9 +44,5 @@ public class EnvironmentConfiguration {
 
     public EmbeddedEnvironmentApi getEmbeddedEnvironmentApi() {
         return environmentApi;
-    }
-
-    protected EnvironmentRepository getEnvironmentRepository() {
-        return environmentRepository;
     }
 }
