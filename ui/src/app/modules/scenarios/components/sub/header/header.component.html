@@ -43,13 +43,13 @@
                                                        [dialogMessage]="'scenarios.execution.actions.remove' | translate"
                                                        (deleteEvent)="deleteScenario(testCaseId)">
                         </chutney-delete-confirm-dialog>
-                        <button type="button" class="btn btn-success accept-spinner align-items-end"
+                        <button type="button" class="btn btn-success accept-spinner align-items-end ms-2"
                                 (click)="duplicateScenario()">
                             <span class="fa fa-clone"></span>
                             <span class="btn-label">{{'global.actions.clone' | translate}}</span>
                         </button>
                         <button *ngIf="isNotComposed()" type="button"
-                                class="btn btn-success accept-spinner align-items-end" (click)="exportScenario()">
+                                class="btn btn-success accept-spinner align-items-end ms-2" (click)="exportScenario()">
                             <span class="fa fa-file-code"></span>
                             <span class="btn-label">{{'global.actions.export' | translate}}</span>
                         </button>
