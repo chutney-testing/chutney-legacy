@@ -12,7 +12,7 @@
                 <span class="fa fa-times"></span> {{ 'campaigns.search.deselectAllText' | translate }}
             </button>
         </div>
-        <div class="d-flex flex-wrap w-auto">
+        <div class="d-flex flex-wrap w-auto mt-1 mb-3">
             <div class="align-self-center">
                 <button class="chutney-tag"
                         [ngClass]="tagFilter.isNoTagSelected() ? 'chutney-tag-selected' : 'chutney-tag-unselected'"
@@ -42,7 +42,7 @@
 
     <div class="campaign-3 w-100">
         <div class="table-responsive" *ngIf="viewedCampaigns.length > 0">
-            <table class="table table-sm table-striped table-hover">
+            <table class="table table-sm table-striped table-hover align-baseline">
                 <tbody>
                 <tr *ngFor="let campaign of (viewedCampaigns | searchTextPipe : campaignFilter:campaignFilterAttributes)">
                     <td class="small_text w93 align-middle">
