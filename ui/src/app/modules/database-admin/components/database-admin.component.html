@@ -8,11 +8,14 @@
             </select>
         </div>
         <div class="col text-center input-group input-group-sm">
-            <label for="paginate" class="me-2">Paginate</label>
-            <input id="paginate" type="checkbox" [(ngModel)]="paginate" (change)="onPaginationChange()" class="me-2 align-middle"/>
-            <div class="d-inline" [ngClass]="paginate ? 'visible' : 'invisible'">
-                <label for="itemsPerPage" class="me-2">Items per page</label>
-                <input id="itemsPerPage" type="number" min="1" max="50" [(ngModel)]="itemsPerPage" (change)="onPaginationChange()"/>
+            <div class="align-bottom">
+                <label for="paginate" class="me-2">Paginate</label>
+                <input id="paginate" type="checkbox" [(ngModel)]="paginate" (change)="onPaginationChange()" class="me-2 align-middle" />
+                <div class="d-inline ms-1" [ngClass]="paginate ? 'visible' : 'invisible'">
+                    <label for="itemsPerPage" class="me-2">Items per page</label>
+                    <input id="itemsPerPage" type="number" min="1" max="50" [(ngModel)]="itemsPerPage"
+                        (change)="onPaginationChange()" />
+                </div>
             </div>
         </div>
     </div>
