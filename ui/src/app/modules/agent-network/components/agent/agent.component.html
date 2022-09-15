@@ -1,23 +1,22 @@
-<tr>
-    <td class="name">
-        <input class="col form-control form-control-sm" type="text" placeholder="{{ 'admin.agents.name.placeholder' | translate }}"
-            required size="50" [(ngModel)]="configurationAgent.name">
-    </td>
-
-    <td>
-        <input class="col form-control form-control-sm" type="text" placeholder="{{ 'admin.agents.name.host' | translate }}"
-            required size="35" [(ngModel)]="configurationAgent.host">
-    </td>
-    <td class="dot">:</td>
-    <td>
-        <input class="col form-control form-control-sm" type="text" pattern="\d{1,5}" placeholder="{{ 'admin.agents.name.port' | translate }}"
-            required maxlength="5" [(ngModel)]="configurationAgent.port">
-    </td>
-    <td>
-        <span class="input-group-btn" (click)="removeAgent()">
-            <button class="btn btn-sm" type="button">
-                <span class="fa fa-times mb-3"></span>
-            </button>
-        </span>
-    </td>
-</tr>
+<div class="row g-1 py-1 align-items-center">
+    <div class="col">
+        <input class="form-control form-control-sm" type="text"
+               placeholder="{{ 'admin.agents.name.placeholder' | translate }}"
+               required [(ngModel)]="configurationAgent.name">
+    </div>
+    <div class="col">
+        <input class="form-control form-control-sm" type="text" placeholder="{{ 'admin.agents.name.host' | translate }}"
+               required [(ngModel)]="configurationAgent.host">
+    </div>
+    <div class="col-sm-1 text-center">:</div>
+    <div class="col-2">
+        <input class="form-control form-control-sm" type="text" pattern="\d{1,5}"
+               placeholder="{{ 'admin.agents.name.port' | translate }}"
+               required maxlength="5" [(ngModel)]="configurationAgent.port">
+    </div>
+    <div class="col-sm-1 text-center">
+        <button class="btn btn-sm" type="button" (click)="removeAgent()">
+            <span class="fa fa-times"></span>
+        </button>
+    </div>
+</div>
