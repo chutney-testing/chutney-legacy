@@ -23,6 +23,7 @@ export class ChutneyEditorComponent implements OnInit, AfterViewInit, OnChanges 
     @Input() content = '';
     @Input() modes: string[];
     @Input() mode: string;
+    @Input() height = '420px';
     currentMode: string;
     @Output() onContentChange = new EventEmitter<string>();
 
