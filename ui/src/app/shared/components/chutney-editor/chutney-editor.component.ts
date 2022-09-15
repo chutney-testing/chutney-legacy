@@ -66,14 +66,10 @@ export class ChutneyEditorComponent implements OnInit, AfterViewInit, OnChanges 
 
     private initEditor() {
         ace.config.set('basePath', 'https://unpkg.com/ace-builds@1.4.12/src-noconflict/');
-        //ace.config.set('maxLines', '23');
         this.aceEditor = ace.edit(this.editorHtmlElement.nativeElement);
         this.aceEditor.session.setValue(this.content ? this.content : '');
         this.aceEditor.setTheme(`ace/theme/${this.currentTheme}`);
         this.aceEditor.session.setMode(`ace/mode/${this.mode}`);
         this.aceEditor.on('change', () => this.onContentChange.emit(this.aceEditor.getValue()))
     }
-
-
-
 }

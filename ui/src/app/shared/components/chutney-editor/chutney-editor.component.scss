@@ -16,8 +16,8 @@
 }
 .ace-editor {
     font-size: 13pt;
-    width: 99%;
-    height: 99%;
+    width: 100%;
+    height: calc(100vh - 420px);
 }
 
 .wrapper, .wrapper-with-error {
