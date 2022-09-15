@@ -1,5 +1,5 @@
 
-<div class="campaign-container min-vh-100">
+<div class="campaign-container">
     <div class="campaign-1 w-100">
         <div class="input-group mb-1">
             <input type="text" class="form-control" placeholder="{{ 'campaigns.search.placeholder' | translate }}" [ngModel]="campaignFilter" (ngModelChange)="campaignFilterChange($event)">
@@ -99,7 +99,7 @@
         </div>
     </div>
     <div class="campaign-4 w-100">
-        <h2 *ngIf="scheduledCampaigns.length > 0">{{ 'campaigns.list.executions.next' | translate }}</h2>
+        <h4 *ngIf="scheduledCampaigns.length > 0">{{ 'campaigns.list.executions.next' | translate }}</h4>
         <div class="table-responsive" *ngIf="scheduledCampaigns.length > 0">
             <table class="table table-sm table-striped">
                 <tbody>
@@ -116,17 +116,17 @@
                               aria-hidden="true"></span>
                         - {{scheduledCampaign.campaignTitle}}
                     </td>
-                    <td>{{scheduledCampaign.schedulingDate | amLocal | amDateFormat: 'YYYY-MM-DD HH:mm'}}</td>
+                    <td class="text-nowrap">{{scheduledCampaign.schedulingDate | amLocal | amDateFormat: 'YYYY-MM-DD HH:mm'}}</td>
                 </tr>
                 </tbody>
             </table>
         </div>
-        <h2>{{ 'campaigns.list.executions.last' | translate }}</h2>
+        <h4>{{ 'campaigns.list.executions.last' | translate }}</h4>
         <div class="table-responsive" *ngIf="campaigns.length > 0">
             <table class="table table-sm table-striped">
                 <tbody>
                 <tr *ngFor="let report of lastCampaignReports" class="small_text">
-                    <td class="w25">{{ report.startDate | amDateFormat: 'DD MMM. YYYY HH:mm' }}</td>
+                    <td class="w25 text-nowrap">{{ report.startDate | amDateFormat: 'DD MMM. YYYY HH:mm' }}</td>
                     <td class="ps-0 w60">
                         <a
                            [routerLink]="['/campaign', campaignIdFromName(report.campaignName), 'execution', report.executionId]"
@@ -137,7 +137,7 @@
                     <td class="ps-0 w5">
                         <chutney-execution-badge [status]="report.status" [spin]="true"></chutney-execution-badge>
                     </td>
-                    <td class="text-center ps-0 w10">{{ report.duration | duration:'short'}}</td>
+                    <td class="text-center text-nowrap ps-0 w10">{{ report.duration | duration:'short'}}</td>
                 </tr>
                 </tbody>
             </table>
