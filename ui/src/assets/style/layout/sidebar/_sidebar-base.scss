@@ -129,7 +129,7 @@
 
   & .menu-header {
     text-transform: uppercase;
-    margin: ($layout-spacer-x / 2) 0;
+    margin: calc($layout-spacer-x / 2) 0;
     font-weight: bold;
     white-space: nowrap;
     position: relative;

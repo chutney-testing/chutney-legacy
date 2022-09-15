@@ -99,7 +99,7 @@
     }
 
     .page-title-actions {
-      margin: ($grid-gutter-width / 2) auto 0;
+      margin: calc($grid-gutter-width / 2) auto 0;
     }
 
     .page-title-actions,
@@ -138,6 +138,6 @@
   }
 
   body {
-    margin-bottom: ($grid-gutter-width / 2) !important;
+    margin-bottom: calc($grid-gutter-width / 2) !important;
   }
 }
