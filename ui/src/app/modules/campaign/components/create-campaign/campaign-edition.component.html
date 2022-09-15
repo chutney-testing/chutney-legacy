@@ -63,7 +63,7 @@
                 <input type="text" class="form-control me-2 small-text"
                         formControlName="campaignTags" placeholder="tags"/>
             </div>
-            <div class="col-12">
+            <div class="col-12 ms-3">
                 {{ 'campaigns.edition.options' | translate }} :
                 <div class="ms-4">
                     <div class="form-group form-check">
@@ -106,7 +106,7 @@
                 </ng-container>
             </fieldset>
         </div>
-        <div class="row">
+        <div class="row mt-4">
             <!-- Left side -->
             <div class="col-md-6">
                 <div class="row campaign-title mt-2">
@@ -152,7 +152,7 @@
                 </div>
             </div>
             <!-- Right side -->
-            <div class="col-md-6">
+            <div class="col-md-6 mt-5">
                 <div class="row">
                     <div class="col campaign-title">
                         <h4>{{ 'campaigns.edition.scenarios.pick.title' | translate }}</h4>
@@ -166,7 +166,7 @@
                         </div>
                     </div>
                     <div class="col">
-                        <input name="search" type="text" class="form-control search-field mb-2" id="scenarioIds"
+                        <input name="search" type="text" class="form-control search-field mb-2 border" id="scenarioIds"
                                 formControlName="scenarioIds" placeholder="Filtrer scénarios"
                                 [(ngModel)]="scenariosFilter"/>
                         <angular2-multiselect [data]="itemList"
@@ -189,7 +189,7 @@
                         </ng-container>
                     </div>
                 </div>
-                <div class="table-responsive">
+                <div class="table-responsive mt-2">
                     <table class="table table-striped table-hover">
                         <tbody>
                         <tr

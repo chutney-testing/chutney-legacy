@@ -7,14 +7,14 @@
         </div>
         <div class="col">
             <button *hasAuthorization="[Authorization.DATASET_WRITE]"
-                    type="button" class="btn btn-outline-primary" [routerLink]="['/dataset', 'edition']"
+                    type="button" class="btn btn-primary" [routerLink]="['/dataset', 'edition']"
             >
                 <span class="fa fa-plus" aria-hidden="true"></span> {{ 'global.actions.create' | translate }}
             </button>
         </div>
     </div>
     <div class="mt-3 w-25">
-        <div class="border border-secondary rounded">
+        <div class="border rounded">
             <angular2-multiselect [data]="itemList"
                                   [settings]="settings"
                                   (onSelect)="onItemSelect($event)"
@@ -45,7 +45,7 @@
 
                     <td class="align-items-center">
                         <button *hasAuthorization="[Authorization.DATASET_WRITE]"
-                                type="button" class="btn btn-outline-primary btn-sm"
+                                type="button" class="btn btn-primary btn-sm"
                                 [routerLink]="['/dataset', dataset.id, 'edition']">
                             <span class="fa fa-pencil-alt"
                                   aria-hidden="true"></span> {{ 'global.actions.edit' | translate }}
