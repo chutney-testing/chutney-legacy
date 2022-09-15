@@ -1,4 +1,4 @@
-<div *ngIf="executions" class="panel me-2">
+<div *ngIf="executions" class="panel">
     <h2>{{ 'scenarios.execution.history.title' | translate }}</h2>
     <div class="row tile tile-click" *ngFor="let execution of executions; let i = index"
           (click)="selectExecution(execution)"
