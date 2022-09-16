@@ -1,5 +1,5 @@
 .component-right-content{
-    height: calc(100vh - 255px);
+    height: calc(100vh - 225px);
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -13,7 +13,7 @@
 }
 
 .table-scroll {
-    height: calc(100vh - 310px);
+    height: calc(100vh - 285px);
     overflow-x: hidden;
     overflow-y: auto;
 }
@@ -28,4 +28,8 @@ textarea {
     &#tags {
         font-size: smaller;
     }
+}
+
+.parameter-text {
+    font-size: x-small;
 }

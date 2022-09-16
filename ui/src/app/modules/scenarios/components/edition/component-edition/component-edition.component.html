@@ -49,11 +49,6 @@
                       formControlName="tags" rows="3"></textarea>
         </div>
     </div>
-    <div class="row mb-2">
-        <div *ngIf="scenarioComponent">
-            <chutney-scenario-campaigns [idScenario]="scenarioComponent.id"></chutney-scenario-campaigns>
-        </div>
-    </div>
     <div class="row">
         <div class="col-md-3">
             <input name="search" type="text" class="form-control my-2"
@@ -126,23 +121,19 @@
                         <div class="row" formArrayName="parameters"
                             *ngFor="let parameter of componentForm.get('parameters')?.controls; let i = index;">
                             <ng-container [formGroupName]="i">
-                                <div class="row w-100 my-2">
-                                    <div class="col-9 ps-0">
-                                        <input type="text" class="form-control me-2 small-text"
-                                            formControlName="key"
-                                            placeholder="key"/>
-                                    </div>
-                                    <div class="col pe-0">
-                                        <button type="button"
-                                                class="btn btn-outline-danger delete-button-height float-end"
-                                                (click)="removeParameter(i)">
-                                            <span class="fa fa-trash"></span>
-                                        </button>
-                                    </div>
+                                <div class="col-10 g-3">
+                                    <input type="text" class="form-control form-control-sm parameter-text mb-1"
+                                           formControlName="key"
+                                           placeholder="key"/>
+                                    <textarea class="form-control form-control-sm parameter-text" formControlName="value" rows="1"
+                                              placeholder="value"></textarea>
                                 </div>
-                                <div class="w-100 ps-4">
-                                    <textarea class="form-control me-2 small-text" formControlName="value" rows="1"
-                                            placeholder="value"></textarea>
+                                <div class="col-2 p-1 align-self-center">
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-danger delete-button-height float-end"
+                                            (click)="removeParameter(i)">
+                                        <span class="fa fa-trash"></span>
+                                    </button>
                                 </div>
                             </ng-container>
                         </div>
