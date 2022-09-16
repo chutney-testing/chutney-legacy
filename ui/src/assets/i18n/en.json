@@ -118,6 +118,15 @@
                         "theme": "Theme"
                     }
                 }
+            },
+            "authoring" : {
+                "author": "Author",
+                "created": "Creation",
+                "update": "Update"
+            },
+            "info": {
+                "from": "Edition from",
+                "conflicts": "Editions conflicts"
             }
         }
     },
