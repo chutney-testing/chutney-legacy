@@ -1,20 +1,9 @@
-.component-list {
-    position: fixed;
-    overflow-x: hidden;
+.component-right-content{
+    height: calc(100vh - 255px);
     overflow-y: auto;
-    height: 90vh;
-    table {
-        table-layout: fixed;
-    }
-    scrollbar-width: thin;
+    overflow-x: hidden;
 }
 
-.component-right-content{
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: 100%;
-    width: 100%;
-}
 .edition-body {
     .drop-zone {
         background-color: lightgray;
@@ -23,3 +12,20 @@
     }
 }
 
+.table-scroll {
+    height: calc(100vh - 310px);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+textarea {
+    &#title {
+        font-size: smaller;
+    }
+    &#description {
+        font-size: x-small;
+    }
+    &#tags {
+        font-size: smaller;
+    }
+}
