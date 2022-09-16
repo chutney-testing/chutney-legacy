@@ -91,6 +91,14 @@ export class RawEditionComponent
         );
     }
 
+    cancel() {
+        if (this.testCase.id != null) {
+            this.router.navigateByUrl('/scenario/' + this.testCase.id + '/execution/last');
+        } else {
+            this.router.navigateByUrl('/scenario');
+        }
+    }
+
     load(id, duplicate: boolean) {
         if (id != null) {
             this.scenarioService.findRawTestCase(id).subscribe(

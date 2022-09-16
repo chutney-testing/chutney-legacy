@@ -7,7 +7,6 @@
     <div class="row mb-2">
         <div class="col-6">
             <div class="mb-2">
-<!--                <label class="form-label fw-bold" for="title">Title</label>-->
                 <textarea type="text" id="title" class="form-control"
                           placeholder="Title"
                           [(ngModel)]="scenarioComponent.title"
@@ -15,7 +14,6 @@
                 </textarea>
             </div>
             <div class="mb-2">
-<!--                <label class="form-label fw-bold" for="description">Description</label>-->
                 <textarea type="text" id="description" class="form-control"
                           placeholder="Description"
                           [(ngModel)]="scenarioComponent.description"
@@ -33,7 +31,7 @@
 
                     <button type="button" class="btn btn-light ms-3 rounded" (click)="cancel()"
                             title="{{'global.actions.cancel' | translate}}">
-                        {{ 'campaigns.scheduling.back' | translate }}
+                        {{ 'global.actions.cancel' | translate }}
                     </button>
                 </div>
                 <div *ngIf="scenarioComponent && scenarioComponent.id" class="d-flex flex-wrap">
