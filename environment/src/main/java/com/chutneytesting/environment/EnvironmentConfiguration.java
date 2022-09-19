@@ -17,15 +17,15 @@ public class EnvironmentConfiguration {
         EnvironmentService environmentService = createEnvironmentService(environmentRepository);
         this.environmentApi = new EmbeddedEnvironmentApi(environmentService);
 
-        if (environmentRepository.listNames().isEmpty()) {
-            createDefaultEnvironment(environmentService);
-        }
+        createDefaultEnvironment(environmentService);
 
         migrateTargetSecurity();
     }
 
     private void createDefaultEnvironment(EnvironmentService environmentService) {
-        environmentService.createEnvironment(Environment.builder().withName("DEFAULT").build());
+        if (environmentRepository.listNames().isEmpty()) {
+            environmentService.createEnvironment(Environment.builder().withName("DEFAULT").build());
+        }
     }
 
     private void migrateTargetSecurity() {
