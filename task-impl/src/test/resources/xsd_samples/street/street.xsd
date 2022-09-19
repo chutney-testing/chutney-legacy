@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://chutney/test/street"
+           targetNamespace="http://chutney/test/street"
+           elementFormDefault="qualified">
+
+    <xs:simpleType name="streetType" >
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Voie" />
+            <xs:enumeration value="Avenue" />
+            <xs:enumeration value="Rue" />
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>
