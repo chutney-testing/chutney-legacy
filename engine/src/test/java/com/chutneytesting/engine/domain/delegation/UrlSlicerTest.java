@@ -58,7 +58,8 @@ public class UrlSlicerTest {
             new Object[]{"https://somehost", 443},
             new Object[]{"ssh://somehost", 22},
             new Object[]{"amqp://somehost", 5672},
-            new Object[]{"amqps://somehost", 5671}
+            new Object[]{"amqps://somehost", 5671},
+            new Object[]{"ftp://somehost", 20},
         };
     }
 }
