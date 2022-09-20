@@ -2,6 +2,7 @@ package com.chutneytesting.agent.domain.explore;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -42,6 +43,17 @@ public class UrlSlicerTest {
         UrlSlicer slicedUrl = new UrlSlicer(url);
         assertThat(slicedUrl.host).as("host").isEqualTo("somehost");
         assertThat(slicedUrl.port).as("port").isEqualTo(defaultPort);
+    }
+
+    @Test
+    public void should_throw_when_target_port_is_null() {
+        Throwable thrown = catchThrowable(() -> {
+            new UrlSlicer("fake://host-without-port/");
+        });
+
+        assertThat(thrown)
+            .isInstanceOf(PortUndefinedException.class)
+            .hasMessageContaining("Port is not defined on [fake://host-without-port/]. Cannot default port for [fake] protocol.");
     }
 
     private static String[] acceptedURLs() {
