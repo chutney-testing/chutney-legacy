@@ -1,4 +1,4 @@
-package com.chutneytesting.engine.domain.delegation;
+package com.chutneytesting.agent.domain.explore;
 
 import java.util.Arrays;
 import java.util.HashMap;

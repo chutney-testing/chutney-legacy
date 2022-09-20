@@ -1,4 +1,4 @@
-package com.chutneytesting.engine.domain.delegation;
+package com.chutneytesting.agent.domain.explore;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
