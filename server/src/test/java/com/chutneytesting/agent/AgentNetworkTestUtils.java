@@ -25,7 +25,7 @@ public class AgentNetworkTestUtils {
 
     private static final String AGENT_INFO_REGEX = "^(?<name>[^|]*)=(?<host>.*):(?<port>.*)$";
     private static final Pattern AGENT_INFO_PATTERN = Pattern.compile(AGENT_INFO_REGEX);
-    private static final String TARGET_INFO_REGEX = "^(?<env>[^|]*)\\|(?<name>[^|]*)=(?<host>.*):(?<port>.*)$";
+    private static final String TARGET_INFO_REGEX = "^(?<env>[^|]*)\\|(?<name>[^|]*)=(?<host>.*)(:(?<port>.*))?$";
     private static final Pattern TARGET_INFO_PATTERN = Pattern.compile(TARGET_INFO_REGEX);
 
     private static final String NODE_LINK_REGEX = "^(?<from>.*)->(?<to>[^|]*)$";
@@ -72,8 +72,9 @@ public class AgentNetworkTestUtils {
     public static Optional<TargetDto> createTarget(String envName, String s) {
         Matcher matcher = TARGET_INFO_PATTERN.matcher(s);
         if (!matcher.find()) return Optional.empty();
+        String port = Optional.ofNullable(matcher.group("port")).map(p -> ":" + p).orElse("");
         return Optional.of(
-            new TargetDto(matcher.group("name"), "proto://" + matcher.group("host") + ":" + matcher.group("port"), emptySet())
+            new TargetDto(matcher.group("name"), "proto://" + matcher.group("host") + port, emptySet())
         );
     }
 

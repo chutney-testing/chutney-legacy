@@ -42,7 +42,7 @@ public class UrlSlicer {
             .map(s -> s.startsWith(":") ? s.substring(1) : s) // Remove colon if present
             .map(Integer::valueOf) // Map to int if present
             .or(() -> ofNullable(portByProtocols.get(urlMatcher.group("protocol")))) // default to protocol type.
-            .orElseThrow(() -> new PortUndefinedException(url, urlMatcher.group("protocol")));
+            .orElseThrow(() -> new UndefinedPortException(url, urlMatcher.group("protocol")));
     }
 
     private static Optional<Matcher> findMatcher(String url) {

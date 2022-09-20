@@ -1,5 +1,6 @@
 package com.chutneytesting.agent.domain.explore;
 
+import static java.util.Collections.singleton;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -14,11 +15,18 @@ import com.chutneytesting.agent.AgentNetworkTestUtils;
 import com.chutneytesting.agent.domain.AgentClient;
 import com.chutneytesting.agent.domain.configure.ConfigurationState;
 import com.chutneytesting.agent.domain.configure.Explorations;
+import com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration;
 import com.chutneytesting.agent.domain.configure.LocalServerIdentifier;
 import com.chutneytesting.agent.domain.configure.NetworkConfiguration;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
 import com.chutneytesting.engine.domain.delegation.ConnectionChecker;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
+import com.chutneytesting.environment.api.dto.EnvironmentDto;
+import com.chutneytesting.environment.api.dto.TargetDto;
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,11 +54,29 @@ public class ExploreAgentsServiceTest {
 
     @Test
     public void explore_with_empty_configuration_returns_empty_links() {
-        NetworkConfiguration configuration = AgentNetworkTestUtils.createNetworkConfiguration("Env-NAME");
+        NetworkConfiguration configuration = AgentNetworkTestUtils.createNetworkConfiguration();
 
         ExploreResult exploreResult = sut.explore(configuration);
 
         assertThat(exploreResult.agentLinks()).isEmpty();
+    }
+
+    @Test
+    public void should_mark_unreachable_when_target_has_unknown_port()  {
+        // Given
+        when(localServerIdentifier.getLocalName(any())).thenReturn("A");
+        when(explorations.changeStateToIfPossible(any(), any())).thenReturn(true);
+        when(connectionChecker.canConnectTo(any())).thenReturn(true);
+        NetworkConfiguration configuration = AgentNetworkTestUtils.createNetworkConfiguration("A=self:1", "e1|s1=hasNoPort", "e1|s2=hasPort:42");
+
+        // When
+        ExploreResult links = sut.explore(configuration);
+
+        // Then
+        assertThat(links.targetLinks())
+            .hasSize(1)
+            .extracting(link -> link.source().name() + "->" + link.destination().name)
+            .containsExactlyInAnyOrder("A->s2");
     }
 
     @Test

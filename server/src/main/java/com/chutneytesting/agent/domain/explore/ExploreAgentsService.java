@@ -90,7 +90,15 @@ public class ExploreAgentsService {
         Set<Link<AgentId, TargetId>> targetLinks = networkConfiguration.environmentConfiguration().stream()
             .flatMap(e -> e.targets.stream()
                 .map(t -> Pair.of(e.name, t))
-                .filter(p -> connectionChecker.canConnectTo(namedHostAndPortFromTarget(p.getRight())))
+                .filter(p -> {
+                    try {
+                        NamedHostAndPort namedHostAndPort = namedHostAndPortFromTarget(p.getRight());
+                        return connectionChecker.canConnectTo(namedHostAndPort);
+                    } catch (UndefinedPortException ex) {
+                        LOGGER.warn(ex.getMessage());
+                        return false;
+                    }
+                })
                 .map(p -> TargetId.of(p.getRight().name, p.getLeft()))
                 .map(targetIdentifier -> Link.of(AgentId.of(localName), targetIdentifier))
             ).collect(Collectors.toSet());

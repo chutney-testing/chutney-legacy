@@ -52,7 +52,7 @@ public class UrlSlicerTest {
         });
 
         assertThat(thrown)
-            .isInstanceOf(PortUndefinedException.class)
+            .isInstanceOf(UndefinedPortException.class)
             .hasMessageContaining("Port is not defined on [fake://host-without-port/]. Cannot default port for [fake] protocol.");
     }
 
