@@ -8,13 +8,25 @@
 
 .table-scroll {
     overflow-y: auto;
-    height: calc(100vh - (50px /*menu*/ + 10px /*row margin*/ + 38px /*menu buttons*/ + (1.5em + 0.75rem + 2px + 0.5rem + 2px) /*search*/ + 1rem /*inner table margin*/ + 0px));
+    height: calc(
+        100vh -
+            (
+                50px /*menu*/ + 10px /*row margin*/ + 80px /*menu buttons*/ + (1.5em + 0.75rem + 2px + 0.5rem + 2px)
+                    /*search*/ + 1rem /*inner table margin*/ + 0px
+            )
+    );
 }
 
 .table-scroll-with-tags-filter {
     overflow-y: auto;
     overflow-x: hidden;
-    height: calc(100vh - (50px /*menu*/ + 10px /*row margin*/ + 38px /*menu buttons*/ + (1.5em + 0.75rem + 2px + 0.5rem + 2px) /*search*/ + (35px + 102px) /*tags*/ + (1px + 2rem) /*hr*/ + 1rem /*inner table margin*/ + 0px));
+    height: calc(
+        100vh -
+            (
+                60px /*menu*/ + 10px /*row margin*/ + 80px /*menu buttons*/ + (1.5em + 0.75rem + 2px + 0.5rem + 2px)
+                    /*search*/ + (35px + 102px) /*tags*/ + (1px + 2rem) /*hr*/ + 1rem /*inner table margin*/ + 0px
+            )
+    );
 }
 
 .tags-scroll {
@@ -23,7 +35,7 @@
 }
 
 .component-list {
-    padding-right: 10px;
+    padding-right: 20px;
 
     table {
         table-layout: fixed;
@@ -57,17 +69,13 @@
     margin-left: auto;
 }
 
-.edition {
-    position: absolute;
+.edition-header {
+    height: 170px;
+}
 
-    .edition-header {
-        height: 140px;
-    }
-
-    .edition-body {
-        height: calc(100vh - (50px + 10px + 140px + 10px + 10px));
-        overflow-y: auto;
-    }
+.edition-body {
+    height: calc(100vh - (60px + 1.5rem + 170px + 24px));
+    overflow-y: auto;
 }
 
 textarea.no-resize {
@@ -80,7 +88,7 @@ textarea.no-resize {
 
 .drop-zone {
     font-size: 12px;
-    padding: .5rem .5rem 0rem !important;
+    padding: 0.5rem 0.5rem 0rem !important;
 }
 
 .drop-zone-empty {
@@ -91,22 +99,17 @@ textarea.no-resize {
     width: 45px;
 }
 
-.edition-component-right-panel-minimize {
-    width: 85%;
-}
-
 .right-panel-minimize-btn {
-    width: 45px;
-}
-
-.right-panel-minimize-btn {
-    position: absolute;
-    height: calc(80vh);
+    width: 40px;
+    float: left;
+    height: calc(100vh - (60px + 1.5rem + 170px + 1.5rem + 25px));
     border: none;
 }
 
 .left-panel-minimize-btn {
+    width: 40px;
     position: absolute;
     height: calc(100vh);
     border: none;
+    margin-left: -1.5rem;
 }
