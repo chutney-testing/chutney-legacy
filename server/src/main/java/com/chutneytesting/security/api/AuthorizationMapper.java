@@ -2,10 +2,10 @@ package com.chutneytesting.security.api;
 
 import static java.util.stream.Collectors.toList;
 
-import com.chutneytesting.server.core.domain.security.UserRoles;
 import com.chutneytesting.server.core.domain.security.Authorization;
 import com.chutneytesting.server.core.domain.security.Role;
 import com.chutneytesting.server.core.domain.security.User;
+import com.chutneytesting.server.core.domain.security.UserRoles;
 import java.util.List;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.tuple.Pair;

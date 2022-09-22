@@ -1,7 +1,6 @@
 package com.chutneytesting.glacio.domain.parser.strategy;
 
 import com.chutneytesting.engine.api.execution.StepDefinitionDto;
-import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
 import com.github.fridujo.glacio.model.Step;
 import java.util.List;
 import java.util.Locale;

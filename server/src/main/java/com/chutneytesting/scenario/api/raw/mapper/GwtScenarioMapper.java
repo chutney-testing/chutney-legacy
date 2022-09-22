@@ -7,7 +7,6 @@ import static com.fasterxml.jackson.annotation.PropertyAccessor.SETTER;
 import static org.hjson.JsonValue.readHjson;
 
 import com.chutneytesting.execution.domain.GwtScenarioMarshaller;
-import com.chutneytesting.server.core.domain.execution.ScenarioConversionException;
 import com.chutneytesting.scenario.api.raw.dto.GwtScenarioDto;
 import com.chutneytesting.scenario.api.raw.dto.GwtStepDto;
 import com.chutneytesting.scenario.api.raw.dto.GwtStepImplementationDto;
@@ -19,6 +18,7 @@ import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtStep;
 import com.chutneytesting.scenario.domain.gwt.GwtStepImplementation;
 import com.chutneytesting.scenario.domain.gwt.Strategy;
+import com.chutneytesting.server.core.domain.execution.ScenarioConversionException;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotParsableException;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;

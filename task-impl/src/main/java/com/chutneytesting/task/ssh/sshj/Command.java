@@ -1,8 +1,8 @@
 package com.chutneytesting.task.ssh.sshj;
 
 
-import com.google.common.base.MoreObjects;
 import com.chutneytesting.task.spi.time.Duration;
+import com.google.common.base.MoreObjects;
 import java.io.IOException;
 import java.util.Optional;
 

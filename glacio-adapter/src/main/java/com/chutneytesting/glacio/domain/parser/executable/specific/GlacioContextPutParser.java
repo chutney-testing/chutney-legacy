@@ -4,10 +4,10 @@ import static java.util.Locale.ENGLISH;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.glacio.domain.parser.ExecutableGlacioStepParser;
-import com.chutneytesting.glacio.domain.parser.util.ParserHelper;
 import com.chutneytesting.glacio.domain.parser.GlacioStepParser;
 import com.chutneytesting.glacio.domain.parser.ParsingContext;
 import com.chutneytesting.glacio.domain.parser.executable.common.EmptyParser;
+import com.chutneytesting.glacio.domain.parser.util.ParserHelper;
 import com.github.fridujo.glacio.model.DataTable;
 import com.github.fridujo.glacio.model.Step;
 import java.util.Arrays;

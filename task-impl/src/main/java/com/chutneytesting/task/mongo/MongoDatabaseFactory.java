@@ -1,8 +1,8 @@
 package com.chutneytesting.task.mongo;
 
-import com.mongodb.client.MongoDatabase;
 import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.tools.CloseableResource;
+import com.mongodb.client.MongoDatabase;
 
 public interface MongoDatabaseFactory {
 

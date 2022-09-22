@@ -1,7 +1,7 @@
 package com.chutneytesting.task.http.function;
 
-import com.github.tomakehurst.wiremock.verification.LoggedRequest;
 import com.chutneytesting.task.spi.SpelFunction;
+import com.github.tomakehurst.wiremock.verification.LoggedRequest;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;

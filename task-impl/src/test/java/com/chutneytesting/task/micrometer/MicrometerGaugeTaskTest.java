@@ -8,7 +8,6 @@ import static com.chutneytesting.task.spi.TaskExecutionResult.Status.Success;
 import static io.micrometer.core.instrument.Metrics.globalRegistry;
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.chutneytesting.task.TestLogger;
 import com.chutneytesting.task.spi.TaskExecutionResult;

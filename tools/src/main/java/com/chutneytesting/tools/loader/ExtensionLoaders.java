@@ -4,8 +4,9 @@ import static com.chutneytesting.tools.loader.ExtensionLoaders.Mappers.instantia
 import static com.chutneytesting.tools.loader.ExtensionLoaders.Mappers.splitByLine;
 import static com.chutneytesting.tools.loader.ExtensionLoaders.Sources.classpath;
 
-import com.google.common.io.CharStreams;
+import com.chutneytesting.tools.ThrowingFunction;
 import com.chutneytesting.tools.loader.ExtensionLoader.ExtensionLoaderSource;
+import com.google.common.io.CharStreams;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -17,7 +18,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import com.chutneytesting.tools.ThrowingFunction;
 
 /**
  * Reference common {@link ExtensionLoader ExtensionLoaders}.

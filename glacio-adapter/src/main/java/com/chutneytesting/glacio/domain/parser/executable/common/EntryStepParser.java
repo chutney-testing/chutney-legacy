@@ -2,9 +2,9 @@ package com.chutneytesting.glacio.domain.parser.executable.common;
 
 import static java.util.Optional.empty;
 
-import com.chutneytesting.glacio.domain.parser.util.ParserHelper;
 import com.chutneytesting.glacio.domain.parser.GlacioStepParser;
 import com.chutneytesting.glacio.domain.parser.ParsingContext;
+import com.chutneytesting.glacio.domain.parser.util.ParserHelper;
 import com.github.fridujo.glacio.model.DataTable;
 import com.github.fridujo.glacio.model.DocString;
 import com.github.fridujo.glacio.model.Step;
