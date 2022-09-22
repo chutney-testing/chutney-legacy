@@ -20,10 +20,10 @@ public class XsdValidationTaskTest {
         Logger logger = new TestLogger();
         String xml = "<?xml version=\"1.0\"?>\r\n" +
             "<Employee xmlns=\"https://www.chutneytesting.com/Employee\">\r\n" +
-            "	<name>my Name</name>\r\n" +
-            "	<age>29</age>\r\n" +
-            "	<role>Java Developer</role>\r\n" +
-            "	<gender>Male</gender>\r\n" +
+            "    <name>my Name</name>\r\n" +
+            "    <age>29</age>\r\n" +
+            "    <role>Java Developer</role>\r\n" +
+            "    <gender>Male</gender>\r\n" +
             "</Employee>";
 
         String xsd = "/xsd_samples/employee.xsd";
@@ -43,10 +43,10 @@ public class XsdValidationTaskTest {
         Logger logger = new TestLogger();
         String xml = "<?xml version=\"1.0\"?>\r\n" +
             "<Employee xmlns=\"https://www.chutneytesting.com/Employee\">\r\n" +
-            "	<name>my name</name>\r\n" +
-            "	<age>29</age>\r\n" +
-            "	<role>Java Developer</role>\r\n" +
-            "	<gender>ERROR</gender>\r\n" +
+            "    <name>my name</name>\r\n" +
+            "    <age>29</age>\r\n" +
+            "    <role>Java Developer</role>\r\n" +
+            "    <gender>ERROR</gender>\r\n" +
             "</Employee>";
 
         String xsd = "/xsd_samples/employee.xsd";
