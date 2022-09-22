@@ -1,15 +1,15 @@
 package com.chutneytesting.task.http;
 
+import com.chutneytesting.task.spi.Task;
+import com.chutneytesting.task.spi.TaskExecutionResult;
+import com.chutneytesting.task.spi.injectable.Input;
+import com.chutneytesting.task.spi.injectable.Logger;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import com.github.tomakehurst.wiremock.verification.FindRequestsResult;
 import com.github.tomakehurst.wiremock.verification.LoggedRequest;
-import com.chutneytesting.task.spi.Task;
-import com.chutneytesting.task.spi.TaskExecutionResult;
-import com.chutneytesting.task.spi.injectable.Input;
-import com.chutneytesting.task.spi.injectable.Logger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

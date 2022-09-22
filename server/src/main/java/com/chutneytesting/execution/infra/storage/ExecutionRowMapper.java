@@ -1,8 +1,8 @@
 package com.chutneytesting.execution.infra.storage;
 
-import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.Execution;
 import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory;
+import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;

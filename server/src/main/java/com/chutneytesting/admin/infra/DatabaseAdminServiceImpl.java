@@ -1,7 +1,10 @@
 package com.chutneytesting.admin.infra;
 
 
-import static com.chutneytesting.server.core.domain.admin.SqlResult.*;
+import static com.chutneytesting.server.core.domain.admin.SqlResult.Row;
+import static com.chutneytesting.server.core.domain.admin.SqlResult.data;
+import static com.chutneytesting.server.core.domain.admin.SqlResult.error;
+import static com.chutneytesting.server.core.domain.admin.SqlResult.updatedRows;
 
 import com.chutneytesting.server.core.domain.admin.DatabaseAdminService;
 import com.chutneytesting.server.core.domain.admin.SqlResult;

@@ -1,8 +1,8 @@
 package com.chutneytesting.execution.domain.campaign;
 
+import com.chutneytesting.jira.api.ReportForJira;
 import com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport;
 import com.chutneytesting.server.core.domain.execution.report.StepExecutionReportCore;
-import com.chutneytesting.jira.api.ReportForJira;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.stream.Collectors;

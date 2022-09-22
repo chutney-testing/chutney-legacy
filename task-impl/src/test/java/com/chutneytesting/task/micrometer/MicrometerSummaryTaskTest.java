@@ -5,7 +5,6 @@ import static com.chutneytesting.task.micrometer.MicrometerTaskTestHelper.assert
 import static com.chutneytesting.task.micrometer.MicrometerTaskTestHelper.buildMeterName;
 import static io.micrometer.core.instrument.Metrics.globalRegistry;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.chutneytesting.task.TestLogger;
 import com.chutneytesting.task.spi.TaskExecutionResult;

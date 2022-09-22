@@ -5,9 +5,9 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
+import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
-import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;

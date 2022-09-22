@@ -1,6 +1,5 @@
 package com.chutneytesting.server.core.domain.tools;
 
-import com.chutneytesting.server.core.domain.tools.ImmutablePaginationRequestParametersDto;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.immutables.value.Value;

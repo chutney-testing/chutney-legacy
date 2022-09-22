@@ -9,10 +9,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.chutneytesting.task.jms.consumer.JmsListenerParameters;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.chutneytesting.task.spi.injectable.Target;
-import com.chutneytesting.task.jms.consumer.JmsListenerParameters;
 import java.util.Optional;
 import javax.jms.TextMessage;
 import org.junit.jupiter.api.Test;

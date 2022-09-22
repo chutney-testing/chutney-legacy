@@ -1,7 +1,7 @@
 package com.chutneytesting.task.micrometer;
 
-import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
 import static com.chutneytesting.task.micrometer.MicrometerTaskHelper.toOutputs;
+import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 import static com.chutneytesting.task.spi.validation.Validator.of;
 import static io.micrometer.core.instrument.Metrics.globalRegistry;
