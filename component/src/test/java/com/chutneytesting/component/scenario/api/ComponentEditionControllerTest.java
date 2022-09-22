@@ -21,7 +21,6 @@ import com.chutneytesting.component.scenario.domain.ComposableScenario;
 import com.chutneytesting.component.scenario.domain.ComposableTestCase;
 import com.chutneytesting.component.scenario.infra.OrientComposableTestCaseRepository;
 import com.chutneytesting.server.core.domain.execution.processor.TestCasePreProcessors;
-import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.server.core.domain.security.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;

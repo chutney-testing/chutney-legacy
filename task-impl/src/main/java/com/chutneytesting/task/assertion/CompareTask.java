@@ -1,11 +1,11 @@
 package com.chutneytesting.task.assertion;
 
+import com.chutneytesting.task.assertion.compareTask.CompareExecutor;
+import com.chutneytesting.task.assertion.compareTask.CompareTaskFactory;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;
 import com.chutneytesting.task.spi.injectable.Logger;
-import com.chutneytesting.task.assertion.compareTask.CompareExecutor;
-import com.chutneytesting.task.assertion.compareTask.CompareTaskFactory;
 
 public class CompareTask implements Task {
 

@@ -5,10 +5,10 @@ import com.chutneytesting.task.domain.ResultOrError;
 import com.chutneytesting.task.domain.TaskTemplate;
 import com.chutneytesting.task.domain.TaskTemplateLoader;
 import com.chutneytesting.task.domain.TaskTemplateParser;
+import com.chutneytesting.tools.loader.ExtensionLoaders;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import com.chutneytesting.tools.loader.ExtensionLoaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

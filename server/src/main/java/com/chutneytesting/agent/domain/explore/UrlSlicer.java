@@ -1,4 +1,6 @@
-package com.chutneytesting.engine.domain.delegation;
+package com.chutneytesting.agent.domain.explore;
+
+import static java.util.Optional.ofNullable;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,6 +23,7 @@ public class UrlSlicer {
         portByProtocols.put("ssh", 22);
         portByProtocols.put("amqp", 5672);
         portByProtocols.put("amqps", 5671);
+        portByProtocols.put("ftp", 20);
     }
 
     private static final Pattern[] patterns = {
@@ -35,10 +38,11 @@ public class UrlSlicer {
         Matcher urlMatcher = findMatcher(url).orElseThrow(() -> new IllegalArgumentException("Given URL does not match any known pattern: " + url));
         host = urlMatcher.group("host");
 
-        port = Optional.ofNullable(urlMatcher.group("port"))
-            .map(s->s.startsWith(":")?s.substring(1):s) // Remove colon if present
+        port = ofNullable(urlMatcher.group("port"))
+            .map(s -> s.startsWith(":") ? s.substring(1) : s) // Remove colon if present
             .map(Integer::valueOf) // Map to int if present
-            .orElseGet(()->portByProtocols.get(urlMatcher.group("protocol"))); // default to protocol type.
+            .or(() -> ofNullable(portByProtocols.get(urlMatcher.group("protocol")))) // default to protocol type.
+            .orElseThrow(() -> new UndefinedPortException(url, urlMatcher.group("protocol")));
     }
 
     private static Optional<Matcher> findMatcher(String url) {

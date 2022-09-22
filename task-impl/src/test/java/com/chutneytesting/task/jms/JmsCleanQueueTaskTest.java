@@ -8,14 +8,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
-import com.chutneytesting.task.spi.injectable.Logger;
-import com.chutneytesting.task.spi.injectable.Target;
 import com.chutneytesting.task.jms.consumer.Consumer;
 import com.chutneytesting.task.jms.consumer.JmsListenerParameters;
+import com.chutneytesting.task.spi.injectable.Logger;
+import com.chutneytesting.task.spi.injectable.Target;
+import com.chutneytesting.tools.CloseableResource;
 import java.util.Optional;
 import java.util.Random;
 import javax.jms.Message;
-import com.chutneytesting.tools.CloseableResource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.OngoingStubbing;

@@ -16,7 +16,6 @@ import com.chutneytesting.campaign.domain.Frequency;
 import com.chutneytesting.campaign.domain.PeriodicScheduledCampaign;
 import com.chutneytesting.campaign.domain.PeriodicScheduledCampaignRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
-import com.chutneytesting.execution.domain.schedule.CampaignScheduler;
 import java.time.Clock;
 import java.util.List;
 import java.util.Random;

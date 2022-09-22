@@ -2,17 +2,16 @@ package com.chutneytesting.junit.engine;
 
 import com.chutneytesting.engine.api.execution.StatusDto;
 import com.google.common.collect.Ordering;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.hierarchical.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class FeatureDescriptor extends AbstractTestDescriptor implements Node<ChutneyEngineExecutionContext> {
 

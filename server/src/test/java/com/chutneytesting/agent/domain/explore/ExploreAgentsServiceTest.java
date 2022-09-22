@@ -46,11 +46,29 @@ public class ExploreAgentsServiceTest {
 
     @Test
     public void explore_with_empty_configuration_returns_empty_links() {
-        NetworkConfiguration configuration = AgentNetworkTestUtils.createNetworkConfiguration("Env-NAME");
+        NetworkConfiguration configuration = AgentNetworkTestUtils.createNetworkConfiguration();
 
         ExploreResult exploreResult = sut.explore(configuration);
 
         assertThat(exploreResult.agentLinks()).isEmpty();
+    }
+
+    @Test
+    public void should_mark_unreachable_when_target_has_unknown_port()  {
+        // Given
+        when(localServerIdentifier.getLocalName(any())).thenReturn("A");
+        when(explorations.changeStateToIfPossible(any(), any())).thenReturn(true);
+        when(connectionChecker.canConnectTo(any())).thenReturn(true);
+        NetworkConfiguration configuration = AgentNetworkTestUtils.createNetworkConfiguration("A=self:1", "e1|s1=hasNoPort", "e1|s2=hasPort:42");
+
+        // When
+        ExploreResult links = sut.explore(configuration);
+
+        // Then
+        assertThat(links.targetLinks())
+            .hasSize(1)
+            .extracting(link -> link.source().name() + "->" + link.destination().name)
+            .containsExactlyInAnyOrder("A->s2");
     }
 
     @Test

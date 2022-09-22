@@ -1,7 +1,6 @@
 <descriptionComplete
     xmlns="http://www.test.fr/xsd/test/"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.test.fr/xsd/test/testv1.xsd"
 
     VersionFlux="1.0" Sender="T1" SenderVersion="10.0" Receiver="T2" Date="03/05/2018 02:00:17" IdMsg="7935177">
     <evenementNatureCode>TEST_CODE</evenementNatureCode>

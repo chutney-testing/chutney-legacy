@@ -2,13 +2,13 @@ package com.chutneytesting.campaign.infra;
 
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
-import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
-import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
+import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory;
+import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
-import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
 import com.google.common.collect.Lists;
 import java.sql.ResultSet;
 import java.sql.SQLException;

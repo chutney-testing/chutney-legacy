@@ -3,7 +3,6 @@ package com.chutneytesting.execution.api.report.surefire;
 import com.chutneytesting.execution.api.report.surefire.Testsuite.Properties;
 import com.chutneytesting.execution.api.report.surefire.Testsuite.Testcase;
 import com.chutneytesting.execution.api.report.surefire.Testsuite.Testcase.Failure;
-
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistoryRepository;
 import com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
