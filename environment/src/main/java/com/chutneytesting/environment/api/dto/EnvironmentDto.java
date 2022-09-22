@@ -7,6 +7,7 @@ import static java.util.stream.Collectors.toList;
 import com.chutneytesting.environment.domain.Environment;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class EnvironmentDto {
@@ -40,5 +41,18 @@ public class EnvironmentDto {
                 ofNullable(targets).orElse(emptyList()).stream().map(t -> t.toTarget(name)).collect(Collectors.toSet())
             )
             .build();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EnvironmentDto that = (EnvironmentDto) o;
+        return Objects.equals(name, that.name) && Objects.equals(targets, that.targets);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, targets);
     }
 }
