@@ -232,5 +232,24 @@
             <artifactId>wss4j</artifactId>
             <version>1.6.19</version>
         </dependency>
+        <dependency>
+            <groupId>chutneytesting</groupId>
+            <artifactId>xsd</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>ProjectRepo</id>
+            <name>ProjectRepo</name>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <url>file://${project.basedir}/src/test/resources/libs</url>
+        </repository>
+    </repositories>
 </project>

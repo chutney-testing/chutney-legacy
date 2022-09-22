@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shipTo xmlns="http://chutney/test/ship"
+        xmlns:addr="http://chutney/test/address"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://chutney/test/ship shipTo.xsd">
+    <name>string</name>
+    <address>
+        <addr:street>voltaire</addr:street>
+        <addr:type>Rue</addr:type>
+        <addr:city>Paris</addr:city>
+        <addr:country>France</addr:country>
+    </address>
+</shipTo>
