@@ -1,6 +1,7 @@
 package com.chutneytesting.environment;
 
 import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
+import com.chutneytesting.environment.domain.Environment;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
 import com.chutneytesting.environment.domain.EnvironmentService;
 import com.chutneytesting.environment.infra.JsonFilesEnvironmentRepository;
@@ -16,7 +17,15 @@ public class EnvironmentConfiguration {
         EnvironmentService environmentService = createEnvironmentService(environmentRepository);
         this.environmentApi = new EmbeddedEnvironmentApi(environmentService);
 
+        createDefaultEnvironment(environmentService);
+
         migrateTargetSecurity();
+    }
+
+    private void createDefaultEnvironment(EnvironmentService environmentService) {
+        if (environmentRepository.listNames().isEmpty()) {
+            environmentService.createEnvironment(Environment.builder().withName("DEFAULT").build());
+        }
     }
 
     private void migrateTargetSecurity() {
