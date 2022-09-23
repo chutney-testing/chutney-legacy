@@ -1,6 +1,6 @@
 com.chutneytesting.task.function.JsonFunctions
 com.chutneytesting.task.function.XPathFunction
-com.chutneytesting.task.function.XmlFunction
+com.chutneytesting.task.function.SoapFunction
 com.chutneytesting.task.function.DateTimeFunctions
 com.chutneytesting.task.function.StringReplaceFunction
 com.chutneytesting.task.function.GenerateFunction

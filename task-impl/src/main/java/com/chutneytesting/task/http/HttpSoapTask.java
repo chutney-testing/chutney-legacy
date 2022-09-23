@@ -1,11 +1,11 @@
 package com.chutneytesting.task.http;
 
+import static com.chutneytesting.task.function.SoapFunction.soapInsertWSUsernameToken;
 import static com.chutneytesting.task.http.HttpTaskHelper.httpCommonValidation;
 import static com.chutneytesting.task.spi.time.Duration.parseToMs;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.task.function.XmlFunction;
 import com.chutneytesting.task.http.domain.HttpClient;
 import com.chutneytesting.task.http.domain.HttpClientFactory;
 import com.chutneytesting.task.http.domain.HttpTask;
@@ -62,9 +62,9 @@ public class HttpSoapTask implements Task {
     public TaskExecutionResult execute() {
         HttpClient httpClient = new HttpClientFactory().create(target, String.class, (int) parseToMs(timeout));
         HttpHeaders httpHeaders = new HttpHeaders();
-        headers.forEach((key, value) -> httpHeaders.add(key, value));
-        Object finalBody = XmlFunction.getSoapBody(this.username, this.password, body.toString());
-        Supplier<ResponseEntity<String>> caller = () -> httpClient.post(this.uri, ofNullable(finalBody).orElse("{}"), httpHeaders);
+        headers.forEach(httpHeaders::add);
+        Object envelope = soapInsertWSUsernameToken(this.username, this.password, body.toString());
+        Supplier<ResponseEntity<String>> caller = () -> httpClient.post(this.uri, ofNullable(envelope).orElse("{}"), httpHeaders);
         return HttpTask.httpCall(logger, caller);
     }
 }
