@@ -4,12 +4,18 @@ import com.chutneytesting.task.spi.SpelFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class StringReplaceFunction {
+public class StringFunction {
 
+    @Deprecated
     @SpelFunction
     public static String str_replace(String input, String regularExpression, String replacement) {
+        return stringReplace(input, regularExpression, replacement);
+    }
+
+    @SpelFunction
+    public static String stringReplace(String input, String regularExpression, String replacement) {
         Matcher m = Pattern.compile(regularExpression).matcher(input);
-        StringBuffer text = new StringBuffer();
+        StringBuilder text = new StringBuilder();
         while (m.find()) {
             m.appendReplacement(text, replacement);
         }
