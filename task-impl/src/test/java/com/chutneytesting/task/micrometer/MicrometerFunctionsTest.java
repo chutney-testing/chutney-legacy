@@ -20,6 +20,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.ToDoubleFunction;
 import java.util.function.ToLongFunction;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class MicrometerFunctionsTest {
 
@@ -44,6 +47,23 @@ public class MicrometerFunctionsTest {
 
         // When
         MeterRegistry result = MicrometerFunctions.micrometerRegistry("unknownRegistryClassName");
+
+        // Then
+        assertThat(result).isEqualTo(globalRegistry);
+    }
+
+    @ParameterizedTest()
+    @NullAndEmptySource
+    @ValueSource(strings = {" ", "  "})
+    public void should_retrieve_micrometer_global_registry_when_blank(String registryClassName) {
+        // Given
+        MeterRegistry monitoringCustomRegistry = new CustomMeterRegistry();
+        SimpleMeterRegistry monitoringSystemRegistry = new SimpleMeterRegistry();
+        globalRegistry.add(monitoringCustomRegistry);
+        globalRegistry.add(monitoringSystemRegistry);
+
+        // When
+        MeterRegistry result = MicrometerFunctions.micrometerRegistry(registryClassName);
 
         // Then
         assertThat(result).isEqualTo(globalRegistry);
