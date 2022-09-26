@@ -15,19 +15,25 @@ import org.apache.ws.security.message.WSSecUsernameToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class XmlFunction {
-    private static final Logger LOGGER = LoggerFactory.getLogger(XmlFunction.class);
+public class SoapFunction {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SoapFunction.class);
 
+    @Deprecated
     @SpelFunction
     public static String getSoapBody(final String login, final String password, final String body) {
-        if (!login.isEmpty()) {
+        return soapInsertWSUsernameToken(login, password, body);
+    }
+
+    @SpelFunction
+    public static String soapInsertWSUsernameToken(final String user, final String password, final String envelope) {
+        if (!user.isEmpty()) {
             try {
                 WSSecUsernameToken builder = new WSSecUsernameToken();
-                builder.setUserInfo(login, password);
+                builder.setUserInfo(user, password);
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                 factory.setNamespaceAware(true);
                 DocumentBuilder builderDoc = factory.newDocumentBuilder();
-                org.w3c.dom.Document doc = builderDoc.parse(new ByteArrayInputStream(body.getBytes()));
+                org.w3c.dom.Document doc = builderDoc.parse(new ByteArrayInputStream(envelope.getBytes()));
                 WSSecHeader secHeader = new WSSecHeader();
                 secHeader.insertSecurityHeader(doc);
                 org.w3c.dom.Document signedDoc = builder.build(doc, secHeader);
@@ -36,7 +42,7 @@ public class XmlFunction {
                 LOGGER.error(e.getMessage(),e);
             }
         }
-        return body;
+        return envelope;
     }
 
     private static String fromDocumentToString(final org.w3c.dom.Document doc) {

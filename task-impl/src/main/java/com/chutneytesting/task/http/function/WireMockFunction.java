@@ -1,28 +1,40 @@
 package com.chutneytesting.task.http.function;
 
+import static java.util.stream.Collectors.toMap;
+
 import com.chutneytesting.task.spi.SpelFunction;
+import com.github.tomakehurst.wiremock.http.MultiValue;
 import com.github.tomakehurst.wiremock.verification.LoggedRequest;
-import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 public class WireMockFunction {
 
+    @Deprecated
     @SpelFunction
     public static Map<String, String> extractHeadersAsMap(LoggedRequest request) {
-        Map<String, String> headersMap = new HashMap<>();
-        for (String key : request.getAllHeaderKeys()) {
-            headersMap.put(key, request.getHeader(key));
-        }
-        return headersMap;
+        return wiremockHeaders(request);
     }
 
     @SpelFunction
-    public static Map<String, String> extractParameters(LoggedRequest request) {
-        Map<String, String> parameters = new HashMap<>();
-        request.getQueryParams()
-            .forEach((key, value) -> parameters.put(value.key(), StringUtils.join(value.values(), ", ")));
+    public static Map<String, String> wiremockHeaders(LoggedRequest request) {
+        return request.getHeaders().all().stream()
+            .collect(toMap(MultiValue::key, WireMockFunction::wiremockMultiValueJoin));
+    }
 
-        return parameters;
+    @Deprecated
+    @SpelFunction
+    public static Map<String, String> extractParameters(LoggedRequest request) {
+        return wiremockQueryParams(request);
+    }
+
+    @SpelFunction
+    public static Map<String, String> wiremockQueryParams(LoggedRequest request) {
+        return request.getQueryParams().values().stream()
+            .collect(toMap(MultiValue::key, WireMockFunction::wiremockMultiValueJoin));
+    }
+
+    private static String wiremockMultiValueJoin(MultiValue mv) {
+        return StringUtils.join(mv.values(), ", ");
     }
 }
