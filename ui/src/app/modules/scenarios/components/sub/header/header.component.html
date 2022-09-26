@@ -14,7 +14,7 @@
                 <div class="col-6 p-0">
                     <ng-container *hasAuthorization="[Authorization.SCENARIO_EXECUTE]">
                         <div ngbDropdown class="d-inline-block">
-                            <button id="dropdownBasic1" type="button" class="btn btn-success accept-spinner m-1"
+                            <button id="dropdownBasic1" type="button" class="btn btn-primary accept-spinner m-1"
                                     [disabled]="canExecute" ngbDropdownToggle
                                     (click)="executeScenarioOnToggle()">
                                 <span class="fa fa-play"></span>
@@ -29,7 +29,7 @@
                     </ng-container>
                     <ng-container *hasAuthorization="[Authorization.SCENARIO_WRITE]">
                         <div class="btn-group">
-                            <button type="button" class="btn btn-light"
+                            <button type="button" class="btn btn-dark"
                                     routerLink="{{isComposed(testCaseId) ? '/scenario/' + testCaseId + '/component-edition' : '/scenario/' + testCaseId + '/raw-edition'}}">
                                 <span class="fa fa-pencil-alt"></span>
                                 <span class="btn-label">{{'global.actions.edit' | translate}}</span>
@@ -43,13 +43,13 @@
                                                        [dialogMessage]="'scenarios.execution.actions.remove' | translate"
                                                        (deleteEvent)="deleteScenario(testCaseId)">
                         </chutney-delete-confirm-dialog>
-                        <button type="button" class="btn btn-success accept-spinner align-items-end ms-2"
+                        <button type="button" class="btn btn-primary accept-spinner align-items-end ms-2"
                                 (click)="duplicateScenario()">
                             <span class="fa fa-clone"></span>
                             <span class="btn-label">{{'global.actions.clone' | translate}}</span>
                         </button>
                         <button *ngIf="isNotComposed()" type="button"
-                                class="btn btn-success accept-spinner align-items-end ms-2" (click)="exportScenario()">
+                                class="btn btn-primary accept-spinner align-items-end ms-2" (click)="exportScenario()">
                             <span class="fa fa-file-code"></span>
                             <span class="btn-label">{{'global.actions.export' | translate}}</span>
                         </button>

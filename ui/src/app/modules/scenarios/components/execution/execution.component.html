@@ -48,19 +48,19 @@
                     <div class="text-sm-center" *hasAuthorization="[Authorization.SCENARIO_EXECUTE]">
                         <div *ngIf="scenarioExecutionReport.report.status == 'RUNNING' || scenarioExecutionReport.report.status == 'PAUSED'"
                               class="btn-group btn-group-sm mt-1 justify-content-center position-relative">
-                            <button type="button" class="btn btn-secondary" (click)="stopScenario()"
+                            <button type="button" class="btn btn-primary" (click)="stopScenario()"
                                     [disabled]="scenarioExecutionReport.report.status != 'RUNNING'">
                                 <span class="fa fa-stop"></span>
                                 <span class="btn-label">{{'global.actions.stop' | translate}}</span>
                             </button>
 
-                            <button type="button" class="btn btn-secondary mx-1" (click)="pauseScenario()"
+                            <button type="button" class="btn btn-primary mx-1" (click)="pauseScenario()"
                                     [disabled]="scenarioExecutionReport.report.status != 'RUNNING'">
                                 <span class="fa fa-pause"></span>
                                 <span class="btn-label">{{'global.actions.pause' | translate}}</span>
                             </button>
 
-                            <button type="button" class="btn btn-secondary" (click)="resumeScenario()"
+                            <button type="button" class="btn btn-primary" (click)="resumeScenario()"
                                     [disabled]="scenarioExecutionReport.report.status != 'PAUSED'">
                                 <span class="fa fa-play"></span>
                                 <span class="btn-label">{{'global.actions.resume' | translate}}</span>
@@ -69,11 +69,11 @@
                     </div>
                 </div>
                 <div class="btn-group float-end col-md-3">
-                    <button type="button" class="btn btn-sm btn-outline-info m-2 rounded" [ngClass]="!toggleScenarioInfo ? 'active' : ''" (click)="expandAllInfo()">
+                    <button type="button" class="btn btn-sm btn-primary m-2 rounded" [ngClass]="!toggleScenarioInfo ? 'active' : ''" (click)="expandAllInfo()">
                         <span class="btn-label"> {{ 'scenarios.execution.step.actions.informations' | translate }}
                         </span>
                     </button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary m-2 rounded" [ngClass]="!toggleScenarioDetails ? 'active' : ''" (click)="expandAllDetails()">
+                    <button type="button" class="btn btn-sm btn-dark m-2 rounded" [ngClass]="!toggleScenarioDetails ? 'active' : ''" (click)="expandAllDetails()">
                         <span class="btn-label">
                             {{toggleScenarioDetails ? ('scenarios.execution.actions.details.show' | translate) : ('scenarios.execution.actions.details.hide' | translate)}}
                         </span>
