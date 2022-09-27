@@ -6,6 +6,20 @@
     font-size: 0.7em;
 }
 
+.edition-header {
+    height: 170px;
+}
+
+.edition-body {
+    height: calc(100vh - (60px + 1.5rem + 170px + 24px));
+    overflow-y: auto;
+}
+
+.edition-body-without-header {
+    height: calc(100vh - (60px + 1.5rem + 24px));
+    overflow-y: auto;
+}
+
 .table-scroll {
     overflow-y: auto;
     height: calc(
@@ -67,15 +81,6 @@
     top: -28px;
     margin-bottom: -28px;
     margin-left: auto;
-}
-
-.edition-header {
-    height: 170px;
-}
-
-.edition-body {
-    height: calc(100vh - (60px + 1.5rem + 170px + 24px));
-    overflow-y: auto;
 }
 
 textarea.no-resize {

@@ -198,7 +198,7 @@
 
         <!-- Actions panel create -->
         <ng-container *ngIf="!viewComponent">
-            <div *ngIf="!actionSelected" class="fw-bold text-center">
+            <div *ngIf="!actionSelected" class="fw-bold text-center edition-body-without-header">
                 {{'components.action.edition.select' | translate}}
             </div>
             <chutney-action-edit-component *ngIf="actionSelected" [editComponent]="actionToEdit"
