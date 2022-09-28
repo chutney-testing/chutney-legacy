@@ -80,7 +80,10 @@ public class Environment {
                     }
                     Set<Target> updatedTargets = new HashSet<>(targets);
                     updatedTargets.remove(t);
-                    updatedTargets.add(targetToUpdate);
+                    updatedTargets.add(Target.builder()
+                        .copyOf(targetToUpdate)
+                        .withPasswordProperties(t.properties)
+                        .build());
 
                     return Environment.builder()
                         .from(this)

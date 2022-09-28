@@ -10,10 +10,10 @@
     <tbody>
         <tr *ngFor="let entry of entries">
             <td>
-                <chutney-forms-input id="{{entry.key}} + '_key_input'" placeholder="Key" [(model)]="entry.key" [validate]="validationService.isNotEmpty"></chutney-forms-input>
+                <chutney-forms-input id="{{entry.key + '_key_input'}}" placeholder="Key" [(model)]="entry.key" [validate]="validationService.isNotEmpty"></chutney-forms-input>
             </td>
             <td>
-                <chutney-forms-input id="{{entry.key}} + '_value_input'" placeholder="Value" [(model)]="entry.value" [validate]="validationService.isNotEmpty"></chutney-forms-input>
+                <chutney-forms-input id="{{entry.key + '_value_input'}}" placeholder="Value" [(model)]="entry.value" [validate]="validationService.isNotEmpty" [hidePassword]="true" ></chutney-forms-input>
             </td>
             <td><button type="button" class="btn btn-lg ms-3" (click)="deleteEntry(entry)"><span class="fa fa-trash" style="color: red;"></span></button></td>
         </tr>

@@ -1,5 +1,7 @@
 package com.chutneytesting.environment.domain;
 
+import static com.chutneytesting.environment.domain.PropertiesTools.HIDDEN_PASSWORD;
+import static com.chutneytesting.environment.domain.PropertiesTools.propertiesEquals;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Optional.ofNullable;
@@ -7,6 +9,7 @@ import static java.util.Optional.ofNullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Target {
 
@@ -64,6 +67,15 @@ public class Target {
             return this;
         }
 
+        public TargetBuilder withPasswordProperties(Map<String, String> value) {
+            this.properties.putAll(this.properties.entrySet()
+                .stream()
+                .filter(PropertiesTools::isPasswordEntry)
+                .filter(e -> value.containsKey(e.getKey()) && e.getValue().equals(HIDDEN_PASSWORD))
+                .collect(Collectors.toMap(p -> p.getKey(), p -> value.get(p.getKey()))));
+            return this;
+        }
+
         public TargetBuilder withProperty(String key, String value) {
             this.properties.put(key, value);
             return this;
@@ -91,7 +103,7 @@ public class Target {
         Target target = (Target) o;
         return Objects.equals(environment, target.environment) &&
             Objects.equals(url, target.url) &&
-            Objects.equals(properties, target.properties) &&
+            propertiesEquals(properties, target.properties) &&
             Objects.equals(name, target.name);
     }
 

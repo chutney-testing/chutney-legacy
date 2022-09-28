@@ -2,6 +2,7 @@ package com.chutneytesting.environment.api;
 
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toCollection;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -237,6 +238,21 @@ public class HttpEnvironmentApiTest {
     }
 
     @Test
+    public void listTargets_should_hide_passwords() throws Exception {
+        Map<String, String> properties = Map.of("passwordProperty", "my password", "property", "property value");
+        addAvailableEnvironment("env test", properties, "target1");
+
+        ResultActions resultActions = mockMvc.perform(get(basePath + "/env test/target"))
+            .andDo(MockMvcResultHandlers.log())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()", equalTo(1)));
+
+        resultActions.andExpect(jsonPath("$.[0].name", equalTo("target1")))
+            .andExpect(jsonPath("$.[0].properties[?(@.key=='passwordProperty')].value", equalTo(List.of("**********"))))
+            .andExpect(jsonPath("$.[0].properties[?(@.key=='property')]..value", equalTo(List.of(properties.get("property")))));
+    }
+
+    @Test
     public void should_list_distinct_targets_in_any_environment() throws Exception {
         List<String> targetsNames = Lists.list("t1", "t2", "t3");
         addAvailableEnvironment("env1", targetsNames.get(0), targetsNames.get(2));
@@ -341,6 +357,36 @@ public class HttpEnvironmentApiTest {
     }
 
     @Test
+    public void updateTarget_with_password_property_saves_it() throws Exception {
+        Map<String, String> properties = Map.of("pwd", "my password","otherPassword","toto");
+        addAvailableEnvironment("env_test", properties, "server 1");
+
+        mockMvc.perform(
+                put(basePath + "/env_test/target/server 1")
+                    .content("{\"name\": \"server 1\", \"url\": \"http://somehost2:42\", " +
+                        "\"properties\":[" +
+                        "{\"key\": \"pwd\",\"value\": \"**********\"}, " +
+                        "{\"key\": \"prop\", \"value\": \"prop value\"}, " +
+                        "{\"key\": \"otherPassword\", \"value\": \"new pass\"}" +
+                        "] }")
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andDo(MockMvcResultHandlers.log())
+            .andExpect(status().isOk());
+
+        ArgumentCaptor<Environment> environmentArgumentCaptor = ArgumentCaptor.forClass(Environment.class);
+        verify(environmentRepository, times(1)).save(environmentArgumentCaptor.capture());
+
+        Environment savedEnvironment = environmentArgumentCaptor.getValue();
+        assertThat(savedEnvironment).isNotNull();
+        assertThat(savedEnvironment.targets).hasSize(1);
+        assertThat(savedEnvironment.targets.iterator().next().url).isEqualTo("http://somehost2:42");
+        assertThat(savedEnvironment.targets.iterator().next().properties.get("pwd")).isEqualTo(properties.get("pwd"));
+        assertThat(savedEnvironment.targets.iterator().next().properties.get("otherPassword")).isEqualTo("new pass");
+        assertThat(savedEnvironment.targets.iterator().next().properties.get("prop")).isEqualTo("prop value");
+    }
+
+    @Test
     public void updateTarget_with_different_a_name_deletes_previous_one() throws Exception {
         addAvailableEnvironment("env_test", "server 1");
 
@@ -384,12 +430,17 @@ public class HttpEnvironmentApiTest {
     }
 
     private void addAvailableEnvironment(String envName, String... targetNames) {
+        addAvailableEnvironment(envName, emptyMap(), targetNames);
+    }
+
+    private void addAvailableEnvironment(String envName, Map<String, String> properties, String... targetNames) {
 
         Set<Target> targets = stream(targetNames)
             .map(targetName -> Target.builder()
                 .withName(targetName)
                 .withEnvironment(envName)
                 .withUrl("http://" + targetName.replace(' ', '_') + ":43")
+                .withProperties(properties)
                 .build())
             .collect(toCollection(LinkedHashSet::new));
 

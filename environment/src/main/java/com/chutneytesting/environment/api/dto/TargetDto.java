@@ -1,5 +1,6 @@
 package com.chutneytesting.environment.api.dto;
 
+import static com.chutneytesting.environment.domain.PropertiesTools.hidePassword;
 import static com.chutneytesting.tools.Entry.toEntrySet;
 import static java.util.Collections.emptySet;
 
@@ -35,7 +36,7 @@ public class TargetDto {
         return new TargetDto(
             target.name,
             target.url,
-            toEntrySet(target.properties)
+            hidePassword(toEntrySet(target.properties))
         );
     }
 

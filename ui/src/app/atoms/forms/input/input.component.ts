@@ -6,7 +6,7 @@ template: `
     <input
         id="{{id}}"
         name="{{id}}"
-        type="{{type}}"
+        type="{{isPassword(id)? 'password' : 'text'}}"
         placeholder="{{placeholder}}"
         [ngModel]="model"
         (ngModelChange)="onInputChange($event)"
@@ -24,6 +24,7 @@ export class InputComponent {
     @Input() model: string;
     @Output() modelChange = new EventEmitter<string>();
     @Input() validate: (value: string) => boolean = (_) => true;
+    @Input() hidePassword: boolean = false;
 
     constructor() { }
 
@@ -31,4 +32,14 @@ export class InputComponent {
         this.model = newValue;
         this.modelChange.emit(this.model);
     }
+
+    isPassword(key: string): boolean{
+        var keywordList = ['password','pwd'];
+        var isPassword;
+        keywordList.forEach( (keyword) => {
+            isPassword ||= key.toLowerCase().includes(keyword);
+        });
+        return this.hidePassword && isPassword;
+    }
+
 }
