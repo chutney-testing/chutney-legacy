@@ -140,36 +140,9 @@ button.btn-link {
     }
 }
 
-.btn-group {
-    margin-right: 20px;
-
-    button {
-        height: 18px;
-        padding-top: 0;
-        font-size: 12px;
-    }
-
-    .inputs {
-        border: 0 double rgba(216, 216, 216, 0.87);
-        border-left-width: .25rem;
-        //border-left-color: grey;
-        padding-left: 5px;
-    }
-
-    .exec-date {
-        white-space: nowrap;
-    }
-
-    .steps-btn {
-        position: absolute;
-        right: -12px;
-
-        button {
-            background-color: transparent;
-
-            &:focus {
-                box-shadow: none;
-            }
-        }
-    }
+.small-button {
+    --bs-btn-padding-y: 0.25rem;
+    --bs-btn-padding-x: 0.7rem;
+    --bs-btn-font-size: 0.65rem;
+    --bs-btn-border-radius: 0.25rem;
 }
