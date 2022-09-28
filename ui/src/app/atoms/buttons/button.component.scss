@@ -1,5 +1,3 @@
-@import 'colors';
-
 @mixin baseButton($text-color, $background-color, $border-color) {
     font-family: 'Montserrat';
     font-weight: bold;
@@ -34,12 +32,12 @@
 }
 
 .first {
-    @include baseButton($grisfonce1, $vert2, $vert2);
-    @include hoverButton($grisfonce1, $vert4, $vert4);
-    @include disabledButton($blanc, $labelko, $labelko);
+    @include baseButton(var(--bs-light), var(--bs-success), var(--bs-success));
+    @include hoverButton(var(--bs-light), var(--bs-primary), var(--bs-primary));
+    @include disabledButton(var(--bs-white), var(--bs-dark), var(--bs-dark));
 }
 
 .second {
-    @include baseButton($vert2, $blanc, $vert2);
-    @include hoverButton($vert1, $vert3, $blanc);
+    @include baseButton(var(--bs-info), var(--bs-white), var(--bs-primary));
+    @include hoverButton(var(--bs-primary), var(--bs-primary), var(--bs-white));
 }

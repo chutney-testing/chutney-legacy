@@ -1,12 +1,8 @@
-@import 'colors';
-@import 'menu';
-
 .create-scenario-wrapper {
     float: right;
 }
 
 .create-scenario {
-    background: $vert2;
     border: none;
     height: 85px;
     font-size: 11px;
@@ -14,11 +10,11 @@
     width: 50px;
 
     button {
-        color: $grisfonce2;
+        color: var(--bs-white);
         text-align: center;
 
         &:hover {
-            color: $blanc;
+            color: var(--bs-white);
         }
 
         &:focus {
@@ -41,21 +37,9 @@
 }
 
 .label-success {
-    background-color: $vert2;
+    background-color: var(--bs-primary);
 }
 
-.scenario-type-filter {
-    cursor: pointer;
-}
-
-.scenario-type-filter-selected {
-    cursor: pointer;
-    color: $bleu6;
-}
-
-.table-link {
-    color: #212529; // Bootstrap table default color
-}
 
 .table-sm {
     font-size: 14px;
@@ -76,18 +60,16 @@
         border: 0;
         border-radius: 0.5rem;
 
-        .arrow {
-            margin-top: -8px !important;
-
+        .popover-arrow {
             &::after {
-                border-left-color: $bleu1;
+                border-left-color: var(--bs-primary);
             }
         }
     }
 
     .popover-body {
-        background-color: $bleu1;
-        color: $blanc;
+        background-color: var(--bs-primary);
+        color: var(--bs-white);
         border-radius: 0.5rem;
     }
 }

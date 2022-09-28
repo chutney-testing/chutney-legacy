@@ -1,4 +1,5 @@
-@import 'colors';
+
+$edition-header-height:230px;
 
 fieldset legend {
     width: auto;
@@ -17,11 +18,11 @@ fieldset legend {
 }
 
 .edition-header {
-    height: 170px;
+    height: $edition-header-height;
 }
 
 .edition-body {
-    height: calc(100vh - (50px + 10px + 170px + 10px + 10px));
+    height: calc(100vh - (60px + 1.5rem + $edition-header-height + 10px + 15px));
     overflow-y: auto;
 }
 
@@ -42,13 +43,9 @@ textarea.no-resize {
 }
 
 .right-panel-minimize-btn {
-    position: fixed;
-    margin-left: -5px;
-    height: calc(80vh);
-}
-
-.right-panel-minimize-btn:hover {
-    background-color: lightgray;
+    float: left;
+    height: calc(100vh - (60px + 1.5rem + $edition-header-height + 1.5rem + 15px));
+    border: none;
 }
 
 .right-panel-content {

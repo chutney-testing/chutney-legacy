@@ -1,0 +1,23 @@
+angular2-multiselect {
+    .cuppa-dropdown {
+        border: 1px solid var(--bs-light);
+        border-radius: 0.375rem;
+    }
+    .selected-list .c-list .c-token {
+        background-color: var(--bs-primary);
+        .c-label {
+            color: var(--bs-white);
+        }
+    }
+    .dropdown-list {
+        label {
+            color: var(--bs-primary);
+        }
+        .pure-checkbox input[type=checkbox]+label:before {
+            color: var(--bs-primary);
+            border: 1px solid var(--bs-primary);
+        }
+    }
+
+}
+

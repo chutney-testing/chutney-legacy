@@ -6,6 +6,9 @@ import { CampaignEditionComponent } from './components/create-campaign/campaign-
 import { CampaignSchedulingComponent } from './components/campaign-scheduling/campaign-scheduling.component';
 import { AuthGuard } from '@core/guards';
 import { Authorization } from '@model';
+import { ChutneyMainHeaderComponent } from '@shared/components/chutney-main-header/chutney-main-header.component';
+import { ChutneyLeftMenuComponent } from '@shared/components/chutney-left-menu/chutney-left-menu.component';
+import { ChutneyRightMenuComponent } from '@shared/components/chutney-right-menu/chutney-right-menu.component';
 
 export const CampaignRoute: Routes = [
     {

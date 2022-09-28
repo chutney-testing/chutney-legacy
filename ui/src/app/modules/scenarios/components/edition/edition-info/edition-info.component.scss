@@ -1,7 +1,5 @@
-@import 'node_modules/bootstrap/scss/bootstrap';
-@import 'colors';
-@import 'mixins';
-@import 'animations';
+@import 'global/mixins';
+@import 'global/animations';
 
 :host ::ng-deep {
 
@@ -12,17 +10,17 @@
         width: -webkit-max-content; /* Chrome */
         border: 0;
         border-radius: 0.5rem;
+    }
 
-        .arrow {
-            &::after {
-                border-bottom-color: $bleu1;
-            }
+    .popover-arrow {
+        &::after {
+            border-bottom-color: var(--bs-primary);
         }
     }
 
     .popover-body {
-        background-color: $bleu1;
-        color: $blanc;
+        background-color: var(--bs-primary);
+        color: var(--bs-white);
         border-radius: 0.5rem;
     }
 }
@@ -33,12 +31,12 @@
   $fromOffsetY: 4px,
   $fromBlur: 8px,
   $fromSpread: 0,
-  $fromColor: rgba($warning, 30),
+  $fromColor: rgba(var(--bs-warning), 30),
   $toOffsetX: 8px,
   $toOffsetY: 8px,
   $toBlur: 16px,
   $toSpread: 0,
-  $toColor: rgba($danger, 30)
+  $toColor: rgba(var(--bs-danger), 30)
 );
 
 .edition-btn-anim {

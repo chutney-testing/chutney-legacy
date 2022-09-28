@@ -1,15 +1,14 @@
-@import 'colors';
-@import 'mixins';
-@import 'animations';
+@import 'global/mixins';
+@import 'global/animations';
 
 @include border-animation(
     $animation_name: running-report-step-border-anim,
     $fromWidth: 0 0 0 3px,
     $fromStyle: solid,
-    $fromColor: rgba($grisfonce2, 0),
+    $fromColor: rgba(#686C71, 0),
     $toWidth: 0 0 0 5px,
     $toStyle: solid,
-    $toColor: rgba($grisfonce2, 50)
+    $toColor: rgba(#686C71, 50)
 );
 
 div.step-container-wrapper {
@@ -20,10 +19,9 @@ div.step-container-wrapper {
 
 div.step-container {
     margin: 5px 0 5px 0;
-    width: 100%;
     border-radius: 4px;
     box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-    background-color: white;
+    //background-color: white;
     border-left: 4px solid;
 }
 
@@ -39,7 +37,7 @@ div.result-header {
     flex-wrap: wrap;
 
     div.result-header-status {
-        background-color: #efefef;
+        background-color: var(--bs-light);
         font-size: 10px;
         padding: 4px 15px;
     }
@@ -47,8 +45,6 @@ div.result-header {
     div.step-name {
         margin-top: 0;
         margin-bottom: 0;
-        padding-top: 4px;
-        padding-bottom: 4px;
 
         span {
             flex: auto;
@@ -66,7 +62,7 @@ div.result-header {
 }
 
 div.result-body {
-    border: 0 solid #efefef;
+    border: 0 solid var(--bs-light);
     border-top-width: .05rem;
     width: 100%;
 }
@@ -104,7 +100,6 @@ div.step {
     height: 100%;
 
     .inputs {
-        padding: 10px;
         font-size: 12px;
     }
 }
@@ -122,7 +117,6 @@ button.btn-link {
     color: #d9534f;
     font-weight: bold;
     font-size: 12px;
-    padding: 10px;
 
     pre {
         color: #d9534f;
@@ -139,7 +133,6 @@ button.btn-link {
     color: #58c69f;
     font-weight: bold;
     font-size: 12px;
-    padding: 10px;
 
     button {
         color: #58c69f;
@@ -147,40 +140,9 @@ button.btn-link {
     }
 }
 
-pre {
-    background-color: white;
-}
-
-.btn-toolbar {
-    margin-right: 20px;
-
-    button {
-        height: 18px;
-        padding-top: 0;
-        font-size: 12px;
-    }
-
-    .inputs {
-        border: 0 double rgba(216, 216, 216, 0.87);
-        border-left-width: .25rem;
-        //border-left-color: grey;
-        padding-left: 5px;
-    }
-
-    .exec-date {
-        white-space: nowrap;
-    }
-
-    .steps-btn {
-        position: absolute;
-        right: 10px;
-
-        button {
-            background-color: transparent;
-
-            &:focus {
-                box-shadow: none;
-            }
-        }
-    }
+.small-button {
+    --bs-btn-padding-y: 0.25rem;
+    --bs-btn-padding-x: 0.7rem;
+    --bs-btn-font-size: 0.65rem;
+    --bs-btn-border-radius: 0.25rem;
 }

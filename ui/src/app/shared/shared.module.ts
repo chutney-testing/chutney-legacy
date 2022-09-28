@@ -36,6 +36,11 @@ import {
 import { StateService } from './state/state.service';
 import { ChutneyEditorComponent } from '@shared/components/chutney-editor/chutney-editor.component';
 import { HjsonParserService } from '@shared/hjson-parser/hjson-parser.service';
+import { ChutneyMainHeaderComponent } from './components/chutney-main-header/chutney-main-header.component';
+import { ChutneyLeftMenuComponent } from './components/chutney-left-menu/chutney-left-menu.component';
+import { ChutneyRightMenuComponent } from './components/chutney-right-menu/chutney-right-menu.component';
+import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
     imports: [
@@ -45,6 +50,8 @@ import { HjsonParserService } from '@shared/hjson-parser/hjson-parser.service';
         ReactiveFormsModule,
         RouterModule,
         TranslateModule,
+        PerfectScrollbarModule,
+        NgbTooltipModule
     ],
     declarations: [
         ComponentCardComponent,
@@ -69,7 +76,10 @@ import { HjsonParserService } from '@shared/hjson-parser/hjson-parser.service';
         TruncatePipe,
         WithoutScenarioPipe,
         HasAuthorizationDirective,
-        ChutneyEditorComponent
+        ChutneyEditorComponent,
+        ChutneyMainHeaderComponent,
+        ChutneyLeftMenuComponent,
+        ChutneyRightMenuComponent,
     ],
     exports: [
         ComponentCardComponent,

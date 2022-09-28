@@ -64,11 +64,12 @@ will generate keys :
         </pre>
     </div>
 
-    <div class="globalvar-editor">
+    <div>
         <chutney-editor
             [modes]="['json', 'hjson']"
             [mode]="'hjson'"
             [content]="data"
+            [height]="'240px'"
             (onContentChange)="callBackFunc($event)">
         </chutney-editor>
     </div>

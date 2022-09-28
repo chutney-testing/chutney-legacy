@@ -10,6 +10,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
@@ -26,7 +27,7 @@ public class TestCaseEditionsServiceTest {
     private TestCaseEditionsService sut;
 
     private final TestCaseEditions testCaseEditions = mock(TestCaseEditions.class);
-    private final AggregatedRepository testCaseRepository = mock(AggregatedRepository.class);
+    private final TestCaseRepositoryAggregator testCaseRepository = mock(TestCaseRepositoryAggregator.class);
 
     @BeforeEach
     public void before() {

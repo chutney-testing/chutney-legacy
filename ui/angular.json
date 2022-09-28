@@ -32,18 +32,25 @@
             ],
             "stylePreprocessorOptions": {
               "includePaths": [
-                "src/styles"
+                "src/assets/style"
               ]
             },
             "styles": [
-              "src/styles/vendor.scss",
-              "src/styles/global.scss",
-              "src/styles/forms.scss",
-              "src/styles/tags.scss",
-              "src/styles/themes/default.theme.scss"
+              "src/assets/style/style.scss",
+                {
+                    "input": "src/assets/style/themes/theme.flatly.scss",
+                    "bundleName": "flatly",
+                    "inject": true
+                },
+                {
+                    "input": "src/assets/style/themes/theme.darkly.scss",
+                    "bundleName": "darkly",
+                    "inject": false
+                }
             ],
             "scripts": [
-              "node_modules/asciidoctor.js/dist/asciidoctor.min.js"
+              "node_modules/asciidoctor.js/dist/asciidoctor.min.js",
+                "node_modules/bootstrap/dist/js/bootstrap.min.js"
             ]
           },
           "configurations": {
@@ -98,15 +105,11 @@
             "karmaConfig": "src/karma.conf.js",
             "stylePreprocessorOptions": {
               "includePaths": [
-                "src/styles"
+                "src/assets/style"
               ]
             },
             "styles": [
-              "src/styles/vendor.scss",
-              "src/styles/global.scss",
-              "src/styles/forms.scss",
-              "src/styles/tags.scss",
-              "src/styles/themes/default.theme.scss"
+              "src/assets/style/style.scss"
             ],
             "scripts": [
               "node_modules/asciidoctor.js/dist/asciidoctor.min.js"
@@ -117,7 +120,20 @@
               "src/favicon.ico"
             ]
           }
-        }
+        },
+          "storybook": {
+              "builder": "@storybook/angular:start-storybook",
+              "options": {
+                  "browserTarget": "chutney:build",
+                  "port": 6006
+              }
+          },
+          "build-storybook": {
+              "builder": "@storybook/angular:build-storybook",
+              "options": {
+                  "browserTarget": "chutney:build"
+              }
+          }
       }
     }
   },

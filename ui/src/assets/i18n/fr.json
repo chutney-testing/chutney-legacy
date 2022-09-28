@@ -16,7 +16,11 @@
             "roles": "Roles",
             "admin": "Admin",
             "signIn": "Connexion",
-            "signOut": "Déconnexion"
+            "signOut": "Déconnexion",
+            "darkMode": "Thème sombre",
+            "lightMode": "Thème clair",
+            "feedback": "Donner un avis",
+            "notif": "Notifications"
         }
     },
     "home": {
@@ -114,6 +118,15 @@
                         "theme": "Thème"
                     }
                 }
+            },
+            "authoring" : {
+                "author": "Auteur",
+                "created": "Création",
+                "update": "Mise à jour"
+            },
+            "info": {
+                "from": "Edition depuis",
+                "conflicts": "Editions concurrentes"
             }
         }
     },
@@ -217,7 +230,7 @@
             "back": "Retour",
             "campaign" : "Campagne",
             "schedulingDate": "Date planifiée",
-            "frequency": "frequence",
+            "frequency": "Frequence",
             "required": {
                 "campaign": "Sélectionner une campagne",
                 "time": "Saisir un horaire",

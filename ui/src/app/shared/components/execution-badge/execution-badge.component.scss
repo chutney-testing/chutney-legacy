@@ -4,6 +4,9 @@
     75% {background-color: Cyan;}
     100% {background-color: Chartreuse ;}
 }
+.badge {
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
 
 .badge-running {
     font-style: italic;
@@ -17,6 +20,6 @@
     background-color: grey;
 }
 
-.badge-not-executed{
-    color: black;
+.badge-not-executed {
+    background-color: var(--bs-warning);
 }

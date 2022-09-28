@@ -1,4 +1,3 @@
-@import 'colors';
 
 :host ::ng-deep {
 
@@ -12,16 +11,10 @@
 
         .arrow {
             margin-top: -8px !important;
-
-            &::after {
-                border-left-color: $bleu1;
-            }
         }
     }
 
     .popover-body {
-        background-color: $bleu1;
-        color: $blanc;
         border-radius: 0.5rem;
     }
 }

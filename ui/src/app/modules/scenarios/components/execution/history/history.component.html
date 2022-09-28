@@ -8,7 +8,7 @@
                       'tile-selected': execution.executionId == selectedExecutionId,
                       'tile-running': execution.status == 'RUNNING' || execution.status == 'PAUSED'}">
         <div class="col col-lg-3 title">
-            <i class="fa fa-circle" aria-hidden="true" [ngClass]="{'circle-ok': execution.status == 'SUCCESS', 'circle-ko': execution.status == 'FAILURE'}"><span class="exection-id">#{{execution.executionId}}</span></i>
+            <span class="exection-id">#{{execution.executionId}}</span>
         </div>
         <div class="col-lg-9 time">
             <div *ngIf="selectedExecutionId === execution.executionId" class="fas fa-arrow-left float-end"></div>

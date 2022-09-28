@@ -1,31 +1,46 @@
-@import 'colors';
-
-.login{
-    background-color: $bleu2;
-    height: 100%;
+.wrapper {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(auto, 105px) auto minmax(auto, 80px);
+    min-height: 100vh;
 }
 
-.form-login {
-    width:350px;
-    padding-top: 25vh;
+.login-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    gap: 0px 0px;
+    justify-items: center;
+    align-items: center;
 }
 
-.login-button {
-    background-color:$bleu4;
-    color: white;
+.login-background {
+    background-color: #f8f9fa;
 }
 
-.form-control{
-    color: black;
-    border-color: black ;
-    background-color: white  ;
-    &:focus {
-        box-shadow: 0 0 0 0.3rem rgba(black, 0.25);
+.logo {
+    width: 50px;
+    margin: 0;
+    padding: 0;
+}
+
+.title {
+    font-size: 2em;
+}
+.custom-class {
+    display: none;
+}
+
+@media (min-width: 992px) {
+    .custom-class {
+        display: block;
     }
-}
-
-.label {
-    display: inline-block;
-    max-width:100%;
-    margin-bottom: 10px;
+    .login-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr;
+        gap: 0px 0px;
+        justify-items: center;
+        align-items: center;
+    }
 }

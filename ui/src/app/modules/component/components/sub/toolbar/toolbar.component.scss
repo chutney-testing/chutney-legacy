@@ -1,4 +1,4 @@
-@import 'colors';
+@import "~bootstrap/scss/bootstrap";;
 
 .btn-toolbar {
     align-items: center;
@@ -14,4 +14,16 @@
     div:last-child {
         margin-left: auto;
     }
+}
+
+.btn-success {
+    background-color: var(--bs-success);
+}
+
+.btn-secondary {
+    background-color: var(--bs-secondary);
+}
+
+.btn-info {
+    background-color: var(--bs-info);
 }

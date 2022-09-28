@@ -1,0 +1,38 @@
+<div class="app-sidebar bg-light" (mouseover)="sidebarHover()"
+     (mouseout)="sidebarHover()">
+    <div class="app-header__logo bg-primary">
+        <div class="logo-src"></div>
+        <div class="header__pane ms-auto">
+
+
+        </div>
+    </div>
+    <div class="app-sidebar-content">
+        <div class="py-1">
+            <span class="close-sidebar-btn" (click)="toggleSidebar()">
+                <i [ngClass]="layoutOptions.toggleSidebar ? 'fa fa-thumb-tack' : 'fa fa-angle-double-left'"></i>
+            </span>
+        </div>
+        <div class="app-sidebar-scroll">
+            <perfect-scrollbar [autoPropagation]="true">
+                <div class="sidebar-menu">
+                    <div class="menu-list">
+                        <ng-container *ngFor="let item of  menuItems">
+                            <ng-container *ngIf="canViewMenuGroup(item)">
+                                <div class="menu-header">{{item.label}}</div>
+                                <ng-container *ngFor="let subItem of item.children">
+                                    <div class="menu-item nav-item" *ngIf="canViewMenuItem(subItem)">
+                                        <a [routerLink]="subItem.link" routerLinkActive="active-item" class="menu-link">
+                                            <i class="menu-icon" [ngClass]="subItem.iconClass"></i>
+                                            <span class="menu-title">{{subItem.label | translate}}</span>
+                                        </a>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                </div>
+            </perfect-scrollbar>
+        </div>
+    </div>
+</div>

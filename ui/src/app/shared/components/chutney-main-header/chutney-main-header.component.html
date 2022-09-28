@@ -1,0 +1,52 @@
+<div class="app-header bg-primary">
+    <div class="logo-src">
+    </div>
+    <div class="app-header__content">
+        <div class="app-header-left">
+        </div>
+        <div class="app-header-right">
+            <div class="nav">
+                <div class="nav-item" placement="bottom" ngbTooltip="{{'menu.principal.documentation' | translate}}">
+                    <a class="nav-link" href="http://www.chutney-testing.com/install/" target="_blank">
+                        <i class="fa fa-book"></i>
+                    </a>
+                </div>
+                <div class="nav-item" placement="bottom"  ngbTooltip="{{'menu.principal.feedback' | translate}}">
+            <span class="nav-link pointer">
+            <i class="fa fa-lightbulb"></i>
+            </span>
+                </div>
+                <div class="nav-item" placement="bottom"  ngbTooltip="{{'menu.principal.notif' | translate}}">
+            <span class="nav-link">
+            <i class="fa fa-bell"></i>
+            </span>
+                </div>
+                <div class="nav-item" *ngIf="isCurrentTheme(Theme.FLATLY)" (click)="switchTheme(Theme.DARKLY)"
+                     placement="bottom"  ngbTooltip="{{'menu.principal.darkMode' | translate}}">
+            <span class="nav-link">
+            <i class="fa fa-moon"></i>
+            </span>
+                </div>
+                <div class="nav-item" *ngIf="isCurrentTheme(Theme.DARKLY)" (click)="switchTheme(Theme.FLATLY)"
+                     placement="bottom"  ngbTooltip="{{'menu.principal.lightMode' | translate}}">
+            <span class="nav-link">
+            <i class="fa fa-sun nav-item"></i>
+            </span>
+                </div>
+                <ng-container *ngIf="(user$ | async) as user">
+                    <div class="nav-item" (click)="logout()" *ngIf="user?.id">
+                <span class="nav-link">
+                <i class="fa fa-sign-out-alt" placement="bottom"  ngbTooltip="{{'menu.principal.signOut' | translate}}"></i>
+                </span>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+    <div class="app-header__mobile-menu">
+        <div class="close-sidebar-btn__mobile" (click)="toggleSidebarMobile()">
+            <i class="fa fa-bars"></i>
+        </div>
+    </div>
+
+</div>

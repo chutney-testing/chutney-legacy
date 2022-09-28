@@ -1,4 +1,14 @@
-@import 'colors';
+.create-campaign-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr;
+    gap: 0px 0px;
+    grid-template-areas:
+      ".";
+    justify-items: start;
+    align-items: start;
+}
+
 
 .campaign-title {
     height: 50px;
@@ -10,14 +20,13 @@
 
 input.search-field {
     border: none;
-    border-bottom: 1px solid $vert2;
+    //border-bottom: 1px solid $primary;
     width: 100%;
 }
 
 span.search-field {
     border: none;
-    color: $vert2;
-    border-bottom: 1px solid $vert2;
+    color: var(--bs-primary);
 }
 
 .cursor {
@@ -60,18 +69,9 @@ fieldset legend {
         width: -webkit-max-content; /* Chrome */
         border: 0;
         border-radius: 0.5rem;
-
-        .popover-arrow {
-
-            &::after {
-                border-left-color: $bleu1;
-            }
-        }
     }
 
     .popover-body {
-        background-color: $bleu1;
-        color: $blanc;
         border-radius: 0.5rem;
         padding: 0.5rem;
     }
