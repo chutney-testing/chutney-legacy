@@ -1,5 +1,5 @@
 <div class="page-header" style="margin: 0 0 10px 0;">
-    <div class="row">
+    <div class="row text-center">
         <div class="col">
             <button type="button" class="btn btn-info" (click)="addServer()">
                 <span class="fa fa-plus" aria-hidden="true"></span> {{ 'global.actions.add' | translate }}
@@ -12,17 +12,10 @@
         </div>
     </div>
 </div>
-<div class="row">
-    <div class="card-deck">
-        <div class="card">
-            <div class="card-body text-dark">
-                <table>
-                    <tbody>
-                        <chutney-agent *ngFor="let configuration of currentConfiguration.agentNetworkConfiguration" [configurationAgent]="configuration" (AgentRemoved)="removeAgent($event)"></chutney-agent>
-                    </tbody>
-                </table>
-
-            </div>
-        </div>
+<div class="row border rounded overflow-auto">
+    <div class="col text-dark agent-container">
+        <chutney-agent *ngFor="let configuration of currentConfiguration.agentNetworkConfiguration"
+                       [configurationAgent]="configuration"
+                       (AgentRemoved)="removeAgent($event)"></chutney-agent>
     </div>
 </div>

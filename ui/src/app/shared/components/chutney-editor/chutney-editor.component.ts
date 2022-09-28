@@ -23,6 +23,7 @@ export class ChutneyEditorComponent implements OnInit, AfterViewInit, OnChanges 
     @Input() content = '';
     @Input() modes: string[];
     @Input() mode: string;
+    @Input() height = '420px';
     currentMode: string;
     @Output() onContentChange = new EventEmitter<string>();
 
@@ -72,7 +73,4 @@ export class ChutneyEditorComponent implements OnInit, AfterViewInit, OnChanges 
         this.aceEditor.session.setMode(`ace/mode/${this.mode}`);
         this.aceEditor.on('change', () => this.onContentChange.emit(this.aceEditor.getValue()))
     }
-
-
-
 }

@@ -16,7 +16,11 @@
             "roles": "Roles",
             "admin": "Admin",
             "signIn": "Sign In",
-            "signOut": "Sign Out"
+            "signOut": "Sign Out",
+            "darkMode": "Dark mode",
+            "lightMode": "Light mode",
+            "feedback": "Feedback",
+            "notif": "Notifications"
         }
     },
     "home": {
@@ -114,6 +118,15 @@
                         "theme": "Theme"
                     }
                 }
+            },
+            "authoring" : {
+                "author": "Author",
+                "created": "Creation",
+                "update": "Update"
+            },
+            "info": {
+                "from": "Edition from",
+                "conflicts": "Editions conflicts"
             }
         }
     },
@@ -217,7 +230,7 @@
             "back": "Back",
             "campaign" : "Campaign",
             "schedulingDate": "Scheduling date",
-            "frequency": "frequency",
+            "frequency": "Frequency",
             "required": {
                 "campaign": "Campaign required",
                 "time": "Time required",

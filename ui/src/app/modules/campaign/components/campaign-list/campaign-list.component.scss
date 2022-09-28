@@ -1,7 +1,31 @@
-@import 'colors';
+
+.campaign-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto 1fr 1fr;
+    gap: 0px 30px;
+    grid-template-areas:
+      "campaign-1 campaign-2"
+      "campaign-3 campaign-4";
+    justify-items: start;
+    align-items: start;
+}
+
+.campaign-1 {
+    grid-area: campaign-1;
+}
+.campaign-2 {
+    grid-area: campaign-2;
+}
+.campaign-3 {
+    grid-area: campaign-3;
+}
+.campaign-4 {
+    grid-area: campaign-4;
+}
 
 .small_text {
-    font-size:0.8em;
+font-size:0.8em;
 }
 
 :host ::ng-deep {
@@ -13,17 +37,9 @@
         width: -webkit-max-content; /* Chrome */
         border: 0;
         border-radius: 0.5rem;
-
-        .popover-arrow {
-            &::after {
-                border-left-color: $bleu1;
-            }
-        }
     }
 
     .popover-body {
-        background-color: $bleu1;
-        color: $blanc;
         border-radius: 0.5rem;
         padding: 0.5rem;
     }

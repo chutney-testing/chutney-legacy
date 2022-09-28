@@ -3,17 +3,17 @@
     <span class="fa fa-check"></span>
 </button>
 <!-- TODO [disabled]="!parentForm.valid" -->
-<button type="button" class="btn btn-secondary ms-2" (click)="cancel()"
+<button type="button" class="btn btn-secondary ms-xl-2 ms-1" (click)="cancel()"
         title="{{'global.actions.cancel' | translate}}">
     <span class="fa fa-times"></span>
 </button>
 
-<button type="button" class="btn btn-success ms-5 align-items-end" (click)="duplicate()"
+<button type="button" class="btn btn-success ms-1 ms-xl-4 align-items-end" (click)="duplicate()"
         title="{{'global.actions.clone' | translate}}" [disabled]="!editComponent.id">
     <span class="fa fa-clone"></span>
 </button>
 
-<div ngbDropdown class="d-inline-block ms-5">
+<div ngbDropdown class="d-inline-block ms-1 ms-xl-4">
     <button id="dropdownBasic1" type="button" class="btn btn-info"
             title="{{'global.actions.execute' | translate}}"
             [disabled]="!editComponent.id" ngbDropdownToggle>
@@ -25,7 +25,7 @@
     </div>
 </div>
 
-<chutney-delete-confirm-dialog  class="ms-5" (deleteEvent)="delete()"
+<chutney-delete-confirm-dialog  class="ms-xl-4 ms-1" (deleteEvent)="delete()"
                             [btnSizeClass]="'m'"
                             [disabled]="(!editComponent || !editComponent.id) || (parents?.parentSteps.length > 0 || parents?.parentScenario.length > 0)">
 </chutney-delete-confirm-dialog>

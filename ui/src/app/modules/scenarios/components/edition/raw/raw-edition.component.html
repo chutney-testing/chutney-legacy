@@ -1,53 +1,48 @@
-<div class="row edition-header">
-    <div class="header-left col-md-8">
-        <div class="title">
-            <chutney-forms-editable-label
-                [id]="'title'"
-                [placeholder]="'title'"
-                [defaultValue]="'title'"
-                [(model)]="testCase.title"
-                [type]="'form-title'">
-            </chutney-forms-editable-label>
+<div class="row mb-2">
+    <div class="col-6">
+        <div class="mb-2">
+            <textarea type="text" id="title" class="form-control"
+                      [(ngModel)]="testCase.title" maxlength="300">
+            </textarea>
         </div>
-        <div class="description">
-            <chutney-forms-editable-text-area
-                [id]="'description'"
-                [placeholder]="'description'"
-                [defaultValue]="'description'"
-                [(model)]="testCase.description"
-                [type]="'form-title'">
-            </chutney-forms-editable-text-area>
+        <div class="mb-2">
+            <textarea type="text" id="description" class="form-control"
+                      [(ngModel)]="testCase.description" maxlength="300">
+            </textarea>
         </div>
     </div>
-    <div class="header-right triangle-left col-md-4">
-        <div class="row">
-            <div class="col-2">
+    <div class="col-3">
+        <div class="d-flex flex-column align-items-center">
+            <div class="mb-3">
+                <button type="button" class="btn btn-primary ms-3 rounded"
+                        (click)="saveScenario()" [disabled]="errorMessage"
+                        title="{{'global.actions.record' | translate}}">
+                    {{'global.actions.save' | translate}}
+                </button>
+
+                <button type="button" class="btn btn-light ms-3 rounded"
+                        (click)="cancel()"
+                        title="{{'global.actions.cancel' | translate}}">
+                    {{ 'global.actions.cancel' | translate }}
+                </button>
+            </div>
+            <div *ngIf="testCase && testCase.id" class="d-flex flex-wrap">
                 <chutney-authoring-info [testCase]="testCase"></chutney-authoring-info>
-            </div>
-            <div class="col-2">
-                <chutney-edition-info [testCase]="testCase"></chutney-edition-info>
-            </div>
-        </div>
-        <div class="row form-group">
-            <div class="col-2 p-0 align-self-center">
-                <label class="form-control-label fw-bold" for="tags">{{ 'scenarios.edition.form.tags' | translate }}</label>
-            </div>
-            <div class="col">
-                <textarea type="text" class="form-control tag-input no-resize" name="tags"
-                      id="tags" [ngModel]="testCase.tags" (ngModelChange)="updateTags($event)" rows="2"></textarea>
+                <chutney-edition-info class="ms-3" [testCase]="testCase"></chutney-edition-info>
             </div>
         </div>
     </div>
-    <div class="action-pane">
-        <button class="save-button" data-toggle="tooltip" title="Sauvegarder" [disabled]="errorMessage"
-            (click)="saveScenario()">
-        </button>
+    <div class="col-3 text-center">
+        <label class="form-label fw-bold" for="tags">{{ 'scenarios.edition.form.tags' | translate }}</label>
+        <textarea type="text" class="form-control" name="tags" id="tags"
+                  [ngModel]="testCase.tags" (ngModelChange)="updateTags($event)"
+                  rows="3"></textarea>
     </div>
 </div>
-<div class="plugins">
+<div>
     <form [formGroup]="pluginsForm" autocomplete="off" class="mb-0">
         <div class="row mb-0 small">
-            <div class="col-7">
+            <div class="col-2">
                 <div class="form-inline">
                     <label class="form-control-label fw-bold me-5" for="jiraId">{{'menu.principal.jiraId' | translate}}</label>
                     <input type="text" class="form-control form-control-sm" id="jiraId"
@@ -71,6 +66,7 @@
             [modes]="['json', 'hjson']"
             [mode]="'hjson'"
             [content]="testCase.content"
+            [height]="'310px'"
             (onContentChange)="onScenarioContentChanged($event)">
         </chutney-editor>
     </div>

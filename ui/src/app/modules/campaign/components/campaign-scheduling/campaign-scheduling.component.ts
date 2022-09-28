@@ -54,10 +54,10 @@ export class CampaignSchedulingComponent implements OnInit {
 
 
         this.form = this.formBuilder.group({
-            campaign: [null, Validators.required],
-            date: [null, Validators.required],
-            time: [null, Validators.required],
-            frequency: [null]
+            campaign: ['', Validators.required],
+            date: ['', Validators.required],
+            time: ['', Validators.required],
+            frequency: ['']
         });
     }
 

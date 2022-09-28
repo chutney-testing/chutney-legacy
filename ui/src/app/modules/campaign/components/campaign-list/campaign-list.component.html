@@ -1,58 +1,48 @@
-<div class="row ms-4">
-    <div class="col-md-6">
-        <button *hasAuthorization="[Authorization.CAMPAIGN_WRITE]"
-                type="button"
-                class="btn btn-sm btn-outline-secondary"
-                (click)="createCampaign()"
-        >
+
+<div class="campaign-container">
+    <div class="campaign-1 w-100">
+        <div class="input-group mb-1">
+            <input type="text" class="form-control" placeholder="{{ 'campaigns.search.placeholder' | translate }}" [ngModel]="campaignFilter" (ngModelChange)="campaignFilterChange($event)">
+        </div>
+        <div class="w-auto" style="min-width: 170px;">
+            <button *ngIf=" !isSelectAll()" type="button" class="btn btn-sm btn-outline-primary m-2" (click)="selectAll()">
+                <span class="fa fa-check"></span> {{ 'campaigns.search.selectAllText' | translate }}
+            </button>
+            <button *ngIf="isSelectAll()" type="button" class="btn btn-sm btn-outline-primary m-2" (click)="deselectAll()">
+                <span class="fa fa-times"></span> {{ 'campaigns.search.deselectAllText' | translate }}
+            </button>
+        </div>
+        <div class="d-flex flex-wrap w-auto mt-1 mb-3">
+            <div class="align-self-center">
+                <button class="chutney-tag"
+                        [ngClass]="tagFilter.isNoTagSelected() ? 'chutney-tag-selected' : 'chutney-tag-unselected'"
+                        (click)="toggleNoTagFilter()">
+                    NO_TAG
+                </button>
+            </div>
+            <div class="border-end border-dark ms-2 me-2"></div>
+            <div *ngFor="let tag of tagFilter.all()" class="align-self-center">
+                <button
+                    [ngClass]="tagFilter.isSelected(tag)? 'chutney-tag chutney-tag-selected' : 'chutney-tag chutney-tag-unselected'"
+                    (click)="toggleTagFilter(tag)">
+                    {{tag}}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="campaign-2 w-100">
+        <button *hasAuthorization="[Authorization.CAMPAIGN_WRITE]" type="button" class="btn btn-primary" (click)="createCampaign()">
             <span class="fa fa-plus" aria-hidden="true"></span> {{ 'campaigns.list.actions.create' | translate }}
         </button>
-        <button *hasAuthorization="[Authorization.CAMPAIGN_EXECUTE]"
-                type="button"
-                class="btn btn-sm btn-outline-secondary ms-2"
-                [routerLink]="['scheduling']"
-        >
+        <button *hasAuthorization="[Authorization.CAMPAIGN_EXECUTE]" type="button" class="btn btn-primary ms-2" [routerLink]="['scheduling']">
             <span class="fa fa-plus" aria-hidden="true"></span> {{ 'campaigns.scheduling.schedule' | translate }}
         </button>
     </div>
-</div>
-<div class="row ms-4">
-    <div class="col-md-6 pe-2">
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="{{ 'campaigns.search.placeholder' | translate }}"
-                   [ngModel]="campaignFilter" (ngModelChange)="campaignFilterChange($event)">
-        </div>
-        <div class="row ms-2">
-            <div class="w-auto" style="min-width: 170px;">
-                <button *ngIf=" !isSelectAll()" type="button" class="btn btn-xs btn-default m-2" (click)="selectAll()">
-                    <span class="fa fa-check"></span> {{ 'campaigns.search.selectAllText' | translate }}
-                </button>
-                <button *ngIf="isSelectAll()" type="button" class="btn btn-xs btn-default m-2" (click)="deselectAll()">
-                    <span class="fa fa-times"></span> {{ 'campaigns.search.deselectAllText' | translate }}
-                </button>
-            </div>
-            <div class="d-flex flex-wrap w-auto">
-                <div class="border-end border-dark ms-2 me-2"></div>
-                <div class="align-self-center">
-                    <button class="chutney-tag"
-                            [ngClass]="tagFilter.isNoTagSelected() ? 'chutney-tag-selected' : 'chutney-tag-unselected'"
-                            (click)="toggleNoTagFilter()">
-                        NO_TAG
-                    </button>
-                </div>
-                <div class="border-end border-dark ms-2 me-2"></div>
-                <div *ngFor="let tag of tagFilter.all()" class="align-self-center">
-                    <button
-                        [ngClass]="tagFilter.isSelected(tag)? 'chutney-tag chutney-tag-selected' : 'chutney-tag chutney-tag-unselected'"
-                        (click)="toggleTagFilter(tag)">
-                        {{tag}}
-                    </button>
-                </div>
-            </div>
-        </div>
 
+    <div class="campaign-3 w-100">
         <div class="table-responsive" *ngIf="viewedCampaigns.length > 0">
-            <table class="table table-sm table-striped table-hover">
+            <table class="table table-sm table-striped table-hover align-baseline">
                 <tbody>
                 <tr *ngFor="let campaign of (viewedCampaigns | searchTextPipe : campaignFilter:campaignFilterAttributes)">
                     <td class="small_text w93 align-middle">
@@ -70,19 +60,17 @@
                         </a>
                     </td>
                     <td class="ps-0 w1">
-                        <span *ngIf="campaign.tags.length <= 3">
-                            <span *ngFor="let tag of campaign.tags"
-                                  class="chutney-tag chutney-tag-selected">{{tag}}</span>
-                        </span>
-                        <span *ngIf="campaign.tags.length > 3">
-                            <span *ngFor="let tag of campaign.tags | slice:0:2"
-                                  class="chutney-tag chutney-tag-selected">{{tag}}</span>
-                            <button type="button" class="chutney-tag chutney-tag-selected"
+                        <ng-container *ngIf="campaign.tags.length <= 3">
+                            <span *ngFor="let tag of campaign.tags" class="badge bg-primary">{{tag}}</span>
+                        </ng-container>
+                        <ng-container *ngIf="campaign.tags.length > 3">
+                            <span *ngFor="let tag of campaign.tags | slice:0:2" class="badge bg-primary">{{tag}}</span>
+                            <button type="button" class="badge bg-primary"
                                     ngbPopover="{{campaign.tags}}" placement="left"
                                     triggers="mouseenter:mouseleave" container="body">
                                 ...
                             </button>
-                        </span>
+                        </ng-container>
                     </td>
                     <td class="ps-0 w1">
                         <button type="button" class="btn btn-link me-0"
@@ -110,8 +98,8 @@
             <span>{{ 'campaigns.list.empty' | translate }}</span>
         </div>
     </div>
-    <div class="col-md-6 ps-2">
-        <h2 *ngIf="scheduledCampaigns.length > 0">{{ 'campaigns.list.executions.next' | translate }}</h2>
+    <div class="campaign-4 w-100">
+        <h4 *ngIf="scheduledCampaigns.length > 0">{{ 'campaigns.list.executions.next' | translate }}</h4>
         <div class="table-responsive" *ngIf="scheduledCampaigns.length > 0">
             <table class="table table-sm table-striped">
                 <tbody>
@@ -128,19 +116,19 @@
                               aria-hidden="true"></span>
                         - {{scheduledCampaign.campaignTitle}}
                     </td>
-                    <td>{{scheduledCampaign.schedulingDate | amLocal | amDateFormat: 'YYYY-MM-DD HH:mm'}}</td>
+                    <td class="text-nowrap">{{scheduledCampaign.schedulingDate | amLocal | amDateFormat: 'YYYY-MM-DD HH:mm'}}</td>
                 </tr>
                 </tbody>
             </table>
         </div>
-        <h2>{{ 'campaigns.list.executions.last' | translate }}</h2>
+        <h4>{{ 'campaigns.list.executions.last' | translate }}</h4>
         <div class="table-responsive" *ngIf="campaigns.length > 0">
             <table class="table table-sm table-striped">
                 <tbody>
                 <tr *ngFor="let report of lastCampaignReports" class="small_text">
-                    <td class="w25">{{ report.startDate | amDateFormat: 'DD MMM. YYYY HH:mm' }}</td>
+                    <td class="w25 text-nowrap">{{ report.startDate | amDateFormat: 'DD MMM. YYYY HH:mm' }}</td>
                     <td class="ps-0 w60">
-                        <a class="table-link"
+                        <a
                            [routerLink]="['/campaign', campaignIdFromName(report.campaignName), 'execution', report.executionId]"
                         >
                             {{ report.campaignName }}
@@ -149,10 +137,10 @@
                     <td class="ps-0 w5">
                         <chutney-execution-badge [status]="report.status" [spin]="true"></chutney-execution-badge>
                     </td>
-                    <td class="text-center ps-0 w10">{{ report.duration | duration:'short'}}</td>
+                    <td class="text-center text-nowrap ps-0 w10">{{ report.duration | duration:'short'}}</td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </div>
-</div>
+  </div>

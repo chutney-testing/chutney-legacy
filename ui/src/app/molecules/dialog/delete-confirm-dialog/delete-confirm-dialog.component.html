@@ -1,4 +1,4 @@
-<button *ngIf="type === 'trash-button'" type="button" class="btn{{btnSizeClass ? '-' + btnSizeClass : ''}} btn btn-{{btnColor ? btnColor : 'danger'}} trash-btn"
+<button *ngIf="type === 'trash-button'" type="button" class="btn-lg {{btnSizeClass ? '-' + btnSizeClass : ''}} btn btn-{{btnColor ? btnColor : 'danger'}} trash-btn"
         (click)="openModal(template)"
         title="{{title ? title : 'global.actions.delete' | translate}}"
         [attr.disabled]="disabledBoolean(disabled)">

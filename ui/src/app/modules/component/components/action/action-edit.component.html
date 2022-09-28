@@ -1,60 +1,60 @@
 <div [formGroup]="actionForm">
-    <div class="edition-header row mt-0">
-        <div class="col-7">
-            <div class="row">
-                <div>
-                    <span class="fa fa-clone"></span>
-                    <span class="ms-2 fw-bold text-capitalize">{{editComponent.implementation.identifier}}</span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-1"></div>
-                <textarea formControlName="name" rows="2"
-                          class="no-resize form-control col"
-                          [ngClass]="{
-                            'is-valid': actionForm.get('name').valid && actionForm.get('name').enabled,
-                            'is-invalid': !actionForm.get('name').valid && actionForm.get('name').enabled
-                          }"
-                          placeholder="{{'components.shared.edition.fields.intention.placeholder' | translate}}"
-                          required></textarea>
-                <div class="col-1"></div>
-            </div>
-            <div *ngIf="editComponent.implementation.hasTarget" class="row">
-                <label for="target" class="col-form-label col-3 fw-bold">{{'components.shared.edition.fields.target.name' | translate}}</label>
-                <div class="col-8">
-                    <select id="target" class="form-select" formControlName="target">
-                        <option *ngFor="let target of availableTargets" [value]="target">{{target}}</option>
-                    </select>
-                </div>
+    <div class="edition-header">
+        <div class="row justify-content-end">
+            <div class="col-6 text-center mt-1">
+                <chutney-toolbar-component *hasAuthorization="[Authorization.COMPONENT_WRITE]"
+                    (editEvent)="edit()"
+                    (cancelEvent)="cancel()"
+                    (executeEvent)="execute($event)"
+                    (childEvent)="sideBarToggle()"
+                    (deleteEvent)="delete()"
+                    (duplicateEvent)="duplicate()"
+                    [editComponent]="editComponent"
+                    [parents]="parents">
+                </chutney-toolbar-component>
             </div>
         </div>
-        <div class="col-5">
-            <div class="row">
-                <div class="col text-center">
-                    <chutney-toolbar-component *hasAuthorization="[Authorization.COMPONENT_WRITE]"
-                        (editEvent)="edit()"
-                        (cancelEvent)="cancel()"
-                        (executeEvent)="execute($event)"
-                        (childEvent)="sideBarToggle()"
-                        (deleteEvent)="delete()"
-                        (duplicateEvent)="duplicate()"
-                        [editComponent]="editComponent"
-                        [parents]="parents">
-                    </chutney-toolbar-component>
+        <div class="row">
+            <div class="col ">
+                <div>
+                    <div class="">
+                        <span class="fa fa-clone"></span>
+                        <span class="ms-2 fw-bold text-capitalize">{{editComponent.implementation.identifier}}</span>
+                    </div>
+                </div>
+                <div class="">
+                    <textarea formControlName="name" rows="2"
+                              class="no-resize form-control col"
+                              [ngClass]="{
+                                'is-valid': actionForm.get('name').valid && actionForm.get('name').enabled,
+                                'is-invalid': !actionForm.get('name').valid && actionForm.get('name').enabled
+                              }"
+                              placeholder="{{'components.shared.edition.fields.intention.placeholder' | translate}}"
+                              required></textarea>
                 </div>
             </div>
-            <div class="row">
-                <div class="p-0 align-self-center">
-                    <label class="form-control-label fw-bold" for="tags">{{ 'scenarios.edition.form.tags' | translate }}</label>
+            <div class="col">
+                
+                <div class="p-0 pt-1 align-self-center">
+                    <label class="form-control-label fw-bold ms-3" for="tags">{{ 'scenarios.edition.form.tags' | translate }}</label>
                 </div>
                 <div class="col">
                     <textarea formControlName="tags" type="text" class="form-control no-resize" name="tags" id="tags" rows="2"></textarea>
                 </div>
+                
+            </div>
+        </div>
+        <div *ngIf="editComponent.implementation.hasTarget" class="row mt-2">
+            <label for="target" class="align-self-center fw-bold col-1">{{'components.shared.edition.fields.target.name' | translate}}</label>
+            <div class="col-5">
+                <select id="target" class="form-select" formControlName="target">
+                    <option *ngFor="let target of availableTargets" [value]="target">{{target}}</option>
+                </select>
             </div>
         </div>
     </div>
     <div class="edition-body row">
-        <div class="border-right"
+        <div class="border-right w-50"
              [ngClass]="{'col edition-action-minimize':rightPanelMinimize, 'col-7':!rightPanelMinimize}">
             <!-- Inputs -->
             <div *ngIf="hasInputs()" class="mt-4 px-0 pb-2 pt-2">
@@ -68,16 +68,16 @@
                 </legend>
                 <ng-container *ngIf="!collapseInputs">
                     <div formArrayName="inputs" *ngFor="let input of actionForm.get('inputs')?.controls; let i=index;">
-                        <div [formGroupName]="i" class="form-group row">
-                            <div class="col-3 ps-3">
+                        <div [formGroupName]="i" class="form-group d-flex flex-row my-2">
+                            <div class="w-25 ps-3">
                                 <label for="input-{{i}}" class="col-form-label">{{input.value.key}}</label>
                             </div>
-                            <div class="col-8 px-1">
+                            <div class="w-75 px-1">
                                 <textarea class="form-control" id="input-{{i}}" rows="1"
                                           placeholder="{{input.value.placeholder}}" formControlName="value"></textarea>
                             </div>
                             <ng-container *hasAuthorization="[Authorization.COMPONENT_WRITE]">
-                                <div class="col-1 px-1 align-self-center text-center">
+                                <div class="px-1 align-self-center text-center">
                                     <button *ngIf="isVariableRef(i)" class="btn btn-sm btn-light btn-outline-dark border-0" type="button"
                                             (click)="switchVariableRefToStruct(i)"
                                             title="{{'components.action.refvar.backTo.tooltip' | translate}}">
@@ -112,17 +112,17 @@
                                 <div formArrayName="valueMap"
                                      *ngFor="let nestedMap of input.get('valueMap').controls; let j = index;">
                                     <div [formGroupName]="j">
-                                        <div class="form-group row">
-                                            <div class="col-3 ps-3">
+                                        <div class="form-group d-flex flex-row my-2">
+                                            <div class="w-25 ps-3">
                                                 <input type="text" class="form-control" formControlName="k"
                                                        title="{{nestedMap.get('k').value}}"
                                                        placeholder="key"/>
                                             </div>
-                                            <div class="col-8 px-1">
+                                            <div class="w-75 px-1">
                                                 <textarea class="mx-2 form-control" formControlName="v"
-                                                          placeholder="value" rows="1"></textarea>
+                                                          placeholder="value" rows="2"></textarea>
                                             </div>
-                                            <div class="col-1 px-1 align-self-center text-right">
+                                            <div class="px-1 ms-2 align-self-center text-right">
                                                 <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
                                                         type="button" class="btn btn-sm btn-outline-danger"
                                                         (click)="removeMapItem(i,j)"
@@ -200,19 +200,19 @@
                     </button>
                 </legend>
                 <ng-container *ngIf="!collapseValidations">
-                    <div class="row" formArrayName="validations"
+                    <div class="d-flex flex-row my-2" formArrayName="validations"
                          *ngFor="let parameter of actionForm.get('validations')?.controls; let i=index;">
                         <ng-container [formGroupName]="i">
-                            <div class="col-3 px-1">
+                            <div class="w-25 px-1">
                                 <input type="text" class="form-control me-2" formControlName="key"
                                        title="{{parameter.get('key').value}}"
                                        placeholder="key"/>
                             </div>
-                            <div class="col-8 px-1">
-                                <textarea class="form-control me-2" formControlName="value" rows="1"
+                            <div class="w-75 px-1">
+                                <textarea class="form-control me-2" formControlName="value" rows="2"
                                       placeholder="value"></textarea>
                             </div>
-                            <div class="col-1 px-1 align-self-center text-right">
+                            <div class="px-1 align-self-center text-right">
                                 <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
                                         type="button" class="btn btn-sm btn-outline-danger"
                                         (click)="removeValidation(i)"
@@ -241,19 +241,19 @@
                     </button>
                 </legend>
                 <ng-container *ngIf="!collapseOutputs">
-                    <div class="row" formArrayName="outputs"
+                    <div class="d-flex flex-row my-2" formArrayName="outputs"
                          *ngFor="let parameter of actionForm.get('outputs')?.controls; let i=index;">
                         <ng-container [formGroupName]="i">
-                            <div class="col-3 px-1">
+                            <div class="w-25 px-1">
                                 <input type="text" class="form-control me-2" formControlName="key"
                                        title="{{parameter.get('key').value}}"
                                        placeholder="key"/>
                             </div>
-                            <div class="col-8 px-1">
-                                <textarea class="form-control me-2" formControlName="value" rows="1"
+                            <div class="w-75 px-1">
+                                <textarea class="form-control me-2" formControlName="value" rows="2"
                                           placeholder="value"></textarea>
                             </div>
-                            <div class="col-1 px-1 align-self-center text-right">
+                            <div class="px-1 align-self-center text-right">
                                 <button *hasAuthorization="[Authorization.COMPONENT_WRITE]"
                                         type="button" class="btn btn-sm btn-outline-danger"
                                         (click)="removeOutput(i)"
@@ -266,9 +266,9 @@
                 </ng-container>
             </fieldset>
         </div>
-        <div [ngClass]="{'p-0 right-panel-minimize':rightPanelMinimize, 'col-5':!rightPanelMinimize}">
-            <button type="button" class="right-panel-minimize-btn btn btn-xs pt-0 btn-default shadow-none"
-                    [ngClass]="{'p-0':!rightPanelMinimize}"
+        <div [ngClass]="{'w-25 p-0 right-panel-minimize':rightPanelMinimize, 'w-50':!rightPanelMinimize}">
+            <button type="button" class="right-panel-minimize-btn btn btn-xs pt-0 btn-default shadow-none border-start rounded-0"
+                    [ngClass]="{'float-end': rightPanelMinimize,'':!rightPanelMinimize}"
                     title="{{(rightPanelMinimize ? 'global.actions.show' : 'global.actions.hide') | translate}}"
                     (click)="rightPanelMinimize = !rightPanelMinimize;">
                 <span class="fa" [ngClass]="{'fa-angle-double-left':rightPanelMinimize, 'fa-angle-double-right':!rightPanelMinimize}"></span>

@@ -1,20 +1,20 @@
-<div *ngIf="testCaseMetadata" class="row edition-header">
-    <div class="header-left">
-        <div class="title" [innerHTML]="testCaseMetadata.title | linkify"></div>
-        <div class="description" [innerHTML]="testCaseMetadata.description | linkify"></div>
-        <div class="btn-group ms-4 header-tag">
+<div *ngIf="testCaseMetadata" class="row edition-header mb-2">
+    <div class="col-md-6 header-left">
+        <div class="title mt-2 mb-1" [innerHTML]="testCaseMetadata.title | linkify"></div>
+        <div class="description p-1 border rounded" [innerHTML]="testCaseMetadata.description | linkify"></div>
+        <div class="btn-group header-tag">
             <span *ngFor="let tag of testCaseMetadata.tags">
                 <span class="chutney-tag chutney-tag-selected">{{tag}}</span>
             </span>
         </div>
     </div>
-    <div class="header-right triangle-left">
+    <div class="col-md-6 header-right align-self-center">
         <div class="row">
             <div class="col-sm-12 btn-toolbar p-0">
                 <div class="col-6 p-0">
                     <ng-container *hasAuthorization="[Authorization.SCENARIO_EXECUTE]">
                         <div ngbDropdown class="d-inline-block">
-                            <button id="dropdownBasic1" type="button" class="btn btn-success accept-spinner m-1"
+                            <button id="dropdownBasic1" type="button" class="btn btn-primary accept-spinner m-1"
                                     [disabled]="canExecute" ngbDropdownToggle
                                     (click)="executeScenarioOnToggle()">
                                 <span class="fa fa-play"></span>
@@ -29,7 +29,7 @@
                     </ng-container>
                     <ng-container *hasAuthorization="[Authorization.SCENARIO_WRITE]">
                         <div class="btn-group">
-                            <button type="button" class="btn btn-light"
+                            <button type="button" class="btn btn-dark"
                                     routerLink="{{isComposed(testCaseId) ? '/scenario/' + testCaseId + '/component-edition' : '/scenario/' + testCaseId + '/raw-edition'}}">
                                 <span class="fa fa-pencil-alt"></span>
                                 <span class="btn-label">{{'global.actions.edit' | translate}}</span>
@@ -43,13 +43,13 @@
                                                        [dialogMessage]="'scenarios.execution.actions.remove' | translate"
                                                        (deleteEvent)="deleteScenario(testCaseId)">
                         </chutney-delete-confirm-dialog>
-                        <button type="button" class="btn btn-success accept-spinner align-items-end"
+                        <button type="button" class="btn btn-primary accept-spinner align-items-end ms-2"
                                 (click)="duplicateScenario()">
                             <span class="fa fa-clone"></span>
                             <span class="btn-label">{{'global.actions.clone' | translate}}</span>
                         </button>
                         <button *ngIf="isNotComposed()" type="button"
-                                class="btn btn-success accept-spinner align-items-end" (click)="exportScenario()">
+                                class="btn btn-primary accept-spinner align-items-end ms-2" (click)="exportScenario()">
                             <span class="fa fa-file-code"></span>
                             <span class="btn-label">{{'global.actions.export' | translate}}</span>
                         </button>

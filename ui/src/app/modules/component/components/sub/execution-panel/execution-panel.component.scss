@@ -1,7 +1,7 @@
-@import 'colors';
+@import "~bootstrap/scss/bootstrap";;
 
 .execution-panel {
-    background-color: $grisclair1;
+    background-color: $light;
     padding: 10px;
     border-radius: 10px;
 }

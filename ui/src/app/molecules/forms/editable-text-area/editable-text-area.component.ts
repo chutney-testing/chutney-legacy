@@ -7,8 +7,6 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 })
 export class EditableTextAreaComponent {
 
-    editMode = false;
-
     @Input() id: string;
     @Input() placeholder: string;
     @Input() type = 'simple';

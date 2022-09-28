@@ -1,6 +1,5 @@
-@import 'colors';
-@import 'mixins';
-@import 'animations';
+@import 'global/mixins';
+@import 'global/animations';
 
 @include box-shadow-animation(
   $animation_name: history-tile-running-anim,
@@ -8,12 +7,12 @@
   $fromOffsetY: 4px,
   $fromBlur: 8px,
   $fromSpread: 0,
-  $fromColor: rgba($grisfonce2, 30),
+  $fromColor: rgba(var(--bs-dark), 30),
   $toOffsetX: 8px,
   $toOffsetY: 8px,
   $toBlur: 16px,
   $toSpread: 0,
-  $toColor: rgba($grisfonce2, 30)
+  $toColor: rgba(var(--bs-dark), 30)
 );
 
 .noselect {
@@ -40,7 +39,7 @@ h2 {
     padding-top: 2px;
 }
 .exection-id {
-    color: black;
+    color: white;
     font-size: 14px;
     font-weight: bold;
     margin-left:4px;
@@ -49,7 +48,7 @@ h2 {
     font-size: 12px;
     color: white;
     padding-top: 6px;
-    padding-left: 20px;
+    padding-left: 0;
     padding-right: 10px;
     line-height: 14px;
     min-height: 40px;
@@ -69,15 +68,15 @@ h2 {
 }
 
 .tile-ok {
-    background-color: $liens;
+    background-color: var(--bs-info);
 }
 
 .tile-ko {
-    background-color: $labelko;
+    background-color: var(--bs-danger);
 }
 
 .tile-stop {
-    background-color: grey;
+    background-color: var(--bs-dark);
 }
 
 .tile-selected {
@@ -85,7 +84,7 @@ h2 {
 }
 
 .tile-running {
-  background-color: $grisclair1;
+  background-color: var(--bs-warning);
   @include animation(
     $animation_name: history-tile-running-anim,
     $animation_duration: 750ms,
@@ -94,22 +93,9 @@ h2 {
     $animation_direction: alternate);
 }
 
-.fa-circle {
-    background-color: white;
-    padding: 5px;
-    border-radius: 4px;
-}
-
-.circle-ok {
-    color: #0275d8;
-}
-
-.circle-ko {
-    color: #d9534f;
-}
-
 .error {
     background-color: rgba(255, 255, 255, 0.5);
     border-radius: 0 0 4px 4px;
     font-size: 12px;
+    line-break: anywhere
 }

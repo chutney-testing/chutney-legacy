@@ -122,6 +122,6 @@ export class LoginService {
         if (contains(authorizations, Authorization.ADMIN_ACCESS)) return '/';
     }
 
-    return '/home';
+    return '/login';
   }
 }

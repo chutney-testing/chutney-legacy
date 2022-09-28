@@ -2,7 +2,7 @@
     <strong *ngIf="message">{{ message }}</strong>
 </div>
 
-<div [formGroup]="configurationForm">
+<div [formGroup]="configurationForm" class="mb-4">
     <fieldset class="w99 border p-2">
         <legend class="w-auto ps-3 pe-3 mb-0 float-none">
             <span>Configuration jira </span>
@@ -24,7 +24,7 @@
             <div class="row m-1">
                 <label class="col-2 col-form-label" for="password">password</label>
                 <div class="col-10">
-                    <input type="text" class="form-control" id="password" formControlName="password"/>
+                    <input type="password" class="form-control" id="password" formControlName="password"/>
                 </div>
             </div>
         </div>

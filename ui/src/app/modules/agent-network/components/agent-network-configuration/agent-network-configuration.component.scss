@@ -12,8 +12,6 @@
 
 .card-body {
     padding-right: 5px;
-    min-width: 23rem;
-    max-width: 23rem;
 }
 
 .plus-btn {
@@ -27,4 +25,8 @@ h1 {
 
 .error {
     margin-top: 15px;
+}
+
+.agent-container {
+    min-width: 400px;
 }

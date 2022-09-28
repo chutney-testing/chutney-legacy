@@ -1,10 +1,5 @@
 <div class="row {{type}}">
-    <div class="editable-field" (click)="editMode = true" *ngIf="!editMode">
-        <span class="input-lbl">{{model}}</span>
-        <span class="fa fa-pencil-alt overlay-icon"></span>
-    </div>
     <input
-        *ngIf="editMode"
         type="text"
         id="{{id}}"
         placeholder="{{placeholder}}"
@@ -12,6 +7,5 @@
         value="{{defaultValue}}"
         [ngModel]="model"
         (ngModelChange)="onInputChange($event)"
-        chutneyFocusOnShow
-        (focusout)="editMode = false"/>
+        chutneyFocusOnShow/>
 </div>
