@@ -15,8 +15,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.chutneytesting.security.api.UserDto;
 import com.chutneytesting.tools.file.FileUtils;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -25,8 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -60,11 +56,6 @@ public class SecuredControllerSpringBootIntegrationTest {
     private static Object[] securedEndPointList() {
         return new Object[][]{
             {POST, "/api/homepage/v1", "ADMIN_ACCESS", "{\"content\":\"\"}"},
-            {GET, "/api/v1/backups/git", "ADMIN_ACCESS", null},
-            {POST, "/api/v1/backups/git", "ADMIN_ACCESS", "{\"name\":\"secuback\",\"url\":\"\",\"branch\":\"\",\"privateKeyPath\":\"\",\"privateKeyPassphrase\":\"\"}"},
-            {DELETE, "/api/v1/backups/git/name", "ADMIN_ACCESS", null},
-            {GET, "/api/v1/backups/git/name/backup", "ADMIN_ACCESS", null},
-            {GET, "/api/v1/backups/git/name/import", "ADMIN_ACCESS", null},
             {GET, "/api/v1/backups", "ADMIN_ACCESS", null},
             {POST, "/api/v1/backups", "ADMIN_ACCESS", "{\"homePage\":true}"},
             {GET, "/api/v1/backups/backupId", "ADMIN_ACCESS", null},
@@ -217,8 +208,6 @@ public class SecuredControllerSpringBootIntegrationTest {
     @ParameterizedTest
     @MethodSource("securedEndPointList")
     public void secured_api_access_verification(HttpMethod httpMethod, String url, String authority, String content) throws Exception {
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(authority));
         UserDto user = new UserDto();
         user.setName("userName");
         user.grantAuthority(authority);
