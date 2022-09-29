@@ -1,13 +1,13 @@
 package com.chutneytesting.task.assertion;
 
-import static com.chutneytesting.task.assertion.utils.JsonUtils.lenientEqual;
+import static com.chutneytesting.task.common.JsonUtils.lenientEqual;
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.enumValidation;
 import static com.chutneytesting.task.spi.validation.TaskValidatorsUtils.notBlankStringValidation;
 import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 import static java.util.Optional.ofNullable;
 import static java.util.function.Predicate.not;
 
-import com.chutneytesting.task.assertion.utils.JsonUtils;
+import com.chutneytesting.task.common.JsonUtils;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
 import com.chutneytesting.task.spi.injectable.Input;

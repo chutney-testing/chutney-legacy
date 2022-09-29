@@ -1,6 +1,6 @@
 package com.chutneytesting.task.assertion.placeholder;
 
-import static com.chutneytesting.task.assertion.utils.JsonUtils.lenientEqual;
+import static com.chutneytesting.task.common.JsonUtils.lenientEqual;
 
 import com.chutneytesting.task.spi.injectable.Logger;
 import com.jayway.jsonpath.JsonPath;

@@ -1,4 +1,4 @@
-package com.chutneytesting.task.assertion.utils;
+package com.chutneytesting.task.common;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
