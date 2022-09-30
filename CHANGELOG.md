@@ -1,5 +1,47 @@
 # Changelog
 
+## [1.5.0](https://github.com/chutney-testing/chutney/tree/1.5.0)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.4.9...1.5.0)
+
+**Implemented enhancements:**
+
+- 🚀 | New chutney instance should create at least a default environment [\#838](https://github.com/chutney-testing/chutney/issues/838)
+- 🚀 | Add log to help understanding client errors [\#802](https://github.com/chutney-testing/chutney/issues/802)
+- 🚀 | New interface for chutney (login page and layout)[\#827](https://github.com/chutney-testing/chutney/pull/827)
+- 🚀 | enable xsd validation from file in classpath, jar in classpath and file system [\#849](https://github.com/chutney-testing/chutney/pull/849) 
+
+**Fixed bugs:**
+
+- 🐛 | Buttons style KO  after deleting all environments [\#832](https://github.com/chutney-testing/chutney/issues/832)
+- 🐛 | If no environment, it bugs on interface [\#808](https://github.com/chutney-testing/chutney/issues/808)
+- 🐛 | AMQP target with cluster addresses [\#766](https://github.com/chutney-testing/chutney/issues/766)
+- 🐛 | Avoid NPE in Micrometer function [\#854](https://github.com/chutney-testing/chutney/pull/854)
+- 🐛 | Avoid NPE when exploring target with unknown port [\#850](https://github.com/chutney-testing/chutney/pull/850) 
+- 🐛 | Fix linkifier regex validation [\#839](https://github.com/chutney-testing/chutney/pull/839) 
+- 🐛 | Scenario execution preview too slow [\#789](https://github.com/chutney-testing/chutney/pull/789)
+
+**Merged pull requests:**
+
+- Delete git backup feature [\#859](https://github.com/chutney-testing/chutney/pull/859) 
+- chore/angular13 [\#748](https://github.com/chutney-testing/chutney/pull/748)
+- chore\(\): Add thread pool executor for async/sse rest endpoints [\#765](https://github.com/chutney-testing/chutney/pull/765) 
+- chore\(deps\): bump maven-javadoc-plugin from 3.3.2 to 3.4.0 [\#799](https://github.com/chutney-testing/chutney/pull/799) 
+- chore\(deps\): bump sshd.version from 2.8.0 to 2.9.0 [\#797](https://github.com/chutney-testing/chutney/pull/797) 
+- chore\(deps\): bump maven-install-plugin from 2.5.2 to 3.0.1 [\#796](https://github.com/chutney-testing/chutney/pull/796)
+- chore\(deps\): bump maven-surefire-plugin from 3.0.0-M5 to 3.0.0-M7 [\#794](https://github.com/chutney-testing/chutney/pull/794) 
+- chore\(deps\): bump spring-boot-maven-plugin from 2.7.1 to 2.7.2 [\#793](https://github.com/chutney-testing/chutney/pull/793)
+- chore\(deps\): bump groovy from 3.0.11 to 3.0.12 [\#792](https://github.com/chutney-testing/chutney/pull/792) 
+- chore\(deps\): bump spring-boot-maven-plugin from 2.7.0 to 2.7.1 [\#782](https://github.com/chutney-testing/chutney/pull/782)
+- chore\(deps\): bump caffeine from 3.0.6 to 3.1.1 [\#781](https://github.com/chutney-testing/chutney/pull/781)
+- chore\(deps\): bump org.eclipse.jgit.ssh.jsch from 6.1.0.202203080745-r to 6.2.0.202206071550-r [\#780](https://github.com/chutney-testing/chutney/pull/780) 
+- chore\(deps\): bump maven-clean-plugin from 3.1.0 to 3.2.0 [\#779](https://github.com/chutney-testing/chutney/pull/779) 
+- chore\(deps\): bump h2 from 2.1.210 to 2.1.214 [\#776](https://github.com/chutney-testing/chutney/pull/776) 
+- chore\(deps\): bump h2 from 1.4.197 to 2.1.210 in /packaging [\#768](https://github.com/chutney-testing/chutney/pull/768)
+- chore\(deps\): bump springboot.version from 2.6.4 to 2.7.0 [\#749](https://github.com/chutney-testing/chutney/pull/749)
+- chore\(deps\): bump spring-boot-maven-plugin from 2.7.2 to 2.7.3 [\#847](https://github.com/chutney-testing/chutney/pull/847)
+- chore\(deps\): bump exec-maven-plugin from 3.0.0 to 3.1.0 [\#817](https://github.com/chutney-testing/chutney/pull/817)
+
 ## [1.4.9](https://github.com/chutney-testing/chutney/tree/HEAD)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.4.8...1.4.9)
