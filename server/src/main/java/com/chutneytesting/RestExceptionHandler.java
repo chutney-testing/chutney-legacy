@@ -1,7 +1,6 @@
 package com.chutneytesting;
 
 import com.chutneytesting.admin.domain.BackupNotFoundException;
-import com.chutneytesting.admin.domain.gitbackup.UnreachableRemoteException;
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
 import com.chutneytesting.component.dataset.domain.DataSetNotFoundException;
 import com.chutneytesting.component.scenario.domain.ComposableStepNotFoundException;
@@ -82,8 +81,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         ReportNotFoundException.class,
         ScenarioNotFoundException.class,
         ScenarioNotRunningException.class,
-        TargetNotFoundException.class,
-        UnreachableRemoteException.class
+        TargetNotFoundException.class
     })
     protected ResponseEntity<Object> notFound(RuntimeException ex, WebRequest request) {
         LOGGER.warn("Not found >> " + ex.getMessage());
