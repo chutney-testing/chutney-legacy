@@ -5,7 +5,7 @@
 
     <groupId>com.chutneytesting</groupId>
     <artifactId>chutney-parent</artifactId>
-    <version>1.4.9-SNAPSHOT</version>
+    <version>1.4.9</version>
     <packaging>pom</packaging>
 
     <name>Chutney</name>
@@ -37,6 +37,10 @@
         <developer>
             <name>Nicolas Brouand</name>
             <url>https://github.com/nbrouand</url>
+        </developer>
+        <developer>
+            <name>Karim Goubbaa</name>
+            <url>https://github.com/KarimGl</url>
         </developer>
     </developers>
 
