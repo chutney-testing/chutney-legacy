@@ -16,6 +16,7 @@
     <properties>
         <chutney.version>${project.version}</chutney.version>
         <mainClass>com.chutneytesting.ServerBootstrap</mainClass>
+        <jasypt-spring-boot.version>3.0.4</jasypt-spring-boot.version>
     </properties>
 
     <modules>
@@ -65,6 +66,11 @@
                 <version>5.17.1</version>
                 <scope>runtime</scope>
             </dependency>
+            <dependency>
+                <groupId>com.github.ulisesbocchio</groupId>
+                <artifactId>jasypt-spring-boot-starter</artifactId>
+                <version>${jasypt-spring-boot.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -88,6 +94,11 @@
                             </goals>
                         </execution>
                     </executions>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.ulisesbocchio</groupId>
+                    <artifactId>jasypt-maven-plugin</artifactId>
+                    <version>${jasypt-spring-boot.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>

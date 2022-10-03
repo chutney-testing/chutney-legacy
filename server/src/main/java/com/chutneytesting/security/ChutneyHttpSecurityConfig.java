@@ -8,8 +8,6 @@ import com.chutneytesting.security.domain.Authorizations;
 import com.chutneytesting.security.infra.handlers.Http401FailureHandler;
 import com.chutneytesting.security.infra.handlers.HttpEmptyLogoutSuccessHandler;
 import com.chutneytesting.security.infra.handlers.HttpStatusInvalidSessionStrategy;
-import com.chutneytesting.security.infra.memory.InMemoryUserDetailsService;
-import com.chutneytesting.security.infra.memory.InMemoryUsersProperties;
 import com.chutneytesting.server.core.domain.security.Authorization;
 import com.chutneytesting.server.core.domain.security.Role;
 import com.chutneytesting.server.core.domain.security.User;
@@ -19,16 +17,10 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.ldap.core.support.LdapContextSource;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.ldap.authentication.NullLdapAuthoritiesPopulator;
-import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
 @Configuration
@@ -102,46 +94,5 @@ public class ChutneyHttpSecurityConfig extends WebSecurityConfigurerAdapter {
         }
 
         return anonymous;
-    }
-
-    @Configuration
-    @Profile("mem-auth")
-    public static class SecSecurityMemoryConfig {
-
-        @Autowired
-        protected void configure(
-            final AuthenticationManagerBuilder auth,
-            final InMemoryUsersProperties users,
-            final PasswordEncoder passwordEncoder,
-            final InMemoryUserDetailsService inMemoryUserDetailsService) throws Exception {
-
-            users.getUsers().forEach(user ->
-                user.setPassword(passwordEncoder.encode(user.getPassword()))
-            );
-
-            auth
-                .userDetailsService(inMemoryUserDetailsService)
-                .passwordEncoder(passwordEncoder);
-        }
-    }
-
-    @Configuration
-    @Profile({"ldap-auth", "ldap-auth-tls1-1"})
-    public static class SecSecurityLDAPConfig {
-
-        @Autowired
-        protected void configure(
-            final AuthenticationManagerBuilder auth,
-            final LdapContextSource ldapContextSource,
-            final UserDetailsContextMapper userDetailsContextMapper) throws Exception {
-
-            auth
-                .ldapAuthentication()
-                .userSearchFilter("(uid={0})")
-                .ldapAuthoritiesPopulator(new NullLdapAuthoritiesPopulator())
-                .userDetailsContextMapper(userDetailsContextMapper)
-                .contextSource(ldapContextSource)
-                .rolePrefix("");
-        }
     }
 }
