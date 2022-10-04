@@ -131,7 +131,7 @@
         <rabbitmq-mock.version>1.1.1</rabbitmq-mock.version>
         <wire-mock.version>2.27.2</wire-mock.version>
         <otj-pg-embedded.version>0.13.4</otj-pg-embedded.version>
-        <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
         <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
         <awaitility.version>4.2.0</awaitility.version> <!--  == spring boot version  -->
         <jqwik.version>1.6.5</jqwik.version>
