@@ -138,7 +138,7 @@ public class NetworkFunctions {
         // Note : remotePort is not important : No real connection is required here, we only need
         // to resolve routing table
         final int remotePort = 8888;
-        try (final DatagramSocket socket = new DatagramSocket()){
+        try (final DatagramSocket socket = new DatagramSocket()) {
             socket.connect(InetAddress.getByName(remoteHost), remotePort);
             return socket.getLocalAddress().getHostAddress();
         }
