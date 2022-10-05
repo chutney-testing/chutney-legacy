@@ -96,7 +96,6 @@
         <commonsio.version>2.11.0</commonsio.version>
         <org.everit.json.schema.version>1.14.1</org.everit.json.schema.version>
         <glacio.version>0.0.1</glacio.version>
-        <caffeine.version>3.1.1</caffeine.version> <!-- override spring boot version 2.9.3  -->
 
         <!-- task impl -->
         <jsonpath.version>2.7.0</jsonpath.version> <!-- == spring boot version-->
@@ -464,11 +463,6 @@
                 <groupId>org.tinyradius</groupId>
                 <artifactId>tinyradius</artifactId>
                 <version>${radius.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.ben-manes.caffeine</groupId>
-                <artifactId>caffeine</artifactId>
-                <version>${caffeine.version}</version>
             </dependency>
 
             <!-- Test dependencies -->
