@@ -10,6 +10,7 @@ import com.chutneytesting.task.spi.SpelFunction;
 import com.chutneytesting.tools.SocketUtils;
 import com.chutneytesting.tools.ThrowingFunction;
 import com.chutneytesting.tools.ThrowingPredicate;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Random;
@@ -130,6 +131,17 @@ public class NetworkFunctions {
             .filter(ip -> matches(regex, ip))
             .findFirst()
             .orElse(InetAddress.getLocalHost().getHostAddress());
+    }
+
+    @SpelFunction
+    public static String hostIpReaching(String remoteHost) throws Exception {
+        // Note : remotePort is not important : No real connection is required here, we only need
+        // to resolve routing table
+        final int remotePort = 8888;
+        try (final DatagramSocket socket = new DatagramSocket()) {
+            socket.connect(InetAddress.getByName(remoteHost), remotePort);
+            return socket.getLocalAddress().getHostAddress();
+        }
     }
 
     private static Boolean matches(String regex, String text) {

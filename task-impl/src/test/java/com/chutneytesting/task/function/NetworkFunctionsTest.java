@@ -15,4 +15,10 @@ class NetworkFunctionsTest {
     void hostIpMatching() throws Exception {
         assertThat(NetworkFunctions.hostIpMatching("127.0.*")).matches("127.0.0.1");
     }
+
+    @Test
+    void hostIpReaching() throws Exception {
+        final String ip = NetworkFunctions.hostIpReaching("127.0.0.2");
+        assertThat(ip).isEqualTo("127.0.0.1");
+    }
 }
