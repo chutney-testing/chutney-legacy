@@ -108,8 +108,6 @@
         <radius.version>1.1.3</radius.version>
 
         <!-- Test dependencies versions -->
-        <junit5.version>5.8.2</junit5.version>  <!--  == spring boot version  -->
-        <junit-jupiter.version>${junit5.version}</junit-jupiter.version>
         <assertj.version>3.22.0</assertj.version> <!--  == spring boot version  -->
         <mockito.version>4.6.1</mockito.version> <!-- Override spring boot version 4.5.1-->
         <byte-buddy.version>1.12.10</byte-buddy.version><!-- Be careful to follow required version by mockito core--> <!--  == spring boot version  -->
@@ -153,13 +151,11 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit5.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
-            <version>${junit5.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -259,14 +255,6 @@
                 <artifactId>glacio-parser</artifactId>
                 <groupId>com.github.fridujo</groupId>
                 <version>${glacio.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.junit</groupId>
-                <artifactId>junit-bom</artifactId>
-                <version>${junit5.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
 
             <!-- APT dependencies -->
