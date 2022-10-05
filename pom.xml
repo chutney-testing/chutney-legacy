@@ -98,8 +98,6 @@
         <commonstext.version>1.9</commonstext.version>
         <commonsio.version>2.11.0</commonsio.version>
         <rxjava.version>3.1.5</rxjava.version> <!-- override spring boot version 2.2.21  -->
-        <jgit-jsch.version>6.2.0.202206071550-r</jgit-jsch.version>
-        <jsch.version>0.1.55</jsch.version>
         <org.everit.json.schema.version>1.14.1</org.everit.json.schema.version>
         <glacio.version>0.0.1</glacio.version>
         <caffeine.version>3.1.1</caffeine.version> <!-- override spring boot version 2.9.3  -->
@@ -410,16 +408,6 @@
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>${commonsio.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jgit</groupId>
-                <artifactId>org.eclipse.jgit.ssh.jsch</artifactId>
-                <version>${jgit-jsch.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.jcraft</groupId>
-                <artifactId>jsch</artifactId>
-                <version>${jsch.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.jayway.jsonpath</groupId>

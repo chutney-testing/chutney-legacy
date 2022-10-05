@@ -170,14 +170,6 @@
             <artifactId>guava</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jgit</groupId>
-            <artifactId>org.eclipse.jgit.ssh.jsch</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.jcraft</groupId>
-            <artifactId>jsch</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.sun.activation</groupId>
             <artifactId>javax.activation</artifactId>
         </dependency>
