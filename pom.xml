@@ -96,7 +96,6 @@
         <commonslang3.version>3.12.0</commonslang3.version>
         <commonstext.version>1.9</commonstext.version>
         <commonsio.version>2.11.0</commonsio.version>
-        <rxjava.version>3.1.5</rxjava.version> <!-- override spring boot version 2.2.21  -->
         <org.everit.json.schema.version>1.14.1</org.everit.json.schema.version>
         <glacio.version>0.0.1</glacio.version>
         <caffeine.version>3.1.1</caffeine.version> <!-- override spring boot version 2.9.3  -->
@@ -332,11 +331,6 @@
             </dependency>
 
             <!-- External dependencies -->
-            <dependency>
-                <groupId>io.reactivex.rxjava3</groupId>
-                <artifactId>rxjava</artifactId>
-                <version>${rxjava.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy</artifactId>
