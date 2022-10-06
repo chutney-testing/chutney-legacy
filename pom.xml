@@ -97,7 +97,6 @@
         <glacio.version>0.0.1</glacio.version>
 
         <!-- task impl -->
-        <jsonpath.version>2.7.0</jsonpath.version> <!-- == spring boot version-->
         <sshj.version>0.33.0</sshj.version>
         <sshd.version>2.9.0</sshd.version>
         <hjson.version>3.0.0</hjson.version>
@@ -322,11 +321,6 @@
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>${commonsio.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.jayway.jsonpath</groupId>
-                <artifactId>json-path</artifactId>
-                <version>${jsonpath.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.erosb</groupId>
