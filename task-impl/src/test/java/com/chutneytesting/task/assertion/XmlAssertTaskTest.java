@@ -140,6 +140,19 @@ public class XmlAssertTaskTest {
         assertThat(result.status).isEqualTo(Success);
     }
 
+    @Test
+    public void should_fails_when_xml_contains_doctype_declaration() {
+        // Given
+        String xml = loadFileFromClasspath("xml_samples/with_dtd.xml");
+
+        // When
+        Task task = new XmlAssertTask(mock(Logger.class), xml, new LinkedHashMap<>());
+        TaskExecutionResult result = task.execute();
+
+        // Then
+        assertThat(result.status).isEqualTo(Failure);
+    }
+
     @SuppressWarnings("resource")
     private String loadFileFromClasspath(String filePath) {
         return new Scanner(XmlAssertTask.class.getClassLoader().getResourceAsStream(filePath), StandardCharsets.UTF_8).useDelimiter("\\A").next();

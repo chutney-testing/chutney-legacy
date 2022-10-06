@@ -1,5 +1,6 @@
 package com.chutneytesting.task.jms.consumer.bodySelector;
 
+import com.chutneytesting.task.common.XmlUtils;
 import com.chutneytesting.task.jms.domain.XmlContent;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -38,7 +39,7 @@ class XpathBodySelectorParser implements BodySelectorParser {
 
     private static class XpathBodySelector extends TextMessageBodySelector {
         private final XPathExpression<Boolean> xPathExpression;
-        private final SAXBuilder saxBuilder = new SAXBuilder();
+        private final SAXBuilder saxBuilder = XmlUtils.saxBuilder();
 
         XpathBodySelector(XPathExpression<Boolean> xPathExpression) {
             this.xPathExpression = xPathExpression;

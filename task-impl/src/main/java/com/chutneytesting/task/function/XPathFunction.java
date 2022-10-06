@@ -1,5 +1,6 @@
 package com.chutneytesting.task.function;
 
+import com.chutneytesting.task.common.XmlUtils;
 import com.chutneytesting.task.spi.SpelFunction;
 import java.util.HashMap;
 import java.util.List;

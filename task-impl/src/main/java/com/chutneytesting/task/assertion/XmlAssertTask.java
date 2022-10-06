@@ -6,7 +6,7 @@ import static com.chutneytesting.task.spi.validation.Validator.getErrorsFrom;
 
 import com.chutneytesting.task.assertion.placeholder.PlaceholderAsserter;
 import com.chutneytesting.task.assertion.placeholder.PlaceholderAsserterUtils;
-import com.chutneytesting.task.assertion.xml.XmlUtils;
+import com.chutneytesting.task.common.XmlUtils;
 import com.chutneytesting.task.jms.domain.XmlContent;
 import com.chutneytesting.task.spi.Task;
 import com.chutneytesting.task.spi.TaskExecutionResult;
@@ -49,7 +49,7 @@ public class XmlAssertTask implements Task {
     @Override
     public TaskExecutionResult execute() {
         try {
-            SAXBuilder saxBuilder = new SAXBuilder();
+            SAXBuilder saxBuilder = XmlUtils.saxBuilder();
             Document document = new XmlContent(saxBuilder, documentAsString).buildDocumentWithoutNamespaces();
             boolean assertTrue = true;
             for (Map.Entry<String, Object> xpathAndExpected : xpathsAndExpectedResults.entrySet()) {
