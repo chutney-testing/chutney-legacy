@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.5.2](https://github.com/chutney-testing/chutney/tree/1.5.2)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.5.1...1.5.2)
+
+**Security enhancements:**
+
+- 🚀 |  fix(xxe): Disable doctype declaration [\#857](https://github.com/chutney-testing/chutney/pull/857)([KarimGl](https://github.com/KarimGl))
+
+**Implemented enhancements:**
+
+- 🚀 |  Get local IP reachable from remote IP [\#860](https://github.com/chutney-testing/chutney/issue/860) [\#876](https://github.com/chutney-testing/chutney/pull/876)([gissehel](https://github.com/gissehel))
+
+**Dependencies bumps:**
+
+- chore(deps): bump maven-javadoc-plugin from 3.4.0 to 3.4.1 [\#870](https://github.com/chutney-testing/chutney/pull/870)
+- chore(deps): bump jacoco-maven-plugin from 0.8.7 to 0.8.8 [\#873](https://github.com/chutney-testing/chutney/pull/873)
+
+
 ## [1.5.1](https://github.com/chutney-testing/chutney/tree/1.5.1)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.4.9...1.5.1)
