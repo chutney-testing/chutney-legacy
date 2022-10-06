@@ -15,7 +15,6 @@
 
     <properties>
         <failOnMissingWebXml>false</failOnMissingWebXml>
-        <frontend-maven-plugin.version>1.12.1</frontend-maven-plugin.version>
         <node.version>v16.15.0</node.version>
         <useExternalNpm>false</useExternalNpm>
     </properties>
@@ -38,7 +37,7 @@
                 <plugin>
                     <groupId>com.github.eirslett</groupId>
                     <artifactId>frontend-maven-plugin</artifactId>
-                    <version>${frontend-maven-plugin.version}</version>
+                    <version>1.12.1</version>
                     <configuration>
                         <nodeVersion>${node.version}</nodeVersion>
                     </configuration>
