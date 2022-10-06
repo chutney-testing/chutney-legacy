@@ -115,7 +115,6 @@
         <otj-pg-embedded.version>0.13.4</otj-pg-embedded.version>
         <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
         <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
-        <awaitility.version>4.2.0</awaitility.version> <!--  == spring boot version  -->
         <jqwik.version>1.6.5</jqwik.version>
     </properties>
 
@@ -172,7 +171,6 @@
         <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
-            <version>${awaitility.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
