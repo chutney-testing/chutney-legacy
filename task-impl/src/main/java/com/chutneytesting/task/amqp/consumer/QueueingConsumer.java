@@ -48,7 +48,7 @@ public class QueueingConsumer {
         messageCounter.await(maxAwait, TimeUnit.MILLISECONDS);
         channel.basicCancel(consumerTag);
         stopwatch.stop();
-        result.consumeDuration = (stopwatch.elapsed().getNano() / 1_000_000) + " ms";
+        result.consumeDuration = stopwatch.elapsed(TimeUnit.MILLISECONDS) + " ms";
         return result;
     }
 
