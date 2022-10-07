@@ -162,7 +162,7 @@ We use Github Actions to build and release Chutney.
 
 ## <a name="release"></a> Release Management
 
-### Sign release artifacts
+### Signing release artifacts (Maintener)
 
 We need a key to sign our artifacts.
 
@@ -181,8 +181,6 @@ In order to do so :
 
 * List public keys
   > gpg -k --with-keygrip --keyid-format LONG
-
-
 
 
 1. Create a master key : ```gpg --full-generate-key```
@@ -283,7 +281,10 @@ In order to do so :
 
 ### Update Changelog file
 
-Do it first, because changelog updates should be part of the release being made
+Do it first, because changelog updates should be part of the release being made.  
+Either do it manually or use a github-changelog-generator.
+
+#### Using github-changelog-generator
 
 - Install [github-changelog-generator](https://github.com/github-changelog-generator/github-changelog-generator#installation)
 - Generate the changelog with https://github.com/github-changelog-generator/github-changelog-generator
@@ -291,31 +292,46 @@ Do it first, because changelog updates should be part of the release being made
 ```shell
 github_changelog_generator -u chutney-testing -p chutney --token <YOUR_TOKEN> --since-tag <previous RELEASE_VERSION>
 ```
+
 - Copy-paste the generated content and use it to update [CHANGELOG.md](https://github.com/chutney-testing/chutney/blob/master/CHANGELOG.md)
 
 ### Releasing
 
+In order to avoid committing unwanted files, we prefer to review changes with a pull request.
+
 ```shell
-  mvn versions:set -DnewVersion=<RELEASE_VERSION> -DgenerateBackupPoms=false && mvn versions:set-scm-tag -DnewTag=<RELEASE_VERSION> -DgenerateBackupPoms=false
-  git diff HEAD
-  git add . && git commit -m "chore: Release <RELEASE_VERSION>"
-  git push origin
-  git tag <TAG_VERSION>
-  git push origin <TAG_VERSION>
+mvn versions:set -DnewVersion=<RELEASE_VERSION> -DgenerateBackupPoms=false && mvn versions:set-scm-tag -DnewTag=<RELEASE_VERSION> -DgenerateBackupPoms=false
+git add .
+git diff --staged
+git commit -m "chore: Release <RELEASE_VERSION>"
+git push origin
 ```
+
+Now you can open a pull request.  
+After validation and merge, you can now tag and push to trigger the release job :
+- Update you local master branch.
+```shell
+git fetch all --prune && git co master && git merge --ff-only origin/master
+```
+
+- Then tag and push.
+```shell
+git tag <TAG_VERSION>
+git push origin <TAG_VERSION>
+```
+
+### Update Github release note
+
+- Update the release note on [github](https://github.com/chutney-testing/chutney/releases)
 
 ### Prepare next development
 
 ```shell
-  mvn versions:set -DnewVersion=<NEXT_DEV_VERSION> -DgenerateBackupPoms=false && mvn versions:set-scm-tag -DnewTag=HEAD -DgenerateBackupPoms=false
-  git diff HEAD
-  git add . && git commit -m "chore: Prepare next development <NEXT_DEV_VERSION>"
-  git push origin
+mvn versions:set -DnewVersion=<NEXT_DEV_VERSION> -DgenerateBackupPoms=false && mvn versions:set-scm-tag -DnewTag=HEAD -DgenerateBackupPoms=false
+git diff HEAD
+git add . && git commit -m "chore: Prepare next development <NEXT_DEV_VERSION>"
+git push origin
 ```
-
-### Update Github release
-
-- Update [Release <RELEASE_VERSION>](https://github.com/chutney-testing/chutney/releases)
 
 ## <a name="task"></a> Adding a task
 
