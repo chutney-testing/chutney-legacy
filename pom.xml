@@ -457,7 +457,6 @@
                 <groupId>com.opentable.components</groupId>
                 <artifactId>otj-pg-embedded</artifactId>
                 <version>${otj-pg-embedded.version}</version>
-                <scope>test</scope>
             </dependency>
             <!-- Property Based Testing -->
             <dependency>

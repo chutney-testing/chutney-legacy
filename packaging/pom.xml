@@ -37,21 +37,6 @@
 
             <!-- External providers -->
             <dependency>
-                <groupId>com.h2database</groupId>
-                <artifactId>h2</artifactId>
-                <version>2.1.214</version>
-            </dependency>
-            <dependency>
-                <groupId>com.opentable.components</groupId>
-                <artifactId>otj-pg-embedded</artifactId>
-                <version>0.13.4</version>
-            </dependency>
-            <dependency>
-                <groupId>org.postgresql</groupId>
-                <artifactId>postgresql</artifactId>
-                <version>42.3.4</version>
-            </dependency>
-            <dependency>
                 <groupId>net.i2p.crypto</groupId>
                 <artifactId>eddsa</artifactId>
                 <version>0.2.0</version>
