@@ -3,7 +3,6 @@ package com.chutneytesting.environment.infra;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +13,6 @@ public class EnvironmentRepositoryTest {
 
         // GIVEN
         ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new GuavaModule());
 
         final String TARGET_NAME = "MGN";
         final String TARGET_URL = "http://localhost:9060";
