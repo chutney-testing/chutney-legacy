@@ -110,7 +110,7 @@
         <rabbitmq-mock.version>1.1.1</rabbitmq-mock.version>
         <wire-mock.version>2.27.2</wire-mock.version>
         <otj-pg-embedded.version>0.13.4</otj-pg-embedded.version>
-        <jqwik.version>1.6.5</jqwik.version>
+        <jqwik.version>1.6.5</jqwik.version> <!-- = Follow JUnit 5 spring boot version -->
     </properties>
 
     <dependencies>
