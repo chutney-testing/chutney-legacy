@@ -28,13 +28,11 @@
                 <groupId>com.chutneytesting</groupId>
                 <artifactId>server</artifactId>
                 <version>${chutney.version}</version>
-                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>com.chutneytesting</groupId>
                 <artifactId>ui</artifactId>
                 <version>${chutney.version}</version>
-                <scope>runtime</scope>
             </dependency>
 
             <!-- External providers -->
@@ -57,13 +55,6 @@
                 <groupId>net.i2p.crypto</groupId>
                 <artifactId>eddsa</artifactId>
                 <version>0.2.0</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-broker</artifactId>
-                <version>5.17.1</version>
-                <scope>runtime</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

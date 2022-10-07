@@ -106,7 +106,7 @@
 
         <!-- Test dependencies versions -->
         <mockrunner-jms.version>1.1.2</mockrunner-jms.version>
-        <activemq.version>5.17.1</activemq.version> <!-- override spring boot version 5.16.5  -->
+        <activemq.version>5.16.5</activemq.version> <!-- = Follow spring boot version -->
         <rabbitmq-mock.version>1.1.1</rabbitmq-mock.version>
         <wire-mock.version>2.27.2</wire-mock.version>
         <otj-pg-embedded.version>0.13.4</otj-pg-embedded.version>
@@ -435,12 +435,6 @@
                         <artifactId>junit</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-broker</artifactId>
-                <version>${activemq.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.activemq.tooling</groupId>

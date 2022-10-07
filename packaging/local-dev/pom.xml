@@ -21,6 +21,7 @@
         <dependency>
             <groupId>com.chutneytesting</groupId>
             <artifactId>ui</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
@@ -35,10 +36,12 @@
         <dependency>
             <groupId>net.i2p.crypto</groupId>
             <artifactId>eddsa</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-broker</artifactId>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 
