@@ -87,8 +87,6 @@
 
         <!-- Runtime dependencies versions -->
         <springboot.version>2.7.4</springboot.version>
-        <spring-kafka-test.version>2.8.6</spring-kafka-test.version> <!-- Be careful to follow springboot version-->
-        <kafka.version>3.1.1</kafka.version> <!-- == spring boot version-->
         <guava.version>21.0</guava.version> <!-- Follow jackson-datatype-guava guava spring boot version -->
         <immutables.version>2.9.0</immutables.version>
         <commonstext.version>1.10.0</commonstext.version> <!-- Follow commons-lang3 spring boot version -->
@@ -264,45 +262,6 @@
                     <exclusion>
                         <artifactId>commons-logging</artifactId>
                         <groupId>commons-logging</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <!-- -->
-            <dependency>
-                <groupId>org.springframework.kafka</groupId>
-                <artifactId>spring-kafka-test</artifactId>
-                <version>${spring-kafka-test.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>junit</groupId>
-                        <artifactId>junit</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.fasterxml.jackson.module</groupId>
-                        <artifactId>jackson-module-scala_2.13</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.zookeeper</groupId>
-                        <artifactId>zookeeper</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <!-- pull by spring boot why we need to add it ??-->
-            <dependency>
-                <groupId>org.apache.kafka</groupId>
-                <artifactId>kafka-clients</artifactId>
-                <version>${kafka.version}</version>
-            </dependency>
-
-            <!-- We need to exclude jackson-module-scala_2.13 because we use .findAndRegisterModules() in our code -->
-            <dependency>
-                <groupId>org.apache.kafka</groupId>
-                <artifactId>kafka_2.13</artifactId>
-                <version>${kafka.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.fasterxml.jackson.module</groupId>
-                        <artifactId>jackson-module-scala_2.13</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>

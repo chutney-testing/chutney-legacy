@@ -28,6 +28,12 @@
         <dependency>
             <groupId>com.chutneytesting</groupId>
             <artifactId>task-impl</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.module</groupId>
+                    <artifactId>jackson-module-scala_2.13</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.chutneytesting</groupId>
@@ -228,16 +234,6 @@
             <artifactId>mockrunner-jms</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_2.13</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka-test</artifactId>
-            <scope>test</scope>
-        </dependency>
         <!-- Note that the below is qpid-broker-core and *not* qpid-broker. -->
         <dependency>
             <groupId>org.apache.qpid</groupId>

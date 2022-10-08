@@ -140,12 +140,21 @@
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
+            <exclusions>
+                <!--
+                    Spring Kafka does not use the same version as parent pom (3.0.2 vs 3.1.2).
+                    So exclude here and import below.
+                -->
+                <exclusion>
+                    <groupId>org.apache.kafka</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_2.13</artifactId>
@@ -155,15 +164,29 @@
             <artifactId>spring-kafka-test</artifactId>
             <scope>compile</scope>
             <exclusions>
+                <!--
+                    Spring Kafka Test does not use the same version as parent pom (3.0.2 vs 3.1.2).
+                    So exclude here and import below.
+                -->
                 <exclusion>
                     <groupId>org.apache.kafka</groupId>
-                    <artifactId>kafka-clients</artifactId>
+                    <artifactId>*</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>org.apache.kafka</groupId>
-                    <artifactId>kafka_2.13</artifactId>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <classifier>test</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka_2.13</artifactId>
+            <classifier>test</classifier>
         </dependency>
         <!-- Selemnium tasks-->
         <dependency>
