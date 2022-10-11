@@ -8,13 +8,13 @@ chutney:
         firstname: user
         lastname: user
         mail: user@user.com
-        password: user
+        password: $2a$10$c3BiXfUrudWkJ9j0dffBkOaJ8bNXp7hYxYUWS.IVxjDjRmWTS2Qru
       -
         id: admin
         name: admin
         firstname: admin
         lastname: admin
         mail: admin@admin.com
-        password: admin
+        password: $2a$10$DsdTFU7OMl/HzlGAr4kUUO7ERvOvZPazQiPkuV8a6TM.CXsGrZjoe
         roles:
           - ADMIN

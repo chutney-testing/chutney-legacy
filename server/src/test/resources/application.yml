@@ -31,7 +31,6 @@ spring:
   profiles:
     active:
       - undertow-https-redirect
-      - users
       - mem-auth
       - db-h2
 

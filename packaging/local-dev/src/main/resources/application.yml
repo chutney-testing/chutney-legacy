@@ -11,10 +11,10 @@ server:
     min-response-size: 1024
   ssl:
     keyStore: 'classpath:security/https/server.jks'
-    key-store-password: 'server'
-    key-password: 'server'
+    key-store-password: ENC(Gbx7KiGNL+a17iZ8ZhAy2FbtJHZ7hKOdsor+xG29Ug5S1MGvxdMMCs2tYPIQK9shG5cVWxrIghg9ugujMjtNFYNdYDO6YbWENAuXWP12H50Z/29Iz7zymZTUC3VNI3WBMmPXj7ZUiJ5b5w2PY/OXEPCnMHkR+ARIS5S61nTIyXGbt1mgAVqcobn6TU1ywxq9uT+Y3H1mx4soJxV58Gfy7m0LT8d0dknPt8TUJ71cwz8wrb22HjbAofQTAxzd1lZrl3ugdN2IRIpr1XjMg2l9RYd+ezMnsAc8arReBifuEdVJwD72Eqr96HPp3UtoRyzWbHheP9LXplZo6yDj4NGmvA==)
+    key-password: ENC(KBtL7IdLlchJCZimeeSolv5AxCPXrMjQ4G30/ZLbCV+tHlgqkyCbOf/S2qz0p4SqTdXiVtXskF2z/fM6R0VETwsQHLQFS8KIDVvoF1sdgJKzjFQZtZdI4DR2O+ah/wsQ0Xyyu+fbD1oPjUwVMt4JSBQxUGJajAOiXWMrAPdVhP3xy12aEl7EIGVAVGUgzXiIV/yyAb3V1h4hc1T0+OPlQCI8bEDdimSnaGBeLimnyVliKL5WHkv9q6MVkNssVGwU0CK7cKbGJ4WTrXJegFV3Byn9eGvXqL9xZCu0hjt9ypNlMPrmEawjNQhgmAdOVYXCjmzk5vt7H6g9MUMJRhRUiA==)
     trust-store: 'classpath:security/https/truststore.jks'
-    trust-store-password: 'truststore'
+    trust-store-password: ENC(dlRt/8qMm5xalAzC4WtYcuuyNhN0TjtxSIRsmJpytK44wSvHNyCPu1Wi14OIa6RS31wtlMaMe5qw7pjPZHXlblAQ0iMRYNA9IfpVJ71JGvdQQx9KS7khdphOzUQJVr1LXr2t/qJ0U6UXZDmOeNtemS65LFWzRZgwiOp4+rHT0S+MmxDJzLQtfkqmB7q7C2i9Im+BwjmVTBBSu/U6F8qwWPj3tJmHb8ONRaQDfMLwxWpEk0kNqVOxhxQiyYE9vVfzAoP10dBxAuJ7aL7yETz3h1WETze22rFB/2ozQLTRWPYcwSP9Xah/p/AAw94M9o0b0xlGfhQhemvk2rfEUbr65w==)
   servlet:
     session:
       timeout: 240m
@@ -41,7 +41,6 @@ spring:
   profiles:
     active:
       - undertow-https-redirect
-      - users
       - mem-auth
       - dev-auth
       - db-h2
@@ -91,3 +90,7 @@ chutney:
 #    defaultHostName:
   agentnetwork:
     connection-checker-timeout: 1000
+jasypt:
+  encryptor:
+    private-key-format: pem
+    private-key-location: classpath:/security/private.pem
