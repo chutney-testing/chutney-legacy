@@ -13,7 +13,8 @@ import { ErrorInterceptor } from './error-interceptor.service';
 import {
     ComponentCardComponent,
     EnvironmentComboComponent,
-    ExecutionBadgeComponent
+    ExecutionBadgeComponent,
+    ScenarioTreeComponent
 } from './components';
 import { ImplementationHostDirective, HasAuthorizationDirective } from './directives';
 import { EventManagerService } from './event-manager.service';
@@ -41,6 +42,7 @@ import { ChutneyLeftMenuComponent } from './components/chutney-left-menu/chutney
 import { ChutneyRightMenuComponent } from './components/chutney-right-menu/chutney-right-menu.component';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { Entry } from '@core/model';
 
 @NgModule({
     imports: [
@@ -80,6 +82,7 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
         ChutneyMainHeaderComponent,
         ChutneyLeftMenuComponent,
         ChutneyRightMenuComponent,
+        ScenarioTreeComponent
     ],
     exports: [
         ComponentCardComponent,
@@ -105,6 +108,7 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
         WithoutScenarioPipe,
         HasAuthorizationDirective,
         ChutneyEditorComponent,
+        ScenarioTreeComponent
     ],
     providers: [
         {

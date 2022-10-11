@@ -1,0 +1,16 @@
+
+<ul> 
+      <li>{{node.name}}</li>
+      <ul *ngFor="let child of node.children">
+            <chutney-tree [node]="child"> </chutney-tree>
+            <ng-container *ngIf="child.scenarios.length > 0">
+                  <ul> <ul>
+                        <li class="scenarioList" *ngFor="let scenario of child.scenarios">
+                              {{ scenario.title }}
+                        </li>
+                  </ul></ul>
+            </ng-container>
+            
+      </ul>
+</ul>
+

@@ -18,6 +18,7 @@ import { DefaultMissingTranslationHandler, HttpLoaderFactory } from './app.trans
 import { SharedModule } from '@shared/shared.module';
 import { CoreModule } from '@core/core.module';
 import { ModalModule, BsModalService  } from 'ngx-bootstrap/modal';
+import { AngularSplitModule } from 'angular-split';
 
 @NgModule({
   declarations: [
@@ -49,6 +50,7 @@ import { ModalModule, BsModalService  } from 'ngx-bootstrap/modal';
     }),
     ModalModule.forRoot(),
     NgbModule,
+    AngularSplitModule,
     // Internal common
     SharedModule,
   ],

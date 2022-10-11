@@ -14,6 +14,7 @@ import {
     PerfectScrollbarConfigInterface,
     PerfectScrollbarModule
 } from 'ngx-perfect-scrollbar';
+import { AngularSplitModule } from 'angular-split';
 // Internal common
 import { SharedModule } from '@shared/shared.module';
 // Internal
@@ -58,6 +59,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
         PerfectScrollbarModule,
         DragulaModule,
         FileSaverModule,
+        AngularSplitModule,
         // Internal common
         SharedModule,
         MoleculesModule,

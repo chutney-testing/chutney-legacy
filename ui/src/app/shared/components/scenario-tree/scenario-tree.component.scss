@@ -1,0 +1,14 @@
+ul, li {
+    list-style-type: none;
+
+    margin: 0;
+    padding: 0;
+    margin-left: 5px;
+}
+
+.scenarioList {
+    list-style: symbols(cyclic "♪""♫""♩""♬");
+    margin: 0;
+    padding: 0;
+    margin-left: 20px;
+}
