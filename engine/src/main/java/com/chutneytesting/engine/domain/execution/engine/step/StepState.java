@@ -10,8 +10,10 @@ import com.chutneytesting.engine.domain.execution.report.Status;
 import com.google.common.base.Stopwatch;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -94,7 +96,7 @@ public class StepState {
     }
 
     public Duration duration() {
-        return stopwatch.elapsed();
+        return Duration.of(stopwatch.elapsed(TimeUnit.MICROSECONDS), ChronoUnit.MICROS);
     }
 
     public Status status() {

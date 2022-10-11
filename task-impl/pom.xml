@@ -117,7 +117,6 @@
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-broker</artifactId>
-            <scope>compile</scope>
         </dependency>
         <!-- SQL task -->
         <dependency>
@@ -141,12 +140,21 @@
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
+            <exclusions>
+                <!--
+                    Spring Kafka does not use the same version as parent pom (3.0.2 vs 3.1.2).
+                    So exclude here and import below.
+                -->
+                <exclusion>
+                    <groupId>org.apache.kafka</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_2.13</artifactId>
@@ -156,17 +164,39 @@
             <artifactId>spring-kafka-test</artifactId>
             <scope>compile</scope>
             <exclusions>
+                <!--
+                    Spring Kafka Test does not use the same version as parent pom (3.0.2 vs 3.1.2).
+                    So exclude here and import below.
+                -->
                 <exclusion>
                     <groupId>org.apache.kafka</groupId>
-                    <artifactId>kafka-clients</artifactId>
+                    <artifactId>*</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>org.apache.kafka</groupId>
-                    <artifactId>kafka_2.13</artifactId>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <classifier>test</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka_2.13</artifactId>
+            <classifier>test</classifier>
+        </dependency>
         <!-- Selemnium tasks-->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-support</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-firefox-driver</artifactId>
@@ -178,10 +208,6 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-chrome-driver</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-support</artifactId>
         </dependency>
         <!-- Radius tasks -->
         <dependency>
@@ -200,6 +226,10 @@
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ws.security</groupId>
+            <artifactId>wss4j</artifactId>
         </dependency>
 
         <!--TEST-->
@@ -222,16 +252,10 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+            <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.ws.security</groupId>
-            <artifactId>wss4j</artifactId>
-            <version>1.6.19</version>
-        </dependency>
+
+        <!-- Specific for test. Associated with ProjectRepo below. -->
         <dependency>
             <groupId>chutneytesting</groupId>
             <artifactId>xsd</artifactId>
@@ -239,6 +263,56 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.github.erosb</groupId>
+                <artifactId>everit-json-schema</artifactId>
+                <version>${org.everit.json.schema.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hierynomus</groupId>
+                <artifactId>sshj</artifactId>
+                <version>${sshj.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.sshd</groupId>
+                <artifactId>sshd-scp</artifactId>
+                <version>${sshd.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.sshd</groupId>
+                <artifactId>sshd-sftp</artifactId>
+                <version>${sshd.version}</version>
+            </dependency>
+            <dependency> <!-- Note that the below is qpid-broker-core and *not* qpid-broker. -->
+                <groupId>org.apache.qpid</groupId>
+                <artifactId>qpid-broker-core</artifactId>
+                <version>${qpid-broker.version}</version>
+            </dependency>
+            <dependency> <!-- AMQP protocol support is modular. Here we show support for 0-8/0-9 and 1.0. Support for 0-10 is excluded. -->
+                <groupId>org.apache.qpid</groupId>
+                <artifactId>qpid-broker-plugins-amqp-0-8-protocol</artifactId>
+                <version>${qpid-broker.version}</version>
+            </dependency>
+            <dependency> <!-- If a different store type is required it needs to be included here -->
+                <groupId>org.apache.qpid</groupId>
+                <artifactId>qpid-broker-plugins-memory-store</artifactId>
+                <version>${qpid-broker.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.tinyradius</groupId>
+                <artifactId>tinyradius</artifactId>
+                <version>${radius.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ws.security</groupId>
+                <artifactId>wss4j</artifactId>
+                <version>${wss4j.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <repositories>
         <repository>

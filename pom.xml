@@ -86,55 +86,32 @@
         <buildMetadataRequired>false</buildMetadataRequired>
 
         <!-- Runtime dependencies versions -->
-
-        <springboot.version>2.7.0</springboot.version>
-        <spring-security-test.version>5.7.1</spring-security-test.version> <!-- Be careful to follow spring-security-core version-->
-        <spring-kafka-test.version>2.8.6</spring-kafka-test.version> <!-- Be careful to follow springboot version-->
-        <kafka.version>3.1.1</kafka.version> <!-- == spring boot version-->
-        <jackson.version>2.13.3</jackson.version> <!-- == spring boot version-->
-        <guava.version>31.1-jre</guava.version>
+        <springboot.version>2.7.4</springboot.version>
+        <guava.version>21.0</guava.version> <!-- Follow jackson-datatype-guava guava spring boot version -->
         <immutables.version>2.9.0</immutables.version>
-        <sl4j.api.version>1.7.36</sl4j.api.version>
-        <commonslang3.version>3.12.0</commonslang3.version>
-        <commonstext.version>1.9</commonstext.version>
+        <commonstext.version>1.10.0</commonstext.version> <!-- Follow commons-lang3 spring boot version -->
         <commonsio.version>2.11.0</commonsio.version>
-        <rxjava.version>3.1.5</rxjava.version> <!-- override spring boot version 2.2.21  -->
-        <jgit-jsch.version>6.2.0.202206071550-r</jgit-jsch.version>
-        <jsch.version>0.1.55</jsch.version>
-        <org.everit.json.schema.version>1.14.1</org.everit.json.schema.version>
         <glacio.version>0.0.1</glacio.version>
-        <caffeine.version>3.1.1</caffeine.version> <!-- override spring boot version 2.9.3  -->
-
-        <!-- task impl -->
-        <jsonpath.version>2.7.0</jsonpath.version> <!-- == spring boot version-->
-        <sshj.version>0.33.0</sshj.version>
-        <sshd.version>2.9.0</sshd.version>
         <hjson.version>3.0.0</hjson.version>
-        <qpid-broker.version>8.0.6</qpid-broker.version>
         <orientdb.version>3.2.5</orientdb.version>
-        <groovy.version>3.0.12</groovy.version> <!-- override spring boot version 3.0.10  -->
+        <jsr305.version>3.0.2</jsr305.version>
+
+        <!-- task-impl dependencies versions -->
+        <sshj.version>0.33.0</sshj.version>
+        <sshd.version>2.9.1</sshd.version>
+        <qpid-broker.version>8.0.6</qpid-broker.version>
         <radius.version>1.1.3</radius.version>
+        <wss4j.version>1.6.19</wss4j.version>
+        <org.everit.json.schema.version>1.14.1</org.everit.json.schema.version>
 
-        <!-- jdk11 -->
-        <javax.activation.version>1.2.0</javax.activation.version>
-        <jaxb.api.version>2.3.0</jaxb.api.version>  <!--  override spring boot version 2.3.1  -->
-
-        <!-- Test dependencies versions -->
-        <junit5.version>5.8.2</junit5.version>  <!--  == spring boot version  -->
-        <junit-jupiter.version>${junit5.version}</junit-jupiter.version>
-        <assertj.version>3.22.0</assertj.version> <!--  == spring boot version  -->
-        <mockito.version>4.6.1</mockito.version> <!-- Override spring boot version 4.5.1-->
-        <byte-buddy.version>1.12.10</byte-buddy.version><!-- Be careful to follow required version by mockito core--> <!--  == spring boot version  -->
+        <!-- task-impl test dependencies versions -->
         <mockrunner-jms.version>1.1.2</mockrunner-jms.version>
-        <eddsa.version>0.2.0</eddsa.version>
-        <activemq.version>5.17.1</activemq.version> <!-- override spring boot version 5.16.5  -->
+        <activemq-junit.version>5.16.5</activemq-junit.version> <!-- = Follow spring boot version -->
         <rabbitmq-mock.version>1.1.1</rabbitmq-mock.version>
+
+        <!-- test dependencies versions -->
+        <jqwik.version>1.6.5</jqwik.version> <!-- = Follow JUnit 5 spring boot version -->
         <wire-mock.version>2.27.2</wire-mock.version>
-        <otj-pg-embedded.version>0.13.4</otj-pg-embedded.version>
-        <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
-        <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
-        <awaitility.version>4.2.0</awaitility.version> <!--  == spring boot version  -->
-        <jqwik.version>1.6.5</jqwik.version>
     </properties>
 
     <dependencies>
@@ -146,52 +123,50 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${sl4j.api.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jul-to-slf4j</artifactId>
-            <version>${sl4j.api.version}</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>log4j-over-slf4j</artifactId>
-            <version>${sl4j.api.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit5.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
-            <version>${junit5.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>${assertj.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-inline</artifactId>
-            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
-            <version>${awaitility.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -269,40 +244,12 @@
                 <version>${glacio.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.junit</groupId>
-                <artifactId>junit-bom</artifactId>
-                <version>${junit5.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
             <!-- APT dependencies -->
             <dependency>
                 <groupId>org.immutables</groupId>
                 <artifactId>value</artifactId>
                 <version>${immutables.version}</version>
                 <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.activation</groupId>
-                <artifactId>javax.activation</artifactId>
-                <version>${javax.activation.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.xml.bind</groupId>
-                <artifactId>jaxb-api</artifactId>
-                <version>${jaxb.api.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.xml.bind</groupId>
-                <artifactId>jaxb-core</artifactId>
-                <version>${jaxb.api.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.xml.bind</groupId>
-                <artifactId>jaxb-impl</artifactId>
-                <version>${jaxb.api.version}</version>
             </dependency>
 
             <!-- Spring dependencies -->
@@ -319,88 +266,12 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <!-- -->
-            <dependency>
-                <groupId>org.springframework.kafka</groupId>
-                <artifactId>spring-kafka-test</artifactId>
-                <version>${spring-kafka-test.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>junit</groupId>
-                        <artifactId>junit</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.fasterxml.jackson.module</groupId>
-                        <artifactId>jackson-module-scala_2.13</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.zookeeper</groupId>
-                        <artifactId>zookeeper</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <!-- pull by spring boot why we need to add it ??-->
-            <dependency>
-                <groupId>org.apache.kafka</groupId>
-                <artifactId>kafka-clients</artifactId>
-                <version>${kafka.version}</version>
-            </dependency>
-
-            <!-- We need to exclude jackson-module-scala_2.13 because we use .findAndRegisterModules() in our code -->
-            <dependency>
-                <groupId>org.apache.kafka</groupId>
-                <artifactId>kafka_2.13</artifactId>
-                <version>${kafka.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.fasterxml.jackson.module</groupId>
-                        <artifactId>jackson-module-scala_2.13</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
 
             <!-- External dependencies -->
-            <dependency>
-                <groupId>io.reactivex.rxjava3</groupId>
-                <artifactId>rxjava</artifactId>
-                <version>${rxjava.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.groovy</groupId>
-                <artifactId>groovy</artifactId>
-                <version>${groovy.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatypes-collections</artifactId>
-                <version>${jackson.version}</version>
-                <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-guava</artifactId>
-                <version>${jackson.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.google.guava</groupId>
-                        <artifactId>guava</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.module</groupId>
-                <artifactId>jackson-module-paranamer</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>${commonslang3.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -413,64 +284,9 @@
                 <version>${commonsio.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.eclipse.jgit</groupId>
-                <artifactId>org.eclipse.jgit.ssh.jsch</artifactId>
-                <version>${jgit-jsch.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.jcraft</groupId>
-                <artifactId>jsch</artifactId>
-                <version>${jsch.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.jayway.jsonpath</groupId>
-                <artifactId>json-path</artifactId>
-                <version>${jsonpath.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.erosb</groupId>
-                <artifactId>everit-json-schema</artifactId>
-                <version>${org.everit.json.schema.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hierynomus</groupId>
-                <artifactId>sshj</artifactId>
-                <version>${sshj.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.sshd</groupId>
-                <artifactId>sshd-core</artifactId>
-                <version>${sshd.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.sshd</groupId>
-                <artifactId>sshd-scp</artifactId>
-                <version>${sshd.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.sshd</groupId>
-                <artifactId>sshd-sftp</artifactId>
-                <version>${sshd.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.hjson</groupId>
                 <artifactId>hjson</artifactId>
                 <version>${hjson.version}</version>
-            </dependency>
-            <dependency> <!-- Note that the below is qpid-broker-core and *not* qpid-broker. -->
-                <groupId>org.apache.qpid</groupId>
-                <artifactId>qpid-broker-core</artifactId>
-                <version>${qpid-broker.version}</version>
-            </dependency>
-            <dependency> <!-- AMQP protocol support is modular. Here we show support for 0-8/0-9 and 1.0. Support for 0-10 is excluded. -->
-                <groupId>org.apache.qpid</groupId>
-                <artifactId>qpid-broker-plugins-amqp-0-8-protocol</artifactId>
-                <version>${qpid-broker.version}</version>
-            </dependency>
-            <dependency> <!-- If a different store type is required it needs to be included here -->
-                <groupId>org.apache.qpid</groupId>
-                <artifactId>qpid-broker-plugins-memory-store</artifactId>
-                <version>${qpid-broker.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.orientechnologies</groupId>
@@ -503,19 +319,14 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>io.github.java-diff-utils</groupId>
-                <artifactId>java-diff-utils</artifactId>
-                <version>4.5</version>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>jsr305</artifactId>
+                <version>${jsr305.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.tinyradius</groupId>
-                <artifactId>tinyradius</artifactId>
-                <version>${radius.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.ben-manes.caffeine</groupId>
-                <artifactId>caffeine</artifactId>
-                <version>${caffeine.version}</version>
+                <groupId>org.apache.sshd</groupId>
+                <artifactId>sshd-core</artifactId>
+                <version>${sshd.version}</version>
             </dependency>
 
             <!-- Test dependencies -->
@@ -536,10 +347,9 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>net.i2p.crypto</groupId>
-                <artifactId>eddsa</artifactId>
-                <version>${eddsa.version}</version>
-                <scope>test</scope>
+                <groupId>com.github.tomakehurst</groupId>
+                <artifactId>wiremock-standalone</artifactId>
+                <version>${wire-mock.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.mockrunner</groupId>
@@ -554,15 +364,9 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-broker</artifactId>
-                <version>${activemq.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.activemq.tooling</groupId>
                 <artifactId>activemq-junit</artifactId>
-                <version>${activemq.version}</version>
+                <version>${activemq-junit.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -571,39 +375,12 @@
                 <version>${rabbitmq-mock.version}</version>
                 <scope>test</scope>
             </dependency>
-            <dependency>
-                <groupId>com.github.tomakehurst</groupId>
-                <artifactId>wiremock-standalone</artifactId>
-                <version>${wire-mock.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.opentable.components</groupId>
-                <artifactId>otj-pg-embedded</artifactId>
-                <version>${otj-pg-embedded.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-test</artifactId>
-                <version>${spring-security-test.version}</version>
-                <scope>test</scope>
-            </dependency>
             <!-- Property Based Testing -->
             <dependency>
                 <groupId>net.jqwik</groupId>
                 <artifactId>jqwik</artifactId>
                 <version>${jqwik.version}</version>
                 <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>net.bytebuddy</groupId>
-                <artifactId>byte-buddy</artifactId>
-                <version>${byte-buddy.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.bytebuddy</groupId>
-                <artifactId>byte-buddy-agent</artifactId>
-                <version>${byte-buddy.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -651,8 +428,6 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.10.1</version>
                     <configuration>
-                        <source>${maven.compiler.source}</source>
-                        <target>${maven.compiler.target}</target>
                         <forceJavacCompilerUse>true</forceJavacCompilerUse>
                     </configuration>
                 </plugin>
@@ -804,12 +579,12 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>${jacoco-maven-plugin.version}</version>
+                    <version>0.8.8</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
-                    <version>${exec-maven-plugin.version}</version>
+                    <version>3.1.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -826,25 +601,6 @@
             <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
-
-    <repositories>
-        <repository>
-            <id>jcenter</id>
-            <url>https://jcenter.bintray.com</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>jcenter</id>
-            <url>https://jcenter.bintray.com</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
 
     <profiles>
         <profile>

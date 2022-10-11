@@ -8,7 +8,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    name: Deploy to bintray
+    name: Test
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 1.8
@@ -22,7 +22,7 @@ jobs:
       # - name: List files
       #  working-directory: ${{ github.workspace }}
       #  run: |
-      #    ls -la 
+      #    ls -la
       #    ls -la packaging/local-dev/target/
       - name: Set env
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
@@ -30,4 +30,4 @@ jobs:
         run: |
           echo $RELEASE_VERSION
           echo ${{ env.RELEASE_VERSION }}
-         
+
