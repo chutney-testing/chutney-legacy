@@ -112,40 +112,20 @@ public class ChutneyTest {
     }
 
     private void addChutneyDBServer() {
-        Target dbTarget;
-        String spring_profiles_active = System.getenv("SPRING_PROFILES_ACTIVE");
-        if (spring_profiles_active != null && spring_profiles_active.contains("db-pg")) { // Check H2 or Postgres
-            dbTarget = Target.builder()
-                .withName("CHUTNEY_DB")
-                .withEnvironment(TEST_ENV_NAME)
-                .withUrl("tcp://localhost:" + dbPort)
-                .withProperties(
-                    Maps.of(
-                        "driverClassName", "org.postgresql.Driver",
-                        "jdbcUrl", "jdbc:postgresql://localhost:" + dbPort + "/postgres",
-                        "dataSource.user", "postgres",
-                        "dataSource.password", "postgres",
-                        "maximumPoolSize", "2"
-                    )
+        Target dbTarget = Target.builder()
+            .withName("CHUTNEY_DB")
+            .withEnvironment(TEST_ENV_NAME)
+            .withUrl("tcp://localhost:" + dbPort)
+            .withProperties(
+                Maps.of(
+                    "driverClassName", "org.h2.Driver",
+                    "jdbcUrl", "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
+                    "dataSource.user", "sa",
+                    "dataSource.password", "",
+                    "maximumPoolSize", "2"
                 )
-                .build();
-        } else { // H2 by default
-            dbTarget = Target.builder()
-                .withName("CHUTNEY_DB")
-                .withEnvironment(TEST_ENV_NAME)
-                .withUrl("tcp://localhost:" + dbPort)
-                .withProperties(
-                    Maps.of(
-                        "driverClassName", "org.h2.Driver",
-                        "jdbcUrl", "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
-                        "dataSource.user", "sa",
-                        "dataSource.password", "",
-                        "maximumPoolSize", "2"
-                    )
-                )
-                .build();
-        }
-
+            )
+            .build();
         environmentService.addTarget(ChutneyTest.TEST_ENV_NAME, TargetDto.from(dbTarget));
     }
 

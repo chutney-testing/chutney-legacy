@@ -112,7 +112,6 @@
         <!-- test dependencies versions -->
         <jqwik.version>1.6.5</jqwik.version> <!-- = Follow JUnit 5 spring boot version -->
         <wire-mock.version>2.27.2</wire-mock.version>
-        <otj-pg-embedded.version>0.13.4</otj-pg-embedded.version>
     </properties>
 
     <dependencies>
@@ -351,11 +350,6 @@
                 <groupId>com.github.tomakehurst</groupId>
                 <artifactId>wiremock-standalone</artifactId>
                 <version>${wire-mock.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.opentable.components</groupId>
-                <artifactId>otj-pg-embedded</artifactId>
-                <version>${otj-pg-embedded.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.mockrunner</groupId>

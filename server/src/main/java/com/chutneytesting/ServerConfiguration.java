@@ -69,8 +69,6 @@ public class ServerConfiguration implements AsyncConfigurer {
     public static final String DBSERVER_PORT_SPRING_VALUE = "${chutney.db-server.port}";
     private static final String DBSERVER_BASEDIR_SPRING_BASE_VALUE = "${chutney.db-server.base-dir:~/.chutney/data";
     public static final String DBSERVER_H2_BASEDIR_SPRING_VALUE = DBSERVER_BASEDIR_SPRING_BASE_VALUE + "}";
-    public static final String DBSERVER_PG_BASEDIR_SPRING_BASE_VALUE = DBSERVER_BASEDIR_SPRING_BASE_VALUE + "/pgdata}";
-    public static final String DBSERVER_PG_WORKDIR_SPRING_BASE_VALUE = DBSERVER_BASEDIR_SPRING_BASE_VALUE + "/pgwork}";
 
     public static final String CONFIGURATION_FOLDER_SPRING_VALUE = "${chutney.configuration-folder:~/.chutney/conf}";
     public static final String ENGINE_REPORTER_PUBLISHER_TTL_SPRING_VALUE = "${chutney.engine.reporter.publisher.ttl:5}";

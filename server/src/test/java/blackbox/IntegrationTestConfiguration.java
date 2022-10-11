@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
-@Import({ServerConfiguration.class, DBConfiguration.class})
+@Import({ServerConfiguration.class})
 public class IntegrationTestConfiguration {
 
     @Bean

@@ -52,7 +52,7 @@ chutney:
     configuration-folder: ${chutney.configuration-folder}/environment
   jira:
     configuration-folder: ${chutney.configuration-folder}/jira
-#  db-server: (cf. application-db-[h2|pg].yml configuration files)
+#  db-server: (cf. application-db-[h2].yml configuration files)
 #    port: 9360
 #    base-dir: ./.chutney
   orient:

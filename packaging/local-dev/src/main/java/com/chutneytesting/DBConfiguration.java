@@ -1,14 +1,9 @@
 package com.chutneytesting;
 
 import static com.chutneytesting.ServerConfiguration.DBSERVER_H2_BASEDIR_SPRING_VALUE;
-import static com.chutneytesting.ServerConfiguration.DBSERVER_PG_BASEDIR_SPRING_BASE_VALUE;
-import static com.chutneytesting.ServerConfiguration.DBSERVER_PG_WORKDIR_SPRING_BASE_VALUE;
 import static com.chutneytesting.ServerConfiguration.DBSERVER_PORT_SPRING_VALUE;
 
-import com.opentable.db.postgres.embedded.EmbeddedPostgres;
 import com.zaxxer.hikari.HikariDataSource;
-import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
 import javax.sql.DataSource;
 import org.h2.tools.Server;
@@ -63,25 +58,6 @@ public class DBConfiguration {
             Server h2Server = Server.createTcpServer("-tcp", "-tcpPort", String.valueOf(dbServerPort), "-tcpAllowOthers", "-baseDir", baseDir, "-ifNotExists").start();
             LOGGER.debug("Started H2 server " + h2Server.getURL());
             return h2Server;
-        }
-    }
-
-    @Configuration
-    @Profile("db-pg")
-    static class PGConfiguration {
-
-        @Bean
-        EmbeddedPostgres dbServer(
-            @Value(DBSERVER_PORT_SPRING_VALUE) int dbServerPort,
-            @Value(DBSERVER_PG_BASEDIR_SPRING_BASE_VALUE) String baseDir,
-            @Value(DBSERVER_PG_WORKDIR_SPRING_BASE_VALUE) String workDir) throws IOException {
-
-            return EmbeddedPostgres.builder()
-                .setPort(dbServerPort)
-                .setDataDirectory(baseDir)
-                .setCleanDataDirectory(false)
-                .setOverrideWorkingDirectory(new File(workDir))
-                .start();
         }
     }
 }
