@@ -186,7 +186,7 @@ public class SecuredControllerSpringBootIntegrationTest {
             {GET, "/actuator/threaddump", "ADMIN_ACCESS", null},
             {GET, "/actuator/prometheus", "ADMIN_ACCESS", null},
             {GET, "/actuator/metrics", "ADMIN_ACCESS", null},
-            {GET, "/actuator/scheduledactions", "ADMIN_ACCESS", null},
+            {GET, "/actuator/scheduledtasks", "ADMIN_ACCESS", null},
             {GET, "/actuator/mappings", "ADMIN_ACCESS", null},
             // Must be at the end because the network configuration is in wrong staten, why ??
             {POST, "/api/v1/agentnetwork/wrapup", "ADMIN_ACCESS", "{\"agentsGraph\":{\"agents\":[]},\"networkConfiguration\":{\"creationDate\":\"2021-09-06T10:08:36.569227Z\",\"agentNetworkConfiguration\":[],\"environmentsConfiguration\":[]}}"},
