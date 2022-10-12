@@ -130,7 +130,7 @@
 
                 <td>
                     <a *ngIf="jiraMap.has(scenario.id)" role="button" class="btn btn-sm btn-link me-0"
-                        target="_blank" href="{{getJiraLink(scenario.id)}}"
+                        target="_blank" href="{{getJiraLink(scenario.id)}}" rel="noopener noreferrer"
                         ngbPopover="{{jiraMap.get(scenario.id)}}" placement="left" (click)="$event.stopPropagation()"
                         triggers="mouseenter:mouseleave">
                         <span class="fab fa-jira" aria-hidden="true">

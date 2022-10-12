@@ -51,7 +51,7 @@
                     </td>
                     <td class="ps-0 w1">
                         <a *ngIf="jiraMap.has(campaign.id.toString())" role="button" class="btn btn-sm btn-link me-0"
-                           target="_blank" href="{{getJiraLink(campaign.id.toString())}}"
+                           target="_blank" href="{{getJiraLink(campaign.id.toString())}}" rel="noopener noreferrer"
                            ngbPopover="{{jiraMap.get(campaign.id.toString())}}" placement="left"
                            (click)="$event.stopPropagation()"
                            triggers="mouseenter:mouseleave">
