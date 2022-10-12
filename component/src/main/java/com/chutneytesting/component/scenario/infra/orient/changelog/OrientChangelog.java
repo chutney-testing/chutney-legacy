@@ -63,11 +63,11 @@ public class OrientChangelog {
         /* nothing to see */
     }
 
-    @ChangelogOrder(order = 5, uuid = "20190828-update-selenium-action-parameters")
+    @ChangelogOrder(order = 5, uuid = "20190828-update-selenium-task-parameters")
     public static void updateSeleniumActionParameters(ODatabaseSession dbSession) {
     }
 
-    @ChangelogOrder(order = 6, uuid = "20191127-update-selenium-action-parameters")
+    @ChangelogOrder(order = 6, uuid = "20191127-update-selenium-task-parameters")
     public static void updateSeleniumActionParametersRight(ODatabaseSession dbSession) {
 
         String QUERY_FSTEPS_IMPLEMENTATION_ID =
@@ -210,7 +210,7 @@ public class OrientChangelog {
         LOGGER.info("20210608-testcase-content-index changelog pass");
     }
 
-    @ChangelogOrder(order = 12, uuid = "20210616-add-input-to-sql-action")
+    @ChangelogOrder(order = 12, uuid = "20210616-add-input-to-sql-task")
     public static void addInputToSqlAction(ODatabaseSession dbSession) {
 
         String QUERY_FSTEPS_IMPLEMENTATION_ID =
