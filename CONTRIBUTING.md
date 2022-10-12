@@ -360,14 +360,14 @@ git push origin
   </parent>
   ```
 
-* Add a dependency on _chutney-task-spi_
+* Add a dependency on _chutney-action-spi_
   * Transitive dependencies are :
     * com.google.guava
 
   ```xml
   <dependency>
       <groupId>com.chutneytesting</groupId>
-      <artifactId>task-spi</artifactId>
+      <artifactId>action-spi</artifactId>
   </dependency>
   ```
 

@@ -10,7 +10,7 @@
         <version>1.5.7-SNAPSHOT</version>
     </parent>
 
-    <artifactId>task-spi</artifactId>
+    <artifactId>action-spi</artifactId>
 
     <dependencies>
         <dependency>

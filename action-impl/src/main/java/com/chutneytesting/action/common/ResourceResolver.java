@@ -52,6 +52,6 @@ public class ResourceResolver implements LSResourceResolver {
     }
 
     private Path getParentResourcePath(String baseURI) {
-        return Path.of(StringUtils.substringAfter(baseURI,"/chutney/task-impl/")).getParent(); // TODO - lessen tight coupling to mvn module name
+        return Path.of(StringUtils.substringAfter(baseURI,"/chutney/action-impl/")).getParent(); // TODO - lessen tight coupling to mvn module name
     }
 }

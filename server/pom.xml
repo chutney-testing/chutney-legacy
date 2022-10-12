@@ -27,7 +27,7 @@
         </dependency>
         <dependency>
             <groupId>com.chutneytesting</groupId>
-            <artifactId>task-impl</artifactId>
+            <artifactId>action-impl</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>com.fasterxml.jackson.module</groupId>

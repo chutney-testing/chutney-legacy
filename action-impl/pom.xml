@@ -10,12 +10,12 @@
         <version>1.5.7-SNAPSHOT</version>
     </parent>
 
-    <artifactId>task-impl</artifactId>
+    <artifactId>action-impl</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>com.chutneytesting</groupId>
-            <artifactId>task-spi</artifactId>
+            <artifactId>action-spi</artifactId>
         </dependency>
         <dependency>
             <groupId>com.chutneytesting</groupId>
