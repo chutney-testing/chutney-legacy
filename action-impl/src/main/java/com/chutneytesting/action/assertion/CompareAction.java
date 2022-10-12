@@ -1,7 +1,7 @@
 package com.chutneytesting.action.assertion;
 
-import com.chutneytesting.action.assertion.compareTask.CompareActionFactory;
-import com.chutneytesting.action.assertion.compareTask.CompareExecutor;
+import com.chutneytesting.action.assertion.compare.CompareActionFactory;
+import com.chutneytesting.action.assertion.compare.CompareExecutor;
 import com.chutneytesting.action.spi.Action;
 import com.chutneytesting.action.spi.ActionExecutionResult;
 import com.chutneytesting.action.spi.injectable.Input;

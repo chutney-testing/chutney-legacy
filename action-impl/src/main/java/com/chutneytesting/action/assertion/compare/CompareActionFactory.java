@@ -1,4 +1,4 @@
-package com.chutneytesting.action.assertion.compareTask;
+package com.chutneytesting.action.assertion.compare;
 
 public class CompareActionFactory {
 

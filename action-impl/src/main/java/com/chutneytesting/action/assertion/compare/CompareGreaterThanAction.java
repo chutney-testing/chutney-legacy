@@ -1,4 +1,4 @@
-package com.chutneytesting.action.assertion.compareTask;
+package com.chutneytesting.action.assertion.compare;
 
 import java.util.function.BiFunction;
 

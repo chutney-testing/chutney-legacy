@@ -1,4 +1,4 @@
-package com.chutneytesting.action.assertion.compareTask;
+package com.chutneytesting.action.assertion.compare;
 
 import com.chutneytesting.action.spi.ActionExecutionResult;
 import com.chutneytesting.action.spi.injectable.Logger;
