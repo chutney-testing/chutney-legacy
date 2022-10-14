@@ -287,7 +287,6 @@
         "backups": {
             "table": {
                 "time.title": "Creation date",
-                "homepage.title": "Home page",
                 "agents.title": "Agents",
                 "environments.title": "Environments",
                 "components.title": "Components",

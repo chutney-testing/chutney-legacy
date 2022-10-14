@@ -9,20 +9,18 @@ public class Backup {
     public final static DateTimeFormatter backupIdTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
     public final LocalDateTime time;
-    public final boolean homePage;
     public final boolean agentsNetwork;
     public final boolean environments;
     public final boolean components;
     public final boolean globalVars;
     public final boolean jiraLinks;
 
-    public Backup(boolean homePage, boolean agentsNetwork, boolean environments, boolean components, boolean globalVars, boolean jiraLinks) {
-        if (!(homePage || agentsNetwork || environments || components || globalVars || jiraLinks)) {
+    public Backup(boolean agentsNetwork, boolean environments, boolean components, boolean globalVars, boolean jiraLinks) {
+        if (!(agentsNetwork || environments || components || globalVars || jiraLinks)) {
             throw new IllegalArgumentException("Nothing to backup !!");
         }
 
         this.time = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
-        this.homePage = homePage;
         this.agentsNetwork = agentsNetwork;
         this.environments = environments;
         this.components = components;
@@ -30,9 +28,8 @@ public class Backup {
         this.jiraLinks = jiraLinks;
     }
 
-    public Backup(String id, Boolean homePage, Boolean agentsNetwork, Boolean environments, Boolean components, Boolean globalVars, Boolean jiraLinks) {
+    public Backup(String id, Boolean agentsNetwork, Boolean environments, Boolean components, Boolean globalVars, Boolean jiraLinks) {
         this.time = LocalDateTime.parse(id, backupIdTimeFormatter);
-        this.homePage = homePage;
         this.agentsNetwork = agentsNetwork;
         this.environments = environments;
         this.components = components;

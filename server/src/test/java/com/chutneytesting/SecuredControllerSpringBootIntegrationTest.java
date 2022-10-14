@@ -55,7 +55,6 @@ public class SecuredControllerSpringBootIntegrationTest {
 
     private static Object[] securedEndPointList() {
         return new Object[][]{
-            {POST, "/api/homepage/v1", "ADMIN_ACCESS", "{\"content\":\"\"}"},
             {GET, "/api/v1/backups", "ADMIN_ACCESS", null},
             {POST, "/api/v1/backups", "ADMIN_ACCESS", "{\"homePage\":true}"},
             {GET, "/api/v1/backups/backupId", "ADMIN_ACCESS", null},
@@ -199,9 +198,7 @@ public class SecuredControllerSpringBootIntegrationTest {
         return new Object[][]{
             {GET, "/api/v1/user"},
             {POST, "/api/v1/user"},
-            {GET, "/api/v1/ui/plugins/linkifier/"},
-            {GET, "/api/homepage/v1"},
-            {GET, "/home"}
+            {GET, "/api/v1/ui/plugins/linkifier/"}
         };
     }
 

@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 public class BackupDto {
 
     private final LocalDateTime time;
-    private final boolean homePage;
     private final boolean agentsNetwork;
     private final boolean environments;
     private final boolean components;
@@ -13,14 +12,12 @@ public class BackupDto {
     private final boolean jiraLinks;
 
     public BackupDto(LocalDateTime time,
-                     boolean homePage,
                      boolean agentsNetwork,
                      boolean environments,
                      boolean components,
                      boolean globalVars,
                      boolean jiraLinks) {
         this.time = time;
-        this.homePage = homePage;
         this.agentsNetwork = agentsNetwork;
         this.environments = environments;
         this.components = components;
@@ -30,10 +27,6 @@ public class BackupDto {
 
     public LocalDateTime getTime() {
         return time;
-    }
-
-    public boolean getHomePage() {
-        return homePage;
     }
 
     public boolean getAgentsNetwork() {

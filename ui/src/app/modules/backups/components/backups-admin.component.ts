@@ -30,12 +30,13 @@ export class BackupsAdminComponent implements OnInit {
 
     launchBackup() {
         this.backupsService.save(
-            new BackupDto(this.formValue('homePage'),
-            this.formValue('agentsNetwork'),
-            this.formValue('environments'),
-            this.formValue('components'),
-            this.formValue('globalVars'),
-            this.formValue('jiraLinks'))
+            new BackupDto(
+                this.formValue('agentsNetwork'),
+                this.formValue('environments'),
+                this.formValue('components'),
+                this.formValue('globalVars'),
+                this.formValue('jiraLinks')
+            )
         ).subscribe(() => this.reloadAfter(0));
     }
 
@@ -51,8 +52,7 @@ export class BackupsAdminComponent implements OnInit {
     }
 
     isOneBackupSelected(): boolean {
-        return this.formValue('homePage') ||
-        this.formValue('agentsNetwork') ||
+        return this.formValue('agentsNetwork') ||
         this.formValue('environments') ||
         this.formValue('components') ||
         this.formValue('globalVars') ||
@@ -66,7 +66,6 @@ export class BackupsAdminComponent implements OnInit {
 
     private initBackupForm() {
         this.backupForm = this.formBuilder.group({
-            homePage: true,
             agentsNetwork: true,
             environments: true,
             components: true,
