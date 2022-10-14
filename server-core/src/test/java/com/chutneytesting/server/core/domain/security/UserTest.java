@@ -19,7 +19,7 @@ class UserTest {
         User nullBuild = User.builder().withId(null).withRole(null).build();
         assertThat(nullBuild).isEqualTo(User.ANONYMOUS);
 
-        assertThat(User.ANONYMOUS.roleName).isEqualTo(Role.DEFAULT.name);
+        assertThat(User.ANONYMOUS.roleName).isEqualTo("");
     }
 
     @Test

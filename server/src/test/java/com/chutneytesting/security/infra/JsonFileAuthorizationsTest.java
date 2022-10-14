@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.util.Files.newTemporaryFolder;
 
 import com.chutneytesting.security.PropertyBasedTestingUtils;
-import com.chutneytesting.server.core.domain.security.Role;
 import com.chutneytesting.server.core.domain.security.UserRoles;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.ForAll;
@@ -27,7 +26,7 @@ class JsonFileAuthorizationsTest {
     @Test
     public void should_init_authorizations_file_if_not_exists() {
         UserRoles firstInit = sut.read();
-        assertThat(firstInit.roles()).containsExactly(Role.DEFAULT);
+        assertThat(firstInit.roles()).isEmpty();
         assertThat(firstInit.users()).isEmpty();
     }
 

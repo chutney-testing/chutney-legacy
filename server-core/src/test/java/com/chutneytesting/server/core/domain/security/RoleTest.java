@@ -16,18 +16,10 @@ import org.junit.jupiter.api.Test;
 
 class RoleTest {
 
-    @Test
-    public void should_build_default_role() {
-        Role defaultBuild = Role.builder().build();
-        assertThat(defaultBuild).isEqualTo(Role.DEFAULT);
-
-        Role nullBuild = Role.builder().withName(null).withAuthorizations(null).build();
-        assertThat(nullBuild).isEqualTo(Role.DEFAULT);
-    }
-
     @Property
     public void should_map_to_distinct_authorizations(@ForAll List<Authorization> authorizations) {
         Role role = Role.builder()
+            .withName("role")
             .withAuthorizations(authorizations.stream().map(Enum::name).collect(toList()))
             .build();
 
@@ -38,6 +30,7 @@ class RoleTest {
     @Property
     public void should_keep_authorizations_order(@ForAll List<Authorization> authorizations) {
         Role role = Role.builder()
+            .withName("role")
             .withAuthorizations(authorizations.stream().map(Enum::name).collect(toList()))
             .build();
 
@@ -70,7 +63,7 @@ class RoleTest {
     @Provide
     @SuppressWarnings("unused")
     private Arbitrary<String> validRoleName() {
-        return PropertyBasedTestingUtils.validRoleNameWithoutDefault();
+        return PropertyBasedTestingUtils.validRoleName();
     }
 
     @Provide

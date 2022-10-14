@@ -88,7 +88,7 @@ Feature: Roles declarations and users associations
             Do http-get
                 On CHUTNEY_LOCAL_NO_USER
                 With headers
-                | Content-Type  | application/json;charset=UTF-8                                                             |
+                | Content-Type  | application/json;charset=UTF-8                                                     |
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("user:user").getBytes())} |
                 With uri /api/v1/user
                 Validate httpStatusCode_200 ${#status == 200}
@@ -106,13 +106,10 @@ Feature: Roles declarations and users associations
                 Validate httpStatusCode_200 ${#status == 200}
         And Check user authority
             Do http-get
-                On CHUTNEY_LOCAL_NO_USER
-                With headers
-                | Content-Type  | application/json;charset=UTF-8                                                             |
-                | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("user:user").getBytes())} |
+                On CHUTNEY_LOCAL
                 With uri /api/v1/user
                 Validate httpStatusCode_200 ${#status == 200}
             Do json-assert
                 With document ${#body}
                 With expected
-                | $.authorizations | $isEmpty |
+                | $.authorizations[?(@.name=='${#roleNameWithNoUser}')].users[0] | $isEmpty |

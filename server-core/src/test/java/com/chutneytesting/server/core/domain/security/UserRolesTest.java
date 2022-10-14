@@ -19,31 +19,37 @@ import org.junit.jupiter.api.Test;
 public class UserRolesTest {
 
     @Test
-    void minimal_build_should_have_default_role() {
+    void minimal_build_should_be_empty() {
         UserRoles defaultBuild = UserRoles.builder().build();
         UserRoles nullBuild = UserRoles.builder().withUsers(null).withRoles(null).build();
         UserRoles emptyBuild = UserRoles.builder().withUsers(emptySet()).withRoles(emptySet()).build();
 
         for (UserRoles userRole : List.of(defaultBuild, nullBuild, emptyBuild)) {
-            Assertions.assertThat(userRole.roles()).containsExactly(Role.DEFAULT);
+            Assertions.assertThat(userRole.roles()).isEmpty();
             Assertions.assertThat(userRole.users()).isEmpty();
         }
     }
 
     @Test
-    void roles_must_contains_default_role() {
-        assertThatThrownBy(() ->
-            UserRoles.builder()
-                .withRoles(singleton(Role.builder().withName("roleName").build()))
-                .build()
-        ).isInstanceOf(IllegalArgumentException.class);
+    void users_must_not_have_a_blank_role() {
+        User nullRoleUser = User.builder().withRole(null).build();
+        User emptyRoleUser = User.builder().withRole("").build();
+        User blankRoleUser = User.builder().withRole("   ").build();
+
+        for (User user : List.of(nullRoleUser, emptyRoleUser, blankRoleUser)) {
+            assertThatThrownBy(() ->
+                UserRoles.builder()
+                    .withUsers(singleton(user))
+                    .build()
+            ).isInstanceOf(IllegalArgumentException.class);
+        }
     }
 
     @Test
     void users_must_have_a_declared_role() {
         assertThatThrownBy(() ->
             UserRoles.builder()
-                .withUsers(List.of(User.builder().withRole("UNDECLARED_ROLE").build()))
+                .withUsers(singleton(User.builder().withRole("UNDECLARED_ROLE").build()))
                 .build()
         ).isInstanceOf(IllegalArgumentException.class);
     }
@@ -53,11 +59,11 @@ public class UserRolesTest {
         UserRoles sut = UserRoles.builder()
             .withRoles(List.of(
                 Role.builder().withName("R").build(),
-                Role.DEFAULT
+                Role.builder().withName("S").build()
             ))
             .withUsers(List.of(
                 User.builder().withId("id").withRole("R").build(),
-                User.builder().withId("id").withRole(Role.DEFAULT.name).build()
+                User.builder().withId("id").withRole("S").build()
             ))
             .build();
 
@@ -70,34 +76,40 @@ public class UserRolesTest {
 
     @Test
     void should_find_user_by_id() {
-        User user2 = User.builder().withId("user2").build();
+        Role roleOfUserToFind = Role.builder().withName("roleOfUserToFind").build();
+        User userToFind = User.builder().withId("userToFind").withRole(roleOfUserToFind.name).build();
+        Role anotherRole = Role.builder().withName("R").build();
+        User anotherUser = User.builder().withId("anotherUser").withRole(anotherRole.name).build();
         UserRoles sut = UserRoles.builder()
-            .withUsers(List.of(User.builder().withId("user1").build(), user2))
+            .withRoles(List.of(anotherRole, roleOfUserToFind))
+            .withUsers(List.of(anotherUser, userToFind))
             .build();
 
-        Assertions.assertThat(sut.userById("user2")).hasValue(user2);
-        Assertions.assertThat(sut.userById("userX")).isEmpty();
+        Assertions.assertThat(sut.userById("userToFind")).hasValue(userToFind);
+        Assertions.assertThat(sut.userById("unknownUser")).isEmpty();
     }
 
     @Test
     void should_find_users_by_role_name() {
-        Role role2 = Role.builder().withName("role2").build();
-        User user2 = User.builder().withId("user2").withRole(role2.name).build();
-        Role unknown_role = Role.builder().withName("unknown_role").build();
+        Role roleOfUserToFind = Role.builder().withName("roleOfUserToFind").build();
+        User userToFind = User.builder().withId("userToFind").withRole(roleOfUserToFind.name).build();
+        Role roleNotUsedByUser = Role.builder().withName("roleNotUsedByUser").build();
+        Role anotherRole = Role.builder().withName("R").build();
+        User anotherUser = User.builder().withId("anotherUser").withRole(anotherRole.name).build();
         UserRoles sut = UserRoles.builder()
-            .withRoles(List.of(Role.DEFAULT, role2))
-            .withUsers(List.of(User.builder().withId("user1").build(), user2))
+            .withRoles(List.of(anotherRole, roleOfUserToFind))
+            .withUsers(List.of(anotherUser, userToFind))
             .build();
 
-        Assertions.assertThat(sut.usersByRole(role2)).containsExactly(user2);
-        Assertions.assertThat(sut.usersByRole(unknown_role)).isEmpty();
+        Assertions.assertThat(sut.usersByRole(roleOfUserToFind)).containsExactly(userToFind);
+        Assertions.assertThat(sut.usersByRole(roleNotUsedByUser)).isEmpty();
     }
 
     @Test
     void should_find_role_by_name() {
         Role role2 = Role.builder().withName("role2").build();
         UserRoles sut = UserRoles.builder()
-            .withRoles(List.of(Role.DEFAULT, Role.builder().withName("role1").build(), role2))
+            .withRoles(List.of(Role.builder().withName("role1").build(), role2))
             .build();
 
         Assertions.assertThat(sut.roleByName("role2")).isEqualTo(role2);
@@ -106,21 +118,8 @@ public class UserRolesTest {
         ).isInstanceOf(RoleNotFoundException.class);
     }
 
-    @Test
-    void should_add_new_user_by_id() {
-        UserRoles sut = UserRoles.builder()
-            .withUsers(List.of(User.builder().withId("user1").build(), User.builder().withId("user2").build()))
-            .build();
-
-        User newUser = sut.addNewUser("new-user");
-
-        assertThat(newUser.id).isEqualTo("new-user");
-        Assertions.assertThat(sut.users()).contains(newUser);
-    }
-
     @Property
     void should_keep_users_and_roles_orders_when_build(@ForAll("validRoles") Set<Role> roles) {
-        roles.add(Role.DEFAULT);
         Set<User> users = PropertyBasedTestingUtils.validUsers(roles);
 
         List<Role> orderedRoles = List.copyOf(roles);

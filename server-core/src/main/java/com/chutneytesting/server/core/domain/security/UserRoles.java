@@ -34,18 +34,6 @@ public class UserRoles {
             .orElseThrow(() -> new RoleNotFoundException("Role [" + roleName + "] is not defined"));
     }
 
-    public User addNewUser(String id) {
-        Objects.requireNonNull(id);
-
-        User newUser = User.builder()
-            .withId(id)
-            .withRole(Role.DEFAULT.name)
-            .build();
-
-        this.userRoleMap.get(Role.DEFAULT).add(newUser);
-        return newUser;
-    }
-
     public Set<Role> roles() {
         return this.userRoleMap.keySet();
     }
@@ -97,7 +85,6 @@ public class UserRoles {
         }
 
         public UserRoles build() {
-            checkDefaultRole();
             checkUserRoles();
 
             return new UserRoles(
@@ -112,6 +99,9 @@ public class UserRoles {
 
         private void checkUserRoles() {
             for (User user : users) {
+                if (user.roleName == null || user.roleName.isBlank()) {
+                    throw new IllegalArgumentException("Role declared for user [" + user.id + "] is blank");
+                }
                 Optional<Role> userRole = roles.stream()
                     .filter(Role.roleByNamePredicate(user.roleName))
                     .findFirst();
@@ -119,18 +109,6 @@ public class UserRoles {
                     throw new IllegalArgumentException("Role [" + user.roleName + "] declared for user [" + user.id + "] is not defined");
                 }
             }
-        }
-
-        private void checkDefaultRole() {
-            if (roles == null || roles.isEmpty()) {
-                roles = new LinkedHashSet<>();
-                roles.add(Role.DEFAULT);
-            }
-
-            roles.stream()
-                .filter(Role.DEFAULT::equals)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Role [" + Role.DEFAULT.name + "] must be defined"));
         }
 
         public UserRolesBuilder withRoles(Collection<Role> roles) {

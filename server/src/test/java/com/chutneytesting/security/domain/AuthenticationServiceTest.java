@@ -1,9 +1,8 @@
 package com.chutneytesting.security.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.chutneytesting.server.core.domain.security.Authorization;
@@ -13,6 +12,7 @@ import com.chutneytesting.server.core.domain.security.UserRoles;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 class AuthenticationServiceTest {
 
@@ -28,12 +28,12 @@ class AuthenticationServiceTest {
     public void should_get_role_from_user_id() {
         // Given
         Role expectedRole = Role.builder()
-            .withName("roleName")
+            .withName("expectedRole")
             .withAuthorizations(List.of(Authorization.SCENARIO_EXECUTE.name(), Authorization.COMPONENT_READ.name()))
             .build();
         when(authorizations.read()).thenReturn(
             UserRoles.builder()
-                .withRoles(List.of(Role.DEFAULT, expectedRole))
+                .withRoles(List.of(expectedRole))
                 .withUsers(List.of(User.builder().withId("userId").withRole(expectedRole.name).build()))
                 .build()
         );
@@ -47,17 +47,14 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    public void should_add_unknown_user_with_default_role_when_get_role_for_authentication() {
+    public void should_throw_user_not_found_when_get_role_for_authentication_for_an_unknown_user() {
         // Given
         when(authorizations.read()).thenReturn(
             UserRoles.builder().build()
         );
 
         // When
-        Role role = sut.userRoleById("unknown-user");
-
-        // Then
-        assertThat(role).isEqualTo(Role.DEFAULT);
-        verify(authorizations).save(any());
+        assertThatThrownBy(() -> sut.userRoleById("unknown-user"))
+            .isInstanceOf(UsernameNotFoundException.class);
     }
 }

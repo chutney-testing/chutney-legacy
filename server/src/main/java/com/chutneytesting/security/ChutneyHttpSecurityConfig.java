@@ -1,7 +1,5 @@
 package com.chutneytesting.security;
 
-import static java.util.Collections.singleton;
-
 import com.chutneytesting.security.api.UserController;
 import com.chutneytesting.security.api.UserDto;
 import com.chutneytesting.security.domain.Authorizations;
@@ -9,9 +7,7 @@ import com.chutneytesting.security.infra.handlers.Http401FailureHandler;
 import com.chutneytesting.security.infra.handlers.HttpEmptyLogoutSuccessHandler;
 import com.chutneytesting.security.infra.handlers.HttpStatusInvalidSessionStrategy;
 import com.chutneytesting.server.core.domain.security.Authorization;
-import com.chutneytesting.server.core.domain.security.Role;
 import com.chutneytesting.server.core.domain.security.User;
-import com.chutneytesting.server.core.domain.security.UserRoles;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,16 +79,6 @@ public class ChutneyHttpSecurityConfig extends WebSecurityConfigurerAdapter {
         UserDto anonymous = new UserDto();
         anonymous.setId(User.ANONYMOUS.id);
         anonymous.setName(User.ANONYMOUS.id);
-
-        UserRoles userRoles = authorizations.read();
-        Role role = userRoles.roleByName(Role.DEFAULT.name);
-        anonymous.setRoles(singleton(role.name));
-        role.authorizations.stream().map(Enum::name).forEach(anonymous::grantAuthority);
-
-        if (role.authorizations.isEmpty()) {
-            anonymous.grantAuthority("ANONYMOUS");
-        }
-
         return anonymous;
     }
 }
