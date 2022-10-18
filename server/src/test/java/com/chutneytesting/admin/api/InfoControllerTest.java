@@ -30,7 +30,7 @@ class InfoControllerTest {
 
     @Test
     public void should_return_chutney_version() throws Exception {
-        this.mockMvc.perform(get("/api/v1/info/version")).andDo(print()).andExpect(status().isOk())
+        this.mockMvc.perform(get("/api/v1/info/build/version")).andDo(print()).andExpect(status().isOk())
             .andExpect(content().string(matchesRegex("\\d\\.\\d\\.\\d+(-SNAPSHOT)?")));
     }
 

@@ -15,7 +15,7 @@ export class InfoService {
     }
 
     public getVersion(): Observable<string> {
-        return this.http.get(environment.backend + this.url + "/version", {responseType: 'text'});
+        return this.http.get(environment.backend + this.url + "/build/version", {responseType: 'text'});
     }
 
     public getApplicationName(): Observable<string> {
