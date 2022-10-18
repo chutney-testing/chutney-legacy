@@ -1,7 +1,6 @@
-@import "~bootstrap/scss/bootstrap";;
 
 .eye-color {
-    color: $light;
+    color: var(--bs-info);
 }
 
 .step-name {
