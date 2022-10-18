@@ -65,6 +65,12 @@ export const allMenuItems: MenuItem [] = [
                 authorizations: [Authorization.ADMIN_ACCESS]
             },
             {
+                label: 'menu.principal.backups',
+                link: '/backups',
+                iconClass: 'fa fa-archive',
+                authorizations: [Authorization.ADMIN_ACCESS]
+            },
+            {
                 label: 'menu.principal.databaseAdmin',
                 link: '/databaseAdmin',
                 iconClass: 'fa fa-database',
