@@ -9,7 +9,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static java.util.Collections.emptyMap;
 import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -200,6 +202,29 @@ public class HttpTaskTest {
         headers.put("CustomHeader", "toto");
 
         Task httpPutTask = new HttpPatchTask(targetMock, logger, uri, "somebody", headers, "1000 ms");
+        TaskExecutionResult executionResult = httpPutTask.execute();
+
+        // then
+        assertThat(executionResult.status).isEqualTo(TaskExecutionResult.Status.Success);
+        assertThat((Integer) executionResult.outputs.get("status")).isEqualTo(expectedStatus);
+    }
+
+    @Test
+    public void should_use_target_proxy() {
+        String uri = "/some/thing";
+        int expectedStatus = 200;
+
+        stubFor(get(urlEqualTo(uri))
+            .willReturn(aResponse().withStatus(expectedStatus))
+        );
+
+        Logger logger = mock(Logger.class);
+        Target targetMock = mockTarget("http://123.456.789.123:45678");
+        when(targetMock.property("proxy.host")).thenReturn(of("127.0.0.1"));
+        when(targetMock.numericProperty("proxy.port")).thenReturn(of(wireMockServer.httpsPort()));
+        // when
+
+        Task httpPutTask = new HttpGetTask(targetMock, logger, uri, emptyMap(), "1000 ms");
         TaskExecutionResult executionResult = httpPutTask.execute();
 
         // then

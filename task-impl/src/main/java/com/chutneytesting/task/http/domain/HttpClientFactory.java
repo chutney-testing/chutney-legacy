@@ -2,18 +2,24 @@ package com.chutneytesting.task.http.domain;
 
 
 import static com.chutneytesting.task.common.SecurityUtils.buildSslContext;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 
 import com.chutneytesting.task.spi.injectable.Target;
 import java.net.ProxySelector;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 import javax.net.ssl.SSLContext;
+import org.apache.http.HttpHost;
+import org.apache.http.conn.routing.HttpRoutePlanner;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.client.ClientHttpResponse;
@@ -23,6 +29,10 @@ import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 public class HttpClientFactory {
+
+    private static final String PROXY_HOST_PROPERTY = "proxy.host";
+    private static final String PROXY_PORT_PROPERTY = "proxy.port";
+    private static final String PROXY_SCHEME_PROPERTY = "proxy.scheme";
 
     /**
      * @return an {@link HttpClient} depending on given {@link Target} able to handle:
@@ -63,8 +73,9 @@ public class HttpClientFactory {
         HttpClientBuilder httpClient = HttpClients.custom()
             .setSSLSocketFactory(socketFactory);
 
-        if (isSystemProxySet()) {
-            httpClient.setRoutePlanner(new SystemDefaultRoutePlanner(ProxySelector.getDefault()));
+        Optional<HttpRoutePlanner> httpRoutePlanner = getProxyConfiguration(target);
+        if (httpRoutePlanner.isPresent()) {
+            httpClient.setRoutePlanner(httpRoutePlanner.get());
         }
 
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient.build());
@@ -75,6 +86,23 @@ public class HttpClientFactory {
         configureBasicAuth(target, restTemplate);
         removeErrorHandler(restTemplate);
         return restTemplate;
+    }
+
+    private static Optional<HttpRoutePlanner> getProxyConfiguration(Target target) {
+        if (isTargetProxySet(target)) {
+            String proxyHost = target.property(PROXY_HOST_PROPERTY).orElseThrow();
+            Integer proxyPort = target.numericProperty(PROXY_PORT_PROPERTY).orElse(443).intValue();
+            String proxyScheme = target.property(PROXY_SCHEME_PROPERTY).orElse("https");
+            HttpHost proxy = new HttpHost(proxyHost, proxyPort, proxyScheme);
+            return of(new DefaultProxyRoutePlanner(proxy));
+        } else if (isSystemProxySet()) {
+            return of(new SystemDefaultRoutePlanner(ProxySelector.getDefault()));
+        }
+        return empty();
+    }
+
+    private static boolean isTargetProxySet(Target target) {
+        return target.property("proxy.host").isPresent();
     }
 
     private static void removeErrorHandler(RestTemplate restTemplate) {
