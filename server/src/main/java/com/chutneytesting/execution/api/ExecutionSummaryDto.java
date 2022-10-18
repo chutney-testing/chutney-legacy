@@ -31,6 +31,7 @@ public interface ExecutionSummaryDto extends ExecutionProperties, Attached {
             .testCaseTitle(executionSummary.testCaseTitle())
             .environment(executionSummary.environment())
             .user(executionSummary.user())
+            .campaign(executionSummary.campaign())
             .build();
     }
 

@@ -71,7 +71,13 @@
         "execution": {
             "history": {
                 "title": "Historique des exécutions",
-                "time": "Aujourd'hui à"
+                "time": "Aujourd'hui à",
+                "status": "Statut",
+                "date": "Date",
+                "env": "Environnement",
+                "executor": "Executeur",
+                "campaign": "Campagne",
+                "report": "Rapport"
             },
             "step": {
                 "actions": {
@@ -397,6 +403,7 @@
             },
 
             "search": "Rechercher",
+            "global-search": "Recherche globale",
             "add": "Ajouter",
             "edit": "Éditer",
             "editRaw": "Édition brute",
@@ -420,6 +427,7 @@
             "resume": "Reprendre",
             "pause": "Suspendre",
             "help": "Aide",
+            "select": "Sélectionner",
 
             "done": {
                 "saved": "Sauvegarde réalisée"
@@ -449,7 +457,8 @@
         "smallword": {
             "of": "de",
             "On": "Sur",
-            "by": "par"
+            "by": "par",
+            "at": "à"
         }
     }
 }

@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { interval, Subscription } from 'rxjs';
 
 import { Execution } from '@model';
-import { ScenarioExecutionService } from '@core/services';
+import { ScenarioExecutionService } from '@modules/scenarios/services/scenario-execution.service';
 
 @Component({
     selector: 'chutney-execution-history',

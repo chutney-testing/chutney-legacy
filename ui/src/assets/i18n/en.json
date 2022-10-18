@@ -71,7 +71,13 @@
         "execution": {
             "history": {
                 "title": "Executions' history",
-                "time": "Today at"
+                "time": "Today at",
+                "status": "Status",
+                "date": "Date",
+                "env": "Environment",
+                "executor": "Executor",
+                "campaign": "Campaign",
+                "report": "Report"
             },
             "step": {
                 "actions": {
@@ -397,6 +403,7 @@
             },
 
             "search": "Search",
+            "global-search": "Global search",
             "add": "Add",
             "edit": "Edit",
             "editRaw": "Raw edition",
@@ -420,6 +427,7 @@
             "resume": "Resume",
             "pause": "Pause",
             "help": "Help",
+            "select": "Select",
 
             "done": {
                 "saved": "Saved"
@@ -449,7 +457,8 @@
         "smallword": {
             "of": "of",
             "On": "On",
-            "by": "by"
+            "by": "by",
+            "at": "at"
         }
     }
 }

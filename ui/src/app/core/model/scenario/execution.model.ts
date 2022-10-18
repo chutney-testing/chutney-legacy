@@ -1,10 +1,13 @@
+import { ExecutionStatus } from '@core/model/scenario/execution-status';
+import { Campaign } from '@core/model';
+
 export class Execution {
 
   public static NO_EXECUTION: Execution = new Execution(null, null, null, null, null, null, null);
 
   constructor(
     public duration: number,
-    public status: string,
+    public status: ExecutionStatus,
     public report: string,
     public executionId: number,
     public time: Date,
@@ -12,6 +15,7 @@ export class Execution {
     public user: string,
     public info?: string,
     public error?: string,
+    public campaign?: string,
   ) { }
 
   static deserializeExecutions(jsonObject: any): Execution[] {
@@ -28,7 +32,8 @@ export class Execution {
       jsonObject.environment,
       jsonObject.user,
       jsonObject.info,
-      jsonObject.error
+      jsonObject.error,
+      jsonObject.campaign,
     );
   }
 }

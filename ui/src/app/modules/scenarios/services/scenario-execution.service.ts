@@ -3,12 +3,10 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { environment } from '@env/environment';
-import { Execution, ScenarioExecutionReport, KeyValue } from '@model';
+import { Execution, KeyValue, ScenarioExecutionReport } from '@model';
 import { HttpClient } from '@angular/common/http';
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable()
 export class ScenarioExecutionService {
 
     private resourceUrl = '/api/ui/scenario';
@@ -16,11 +14,12 @@ export class ScenarioExecutionService {
     constructor(private http: HttpClient) {
     }
 
-    findScenarioExecutions(scenarioId: string): Observable<Array<Execution>> {
-        return this.http.get<Array<Execution>>(environment.backend + `${this.resourceUrl}/${scenarioId}/execution/v1`)
-            .pipe(map((res: Array<Execution>) => {
-                return res.map((execution) => Execution.deserialize(execution));
-            }));
+    findScenarioExecutions(scenarioId: string): Observable<Execution[]> {
+        return this.http.get<Execution[]>(environment.backend + `${this.resourceUrl}/${scenarioId}/execution/v1`)
+            .pipe(
+                map((res: Execution[]) => {
+                    return res.map((execution) => Execution.deserialize(execution));
+        }));
     }
 
     executeScenarioAsync(scenarioId: string, computedParameters: Array<KeyValue> = [], env: string): Observable<string> {
@@ -45,19 +44,19 @@ export class ScenarioExecutionService {
     stopScenario(scenarioId: string, executionId: number): Observable<void> {
         return this.http.post(environment.backend +
             `${this.resourceUrl}/executionasync/v1/${scenarioId}/execution/${executionId}/stop`, {}).pipe(map((res: Response) => {
-            }));
+        }));
     }
 
     pauseScenario(scenarioId: string, executionId: number): Observable<void> {
         return this.http.post(environment.backend +
             `${this.resourceUrl}/executionasync/v1/${scenarioId}/execution/${executionId}/pause`, {}).pipe(map((res: Response) => {
-            }));
+        }));
     }
 
     resumeScenario(scenarioId: string, executionId: number): Observable<void> {
         return this.http.post(environment.backend +
             `${this.resourceUrl}/executionasync/v1/${scenarioId}/execution/${executionId}/resume`, {}).pipe(map((res: Response) => {
-            }));
+        }));
     }
 
     private createScenarioExecutionObservable(url: string) {

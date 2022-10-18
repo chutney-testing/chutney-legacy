@@ -7,7 +7,8 @@ import { debounceTime, delay, tap } from 'rxjs/operators';
 import { EventManagerService } from '@shared/event-manager.service';
 
 import { Execution, GwtTestCase, ScenarioComponent, ScenarioExecutionReport, StepExecutionReport, TestCase, Authorization } from '@model';
-import { ComponentService, ScenarioExecutionService, ScenarioService } from '@core/services';
+import { ComponentService, ScenarioService } from '@core/services';
+import { ScenarioExecutionService } from '@modules/scenarios/services/scenario-execution.service';
 
 @Component({
     selector: 'chutney-execution',
@@ -238,7 +239,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     private updateLocation(executionId: number) {
-        this.location.replaceState('/scenario/' + this.currentScenarioId + '/execution/' + executionId);
+        this.location.replaceState('/scenario/' + this.currentScenarioId + '/executions/' + executionId);
     }
 
     private unsubscribeScenarioExecutionAsyncSubscription() {

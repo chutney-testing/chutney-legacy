@@ -5,7 +5,8 @@ import { Observable, Subscription } from 'rxjs';
 import { delay, map, tap } from 'rxjs/operators';
 
 import { TestCase, KeyValue } from '@model';
-import { ScenarioExecutionService, ComponentService, ScenarioService } from '@core/services';
+import {  ComponentService, ScenarioService } from '@core/services';
+import { ScenarioExecutionService } from '@modules/scenarios/services/scenario-execution.service';
 
 @Component({
     selector: 'chutney-execute',
@@ -52,10 +53,10 @@ export class ExecuteComponent implements OnInit, OnDestroy {
             )
             .subscribe(
             executionId =>
-                this.router.navigateByUrl(`/scenario/${this.testCaseId}/execution/${executionId}`)
+                this.router.navigateByUrl(`/scenario/${this.testCaseId}/executions/${executionId}`)
                     .then(null),
             error =>
-                this.router.navigateByUrl(`/scenario/${this.testCaseId}/execution/last`)
+                this.router.navigateByUrl(`/scenario/${this.testCaseId}/executions/last`)
                     .then(null)
         );
     }

@@ -83,7 +83,7 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
                     () => {},
                     (error) => { console.log(error); }
                 );
-                this.router.navigateByUrl('/scenario/' + response + '/execution/last')
+                this.router.navigateByUrl('/scenario/' + response + '/executions/last')
                     .then(null);
             },
             (error) => {
@@ -98,7 +98,7 @@ export class ComponentEditionComponent extends CanDeactivatePage implements OnIn
 
     cancel() {
         if (this.scenarioComponent.id != null) {
-            this.router.navigateByUrl('/scenario/' + this.scenarioComponent.id + '/execution/last');
+            this.router.navigateByUrl('/scenario/' + this.scenarioComponent.id + '/executions/last');
         } else {
             this.router.navigateByUrl('/scenario');
         }

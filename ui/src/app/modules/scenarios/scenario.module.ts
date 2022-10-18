@@ -4,8 +4,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // External libs
-import { MomentModule } from 'ngx-moment';
-import { NgbDropdownModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { DateFormatPipe, MomentModule } from 'ngx-moment';
+import { NgbDropdownModule, NgbHighlight, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FileSaverModule } from 'ngx-filesaver';
 import { AngularMultiSelectModule } from 'angular2-multiselect-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
@@ -34,6 +34,8 @@ import { ComponentReadComponent } from './components/execution/component-read/co
 import { GwtReadComponent } from './components/execution/gwt-read/gwt-read.component';
 import { AuthoringInfoComponent } from './components/edition/authoring-info/authoring-info.component';
 import { EditionInfoComponent } from './components/edition/edition-info/edition-info.component';
+import { ScenarioExecutionsComponent } from './components/execution/list/scenario-executions.component';
+import { ScenarioExecutionService } from '@modules/scenarios/services/scenario-execution.service';
 
 const ROUTES = [
     ...scenarioRoute
@@ -60,8 +62,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
         FileSaverModule,
         // Internal common
         SharedModule,
-        MoleculesModule,
-        NgbDropdownModule,
+        MoleculesModule
     ],
     declarations: [
         ScenariosComponent,
@@ -77,13 +78,16 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
         ComponentReadComponent,
         GwtReadComponent,
         AuthoringInfoComponent,
-        EditionInfoComponent
+        EditionInfoComponent,
+        ScenarioExecutionsComponent
     ],
     providers: [
         {
             provide: PERFECT_SCROLLBAR_CONFIG,
             useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
         },
+        DateFormatPipe,
+        ScenarioExecutionService
     ]
 })
 export class ScenarioModule {
