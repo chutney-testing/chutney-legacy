@@ -209,6 +209,10 @@ public class HttpTaskTest {
         assertThat((Integer) executionResult.outputs.get("status")).isEqualTo(expectedStatus);
     }
 
+    /**
+     * It test that the proxy is set.
+     * It doesnt test DefaultProxyRoutePlanner class.
+     */
     @Test
     public void should_use_target_proxy() {
         String uri = "/some/thing";
@@ -220,10 +224,9 @@ public class HttpTaskTest {
 
         Logger logger = mock(Logger.class);
         Target targetMock = mockTarget("http://123.456.789.123:45678");
-        when(targetMock.property("proxy.host")).thenReturn(of("127.0.0.1"));
-        when(targetMock.numericProperty("proxy.port")).thenReturn(of(wireMockServer.httpsPort()));
-        // when
+        when(targetMock.property("proxy")).thenReturn(of("https://127.0.0.1:" + wireMockServer.httpsPort()));
 
+        // when
         Task httpPutTask = new HttpGetTask(targetMock, logger, uri, emptyMap(), "1000 ms");
         TaskExecutionResult executionResult = httpPutTask.execute();
 
