@@ -216,7 +216,11 @@
             "options": "Options",
             "parallelRun": "Execution parallèle des scénarios",
             "retryAuto": "1 retry auto sur les scénarios en échec",
-            "jiraLinkedTest": "Scénarios du test exec",
+            "jiraLinkedTest": "Scénarios lié à jira",
+            "jiraIdInfo": {
+                "testPlan": "Si id test plan, un nouveau test exec est créé à chaque exécution.",
+                "testExec": "Si id test exec, les status des tests du test exec sont mis à jour."
+            },
             "selectTag": "Sélectionner tag",
             "selectJiraTag": "Sélectionner statut d'execution jira"
         },

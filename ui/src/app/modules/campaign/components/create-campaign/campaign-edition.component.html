@@ -42,6 +42,12 @@
                 <input type="text" class="form-control me-2 small-text"
                         formControlName="jiraId" (change)="refreshJiraScenarios()"
                         placeholder="id jira"/>
+                <ng-template #jiraFieldHelp>{{'campaigns.edition.jiraIdInfo.testPlan' | translate}}<br>{{'campaigns.edition.jiraIdInfo.testExec' | translate}}</ng-template>
+                <button type="button" class="btn btn-link position-relative float-end" style="margin-top: -34;"
+                        [ngbPopover]="jiraFieldHelp" placement="bottom"
+                        triggers="mouseenter:mouseleave">
+                    <span class="fa fa-info-circle" aria-hidden="true"></span>
+                </button>
             </div>
             <div class="col-12">
                 <label>{{'menu.principal.dataset' | translate}}</label>

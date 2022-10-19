@@ -122,7 +122,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
                 if (campaign) {
                     this.campaign = campaign;
                     this.loadReports(this.campaign, selectLast, executionId);
-                    this.initJiraTestExecutionId();
+                    this.getJiraTestExecutionScenarios();
                 }
             },
             (error) => {
@@ -278,6 +278,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
         this.currentCampaignExecutionReport = campaignExecutionReport;
         this.currentScenariosReportsOutlines = newInstance(campaignExecutionReport.scenarioExecutionReports);
         this.updateLocation(this.currentCampaignExecutionReport.executionId);
+        this.getJiraTestExecutionScenarios();
     }
 
     private resetOrdering() {
@@ -392,7 +393,7 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
         return this.UNSUPPORTED;
     }
 
-    initJiraTestExecutionId() {
+    getJiraTestExecutionScenarios() {
 
         this.jiraPluginConfigurationService.getUrl()
         .subscribe((r) => {
@@ -402,12 +403,12 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
         });
         this.jiraLinkService.findByCampaignId(this.campaign.id).subscribe(
             (jiraId) => {
-                this.testExecutionId = jiraId;
                 if(jiraId) {
-                    this.jiraLinkService.findTestExecScenarios(this.testExecutionId)
+                    this.jiraLinkService.findTestExecScenariosByCampaignExecution(this.currentCampaignExecutionReport.executionId)
                     .subscribe(
                         (result) => {
-                            this.jiraScenarios = result;
+                            this.jiraScenarios = result.jiraScenarios;
+                            this.testExecutionId = result.id;
                         }
                     );
                 }

@@ -217,6 +217,10 @@
             "parallelRun": "Parallel run",
             "retryAuto": "1 auto retry on failed scenario",
             "jiraLinkedTest": "Test exec scenarios",
+            "jiraIdInfo": {
+                "testPlan": "If id test plan, create new test exec on campaign execution.",
+                "testExec": "If id test exec, update test status on current test execution."
+            },
             "selectTag": "Select tag",
             "selectJiraTag": "Select jira execution status"
         },

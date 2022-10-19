@@ -7,6 +7,7 @@ import com.chutneytesting.jira.xrayapi.XrayTestExecTest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.http.MediaType;
@@ -29,6 +30,7 @@ public class JiraModuleController {
     public static final String BASE_URL = "/api/ui/jira/v1/";
     public static final String BASE_SCENARIO_URL = "scenario";
     public static final String BASE_CAMPAIGN_URL = "campaign";
+    public static final String BASE_CAMPAIGN_EXEC_URL = "campaign_execution";
     public static final String BASE_TEST_EXEC_URL = "testexec";
     public static final String BASE_CONFIGURATION_URL = "configuration";
 
@@ -93,9 +95,10 @@ public class JiraModuleController {
 
     @PreAuthorize("hasAuthority('CAMPAIGN_WRITE')")
     @GetMapping(path = BASE_TEST_EXEC_URL + "/{testExecId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<JiraDto> getScenariosByCampaignId(@PathVariable String testExecId) {
-        if (testExecId.isEmpty())
+    public List<JiraDto> getScenariosByTestExecutionId(@PathVariable String testExecId) {
+        if (testExecId.isEmpty()) {
             return new ArrayList<>();
+        }
 
         Map<String, String> allLinkedScenarios = jiraRepository.getAllLinkedScenarios();
         Map<String, XrayTestExecTest> collect = jiraXrayService.getTestExecutionScenarios(testExecId).stream().collect(Collectors.toMap(XrayTestExecTest::getKey, Function.identity()));
@@ -106,9 +109,25 @@ public class JiraModuleController {
             .map(m -> ImmutableJiraDto.builder()
                 .id(m.getValue())
                 .chutneyId(m.getKey())
-                .executionStatus(collect.get(m.getValue()).getStatus())
+                .executionStatus(Optional.ofNullable(collect.get(m.getValue()).getStatus()))
                 .build())
             .collect(Collectors.toList());
+    }
+
+    @PreAuthorize("hasAuthority('CAMPAIGN_WRITE')")
+    @GetMapping(path = BASE_CAMPAIGN_EXEC_URL + "/{campaignExecutionId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public JiraTestExecutionDto getScenariosByCampaignExecutionId(@PathVariable String campaignExecutionId) {
+        if (campaignExecutionId.isEmpty()) {
+            throw new IllegalArgumentException("Empty campaign execution id");
+        }
+
+        String testExecId = jiraRepository.getByCampaignExecutionId(campaignExecutionId);
+        List<JiraDto> jiraDtoList = getScenariosByTestExecutionId(testExecId);
+
+        return ImmutableJiraTestExecutionDto.builder()
+            .id(testExecId)
+            .jiraScenarios(jiraDtoList)
+            .build();
     }
 
     @PreAuthorize("hasAuthority('CAMPAIGN_WRITE')")

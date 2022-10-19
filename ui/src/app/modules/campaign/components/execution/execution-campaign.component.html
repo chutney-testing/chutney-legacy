@@ -123,6 +123,7 @@
 
         <span class="m-2">
             {{'campaigns.execution.name' | translate}} <strong>#{{currentCampaignExecutionReport.executionId}}</strong>
+            <span *ngIf="this.jiraUrl && this.testExecutionId"> (<a target="_blank" rel="noopener noreferrer" href="{{ this.jiraUrl +'/browse/' + testExecutionId }}">{{testExecutionId}}</a>)</span>
             {{'campaigns.execution.on_env' | translate}} <strong>{{currentCampaignExecutionReport.executionEnvironment}}</strong>
             {{currentCampaignExecutionReport.user == '' ? '' : 'global.smallword.by' | translate }} <strong>{{currentCampaignExecutionReport.user}}</strong>
         </span>

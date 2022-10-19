@@ -125,7 +125,7 @@ class JiraModuleControllerTest {
     }
 
     @Test
-    void getScenariosByCampaignId() {
+    void getScenariosByTestExecutionId() {
 
         List<XrayTestExecTest> result = new ArrayList<>();
         XrayTestExecTest xrayTestExecTest = new XrayTestExecTest();
@@ -143,6 +143,26 @@ class JiraModuleControllerTest {
         assertThat(scenarios.get(0).id()).isEqualTo("SCE-2");
         assertThat(scenarios.get(0).chutneyId()).isEqualTo("2");
         assertThat(scenarios.get(0).executionStatus().get()).isEqualTo(PASS.value);
+    }
+
+    @Test
+    void getScenariosByCampaignExecutionId() {
+        List<XrayTestExecTest> result = new ArrayList<>();
+        XrayTestExecTest xrayTestExecTest = new XrayTestExecTest();
+        xrayTestExecTest.setId("12345");
+        xrayTestExecTest.setKey("SCE-2");
+        xrayTestExecTest.setStatus(PASS.value);
+        result.add(xrayTestExecTest);
+        jiraRepository.saveForCampaignExecution("3", "JIRA-22");
+        when(mockJiraXrayApi.getTestExecutionScenarios("JIRA-22")).thenReturn(result);
+
+        JiraTestExecutionDto jiraTestExecution = getJiraController("/api/ui/jira/v1/campaign_execution/3", new TypeReference<>() {
+        });
+
+        assertThat(jiraTestExecution.jiraScenarios()).hasSize(1);
+        assertThat(jiraTestExecution.jiraScenarios().get(0).id()).isEqualTo("SCE-2");
+        assertThat(jiraTestExecution.jiraScenarios().get(0).chutneyId()).isEqualTo("2");
+        assertThat(jiraTestExecution.jiraScenarios().get(0).executionStatus().get()).isEqualTo(PASS.value);
     }
 
     @Test
@@ -208,7 +228,7 @@ class JiraModuleControllerTest {
 
         when(mockJiraXrayApi.getTestExecutionScenarios(anyString())).thenReturn(list(xrayTestExecTest));
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/ui/jira/v1/testexec/JIRA-10\"")
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/ui/jira/v1/testexec/JIRA-10")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(om.writeValueAsString(dto))
                 .accept(MediaType.APPLICATION_JSON_VALUE))

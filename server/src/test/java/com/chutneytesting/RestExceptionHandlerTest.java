@@ -53,7 +53,7 @@ class RestExceptionHandlerTest {
             of(new HttpMessageConversionException(""), BAD_REQUEST, status().isBadRequest()),
             of(new AlreadyExistingTargetException(""), CONFLICT, status().isConflict()),
             of(new ScenarioConversionException("", mock(Exception.class)), UNPROCESSABLE_ENTITY, status().isUnprocessableEntity()),
-            of(new IllegalArgumentException(), FORBIDDEN, status().isForbidden())
+            of(new IllegalArgumentException(), BAD_REQUEST, status().isBadRequest())
         );
     }
 

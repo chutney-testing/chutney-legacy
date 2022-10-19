@@ -22,6 +22,7 @@ public class JiraFileRepository implements JiraRepository {
     private static final String FILE_EXTENSION = ".json";
     private static final String SCENARIO_FILE = "scenario_link" + FILE_EXTENSION;
     private static final String CAMPAIGN_FILE = "campaign_link" + FILE_EXTENSION;
+    private static final String CAMPAIGN_EXECUTION_FILE = "campaign_execution_link" + FILE_EXTENSION;
     private static final String CONFIGURATION_FILE = "jira_config" + FILE_EXTENSION;
 
     private final Path storeFolderPath;
@@ -51,7 +52,7 @@ public class JiraFileRepository implements JiraRepository {
         return getAll(SCENARIO_FILE)
             .entrySet()
             .stream()
-            .collect(Collectors.toMap(entry -> entry.getKey(), Map.Entry::getValue));
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @Override
@@ -82,6 +83,21 @@ public class JiraFileRepository implements JiraRepository {
     @Override
     public void removeForCampaign(String campaignId) {
         remove(CAMPAIGN_FILE, campaignId);
+    }
+
+    @Override
+    public String getByCampaignExecutionId(String campaignExecutionId) {
+        return getById(CAMPAIGN_EXECUTION_FILE, campaignExecutionId);
+    }
+
+    @Override
+    public void saveForCampaignExecution(String campaignExecutionId, String jiraId) {
+        save(CAMPAIGN_EXECUTION_FILE, campaignExecutionId, jiraId);
+    }
+
+    @Override
+    public void removeForCampaignExecution(String campaignExecutionId) {
+        remove(CAMPAIGN_EXECUTION_FILE, campaignExecutionId);
     }
 
     @Override
