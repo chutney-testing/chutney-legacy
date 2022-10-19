@@ -15,7 +15,7 @@
             "jiraId": "Jira identifier",
             "roles": "Roles",
             "admin": "Admin",
-            "signIn": "Sign In",
+            "profile": "Profile",
             "signOut": "Sign Out",
             "darkMode": "Dark mode",
             "lightMode": "Light mode",

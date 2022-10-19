@@ -15,7 +15,7 @@
             "jiraId": "Identifiant jira",
             "roles": "Roles",
             "admin": "Admin",
-            "signIn": "Connexion",
+            "profile": "Profil",
             "signOut": "Déconnexion",
             "darkMode": "Thème sombre",
             "lightMode": "Thème clair",
