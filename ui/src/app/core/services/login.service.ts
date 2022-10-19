@@ -24,12 +24,13 @@ export class LoginService {
   ) { }
 
   initLogin(url?: string) {
+    const nextUrl = this.checkUrlNotLogin(url);
     this.currentUser(true).pipe(
         tap(user => this.setUser(user))
     ).subscribe(
-        () => this.navigateAfterLogin(url),
+        () => this.navigateAfterLogin(nextUrl),
         () => {
-            const queryParams: Object = isNullOrBlankString(url) ? {} : { queryParams: { url: url } };
+            const queryParams: Object = isNullOrBlankString(nextUrl) ? {} : { queryParams: { url: nextUrl } };
             this.router.navigate(['login'], queryParams);
         }
     );
@@ -60,9 +61,10 @@ export class LoginService {
   }
 
   navigateAfterLogin(url?: string) {
+    const nextUrl = this.checkUrlNotLogin(url);
     if (this.isAuthenticated()) {
         const user: User = this.user$.getValue();
-        this.router.navigateByUrl(url ? url : this.defaultForwardUrl(user));
+        this.router.navigateByUrl(nextUrl ? nextUrl : this.defaultForwardUrl(user));
     }
   }
 
@@ -123,5 +125,9 @@ export class LoginService {
     }
 
     return '/login';
+  }
+
+  private checkUrlNotLogin(url: string): string {
+    return url && url != '/login' ? url : null;
   }
 }
