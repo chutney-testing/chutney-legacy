@@ -49,7 +49,7 @@ public class HttpPutTask implements Task {
 
     @Override
     public TaskExecutionResult execute() {
-        HttpClient httpClient = new HttpClientFactory().create(target, String.class, (int) parseToMs(timeout));
+        HttpClient httpClient = new HttpClientFactory().create(logger, target, String.class, (int) parseToMs(timeout));
         HttpHeaders httpHeaders = new HttpHeaders();
         headers.forEach((key, value) -> httpHeaders.add(key, value));
         Supplier<ResponseEntity<String>> caller = () -> httpClient.put(this.uri, body, httpHeaders);
