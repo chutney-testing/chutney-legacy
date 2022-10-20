@@ -21,7 +21,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" (click)="errorMessage = null"></button>
             {{ errorMessage }}
         </div>
-        
+
         <div class="row row-cols-lg-auto g-3">
             <div class="col-sm-7" [class.errors-input]="submitted && f['title'].errors['required']">
                 <label for="title">{{ 'campaigns.edition.form.title.label' | translate }}</label>
@@ -132,7 +132,7 @@
                             </td>
                             <td class="p-0">
                                 <a  *ngIf="jiraMap.has(scenario.id)" role="button" class="btn btn-sm btn-link me-0"
-                                    target="_blank" href="{{getJiraLink(scenario.id)}}"
+                                    target="_blank" href="{{getJiraLink(scenario.id)}}" rel="noopener noreferrer"
                                     ngbPopover="{{jiraMap.get(scenario.id)}}" placement="left" (click)="$event.stopPropagation()"
                                     triggers="mouseenter:mouseleave">
                                     <span class="fab fa-jira" aria-hidden="true">
@@ -215,7 +215,7 @@
                             </td>
                             <td class="p-0">
                                 <a *ngIf="jiraMap.has(scenario.id)" role="button" class="btn btn-sm btn-link me-0"
-                                    target="_blank" href="{{getJiraLink(scenario.id)}}"
+                                    target="_blank" href="{{getJiraLink(scenario.id)}}" rel="noopener noreferrer"
                                     ngbPopover="{{jiraMap.get(scenario.id)}}" placement="left" (click)="$event.stopPropagation()"
                                     triggers="mouseenter:mouseleave">
                                     <span class="fab fa-jira" aria-hidden="true">

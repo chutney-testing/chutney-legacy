@@ -192,7 +192,7 @@
                         </td>
                         <td *ngIf="testExecutionId && getJiraLink(scenarioReportOutline.scenarioId) !== null">
                             <a role="button" class="btn btn-sm btn-link m-0"
-                                target="_blank" href="{{getJiraLink(scenarioReportOutline.scenarioId)}}"
+                                target="_blank" href="{{getJiraLink(scenarioReportOutline.scenarioId)}}" rel="noopener noreferrer"
                                 ngbPopover="{{getJiraLink(scenarioReportOutline.scenarioId)}}" placement="left" (click)="$event.stopPropagation()"
                                 triggers="mouseenter:mouseleave">
                                 <span class="fab fa-jira" aria-hidden="true">
