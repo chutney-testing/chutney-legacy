@@ -89,7 +89,7 @@ public class HttpClientFactory {
                 final URL url = new URL(proxy);
                 final String host = url.getHost();
                 final String scheme = url.getProtocol();
-                final int port = ofNullable(url.getPort()).orElse(defaultPort(scheme));
+                final int port = ofNullable(url.getPort()).orElse(3128);
                 final HttpHost httpProxy = new HttpHost(host, port, scheme);
                 logger.info("Proxy used: [" + httpProxy + "]");
                 return of(new DefaultProxyRoutePlanner(httpProxy));
@@ -101,17 +101,6 @@ public class HttpClientFactory {
             return of(new SystemDefaultRoutePlanner(ProxySelector.getDefault()));
         }
         return empty();
-    }
-
-    private static int defaultPort(String scheme) {
-        switch (scheme) {
-            case "https":
-                return 443;
-            case "http":
-                return 80;
-            default:
-                return -1;
-        }
     }
 
     private static boolean isTargetProxySet(Target target) {
