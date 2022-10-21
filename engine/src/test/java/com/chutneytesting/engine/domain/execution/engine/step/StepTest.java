@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class StepTest {
@@ -343,6 +344,38 @@ public class StepTest {
 
     }
 
+    @Test
+    public void should_evaluate_spel_for_target_data() {
+        // Given
+        TargetImpl fakeTarget = TargetImpl.builder()
+            .withName("${#dynamicTarget}")
+            .withUrl("${#dynamicUrl}")
+            .withProperties(Map.of("${#dynamicPropertiesKey}", "${#dynamicPropertiesValue}"))
+            .build();
+        String environment = "FakeTestEnvironment";
+
+        Map<String, Object> inputs = new HashMap<>();
+        inputs.put("dynamicTarget", "name");
+        inputs.put("dynamicUrl", "uri");
+        inputs.put("dynamicPropertiesKey", "key");
+        inputs.put("dynamicPropertiesValue", "value");
+
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, inputs, null, null, null, environment);
+        StepExecutor stepExecutorMock = mock(StepExecutor.class);
+        Step step = new Step(dataEvaluator, fakeStepDefinition, stepExecutorMock, emptyList());
+
+        // When
+        step.execute(ScenarioExecution.createScenarioExecution(null), new ScenarioContextImpl());
+
+        // Then
+        ArgumentCaptor<Target> targetCaptor = ArgumentCaptor.forClass(Target.class);
+        verify(stepExecutorMock).execute(any(), any(), targetCaptor.capture(), any());
+
+        Target target = targetCaptor.getValue();
+        assertThat(target.name()).isEqualTo("name");
+        assertThat(target.uri()).isEqualTo("uri");
+        assertThat(target.property("key")).isEqualTo("value");
+    }
 
     private Status executeWithRemote(Status remoteStatus) {
 

@@ -18,13 +18,13 @@ public class TargetImpl implements Target {
     public static final TargetImpl NONE = TargetImpl.builder().build();
 
     public final String name;
-    public final URI uri;
+    public final String url;
     public final Map<String, String> properties;
     public final List<NamedHostAndPort> agents;
 
     private TargetImpl(String name, String url, Map<String, String> properties, List<NamedHostAndPort> agents) {
         this.name = name;
-        this.uri = uriFrom(url);
+        this.url = url;
         this.properties = properties;
         this.agents = agents;
     }
@@ -40,7 +40,7 @@ public class TargetImpl implements Target {
 
     @Override
     public URI uri() {
-        return uri;
+        return uriFrom(url);
     }
 
     @Override
