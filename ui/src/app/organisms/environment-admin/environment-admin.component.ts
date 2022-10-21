@@ -177,8 +177,8 @@ export class EnvironmentAdminComponent implements OnInit {
     }
 
     isValid(target: Target): boolean {
-        return this.validationService.isNotEmpty(target.name)
-            && this.validationService.isValidUrl(target.url);
+        return this.validationService.isNotEmpty(target.name);
+           // && this.validationService.isValidUrl(target.url);
     }
 
     deleteEnvironment() {

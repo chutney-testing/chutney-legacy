@@ -44,6 +44,11 @@ public class TargetImpl implements Target {
     }
 
     @Override
+    public String rawUri() {
+        return url;
+    }
+
+    @Override
     public Optional<String> property(String key) {
         return ofNullable(properties.get(key));
     }
@@ -58,6 +63,15 @@ public class TargetImpl implements Target {
 
     public Map<String, String> properties() {
         return properties;
+    }
+
+    @Override
+    public String toString() {
+        return "TargetImpl{" +
+            "name='" + name + '\'' +
+            ", url='" + url + '\'' +
+            ", properties=" + properties +
+            '}';
     }
 
     public static class TargetBuilder {

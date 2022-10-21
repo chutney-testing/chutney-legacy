@@ -43,7 +43,7 @@ public class Step {
 
     private final StepState state;
     private final List<Step> steps;
-    private final Target target;
+    private Target target;
     private final StepExecutor executor;
     private final StepDataEvaluator dataEvaluator;
 
@@ -83,7 +83,9 @@ public class Step {
         try {
             makeTargetAccessibleForInputEvaluation(scenarioContext);
             makeEnvironmentAccessibleForInputEvaluation(scenarioContext);
+
             Map<String, Object> evaluatedInputs = definition.type.equals("final") ? definition.inputs : unmodifiableMap(dataEvaluator.evaluateNamedDataWithContextVariables(definition.inputs, scenarioContext));
+            this.target = dataEvaluator.evaluateTarget(target, scenarioContext);
 
             Try
                 .exec(() -> new StepContextImpl(evaluatedInputs, scenarioContext))

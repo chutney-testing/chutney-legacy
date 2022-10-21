@@ -21,6 +21,7 @@ import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.subjects.ReplaySubject;
 import io.reactivex.subjects.Subject;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -106,23 +107,33 @@ public class Reporter {
     }
 
     StepExecutionReport generateReport(Step step, Function<Step, Status> statusSupplier) {
-        Step.StepContextImpl stepContext = step.stepContext();
-        return new StepExecutionReportBuilder()
-            .setName(step.definition().name)
-            .setEnvironment(step.definition().environment)
-            .setDuration(step.duration().toMillis())
-            .setStartDate(step.startDate())
-            .setStatus(statusSupplier.apply(step))
-            .setInformation(step.informations())
-            .setErrors(step.errors())
-            .setSteps(step.subSteps().stream().map(subStep -> generateReport(subStep, Step::status)).collect(Collectors.toList()))
-            .setEvaluatedInputs(stepContext.getEvaluatedInputs())
-            .setStepResults(stepContext.getStepOutputs())
-            .setScenarioContext(stepContext.getScenarioContext())
-            .setType(step.type())
-            .setTarget(step.target())
-            .setStrategy(guardNullStrategy(step.strategy()))
-            .createStepExecutionReport();
+        try {
+            Step.StepContextImpl stepContext = step.stepContext();
+            return new StepExecutionReportBuilder()
+                .setName(step.definition().name)
+                .setEnvironment(step.definition().environment)
+                .setDuration(step.duration().toMillis())
+                .setStartDate(step.startDate())
+                .setStatus(statusSupplier.apply(step))
+                .setInformation(step.informations())
+                .setErrors(step.errors())
+                .setSteps(step.subSteps().stream().map(subStep -> generateReport(subStep, Step::status)).collect(Collectors.toList()))
+                .setEvaluatedInputs(stepContext.getEvaluatedInputs())
+                .setStepResults(stepContext.getStepOutputs())
+                .setScenarioContext(stepContext.getScenarioContext())
+                .setType(step.type())
+                .setTarget(step.target())
+                .setStrategy(guardNullStrategy(step.strategy()))
+                .createStepExecutionReport();
+        } catch (Exception e) {
+            String error = "Cannot generate step report: " + e.getMessage();
+            LOGGER.error(error, e);
+            return new StepExecutionReportBuilder()
+                .setName(step.definition().name)
+                .setStatus(Status.FAILURE)
+                .setErrors(List.of(error))
+                .createStepExecutionReport();
+        }
     }
 
     /* TODO mbb - hack - remove me when core module domain is decouple from lite-engine domain & API */

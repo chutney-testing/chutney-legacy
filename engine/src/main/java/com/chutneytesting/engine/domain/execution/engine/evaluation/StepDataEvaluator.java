@@ -2,7 +2,9 @@ package com.chutneytesting.engine.domain.execution.engine.evaluation;
 
 import static com.chutneytesting.engine.domain.execution.engine.evaluation.Strings.escapeForRegex;
 
+import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.evaluation.SpelFunctions;
+import com.chutneytesting.task.spi.injectable.Target;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,14 +39,7 @@ public class StepDataEvaluator {
     public Map<String, Object> evaluateNamedDataWithContextVariables(final Map<String, Object> data, final Map<String, Object> contextVariables) throws EvaluationException {
         Map<String, Object> evaluatedNamedData = new LinkedHashMap<>();
 
-        StandardEvaluationContext evaluationContext = new StandardEvaluationContext();
-        evaluationContext.registerMethodFilter(java.lang.Runtime.class, methods -> Collections.emptyList());
-        evaluationContext.registerMethodFilter(java.lang.ProcessBuilder.class, methods -> Collections.emptyList());
-
-        if (spelFunctions != null) {
-            spelFunctions.stream().forEach(f -> evaluationContext.registerFunction(f.getName(), f.getMethod()));
-        }
-        evaluationContext.setVariables(contextVariables);
+        StandardEvaluationContext evaluationContext = buildEvaluationContext(contextVariables);
 
         data.forEach(
             (dataName, dataValue) -> {
@@ -54,6 +49,29 @@ public class StepDataEvaluator {
             }
         );
         return evaluatedNamedData;
+    }
+
+    public Target evaluateTarget(final Target target, final Map<String, Object> contextVariables) throws EvaluationException {
+        TargetImpl.TargetBuilder builder = TargetImpl.builder();
+
+        StandardEvaluationContext evaluationContext = buildEvaluationContext(contextVariables);
+
+        builder.withName((String) evaluateObject(target.name(), evaluationContext));
+        builder.withUrl((String) evaluateObject(target.rawUri(), evaluationContext));
+        builder.withProperties((Map<String,String>) evaluateObject(target.prefixedProperties(""), evaluationContext));
+        return builder.build();
+    }
+
+    private StandardEvaluationContext buildEvaluationContext(Map<String, Object> contextVariables) {
+        StandardEvaluationContext evaluationContext = new StandardEvaluationContext();
+        evaluationContext.registerMethodFilter(Runtime.class, methods -> Collections.emptyList());
+        evaluationContext.registerMethodFilter(ProcessBuilder.class, methods -> Collections.emptyList());
+
+        if (spelFunctions != null) {
+            spelFunctions.stream().forEach(f -> evaluationContext.registerFunction(f.getName(), f.getMethod()));
+        }
+        evaluationContext.setVariables(contextVariables);
+        return evaluationContext;
     }
 
     @SuppressWarnings("unchecked")

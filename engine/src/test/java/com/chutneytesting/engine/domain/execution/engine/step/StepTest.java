@@ -348,14 +348,13 @@ public class StepTest {
     public void should_evaluate_spel_for_target_data() {
         // Given
         TargetImpl fakeTarget = TargetImpl.builder()
-            .withName("${#dynamicTarget}")
+            .withName("NAME")
             .withUrl("${#dynamicUrl}")
             .withProperties(Map.of("${#dynamicPropertiesKey}", "${#dynamicPropertiesValue}"))
             .build();
         String environment = "FakeTestEnvironment";
 
         Map<String, Object> inputs = new HashMap<>();
-        inputs.put("dynamicTarget", "name");
         inputs.put("dynamicUrl", "uri");
         inputs.put("dynamicPropertiesKey", "key");
         inputs.put("dynamicPropertiesValue", "value");
@@ -372,9 +371,9 @@ public class StepTest {
         verify(stepExecutorMock).execute(any(), any(), targetCaptor.capture(), any());
 
         Target target = targetCaptor.getValue();
-        assertThat(target.name()).isEqualTo("name");
-        assertThat(target.uri()).isEqualTo("uri");
-        assertThat(target.property("key")).isEqualTo("value");
+        assertThat(target.name()).isEqualTo("NAME");
+        assertThat(target.rawUri()).isEqualTo("uri");
+        assertThat(target.property("key").get()).isEqualTo("value");
     }
 
     private Status executeWithRemote(Status remoteStatus) {
