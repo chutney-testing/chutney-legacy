@@ -12,7 +12,7 @@ public interface Target {
 
     URI uri();
 
-    String rawUri();
+    String rawUri(); //TODO tester propagation agents, if url malformé voir si gestion de l'erreur propre
 
     Optional<String> property(String key);
 

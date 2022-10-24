@@ -56,9 +56,9 @@ public class StepDataEvaluator {
 
         StandardEvaluationContext evaluationContext = buildEvaluationContext(contextVariables);
 
-        builder.withName((String) evaluateObject(target.name(), evaluationContext));
+        builder.withName(target.name());
         builder.withUrl((String) evaluateObject(target.rawUri(), evaluationContext));
-        builder.withProperties((Map<String,String>) evaluateObject(target.prefixedProperties(""), evaluationContext));
+        builder.withProperties((Map<String, String>) evaluateObject(target.prefixedProperties(""), evaluationContext));
         return builder.build();
     }
 
@@ -79,7 +79,7 @@ public class StepDataEvaluator {
         Object inputEvaluatedValue;
         if (object instanceof String) {
             String stringValue = (String) object;
-            if (isObjectEvaluation(stringValue)) {
+            if (hasOnlyOneSpel(stringValue)) {
                 inputEvaluatedValue = Strings.replaceExpression(stringValue, s -> evaluate(parser, evaluationContext, s), EVALUATION_STRING_PREFIX, EVALUATION_STRING_SUFFIX, EVALUATION_STRING_ESCAPE);
             } else {
                 inputEvaluatedValue = Strings.replaceExpressions(stringValue, s -> evaluate(parser, evaluationContext, s), EVALUATION_STRING_PREFIX, EVALUATION_STRING_SUFFIX, EVALUATION_STRING_ESCAPE);
@@ -136,7 +136,15 @@ public class StepDataEvaluator {
         }
     }
 
-    private boolean isObjectEvaluation(String template) {
+    /**
+     * If there is only one spel, it means it can be evaluated as a whole java Object.
+     * ex: ${#webdriver} will retrieve the object Webdriver stored in the context
+     * If there are multiple spel, it will be a String concatenation
+     *
+     * @param template
+     * @return true if only one spel in template
+     */
+    private boolean hasOnlyOneSpel(String template) {
         return EVALUATION_OBJECT_PATTERN.matcher(template.trim()).matches();
     }
 
