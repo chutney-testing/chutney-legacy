@@ -60,7 +60,7 @@ public class SqlAction implements Action {
         SqlClient sqlClient = clientFactory.create(target);
         try {
             List<Records> records = new ArrayList<>();
-            Map<String, List<Records>> outputs = new HashMap<>();
+            Map<String, Object> outputs = new HashMap<>();
             AtomicBoolean failure = new AtomicBoolean(false);
             statements.forEach(statement -> {
                 try {
@@ -78,6 +78,7 @@ public class SqlAction implements Action {
                 }
             });
             outputs.put("recordResult", records);
+            outputs.put("records", records.get(0));
             return failure.get() ? ActionExecutionResult.ko(outputs) : ActionExecutionResult.ok(outputs);
         } finally {
             if (sqlClient != null) {
