@@ -88,7 +88,7 @@ export class EnvironmentAdminComponent implements OnInit {
 
     updateTarget(oldTargetName: string, newTarget: Target) {
         if (!this.isValid(newTarget)) {
-            this.errorMessage = 'Name cannot be empty and url must match xxx://xxxxx:12345';
+            this.errorMessage = 'Name cannot be empty and url must match xxx://xxxxx:12345 or a spel (${#dynamicUri})';
         } else {
 
             this.environmentAdminService.updateTarget(this.selectedEnvironment.name, oldTargetName, newTarget).subscribe(
@@ -122,7 +122,7 @@ export class EnvironmentAdminComponent implements OnInit {
             (t) => {
                 if (!this.isValid(t)) {
                     this.errorMessage +=
-                        '<br>Error found in ' + f.name + ', target name cannot be empty and url must match xxx://xxxxx:12345';
+                        '<br>Error found in ' + f.name + ', target name cannot be empty and url must match xxx://xxxxx:12345 or a spel (${#dynamicUri})';
                 } else {
                     try {
                         const duplicates = this.findDuplicate(t);
@@ -177,8 +177,8 @@ export class EnvironmentAdminComponent implements OnInit {
     }
 
     isValid(target: Target): boolean {
-        return this.validationService.isNotEmpty(target.name);
-           // && this.validationService.isValidUrl(target.url);
+        return this.validationService.isNotEmpty(target.name)
+            && this.validationService.isValidUrlOrSpel(target.url);
     }
 
     deleteEnvironment() {

@@ -59,3 +59,15 @@ it('isValidEnvironmentName returns false short string', () => {
 it('isValidEnvironmentName returns true when valid environment name', () => {
   expect(service.isValidEnvironmentName('TEST_45-2')).toBe(true);
 });
+
+it('isValidSpel returns false on null', () => {
+    expect(service.isValidSpel(null)).toBe(false);
+});
+
+it('isValidSpel returns false with empty spel', () => {
+    expect(service.isValidSpel('${}')).toBe(false);
+});
+
+it('isValidSpel returns true on valid spel', () => {
+    expect(service.isValidSpel('${test}')).toBe(true);
+});

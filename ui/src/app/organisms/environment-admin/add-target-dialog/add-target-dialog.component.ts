@@ -36,7 +36,7 @@ export class AddTargetDialogComponent {
     }
 
     isValid(): boolean {
-        return this.validationService.isNotEmpty(this.target.name);
-            //&& this.validationService.isValidUrl(this.target.url);
+        return this.validationService.isNotEmpty(this.target.name)
+            && this.validationService.isValidUrlOrSpel(this.target.url);
     }
 }
