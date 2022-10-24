@@ -15,7 +15,7 @@ public class Records {
     @Deprecated public final List<List<Object>> rows;
 
     public final List<Column> columns;
-    public final List<Row> records;
+    public final List<Row> records; // TODO - rename to 'rows' after removing currently deprecated 'rows'
 
     public Records(int affectedRows, List<Column> columns, List<Row> records) {
         this.affectedRows = affectedRows;
@@ -30,8 +30,17 @@ public class Records {
         return headers;
     }
 
+    @Deprecated
     List<List<Object>> getRows() {
         return rows;
+    }
+
+    public Rows rows() {
+        return new Rows(records);
+    }
+
+    public Row row(int index) {
+        return records.get(index);
     }
 
     public int count() {
