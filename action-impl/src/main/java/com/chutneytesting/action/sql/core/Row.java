@@ -1,5 +1,8 @@
 package com.chutneytesting.action.sql.core;
 
+import static java.util.stream.Collectors.toMap;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -64,5 +67,10 @@ public class Row {
         return "Row{" +
             "cells=" + cells +
             '}';
+    }
+
+    public Map<String, Object> asMap() {
+        return cells.stream()
+            .collect(toMap(c -> c.column.name, c -> c.value, (c1, c2) -> c1, HashMap::new));
     }
 }
