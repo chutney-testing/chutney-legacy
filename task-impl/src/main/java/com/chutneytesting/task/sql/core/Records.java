@@ -2,6 +2,8 @@ package com.chutneytesting.task.sql.core;
 
 import static java.util.stream.Collectors.toList;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -44,6 +46,37 @@ public class Records {
             }
         }
         return matrix;
+    }
+
+    @Deprecated
+    public List<Map<String, Object>> toListOfMaps() {
+        return this.toListOfMaps(records.size());
+    }
+
+    /**
+     * This method is deprecated because it is bugged by design.
+     * Since a row is a Map<String, Object>, where the key is the column name and value is the effective data,
+     * it can't represent different columns having the same name.
+     *
+     * @param n limit the number of returned rows
+     * @return  list of rows, a row being a Map where the key is the column name and value is the effective data
+     */
+    @Deprecated
+    public List<Map<String, Object>> toListOfMaps(int n) {
+        final int limit = Math.min(n, records.size());
+        final List<Map<String, Object>> listOfMaps = new ArrayList<>(limit);
+        for (Row row : records.subList(0, limit)) {
+            final Map<String, Object> aRow = new LinkedHashMap<>(columns.size());
+            for (Column column : columns) {
+                aRow.put(column.name, row.get(column).value);
+            }
+            listOfMaps.add(aRow);
+        }
+        return listOfMaps;
+    }
+
+    public Map<String, Object> asMap(int index) {
+        return toListOfMaps().get(index);
     }
 
     public String printable(int limit) {
