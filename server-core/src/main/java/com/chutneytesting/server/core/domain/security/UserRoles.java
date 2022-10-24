@@ -4,6 +4,7 @@ import static java.util.Collections.emptySet;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -31,7 +32,7 @@ public class UserRoles {
         return roles().stream()
             .filter(Role.roleByNamePredicate(roleName))
             .findFirst()
-            .orElseThrow(() -> new RoleNotFoundException("Role [" + roleName + "] is not defined"));
+            .orElseThrow(() -> RoleNotFoundException.forRole(roleName));
     }
 
     public Set<Role> roles() {
@@ -99,7 +100,7 @@ public class UserRoles {
 
         private void checkUserRoles() {
             for (User user : users) {
-                if (user.roleName == null || user.roleName.isBlank()) {
+                if (isBlank(user.roleName)) {
                     throw new IllegalArgumentException("Role declared for user [" + user.id + "] is blank");
                 }
                 Optional<Role> userRole = roles.stream()

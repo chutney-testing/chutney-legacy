@@ -198,9 +198,8 @@ public class SecuredControllerSpringBootIntegrationTest {
             {GET, "/api/v1/user", null, null},
             {POST, "/api/v1/user", null, "{}"},
             {GET, "/api/v1/ui/plugins/linkifier/", null, null},
-            {GET, "/api/v1/info/build", null, null},
             {GET, "/api/v1/info/build/version", null, null},
-            {GET, "/api/v1/appname", null, null},
+            {GET, "/api/v1/info/appname", null, null},
         };
     }
 

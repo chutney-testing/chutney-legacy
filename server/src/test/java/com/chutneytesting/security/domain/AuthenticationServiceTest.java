@@ -7,12 +7,12 @@ import static org.mockito.Mockito.when;
 
 import com.chutneytesting.server.core.domain.security.Authorization;
 import com.chutneytesting.server.core.domain.security.Role;
+import com.chutneytesting.server.core.domain.security.RoleNotFoundException;
 import com.chutneytesting.server.core.domain.security.User;
 import com.chutneytesting.server.core.domain.security.UserRoles;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 class AuthenticationServiceTest {
 
@@ -55,6 +55,6 @@ class AuthenticationServiceTest {
 
         // When
         assertThatThrownBy(() -> sut.userRoleById("unknown-user"))
-            .isInstanceOf(UsernameNotFoundException.class);
+            .isInstanceOf(RoleNotFoundException.class);
     }
 }

@@ -25,8 +25,8 @@ public class UserRolesTest {
         UserRoles emptyBuild = UserRoles.builder().withUsers(emptySet()).withRoles(emptySet()).build();
 
         for (UserRoles userRole : List.of(defaultBuild, nullBuild, emptyBuild)) {
-            Assertions.assertThat(userRole.roles()).isEmpty();
-            Assertions.assertThat(userRole.users()).isEmpty();
+            assertThat(userRole.roles()).isEmpty();
+            assertThat(userRole.users()).isEmpty();
         }
     }
 
@@ -67,7 +67,7 @@ public class UserRolesTest {
             ))
             .build();
 
-        Assertions.assertThat(sut.users())
+        assertThat(sut.users())
             .hasSize(1)
             .first()
             .hasFieldOrPropertyWithValue("id", "id")
@@ -85,8 +85,8 @@ public class UserRolesTest {
             .withUsers(List.of(anotherUser, userToFind))
             .build();
 
-        Assertions.assertThat(sut.userById("userToFind")).hasValue(userToFind);
-        Assertions.assertThat(sut.userById("unknownUser")).isEmpty();
+        assertThat(sut.userById("userToFind")).hasValue(userToFind);
+        assertThat(sut.userById("unknownUser")).isEmpty();
     }
 
     @Test
@@ -101,8 +101,8 @@ public class UserRolesTest {
             .withUsers(List.of(anotherUser, userToFind))
             .build();
 
-        Assertions.assertThat(sut.usersByRole(roleOfUserToFind)).containsExactly(userToFind);
-        Assertions.assertThat(sut.usersByRole(roleNotUsedByUser)).isEmpty();
+        assertThat(sut.usersByRole(roleOfUserToFind)).containsExactly(userToFind);
+        assertThat(sut.usersByRole(roleNotUsedByUser)).isEmpty();
     }
 
     @Test
@@ -112,7 +112,7 @@ public class UserRolesTest {
             .withRoles(List.of(Role.builder().withName("role1").build(), role2))
             .build();
 
-        Assertions.assertThat(sut.roleByName("role2")).isEqualTo(role2);
+        assertThat(sut.roleByName("role2")).isEqualTo(role2);
         assertThatThrownBy(() ->
             sut.roleByName("roleX")
         ).isInstanceOf(RoleNotFoundException.class);
@@ -130,14 +130,14 @@ public class UserRolesTest {
             .withUsers(users)
             .build();
 
-        Assertions.assertThat(sut.roles()).containsExactlyElementsOf(orderedRoles);
+        assertThat(sut.roles()).containsExactlyElementsOf(orderedRoles);
 
         assertThat(Role.authorizations(List.copyOf(sut.roles())))
             .containsExactlyElementsOf(Role.authorizations(orderedRoles));
 
         sut.roles().forEach(role -> {
             List<User> usersForRole = orderedUsers.stream().filter(userByRoleNamePredicate(role.name)).collect(toList());
-            Assertions.assertThat(sut.usersByRole(role)).containsExactlyElementsOf(usersForRole);
+            assertThat(sut.usersByRole(role)).containsExactlyElementsOf(usersForRole);
         });
     }
 

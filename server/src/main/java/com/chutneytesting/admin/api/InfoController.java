@@ -5,7 +5,6 @@ import static com.chutneytesting.ServerConfiguration.SERVER_INSTANCE_NAME_VALUE;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,22 +41,13 @@ public class InfoController {
         return props;
     }
 
-    @GetMapping(path = "/build/**")
-    public String getBuildProperties(HttpServletRequest request) {
-        String buildKey = extractBuildKeyFromRequestURI(request.getRequestURI().substring(BASE_URL.length()));
-        return buildProperties.getProperty(buildKey, "");
-    }
-
-    private String extractBuildKeyFromRequestURI(String requestURI) {
-        String s = requestURI;
-        if (s.startsWith("/")) {
-            s = s.substring(1);
-        }
-        return s.replaceAll("/", ".");
+    @GetMapping(path = "/build/version")
+    public String buildVersion() {
+        return buildProperties.getProperty("build.version", "");
     }
 
     @GetMapping(path = "/appname")
-    public String getApplicationName() {
+    public String applicationName() {
         return applicationName;
     }
 }

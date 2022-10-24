@@ -4,6 +4,7 @@ import com.chutneytesting.security.api.UserDto;
 import com.chutneytesting.security.domain.AuthenticationService;
 import com.chutneytesting.server.core.domain.security.Authorization;
 import com.chutneytesting.server.core.domain.security.Role;
+import com.chutneytesting.server.core.domain.security.RoleNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,10 +15,13 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ldap.core.AttributesMapper;
 
 public class LdapAttributesMapper implements AttributesMapper<UserDto> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(LdapAttributesMapper.class);
     private final Pattern ldapGroupPattern;
     private final LdapAttributesProperties ldapAttributesProperties;
     private final AuthenticationService authenticationService;
@@ -56,9 +60,13 @@ public class LdapAttributesMapper implements AttributesMapper<UserDto> {
             Arrays.stream(Authorization.values()).map(Authorization::name).forEach(dto::grantAuthority);
         }
 
-        Role role = authenticationService.userRoleById(dto.getId());
-        dto.addRole(role.name);
-        role.authorizations.stream().map(Enum::name).forEach(dto::grantAuthority);
+        try {
+            Role role = authenticationService.userRoleById(dto.getId());
+            dto.addRole(role.name);
+            role.authorizations.stream().map(Enum::name).forEach(dto::grantAuthority);
+        } catch (RoleNotFoundException rnfe) {
+            LOGGER.warn("User {} has no role defined", dto.getId());
+        }
 
         return dto;
     }
