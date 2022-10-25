@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
@@ -9,7 +9,7 @@ import { InfoService, LoginService } from '@core/services';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
-export class LoginComponent implements OnDestroy {
+export class LoginComponent implements OnDestroy, OnInit {
 
   username: string;
   password: string;
@@ -39,6 +39,12 @@ export class LoginComponent implements OnDestroy {
     this.infoService.getApplicationName().subscribe(result => {
       this.applicationName = result;
     });
+  }
+
+  ngOnInit() {
+    if (this.loginService.isAuthenticated()) {
+        this.loginService.navigateAfterLogin();
+    }
   }
 
   ngOnDestroy() {

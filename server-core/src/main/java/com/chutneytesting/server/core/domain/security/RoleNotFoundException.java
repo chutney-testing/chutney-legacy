@@ -11,6 +11,6 @@ public class RoleNotFoundException extends RuntimeException {
     }
 
     public static RoleNotFoundException forUser(String userId) {
-        return new RoleNotFoundException("No role defined for user " + userId);
+        return new RoleNotFoundException("No role defined for user: " + userId);
     }
 }

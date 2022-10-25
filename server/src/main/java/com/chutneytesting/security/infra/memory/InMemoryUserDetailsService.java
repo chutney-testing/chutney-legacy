@@ -42,14 +42,15 @@ public class InMemoryUserDetailsService implements UserDetailsService {
 
         if (dto.getRoles().contains("ADMIN")) {
             Arrays.stream(Authorization.values()).map(Authorization::name).forEach(dto::grantAuthority);
-        }
-
-        try {
-            Role role = authenticationService.userRoleById(dto.getId());
-            dto.addRole(role.name);
-            role.authorizations.stream().map(Enum::name).forEach(dto::grantAuthority);
-        } catch (RoleNotFoundException rnfe) {
-            LOGGER.warn("User {} has no role defined", dto.getId());
+        } else {
+            try {
+                Role role = authenticationService.userRoleById(dto.getId());
+                dto.addRole(role.name);
+                role.authorizations.stream().map(Enum::name).forEach(dto::grantAuthority);
+            } catch (RoleNotFoundException rnfe) {
+                LOGGER.warn("User {} has no role defined", dto.getId());
+                throw rnfe;
+            }
         }
 
         return dto;

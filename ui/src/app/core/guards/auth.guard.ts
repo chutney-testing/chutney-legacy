@@ -36,7 +36,7 @@ export class AuthGuard implements CanActivate {
         return true;
     } else {
         this.alertService.error(this.unauthorizedMessage, { timeOut: 0, extendedTimeOut: 0, closeButton: true });
-        this.navigateToAppRootIfLogin();
+        this.loginService.navigateAfterLogin();
         return false;
     }
   }
@@ -51,14 +51,6 @@ export class AuthGuard implements CanActivate {
   private getTranslation() {
     this.translateService.get('login.unauthorized').subscribe((res: string) => {
         this.unauthorizedMessage = res;
-    });
-  }
-
-  private navigateToAppRootIfLogin() {
-    this.router.routerState.root.firstChild.url.subscribe(u => {
-        if (u[0] && u[0].path == 'login') {
-            this.router.navigateByUrl('/');
-        }
     });
   }
 }
