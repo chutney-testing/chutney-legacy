@@ -2,6 +2,7 @@ package com.chutneytesting.engine.domain.execution.engine.step;
 
 import static com.chutneytesting.tools.WaitUtils.awaitDuring;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -354,17 +355,18 @@ public class StepTest {
             .build();
         String environment = "FakeTestEnvironment";
 
-        Map<String, Object> inputs = new HashMap<>();
-        inputs.put("dynamicUrl", "uri");
-        inputs.put("dynamicPropertiesKey", "key");
-        inputs.put("dynamicPropertiesValue", "value");
+        ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
+        scenarioContext.put("dynamicUrl", "uri");
+        scenarioContext.put("dynamicPropertiesKey", "key");
+        scenarioContext.put("dynamicPropertiesValue", "value");
 
-        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, inputs, null, null, null, environment);
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, emptyMap(), null, null, null, environment);
         StepExecutor stepExecutorMock = mock(StepExecutor.class);
         Step step = new Step(dataEvaluator, fakeStepDefinition, stepExecutorMock, emptyList());
 
         // When
-        step.execute(ScenarioExecution.createScenarioExecution(null), new ScenarioContextImpl());
+
+        step.execute(ScenarioExecution.createScenarioExecution(null), scenarioContext);
 
         // Then
         ArgumentCaptor<Target> targetCaptor = ArgumentCaptor.forClass(Target.class);

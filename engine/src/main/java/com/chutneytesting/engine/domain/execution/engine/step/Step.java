@@ -88,7 +88,7 @@ public class Step {
             makeEnvironmentAccessibleForInputEvaluation(scenarioContext);
 
             final Map<String, Object> evaluatedInputs = definition.type.equals("final") ? definition.inputs : unmodifiableMap(dataEvaluator.evaluateNamedDataWithContextVariables(definition.inputs, scenarioContext));
-            evaluatedTarget.set(dataEvaluator.evaluateTarget(target, evaluatedInputs));
+            evaluatedTarget.set(dataEvaluator.evaluateTarget(target, scenarioContext));
 
             Try
                 .exec(() -> new StepContextImpl(evaluatedInputs, scenarioContext))
