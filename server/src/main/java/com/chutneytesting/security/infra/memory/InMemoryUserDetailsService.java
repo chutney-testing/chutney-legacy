@@ -7,15 +7,19 @@ import com.chutneytesting.security.api.UserDto;
 import com.chutneytesting.security.domain.AuthenticationService;
 import com.chutneytesting.server.core.domain.security.Authorization;
 import com.chutneytesting.server.core.domain.security.Role;
+import com.chutneytesting.server.core.domain.security.RoleNotFoundException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 public class InMemoryUserDetailsService implements UserDetailsService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryUserDetailsService.class);
     private final Map<String, UserDto> users;
     private final AuthenticationService authenticationService;
 
@@ -38,11 +42,16 @@ public class InMemoryUserDetailsService implements UserDetailsService {
 
         if (dto.getRoles().contains("ADMIN")) {
             Arrays.stream(Authorization.values()).map(Authorization::name).forEach(dto::grantAuthority);
+        } else {
+            try {
+                Role role = authenticationService.userRoleById(dto.getId());
+                dto.addRole(role.name);
+                role.authorizations.stream().map(Enum::name).forEach(dto::grantAuthority);
+            } catch (RoleNotFoundException rnfe) {
+                LOGGER.warn("User {} has no role defined", dto.getId());
+                throw rnfe;
+            }
         }
-
-        Role role = authenticationService.userRoleById(dto.getId());
-        dto.addRole(role.name);
-        role.authorizations.stream().map(Enum::name).forEach(dto::grantAuthority);
 
         return dto;
     }

@@ -1,5 +1,6 @@
 package com.chutneytesting;
 
+import static java.util.Optional.ofNullable;
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.springframework.http.HttpMethod.DELETE;
@@ -23,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -55,9 +55,8 @@ public class SecuredControllerSpringBootIntegrationTest {
 
     private static Object[] securedEndPointList() {
         return new Object[][]{
-            {POST, "/api/homepage/v1", "ADMIN_ACCESS", "{\"content\":\"\"}"},
             {GET, "/api/v1/backups", "ADMIN_ACCESS", null},
-            {POST, "/api/v1/backups", "ADMIN_ACCESS", "{\"homePage\":true}"},
+            {POST, "/api/v1/backups", "ADMIN_ACCESS", "{\"environments\":true}"},
             {GET, "/api/v1/backups/backupId", "ADMIN_ACCESS", null},
             {DELETE, "/api/v1/backups/backupId", "ADMIN_ACCESS", null},
             {GET, "/api/v1/backups/id/download", "ADMIN_ACCESS", null},
@@ -191,26 +190,25 @@ public class SecuredControllerSpringBootIntegrationTest {
             {GET, "/actuator/mappings", "ADMIN_ACCESS", null},
             // Must be at the end because the network configuration is in wrong staten, why ??
             {POST, "/api/v1/agentnetwork/wrapup", "ADMIN_ACCESS", "{\"agentsGraph\":{\"agents\":[]},\"networkConfiguration\":{\"creationDate\":\"2021-09-06T10:08:36.569227Z\",\"agentNetworkConfiguration\":[],\"environmentsConfiguration\":[]}}"},
-
         };
     }
 
     private static Object[] unsecuredEndPointList() {
         return new Object[][]{
-            {GET, "/api/v1/user"},
-            {POST, "/api/v1/user"},
-            {GET, "/api/v1/ui/plugins/linkifier/"},
-            {GET, "/api/homepage/v1"},
-            {GET, "/home"}
+            {GET, "/api/v1/user", null, null},
+            {POST, "/api/v1/user", null, "{}"},
+            {GET, "/api/v1/ui/plugins/linkifier/", null, null},
+            {GET, "/api/v1/info/build/version", null, null},
+            {GET, "/api/v1/info/appname", null, null},
         };
     }
 
     @ParameterizedTest
-    @MethodSource("securedEndPointList")
+    @MethodSource({"securedEndPointList", "unsecuredEndPointList"})
     public void secured_api_access_verification(HttpMethod httpMethod, String url, String authority, String content) throws Exception {
         UserDto user = new UserDto();
         user.setName("userName");
-        user.grantAuthority(authority);
+        ofNullable(authority).ifPresent(user::grantAuthority);
         MockHttpServletRequestBuilder request = request(httpMethod, url)
             .secure(true)
             .with(user(user))
@@ -218,17 +216,6 @@ public class SecuredControllerSpringBootIntegrationTest {
         if (content != null) {
             request.content(content);
         }
-        mvc.perform(request)
-            .andExpect(status().is(anyOf(equalTo(200), equalTo(404))));
-    }
-
-    @ParameterizedTest
-    @MethodSource("unsecuredEndPointList")
-    @WithUserDetails
-    public void unsecured_api_access_verification(HttpMethod httpMethod, String url) throws Exception {
-        MockHttpServletRequestBuilder request = request(httpMethod, url)
-            .secure(true)
-            .contentType(MediaType.APPLICATION_JSON);
         mvc.perform(request)
             .andExpect(status().is(anyOf(equalTo(200), equalTo(404))));
     }

@@ -56,7 +56,7 @@ public class User {
     }
 
     public static class UserBuilder {
-        private static final Predicate<String> USER_NAME_PREDICATE = Pattern.compile("^[0-9a-zA-Z_-]+$").asMatchPredicate();
+        private static final Predicate<String> USER_NAME_PREDICATE = Pattern.compile("^[\\w-]+$").asMatchPredicate();
         private static final String ANONYMOUS_USER_ID = "guest";
 
         private String id;
@@ -68,7 +68,7 @@ public class User {
         public User build() {
             return new User(
                 validateUserId(),
-                ofNullable(role).orElse(Role.DEFAULT.name)
+                ofNullable(role).orElse("")
             );
         }
 

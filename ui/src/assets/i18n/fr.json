@@ -15,7 +15,7 @@
             "jiraId": "Identifiant jira",
             "roles": "Roles",
             "admin": "Admin",
-            "signIn": "Connexion",
+            "profile": "Profil",
             "signOut": "Déconnexion",
             "darkMode": "Thème sombre",
             "lightMode": "Thème clair",
@@ -287,7 +287,6 @@
         "backups": {
             "table": {
                 "time.title": "Date de création",
-                "homepage.title": "Page d'accueil",
                 "agents.title": "Agents",
                 "environments.title": "Environnements",
                 "components.title": "Composants",

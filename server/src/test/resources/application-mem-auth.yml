@@ -17,13 +17,6 @@ chutney:
         mail: paloma@paloma.com
         password: $2a$10$5/nx/WkpkgKJzdCt9.ImT.Kfx/Zr8ITzhzpKOcB2Hqps33wOTDdGS
       -
-        id: secutest
-        name: secutest
-        firstname: secutest
-        lastname: secutest
-        mail: secutest@secutest.com
-        password: $2a$10$yraymBUNcKtXF0Awz9nUROC96xGbyGK47alqmxE9ergYX1CIjzcba
-      -
         id: user
         name: user
         firstname: user

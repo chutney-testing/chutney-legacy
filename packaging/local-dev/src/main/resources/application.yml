@@ -42,7 +42,6 @@ spring:
     active:
       - undertow-https-redirect
       - mem-auth
-      - dev-auth
       - db-h2
 
 chutney:

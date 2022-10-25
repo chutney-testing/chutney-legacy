@@ -15,8 +15,6 @@ import java.util.regex.Pattern;
 
 public class Role {
 
-    public static final Role DEFAULT = Role.builder().build();
-
     public final String name;
     public final Set<Authorization> authorizations;
 
@@ -61,7 +59,7 @@ public class Role {
     }
 
     public static class RoleBuilder {
-        private static final Predicate<String> ROLE_NAME_PREDICATE = Pattern.compile("^[0-9a-zA-Z_]+$").asMatchPredicate();
+        private static final Predicate<String> ROLE_NAME_PREDICATE = Pattern.compile("^\\w+$").asMatchPredicate();
 
         private String name;
         private Set<String> authorizations;
@@ -89,7 +87,7 @@ public class Role {
         }
 
         private String validateRoleName() {
-            String n = ofNullable(name).orElse("DEFAULT");
+            String n = ofNullable(name).orElse("");
             if (!ROLE_NAME_PREDICATE.test(n)) {
                 throw new IllegalArgumentException("Role name must be alphanumeric with underscores, i.e. must match the pattern `[0-9a-zA-Z_]+`");
             }

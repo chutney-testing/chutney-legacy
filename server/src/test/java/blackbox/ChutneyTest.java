@@ -146,7 +146,6 @@ public class ChutneyTest {
 
         UserRoles userRoles = UserRoles.builder()
             .withRoles(List.of(
-                Role.DEFAULT,
                 Role.builder().withName("NO_USER_ROLE").withAuthorizations(List.of(Authorization.ADMIN_ACCESS.name())).build(),
                 Role.builder().withName("SCENARIO_READ_ROLE").withAuthorizations(List.of(Authorization.SCENARIO_READ.name())).build(),
                 Role.builder().withName("SCENARIO_WRITE_ROLE").withAuthorizations(List.of(Authorization.SCENARIO_WRITE.name())).build(),

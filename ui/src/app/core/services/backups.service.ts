@@ -46,7 +46,7 @@ export class BackupsService {
     }
 
     private mapToBackup(dto: BackupDto): Backup {
-        return new Backup(dto.homePage, dto.agentsNetwork, dto.environments, dto.components, dto.globalVars, dto.jiraLinks, dto.time);
+        return new Backup(dto.agentsNetwork, dto.environments, dto.components, dto.globalVars, dto.jiraLinks, dto.time);
     }
 
     private mapToBackups(dtos: BackupDto[]): Backup[] {
@@ -56,7 +56,6 @@ export class BackupsService {
 
 export class BackupDto {
     constructor(
-        public homePage: boolean,
         public agentsNetwork: boolean,
         public environments: boolean,
         public components: boolean,

@@ -7,7 +7,6 @@ import static java.util.Optional.ofNullable;
 import com.chutneytesting.admin.domain.Backup;
 import com.chutneytesting.admin.domain.BackupNotFoundException;
 import com.chutneytesting.admin.domain.BackupRepository;
-import com.chutneytesting.admin.domain.HomePageRepository;
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.component.scenario.infra.orient.OrientComponentDB;
 import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
@@ -51,7 +50,6 @@ public class FileSystemBackupRepository implements BackupRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemBackupRepository.class);
 
     static final Path ROOT_DIRECTORY_NAME = Paths.get("backups", "zip");
-    static final String HOME_PAGE_BACKUP_NAME = "homepage.zip";
     static final String ENVIRONMENTS_BACKUP_NAME = "environments.zip";
     static final String AGENTS_BACKUP_NAME = "agents.zip";
     static final String GLOBAL_VARS_BACKUP_NAME = "globalvars.zip";
@@ -61,7 +59,6 @@ public class FileSystemBackupRepository implements BackupRepository {
     private final Path backupsRootPath;
 
     private final OrientComponentDB orientComponentDB;
-    private final HomePageRepository homePageRepository;
     private final EnvironmentApi embeddedEnvironmentApi;
     private final GlobalvarRepository globalvarRepository;
     private final CurrentNetworkDescription currentNetworkDescription;
@@ -75,7 +72,6 @@ public class FileSystemBackupRepository implements BackupRepository {
 
     public FileSystemBackupRepository(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String backupsRootPath,
                                       OrientComponentDB orientComponentDB,
-                                      HomePageRepository homePageRepository,
                                       EmbeddedEnvironmentApi embeddedEnvironmentApi,
                                       GlobalvarRepository globalvarRepository,
                                       CurrentNetworkDescription currentNetworkDescription, JiraRepository jiraRepository) {
@@ -83,7 +79,6 @@ public class FileSystemBackupRepository implements BackupRepository {
         initFolder(this.backupsRootPath);
 
         this.orientComponentDB = orientComponentDB;
-        this.homePageRepository = homePageRepository;
         this.embeddedEnvironmentApi = embeddedEnvironmentApi;
         this.globalvarRepository = globalvarRepository;
         this.currentNetworkDescription = currentNetworkDescription;
@@ -107,10 +102,6 @@ public class FileSystemBackupRepository implements BackupRepository {
         LOGGER.info("Backup [{}] initiating", backupId);
         Path backupPath = backupsRootPath.resolve(backupId);
         Try.exec(() -> Files.createDirectory(backupPath)).runtime();
-
-        if (backup.homePage) {
-            backup(homePageRepository, backupPath.resolve(HOME_PAGE_BACKUP_NAME), "home page");
-        }
 
         if (backup.environments) {
             backup(backupPath.resolve(ENVIRONMENTS_BACKUP_NAME), "environments", this::backupEnvironments);
@@ -142,7 +133,6 @@ public class FileSystemBackupRepository implements BackupRepository {
         if (backupPath.toFile().exists()) {
             try {
                 return new Backup(backupId,
-                    backupPath.resolve(HOME_PAGE_BACKUP_NAME).toFile().exists(),
                     backupPath.resolve(AGENTS_BACKUP_NAME).toFile().exists(),
                     backupPath.resolve(ENVIRONMENTS_BACKUP_NAME).toFile().exists(),
                     backupPath.resolve(COMPONENTS_BACKUP_NAME).toFile().exists(),

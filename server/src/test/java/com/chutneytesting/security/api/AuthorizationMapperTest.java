@@ -1,7 +1,7 @@
 package com.chutneytesting.security.api;
 
 import static com.chutneytesting.security.PropertyBasedTestingUtils.validRights;
-import static com.chutneytesting.security.PropertyBasedTestingUtils.validRoleNameWithoutDefault;
+import static com.chutneytesting.security.PropertyBasedTestingUtils.validRoleName;
 import static com.chutneytesting.security.PropertyBasedTestingUtils.validUserId;
 import static net.jqwik.api.Arbitraries.just;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,12 +46,7 @@ class AuthorizationMapperTest {
     @Provide
     @SuppressWarnings("unused")
     private Arbitrary<AuthorizationsDto> validDto() {
-        return Combinators.combine(validRoleDtoList(), validDefaultRoleDto())
-            .flatAs((r, d) -> {
-                List<AuthorizationsDto.RoleDto> l = new ArrayList<>(r);
-                l.add(d);
-                return buildAuthorizationDto(l);
-            });
+        return validRoleDtoList().map(ArrayList::new).flatMap(this::buildAuthorizationDto);
     }
 
     @Provide
@@ -68,13 +63,7 @@ class AuthorizationMapperTest {
 
     private Arbitrary<AuthorizationsDto.RoleDto> validRoleDto() {
         return Combinators
-            .combine(validRoleNameWithoutDefault(), validRights())
-            .as((n, r) -> buildRoleDto(n, List.copyOf(r)));
-    }
-
-    private Arbitrary<AuthorizationsDto.RoleDto> validDefaultRoleDto() {
-        return Combinators
-            .combine(just(Role.DEFAULT.name), validRights())
+            .combine(validRoleName(), validRights())
             .as((n, r) -> buildRoleDto(n, List.copyOf(r)));
     }
 

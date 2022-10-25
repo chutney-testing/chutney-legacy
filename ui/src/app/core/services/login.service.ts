@@ -29,14 +29,14 @@ export class LoginService {
     ).subscribe(
         () => this.navigateAfterLogin(url),
         () => {
-            const queryParams: Object = isNullOrBlankString(url) ? {} : { queryParams: { url: url } };
+            const nextUrl = this.nullifyLoginUrl(url);
+            const queryParams: Object = isNullOrBlankString(nextUrl) ? {} : { queryParams: { url: nextUrl } };
             this.router.navigate(['login'], queryParams);
         }
     );
   }
 
   login(username: string, password: string): Observable<User> {
-
     if (isNullOrBlankString(username) && isNullOrBlankString(password)) {
       return this.currentUser().pipe(
         tap(user => this.setUser(user))
@@ -60,9 +60,10 @@ export class LoginService {
   }
 
   navigateAfterLogin(url?: string) {
+    const nextUrl = this.nullifyLoginUrl(url);
     if (this.isAuthenticated()) {
         const user: User = this.user$.getValue();
-        this.router.navigateByUrl(url ? url : this.defaultForwardUrl(user));
+        this.router.navigateByUrl(nextUrl ? nextUrl : this.defaultForwardUrl(user));
     }
   }
 
@@ -123,5 +124,9 @@ export class LoginService {
     }
 
     return '/login';
+  }
+
+  private nullifyLoginUrl(url: string): string {
+    return url && url !== '/login' ? url : null;
   }
 }

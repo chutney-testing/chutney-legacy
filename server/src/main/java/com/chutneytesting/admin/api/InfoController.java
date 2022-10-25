@@ -1,11 +1,12 @@
 package com.chutneytesting.admin.api;
 
 import static com.chutneytesting.ServerConfiguration.SERVER_INSTANCE_NAME_VALUE;
-import static com.chutneytesting.tools.loader.ExtensionLoaders.Sources.classpath;
 
-import com.chutneytesting.tools.loader.ExtensionLoader;
 import java.io.IOException;
-import java.util.Collections;
+import java.io.InputStream;
+import java.util.Properties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,36 +18,36 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "*")
 public class InfoController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(InfoController.class);
     public static final String BASE_URL = "/api/v1/info";
+    private final Properties buildProperties;
 
     @Value(SERVER_INSTANCE_NAME_VALUE)
     private String applicationName;
 
-    @GetMapping("version")
-    public String getVersion() throws IOException {
-        return getChutneyVersion();
+    public InfoController() {
+        buildProperties = loadBuildProperties();
     }
 
-    @GetMapping("appname")
-    public String getApplicationName() throws IOException {
+    private Properties loadBuildProperties() {
+        Properties props = new Properties();
+        try (InputStream input = InfoController.class.getClassLoader().getResourceAsStream("META-INF/build.properties")) {
+            if (input != null) {
+                props.load(input);
+            }
+        } catch (IOException ioe) {
+            LOGGER.warn("Cannot read build properties file", ioe);
+        }
+        return props;
+    }
+
+    @GetMapping(path = "/build/version")
+    public String buildVersion() {
+        return buildProperties.getProperty("build.version", "");
+    }
+
+    @GetMapping(path = "/appname")
+    public String applicationName() {
         return applicationName;
-    }
-
-    private String getChutneyVersion() {
-        return ExtensionLoader.Builder
-            .<String, String>withSource(classpath("META-INF/build.properties"))
-            .withMapper(Collections::singleton)
-            .load()
-            .stream()
-            .filter(text -> text.contains("chutneytesting"))
-            .map(text -> getVersionInProperties(text))
-            .findFirst().get();
-    }
-
-    private String getVersionInProperties(String text) {
-        return text.lines()
-            .filter(line -> line.startsWith("build.version="))
-            .map(s -> s.split("=")[1])
-            .findFirst().orElse("no version");
     }
 }

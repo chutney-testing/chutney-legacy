@@ -2,7 +2,6 @@ import { formatDate } from '@angular/common';
 
 export class Backup {
     constructor(
-        public homePage: boolean,
         public agentsNetwork: boolean,
         public environments: boolean,
         public components: boolean,

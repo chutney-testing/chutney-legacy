@@ -137,7 +137,9 @@ Feature: Final task for registering final actions for a testcase
                             "properties": [
                                 { "key" : "keyStore", "value": "${#escapeJson(#resourcePath("blackbox/keystores/client.jks"))}" },
                                 { "key" : "keyStorePassword", "value": "client" },
-                                { "key" : "keyPassword", "value": "client" }
+                                { "key" : "keyPassword", "value": "client" },
+                                { "key" : "username", "value": "admin" },
+                                { "key" : "password", "value": "admin" }
                             ]
                         }
                     ]
@@ -162,7 +164,7 @@ Feature: Final task for registering final actions for a testcase
                                     "sentence":"Register task providing outputs",
                                     "implementation":{
                                         "target": "CHUTNEY_LOCAL",
-                                        "task":"{\n type: final \n target: test_http \n inputs: {\n type: http-get \n name: Get Home \n inputs: {\n uri: /home \n timeout: 5 sec \n} \n validations: { \n http_OK: \${ #status == 200 } \n} \n} \n}"
+                                        "task":"{\n type: final \n target: test_http \n inputs: {\n type: http-get \n name: Get user \n inputs: {\n uri: /api/v1/user \n timeout: 5 sec \n} \n validations: { \n http_OK: \${ #status == 200 } \n} \n} \n}"
                                     }
                                 }
                             ]

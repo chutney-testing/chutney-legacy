@@ -1,7 +1,6 @@
 package com.chutneytesting.security;
 
-import static java.util.Collections.singleton;
-
+import com.chutneytesting.admin.api.InfoController;
 import com.chutneytesting.security.api.UserController;
 import com.chutneytesting.security.api.UserDto;
 import com.chutneytesting.security.domain.Authorizations;
@@ -9,9 +8,8 @@ import com.chutneytesting.security.infra.handlers.Http401FailureHandler;
 import com.chutneytesting.security.infra.handlers.HttpEmptyLogoutSuccessHandler;
 import com.chutneytesting.security.infra.handlers.HttpStatusInvalidSessionStrategy;
 import com.chutneytesting.server.core.domain.security.Authorization;
-import com.chutneytesting.server.core.domain.security.Role;
 import com.chutneytesting.server.core.domain.security.User;
-import com.chutneytesting.server.core.domain.security.UserRoles;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,13 +40,19 @@ public class ChutneyHttpSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         configureBaseHttpSecurity(http);
+        UserDto anonymous = anonymous();
         http
+            .anonymous()
+                .principal(anonymous)
+                .authorities(new ArrayList<>(anonymous.getAuthorities()))
+            .and()
             .authorizeRequests()
                 .antMatchers(LOGIN_URL).permitAll()
                 .antMatchers(LOGOUT_URL).permitAll()
+                .antMatchers(InfoController.BASE_URL + "/**").permitAll()
                 .antMatchers(API_BASE_URL_PATTERN).authenticated()
                 .antMatchers(ACTUATOR_BASE_URL_PATTERN).hasAuthority(Authorization.ADMIN_ACCESS.name())
-                .anyRequest().permitAll()
+            .anyRequest().permitAll()
             .and()
             .httpBasic();
     }
@@ -83,16 +87,7 @@ public class ChutneyHttpSecurityConfig extends WebSecurityConfigurerAdapter {
         UserDto anonymous = new UserDto();
         anonymous.setId(User.ANONYMOUS.id);
         anonymous.setName(User.ANONYMOUS.id);
-
-        UserRoles userRoles = authorizations.read();
-        Role role = userRoles.roleByName(Role.DEFAULT.name);
-        anonymous.setRoles(singleton(role.name));
-        role.authorizations.stream().map(Enum::name).forEach(anonymous::grantAuthority);
-
-        if (role.authorizations.isEmpty()) {
-            anonymous.grantAuthority("ANONYMOUS");
-        }
-
+        anonymous.grantAuthority("ANONYMOUS");
         return anonymous;
     }
 }

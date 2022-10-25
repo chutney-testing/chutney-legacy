@@ -12,20 +12,8 @@ import net.jqwik.api.arbitraries.SetArbitrary;
 
 public final class PropertyBasedTestingUtils {
 
-
-    public static Arbitrary<UserRoles> validUserRoles() {
-        SetArbitrary<Role> roles = validRole().set().ofMinSize(1).ofMaxSize(10);
-        return roles.map(r -> {
-            r.add(Role.DEFAULT);
-            return UserRoles.builder()
-                .withRoles(r)
-                .withUsers(validUsers(r))
-                .build();
-        });
-    }
-
     public static Arbitrary<Role> validRole() {
-        return Combinators.combine(validRoleNameWithoutDefault(), validRights())
+        return Combinators.combine(validRoleName(), validRights())
             .as((n, a) ->
                 Role.builder()
                     .withName(n)
@@ -45,15 +33,14 @@ public final class PropertyBasedTestingUtils {
             ).collect(toSet());
     }
 
-    public static Arbitrary<String> validRoleNameWithoutDefault() {
+    public static Arbitrary<String> validRoleName() {
         return Arbitraries.strings()
             .alpha().numeric().withChars('_')
-            .ofMinLength(1).ofMaxLength(20)
-            .filter(s -> !Role.DEFAULT.name.equals(s));
+            .ofMinLength(1).ofMaxLength(20);
     }
 
     public static Arbitrary<String> invalidRoleName() {
-        return Arbitraries.strings().withChars(" &~#\"'{([|-`\\^@°)]=}+^¨£$¤%ùµ*!§:/;.,?<>").ofMinLength(1);
+        return Arbitraries.strings().withChars(" &~#\"'{([|-`\\^@°)]=}+^¨£$¤%ùµ*!§:/;.,?<>").injectNull(0.5);
     }
 
     public static Arbitrary<String> validUserId() {
