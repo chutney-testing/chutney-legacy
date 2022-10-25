@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 export class ValidationService {
 
     private urlRegex = new RegExp('^[a-z]+:\/\/[^:]+(:[0-9]+)?.*$');
+    private spelRegex = new RegExp('\\$\\{([^}]+)\\}');
     private environmentNameRegex = new RegExp('^[A-Z0-9_-]{3,20}$');
 
     constructor() { }
@@ -17,6 +18,13 @@ export class ValidationService {
         return this.urlRegex.test(text);
     }
 
+    isValidSpel(text: string): boolean {
+        return this.spelRegex.test(text);
+    }
+
+    isValidUrlOrSpel(text: string): boolean {
+        return this.isValidUrl(text) || this.isValidSpel(text);
+    }
     isValidEnvironmentName(text: string): boolean {
         return this.environmentNameRegex.test(text);
     }

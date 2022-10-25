@@ -1,8 +1,10 @@
 package com.chutneytesting.engine.domain.execution.engine.step;
 
+import static com.chutneytesting.engine.domain.execution.StepDefinitionBuilder.copyFrom;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
+import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.engine.domain.environment.TargetImpl;
@@ -28,6 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +69,7 @@ public class Step {
     public Status execute(ScenarioExecution scenarioExecution, ScenarioContext scenarioContext) {
 
         if (scenarioExecution.hasToPause()) {
-            Instant startPauseInstant = Instant.now();
+            final Instant startPauseInstant = Instant.now();
             pauseExecution(scenarioExecution);
             scenarioExecution.waitForRestart();
             state.resumeExecution();
@@ -79,16 +82,18 @@ public class Step {
         }
 
         beginExecution(scenarioExecution);
-
+        final AtomicReference<Target> evaluatedTarget = new AtomicReference<>();
         try {
             makeTargetAccessibleForInputEvaluation(scenarioContext);
             makeEnvironmentAccessibleForInputEvaluation(scenarioContext);
-            Map<String, Object> evaluatedInputs = definition.type.equals("final") ? definition.inputs : unmodifiableMap(dataEvaluator.evaluateNamedDataWithContextVariables(definition.inputs, scenarioContext));
+
+            final Map<String, Object> evaluatedInputs = definition.type.equals("final") ? definition.inputs : unmodifiableMap(dataEvaluator.evaluateNamedDataWithContextVariables(definition.inputs, scenarioContext));
+            evaluatedTarget.set(dataEvaluator.evaluateTarget(target, scenarioContext));
 
             Try
                 .exec(() -> new StepContextImpl(evaluatedInputs, scenarioContext))
                 .ifSuccess(stepContextExecuted -> {
-                    executor.execute(scenarioExecution, stepContextExecuted, target, this);
+                    executor.execute(scenarioExecution, stepContextExecuted, evaluatedTarget.get(), this);
                     if (Status.SUCCESS.equals(this.state.status())) {
                         executeStepValidations(stepContextExecuted);
                         copyStepResultsToScenarioContext(stepContextExecuted, scenarioContext);
@@ -100,7 +105,7 @@ public class Step {
             failure(e);
             LOGGER.warn("Intercepted exception!", e);
         } finally {
-            endExecution(scenarioExecution);
+            endExecution(scenarioExecution, ofNullable(evaluatedTarget.get()));
         }
         return state.status();
     }
@@ -111,8 +116,22 @@ public class Step {
     }
 
     public void endExecution(ScenarioExecution scenarioExecution) {
+        endExecution(scenarioExecution, empty());
+    }
+
+    public void endExecution(ScenarioExecution scenarioExecution, Optional<Target> evaluatedTarget) {
         state.endExecution(isParentStep());
-        RxBus.getInstance().post(new EndStepExecutionEvent(scenarioExecution, this));
+        final Step stepToNotify;
+        if (evaluatedTarget.isPresent()) {
+            stepToNotify = StepBuilder.copyFrom(this)
+                .withDefinition(copyFrom(this.definition)
+                    .withTarget(evaluatedTarget.get())
+                    .build())
+                .build();
+        } else {
+            stepToNotify = this;
+        }
+        RxBus.getInstance().post(new EndStepExecutionEvent(scenarioExecution, stepToNotify));
     }
 
     public void stopExecution(ScenarioExecution scenarioExecution) {
@@ -128,7 +147,7 @@ public class Step {
 
     public Status status() {
         if (isParentStep()) {
-            Status worstSubStepsStatus = Status.worst(subStepsStatus());
+            final Status worstSubStepsStatus = Status.worst(subStepsStatus());
             if (Status.PAUSED.equals(worstSubStepsStatus)) {
                 return Status.PAUSED;
             }
@@ -236,9 +255,9 @@ public class Step {
     }
 
     private void copyStepResultsToScenarioContext(StepContextImpl stepContext, ScenarioContext scenarioContext) {
-        Map<String, Object> contextAndStepResults = stepContext.allEvaluatedVariables();
+        final Map<String, Object> contextAndStepResults = stepContext.allEvaluatedVariables();
         Try.exec(() -> {
-                Map<String, Object> evaluatedOutputs = dataEvaluator.evaluateNamedDataWithContextVariables(definition.outputs, contextAndStepResults);
+                final Map<String, Object> evaluatedOutputs = dataEvaluator.evaluateNamedDataWithContextVariables(definition.outputs, contextAndStepResults);
                 stepContext.stepOutputs.putAll(evaluatedOutputs);
                 scenarioContext.putAll(evaluatedOutputs);
                 return null;
@@ -248,9 +267,9 @@ public class Step {
     }
 
     private void executeStepValidations(StepContextImpl stepContext) {
-        Map<String, Object> contextAndStepResults = stepContext.allEvaluatedVariables();
+        final Map<String, Object> contextAndStepResults = stepContext.allEvaluatedVariables();
         Try.exec(() -> {
-                Map<String, Object> evaluatedValidations = dataEvaluator.evaluateNamedDataWithContextVariables(definition.validations, contextAndStepResults);
+                final Map<String, Object> evaluatedValidations = dataEvaluator.evaluateNamedDataWithContextVariables(definition.validations, contextAndStepResults);
                 evaluatedValidations.forEach((k, v) -> {
                     if (!(boolean) v) {
                         failure("Validation [" + k + "] : KO (" + definition.validations.get(k).toString() + ")");
@@ -289,7 +308,7 @@ public class Step {
         }
 
         private Map<String, Object> allEvaluatedVariables() {
-            Map<String, Object> allResults = Maps.newLinkedHashMap(scenarioContext);
+            final Map<String, Object> allResults = Maps.newLinkedHashMap(scenarioContext);
             allResults.putAll(stepOutputs);
             return allResults;
         }
@@ -321,6 +340,46 @@ public class Step {
 
         StepContext copy() {
             return new StepContextImpl(scenarioContext.unmodifiable(), unmodifiableMap(evaluatedInputs), unmodifiableMap(stepOutputs));
+        }
+    }
+
+    public static class StepBuilder {
+        private StepDataEvaluator dataEvaluator;
+        private StepDefinition definition;
+        private StepExecutor executor;
+        private List<Step> steps;
+
+        public StepBuilder withDataEvaluator(StepDataEvaluator dataEvaluator) {
+            this.dataEvaluator = dataEvaluator;
+            return this;
+        }
+
+        public StepBuilder withDefinition(StepDefinition definition) {
+            this.definition = definition;
+            return this;
+        }
+
+        public StepBuilder withExecutor(StepExecutor executor) {
+            this.executor = executor;
+            return this;
+        }
+
+        public StepBuilder withSteps(List<Step> steps) {
+            this.steps = steps;
+            return this;
+        }
+
+        public Step build() {
+            return new Step(dataEvaluator, definition, executor, steps);
+        }
+
+        public static StepBuilder copyFrom(Step step) {
+            StepBuilder builder = new StepBuilder();
+            builder.withSteps(step.steps);
+            builder.withExecutor(step.executor);
+            builder.withDataEvaluator(step.dataEvaluator);
+            builder.withDefinition(step.definition);
+            return builder;
         }
     }
 }

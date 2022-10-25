@@ -114,7 +114,7 @@ public class StepExecutionReportBuilder {
     public StepExecutionReportBuilder setTarget(Target target) {
         if (target != null) {
             this.targetName = target.name();
-            this.targetUrl = target.uri().toString();
+            this.targetUrl = target.rawUri();
         }
         return this;
     }

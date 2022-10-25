@@ -45,6 +45,11 @@ public class HardcodedTarget implements Target {
     }
 
     @Override
+    public String rawUri() {
+        return uri().toString();
+    }
+
+    @Override
     public Optional<String> property(String key) {
         return ofNullable(properties.get(key));
     }

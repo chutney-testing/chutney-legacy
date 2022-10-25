@@ -2,6 +2,7 @@ package com.chutneytesting.engine.domain.execution.engine.step;
 
 import static com.chutneytesting.tools.WaitUtils.awaitDuring;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,6 +39,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class StepTest {
@@ -343,6 +345,38 @@ public class StepTest {
 
     }
 
+    @Test
+    public void should_evaluate_spel_for_target_data() {
+        // Given
+        TargetImpl fakeTarget = TargetImpl.builder()
+            .withName("NAME")
+            .withUrl("${#dynamicUrl}")
+            .withProperties(Map.of("${#dynamicPropertiesKey}", "${#dynamicPropertiesValue}"))
+            .build();
+        String environment = "FakeTestEnvironment";
+
+        ScenarioContextImpl scenarioContext = new ScenarioContextImpl();
+        scenarioContext.put("dynamicUrl", "uri");
+        scenarioContext.put("dynamicPropertiesKey", "key");
+        scenarioContext.put("dynamicPropertiesValue", "value");
+
+        StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, emptyMap(), null, null, null, environment);
+        StepExecutor stepExecutorMock = mock(StepExecutor.class);
+        Step step = new Step(dataEvaluator, fakeStepDefinition, stepExecutorMock, emptyList());
+
+        // When
+
+        step.execute(ScenarioExecution.createScenarioExecution(null), scenarioContext);
+
+        // Then
+        ArgumentCaptor<Target> targetCaptor = ArgumentCaptor.forClass(Target.class);
+        verify(stepExecutorMock).execute(any(), any(), targetCaptor.capture(), any());
+
+        Target target = targetCaptor.getValue();
+        assertThat(target.name()).isEqualTo("NAME");
+        assertThat(target.rawUri()).isEqualTo("uri");
+        assertThat(target.property("key").get()).isEqualTo("value");
+    }
 
     private Status executeWithRemote(Status remoteStatus) {
 

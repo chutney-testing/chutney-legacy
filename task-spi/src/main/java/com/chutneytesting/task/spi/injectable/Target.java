@@ -12,6 +12,8 @@ public interface Target {
 
     URI uri();
 
+    String rawUri();
+
     Optional<String> property(String key);
 
     default Map<String, String> prefixedProperties(String prefix) {

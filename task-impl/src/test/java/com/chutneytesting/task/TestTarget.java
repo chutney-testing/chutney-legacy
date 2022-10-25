@@ -37,6 +37,14 @@ public class TestTarget implements Target {
     }
 
     @Override
+    public String rawUri() {
+        if(url == null) {
+            return "null uri";
+        }
+        return uri().toString();
+    }
+
+    @Override
     public Optional<String> property(String key) {
         return ofNullable(properties.get(key));
     }

@@ -2,7 +2,9 @@ package com.chutneytesting.engine.domain.execution.engine.evaluation;
 
 import static com.chutneytesting.engine.domain.execution.engine.evaluation.Strings.escapeForRegex;
 
+import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.evaluation.SpelFunctions;
+import com.chutneytesting.task.spi.injectable.Target;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,14 +39,7 @@ public class StepDataEvaluator {
     public Map<String, Object> evaluateNamedDataWithContextVariables(final Map<String, Object> data, final Map<String, Object> contextVariables) throws EvaluationException {
         Map<String, Object> evaluatedNamedData = new LinkedHashMap<>();
 
-        StandardEvaluationContext evaluationContext = new StandardEvaluationContext();
-        evaluationContext.registerMethodFilter(java.lang.Runtime.class, methods -> Collections.emptyList());
-        evaluationContext.registerMethodFilter(java.lang.ProcessBuilder.class, methods -> Collections.emptyList());
-
-        if (spelFunctions != null) {
-            spelFunctions.stream().forEach(f -> evaluationContext.registerFunction(f.getName(), f.getMethod()));
-        }
-        evaluationContext.setVariables(contextVariables);
+        StandardEvaluationContext evaluationContext = buildEvaluationContext(contextVariables);
 
         data.forEach(
             (dataName, dataValue) -> {
@@ -56,12 +51,35 @@ public class StepDataEvaluator {
         return evaluatedNamedData;
     }
 
+    public Target evaluateTarget(final Target target, final Map<String, Object> contextVariables) throws EvaluationException {
+        TargetImpl.TargetBuilder builder = TargetImpl.builder();
+
+        StandardEvaluationContext evaluationContext = buildEvaluationContext(contextVariables);
+
+        builder.withName(target.name());
+        builder.withUrl((String) evaluateObject(target.rawUri(), evaluationContext));
+        builder.withProperties((Map<String, String>) evaluateObject(target.prefixedProperties(""), evaluationContext));
+        return builder.build();
+    }
+
+    private StandardEvaluationContext buildEvaluationContext(Map<String, Object> contextVariables) {
+        StandardEvaluationContext evaluationContext = new StandardEvaluationContext();
+        evaluationContext.registerMethodFilter(Runtime.class, methods -> Collections.emptyList());
+        evaluationContext.registerMethodFilter(ProcessBuilder.class, methods -> Collections.emptyList());
+
+        if (spelFunctions != null) {
+            spelFunctions.stream().forEach(f -> evaluationContext.registerFunction(f.getName(), f.getMethod()));
+        }
+        evaluationContext.setVariables(contextVariables);
+        return evaluationContext;
+    }
+
     @SuppressWarnings("unchecked")
     private Object evaluateObject(final Object object, final EvaluationContext evaluationContext) throws EvaluationException {
         Object inputEvaluatedValue;
         if (object instanceof String) {
             String stringValue = (String) object;
-            if (isObjectEvaluation(stringValue)) {
+            if (hasOnlyOneSpel(stringValue)) {
                 inputEvaluatedValue = Strings.replaceExpression(stringValue, s -> evaluate(parser, evaluationContext, s), EVALUATION_STRING_PREFIX, EVALUATION_STRING_SUFFIX, EVALUATION_STRING_ESCAPE);
             } else {
                 inputEvaluatedValue = Strings.replaceExpressions(stringValue, s -> evaluate(parser, evaluationContext, s), EVALUATION_STRING_PREFIX, EVALUATION_STRING_SUFFIX, EVALUATION_STRING_ESCAPE);
@@ -118,7 +136,15 @@ public class StepDataEvaluator {
         }
     }
 
-    private boolean isObjectEvaluation(String template) {
+    /**
+     * If there is only one spel, it means it can be evaluated as a whole java Object.
+     * ex: ${#webdriver} will retrieve the object Webdriver stored in the context
+     * If there are multiple spel, it will be a String concatenation
+     *
+     * @param template
+     * @return true if only one spel in template
+     */
+    private boolean hasOnlyOneSpel(String template) {
         return EVALUATION_OBJECT_PATTERN.matcher(template.trim()).matches();
     }
 
