@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.5.3](https://github.com/chutney-testing/chutney/tree/1.5.3)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.5.2...1.5.3)
+
+**Implemented enhancements:**
+
+- 🚀 | Enable dynamic host for Http targets [\#889](https://github.com/chutney-testing/chutney/issues/889)
+- 🚀 | Use a given proxy for HTTP tasks [\#881](https://github.com/chutney-testing/chutney/issues/881)
+- 🚀 | Add attribute rel to link [\#892](https://github.com/chutney-testing/chutney/pull/892)
+- 🚀 | Remove default role [\#891](https://github.com/chutney-testing/chutney/pull/891) 
+- 🚀 | Encrypt and hash sensitive data in config files [\#880](https://github.com/chutney-testing/chutney/pull/880) 
+
+**Fixed bugs:**
+
+- 🐛 | Error message on login page [\#883](https://github.com/chutney-testing/chutney/issues/883)
+- 🐛 | User migration issue [\#896](https://github.com/chutney-testing/chutney/pull/896) 
+- 🐛 | Fix scenario read angle color [\#888](https://github.com/chutney-testing/chutney/pull/888) 
+- 🐛 | Toggle unused header features & restore backup menu [\#887](https://github.com/chutney-testing/chutney/pull/887) 
+
+**Merged pull requests:**
+ 
+- chore\(\): Use spring boot version property for spring boot maven plugin [\#884](https://github.com/chutney-testing/chutney/pull/884) 
+- chore\(deps\): bump springboot.version from 2.7.0 to 2.7.4 [\#862](https://github.com/chutney-testing/chutney/pull/862) 
+
+
 ## [1.5.2](https://github.com/chutney-testing/chutney/tree/1.5.2)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.5.1...1.5.2)
