@@ -474,29 +474,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>enforce</id>
-                        <configuration>
-                            <rules>
-                                <dependencyConvergence/>
-                                <!--<reactorModuleConvergence>
-                                    <message>The reactor is not valid</message>
-                                    <ignoreModuleDependencies>true</ignoreModuleDependencies>
-                                </reactorModuleConvergence>-->
-                            </rules>
-                            <fail>false</fail>
-                        </configuration>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
@@ -743,6 +720,38 @@
                                 <phase>verify</phase>
                                 <goals>
                                     <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>convergence</id>
+            <activation>
+                <property>
+                    <name>convergence</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>enforce</id>
+                                <configuration>
+                                    <rules>
+                                        <dependencyConvergence/>
+                                    </rules>
+                                    <fail>true</fail>
+                                </configuration>
+                                <goals>
+                                    <goal>enforce</goal>
                                 </goals>
                             </execution>
                         </executions>
