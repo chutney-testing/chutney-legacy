@@ -27,6 +27,7 @@ import com.chutneytesting.engine.domain.execution.engine.StepExecutor;
 import com.chutneytesting.engine.domain.execution.engine.evaluation.StepDataEvaluator;
 import com.chutneytesting.engine.domain.execution.engine.scenario.ScenarioContextImpl;
 import com.chutneytesting.engine.domain.execution.evaluation.SpelFunctions;
+import com.chutneytesting.engine.domain.execution.event.EndStepExecutionEvent;
 import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReportBuilder;
@@ -37,8 +38,14 @@ import io.reactivex.schedulers.Schedulers;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Stream;
 import org.assertj.core.util.Lists;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -376,6 +383,35 @@ public class StepTest {
         assertThat(target.name()).isEqualTo("NAME");
         assertThat(target.rawUri()).isEqualTo("uri");
         assertThat(target.property("key").get()).isEqualTo("value");
+    }
+
+    @ParameterizedTest
+    @MethodSource("executionResults")
+    void should_notify_execution_end_with_correct_state(TaskExecutionResult ter) {
+        StepExecutor stepExecutor = new FakeStepExecutor(ter);
+        Step step = buildEmptyStep(stepExecutor);
+
+        ScenarioExecution execution = ScenarioExecution.createScenarioExecution(null);
+
+        AtomicReference<Step> notifyStep = new AtomicReference<>();
+        RxBus.getInstance().registerOnExecutionId(EndStepExecutionEvent.class, execution.executionId,
+            e -> {
+                EndStepExecutionEvent ee = (EndStepExecutionEvent) e;
+                notifyStep.set(ee.step);
+            });
+
+        Status returnedStatus = step.execute(execution, new ScenarioContextImpl());
+        Step notifiedStep = await().untilAtomic(notifyStep, Matchers.notNullValue(Step.class));
+
+        assertThat(notifiedStep.status()).isEqualTo(returnedStatus);
+        assertThat(System.identityHashCode(step)).isEqualTo(System.identityHashCode(notifiedStep));
+    }
+
+    private static Stream<Arguments> executionResults() {
+        return Stream.of(
+            Arguments.of(TaskExecutionResult.ok()),
+            Arguments.of(TaskExecutionResult.ko())
+        );
     }
 
     private Status executeWithRemote(Status remoteStatus) {

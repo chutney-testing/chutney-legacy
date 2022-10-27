@@ -46,7 +46,7 @@ public class Step {
 
     private final StepState state;
     private final List<Step> steps;
-    private final Target target;
+    private Target target;
     private final StepExecutor executor;
     private final StepDataEvaluator dataEvaluator;
 
@@ -82,18 +82,18 @@ public class Step {
         }
 
         beginExecution(scenarioExecution);
-        final AtomicReference<Target> evaluatedTarget = new AtomicReference<>();
+
         try {
             makeTargetAccessibleForInputEvaluation(scenarioContext);
             makeEnvironmentAccessibleForInputEvaluation(scenarioContext);
 
             final Map<String, Object> evaluatedInputs = definition.type.equals("final") ? definition.inputs : unmodifiableMap(dataEvaluator.evaluateNamedDataWithContextVariables(definition.inputs, scenarioContext));
-            evaluatedTarget.set(dataEvaluator.evaluateTarget(target, scenarioContext));
+            target = dataEvaluator.evaluateTarget(target, scenarioContext);
 
             Try
                 .exec(() -> new StepContextImpl(evaluatedInputs, scenarioContext))
                 .ifSuccess(stepContextExecuted -> {
-                    executor.execute(scenarioExecution, stepContextExecuted, evaluatedTarget.get(), this);
+                    executor.execute(scenarioExecution, stepContextExecuted, target, this);
                     if (Status.SUCCESS.equals(this.state.status())) {
                         executeStepValidations(stepContextExecuted);
                         copyStepResultsToScenarioContext(stepContextExecuted, scenarioContext);
@@ -105,7 +105,7 @@ public class Step {
             failure(e);
             LOGGER.warn("Intercepted exception!", e);
         } finally {
-            endExecution(scenarioExecution, ofNullable(evaluatedTarget.get()));
+            endExecution(scenarioExecution);
         }
         return state.status();
     }
@@ -116,22 +116,8 @@ public class Step {
     }
 
     public void endExecution(ScenarioExecution scenarioExecution) {
-        endExecution(scenarioExecution, empty());
-    }
-
-    public void endExecution(ScenarioExecution scenarioExecution, Optional<Target> evaluatedTarget) {
         state.endExecution(isParentStep());
-        final Step stepToNotify;
-        if (evaluatedTarget.isPresent()) {
-            stepToNotify = StepBuilder.copyFrom(this)
-                .withDefinition(copyFrom(this.definition)
-                    .withTarget(evaluatedTarget.get())
-                    .build())
-                .build();
-        } else {
-            stepToNotify = this;
-        }
-        RxBus.getInstance().post(new EndStepExecutionEvent(scenarioExecution, stepToNotify));
+        RxBus.getInstance().post(new EndStepExecutionEvent(scenarioExecution, this));
     }
 
     public void stopExecution(ScenarioExecution scenarioExecution) {
@@ -340,46 +326,6 @@ public class Step {
 
         StepContext copy() {
             return new StepContextImpl(scenarioContext.unmodifiable(), unmodifiableMap(evaluatedInputs), unmodifiableMap(stepOutputs));
-        }
-    }
-
-    public static class StepBuilder {
-        private StepDataEvaluator dataEvaluator;
-        private StepDefinition definition;
-        private StepExecutor executor;
-        private List<Step> steps;
-
-        public StepBuilder withDataEvaluator(StepDataEvaluator dataEvaluator) {
-            this.dataEvaluator = dataEvaluator;
-            return this;
-        }
-
-        public StepBuilder withDefinition(StepDefinition definition) {
-            this.definition = definition;
-            return this;
-        }
-
-        public StepBuilder withExecutor(StepExecutor executor) {
-            this.executor = executor;
-            return this;
-        }
-
-        public StepBuilder withSteps(List<Step> steps) {
-            this.steps = steps;
-            return this;
-        }
-
-        public Step build() {
-            return new Step(dataEvaluator, definition, executor, steps);
-        }
-
-        public static StepBuilder copyFrom(Step step) {
-            StepBuilder builder = new StepBuilder();
-            builder.withSteps(step.steps);
-            builder.withExecutor(step.executor);
-            builder.withDataEvaluator(step.dataEvaluator);
-            builder.withDefinition(step.definition);
-            return builder;
         }
     }
 }
