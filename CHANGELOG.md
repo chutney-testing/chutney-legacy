@@ -1,8 +1,8 @@
 # Changelog
 
-## [1.5.3](https://github.com/chutney-testing/chutney/tree/1.5.3)
+## [1.5.3](https://github.com/chutney-testing/chutney/tree/1.5.4)
 
-[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.5.2...1.5.3)
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.5.2...1.5.4)
 
 **Implemented enhancements:**
 
