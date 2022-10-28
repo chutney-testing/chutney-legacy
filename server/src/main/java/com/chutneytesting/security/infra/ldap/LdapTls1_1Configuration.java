@@ -44,14 +44,19 @@ public class LdapTls1_1Configuration {
 
     @Bean
     public AttributesMapper<UserDto> attributesMapper(LdapAttributesProperties ldapAttributesProperties,
-                                                      @Value("${ldap.groups-pattern}") String ldapGroupsPattern,
-                                                      AuthenticationService authenticationService) {
-        return new LdapAttributesMapper(ldapAttributesProperties, ldapGroupsPattern, authenticationService);
+                                                      @Value("${ldap.groups-pattern}") String ldapGroupsPattern) {
+        return new LdapAttributesMapper(ldapAttributesProperties, ldapGroupsPattern);
     }
 
     @Bean
-    public LdapUserDetailsService ldapUserDetailsService(LdapTemplate ldapTemplate, LdapAttributesProperties ldapAttributesProperties, AttributesMapper<UserDto> attributesMapper) {
-        return new LdapUserDetailsService(ldapTemplate, ldapAttributesProperties, attributesMapper);
+    public LdapUserDetailsService ldapUserDetailsService(
+        LdapTemplate ldapTemplate,
+        LdapAttributesProperties ldapAttributesProperties,
+        AttributesMapper<UserDto> attributesMapper,
+        AuthenticationService authenticationService,
+        @Value("${ldap.user-search-scope}") String userSearchScope
+    ) {
+        return new LdapUserDetailsService(ldapTemplate, ldapAttributesProperties, attributesMapper, authenticationService, userSearchScope);
     }
 
     @Bean

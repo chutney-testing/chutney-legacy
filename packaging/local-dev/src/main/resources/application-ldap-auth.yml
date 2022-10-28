@@ -1,0 +1,16 @@
+
+ldap:
+  source:
+    url: "ldap://localhost:12345"
+    base: "dc=chutneytesting,dc=com"
+    userDn: "uid=admin"
+    password: "secret"
+  attributes:
+    id: "uid"
+    name: "cn"
+    firstname: "sn"
+    lastname: "sn"
+    groups: "isMemberOf"
+    mail: "sn"
+  groups-pattern: "^cn=chutney(.+),ou=groups,dc=chutneytesting,dc=com$"
+  user-search-scope: "SUBTREE"

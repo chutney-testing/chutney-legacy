@@ -38,9 +38,30 @@ management:
 spring:
   liquibase:
     change-log: classpath:/changelog/db.changelog-master.xml
+  ldap:
+    # Spring LDAP
+    #
+    # In this example we use an embedded ldap server. When using a real one,
+    # you can configure the settings here.
+    #
+    # urls: ldap://localhost:12345
+    # base: dc=chutneytesting,dc=com
+    # username: uid=admin
+    # password: secret
+    # Embedded Spring LDAP
+    embedded:
+      base-dn: dc=chutneytesting,dc=com
+      credential:
+        username: uid=admin
+        password: secret
+      ldif: classpath:/schema.ldif
+      port: 12345
+      validation:
+        enabled: false
   profiles:
     active:
       - undertow-https-redirect
+      - ldap-auth
       - mem-auth
       - db-h2
 

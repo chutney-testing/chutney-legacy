@@ -5,10 +5,7 @@ import static java.util.stream.Collectors.toUnmodifiableMap;
 
 import com.chutneytesting.security.api.UserDto;
 import com.chutneytesting.security.domain.AuthenticationService;
-import com.chutneytesting.server.core.domain.security.Authorization;
-import com.chutneytesting.server.core.domain.security.Role;
-import com.chutneytesting.server.core.domain.security.RoleNotFoundException;
-import java.util.Arrays;
+import com.chutneytesting.security.infra.UserDetailsServiceHelper;
 import java.util.Map;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -33,26 +30,7 @@ public class InMemoryUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<UserDto> user = Optional.ofNullable(users.get(username));
         return user
-            .map(this::readRole)
+            .map(u -> UserDetailsServiceHelper.grantAuthoritiesFromUserRole(u, authenticationService))
             .orElseThrow(() -> new UsernameNotFoundException("Username not found."));
-    }
-
-    private UserDto readRole(UserDto userDto) {
-        UserDto dto = new UserDto(userDto);
-
-        if (dto.getRoles().contains("ADMIN")) {
-            Arrays.stream(Authorization.values()).map(Authorization::name).forEach(dto::grantAuthority);
-        } else {
-            try {
-                Role role = authenticationService.userRoleById(dto.getId());
-                dto.addRole(role.name);
-                role.authorizations.stream().map(Enum::name).forEach(dto::grantAuthority);
-            } catch (RoleNotFoundException rnfe) {
-                LOGGER.warn("User {} has no role defined", dto.getId());
-                throw rnfe;
-            }
-        }
-
-        return dto;
     }
 }
