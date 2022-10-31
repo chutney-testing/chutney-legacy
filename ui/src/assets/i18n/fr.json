@@ -218,8 +218,8 @@
             "retryAuto": "1 retry auto sur les scénarios en échec",
             "jiraLinkedTest": "Scénarios lié à jira",
             "jiraIdInfo": {
-                "testPlan": "Si id test plan, un nouveau test exec est créé à chaque exécution.",
-                "testExec": "Si id test exec, les status des tests du test exec sont mis à jour."
+                "testPlan": "Si l'id est celui d'un test plan: cela créé un nouveau test exec pour chaque exécution de campagne.",
+                "testExec": "Si l'id est celui d'un test exec: cela met à jour les status des tests pour ce test exec."
             },
             "selectTag": "Sélectionner tag",
             "selectJiraTag": "Sélectionner statut d'execution jira"
