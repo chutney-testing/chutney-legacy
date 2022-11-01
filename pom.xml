@@ -86,7 +86,7 @@
         <buildMetadataRequired>false</buildMetadataRequired>
 
         <!-- Runtime dependencies versions -->
-        <springboot.version>2.7.4</springboot.version>
+        <springboot.version>2.7.5</springboot.version>
         <guava.version>21.0</guava.version> <!-- Follow jackson-datatype-guava guava spring boot version -->
         <immutables.version>2.9.0</immutables.version>
         <commonstext.version>1.10.0</commonstext.version> <!-- Follow commons-lang3 spring boot version -->
