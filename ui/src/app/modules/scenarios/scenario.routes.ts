@@ -1,14 +1,11 @@
 import { Routes } from '@angular/router';
 import { ScenariosComponent } from './components/search-list/scenarios.component';
-import { ScenarioExecutionComponent } from './components/execution/execution.component';
 import { RawEditionComponent } from './components/edition/raw/raw-edition.component';
 import { ComponentEditionComponent } from './components/edition/component-edition/component-edition.component';
 import { ExecuteComponent } from './components/execute/execute.component';
 import { AuthGuard, CanDeactivateGuard } from '@core/guards';
 import { Authorization } from '@model';
-import {
-    ScenarioExecutionsComponent
-} from '@modules/scenarios/components/execution/list/scenario-executions.component';
+import { HistoryComponent } from '@modules/scenarios/components/execution/history/history.component';
 
 export const scenarioRoute: Routes = [
 
@@ -20,13 +17,7 @@ export const scenarioRoute: Routes = [
     },
     {
         path: ':id/executions',
-        component: ScenarioExecutionsComponent,
-        canActivate: [AuthGuard],
-        data: { 'authorizations': [ Authorization.SCENARIO_READ ] }
-    },
-    {
-        path: ':id/executions/:execId',
-        component: ScenarioExecutionComponent,
+        component: HistoryComponent,
         canActivate: [AuthGuard],
         data: { 'authorizations': [ Authorization.SCENARIO_READ ] }
     },

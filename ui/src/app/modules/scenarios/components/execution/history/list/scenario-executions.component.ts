@@ -1,11 +1,10 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { Execution } from '@model';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { ScenarioExecutionService } from '@modules/scenarios/services/scenario-execution.service';
 import { ExecutionStatus } from '@core/model/scenario/execution-status';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { debounceTime, switchMap } from 'rxjs/operators';
-import { Observable, Subscription } from 'rxjs';
+import { debounceTime, map, tap } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { DateFormatPipe } from 'ngx-moment';
 import { AngularMultiSelect } from 'angular2-multiselect-dropdown';
@@ -16,17 +15,15 @@ import { NgbDate } from '@ng-bootstrap/ng-bootstrap/datepicker/ngb-date';
     templateUrl: './scenario-executions.component.html',
     styleUrls: ['./scenario-executions.component.scss']
 })
-export class ScenarioExecutionsComponent implements OnInit, OnDestroy {
+export class ScenarioExecutionsComponent implements OnChanges, OnDestroy {
     ExecutionStatus = ExecutionStatus;
-    executions: Execution[] = [];
     filteredExecutions: Execution[] = [];
+    filtersForm: FormGroup;
 
-    filters: FormGroup;
     status: { id: string, itemName: string }[] = [];
     environments: { id: string, itemName: string }[] = [];
     executors: { id: string, itemName: string }[] = [];
     campaigns: { id: string, itemName: string }[] = [];
-
     selectSettings = {
         text: '',
         enableCheckAll: false,
@@ -36,42 +33,54 @@ export class ScenarioExecutionsComponent implements OnInit, OnDestroy {
     };
 
     private filters$: Subscription;
+
     private readonly iso_Date_Delimiter = '-';
+    @ViewChild('statusDropdown', {static: false}) statusDropdown: AngularMultiSelect;
 
-    @ViewChild('statusDropdown',{static:false}) statusDropdown: AngularMultiSelect;
-    @ViewChild('envsDropdown',{static:false}) envsDropdown: AngularMultiSelect;
-    @ViewChild('executorsDropdown',{static:false}) executorsDropdown: AngularMultiSelect;
-    @ViewChild('campsDropdown',{static:false}) campsDropdown: AngularMultiSelect;
+    @ViewChild('envsDropdown', {static: false}) envsDropdown: AngularMultiSelect;
+    @ViewChild('executorsDropdown', {static: false}) executorsDropdown: AngularMultiSelect;
+    @ViewChild('campsDropdown', {static: false}) campsDropdown: AngularMultiSelect;
 
-    constructor(private scenarioExecutionService: ScenarioExecutionService,
-                private route: ActivatedRoute,
+    @Input() executions: Execution[] = [];
+    @Output() onExecutionSelect = new EventEmitter<{ execution: Execution, focus: boolean }>();
+    @Input() filters: Params;
+    @Output() filtersChange = new EventEmitter<Params>();
+
+    constructor(private route: ActivatedRoute,
                 private router: Router,
                 private formBuilder: FormBuilder,
                 private datePipe: DateFormatPipe) {
     }
 
-    ngOnInit(): void {
-        this.getExecutions()
-            .subscribe(executions => {
-                this.executions = executions;
-                this.initFiltersOptions();
-                this.applyUriFilters();
-            })
+
+    ngOnChanges(changes: SimpleChanges): void {
+        this.initFiltersOptions();
+        this.applyFilters();
+        this.onFiltersChange();
+    }
+
+    toggleDropDown(dropDown: AngularMultiSelect, event) {
+        event.stopPropagation();
+        dropDown.toggleDropdown(event);
+    }
+
+    getDateFilterValue() {
+        let date: NgbDateStruct = this.filtersForm.value.date;
+        return new Date(date.year, date.month - 1, date.day);
+    }
+
+    noExecutionAt() {
+        return (date: NgbDate) => !this.executions.filter(exec => this.matches(exec, {date: date})).length;
+    }
+
+    openReport(execution: Execution, focus: boolean = true) {
+        this.onExecutionSelect.emit({execution, focus});
     }
 
     ngOnDestroy(): void {
         this.filters$.unsubscribe();
     }
 
-    goToExecutionReport(executionId: number) {
-        this.router.navigate([executionId], {relativeTo: this.route} )
-    }
-
-    private getExecutions(): Observable<Execution[]> {
-        return this.route.params.pipe(
-            switchMap(params => this.scenarioExecutionService.findScenarioExecutions(params['id']))
-        );
-    }
 
     private initFiltersOptions() {
         this.status = [...new Set(this.executions.map(exec => exec.status))].map(status => this.toSelectOption(status, ExecutionStatus.toString(status)));
@@ -80,47 +89,49 @@ export class ScenarioExecutionsComponent implements OnInit, OnDestroy {
         this.campaigns = [...new Set(this.executions.filter(exec => !!exec.campaign).map(exec => exec.campaign))].map(camp => this.toSelectOption(camp));
     }
 
-    private applyUriFilters() {
-        this.route.queryParams.subscribe(params => {
-            this.initFiltersForm(params);
-            this.filteredExecutions = this.executions.filter(exec => this.matches(exec, this.filters.value))
-        })
-
+    private applyFilters() {
+        this.applyFiltersOnHeaders();
+        this.applyFiltersOnExecutions();
     }
 
-
-    private initFiltersForm(params: Params) {
-        this.filters = this.formBuilder.group({
-            keyword: params['keyword'],
-            date: this.formBuilder.control(this.toNgbDate(params['date'])),
-            status: this.formBuilder.control(this.selectedOptionsFromUri(params['status'], ExecutionStatus.toString)),
-            environments: this.formBuilder.control(this.selectedOptionsFromUri(params['env'])),
-            executors: this.formBuilder.control(this.selectedOptionsFromUri(params['exec'])),
-            campaigns: this.formBuilder.control(this.selectedOptionsFromUri(params['camp'])),
+    private applyFiltersOnHeaders() {
+        this.filtersForm = this.formBuilder.group({
+            keyword: this.filters['keyword'],
+            date: this.formBuilder.control(this.toNgbDate(this.filters['date'])),
+            status: this.formBuilder.control(this.selectedOptionsFromUri(this.filters['status'], ExecutionStatus.toString)),
+            environments: this.formBuilder.control(this.selectedOptionsFromUri(this.filters['env'])),
+            executors: this.formBuilder.control(this.selectedOptionsFromUri(this.filters['exec'])),
+            campaigns: this.formBuilder.control(this.selectedOptionsFromUri(this.filters['camp'])),
         });
-        this.filters$ = this.filters
+    }
+
+    private applyFiltersOnExecutions() {
+        this.filteredExecutions = this.executions.filter(exec => this.matches(exec, this.filtersForm.value))
+    }
+
+    private onFiltersChange() {
+        this.filters$ = this.filtersForm
             .valueChanges
-            .pipe(debounceTime(500))
-            .subscribe(() => {
-                this.router.navigate([], {
-                    relativeTo: this.route,
-                    queryParams: this.toQueryParams(this.filters.value)
-                })
-            });
+            .pipe(
+                debounceTime(500),
+                map(value => this.toQueryParams(value)),
+                tap(params => this.filtersChange.emit(params)))
+            .subscribe();
     }
 
 
-
-    private selectedOptionsFromUri(param: string, labelResolver: (id) => string = () => param) {
+    private selectedOptionsFromUri(param: string, labelResolver?: (param) => string) {
         if (param) {
-            return param.split(',').map(part => this.toSelectOption(part, labelResolver(part)));
+            return param
+                .split(',')
+                .map(part => this.toSelectOption(part, labelResolver ? labelResolver(part) : part));
         }
         return [];
 
     }
 
-    private toSelectOption(id: string, label?: string) {
-       return {id: id, itemName: label ? label : id};
+    private toSelectOption(id: string, label: string = id) {
+        return {id: id, itemName: label };
     }
 
     private toQueryParams(filters: any): Params {
@@ -128,11 +139,11 @@ export class ScenarioExecutionsComponent implements OnInit, OnDestroy {
         if (filters.keyword) {
             params['keyword'] = filters.keyword;
         }
-        if (filters.status) {
+        if (filters.status && filters.status.length) {
             params['status'] = filters.status.map(status => status.id).toString();
         }
         if (filters.date) {
-            params['date'] = this.formatToIsoDate(filters.date);
+            params['date'] = this.toIsoDate(filters.date);
         }
         if (filters.environments && filters.environments.length) {
             params['env'] = filters.environments.map(env => env.id).toString();
@@ -146,7 +157,7 @@ export class ScenarioExecutionsComponent implements OnInit, OnDestroy {
         return params;
     }
 
-    private formatToIsoDate(ngbDate: NgbDateStruct) {
+    private toIsoDate(ngbDate: NgbDateStruct) {
         let dd = String(ngbDate.day).padStart(2, '0');
         let mm = String(ngbDate.month).padStart(2, '0')
         let yyyy = ngbDate.year;
@@ -174,6 +185,10 @@ export class ScenarioExecutionsComponent implements OnInit, OnDestroy {
                 + exec.environment
                 + space
                 + this.datePipe.transform(exec.time, 'DD MMM. YYYY HH:mm')
+                + space
+                + exec.executionId
+                + space
+                + ExecutionStatus.toString(exec.status)
                 + space;
             if (exec.campaign) {
                 searchScope += space + exec.campaign;
@@ -212,18 +227,4 @@ export class ScenarioExecutionsComponent implements OnInit, OnDestroy {
         return keywordMatch && statusMatch && dateMatch && userMatch && envMatch && campaignMatch;
     }
 
-    toggleDropDown(dropDown: AngularMultiSelect, event) {
-        event.stopPropagation();
-        dropDown.toggleDropdown(event);
-    }
-
-    getDateFilterValue() {
-        let date: NgbDateStruct = this.filters.value.date;
-        return new Date(date.year, date.month - 1, date.day);
-    }
-
-
-    noExecutionAt()  {
-        return (date: NgbDate)=> !this.executions.filter(exec => this.matches(exec, {date: date})).length;
-    }
 }

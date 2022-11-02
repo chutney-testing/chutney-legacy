@@ -1,17 +1,10 @@
-<chutney-header [testCaseId]="currentScenarioId"
+<chutney-header [testCaseId]="scenarioId"
                 [canExecute]="parseError"
                 (executeEvent)="executeScenario($event)">
 </chutney-header>
 
 <div class="row">
-    <div class="col-sm-3half">
-        <chutney-execution-history [scenarioId]="currentScenarioId"
-                                   [selectedExecutionId]="currentExecutionId"
-                                   (onselectExecution)="onSelectExecution($event)"
-                                   (onlastIdExecution)="onLastIdExecution($event)"
-                                   (onlastStatusExecution)="onlastStatusExecution($event)"
-        ></chutney-execution-history>
-    </div>
+
 
     <div class="col-sm-8half">
         <div class="steps" *ngIf="parseError">
@@ -25,7 +18,7 @@
             </div>
         </div>
         <div class="mb-2">
-            <chutney-scenario-campaigns [idScenario]="currentScenarioId"></chutney-scenario-campaigns>
+            <chutney-scenario-campaigns [idScenario]="scenarioId"></chutney-scenario-campaigns>
         </div>
         <ng-container *ngIf="scenarioExecutionReport?.report">
             <div class="row steps">

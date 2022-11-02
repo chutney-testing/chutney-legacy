@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
@@ -11,21 +11,19 @@ import { ComponentService, ScenarioService } from '@core/services';
 import { ScenarioExecutionService } from '@modules/scenarios/services/scenario-execution.service';
 
 @Component({
-    selector: 'chutney-execution',
+    selector: 'chutney-scenario-execution',
     providers: [Location],
     templateUrl: './execution.component.html',
     styleUrls: ['./execution.component.scss']
 })
 export class ScenarioExecutionComponent implements OnInit, OnDestroy {
-
+    @Input() scenarioId: string;
+    @Input() executionId: number;
     scenarioComponent$: Observable<ScenarioComponent> = null;
     scenarioGwt$: Observable<GwtTestCase> = null;
 
     parseError: String;
     executionError: String;
-
-    currentScenarioId: string;
-    currentExecutionId: number;
 
     scenarioExecutionReport: ScenarioExecutionReport;
 
@@ -36,7 +34,6 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     private isComposed = TestCase.isComposed;
     private hasParameters: boolean = null;
 
-    private routeParamsSubscription: Subscription;
     private scenarioExecutionAsyncSubscription: Subscription;
 
     Authorization = Authorization;
@@ -53,32 +50,26 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.routeParamsSubscription = this.route.params.subscribe((params) => {
-            this.currentScenarioId = params['id'];
-            if (params['execId'] && params['execId'] !== 'last') {
-                this.loadScenarioExecution(params['execId']);
-            }
-
-            this.loadScenario();
-        });
+        this.loadScenarioExecution(this.executionId);
+        this.loadScenario();
     }
 
     ngOnDestroy() {
-        this.eventManager.destroy(this.routeParamsSubscription);
         this.unsubscribeScenarioExecutionAsyncSubscription();
     }
 
+    //TODO: scenario as input ? to avoid new http call for every opened tab
     loadScenario() {
-        if (this.isComposed(this.currentScenarioId)) {
+        if (this.isComposed(this.scenarioId)) {
             this.scenarioComponent$ = this.componentService
-                .findComponentTestCaseWithoutDeserializeImpl(this.currentScenarioId).pipe(
+                .findComponentTestCaseWithoutDeserializeImpl(this.scenarioId).pipe(
                     tap(sc => {
                         this.hasParameters = (sc.computedParameters && sc.computedParameters.length > 0);
                     })
                 );
         } else {
             this.scenarioGwt$ = this.scenarioService
-                .findTestCase(this.currentScenarioId).pipe(
+                .findTestCase(this.scenarioId).pipe(
                      tap(gwt => {
                         this.hasParameters = (gwt.wrappedParams.params && gwt.wrappedParams.params.length > 0);
                     })
@@ -92,9 +83,9 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
 
     onLastIdExecution(execution: Execution) {
         if (Execution.NO_EXECUTION === execution) {
-            this.currentExecutionId = null;
-        } else if (this.currentExecutionId !== execution.executionId) {
-            this.currentExecutionId = execution.executionId;
+            this.executionId = null;
+        } else if (this.executionId !== execution.executionId) {
+            this.executionId = execution.executionId;
             if (!this.scenarioExecutionAsyncSubscription || this.scenarioExecutionAsyncSubscription.closed) {
                 if ('RUNNING' === execution.status) {
                     this.observeScenarioExecution(execution.executionId);
@@ -107,7 +98,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
 
     onSelectExecution(execution: Execution) {
         if (execution != null) {
-            this.currentExecutionId = execution.executionId;
+            this.executionId = execution.executionId;
             this.executionError = '';
 
             this.unsubscribeScenarioExecutionAsyncSubscription();
@@ -118,7 +109,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
                 this.loadScenarioExecution(execution.executionId);
             }
         } else {
-            this.currentExecutionId = null;
+            this.executionId = null;
             this.executionError = '';
             this.scenarioExecutionReport = null;
         }
@@ -126,11 +117,11 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
 
     loadScenarioExecution(executionId: number) {
         this.executionError = '';
-        this.currentExecutionId = executionId;
-        this.scenarioExecutionService.findExecutionReport(this.currentScenarioId, executionId)
+        this.executionId = executionId;
+        this.scenarioExecutionService.findExecutionReport(this.scenarioId, executionId)
             .subscribe((scenarioExecutionReport: ScenarioExecutionReport) => {
 
-                this.updateLocation(executionId);
+                //this.updateLocation(executionId);
 
                 if (scenarioExecutionReport && scenarioExecutionReport.report.status === 'RUNNING') {
                     this.observeScenarioExecution(executionId);
@@ -148,13 +139,13 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
 
     executeScenario(env: string) {
         if (this.hasParameters == null) {
-            let scenario$ : Observable<Object> = this.isComposed(this.currentScenarioId) ? this.scenarioComponent$ : this.scenarioGwt$;
+            let scenario$ : Observable<Object> = this.isComposed(this.scenarioId) ? this.scenarioComponent$ : this.scenarioGwt$;
             scenario$.subscribe(() => this.executeScenario(env));
         } else if (this.hasParameters) {
-            this.router.navigateByUrl(`/scenario/${this.currentScenarioId}/execute/${env}`)
+            this.router.navigateByUrl(`/scenario/${this.scenarioId}/execute/${env}`)
                 .then(null);
         } else {
-            this.scenarioExecutionService.executeScenarioAsync(this.currentScenarioId, [], env)
+            this.scenarioExecutionService.executeScenarioAsync(this.scenarioId, [], env)
                 .pipe(
                     delay(1000)
                 )
@@ -180,7 +171,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     stopScenario() {
-        this.scenarioExecutionService.stopScenario(this.currentScenarioId, this.currentExecutionId).subscribe(() => {
+        this.scenarioExecutionService.stopScenario(this.scenarioId, this.executionId).subscribe(() => {
         }, error => {
             const body = JSON.parse(error._body);
             this.executionError = 'Cannot stop scenario : ' + error.status + ' ' + error.statusText + ' ' + body.message;
@@ -189,7 +180,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     pauseScenario() {
-        this.scenarioExecutionService.pauseScenario(this.currentScenarioId, this.currentExecutionId).subscribe(() => {
+        this.scenarioExecutionService.pauseScenario(this.scenarioId, this.executionId).subscribe(() => {
         }, error => {
             const body = JSON.parse(error._body);
             this.executionError = 'Cannot pause scenario : ' + error.status + ' ' + error.statusText + ' ' + body.message;
@@ -197,12 +188,12 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     resumeScenario() {
-        this.scenarioExecutionService.resumeScenario(this.currentScenarioId, this.currentExecutionId)
+        this.scenarioExecutionService.resumeScenario(this.scenarioId, this.executionId)
             .pipe(
                 delay(1000)
             )
             .subscribe(
-                () => this.loadScenarioExecution(Number(this.currentExecutionId)),
+                () => this.loadScenarioExecution(Number(this.executionId)),
                 error => {
                     const body = JSON.parse(error._body);
                     this.executionError = 'Cannot resume scenario : ' + error.status + ' ' + error.statusText + ' ' + body.message;
@@ -214,7 +205,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
         this.unsubscribeScenarioExecutionAsyncSubscription();
         this.scenarioExecutionAsyncSubscription =
             this.subscribeToScenarioExecutionReports(
-                this.scenarioExecutionService.observeScenarioExecution(this.currentScenarioId, executionId));
+                this.scenarioExecutionService.observeScenarioExecution(this.scenarioId, executionId));
     }
 
     private subscribeToScenarioExecutionReports(scenarioExecutionReportsObservable: Observable<ScenarioExecutionReport>): Subscription {
@@ -239,7 +230,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     private updateLocation(executionId: number) {
-        this.location.replaceState('/scenario/' + this.currentScenarioId + '/executions/' + executionId);
+        this.location.replaceState('/scenario/' + this.scenarioId + '/executions/' + executionId);
     }
 
     private unsubscribeScenarioExecutionAsyncSubscription() {
