@@ -12,6 +12,7 @@ import { Authorization } from '@model';
 export class GlobalVariableEditionComponent implements OnInit {
 
     data = '';
+    modifiedContent;
     fileNames;
     currentFileName;
     message: string;
@@ -34,14 +35,14 @@ export class GlobalVariableEditionComponent implements OnInit {
     }
 
     callBackFunc(data) {
-        this.data = data;
+        this.modifiedContent = data;
     }
 
     save() {
         (async () => {
             this.message = 'Saving...';
             await this.delay(1000);
-            this.globalVariableService.save(this.currentFileName, this.data).subscribe(
+            this.globalVariableService.save(this.currentFileName, this.modifiedContent).subscribe(
                 res => {
                     this.message = 'Document saved';
                     if (this.fileNames.indexOf(this.currentFileName) === -1) {
@@ -67,12 +68,12 @@ export class GlobalVariableEditionComponent implements OnInit {
     updateFileContent(selectedFileName: string) {
         if (selectedFileName === undefined) {
             this.data = '';
-            this.data = '';
+            this.modifiedContent = '';
         } else {
             this.globalVariableService.get(selectedFileName).subscribe(
                 response => {
                     this.data = response;
-                    this.data = response;
+                    this.modifiedContent = response;
                 }
             );
         }
