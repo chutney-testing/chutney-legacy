@@ -89,7 +89,7 @@ public class TestCaseControllerTest {
     }
 
     @Test
-    public void should_get_403_when_save_scenario_return_illegal_argument() throws Exception {
+    public void should_get_400_when_save_scenario_return_illegal_argument() throws Exception {
         // Given
         when(testCaseRepository.save(any(GwtTestCase.class))).thenThrow(new IllegalArgumentException());
         // When
@@ -100,7 +100,7 @@ public class TestCaseControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
         )
             .andDo(result -> resultContentLength.set(result.getResponse().getContentLength()))
-            .andExpect(status().isForbidden());
+            .andExpect(status().isBadRequest());
 
         // Then
         assertThat(resultContentLength.get()).isZero();

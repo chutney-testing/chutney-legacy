@@ -26,6 +26,12 @@ public interface JiraRepository {
 
     void removeForCampaign(String campaignId);
 
+    String getByCampaignExecutionId(String campaignExecutionId);
+
+    void saveForCampaignExecution(String campaignExecutionId, String jiraId);
+
+    void removeForCampaignExecution(String campaignExecutionId);
+
     JiraTargetConfiguration loadServerConfiguration();
 
     void saveServerConfiguration(JiraTargetConfiguration jiraTargetConfiguration);

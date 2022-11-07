@@ -35,13 +35,22 @@ public class JiraXrayService {
         this.jiraXrayImplFactory = jiraXrayImplFactory;
     }
 
-    public void updateTestExecution(Long campaignId, String scenarioId, ReportForJira report) {
+    public void updateTestExecution(Long campaignId, Long campaignExecutionId, String scenarioId, ReportForJira report) {
         JiraXrayApi jiraXrayApi = createHttpJiraXrayImpl();
 
         String testKey = jiraRepository.getByScenarioId(scenarioId);
         String testExecutionKey = jiraRepository.getByCampaignId(campaignId.toString());
+        if (jiraXrayApi.isTestPlan(testExecutionKey)) {
+            String newTestExecutionKey = jiraRepository.getByCampaignExecutionId(campaignExecutionId.toString());
+            if (newTestExecutionKey.isEmpty()) {
+                newTestExecutionKey = jiraXrayApi.createTestExecution(testExecutionKey);
+            }
+            testExecutionKey = newTestExecutionKey;
+        }
+
         if (!testKey.isEmpty() && !testExecutionKey.isEmpty()) {
             LOGGER.info("Update xray test {} of test execution {}", testKey, testExecutionKey);
+            jiraRepository.saveForCampaignExecution(campaignExecutionId.toString(), testExecutionKey);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZZZZZ");
             XrayTest xrayTest = new XrayTest(
                 testKey,
@@ -71,9 +80,7 @@ public class JiraXrayService {
 
         List<XrayTestExecTest> testExecutionScenarios = getTestExecutionScenarios(testExecId);
         Optional<XrayTestExecTest> foundTest = testExecutionScenarios.stream().filter(test -> scenarioJiraId.equals(test.getKey())).findFirst();
-        if (foundTest.isPresent()) {
-            jiraXrayApi.updateStatusByTestRunId(foundTest.get().getId(), executionStatus);
-        }
+        foundTest.ifPresent(xrayTestExecTest -> jiraXrayApi.updateStatusByTestRunId(xrayTestExecTest.getId(), executionStatus));
     }
 
     private JiraXrayApi createHttpJiraXrayImpl() {

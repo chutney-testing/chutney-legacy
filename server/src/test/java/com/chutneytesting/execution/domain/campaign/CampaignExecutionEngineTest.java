@@ -115,10 +115,10 @@ public class CampaignExecutionEngineTest {
         when(scenarioExecutionEngine.execute(any(ExecutionRequest.class), any())).thenReturn(mock(ScenarioExecutionReport.class));
 
         // When
-        sut.executeScenarioInCampaign(emptyList(), campaign, "user");
+        CampaignExecutionReport cer = sut.executeScenarioInCampaign(emptyList(), campaign, "user");
 
         ArgumentCaptor<ReportForJira> reportForJiraCaptor = ArgumentCaptor.forClass(ReportForJira.class);
-        verify(jiraXrayPlugin).updateTestExecution(eq(campaign.id), eq(firstTestCase.metadata.id), reportForJiraCaptor.capture());
+        verify(jiraXrayPlugin).updateTestExecution(eq(campaign.id), eq(cer.executionId), eq(firstTestCase.metadata.id), reportForJiraCaptor.capture());
 
         assertThat(reportForJiraCaptor).isNotNull();
 

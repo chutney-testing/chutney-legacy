@@ -8,7 +8,14 @@ public interface JiraXrayApi {
 
     void updateRequest(Xray xray);
 
-    List<XrayTestExecTest> getTestExecutionScenarios(String testExecutionId);
+    List<XrayTestExecTest> getTestExecutionScenarios(String xrayId);
 
     void updateStatusByTestRunId(String id, String executionStatus);
+
+    void associateTestExecutionFromTestPlan(String testPlanId, String testExecutionId);
+
+    String createTestExecution(String testPlanId);
+
+    boolean isTestPlan(String issueId);
+
 }

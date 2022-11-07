@@ -114,7 +114,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({
         DateTimeParseException.class,
         HttpMessageConversionException.class,
-        InvalidEnvironmentNameException.class
+        InvalidEnvironmentNameException.class,
+        IllegalArgumentException.class
     })
     protected ResponseEntity<Object> badRequest(RuntimeException ex, WebRequest request) {
         LOGGER.warn("Bad Request >> " + ex.getMessage());
@@ -123,8 +124,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({
-        AccessDeniedException.class,
-        IllegalArgumentException.class
+        AccessDeniedException.class
     })
     protected ResponseEntity<Object> forbidden(RuntimeException ex, WebRequest request) {
         LOGGER.warn("Forbidden >> " + ex.getMessage());

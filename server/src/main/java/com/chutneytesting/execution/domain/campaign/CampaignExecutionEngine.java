@@ -211,7 +211,7 @@ public class CampaignExecutionEngine {
                         campaignExecutionReport.endScenarioExecution(serc);
                         // update xray test
                         ExecutionHistory.Execution execution = executionHistoryRepository.getExecution(serc.scenarioId, serc.execution.executionId());
-                        jiraXrayEmbeddedApi.updateTestExecution(campaign.id, serc.scenarioId, JiraReportMapper.from(execution.report(), objectMapper));
+                        jiraXrayEmbeddedApi.updateTestExecution(campaign.id, campaignExecutionReport.executionId, serc.scenarioId, JiraReportMapper.from(execution.report(), objectMapper));
                     });
             }
         };

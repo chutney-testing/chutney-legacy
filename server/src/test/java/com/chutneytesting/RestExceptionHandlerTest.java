@@ -51,15 +51,15 @@ class RestExceptionHandlerTest {
         return List.of(
             of(new ScenarioNotFoundException("12345"), NOT_FOUND, status().isNotFound()),
             of(new HttpMessageConversionException(""), BAD_REQUEST, status().isBadRequest()),
+            of(new IllegalArgumentException(), BAD_REQUEST, status().isBadRequest()),
             of(new AlreadyExistingTargetException(""), CONFLICT, status().isConflict()),
-            of(new ScenarioConversionException("", mock(Exception.class)), UNPROCESSABLE_ENTITY, status().isUnprocessableEntity()),
-            of(new IllegalArgumentException(), FORBIDDEN, status().isForbidden())
+            of(new ScenarioConversionException("", mock(Exception.class)), UNPROCESSABLE_ENTITY, status().isUnprocessableEntity())
         );
     }
 
     @ParameterizedTest
     @MethodSource("usernamePrivateKeyTargets")
-    void should_return_not_found_status(RuntimeException exception, HttpStatus status, ResultMatcher statusMatcher) throws Exception {
+    void should_return_corresponding_http_error_status(RuntimeException exception, HttpStatus status, ResultMatcher statusMatcher) throws Exception {
         // Given
         when(testCaseRepository.findById("12345")).thenThrow(exception);
 
