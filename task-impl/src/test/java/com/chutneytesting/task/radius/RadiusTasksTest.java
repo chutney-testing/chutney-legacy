@@ -19,6 +19,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.tinyradius.packet.AccessRequest;
+import org.tinyradius.packet.RadiusPacket;
+import org.tinyradius.util.RadiusException;
 import org.tinyradius.util.RadiusServer;
 
 class RadiusTasksTest {
@@ -27,6 +31,7 @@ class RadiusTasksTest {
     private static int authPort;
     private static int accPort;
     private static Target testTarget;
+    private static AccessRequest receivedAccessRequest;
 
     @BeforeAll
     public static void setUp() {
@@ -41,6 +46,11 @@ class RadiusTasksTest {
                 return "password";
             }
 
+            @Override
+            public RadiusPacket accessRequestReceived(AccessRequest accessRequest, InetSocketAddress client) throws RadiusException {
+                receivedAccessRequest = accessRequest;
+                return super.accessRequestReceived(accessRequest, client);
+            }
         };
         Integer[] httpPortRange = getRandomPortRange(100);
         authPort = findAvailableTcpPort(httpPortRange[0], httpPortRange[1]);
@@ -67,13 +77,15 @@ class RadiusTasksTest {
         server.stop();
     }
 
-    @Test
-    public void authenticate_should_success_with_valid_input() {
-        Task sut = new RadiusAuthenticateTask(new TestLogger(), testTarget, "userName", "password", null, null);
+    @ParameterizedTest(name = "accounting_should_success_with_valid_input with protocol {0}")
+    @ValueSource(strings = {"pap", "chap"})
+    public void authenticate_should_success_with_valid_input(String protocol) {
+        Task sut = new RadiusAuthenticateTask(new TestLogger(), testTarget, "userName", "password", protocol, null);
 
         TaskExecutionResult result = sut.execute();
 
         assertThat(result.status).isEqualTo(Success);
+        assertThat(receivedAccessRequest.getAuthProtocol()).isEqualTo(protocol);
     }
 
     @Test

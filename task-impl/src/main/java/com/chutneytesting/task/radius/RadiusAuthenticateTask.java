@@ -25,6 +25,11 @@ import org.tinyradius.packet.RadiusPacket;
 import org.tinyradius.util.RadiusClient;
 import org.tinyradius.util.RadiusException;
 
+/**
+ * mschapv2 and eap not supported by the client we use.
+ *
+ * @See org.tinyradius.packet.AccessRequest#encodeRequestAttributes(java.lang.String)
+ */
 public class RadiusAuthenticateTask implements Task {
 
     private final Logger logger;
