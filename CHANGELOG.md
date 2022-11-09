@@ -1,6 +1,23 @@
 # Changelog
 
-## [1.5.3](https://github.com/chutney-testing/chutney/tree/1.5.4)
+## [1.5.5](https://github.com/chutney-testing/chutney/tree/1.5.5)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.5.4...1.5.5)
+
+**Implemented enhancements:**
+
+- 🚀 | Create xray test execution from test plan [\#607](https://github.com/chutney-testing/chutney/issues/607)
+
+**Fixed bugs:**
+
+- 🐛 | Cannot edit global variable [\#917](https://github.com/chutney-testing/chutney/pull/917)
+
+**Merged pull requests:**
+
+- chore(deps): Bump maven-resources-plugin from 3.2.0 to 3.3.0 [\#907](https://github.com/chutney-testing/chutney/pull/907)
+- Enforce dependency convergence [\#894](https://github.com/chutney-testing/chutney/pull/894)
+
+## [1.5.4](https://github.com/chutney-testing/chutney/tree/1.5.4)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.5.2...1.5.4)
 
