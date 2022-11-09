@@ -505,11 +505,6 @@
                     <version>3.0.0</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.0.0</version>
-                </plugin>
-                <plugin>
                     <groupId>de.smartics.maven.plugin</groupId>
                     <artifactId>buildmetadata-maven-plugin</artifactId>
                     <version>1.7.0</version>
