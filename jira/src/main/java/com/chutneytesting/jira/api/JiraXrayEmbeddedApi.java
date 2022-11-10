@@ -20,7 +20,7 @@ public class JiraXrayEmbeddedApi {
         }
     }
 
-    public List<XrayTestExecTest> getTestStatusInTestExec(String testExec) {
+    public List<XrayTestExecTest> getTestStatusInTestExec(String testExec) { // TODO - Only used in a test ?
         return jiraXrayService.getTestExecutionScenarios(testExec);
     }
 }
