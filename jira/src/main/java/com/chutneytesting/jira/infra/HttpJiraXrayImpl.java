@@ -141,8 +141,8 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
             .setSummary(parentIssue.getSummary())
             .build();
 
-        try {
-            BasicIssue issue = getJiraRestClient().getIssueClient().createIssue(issueInput).claim();
+        try(JiraRestClient jiraRestClient = getJiraRestClient()) {
+            BasicIssue issue = jiraRestClient.getIssueClient().createIssue(issueInput).claim();
             associateTestExecutionFromTestPlan(testPlanId, issue.getKey());
             return issue.getKey();
         } catch (Exception e) {
@@ -157,7 +157,11 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
     }
 
     private Issue getIssue(String issueKey) {
-        return getJiraRestClient().getIssueClient().getIssue(issueKey).claim();
+        try(JiraRestClient jiraRestClient = getJiraRestClient()) {
+            return jiraRestClient.getIssueClient().getIssue(issueKey).claim();
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to get issue [" + issueKey + "] : ", e);
+        }
     }
 
     private JiraIssueType getIssueTypeByName(String issueTypeName) {
