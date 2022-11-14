@@ -115,7 +115,7 @@ Adding a new task capabilities should be packaged in a maven submodule named chu
 
 * **wip/** unstable code, to share between developers working on the same task
 * **feat/** stable code of new feature, to be merged if validated
-* **bugfix/** stable code of correction (PROD / VALID)
+* **fix/** stable code of correction (PROD / VALID)
 * **tech/** stable code, purely technical modification like refactoring, log level change or documentation
 
 
