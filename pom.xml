@@ -87,7 +87,7 @@
 
         <!-- Runtime dependencies versions -->
         <springboot.version>2.7.4</springboot.version>
-        <guava.version>21.0</guava.version> <!-- Follow jackson-datatype-guava guava spring boot version -->
+        <guava.version>31.0.1-jre</guava.version> <!-- Test on https://github.com/FasterXML/jackson-datatypes-collections/tree/2.14/guava -->
         <immutables.version>2.9.0</immutables.version>
         <commonstext.version>1.10.0</commonstext.version> <!-- Follow commons-lang3 spring boot version -->
         <commonsio.version>2.11.0</commonsio.version>
@@ -429,6 +429,18 @@
                 <artifactId>lz4-java</artifactId>
                 <version>1.8.0</version>
                 <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.checkerframework</groupId>
+                <artifactId>checker-qual</artifactId>
+                <version>3.19.0</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.errorprone</groupId>
+                <artifactId>error_prone_annotations</artifactId>
+                <version>2.10.0</version>
+                <scope>compile</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
