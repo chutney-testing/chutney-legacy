@@ -7,7 +7,7 @@
     <parent>
         <artifactId>chutney-parent</artifactId>
         <groupId>com.chutneytesting</groupId>
-        <version>1.5.6-SNAPSHOT</version>
+        <version>1.5.6</version>
     </parent>
 
     <artifactId>component</artifactId>

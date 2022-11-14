@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.5.6](https://github.com/chutney-testing/chutney/tree/1.5.6)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.5.5...1.5.6)
+
+**Implemented enhancements:**
+
+- 🚀 | feat(task): Document unsupported radius protocols mschapv2 & eap [\#921](https://github.com/chutney-testing/chutney/pull/921)
+
+**Fixed bugs:**
+
+- 🐛 | bugfix(jira): Close jira client [\#923](https://github.com/chutney-testing/chutney/pull/923)
+- 🐛 | bugfix: Upgrade guava version to 31.0.1-jre. Mandatory for selenium 4.1 [\#924](https://github.com/chutney-testing/chutney/pull/924)
+
+**Merged pull requests:**
+
+- chore(): Do not deploy packaging pom [\#926](https://github.com/chutney-testing/chutney/pull/926)
+- chore(): Delete unknown dependency in parent pom [\#925](https://github.com/chutney-testing/chutney/pull/925)
+- chore(deps): Remove maven-assembly-plugin [\#909](https://github.com/chutney-testing/chutney/pull/909)
+
 ## [1.5.5](https://github.com/chutney-testing/chutney/tree/1.5.5)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.5.4...1.5.5)
