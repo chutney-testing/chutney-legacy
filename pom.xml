@@ -200,11 +200,6 @@
             </dependency>
             <dependency>
                 <groupId>com.chutneytesting</groupId>
-                <artifactId>core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.chutneytesting</groupId>
                 <artifactId>engine</artifactId>
                 <version>${project.version}</version>
             </dependency>
