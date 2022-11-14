@@ -47,7 +47,6 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
     public HttpJiraXrayImpl(JiraTargetConfiguration jiraTargetConfiguration) {
         this.jiraTargetConfiguration = jiraTargetConfiguration;
         if (!jiraTargetConfiguration.isValid()) {
-            LOGGER.error("Unable to update xray, jira url is undefined");
             throw new NoJiraConfigurationException();
         }
     }
@@ -67,7 +66,6 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
                 LOGGER.error(response.toString());
             }
         } catch (RestClientException e) {
-            LOGGER.error("Unable to update test execution [" + xray.getTestExecutionKey() + "] : ", e);
             throw new RuntimeException("Unable to update test execution [" + xray.getTestExecutionKey() + "] : ", e);
         }
     }
@@ -89,7 +87,6 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
                 LOGGER.error(response.toString());
             }
         } catch (RestClientException e) {
-            LOGGER.error("Unable to get xray test execution[" + xrayId + "] scenarios : ", e);
             throw new RuntimeException("Unable to get xray test execution[" + xrayId + "] scenarios : ", e);
         }
         return tests;
@@ -104,7 +101,6 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
         try {
             restTemplate.put(uri, null);
         } catch (RestClientException e) {
-            LOGGER.error("Unable to update xray testRuntId[" + testRuntId + "] with status[" + executionStatus + "] : ", e);
             throw new RuntimeException("Unable to update xray testRuntId[" + testRuntId + "] with status[" + executionStatus + "] : ", e);
         }
     }
@@ -125,7 +121,6 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
                 throw new RuntimeException("Unable to associate test execution [" + testExecutionId + "] from test plan [" + testPlanId + "]");
             }
         } catch (RestClientException e) {
-            LOGGER.error("Unable to associate test execution [" + testExecutionId + "] from test plan [" + testPlanId + "] : ", e);
             throw new RuntimeException("Unable to associate test execution [" + testExecutionId + "] from test plan [" + testPlanId + "] : ", e);
         }
     }
@@ -141,12 +136,11 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
             .setSummary(parentIssue.getSummary())
             .build();
 
-        try {
-            BasicIssue issue = getJiraRestClient().getIssueClient().createIssue(issueInput).claim();
+        try(JiraRestClient jiraRestClient = getJiraRestClient()) {
+            BasicIssue issue = jiraRestClient.getIssueClient().createIssue(issueInput).claim();
             associateTestExecutionFromTestPlan(testPlanId, issue.getKey());
             return issue.getKey();
         } catch (Exception e) {
-            LOGGER.error("Unable to create test execution issue from test plan [" + testPlanId + "] : ", e);
             throw new RuntimeException("Unable to create test execution issue from test plan [" + testPlanId + "] : ", e);
         }
     }
@@ -157,7 +151,11 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
     }
 
     private Issue getIssue(String issueKey) {
-        return getJiraRestClient().getIssueClient().getIssue(issueKey).claim();
+        try(JiraRestClient jiraRestClient = getJiraRestClient()) {
+            return jiraRestClient.getIssueClient().getIssue(issueKey).claim();
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to get issue [" + issueKey + "] : ", e);
+        }
     }
 
     private JiraIssueType getIssueTypeByName(String issueTypeName) {
@@ -175,7 +173,6 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
                 LOGGER.error(response.toString());
             }
         } catch (RestClientException e) {
-            LOGGER.error("Unable to get issues type list : ", e);
             throw new RuntimeException("Unable to get issues type list : ", e);
         }
         return issueTypeOptional.orElseThrow(() -> new RuntimeException("Unable to get issue type [" + issueTypeName + "]"));
@@ -218,7 +215,6 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
                     jiraTargetConfiguration.username,
                     jiraTargetConfiguration.password);
         } catch (URISyntaxException e) {
-            LOGGER.error("Unable to instantiate Jira rest client from url [" + jiraTargetConfiguration.url + "] : ", e);
             throw new RuntimeException("Unable to instantiate Jira rest client from url [" + jiraTargetConfiguration.url + "] : ", e);
         }
     }
