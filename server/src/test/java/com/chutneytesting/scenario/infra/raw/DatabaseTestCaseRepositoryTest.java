@@ -154,7 +154,7 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
         GwtTestCaseBuilder deletedScenario = GwtTestCase.builder().from(GWT_TEST_CASE)
             .withMetadata(
                 TestCaseMetadataImpl.builder()
-                    .withId("2")
+                    .withId(String.valueOf(Integer.valueOf(anotherScenarioId) + 1))
                     .withDescription("Will be deleted")
                     .withTags(Collections.singletonList("T2"))
                     .build()
