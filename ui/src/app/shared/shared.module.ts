@@ -105,6 +105,7 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
         WithoutScenarioPipe,
         HasAuthorizationDirective,
         ChutneyEditorComponent,
+        ChutneyRightMenuComponent,
     ],
     providers: [
         {

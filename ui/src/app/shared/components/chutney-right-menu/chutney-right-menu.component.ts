@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { Authorization } from '@model';
 
 @Component({
   selector: 'chutney-chutney-right-menu',
@@ -8,8 +9,13 @@ import { Component, OnInit } from '@angular/core';
 export class ChutneyRightMenuComponent implements OnInit {
 
     expanded = true;
-    menuItems: Array<{label, link, iconClass}> = [
-    ];
+    @Input() menuItems: {
+        label: string,
+        click?: Function,
+        link?: string,
+        class?: string,
+        authorizations:Authorization[]
+    } [] = [];
     constructor() { }
 
     ngOnInit(): void {

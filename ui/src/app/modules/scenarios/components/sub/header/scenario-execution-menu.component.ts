@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, ViewChildren, QueryList } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, ViewChildren, QueryList, TemplateRef } from '@angular/core';
 import { disabledBoolean } from '@shared/tools/bool-utils';
 
 import { TestCase, ScenarioIndex, Authorization } from '@model';
@@ -7,13 +7,15 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { FileSaverService } from 'ngx-filesaver';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 
 @Component({
-    selector: 'chutney-header',
-    templateUrl: './header.component.html',
-    styleUrls: ['./header.component.scss']
+    selector: 'chutney-scenario-execution-menu',
+    templateUrl: './scenario-execution-menu.component.html',
+    styleUrls: ['./scenario-execution-menu.component.scss']
 })
-export class HeaderComponent implements OnInit {
+export class ScenarioExecutionMenuComponent implements OnInit {
 
     @Input() testCaseId: string;
     @Input() canExecute = true;
@@ -29,6 +31,7 @@ export class HeaderComponent implements OnInit {
     private executeDropDown: QueryList<NgbDropdown>;
 
     Authorization = Authorization;
+    modalRef: BsModalRef;
 
     constructor(private componentService: ComponentService,
                 private environmentAdminService: EnvironmentAdminService,
@@ -36,7 +39,8 @@ export class HeaderComponent implements OnInit {
                 private jiraLinkService: JiraPluginService,
                 private router: Router,
                 private scenarioService: ScenarioService,
-                private loginService: LoginService
+                private loginService: LoginService,
+                private modalService: BsModalService
     ) {
     }
 
@@ -91,9 +95,21 @@ export class HeaderComponent implements OnInit {
         });
     }
 
-    isNotComposed() {
-        return !TestCase.isComposed(this.testCaseId);
+    openModal(template: TemplateRef<any>) {
+        this.modalRef = this.modalService.show(template, {class: 'modal-sm'});
+        document.getElementById('no-btn').focus();
     }
+
+    confirm(): void {
+        this.modalRef.hide();
+        this.deleteScenario(this.testCaseId);
+    }
+
+    decline(): void {
+        this.modalRef.hide();
+    }
+
+
 
     private removeJiraLink(id: string) {
         this.jiraLinkService.removeForScenario(id).subscribe(

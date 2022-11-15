@@ -47,6 +47,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
         private router: Router,
         private location: Location,
     ) {
+        ///this.that = this;
     }
 
     ngOnInit() {

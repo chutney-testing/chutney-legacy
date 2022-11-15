@@ -1,0 +1,56 @@
+<nav class="navbar navbar-light bg-light">
+    <div class="container-fluid">
+            <ul class="navbar-nav me-auto mb-2">
+                <li class="nav-item dropdown" *hasAuthorization="[Authorization.SCENARIO_WRITE]">
+                    <a class="nav-link dropdown-toggle" id="executeDropdown" role="button" data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        <i class="fa fa-play me-1"></i>
+                        {{'global.actions.execute' | translate}}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-start" aria-labelledby="executeDropdown">
+                        <li *ngFor="let env of environments"
+                            (click)="executeScenario(env)">
+                            <a class="dropdown-item">{{ env }}</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item" *hasAuthorization="[Authorization.SCENARIO_WRITE]">
+                    <a class="nav-link"
+                       routerLink="{{isComposed(testCaseId) ? '/scenario/' + testCaseId + '/component-edition' : '/scenario/' + testCaseId + '/raw-edition'}}">
+                        <i class="fa fa-pencil-alt me-1"></i>
+                        {{'global.actions.edit' | translate}}</a>
+                </li>
+
+                <li class="nav-item" *hasAuthorization="[Authorization.SCENARIO_WRITE]">
+                    <span class="nav-link pointer" (click)="openModal(template)">
+                        <i class="fa fa-trash me-1"></i>{{'global.actions.delete' | translate}}
+                    </span>
+                </li>
+
+                <li class="nav-item" *hasAuthorization="[Authorization.SCENARIO_WRITE]">
+                    <span class="nav-link pointer"
+                          (click)="duplicateScenario()">
+                        <i class="fa fa-clone"></i>
+                        {{'global.actions.clone' | translate}}
+                    </span>
+                </li>
+                <li class="nav-item" *hasAuthorization="[Authorization.SCENARIO_WRITE]">
+                    <span class="nav-link pointer"
+                          (click)="exportScenario()">
+                        <i class="fa fa-file-code"></i>
+                        {{'global.actions.export' | translate}}
+                    </span>
+                </li>
+            </ul>
+    </div>
+</nav>
+
+<ng-template #template>
+    <div class="modal-body text-center">
+        <p>{{'scenarios.execution.actions.remove' | translate}}</p>
+        <button type="button" class="btn btn-default" (click)="confirm()">{{'global.confirm.yes' | translate}}</button>
+        <button id="no-btn" type="button" class="btn btn-primary" (click)="decline()">{{'global.confirm.no' | translate}}</button>
+    </div>
+</ng-template>
+

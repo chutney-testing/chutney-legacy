@@ -1,9 +1,14 @@
 <div class="right-menu" [class.expanded]="expanded">
     <div class="right-menu__items">
-        <div *ngFor="let item of  menuItems" class="menu-item" routerLinkActive="active" routerLink="{{item.link}}">
-            <i class="fa fa-user-shield icon-30"></i>
-            <span>{{item.label}}</span>
+        <div *ngFor="let item of  menuItems">
+            <div class="menu-item"
+                 routerLink="{{!!item.link && item.link}}"
+                 (click)="item.click && item.click()">
+                <i class="icon-30" [ngClass]="item.class"></i>
+                <span>{{item.label | translate}}</span>
+            </div>
         </div>
+
     </div>
     <div class="right-menu__collapse" (click)="toggleExpand()">
         <i class="fa fa-chevron-right icon-60"></i>

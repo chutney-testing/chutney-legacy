@@ -5,7 +5,9 @@ import { ComponentEditionComponent } from './components/edition/component-editio
 import { ExecuteComponent } from './components/execute/execute.component';
 import { AuthGuard, CanDeactivateGuard } from '@core/guards';
 import { Authorization } from '@model';
-import { HistoryComponent } from '@modules/scenarios/components/execution/history/history.component';
+import {
+    ScenarioExecutionsHistoryComponent
+} from '@modules/scenarios/components/execution/history/scenario-executions-history.component';
 
 export const scenarioRoute: Routes = [
 
@@ -13,31 +15,18 @@ export const scenarioRoute: Routes = [
         path: '',
         component: ScenariosComponent,
         canActivate: [AuthGuard],
-        data: { 'authorizations': [ Authorization.SCENARIO_READ ] }
+        data: {'authorizations': [Authorization.SCENARIO_READ]}
     },
     {
         path: ':id/executions',
-        component: HistoryComponent,
+        component: ScenarioExecutionsHistoryComponent,
         canActivate: [AuthGuard],
-        data: { 'authorizations': [ Authorization.SCENARIO_READ ] }
+        data: {'authorizations': [Authorization.SCENARIO_READ]}
     },
-    {
-        path: 'raw-edition',
-        component: RawEditionComponent,
-        canDeactivate: [CanDeactivateGuard],
-        canActivate: [AuthGuard],
-        data: {'authorizations': [Authorization.SCENARIO_WRITE]}
-    },
+
     {
         path: ':id/raw-edition',
         component: RawEditionComponent,
-        canDeactivate: [CanDeactivateGuard],
-        canActivate: [AuthGuard],
-        data: {'authorizations': [Authorization.SCENARIO_WRITE]}
-    },
-    {
-        path: 'component-edition',
-        component: ComponentEditionComponent,
         canDeactivate: [CanDeactivateGuard],
         canActivate: [AuthGuard],
         data: {'authorizations': [Authorization.SCENARIO_WRITE]}
@@ -56,4 +45,18 @@ export const scenarioRoute: Routes = [
         canActivate: [AuthGuard],
         data: {'authorizations': [Authorization.SCENARIO_EXECUTE]}
     },
+    {
+        path: 'raw-edition',
+        component: RawEditionComponent,
+        canDeactivate: [CanDeactivateGuard],
+        canActivate: [AuthGuard],
+        data: {'authorizations': [Authorization.SCENARIO_WRITE]}
+    },
+    {
+        path: 'component-edition',
+        component: ComponentEditionComponent,
+        canDeactivate: [CanDeactivateGuard],
+        canActivate: [AuthGuard],
+        data: {'authorizations': [Authorization.SCENARIO_WRITE]}
+    }
 ];

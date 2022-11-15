@@ -1,16 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { combineLatestWith, switchMap, tap } from 'rxjs/operators';
+import { combineLatestWith, delay, switchMap, tap } from 'rxjs/operators';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { Execution } from '@model';
+import { Authorization, Execution, TestCase } from '@model';
 import { ScenarioExecutionService } from '@modules/scenarios/services/scenario-execution.service';
 import { NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
+import { Observable } from 'rxjs';
+import { EventManagerService } from '@shared';
+import { ScenarioService } from '@core/services';
+import { FileSaverService } from 'ngx-filesaver';
 
 @Component({
-    selector: 'chutney-execution-history',
-    templateUrl: './history.component.html',
-    styleUrls: ['./history.component.scss']
+    selector: 'chutney-scenario-executions-history',
+    templateUrl: './scenario-executions-history.component.html',
+    styleUrls: ['./scenario-executions-history.component.scss']
 })
-export class HistoryComponent implements OnInit {
+export class ScenarioExecutionsHistoryComponent implements OnInit {
 
     tabs: Execution[] = [];
     activeTab = 0;
@@ -18,10 +22,13 @@ export class HistoryComponent implements OnInit {
     scenarioId: string;
     private _executionsFilters: Params = {};
     private tabFilters: Params = {};
+    rightMenuItems = [];
 
     constructor(private route: ActivatedRoute,
                 private router: Router,
-                private scenarioExecutionService: ScenarioExecutionService) {
+                private scenarioExecutionService: ScenarioExecutionService,
+                private scenarioService: ScenarioService,
+                private fileSaverService: FileSaverService) {
     }
 
     ngOnInit(): void {
@@ -35,6 +42,7 @@ export class HistoryComponent implements OnInit {
                 this.openTabs(queryParams['open']);
                 this.focusOnTab(queryParams['active'])
                 this.executionsFilters = queryParams;
+                this.initRightMenu();
             });
     }
 
@@ -114,5 +122,49 @@ export class HistoryComponent implements OnInit {
     onTabChange(changeEvent: NgbNavChangeEvent) {
         this.tabFilters['active'] = changeEvent.nextId;
         this.updateQueryParams();
+    }
+
+    private initRightMenu() {
+        this.rightMenuItems = [
+            {
+                label: 'global.actions.execute',
+                //click: this.onTabChange,
+                class: 'fa fa-play',
+                authorizations: [Authorization.SCENARIO_EXECUTE]
+            },
+            {
+                label: 'global.actions.edit',
+                link: TestCase.isComposed(this.scenarioId) ? '/scenario/' + this.scenarioId + '/component-edition' : '/scenario/' + this.scenarioId + '/raw-edition',
+                class: 'fa fa-pencil-alt',
+                authorizations: [Authorization.SCENARIO_WRITE]
+            },
+            {
+                label: 'scenarios.execution.actions.remove',
+                //click:
+                class: 'fa fa-trash',
+                authorizations: [Authorization.SCENARIO_WRITE]
+            },
+            {
+                label: 'global.actions.clone',
+                //click:
+                class: 'fa fa-clone',
+                authorizations: [Authorization.SCENARIO_WRITE]
+            },
+        ];
+
+        if(!TestCase.isComposed(this.scenarioId)) {
+            this.rightMenuItems.push({
+                label: 'global.actions.export',
+                click: this.exportScenario.bind(this),
+                class: 'fa fa-file-code'
+            })
+        }
+    }
+    private exportScenario() {
+        this.scenarioService.findRawTestCase(this.scenarioId)
+            .subscribe((testCase: TestCase) => {
+                const fileName = `${this.scenarioId}-${testCase.title}.chutney.hjson`;
+                this.fileSaverService.saveText(testCase.content, fileName);
+        });
     }
 }

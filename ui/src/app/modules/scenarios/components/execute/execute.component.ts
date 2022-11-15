@@ -56,7 +56,7 @@ export class ExecuteComponent implements OnInit, OnDestroy {
                 this.router.navigateByUrl(`/scenario/${this.testCaseId}/executions/${executionId}`)
                     .then(null),
             error =>
-                this.router.navigateByUrl(`/scenario/${this.testCaseId}/executions/last`)
+                this.router.navigateByUrl(`/scenario/${this.testCaseId}/executions`)
                     .then(null)
         );
     }

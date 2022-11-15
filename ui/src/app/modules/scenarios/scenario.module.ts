@@ -19,13 +19,13 @@ import { SharedModule } from '@shared/shared.module';
 // Internal
 import { scenarioRoute } from './scenario.routes';
 import { ScenariosComponent } from './components/search-list/scenarios.component';
-import { HistoryComponent } from './components/execution/history/history.component';
+import { ScenarioExecutionsHistoryComponent } from './components/execution/history/scenario-executions-history.component';
 import { MoleculesModule } from '../../molecules/molecules.module';
 import { RawEditionComponent } from './components/edition/raw/raw-edition.component';
 import { ComponentEditionComponent } from './components/edition/component-edition/component-edition.component';
 import { DragulaModule } from 'ng2-dragula';
 import { ExecuteComponent } from './components/execute/execute.component';
-import { HeaderComponent } from './components/sub/header/header.component';
+import { ScenarioExecutionMenuComponent } from './components/sub/header/scenario-execution-menu.component';
 import {
     ScenarioCampaignsComponent
 } from '@modules/scenarios/components/sub/scenario-campaigns/scenario-campaigns.component';
@@ -76,11 +76,11 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
         StepReportComponent,
         StepComponent,
         ScenarioCampaignsComponent,
-        HistoryComponent,
+        ScenarioExecutionsHistoryComponent,
         RawEditionComponent,
         ComponentEditionComponent,
         ExecuteComponent,
-        HeaderComponent,
+        ScenarioExecutionMenuComponent,
         ComponentReadComponent,
         GwtReadComponent,
         AuthoringInfoComponent,

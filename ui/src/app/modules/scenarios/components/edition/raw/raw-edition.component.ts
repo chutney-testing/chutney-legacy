@@ -93,7 +93,7 @@ export class RawEditionComponent
 
     cancel() {
         if (this.testCase.id != null) {
-            this.router.navigateByUrl('/scenario/' + this.testCase.id + '/executions/last');
+            this.router.navigateByUrl('/scenario/' + this.testCase.id + '/executions');
         } else {
             this.router.navigateByUrl('/scenario');
         }
@@ -168,7 +168,7 @@ export class RawEditionComponent
                         }
                     );
                 this.router.navigateByUrl(
-                    '/scenario/' + response + '/executions/last'
+                    '/scenario/' + response + '/executions'
                 );
             },
             (error) => {

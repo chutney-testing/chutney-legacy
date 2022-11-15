@@ -1,0 +1,35 @@
+<div class="d-flex flex-row">
+    <div class="w90">
+        <ul ngbNav #nav="ngbNav" [(activeId)]="activeTab" (navChange)="onTabChange($event)" class="nav-tabs">
+            <li [ngbNavItem]="0" [destroyOnHide]="false">
+                <a ngbNavLink>
+                    {{'scenarios.execution.history.title' | translate}}
+                </a>
+                <ng-template ngbNavContent>
+                    <chutney-scenario-executions [executions]="executions"
+                                                 [(filters)]="executionsFilters"
+                                                 (onExecutionSelect)="openReport($event)"></chutney-scenario-executions>
+                </ng-template>
+            </li>
+
+            <li *ngFor="let exec of tabs" [ngbNavItem]="exec.executionId" [destroyOnHide]="false">
+                <a ngbNavLink>
+                    <small><strong>#{{exec.executionId}} </strong> <small>({{ exec.time | amCalendar}})</small></small>
+                    <i class="fa-regular fa-x fa-xs ms-2 fw-light" (click)="closeReport($event, exec.executionId)"></i>
+                </a>
+                <ng-template ngbNavContent>
+                    <chutney-scenario-execution [scenarioId]="scenarioId"
+                                                [executionId]="exec.executionId"></chutney-scenario-execution>
+                </ng-template>
+            </li>
+        </ul>
+        <div [ngbNavOutlet]="nav" class="mt-2">
+        </div>
+    </div>
+    <div class="w13 ms-2">
+        <chutney-scenario-execution-menu [testCaseId]="scenarioId">
+
+        </chutney-scenario-execution-menu>
+    </div>
+</div>
+
