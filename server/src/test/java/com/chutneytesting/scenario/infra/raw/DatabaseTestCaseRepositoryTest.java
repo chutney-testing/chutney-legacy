@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import liquibase.exception.LiquibaseException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -48,6 +49,30 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
 
         // Then: a non blank id is generated
         assertThat(scenarioID).isNotBlank();
+    }
+
+    @Test
+    public void should_not_increase_sequence_at_restart() throws LiquibaseException {
+        // Given
+        repository.save(GWT_TEST_CASE);
+        repository.save(GWT_TEST_CASE);
+        repository.save(GWT_TEST_CASE);
+        String scenarioId1 = repository.save(GWT_TEST_CASE);
+
+        // When redo liquibase
+        this.initializeLiquibase();
+
+        // Then
+        String scenarioId2 = repository.save(GWT_TEST_CASE);
+        assertThat(Integer.valueOf(scenarioId2)).isEqualTo(Integer.valueOf(scenarioId1) + 1);
+
+
+        // When redo liquibase
+        this.initializeLiquibase();
+
+        // Then
+        String scenarioId3 = repository.save(GWT_TEST_CASE);
+        assertThat(Integer.valueOf(scenarioId3)).isEqualTo(Integer.valueOf(scenarioId2) + 1);
     }
 
     @Test
