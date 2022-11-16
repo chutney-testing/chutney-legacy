@@ -2,17 +2,41 @@
 
 $nav-link-padding-x: 1rem;
 $link-color: $info;
-$body-bg: $gray-700;
+$body-bg: #0d1117;
 $input-bg: #FAF9F6;
 $info:#3190d0;
+$dark:#161b22;
+$dropdown-link-color:#cdcdcd;
+$table-hover-bg:$primary;
+$table-striped-bg:$dark;
 
 @import "~bootstrap/scss/bootstrap";
 @import "~bootswatch/dist/darkly/bootswatch";
 
+.bg-primary {
+    background-color: black !important;
+}
+
+.app-sidebar{
+    background-color: black;
+}
 
 
 angular2-multiselect {
     .cuppa-dropdown {
-        background-color: var(--bs-white);
+        background-color: $input-bg;
+        color: $dark;
     }
+}
+
+.sidebar-menu .menu-link {
+    color: $white;
+}
+
+.step-container {
+    background-color: $dark !important;
+}
+
+.execution-panel {
+    background-color: $info !important;
 }
