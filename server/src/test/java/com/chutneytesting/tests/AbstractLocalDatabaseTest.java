@@ -24,7 +24,7 @@ public abstract class AbstractLocalDatabaseTest {
     protected final DataSource localDataSource;
     protected final JdbcTemplate jdbcTemplate;
     protected final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+    protected final Database database;
     protected AbstractLocalDatabaseTest() {
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setMaximumPoolSize(2);
@@ -32,7 +32,12 @@ public abstract class AbstractLocalDatabaseTest {
         localDataSource = new HikariDataSource(hikariConfig);
         jdbcTemplate = new JdbcTemplate(localDataSource);
         namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
-        initializeLiquibase();
+        try {
+            this.database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(localDataSource.getConnection()));
+            initializeLiquibase();
+        } catch (SQLException | LiquibaseException e) {
+            throw new RuntimeException("cannot initialize liquibase", e);
+        }
     }
 
     @AfterEach
@@ -45,14 +50,8 @@ public abstract class AbstractLocalDatabaseTest {
         jdbcTemplate.execute("DELETE FROM SCENARIO");
     }
 
-    private void initializeLiquibase() {
-        Database database;
-        try {
-            database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(localDataSource.getConnection()));
-            new Liquibase(DB_CHANGELOG_DB_CHANGELOG_MASTER_XML, new ClassLoaderResourceAccessor(), database).update("");
-        } catch (SQLException | LiquibaseException e) {
-            throw new RuntimeException("cannot initialize liquibase", e);
-        }
+    protected void initializeLiquibase() throws LiquibaseException {
+        new Liquibase(DB_CHANGELOG_DB_CHANGELOG_MASTER_XML, new ClassLoaderResourceAccessor(), database).update("");
     }
 
     protected final void createCampaignWithScenarioExecution(Long campaignId, String scenarioId, Long scenarioExecutionId, Long campaignExecutionId) {

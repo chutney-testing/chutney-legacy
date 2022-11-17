@@ -118,11 +118,12 @@
         <createSequence sequenceName="SCENARIO_SEQ" startValue="1" incrementBy="1"/>
     </changeSet>
     <!-- If not doing that we have : current value of sequence SCENARIO_SEQ is not yet defined in this session-->
-    <changeSet id="init_scenario_seq" author="ICG" runAlways="true">
+    <changeSet id="init_scenario_seq" author="ICG"  dbms="h2" runAlways="true">
+        <validCheckSum>8:cedc00e540a2be8d95813f0b8269098e</validCheckSum>
         <comment>Init sequence in session</comment>
-        <sql>select nextval('SCENARIO_SEQ') from SCENARIO</sql>
+        <sql>select nextval('SCENARIO_SEQ')</sql>
     </changeSet>
-    <changeSet id="20190719-003-h2" author="ICG" dbms="h2">
+    <changeSet id="20190719-003-h2" author="ICG" dbms="h2" runAlways="true">
         <preConditions onFail="CONTINUE">
             <not>
                 <tableIsEmpty tableName="SCENARIO"/>
@@ -133,7 +134,7 @@
         <sql>alter sequence SCENARIO_SEQ restart with (select max(cast(ID as integer))+1 from SCENARIO)</sql>
     </changeSet>
 
-    <changeSet id="20190719-003-pg" author="ICG" dbms="postgresql">
+    <changeSet id="20190719-003-pg" author="ICG" dbms="postgresql" runAlways="true">
         <preConditions onFail="CONTINUE">
             <not>
                 <tableIsEmpty tableName="SCENARIO"/>
@@ -166,12 +167,13 @@
         <createSequence sequenceName="CAMPAIGN_SEQ" startValue="1" incrementBy="1"/>
     </changeSet>
 
-    <!-- If not doing that we have : current value of sequence SCENARIO_SEQ is not yet defined in this session-->
-    <changeSet id="init_campaign_seq" author="ICG" runAlways="true">
+    <!-- If not doing that we have : current value of sequence CAMPAIGN_SEQ is not yet defined in this session-->
+    <changeSet id="init_campaign_seq" author="ICG" dbms="h2" runAlways="true">
+        <validCheckSum>8:b2d47bad6bb04a1521a1c36f1f69ef31</validCheckSum>
         <comment>Init sequence in session</comment>
-        <sql>select nextval('CAMPAIGN_SEQ') from CAMPAIGN</sql>
+        <sql>select nextval('CAMPAIGN_SEQ')</sql>
     </changeSet>
-    <changeSet id="20190719-005-h2" author="ICG" dbms="h2">
+    <changeSet id="20190719-005-h2" author="ICG" dbms="h2" runAlways="true">
         <preConditions onFail="CONTINUE">
             <not>
                 <tableIsEmpty tableName="CAMPAIGN"/>
@@ -182,7 +184,7 @@
         <sql>alter sequence CAMPAIGN_SEQ restart with (select max(ID)+1 from CAMPAIGN)</sql>
     </changeSet>
 
-    <changeSet id="20190719-005-pg" author="ICG" dbms="postgresql">
+    <changeSet id="20190719-005-pg" author="ICG" dbms="postgresql" runAlways="true">
         <preConditions onFail="CONTINUE">
             <not>
                 <tableIsEmpty tableName="CAMPAIGN"/>
@@ -223,12 +225,13 @@
         </createIndex>
     </changeSet>
 
-    <!-- If not doing that we have : current value of sequence SCENARIO_SEQ is not yet defined in this session-->
-    <changeSet id="init_execution_history_seq" author="ICG" runAlways="true">
+    <!-- If not doing that we have : current value of sequence SCENARIO_EXECUTION_HISTORY_SEQ is not yet defined in this session-->
+    <changeSet id="init_execution_history_seq" author="ICG" dbms="h2" runAlways="true">
+        <validCheckSum>8:1236e6d6f029325bc6aed052f04e158e</validCheckSum>
         <comment>Init sequence in session</comment>
-        <sql>select nextval('SCENARIO_EXECUTION_HISTORY_SEQ') from SCENARIO_EXECUTION_HISTORY</sql>
+        <sql>select nextval('SCENARIO_EXECUTION_HISTORY_SEQ')</sql>
     </changeSet>
-    <changeSet id="20190719-007-h2" author="ICG" dbms="h2">
+    <changeSet id="20190719-007-h2" author="ICG" dbms="h2" runAlways="true">
         <preConditions onFail="CONTINUE">
             <not>
                 <tableIsEmpty tableName="SCENARIO_EXECUTION_HISTORY"/>
@@ -239,7 +242,7 @@
         <sql>alter sequence SCENARIO_EXECUTION_HISTORY_SEQ restart with (select max(ID)+1 from SCENARIO_EXECUTION_HISTORY)</sql>
     </changeSet>
 
-    <changeSet id="20190719-007-pg" author="ICG" dbms="postgresql">
+    <changeSet id="20190719-007-pg" author="ICG" dbms="postgresql" runAlways="true">
         <preConditions onFail="CONTINUE">
             <not>
                 <tableIsEmpty tableName="SCENARIO_EXECUTION_HISTORY"/>
@@ -294,12 +297,13 @@
         </createIndex>
     </changeSet>
 
-    <!-- If not doing that we have : current value of sequence SCENARIO_SEQ is not yet defined in this session-->
-    <changeSet id="init_campaign_execution_history_seq" author="ICG" runAlways="true">
+    <!-- If not doing that we have : current value of sequence CAMPAIGN_EXECUTION_SEQ is not yet defined in this session-->
+    <changeSet id="init_campaign_execution_history_seq" author="ICG" dbms="h2" runAlways="true">
+        <validCheckSum>8:b7b1dbdf1c198f4edf3cd444e2d5b1b4</validCheckSum>
         <comment>Init sequence in session</comment>
-        <sql>select nextval('CAMPAIGN_EXECUTION_SEQ') from CAMPAIGN_EXECUTION_HISTORY</sql>
+        <sql>select nextval('CAMPAIGN_EXECUTION_SEQ')</sql>
     </changeSet>
-    <changeSet id="20190719-011-h2" author="ICG" dbms="h2">
+    <changeSet id="20190719-011-h2" author="ICG" dbms="h2" runAlways="true">
         <preConditions onFail="CONTINUE">
             <not>
                 <tableIsEmpty tableName="CAMPAIGN_EXECUTION_HISTORY"/>
@@ -310,7 +314,7 @@
         <sql>alter sequence CAMPAIGN_EXECUTION_SEQ restart with (select max(ID)+1 from CAMPAIGN_EXECUTION_HISTORY)</sql>
     </changeSet>
 
-    <changeSet id="20190719-011-pg" author="ICG" dbms="postgresql">
+    <changeSet id="20190719-011-pg" author="ICG" dbms="postgresql" runAlways="true">
         <preConditions onFail="CONTINUE">
             <not>
                 <tableIsEmpty tableName="CAMPAIGN_EXECUTION_HISTORY"/>
