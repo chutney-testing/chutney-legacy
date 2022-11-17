@@ -78,6 +78,35 @@ public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
     }
 
     @Test
+    public void campaign_execution_history_should_list_not_executed_scenarios() {
+        // Given
+        long campaignId = 1;
+        String scenarioName = "test1";
+        String firstScenarioId = "3";
+        String secondScenarioId = "5";
+        insertCampaign(campaignId);
+        insertScenario(firstScenarioId, scenarioName);
+        insertScenario(secondScenarioId, scenarioName);
+        insertScenarioExec(firstScenarioId, "4", "STOPPED");
+
+        currentCampaign = new Campaign(campaignId, "campaignName", "campaign description", newArrayList(firstScenarioId, secondScenarioId), emptyMap(), "env", false, false, null, null);
+        saveOneCampaignExecutionReport(campaignId, 1L, firstScenarioId, scenarioName, 4, ServerReportStatus.STOPPED);
+        saveOneCampaignExecutionReport(campaignId, 1L, secondScenarioId, scenarioName, -1, ServerReportStatus.NOT_EXECUTED);
+
+        // When
+        List<CampaignExecutionReport> executionHistory = sut.findExecutionHistory(currentCampaign.id);
+
+        // Then
+        assertThat(executionHistory).hasSize(1);
+        List<ScenarioExecutionReportCampaign> scenarioExecutionReportCampaigns = executionHistory.get(0).scenarioExecutionReports();
+        assertThat(scenarioExecutionReportCampaigns).hasSize(2);
+        assertThat(scenarioExecutionReportCampaigns.get(0).execution.executionId()).isEqualTo(4);
+        assertThat(scenarioExecutionReportCampaigns.get(0).execution.status()).isEqualTo(ServerReportStatus.STOPPED);
+        assertThat(scenarioExecutionReportCampaigns.get(1).execution.executionId()).isEqualTo(-1);
+        assertThat(scenarioExecutionReportCampaigns.get(1).execution.status()).isEqualTo(ServerReportStatus.NOT_EXECUTED);
+    }
+
+    @Test
     public void should_remove_all_campaign_executions_when_removing_campaign_execution_report() {
         long campaignId = 1;
         String scenarioName = "test1";
