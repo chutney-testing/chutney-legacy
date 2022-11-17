@@ -1,0 +1,10 @@
+.database-admin-container {
+    height: calc(100vh - 60px - 1.5rem);
+    display: flex;
+    flex-direction: column;
+}
+
+.sql-result {
+    overflow: auto;
+    height: 100%;
+}

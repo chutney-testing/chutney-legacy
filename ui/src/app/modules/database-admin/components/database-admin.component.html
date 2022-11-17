@@ -1,4 +1,4 @@
-<div class="col">
+<div class="database-admin-container">
     <div class="row">
         <div class="col text-center">
             <label for="database" class="me-2">Database</label>
@@ -33,7 +33,7 @@
             </button>
         </div>
     </div>
-    <div class="row" class="overflow-x: auto;">
+    <div class="row sql-result">
         <chutney-error-panel [errorMessage]="errorMessage"></chutney-error-panel>
         <chutney-error-panel [errorMessage]="sqlResult.error"></chutney-error-panel>
         <div [hidden]="sqlResult.updatedRows === undefined || sqlResult.updatedRows === null" class="mb-2">
