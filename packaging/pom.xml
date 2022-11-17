@@ -6,7 +6,7 @@
 
     <groupId>com.chutneytesting</groupId>
     <artifactId>packaging</artifactId>
-    <version>1.0.0</version>
+    <version>0.0.666</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -17,7 +17,7 @@
 
         <chutney.version>1.5.7-SNAPSHOT</chutney.version>
         <mainClass>com.chutneytesting.ServerBootstrap</mainClass>
-        <springboot.version>2.7.4</springboot.version>
+        <spring-boot-maven.version>2.7.4</spring-boot-maven.version>
         <jasypt-spring-boot.version>3.0.4</jasypt-spring-boot.version>
     </properties>
 
@@ -39,7 +39,7 @@
             <dependency>
                 <groupId>net.i2p.crypto</groupId>
                 <artifactId>eddsa</artifactId>
-                <version>0.2.0</version>
+                <version>0.3.0</version>
             </dependency>
             <dependency>
                 <groupId>com.github.ulisesbocchio</groupId>
@@ -89,7 +89,7 @@
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
-                    <version>${springboot.version}</version>
+                    <version>${spring-boot-maven.version}</version>
                     <configuration>
                         <executable>true</executable>
                         <layout>ZIP</layout>

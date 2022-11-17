@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.chutneytesting</groupId>
         <artifactId>packaging</artifactId>
-        <version>1.0.0</version>
+        <version>0.0.666</version>
     </parent>
 
     <artifactId>local-dev</artifactId>
@@ -75,6 +75,22 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>before-it</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>after-it</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>com.github.ulisesbocchio</groupId>
