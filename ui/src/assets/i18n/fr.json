@@ -239,7 +239,8 @@
                 "campaign": "Sélectionner une campagne",
                 "time": "Saisir un horaire",
                 "date": "Saisir une date"
-            }
+            },
+            "nothing": "Aucune planification"
         }
     },
     "dataset": {

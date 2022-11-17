@@ -33,7 +33,7 @@
                     <div class="input-group">
                         <input id="calendar" class="form-control" placeholder="yyyy-mm-dd"
                             name="dp" formControlName="date" ngbDatepicker #d="ngbDatepicker">
-                        <button class="btn btn-outline-secondary bi bi-calendar-event" (click)="d.toggle()"
+                        <button class="btn btn-success bi bi-calendar-event" (click)="d.toggle()"
                                 type="button"></button>
                     </div>
 
@@ -69,33 +69,39 @@
         </form>
     </div>
     <div class="row w-100">
-        <div class="table-responsive">
-            <table class="table table-striped table-hover">
-                <thead>
-                <tr>
-                    <th class="w80"> {{ 'campaigns.scheduling.campaign' | translate }}</th>
-                    <th class="w15">{{ 'campaigns.scheduling.schedulingDate' | translate }}</th>
-                    <th class="w10">{{ 'campaigns.scheduling.frequency' | translate }}</th>
-                    <th class="w5"></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let scheduledCampaign of scheduledCampaigns">
-                    <td>#{{scheduledCampaign.campaignId}} - {{scheduledCampaign.campaignTitle}}</td>
+        <ng-container *ngIf="scheduledCampaigns.length == 0">
+            {{ 'campaigns.scheduling.nothing' | translate }}
+        </ng-container>
+        <ng-container *ngIf="scheduledCampaigns.length > 0">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th class="w80"> {{ 'campaigns.scheduling.campaign' | translate }}</th>
+                        <th class="w15">{{ 'campaigns.scheduling.schedulingDate' | translate }}</th>
+                        <th class="w10">{{ 'campaigns.scheduling.frequency' | translate }}</th>
+                        <th class="w5"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let scheduledCampaign of scheduledCampaigns">
+                        <td>#{{scheduledCampaign.campaignId}} - {{scheduledCampaign.campaignTitle}}</td>
 
-                    <td>{{scheduledCampaign.schedulingDate | amLocal | amDateFormat: 'YYYY-MM-DD HH:mm'}}</td>
-                    <td><span
-                        *ngIf="scheduledCampaign.frequency !==undefined">{{scheduledCampaign.frequency}}</span>
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-outline-danger btn-sm float-end"
-                                (click)="delete(scheduledCampaign.id)">
-                            <span class="fa fa-trash"></span>
-                        </button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+                        <td>{{scheduledCampaign.schedulingDate | amLocal | amDateFormat: 'YYYY-MM-DD HH:mm'}}</td>
+                        <td><span
+                            *ngIf="scheduledCampaign.frequency !==undefined">{{scheduledCampaign.frequency}}</span>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-outline-danger btn-sm float-end"
+                                    (click)="delete(scheduledCampaign.id)">
+                                <span class="fa fa-trash"></span>
+                            </button>
+                        </td>
+                    </tr>
+                    
+                    </tbody>
+                </table>
+            </div>
+        </ng-container>
     </div>
 </div>
