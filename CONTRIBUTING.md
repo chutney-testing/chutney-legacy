@@ -324,6 +324,20 @@ git push origin <TAG_VERSION>
 
 - Update the release note on [github](https://github.com/chutney-testing/chutney/releases)
 
+### Release on Maven central
+
+In order to release artifacts on maven central, you should first create an account on [sonatype](https://issues.sonatype.org/).  
+Then, a team member should open a ticket to ask for granting you release permissions (ex. [ticket](https://issues.sonatype.org/browse/OSSRH-78321))
+
+Then, you can go to [nexus](https://s01.oss.sonatype.org/) and login using your sonatype credentials.
+
+In order to effectively release artifacts :
+
+- Under left menu "Build Promotion" -> "Staging Repositories"
+- Select the repository and click on "Close"
+- After the checks are done, refresh and click on "Release"
+- Wait a few hours to see it on [central](https://central.sonatype.dev/namespace/com.chutneytesting)
+
 ### Prepare next development
 
 ```shell
