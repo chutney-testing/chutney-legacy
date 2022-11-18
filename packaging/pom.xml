@@ -17,7 +17,7 @@
 
         <chutney.version>1.5.7-SNAPSHOT</chutney.version>
         <mainClass>com.chutneytesting.ServerBootstrap</mainClass>
-        <spring-boot-maven.version>2.7.4</spring-boot-maven.version>
+        <spring-boot-maven.version>2.7.5</spring-boot-maven.version>
         <jasypt-spring-boot.version>3.0.4</jasypt-spring-boot.version>
     </properties>
 
