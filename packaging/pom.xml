@@ -6,7 +6,7 @@
 
     <groupId>com.chutneytesting</groupId>
     <artifactId>packaging</artifactId>
-    <version>0.0.666</version>
+    <version>0.0.1-never.change</version>
     <packaging>pom</packaging>
 
     <properties>

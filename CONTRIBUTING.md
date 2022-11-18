@@ -329,7 +329,7 @@ git push origin <TAG_VERSION>
 ### Prepare next development
 
 ```shell
-mvn versions:set -DnewVersion=<NEXT_DEV_VERSION> -DgenerateBackupPoms=false && mvn versions:set-scm-tag -DnewTag=HEAD -DgenerateBackupPoms=false
+mvn versions:set -pl !packaging -DnewVersion=<NEXT_DEV_VERSION> -DgenerateBackupPoms=false && mvn versions:set-scm-tag -DnewTag=HEAD -DgenerateBackupPoms=false
 git diff HEAD
 git add . && git commit -m "chore: Prepare next development <NEXT_DEV_VERSION>"
 git push origin
